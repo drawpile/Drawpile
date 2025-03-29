@@ -143,6 +143,27 @@
       </spacer>
      </item>
      <item>
+      <widget class="widgets::GroupedToolButton" name="alphaPreserve">
+       <property name="toolTip">
+        <string notr="true">Preserve alpha</string>
+       </property>
+       <property name="statusTip">
+        <string notr="true">Preserve alpha</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>theme:drawpile_alpha_unlocked.svg</normaloff>
+         <normalon>theme:drawpile_alpha_locked.svg</normalon>theme:drawpile_alpha_unlocked.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>widgets::GroupedToolButton::NotGrouped</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QComboBox" name="blendModeCombo">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -407,6 +428,7 @@
   <tabstop>areaContinuous</tabstop>
   <tabstop>areaSimilar</tabstop>
   <tabstop>areaSelection</tabstop>
+  <tabstop>alphaPreserve</tabstop>
   <tabstop>blendModeCombo</tabstop>
   <tabstop>applyButton</tabstop>
   <tabstop>cancelButton</tabstop>

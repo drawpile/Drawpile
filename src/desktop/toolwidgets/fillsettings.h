@@ -6,6 +6,7 @@
 class QAction;
 class QButtonGroup;
 class QLabel;
+class QMenu;
 class QStackedWidget;
 class Ui_FillSettings;
 
@@ -44,6 +45,7 @@ public:
 
 	QWidget *getHeaderWidget() override { return m_headerWidget; }
 
+	void setActions(QAction *automaticAlphaPreserve);
 	void setFeatureAccess(bool featureAccess);
 
 signals:
@@ -68,15 +70,21 @@ private:
 	int calculatePixelSize(int size) const;
 
 	void initBlendModeOptions();
+	void updateAlphaPreserve();
+	void updateBlendMode(int index);
 	void selectBlendMode(int blendMode);
+	int getCurrentBlendMode() const;
 
 	void setButtonState(bool running, bool pending);
 	void setDragState(bool dragging, int tolerance);
 	void updateWidgets();
 
+	void setAutomaticAlphaPerserve(bool automaticAlphaPreserve);
+
 	QWidget *m_headerWidget = nullptr;
 	QStackedWidget *m_stack;
 	Ui_FillSettings *m_ui = nullptr;
+	QMenu *m_menu = nullptr;
 	QLabel *m_permissionDeniedLabel = nullptr;
 	QAction *m_editableAction = nullptr;
 	QAction *m_confirmAction = nullptr;
@@ -88,6 +96,7 @@ private:
 	qreal m_quickAdjust1 = 0.0;
 	bool m_featureAccess = true;
 	bool m_haveSelection = false;
+	bool m_automaticAlphaPreserve = true;
 	bool m_updating = false;
 };
 
