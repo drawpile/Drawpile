@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libclient/canvas/blendmodes.h"
-
 #include <QCoreApplication>
 #include <QStandardItemModel>
 
@@ -9,16 +7,16 @@ namespace canvas {
 namespace blendmode {
 
 // Mode can be used as a layer blending mode
-static const uint8_t LayerMode = 0x01;
+static constexpr uint8_t LayerMode = 0x01;
 
 // Mode can be used as a brush blending mode
-static const uint8_t BrushMode = 0x02;
+static constexpr uint8_t BrushMode = 0x02;
 
 // Mode can be used for both brushes and layers
-static const uint8_t UniversalMode = 0x03;
+static constexpr uint8_t UniversalMode = 0x03;
 
 // Mode is available when the eraser option is checked
-static const uint8_t EraserMode = 0x04;
+static constexpr uint8_t EraserMode = 0x04;
 
 struct BlendModeInfo {
 	//! The blend mode's translatable name
@@ -41,72 +39,72 @@ static const BlendModeInfo BLEND_MODE[] = {
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Recolor"),
 		DP_BLEND_MODE_RECOLOR,
-		UniversalMode ,
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Behind"),
 		DP_BLEND_MODE_BEHIND,
-		BrushMode ,
+		BrushMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Multiply"),
 		DP_BLEND_MODE_MULTIPLY,
-		UniversalMode ,
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Screen"),
 		DP_BLEND_MODE_SCREEN,
-		UniversalMode
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Overlay"),
 		DP_BLEND_MODE_OVERLAY,
-		UniversalMode
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Divide"),
 		DP_BLEND_MODE_DIVIDE,
-		UniversalMode ,
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Burn"),
 		DP_BLEND_MODE_BURN,
-		UniversalMode ,
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Dodge"),
 		DP_BLEND_MODE_DODGE,
-		UniversalMode ,
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Darken"),
 		DP_BLEND_MODE_DARKEN,
-		UniversalMode ,
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Lighten"),
 		DP_BLEND_MODE_LIGHTEN,
-		UniversalMode ,
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Subtract"),
 		DP_BLEND_MODE_SUBTRACT,
-		UniversalMode ,
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Add"),
 		DP_BLEND_MODE_ADD,
-		UniversalMode ,
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Erase"),
 		DP_BLEND_MODE_ERASE,
-		LayerMode | EraserMode ,
+		LayerMode | EraserMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Color Erase"),
 		DP_BLEND_MODE_COLOR_ERASE,
-		EraserMode ,
+		EraserMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Erase Lightness"),
@@ -121,55 +119,55 @@ static const BlendModeInfo BLEND_MODE[] = {
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Hard Light"),
 		DP_BLEND_MODE_HARD_LIGHT,
-		UniversalMode
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Soft Light"),
 		DP_BLEND_MODE_SOFT_LIGHT,
-		UniversalMode
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Linear Burn"),
 		DP_BLEND_MODE_LINEAR_BURN,
-		UniversalMode
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Linear Light"),
 		DP_BLEND_MODE_LINEAR_LIGHT,
-		UniversalMode
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Luminosity/Shine (SAI)"),
 		DP_BLEND_MODE_LUMINOSITY_SHINE_SAI,
-		UniversalMode
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Hue"),
 		DP_BLEND_MODE_HUE,
-		UniversalMode
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Saturation"),
 		DP_BLEND_MODE_SATURATION,
-		UniversalMode
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Luminosity"),
 		DP_BLEND_MODE_LUMINOSITY,
-		UniversalMode
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Color"),
 		DP_BLEND_MODE_COLOR,
-		UniversalMode
+		UniversalMode,
 	},
 };
 
-static const int BLEND_MODES = sizeof(BLEND_MODE)/sizeof(BlendModeInfo);
+static const int BLEND_MODES = sizeof(BLEND_MODE) / sizeof(BlendModeInfo);
 
 QString translatedName(int mode)
 {
-	const char *key =  QT_TRANSLATE_NOOP("blendmode", "Unknown");
+	const char *key = QT_TRANSLATE_NOOP("blendmode", "Unknown");
 	for(const BlendModeInfo &info : BLEND_MODE) {
 		if(int(info.id) == mode) {
 			key = info.name;
@@ -193,7 +191,7 @@ DP_BlendMode fromOraName(const QString &name, DP_BlendMode defaultMode)
 static QVector<Named> modeNames(uint8_t flag)
 {
 	QVector<Named> list;
-	for(int i=0;i<BLEND_MODES;++i) {
+	for(int i = 0; i < BLEND_MODES; ++i) {
 		if((BLEND_MODE[i].flags & flag)) {
 			list.append(Named{
 				BLEND_MODE[i].id,
