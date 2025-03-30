@@ -753,19 +753,26 @@ bool ThinSession::AutoResetCandidate::operator<(
 	// Clients on a better operating system are preferable.
 	if(osQuality < other.osQuality) {
 		return true;
+	} else if(osQuality > other.osQuality) {
+		return false;
 	}
 
 	// Clients on a better network are preferable. At the time of writing, this
 	// is only determined by the user manually toggling a setting for it.
 	if(netQuality < other.netQuality) {
 		return true;
+	} else if(netQuality > other.netQuality) {
+		return false;
 	}
 
 	// Clients with a lower average ping are preferable. Average pings <= 0.0
 	// means that the client didn't give us any data, so we can't compare.
-	if(averagePing > 0.0 && other.averagePing > 0.0 &&
-	   averagePing > other.averagePing) {
-		return true;
+	if(averagePing > 0.0 && other.averagePing > 0.0) {
+		if(averagePing > other.averagePing) {
+			return true;
+		} else if(averagePing < other.averagePing) {
+			return false;
+		}
 	}
 
 	// Finally, whoever responded first gets the cut.
