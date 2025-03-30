@@ -81,7 +81,15 @@ static size_t opaque_serialize_payload(DP_Message *msg, unsigned char *data)
     DP_OpaqueMessage *om = (void *)msg->internal;
     size_t length = om->length;
     if (length != 0) {
+        // Some GCC versions raise a bogus warning here.
+#if defined(__GNUC__)
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
         memcpy(data, om->body, length);
+#if defined(__GNUC__)
+#   pragma GCC diagnostic pop
+#endif
     }
     return length;
 }
