@@ -10423,7 +10423,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+312"/>
         <location line="+45"/>
         <source>Keep</source>
-        <translation>E&amp;xporter l’Étiquette...</translation>
+        <translation>Garder</translation>
     </message>
     <message>
         <location line="-294"/>
