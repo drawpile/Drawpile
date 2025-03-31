@@ -9414,7 +9414,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+20"/>
         <source>Scale factor: </source>
-        <translation type="unfinished"></translation>
+        <translation>Facteur d&apos;échelle&#xa0;: </translation>
     </message>
     <message>
         <location line="+1"/>
