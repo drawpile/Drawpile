@@ -10010,7 +10010,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-2"/>
         <source>Are you sure you want to delete preset %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>Êtes-vous sûr·e de vouloir supprimer ce projet «&#xa0;$1&#xa0;»&#x202f;?</translation>
     </message>
     <message>
         <location line="+1"/>
