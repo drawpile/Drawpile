@@ -10386,7 +10386,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Im&amp;port Brushes…</source>
-        <translation>Importer des brosses…</translation>
+        <translation>Im&amp;porter des Pinceaux…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10423,7 +10423,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+312"/>
         <location line="+45"/>
         <source>Keep</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;xporter l’Étiquette...</translation>
     </message>
     <message>
         <location line="-294"/>
