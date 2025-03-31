@@ -9868,12 +9868,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+504"/>
         <source>Export Settings</source>
-        <translation>Exporter les paramètres</translation>
+        <translation>Exporter les Paramètres</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pick the sections you want to export:</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisissez les sélections que vous désirez exporter&#xa0;:</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -9883,7 +9883,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Could not export session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;exporter les paramètres de session.</translation>
     </message>
 </context>
 <context>
