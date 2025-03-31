@@ -8,8 +8,9 @@
 // We're disabling it for now, but presumably this can be fixed, since a similar
 // thing is working fine on Krita for Android. It also works if the Qt::Window
 // window flag is used instead of Qt::Popup, but then it covers the screen.
+// TODO: Dito on macOS.
 // TODO: On Emscripten, the window just doesn't show up for some reason.
-#if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
+#if defined(Q_OS_ANDROID) || defined(Q_OS_MACOS) || defined(__EMSCRIPTEN__)
 #	undef DP_COLOR_SPINNER_ENABLE_PREVIEW
 #else
 #	define DP_COLOR_SPINNER_ENABLE_PREVIEW
