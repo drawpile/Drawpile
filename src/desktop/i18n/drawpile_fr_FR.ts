@@ -725,7 +725,7 @@
         <location line="-336"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation>Limite de taille </translation>
+        <translation>Limite de taille&#xa0;: </translation>
     </message>
     <message>
         <location line="+279"/>
@@ -736,7 +736,7 @@
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+131"/>
         <source>Size Limit: Unlimited</source>
-        <translation>Limite de taille&#xa0;: Infinie</translation>
+        <translation>Limite de taille&#xa0;: Illimitée</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-260"/>
@@ -1104,7 +1104,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="-24"/>
         <source>Username</source>
-        <translation>Utilisateur</translation>
+        <translation>Nom d&apos;utilisateur</translation>
     </message>
     <message>
         <location line="+158"/>
