@@ -9394,7 +9394,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Miscellaneous:</source>
-        <translation>Divers</translation>
+        <translation>Divers&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9404,7 +9404,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Ask before deleting layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Demander avant de supprimer des calques</translation>
     </message>
     <message>
         <location line="+9"/>
