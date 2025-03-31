@@ -9429,12 +9429,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+11"/>
         <source>Vertical sync:</source>
-        <translation>Synchronisation verticale</translation>
+        <translation>Synchronisation verticale&#xa0;:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Activé</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -9799,12 +9799,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
-        <translation type="unfinished"></translation>
+        <translation>Si vous rencontrez des difficultés, consultez les pages d&apos;aide à droite. Si elles ne répondent pas à votre question, vous pouvez rejoindre le serveur Discord et poser vos questions&#x202f;; il y a généralement des personnes disponibles pour vous aider&#x202f;!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Next time, you&apos;ll see news and updates on this page.</source>
-        <translation type="unfinished"></translation>
+        <translation>La prochaine fois, vous verrez des nouvelle et des mises à jour sur cette page.</translation>
     </message>
 </context>
 <context>
@@ -9812,7 +9812,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/bans.cpp" line="+24"/>
         <source>No bans imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucun bannissements importés.</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -9835,7 +9835,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+13"/>
         <source>Replace announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplacer les annonces</translation>
     </message>
     <message>
         <location line="+7"/>
