@@ -39,8 +39,8 @@ private slots:
 								  "!title=Test\n"
 								  "!nsfm=false\n"
 								  "\n"
-								  "1 resize bottom=3000 right=3000\n"
-								  "1 newlayer id=0x0101 title=background\n");
+								  "1 resize {\"bottom\":3000,\"right\":\"3000\"}\n"
+								  "1 newlayer {\"id\":257,\"title\":\"background\"}\n");
 			QCOMPARE(testFile.write(testContent), testContent.size());
 			QVERIFY(testFile.flush());
 			testFile.close();

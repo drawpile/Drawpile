@@ -283,7 +283,7 @@ DefaultLayer:
              The default layer is the one new users default to when logging in.
              If no default layer is set, the newest layer will be selected by default.
     fields:
-        - id u16: hex
+        - id u16
 
 Filtered:
     id: 72
@@ -398,8 +398,8 @@ LayerCreate:
 
              If layer controls are locked, this command requires session operator privileges.
     fields:
-        - id u16: hex
-        - source u16: hex
+        - id u16
+        - source u16
         - fill argb32
         - flags flags: [copy, insert]
         - title utf8
@@ -418,7 +418,7 @@ LayerAttributes:
              Note: the `fixed` flag is unused since version 2.2. It's functionality is replaced
              by the custom timeline feature.
     fields:
-        - id u16: hex
+        - id u16
         - sublayer u8
         - flags flags: [censor, fixed, isolated, clip]
         - opacity u8
@@ -429,7 +429,7 @@ LayerRetitle:
     name: retitlelayer
     comment: Change a layer's title
     fields:
-        - id u16: hex
+        - id u16
         - title utf8
 
 LayerOrder:
@@ -450,7 +450,7 @@ LayerOrder:
 
              If layer controls are locked, this command requires session operator privileges.
     fields:
-      - layers vec_u16: hex
+      - layers vec_u16
 
 LayerDelete:
     id: 134
@@ -464,7 +464,7 @@ LayerDelete:
              If the current layer or layer controls in general are locked, this command
              requires session operator privileges.
     fields:
-        - id u16: hex
+        - id u16
         - merge bool
 
 LayerVisibility:
@@ -504,7 +504,7 @@ PutImage:
              a SelectionClear message; the bottom octet of layer is the
              selection id and everything else is ignored.
     fields:
-        - layer u16: hex
+        - layer u16
         - mode blendmode
         - x u32
         - y u32
@@ -516,7 +516,7 @@ FillRect:
     id: 137
     comment: Fill a rectangle with solid color
     fields:
-        - layer u16: hex
+        - layer u16
         - mode blendmode
         - x u32
         - y u32
@@ -554,7 +554,7 @@ AnnotationCreate:
 
              The new annotation created with this command is initally empy with a transparent background
     fields:
-        - id u16: hex
+        - id u16
         - x i32
         - y i32
         - w u16
@@ -565,7 +565,7 @@ AnnotationReshape:
     name: reshapeannotation
     comment: Change the position and size of an annotation
     fields:
-        - id u16: hex
+        - id u16
         - x i32
         - y i32
         - w u16
@@ -582,7 +582,7 @@ AnnotationEdit:
              If an annotation is flagged as protected, it cannot be modified by users
              other than the one who created it, or session operators.
     fields:
-        - id u16: hex
+        - id u16
         - bg argb32
         - flags flags: [protect, valign_center, valign_bottom, alias, rasterize]
         - border u8
@@ -599,7 +599,7 @@ AnnotationDelete:
              an image and drawing the image with the PutImage command. This ensures
              identical rendering on all clients.
     fields:
-        - id u16: hex
+        - id u16
 
 MoveRegion:
     id: 145
@@ -627,7 +627,7 @@ MoveRegion:
 
              If the layer is 0, the selection with id 1 is transformed instead.
     fields:
-        - layer u16: hex
+        - layer u16
         - bx i32
         - by i32
         - bw i32
@@ -653,7 +653,7 @@ PutTile:
              PutTile can target sublayers as well. This is used when generating a reset image
              with incomplete indirect strokes. Sending a PenUp command will merge the sublayer.
     fields:
-        - layer u16: hex
+        - layer u16
         - sublayer u8
         - col u16
         - row u16
@@ -682,7 +682,7 @@ DrawDabsClassic:
              The coordinate system has 1/4 pixel resolution. Divide by 4.0 before use.
              The size field is the brush diameter multiplied by 256.
     fields:
-        - layer u16: hex
+        - layer u16
         - x i32: div4
         - y i32: div4
         - color argb32
@@ -705,7 +705,7 @@ DrawDabsPixel:
              The same kind of delta compression is used as in classicdabs,
              but the fields all have integer precision.
     fields:
-        - layer u16: hex
+        - layer u16
         - x i32
         - y i32
         - color argb32
@@ -737,7 +737,7 @@ DrawDabsMyPaint:
              mode, 0x2 means indirect with Recolor mode and 0x3 means indirect
              with Erase mode.
     fields:
-        - layer u16: hex
+        - layer u16
         - x i32: div4
         - y i32: div4
         - color argb32
@@ -769,8 +769,8 @@ MoveRect:
              If source is 0, layer refers to a selection instead: the lower
              octet is the source and the upper octet is the target selection id.
     fields:
-      - layer u16: hex
-      - source u16: hex
+      - layer u16
+      - source u16
       - sx i32
       - sy i32
       - tx i32
@@ -825,9 +825,9 @@ LayerTreeCreate:
 
              If layer controls are locked, this command requires session operator privileges.
     fields:
-        - id u16: hex
-        - source u16: hex
-        - target u16: hex
+        - id u16
+        - source u16
+        - target u16
         - fill argb32
         - flags flags: [group, into]
         - title utf8
@@ -848,9 +848,9 @@ LayerTreeMove:
              would be allowed to create a layer there (which is always, since
              that's currently conflated with being allowed to edit layers.)
     fields:
-      - layer u16: hex
-      - parent u16: hex
-      - sibling u16: hex
+      - layer u16
+      - parent u16
+      - sibling u16
 
 LayerTreeDelete:
     id: 164
@@ -864,8 +864,8 @@ LayerTreeDelete:
              If the current layer or layer controls in general are locked, this command
              requires session operator privileges.
     fields:
-        - id u16: hex
-        - merge_to u16: hex
+        - id u16
+        - merge_to u16
 
 TransformRegion:
     id: 165
@@ -893,8 +893,8 @@ TransformRegion:
              If source is 0, layer refers to a selection instead: the lower
              octet is the source and the upper octet is the target selection id.
     fields:
-        - layer u16: hex
-        - source u16: hex
+        - layer u16
+        - source u16
         - bx i32
         - by i32
         - bw i32
@@ -922,23 +922,23 @@ TrackCreate:
              The track id must be prefixed by the user's context id, like layer
              and annotation ids. Operators are exempt from this restriction.
     fields:
-        - id u16: hex
-        - insert_id u16: hex
-        - source_id u16: hex
+        - id u16
+        - insert_id u16
+        - source_id u16
         - title utf8
 
 TrackRetitle:
     id: 167
     comment: Rename a timeline track.
     fields:
-        - id u16: hex
+        - id u16
         - title utf8
 
 TrackDelete:
     id: 168
     comment: Delete a timeline track.
     fields:
-        - id u16: hex
+        - id u16
 
 TrackOrder:
     id: 169
@@ -948,7 +948,7 @@ TrackOrder:
              Works like the LayerOrder command, just for tracks: duplicates are
              ignored and missing tracks are appended to the end.
     fields:
-        - tracks vec_u16: hex
+        - tracks vec_u16
 
 KeyFrameSet:
     id: 170
@@ -964,9 +964,9 @@ KeyFrameSet:
              source is `KeyFrame`, the key frame is copied from the key frame at
              track with id `source_id` and frame index `source_index`.
     fields:
-        - track_id u16: hex
+        - track_id u16
         - frame_index u16
-        - source_id u16: hex
+        - source_id u16
         - source_index u16
         - source enum:
           name: Source
@@ -978,7 +978,7 @@ KeyFrameRetitle:
     id: 171
     comment: Rename a key frame.
     fields:
-        - track_id u16: hex
+        - track_id u16
         - frame_index u16
         - title utf8
 
@@ -1002,17 +1002,17 @@ KeyFrameLayerAttributes:
                on the same layer cancels each other out and will act like
                neither is set.
     fields:
-        - track_id u16: hex
+        - track_id u16
         - frame_index u16
-        - layers vec_u16: hex
+        - layers vec_u16
 
 KeyFrameDelete:
     id: 173
     comment: Delete a key frame, possibly moving it somewhere else.
     fields:
-        - track_id u16: hex
+        - track_id u16
         - frame_index u16
-        - move_track_id u16: hex
+        - move_track_id u16
         - move_frame_index u16
 
 SelectionPut:
@@ -1029,7 +1029,7 @@ SelectionPut:
         Currently, only selection id 1 is used and these messages are not sent
         over the network; LocalMatch commands are used instead.
     fields:
-        - selection_id u8: hex
+        - selection_id u8
         - op enum:
           name: Op
           variants:
@@ -1053,7 +1053,7 @@ SelectionClear:
         Currently, only selection id 1 is used and these messages are not sent
         over the network; LocalMatch commands are used instead.
     fields:
-        - selection_id u8: hex
+        - selection_id u8
 
 LocalMatch:
     id: 176
@@ -1075,7 +1075,7 @@ LocalMatch:
         accept it anyway. In sessions on the builtin server, a PutImage message
         with an invalid blend mode is used instead.
     fields:
-        - type u8: hex
+        - type u8
         - data bytes
 
 Undo:
