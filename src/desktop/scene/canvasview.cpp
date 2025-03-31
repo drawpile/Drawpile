@@ -2118,7 +2118,8 @@ void CanvasView::updateOutlinePos(QPointF point)
 {
 	if(m_showoutline && !m_locked &&
 	   m_toolState == int(tools::ToolState::Normal) && !m_hoveringOverHud &&
-	   (!canvas::Point::roughlySame(point, m_prevoutlinepoint))) {
+	   (canvas::Point::isOutlinePosDifferent(
+		   point, m_prevoutlinepoint, m_subpixeloutline))) {
 		if(!m_subpixeloutline) {
 			point.setX(qFloor(point.x()) + 0.5);
 			point.setY(qFloor(point.y()) + 0.5);

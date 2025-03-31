@@ -1964,7 +1964,8 @@ void CanvasController::setAlphaLockCursorStyle(int alphaLockCursorStyle)
 
 void CanvasController::updateOutlinePos(QPointF point)
 {
-	if(!canvas::Point::roughlySame(point, m_outlinePos)) {
+	if(canvas::Point::isOutlinePosDifferent(
+		   point, m_outlinePos, m_subpixelOutline)) {
 		setOutlinePos(point);
 		if(isOutlineVisible()) {
 			emit outlineChanged();

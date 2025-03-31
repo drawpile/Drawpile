@@ -64,14 +64,20 @@ public:
 	//! Set this point's barrel rotation value in radians
 	void setRotation(qreal r) { m_r = r; }
 
-	//! Compare two points at subpixel resolution
-	static bool roughlySame(const QPointF& p1, const QPointF &p2) {
-		qreal dx = p1.x() - p2.x();
-		qreal dy = p1.y() - p2.y();
-		qreal d = dx*dx + dy*dy;
-		return d <= ((1/4.0)*(1/4.0));
+	//! Is the brush outline position for these points different?
+	static bool
+	isOutlinePosDifferent(const QPointF &p1, const QPointF &p2, bool subpixel)
+	{
+		if(subpixel) {
+			qreal dx = p1.x() - p2.x();
+			qreal dy = p1.y() - p2.y();
+			qreal d = dx * dx + dy * dy;
+			return d > 0.001;
+		} else {
+			return (p1 - QPointF(0.5, 0.5)).toPoint() !=
+				   (p2 - QPointF(0.5, 0.5)).toPoint();
+		}
 	}
-	bool roughlySame(const QPointF& point) const { return roughlySame(*this, point); }
 
 	//! Are the two points less than one pixel different?
 	static bool intSame(const QPointF &p1, const QPointF &p2) {
