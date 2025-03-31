@@ -10028,7 +10028,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+26"/>
         <source>Cut, paste and fill:</source>
-        <translation type="unfinished"></translation>
+        <translation>Couper, Coller &amp; Remplir&#xa0;:</translation>
     </message>
     <message>
         <location line="+4"/>
