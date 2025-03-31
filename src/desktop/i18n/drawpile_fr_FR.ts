@@ -487,7 +487,7 @@
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation>Importer des pinceaux</translation>
+        <translation>Importer des Pinceaux</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -548,7 +548,7 @@
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation>Exporter la Vidéo WEBM</translation>
+        <translation>Exporter la Vidéo WebM</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1815,7 +1815,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation>Rotation anti-horaire du canevas</translation>
+        <translation>Rotation Anti-Horaire de la Toile</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1905,12 +1905,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation>&amp;Tout Cocher</translation>
+        <translation>Tout &amp;Cocher</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Uncheck All</source>
-        <translation>&amp;Tout Décocher</translation>
+        <translation>To&amp;ut Décocher</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2126,12 +2126,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+49"/>
         <source>Next Frame</source>
-        <translation type="unfinished">Trame Suivante</translation>
+        <translation>Trame Suivante</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Frame</source>
-        <translation type="unfinished">Trame précédente</translation>
+        <translation>Trame Précédente</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -2171,7 +2171,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>&amp;Lasso Select</source>
-        <translation>&amp;Sélection au Lasso</translation>
+        <translation>Sélection au &amp;Lasso</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2181,7 +2181,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>&amp;Magic Wand Select</source>
-        <translation type="unfinished">&amp;Sélection Baguette Magique</translation>
+        <translation>Sélection Baguette &amp;Magique</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2211,12 +2211,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+27"/>
         <source>Developer Tools</source>
-        <translation type="unfinished">Outils de développement</translation>
+        <translation>Outils de Développement</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>System Information…</source>
-        <translation>Information système…</translation>
+        <translation>Information Système…</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -2236,7 +2236,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+44"/>
         <source>Toggle Eraser Mode</source>
-        <translation type="unfinished">Activer/Désactiver le Mode Gomme</translation>
+        <translation>Activer/Désactiver le Mode Gomme</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2246,7 +2246,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>Choose the current foreground color</source>
-        <translation type="unfinished">Choisir la couleur de premier plan</translation>
+        <translation>Choisir la couleur de premier plan</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9334,47 +9334,47 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Kinetic scrolling:</source>
-        <translation type="unfinished"></translation>
+        <translation>Défilement cinétique&#xa0;:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Threshold: </source>
-        <translation type="unfinished"></translation>
+        <translation>Seuil&#xa0;: </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide scroll bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Cacher les barres de défilement</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Background color behind the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur de fond derrière la toile</translation>
     </message>
     <message>
         <location line="+71"/>
         <source>Override system scale factor</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplacer le facteur d&apos;échelle du système</translation>
     </message>
     <message>
         <location line="-126"/>
         <source>Small screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Petit écran</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>First checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur du premier damier</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Second checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur du second damier</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Colors behind canvas:</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleurs derrière la toile&#xa0;:</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -9389,7 +9389,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Show scroll bars on canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer les barres de défilement sur la toile</translation>
     </message>
     <message>
         <location line="+2"/>
