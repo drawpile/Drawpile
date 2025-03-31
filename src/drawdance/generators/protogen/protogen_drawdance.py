@@ -112,8 +112,6 @@ class DrawdanceFieldType:
         min_value, max_value = self._get_min_max(f)
         if not fmt:
             return f'({f.type.base_type})DP_text_reader_get_ulong(reader, "{f.name}", {max_value})'
-        elif fmt == "hex":
-            return f'({f.type.base_type})DP_text_reader_get_ulong_hex(reader, "{f.name}", {max_value})'
         elif fmt == "div256":
             return f'({f.type.base_type})DP_text_reader_get_decimal(reader, "{f.name}", 256.0, 0, {max_value})'
         elif fmt == "flags":
@@ -126,8 +124,6 @@ class DrawdanceFieldType:
         fmt = f.format
         if not fmt:
             return "DP_text_reader_parse_uint16_array"
-        elif fmt == "hex":
-            return "DP_text_reader_parse_uint16_array_hex"
         else:
             raise RuntimeError(f"Unknown uint16 list format '{fmt}'")
 
@@ -135,9 +131,9 @@ class DrawdanceFieldType:
         fmt = f.format
         min_value, max_value = self._get_min_max(f)
         if not fmt:
-            return f"DP_text_reader_get_subfield_long(reader, i, {index}, {min_value}, {max_value})"
+            return f'DP_text_reader_get_subfield_long(reader, i, "{f.field_name}", {min_value}, {max_value})'
         elif fmt == "div4":
-            return f"DP_text_reader_get_subfield_decimal(reader, i, {index}, 4.0, {min_value}, {max_value})"
+            return f'DP_text_reader_get_subfield_decimal(reader, i, "{f.field_name}", 4.0, {min_value}, {max_value})'
         else:
             raise RuntimeError(f"Unknown int subfield format '{fmt}'")
 
@@ -145,9 +141,9 @@ class DrawdanceFieldType:
         fmt = f.format
         min_value, max_value = self._get_min_max(f)
         if not fmt:
-            return f"DP_text_reader_get_subfield_ulong(reader, i, {index}, {max_value})"
+            return f'DP_text_reader_get_subfield_ulong(reader, i, "{f.field_name}", {max_value})'
         elif fmt == "div256":
-            return f"DP_text_reader_get_subfield_decimal(reader, i, {index}, 256.0, 0, {max_value})"
+            return f'DP_text_reader_get_subfield_decimal(reader, i, "{f.field_name}", 256.0, 0, {max_value})'
         else:
             raise RuntimeError(f"Unknown uint subfield format '{fmt}'")
 
@@ -174,9 +170,7 @@ class DrawdanceFieldType:
         a = self.access(f, subject)
         fmt = f.format
         if not fmt:
-            return f'DP_text_writer_write_uint(writer, "{f.name}", {a}, false)'
-        elif fmt == "hex":
-            return f'DP_text_writer_write_uint(writer, "{f.name}", {a}, true)'
+            return f'DP_text_writer_write_uint(writer, "{f.name}", {a})'
         elif fmt == "div256":
             return (
                 f'DP_text_writer_write_decimal(writer, "{f.name}", (double){a} / 256.0)'
@@ -188,22 +182,15 @@ class DrawdanceFieldType:
             raise RuntimeError(f"Unknown uint format '{fmt}'")
 
     def write_text_uint16_list(self, f, a, a_count):
-        fmt = f.format
-        if not fmt:
-            hex_arg = "false"
-        elif fmt == "hex":
-            hex_arg = "true"
-        else:
-            raise RuntimeError(f"Unknown uint16 list format '{fmt}'")
-        return f'DP_text_writer_write_uint16_list(writer, "{f.name}", {a}, {a_count}, {hex_arg})'
+        return f'DP_text_writer_write_uint16_list(writer, "{f.name}", {a}, {a_count})'
 
     def write_subfield_text_int(self, f, subject):
         a = self.access(f, subject)
         fmt = f.format
         if not fmt:
-            return f"DP_text_writer_write_subfield_int(writer, {a})"
+            return f"DP_text_writer_write_subfield_int(writer, \"{f.field_name}\", {a})"
         elif fmt == "div4":
-            return f"DP_text_writer_write_subfield_decimal(writer, (double){a} / 4.0)"
+            return f"DP_text_writer_write_subfield_decimal(writer, \"{f.field_name}\", (double){a} / 4.0)"
         else:
             raise RuntimeError(f"Unknown int subfield format '{fmt}'")
 
@@ -211,9 +198,9 @@ class DrawdanceFieldType:
         a = self.access(f, subject)
         fmt = f.format
         if not fmt:
-            return f"DP_text_writer_write_subfield_uint(writer, {a})"
+            return f"DP_text_writer_write_subfield_uint(writer, \"{f.field_name}\", {a})"
         elif fmt == "div256":
-            return f"DP_text_writer_write_subfield_decimal(writer, (double){a} / 256.0)"
+            return f"DP_text_writer_write_subfield_decimal(writer, \"{f.field_name}\", (double){a} / 256.0)"
         else:
             raise RuntimeError(f"Unknown uint subfield format '{fmt}'")
 
@@ -261,7 +248,7 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
             assign = fn(self, f)
         return f"{self.base_type} {f.name} = {assign};"
 
-    def parse_tuple_field(self, f, index):
+    def parse_subfield(self, f, index):
         fn = self.parse_subfield_fn
         if fn:
             return (
@@ -621,7 +608,7 @@ class DrawdanceStructFieldType(DrawdanceFieldType):
         return f"{f.sub.func_name}_deserialize, {f.name}_count, {f.name}_user"
 
     def parse_field_count(self, f):
-        return f"int {f.name}_count = DP_text_reader_get_tuple_count(reader);"
+        return f'int {f.name}_count = DP_text_reader_get_sub_count(reader);'
 
     def parse_field(self, f):
         return f"void *{f.name}_user = reader;"
@@ -801,7 +788,7 @@ DrawdanceArrayFieldType.declare(
     serialize_payload_fn="DP_write_bigendian_uint8_array",
     write_payload_text_fn="DP_text_writer_write_uint8_list",
     deserialize_payload_fn="read_uint8_array",
-    parse_get_field_fn="DP_text_reader_get_comma_separated",
+    parse_get_field_fn="DP_text_reader_get_array",
     parse_constructor_fn="DP_text_reader_parse_uint8_array",
 )
 
@@ -813,7 +800,7 @@ DrawdanceArrayFieldType.declare(
     serialize_payload_fn="DP_write_bigendian_uint16_array",
     write_payload_text_fn=DrawdanceFieldType.write_text_uint16_list,
     deserialize_payload_fn="read_uint16_array",
-    parse_get_field_fn="DP_text_reader_get_comma_separated",
+    parse_get_field_fn="DP_text_reader_get_array",
     parse_constructor_fn=DrawdanceFieldType.parse_text_uint16_list,
 )
 
@@ -1066,8 +1053,8 @@ class DrawdanceField:
     def parse_field(self):
         return self.type.parse_field(self)
 
-    def parse_tuple_field(self, index):
-        return self.type.parse_tuple_field(self, index)
+    def parse_subfield(self, index):
+        return self.type.parse_subfield(self, index)
 
     @property
     def parse_constructor_arg(self):
