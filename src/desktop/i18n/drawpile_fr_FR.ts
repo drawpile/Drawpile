@@ -10366,7 +10366,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Icon Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille de l&apos;icone</translation>
     </message>
     <message>
         <location line="+3"/>
