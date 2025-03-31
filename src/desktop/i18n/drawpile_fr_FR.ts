@@ -10028,7 +10028,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+26"/>
         <source>Cut, paste and fill:</source>
-        <translation>Couper, Coller &amp; Remplir&#xa0;:</translation>
+        <translation>Couper, coller et remplir&#xa0;:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10356,12 +10356,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Su&amp;pprimer le Pinceau</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Brush &amp;Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>É&amp;tiquette des Pinceaux</translation>
     </message>
     <message>
         <location line="+1"/>
