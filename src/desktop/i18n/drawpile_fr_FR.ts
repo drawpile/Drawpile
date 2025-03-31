@@ -9994,18 +9994,18 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation>Le fichier existe déjà. Désirez-vous le remplacer&#x202f;?</translation>
+        <translation>Le préréglage %1 existe déjà, désirez-vous le remplacer&#x202f;?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Oui, remplacer</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+22"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>Non, garder</translation>
     </message>
     <message>
         <location line="-2"/>
