@@ -2000,7 +2000,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+88"/>
         <source>New Layer Group</source>
-        <translation>Nouveau groupe de calque</translation>
+        <translation>Nouveau Groupe de Calques</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -9394,7 +9394,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Miscellaneous:</source>
-        <translation type="unfinished"></translation>
+        <translation>Divers</translation>
     </message>
     <message>
         <location line="+2"/>
