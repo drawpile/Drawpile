@@ -9878,7 +9878,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+35"/>
         <source>Export Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur d&apos;exportation</translation>
     </message>
     <message>
         <location line="+0"/>
