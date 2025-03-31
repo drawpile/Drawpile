@@ -725,7 +725,7 @@
         <location line="-336"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation>Limite de taille&#xa0;: </translation>
+        <translation>Limite de taille </translation>
     </message>
     <message>
         <location line="+279"/>
