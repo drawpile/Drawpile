@@ -10366,22 +10366,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Icon Size</source>
-        <translation>Taille de l&apos;icone</translation>
+        <translation>Taille de l&apos;&amp;Icône</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ne&amp;w Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle Éti&amp;quette</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rena&amp;me Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Reno&amp;mmer l’Étiquette</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>De&amp;lete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer &amp;l’Étiquette</translation>
     </message>
     <message>
         <location line="+2"/>
