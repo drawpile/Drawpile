@@ -25,6 +25,7 @@
 #include <dpcommon/common.h>
 
 typedef struct DP_Input DP_Input;
+typedef struct json_array_t JSON_Array;
 
 
 typedef struct DP_TextReader DP_TextReader;
@@ -38,8 +39,13 @@ typedef enum DP_TextReaderResult {
 } DP_TextReaderResult;
 
 typedef struct DP_TextReaderParseParams {
-    const char *value;
-    size_t length;
+    union {
+        struct {
+            const char *value;
+            size_t length;
+        };
+        JSON_Array *array;
+    };
 } DP_TextReaderParseParams;
 
 DP_TextReader *DP_text_reader_new(DP_Input *input);
@@ -69,9 +75,6 @@ long DP_text_reader_get_long(DP_TextReader *reader, const char *key, long min,
 unsigned long DP_text_reader_get_ulong(DP_TextReader *reader, const char *key,
                                        unsigned long max);
 
-unsigned long DP_text_reader_get_ulong_hex(DP_TextReader *reader,
-                                           const char *key, unsigned long max);
-
 double DP_text_reader_get_decimal(DP_TextReader *reader, const char *key,
                                   double multiplier, double min, double max);
 
@@ -92,28 +95,27 @@ DP_text_reader_get_base64_string(DP_TextReader *reader, const char *key,
 
 void DP_text_reader_parse_base64(size_t size, unsigned char *out, void *user);
 
-DP_TextReaderParseParams
-DP_text_reader_get_comma_separated(DP_TextReader *reader, const char *key,
-                                   int *out_count);
+DP_TextReaderParseParams DP_text_reader_get_array(DP_TextReader *reader,
+                                                  const char *key,
+                                                  int *out_count);
 
 void DP_text_reader_parse_uint8_array(int count, uint8_t *out, void *user);
 
 void DP_text_reader_parse_uint16_array(int count, uint16_t *out, void *user);
 
-void DP_text_reader_parse_uint16_array_hex(int count, uint16_t *out,
-                                           void *user);
+int DP_text_reader_get_sub_count(DP_TextReader *reader);
 
-int DP_text_reader_get_tuple_count(DP_TextReader *reader);
+long DP_text_reader_get_subfield_long(DP_TextReader *reader, int i,
+                                      const char *subkey, long min, long max);
 
-long DP_text_reader_get_subfield_long(DP_TextReader *reader, int row, int col,
-                                      long min, long max);
+unsigned long DP_text_reader_get_subfield_ulong(DP_TextReader *reader, int i,
+                                                const char *subkey,
+                                                unsigned long max);
 
-unsigned long DP_text_reader_get_subfield_ulong(DP_TextReader *reader, int row,
-                                                int col, unsigned long max);
-
-double DP_text_reader_get_subfield_decimal(DP_TextReader *reader, int row,
-                                           int col, double multiplier,
-                                           double min, double max);
+double DP_text_reader_get_subfield_decimal(DP_TextReader *reader, int i,
+                                           const char *subkey,
+                                           double multiplier, double min,
+                                           double max);
 
 
 #endif

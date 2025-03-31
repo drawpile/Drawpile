@@ -28,9 +28,6 @@ typedef struct DP_Message DP_Message;
 typedef struct DP_Output DP_Output;
 
 
-#define DP_TEXT_WRITER_RAW_PRINT_LITERAL(WRITER, LITERAL) \
-    DP_text_writer_raw_write((WRITER), "" LITERAL, strlen(LITERAL))
-
 typedef struct DP_TextWriter DP_TextWriter;
 
 DP_TextWriter *DP_text_writer_new(DP_Output *output);
@@ -53,7 +50,7 @@ bool DP_text_writer_write_int(DP_TextWriter *writer, const char *key,
                               int value) DP_MUST_CHECK;
 
 bool DP_text_writer_write_uint(DP_TextWriter *writer, const char *key,
-                               unsigned int value, bool hex) DP_MUST_CHECK;
+                               unsigned int value) DP_MUST_CHECK;
 
 bool DP_text_writer_write_decimal(DP_TextWriter *writer, const char *key,
                                   double value) DP_MUST_CHECK;
@@ -81,27 +78,26 @@ bool DP_text_writer_write_uint8_list(DP_TextWriter *writer, const char *key,
                                      int count) DP_MUST_CHECK;
 
 bool DP_text_writer_write_uint16_list(DP_TextWriter *writer, const char *key,
-                                      const uint16_t *value, int count,
-                                      bool hex) DP_MUST_CHECK;
+                                      const uint16_t *value,
+                                      int count) DP_MUST_CHECK;
 
-bool DP_text_writer_write_subfield_int(DP_TextWriter *writer,
+bool DP_text_writer_start_subs(DP_TextWriter *writer) DP_MUST_CHECK;
+
+bool DP_text_writer_finish_subs(DP_TextWriter *writer) DP_MUST_CHECK;
+
+bool DP_text_writer_start_subobject(DP_TextWriter *writer) DP_MUST_CHECK;
+
+bool DP_text_writer_finish_subobject(DP_TextWriter *writer) DP_MUST_CHECK;
+
+bool DP_text_writer_write_subfield_int(DP_TextWriter *writer, const char *key,
                                        int value) DP_MUST_CHECK;
 
-bool DP_text_writer_write_subfield_uint(DP_TextWriter *writer,
+bool DP_text_writer_write_subfield_uint(DP_TextWriter *writer, const char *key,
                                         unsigned int value) DP_MUST_CHECK;
 
 bool DP_text_writer_write_subfield_decimal(DP_TextWriter *writer,
+                                           const char *key,
                                            double value) DP_MUST_CHECK;
-
-
-bool DP_text_writer_raw_write(DP_TextWriter *writer, const char *buffer,
-                              size_t size) DP_MUST_CHECK;
-
-bool DP_text_writer_raw_print(DP_TextWriter *writer,
-                              const char *str) DP_MUST_CHECK;
-
-bool DP_text_writer_raw_format(DP_TextWriter *writer, const char *fmt,
-                               ...) DP_MUST_CHECK DP_FORMAT(2, 3);
 
 
 #endif

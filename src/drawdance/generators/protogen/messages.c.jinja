@@ -359,24 +359,29 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
 
             static bool {{ f.sub.func_name }}_write_payload_text({{ f.sub.param }}, DP_TextWriter *writer)
             {
-                return DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "   ") &&
+                return DP_text_writer_start_subobject(writer) &&
                     {% for sf in f.sub.fields %}
                         {{ sf.write_subfield_payload_text(f.sub.param_name) }} &&
                     {% endfor %}
-                    DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "\n");
+                    DP_text_writer_finish_subobject(writer);
             }
 
             static size_t {{ f.sub.func_name }}_write_payload_texts({{ f.sub.param }}, int count, DP_TextWriter *writer)
             {
-                if (!DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, " {\n")) {
-                    return false;
-                }
-                for (int i = 0; i < count; ++i) {
-                    if (!{{ f.sub.func_name }}_write_payload_text(&{{ f.sub.param_name }}[i], writer)) {
+                if (count != 0) {
+                    if (!DP_text_writer_start_subs(writer)) {
+                        return false;
+                    }
+                    for (int i = 0; i < count; ++i) {
+                        if (!{{ f.sub.func_name }}_write_payload_text(&{{ f.sub.param_name }}[i], writer)) {
+                            return false;
+                        }
+                    }
+                    if (!DP_text_writer_finish_subs(writer)) {
                         return false;
                     }
                 }
-                return DP_TEXT_WRITER_RAW_PRINT_LITERAL(writer, "}");
+                return true;
             }
 
             static bool {{ f.sub.func_name }}_equals({{ f.sub.struct_name }} *DP_RESTRICT a, {{ f.sub.struct_name }} *DP_RESTRICT b)
@@ -430,7 +435,7 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
                 DP_TextReader *reader = user;
                 for (int i = 0; i < count; ++i) {
                     {% for sf in f.sub.fields %}
-                        {{ sf.parse_tuple_field(loop.index - 1) }}
+                        {{ sf.parse_subfield(loop.index - 1) }}
                     {% endfor %}
                     DP_{{ f.sub.func_name }}_init({{ f.sub.param_name }}s, i
                         {%- for sf in f.sub.fields %}
