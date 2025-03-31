@@ -10015,7 +10015,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Yes, delete</source>
-        <translation>Oui, supprimé</translation>
+        <translation>Oui, supprimer</translation>
     </message>
 </context>
 <context>
@@ -10023,7 +10023,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/permissions.cpp" line="+97"/>
         <source>Undo Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Limite de Retour en Arrière&#xa0;: </translation>
     </message>
     <message>
         <location line="+26"/>
