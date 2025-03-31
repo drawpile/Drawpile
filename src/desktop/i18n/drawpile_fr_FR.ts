@@ -1815,7 +1815,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation>Tourner la Toile dans le sens Inverse des Aiguilles d&apos;une Montre</translation>
+        <translation>Rotation anti-horaire du canevas</translation>
     </message>
     <message>
         <location line="+6"/>
