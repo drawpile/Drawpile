@@ -3,6 +3,7 @@ Unreleased Version 2.2.3-pre
  * Fix: Clear text in the annotation tool when deselecting, since it makes it seem like you can still type in there.
  * Feature: Allow setting hostaddress, hostpass, username and userpass URL parameters in the browser, as a workaround for when you can't type anything into the text fields. Thanks N8theGr8 for bringing this up.
  * Server Fix: Properly prefer users with better OS, net quality or ping for autoresets, even if they responded first. Thanks Blozzom for reporting.
+ * Fix: Don't reselect default layer after picking a layer from the canvas or via the timeline. Thanks Meru for reporting.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.

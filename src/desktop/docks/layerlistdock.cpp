@@ -609,6 +609,7 @@ void LayerList::forceRefreshMargin()
 
 void LayerList::selectLayer(int id)
 {
+	disableAutoselectAny();
 	selectLayerIndex(m_canvas->layerlist()->layerIndex(id), true);
 }
 
