@@ -9868,7 +9868,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+504"/>
         <source>Export Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter les paramètres</translation>
     </message>
     <message>
         <location line="+9"/>
