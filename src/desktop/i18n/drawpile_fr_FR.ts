@@ -1352,7 +1352,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+50"/>
         <source>Unsupported format.</source>
-        <translation>Format non pris en charge</translation>
+        <translation>Format non pris en charge.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1505,7 +1505,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+5"/>
         <source>stop your recording</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished">arrêt de l&apos;enregistrement</translation>
+        <translation>arrêt de l&apos;enregistrement</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1589,7 +1589,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation>Vous n&apos;avez pas la permission de faire cette action.</translation>
+        <translation>Vous n&apos;avez pas la permission pour faire cette action.</translation>
     </message>
     <message>
         <location line="+112"/>
@@ -1676,7 +1676,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+559"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation>Cette image n&apos;a pas pu être chargée&#xa0;: %1.</translation>
+        <translation>L&apos;image n&apos;a pas pu être chargée&#xa0;: %1.</translation>
     </message>
     <message>
         <location line="+438"/>
