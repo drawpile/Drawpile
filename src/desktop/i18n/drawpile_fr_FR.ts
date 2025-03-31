@@ -9929,7 +9929,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+13"/>
         <source>Announcements:</source>
-        <translation type="unfinished"></translation>
+        <translation>Annonces&#xa0;:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9962,7 +9962,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-356"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Charger les Paramètres</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -9994,7 +9994,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Le fichier existe déjà. Désirez-vous le remplacer&#x202f;?</translation>
     </message>
     <message>
         <location line="+3"/>
