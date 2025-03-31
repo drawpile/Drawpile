@@ -9891,7 +9891,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-113"/>
         <source>Import Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer Réglages</translation>
     </message>
     <message>
         <location line="+6"/>
