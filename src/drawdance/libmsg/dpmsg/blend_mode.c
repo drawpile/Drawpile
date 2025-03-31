@@ -211,7 +211,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_LINEAR_LIGHT",
             "krita:linear light",
-            "-dp-linear-light",
+            "krita:linear light",
             "Linear Light",
         },
     [DP_BLEND_MODE_HUE] =
