@@ -1890,7 +1890,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+1"/>
         <source>Forever</source>
         <comment>user pointer stay time</comment>
-        <translation>Pour Toujour</translation>
+        <translation>Indéfiniment</translation>
     </message>
     <message>
         <location line="+57"/>
