@@ -9891,12 +9891,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-113"/>
         <source>Import Settings</source>
-        <translation>Importer Réglages</translation>
+        <translation>Importer les Réglages</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to import:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionnez les sections que vous souhaitez importer&#xa0;:</translation>
     </message>
 </context>
 <context>
