@@ -29,10 +29,10 @@
 #include <dpcommon/vector.h>
 #include <ctype.h>
 #include <math.h>
+#include <parson.h>
 
 
-#define MIN_READ_CAPACITY   4096
-#define MIN_VECTOR_CAPACITY 16
+#define MIN_READ_CAPACITY 4096
 
 typedef struct DP_TextReaderField {
     size_t key_offset;
@@ -55,16 +55,7 @@ struct DP_TextReader {
         size_t used;
         char *buffer;
     } read;
-    struct {
-        size_t capacity;
-        size_t used;
-        char *buffer;
-        DP_Vector offsets;
-    } field;
-    struct {
-        DP_Vector rows;
-        DP_Vector offsets;
-    } tuple;
+    JSON_Object *body;
 };
 
 DP_TextReader *DP_text_reader_new(DP_Input *input)
@@ -78,29 +69,13 @@ DP_TextReader *DP_text_reader_new(DP_Input *input)
     }
 
     DP_TextReader *reader = DP_malloc(sizeof(*reader));
-    *reader = (DP_TextReader){input,
-                              input_length,
-                              0,
-                              0,
-                              0,
-                              {0, 0, NULL},
-                              {0, 0, NULL, DP_VECTOR_NULL},
-                              {DP_VECTOR_NULL, DP_VECTOR_NULL}};
-    DP_VECTOR_INIT_TYPE(&reader->field.offsets, DP_TextReaderField,
-                        MIN_VECTOR_CAPACITY);
-    DP_VECTOR_INIT_TYPE(&reader->tuple.rows, DP_TextReaderTupleRow,
-                        MIN_VECTOR_CAPACITY);
-    DP_VECTOR_INIT_TYPE(&reader->tuple.offsets, size_t, MIN_VECTOR_CAPACITY);
+    *reader = (DP_TextReader){input, input_length, 0, 0, 0, {0, 0, NULL}, NULL};
     return reader;
 }
 
 void DP_text_reader_free(DP_TextReader *reader)
 {
     if (reader) {
-        DP_vector_dispose(&reader->tuple.offsets);
-        DP_vector_dispose(&reader->tuple.rows);
-        DP_vector_dispose(&reader->field.offsets);
-        DP_free(reader->field.buffer);
         DP_free(reader->read.buffer);
         DP_input_free(reader->input);
         DP_free(reader);
@@ -292,15 +267,35 @@ static size_t skip_ws_reverse(const char *buffer, size_t end, size_t start)
     return start;
 }
 
-static size_t skip_newline_reverse(const char *buffer, size_t end, size_t start)
+static void skip_body(const char *buffer, size_t start, size_t end,
+                      size_t *out_body_start, size_t *out_body_end)
 {
-    for (size_t i = end; i > start; --i) {
-        char c = buffer[i - 1];
-        if (c != '\n' && c != '\r') {
-            return i;
+    size_t i = start;
+    while (i < end) {
+        size_t pos = i++;
+        char c = buffer[pos];
+        if (c == '\n') {
+            *out_body_start = pos;
+            *out_body_end = pos;
+            return;
+        }
+        else if (!isspace(c)) {
+            start = pos;
+            break;
         }
     }
-    return start;
+
+    while (i < end) {
+        size_t pos = i++;
+        if (buffer[pos] == '\n') {
+            *out_body_start = start;
+            *out_body_end = pos;
+            return;
+        }
+    }
+
+    *out_body_start = start;
+    *out_body_end = end;
 }
 
 
@@ -364,249 +359,11 @@ DP_TextReaderResult DP_text_reader_read_header_field(DP_TextReader *reader,
 }
 
 
-static void discard_message_body(DP_TextReader *reader)
-{
-    while (true) {
-        size_t start, end;
-        if (!buffer_relevant_line(reader, &start, &end)) {
-            DP_warn("Input error during message discard: %s", DP_error());
-            break;
-        }
-
-        if (end == 0) {
-            DP_warn("End of input during message discard");
-            break;
-        }
-
-        char *buffer = reader->read.buffer;
-        size_t field_start = skip_ws(buffer, start, end);
-        if (buffer[field_start] == '}') {
-            if (skip_ws(buffer, field_start + 1, end) != end) {
-                DP_warn("Garbage after '}' at offset %zu",
-                        reader->input_offset);
-            }
-            break;
-        }
-    }
-}
-
-static void discard_message(DP_TextReader *reader, size_t field_offset,
-                            size_t end)
-{
-    while (true) {
-        char *buffer = reader->read.buffer;
-        size_t field_start = skip_ws(buffer, field_offset, end);
-        size_t field_end = skip_non_ws(buffer, field_start, end);
-        if (field_start == field_end) {
-            consume_line(reader);
-            break;
-        }
-        else if (buffer[field_start] == '{') {
-            discard_message_body(reader);
-            break;
-        }
-        else {
-            field_offset = field_end + 1;
-        }
-    }
-}
-
-static size_t expand_field_buffer(DP_TextReader *reader, size_t size)
-{
-    size_t used = reader->field.used;
-    size_t required_capacity = used + size;
-    reader->field.used = required_capacity;
-    if (reader->field.capacity < required_capacity) {
-        reader->field.buffer =
-            DP_realloc(reader->field.buffer, required_capacity);
-        reader->field.capacity = required_capacity;
-    }
-    return used;
-}
-
-static void push_field(DP_TextReader *reader, const char *key, size_t key_len,
-                       const char *value, size_t value_len)
-{
-    size_t key_start = expand_field_buffer(reader, key_len + value_len + 2);
-    size_t key_end = key_start + key_len;
-    char *buffer = reader->field.buffer;
-    memcpy(buffer + key_start, key, key_len);
-    buffer[key_end] = '\0';
-
-    size_t value_start = key_end + 1;
-    size_t value_end = value_start + value_len;
-    memcpy(buffer + value_start, value, value_len);
-    buffer[value_end] = '\0';
-
-    DP_TextReaderField trf = {key_start, value_start};
-    DP_VECTOR_PUSH_TYPE(&reader->field.offsets, DP_TextReaderField, trf);
-}
-
-static size_t parse_tuple_value(DP_TextReader *reader, size_t offset,
-                                size_t end)
-{
-    char *read_buffer = reader->read.buffer;
-    size_t value_start = skip_ws(read_buffer, offset, end);
-    size_t value_end = skip_non_ws(read_buffer, value_start, end);
-    if (value_start == value_end) {
-        return 0;
-    }
-    else {
-        char *value = read_buffer + value_start;
-        size_t value_len = value_end - value_start;
-        size_t start = expand_field_buffer(reader, value_len + 1);
-        char *field_buffer = reader->field.buffer;
-        memcpy(field_buffer + start, value, value_len);
-        field_buffer[start + value_len] = '\0';
-        DP_VECTOR_PUSH_TYPE(&reader->tuple.offsets, size_t, start);
-        return value_len;
-    }
-}
-
-static void parse_tuple(DP_TextReader *reader, size_t field_start, size_t end)
-{
-    size_t offset = field_start;
-    size_t count = 0;
-    size_t offset_index = reader->tuple.offsets.used;
-    size_t len;
-    while ((len = parse_tuple_value(reader, offset, end)) != 0) {
-        offset += len + 1;
-        ++count;
-    }
-    DP_TextReaderTupleRow trtr = {count, offset_index};
-    DP_VECTOR_PUSH_TYPE(&reader->tuple.rows, DP_TextReaderTupleRow, trtr);
-}
-
-static bool is_multiline_field_continuation(DP_TextReader *reader,
-                                            const char *key, size_t key_len)
-{
-    DP_TextReaderField trf =
-        DP_VECTOR_LAST_TYPE(&reader->field.offsets, DP_TextReaderField);
-    const char *last_key = reader->field.buffer + trf.key_offset;
-    return key_len == strlen(last_key) && memcmp(key, last_key, key_len) == 0;
-}
-
-static void append_multiline_field(DP_TextReader *reader, const char *value,
-                                   size_t value_len)
-{
-    size_t start = expand_field_buffer(reader, value_len + 1);
-    char *buffer = reader->field.buffer;
-    buffer[start - 1] = '\n';
-    memcpy(buffer + start, value, value_len);
-    buffer[start + value_len] = '\0';
-}
-
-static bool parse_multiline_field(DP_TextReader *reader, size_t field_start,
-                                  size_t end, bool can_append)
-{
-    char *buffer = reader->read.buffer;
-    size_t equals_index = search_char_index(buffer, field_start, end, '=');
-    if (equals_index == end) {
-        DP_error_set("Missing '=' in multiline field '%.*s' at offset %zu",
-                     DP_size_to_int(end - field_start), buffer + field_start,
-                     reader->input_offset);
-        return can_append;
-    }
-
-    char *key = buffer + field_start;
-    size_t key_len = equals_index - field_start;
-
-    size_t value_start = equals_index + 1;
-    size_t value_end = skip_newline_reverse(buffer, end, value_start);
-    size_t value_len = value_end - value_start;
-    char *value = buffer + value_start;
-
-    if (can_append && is_multiline_field_continuation(reader, key, key_len)) {
-        append_multiline_field(reader, buffer + value_start, value_len);
-    }
-    else {
-        push_field(reader, key, key_len, value, value_len);
-    }
-    return true;
-}
-
-static DP_TextReaderResult parse_multiline(DP_TextReader *reader,
-                                           bool parse_tuples)
-{
-    bool can_append = false;
-    while (true) {
-        size_t start, end;
-        if (!buffer_relevant_line(reader, &start, &end)) {
-            return DP_TEXT_READER_ERROR_INPUT;
-        }
-
-        if (end == 0) {
-            DP_error_set("Expected }, but got end of input");
-            return DP_TEXT_READER_ERROR_INPUT;
-        }
-
-        char *buffer = reader->read.buffer;
-        size_t field_start = skip_ws(buffer, start, end);
-        if (buffer[field_start] == '}') {
-            if (skip_ws(buffer, field_start + 1, end) != end) {
-                DP_warn("Garbage after '}' at offset %zu",
-                        reader->input_offset);
-            }
-            return DP_TEXT_READER_SUCCESS;
-        }
-
-        if (parse_tuples) {
-            parse_tuple(reader, field_start, end);
-        }
-        else {
-            can_append =
-                parse_multiline_field(reader, field_start, end, can_append);
-        }
-    }
-}
-
-static DP_TextReaderResult parse_fields(DP_TextReader *reader,
-                                        size_t field_offset, size_t end,
-                                        DP_MessageType type)
-{
-    while (true) {
-        char *buffer = reader->read.buffer;
-        size_t field_start = skip_ws(buffer, field_offset, end);
-        size_t field_end = skip_non_ws(buffer, field_start, end);
-
-        if (field_start == field_end) {
-            return DP_TEXT_READER_SUCCESS;
-        }
-
-        if (buffer[field_start] == '{') {
-            if (skip_ws(buffer, field_start + 1, end) != end) {
-                DP_warn("Garbage after '{' at offset %zu",
-                        reader->input_offset);
-            }
-            bool parse_tuples = DP_message_type_parse_multiline_tuples(type);
-            return parse_multiline(reader, parse_tuples);
-        }
-
-        field_offset = field_end + 1;
-
-        size_t equals_index =
-            search_char_index(buffer, field_start, field_end, '=');
-        if (equals_index == field_end) {
-            DP_warn("Missing '=' in field '%s' at offset %zu",
-                    buffer + field_start, reader->input_offset);
-            continue;
-        }
-
-        size_t value_start = equals_index + 1;
-        push_field(reader, buffer + field_start, equals_index - field_start,
-                   buffer + value_start, field_end - value_start);
-    }
-}
-
 DP_TextReaderResult DP_text_reader_read_message(DP_TextReader *reader,
                                                 DP_Message **out_msg)
 {
     DP_ASSERT(reader);
     DP_ASSERT(out_msg);
-    reader->field.used = 0;
-    reader->field.offsets.used = 0;
-    reader->tuple.rows.used = 0;
-    reader->tuple.offsets.used = 0;
 
     while (true) {
         size_t start, end;
@@ -631,22 +388,40 @@ DP_TextReaderResult DP_text_reader_read_message(DP_TextReader *reader,
         size_t type_end = skip_non_ws(buffer, type_start, end);
         buffer[type_end] = '\0';
 
-        size_t field_offset = type_end + 1;
         DP_MessageType type =
             DP_message_type_from_name(buffer + type_start, DP_MSG_TYPE_COUNT);
         if (type == DP_MSG_TYPE_COUNT) {
             DP_error_set("Unknown message type '%s'", buffer + type_start);
-            discard_message(reader, field_offset, end);
             return DP_TEXT_READER_ERROR_PARSE;
         }
 
-        DP_TextReaderResult parse_fields_result =
-            parse_fields(reader, field_offset, end, type);
-        if (parse_fields_result != DP_TEXT_READER_SUCCESS) {
-            return parse_fields_result;
+        size_t body_start, body_end;
+        skip_body(buffer, type_end + 1, end, &body_start, &body_end);
+
+        JSON_Value *json;
+        if (body_start == body_end) {
+            json = NULL;
+        }
+        else {
+            buffer[body_end] = '\0';
+            json = json_parse_string(buffer + body_start);
+            if (!json) {
+                DP_error_set("Failed to parse message body");
+                return DP_TEXT_READER_ERROR_PARSE;
+            }
+
+            reader->body = json_value_get_object(json);
+            if (!reader->body) {
+                json_value_free(json);
+                DP_error_set("Message body is not an object");
+                return DP_TEXT_READER_ERROR_PARSE;
+            }
         }
 
         DP_Message *msg = DP_message_parse_body(type, context_id, reader);
+        json_value_free(json);
+        reader->body = NULL;
+
         if (msg) {
             *out_msg = msg;
             return DP_TEXT_READER_SUCCESS;
@@ -658,59 +433,113 @@ DP_TextReaderResult DP_text_reader_read_message(DP_TextReader *reader,
 }
 
 
-static const char *search_field(DP_TextReader *reader, const char *key)
+static const char *stringify_json_type(JSON_Value_Type type)
 {
-    size_t used = reader->field.offsets.used;
-    const char *buffer = reader->field.buffer;
-    for (size_t i = 0; i < used; ++i) {
-        DP_TextReaderField trf =
-            DP_VECTOR_AT_TYPE(&reader->field.offsets, DP_TextReaderField, i);
-        if (DP_str_equal(buffer + trf.key_offset, key)) {
-            return buffer + trf.value_offset;
-        }
+    switch (type) {
+    case JSONError:
+        return "error";
+    case JSONNull:
+        return "null";
+    case JSONString:
+        return "string";
+    case JSONNumber:
+        return "number";
+    case JSONObject:
+        return "object";
+    case JSONArray:
+        return "array";
+    case JSONBoolean:
+        return "boolean";
     }
-    return NULL;
+    return "unknown";
+}
+
+static bool check_json_type(const char *key, JSON_Value *value,
+                            JSON_Value_Type type)
+{
+    JSON_Value_Type value_type = json_value_get_type(value);
+    if (value_type == type) {
+        return true;
+    }
+    else {
+        DP_warn("Expected field '%s' to be %s, but is %s", key,
+                stringify_json_type(type), stringify_json_type(value_type));
+        return false;
+    }
+}
+
+static bool get_field(DP_TextReader *reader, const char *key,
+                      JSON_Value **out_value)
+{
+    JSON_Object *body = reader->body;
+    if (!body) {
+        return false;
+    }
+
+    JSON_Value *value = json_object_get_value(body, key);
+    if (!value) {
+        return false;
+    }
+
+    *out_value = value;
+    return true;
+}
+
+static bool get_string_field(DP_TextReader *reader, const char *key,
+                             const char **out_s, size_t *out_len)
+{
+    JSON_Value *value;
+    if (!get_field(reader, key, &value)) {
+        return false;
+    }
+
+    if (!check_json_type(key, value, JSONString)) {
+        return false;
+    }
+
+    const char *s = json_value_get_string(value);
+    size_t len;
+    if (s && s[0] != '\0') {
+        *out_s = s;
+        len = strlen(s);
+    }
+    else {
+        *out_s = "";
+        len = 0;
+    }
+
+    if (out_len) {
+        *out_len = len;
+    }
+    return true;
 }
 
 bool DP_text_reader_get_bool(DP_TextReader *reader, const char *key)
 {
     DP_ASSERT(reader);
     DP_ASSERT(key);
-    const char *value = search_field(reader, key);
-    if (value) {
-        if (DP_str_equal(value, "true")) {
-            return true;
-        }
-        else if (DP_str_equal(value, "false")) {
-            return false;
-        }
-        else {
-            DP_warn("Error parsing bool field '%s' = '%s'", key, value);
-        }
-    }
-    return false;
+    JSON_Value *value;
+    return get_field(reader, key, &value)
+        && check_json_type(key, value, JSONBoolean)
+        && json_value_get_boolean(value);
 }
 
-static long parse_long(const char *value, long min, long max)
+static long get_long(const char *key, long min, long max, JSON_Value *value)
 {
-    if (!value || *value == '\0') {
-        return 0;
-    }
-
-    char *end;
-    long result = strtol(value, &end, 10);
-    if (*end != '\0') {
-        DP_warn("Error parsing signed field '%s'", value);
-        return 0;
-    }
-
-    if (result >= min && result <= max) {
-        return result;
+    if (check_json_type(key, value, JSONNumber)) {
+        double d = json_value_get_number(value);
+        long l = lround(d);
+        if (l >= min && l <= max) {
+            return l;
+        }
+        else {
+            DP_warn("Signed field '%s' value %f not in bounds [%ld, %ld]", key,
+                    d, min, max);
+            return 0L;
+        }
     }
     else {
-        DP_warn("Signed field value %ld not in bounds [%ld, %ld]", result, min,
-                max);
-        return 0;
+        return 0L;
     }
 }
 
@@ -720,29 +549,32 @@ long DP_text_reader_get_long(DP_TextReader *reader, const char *key, long min,
 {
     DP_ASSERT(reader);
     DP_ASSERT(key);
-    const char *value = search_field(reader, key);
-    return parse_long(value, min, max);
-}
-
-static unsigned long parse_ulong(int base, const char *value, unsigned long max)
-{
-    if (!value || *value == '\0') {
-        return 0;
-    }
-
-    char *end;
-    unsigned long result = strtoul(value, &end, base);
-    if (*end != '\0') {
-        DP_warn("Error parsing unsigned field '%s'", value);
-        return 0;
-    }
-
-    if (result <= max) {
-        return result;
+    JSON_Value *value;
+    if (get_field(reader, key, &value)) {
+        return get_long(key, min, max, value);
     }
     else {
-        DP_warn("Unsigned field value %lu exceeds maximum %lu", result, max);
         return 0;
+    }
+}
+
+static unsigned long get_ulong(const char *key, unsigned long max,
+                               JSON_Value *value)
+{
+    if (check_json_type(key, value, JSONNumber)) {
+        double d = json_value_get_number(value);
+        unsigned long ul;
+        if (d >= 0.0 && (ul = DP_double_to_ulong(d + 0.5)) <= max) {
+            return ul;
+        }
+        else {
+            DP_warn("Unsigned field '%s' value %f not in bounds [0, %ld]", key,
+                    d, max);
+            return 0UL;
+        }
+    }
+    else {
+        return 0UL;
     }
 }
 
@@ -751,43 +583,31 @@ unsigned long DP_text_reader_get_ulong(DP_TextReader *reader, const char *key,
 {
     DP_ASSERT(reader);
     DP_ASSERT(key);
-    const char *value = search_field(reader, key);
-    return parse_ulong(10, value, max);
-}
-
-unsigned long DP_text_reader_get_ulong_hex(DP_TextReader *reader,
-                                           const char *key, unsigned long max)
-{
-    DP_ASSERT(reader);
-    DP_ASSERT(key);
-    const char *value = search_field(reader, key);
-    if (value && value[0] == '0' && (value[1] == 'x' || value[1] == 'X')) {
-        return parse_ulong(16, value + 2, max);
-    }
-    return 0;
-}
-
-static double parse_decimal(const char *value, double multiplier, double min,
-                            double max)
-{
-    if (!value || *value == '\0') {
-        return 0.0;
-    }
-
-    char *end;
-    double result = strtod(value, &end);
-    if (*end != '\0' || isnan(result)) {
-        DP_warn("Error parsing decimal field '%s'", value);
-        return 0.0;
-    }
-
-    double scaled_result = result * multiplier;
-    if (scaled_result >= min && scaled_result <= max) {
-        return scaled_result >= 0.0 ? scaled_result + 0.5 : scaled_result - 0.5;
+    JSON_Value *value;
+    if (get_field(reader, key, &value)) {
+        return get_ulong(key, max, value);
     }
     else {
-        DP_warn("Decimal field value %f not in bounds [%f, %f]", scaled_result,
-                min, max);
+        return 0;
+    }
+}
+
+static double get_decimal(const char *key, double multiplier, double min,
+                          double max, JSON_Value *value)
+{
+    if (check_json_type(key, value, JSONNumber)) {
+        double d = json_value_get_number(value);
+        double scaled = d * multiplier;
+        if (scaled >= min && scaled <= max) {
+            return scaled >= 0.0 ? scaled + 0.5 : scaled - 0.5;
+        }
+        else {
+            DP_warn("Decimal field '%s' value %f not in bounds [%f, %f]", key,
+                    d, min, max);
+            return 0.0;
+        }
+    }
+    else {
         return 0.0;
     }
 }
@@ -798,8 +618,13 @@ double DP_text_reader_get_decimal(DP_TextReader *reader, const char *key,
     DP_ASSERT(reader);
     DP_ASSERT(key);
     DP_ASSERT(min <= max);
-    const char *value = search_field(reader, key);
-    return parse_decimal(value, multiplier, min, max);
+    JSON_Value *value;
+    if (get_field(reader, key, &value)) {
+        return get_decimal(key, multiplier, min, max, value);
+    }
+    else {
+        return 0.0;
+    }
 }
 
 const char *DP_text_reader_get_string(DP_TextReader *reader, const char *key,
@@ -808,15 +633,15 @@ const char *DP_text_reader_get_string(DP_TextReader *reader, const char *key,
     DP_ASSERT(reader);
     DP_ASSERT(key);
     DP_ASSERT(out_len);
-    const char *value = search_field(reader, key);
-    if (value) {
-        size_t len = strlen(value);
+    const char *s;
+    size_t len;
+    if (get_string_field(reader, key, &s, &len)) {
         if (len <= UINT16_MAX) {
             *out_len = DP_size_to_uint16(len);
-            return value;
+            return s;
         }
         else {
-            DP_warn("String length %zu out of bounds", len);
+            DP_warn("String field '%s' length %zu out of bounds", key, len);
         }
     }
     *out_len = 0;
@@ -844,17 +669,17 @@ uint32_t DP_text_reader_get_argb_color(DP_TextReader *reader, const char *key)
 {
     DP_ASSERT(reader);
     DP_ASSERT(key);
-    const char *value = search_field(reader, key);
-    if (value) {
-        size_t len = strlen(value);
+    const char *s;
+    size_t len;
+    if (get_string_field(reader, key, &s, &len)) {
         if (len == 7) {
-            return parse_argb(value, 0xff000000u);
+            return parse_argb(s, 0xff000000u);
         }
         else if (len == 9) {
-            return parse_argb(value, 0x0u);
+            return parse_argb(s, 0x0u);
         }
         else {
-            DP_warn("Invalid color of length %zu: '%s'", len, value);
+            DP_warn("Invalid color of length %zu: '%s'", len, s);
         }
     }
     return 0;
@@ -864,19 +689,19 @@ uint8_t DP_text_reader_get_blend_mode(DP_TextReader *reader, const char *key)
 {
     DP_ASSERT(reader);
     DP_ASSERT(key);
-    const char *value = search_field(reader, key);
-    return value
-             ? (uint8_t)DP_blend_mode_by_dptxt_name(value, DP_BLEND_MODE_NORMAL)
+    const char *s;
+    return get_string_field(reader, key, &s, NULL)
+             ? (uint8_t)DP_blend_mode_by_dptxt_name(s, DP_BLEND_MODE_NORMAL)
              : DP_BLEND_MODE_NORMAL;
 }
 
 static unsigned int get_flag_value(int count, const char **keys,
-                                   unsigned int *values, const char *in,
-                                   size_t len)
+                                   unsigned int *values, const char *s)
 {
+    size_t len = strlen(s);
     for (int i = 0; i < count; ++i) {
         const char *key = keys[i];
-        if (strlen(key) == len && memcmp(in, key, len) == 0) {
+        if (strlen(key) == len && memcmp(s, key, len) == 0) {
             return values[i];
         }
     }
@@ -893,33 +718,26 @@ unsigned int DP_text_reader_get_flags(DP_TextReader *reader, const char *key,
     DP_ASSERT(keys);
     DP_ASSERT(values);
     unsigned int flags = 0;
-    const char *value = search_field(reader, key);
-    if (value) {
-        size_t i = 0;
-        size_t start = 0;
-        while (true) {
-            char c = value[i];
-            if (c == ',' || c == '\0') {
-                const char *in = value + start;
-                size_t len = i - start;
-                unsigned int flag =
-                    get_flag_value(count, keys, values, in, len);
-                if (flag != 0) {
+    JSON_Value *value;
+    if (get_field(reader, key, &value)
+        && check_json_type(key, value, JSONArray)) {
+        JSON_Array *array = json_value_get_array(value);
+        size_t array_count = json_array_get_count(array);
+        for (size_t i = 0; i < array_count; ++i) {
+            const char *s =
+                json_value_get_string(json_array_get_value(array, i));
+            if (s) {
+                unsigned int flag = get_flag_value(count, keys, values, s);
+                if (flag == 0) {
+                    DP_warn("Unknown '%s' flag '%s'", key, s);
+                }
+                else {
                     flags |= flag;
                 }
-                else {
-                    DP_warn("Unknown '%s' flag '%.*s'", key,
-                            DP_size_to_int(len), in);
-                }
-
-                if (c == ',') {
-                    start = i + 1;
-                }
-                else {
-                    break;
-                }
             }
-            ++i;
+            else {
+                DP_warn("Flag %zu value in %s is not a string", i, key);
+            }
         }
     }
     return flags;
@@ -932,14 +750,14 @@ DP_text_reader_get_base64_string(DP_TextReader *reader, const char *key,
     DP_ASSERT(reader);
     DP_ASSERT(key);
     DP_ASSERT(out_decoded_len);
-    const char *value = search_field(reader, key);
-    if (value) {
-        size_t len = strlen(value);
-        *out_decoded_len = DP_base64_decode_length(value, len);
-        return (DP_TextReaderParseParams){value, len};
+    const char *s;
+    size_t len;
+    if (get_string_field(reader, key, &s, &len)) {
+        *out_decoded_len = DP_base64_decode_length(s, len);
+        return (DP_TextReaderParseParams){.value = s, .length = len};
     }
     *out_decoded_len = 0;
-    return (DP_TextReaderParseParams){"", 0};
+    return (DP_TextReaderParseParams){.value = "", .length = 0};
 }
 
 void DP_text_reader_parse_base64(size_t size, unsigned char *out, void *user)
@@ -951,83 +769,67 @@ void DP_text_reader_parse_base64(size_t size, unsigned char *out, void *user)
 }
 
 DP_TextReaderParseParams
-DP_text_reader_get_comma_separated(DP_TextReader *reader, const char *key,
-                                   int *out_count)
+DP_text_reader_get_array(DP_TextReader *reader, const char *key, int *out_count)
 {
     DP_ASSERT(reader);
     DP_ASSERT(key);
     DP_ASSERT(out_count);
-    const char *value = search_field(reader, key);
-    if (value) {
-        size_t len = strlen(value);
-        bool content_found = false;
-        int count = 0;
-        for (size_t i = 0; i < len; ++i) {
-            char c = value[i];
-            if (c == ',') {
-                content_found = false;
-            }
-            else if (!isspace(c) && !content_found) {
-                content_found = true;
-                ++count;
-            }
-        }
-        *out_count = count;
-        return (DP_TextReaderParseParams){value, len};
+    JSON_Value *value;
+    if (get_field(reader, key, &value)
+        && check_json_type(key, value, JSONArray)) {
+        JSON_Array *array = json_value_get_array(value);
+        *out_count = DP_size_to_int(json_array_get_count(array));
+        return (DP_TextReaderParseParams){.array = array};
     }
-    *out_count = 0;
-    return (DP_TextReaderParseParams){"", 0};
+    else {
+        *out_count = 0;
+        return (DP_TextReaderParseParams){.array = NULL};
+    }
 }
 
-static bool has_hex_prefix(const char *value)
+static unsigned long parse_array_value(JSON_Array *array, size_t array_count,
+                                       const char *title, unsigned long max,
+                                       int i)
 {
-    return value && value[0] == '0' && (value[1] == 'x' || value[1] == 'X');
+    size_t si = DP_int_to_size(i);
+    if (si >= array_count) {
+        return 0UL;
+    }
+
+    JSON_Value *value = json_array_get_value(array, si);
+    if (json_value_get_type(value) != JSONNumber) {
+        DP_warn("Value %d in %s is not a string", i, title);
+        return 0UL;
+    }
+
+    double d = json_value_get_number(value);
+    unsigned long ul;
+    if (d < 0.0 || (ul = DP_double_to_ulong(d + 0.5)) > max) {
+        DP_warn("Value %d in %s not in bounds [0, %ld]", i, title, max);
+        return 0UL;
+    }
+
+    return ul;
 }
 
-static void
-parse_comma_separated_array(int count, DP_TextReaderParseParams *params,
-                            const char *title, unsigned long max,
-                            void (*set_at)(void *, int, unsigned long),
-                            void *user, bool hex)
+static void parse_array(int count, DP_TextReaderParseParams *params,
+                        const char *title, unsigned long max,
+                        void (*set_at)(void *, int, unsigned long), void *user)
 {
     if (count != 0) {
-        const char *value = params->value;
-        size_t length = params->length;
-        char buffer[64]; // plenty to hold the digits to a uint8 and uint16
-        size_t buffer_fill = 0;
-        int out_index = 0;
-
-        for (size_t i = 0; i <= length; ++i) {
-            char c = i == length ? ',' : value[i];
-            if (c == ',') {
-                if (buffer_fill != 0) {
-                    buffer[buffer_fill] = '\0';
-
-                    unsigned long result;
-                    if (hex) {
-                        if (has_hex_prefix(buffer)) {
-                            result = parse_ulong(16, buffer + 2, max);
-                        }
-                        else {
-                            DP_warn("Invalid %s value '%s'", title, buffer);
-                            result = 0;
-                        }
-                    }
-                    else {
-                        result = parse_ulong(10, buffer, max);
-                    }
-
-                    set_at(user, out_index, result);
-                    ++out_index;
-                    buffer_fill = 0;
-                }
-            }
-            else if (!isspace(c) && buffer_fill < sizeof(buffer) - 1) {
-                buffer[buffer_fill++] = c;
-            }
+        JSON_Array *array = params->array;
+        size_t array_count = json_array_get_count(array);
+        size_t scount = DP_int_to_size(count);
+        if (array_count != scount) {
+            DP_warn("Got %zu value(s) in array to fill %d %s target value(s)",
+                    array_count, count, title);
         }
 
-        DP_ASSERT(out_index == count);
+        for (int i = 0; i < count; ++i) {
+            unsigned long value =
+                parse_array_value(array, array_count, title, max, i);
+            set_at(user, i, value);
+        }
     }
 }
 
@@ -1040,8 +842,7 @@ static void set_uint8(void *user, int index, unsigned long result)
 
 void DP_text_reader_parse_uint8_array(int count, uint8_t *out, void *user)
 {
-    parse_comma_separated_array(count, user, "uint8", UINT8_MAX, set_uint8, out,
-                                false);
+    parse_array(count, user, "uint8", UINT8_MAX, set_uint8, out);
 }
 
 static void set_uint16(void *user, int index, unsigned long result)
@@ -1053,65 +854,106 @@ static void set_uint16(void *user, int index, unsigned long result)
 
 void DP_text_reader_parse_uint16_array(int count, uint16_t *out, void *user)
 {
-    parse_comma_separated_array(count, user, "uint16", UINT16_MAX, set_uint16,
-                                out, false);
+    parse_array(count, user, "uint16", UINT16_MAX, set_uint16, out);
 }
 
-void DP_text_reader_parse_uint16_array_hex(int count, uint16_t *out, void *user)
+static bool get_subfield_value(DP_TextReader *reader, int i, const char *subkey,
+                               JSON_Value **out_value)
 {
-    parse_comma_separated_array(count, user, "uint16", UINT16_MAX, set_uint16,
-                                out, true);
-}
-
-int DP_text_reader_get_tuple_count(DP_TextReader *reader)
-{
-    DP_ASSERT(reader);
-    return DP_size_to_int(reader->tuple.rows.used);
-}
-
-static const char *get_tuple_field(DP_TextReader *reader, size_t row,
-                                   size_t col)
-{
-    DP_TextReaderTupleRow trtr =
-        DP_VECTOR_AT_TYPE(&reader->tuple.rows, DP_TextReaderTupleRow, row);
-    if (col < trtr.count) {
-        size_t offset = DP_VECTOR_AT_TYPE(&reader->tuple.offsets, size_t,
-                                          trtr.offset_index + col);
-        return reader->field.buffer + offset;
+    JSON_Value *value;
+    if (get_field(reader, "_", &value)
+        && check_json_type("_", value, JSONArray)) {
+        JSON_Array *array = json_value_get_array(value);
+        size_t array_count = json_array_get_count(array);
+        size_t si = DP_int_to_size(i);
+        if (si < array_count) {
+            JSON_Object *subobject =
+                json_value_get_object(json_array_get_value(array, si));
+            if (subobject) {
+                JSON_Value *subvalue = json_object_get_value(subobject, subkey);
+                if (subvalue) {
+                    *out_value = subvalue;
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                DP_warn("Subvalue %d is not an object", i);
+                return false;
+            }
+        }
+        else {
+            DP_warn("Subindex %d out of bounds", i);
+            return false;
+        }
     }
     else {
-        DP_warn("Tuple in row %zu has no column %zu", row, col);
-        return NULL;
+        return false;
     }
 }
 
-long DP_text_reader_get_subfield_long(DP_TextReader *reader, int row, int col,
-                                      long min, long max)
+int DP_text_reader_get_sub_count(DP_TextReader *reader)
 {
     DP_ASSERT(reader);
-    DP_ASSERT(min < max);
-    const char *value =
-        get_tuple_field(reader, DP_int_to_size(row), DP_int_to_size(col));
-    return parse_long(value, min, max);
+    JSON_Value *value;
+    if (get_field(reader, "_", &value)
+        && check_json_type("_", value, JSONArray)) {
+        return DP_size_to_int(
+            json_array_get_count(json_value_get_array(value)));
+    }
+    else {
+        return 0;
+    }
 }
 
-unsigned long DP_text_reader_get_subfield_ulong(DP_TextReader *reader, int row,
-                                                int col, unsigned long max)
+long DP_text_reader_get_subfield_long(DP_TextReader *reader, int i,
+                                      const char *subkey, long min, long max)
 {
     DP_ASSERT(reader);
-    const char *value =
-        get_tuple_field(reader, DP_int_to_size(row), DP_int_to_size(col));
-    return parse_ulong(10, value, max);
+    DP_ASSERT(i >= 0);
+    DP_ASSERT(subkey);
+    DP_ASSERT(min < max);
+    JSON_Value *value;
+    if (get_subfield_value(reader, i, subkey, &value)) {
+        return get_long(subkey, min, max, value);
+    }
+    else {
+        return 0L;
+    }
 }
 
-double DP_text_reader_get_subfield_decimal(DP_TextReader *reader, int row,
-                                           int col, double multiplier,
-                                           double min, double max)
+unsigned long DP_text_reader_get_subfield_ulong(DP_TextReader *reader, int i,
+                                                const char *subkey,
+                                                unsigned long max)
 {
     DP_ASSERT(reader);
-    DP_ASSERT(min < max);
+    DP_ASSERT(i >= 0);
+    DP_ASSERT(subkey);
+    JSON_Value *value;
+    if (get_subfield_value(reader, i, subkey, &value)) {
+        return get_ulong(subkey, max, value);
+    }
+    else {
+        return 0UL;
+    }
+}
 
-    const char *value =
-        get_tuple_field(reader, DP_int_to_size(row), DP_int_to_size(col));
-    return parse_decimal(value, multiplier, min, max);
+double DP_text_reader_get_subfield_decimal(DP_TextReader *reader, int i,
+                                           const char *subkey,
+                                           double multiplier, double min,
+                                           double max)
+{
+    DP_ASSERT(reader);
+    DP_ASSERT(i >= 0);
+    DP_ASSERT(subkey);
+    DP_ASSERT(min < max);
+    JSON_Value *value;
+    if (get_subfield_value(reader, i, subkey, &value)) {
+        return get_decimal(subkey, multiplier, min, max, value);
+    }
+    else {
+        return 0UL;
+    }
 }
