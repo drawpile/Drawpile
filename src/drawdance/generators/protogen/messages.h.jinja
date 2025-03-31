@@ -125,7 +125,11 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id, 
 
                 #define {{ message.enum_name }}_{{ f.func_name|upper }}_MAX {{ f.sub.max_items }}
 
-                typedef struct {{ f.sub.struct_name }} {{ f.sub.struct_name }};
+                typedef struct {{ f.sub.struct_name }} {
+                    {% for sf in f.sub.fields %}
+                        {{ sf.struct_declaration }};
+                    {% endfor %}
+                } {{ f.sub.struct_name }};
 
                 void DP_{{ f.sub.func_name }}_init({{ f.sub.param }}s, int i
                     {%- for sf in f.sub.fields %}

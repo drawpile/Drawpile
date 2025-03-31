@@ -99,5 +99,9 @@ bool DP_text_writer_write_subfield_decimal(DP_TextWriter *writer,
                                            const char *key,
                                            double value) DP_MUST_CHECK;
 
+bool DP_text_writer_write_subfield_rgb_color(DP_TextWriter *writer,
+                                             const char *key,
+                                             uint32_t bgr) DP_MUST_CHECK;
+
 
 #endif

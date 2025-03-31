@@ -696,6 +696,90 @@ DrawDabsClassic:
             - hardness u8
             - opacity u8
 
+DrawDabsClassicX:
+    id: 152
+    name: classicdabsx
+    comment: |
+             Draw classic brush dabs. Uses custom variable-length serialization,
+             see dabs.c. The individual dabs are effectively delta-encoded, only
+             tracking differences according to what's set in the flags. The
+             initial values are all zero.
+
+             For dabs above size 255, the coordinates are at pixel resolution
+             and the size multiplied by 16 to allow for fractions. For smaller
+             sizes, the coordinates are at quarter pixel resolution and size is
+             multiplied by 256 to allow for fractions.
+
+             The encoding is like this:
+
+             * flags: u8
+             * layer: u16
+             * mode: u8
+             * indirect_alpha: optional u8
+             * selection_id: optional u8
+                * flags: u8
+                * color: optional rgb24
+                * x: optional i8|i16|i24|i32
+                * y: optional i8|i16|i24|i32
+                * size: optional i8|i16|i24|u8|u16|u24|u32
+                * opacity: optional u8
+                * hardness: optional u8
+
+             In the message flags, the first two bits identify the paint mode:
+
+             * 0: direct mode. The indirect_alpha field will not be present.
+             * 1: indirect mode with Compare Density, the "proper" way.
+             * 2: indirect mode with Alpha Darken, like in Drawpile 2.2.
+             * 3: indirect mode with Normal, like in Drawpile 2.1.
+
+             The fifth bit indicates that there's a selection_id field.
+
+             The sixth bit indicates that this message contains huge dabs with a
+             size above 255.
+
+             The third, fourth, seventh and eigth bits are not used.
+
+             In the dab flags, the first bit indicates the presence of a color
+             field. If this is not present, the color is that of the previous
+             dab in this message.
+
+             The second, third and fourth bits indicate the size and presence of
+             the x and y fields:
+
+             * 0: neither field is present, same position as the previous dab.
+             * 1: x and y are signed 8 bit offsets from the previous position.
+             * 2: x and y are signed 16 bit offsets from the previous position.
+             * 3: x and y are signed 24 bit offsets from the previous position.
+             * 5: x and y are signed 16 bit absolute positions.
+             * 6: x and y are signed 24 bit absolute positions.
+             * 7: x and y are signed 32 bit absolute positions.
+
+             The fifth and sixth bits indicate the size and presence of the size
+             field:
+
+             * 0: size is not preset, same size as the previous dab.
+             * 1: size is a signed 8 bit difference to the previous size.
+             * 2: size is a signed 16 bit difference to the previous size.
+             * 3: size is an unsigned 24 bit absolute value.
+
+             The seventh bit indicates the presence of an opacity field and the
+             eighth bit indicates the presence of a hardness field.
+    fields:
+        - flags flags: [indirect0, indirect1, reserved2, reserved3, mask, huge]
+        - layer u16
+        - mode blendmode
+        - indirect_alpha u8
+        - selection_id u8
+        - dabs struct:
+          name: ClassicDabX
+          fields:
+            - color rgb24
+            - x i32
+            - y i32
+            - size u16
+            - opacity u8
+            - hardness u8
+
 DrawDabsPixel:
     id: 149
     name: pixeldabs

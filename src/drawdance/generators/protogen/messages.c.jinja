@@ -242,6 +242,12 @@ static uint16_t read_uint16(const unsigned char *buffer, size_t *read)
     return DP_read_bigendian_uint16(buffer);
 }
 
+static uint32_t read_uint24(const unsigned char *buffer, size_t *read)
+{
+    *read += 3;
+    return DP_read_bigendian_uint24(buffer);
+}
+
 static uint32_t read_uint32(const unsigned char *buffer, size_t *read)
 {
     *read += 4;
@@ -332,12 +338,6 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
     {% endfor %}
     {% for f in message.fields %}
         {% if f.sub %}
-
-            struct {{ f.sub.struct_name }} {
-                {% for sf in f.sub.fields %}
-                    {{ sf.struct_declaration }};
-                {% endfor %}
-            };
 
             static size_t {{ f.sub.func_name }}_serialize_payload({{ f.sub.param }}, unsigned char *data)
             {

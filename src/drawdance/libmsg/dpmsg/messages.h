@@ -92,6 +92,7 @@ typedef enum DP_MessageType {
     DP_MSG_DRAW_DABS_PIXEL = 149,
     DP_MSG_DRAW_DABS_PIXEL_SQUARE = 150,
     DP_MSG_DRAW_DABS_MYPAINT = 151,
+    DP_MSG_DRAW_DABS_CLASSIC_X = 152,
     DP_MSG_MOVE_RECT = 160,
     DP_MSG_SET_METADATA_INT = 161,
     DP_MSG_LAYER_TREE_CREATE = 162,
@@ -1875,7 +1876,13 @@ size_t DP_msg_canvas_background_image_size(const DP_MsgCanvasBackground *mcb);
 
 #define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX 10920
 
-typedef struct DP_ClassicDab DP_ClassicDab;
+typedef struct DP_ClassicDab {
+    int8_t x;
+    int8_t y;
+    uint16_t size;
+    uint8_t hardness;
+    uint8_t opacity;
+} DP_ClassicDab;
 
 void DP_classic_dab_init(DP_ClassicDab *cds, int i, int8_t x, int8_t y,
                          uint16_t size, uint8_t hardness, uint8_t opacity);
@@ -1943,7 +1950,12 @@ int DP_msg_draw_dabs_classic_dabs_count(const DP_MsgDrawDabsClassic *mddc);
 
 #define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX 16380
 
-typedef struct DP_PixelDab DP_PixelDab;
+typedef struct DP_PixelDab {
+    int8_t x;
+    int8_t y;
+    uint8_t size;
+    uint8_t opacity;
+} DP_PixelDab;
 
 void DP_pixel_dab_init(DP_PixelDab *pds, int i, int8_t x, int8_t y,
                        uint8_t size, uint8_t opacity);
@@ -2034,7 +2046,15 @@ DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg);
 
 #define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX 8189
 
-typedef struct DP_MyPaintDab DP_MyPaintDab;
+typedef struct DP_MyPaintDab {
+    int8_t x;
+    int8_t y;
+    uint16_t size;
+    uint8_t hardness;
+    uint8_t opacity;
+    uint8_t angle;
+    uint8_t aspect_ratio;
+} DP_MyPaintDab;
 
 void DP_mypaint_dab_init(DP_MyPaintDab *mpds, int i, int8_t x, int8_t y,
                          uint16_t size, uint8_t hardness, uint8_t opacity,
@@ -2096,6 +2116,165 @@ DP_msg_draw_dabs_mypaint_dabs(const DP_MsgDrawDabsMyPaint *mddmp,
                               int *out_count);
 
 int DP_msg_draw_dabs_mypaint_dabs_count(const DP_MsgDrawDabsMyPaint *mddmp);
+
+
+/*
+ * DP_MSG_DRAW_DABS_CLASSIC_X
+ *
+ * Draw classic brush dabs. Uses custom variable-length serialization,
+ * see dabs.c. The individual dabs are effectively delta-encoded, only
+ * tracking differences according to what's set in the flags. The
+ * initial values are all zero.
+ *
+ * For dabs above size 255, the coordinates are at pixel resolution
+ * and the size multiplied by 16 to allow for fractions. For smaller
+ * sizes, the coordinates are at quarter pixel resolution and size is
+ * multiplied by 256 to allow for fractions.
+ *
+ * The encoding is like this:
+ *
+ * * flags: u8
+ * * layer: u16
+ * * mode: u8
+ * * indirect_alpha: optional u8
+ * * selection_id: optional u8
+ *    * flags: u8
+ *    * color: optional rgb24
+ *    * x: optional i8|i16|i24|i32
+ *    * y: optional i8|i16|i24|i32
+ *    * size: optional i8|i16|i24|u8|u16|u24|u32
+ *    * opacity: optional u8
+ *    * hardness: optional u8
+ *
+ * In the message flags, the first two bits identify the paint mode:
+ *
+ * * 0: direct mode. The indirect_alpha field will not be present.
+ * * 1: indirect mode with Compare Density, the "proper" way.
+ * * 2: indirect mode with Alpha Darken, like in Drawpile 2.2.
+ * * 3: indirect mode with Normal, like in Drawpile 2.1.
+ *
+ * The fifth bit indicates that there's a selection_id field.
+ *
+ * The sixth bit indicates that this message contains huge dabs with a
+ * size above 255.
+ *
+ * The third, fourth, seventh and eigth bits are not used.
+ *
+ * In the dab flags, the first bit indicates the presence of a color
+ * field. If this is not present, the color is that of the previous
+ * dab in this message.
+ *
+ * The second, third and fourth bits indicate the size and presence of
+ * the x and y fields:
+ *
+ * * 0: neither field is present, same position as the previous dab.
+ * * 1: x and y are signed 8 bit offsets from the previous position.
+ * * 2: x and y are signed 16 bit offsets from the previous position.
+ * * 3: x and y are signed 24 bit offsets from the previous position.
+ * * 5: x and y are signed 16 bit absolute positions.
+ * * 6: x and y are signed 24 bit absolute positions.
+ * * 7: x and y are signed 32 bit absolute positions.
+ *
+ * The fifth and sixth bits indicate the size and presence of the size
+ * field:
+ *
+ * * 0: size is not preset, same size as the previous dab.
+ * * 1: size is a signed 8 bit difference to the previous size.
+ * * 2: size is a signed 16 bit difference to the previous size.
+ * * 3: size is an unsigned 24 bit absolute value.
+ *
+ * The seventh bit indicates the presence of an opacity field and the
+ * eighth bit indicates the presence of a hardness field.
+ */
+
+#define DP_MSG_DRAW_DABS_CLASSIC_X_STATIC_LENGTH 6
+
+#define DP_MSG_DRAW_DABS_CLASSIC_X_FLAGS_INDIRECT0 0x1
+#define DP_MSG_DRAW_DABS_CLASSIC_X_FLAGS_INDIRECT1 0x2
+#define DP_MSG_DRAW_DABS_CLASSIC_X_FLAGS_RESERVED2 0x4
+#define DP_MSG_DRAW_DABS_CLASSIC_X_FLAGS_RESERVED3 0x8
+#define DP_MSG_DRAW_DABS_CLASSIC_X_FLAGS_MASK      0x10
+#define DP_MSG_DRAW_DABS_CLASSIC_X_FLAGS_HUGE      0x20
+
+#define DP_MSG_DRAW_DABS_CLASSIC_X_NUM_FLAGS 6
+#define DP_MSG_DRAW_DABS_CLASSIC_X_ALL_FLAGS        \
+    DP_MSG_DRAW_DABS_CLASSIC_X_FLAGS_INDIRECT0,     \
+        DP_MSG_DRAW_DABS_CLASSIC_X_FLAGS_INDIRECT1, \
+        DP_MSG_DRAW_DABS_CLASSIC_X_FLAGS_RESERVED2, \
+        DP_MSG_DRAW_DABS_CLASSIC_X_FLAGS_RESERVED3, \
+        DP_MSG_DRAW_DABS_CLASSIC_X_FLAGS_MASK,      \
+        DP_MSG_DRAW_DABS_CLASSIC_X_FLAGS_HUGE
+
+const char *DP_msg_draw_dabs_classic_x_flags_flag_name(unsigned int value);
+
+#define DP_MSG_DRAW_DABS_CLASSIC_X_DABS_MIN_COUNT 1
+#define DP_MSG_DRAW_DABS_CLASSIC_X_DABS_MAX_COUNT 4095
+
+#define DP_MSG_DRAW_DABS_CLASSIC_X_DABS_MAX 4095
+
+typedef struct DP_ClassicDabX {
+    uint32_t color;
+    int32_t x;
+    int32_t y;
+    uint16_t size;
+    uint8_t opacity;
+    uint8_t hardness;
+} DP_ClassicDabX;
+
+void DP_classic_dab_x_init(DP_ClassicDabX *cdxs, int i, uint32_t color,
+                           int32_t x, int32_t y, uint16_t size, uint8_t opacity,
+                           uint8_t hardness);
+
+uint32_t DP_classic_dab_x_color(const DP_ClassicDabX *cdx);
+
+int32_t DP_classic_dab_x_x(const DP_ClassicDabX *cdx);
+
+int32_t DP_classic_dab_x_y(const DP_ClassicDabX *cdx);
+
+uint16_t DP_classic_dab_x_size(const DP_ClassicDabX *cdx);
+
+uint8_t DP_classic_dab_x_opacity(const DP_ClassicDabX *cdx);
+
+uint8_t DP_classic_dab_x_hardness(const DP_ClassicDabX *cdx);
+
+const DP_ClassicDabX *DP_classic_dab_x_at(const DP_ClassicDabX *cdx, int i);
+
+
+typedef struct DP_MsgDrawDabsClassicX DP_MsgDrawDabsClassicX;
+
+DP_Message *
+DP_msg_draw_dabs_classic_x_new(unsigned int context_id, uint8_t flags,
+                               uint16_t layer, uint8_t mode,
+                               uint8_t indirect_alpha, uint8_t selection_id,
+                               void (*set_dabs)(int, DP_ClassicDabX *, void *),
+                               int dabs_count, void *dabs_user);
+
+DP_Message *DP_msg_draw_dabs_classic_x_deserialize(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length);
+
+DP_Message *DP_msg_draw_dabs_classic_x_parse(unsigned int context_id,
+                                             DP_TextReader *reader);
+
+DP_MsgDrawDabsClassicX *DP_msg_draw_dabs_classic_x_cast(DP_Message *msg);
+
+uint8_t DP_msg_draw_dabs_classic_x_flags(const DP_MsgDrawDabsClassicX *mddcx);
+
+uint16_t DP_msg_draw_dabs_classic_x_layer(const DP_MsgDrawDabsClassicX *mddcx);
+
+uint8_t DP_msg_draw_dabs_classic_x_mode(const DP_MsgDrawDabsClassicX *mddcx);
+
+uint8_t
+DP_msg_draw_dabs_classic_x_indirect_alpha(const DP_MsgDrawDabsClassicX *mddcx);
+
+uint8_t
+DP_msg_draw_dabs_classic_x_selection_id(const DP_MsgDrawDabsClassicX *mddcx);
+
+const DP_ClassicDabX *
+DP_msg_draw_dabs_classic_x_dabs(const DP_MsgDrawDabsClassicX *mddcx,
+                                int *out_count);
+
+int DP_msg_draw_dabs_classic_x_dabs_count(const DP_MsgDrawDabsClassicX *mddcx);
 
 
 /*

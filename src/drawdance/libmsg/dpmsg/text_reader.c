@@ -957,3 +957,28 @@ double DP_text_reader_get_subfield_decimal(DP_TextReader *reader, int i,
         return 0UL;
     }
 }
+
+uint32_t DP_text_reader_get_subfield_rgb_color(DP_TextReader *reader, int i,
+                                               const char *subkey)
+{
+    DP_ASSERT(reader);
+    DP_ASSERT(i >= 0);
+    DP_ASSERT(subkey);
+    JSON_Value *value;
+    if (get_subfield_value(reader, i, subkey, &value)
+        && check_json_type(subkey, value, JSONString)) {
+        const char *s = json_value_get_string(value);
+        size_t len = s ? strlen(s) : 0;
+        if (len == 7) {
+            return parse_argb(s, 0xff000000u);
+        }
+        else {
+            DP_warn("Invalid %s color of length %zu: '%s'", subkey, len,
+                    s ? s : "");
+            return 0u;
+        }
+    }
+    else {
+        return 0u;
+    }
+}
