@@ -9850,7 +9850,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+8"/>
         <source>Replace role list</source>
-        <translation>Remplacer un rôle&#xa0;:</translation>
+        <translation>Remplacer la liste des rôles&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -9860,7 +9860,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+8"/>
         <source>Replace ban list</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplacer la liste des bannissements</translation>
     </message>
 </context>
 <context>
