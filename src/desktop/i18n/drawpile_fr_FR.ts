@@ -9904,12 +9904,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/listing.cpp" line="+37"/>
         <source>Set title automatically</source>
-        <translation>Définir automatiquement</translation>
+        <translation>Définir le titre automatiquement</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Enter a publicly visible title</source>
-        <translation type="unfinished"></translation>
+        <translation>Saisissez un titre visible publiquement</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9919,12 +9919,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+11"/>
         <source>Publicly visible ID for pretty invite links</source>
-        <translation type="unfinished"></translation>
+        <translation>ID visible publiquement pour les jolis liens d&apos;invitation</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>ID alias:</source>
-        <translation type="unfinished"></translation>
+        <translation>Alias d&apos;identification&#xa0;:</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -9979,12 +9979,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-131"/>
         <source>Pick the sections you want to load:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionnez les sections que vous souhaitez charger&#xa0;:</translation>
     </message>
     <message>
         <location line="+94"/>
         <source>Choose a new name for preset %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisissez un nouveau nom pour le préréglage %1.</translation>
     </message>
     <message>
         <location line="+13"/>
