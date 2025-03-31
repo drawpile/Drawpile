@@ -97,13 +97,13 @@
         </artifact>
         <artifact type="binary" platform="macos">
           <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2/Drawpile-2.2.2-x86_64.dmg</location>
-          <checksum type="sha256">8dd6f517c9fbbe767570d4fc1a01bef3ddef03328606b517623c8eac4409cb8c</checksum>
-          <size type="download">30874947</size>
+          <checksum type="sha256">56d484ea4ea32fccbc6015eedb5d80f1f4f77fa018b8724e2d9499368c70a922</checksum>
+          <size type="download">30639739</size>
         </artifact>
         <artifact type="binary" platform="aarch64-darwin-gnu">
           <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2/Drawpile-2.2.2-arm64.dmg</location>
-          <checksum type="sha256">06c9a282761d79d0f41402fa56996388da3b861363a61d6213430238a2c068b4</checksum>
-          <size type="download">28185823</size>
+          <checksum type="sha256">59b1ff5b42bb1ded49be5070f290429a37d0d7a723fed07a6ec51ec79cdea7a9</checksum>
+          <size type="download">28196362</size>
         </artifact>
         <artifact type="binary" platform="x86_64-linux-gnu">
           <location>https://github.com/drawpile/Drawpile/releases/download/2.2.2/Drawpile-2.2.2-x86_64.AppImage</location>
