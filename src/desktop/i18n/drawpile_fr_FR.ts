@@ -1352,7 +1352,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+50"/>
         <source>Unsupported format.</source>
-        <translation>Format non supporté.</translation>
+        <translation>Format non pris en charge</translation>
     </message>
     <message>
         <location line="+3"/>
