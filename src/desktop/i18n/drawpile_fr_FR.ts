@@ -10428,7 +10428,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-294"/>
         <source>Brush Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Import des Pinceaux</translation>
     </message>
     <message numerus="yes">
         <location line="+12"/>
@@ -10449,7 +10449,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>0 tags imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>0 étiquettes importées.</translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
