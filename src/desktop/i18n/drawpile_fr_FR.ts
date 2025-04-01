@@ -10749,7 +10749,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <source>S</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Saturation&quot; S of HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>s</translation>
     </message>
     <message>
         <location line="+2"/>
