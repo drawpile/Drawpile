@@ -10496,12 +10496,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-3"/>
         <source>Delete Brush</source>
-        <translation>Effacer la brosse</translation>
+        <translation>Supprimer le Pinceau</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete brush &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Voulez-vous vraiment supprimer le pinceau «&#xa0;%1&#xa0;»&#x202f;?</translation>
     </message>
 </context>
 <context>
@@ -10509,7 +10509,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+25"/>
         <source>Color Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Cercle de Couleurs</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -10547,7 +10547,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+14"/>
         <source>Duplicate palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Dupliquer la palette</translation>
     </message>
     <message>
         <location line="+2"/>
