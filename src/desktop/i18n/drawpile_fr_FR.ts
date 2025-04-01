@@ -10552,17 +10552,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Delete palette</source>
-        <translation>Supprimer la Palette</translation>
+        <translation>Supprimer la palette</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rename palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Renommer la palette</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer une palette…</translation>
     </message>
     <message>
         <location line="+2"/>
