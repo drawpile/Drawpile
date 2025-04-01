@@ -10496,7 +10496,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-3"/>
         <source>Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Effacer la brosse</translation>
     </message>
     <message>
         <location line="+1"/>
