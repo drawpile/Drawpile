@@ -10480,12 +10480,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Edit Tag</source>
-        <translation>Modifier l’étiquette</translation>
+        <translation>Modifier l’Étiquette</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Really delete tag &apos;%1&apos;? This will not delete the brushes within.</source>
-        <translation type="unfinished"></translation>
+        <translation>Voulez-vous vraiment supprimer l’Étiquette «&#xa0;%1&#xa0;»&#x202f;? Cela ne supprimera pas les pinceaux qu&apos;elle contient.</translation>
     </message>
     <message>
         <location line="+3"/>
