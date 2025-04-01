@@ -10567,7 +10567,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Export palette…</source>
-        <translation>Exporter la palette</translation>
+        <translation>Exporter une palette…</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -10582,7 +10582,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+55"/>
         <source>Color history</source>
-        <translation type="unfinished"></translation>
+        <translation>Historique des couleurs</translation>
     </message>
     <message>
         <location line="+2"/>
