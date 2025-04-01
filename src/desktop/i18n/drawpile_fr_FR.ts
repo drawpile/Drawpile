@@ -10572,12 +10572,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+41"/>
         <source>Add column</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter une colonne</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove column</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer la colonne</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -10724,13 +10724,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+10"/>
         <source>G</source>
         <extracomment>The &quot;Green&quot; G of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>V</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>B</source>
         <extracomment>The &quot;Blue&quot; B of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <location line="+19"/>
