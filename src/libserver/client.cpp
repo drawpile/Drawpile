@@ -266,6 +266,7 @@ QJsonObject Client::description(bool includeSession) const
 	u["muted"] = isMuted();
 	u["mod"] = isModerator();
 	u["tls"] = isSecure();
+	u[QStringLiteral("browser")] = isBrowser();
 	if(includeSession && d->session) {
 		u["session"] = d->session->id();
 	}
