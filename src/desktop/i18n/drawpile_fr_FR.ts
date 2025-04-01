@@ -10532,7 +10532,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-249"/>
         <source>New palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle palette</translation>
     </message>
     <message>
         <location line="-12"/>
@@ -10552,7 +10552,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Delete palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer la Palette</translation>
     </message>
     <message>
         <location line="+2"/>
