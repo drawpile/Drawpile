@@ -10567,7 +10567,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Export palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter la palette</translation>
     </message>
     <message>
         <location line="+41"/>
