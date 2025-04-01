@@ -10514,12 +10514,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Cercle</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Configure…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurer…</translation>
     </message>
 </context>
 <context>
@@ -10537,7 +10537,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-12"/>
         <source>Color Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Palette de Couleurs</translation>
     </message>
     <message>
         <location line="+0"/>
