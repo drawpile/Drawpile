@@ -10735,14 +10735,14 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+19"/>
         <source>RGB</source>
-        <translation>RGB</translation>
+        <translation>RVB</translation>
     </message>
     <message>
         <location line="+203"/>
         <source>H</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>T</translation>
     </message>
     <message>
         <location line="+2"/>
