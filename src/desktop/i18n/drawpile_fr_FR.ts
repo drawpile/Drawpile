@@ -10480,7 +10480,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Edit Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier l’étiquette</translation>
     </message>
     <message>
         <location line="+19"/>
