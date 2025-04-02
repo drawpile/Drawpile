@@ -128,9 +128,6 @@ public:
 	void setLocalBackgroundColor(const QColor &color);
 	void clearLocalBackgroundColor();
 
-	//! Find an unused ID for a new annotation
-	uint16_t findAvailableAnnotationId(uint8_t forUser) const;
-
 	//! Get the annotation at the given point
 	drawdance::Annotation getAnnotationById(int annotationId) const;
 

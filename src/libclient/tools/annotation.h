@@ -3,6 +3,7 @@
 #define TOOLS_ANNOTATION_H
 #include "libclient/tools/tool.h"
 #include <QRect>
+#include <QSet>
 
 namespace tools {
 
@@ -33,6 +34,10 @@ private:
 	};
 
 	void deselectAnnotation();
+	Handle handleAt(const QRect &rect, const QPoint &p, int handleSize);
+
+	int getAvailableAnnotationId();
+	int searchAvailableAnnotationId(const QSet<int> &takenIds, int contextId);
 
 	/// ID of the currently selected annotation
 	int m_selectedId = 0;
@@ -48,8 +53,6 @@ private:
 
 	/// The shape of the annotation being edited
 	QRect m_shape;
-
-	Handle handleAt(const QRect &rect, const QPoint &p, int handleSize);
 };
 
 }

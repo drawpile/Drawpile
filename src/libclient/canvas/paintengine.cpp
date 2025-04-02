@@ -268,29 +268,6 @@ void PaintEngine::clearLocalBackgroundColor()
 	receiveMessages(false, 1, &msg);
 }
 
-uint16_t PaintEngine::findAvailableAnnotationId(uint8_t forUser) const
-{
-	QSet<int> usedIds;
-	int idMask = forUser << 8;
-	drawdance::AnnotationList annotations = historyCanvasState().annotations();
-	int count = annotations.count();
-	for(int i = 0; i < count; ++i) {
-		int id = annotations.at(i).id();
-		if((id & 0xff00) == idMask) {
-			usedIds.insert(id & 0xff);
-		}
-	}
-
-	for(int i = 0; i < 256; ++i) {
-		if(!usedIds.contains(i)) {
-			return idMask | i;
-		}
-	}
-
-	qWarning("No available annotation id for user %d", forUser);
-	return 0;
-}
-
 drawdance::Annotation PaintEngine::getAnnotationById(int annotationId) const
 {
 	drawdance::AnnotationList annotations = viewCanvasState().annotations();

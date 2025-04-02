@@ -49,9 +49,7 @@ void Annotation::begin(const BeginParams &params)
 			return;
 		}
 
-		m_selectedId =
-			m_owner.model()->paintEngine()->findAvailableAnnotationId(
-				m_owner.model()->localUserId());
+		m_selectedId = getAvailableAnnotationId();
 		m_handle = Handle::BottomRight;
 		m_shape = QRect{m_p1.toPoint(), QSize{1, 1}};
 		m_isNew = true;
@@ -253,6 +251,61 @@ void Annotation::deselectAnnotation()
 {
 	m_selectedId = 0;
 	m_owner.setActiveAnnotation(0);
+}
+
+int Annotation::getAvailableAnnotationId()
+{
+	canvas::CanvasModel *canvas = m_owner.model();
+	if(!canvas) {
+		return 0;
+	}
+
+	drawdance::AnnotationList annotations =
+		canvas->paintEngine()->historyCanvasState().annotations();
+	QSet<int> takenIds;
+	takenIds.insert(0);
+	int annotationCount = annotations.count();
+	for(int i = 0; i < annotationCount; ++i) {
+		takenIds.insert(annotations.at(i).id());
+	}
+
+	canvas::AclState *aclState = canvas->aclState();
+	int localUserId = aclState->localUserId();
+	int annotationId = searchAvailableAnnotationId(takenIds, localUserId);
+	if(annotationId != 0) {
+		return annotationId;
+	}
+
+	if(aclState->amOperator()) {
+		annotationId = searchAvailableAnnotationId(takenIds, 0);
+		if(annotationId != 0) {
+			return annotationId;
+		}
+
+		for(int i = 255; i > 0; --i) {
+			if(i != localUserId) {
+				annotationId = searchAvailableAnnotationId(takenIds, i);
+				if(annotationId != 0) {
+					return annotationId;
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+int Annotation::searchAvailableAnnotationId(
+	const QSet<int> &takenIds, int contextId)
+{
+	int prefix = contextId << 8;
+	for(int i = 0; i < 256; ++i) {
+		int id = prefix | i;
+		if(!takenIds.contains(id)) {
+			return id;
+		}
+	}
+	return 0;
 }
 
 }
