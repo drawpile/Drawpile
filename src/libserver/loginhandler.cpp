@@ -509,11 +509,21 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 		cmd.args.size() > 1 ? cmd.args[1].toString() : QString();
 
 	if(!validateUsername(username)) {
+		m_client->log(
+			Log()
+				.about(Log::Level::Warn, Log::Topic::RuleBreak)
+				.message(QStringLiteral("Attempt to use invalid username '%1'")
+							 .arg(username)));
 		sendError("badUsername", "Invalid username");
 		return;
 	}
 
 	if(m_config->isNameBanned(username)) {
+		m_client->log(Log()
+						  .about(Log::Level::Warn, Log::Topic::RuleBreak)
+						  .message(QStringLiteral(
+									   "Attempt to use forbidden username '%1'")
+									   .arg(username)));
 		sendError(
 			QStringLiteral("forbiddenUsername"),
 			QStringLiteral("Forbidden username"));
