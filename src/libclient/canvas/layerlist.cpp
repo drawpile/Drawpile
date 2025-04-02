@@ -1063,9 +1063,11 @@ QVector<int> LayerListModel::getAvailableLayerIds(int count) const
 			layerId = searchAvailableLayerId(takenIds, 0);
 			if(layerId == 0) {
 				for(int i = 255; i > 0; --i) {
-					layerId = searchAvailableLayerId(takenIds, i);
-					if(layerId != 0) {
-						break;
+					if(i != localUserId) {
+						layerId = searchAvailableLayerId(takenIds, i);
+						if(layerId != 0) {
+							break;
+						}
 					}
 				}
 			}
