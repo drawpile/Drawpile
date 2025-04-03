@@ -1,15 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 extern "C" {
 #include <dpengine/key_frame.h>
 }
-
 #include "libclient/canvas/canvasmodel.h"
-#include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/timelinemodel.h"
-#include "libclient/drawdance/layerpropslist.h"
 #include "libclient/drawdance/timeline.h"
-
 #include <QRegularExpression>
 #include <QSet>
 
@@ -54,7 +49,7 @@ int TimelineModel::getAvailableTrackId() const
 
 QString TimelineModel::getAvailableTrackName(QString basename) const
 {
-	QRegularExpression suffixNumRe{QStringLiteral("\\s*([0-9])+\\z")};
+	static QRegularExpression suffixNumRe{QStringLiteral("\\s*([0-9])+\\z")};
 	QRegularExpressionMatch suffixNumMatch = suffixNumRe.match(basename);
 	if(suffixNumMatch.hasMatch()) {
 		basename = basename.mid(0, suffixNumMatch.capturedStart());

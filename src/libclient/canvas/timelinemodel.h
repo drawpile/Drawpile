@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef DP_TIMELINE_MODEL_H
-#define DP_TIMELINE_MODEL_H
-
+#ifndef LIBCLIENT_CANVAS_TIMELINEMODEL_H
+#define LIBCLIENT_CANVAS_TIMELINEMODEL_H
+#include <QColor>
 #include <QHash>
 #include <QObject>
 #include <QVector>
