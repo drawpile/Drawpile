@@ -69,6 +69,7 @@ public:
 		QAction *layerCheckToggle = nullptr;
 		QAction *layerCheckAll = nullptr;
 		QAction *layerUncheckAll = nullptr;
+		QMenu *layerColorMenu = nullptr;
 	};
 
 	LayerList(QWidget *parent = nullptr);
@@ -90,6 +91,8 @@ public:
 
 	bool isExpanded(const QModelIndex &index) const;
 	bool isSelected(int id) const { return m_selectedIds.contains(id); }
+
+	void updateLayerColorMenuIcon();
 
 public slots:
 	void selectLayer(int id);
@@ -188,6 +191,8 @@ private:
 		net::MessageList &msgs, uint8_t contextId, const QModelIndex &idx,
 		int id) const;
 	void doDeleteSelected();
+
+	void setLayerColor(QAction *action);
 
 	void showPropertiesForNew(bool group);
 	void showPropertiesOfCurrent();

@@ -280,7 +280,9 @@ QIcon makeColorIconFor(const QWidget *parent, const QColor &color);
 struct MarkerColor {
 	QColor color;
 	QString name;
+	QString layerActionText;
 	QString keyFrameActionText;
+	const char *layerActionName;
 	const char *keyFrameActionName;
 };
 

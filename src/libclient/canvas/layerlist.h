@@ -31,6 +31,9 @@ struct LayerListItem {
 	//! Layer title
 	QString title;
 
+	//! Layer color marker
+	QColor color;
+
 	//! Layer opacity
 	float opacity;
 
@@ -80,6 +83,11 @@ struct LayerListItem {
 	uint8_t creatorId() const { return uint8_t((id & 0xff00) >> 8); }
 
 	bool actuallyCensored() const { return censored || revealed; }
+
+	QString titleWithColor() const { return makeTitleWithColor(title, color); }
+
+	static QString
+	makeTitleWithColor(const QString &title, const QColor &color);
 };
 
 }
@@ -110,6 +118,7 @@ public:
 		CheckStateRole,
 		IsSketchModeRole,
 		OwnerIdRole,
+		ColorRole,
 	};
 
 	enum CheckState {

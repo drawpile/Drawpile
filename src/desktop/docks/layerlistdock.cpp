@@ -59,7 +59,10 @@ public:
 			selectionModel()->isSelected(index) &&
 			m_dock->currentId() !=
 				index.data(canvas::LayerListModel::IdRole).toInt();
-		if(disabled || secondarySelection) {
+		QColor color =
+			index.data(canvas::LayerListModel::ColorRole).value<QColor>();
+		bool hasColor = color.isValid() && color.alpha() > 0;
+		if(disabled || secondarySelection || hasColor) {
 			QStyleOptionViewItem opt = options;
 			if(disabled) {
 				opt.state.setFlag(QStyle::State_Enabled, false);
@@ -75,6 +78,20 @@ public:
 							opt.palette.color(
 								QPalette::ColorGroup(i), QPalette::Text));
 					}
+				} else if(hasColor) {
+					QColor highlightColor = color;
+					QColor highlightDisabledColor = color.darker(150);
+					highlightColor.setAlpha(highlightColor.alpha() / 2);
+					highlightDisabledColor.setAlpha(
+						highlightDisabledColor.alpha() / 2);
+					opt.palette.setColor(
+						QPalette::Active, QPalette::Highlight, highlightColor);
+					opt.palette.setColor(
+						QPalette::Inactive, QPalette::Highlight,
+						highlightColor);
+					opt.palette.setColor(
+						QPalette::Disabled, QPalette::Highlight,
+						highlightDisabledColor);
 				} else {
 					for(int i = 0; i < QPalette::NColorGroups; ++i) {
 						QColor highlight = opt.palette.color(
@@ -85,6 +102,13 @@ public:
 							highlight);
 					}
 				}
+			} else if(hasColor) {
+				opt.palette.setColor(
+					QPalette::Active, QPalette::Highlight, color);
+				opt.palette.setColor(
+					QPalette::Inactive, QPalette::Highlight, color);
+				opt.palette.setColor(
+					QPalette::Disabled, QPalette::Highlight, color.darker(150));
 			}
 			QTreeView::drawRow(painter, opt, index);
 		} else {
@@ -365,6 +389,7 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	m_contextMenu->addAction(m_actions.duplicate);
 	m_contextMenu->addAction(m_actions.merge);
 	m_contextMenu->addAction(m_actions.del);
+	m_contextMenu->addMenu(m_actions.layerColorMenu);
 	m_contextMenu->addAction(m_actions.properties);
 	m_contextMenu->addAction(m_actions.toggleVisibility);
 	m_contextMenu->addAction(m_actions.toggleSketch);
@@ -374,6 +399,9 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	m_contextMenu->addAction(m_actions.keyFrameSetLayer);
 
 	// Action functionality
+	connect(
+		m_contextMenu, &QMenu::aboutToShow, this,
+		&LayerList::updateLayerColorMenuIcon);
 	connect(
 		m_actions.addLayer, &QAction::triggered, this,
 		std::bind(&LayerList::addOrPromptLayerOrGroup, this, false));
@@ -435,6 +463,9 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	connect(
 		m_actions.layerUncheckAll, &QAction::triggered, this,
 		&LayerList::uncheckAll);
+	connect(
+		actions.layerColorMenu, &QMenu::triggered, this,
+		&LayerList::setLayerColor);
 
 	updateActionLabels();
 	updateLockedControls();
@@ -561,6 +592,16 @@ void LayerList::updateLockedControls()
 			canEditCurrent && !haveMultipleSelected);
 		m_actions.del->setEnabled(canEditSelected);
 		m_actions.merge->setEnabled(canMerge(topLevelIds).isValid());
+		m_actions.layerColorMenu->setProperty(
+			"markercolor", haveCurrent
+							   ? currentSelection()
+									 .data(canvas::LayerListModel::ColorRole)
+									 .value<QColor>()
+							   : QColor());
+		m_actions.layerColorMenu->setEnabled(canEditSelected);
+		for(QAction *ca : m_actions.layerColorMenu->actions()) {
+			ca->setEnabled(canEditSelected);
+		}
 		m_actions.properties->setEnabled(
 			canEditCurrent && !haveMultipleSelected);
 		m_actions.toggleVisibility->setEnabled(haveCurrent && haveAnySelected);
@@ -1455,6 +1496,41 @@ void LayerList::uncheckAll()
 	}
 }
 
+void LayerList::setLayerColor(QAction *action)
+{
+	QItemSelectionModel *selectionModel = m_view->selectionModel();
+	if(!selectionModel) {
+		return;
+	}
+
+	QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
+	if(selectedIndexes.isEmpty()) {
+		return;
+	}
+
+	net::MessageList msgs;
+	msgs.reserve(selectedIndexes.size() + 1);
+	uint8_t contextId = m_canvas->localUserId();
+	QColor color = action->property("markercolor").value<QColor>();
+	for(QModelIndex &idx : selectedIndexes) {
+		if(color !=
+			   idx.data(canvas::LayerListModel::ColorRole).value<QColor>() &&
+		   canEditLayer(idx)) {
+			msgs.append(net::makeLayerRetitleMessage(
+				contextId, idx.data(canvas::LayerListModel::IdRole).toInt(),
+				canvas::LayerListItem::makeTitleWithColor(
+					idx.data(canvas::LayerListModel::TitleRole).toString(),
+					color)));
+		}
+	}
+
+	int count = msgs.size();
+	if(count != 0) {
+		msgs.prepend(net::makeUndoPointMessage(contextId));
+		emit layerCommands(count + 1, msgs.constData());
+	}
+}
+
 void LayerList::showPropertiesForNew(bool group)
 {
 	QString dialogObjectName = QStringLiteral("layerpropertiesnewlayer");
@@ -1786,6 +1862,17 @@ QFlags<view::Lock::Reason> LayerList::currentLayerLock() const
 bool LayerList::isExpanded(const QModelIndex &index) const
 {
 	return m_view->isExpanded(index);
+}
+
+void LayerList::updateLayerColorMenuIcon()
+{
+	QMenu *menu = m_actions.layerColorMenu;
+	QColor markerColor = menu->property("markercolor").value<QColor>();
+	QColor iconColor = menu->property("iconcolor").value<QColor>();
+	if(markerColor != iconColor) {
+		menu->setProperty("iconcolor", markerColor);
+		menu->setIcon(utils::makeColorIcon(16, markerColor));
+	}
 }
 
 void LayerList::currentChanged(

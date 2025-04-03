@@ -6,6 +6,7 @@
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/net/message.h"
 #include "ui_layerproperties.h"
+#include <QButtonGroup>
 #include <QPainter>
 #include <QPixmap>
 #include <QPushButton>
@@ -21,6 +22,22 @@ LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
 {
 	m_ui = new Ui_LayerProperties;
 	m_ui->setupUi(this);
+
+	m_colorButtons = new QButtonGroup(this);
+	const QVector<utils::MarkerColor> &markerColors = utils::markerColors();
+	for(int i = 0, count = markerColors.size(); i < count; ++i) {
+		widgets::GroupedToolButton *colorButton =
+			new widgets::GroupedToolButton(
+				i == 0			 ? widgets::GroupedToolButton::GroupLeft
+				: i == count - 1 ? widgets::GroupedToolButton::GroupRight
+								 : widgets::GroupedToolButton::GroupCenter);
+		const utils::MarkerColor &mc = markerColors[i];
+		colorButton->setIcon(utils::makeColorIconFor(colorButton, mc.color));
+		colorButton->setToolTip(mc.name);
+		colorButton->setCheckable(true);
+		m_colorButtons->addButton(colorButton, int(mc.color.rgb() & 0xffffffu));
+		m_ui->colorLayout->addWidget(colorButton);
+	}
 
 	m_ui->sketchTintPreview->setDisplayMode(
 		color_widgets::ColorPreview::AllAlpha);
@@ -82,14 +99,15 @@ void LayerProperties::setNewLayerItem(
 	int selectedId, bool group, const QString &title)
 {
 	m_item = {
-		0,	   QString(), 1.0f,	 DP_BLEND_MODE_NORMAL,
-		0.0f,  QColor(),  false, false,
-		false, group,	  group, 0,
-		0,	   0,		  0,
+		0,	   QString(), QColor(), 1.0f,  DP_BLEND_MODE_NORMAL,
+		0.0f,  QColor(),  false,	false, false,
+		group, group,	  0,		0,	   0,
+		0,
 	};
 	m_selectedId = selectedId;
 	m_wasDefault = false;
 	setWindowTitle(group ? tr("New Layer Group") : tr("New Layer"));
+	m_ui->buttonBox->buttons()[0]->setChecked(true);
 	m_ui->title->setText(title);
 	m_ui->opacitySlider->setValue(100);
 	m_ui->visible->setChecked(true);
@@ -116,6 +134,13 @@ void LayerProperties::setLayerItem(
 	m_wasDefault = isDefault;
 
 	m_ui->title->setText(item.title);
+	int rgb = item.color.isValid() ? int(item.color.rgb() & 0xffffffu) : 0;
+	QAbstractButton *colorButton = m_colorButtons->button(rgb);
+	if(colorButton) {
+		colorButton->setChecked(true);
+	} else {
+		m_colorButtons->buttons()[0]->setChecked(true);
+	}
 	m_ui->opacitySlider->setValue(qRound(item.opacity * 100.0f));
 	m_ui->visible->setChecked(!item.hidden);
 	m_ui->censored->setChecked(item.actuallyCensored());
@@ -280,7 +305,7 @@ void LayerProperties::apply()
 			sketchOpacity <= 0 ? QColor() : m_ui->sketchTintPreview->color();
 		saveSketchParametersToSettings(sketchOpacity, sketchTint);
 		emit addLayerOrGroupRequested(
-			m_selectedId, m_item.group, m_ui->title->text(),
+			m_selectedId, m_item.group, getTitleWithColor(),
 			m_ui->opacitySlider->value(),
 			blendModeData == -1 ? DP_BLEND_MODE_NORMAL : blendModeData,
 			m_item.group && blendModeData != -1, m_ui->censored->isChecked(),
@@ -291,12 +316,21 @@ void LayerProperties::apply()
 	}
 }
 
+QString LayerProperties::getTitleWithColor() const
+{
+	int checkedColorId = m_colorButtons->checkedId();
+	QColor color =
+		checkedColorId <= 0 ? QColor() : QColor::fromRgb(QRgb(checkedColorId));
+	return canvas::LayerListItem::makeTitleWithColor(
+		m_ui->title->text(), color);
+}
+
 void LayerProperties::emitChanges()
 {
 	net::MessageList messages;
 
-	QString title = m_ui->title->text();
-	if(m_item.title != title) {
+	QString title = getTitleWithColor();
+	if(m_item.titleWithColor() != title) {
 		messages.append(net::makeLayerRetitleMessage(m_user, m_item.id, title));
 	}
 

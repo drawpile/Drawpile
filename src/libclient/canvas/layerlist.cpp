@@ -63,6 +63,16 @@ private:
 
 }
 
+QString
+LayerListItem::makeTitleWithColor(const QString &title, const QColor &color)
+{
+	if(color.isValid() && color.alpha() > 0) {
+		return QStringLiteral("%1!%2").arg(color.name(QColor::HexRgb), title);
+	} else {
+		return title;
+	}
+}
+
 LayerListModel::LayerListModel(QObject *parent)
 	: QAbstractItemModel(parent)
 	, m_viewMode(DP_VIEW_MODE_NORMAL)
@@ -83,6 +93,14 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 	case TitleRole:
 	case Qt::EditRole:
 		return item.title;
+	case Qt::BackgroundRole:
+		if(item.color.isValid() && item.color.alpha() > 0) {
+			QColor color = item.color;
+			color.setAlpha(color.alpha() / 3);
+			return color;
+		} else {
+			return QVariant();
+		}
 	case IdRole:
 		return item.id;
 	case IsDefaultRole:
@@ -140,6 +158,8 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 		return item.sketchOpacity > 0.0f;
 	case OwnerIdRole:
 		return AclState::extractLayerOwnerId(item.id);
+	case ColorRole:
+		return item.color;
 	}
 
 	return QVariant();
@@ -416,9 +436,10 @@ static LayerListItem makeItem(
 	int left, int right)
 {
 	int id = lp.id();
-	return LayerListItem{
+	LayerListItem item = {
 		id,
 		lp.title(),
+		QColor(),
 		float(lp.opacity()) / float(DP_BIT15),
 		DP_BlendMode(lp.blendMode()),
 		float(lp.sketchOpacity()) / float(DP_BIT15),
@@ -433,6 +454,15 @@ static LayerListItem makeItem(
 		left,
 		right,
 	};
+
+	static QRegularExpression colorRe(QStringLiteral("\\A(#[0-9a-f]{6})!"));
+	QRegularExpressionMatch match = colorRe.match(item.title);
+	if(match.hasMatch()) {
+		item.color = QColor(match.captured(1));
+		item.title = item.title.mid(match.capturedEnd());
+	}
+
+	return item;
 }
 
 LayerListModel::CheckState LayerListModel::flattenLayerList(
@@ -1153,10 +1183,10 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 LayerListItem LayerListItem::null()
 {
 	return LayerListItem{
-		0,	   QString(), 1.0f,	 DP_BLEND_MODE_NORMAL,
-		0.0f,  QColor(),  false, false,
-		false, false,	  false, 0,
-		0,	   0,		  0,
+		0,	   QString(), QColor(), 1.0f,  DP_BLEND_MODE_NORMAL,
+		0.0f,  QColor(),  false,	false, false,
+		false, false,	  0,		0,	   0,
+		0,
 	};
 }
 

@@ -88,6 +88,9 @@ void LayerListDelegate::paint(
 	if(index.data(canvas::LayerListModel::IsDefaultRole).toBool()) {
 		opt.font.setUnderline(true);
 	}
+	if(!opt.state.testFlag(QStyle::State_Selected)) {
+		drawBackgroundFor(painter, opt, index, textRect, 0, 0);
+	}
 	drawDisplay(painter, opt, textRect, layer.title);
 }
 

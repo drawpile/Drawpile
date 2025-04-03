@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QIcon>
 
+class QButtonGroup;
 class QComboBox;
 class QStandardItemModel;
 class Ui_LayerProperties;
@@ -62,11 +63,13 @@ private:
 	void setSketchParamsFromSettings();
 	void saveSketchParametersToSettings(int opacityPercent, const QColor &tint);
 	void apply();
+	QString getTitleWithColor() const;
 	void emitChanges();
 	static void addBlendModesTo(QStandardItemModel *model);
 	static int searchBlendModeIndex(QComboBox *combo, DP_BlendMode mode);
 
 	Ui_LayerProperties *m_ui;
+	QButtonGroup *m_colorButtons;
 	canvas::LayerListItem m_item = canvas::LayerListItem::null();
 	int m_selectedId = 0;
 	bool m_wasDefault = false;

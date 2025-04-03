@@ -5538,6 +5538,15 @@ void MainWindow::setupActions()
 	QAction *groupAdd = makeAction("groupadd", tr("New Layer Group")).icon("folder-new").noDefaultShortcut();
 	QAction *layerDupe = makeAction("layerdupe", tr("Duplicate Layer")).icon("edit-copy").noDefaultShortcut();
 	QAction *layerMerge = makeAction("layermerge", tr("Merge Layer")).icon("arrow-down-double").noDefaultShortcut();
+	// clang-format on
+	QVector<QAction *> layerColors;
+	for(const utils::MarkerColor &mc : utils::markerColors()) {
+		layerColors.append(makeAction(mc.layerActionName, mc.layerActionText)
+							   .icon(utils::makeColorIcon(16, mc.color))
+							   .property("markercolor", mc.color)
+							   .noDefaultShortcut());
+	}
+	// clang-format off
 	QAction *layerProperties = makeAction("layerproperties", tr("Layer Properties…")).icon("configure").noDefaultShortcut();
 	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer")).icon("trash-empty").noDefaultShortcut();
 	QAction *layerVisibilityToggle = makeAction("layervisibilitytoggle", tr("Toggle Layer &Visibility")).icon("view-visible").noDefaultShortcut();
@@ -5559,12 +5568,18 @@ void MainWindow::setupActions()
 	connect(layerUpAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectBelow);
 
+	// clang-format on
 	QMenu *layerMenu = menuBar()->addMenu(tr("&Layer"));
 	layerMenu->addAction(layerAdd);
 	layerMenu->addAction(groupAdd);
 	layerMenu->addAction(layerDupe);
 	layerMenu->addAction(layerMerge);
 	layerMenu->addAction(layerDelete);
+	QMenu *layerColorMenu = layerMenu->addMenu(
+		utils::makeColorIcon(16, QColor()), tr("Layer Color Marker"));
+	for(QAction *layerColor : layerColors) {
+		layerColorMenu->addAction(layerColor);
+	}
 	layerMenu->addAction(layerProperties);
 	layerMenu->addAction(layerVisibilityToggle);
 	layerMenu->addAction(layerSketchToggle);
@@ -5580,7 +5595,10 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerCheckAll);
 	layerMenu->addAction(layerUncheckAll);
 
-	// clang-format on
+	connect(
+		layerMenu, &QMenu ::aboutToShow, m_dockLayers,
+		&docks::LayerList::updateLayerColorMenuIcon);
+
 	//
 	// Select menu
 	//
@@ -5840,13 +5858,74 @@ void MainWindow::setupActions()
 	animationMenu->addAction(keyFramePrev);
 	animationMenu->addAction(trackAbove);
 	animationMenu->addAction(trackBelow);
-	// clang-format off
 
 	m_currentdoctools->addAction(showFlipbook);
-	m_dockLayers->setLayerEditActions({layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, layerVisibilityToggle, layerSketchToggle, layerSetFillSource, layerClearFillSource, keyFrameSetLayer, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, layerKeyFrameGroup, layerCheckToggle, layerCheckAll, layerUncheckAll});
-	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, keyFrameExposureIncrease, keyFrameExposureDecrease, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, keyFrameNext, keyFramePrev, trackAbove, trackBelow, animationKeyFrameColorMenu, animationLayerMenu, animationGroupMenu, animationDuplicateMenu}, layerViewNormal, layerViewCurrentFrame, showFlipbook);
+	m_dockLayers->setLayerEditActions({
+		layerAdd,
+		groupAdd,
+		layerDupe,
+		layerMerge,
+		layerProperties,
+		layerDelete,
+		layerVisibilityToggle,
+		layerSketchToggle,
+		layerSetFillSource,
+		layerClearFillSource,
+		keyFrameSetLayer,
+		keyFrameCreateLayer,
+		keyFrameCreateLayerNext,
+		keyFrameCreateLayerPrev,
+		keyFrameCreateGroup,
+		keyFrameCreateGroupNext,
+		keyFrameCreateGroupPrev,
+		keyFrameDuplicateNext,
+		keyFrameDuplicatePrev,
+		layerKeyFrameGroup,
+		layerCheckToggle,
+		layerCheckAll,
+		layerUncheckAll,
+		layerColorMenu,
+	});
+	m_dockTimeline->setActions(
+		{
+			keyFrameSetLayer,
+			keyFrameSetEmpty,
+			keyFrameCreateLayer,
+			keyFrameCreateLayerNext,
+			keyFrameCreateLayerPrev,
+			keyFrameCreateGroup,
+			keyFrameCreateGroupNext,
+			keyFrameCreateGroupPrev,
+			keyFrameDuplicateNext,
+			keyFrameDuplicatePrev,
+			keyFrameCut,
+			keyFrameCopy,
+			keyFramePaste,
+			keyFrameProperties,
+			keyFrameDelete,
+			keyFrameExposureIncrease,
+			keyFrameExposureDecrease,
+			trackAdd,
+			trackVisible,
+			trackOnionSkin,
+			trackDuplicate,
+			trackRetitle,
+			trackDelete,
+			frameCountSet,
+			framerateSet,
+			frameNext,
+			framePrev,
+			keyFrameNext,
+			keyFramePrev,
+			trackAbove,
+			trackBelow,
+			animationKeyFrameColorMenu,
+			animationLayerMenu,
+			animationGroupMenu,
+			animationDuplicateMenu,
+		},
+		layerViewNormal, layerViewCurrentFrame, showFlipbook);
 
-	// clang-format on
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
 	connect(
 		animationMenu, &QMenu ::aboutToShow, m_dockTimeline,
