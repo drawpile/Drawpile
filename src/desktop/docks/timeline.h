@@ -41,6 +41,8 @@ public:
 	int currentTrackId() const;
 	int currentFrame() const;
 
+	void updateKeyFrameColorMenuIcon();
+
 public slots:
 	void setFramerate(int framerate);
 	void setFrameCount(int frameCount);

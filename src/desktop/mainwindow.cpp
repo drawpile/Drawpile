@@ -5743,6 +5743,16 @@ void MainWindow::setupActions()
 	QAction *keyFrameCut = makeAction("key-frame-cut", tr("Cut Key Frame")).icon("edit-cut").noDefaultShortcut();
 	QAction *keyFrameCopy = makeAction("key-frame-copy", tr("Copy Key Frame")).icon("edit-copy").noDefaultShortcut();
 	QAction *keyFramePaste = makeAction("key-frame-paste", tr("Paste Key Frame")).icon("edit-paste").noDefaultShortcut();
+	// clang-format on
+	QVector<QAction *> keyFrameColors;
+	for(const utils::MarkerColor &mc : utils::markerColors()) {
+		keyFrameColors.append(
+			makeAction(mc.keyFrameActionName, mc.keyFrameActionText)
+				.icon(utils::makeColorIcon(16, mc.color))
+				.property("markercolor", mc.color)
+				.noDefaultShortcut());
+	}
+	// clang-format off
 	QAction *keyFrameProperties = makeAction("key-frame-properties", tr("Key Frame Properties...")).icon("configure").shortcut("Ctrl+Shift+P");
 	QAction *keyFrameDelete = makeAction("key-frame-delete", tr("Delete Key Frame")).icon("keyframe-remove").shortcut("Ctrl+Shift+G");
 	QAction *keyFrameExposureIncrease = makeAction("key-frame-exposure-increase", tr("Increase Key Frame Exposure")).icon("sidebar-expand-left").shortcut("Ctrl+Shift++");
@@ -5779,6 +5789,7 @@ void MainWindow::setupActions()
 	layerKeyFrameGroup->addAction(keyFrameDuplicateNext);
 	layerKeyFrameGroup->addAction(keyFrameDuplicatePrev);
 
+	// clang-format on
 	QMenu *animationMenu = menuBar()->addMenu(tr("&Animation"));
 	animationMenu->addAction(showFlipbook);
 	animationMenu->addAction(frameCountSet);
@@ -5790,6 +5801,11 @@ void MainWindow::setupActions()
 	animationMenu->addAction(keyFrameCut);
 	animationMenu->addAction(keyFrameCopy);
 	animationMenu->addAction(keyFramePaste);
+	QMenu *animationKeyFrameColorMenu = animationMenu->addMenu(
+		utils::makeColorIcon(16, QColor()), tr("Key Frame Color Marker"));
+	for(QAction *keyFrameColor : keyFrameColors) {
+		animationKeyFrameColorMenu->addAction(keyFrameColor);
+	}
 	animationMenu->addAction(keyFrameProperties);
 	animationMenu->addAction(keyFrameDelete);
 	animationMenu->addSeparator();
@@ -5824,12 +5840,18 @@ void MainWindow::setupActions()
 	animationMenu->addAction(keyFramePrev);
 	animationMenu->addAction(trackAbove);
 	animationMenu->addAction(trackBelow);
+	// clang-format off
 
 	m_currentdoctools->addAction(showFlipbook);
 	m_dockLayers->setLayerEditActions({layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, layerVisibilityToggle, layerSketchToggle, layerSetFillSource, layerClearFillSource, keyFrameSetLayer, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, layerKeyFrameGroup, layerCheckToggle, layerCheckAll, layerUncheckAll});
-	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, keyFrameExposureIncrease, keyFrameExposureDecrease, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, keyFrameNext, keyFramePrev, trackAbove, trackBelow, animationLayerMenu, animationGroupMenu, animationDuplicateMenu}, layerViewNormal, layerViewCurrentFrame, showFlipbook);
+	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, keyFrameExposureIncrease, keyFrameExposureDecrease, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, keyFrameNext, keyFramePrev, trackAbove, trackBelow, animationKeyFrameColorMenu, animationLayerMenu, animationGroupMenu, animationDuplicateMenu}, layerViewNormal, layerViewCurrentFrame, showFlipbook);
 
+	// clang-format on
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
+	connect(
+		animationMenu, &QMenu ::aboutToShow, m_dockTimeline,
+		&docks::Timeline::updateKeyFrameColorMenuIcon);
+	// clang-format off
 
 	//
 	// Session menu

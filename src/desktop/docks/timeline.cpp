@@ -95,6 +95,11 @@ int Timeline::currentFrame() const
 	return m_widget->currentFrame();
 }
 
+void Timeline::updateKeyFrameColorMenuIcon()
+{
+	m_widget->updateKeyFrameColorMenuIcon();
+}
+
 void Timeline::setFramerate(int framerate)
 {
 	if(m_framerateSpinner) {

@@ -1203,13 +1203,21 @@ QIcon makeColorIcon(int size, const QColor &color)
 {
 	int half = size / 2;
 	QPixmap pixmap(size, size);
-	pixmap.fill(color);
-	if(color.alpha() != 255) {
-		QPainter painter{&pixmap};
-		painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
+	if(color.isValid()) {
+		pixmap.fill(color);
+		if(color.alpha() != 255) {
+			QPainter painter(&pixmap);
+			painter.setCompositionMode(
+				QPainter::CompositionMode_DestinationOver);
+			painter.fillRect(0, 0, half, half, Qt::gray);
+			painter.fillRect(half, 0, half, half, Qt::white);
+			painter.fillRect(0, half, half, half, Qt::white);
+			painter.fillRect(half, half, half, half, Qt::gray);
+		}
+	} else {
+		pixmap.fill(Qt::white);
+		QPainter painter(&pixmap);
 		painter.fillRect(0, 0, half, half, Qt::gray);
-		painter.fillRect(half, 0, half, half, Qt::white);
-		painter.fillRect(0, half, half, half, Qt::white);
 		painter.fillRect(half, half, half, half, Qt::gray);
 	}
 	return QIcon(pixmap);
@@ -1220,6 +1228,70 @@ QIcon makeColorIconFor(const QWidget *parent, const QColor &color)
 	Q_ASSERT(parent);
 	return makeColorIcon(
 		parent->style()->pixelMetric(QStyle::PM_ButtonIconSize), color);
+}
+
+const QVector<MarkerColor> &markerColors()
+{
+	static QVector<MarkerColor> instance = {
+		{
+			Qt::transparent,
+			QCoreApplication::translate("MarkerColors", "None"),
+			QCoreApplication::translate("MarkerColors", "Unmark key frame"),
+			"key-frame-mark-none",
+		},
+		{
+			QColor(0xff5491b5),
+			QCoreApplication::translate("MarkerColors", "Blue"),
+			QCoreApplication::translate("MarkerColors", "Mark key frame blue"),
+			"key-frame-mark-blue",
+		},
+		{
+			QColor(0xff81a73e),
+			QCoreApplication::translate("MarkerColors", "Green"),
+			QCoreApplication::translate("MarkerColors", "Mark key frame green"),
+			"key-frame-mark-green",
+		},
+		{
+			QColor(0xffc9bb3d),
+			QCoreApplication::translate("MarkerColors", "Yellow"),
+			QCoreApplication::translate(
+				"MarkerColors", "Mark key frame yellow"),
+			"key-frame-mark-yellow",
+		},
+		{
+			QColor(0xffcf8f3e),
+			QCoreApplication::translate("MarkerColors", "Orange"),
+			QCoreApplication::translate(
+				"MarkerColors", "Mark key frame orange"),
+			"key-frame-mark-orange",
+		},
+		{
+			QColor(0xff945c3e),
+			QCoreApplication::translate("MarkerColors", "Brown"),
+			QCoreApplication::translate("MarkerColors", "Mark key frame brown"),
+			"key-frame-mark-brown",
+		},
+		{
+			QColor(0xffc23535),
+			QCoreApplication::translate("MarkerColors", "Red"),
+			QCoreApplication::translate("MarkerColors", "Mark key frame red"),
+			"key-frame-mark-red",
+		},
+		{
+			QColor(0xff9f5fac),
+			QCoreApplication::translate("MarkerColors", "Purple"),
+			QCoreApplication::translate(
+				"MarkerColors", "Mark key frame purple"),
+			"key-frame-mark-purple",
+		},
+		{
+			QColor(0xff7a7b76),
+			QCoreApplication::translate("MarkerColors", "Gray"),
+			QCoreApplication::translate("MarkerColors", "Mark key frame gray"),
+			"key-frame-mark-gray",
+		},
+	};
+	return instance;
 }
 
 }

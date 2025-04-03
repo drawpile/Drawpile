@@ -20,8 +20,9 @@ class CanvasModel;
 
 struct TimelineKeyFrame final {
 	int layerId;
-	QString title;
 	int frameIndex;
+	QColor color;
+	QString title;
 	QHash<int, bool> layerVisibility;
 
 	bool hasSameContentAs(const TimelineKeyFrame &other) const
@@ -29,6 +30,11 @@ struct TimelineKeyFrame final {
 		return layerId == other.layerId &&
 			   layerVisibility == other.layerVisibility;
 	}
+
+	QString titleWithColor() const { return makeTitleWithColor(title, color); }
+
+	static QString
+	makeTitleWithColor(const QString &title, const QColor &color);
 };
 
 struct TimelineTrack final {

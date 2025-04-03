@@ -2,6 +2,7 @@
 extern "C" {
 #include <dpengine/key_frame.h>
 }
+#include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/drawdance/timeline.h"
@@ -9,6 +10,16 @@ extern "C" {
 #include <QSet>
 
 namespace canvas {
+
+QString
+TimelineKeyFrame::makeTitleWithColor(const QString &title, const QColor &color)
+{
+	if(color.isValid() && color.alpha() > 0) {
+		return QStringLiteral("%1!%2").arg(color.name(QColor::HexRgb), title);
+	} else {
+		return title;
+	}
+}
 
 TimelineModel::TimelineModel(CanvasModel *canvas)
 	: QObject{canvas}
@@ -91,15 +102,24 @@ TimelineTrack TimelineModel::trackToModel(const drawdance::Track &t)
 TimelineKeyFrame
 TimelineModel::keyFrameToModel(const drawdance::KeyFrame &kf, int frameIndex)
 {
-	QHash<int, bool> layerVisibility;
+	TimelineKeyFrame tkf = {kf.layerId(), frameIndex, QColor(), kf.title(), {}};
+
 	for(const DP_KeyFrameLayer &kfl : kf.layers()) {
 		if(DP_key_frame_layer_hidden(&kfl)) {
-			layerVisibility.insert(kfl.layer_id, false);
+			tkf.layerVisibility.insert(kfl.layer_id, false);
 		} else if(DP_key_frame_layer_revealed(&kfl)) {
-			layerVisibility.insert(kfl.layer_id, true);
+			tkf.layerVisibility.insert(kfl.layer_id, true);
 		}
 	}
-	return {kf.layerId(), kf.title(), frameIndex, layerVisibility};
+
+	static QRegularExpression colorRe(QStringLiteral("\\A(#[0-9a-f]{6})!"));
+	QRegularExpressionMatch match = colorRe.match(tkf.title);
+	if(match.hasMatch()) {
+		tkf.color = QColor(match.captured(1));
+		tkf.title = tkf.title.mid(match.capturedEnd());
+	}
+
+	return tkf;
 }
 
 }

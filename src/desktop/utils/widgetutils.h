@@ -277,6 +277,15 @@ QString makeActionShortcutText(QString text, const QKeySequence &shortcut);
 QIcon makeColorIcon(int size, const QColor &color);
 QIcon makeColorIconFor(const QWidget *parent, const QColor &color);
 
+struct MarkerColor {
+	QColor color;
+	QString name;
+	QString keyFrameActionText;
+	const char *keyFrameActionName;
+};
+
+const QVector<MarkerColor> &markerColors();
+
 }
 
 #endif

@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_DIALOGS_KEYFRAMEPROPERTIESDIALOG_H
 #define DESKTOP_DIALOGS_KEYFRAMEPROPERTIESDIALOG_H
+#include <QColor>
 #include <QDialog>
 #include <QItemDelegate>
 #include <QModelIndexList>
 
 class KeyFrameLayerModel;
 class QAbstractButton;
+class QButtonGroup;
 class QDialogButtonBox;
 class QLineEdit;
 class QTreeView;
@@ -63,11 +65,12 @@ public:
 	int frame() const { return m_frame; }
 
 	void setKeyFrameTitle(const QString &title);
+	void setKeyFrameColor(const QColor &color);
 	void setKeyFrameLayers(KeyFrameLayerModel *layerModel);
 
 signals:
 	void keyFramePropertiesChanged(
-		int trackId, int frame, const QString &title,
+		int trackId, int frame, const QColor &color, const QString &title,
 		const QHash<int, bool> layerVisibility);
 
 protected:
@@ -87,6 +90,7 @@ private:
 	int m_frame;
 	KeyFrameLayerModel *m_layerModel = nullptr;
 	KeyFramePropertiesDialogLayerDelegate *m_layerDelegate;
+	QButtonGroup *m_colorButtons;
 	QLineEdit *m_titleEdit;
 	QLineEdit *m_searchEdit;
 	widgets::GroupedToolButton *m_searchPrevButton;

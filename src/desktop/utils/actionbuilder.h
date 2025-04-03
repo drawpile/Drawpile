@@ -29,7 +29,12 @@ public:
 
 	ActionBuilder &icon(const QString &name)
 	{
-		m_action->setIcon(QIcon::fromTheme(name));
+		return icon(QIcon::fromTheme(name));
+	}
+
+	ActionBuilder &icon(const QIcon &icon)
+	{
+		m_action->setIcon(icon);
 		CustomShortcutModel::setCustomizableActionIcon(
 			m_action->objectName(), m_action->icon());
 		return *this;

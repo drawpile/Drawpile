@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef TIMELINEWIDGET_H
 #define TIMELINEWIDGET_H
+#include <QColor>
 #include <QWidget>
 #include <functional>
 
@@ -52,6 +53,7 @@ public:
 		QAction *keyFramePrev = nullptr;
 		QAction *trackAbove = nullptr;
 		QAction *trackBelow = nullptr;
+		QMenu *animationKeyFrameColorMenu = nullptr;
 		QMenu *animationLayerMenu = nullptr;
 		QMenu *animationGroupMenu = nullptr;
 		QMenu *animationDuplicateMenu = nullptr;
@@ -70,6 +72,7 @@ public:
 
 	void
 	updateControlsEnabled(bool access, bool locked, bool compatibilityMode);
+	void updateKeyFrameColorMenuIcon();
 
 	canvas::CanvasModel *canvas() const;
 
@@ -109,9 +112,10 @@ private slots:
 	void cutKeyFrame();
 	void copyKeyFrame();
 	void pasteKeyFrame();
+	void setKeyFrameColor(QAction *action);
 	void showKeyFrameProperties();
 	void keyFramePropertiesChanged(
-		int trackId, int frame, const QString &title,
+		int trackId, int frame, const QColor &color, const QString &title,
 		const QHash<int, bool> &layerVisibility);
 	void deleteKeyFrame();
 	void increaseKeyFrameExposure();

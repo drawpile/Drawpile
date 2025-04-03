@@ -410,6 +410,7 @@ void TimelineWidget::setActions(const Actions &actions)
 	d->frameMenu->addAction(actions.keyFrameCut);
 	d->frameMenu->addAction(actions.keyFrameCopy);
 	d->frameMenu->addAction(actions.keyFramePaste);
+	d->frameMenu->addMenu(actions.animationKeyFrameColorMenu);
 	d->frameMenu->addAction(actions.keyFrameProperties);
 	d->frameMenu->addAction(actions.keyFrameDelete);
 	d->frameMenu->addSeparator();
@@ -440,6 +441,9 @@ void TimelineWidget::setActions(const Actions &actions)
 	}
 
 	connect(
+		d->frameMenu, &QMenu::aboutToShow, this,
+		&TimelineWidget::updateKeyFrameColorMenuIcon);
+	connect(
 		actions.keyFrameSetLayer, &QAction::triggered, this,
 		&TimelineWidget::setKeyFrameLayer);
 	connect(
@@ -457,6 +461,9 @@ void TimelineWidget::setActions(const Actions &actions)
 	connect(
 		actions.keyFrameProperties, &QAction::triggered, this,
 		&TimelineWidget::showKeyFrameProperties);
+	connect(
+		actions.animationKeyFrameColorMenu, &QMenu::triggered, this,
+		&TimelineWidget::setKeyFrameColor);
 	connect(
 		actions.keyFrameDelete, &QAction::triggered, this,
 		&TimelineWidget::deleteKeyFrame);
@@ -551,6 +558,17 @@ void TimelineWidget::updateControlsEnabled(
 	d->editable = access && !locked && !compatibilityMode;
 	updateActions();
 	update();
+}
+
+void TimelineWidget::updateKeyFrameColorMenuIcon()
+{
+	QMenu *menu = d->actions.animationKeyFrameColorMenu;
+	QColor markerColor = menu->property("markercolor").value<QColor>();
+	QColor iconColor = menu->property("iconcolor").value<QColor>();
+	if(markerColor != iconColor) {
+		menu->setProperty("iconcolor", markerColor);
+		menu->setIcon(utils::makeColorIcon(16, markerColor));
+	}
 }
 
 canvas::CanvasModel *TimelineWidget::canvas() const
@@ -713,8 +731,12 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 			int x = headerWidth + frame * columnWidth - xScroll;
 			bool isSelected =
 				currentFrame == frame && d->currentTrackId == track.id;
-			QBrush brush =
-				isSelected ? pal.highlightedText() : pal.windowText();
+			QBrush brush;
+			if(keyFrame.color.isValid()) {
+				brush = isSelected ? keyFrame.color.lighter() : keyFrame.color;
+			} else {
+				brush = isSelected ? pal.highlightedText() : pal.windowText();
+			}
 			if(keyFrame.layerId == 0) {
 				brush.setStyle(Qt::DiagCrossPattern);
 			} else {
@@ -1178,7 +1200,7 @@ void TimelineWidget::copyKeyFrame()
 
 	QJsonDocument doc{QJsonObject{
 		{"layerId", keyFrame->layerId},
-		{"title", keyFrame->title},
+		{"title", keyFrame->titleWithColor()},
 		{"layerVisibility", layerVisibilityJson},
 	}};
 
@@ -1226,6 +1248,28 @@ void TimelineWidget::pasteKeyFrame()
 	setKeyFrameProperties(trackId, frame, {}, {}, title, layerVisibility);
 }
 
+void TimelineWidget::setKeyFrameColor(QAction *action)
+{
+	if(!d->editable) {
+		return;
+	}
+
+	const canvas::TimelineKeyFrame *keyFrame = d->currentKeyFrame();
+	if(!keyFrame) {
+		return;
+	}
+
+	QColor color = action->property("markercolor").value<QColor>();
+	if(color != keyFrame->color) {
+		setKeyFrameProperties(
+			d->currentTrackId, keyFrame->frameIndex, keyFrame->titleWithColor(),
+			keyFrame->layerVisibility,
+			canvas::TimelineKeyFrame::makeTitleWithColor(
+				keyFrame->title, color),
+			keyFrame->layerVisibility);
+	}
+}
+
 void TimelineWidget::showKeyFrameProperties()
 {
 	if(!d->editable) {
@@ -1257,6 +1301,7 @@ void TimelineWidget::showKeyFrameProperties()
 	}
 
 	dlg->setKeyFrameTitle(keyFrame->title);
+	dlg->setKeyFrameColor(keyFrame->color);
 	dlg->setKeyFrameLayers(d->canvas->layerlist()->toKeyFrameLayerModel(
 		keyFrame->layerId, keyFrame->layerVisibility));
 
@@ -1266,7 +1311,7 @@ void TimelineWidget::showKeyFrameProperties()
 }
 
 void TimelineWidget::keyFramePropertiesChanged(
-	int trackId, int frame, const QString &title,
+	int trackId, int frame, const QColor &color, const QString &title,
 	const QHash<int, bool> &layerVisibility)
 {
 	if(!d->editable) {
@@ -1279,7 +1324,8 @@ void TimelineWidget::keyFramePropertiesChanged(
 	}
 
 	setKeyFrameProperties(
-		trackId, frame, keyFrame->title, keyFrame->layerVisibility, title,
+		trackId, frame, keyFrame->titleWithColor(), keyFrame->layerVisibility,
+		canvas::TimelineKeyFrame::makeTitleWithColor(title, color),
 		layerVisibility);
 }
 
@@ -1799,6 +1845,12 @@ void TimelineWidget::updateActions()
 	bool keyFrameEditable = keyFrameSettable && currentKeyFrame;
 	d->actions.keyFrameCut->setEnabled(keyFrameEditable);
 	d->actions.keyFrameCopy->setEnabled(keyFrameEditable);
+	d->actions.animationKeyFrameColorMenu->setEnabled(keyFrameEditable);
+	d->actions.animationKeyFrameColorMenu->setProperty(
+		"markercolor", currentKeyFrame ? currentKeyFrame->color : QColor());
+	for(QAction *ca : d->actions.animationKeyFrameColorMenu->actions()) {
+		ca->setEnabled(keyFrameEditable);
+	}
 	d->actions.keyFrameProperties->setEnabled(keyFrameEditable);
 	d->actions.keyFrameDelete->setEnabled(keyFrameEditable);
 

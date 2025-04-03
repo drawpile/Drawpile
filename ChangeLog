@@ -11,6 +11,7 @@ Unreleased Version 2.2.3-pre
  * Server Feature: Allow marking individual sessions as unlisted, as well as a setting to automatically unlist all or browser-hosted sessions. Thanks Bluestrings for suggesting.
  * Server Feature: Allow adding server log entries via API. Thanks Bluestrings for suggesting.
  * Server Feature: Add a "browser" flag to the API, to be able to tell whether a user is connected via web browser.
+ * Feature: Assigning colors to key frames. Thanks hpar for suggesting.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.

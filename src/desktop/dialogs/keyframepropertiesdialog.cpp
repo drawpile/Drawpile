@@ -3,6 +3,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/utils/keyframelayermodel.h"
+#include <QButtonGroup>
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
@@ -129,6 +130,27 @@ KeyFramePropertiesDialog::KeyFramePropertiesDialog(
 
 	QFormLayout *layout = new QFormLayout(this);
 
+	m_colorButtons = new QButtonGroup(this);
+	QHBoxLayout *colorLayout = new QHBoxLayout;
+	colorLayout->setSpacing(0);
+
+	const QVector<utils::MarkerColor> &markerColors = utils::markerColors();
+	for(int i = 0, count = markerColors.size(); i < count; ++i) {
+		widgets::GroupedToolButton *colorButton =
+			new widgets::GroupedToolButton(
+				i == 0			 ? widgets::GroupedToolButton::GroupLeft
+				: i == count - 1 ? widgets::GroupedToolButton::GroupRight
+								 : widgets::GroupedToolButton::GroupCenter);
+		const utils::MarkerColor &mc = markerColors[i];
+		colorButton->setIcon(utils::makeColorIconFor(colorButton, mc.color));
+		colorButton->setToolTip(mc.name);
+		colorButton->setCheckable(true);
+		m_colorButtons->addButton(colorButton, int(mc.color.rgb() & 0xffffffu));
+		colorLayout->addWidget(colorButton);
+	}
+
+	layout->addRow(colorLayout);
+
 	m_titleEdit = new QLineEdit;
 	layout->addRow(tr("Title:"), m_titleEdit);
 
@@ -192,6 +214,17 @@ void KeyFramePropertiesDialog::setKeyFrameTitle(const QString &title)
 {
 	m_titleEdit->setText(title);
 	m_titleEdit->selectAll();
+}
+
+void KeyFramePropertiesDialog::setKeyFrameColor(const QColor &color)
+{
+	int rgb = color.isValid() ? int(color.rgb() & 0xffffffu) : 0;
+	QAbstractButton *colorButton = m_colorButtons->button(rgb);
+	if(colorButton) {
+		colorButton->setChecked(true);
+	} else {
+		m_colorButtons->buttons()[0]->setChecked(true);
+	}
 }
 
 void KeyFramePropertiesDialog::setKeyFrameLayers(KeyFrameLayerModel *layerModel)
@@ -322,8 +355,12 @@ void KeyFramePropertiesDialog::buttonClicked(QAbstractButton *button)
 	bool cancelPressed = m_buttons->button(QDialogButtonBox::Cancel) == button;
 
 	if(okPressed || applyPressed) {
+		int checkedColorId = m_colorButtons->checkedId();
 		emit keyFramePropertiesChanged(
-			m_trackId, m_frame, m_titleEdit->text(),
+			m_trackId, m_frame,
+			checkedColorId <= 0 ? QColor()
+								: QColor::fromRgb(QRgb(checkedColorId)),
+			m_titleEdit->text(),
 			m_layerModel ? m_layerModel->layerVisibility()
 						 : QHash<int, bool>());
 	}
