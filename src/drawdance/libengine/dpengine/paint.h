@@ -27,6 +27,7 @@
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_ClassicDab DP_ClassicDab;
 typedef struct DP_DrawContext DP_DrawContext;
+typedef struct DP_MyPaintBlendDab DP_MyPaintBlendDab;
 typedef struct DP_MyPaintDab DP_MyPaintDab;
 typedef struct DP_PixelDab DP_PixelDab;
 typedef struct DP_UserCursors DP_UserCursors;
@@ -53,7 +54,7 @@ typedef struct DP_PaintDrawDabsParams {
     int origin_y;
     uint32_t color;
     int blend_mode;
-    bool indirect;
+    int paint_mode;
     int dab_count;
     union {
         struct {
@@ -69,6 +70,9 @@ typedef struct DP_PaintDrawDabsParams {
             uint8_t posterize;
             uint8_t posterize_num;
         } mypaint;
+        struct {
+            const DP_MyPaintBlendDab *dabs;
+        } mypaint_blend;
     };
 } DP_PaintDrawDabsParams;
 

@@ -248,22 +248,17 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "svg:color",
             "Color",
         },
-    [DP_BLEND_MODE_ALPHA_DARKEN] =
+    [DP_BLEND_MODE_COMPARE_DENSITY_SOFT] =
         {
-            INCREASE_OPACITY | BLEND_BLANK,
-            "DP_BLEND_MODE_ALPHA_DARKEN",
-            // This is not actually what Krita uses for its Alpha Darken blend
-            // mode. What it does is closer to compare density below, except it
-            // also interpolates the color channels. However, this blend mode is
-            // only ever used for brush strokes, so it never ends up in anything
-            // that's read by Krita.
-            "krita:alphadarken",
-            "krita:alphadarken",
-            "Alpha Darken",
+            BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_COMPARE_DENSITY_SOFT",
+            "-dp-compare-density-soft",
+            "-dp-compare-density-soft",
+            "Compare Density Soft",
         },
     [DP_BLEND_MODE_COMPARE_DENSITY] =
         {
-            INCREASE_OPACITY | BLEND_BLANK,
+            BRUSH | INCREASE_OPACITY | BLEND_BLANK,
             "DP_BLEND_MODE_COMPARE_DENSITY",
             "-dp-compare-density",
             "-dp-compare-density",
@@ -898,6 +893,8 @@ int DP_blend_mode_to_alpha_affecting(int blend_mode)
 int DP_blend_mode_to_alpha_preserving(int blend_mode)
 {
     switch (blend_mode) {
+    case DP_BLEND_MODE_ERASE:
+        return DP_BLEND_MODE_ERASE;
     case DP_BLEND_MODE_NORMAL:
         return DP_BLEND_MODE_RECOLOR;
     case DP_BLEND_MODE_BEHIND:
@@ -954,5 +951,94 @@ int DP_blend_mode_to_alpha_preserving(int blend_mode)
         return DP_BLEND_MODE_GREATER;
     default:
         return blend_mode;
+    }
+}
+
+
+bool DP_paint_mode_exists(int paint_mode)
+{
+    switch (paint_mode) {
+    case DP_PAINT_MODE_DIRECT:
+    case DP_PAINT_MODE_INDIRECT_WASH:
+    case DP_PAINT_MODE_INDIRECT_SOFT:
+    case DP_PAINT_MODE_INDIRECT_NORMAL:
+        return true;
+    default:
+        return false;
+    }
+}
+
+const char *DP_paint_mode_enum_name(int paint_mode)
+{
+    switch (paint_mode) {
+    case DP_PAINT_MODE_DIRECT:
+        return "DP_PAINT_MODE_DIRECT";
+    case DP_PAINT_MODE_INDIRECT_WASH:
+        return "DP_PAINT_MODE_INDIRECT_WASH";
+    case DP_PAINT_MODE_INDIRECT_SOFT:
+        return "DP_PAINT_MODE_INDIRECT_SOFT";
+    case DP_PAINT_MODE_INDIRECT_NORMAL:
+        return "DP_PAINT_MODE_INDIRECT_NORMAL";
+    default:
+        return "DP_PAINT_MODE_UNKLNOWN";
+    }
+}
+
+const char *DP_paint_mode_enum_name_unprefixed(int paint_mode)
+{
+    return DP_paint_mode_enum_name(paint_mode) + 14;
+}
+
+const char *DP_paint_mode_setting_name(int paint_mode)
+{
+    switch (paint_mode) {
+    case DP_PAINT_MODE_DIRECT:
+        return "direct";
+    case DP_PAINT_MODE_INDIRECT_WASH:
+        return "indirect_wash";
+    case DP_PAINT_MODE_INDIRECT_SOFT:
+        return "indirect_soft";
+    case DP_PAINT_MODE_INDIRECT_NORMAL:
+        return "indirect_normal";
+    default:
+        return "unknown";
+    }
+}
+
+DP_PaintMode DP_paint_mode_by_setting_name(const char *setting_name,
+                                           DP_PaintMode not_found_value)
+{
+    if (DP_str_equal(setting_name, "direct")) {
+        return DP_PAINT_MODE_DIRECT;
+    }
+    else if (DP_str_equal(setting_name, "indirect_wash")) {
+        return DP_PAINT_MODE_INDIRECT_WASH;
+    }
+    else if (DP_str_equal(setting_name, "indirect_soft")) {
+        return DP_PAINT_MODE_INDIRECT_SOFT;
+    }
+    else if (DP_str_equal(setting_name, "indirect_normal")) {
+        return DP_PAINT_MODE_INDIRECT_NORMAL;
+    }
+    else {
+        return not_found_value;
+    }
+}
+
+bool DP_paint_mode_indirect(int paint_mode, int *out_blend_mode)
+{
+    DP_ASSERT(out_blend_mode);
+    switch (paint_mode) {
+    case DP_PAINT_MODE_INDIRECT_WASH:
+        *out_blend_mode = DP_BLEND_MODE_COMPARE_DENSITY;
+        return true;
+    case DP_PAINT_MODE_INDIRECT_SOFT:
+        *out_blend_mode = DP_BLEND_MODE_COMPARE_DENSITY_SOFT;
+        return true;
+    case DP_PAINT_MODE_INDIRECT_NORMAL:
+        *out_blend_mode = DP_BLEND_MODE_NORMAL;
+        return true;
+    default:
+        return false;
     }
 }

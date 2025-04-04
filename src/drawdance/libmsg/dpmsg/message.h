@@ -97,9 +97,12 @@ DP_Message *DP_message_deserialize(const unsigned char *buf, size_t bufsize,
                                    bool decode_opaque);
 
 
-bool DP_msg_draw_dabs_classic_indirect(DP_MsgDrawDabsClassic *mddc);
+int DP_msg_draw_dabs_classic_paint_mode(DP_MsgDrawDabsClassic *mddc);
 
-bool DP_msg_draw_dabs_pixel_indirect(DP_MsgDrawDabsPixel *mddp);
+int DP_msg_draw_dabs_pixel_paint_mode(DP_MsgDrawDabsPixel *mddp);
+
+int DP_msg_draw_dabs_mypaint_blend_paint_mode(
+    DP_MsgDrawDabsMyPaintBlend *mddmb);
 
 
 #endif

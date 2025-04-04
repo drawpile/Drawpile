@@ -60,10 +60,10 @@ static bool preset_equal_classic_brush(const DP_ClassicBrush *a,
         && preset_equal_classic_brush_range(&a->opacity, &b->opacity)
         && preset_equal_classic_brush_range(&a->smudge, &b->smudge)
         && a->spacing == b->spacing && a->resmudge == b->resmudge
-        && a->shape == b->shape && a->brush_mode == b->brush_mode
-        && a->erase_mode == b->erase_mode
+        && a->shape == b->shape && a->paint_mode == b->paint_mode
+        && a->brush_mode == b->brush_mode && a->erase_mode == b->erase_mode
         && (in_eraser_slot || a->erase == b->erase)
-        && a->incremental == b->incremental && a->colorpick == b->colorpick
+        && a->colorpick == b->colorpick
         && preset_equal_classic_brush_dynamic(&a->size_dynamic,
                                               &b->size_dynamic)
         && preset_equal_classic_brush_dynamic(&a->hardness_dynamic,
@@ -282,9 +282,9 @@ static bool preset_equal_mypaint_brush(const DP_MyPaintBrush *a,
                                        const DP_MyPaintBrush *b,
                                        bool in_eraser_slot)
 {
-    return a->lock_alpha == b->lock_alpha
-        && (in_eraser_slot || a->erase == b->erase)
-        && a->incremental == b->incremental;
+    return a->paint_mode == b->paint_mode && a->brush_mode == b->brush_mode
+        && a->erase_mode == b->erase_mode
+        && (in_eraser_slot || a->erase == b->erase);
 }
 
 bool DP_mypaint_brush_equal_preset(const DP_MyPaintBrush *a,
@@ -295,63 +295,8 @@ bool DP_mypaint_brush_equal_preset(const DP_MyPaintBrush *a,
         || (a && b && preset_equal_mypaint_brush(a, b, in_eraser_slot));
 }
 
-
-void DP_mypaint_brush_mode_extract(uint8_t mode, int *out_blend_mode,
-                                   bool *out_indirect,
-                                   uint8_t *out_posterize_num)
+DP_BlendMode DP_mypaint_brush_blend_mode(const DP_MyPaintBrush *mb)
 {
-    int blend_mode;
-    bool indirect;
-    uint8_t posterize_num;
-    if (mode & DP_MYPAINT_BRUSH_MODE_FLAG) {
-        posterize_num = 0;
-        switch (mode & DP_MYPAINT_BRUSH_MODE_MASK) {
-        case DP_MYPAINT_BRUSH_MODE_NORMAL:
-            blend_mode = DP_BLEND_MODE_NORMAL;
-            indirect = true;
-            break;
-        case DP_MYPAINT_BRUSH_MODE_RECOLOR:
-            blend_mode = DP_BLEND_MODE_RECOLOR;
-            indirect = true;
-            break;
-        case DP_MYPAINT_BRUSH_MODE_ERASE:
-            blend_mode = DP_BLEND_MODE_ERASE;
-            indirect = true;
-            break;
-        default:
-            blend_mode = DP_BLEND_MODE_NORMAL_AND_ERASER;
-            indirect = false;
-            break;
-        }
-    }
-    else {
-        blend_mode = DP_BLEND_MODE_NORMAL_AND_ERASER;
-        indirect = false;
-        posterize_num = mode;
-    }
-
-    if (out_blend_mode) {
-        *out_blend_mode = blend_mode;
-    }
-    if (out_indirect) {
-        *out_indirect = indirect;
-    }
-    if (out_posterize_num) {
-        *out_posterize_num = posterize_num;
-    }
-}
-
-bool DP_mypaint_brush_mode_indirect(uint8_t mode)
-{
-    if (mode & DP_MYPAINT_BRUSH_MODE_FLAG) {
-        switch (mode & DP_MYPAINT_BRUSH_MODE_MASK) {
-        case DP_MYPAINT_BRUSH_MODE_NORMAL:
-        case DP_MYPAINT_BRUSH_MODE_RECOLOR:
-        case DP_MYPAINT_BRUSH_MODE_ERASE:
-            return true;
-        default:
-            break;
-        }
-    }
-    return false;
+    DP_ASSERT(mb);
+    return mb->erase ? mb->erase_mode : mb->brush_mode;
 }

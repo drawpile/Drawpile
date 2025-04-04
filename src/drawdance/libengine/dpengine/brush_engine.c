@@ -139,18 +139,19 @@ struct DP_BrushEngine {
             float last_distance;
             bool last_left;
             bool last_up;
+            uint8_t dab_flags;
             int32_t dab_x;
             int32_t dab_y;
             uint32_t dab_color;
         } classic;
         struct {
-            bool lock_alpha;
-            bool erase;
-            uint8_t mode;
+            DP_PaintMode paint_mode;
+            DP_BlendMode blend_mode;
+            uint8_t dab_flags;
             uint8_t dab_lock_alpha;
             uint8_t dab_colorize;
             uint8_t dab_posterize;
-            uint8_t dab_mode;
+            uint8_t dab_posterize_num;
             int32_t dab_x;
             int32_t dab_y;
             uint32_t dab_color;
@@ -363,6 +364,7 @@ static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
     uint8_t dab_opacity =
         DP_classic_brush_dab_opacity_at(cb, pressure, velocity, distance);
     if (dab_size > 0 && dab_opacity > 0) {
+        uint8_t dab_flags = (uint8_t)cb->paint_mode;
         int32_t dab_x = DP_int_to_int32(x);
         int32_t dab_y = DP_int_to_int32(y);
         uint32_t dab_color = combine_upixel_float(be->classic.smudge_color);
@@ -370,6 +372,7 @@ static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
         int used = be->dabs.used;
         int8_t dx, dy;
         bool can_append = used != 0 && used < DP_MSG_DRAW_DABS_PIXEL_DABS_MAX
+                       && be->classic.dab_flags == dab_flags
                        && be->classic.dab_color == dab_color
                        && delta_xy(be, dab_x, dab_y, &dx, &dy);
         be->dabs.last_x = dab_x;
@@ -377,6 +380,7 @@ static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
 
         if (!can_append) {
             DP_brush_engine_dabs_flush(be);
+            be->classic.dab_flags = dab_flags;
             be->classic.dab_x = dab_x;
             be->classic.dab_y = dab_y;
             be->classic.dab_color = dab_color;
@@ -429,6 +433,7 @@ static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
             fudge_x = fudge_y = rrem * half_fudge;
         }
 
+        uint8_t dab_flags = (uint8_t)cb->paint_mode;
         int32_t dab_x = DP_float_to_int32((x + fudge_x) * 4.0f) + (int32_t)3;
         int32_t dab_y = DP_float_to_int32((y + fudge_y) * 4.0f) + (int32_t)2;
         uint32_t dab_color = combine_upixel_float(be->classic.smudge_color);
@@ -436,6 +441,7 @@ static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
         int used = be->dabs.used;
         int8_t dx, dy;
         bool can_append = used != 0 && used < DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX
+                       && be->classic.dab_flags == dab_flags
                        && be->classic.dab_color == dab_color
                        && delta_xy(be, dab_x, dab_y, &dx, &dy);
         be->dabs.last_x = dab_x;
@@ -443,6 +449,7 @@ static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
 
         if (!can_append) {
             DP_brush_engine_dabs_flush(be);
+            be->classic.dab_flags = dab_flags;
             be->classic.dab_x = dab_x;
             be->classic.dab_y = dab_y;
             be->classic.dab_color = dab_color;
@@ -479,51 +486,25 @@ static DP_BrushEngine *get_mypaint_surface_brush_engine(MyPaintSurface2 *self)
     return (void *)(bytes - offsetof(DP_BrushEngine, mypaint_surface2));
 }
 
-static uint32_t get_mypaint_dab_color(DP_BrushEngine *be, float color_r,
-                                      float color_g, float color_b,
-                                      float alpha_eraser)
+static uint32_t get_mypaint_dab_color(float color_r, float color_g,
+                                      float color_b, float alpha_eraser)
 {
-    if (be->mypaint.erase) {
-        return be->mypaint.mode == DP_MYPAINT_BRUSH_MODE_INCREMENTAL
-                 ? 0x00000000u
-                 : 0xff000000u;
-    }
-    else {
-        return combine_rgba(color_r, color_g, color_b, alpha_eraser);
-    }
+    return combine_rgba(color_r, color_g, color_b, alpha_eraser);
 }
 
-static uint8_t get_mypaint_dab_lock_alpha(DP_BrushEngine *be, float lock_alpha)
+static uint8_t get_mypaint_dab_lock_alpha(float lock_alpha)
 {
-    if (be->mypaint.erase) {
-        return 0;
-    }
-    else if (be->mypaint.lock_alpha) {
-        return 255;
-    }
-    else {
-        return DP_float_to_uint8(lock_alpha * 255.0f + 0.5f);
-    }
+    return DP_float_to_uint8(lock_alpha * 255.0f + 0.5f);
 }
 
-static uint8_t get_mypaint_dab_colorize(DP_BrushEngine *be, float colorize)
+static uint8_t get_mypaint_dab_colorize(float colorize)
 {
-    if (be->mypaint.erase || be->mypaint.lock_alpha) {
-        return 0;
-    }
-    else {
-        return DP_float_to_uint8(colorize * 255.0f + 0.5f);
-    }
+    return DP_float_to_uint8(colorize * 255.0f + 0.5f);
 }
 
-static uint8_t get_mypaint_dab_posterize(DP_BrushEngine *be, float posterize)
+static uint8_t get_mypaint_dab_posterize(float posterize)
 {
-    if (be->mypaint.erase || be->mypaint.lock_alpha) {
-        return 0;
-    }
-    else {
-        return DP_float_to_uint8(posterize * 255.0f + 0.5f);
-    }
+    return DP_float_to_uint8(posterize * 255.0f + 0.5f);
 }
 
 static uint8_t get_mypaint_dab_posterize_num(uint8_t dab_posterize,
@@ -534,7 +515,7 @@ static uint8_t get_mypaint_dab_posterize_num(uint8_t dab_posterize,
     }
     else {
         float value = posterize_num * 100.0f + 0.5f - 1.0f;
-        return DP_float_to_uint8(CLAMP(value, 0.0f, 127.0f));
+        return DP_float_to_uint8(CLAMP(value, 0.0f, 255.0f));
     }
 }
 
@@ -575,35 +556,40 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
         int32_t dab_x = DP_float_to_int32(x * 4.0f);
         int32_t dab_y = DP_float_to_int32(y * 4.0f);
         uint32_t dab_color;
-        uint8_t dab_lock_alpha, dab_colorize, dab_posterize, dab_mode;
+        uint8_t dab_flags, dab_lock_alpha, dab_colorize, dab_posterize,
+            dab_posterize_num;
 
-        uint8_t mode = be->mypaint.mode;
-        if (mode == DP_MYPAINT_BRUSH_MODE_INCREMENTAL) {
-            dab_color = get_mypaint_dab_color(be, color_r, color_g, color_b,
-                                              alpha_eraser);
-            dab_lock_alpha = get_mypaint_dab_lock_alpha(be, lock_alpha);
-            dab_colorize = get_mypaint_dab_colorize(be, colorize);
-            dab_posterize = get_mypaint_dab_posterize(be, posterize);
-            dab_mode =
+        DP_PaintMode paint_mode = be->mypaint.paint_mode;
+        DP_BlendMode blend_mode = be->mypaint.blend_mode;
+        if (paint_mode == DP_PAINT_MODE_DIRECT
+            && blend_mode == DP_BLEND_MODE_NORMAL) {
+            dab_color =
+                get_mypaint_dab_color(color_r, color_g, color_b, alpha_eraser);
+            dab_flags = 0;
+            dab_lock_alpha = get_mypaint_dab_lock_alpha(lock_alpha);
+            dab_colorize = get_mypaint_dab_colorize(colorize);
+            dab_posterize = get_mypaint_dab_posterize(posterize);
+            dab_posterize_num =
                 get_mypaint_dab_posterize_num(dab_posterize, posterize_num);
         }
         else {
-            dab_color =
-                get_mypaint_dab_color(be, color_r, color_g, color_b, 1.0);
+            dab_color = get_mypaint_dab_color(color_r, color_g, color_b, 1.0f);
+            dab_flags = (uint8_t)paint_mode;
             dab_lock_alpha = 0;
             dab_colorize = 0;
             dab_posterize = 0;
-            dab_mode = DP_MYPAINT_BRUSH_MODE_FLAG | mode;
+            dab_posterize_num = 0;
         }
 
         int used = be->dabs.used;
         int8_t dx, dy;
         bool can_append = used != 0 && used < DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX
                        && be->mypaint.dab_color == dab_color
+                       && be->mypaint.dab_flags == dab_flags
                        && be->mypaint.dab_lock_alpha == dab_lock_alpha
                        && be->mypaint.dab_colorize == dab_colorize
                        && be->mypaint.dab_posterize == dab_posterize
-                       && be->mypaint.dab_mode == dab_mode
+                       && be->mypaint.dab_posterize_num == dab_posterize_num
                        && delta_xy(be, dab_x, dab_y, &dx, &dy);
         be->dabs.last_x = dab_x;
         be->dabs.last_y = dab_y;
@@ -613,10 +599,11 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
             be->mypaint.dab_x = dab_x;
             be->mypaint.dab_y = dab_y;
             be->mypaint.dab_color = dab_color;
+            be->mypaint.dab_flags = dab_flags;
             be->mypaint.dab_lock_alpha = dab_lock_alpha;
             be->mypaint.dab_colorize = dab_colorize;
             be->mypaint.dab_posterize = dab_posterize;
-            be->mypaint.dab_mode = dab_mode;
+            be->mypaint.dab_posterize_num = dab_posterize_num;
             dx = 0;
             dy = 0;
         }
@@ -858,14 +845,14 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
     be->classic.brush = *brush;
     DP_ClassicBrush *cb = &be->classic.brush;
     DP_UPixelFloat color = color_override ? *color_override : brush->color;
-    if (cb->incremental || cb->smudge.max > 0.0f) {
+    if (cb->paint_mode == DP_PAINT_MODE_DIRECT || cb->smudge.max > 0.0f) {
         // Incremental mode must be used when smudging, because color is not
         // picked up from sublayers
+        cb->paint_mode = DP_PAINT_MODE_DIRECT;
         color.a = 0.0f;
     }
     else {
-        // If brush color alpha is nonzero, indirect drawing mode
-        // is used and the alpha is used as the overall transparency
+        // For indirect drawing modes, the alpha is used as the overall opacity
         // of the entire stroke.
         color.a = cb->opacity.max;
         cb->opacity.max = 1.0f;
@@ -935,13 +922,10 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     mypaint_brush_set_base_value(mb, MYPAINT_BRUSH_SETTING_COLOR_S, g_s);
     mypaint_brush_set_base_value(mb, MYPAINT_BRUSH_SETTING_COLOR_V, b_v);
 
-    bool erase = brush->erase || eraser_override;
-    be->mypaint.lock_alpha = brush->lock_alpha;
-    be->mypaint.erase = erase;
-    be->mypaint.mode = brush->incremental ? DP_MYPAINT_BRUSH_MODE_INCREMENTAL
-                     : erase              ? DP_MYPAINT_BRUSH_MODE_ERASE
-                     : brush->lock_alpha  ? DP_MYPAINT_BRUSH_MODE_RECOLOR
-                                          : DP_MYPAINT_BRUSH_MODE_NORMAL;
+    be->mypaint.paint_mode = brush->paint_mode;
+    be->mypaint.blend_mode = eraser_override
+                               ? DP_BLEND_MODE_ERASE
+                               : DP_mypaint_brush_blend_mode(brush);
 
     // We don't support spectral painting (aka Pigment mode), so we'll turn
     // that off at the source here. It's like turning the Pigment slider in
@@ -951,27 +935,27 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     // We have our own, better stabilizer, so turn the MyPaint one off.
     disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SLOW_TRACKING);
 
-    if (!brush->incremental) {
+    bool indirect = be->mypaint.paint_mode != DP_PAINT_MODE_DIRECT;
+    if (indirect) {
         // Opacity linearization is supposed to compensate for direct mode
         // drawing, in indirect mode it just causes really wrong behavior.
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_OPAQUE_LINEARIZE);
-        // Indirect mode can't smudge, erase, colorize or posterize.
+        // Indirect mode can't smudge.
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE);
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH);
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_RADIUS_LOG);
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_ERASER);
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_LOCK_ALPHA);
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_COLORIZE);
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH_LOG);
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_BUCKET);
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_TRANSPARENCY);
+    }
+
+    if (indirect || be->mypaint.blend_mode != DP_BLEND_MODE_NORMAL) {
+        // Indirect mode also can't do any of these. They're also basically
+        // blend modes, so they only work when that hasn't been altered.
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_ERASER);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_LOCK_ALPHA);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_COLORIZE);
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_POSTERIZE);
-        // Can't change the color during an indirect stroke.
-        disable_mypaint_dynamics(mb, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_H);
-        disable_mypaint_dynamics(mb, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_L);
-        disable_mypaint_dynamics(mb, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSL_S);
-        disable_mypaint_dynamics(mb, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_V);
-        disable_mypaint_dynamics(mb, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSV_S);
     }
 }
 
@@ -987,9 +971,9 @@ static void set_pixel_dabs(int count, DP_PixelDab *out, void *user)
 
 static void flush_pixel_dabs(DP_BrushEngine *be, int used)
 {
-    DP_Message *(*new_fn)(unsigned int, uint16_t, int32_t, int32_t, uint32_t,
-                          uint8_t, void (*)(int, DP_PixelDab *, void *), int,
-                          void *);
+    DP_Message *(*new_fn)(unsigned int, uint8_t, uint16_t, int32_t, int32_t,
+                          uint32_t, uint8_t,
+                          void (*)(int, DP_PixelDab *, void *), int, void *);
     if (be->classic.brush.shape == DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND) {
         new_fn = DP_msg_draw_dabs_pixel_new;
     }
@@ -998,8 +982,9 @@ static void flush_pixel_dabs(DP_BrushEngine *be, int used)
     }
     be->push_message(
         be->user,
-        new_fn(be->stroke.context_id, DP_int_to_uint16(be->layer_id),
-               be->classic.dab_x, be->classic.dab_y, be->classic.dab_color,
+        new_fn(be->stroke.context_id, (uint8_t)be->classic.dab_flags,
+               DP_int_to_uint16(be->layer_id), be->classic.dab_x,
+               be->classic.dab_y, be->classic.dab_color,
                (uint8_t)DP_classic_brush_blend_mode(&be->classic.brush),
                set_pixel_dabs, used, be->dabs.buffer));
 }
@@ -1017,12 +1002,12 @@ static void set_soft_dabs(int count, DP_ClassicDab *out, void *user)
 static void flush_soft_dabs(DP_BrushEngine *be, int used)
 {
     be->push_message(
-        be->user,
-        DP_msg_draw_dabs_classic_new(
-            be->stroke.context_id, DP_int_to_uint16(be->layer_id),
-            be->classic.dab_x, be->classic.dab_y, be->classic.dab_color,
-            (uint8_t)DP_classic_brush_blend_mode(&be->classic.brush),
-            set_soft_dabs, used, be->dabs.buffer));
+        be->user, DP_msg_draw_dabs_classic_new(
+                      be->stroke.context_id, be->classic.dab_flags,
+                      DP_int_to_uint16(be->layer_id), be->classic.dab_x,
+                      be->classic.dab_y, be->classic.dab_color,
+                      (uint8_t)DP_classic_brush_blend_mode(&be->classic.brush),
+                      set_soft_dabs, used, be->dabs.buffer));
 }
 
 static void set_mypaint_dabs(int count, DP_MyPaintDab *out, void *user)
@@ -1035,16 +1020,40 @@ static void set_mypaint_dabs(int count, DP_MyPaintDab *out, void *user)
     }
 }
 
+static void set_mypaint_blend_dabs(int count, DP_MyPaintBlendDab *out,
+                                   void *user)
+{
+    DP_BrushEngineMyPaintDab *dabs = user;
+    for (int i = 0; i < count; ++i) {
+        DP_BrushEngineMyPaintDab *dab = &dabs[i];
+        DP_mypaint_blend_dab_init(out, i, dab->x, dab->y, dab->size,
+                                  dab->hardness, dab->opacity, dab->angle,
+                                  dab->aspect_ratio);
+    }
+}
+
 static void flush_mypaint_dabs(DP_BrushEngine *be, int used)
 {
-    be->push_message(be->user,
-                     DP_msg_draw_dabs_mypaint_new(
-                         be->stroke.context_id, DP_int_to_uint16(be->layer_id),
-                         be->mypaint.dab_x, be->mypaint.dab_y,
-                         be->mypaint.dab_color, be->mypaint.dab_lock_alpha,
-                         be->mypaint.dab_colorize, be->mypaint.dab_posterize,
-                         be->mypaint.dab_mode, set_mypaint_dabs, used,
-                         be->dabs.buffer));
+    DP_Message *msg;
+    DP_PaintMode paint_mode = be->mypaint.paint_mode;
+    DP_BlendMode blend_mode = be->mypaint.blend_mode;
+    if (paint_mode == DP_PAINT_MODE_DIRECT
+        && blend_mode == DP_BLEND_MODE_NORMAL) {
+        msg = DP_msg_draw_dabs_mypaint_new(
+            be->stroke.context_id, DP_int_to_uint16(be->layer_id),
+            be->mypaint.dab_x, be->mypaint.dab_y, be->mypaint.dab_color,
+            be->mypaint.dab_lock_alpha, be->mypaint.dab_colorize,
+            be->mypaint.dab_posterize, be->mypaint.dab_posterize_num,
+            set_mypaint_dabs, used, be->dabs.buffer);
+    }
+    else {
+        msg = DP_msg_draw_dabs_mypaint_blend_new(
+            be->stroke.context_id, be->mypaint.dab_flags,
+            DP_int_to_uint16(be->layer_id), be->mypaint.dab_x,
+            be->mypaint.dab_y, be->mypaint.dab_color, (uint8_t)blend_mode,
+            set_mypaint_blend_dabs, used, be->dabs.buffer);
+    }
+    be->push_message(be->user, msg);
 }
 
 void DP_brush_engine_dabs_flush(DP_BrushEngine *be)

@@ -1010,27 +1010,30 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
         return override
             || !DP_acl_state_layer_locked_for(
                    acls, user_id,
-                   DP_msg_draw_dabs_classic_layer(
-                       DP_msg_draw_dabs_classic_cast(msg)));
+                   DP_msg_draw_dabs_classic_layer(DP_message_internal(msg)));
     case DP_MSG_DRAW_DABS_PIXEL:
         return override
             || !DP_acl_state_layer_locked_for(
                    acls, user_id,
-                   DP_msg_draw_dabs_pixel_layer(
-                       DP_msg_draw_dabs_pixel_cast(msg)));
+                   DP_msg_draw_dabs_pixel_layer(DP_message_internal(msg)));
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
         return override
             || !DP_acl_state_layer_locked_for(
                    acls, user_id,
-                   DP_msg_draw_dabs_pixel_layer(
-                       DP_msg_draw_dabs_pixel_square_cast(msg)));
+                   DP_msg_draw_dabs_pixel_layer(DP_message_internal(msg)));
     case DP_MSG_DRAW_DABS_MYPAINT:
         return override
             || (DP_acl_state_can_use_feature(acls, DP_FEATURE_MYPAINT, user_id)
                 && !DP_acl_state_layer_locked_for(
                     acls, user_id,
-                    DP_msg_draw_dabs_mypaint_layer(
-                        DP_msg_draw_dabs_mypaint_cast(msg))));
+                    DP_msg_draw_dabs_mypaint_layer(DP_message_internal(msg))));
+    case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
+        return override
+            || (DP_acl_state_can_use_feature(acls, DP_FEATURE_MYPAINT, user_id)
+                && !DP_acl_state_layer_locked_for(
+                    acls, user_id,
+                    DP_msg_draw_dabs_mypaint_blend_layer(
+                        DP_message_internal(msg))));
     case DP_MSG_MOVE_RECT:
         return handle_move_rect(acls, msg, user_id, override);
     case DP_MSG_SET_METADATA_INT:
