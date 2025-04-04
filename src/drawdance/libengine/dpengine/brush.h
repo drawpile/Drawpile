@@ -29,13 +29,6 @@
 #define DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT 256
 #define DP_MYPAINT_CONTROL_POINTS_COUNT    64
 
-#define DP_MYPAINT_BRUSH_MODE_FLAG        0x80
-#define DP_MYPAINT_BRUSH_MODE_INCREMENTAL 0x0
-#define DP_MYPAINT_BRUSH_MODE_NORMAL      0x1
-#define DP_MYPAINT_BRUSH_MODE_RECOLOR     0x2
-#define DP_MYPAINT_BRUSH_MODE_ERASE       0x3
-#define DP_MYPAINT_BRUSH_MODE_MASK        0x3
-
 
 typedef enum DP_BrushShape {
     DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND,
@@ -77,10 +70,10 @@ typedef struct DP_ClassicBrush {
     int resmudge;
     DP_UPixelFloat color;
     DP_BrushShape shape;
+    DP_PaintMode paint_mode;
     DP_BlendMode brush_mode;
     DP_BlendMode erase_mode;
     bool erase;
-    bool incremental;
     bool colorpick;
     DP_ClassicBrushDynamic size_dynamic;
     DP_ClassicBrushDynamic hardness_dynamic;
@@ -106,9 +99,10 @@ typedef struct DP_MyPaintSettings {
 
 typedef struct DP_MyPaintBrush {
     DP_UPixelFloat color;
-    bool lock_alpha;
+    DP_PaintMode paint_mode;
+    DP_BlendMode brush_mode;
+    DP_BlendMode erase_mode;
     bool erase;
-    bool incremental;
 } DP_MyPaintBrush;
 
 
@@ -158,11 +152,6 @@ bool DP_mypaint_brush_equal_preset(const DP_MyPaintBrush *a,
                                    const DP_MyPaintBrush *b,
                                    bool in_eraser_slot);
 
-void DP_mypaint_brush_mode_extract(uint8_t mode, int *out_blend_mode,
-                                   bool *out_indirect,
-                                   uint8_t *out_posterize_num);
-
-bool DP_mypaint_brush_mode_indirect(uint8_t mode);
-
+DP_BlendMode DP_mypaint_brush_blend_mode(const DP_MyPaintBrush *mb);
 
 #endif

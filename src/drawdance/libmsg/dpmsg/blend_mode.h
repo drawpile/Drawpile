@@ -52,7 +52,7 @@ typedef enum DP_BlendMode {
     DP_BLEND_MODE_SATURATION,
     DP_BLEND_MODE_LUMINOSITY,
     DP_BLEND_MODE_COLOR,
-    DP_BLEND_MODE_ALPHA_DARKEN,
+    DP_BLEND_MODE_COMPARE_DENSITY_SOFT,
     DP_BLEND_MODE_COMPARE_DENSITY,
     DP_BLEND_MODE_GREATER,
     DP_BLEND_MODE_ERASE_LIGHT,
@@ -100,6 +100,14 @@ typedef enum DP_BlendMode {
     DP_BLEND_MODE_REPLACE = DP_BLEND_MODE_MAX,
     DP_BLEND_MODE_COUNT,
 } DP_BlendMode;
+
+typedef enum DP_PaintMode {
+    DP_PAINT_MODE_DIRECT,
+    DP_PAINT_MODE_INDIRECT_WASH,
+    DP_PAINT_MODE_INDIRECT_SOFT,
+    DP_PAINT_MODE_INDIRECT_NORMAL,
+    DP_PAINT_MODE_COUNT,
+} DP_PaintMode;
 
 
 bool DP_blend_mode_exists(int blend_mode);
@@ -152,6 +160,20 @@ DP_INLINE int DP_blend_mode_clip(int blend_mode, bool clip)
 {
     return clip ? DP_blend_mode_to_alpha_preserving(blend_mode) : blend_mode;
 }
+
+
+bool DP_paint_mode_exists(int paint_mode);
+
+const char *DP_paint_mode_enum_name(int paint_mode);
+
+const char *DP_paint_mode_enum_name_unprefixed(int paint_mode);
+
+const char *DP_paint_mode_setting_name(int paint_mode);
+
+DP_PaintMode DP_paint_mode_by_setting_name(const char *setting_name,
+                                           DP_PaintMode not_found_value);
+
+bool DP_paint_mode_indirect(int paint_mode, int *out_blend_mode);
 
 
 #endif

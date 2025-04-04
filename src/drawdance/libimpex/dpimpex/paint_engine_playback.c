@@ -32,6 +32,7 @@ static long long guess_message_msecs(DP_Message *msg, DP_MessageType type,
     case DP_MSG_DRAW_DABS_PIXEL:
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
     case DP_MSG_DRAW_DABS_MYPAINT:
+    case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
         return 5;
     case DP_MSG_PUT_IMAGE:
     case DP_MSG_MOVE_REGION:

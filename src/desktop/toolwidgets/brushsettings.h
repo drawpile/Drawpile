@@ -122,6 +122,7 @@ protected:
 
 private slots:
 	void changeBrushType(const QAction *action);
+	void changePaintMode(const QAction *action);
 	void changeSizeSetting(int size);
 	void changeRadiusLogarithmicSetting(int radiusLogarithmic);
 	void updateFromUi();
@@ -147,6 +148,7 @@ private:
 
 	void updateMenuActions();
 	void setAutomaticAlphaPreserve(bool automaticAlphaPreserve);
+	void setPaintModeInUi(int paintMode);
 	void updateAlphaPreserve(bool alphaPreserve);
 	void updateBlendMode(int index);
 	void updateUi();

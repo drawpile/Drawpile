@@ -37,6 +37,7 @@ public:
 
 	bool equalPreset(const ClassicBrush &other, bool inEraserSlot) const;
 
+	void setPaintMode(int paintMode);
 	void setBlendMode(int blendMode, bool isErase);
 
 	const KisCubicCurve &sizeCurve() const { return m_sizeCurve; }
@@ -225,6 +226,9 @@ public:
 	DP_MyPaintSettings &settings();
 	const DP_MyPaintSettings &constSettings() const;
 
+	void setPaintMode(int paintMode);
+	void setBlendMode(int blendMode, bool isErase);
+
 	StabilizationMode stabilizationMode() const { return m_stabilizationMode; }
 	void setStabilizationMode(StabilizationMode stabilizationMode)
 	{
@@ -302,6 +306,12 @@ public:
 	MyPaintBrush &myPaint() { return m_myPaint; }
 	const MyPaintBrush &myPaint() const { return m_myPaint; }
 	void setMyPaint(const MyPaintBrush &myPaint) { m_myPaint = myPaint; }
+
+	DP_PaintMode paintMode() const;
+	void setPaintMode(int paintMode);
+
+	DP_BlendMode blendMode() const;
+	void setBlendMode(int blendMode, bool isErase);
 
 	bool isEraser() const;
 	void setEraser(bool erase);
