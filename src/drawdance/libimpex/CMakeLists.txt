@@ -93,3 +93,9 @@ if(TESTS)
         test/resize_image.c
     )
 endif()
+
+if(BENCHMARKS)
+    dp_add_executable(bench_multidab)
+    dp_target_sources(bench_multidab bench/bench_multidab.c)
+    target_link_libraries(bench_multidab PUBLIC dpimpex)
+endif()
