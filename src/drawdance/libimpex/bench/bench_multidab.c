@@ -13,6 +13,7 @@
 #include <dpengine/layer_props.h>
 #include <dpengine/layer_props_list.h>
 #include <dpengine/tile.h>
+#include <dpimpex/image_impex.h>
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/message.h>
 #include <stdio.h>
@@ -127,7 +128,7 @@ static bool parse_uint16_arg(const char *s, uint16_t min_inclusive,
 
 static bool parse_blend_mode_arg(const char *s, DP_BlendMode *out_value)
 {
-    DP_BlendMode value = DP_blend_mode_by_svg_name(s, DP_BLEND_MODE_COUNT);
+    DP_BlendMode value = DP_blend_mode_by_dptxt_name(s, DP_BLEND_MODE_COUNT);
     if (value == DP_BLEND_MODE_COUNT) {
         DP_warn("Unknown blend mode '%s'", s);
         return false;
@@ -429,8 +430,34 @@ static void dump_blend_modes(void)
     printf("blend_modes = [\n");
     for (int i = 0; i < DP_BLEND_MODE_COUNT; ++i) {
         if (DP_blend_mode_valid_for_brush(i)) {
-            printf("    {\"enum_name\": \"%s\", \"svg_name\": \"%s\"},\n",
-                   DP_blend_mode_enum_name(i), DP_blend_mode_svg_name(i));
+            printf("    {\"enum_name\": \"%s\", \"dptxt_name\": \"%s\"",
+                   DP_blend_mode_enum_name(i), DP_blend_mode_dptxt_name(i));
+            if (DP_blend_mode_secondary_alias(i)) {
+                DP_BlendMode alpha_affecting, alpha_preserving;
+                if (DP_blend_mode_alpha_preserve_pair(i, &alpha_affecting,
+                                                      &alpha_preserving)) {
+                    if ((int)alpha_affecting == i) {
+                        printf(", \"alias_for\": \"%s\"",
+                               DP_blend_mode_enum_name((int)alpha_preserving));
+                    }
+                    else if ((int)alpha_preserving == i) {
+                        printf(", \"alias_for\": \"%s\"",
+                               DP_blend_mode_enum_name((int)alpha_affecting));
+                    }
+                    else {
+                        DP_warn("Blend mode %d is aliased to neither "
+                                "alpha-affecting mode %d nor alpha-preserving "
+                                "mode %d",
+                                i, (int)alpha_affecting, (int)alpha_preserving);
+                    }
+                }
+                else {
+                    DP_warn("Blend mode %d purports to be aliased but has no "
+                            "alpha preserve pair",
+                            i);
+                }
+            }
+            printf("},\n");
         }
     }
     printf("]\n");
