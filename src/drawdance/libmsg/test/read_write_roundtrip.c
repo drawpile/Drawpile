@@ -262,6 +262,16 @@ static void generate_mypaint_dabs(int count, DP_MyPaintDab *out,
     }
 }
 
+static void generate_mypaint_blend_dabs(int count, DP_MyPaintBlendDab *out,
+                                        DP_UNUSED void *user)
+{
+    for (int i = 0; i < count; ++i) {
+        DP_mypaint_blend_dab_init(
+            out, i, random_int8(), random_int8(), random_uint16(),
+            random_uint8(), random_uint8(), random_uint8(), random_uint8());
+    }
+}
+
 static DP_Message *generate_server_command(void)
 {
     size_t message_len;
@@ -616,8 +626,9 @@ static DP_Message *generate_canvas_background(void)
 static DP_Message *generate_draw_dabs_classic(void)
 {
     return DP_msg_draw_dabs_classic_new(
-        generate_context_id(), random_uint16(), random_int32(), random_int32(),
-        random_uint32(), generate_blend_mode(), generate_classic_dabs,
+        generate_context_id(), random_uint8(), random_uint16(), random_int32(),
+        random_int32(), random_uint32(), generate_blend_mode(),
+        generate_classic_dabs,
         int_between(DP_MSG_DRAW_DABS_CLASSIC_DABS_MIN_COUNT,
                     DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX_COUNT),
         NULL);
@@ -626,8 +637,9 @@ static DP_Message *generate_draw_dabs_classic(void)
 static DP_Message *generate_draw_dabs_pixel(void)
 {
     return DP_msg_draw_dabs_pixel_new(
-        generate_context_id(), random_uint16(), random_int32(), random_int32(),
-        random_uint32(), generate_blend_mode(), generate_pixel_dabs,
+        generate_context_id(), random_uint8(), random_uint16(), random_int32(),
+        random_int32(), random_uint32(), generate_blend_mode(),
+        generate_pixel_dabs,
         int_between(DP_MSG_DRAW_DABS_PIXEL_DABS_MIN_COUNT,
                     DP_MSG_DRAW_DABS_PIXEL_DABS_MAX_COUNT),
         NULL);
@@ -636,8 +648,9 @@ static DP_Message *generate_draw_dabs_pixel(void)
 static DP_Message *generate_draw_dabs_pixel_square(void)
 {
     return DP_msg_draw_dabs_pixel_square_new(
-        generate_context_id(), random_uint16(), random_int32(), random_int32(),
-        random_uint32(), generate_blend_mode(), generate_pixel_dabs,
+        generate_context_id(), random_uint8(), random_uint16(), random_int32(),
+        random_int32(), random_uint32(), generate_blend_mode(),
+        generate_pixel_dabs,
         int_between(DP_MSG_DRAW_DABS_PIXEL_DABS_MIN_COUNT,
                     DP_MSG_DRAW_DABS_PIXEL_DABS_MAX_COUNT),
         NULL);
@@ -651,6 +664,17 @@ static DP_Message *generate_draw_dabs_mypaint(void)
         random_uint8(), generate_mypaint_dabs,
         int_between(DP_MSG_DRAW_DABS_MYPAINT_DABS_MIN_COUNT,
                     DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX_COUNT),
+        NULL);
+}
+
+static DP_Message *generate_draw_dabs_mypaint_blend(void)
+{
+    return DP_msg_draw_dabs_mypaint_blend_new(
+        generate_context_id(), random_uint8(), random_uint16(), random_int32(),
+        random_int32(), random_uint32(), generate_blend_mode(),
+        generate_mypaint_blend_dabs,
+        int_between(DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MIN_COUNT,
+                    DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MAX_COUNT),
         NULL);
 }
 
@@ -852,6 +876,7 @@ static GenerateFn generate_fns[] = {
     generate_draw_dabs_pixel,
     generate_draw_dabs_pixel_square,
     generate_draw_dabs_mypaint,
+    generate_draw_dabs_mypaint_blend,
     generate_move_rect,
     generate_set_metadata_int,
     generate_layer_tree_create,

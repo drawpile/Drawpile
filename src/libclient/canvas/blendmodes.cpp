@@ -315,4 +315,32 @@ void adjustAlphaBehavior(int &mode, bool preserveAlpha)
 }
 
 }
+
+namespace paintmode {
+
+bool isValidPaintMode(int mode)
+{
+	switch(mode) {
+	case DP_PAINT_MODE_DIRECT:
+	case DP_PAINT_MODE_INDIRECT_WASH:
+	case DP_PAINT_MODE_INDIRECT_SOFT:
+	case DP_PAINT_MODE_INDIRECT_NORMAL:
+		return true;
+	default:
+		return false;
+	}
+}
+
+QString settingName(DP_PaintMode mode)
+{
+	return QString::fromUtf8(DP_paint_mode_setting_name(mode));
+}
+
+DP_PaintMode fromSettingName(const QString &name, DP_PaintMode defaultMode)
+{
+	return DP_paint_mode_by_setting_name(
+		name.toUtf8().constData(), defaultMode);
+}
+
+}
 }

@@ -2190,9 +2190,9 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
         blend_mask_normal_and_eraser(dst, src, mask, to_fix(opacity), w, h,
                                      mask_skip, base_skip);
         break;
-    case DP_BLEND_MODE_ALPHA_DARKEN:
-        blend_mask_alpha_darken(dst, src, mask, to_fix(opacity), w, h,
-                                mask_skip, base_skip);
+    case DP_BLEND_MODE_COMPARE_DENSITY_SOFT:
+        blend_mask_compare_density_soft(dst, src, mask, to_fix(opacity), w, h,
+                                        mask_skip, base_skip);
         break;
     case DP_BLEND_MODE_COMPARE_DENSITY:
         blend_mask_compare_density(dst, src, mask, to_fix(opacity), w, h,

@@ -864,7 +864,7 @@ get_draw_dabs_classic_params(unsigned int context_id,
                                     DP_msg_draw_dabs_classic_y(mddc),
                                     DP_msg_draw_dabs_classic_color(mddc),
                                     DP_msg_draw_dabs_classic_mode(mddc),
-                                    DP_msg_draw_dabs_classic_indirect(mddc),
+                                    DP_msg_draw_dabs_classic_paint_mode(mddc),
                                     dab_count,
                                     {.classic = {dabs}}};
 }
@@ -882,7 +882,7 @@ get_draw_dabs_pixel_params(DP_MessageType type, unsigned int context_id,
                                     DP_msg_draw_dabs_pixel_y(mddp),
                                     DP_msg_draw_dabs_pixel_color(mddp),
                                     DP_msg_draw_dabs_pixel_mode(mddp),
-                                    DP_msg_draw_dabs_pixel_indirect(mddp),
+                                    DP_msg_draw_dabs_pixel_paint_mode(mddp),
                                     dab_count,
                                     {.pixel = {dabs}}};
 }
@@ -891,11 +891,6 @@ static DP_PaintDrawDabsParams
 get_draw_dabs_mypaint_params(unsigned int context_id,
                              DP_MsgDrawDabsMyPaint *mddmp)
 {
-    int blend_mode;
-    bool indirect;
-    uint8_t posterize_num;
-    DP_mypaint_brush_mode_extract(DP_msg_draw_dabs_mypaint_mode(mddmp),
-                                  &blend_mode, &indirect, &posterize_num);
     int dab_count;
     const DP_MyPaintDab *dabs =
         DP_msg_draw_dabs_mypaint_dabs(mddmp, &dab_count);
@@ -906,13 +901,33 @@ get_draw_dabs_mypaint_params(unsigned int context_id,
         DP_msg_draw_dabs_mypaint_x(mddmp),
         DP_msg_draw_dabs_mypaint_y(mddmp),
         DP_msg_draw_dabs_mypaint_color(mddmp),
-        blend_mode,
-        indirect,
+        DP_BLEND_MODE_NORMAL_AND_ERASER,
+        DP_PAINT_MODE_DIRECT,
         dab_count,
         {.mypaint = {dabs, DP_msg_draw_dabs_mypaint_lock_alpha(mddmp),
                      DP_msg_draw_dabs_mypaint_colorize(mddmp),
                      DP_msg_draw_dabs_mypaint_posterize(mddmp),
-                     posterize_num}}};
+                     DP_msg_draw_dabs_mypaint_posterize_num(mddmp)}}};
+}
+
+static DP_PaintDrawDabsParams
+get_draw_dabs_mypaint_blend_params(unsigned int context_id,
+                                   DP_MsgDrawDabsMyPaintBlend *mddmpb)
+{
+    int dab_count;
+    const DP_MyPaintBlendDab *dabs =
+        DP_msg_draw_dabs_mypaint_blend_dabs(mddmpb, &dab_count);
+    return (DP_PaintDrawDabsParams){
+        DP_MSG_DRAW_DABS_MYPAINT_BLEND,
+        context_id,
+        DP_msg_draw_dabs_mypaint_blend_layer(mddmpb),
+        DP_msg_draw_dabs_mypaint_blend_x(mddmpb),
+        DP_msg_draw_dabs_mypaint_blend_y(mddmpb),
+        DP_msg_draw_dabs_mypaint_blend_color(mddmpb),
+        DP_msg_draw_dabs_mypaint_blend_mode(mddmpb),
+        DP_msg_draw_dabs_mypaint_blend_paint_mode(mddmpb),
+        dab_count,
+        {.mypaint_blend = {dabs}}};
 }
 
 static bool next_dab(void *user, DP_PaintDrawDabsParams *out_params)
@@ -942,7 +957,11 @@ static bool next_dab(void *user, DP_PaintDrawDabsParams *out_params)
                 break;
             case DP_MSG_DRAW_DABS_MYPAINT:
                 *out_params = get_draw_dabs_mypaint_params(
-                    context_id, DP_msg_draw_dabs_mypaint_cast(msg));
+                    context_id, DP_message_internal(msg));
+                break;
+            case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
+                *out_params = get_draw_dabs_mypaint_blend_params(
+                    context_id, DP_message_internal(msg));
                 break;
             default:
                 DP_UNREACHABLE();
@@ -1386,6 +1405,7 @@ static DP_CanvasState *handle(DP_CanvasState *cs, DP_DrawContext *dc,
     case DP_MSG_DRAW_DABS_PIXEL:
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
     case DP_MSG_DRAW_DABS_MYPAINT:
+    case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
         return handle_draw_dabs(cs, dc, ucs_or_null, 1, &msg);
     case DP_MSG_MOVE_RECT:
         return handle_move_rect(cs, ucs_or_null, DP_message_context_id(msg),

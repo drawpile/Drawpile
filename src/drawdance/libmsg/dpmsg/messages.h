@@ -92,6 +92,7 @@ typedef enum DP_MessageType {
     DP_MSG_DRAW_DABS_PIXEL = 149,
     DP_MSG_DRAW_DABS_PIXEL_SQUARE = 150,
     DP_MSG_DRAW_DABS_MYPAINT = 151,
+    DP_MSG_DRAW_DABS_MYPAINT_BLEND = 152,
     DP_MSG_MOVE_RECT = 160,
     DP_MSG_SET_METADATA_INT = 161,
     DP_MSG_LAYER_TREE_CREATE = 162,
@@ -1868,12 +1869,12 @@ size_t DP_msg_canvas_background_image_size(const DP_MsgCanvasBackground *mcb);
  * The size field is the brush diameter multiplied by 256.
  */
 
-#define DP_MSG_DRAW_DABS_CLASSIC_STATIC_LENGTH 15
+#define DP_MSG_DRAW_DABS_CLASSIC_STATIC_LENGTH 16
 
 #define DP_MSG_DRAW_DABS_CLASSIC_DABS_MIN_COUNT 1
-#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX_COUNT 10920
+#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX_COUNT 10919
 
-#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX 10920
+#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX 10919
 
 typedef struct DP_ClassicDab DP_ClassicDab;
 
@@ -1895,11 +1896,12 @@ const DP_ClassicDab *DP_classic_dab_at(const DP_ClassicDab *cd, int i);
 
 typedef struct DP_MsgDrawDabsClassic DP_MsgDrawDabsClassic;
 
-DP_Message *
-DP_msg_draw_dabs_classic_new(unsigned int context_id, uint16_t layer, int32_t x,
-                             int32_t y, uint32_t color, uint8_t mode,
-                             void (*set_dabs)(int, DP_ClassicDab *, void *),
-                             int dabs_count, void *dabs_user);
+DP_Message *DP_msg_draw_dabs_classic_new(unsigned int context_id, uint8_t flags,
+                                         uint16_t layer, int32_t x, int32_t y,
+                                         uint32_t color, uint8_t mode,
+                                         void (*set_dabs)(int, DP_ClassicDab *,
+                                                          void *),
+                                         int dabs_count, void *dabs_user);
 
 DP_Message *DP_msg_draw_dabs_classic_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
@@ -1909,6 +1911,8 @@ DP_Message *DP_msg_draw_dabs_classic_parse(unsigned int context_id,
                                            DP_TextReader *reader);
 
 DP_MsgDrawDabsClassic *DP_msg_draw_dabs_classic_cast(DP_Message *msg);
+
+uint8_t DP_msg_draw_dabs_classic_flags(const DP_MsgDrawDabsClassic *mddc);
 
 uint16_t DP_msg_draw_dabs_classic_layer(const DP_MsgDrawDabsClassic *mddc);
 
@@ -1936,12 +1940,12 @@ int DP_msg_draw_dabs_classic_dabs_count(const DP_MsgDrawDabsClassic *mddc);
  * but the fields all have integer precision.
  */
 
-#define DP_MSG_DRAW_DABS_PIXEL_STATIC_LENGTH 15
+#define DP_MSG_DRAW_DABS_PIXEL_STATIC_LENGTH 16
 
 #define DP_MSG_DRAW_DABS_PIXEL_DABS_MIN_COUNT 1
-#define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX_COUNT 16380
+#define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX_COUNT 16379
 
-#define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX 16380
+#define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX 16379
 
 typedef struct DP_PixelDab DP_PixelDab;
 
@@ -1961,11 +1965,12 @@ const DP_PixelDab *DP_pixel_dab_at(const DP_PixelDab *pd, int i);
 
 typedef struct DP_MsgDrawDabsPixel DP_MsgDrawDabsPixel;
 
-DP_Message *
-DP_msg_draw_dabs_pixel_new(unsigned int context_id, uint16_t layer, int32_t x,
-                           int32_t y, uint32_t color, uint8_t mode,
-                           void (*set_dabs)(int, DP_PixelDab *, void *),
-                           int dabs_count, void *dabs_user);
+DP_Message *DP_msg_draw_dabs_pixel_new(unsigned int context_id, uint8_t flags,
+                                       uint16_t layer, int32_t x, int32_t y,
+                                       uint32_t color, uint8_t mode,
+                                       void (*set_dabs)(int, DP_PixelDab *,
+                                                        void *),
+                                       int dabs_count, void *dabs_user);
 
 DP_Message *DP_msg_draw_dabs_pixel_deserialize(unsigned int context_id,
                                                const unsigned char *buffer,
@@ -1975,6 +1980,8 @@ DP_Message *DP_msg_draw_dabs_pixel_parse(unsigned int context_id,
                                          DP_TextReader *reader);
 
 DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_cast(DP_Message *msg);
+
+uint8_t DP_msg_draw_dabs_pixel_flags(const DP_MsgDrawDabsPixel *mddp);
 
 uint16_t DP_msg_draw_dabs_pixel_layer(const DP_MsgDrawDabsPixel *mddp);
 
@@ -2000,10 +2007,12 @@ int DP_msg_draw_dabs_pixel_dabs_count(const DP_MsgDrawDabsPixel *mddp);
 
 #define DP_MSG_DRAW_DABS_PIXEL_SQUARE_STATIC_LENGTH 0
 
-DP_Message *DP_msg_draw_dabs_pixel_square_new(
-    unsigned int context_id, uint16_t layer, int32_t x, int32_t y,
-    uint32_t color, uint8_t mode, void (*set_dabs)(int, DP_PixelDab *, void *),
-    int dabs_count, void *dabs_user);
+DP_Message *
+DP_msg_draw_dabs_pixel_square_new(unsigned int context_id, uint8_t flags,
+                                  uint16_t layer, int32_t x, int32_t y,
+                                  uint32_t color, uint8_t mode,
+                                  void (*set_dabs)(int, DP_PixelDab *, void *),
+                                  int dabs_count, void *dabs_user);
 
 DP_Message *DP_msg_draw_dabs_pixel_square_deserialize(
     unsigned int context_id, const unsigned char *buffer, size_t length);
@@ -2017,14 +2026,10 @@ DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg);
 /*
  * DP_MSG_DRAW_DABS_MYPAINT
  *
- * Draw MyPaint brush dabs
- *
- * If the highest bit (0x80) of the mode field is not set, it is
- * treated as the number of posterization colors. If it is set, the
- * first two bits decide the drawing mode of this stroke: 0x0 means
- * direct with Normal and Eraser mode, 0x1 means indirect with Normal
- * mode, 0x2 means indirect with Recolor mode and 0x3 means indirect
- * with Erase mode.
+ * Draw MyPaint brush dabs in "normal and eraser" mode, the regular
+ * mode of MyPaint brushes as used in MyPaint itself. Always uses
+ * direct painting mode. Other blend and indirect painting modes use
+ * the mypaintdabsblend message instead.
  */
 
 #define DP_MSG_DRAW_DABS_MYPAINT_STATIC_LENGTH 18
@@ -2059,12 +2064,11 @@ const DP_MyPaintDab *DP_mypaint_dab_at(const DP_MyPaintDab *mpd, int i);
 
 typedef struct DP_MsgDrawDabsMyPaint DP_MsgDrawDabsMyPaint;
 
-DP_Message *
-DP_msg_draw_dabs_mypaint_new(unsigned int context_id, uint16_t layer, int32_t x,
-                             int32_t y, uint32_t color, uint8_t lock_alpha,
-                             uint8_t colorize, uint8_t posterize, uint8_t mode,
-                             void (*set_dabs)(int, DP_MyPaintDab *, void *),
-                             int dabs_count, void *dabs_user);
+DP_Message *DP_msg_draw_dabs_mypaint_new(
+    unsigned int context_id, uint16_t layer, int32_t x, int32_t y,
+    uint32_t color, uint8_t lock_alpha, uint8_t colorize, uint8_t posterize,
+    uint8_t posterize_num, void (*set_dabs)(int, DP_MyPaintDab *, void *),
+    int dabs_count, void *dabs_user);
 
 DP_Message *DP_msg_draw_dabs_mypaint_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
@@ -2089,13 +2093,97 @@ uint8_t DP_msg_draw_dabs_mypaint_colorize(const DP_MsgDrawDabsMyPaint *mddmp);
 
 uint8_t DP_msg_draw_dabs_mypaint_posterize(const DP_MsgDrawDabsMyPaint *mddmp);
 
-uint8_t DP_msg_draw_dabs_mypaint_mode(const DP_MsgDrawDabsMyPaint *mddmp);
+uint8_t
+DP_msg_draw_dabs_mypaint_posterize_num(const DP_MsgDrawDabsMyPaint *mddmp);
 
 const DP_MyPaintDab *
 DP_msg_draw_dabs_mypaint_dabs(const DP_MsgDrawDabsMyPaint *mddmp,
                               int *out_count);
 
 int DP_msg_draw_dabs_mypaint_dabs_count(const DP_MsgDrawDabsMyPaint *mddmp);
+
+
+/*
+ * DP_MSG_DRAW_DABS_MYPAINT_BLEND
+ *
+ * Draw MyPaint brush dabs with single blend mode. Used for cases
+ * where the regular MyPaint blending with "normal and eraser" mode is
+ * unsuitable.
+ */
+
+#define DP_MSG_DRAW_DABS_MYPAINT_BLEND_STATIC_LENGTH 16
+
+#define DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MIN_COUNT 1
+#define DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MAX_COUNT 8189
+
+#define DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MAX 8189
+
+typedef struct DP_MyPaintBlendDab DP_MyPaintBlendDab;
+
+void DP_mypaint_blend_dab_init(DP_MyPaintBlendDab *mpbds, int i, int8_t x,
+                               int8_t y, uint16_t size, uint8_t hardness,
+                               uint8_t opacity, uint8_t angle,
+                               uint8_t aspect_ratio);
+
+int8_t DP_mypaint_blend_dab_x(const DP_MyPaintBlendDab *mpbd);
+
+int8_t DP_mypaint_blend_dab_y(const DP_MyPaintBlendDab *mpbd);
+
+uint16_t DP_mypaint_blend_dab_size(const DP_MyPaintBlendDab *mpbd);
+
+uint8_t DP_mypaint_blend_dab_hardness(const DP_MyPaintBlendDab *mpbd);
+
+uint8_t DP_mypaint_blend_dab_opacity(const DP_MyPaintBlendDab *mpbd);
+
+uint8_t DP_mypaint_blend_dab_angle(const DP_MyPaintBlendDab *mpbd);
+
+uint8_t DP_mypaint_blend_dab_aspect_ratio(const DP_MyPaintBlendDab *mpbd);
+
+const DP_MyPaintBlendDab *
+DP_mypaint_blend_dab_at(const DP_MyPaintBlendDab *mpbd, int i);
+
+
+typedef struct DP_MsgDrawDabsMyPaintBlend DP_MsgDrawDabsMyPaintBlend;
+
+DP_Message *DP_msg_draw_dabs_mypaint_blend_new(
+    unsigned int context_id, uint8_t flags, uint16_t layer, int32_t x,
+    int32_t y, uint32_t color, uint8_t mode,
+    void (*set_dabs)(int, DP_MyPaintBlendDab *, void *), int dabs_count,
+    void *dabs_user);
+
+DP_Message *DP_msg_draw_dabs_mypaint_blend_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_draw_dabs_mypaint_blend_parse(unsigned int context_id,
+                                                 DP_TextReader *reader);
+
+DP_MsgDrawDabsMyPaintBlend *
+DP_msg_draw_dabs_mypaint_blend_cast(DP_Message *msg);
+
+uint8_t
+DP_msg_draw_dabs_mypaint_blend_flags(const DP_MsgDrawDabsMyPaintBlend *mddmpb);
+
+uint16_t
+DP_msg_draw_dabs_mypaint_blend_layer(const DP_MsgDrawDabsMyPaintBlend *mddmpb);
+
+int32_t
+DP_msg_draw_dabs_mypaint_blend_x(const DP_MsgDrawDabsMyPaintBlend *mddmpb);
+
+int32_t
+DP_msg_draw_dabs_mypaint_blend_y(const DP_MsgDrawDabsMyPaintBlend *mddmpb);
+
+uint32_t
+DP_msg_draw_dabs_mypaint_blend_color(const DP_MsgDrawDabsMyPaintBlend *mddmpb);
+
+uint8_t
+DP_msg_draw_dabs_mypaint_blend_mode(const DP_MsgDrawDabsMyPaintBlend *mddmpb);
+
+const DP_MyPaintBlendDab *
+DP_msg_draw_dabs_mypaint_blend_dabs(const DP_MsgDrawDabsMyPaintBlend *mddmpb,
+                                    int *out_count);
+
+int DP_msg_draw_dabs_mypaint_blend_dabs_count(
+    const DP_MsgDrawDabsMyPaintBlend *mddmpb);
 
 
 /*

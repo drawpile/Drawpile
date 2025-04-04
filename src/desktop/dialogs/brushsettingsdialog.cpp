@@ -259,7 +259,7 @@ struct BrushSettingsDialog::Private {
 		KisDoubleSliderSpinBox *baseValueSpinner;
 		widgets::MyPaintInput *inputs[MYPAINT_BRUSH_INPUTS_COUNT];
 		QLabel *constantLabel;
-		QLabel *indirectLabel;
+		QLabel *disabledLabel;
 	};
 
 	QPushButton *newBrushButton;
@@ -270,7 +270,6 @@ struct BrushSettingsDialog::Private {
 	QComboBox *brushTypeCombo;
 	QLabel *paintModeLabel;
 	QComboBox *paintModeCombo;
-	QLabel *brushModeLabel;
 	QComboBox *brushModeCombo;
 	QCheckBox *eraseModeBox;
 	QCheckBox *colorPickBox;
@@ -612,24 +611,28 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->paintModeLabel = new QLabel{tr("Paint Mode:"), widget};
 	d->paintModeCombo = new QComboBox{widget};
 	layout->addRow(d->paintModeLabel, d->paintModeCombo);
-	d->paintModeCombo->addItem(tr("Build-Up/Direct"), true);
-	d->paintModeCombo->addItem(tr("Wash/Indirect"), false);
+	d->paintModeCombo->addItem(
+		QIcon::fromTheme("drawpile_incremental_mode"), tr("Direct Build-Up"),
+		int(DP_PAINT_MODE_DIRECT));
+	d->paintModeCombo->addItem(
+		QIcon::fromTheme("drawpile_wash_mode"), tr("Indirect Wash"),
+		int(DP_PAINT_MODE_INDIRECT_WASH));
+	d->paintModeCombo->addItem(
+		QIcon::fromTheme("drawpile_soft_mode"),
+		tr("Indirect Soft (Drawpile 2.2)"), int(DP_PAINT_MODE_INDIRECT_SOFT));
+	d->paintModeCombo->addItem(
+		QIcon::fromTheme("drawpile_indirect_mode"),
+		tr("Indirect Build-Up (Drawpile 2.1)"),
+		int(DP_PAINT_MODE_INDIRECT_NORMAL));
 	connect(
 		d->paintModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		makeBrushChangeCallbackArg<int>([this](int index) {
-			if(d->brush.activeType() == brushes::ActiveBrush::CLASSIC) {
-				d->brush.classic().incremental =
-					d->paintModeCombo->itemData(index).toBool();
-			} else {
-				d->brush.myPaint().brush().incremental =
-					d->paintModeCombo->itemData(index).toBool();
-			}
+			d->brush.setPaintMode(d->paintModeCombo->itemData(index).toInt());
 			emitChange();
 		}));
 
-	d->brushModeLabel = new QLabel{tr("Blend Mode:"), widget};
 	d->brushModeCombo = new QComboBox{widget};
-	layout->addRow(d->brushModeLabel, d->brushModeCombo);
+	layout->addRow(tr("Blend Mode:"), d->brushModeCombo);
 	connect(
 		d->brushModeCombo, QOverload<int>::of(&QComboBox::activated),
 		makeBrushChangeCallbackArg<int>([this](int index) {
@@ -638,8 +641,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 				canvas::blendmode::adjustAlphaBehavior(
 					blendMode, d->preserveAlphaBox->isChecked());
 			}
-			d->brush.classic().setBlendMode(
-				blendMode, d->eraseModeBox->isChecked());
+			d->brush.setBlendMode(blendMode, d->eraseModeBox->isChecked());
 			emitChange();
 		}));
 
@@ -649,14 +651,9 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	connect(
 		d->preserveAlphaBox, &QCheckBox::clicked,
 		makeBrushChangeCallbackArg<bool>([this](bool checked) {
-			if(d->brush.activeType() == brushes::ActiveBrush::CLASSIC) {
-				int blendMode = d->brushModeCombo->currentData().toInt();
-				canvas::blendmode::adjustAlphaBehavior(blendMode, checked);
-				d->brush.classic().setBlendMode(
-					blendMode, d->eraseModeBox->isChecked());
-			} else {
-				d->brush.myPaint().brush().lock_alpha = checked;
-			}
+			int blendMode = d->brushModeCombo->currentData().toInt();
+			canvas::blendmode::adjustAlphaBehavior(blendMode, checked);
+			d->brush.setBlendMode(blendMode, d->eraseModeBox->isChecked());
 			emitChange();
 		}));
 
@@ -1139,16 +1136,23 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 		}
 	}
 
-	if(disableIndirectMyPaintSetting(setting)) {
-		page.indirectLabel =
-			new QLabel{tr("Not available in Indirect/Wash mode."), widget};
-		layout->addWidget(page.indirectLabel);
-	} else if(disableIndirectMyPaintInputs(setting)) {
-		page.indirectLabel = new QLabel{
-			tr("Dynamics not available in Indirect/Wash mode."), widget};
-		layout->addWidget(page.indirectLabel);
-	} else {
-		page.indirectLabel = nullptr;
+	switch(getMyPaintCondition(setting)) {
+	case MyPaintCondition::IndirectDisabled:
+		page.disabledLabel =
+			new QLabel(tr("Not available in indirect paint modes."));
+		break;
+	case MyPaintCondition::BlendOrIndirectDisabled:
+		page.disabledLabel =
+			new QLabel(tr("Not available in indirect paint modes or when using "
+						  "a blend mode other than Normal."));
+		break;
+	default:
+		page.disabledLabel = nullptr;
+	}
+
+	if(page.disabledLabel) {
+		page.disabledLabel->setWordWrap(true);
+		layout->addWidget(page.disabledLabel);
 	}
 
 	layout->addSpacerItem(
@@ -1236,8 +1240,6 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 {
 	const brushes::ClassicBrush &classic = d->brush.classic();
 
-	d->brushModeLabel->setVisible(true);
-	d->brushModeCombo->setVisible(true);
 	d->brushModeCombo->setModel(
 		getBrushBlendModesFor(classic.erase, d->automaticAlphaPreserve));
 	int brushMode = classic.erase ? classic.erase_mode : classic.brush_mode;
@@ -1257,8 +1259,10 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->colorPickBox->setVisible(true);
 
 	bool haveSmudge = classic.smudge.max > 0.0f;
-	d->paintModeCombo->setCurrentIndex(
-		haveSmudge || classic.incremental ? 0 : 1);
+	setComboBoxIndexByData(
+		d->paintModeCombo,
+		haveSmudge ? DP_PAINT_MODE_DIRECT : int(classic.paint_mode));
+	d->paintModeCombo->setCurrentIndex(haveSmudge ? 0 : classic.paint_mode);
 	d->paintModeCombo->setDisabled(haveSmudge);
 
 	d->spacingSpinner->setValue(classic.spacing * 100.0 + 0.5);
@@ -1324,16 +1328,22 @@ bool BrushSettingsDialog::updateClassicBrushDynamics(
 void BrushSettingsDialog::updateUiFromMyPaintBrush()
 {
 	const DP_MyPaintBrush &brush = d->brush.myPaint().constBrush();
-
-	d->brushModeLabel->setVisible(false);
-	d->brushModeCombo->setVisible(false);
 	d->colorPickBox->setVisible(false);
 	d->spacingSpinner->setVisible(false);
 
-	d->paintModeCombo->setCurrentIndex(brush.incremental ? 0 : 1);
+	d->brushModeCombo->setModel(
+		getBrushBlendModesFor(brush.erase, d->automaticAlphaPreserve));
+	int brushMode = brush.erase ? brush.erase_mode : brush.brush_mode;
+	int brushModeIndex =
+		searchBlendModeComboIndex(d->brushModeCombo, brushMode);
+	if(brushModeIndex != -1) {
+		d->brushModeCombo->setCurrentIndex(brushModeIndex);
+	}
+	d->preserveAlphaBox->setChecked(
+		canvas::blendmode::presentsAsAlphaPreserving(brushMode));
+
 	d->paintModeCombo->setEnabled(true);
 	d->eraseModeBox->setChecked(brush.erase);
-	d->preserveAlphaBox->setChecked(brush.lock_alpha);
 
 	for(int setting = 0; setting < MYPAINT_BRUSH_SETTINGS_COUNT; ++setting) {
 		if(shouldIncludeMyPaintSetting(setting)) {
@@ -1351,19 +1361,27 @@ void BrushSettingsDialog::updateMyPaintSettingPage(int setting)
 	Private::MyPaintPage &page = d->myPaintPages[setting];
 	page.baseValueSpinner->setValue(mapping.base_value);
 
-	bool incremental = mypaint.constBrush().incremental;
-	bool disableIndirectSetting = disableIndirectMyPaintSetting(setting);
-	bool disableIndirectInputs = disableIndirectMyPaintInputs(setting);
-	if(disableIndirectSetting) {
-		page.baseValueSpinner->setVisible(incremental);
+	bool enabled;
+	const DP_MyPaintBrush &brush = mypaint.constBrush();
+	switch(getMyPaintCondition(setting)) {
+	case MyPaintCondition::IndirectDisabled:
+		enabled = brush.paint_mode == DP_PAINT_MODE_DIRECT;
+		break;
+	case MyPaintCondition::BlendOrIndirectDisabled:
+		enabled = brush.paint_mode == DP_PAINT_MODE_DIRECT &&
+				  DP_mypaint_brush_blend_mode(&brush) == DP_BLEND_MODE_NORMAL;
+		break;
+	default:
+		enabled = true;
+		break;
 	}
+
+	page.baseValueSpinner->setVisible(enabled);
 
 	const MyPaintBrushSettingInfo *settingInfo =
 		mypaint_brush_setting_info(MyPaintBrushSetting(setting));
 	if(settingInfo->constant) {
-		if(disableIndirectSetting || disableIndirectInputs) {
-			page.constantLabel->setVisible(incremental);
-		}
+		page.constantLabel->setVisible(enabled);
 	} else {
 		for(int input = 0; input < MYPAINT_BRUSH_INPUTS_COUNT; ++input) {
 			widgets::MyPaintInput *inputWidget = page.inputs[input];
@@ -1374,14 +1392,12 @@ void BrushSettingsDialog::updateMyPaintSettingPage(int setting)
 				inputWidget->setControlPoints(mapping.inputs[input]);
 				mypaint.setCurve(setting, input, inputWidget->myPaintCurve());
 			}
-			if(disableIndirectSetting || disableIndirectInputs) {
-				inputWidget->setVisible(incremental);
-			}
+			inputWidget->setVisible(enabled);
 		}
 	}
 
-	if(disableIndirectSetting || disableIndirectInputs) {
-		page.indirectLabel->setVisible(!incremental);
+	if(page.disabledLabel) {
+		page.disabledLabel->setVisible(!enabled);
 	}
 }
 
@@ -1456,42 +1472,31 @@ bool BrushSettingsDialog::shouldIncludeMyPaintSetting(int setting)
 	}
 }
 
-bool BrushSettingsDialog::disableIndirectMyPaintSetting(int setting)
+BrushSettingsDialog::MyPaintCondition
+BrushSettingsDialog::getMyPaintCondition(int setting)
 {
 	switch(setting) {
 	// Opacity linearization is supposed to compensate for direct drawing mode,
 	// in indirect mode its behavior is just really wrong, so we disable it.
 	case MYPAINT_BRUSH_SETTING_OPAQUE_LINEARIZE:
-	// Indirect mode can't smudge, affect alpha or change color along the way.
+	// Indirect mode can't smudge.
 	case MYPAINT_BRUSH_SETTING_SMUDGE:
 	case MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH:
 	case MYPAINT_BRUSH_SETTING_SMUDGE_RADIUS_LOG:
-	case MYPAINT_BRUSH_SETTING_ERASER:
-	case MYPAINT_BRUSH_SETTING_LOCK_ALPHA:
-	case MYPAINT_BRUSH_SETTING_COLORIZE:
 	case MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH_LOG:
 	case MYPAINT_BRUSH_SETTING_SMUDGE_BUCKET:
 	case MYPAINT_BRUSH_SETTING_SMUDGE_TRANSPARENCY:
+		return MyPaintCondition::IndirectDisabled;
+	// Indirect mode also can't use multiple blend modes, nor can you use them
+	// when you picked some non-Normal blend mode, since you get that instead.
+	case MYPAINT_BRUSH_SETTING_ERASER:
+	case MYPAINT_BRUSH_SETTING_LOCK_ALPHA:
+	case MYPAINT_BRUSH_SETTING_COLORIZE:
 	case MYPAINT_BRUSH_SETTING_POSTERIZE:
 	case MYPAINT_BRUSH_SETTING_POSTERIZE_NUM:
-		return true;
+		return MyPaintCondition::BlendOrIndirectDisabled;
 	default:
-		return false;
-	}
-}
-
-bool BrushSettingsDialog::disableIndirectMyPaintInputs(int setting)
-{
-	switch(setting) {
-	// Indirect mode can't change color along the way.
-	case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_H:
-	case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_L:
-	case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSL_S:
-	case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_V:
-	case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSV_S:
-		return true;
-	default:
-		return false;
+		return MyPaintCondition::AlwaysEnabled;
 	}
 }
 

@@ -517,27 +517,21 @@ static int preview_dabs_blend_mode(DP_Message *msg)
         return DP_msg_draw_dabs_pixel_mode(DP_message_internal(msg));
     case DP_MSG_DRAW_DABS_MYPAINT: {
         DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
-        int blend_mode;
-        DP_mypaint_brush_mode_extract(DP_msg_draw_dabs_mypaint_mode(mddmp),
-                                      &blend_mode, NULL, NULL);
-        if (blend_mode == DP_BLEND_MODE_NORMAL_AND_ERASER) {
-            if (DP_msg_draw_dabs_mypaint_lock_alpha(mddmp) == UINT8_MAX) {
-                return DP_BLEND_MODE_RECOLOR;
-            }
-            else if (DP_msg_draw_dabs_mypaint_colorize(mddmp) == UINT8_MAX) {
-                return DP_BLEND_MODE_COLOR;
-            }
-            else if (DP_msg_draw_dabs_mypaint_color(mddmp) & 0xff000000u) {
-                return DP_BLEND_MODE_NORMAL;
-            }
-            else {
-                return DP_BLEND_MODE_ERASE;
-            }
+        if (DP_msg_draw_dabs_mypaint_lock_alpha(mddmp) == UINT8_MAX) {
+            return DP_BLEND_MODE_RECOLOR;
+        }
+        else if (DP_msg_draw_dabs_mypaint_colorize(mddmp) == UINT8_MAX) {
+            return DP_BLEND_MODE_COLOR;
+        }
+        else if (DP_msg_draw_dabs_mypaint_color(mddmp) & 0xff000000u) {
+            return DP_BLEND_MODE_NORMAL;
         }
         else {
-            return blend_mode;
+            return DP_BLEND_MODE_ERASE;
         }
     }
+    case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
+        return DP_msg_draw_dabs_mypaint_blend_mode(DP_message_internal(msg));
     default:
         DP_UNREACHABLE();
     }
@@ -562,7 +556,7 @@ static void preview_dabs_render(DP_Preview *pv, DP_DrawContext *dc,
             params.origin_x = DP_msg_draw_dabs_classic_x(mddc);
             params.origin_y = DP_msg_draw_dabs_classic_y(mddc);
             params.color = DP_msg_draw_dabs_classic_color(mddc);
-            params.indirect = DP_msg_draw_dabs_classic_indirect(mddc);
+            params.paint_mode = DP_msg_draw_dabs_classic_paint_mode(mddc);
             params.classic.dabs =
                 DP_msg_draw_dabs_classic_dabs(mddc, &params.dab_count);
             break;
@@ -573,7 +567,7 @@ static void preview_dabs_render(DP_Preview *pv, DP_DrawContext *dc,
             params.origin_x = DP_msg_draw_dabs_pixel_x(mddp);
             params.origin_y = DP_msg_draw_dabs_pixel_y(mddp);
             params.color = DP_msg_draw_dabs_pixel_color(mddp);
-            params.indirect = DP_msg_draw_dabs_pixel_indirect(mddp);
+            params.paint_mode = DP_msg_draw_dabs_pixel_paint_mode(mddp);
             params.pixel.dabs =
                 DP_msg_draw_dabs_pixel_dabs(mddp, &params.dab_count);
             break;
@@ -583,21 +577,23 @@ static void preview_dabs_render(DP_Preview *pv, DP_DrawContext *dc,
             params.origin_x = DP_msg_draw_dabs_mypaint_x(mddmp);
             params.origin_y = DP_msg_draw_dabs_mypaint_y(mddmp);
             params.color = DP_msg_draw_dabs_mypaint_color(mddmp);
+            params.paint_mode = DP_PAINT_MODE_DIRECT;
             params.mypaint.dabs =
                 DP_msg_draw_dabs_mypaint_dabs(mddmp, &params.dab_count);
             params.mypaint.lock_alpha = 0;
             params.mypaint.colorize = 0;
             params.mypaint.posterize = 0;
             params.mypaint.posterize_num = 0;
-            DP_mypaint_brush_mode_extract(DP_msg_draw_dabs_mypaint_mode(mddmp),
-                                          NULL, &params.indirect, NULL);
             break;
         }
+        case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
+            DP_warn("TODO: mypaint blend");
+            DP_FALLTHROUGH();
         default:
             continue;
         }
 
-        if (params.indirect) {
+        if (DP_paint_mode_indirect(params.paint_mode, &params.blend_mode)) {
             if (!sub_tlc) {
                 sub_tlc = DP_transient_layer_content_new_init(
                     DP_transient_layer_content_width(tlc),
@@ -605,7 +601,6 @@ static void preview_dabs_render(DP_Preview *pv, DP_DrawContext *dc,
                 sub_opacity = DP_channel8_to_15(
                     DP_uint32_to_uint8((params.color & 0xff000000u) >> 24u));
             }
-            params.blend_mode = DP_BLEND_MODE_ALPHA_DARKEN;
         }
         else {
             params.blend_mode = DP_BLEND_MODE_NORMAL;
@@ -615,7 +610,9 @@ static void preview_dabs_render(DP_Preview *pv, DP_DrawContext *dc,
         params.type = (int)type;
         params.origin_x += offset_x;
         params.origin_y += offset_y;
-        DP_paint_draw_dabs(dc, NULL, &params, params.indirect ? sub_tlc : tlc);
+        DP_paint_draw_dabs(dc, NULL, &params,
+                           params.paint_mode == DP_PAINT_MODE_DIRECT ? tlc
+                                                                     : sub_tlc);
     }
 
     if (sub_tlc) {

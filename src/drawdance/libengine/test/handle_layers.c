@@ -197,13 +197,14 @@ static void set_pixel_dab(DP_UNUSED int count, DP_PixelDab *dabs,
 }
 
 static void add_draw_dabs_pixel_square(DP_Output *output, DP_CanvasHistory *ch,
-                                       DP_DrawContext *dc, uint16_t layer,
-                                       int32_t x, int32_t y, uint32_t color,
-                                       uint8_t mode)
+                                       DP_DrawContext *dc, uint8_t flags,
+                                       uint16_t layer, int32_t x, int32_t y,
+                                       uint32_t color, uint8_t mode)
 {
     add_message(output, ch, dc,
-                DP_msg_draw_dabs_pixel_square_new(1, layer, x, y, color, mode,
-                                                  set_pixel_dab, 1, NULL));
+                DP_msg_draw_dabs_pixel_square_new(1, flags, layer, x, y, color,
+                                                  mode, set_pixel_dab, 1,
+                                                  NULL));
 }
 
 static void add_pen_up(DP_Output *output, DP_CanvasHistory *ch,
@@ -257,15 +258,16 @@ static void handle_layers(DP_Output *output, DP_CanvasHistory *ch,
     dump_layers(output, ch, "resize layers");
 
     add_undo_point(output, ch, dc);
-    add_draw_dabs_pixel_square(output, ch, dc, 261, 0, 0, 0x00abcdef,
-                               DP_BLEND_MODE_SUBTRACT);
+    add_draw_dabs_pixel_square(output, ch, dc, (uint8_t)DP_PAINT_MODE_DIRECT,
+                               261, 0, 0, 0x00abcdef, DP_BLEND_MODE_SUBTRACT);
     dump_layers(output, ch, "draw dab in direct mode");
     add_pen_up(output, ch, dc);
     dump_layers(output, ch, "pen up in direct mode");
 
     add_undo_point(output, ch, dc);
-    add_draw_dabs_pixel_square(output, ch, dc, 261, 0, 0, 0x7fabcdef,
-                               DP_BLEND_MODE_SCREEN);
+    add_draw_dabs_pixel_square(output, ch, dc,
+                               (uint8_t)DP_PAINT_MODE_INDIRECT_WASH, 261, 0, 0,
+                               0x7fabcdef, DP_BLEND_MODE_SCREEN);
     dump_layers(output, ch, "draw dab in indirect mode");
     add_pen_up(output, ch, dc);
     dump_layers(output, ch, "pen up in indirect mode");

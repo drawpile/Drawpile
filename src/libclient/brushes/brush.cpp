@@ -37,11 +37,11 @@ ClassicBrush::ClassicBrush()
 		0,
 		{0.0f, 0.0f, 0.0f, 1.0f},
 		DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND,
+		DP_PAINT_MODE_DIRECT,
 		DP_BLEND_MODE_NORMAL,
 		DP_BLEND_MODE_ERASE,
 		false,
 		true,
-		false,
 		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
@@ -64,6 +64,15 @@ bool ClassicBrush::equalPreset(
 		   stabilizationMode == other.stabilizationMode &&
 		   stabilizerSampleCount == other.stabilizerSampleCount &&
 		   smoothing == other.smoothing;
+}
+
+void ClassicBrush::setPaintMode(int paintMode)
+{
+	if(canvas::paintmode::isValidPaintMode(paintMode)) {
+		paint_mode = DP_PaintMode(paintMode);
+	} else {
+		qWarning("Invalid paint mode %d", paintMode);
+	}
 }
 
 void ClassicBrush::setBlendMode(int blendMode, bool isErase)
@@ -172,7 +181,11 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.spacing = o["spacing"].toDouble();
 	b.resmudge = o["resmudge"].toInt();
 
-	b.incremental = !o["indirect"].toBool();
+	b.paint_mode = canvas::paintmode::fromSettingName(
+		o.value(QStringLiteral("paintmode")).toString(),
+		o.value(QStringLiteral("indirect")).toBool()
+			? DP_PAINT_MODE_INDIRECT_WASH
+			: DP_PAINT_MODE_DIRECT);
 	b.colorpick = o["colorpick"].toBool();
 
 	b.size_dynamic = dynamicFromJson(o, QStringLiteral("size"));
@@ -294,7 +307,11 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 	spacing = settings["spacing"].toDouble();
 	resmudge = settings["resmudge"].toInt();
 
-	incremental = !settings["indirect"].toBool();
+	paint_mode = canvas::paintmode::fromSettingName(
+		settings.value(QStringLiteral("paintmode")).toString(),
+		settings.value(QStringLiteral("indirect")).toBool()
+			? DP_PAINT_MODE_INDIRECT_WASH
+			: DP_PAINT_MODE_DIRECT);
 	colorpick = settings["colorpick"].toBool();
 	size_dynamic = dynamicFromJson(settings, QStringLiteral("size"));
 	m_lastSizeDynamicType =
@@ -376,8 +393,9 @@ QJsonObject ClassicBrush::settingsToJson() const
 	if(resmudge > 0)
 		o["resmudge"] = resmudge;
 
-	if(!incremental)
-		o["indirect"] = true;
+	o[QStringLiteral("paintmode")] = canvas::paintmode::settingName(paint_mode);
+	o[QStringLiteral("indirect")] = paint_mode != DP_PAINT_MODE_DIRECT;
+
 	if(colorpick)
 		o["colorpick"] = true;
 	dynamicToJson(
@@ -476,12 +494,17 @@ void ClassicBrush::dynamicToJson(
 
 
 MyPaintBrush::MyPaintBrush()
-	: m_brush{{0.0f, 0.0f, 0.0f, 1.0f}, false, false, true}
-	, m_settings{nullptr}
-	, m_stabilizationMode{Stabilizer}
-	, m_stabilizerSampleCount{0}
-	, m_smoothing{0}
-	, m_curves{}
+	: m_brush(
+		  {{0.0f, 0.0f, 0.0f, 1.0f},
+		   DP_PAINT_MODE_DIRECT,
+		   DP_BLEND_MODE_NORMAL,
+		   DP_BLEND_MODE_ERASE,
+		   false})
+	, m_settings(nullptr)
+	, m_stabilizationMode(Stabilizer)
+	, m_stabilizerSampleCount(0)
+	, m_smoothing(0)
+	, m_curves()
 {
 }
 
@@ -570,6 +593,32 @@ const DP_MyPaintSettings &MyPaintBrush::constSettings() const
 	return m_settings ? *m_settings : getDefaultSettings();
 }
 
+void MyPaintBrush::setPaintMode(int paintMode)
+{
+	if(canvas::paintmode::isValidPaintMode(paintMode)) {
+		m_brush.paint_mode = DP_PaintMode(paintMode);
+	} else {
+		qWarning("Invalid paint mode %d", paintMode);
+	}
+}
+
+void MyPaintBrush::setBlendMode(int blendMode, bool isErase)
+{
+	if(isErase) {
+		if(canvas::blendmode::isValidEraseMode(blendMode)) {
+			m_brush.erase_mode = DP_BlendMode(blendMode);
+		} else {
+			qWarning("Invalid brush erase mode %d", blendMode);
+		}
+	} else {
+		if(canvas::blendmode::isValidBrushMode(blendMode)) {
+			m_brush.brush_mode = DP_BlendMode(blendMode);
+		} else {
+			qWarning("Invalid brush blend mode %d", blendMode);
+		}
+	}
+}
+
 MyPaintCurve MyPaintBrush::getCurve(int setting, int input) const
 {
 	return m_curves.value({setting, input});
@@ -602,13 +651,20 @@ QJsonObject MyPaintBrush::toJson() const
 		{"version", 1},
 		{"settings",
 		 QJsonObject{
-			 {"lock_alpha", m_brush.lock_alpha},
+			 {"blend", canvas::blendmode::oraName(m_brush.brush_mode)},
+			 {"blenderase", canvas::blendmode::oraName(m_brush.erase_mode)},
+			 {"blendalpha",
+			  canvas::blendmode::presentsAsAlphaPreserving(m_brush.brush_mode)},
+			 {"blenderasealpha",
+			  canvas::blendmode::presentsAsAlphaPreserving(m_brush.erase_mode)},
 			 {"erase", m_brush.erase},
-			 {"indirect", !m_brush.incremental},
 			 {"stabilizationmode", m_stabilizationMode},
 			 {"stabilizer", m_stabilizerSampleCount},
 			 {"smoothing", m_smoothing},
 			 {"mapping", mappingToJson()},
+			 // Backward-compatibility.
+			 {"lock_alpha", m_brush.brush_mode == DP_BLEND_MODE_RECOLOR},
+			 {"indirect", m_brush.paint_mode != DP_PAINT_MODE_DIRECT},
 		 }},
 	};
 }
@@ -616,12 +672,19 @@ QJsonObject MyPaintBrush::toJson() const
 void MyPaintBrush::exportToJson(QJsonObject &json) const
 {
 	json["drawpile_settings"] = QJsonObject{
-		{"lock_alpha", m_brush.lock_alpha},
+		{"blend", canvas::blendmode::oraName(m_brush.brush_mode)},
+		{"blenderase", canvas::blendmode::oraName(m_brush.erase_mode)},
+		{"blendalpha",
+		 canvas::blendmode::presentsAsAlphaPreserving(m_brush.brush_mode)},
+		{"blenderasealpha",
+		 canvas::blendmode::presentsAsAlphaPreserving(m_brush.erase_mode)},
 		{"erase", m_brush.erase},
-		{"indirect", !m_brush.incremental},
 		{"stabilizationmode", m_stabilizationMode},
 		{"stabilizer", m_stabilizerSampleCount},
 		{"smoothing", m_smoothing},
+		// Backward-compatibility.
+		{"lock_alpha", m_brush.brush_mode == DP_BLEND_MODE_RECOLOR},
+		{"indirect", m_brush.paint_mode != DP_PAINT_MODE_DIRECT},
 	};
 	json["settings"] = mappingToJson();
 }
@@ -635,9 +698,41 @@ MyPaintBrush MyPaintBrush::fromJson(const QJsonObject &json)
 	}
 
 	const QJsonObject o = json["settings"].toObject();
-	b.m_brush.lock_alpha = o["lock_alpha"].toBool();
+
+	if(o.contains(QStringLiteral("blend"))) {
+		int brushMode = canvas::blendmode::fromOraName(
+			o.value(QStringLiteral("blend")).toString());
+		canvas::blendmode::adjustAlphaBehavior(
+			brushMode, o.value(QStringLiteral("blendalpha")).toBool());
+		b.m_brush.brush_mode = DP_BlendMode(brushMode);
+	} else if(o.value(QStringLiteral("lock_alpha")).toBool()) {
+		b.m_brush.brush_mode = DP_BLEND_MODE_RECOLOR;
+	} else {
+		b.m_brush.brush_mode = DP_BLEND_MODE_NORMAL;
+	}
+
+	if(o.contains(QStringLiteral("blenderase"))) {
+		int eraseMode = canvas::blendmode::fromOraName(
+			o.value(QStringLiteral("blenderase")).toString(),
+			DP_BLEND_MODE_ERASE);
+		canvas::blendmode::adjustAlphaBehavior(
+			eraseMode, o.value(QStringLiteral("blenderasealpha")).toBool());
+		b.m_brush.erase_mode = DP_BlendMode(eraseMode);
+	} else {
+		b.m_brush.erase_mode = DP_BLEND_MODE_ERASE;
+	}
+
+	if(o.contains(QStringLiteral("paintmode"))) {
+		b.m_brush.paint_mode = canvas::paintmode::fromSettingName(
+			o.value(QStringLiteral("paintmode")).toString(),
+			DP_PAINT_MODE_DIRECT);
+	} else if(o.value(QStringLiteral("indirect")).toBool()) {
+		b.m_brush.paint_mode = DP_PAINT_MODE_INDIRECT_WASH;
+	} else {
+		b.m_brush.paint_mode = DP_PAINT_MODE_DIRECT;
+	}
+
 	b.m_brush.erase = o["erase"].toBool();
-	b.m_brush.incremental = !o["indirect"].toBool();
 	b.loadJsonSettings(o["mapping"].toObject());
 
 	// If there's no Drawpile stabilizer defined, we get a sensible default
@@ -683,9 +778,42 @@ bool MyPaintBrush::fromExportJson(const QJsonObject &json)
 		}
 	}
 
-	m_brush.lock_alpha = drawpileSettings["lock_alpha"].toBool(false);
+	if(drawpileSettings.contains(QStringLiteral("blend"))) {
+		int brushMode = canvas::blendmode::fromOraName(
+			drawpileSettings.value(QStringLiteral("blend")).toString());
+		canvas::blendmode::adjustAlphaBehavior(
+			brushMode,
+			drawpileSettings.value(QStringLiteral("blendalpha")).toBool());
+		m_brush.brush_mode = DP_BlendMode(brushMode);
+	} else if(drawpileSettings.value(QStringLiteral("lock_alpha")).toBool()) {
+		m_brush.brush_mode = DP_BLEND_MODE_RECOLOR;
+	} else {
+		m_brush.brush_mode = DP_BLEND_MODE_NORMAL;
+	}
+
+	if(drawpileSettings.contains(QStringLiteral("blenderase"))) {
+		int eraseMode = canvas::blendmode::fromOraName(
+			drawpileSettings.value(QStringLiteral("blenderase")).toString(),
+			DP_BLEND_MODE_ERASE);
+		canvas::blendmode::adjustAlphaBehavior(
+			eraseMode,
+			drawpileSettings.value(QStringLiteral("blenderasealpha")).toBool());
+		m_brush.erase_mode = DP_BlendMode(eraseMode);
+	} else {
+		m_brush.erase_mode = DP_BLEND_MODE_ERASE;
+	}
+
+	if(drawpileSettings.contains(QStringLiteral("paintmode"))) {
+		m_brush.paint_mode = canvas::paintmode::fromSettingName(
+			drawpileSettings.value(QStringLiteral("paintmode")).toString(),
+			DP_PAINT_MODE_DIRECT);
+	} else if(drawpileSettings.value(QStringLiteral("indirect")).toBool()) {
+		m_brush.paint_mode = DP_PAINT_MODE_INDIRECT_WASH;
+	} else {
+		m_brush.paint_mode = DP_PAINT_MODE_DIRECT;
+	}
+
 	m_brush.erase = drawpileSettings["erase"].toBool(false);
-	m_brush.incremental = !drawpileSettings["indirect"].toBool(false);
 	m_stabilizationMode =
 		drawpileSettings["stabilizationmode"].toInt() == Smoothing ? Smoothing
 																   : Stabilizer;
@@ -997,6 +1125,37 @@ bool ActiveBrush::equalPreset(const ActiveBrush &other, bool inEraserSlot) const
 DP_BrushShape ActiveBrush::shape() const
 {
 	return m_activeType == CLASSIC ? m_classic.shape : DP_BRUSH_SHAPE_MYPAINT;
+}
+
+DP_PaintMode ActiveBrush::paintMode() const
+{
+	return m_activeType == CLASSIC ? m_classic.paint_mode
+								   : m_myPaint.constBrush().paint_mode;
+}
+
+void ActiveBrush::setPaintMode(int paintMode)
+{
+	if(m_activeType == CLASSIC) {
+		m_classic.setPaintMode(paintMode);
+	} else {
+		m_myPaint.setPaintMode(paintMode);
+	}
+}
+
+DP_BlendMode ActiveBrush::blendMode() const
+{
+	return m_activeType == CLASSIC
+			   ? DP_classic_brush_blend_mode(&m_classic)
+			   : DP_mypaint_brush_blend_mode(&m_myPaint.constBrush());
+}
+
+void ActiveBrush::setBlendMode(int blendMode, bool isErase)
+{
+	if(m_activeType == CLASSIC) {
+		m_classic.setBlendMode(blendMode, isErase);
+	} else {
+		m_myPaint.setBlendMode(blendMode, isErase);
+	}
 }
 
 bool ActiveBrush::isEraser() const

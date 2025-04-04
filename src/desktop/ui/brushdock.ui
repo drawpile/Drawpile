@@ -158,16 +158,12 @@
       </widget>
      </item>
      <item>
-      <widget class="widgets::GroupedToolButton" name="modeIncremental">
+      <widget class="widgets::GroupedToolButton" name="paintMode">
        <property name="toolTip">
         <string>Direct drawing mode</string>
        </property>
-       <property name="icon">
-        <iconset theme="drawpile_incremental_mode">
-         <normaloff>theme:drawpile_incremental_mode.svg</normaloff>theme:drawpile_incremental_mode.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
        </property>
       </widget>
      </item>
@@ -478,7 +474,7 @@
   <tabstop>blendmode</tabstop>
   <tabstop>modeColorpick</tabstop>
   <tabstop>modeEraser</tabstop>
-  <tabstop>modeIncremental</tabstop>
+  <tabstop>paintMode</tabstop>
   <tabstop>brushsizeBox</tabstop>
   <tabstop>pressureSize</tabstop>
   <tabstop>radiusLogarithmicBox</tabstop>
