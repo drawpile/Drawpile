@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="16"
+   width="16"
+   version="1.1"
+   id="svg4"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient5">
+      <stop
+         style="stop-color:#232629;stop-opacity:1;"
+         offset="0"
+         id="stop6" />
+      <stop
+         style="stop-color:#232629;stop-opacity:0;"
+         offset="1"
+         id="stop7" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4">
+      <stop
+         style="stop-color:#232629;stop-opacity:1;"
+         offset="0"
+         id="stop4" />
+      <stop
+         style="stop-color:#232629;stop-opacity:0;"
+         offset="1"
+         id="stop5" />
+    </linearGradient>
+    <radialGradient
+       xlink:href="#linearGradient4"
+       id="radialGradient5"
+       cx="6.5"
+       cy="9.5"
+       fx="6.5"
+       fy="9.5"
+       r="4.5"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       xlink:href="#linearGradient5"
+       id="radialGradient7"
+       cx="9.5"
+       cy="6.5"
+       fx="9.5"
+       fy="6.5"
+       r="4.5"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <circle
+     style="fill:url(#radialGradient5);fill-opacity:1;stroke-width:2.86187"
+     id="path4"
+     cx="6.5"
+     cy="9.5"
+     r="4.5" />
+  <circle
+     style="fill:url(#radialGradient7);fill-opacity:1;stroke-width:2.86187"
+     id="path4-6"
+     cx="9.5"
+     cy="6.5"
+     r="4.5" />
+</svg>

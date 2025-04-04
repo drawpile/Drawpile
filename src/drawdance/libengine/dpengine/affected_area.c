@@ -20,7 +20,6 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "affected_area.h"
-#include "brush.h"
 #include "canvas_state.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -144,6 +143,23 @@ static DP_Rect mypaint_dabs_bounds(DP_MsgDrawDabsMyPaint *mddmp)
         const DP_MyPaintDab *dab = DP_mypaint_dab_at(dabs, i);
         subpixel_dabs_update(&s, DP_mypaint_dab_x(dab), DP_mypaint_dab_y(dab),
                              DP_mypaint_dab_size(dab));
+    }
+    return s.bounds;
+}
+
+static DP_Rect mypaint_blend_dabs_bounds(DP_MsgDrawDabsMyPaintBlend *mddmpb)
+{
+    struct SubpixelDabs s =
+        subpixel_dabs_init(DP_msg_draw_dabs_mypaint_blend_x(mddmpb),
+                           DP_msg_draw_dabs_mypaint_blend_y(mddmpb));
+    int count;
+    const DP_MyPaintBlendDab *dabs =
+        DP_msg_draw_dabs_mypaint_blend_dabs(mddmpb, &count);
+    for (int i = 0; i < count; ++i) {
+        const DP_MyPaintBlendDab *dab = DP_mypaint_blend_dab_at(dabs, i);
+        subpixel_dabs_update(&s, DP_mypaint_blend_dab_x(dab),
+                             DP_mypaint_blend_dab_y(dab),
+                             DP_mypaint_blend_dab_size(dab));
     }
     return s.bounds;
 }
@@ -334,7 +350,9 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         DP_MsgDrawDabsClassic *mddc = DP_msg_draw_dabs_classic_cast(msg);
         int layer_id = DP_msg_draw_dabs_classic_layer(mddc);
         DP_Rect bounds = classic_dabs_bounds(mddc);
-        if (aia_or_null && DP_msg_draw_dabs_classic_indirect(mddc)) {
+        if (aia_or_null
+            && DP_msg_draw_dabs_classic_paint_mode(mddc)
+                   != DP_PAINT_MODE_DIRECT) {
             return update_indirect_area(aia_or_null, DP_message_context_id(msg),
                                         layer_id, bounds);
         }
@@ -347,7 +365,9 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
         int layer_id = DP_msg_draw_dabs_pixel_layer(mddp);
         DP_Rect bounds = pixel_dabs_bounds(mddp);
-        if (aia_or_null && DP_msg_draw_dabs_pixel_indirect(mddp)) {
+        if (aia_or_null
+            && DP_msg_draw_dabs_pixel_paint_mode(mddp)
+                   != DP_PAINT_MODE_DIRECT) {
             return update_indirect_area(aia_or_null, DP_message_context_id(msg),
                                         layer_id, bounds);
         }
@@ -359,9 +379,15 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
         int layer_id = DP_msg_draw_dabs_mypaint_layer(mddmp);
         DP_Rect bounds = mypaint_dabs_bounds(mddmp);
+        return make_pixels(layer_id, bounds);
+    }
+    case DP_MSG_DRAW_DABS_MYPAINT_BLEND: {
+        DP_MsgDrawDabsMyPaintBlend *mddmpb = DP_message_internal(msg);
+        int layer_id = DP_msg_draw_dabs_mypaint_blend_layer(mddmpb);
+        DP_Rect bounds = mypaint_blend_dabs_bounds(mddmpb);
         if (aia_or_null
-            && DP_mypaint_brush_mode_indirect(
-                DP_msg_draw_dabs_mypaint_mode(mddmp))) {
+            && DP_msg_draw_dabs_mypaint_blend_paint_mode(mddmpb)
+                   != DP_PAINT_MODE_DIRECT) {
             return update_indirect_area(aia_or_null, DP_message_context_id(msg),
                                         layer_id, bounds);
         }
