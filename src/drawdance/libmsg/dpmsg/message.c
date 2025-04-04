@@ -82,12 +82,12 @@ static size_t opaque_serialize_payload(DP_Message *msg, unsigned char *data)
     if (length != 0) {
         // Some GCC versions raise a bogus warning here.
 #if defined(__GNUC__)
-#   pragma GCC diagnostic push
-#   pragma GCC diagnostic ignored "-Warray-bounds"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Warray-bounds"
 #endif
         memcpy(data, om->body, length);
 #if defined(__GNUC__)
-#   pragma GCC diagnostic pop
+#    pragma GCC diagnostic pop
 #endif
     }
     return length;
@@ -364,19 +364,20 @@ DP_Message *DP_message_deserialize(const unsigned char *buf, size_t bufsize,
 }
 
 
-static bool has_alpha(uint32_t color)
-{
-    return color & 0xff000000;
-}
-
-bool DP_msg_draw_dabs_classic_indirect(DP_MsgDrawDabsClassic *mddc)
+int DP_msg_draw_dabs_classic_paint_mode(DP_MsgDrawDabsClassic *mddc)
 {
     DP_ASSERT(mddc);
-    return has_alpha(DP_msg_draw_dabs_classic_color(mddc));
+    return DP_msg_draw_dabs_classic_flags(mddc) & 0x3;
 }
 
-bool DP_msg_draw_dabs_pixel_indirect(DP_MsgDrawDabsPixel *mddp)
+int DP_msg_draw_dabs_pixel_paint_mode(DP_MsgDrawDabsPixel *mddp)
 {
     DP_ASSERT(mddp);
-    return has_alpha(DP_msg_draw_dabs_pixel_color(mddp));
+    return DP_msg_draw_dabs_pixel_flags(mddp) & 0x3;
+}
+
+int DP_msg_draw_dabs_mypaint_blend_paint_mode(DP_MsgDrawDabsMyPaintBlend *mddmb)
+{
+    DP_ASSERT(mddmb);
+    return DP_msg_draw_dabs_mypaint_blend_flags(mddmb) & 0x3;
 }

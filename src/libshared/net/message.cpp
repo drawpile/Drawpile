@@ -309,6 +309,7 @@ bool Message::shouldSmoothe() const
 	case DP_MSG_DRAW_DABS_PIXEL:
 	case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
 	case DP_MSG_DRAW_DABS_MYPAINT:
+	case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
 	case DP_MSG_MOVE_POINTER:
 		return true;
 	default:

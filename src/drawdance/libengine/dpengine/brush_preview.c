@@ -148,7 +148,7 @@ static DP_CanvasState *draw_foreground_dabs(DP_CanvasState *cs,
         cs = handle_preview_message_dec(
             cs, dc,
             DP_msg_draw_dabs_pixel_new(
-                0, 1, DP_int_to_int32(x), DP_int_to_int32(height / 2),
+                0, 0, 1, DP_int_to_int32(x), DP_int_to_int32(height / 2),
                 // Set the alpha to zero to draw in direct mode.
                 hsv_to_bgra(hue, 0.62f, 0.86f) & 0x00ffffffu,
                 DP_BLEND_MODE_NORMAL, set_preview_foreground_dab, 1, &d));
@@ -376,16 +376,18 @@ static DP_Message *get_preview_draw_dab_message(const DP_ClassicBrush *cb,
     switch (cb->shape) {
     case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
         return DP_msg_draw_dabs_pixel_new(
-            0, 1, DP_int_to_int32(width / 2), DP_int_to_int32(height / 2),
-            color, DP_BLEND_MODE_NORMAL, set_preview_pixel_dab, 1, (void *)cb);
+            0, (uint8_t)cb->paint_mode, 1, DP_int_to_int32(width / 2),
+            DP_int_to_int32(height / 2), color, DP_BLEND_MODE_NORMAL,
+            set_preview_pixel_dab, 1, (void *)cb);
     case DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE:
         return DP_msg_draw_dabs_pixel_square_new(
-            0, 1, DP_int_to_int32(width / 2), DP_int_to_int32(height / 2),
-            color, DP_BLEND_MODE_NORMAL, set_preview_pixel_dab, 1, (void *)cb);
+            0, (uint8_t)cb->paint_mode, 1, DP_int_to_int32(width / 2),
+            DP_int_to_int32(height / 2), color, DP_BLEND_MODE_NORMAL,
+            set_preview_pixel_dab, 1, (void *)cb);
     default:
         DP_ASSERT(cb->shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND);
         return DP_msg_draw_dabs_classic_new(
-            0, 1, DP_int_to_int32(width * 4 / 2),
+            0, (uint8_t)cb->paint_mode, 1, DP_int_to_int32(width * 4 / 2),
             DP_int_to_int32(height * 4 / 2), color, DP_BLEND_MODE_NORMAL,
             set_preview_classic_dab, 1, (void *)cb);
     }

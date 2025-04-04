@@ -109,6 +109,12 @@ private:
 		QPushButton *applyDistanceToAllButton;
 	};
 
+	enum class MyPaintCondition {
+		AlwaysEnabled,
+		IndirectDisabled,
+		BlendOrIndirectDisabled,
+	};
+
 	struct Private;
 	Private *d;
 
@@ -170,8 +176,7 @@ private:
 
 	static void setComboBoxIndexByData(QComboBox *combo, int data);
 	static bool shouldIncludeMyPaintSetting(int setting);
-	static bool disableIndirectMyPaintSetting(int setting);
-	static bool disableIndirectMyPaintInputs(int setting);
+	static MyPaintCondition getMyPaintCondition(int setting);
 
 	static QString getMyPaintInputTitle(int input);
 	static QString getMyPaintInputDescription(int input);

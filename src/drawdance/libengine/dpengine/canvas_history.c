@@ -707,6 +707,7 @@ static bool is_draw_dabs_message_type(DP_MessageType type)
     case DP_MSG_DRAW_DABS_PIXEL:
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
     case DP_MSG_DRAW_DABS_MYPAINT:
+    case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
         return true;
     default:
         return false;

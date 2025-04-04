@@ -20,7 +20,6 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "paint_engine.h"
-#include "brush.h"
 #include "canvas_diff.h"
 #include "canvas_history.h"
 #include "canvas_state.h"
@@ -399,9 +398,9 @@ static double get_classic_dabs_cost(DP_MsgDrawDabsClassic *mddc,
 {
     int count;
     const DP_ClassicDab *cds = DP_msg_draw_dabs_classic_dabs(mddc, &count);
-    double base_cost =
-        DP_dab_cost_classic(DP_msg_draw_dabs_classic_indirect(mddc),
-                            DP_msg_draw_dabs_classic_mode(mddc));
+    double base_cost = DP_dab_cost_classic(
+        DP_msg_draw_dabs_classic_paint_mode(mddc) != DP_PAINT_MODE_DIRECT,
+        DP_msg_draw_dabs_classic_mode(mddc));
     for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
         double size =
             DP_int_to_double(DP_classic_dab_size(DP_classic_dab_at(cds, i)));
@@ -415,7 +414,8 @@ static double get_pixel_dabs_cost(DP_MsgDrawDabsPixel *mddp, double dabs_cost)
 {
     int count;
     const DP_PixelDab *pds = DP_msg_draw_dabs_pixel_dabs(mddp, &count);
-    double base_cost = DP_dab_cost_pixel(DP_msg_draw_dabs_pixel_indirect(mddp),
+    double base_cost = DP_dab_cost_pixel(DP_msg_draw_dabs_pixel_paint_mode(mddp)
+                                             != DP_PAINT_MODE_DIRECT,
                                          DP_msg_draw_dabs_pixel_mode(mddp));
     for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
         double size = DP_pixel_dab_size(DP_pixel_dab_at(pds, i));
@@ -430,9 +430,9 @@ static double get_pixel_square_dabs_cost(DP_MsgDrawDabsPixel *mddp,
 {
     int count;
     const DP_PixelDab *pds = DP_msg_draw_dabs_pixel_dabs(mddp, &count);
-    double base_cost =
-        DP_dab_cost_pixel_square(DP_msg_draw_dabs_pixel_indirect(mddp),
-                                 DP_msg_draw_dabs_pixel_mode(mddp));
+    double base_cost = DP_dab_cost_pixel_square(
+        DP_msg_draw_dabs_pixel_paint_mode(mddp) != DP_PAINT_MODE_DIRECT,
+        DP_msg_draw_dabs_pixel_mode(mddp));
     for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
         double size = DP_pixel_dab_size(DP_pixel_dab_at(pds, i));
         double cost = base_cost * size * size;
@@ -446,13 +446,31 @@ static double get_mypaint_dabs_cost(DP_MsgDrawDabsMyPaint *mddmp,
 {
     int count;
     const DP_MyPaintDab *mpds = DP_msg_draw_dabs_mypaint_dabs(mddmp, &count);
-    double base_cost = DP_dab_cost_mypaint(
-        DP_mypaint_brush_mode_indirect(DP_msg_draw_dabs_mypaint_mode(mddmp)),
-        DP_msg_draw_dabs_mypaint_lock_alpha(mddmp),
-        DP_msg_draw_dabs_mypaint_colorize(mddmp),
-        DP_msg_draw_dabs_mypaint_posterize(mddmp));
+    double base_cost =
+        DP_dab_cost_mypaint(false, DP_msg_draw_dabs_mypaint_lock_alpha(mddmp),
+                            DP_msg_draw_dabs_mypaint_colorize(mddmp),
+                            DP_msg_draw_dabs_mypaint_posterize(mddmp));
     for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
         double size = DP_mypaint_dab_size(DP_mypaint_dab_at(mpds, i));
+        double cost = base_cost * size * size;
+        dabs_cost += cost;
+    }
+    return dabs_cost;
+}
+
+static double get_mypaint_blend_dabs_cost(DP_MsgDrawDabsMyPaintBlend *mddmpb,
+                                          double dabs_cost)
+{
+    int count;
+    const DP_MyPaintBlendDab *mpbds =
+        DP_msg_draw_dabs_mypaint_blend_dabs(mddmpb, &count);
+    double base_cost =
+        DP_dab_cost_mypaint(DP_msg_draw_dabs_mypaint_blend_paint_mode(mddmpb)
+                                != DP_PAINT_MODE_DIRECT,
+                            0, 0, 0);
+    for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
+        double size =
+            DP_mypaint_blend_dab_size(DP_mypaint_blend_dab_at(mpbds, i));
         double cost = base_cost * size * size;
         dabs_cost += cost;
     }
@@ -471,6 +489,8 @@ static double get_dabs_cost(DP_Message *msg, DP_MessageType type,
         return get_pixel_square_dabs_cost(DP_message_internal(msg), dabs_cost);
     case DP_MSG_DRAW_DABS_MYPAINT:
         return get_mypaint_dabs_cost(DP_message_internal(msg), dabs_cost);
+    case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
+        return get_mypaint_blend_dabs_cost(DP_message_internal(msg), dabs_cost);
     default:
         return MAX_MULTIDAB_COST + 1.0;
     }
