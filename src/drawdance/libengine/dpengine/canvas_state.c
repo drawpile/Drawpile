@@ -864,7 +864,7 @@ get_draw_dabs_classic_params(unsigned int context_id,
                                     DP_msg_draw_dabs_classic_y(mddc),
                                     DP_msg_draw_dabs_classic_color(mddc),
                                     DP_msg_draw_dabs_classic_mode(mddc),
-                                    DP_msg_draw_dabs_classic_indirect(mddc),
+                                    DP_msg_draw_dabs_classic_paint_mode(mddc),
                                     dab_count,
                                     {.classic = {dabs}}};
 }
@@ -882,7 +882,7 @@ get_draw_dabs_pixel_params(DP_MessageType type, unsigned int context_id,
                                     DP_msg_draw_dabs_pixel_y(mddp),
                                     DP_msg_draw_dabs_pixel_color(mddp),
                                     DP_msg_draw_dabs_pixel_mode(mddp),
-                                    DP_msg_draw_dabs_pixel_indirect(mddp),
+                                    DP_msg_draw_dabs_pixel_paint_mode(mddp),
                                     dab_count,
                                     {.pixel = {dabs}}};
 }
@@ -892,10 +892,10 @@ get_draw_dabs_mypaint_params(unsigned int context_id,
                              DP_MsgDrawDabsMyPaint *mddmp)
 {
     int blend_mode;
-    bool indirect;
+    int paint_mode;
     uint8_t posterize_num;
     DP_mypaint_brush_mode_extract(DP_msg_draw_dabs_mypaint_mode(mddmp),
-                                  &blend_mode, &indirect, &posterize_num);
+                                  &blend_mode, &paint_mode, &posterize_num);
     int dab_count;
     const DP_MyPaintDab *dabs =
         DP_msg_draw_dabs_mypaint_dabs(mddmp, &dab_count);
@@ -907,7 +907,7 @@ get_draw_dabs_mypaint_params(unsigned int context_id,
         DP_msg_draw_dabs_mypaint_y(mddmp),
         DP_msg_draw_dabs_mypaint_color(mddmp),
         blend_mode,
-        indirect,
+        paint_mode,
         dab_count,
         {.mypaint = {dabs, DP_msg_draw_dabs_mypaint_lock_alpha(mddmp),
                      DP_msg_draw_dabs_mypaint_colorize(mddmp),

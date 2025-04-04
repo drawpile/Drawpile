@@ -205,7 +205,8 @@ static void get_high_res_mask(DP_BrushStamp *stamp, double radius,
             int dist10 = DP_double_to_int((xx1 + yy0) * lut_scale);
             int dist11 = DP_double_to_int((xx1 + yy1) * lut_scale);
 
-            uint32_t acc = (dist00 < CLASSIC_LUT_SIZE ? (uint32_t)lut[dist00] : 0)
+            uint32_t acc =
+                (dist00 < CLASSIC_LUT_SIZE ? (uint32_t)lut[dist00] : 0)
                 + (dist01 < CLASSIC_LUT_SIZE ? (uint32_t)lut[dist01] : 0)
                 + (dist10 < CLASSIC_LUT_SIZE ? (uint32_t)lut[dist10] : 0)
                 + (dist11 < CLASSIC_LUT_SIZE ? (uint32_t)lut[dist11] : 0);
@@ -908,7 +909,7 @@ static void apply_mypaint_dab(DP_TransientLayerContent *tlc,
     if (indirect) {
         DP_transient_layer_content_brush_stamp_apply(
             tlc, context_id, pixel, DP_channel8_to_15(dab_opacity),
-            DP_BLEND_MODE_ALPHA_DARKEN, stamp);
+            DP_BLEND_MODE_COMPARE_DENSITY, stamp);
     }
     else {
         float opacity = DP_uint8_to_float(dab_opacity) / 255.0f;
@@ -946,7 +947,7 @@ static void draw_dabs_mypaint(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                               DP_TransientLayerContent *tlc)
 {
     unsigned int context_id = params->context_id;
-    bool indirect = params->indirect;
+    bool indirect = params->paint_mode != DP_PAINT_MODE_DIRECT;
     DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
     int dab_count = params->dab_count;
     const DP_MyPaintDab *dabs = params->mypaint.dabs;
@@ -1079,9 +1080,7 @@ DP_BrushStamp DP_paint_color_sampling_stamp_make(uint16_t *data, int diameter,
             for (int x = 0; x < diameter; ++x) {
                 double dist = (DP_square_double(x - radius) + yy) * lut_scale;
                 int i = DP_double_to_int(dist);
-                *d = i < CLASSIC_LUT_SIZE
-                       ? lut[i]
-                       : 0;
+                *d = i < CLASSIC_LUT_SIZE ? lut[i] : 0;
                 ++d;
             }
         }

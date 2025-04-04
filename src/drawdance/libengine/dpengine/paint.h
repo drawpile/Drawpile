@@ -53,7 +53,7 @@ typedef struct DP_PaintDrawDabsParams {
     int origin_y;
     uint32_t color;
     int blend_mode;
-    bool indirect;
+    int paint_mode;
     int dab_count;
     union {
         struct {

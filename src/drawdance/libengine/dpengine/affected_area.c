@@ -334,7 +334,9 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         DP_MsgDrawDabsClassic *mddc = DP_msg_draw_dabs_classic_cast(msg);
         int layer_id = DP_msg_draw_dabs_classic_layer(mddc);
         DP_Rect bounds = classic_dabs_bounds(mddc);
-        if (aia_or_null && DP_msg_draw_dabs_classic_indirect(mddc)) {
+        if (aia_or_null
+            && DP_msg_draw_dabs_classic_paint_mode(mddc)
+                   != DP_PAINT_MODE_DIRECT) {
             return update_indirect_area(aia_or_null, DP_message_context_id(msg),
                                         layer_id, bounds);
         }
@@ -347,7 +349,9 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
         int layer_id = DP_msg_draw_dabs_pixel_layer(mddp);
         DP_Rect bounds = pixel_dabs_bounds(mddp);
-        if (aia_or_null && DP_msg_draw_dabs_pixel_indirect(mddp)) {
+        if (aia_or_null
+            && DP_msg_draw_dabs_pixel_paint_mode(mddp)
+                   != DP_PAINT_MODE_DIRECT) {
             return update_indirect_area(aia_or_null, DP_message_context_id(msg),
                                         layer_id, bounds);
         }

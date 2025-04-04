@@ -202,8 +202,8 @@ static void add_draw_dabs_pixel_square(DP_Output *output, DP_CanvasHistory *ch,
                                        uint8_t mode)
 {
     add_message(output, ch, dc,
-                DP_msg_draw_dabs_pixel_square_new(1, layer, x, y, color, mode,
-                                                  set_pixel_dab, 1, NULL));
+                DP_msg_draw_dabs_pixel_square_new(
+                    1, 0, layer, x, y, color, mode, set_pixel_dab, 1, NULL));
 }
 
 static void add_pen_up(DP_Output *output, DP_CanvasHistory *ch,

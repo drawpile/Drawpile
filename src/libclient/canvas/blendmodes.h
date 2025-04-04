@@ -52,6 +52,14 @@ int toAlphaPreserving(int mode);
 void adjustAlphaBehavior(int &mode, bool preserveAlpha);
 
 }
+
+namespace paintmode {
+
+QString settingName(DP_PaintMode mode);
+
+DP_PaintMode fromSettingName(const QString &name, DP_PaintMode defaultMode);
+
+}
 }
 
 #endif

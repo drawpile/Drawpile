@@ -612,17 +612,31 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->paintModeLabel = new QLabel{tr("Paint Mode:"), widget};
 	d->paintModeCombo = new QComboBox{widget};
 	layout->addRow(d->paintModeLabel, d->paintModeCombo);
-	d->paintModeCombo->addItem(tr("Build-Up/Direct"), true);
-	d->paintModeCombo->addItem(tr("Wash/Indirect"), false);
+	d->paintModeCombo->addItem(
+		QIcon::fromTheme("drawpile_incremental_mode"), tr("Direct Build-Up"),
+		int(DP_PAINT_MODE_DIRECT));
+	d->paintModeCombo->addItem(
+		QIcon::fromTheme("drawpile_wash_mode"), tr("Indirect Wash/Marker"),
+		int(DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY));
+	d->paintModeCombo->addItem(
+		QIcon::fromTheme("drawpile_soft_mode"),
+		tr("Indirect Soft (Drawpile 2.2)"),
+		int(DP_PAINT_MODE_INDIRECT_ALPHA_DARKEN));
+	d->paintModeCombo->addItem(
+		QIcon::fromTheme("drawpile_indirect_mode"),
+		tr("Indirect Build-Up (Drawpile 2.1)"),
+		int(DP_PAINT_MODE_INDIRECT_NORMAL));
 	connect(
 		d->paintModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		makeBrushChangeCallbackArg<int>([this](int index) {
 			if(d->brush.activeType() == brushes::ActiveBrush::CLASSIC) {
-				d->brush.classic().incremental =
-					d->paintModeCombo->itemData(index).toBool();
+				d->brush.classic().paint_mode =
+					DP_PaintMode(d->paintModeCombo->itemData(index).toInt());
 			} else {
+				// TODO
 				d->brush.myPaint().brush().incremental =
-					d->paintModeCombo->itemData(index).toBool();
+					d->paintModeCombo->itemData(index).toInt() ==
+					int(DP_PAINT_MODE_DIRECT);
 			}
 			emitChange();
 		}));
@@ -1257,8 +1271,10 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->colorPickBox->setVisible(true);
 
 	bool haveSmudge = classic.smudge.max > 0.0f;
-	d->paintModeCombo->setCurrentIndex(
-		haveSmudge || classic.incremental ? 0 : 1);
+	setComboBoxIndexByData(
+		d->paintModeCombo,
+		haveSmudge ? DP_PAINT_MODE_DIRECT : int(classic.paint_mode));
+	d->paintModeCombo->setCurrentIndex(haveSmudge ? 0 : classic.paint_mode);
 	d->paintModeCombo->setDisabled(haveSmudge);
 
 	d->spacingSpinner->setValue(classic.spacing * 100.0 + 0.5);

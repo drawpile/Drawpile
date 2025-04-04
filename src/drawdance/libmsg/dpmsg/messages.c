@@ -6281,6 +6281,7 @@ const DP_ClassicDab *DP_classic_dab_at(const DP_ClassicDab *cd, int i)
 }
 
 struct DP_MsgDrawDabsClassic {
+    uint8_t flags;
     uint16_t layer;
     int32_t x;
     int32_t y;
@@ -6293,7 +6294,7 @@ struct DP_MsgDrawDabsClassic {
 static size_t msg_draw_dabs_classic_payload_length(DP_Message *msg)
 {
     DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
-    return ((size_t)15) + DP_int_to_size(mddc->dabs_count) * 6;
+    return ((size_t)16) + DP_int_to_size(mddc->dabs_count) * 6;
 }
 
 static size_t msg_draw_dabs_classic_serialize_payload(DP_Message *msg,
@@ -6301,6 +6302,7 @@ static size_t msg_draw_dabs_classic_serialize_payload(DP_Message *msg,
 {
     DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
     size_t written = 0;
+    written += DP_write_bigendian_uint8(mddc->flags, data + written);
     written += DP_write_bigendian_uint16(mddc->layer, data + written);
     written += DP_write_bigendian_int32(mddc->x, data + written);
     written += DP_write_bigendian_int32(mddc->y, data + written);
@@ -6317,6 +6319,7 @@ static bool msg_draw_dabs_classic_write_payload_text(DP_Message *msg,
 {
     DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
     return DP_text_writer_write_argb_color(writer, "color", mddc->color)
+        && DP_text_writer_write_uint(writer, "flags", mddc->flags)
         && DP_text_writer_write_uint(writer, "layer", mddc->layer)
         && DP_text_writer_write_blend_mode(writer, "mode", mddc->mode)
         && DP_text_writer_write_decimal(writer, "x", (double)mddc->x / 4.0)
@@ -6330,8 +6333,8 @@ static bool msg_draw_dabs_classic_equals(DP_Message *DP_RESTRICT msg,
 {
     DP_MsgDrawDabsClassic *a = DP_message_internal(msg);
     DP_MsgDrawDabsClassic *b = DP_message_internal(other);
-    return a->layer == b->layer && a->x == b->x && a->y == b->y
-        && a->color == b->color && a->mode == b->mode
+    return a->flags == b->flags && a->layer == b->layer && a->x == b->x
+        && a->y == b->y && a->color == b->color && a->mode == b->mode
         && a->dabs_count == b->dabs_count
         && classic_dabs_equal(a->dabs, b->dabs, a->dabs_count);
 }
@@ -6343,17 +6346,19 @@ static const DP_MessageMethods msg_draw_dabs_classic_methods = {
     msg_draw_dabs_classic_equals,
 };
 
-DP_Message *
-DP_msg_draw_dabs_classic_new(unsigned int context_id, uint16_t layer, int32_t x,
-                             int32_t y, uint32_t color, uint8_t mode,
-                             void (*set_dabs)(int, DP_ClassicDab *, void *),
-                             int dabs_count, void *dabs_user)
+DP_Message *DP_msg_draw_dabs_classic_new(unsigned int context_id, uint8_t flags,
+                                         uint16_t layer, int32_t x, int32_t y,
+                                         uint32_t color, uint8_t mode,
+                                         void (*set_dabs)(int, DP_ClassicDab *,
+                                                          void *),
+                                         int dabs_count, void *dabs_user)
 {
     DP_Message *msg = DP_message_new(
         DP_MSG_DRAW_DABS_CLASSIC, context_id, &msg_draw_dabs_classic_methods,
         DP_FLEX_SIZEOF(DP_MsgDrawDabsClassic, dabs,
                        DP_int_to_size(dabs_count) * sizeof(DP_ClassicDab)));
     DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
+    mddc->flags = flags;
     mddc->layer = layer;
     mddc->x = x;
     mddc->y = y;
@@ -6368,13 +6373,14 @@ DP_Message *DP_msg_draw_dabs_classic_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
                                                  size_t length)
 {
-    if (length < 21 || length > 65535) {
+    if (length < 22 || length > 65530) {
         DP_error_set("Wrong length for classicdabs message; "
-                     "expected between 21 and 65535, got %zu",
+                     "expected between 22 and 65530, got %zu",
                      length);
         return NULL;
     }
     size_t read = 0;
+    uint8_t flags = read_uint8(buffer + read, &read);
     uint16_t layer = read_uint16(buffer + read, &read);
     int32_t x = read_int32(buffer + read, &read);
     int32_t y = read_int32(buffer + read, &read);
@@ -6389,14 +6395,16 @@ DP_Message *DP_msg_draw_dabs_classic_deserialize(unsigned int context_id,
     }
     int dabs_count = DP_size_to_int(dabs_bytes) / 6;
     void *dabs_user = (void *)(buffer + read);
-    return DP_msg_draw_dabs_classic_new(context_id, layer, x, y, color, mode,
-                                        classic_dab_deserialize, dabs_count,
-                                        dabs_user);
+    return DP_msg_draw_dabs_classic_new(context_id, flags, layer, x, y, color,
+                                        mode, classic_dab_deserialize,
+                                        dabs_count, dabs_user);
 }
 
 DP_Message *DP_msg_draw_dabs_classic_parse(unsigned int context_id,
                                            DP_TextReader *reader)
 {
+    uint8_t flags =
+        (uint8_t)DP_text_reader_get_ulong(reader, "flags", UINT8_MAX);
     uint16_t layer =
         (uint16_t)DP_text_reader_get_ulong(reader, "layer", UINT16_MAX);
     int32_t x = (int32_t)DP_text_reader_get_decimal(reader, "x", 4.0, INT32_MIN,
@@ -6407,14 +6415,20 @@ DP_Message *DP_msg_draw_dabs_classic_parse(unsigned int context_id,
     uint8_t mode = DP_text_reader_get_blend_mode(reader, "mode");
     int dabs_count = DP_text_reader_get_sub_count(reader);
     void *dabs_user = reader;
-    return DP_msg_draw_dabs_classic_new(context_id, layer, x, y, color, mode,
-                                        classic_dab_parse, dabs_count,
+    return DP_msg_draw_dabs_classic_new(context_id, flags, layer, x, y, color,
+                                        mode, classic_dab_parse, dabs_count,
                                         dabs_user);
 }
 
 DP_MsgDrawDabsClassic *DP_msg_draw_dabs_classic_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_DRAW_DABS_CLASSIC);
+}
+
+uint8_t DP_msg_draw_dabs_classic_flags(const DP_MsgDrawDabsClassic *mddc)
+{
+    DP_ASSERT(mddc);
+    return mddc->flags;
 }
 
 uint16_t DP_msg_draw_dabs_classic_layer(const DP_MsgDrawDabsClassic *mddc)
@@ -6610,6 +6624,7 @@ const DP_PixelDab *DP_pixel_dab_at(const DP_PixelDab *pd, int i)
 }
 
 struct DP_MsgDrawDabsPixel {
+    uint8_t flags;
     uint16_t layer;
     int32_t x;
     int32_t y;
@@ -6622,7 +6637,7 @@ struct DP_MsgDrawDabsPixel {
 static size_t msg_draw_dabs_pixel_payload_length(DP_Message *msg)
 {
     DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
-    return ((size_t)15) + DP_int_to_size(mddp->dabs_count) * 4;
+    return ((size_t)16) + DP_int_to_size(mddp->dabs_count) * 4;
 }
 
 static size_t msg_draw_dabs_pixel_serialize_payload(DP_Message *msg,
@@ -6630,6 +6645,7 @@ static size_t msg_draw_dabs_pixel_serialize_payload(DP_Message *msg,
 {
     DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
     size_t written = 0;
+    written += DP_write_bigendian_uint8(mddp->flags, data + written);
     written += DP_write_bigendian_uint16(mddp->layer, data + written);
     written += DP_write_bigendian_int32(mddp->x, data + written);
     written += DP_write_bigendian_int32(mddp->y, data + written);
@@ -6646,6 +6662,7 @@ static bool msg_draw_dabs_pixel_write_payload_text(DP_Message *msg,
 {
     DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
     return DP_text_writer_write_argb_color(writer, "color", mddp->color)
+        && DP_text_writer_write_uint(writer, "flags", mddp->flags)
         && DP_text_writer_write_uint(writer, "layer", mddp->layer)
         && DP_text_writer_write_blend_mode(writer, "mode", mddp->mode)
         && DP_text_writer_write_int(writer, "x", mddp->x)
@@ -6658,8 +6675,8 @@ static bool msg_draw_dabs_pixel_equals(DP_Message *DP_RESTRICT msg,
 {
     DP_MsgDrawDabsPixel *a = DP_message_internal(msg);
     DP_MsgDrawDabsPixel *b = DP_message_internal(other);
-    return a->layer == b->layer && a->x == b->x && a->y == b->y
-        && a->color == b->color && a->mode == b->mode
+    return a->flags == b->flags && a->layer == b->layer && a->x == b->x
+        && a->y == b->y && a->color == b->color && a->mode == b->mode
         && a->dabs_count == b->dabs_count
         && pixel_dabs_equal(a->dabs, b->dabs, a->dabs_count);
 }
@@ -6671,17 +6688,19 @@ static const DP_MessageMethods msg_draw_dabs_pixel_methods = {
     msg_draw_dabs_pixel_equals,
 };
 
-DP_Message *
-DP_msg_draw_dabs_pixel_new(unsigned int context_id, uint16_t layer, int32_t x,
-                           int32_t y, uint32_t color, uint8_t mode,
-                           void (*set_dabs)(int, DP_PixelDab *, void *),
-                           int dabs_count, void *dabs_user)
+DP_Message *DP_msg_draw_dabs_pixel_new(unsigned int context_id, uint8_t flags,
+                                       uint16_t layer, int32_t x, int32_t y,
+                                       uint32_t color, uint8_t mode,
+                                       void (*set_dabs)(int, DP_PixelDab *,
+                                                        void *),
+                                       int dabs_count, void *dabs_user)
 {
     DP_Message *msg = DP_message_new(
         DP_MSG_DRAW_DABS_PIXEL, context_id, &msg_draw_dabs_pixel_methods,
         DP_FLEX_SIZEOF(DP_MsgDrawDabsPixel, dabs,
                        DP_int_to_size(dabs_count) * sizeof(DP_PixelDab)));
     DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
+    mddp->flags = flags;
     mddp->layer = layer;
     mddp->x = x;
     mddp->y = y;
@@ -6696,13 +6715,14 @@ DP_Message *DP_msg_draw_dabs_pixel_deserialize(unsigned int context_id,
                                                const unsigned char *buffer,
                                                size_t length)
 {
-    if (length < 19 || length > 65535) {
+    if (length < 20 || length > 65532) {
         DP_error_set("Wrong length for pixeldabs message; "
-                     "expected between 19 and 65535, got %zu",
+                     "expected between 20 and 65532, got %zu",
                      length);
         return NULL;
     }
     size_t read = 0;
+    uint8_t flags = read_uint8(buffer + read, &read);
     uint16_t layer = read_uint16(buffer + read, &read);
     int32_t x = read_int32(buffer + read, &read);
     int32_t y = read_int32(buffer + read, &read);
@@ -6717,14 +6737,16 @@ DP_Message *DP_msg_draw_dabs_pixel_deserialize(unsigned int context_id,
     }
     int dabs_count = DP_size_to_int(dabs_bytes) / 4;
     void *dabs_user = (void *)(buffer + read);
-    return DP_msg_draw_dabs_pixel_new(context_id, layer, x, y, color, mode,
-                                      pixel_dab_deserialize, dabs_count,
+    return DP_msg_draw_dabs_pixel_new(context_id, flags, layer, x, y, color,
+                                      mode, pixel_dab_deserialize, dabs_count,
                                       dabs_user);
 }
 
 DP_Message *DP_msg_draw_dabs_pixel_parse(unsigned int context_id,
                                          DP_TextReader *reader)
 {
+    uint8_t flags =
+        (uint8_t)DP_text_reader_get_ulong(reader, "flags", UINT8_MAX);
     uint16_t layer =
         (uint16_t)DP_text_reader_get_ulong(reader, "layer", UINT16_MAX);
     int32_t x =
@@ -6735,13 +6757,20 @@ DP_Message *DP_msg_draw_dabs_pixel_parse(unsigned int context_id,
     uint8_t mode = DP_text_reader_get_blend_mode(reader, "mode");
     int dabs_count = DP_text_reader_get_sub_count(reader);
     void *dabs_user = reader;
-    return DP_msg_draw_dabs_pixel_new(context_id, layer, x, y, color, mode,
-                                      pixel_dab_parse, dabs_count, dabs_user);
+    return DP_msg_draw_dabs_pixel_new(context_id, flags, layer, x, y, color,
+                                      mode, pixel_dab_parse, dabs_count,
+                                      dabs_user);
 }
 
 DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_DRAW_DABS_PIXEL);
+}
+
+uint8_t DP_msg_draw_dabs_pixel_flags(const DP_MsgDrawDabsPixel *mddp)
+{
+    DP_ASSERT(mddp);
+    return mddp->flags;
 }
 
 uint16_t DP_msg_draw_dabs_pixel_layer(const DP_MsgDrawDabsPixel *mddp)
@@ -6792,16 +6821,19 @@ int DP_msg_draw_dabs_pixel_dabs_count(const DP_MsgDrawDabsPixel *mddp)
 
 /* DP_MSG_DRAW_DABS_PIXEL_SQUARE */
 
-DP_Message *DP_msg_draw_dabs_pixel_square_new(
-    unsigned int context_id, uint16_t layer, int32_t x, int32_t y,
-    uint32_t color, uint8_t mode, void (*set_dabs)(int, DP_PixelDab *, void *),
-    int dabs_count, void *dabs_user)
+DP_Message *
+DP_msg_draw_dabs_pixel_square_new(unsigned int context_id, uint8_t flags,
+                                  uint16_t layer, int32_t x, int32_t y,
+                                  uint32_t color, uint8_t mode,
+                                  void (*set_dabs)(int, DP_PixelDab *, void *),
+                                  int dabs_count, void *dabs_user)
 {
     DP_Message *msg = DP_message_new(
         DP_MSG_DRAW_DABS_PIXEL_SQUARE, context_id, &msg_draw_dabs_pixel_methods,
         DP_FLEX_SIZEOF(DP_MsgDrawDabsPixel, dabs,
                        DP_int_to_size(dabs_count) * sizeof(DP_PixelDab)));
     DP_MsgDrawDabsPixel *mddps = DP_message_internal(msg);
+    mddps->flags = flags;
     mddps->layer = layer;
     mddps->x = x;
     mddps->y = y;
@@ -6815,13 +6847,14 @@ DP_Message *DP_msg_draw_dabs_pixel_square_new(
 DP_Message *DP_msg_draw_dabs_pixel_square_deserialize(
     unsigned int context_id, const unsigned char *buffer, size_t length)
 {
-    if (length < 19 || length > 65535) {
+    if (length < 20 || length > 65532) {
         DP_error_set("Wrong length for squarepixeldabs message; "
-                     "expected between 19 and 65535, got %zu",
+                     "expected between 20 and 65532, got %zu",
                      length);
         return NULL;
     }
     size_t read = 0;
+    uint8_t flags = read_uint8(buffer + read, &read);
     uint16_t layer = read_uint16(buffer + read, &read);
     int32_t x = read_int32(buffer + read, &read);
     int32_t y = read_int32(buffer + read, &read);
@@ -6836,14 +6869,16 @@ DP_Message *DP_msg_draw_dabs_pixel_square_deserialize(
     }
     int dabs_count = DP_size_to_int(dabs_bytes) / 4;
     void *dabs_user = (void *)(buffer + read);
-    return DP_msg_draw_dabs_pixel_square_new(context_id, layer, x, y, color,
-                                             mode, pixel_dab_deserialize,
+    return DP_msg_draw_dabs_pixel_square_new(context_id, flags, layer, x, y,
+                                             color, mode, pixel_dab_deserialize,
                                              dabs_count, dabs_user);
 }
 
 DP_Message *DP_msg_draw_dabs_pixel_square_parse(unsigned int context_id,
                                                 DP_TextReader *reader)
 {
+    uint8_t flags =
+        (uint8_t)DP_text_reader_get_ulong(reader, "flags", UINT8_MAX);
     uint16_t layer =
         (uint16_t)DP_text_reader_get_ulong(reader, "layer", UINT16_MAX);
     int32_t x =
@@ -6854,9 +6889,9 @@ DP_Message *DP_msg_draw_dabs_pixel_square_parse(unsigned int context_id,
     uint8_t mode = DP_text_reader_get_blend_mode(reader, "mode");
     int dabs_count = DP_text_reader_get_sub_count(reader);
     void *dabs_user = reader;
-    return DP_msg_draw_dabs_pixel_square_new(context_id, layer, x, y, color,
-                                             mode, pixel_dab_parse, dabs_count,
-                                             dabs_user);
+    return DP_msg_draw_dabs_pixel_square_new(context_id, flags, layer, x, y,
+                                             color, mode, pixel_dab_parse,
+                                             dabs_count, dabs_user);
 }
 
 DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg)

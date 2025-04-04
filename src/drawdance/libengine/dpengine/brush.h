@@ -80,8 +80,8 @@ typedef struct DP_ClassicBrush {
     DP_BlendMode brush_mode;
     DP_BlendMode erase_mode;
     bool erase;
-    bool incremental;
     bool colorpick;
+    DP_PaintMode paint_mode;
     DP_ClassicBrushDynamic size_dynamic;
     DP_ClassicBrushDynamic hardness_dynamic;
     DP_ClassicBrushDynamic opacity_dynamic;
@@ -159,7 +159,7 @@ bool DP_mypaint_brush_equal_preset(const DP_MyPaintBrush *a,
                                    bool in_eraser_slot);
 
 void DP_mypaint_brush_mode_extract(uint8_t mode, int *out_blend_mode,
-                                   bool *out_indirect,
+                                   int *out_paint_mode,
                                    uint8_t *out_posterize_num);
 
 bool DP_mypaint_brush_mode_indirect(uint8_t mode);

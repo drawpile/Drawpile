@@ -1868,12 +1868,12 @@ size_t DP_msg_canvas_background_image_size(const DP_MsgCanvasBackground *mcb);
  * The size field is the brush diameter multiplied by 256.
  */
 
-#define DP_MSG_DRAW_DABS_CLASSIC_STATIC_LENGTH 15
+#define DP_MSG_DRAW_DABS_CLASSIC_STATIC_LENGTH 16
 
 #define DP_MSG_DRAW_DABS_CLASSIC_DABS_MIN_COUNT 1
-#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX_COUNT 10920
+#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX_COUNT 10919
 
-#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX 10920
+#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX 10919
 
 typedef struct DP_ClassicDab DP_ClassicDab;
 
@@ -1895,11 +1895,12 @@ const DP_ClassicDab *DP_classic_dab_at(const DP_ClassicDab *cd, int i);
 
 typedef struct DP_MsgDrawDabsClassic DP_MsgDrawDabsClassic;
 
-DP_Message *
-DP_msg_draw_dabs_classic_new(unsigned int context_id, uint16_t layer, int32_t x,
-                             int32_t y, uint32_t color, uint8_t mode,
-                             void (*set_dabs)(int, DP_ClassicDab *, void *),
-                             int dabs_count, void *dabs_user);
+DP_Message *DP_msg_draw_dabs_classic_new(unsigned int context_id, uint8_t flags,
+                                         uint16_t layer, int32_t x, int32_t y,
+                                         uint32_t color, uint8_t mode,
+                                         void (*set_dabs)(int, DP_ClassicDab *,
+                                                          void *),
+                                         int dabs_count, void *dabs_user);
 
 DP_Message *DP_msg_draw_dabs_classic_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
@@ -1909,6 +1910,8 @@ DP_Message *DP_msg_draw_dabs_classic_parse(unsigned int context_id,
                                            DP_TextReader *reader);
 
 DP_MsgDrawDabsClassic *DP_msg_draw_dabs_classic_cast(DP_Message *msg);
+
+uint8_t DP_msg_draw_dabs_classic_flags(const DP_MsgDrawDabsClassic *mddc);
 
 uint16_t DP_msg_draw_dabs_classic_layer(const DP_MsgDrawDabsClassic *mddc);
 
@@ -1936,12 +1939,12 @@ int DP_msg_draw_dabs_classic_dabs_count(const DP_MsgDrawDabsClassic *mddc);
  * but the fields all have integer precision.
  */
 
-#define DP_MSG_DRAW_DABS_PIXEL_STATIC_LENGTH 15
+#define DP_MSG_DRAW_DABS_PIXEL_STATIC_LENGTH 16
 
 #define DP_MSG_DRAW_DABS_PIXEL_DABS_MIN_COUNT 1
-#define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX_COUNT 16380
+#define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX_COUNT 16379
 
-#define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX 16380
+#define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX 16379
 
 typedef struct DP_PixelDab DP_PixelDab;
 
@@ -1961,11 +1964,12 @@ const DP_PixelDab *DP_pixel_dab_at(const DP_PixelDab *pd, int i);
 
 typedef struct DP_MsgDrawDabsPixel DP_MsgDrawDabsPixel;
 
-DP_Message *
-DP_msg_draw_dabs_pixel_new(unsigned int context_id, uint16_t layer, int32_t x,
-                           int32_t y, uint32_t color, uint8_t mode,
-                           void (*set_dabs)(int, DP_PixelDab *, void *),
-                           int dabs_count, void *dabs_user);
+DP_Message *DP_msg_draw_dabs_pixel_new(unsigned int context_id, uint8_t flags,
+                                       uint16_t layer, int32_t x, int32_t y,
+                                       uint32_t color, uint8_t mode,
+                                       void (*set_dabs)(int, DP_PixelDab *,
+                                                        void *),
+                                       int dabs_count, void *dabs_user);
 
 DP_Message *DP_msg_draw_dabs_pixel_deserialize(unsigned int context_id,
                                                const unsigned char *buffer,
@@ -1975,6 +1979,8 @@ DP_Message *DP_msg_draw_dabs_pixel_parse(unsigned int context_id,
                                          DP_TextReader *reader);
 
 DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_cast(DP_Message *msg);
+
+uint8_t DP_msg_draw_dabs_pixel_flags(const DP_MsgDrawDabsPixel *mddp);
 
 uint16_t DP_msg_draw_dabs_pixel_layer(const DP_MsgDrawDabsPixel *mddp);
 
@@ -2000,10 +2006,12 @@ int DP_msg_draw_dabs_pixel_dabs_count(const DP_MsgDrawDabsPixel *mddp);
 
 #define DP_MSG_DRAW_DABS_PIXEL_SQUARE_STATIC_LENGTH 0
 
-DP_Message *DP_msg_draw_dabs_pixel_square_new(
-    unsigned int context_id, uint16_t layer, int32_t x, int32_t y,
-    uint32_t color, uint8_t mode, void (*set_dabs)(int, DP_PixelDab *, void *),
-    int dabs_count, void *dabs_user);
+DP_Message *
+DP_msg_draw_dabs_pixel_square_new(unsigned int context_id, uint8_t flags,
+                                  uint16_t layer, int32_t x, int32_t y,
+                                  uint32_t color, uint8_t mode,
+                                  void (*set_dabs)(int, DP_PixelDab *, void *),
+                                  int dabs_count, void *dabs_user);
 
 DP_Message *DP_msg_draw_dabs_pixel_square_deserialize(
     unsigned int context_id, const unsigned char *buffer, size_t length);

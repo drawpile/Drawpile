@@ -153,6 +153,13 @@ struct BrushSettings::Private {
 	QAction *brushTypeSoftRoundAction;
 	QAction *brushTypeMyPaintAction;
 
+	DP_PaintMode paintMode = DP_PAINT_MODE_DIRECT;
+	QActionGroup *paintModeGroup;
+	QAction *paintModeDirectAction;
+	QAction *paintModeIndirectCompareDensityAction;
+	QAction *paintModeIndirectAlphaDarkenAction;
+	QAction *paintModeIndirectNormalAction;
+
 	QActionGroup *stabilizationModeGroup;
 	QAction *stabilizerAction;
 	QAction *smoothingAction;
@@ -396,9 +403,9 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	// hiding it causes some jerking normally, so we'll tell it to retain its
 	// size. The space it's taking up is supposed to be empty anyway.
 	utils::setWidgetRetainSizeWhenHidden(d->ui.blendmode, true);
-	// It's really hard to see that the indirect mode button is disabled when
+	// It's really hard to see that the paint mode button is disabled when
 	// smudging is turned on, so we just hide it altogether and keep the space.
-	utils::setWidgetRetainSizeWhenHidden(d->ui.modeIncremental, true);
+	utils::setWidgetRetainSizeWhenHidden(d->ui.paintMode, true);
 
 	// Exponential sliders for easier picking of small values.
 	d->ui.brushsizeBox->setExponentRatio(2.0);
@@ -428,6 +435,32 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->brushTypeGroup->addAction(d->brushTypeSoftRoundAction);
 	d->brushTypeGroup->addAction(d->brushTypeMyPaintAction);
 	d->ui.brushTypeButton->setMenu(brushTypeMenu);
+
+	QMenu *paintModeMenu = new QMenu(d->ui.paintMode);
+	d->paintModeGroup = new QActionGroup(paintModeMenu);
+	d->paintModeDirectAction = paintModeMenu->addAction(
+		QIcon::fromTheme("drawpile_incremental_mode"),
+		QCoreApplication::translate(
+			"dialogs::BrushSettingsDialog", "Direct Build-Up"));
+	d->paintModeIndirectCompareDensityAction = paintModeMenu->addAction(
+		QIcon::fromTheme("drawpile_wash_mode"),
+		QCoreApplication::translate(
+			"dialogs::BrushSettingsDialog", "Indirect Wash/Marker"));
+	d->paintModeIndirectAlphaDarkenAction = paintModeMenu->addAction(
+		QIcon::fromTheme("drawpile_soft_mode"),
+		QCoreApplication::translate(
+			"dialogs::BrushSettingsDialog", "Indirect Soft (Drawpile 2.2)"));
+	d->paintModeIndirectNormalAction = paintModeMenu->addAction(
+		QIcon::fromTheme("drawpile_indirect_mode"),
+		QCoreApplication::translate(
+			"dialogs::BrushSettingsDialog",
+			"Indirect Build-Up (Drawpile 2.1)"));
+	d->paintModeGroup->addAction(d->paintModeDirectAction);
+	d->paintModeGroup->addAction(d->paintModeIndirectCompareDensityAction);
+	d->paintModeGroup->addAction(d->paintModeIndirectAlphaDarkenAction);
+	d->paintModeGroup->addAction(d->paintModeIndirectNormalAction);
+	d->ui.paintMode->setMenu(paintModeMenu);
+	setPaintModeInUi(int(DP_PAINT_MODE_DIRECT));
 
 	QMenu *stabilizerMenu = new QMenu{d->ui.stabilizerButton};
 	d->stabilizationModeGroup = new QActionGroup{stabilizerMenu};
@@ -478,6 +511,9 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(
 		brushTypeMenu, &QMenu::triggered, this,
 		&BrushSettings::changeBrushType);
+	connect(
+		paintModeMenu, &QMenu::triggered, this,
+		&BrushSettings::changePaintMode);
 
 	connect(
 		d->ui.brushsizeBox, QOverload<int>::of(&QSpinBox::valueChanged), this,
@@ -527,9 +563,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 		&BrushSettings::updateFromUi);
 
 	connect(
-		d->ui.modeIncremental, &QToolButton::clicked, this,
-		&BrushSettings::updateFromUi);
-	connect(
 		d->ui.modeColorpick, &QToolButton::clicked, this,
 		&BrushSettings::updateFromUi);
 	connect(
@@ -555,20 +588,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(
 		d->useBrushSampleCountAction, &QAction::triggered, this,
 		&BrushSettings::updateFromUi);
-
-	connect(
-		d->ui.noPermissionLabel, &QLabel::linkActivated, this,
-		[this](const QString &link) {
-			QSignalBlocker blocker{d->ui.modeIncremental};
-			if(link == QStringLiteral("#inc")) {
-				d->ui.modeIncremental->setChecked(true);
-			} else if(link == QStringLiteral("#opa")) {
-				d->ui.pressureOpacity->setChecked(false);
-			} else {
-				qWarning("Unknown link '%s' clicked", qUtf8Printable(link));
-			}
-			updateFromUi();
-		});
 
 	// By default, the docker shows all settings at once, making it bigger on
 	// startup and messing up the application layout. This will hide the excess
@@ -1067,6 +1086,23 @@ void BrushSettings::changeBrushType(const QAction *action)
 	updateUi();
 }
 
+void BrushSettings::changePaintMode(const QAction *action)
+{
+	if(action == d->paintModeDirectAction) {
+		d->paintMode = DP_PAINT_MODE_DIRECT;
+	} else if(action == d->paintModeIndirectCompareDensityAction) {
+		d->paintMode = DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY;
+	} else if(action == d->paintModeIndirectAlphaDarkenAction) {
+		d->paintMode = DP_PAINT_MODE_INDIRECT_ALPHA_DARKEN;
+	} else if(action == d->paintModeIndirectNormalAction) {
+		d->paintMode = DP_PAINT_MODE_INDIRECT_NORMAL;
+	} else {
+		qWarning("Unknown paint mode selected");
+	}
+	updateFromUi();
+	updateUi();
+}
+
 void BrushSettings::changeSizeSetting(int size)
 {
 	if(d->currentBrush().activeType() == brushes::ActiveBrush::CLASSIC) {
@@ -1137,6 +1173,32 @@ void BrushSettings::setAutomaticAlphaPreserve(bool automaticAlphaPreserve)
 				getBrushBlendModesFor(false, automaticAlphaPreserve));
 		}
 	}
+}
+
+void BrushSettings::setPaintModeInUi(int paintMode)
+{
+	QAction *action;
+	switch(paintMode) {
+	case DP_PAINT_MODE_DIRECT:
+		action = d->paintModeDirectAction;
+		break;
+	case DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY:
+		action = d->paintModeIndirectCompareDensityAction;
+		break;
+	case DP_PAINT_MODE_INDIRECT_ALPHA_DARKEN:
+		action = d->paintModeIndirectAlphaDarkenAction;
+		break;
+	case DP_PAINT_MODE_INDIRECT_NORMAL:
+		action = d->paintModeIndirectNormalAction;
+		break;
+	default:
+		qWarning("Unknown paint mode %d", paintMode);
+		return;
+	}
+	d->paintMode = DP_PaintMode(paintMode);
+	d->ui.paintMode->setIcon(action->icon());
+	d->ui.paintMode->setStatusTip(action->text());
+	d->ui.paintMode->setToolTip(action->text());
 }
 
 void BrushSettings::updateAlphaPreserve(bool alphaPreserve)
@@ -1266,16 +1328,19 @@ void BrushSettings::updateUi()
 			d->ui.opacityBox, myPaintSettings, MYPAINT_BRUSH_SETTING_OPAQUE);
 		setSliderFromMyPaintSetting(
 			d->ui.hardnessBox, myPaintSettings, MYPAINT_BRUSH_SETTING_HARDNESS);
-		d->ui.modeIncremental->setChecked(myPaint.constBrush().incremental);
+		setPaintModeInUi(
+			int(myPaint.constBrush().incremental
+					? DP_PAINT_MODE_DIRECT
+					: DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY));
 		bool canUseIncrementalMode = !isLocked();
-		d->ui.modeIncremental->setEnabled(canUseIncrementalMode);
-		d->ui.modeIncremental->setVisible(canUseIncrementalMode);
+		d->ui.paintMode->setEnabled(canUseIncrementalMode);
+		d->ui.paintMode->setVisible(canUseIncrementalMode);
 	} else {
 		d->ui.alphaPreserve->setChecked(
 			canvas::blendmode::presentsAsAlphaPreserving(blendMode));
 		d->ui.opacityBox->setValue(qRound(classic.opacity.max * 100.0));
 		d->ui.hardnessBox->setValue(qRound(classic.hardness.max * 100.0));
-		d->ui.modeIncremental->setChecked(classic.incremental);
+		setPaintModeInUi(int(classic.paint_mode));
 		// Smudging only works right in incremental mode
 		bool canUseIncrementalMode;
 		if(classic.smudge.max == 0.0) {
@@ -1284,8 +1349,8 @@ void BrushSettings::updateUi()
 		} else {
 			canUseIncrementalMode = false;
 		}
-		d->ui.modeIncremental->setEnabled(canUseIncrementalMode);
-		d->ui.modeIncremental->setVisible(canUseIncrementalMode);
+		d->ui.paintMode->setEnabled(canUseIncrementalMode);
+		d->ui.paintMode->setVisible(canUseIncrementalMode);
 	}
 
 	if(d->useBrushSampleCount) {
@@ -1390,10 +1455,10 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			setMyPaintSettingFromSlider(
 				d->ui.hardnessBox, myPaintSettings,
 				MYPAINT_BRUSH_SETTING_HARDNESS);
-			myPaint.brush().incremental = d->ui.modeIncremental->isChecked();
+			myPaint.brush().incremental = d->paintMode == DP_PAINT_MODE_DIRECT;
 			bool canUseIncrementalMode = !isLocked();
-			d->ui.modeIncremental->setEnabled(canUseIncrementalMode);
-			d->ui.modeIncremental->setVisible(canUseIncrementalMode);
+			d->ui.paintMode->setEnabled(canUseIncrementalMode);
+			d->ui.paintMode->setVisible(canUseIncrementalMode);
 		} else {
 			int blendMode = d->ui.blendmode->currentData(Qt::UserRole).toInt();
 			canvas::blendmode::adjustAlphaBehavior(
@@ -1411,7 +1476,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 						? classic.lastHardnessDynamicType()
 						: DP_CLASSIC_BRUSH_DYNAMIC_NONE;
 			}
-			classic.incremental = d->ui.modeIncremental->isChecked();
+			classic.paint_mode = d->paintMode;
 			// Smudging only works right in incremental mode
 			bool canUseIncrementalMode;
 			if(classic.smudge.max == 0.0) {
@@ -1420,8 +1485,8 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			} else {
 				canUseIncrementalMode = false;
 			}
-			d->ui.modeIncremental->setEnabled(canUseIncrementalMode);
-			d->ui.modeIncremental->setVisible(canUseIncrementalMode);
+			d->ui.paintMode->setEnabled(canUseIncrementalMode);
+			d->ui.paintMode->setVisible(canUseIncrementalMode);
 		}
 	}
 
@@ -1488,7 +1553,7 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.modeColorpick, !locked && !mypaintmode},
 		{d->ui.alphaPreserve, !locked},
 		{d->ui.modeEraser, !locked},
-		{d->ui.modeIncremental, d->ui.modeIncremental->isEnabled() && !locked},
+		{d->ui.paintMode, d->ui.paintMode->isEnabled() && !locked},
 		{d->ui.blendmode, !locked && !mypaintmode},
 		{d->ui.pressureHardness, !locked && softmode && !mypaintmode},
 		{d->ui.hardnessBox, !locked && softmode},

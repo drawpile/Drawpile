@@ -63,7 +63,7 @@ static bool preset_equal_classic_brush(const DP_ClassicBrush *a,
         && a->shape == b->shape && a->brush_mode == b->brush_mode
         && a->erase_mode == b->erase_mode
         && (in_eraser_slot || a->erase == b->erase)
-        && a->incremental == b->incremental && a->colorpick == b->colorpick
+        && a->colorpick == b->colorpick && a->paint_mode == b->paint_mode
         && preset_equal_classic_brush_dynamic(&a->size_dynamic,
                                               &b->size_dynamic)
         && preset_equal_classic_brush_dynamic(&a->hardness_dynamic,
@@ -297,7 +297,7 @@ bool DP_mypaint_brush_equal_preset(const DP_MyPaintBrush *a,
 
 
 void DP_mypaint_brush_mode_extract(uint8_t mode, int *out_blend_mode,
-                                   bool *out_indirect,
+                                   int *out_paint_mode,
                                    uint8_t *out_posterize_num)
 {
     int blend_mode;
@@ -333,8 +333,9 @@ void DP_mypaint_brush_mode_extract(uint8_t mode, int *out_blend_mode,
     if (out_blend_mode) {
         *out_blend_mode = blend_mode;
     }
-    if (out_indirect) {
-        *out_indirect = indirect;
+    if (out_paint_mode) {
+        *out_paint_mode = indirect ? DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY
+                                   : DP_PAINT_MODE_DIRECT;
     }
     if (out_posterize_num) {
         *out_posterize_num = posterize_num;

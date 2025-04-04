@@ -956,3 +956,92 @@ int DP_blend_mode_to_alpha_preserving(int blend_mode)
         return blend_mode;
     }
 }
+
+
+bool DP_paint_mode_exists(int paint_mode)
+{
+    switch (paint_mode) {
+    case DP_PAINT_MODE_DIRECT:
+    case DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY:
+    case DP_PAINT_MODE_INDIRECT_ALPHA_DARKEN:
+    case DP_PAINT_MODE_INDIRECT_NORMAL:
+        return true;
+    default:
+        return false;
+    }
+}
+
+const char *DP_paint_mode_enum_name(int paint_mode)
+{
+    switch (paint_mode) {
+    case DP_PAINT_MODE_DIRECT:
+        return "DP_PAINT_MODE_DIRECT";
+    case DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY:
+        return "DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY";
+    case DP_PAINT_MODE_INDIRECT_ALPHA_DARKEN:
+        return "DP_PAINT_MODE_INDIRECT_ALPHA_DARKEN";
+    case DP_PAINT_MODE_INDIRECT_NORMAL:
+        return "DP_PAINT_MODE_INDIRECT_NORMAL";
+    default:
+        return "DP_PAINT_MODE_UNKLNOWN";
+    }
+}
+
+const char *DP_paint_mode_enum_name_unprefixed(int paint_mode)
+{
+    return DP_paint_mode_enum_name(paint_mode) + 14;
+}
+
+const char *DP_paint_mode_setting_name(int paint_mode)
+{
+    switch (paint_mode) {
+    case DP_PAINT_MODE_DIRECT:
+        return "direct";
+    case DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY:
+        return "indirect_compare_density";
+    case DP_PAINT_MODE_INDIRECT_ALPHA_DARKEN:
+        return "indirect_alpha_darken";
+    case DP_PAINT_MODE_INDIRECT_NORMAL:
+        return "indirect_normal";
+    default:
+        return "unknown";
+    }
+}
+
+DP_PaintMode DP_paint_mode_by_setting_name(const char *setting_name,
+                                           DP_PaintMode not_found_value)
+{
+    if (DP_str_equal(setting_name, "direct")) {
+        return DP_PAINT_MODE_DIRECT;
+    }
+    else if (DP_str_equal(setting_name, "indirect_compare_density")) {
+        return DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY;
+    }
+    else if (DP_str_equal(setting_name, "indirect_alpha_darken")) {
+        return DP_PAINT_MODE_INDIRECT_ALPHA_DARKEN;
+    }
+    else if (DP_str_equal(setting_name, "indirect_normal")) {
+        return DP_PAINT_MODE_INDIRECT_NORMAL;
+    }
+    else {
+        return not_found_value;
+    }
+}
+
+bool DP_paint_mode_indirect(int paint_mode, int *out_blend_mode)
+{
+    DP_ASSERT(out_blend_mode);
+    switch (paint_mode) {
+    case DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY:
+        *out_blend_mode = DP_BLEND_MODE_COMPARE_DENSITY;
+        return true;
+    case DP_PAINT_MODE_INDIRECT_ALPHA_DARKEN:
+        *out_blend_mode = DP_BLEND_MODE_ALPHA_DARKEN;
+        return true;
+    case DP_PAINT_MODE_INDIRECT_NORMAL:
+        *out_blend_mode = DP_BLEND_MODE_NORMAL;
+        return true;
+    default:
+        return false;
+    }
+}

@@ -41,7 +41,7 @@ ClassicBrush::ClassicBrush()
 		DP_BLEND_MODE_ERASE,
 		false,
 		true,
-		false,
+		DP_PAINT_MODE_DIRECT,
 		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
@@ -172,7 +172,11 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.spacing = o["spacing"].toDouble();
 	b.resmudge = o["resmudge"].toInt();
 
-	b.incremental = !o["indirect"].toBool();
+	b.paint_mode = canvas::paintmode::fromSettingName(
+		o.value(QStringLiteral("paint_mode")).toString(),
+		o.value(QStringLiteral("indirect")).toBool()
+			? DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY
+			: DP_PAINT_MODE_DIRECT);
 	b.colorpick = o["colorpick"].toBool();
 
 	b.size_dynamic = dynamicFromJson(o, QStringLiteral("size"));
@@ -294,7 +298,11 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 	spacing = settings["spacing"].toDouble();
 	resmudge = settings["resmudge"].toInt();
 
-	incremental = !settings["indirect"].toBool();
+	paint_mode = canvas::paintmode::fromSettingName(
+		settings.value(QStringLiteral("paint_mode")).toString(),
+		settings.value(QStringLiteral("indirect")).toBool()
+			? DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY
+			: DP_PAINT_MODE_DIRECT);
 	colorpick = settings["colorpick"].toBool();
 	size_dynamic = dynamicFromJson(settings, QStringLiteral("size"));
 	m_lastSizeDynamicType =
@@ -376,8 +384,10 @@ QJsonObject ClassicBrush::settingsToJson() const
 	if(resmudge > 0)
 		o["resmudge"] = resmudge;
 
-	if(!incremental)
-		o["indirect"] = true;
+	o[QStringLiteral("paint_mode")] =
+		canvas::paintmode::settingName(paint_mode);
+	o[QStringLiteral("indirect")] = paint_mode != DP_PAINT_MODE_DIRECT;
+
 	if(colorpick)
 		o["colorpick"] = true;
 	dynamicToJson(

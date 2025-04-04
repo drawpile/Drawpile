@@ -682,6 +682,7 @@ DrawDabsClassic:
              The coordinate system has 1/4 pixel resolution. Divide by 4.0 before use.
              The size field is the brush diameter multiplied by 256.
     fields:
+        - flags u8
         - layer u16
         - x i32: div4
         - y i32: div4
@@ -705,6 +706,7 @@ DrawDabsPixel:
              The same kind of delta compression is used as in classicdabs,
              but the fields all have integer precision.
     fields:
+        - flags u8
         - layer u16
         - x i32
         - y i32

@@ -399,9 +399,9 @@ static double get_classic_dabs_cost(DP_MsgDrawDabsClassic *mddc,
 {
     int count;
     const DP_ClassicDab *cds = DP_msg_draw_dabs_classic_dabs(mddc, &count);
-    double base_cost =
-        DP_dab_cost_classic(DP_msg_draw_dabs_classic_indirect(mddc),
-                            DP_msg_draw_dabs_classic_mode(mddc));
+    double base_cost = DP_dab_cost_classic(
+        DP_msg_draw_dabs_classic_paint_mode(mddc) != DP_PAINT_MODE_DIRECT,
+        DP_msg_draw_dabs_classic_mode(mddc));
     for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
         double size =
             DP_int_to_double(DP_classic_dab_size(DP_classic_dab_at(cds, i)));
@@ -415,7 +415,8 @@ static double get_pixel_dabs_cost(DP_MsgDrawDabsPixel *mddp, double dabs_cost)
 {
     int count;
     const DP_PixelDab *pds = DP_msg_draw_dabs_pixel_dabs(mddp, &count);
-    double base_cost = DP_dab_cost_pixel(DP_msg_draw_dabs_pixel_indirect(mddp),
+    double base_cost = DP_dab_cost_pixel(DP_msg_draw_dabs_pixel_paint_mode(mddp)
+                                             != DP_PAINT_MODE_DIRECT,
                                          DP_msg_draw_dabs_pixel_mode(mddp));
     for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
         double size = DP_pixel_dab_size(DP_pixel_dab_at(pds, i));
@@ -430,9 +431,9 @@ static double get_pixel_square_dabs_cost(DP_MsgDrawDabsPixel *mddp,
 {
     int count;
     const DP_PixelDab *pds = DP_msg_draw_dabs_pixel_dabs(mddp, &count);
-    double base_cost =
-        DP_dab_cost_pixel_square(DP_msg_draw_dabs_pixel_indirect(mddp),
-                                 DP_msg_draw_dabs_pixel_mode(mddp));
+    double base_cost = DP_dab_cost_pixel_square(
+        DP_msg_draw_dabs_pixel_paint_mode(mddp) != DP_PAINT_MODE_DIRECT,
+        DP_msg_draw_dabs_pixel_mode(mddp));
     for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
         double size = DP_pixel_dab_size(DP_pixel_dab_at(pds, i));
         double cost = base_cost * size * size;

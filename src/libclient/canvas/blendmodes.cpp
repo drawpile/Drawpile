@@ -315,4 +315,19 @@ void adjustAlphaBehavior(int &mode, bool preserveAlpha)
 }
 
 }
+
+namespace paintmode {
+
+QString settingName(DP_PaintMode mode)
+{
+	return QString::fromUtf8(DP_paint_mode_setting_name(mode));
+}
+
+DP_PaintMode fromSettingName(const QString &name, DP_PaintMode defaultMode)
+{
+	return DP_paint_mode_by_setting_name(
+		name.toUtf8().constData(), defaultMode);
+}
+
+}
 }
