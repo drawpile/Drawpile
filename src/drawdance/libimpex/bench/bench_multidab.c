@@ -13,6 +13,7 @@
 #include <dpengine/layer_props.h>
 #include <dpengine/layer_props_list.h>
 #include <dpengine/tile.h>
+#include <dpimpex/image_impex.h>
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/message.h>
 #include <stdio.h>
@@ -25,19 +26,19 @@
 
 struct PixelArgs {
     DP_BlendMode blend_mode;
-    uint8_t size;
+    uint16_t size;
     uint8_t opacity;
 };
 
 struct ClassicArgs {
     DP_BlendMode blend_mode;
-    uint16_t size;
+    uint32_t size;
     uint8_t opacity;
     uint8_t hardness;
 };
 
 struct MyPaintArgs {
-    uint16_t size;
+    uint32_t size;
     uint8_t opacity;
     uint8_t hardness;
     uint8_t angle;
@@ -46,6 +47,15 @@ struct MyPaintArgs {
     uint8_t colorize;
     uint8_t posterize;
     uint8_t posterize_num;
+};
+
+struct MyPaintBlendArgs {
+    DP_BlendMode blend_mode;
+    uint32_t size;
+    uint8_t opacity;
+    uint8_t hardness;
+    uint8_t angle;
+    uint8_t aspect_ratio;
 };
 
 struct Args {
@@ -58,6 +68,7 @@ struct Args {
         struct PixelArgs pixel;
         struct ClassicArgs classic;
         struct MyPaintArgs mypaint;
+        struct MyPaintBlendArgs mypaint_blend;
     };
 };
 
@@ -125,9 +136,22 @@ static bool parse_uint16_arg(const char *s, uint16_t min_inclusive,
     }
 }
 
+static bool parse_uint32_arg(const char *s, uint32_t min_inclusive,
+                             uint32_t max_inclusive, uint32_t *out_value)
+{
+    long long value;
+    if (parse_llong_arg(s, min_inclusive, max_inclusive, &value)) {
+        *out_value = DP_llong_to_uint32(value);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 static bool parse_blend_mode_arg(const char *s, DP_BlendMode *out_value)
 {
-    DP_BlendMode value = DP_blend_mode_by_svg_name(s, DP_BLEND_MODE_COUNT);
+    DP_BlendMode value = DP_blend_mode_by_dptxt_name(s, DP_BLEND_MODE_COUNT);
     if (value == DP_BLEND_MODE_COUNT) {
         DP_warn("Unknown blend mode '%s'", s);
         return false;
@@ -167,7 +191,7 @@ static bool parse_pixel_arguments(DP_MessageType type, int argc, char **argv,
                          &out_args->dabs_per_message)
         && parse_uint8_arg(argv[4], 0, UINT8_MAX, &out_args->color_alpha)
         && parse_blend_mode_arg(argv[5], &out_args->pixel.blend_mode)
-        && parse_uint8_arg(argv[6], 0, UINT8_MAX, &out_args->pixel.size)
+        && parse_uint16_arg(argv[6], 0, UINT16_MAX, &out_args->pixel.size)
         && parse_uint8_arg(argv[7], 0, UINT8_MAX, &out_args->pixel.opacity);
 }
 
@@ -183,7 +207,7 @@ static bool parse_classic_arguments(int argc, char **argv,
                          &out_args->dabs_per_message)
         && parse_uint8_arg(argv[4], 0, UINT8_MAX, &out_args->color_alpha)
         && parse_blend_mode_arg(argv[5], &out_args->classic.blend_mode)
-        && parse_uint16_arg(argv[6], 0, UINT16_MAX, &out_args->classic.size)
+        && parse_uint32_arg(argv[6], 0, DP_UINT24_MAX, &out_args->classic.size)
         && parse_uint8_arg(argv[7], 0, UINT8_MAX, &out_args->classic.opacity)
         && parse_uint8_arg(argv[8], 0, UINT8_MAX, &out_args->classic.hardness);
 }
@@ -199,7 +223,7 @@ static bool parse_mypaint_arguments(int argc, char **argv,
                                     out_args->total_dabs),
                          &out_args->dabs_per_message)
         && parse_uint8_arg(argv[4], 0, UINT8_MAX, &out_args->color_alpha)
-        && parse_uint16_arg(argv[5], 0, UINT16_MAX, &out_args->mypaint.size)
+        && parse_uint32_arg(argv[5], 0, DP_UINT24_MAX, &out_args->mypaint.size)
         && parse_uint8_arg(argv[6], 0, UINT8_MAX, &out_args->mypaint.opacity)
         && parse_uint8_arg(argv[7], 0, UINT8_MAX, &out_args->mypaint.hardness)
         && parse_uint8_arg(argv[8], 0, UINT8_MAX, &out_args->mypaint.angle)
@@ -211,6 +235,31 @@ static bool parse_mypaint_arguments(int argc, char **argv,
         && parse_uint8_arg(argv[12], 0, UINT8_MAX, &out_args->mypaint.posterize)
         && parse_uint8_arg(argv[13], 0, UINT8_MAX,
                            &out_args->mypaint.posterize_num);
+}
+
+static bool parse_mypaint_blend_arguments(int argc, char **argv,
+                                          struct Args *out_args)
+{
+    return parse_common_arguments(DP_MSG_DRAW_DABS_MYPAINT_BLEND, 11, argc,
+                                  argv, out_args)
+        && parse_int_arg(argv[2], 0, INT_MAX, &out_args->total_dabs)
+        && parse_int_arg(
+               argv[3], DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MIN_COUNT,
+               DP_min_int(DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MAX_COUNT,
+                          out_args->total_dabs),
+               &out_args->dabs_per_message)
+        && parse_uint8_arg(argv[4], 0, UINT8_MAX, &out_args->color_alpha)
+        && parse_blend_mode_arg(argv[5], &out_args->mypaint_blend.blend_mode)
+        && parse_uint32_arg(argv[6], 0, DP_UINT24_MAX,
+                            &out_args->mypaint_blend.size)
+        && parse_uint8_arg(argv[7], 0, UINT8_MAX,
+                           &out_args->mypaint_blend.opacity)
+        && parse_uint8_arg(argv[8], 0, UINT8_MAX,
+                           &out_args->mypaint_blend.hardness)
+        && parse_uint8_arg(argv[9], 0, UINT8_MAX,
+                           &out_args->mypaint_blend.angle)
+        && parse_uint8_arg(argv[10], 0, UINT8_MAX,
+                           &out_args->mypaint_blend.aspect_ratio);
 }
 
 static bool parse_arguments(int argc, char **argv, struct Args *out_args)
@@ -234,6 +283,9 @@ static bool parse_arguments(int argc, char **argv, struct Args *out_args)
     }
     else if (DP_str_equal(type, "mypaint")) {
         return parse_mypaint_arguments(argc, argv, out_args);
+    }
+    else if (DP_str_equal(type, "mypaintblend")) {
+        return parse_mypaint_blend_arguments(argc, argv, out_args);
     }
     else if (DP_str_equal(type, "blendmodes")) {
         if (argc == 2) {
@@ -279,6 +331,24 @@ static void set_mypaint_dabs(int count, DP_MyPaintDab *mpds, void *user)
     }
 }
 
+static void set_mypaint_blend_dabs(int count, DP_MyPaintBlendDab *mpbds,
+                                   void *user)
+{
+    const struct Args *args = user;
+    for (int i = 0; i < count; ++i) {
+        DP_mypaint_blend_dab_init(mpbds, i, 0, 0, args->mypaint.size,
+                                  args->mypaint.hardness, args->mypaint.opacity,
+                                  args->mypaint.angle,
+                                  args->mypaint.aspect_ratio);
+    }
+}
+
+static uint8_t get_dab_flags(DP_UPixel8 p)
+{
+    return p.a == 0 ? (uint8_t)DP_PAINT_MODE_DIRECT
+                    : (uint8_t)DP_PAINT_MODE_INDIRECT_WASH;
+}
+
 static DP_Message **generate_messages(const struct Args *args, int *out_count)
 {
     int total_dabs = args->total_dabs;
@@ -300,30 +370,40 @@ static DP_Message **generate_messages(const struct Args *args, int *out_count)
         switch (args->type) {
         case DP_MSG_DRAW_DABS_PIXEL:
             msgs[i] = DP_msg_draw_dabs_pixel_new(
-                1, LAYER_ID, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, pixel.color,
-                (uint8_t)args->pixel.blend_mode, set_pixel_dabs, dab_count,
-                (void *)args);
+                1, get_dab_flags(pixel), LAYER_ID, CANVAS_WIDTH / 2,
+                CANVAS_HEIGHT / 2, pixel.color, (uint8_t)args->pixel.blend_mode,
+                set_pixel_dabs, dab_count, (void *)args);
             break;
         case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
             msgs[i] = DP_msg_draw_dabs_pixel_square_new(
-                1, LAYER_ID, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, pixel.color,
-                (uint8_t)args->pixel.blend_mode, set_pixel_dabs, dab_count,
-                (void *)args);
+                1, get_dab_flags(pixel), LAYER_ID, CANVAS_WIDTH / 2,
+                CANVAS_HEIGHT / 2, pixel.color, (uint8_t)args->pixel.blend_mode,
+                set_pixel_dabs, dab_count, (void *)args);
             break;
         case DP_MSG_DRAW_DABS_CLASSIC:
             msgs[i] = DP_msg_draw_dabs_classic_new(
-                1, LAYER_ID, DP_double_to_int32(CANVAS_WIDTH / 2.0 * 4.0),
+                1, get_dab_flags(pixel), LAYER_ID,
+                DP_double_to_int32(CANVAS_WIDTH / 2.0 * 4.0),
                 DP_double_to_int32(CANVAS_HEIGHT / 2.0 * 4.0), pixel.color,
-                (uint8_t)args->pixel.blend_mode, set_classic_dabs, dab_count,
+                (uint8_t)args->classic.blend_mode, set_classic_dabs, dab_count,
                 (void *)args);
             break;
         case DP_MSG_DRAW_DABS_MYPAINT:
             msgs[i] = DP_msg_draw_dabs_mypaint_new(
-                1, LAYER_ID, DP_double_to_int32(CANVAS_WIDTH / 2.0 * 4.0),
+                1, get_dab_flags(pixel), LAYER_ID,
+                DP_double_to_int32(CANVAS_WIDTH / 2.0 * 4.0),
                 DP_double_to_int32(CANVAS_HEIGHT / 2.0 * 4.0), pixel.color,
                 args->mypaint.lock_alpha, args->mypaint.colorize,
                 args->mypaint.posterize, args->mypaint.posterize_num,
                 set_mypaint_dabs, dab_count, (void *)args);
+            break;
+        case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
+            msgs[i] = DP_msg_draw_dabs_mypaint_blend_new(
+                1, get_dab_flags(pixel), LAYER_ID,
+                DP_double_to_int32(CANVAS_WIDTH / 2.0 * 4.0),
+                DP_double_to_int32(CANVAS_HEIGHT / 2.0 * 4.0), pixel.color,
+                (uint8_t)args->mypaint_blend.blend_mode, set_mypaint_blend_dabs,
+                dab_count, (void *)args);
             break;
         default:
             DP_UNREACHABLE();
@@ -429,8 +509,34 @@ static void dump_blend_modes(void)
     printf("blend_modes = [\n");
     for (int i = 0; i < DP_BLEND_MODE_COUNT; ++i) {
         if (DP_blend_mode_valid_for_brush(i)) {
-            printf("    {\"enum_name\": \"%s\", \"svg_name\": \"%s\"},\n",
-                   DP_blend_mode_enum_name(i), DP_blend_mode_svg_name(i));
+            printf("    {\"enum_name\": \"%s\", \"dptxt_name\": \"%s\"",
+                   DP_blend_mode_enum_name(i), DP_blend_mode_dptxt_name(i));
+            if (DP_blend_mode_secondary_alias(i)) {
+                DP_BlendMode alpha_affecting, alpha_preserving;
+                if (DP_blend_mode_alpha_preserve_pair(i, &alpha_affecting,
+                                                      &alpha_preserving)) {
+                    if ((int)alpha_affecting == i) {
+                        printf(", \"alias_for\": \"%s\"",
+                               DP_blend_mode_enum_name((int)alpha_preserving));
+                    }
+                    else if ((int)alpha_preserving == i) {
+                        printf(", \"alias_for\": \"%s\"",
+                               DP_blend_mode_enum_name((int)alpha_affecting));
+                    }
+                    else {
+                        DP_warn("Blend mode %d is aliased to neither "
+                                "alpha-affecting mode %d nor alpha-preserving "
+                                "mode %d",
+                                i, (int)alpha_affecting, (int)alpha_preserving);
+                    }
+                }
+                else {
+                    DP_warn("Blend mode %d purports to be aliased but has no "
+                            "alpha preserve pair",
+                            i);
+                }
+            }
+            printf("},\n");
         }
     }
     printf("]\n");

@@ -696,7 +696,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
     [DP_BLEND_MODE_GREATER_ALPHA_WASH] =
         {
             LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK | COMPARES_ALPHA,
-            "DP_BLEND_MODE_GREATER_ALPHA",
+            "DP_BLEND_MODE_GREATER_ALPHA_WASH",
             "krita:greater",
             "-dp-greater-alpha-wash",
             "Greater Alpha Wash",
@@ -747,7 +747,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
     [DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE] =
         {
             LAYER | BRUSH | DECREASE_OPACITY | SECONDARY_ALIAS,
-            "DP_BLEND_MODE_LIGHT_TO_ALPHA",
+            "DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE",
             "-dp-light-to-alpha",
             "-dp-light-to-alpha-preserve",
             "Lightness to Alpha Preserve",

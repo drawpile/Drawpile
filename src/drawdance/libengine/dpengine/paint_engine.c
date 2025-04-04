@@ -465,10 +465,10 @@ static double get_mypaint_blend_dabs_cost(DP_MsgDrawDabsMyPaintBlend *mddmpb,
     int count;
     const DP_MyPaintBlendDab *mpbds =
         DP_msg_draw_dabs_mypaint_blend_dabs(mddmpb, &count);
-    double base_cost =
-        DP_dab_cost_mypaint(DP_msg_draw_dabs_mypaint_blend_paint_mode(mddmpb)
-                                != DP_PAINT_MODE_DIRECT,
-                            0, 0, 0);
+    double base_cost = DP_dab_cost_mypaint_blend(
+        DP_msg_draw_dabs_mypaint_blend_paint_mode(mddmpb)
+            != DP_PAINT_MODE_DIRECT,
+        DP_msg_draw_dabs_mypaint_blend_mode(mddmpb));
     for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
         double size =
             DP_mypaint_blend_dab_size(DP_mypaint_blend_dab_at(mpbds, i));

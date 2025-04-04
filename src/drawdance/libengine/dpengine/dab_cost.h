@@ -12,4 +12,6 @@ double DP_dab_cost_classic(bool indirect, int blend_mode);
 double DP_dab_cost_mypaint(bool indirect, uint8_t lock_alpha, uint8_t colorize,
                            uint8_t posterize);
 
+double DP_dab_cost_mypaint_blend(bool indirect, int blend_mode);
+
 #endif
