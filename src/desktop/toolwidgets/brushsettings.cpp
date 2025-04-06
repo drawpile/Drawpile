@@ -1338,28 +1338,23 @@ void BrushSettings::updateUi()
 		d->ui.gainBox, myPaintSettings,
 		MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG);
 
+	bool canChangePaintMode =
+		!isLocked() && !canvas::blendmode::directOnly(blendMode);
 	if(mypaintmode) {
 		setSliderFromMyPaintSetting(
 			d->ui.opacityBox, myPaintSettings, MYPAINT_BRUSH_SETTING_OPAQUE);
 		setSliderFromMyPaintSetting(
 			d->ui.hardnessBox, myPaintSettings, MYPAINT_BRUSH_SETTING_HARDNESS);
-		bool canUseIncrementalMode = !isLocked();
-		d->ui.paintMode->setEnabled(canUseIncrementalMode);
-		d->ui.paintMode->setVisible(canUseIncrementalMode);
 	} else {
 		d->ui.opacityBox->setValue(qRound(classic.opacity.max * 100.0));
 		d->ui.hardnessBox->setValue(qRound(classic.hardness.max * 100.0));
 		// Smudging only works right in incremental mode
-		bool canUseIncrementalMode;
-		if(classic.smudge.max == 0.0) {
-			Lock lock = getLock();
-			canUseIncrementalMode = lock == Lock::None;
-		} else {
-			canUseIncrementalMode = false;
+		if(classic.smudge.max != 0.0) {
+			canChangePaintMode = false;
 		}
-		d->ui.paintMode->setEnabled(canUseIncrementalMode);
-		d->ui.paintMode->setVisible(canUseIncrementalMode);
 	}
+	d->ui.paintMode->setEnabled(canChangePaintMode);
+	d->ui.paintMode->setVisible(canChangePaintMode);
 
 	if(d->useBrushSampleCount) {
 		brushes::StabilizationMode stabilizationMode =
@@ -1460,6 +1455,8 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			blendMode, d->ui.alphaPreserve->isChecked());
 		brush.setBlendMode(blendMode, brush.isEraser());
 		brush.setPaintMode(int(d->paintMode));
+		bool canChangePaintMode =
+			!isLocked() && !canvas::blendmode::directOnly(blendMode);
 		if(mypaintmode) {
 			setMyPaintSettingFromSlider(
 				d->ui.opacityBox, myPaintSettings,
@@ -1467,9 +1464,6 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			setMyPaintSettingFromSlider(
 				d->ui.hardnessBox, myPaintSettings,
 				MYPAINT_BRUSH_SETTING_HARDNESS);
-			bool canUseIncrementalMode = !isLocked();
-			d->ui.paintMode->setEnabled(canUseIncrementalMode);
-			d->ui.paintMode->setVisible(canUseIncrementalMode);
 		} else {
 			classic.opacity.max = d->ui.opacityBox->value() / 100.0;
 			classic.opacity_dynamic.type =
@@ -1484,16 +1478,12 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 						: DP_CLASSIC_BRUSH_DYNAMIC_NONE;
 			}
 			// Smudging only works right in incremental mode
-			bool canUseIncrementalMode;
-			if(classic.smudge.max == 0.0) {
-				Lock lock = getLock();
-				canUseIncrementalMode = lock == Lock::None;
-			} else {
-				canUseIncrementalMode = false;
+			if(classic.smudge.max != 0.0) {
+				canChangePaintMode = false;
 			}
-			d->ui.paintMode->setEnabled(canUseIncrementalMode);
-			d->ui.paintMode->setVisible(canUseIncrementalMode);
 		}
+		d->ui.paintMode->setEnabled(canChangePaintMode);
+		d->ui.paintMode->setVisible(canChangePaintMode);
 	}
 
 	if(d->useBrushSampleCount) {
