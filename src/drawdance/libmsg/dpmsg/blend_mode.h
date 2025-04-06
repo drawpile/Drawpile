@@ -140,6 +140,8 @@ bool DP_blend_mode_presents_as_eraser(int blend_mode);
 
 bool DP_blend_mode_presents_as_alpha_preserving(int blend_mode);
 
+bool DP_blend_mode_compares_alpha(int blend_mode);
+
 DP_BlendMode DP_blend_mode_by_ora_name(const char *svg_name,
                                        DP_BlendMode not_found_value);
 

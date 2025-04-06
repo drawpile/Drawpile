@@ -113,6 +113,7 @@ private:
 		AlwaysEnabled,
 		IndirectDisabled,
 		BlendOrIndirectDisabled,
+		ComparesAlphaOrIndirectDisabled,
 	};
 
 	struct Private;
