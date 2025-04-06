@@ -960,6 +960,22 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
 }
 
 
+static uint8_t get_dab_blend_mode(DP_PaintMode paint_mode,
+                                  DP_BlendMode blend_mode)
+{
+    // Greater looks better in wash mode, so switch to it when using direct
+    // painting. The soft indirect mode is there if the user really wants it.
+    if (paint_mode == DP_PAINT_MODE_DIRECT) {
+        if (blend_mode == DP_BLEND_MODE_GREATER) {
+            return (uint8_t)DP_BLEND_MODE_GREATER_WASH;
+        }
+        else if (blend_mode == DP_BLEND_MODE_GREATER_ALPHA) {
+            return (uint8_t)DP_BLEND_MODE_GREATER_ALPHA_WASH;
+        }
+    }
+    return (uint8_t)blend_mode;
+}
+
 static void set_pixel_dabs(int count, DP_PixelDab *out, void *user)
 {
     DP_BrushEnginePixelDab *dabs = user;
@@ -981,12 +997,13 @@ static void flush_pixel_dabs(DP_BrushEngine *be, int used)
         new_fn = DP_msg_draw_dabs_pixel_square_new;
     }
     be->push_message(
-        be->user,
-        new_fn(be->stroke.context_id, (uint8_t)be->classic.dab_flags,
-               DP_int_to_uint16(be->layer_id), be->classic.dab_x,
-               be->classic.dab_y, be->classic.dab_color,
-               (uint8_t)DP_classic_brush_blend_mode(&be->classic.brush),
-               set_pixel_dabs, used, be->dabs.buffer));
+        be->user, new_fn(be->stroke.context_id, (uint8_t)be->classic.dab_flags,
+                         DP_int_to_uint16(be->layer_id), be->classic.dab_x,
+                         be->classic.dab_y, be->classic.dab_color,
+                         get_dab_blend_mode(
+                             be->classic.brush.paint_mode,
+                             DP_classic_brush_blend_mode(&be->classic.brush)),
+                         set_pixel_dabs, used, be->dabs.buffer));
 }
 
 static void set_soft_dabs(int count, DP_ClassicDab *out, void *user)
@@ -1002,12 +1019,14 @@ static void set_soft_dabs(int count, DP_ClassicDab *out, void *user)
 static void flush_soft_dabs(DP_BrushEngine *be, int used)
 {
     be->push_message(
-        be->user, DP_msg_draw_dabs_classic_new(
-                      be->stroke.context_id, be->classic.dab_flags,
-                      DP_int_to_uint16(be->layer_id), be->classic.dab_x,
-                      be->classic.dab_y, be->classic.dab_color,
-                      (uint8_t)DP_classic_brush_blend_mode(&be->classic.brush),
-                      set_soft_dabs, used, be->dabs.buffer));
+        be->user,
+        DP_msg_draw_dabs_classic_new(
+            be->stroke.context_id, be->classic.dab_flags,
+            DP_int_to_uint16(be->layer_id), be->classic.dab_x,
+            be->classic.dab_y, be->classic.dab_color,
+            get_dab_blend_mode(be->classic.brush.paint_mode,
+                               DP_classic_brush_blend_mode(&be->classic.brush)),
+            set_soft_dabs, used, be->dabs.buffer));
 }
 
 static void set_mypaint_dabs(int count, DP_MyPaintDab *out, void *user)
@@ -1050,8 +1069,9 @@ static void flush_mypaint_dabs(DP_BrushEngine *be, int used)
         msg = DP_msg_draw_dabs_mypaint_blend_new(
             be->stroke.context_id, be->mypaint.dab_flags,
             DP_int_to_uint16(be->layer_id), be->mypaint.dab_x,
-            be->mypaint.dab_y, be->mypaint.dab_color, (uint8_t)blend_mode,
-            set_mypaint_blend_dabs, used, be->dabs.buffer);
+            be->mypaint.dab_y, be->mypaint.dab_color,
+            get_dab_blend_mode(paint_mode, blend_mode), set_mypaint_blend_dabs,
+            used, be->dabs.buffer);
     }
     be->push_message(be->user, msg);
 }
