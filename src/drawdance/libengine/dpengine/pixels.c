@@ -2063,6 +2063,36 @@ static void blend_mask_greater(DP_Pixel15 *dst, DP_UPixel15 src,
     });
 }
 
+static void blend_mask_greater_wash(DP_Pixel15 *dst, DP_UPixel15 src,
+                                    const uint16_t *mask, Fix15 opacity, int w,
+                                    int h, int mask_skip, int base_skip)
+{
+    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
+        if (as != 0) {
+            Fix15 ab = dst->a;
+            if (ab != 0 && ab < opacity) {
+                Fix15 ar = ab + fix15_mul(as, opacity - ab);
+                float ad = (float)(ar - ab) / BIT15_FLOAT;
+                Fix15 wa = to_fix(
+                    DP_channel_float_to_15(1.0f / (1.0f + expf(40.0f * ad))));
+                Fix15 a = fix15_sumprods(ab, wa, ar, DP_BIT15 - wa);
+                Fix15 fake_opacity =
+                    BIT15_FIX
+                    - fix15_clamp_div((BIT15_FIX - a), (BIT15_FIX - ab));
+                *dst = DP_pixel15_premultiply((DP_UPixel15){
+                    from_fix(fix15_clamp_div(
+                        fix15_lerp(to_fix(dst->b), src.b, fake_opacity), a)),
+                    from_fix(fix15_clamp_div(
+                        fix15_lerp(to_fix(dst->g), src.g, fake_opacity), a)),
+                    from_fix(fix15_clamp_div(
+                        fix15_lerp(to_fix(dst->r), src.r, fake_opacity), a)),
+                    from_fix(ab),
+                });
+            }
+        }
+    });
+}
+
 static void blend_mask_greater_alpha(DP_Pixel15 *dst, DP_UPixel15 src,
                                      const uint16_t *mask, Fix15 opacity, int w,
                                      int h, int mask_skip, int base_skip)
@@ -2094,6 +2124,45 @@ static void blend_mask_greater_alpha(DP_Pixel15 *dst, DP_UPixel15 src,
                     from_fix(fix15_clamp_div(
                         fix15_lerp(to_fix(dst->r), src.r, fake_opacity), a)),
                     from_fix(aso),
+                });
+            }
+        }
+    });
+}
+
+static void blend_mask_greater_alpha_wash(DP_Pixel15 *dst, DP_UPixel15 src,
+                                          const uint16_t *mask, Fix15 opacity,
+                                          int w, int h, int mask_skip,
+                                          int base_skip)
+{
+    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
+        if (as != 0) {
+            Fix15 ab = dst->a;
+            if (ab == 0) {
+                *dst = DP_pixel15_premultiply((DP_UPixel15){
+                    src.b,
+                    src.g,
+                    src.r,
+                    from_fix(fix15_mul(as, opacity)),
+                });
+            }
+            else if (ab < opacity) {
+                Fix15 ar = ab + fix15_mul(as, opacity - ab);
+                float ad = (float)(ar - ab) / BIT15_FLOAT;
+                Fix15 wa = to_fix(
+                    DP_channel_float_to_15(1.0f / (1.0f + expf(40.0f * ad))));
+                Fix15 a = fix15_sumprods(ab, wa, ar, DP_BIT15 - wa);
+                Fix15 fake_opacity =
+                    BIT15_FIX
+                    - fix15_clamp_div((BIT15_FIX - a), (BIT15_FIX - ab));
+                *dst = DP_pixel15_premultiply((DP_UPixel15){
+                    from_fix(fix15_clamp_div(
+                        fix15_lerp(to_fix(dst->b), src.b, fake_opacity), a)),
+                    from_fix(fix15_clamp_div(
+                        fix15_lerp(to_fix(dst->g), src.g, fake_opacity), a)),
+                    from_fix(fix15_clamp_div(
+                        fix15_lerp(to_fix(dst->r), src.r, fake_opacity), a)),
+                    from_fix(ar),
                 });
             }
         }
@@ -2291,6 +2360,10 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
     case DP_BLEND_MODE_GREATER:
         blend_mask_greater(dst, src, mask, opacity, w, h, mask_skip, base_skip);
         break;
+    case DP_BLEND_MODE_GREATER_WASH:
+        blend_mask_greater_wash(dst, src, mask, opacity, w, h, mask_skip,
+                                base_skip);
+        break;
     // Alpha-preserving separable blend modes where the opacity affects blending
     case DP_BLEND_MODE_LUMINOSITY_SHINE_SAI:
         blend_mask_composite_separable_with_opacity(dst, src, mask, opacity, w,
@@ -2380,6 +2453,10 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
     case DP_BLEND_MODE_GREATER_ALPHA:
         blend_mask_greater_alpha(dst, src, mask, opacity, w, h, mask_skip,
                                  base_skip);
+        break;
+    case DP_BLEND_MODE_GREATER_ALPHA_WASH:
+        blend_mask_greater_alpha_wash(dst, src, mask, opacity, w, h, mask_skip,
+                                      base_skip);
         break;
     // Alpha-preserving separable blend modes where the opacity affects blending
     case DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA:
@@ -2763,6 +2840,7 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
                                          comp_linear_light);
         break;
     case DP_BLEND_MODE_GREATER:
+    case DP_BLEND_MODE_GREATER_WASH:
         blend_pixels_greater(dst, src, pixel_count, to_fix(opacity));
         break;
     // Alpha-preserving separable blend modes where the opacity affects blending
@@ -2845,6 +2923,7 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
             dst, src, pixel_count, to_fix(opacity), comp_linear_light);
         break;
     case DP_BLEND_MODE_GREATER_ALPHA:
+    case DP_BLEND_MODE_GREATER_ALPHA_WASH:
         blend_pixels_greater_alpha(dst, src, pixel_count, to_fix(opacity));
         break;
     // Alpha-preserving separable blend modes where the opacity affects blending

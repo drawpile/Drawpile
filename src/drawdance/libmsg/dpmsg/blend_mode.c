@@ -272,6 +272,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "-dp-greater",
             "Greater",
         },
+    [DP_BLEND_MODE_GREATER_WASH] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_GREATER_WASH",
+            "-dp-greater-wash",
+            "-dp-greater-wash",
+            "Greater Wash",
+        },
     [DP_BLEND_MODE_ERASE_LIGHT] =
         {
             LAYER | BRUSH | DECREASE_OPACITY | PRESENTS_AS_ERASER,
@@ -463,6 +471,14 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "krita:greater",
             "krita:greater",
             "Greater Alpha",
+        },
+    [DP_BLEND_MODE_GREATER_ALPHA_WASH] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_GREATER_ALPHA",
+            "-dp-greater-alpha-wash",
+            "-dp-greater-alpha-wash",
+            "Greater Alpha Wash",
         },
     [DP_BLEND_MODE_ERASE_PRESERVE] =
         {
@@ -793,6 +809,11 @@ bool DP_blend_mode_alpha_preserve_pair(int blend_mode,
         alpha_affecting = DP_BLEND_MODE_GREATER_ALPHA;
         alpha_preserving = DP_BLEND_MODE_GREATER;
         break;
+    case DP_BLEND_MODE_GREATER_WASH:
+    case DP_BLEND_MODE_GREATER_ALPHA_WASH:
+        alpha_affecting = DP_BLEND_MODE_GREATER_ALPHA_WASH;
+        alpha_preserving = DP_BLEND_MODE_GREATER_WASH;
+        break;
     case DP_BLEND_MODE_ERASE_LIGHT:
     case DP_BLEND_MODE_ERASE_LIGHT_PRESERVE:
         alpha_affecting = DP_BLEND_MODE_ERASE_LIGHT;
@@ -871,6 +892,8 @@ int DP_blend_mode_to_alpha_affecting(int blend_mode)
         return DP_BLEND_MODE_COLOR_ALPHA;
     case DP_BLEND_MODE_GREATER:
         return DP_BLEND_MODE_GREATER_ALPHA;
+    case DP_BLEND_MODE_GREATER_WASH:
+        return DP_BLEND_MODE_GREATER_ALPHA_WASH;
     case DP_BLEND_MODE_ERASE_PRESERVE:
         return DP_BLEND_MODE_ERASE;
     case DP_BLEND_MODE_BEHIND_PRESERVE:
@@ -949,6 +972,8 @@ int DP_blend_mode_to_alpha_preserving(int blend_mode)
         return DP_BLEND_MODE_COLOR;
     case DP_BLEND_MODE_GREATER_ALPHA:
         return DP_BLEND_MODE_GREATER;
+    case DP_BLEND_MODE_GREATER_ALPHA_WASH:
+        return DP_BLEND_MODE_GREATER_WASH;
     default:
         return blend_mode;
     }
