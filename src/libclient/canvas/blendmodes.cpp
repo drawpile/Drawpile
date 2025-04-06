@@ -53,7 +53,7 @@ static const BlendModeInfo BLEND_MODE[] = {
 		BrushMode,
 	},
 	{
-		QT_TRANSLATE_NOOP("blendmode", "Greater Density"),
+		QT_TRANSLATE_NOOP("blendmode", "Greater Density/Marker"),
 		DP_BLEND_MODE_GREATER_ALPHA,
 		DP_BLEND_MODE_GREATER,
 		UniversalMode,
