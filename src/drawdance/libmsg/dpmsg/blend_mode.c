@@ -32,6 +32,7 @@
 #define PRESENTS_AS_ERASER           (1 << 6)
 #define PRESENTS_AS_ALPHA_PRESERVING (1 << 7)
 #define SECONDARY_ALIAS              (1 << 8)
+#define COMPARES_ALPHA               (1 << 9)
 
 #define REPLACE_NAME "-dp-replace"
 
@@ -250,7 +251,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         },
     [DP_BLEND_MODE_COMPARE_DENSITY_SOFT] =
         {
-            BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            BRUSH | INCREASE_OPACITY | BLEND_BLANK | COMPARES_ALPHA,
             "DP_BLEND_MODE_COMPARE_DENSITY_SOFT",
             "-dp-compare-density-soft",
             "-dp-compare-density-soft",
@@ -258,7 +259,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         },
     [DP_BLEND_MODE_COMPARE_DENSITY] =
         {
-            BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            BRUSH | INCREASE_OPACITY | BLEND_BLANK | COMPARES_ALPHA,
             "DP_BLEND_MODE_COMPARE_DENSITY",
             "-dp-compare-density",
             "-dp-compare-density",
@@ -266,7 +267,8 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         },
     [DP_BLEND_MODE_GREATER] =
         {
-            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING
+                | COMPARES_ALPHA,
             "DP_BLEND_MODE_GREATER",
             "krita:greater",
             "-dp-greater",
@@ -274,7 +276,8 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         },
     [DP_BLEND_MODE_GREATER_WASH] =
         {
-            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING
+                | COMPARES_ALPHA,
             "DP_BLEND_MODE_GREATER_WASH",
             "-dp-greater-wash",
             "-dp-greater-wash",
@@ -466,7 +469,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         },
     [DP_BLEND_MODE_GREATER_ALPHA] =
         {
-            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK | COMPARES_ALPHA,
             "DP_BLEND_MODE_GREATER_ALPHA",
             "krita:greater",
             "krita:greater",
@@ -474,7 +477,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         },
     [DP_BLEND_MODE_GREATER_ALPHA_WASH] =
         {
-            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK | COMPARES_ALPHA,
             "DP_BLEND_MODE_GREATER_ALPHA",
             "-dp-greater-alpha-wash",
             "-dp-greater-alpha-wash",
@@ -634,6 +637,11 @@ bool DP_blend_mode_presents_as_eraser(int blend_mode)
 bool DP_blend_mode_presents_as_alpha_preserving(int blend_mode)
 {
     return get_attributes(blend_mode)->flags & PRESENTS_AS_ALPHA_PRESERVING;
+}
+
+bool DP_blend_mode_compares_alpha(int blend_mode)
+{
+    return get_attributes(blend_mode)->flags & COMPARES_ALPHA;
 }
 
 static DP_BlendMode blend_mode_by_fallback_name(const char *name,

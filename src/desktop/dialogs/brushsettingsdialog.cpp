@@ -1146,6 +1146,11 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 			new QLabel(tr("Not available in indirect paint modes or when using "
 						  "a blend mode other than Normal."));
 		break;
+	case MyPaintCondition::ComparesAlphaOrIndirectDisabled:
+		page.disabledLabel =
+			new QLabel(tr("Not available in indirect paint modes or when using "
+						  "the Greater Density/Marker blend mode."));
+		break;
 	default:
 		page.disabledLabel = nullptr;
 	}
@@ -1371,6 +1376,11 @@ void BrushSettingsDialog::updateMyPaintSettingPage(int setting)
 		enabled = brush.paint_mode == DP_PAINT_MODE_DIRECT &&
 				  DP_mypaint_brush_blend_mode(&brush) == DP_BLEND_MODE_NORMAL;
 		break;
+	case MyPaintCondition::ComparesAlphaOrIndirectDisabled:
+		enabled = brush.paint_mode == DP_PAINT_MODE_DIRECT &&
+				  !canvas::blendmode::comparesAlpha(
+					  int(DP_mypaint_brush_blend_mode(&brush)));
+		break;
 	default:
 		enabled = true;
 		break;
@@ -1477,8 +1487,11 @@ BrushSettingsDialog::getMyPaintCondition(int setting)
 {
 	switch(setting) {
 	// Opacity linearization is supposed to compensate for direct drawing mode,
-	// in indirect mode its behavior is just really wrong, so we disable it.
+	// in indirect mode its behavior is just really wrong, so we disable it. The
+	// same goes for blend modes like Greater, which effectively do indirect
+	// drawing directly on top of the layer.
 	case MYPAINT_BRUSH_SETTING_OPAQUE_LINEARIZE:
+		return MyPaintCondition::ComparesAlphaOrIndirectDisabled;
 	// Indirect mode can't smudge.
 	case MYPAINT_BRUSH_SETTING_SMUDGE:
 	case MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH:
