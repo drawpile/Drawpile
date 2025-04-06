@@ -175,7 +175,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "DP_BLEND_MODE_LUMINOSITY_SHINE_SAI",
             "krita:luminosity_sai",
             "krita:luminosity_sai",
-            "Luminosity/Shine (SAI)",
+            "Shine (SAI)",
         },
     [DP_BLEND_MODE_OVERLAY] =
         {
