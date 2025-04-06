@@ -1431,6 +1431,47 @@ DP_CanvasState *DP_ops_annotation_delete(DP_CanvasState *cs, int annotation_id)
 }
 
 
+static void draw_dabs_adjust_indirect_mode(DP_PaintDrawDabsParams *params,
+                                           DP_TransientLayerProps *sub_tlp,
+                                           int alternate_blend_mode)
+{
+    uint32_t existing_color = DP_transient_layer_props_sketch_tint(sub_tlp);
+    if (existing_color & (uint32_t)0xff000000u) {
+        // Color has already changed once, so keep using the alternate mode.
+        params->blend_mode = alternate_blend_mode;
+    }
+    else {
+        uint32_t current_color = params->color & (uint32_t)0xffffffu;
+        if (current_color != existing_color) {
+            // Color is different from the initial one, switch to the more
+            // expensive mode and flag the sketch tint accordingly.
+            params->blend_mode = alternate_blend_mode;
+            DP_transient_layer_props_sketch_tint_set(sub_tlp,
+                                                     (uint32_t)0xff000000u);
+        }
+    }
+}
+
+static void draw_dabs_check_indirect_color(DP_PaintDrawDabsParams *params,
+                                           DP_TransientLayerProps *sub_tlp)
+{
+    // The compare density blend modes only work properly if the
+    // color doesn't change. Check if that happened and switch
+    // them over to the more intensive greater mode if needed.
+    switch (params->blend_mode) {
+    case DP_BLEND_MODE_COMPARE_DENSITY:
+        draw_dabs_adjust_indirect_mode(params, sub_tlp,
+                                       DP_BLEND_MODE_GREATER_ALPHA_WASH);
+        break;
+    case DP_BLEND_MODE_COMPARE_DENSITY_SOFT:
+        draw_dabs_adjust_indirect_mode(params, sub_tlp,
+                                       DP_BLEND_MODE_GREATER_ALPHA);
+        break;
+    default:
+        break;
+    }
+}
+
 DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
                                  DP_UserCursors *ucs_or_null,
                                  bool (*next)(void *, DP_PaintDrawDabsParams *),
@@ -1443,6 +1484,7 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
     DP_TransientCanvasState *tcs = NULL;
     DP_TransientLayerContent *tlc = NULL;
     DP_TransientLayerContent *sub_tlc = NULL;
+    DP_TransientLayerProps *sub_tlp = NULL;
     int last_layer_id = -1;
     int last_sublayer_id = -1;
     int errors = 0;
@@ -1491,26 +1533,38 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
         DP_TransientLayerContent *target;
         if (DP_paint_mode_indirect(params.paint_mode, &params.blend_mode)) {
             int sublayer_id = DP_uint_to_int(params.context_id);
-            if (last_sublayer_id != sublayer_id) {
+            if (last_sublayer_id == sublayer_id) {
+                draw_dabs_check_indirect_color(&params, sub_tlp);
+            }
+            else {
+
                 last_sublayer_id = sublayer_id;
                 DP_LayerPropsList *lpl =
                     DP_transient_layer_content_sub_props_noinc(tlc);
                 int sublayer_index =
                     DP_layer_props_list_index_by_id(lpl, sublayer_id);
                 if (sublayer_index < 0) {
-                    DP_TransientLayerProps *tlp;
                     DP_transient_layer_content_transient_sublayer(
-                        tlc, sublayer_id, &sub_tlc, &tlp);
+                        tlc, sublayer_id, &sub_tlc, &sub_tlp);
                     // Only set these once, when the sublayer is created. They
                     // should always be the same values for a single sublayer.
-                    DP_transient_layer_props_blend_mode_set(tlp, blend_mode);
+                    DP_transient_layer_props_blend_mode_set(sub_tlp,
+                                                            blend_mode);
                     DP_transient_layer_props_opacity_set(
-                        tlp, DP_channel8_to_15(DP_uint32_to_uint8(
-                                 (params.color & 0xff000000) >> 24)));
+                        sub_tlp, DP_channel8_to_15(DP_uint32_to_uint8(
+                                     (params.color & (uint32_t)0xff000000u)
+                                     >> (uint32_t)24u)));
+                    // Stash the initial color inside the sketch tint of the
+                    // sublayer. This is used to check if the stroke changed
+                    // color along the way, in which case we need to switch to a
+                    // more expensive blend mode that can deal with that.
+                    DP_transient_layer_props_sketch_tint_set(
+                        sub_tlp, (params.color & (uint32_t)0xffffffu));
                 }
                 else {
                     DP_transient_layer_content_transient_sublayer_at(
-                        tlc, sublayer_index, &sub_tlc, NULL);
+                        tlc, sublayer_index, &sub_tlc, &sub_tlp);
+                    draw_dabs_check_indirect_color(&params, sub_tlp);
                 }
             }
             target = sub_tlc;
