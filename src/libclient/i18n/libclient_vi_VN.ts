@@ -20,13 +20,13 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Đối lập</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (đối lập)</translation>
     </message>
     <message>
         <location line="+85"/>
@@ -83,13 +83,13 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Đối lập</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (đối lập)</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -164,7 +164,7 @@
     <message>
         <location line="+16"/>
         <source>Unknown Button 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nút bấm không xác định 0x%1</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -174,87 +174,87 @@
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Di ngang Khung tranh</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Xoay Khung tranh</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Phóng to/nhỏ Khung tranh</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Lấy Màu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Chọn Lớp</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Đổi cỡ cọ</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Công cụ ghim</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Công cụ Canh giữa</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Công cụ Ghim và Canh giữa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Constraint 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ghim nét Không xác định 0x%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Xoay Khung Bánh Cóc</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Free Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Xoay Khung Tự do</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Đổi Màu Gốc</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Đổi Màu Tương phản</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Đổi Định lượng Màu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Action %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Thao tác không xác định %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Đảo Ngược, Đổi Trục</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -282,7 +282,7 @@
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; chứa chứng nhận không hợp lệ.</translation>
     </message>
     <message>
         <location line="+8"/>
