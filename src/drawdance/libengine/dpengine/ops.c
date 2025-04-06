@@ -1457,15 +1457,15 @@ static void draw_dabs_check_indirect_color(DP_PaintDrawDabsParams *params,
 {
     // The compare density blend modes only work properly if the
     // color doesn't change. Check if that happened and switch
-    // them over to the more intensive greater mode if needed.
+    // them over to the more intensive marker mode if needed.
     switch (params->blend_mode) {
     case DP_BLEND_MODE_COMPARE_DENSITY:
         draw_dabs_adjust_indirect_mode(params, sub_tlp,
-                                       DP_BLEND_MODE_GREATER_ALPHA_WASH);
+                                       DP_BLEND_MODE_MARKER_ALPHA_WASH);
         break;
     case DP_BLEND_MODE_COMPARE_DENSITY_SOFT:
         draw_dabs_adjust_indirect_mode(params, sub_tlp,
-                                       DP_BLEND_MODE_GREATER_ALPHA);
+                                       DP_BLEND_MODE_MARKER_ALPHA);
         break;
     default:
         break;
