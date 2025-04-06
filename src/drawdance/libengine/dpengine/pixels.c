@@ -2033,6 +2033,105 @@ static void blend_mask_compare_density(DP_Pixel15 *dst, DP_UPixel15 src,
 
 // SPDX-SnippetBegin
 // SPDX-License-Identifier: GPL-3.0-or-later
+// SDPX—SnippetName: Based on Krita's KoCompositeOpAlphaDarken.h
+static DP_Pixel15 blend_marker(BGR15 cb, BGR15 cs, Fix15 ab, Fix15 as, Fix15 o)
+{
+    Fix15 k = fix15_clamp_div(fix15_mul(as, o), ab);
+    return DP_pixel15_premultiply((DP_UPixel15){
+        from_fix(fix15_lerp(cb.b, cs.b, k)),
+        from_fix(fix15_lerp(cb.g, cs.g, k)),
+        from_fix(fix15_lerp(cb.r, cs.r, k)),
+        from_fix(ab),
+    });
+}
+
+static void blend_mask_marker(DP_Pixel15 *dst, DP_UPixel15 src,
+                              const uint16_t *mask, Fix15 opacity, int w, int h,
+                              int mask_skip, int base_skip)
+{
+    BGR15 cs = to_ubgr(src);
+    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
+        Fix15 ab = dst->a;
+        if (as != 0 && ab != 0) {
+            BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(*dst));
+            *dst = blend_marker(cb, cs, ab, as, opacity);
+        }
+    });
+}
+
+static void blend_mask_marker_alpha(DP_Pixel15 *dst, DP_UPixel15 src,
+                                    const uint16_t *mask, Fix15 opacity, int w,
+                                    int h, int mask_skip, int base_skip)
+{
+    BGR15 cs = to_ubgr(src);
+    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
+        if (as != 0) {
+            Fix15 ab = dst->a;
+            Fix15 aso = fix15_mul(as, opacity);
+            if (ab == 0) {
+                *dst = DP_pixel15_premultiply((DP_UPixel15){
+                    src.b,
+                    src.g,
+                    src.r,
+                    from_fix(aso),
+                });
+            }
+            else {
+                Fix15 ar = ab < aso ? aso : ab;
+                BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(*dst));
+                Fix15 k = fix15_clamp_div(aso, ab);
+                *dst = DP_pixel15_premultiply((DP_UPixel15){
+                    from_fix(fix15_lerp(cb.b, cs.b, k)),
+                    from_fix(fix15_lerp(cb.g, cs.g, k)),
+                    from_fix(fix15_lerp(cb.r, cs.r, k)),
+                    from_fix(ar),
+                });
+            }
+        }
+    });
+}
+
+static DP_Pixel15 blend_marker_alpha_wash(BGR15 cb, BGR15 cs, Fix15 ab,
+                                          Fix15 as, Fix15 o)
+{
+    Fix15 ar = ab < o ? ab + fix15_mul(as, o - ab) : ab;
+    Fix15 k = fix15_clamp_div(fix15_mul(as, o), ab);
+    return DP_pixel15_premultiply((DP_UPixel15){
+        from_fix(fix15_lerp(cb.b, cs.b, k)),
+        from_fix(fix15_lerp(cb.g, cs.g, k)),
+        from_fix(fix15_lerp(cb.r, cs.r, k)),
+        from_fix(ar),
+    });
+}
+
+static void blend_mask_marker_alpha_wash(DP_Pixel15 *dst, DP_UPixel15 src,
+                                         const uint16_t *mask, Fix15 opacity,
+                                         int w, int h, int mask_skip,
+                                         int base_skip)
+{
+    BGR15 cs = to_ubgr(src);
+    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
+        if (as != 0) {
+            Fix15 ab = dst->a;
+            if (ab == 0) {
+                *dst = DP_pixel15_premultiply((DP_UPixel15){
+                    src.b,
+                    src.g,
+                    src.r,
+                    from_fix(fix15_mul(as, opacity)),
+                });
+            }
+            else {
+                BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(*dst));
+                *dst = blend_marker_alpha_wash(cb, cs, ab, as, opacity);
+            }
+        }
+    });
+}
+// SPDX-SnippetEnd
+
+// SPDX-SnippetBegin
+// SPDX-License-Identifier: GPL-3.0-or-later
 // SDPX—SnippetName: Based on Krita's KoCompositeOpGreater.h
 static void blend_mask_greater(DP_Pixel15 *dst, DP_UPixel15 src,
                                const uint16_t *mask, Fix15 opacity, int w,
@@ -2357,6 +2456,10 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
         blend_mask_composite_separable(dst, src, mask, opacity, w, h, mask_skip,
                                        base_skip, comp_linear_light);
         break;
+    case DP_BLEND_MODE_MARKER:
+    case DP_BLEND_MODE_MARKER_WASH:
+        blend_mask_marker(dst, src, mask, opacity, w, h, mask_skip, base_skip);
+        break;
     case DP_BLEND_MODE_GREATER:
         blend_mask_greater(dst, src, mask, opacity, w, h, mask_skip, base_skip);
         break;
@@ -2450,6 +2553,14 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
                                              mask_skip, base_skip,
                                              comp_linear_light);
         break;
+    case DP_BLEND_MODE_MARKER_ALPHA:
+        blend_mask_marker_alpha(dst, src, mask, opacity, w, h, mask_skip,
+                                base_skip);
+        break;
+    case DP_BLEND_MODE_MARKER_ALPHA_WASH:
+        blend_mask_marker_alpha_wash(dst, src, mask, opacity, w, h, mask_skip,
+                                     base_skip);
+        break;
     case DP_BLEND_MODE_GREATER_ALPHA:
         blend_mask_greater_alpha(dst, src, mask, opacity, w, h, mask_skip,
                                  base_skip);
@@ -2516,6 +2627,63 @@ static void blend_pixels_to_alpha_op(DP_Pixel15 *DP_RESTRICT dst,
         *dst = from_bgra(op(b.bgr, s, b.a, ((Fix15)(1 << 15)), opacity));
     }
 }
+
+// SPDX-SnippetBegin
+// SPDX-License-Identifier: GPL-3.0-or-later
+// SDPX—SnippetName: Based on Krita's KoCompositeOpAlphaDarken.h
+static void blend_pixels_marker(DP_Pixel15 *DP_RESTRICT dst,
+                                const DP_Pixel15 *DP_RESTRICT src,
+                                int pixel_count, Fix15 opacity)
+{
+    for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
+        Fix15 as = to_fix(src->a);
+        Fix15 ab = to_fix(dst->a);
+        if (as != 0 && ab != 0) {
+            Fix15 aso = fix15_mul(as, opacity);
+            BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(*src));
+            BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(*dst));
+            Fix15 k = fix15_clamp_div(aso, ab);
+            *dst = DP_pixel15_premultiply((DP_UPixel15){
+                from_fix(fix15_lerp(cb.b, cs.b, k)),
+                from_fix(fix15_lerp(cb.g, cs.g, k)),
+                from_fix(fix15_lerp(cb.r, cs.r, k)),
+                from_fix(ab),
+            });
+        }
+    }
+}
+
+static void blend_pixels_marker_alpha(DP_Pixel15 *DP_RESTRICT dst,
+                                      const DP_Pixel15 *DP_RESTRICT src,
+                                      int pixel_count, Fix15 opacity)
+{
+    for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
+        Fix15 as = to_fix(src->a);
+        if (as != 0) {
+            Fix15 ab = to_fix(dst->a);
+            if (ab == 0) {
+                if (opacity == DP_BIT15) {
+                    *dst = *src;
+                }
+                else {
+                    BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(*src));
+                    *dst = DP_pixel15_premultiply((DP_UPixel15){
+                        from_fix(cs.b),
+                        from_fix(cs.g),
+                        from_fix(cs.r),
+                        from_fix(fix15_mul(as, opacity)),
+                    });
+                }
+            }
+            else {
+                BGR15 cs = to_ubgr(DP_pixel15_unpremultiply(*src));
+                BGR15 cb = to_ubgr(DP_pixel15_unpremultiply(*dst));
+                *dst = blend_marker_alpha_wash(cb, cs, ab, as, opacity);
+            }
+        }
+    }
+}
+// SPDX-SnippetEnd
 
 // SPDX-SnippetBegin
 // SPDX-License-Identifier: GPL-3.0-or-later
@@ -2839,6 +3007,10 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
         blend_pixels_composite_separable(dst, src, pixel_count, to_fix(opacity),
                                          comp_linear_light);
         break;
+    case DP_BLEND_MODE_MARKER:
+    case DP_BLEND_MODE_MARKER_WASH:
+        blend_pixels_marker(dst, src, pixel_count, to_fix(opacity));
+        break;
     case DP_BLEND_MODE_GREATER:
     case DP_BLEND_MODE_GREATER_WASH:
         blend_pixels_greater(dst, src, pixel_count, to_fix(opacity));
@@ -2921,6 +3093,10 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
     case DP_BLEND_MODE_LINEAR_LIGHT_ALPHA:
         blend_pixels_composite_separable_alpha(
             dst, src, pixel_count, to_fix(opacity), comp_linear_light);
+        break;
+    case DP_BLEND_MODE_MARKER_ALPHA:
+    case DP_BLEND_MODE_MARKER_ALPHA_WASH:
+        blend_pixels_marker_alpha(dst, src, pixel_count, to_fix(opacity));
         break;
     case DP_BLEND_MODE_GREATER_ALPHA:
     case DP_BLEND_MODE_GREATER_ALPHA_WASH:

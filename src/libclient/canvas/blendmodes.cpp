@@ -53,9 +53,15 @@ static const BlendModeInfo BLEND_MODE[] = {
 		BrushMode,
 	},
 	{
-		QT_TRANSLATE_NOOP("blendmode", "Greater Density/Marker"),
+		QT_TRANSLATE_NOOP("blendmode", "Greater Density"),
 		DP_BLEND_MODE_GREATER_ALPHA,
 		DP_BLEND_MODE_GREATER,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Marker"),
+		DP_BLEND_MODE_MARKER_ALPHA,
+		DP_BLEND_MODE_MARKER,
 		UniversalMode,
 	},
 	{
@@ -287,6 +293,12 @@ bool comparesAlpha(int mode)
 {
 	return mode >= 0 && mode < DP_BLEND_MODE_COUNT &&
 		   DP_blend_mode_compares_alpha(mode);
+}
+
+bool directOnly(int mode)
+{
+	return mode >= 0 && mode < DP_BLEND_MODE_COUNT &&
+		   DP_blend_mode_direct_only(mode);
 }
 
 bool alphaPreservePair(

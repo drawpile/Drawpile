@@ -265,6 +265,24 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "-dp-compare-density",
             "Compare Density",
         },
+    [DP_BLEND_MODE_MARKER] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING
+                | COMPARES_ALPHA,
+            "DP_BLEND_MODE_MARKER",
+            "-dp-marker",
+            "-dp-marker",
+            "Marker",
+        },
+    [DP_BLEND_MODE_MARKER_WASH] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING
+                | COMPARES_ALPHA,
+            "DP_BLEND_MODE_MARKER_WASH",
+            "-dp-marker",
+            "-dp-marker-wash",
+            "Marker Wash",
+        },
     [DP_BLEND_MODE_GREATER] =
         {
             LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING
@@ -279,7 +297,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING
                 | COMPARES_ALPHA,
             "DP_BLEND_MODE_GREATER_WASH",
-            "-dp-greater-wash",
+            "krita:greater",
             "-dp-greater-wash",
             "Greater Wash",
         },
@@ -467,6 +485,22 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "-dp-color-alpha",
             "Color Alpha",
         },
+    [DP_BLEND_MODE_MARKER_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK | COMPARES_ALPHA,
+            "DP_BLEND_MODE_MARKER_ALPHA",
+            "-dp-marker",
+            "-dp-marker-alpha",
+            "Marker Alpha",
+        },
+    [DP_BLEND_MODE_MARKER_ALPHA_WASH] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK | COMPARES_ALPHA,
+            "DP_BLEND_MODE_MARKER_ALPHA_WASH",
+            "-dp-marker",
+            "-dp-marker-alpha-wash",
+            "Marker Alpha Wash",
+        },
     [DP_BLEND_MODE_GREATER_ALPHA] =
         {
             LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK | COMPARES_ALPHA,
@@ -479,7 +513,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         {
             LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK | COMPARES_ALPHA,
             "DP_BLEND_MODE_GREATER_ALPHA",
-            "-dp-greater-alpha-wash",
+            "krita:greater",
             "-dp-greater-alpha-wash",
             "Greater Alpha Wash",
         },
@@ -642,6 +676,19 @@ bool DP_blend_mode_presents_as_alpha_preserving(int blend_mode)
 bool DP_blend_mode_compares_alpha(int blend_mode)
 {
     return get_attributes(blend_mode)->flags & COMPARES_ALPHA;
+}
+
+bool DP_blend_mode_direct_only(int blend_mode)
+{
+    switch (blend_mode) {
+    case DP_BLEND_MODE_MARKER:
+    case DP_BLEND_MODE_MARKER_WASH:
+    case DP_BLEND_MODE_MARKER_ALPHA:
+    case DP_BLEND_MODE_MARKER_ALPHA_WASH:
+        return true;
+    default:
+        return false;
+    }
 }
 
 static DP_BlendMode blend_mode_by_fallback_name(const char *name,
@@ -812,6 +859,16 @@ bool DP_blend_mode_alpha_preserve_pair(int blend_mode,
         alpha_affecting = DP_BLEND_MODE_COLOR_ALPHA;
         alpha_preserving = DP_BLEND_MODE_COLOR;
         break;
+    case DP_BLEND_MODE_MARKER:
+    case DP_BLEND_MODE_MARKER_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_MARKER_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_MARKER;
+        break;
+    case DP_BLEND_MODE_MARKER_WASH:
+    case DP_BLEND_MODE_MARKER_ALPHA_WASH:
+        alpha_affecting = DP_BLEND_MODE_MARKER_ALPHA_WASH;
+        alpha_preserving = DP_BLEND_MODE_MARKER_WASH;
+        break;
     case DP_BLEND_MODE_GREATER:
     case DP_BLEND_MODE_GREATER_ALPHA:
         alpha_affecting = DP_BLEND_MODE_GREATER_ALPHA;
@@ -898,6 +955,10 @@ int DP_blend_mode_to_alpha_affecting(int blend_mode)
         return DP_BLEND_MODE_LUMINOSITY_ALPHA;
     case DP_BLEND_MODE_COLOR:
         return DP_BLEND_MODE_COLOR_ALPHA;
+    case DP_BLEND_MODE_MARKER:
+        return DP_BLEND_MODE_MARKER_ALPHA;
+    case DP_BLEND_MODE_MARKER_WASH:
+        return DP_BLEND_MODE_MARKER_ALPHA_WASH;
     case DP_BLEND_MODE_GREATER:
         return DP_BLEND_MODE_GREATER_ALPHA;
     case DP_BLEND_MODE_GREATER_WASH:
@@ -978,6 +1039,10 @@ int DP_blend_mode_to_alpha_preserving(int blend_mode)
         return DP_BLEND_MODE_LUMINOSITY;
     case DP_BLEND_MODE_COLOR_ALPHA:
         return DP_BLEND_MODE_COLOR;
+    case DP_BLEND_MODE_MARKER_ALPHA:
+        return DP_BLEND_MODE_MARKER;
+    case DP_BLEND_MODE_MARKER_ALPHA_WASH:
+        return DP_BLEND_MODE_MARKER_WASH;
     case DP_BLEND_MODE_GREATER_ALPHA:
         return DP_BLEND_MODE_GREATER;
     case DP_BLEND_MODE_GREATER_ALPHA_WASH:
