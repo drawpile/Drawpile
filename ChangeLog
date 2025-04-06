@@ -9,6 +9,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Make indirect wash mode actually work like it's supposed to, without causing weird effects for soft brushes. The previous mode is now available as a separate paint mode.
  * Feature: Bring back the indirect normal mode from Drawpile 2.1 as another paint mode option.
  * Feature: Allow using blend modes with MyPaint brushes, rather than restricting them to normal, recolor and erase.
+ * Feature: Allow using MyPaint brush color dynamics in indirect mode.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.
