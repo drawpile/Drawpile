@@ -1182,7 +1182,7 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 	case MyPaintCondition::ComparesAlphaOrIndirectDisabled:
 		page.disabledLabel =
 			new QLabel(tr("Not available in indirect paint modes or when using "
-						  "the Greater Density/Marker blend mode."));
+						  "the Marker or Greater Density blend modes."));
 		break;
 	default:
 		page.disabledLabel = nullptr;
@@ -1293,7 +1293,7 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 
 	d->brushModeCombo->setModel(
 		getBrushBlendModesFor(classic.erase, d->automaticAlphaPreserve));
-	int brushMode = classic.erase ? classic.erase_mode : classic.brush_mode;
+	int brushMode = DP_classic_brush_blend_mode(&classic);
 	int brushModeIndex =
 		searchBlendModeComboIndex(d->brushModeCombo, brushMode);
 	if(brushModeIndex != -1) {
@@ -1305,16 +1305,15 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->eraseModeBox->setChecked(classic.erase);
 
 	d->colorPickBox->setChecked(classic.colorpick);
-	d->colorPickBox->setEnabled(
-		DP_classic_brush_blend_mode(&classic) != DP_BLEND_MODE_ERASE);
+	d->colorPickBox->setEnabled(brushMode != DP_BLEND_MODE_ERASE);
 	d->colorPickBox->setVisible(true);
 
-	bool haveSmudge = classic.smudge.max > 0.0f;
+	bool forceDirectMode =
+		canvas::blendmode::directOnly(brushMode) || classic.smudge.max > 0.0f;
 	setComboBoxIndexByData(
 		d->paintModeCombo,
-		haveSmudge ? DP_PAINT_MODE_DIRECT : int(classic.paint_mode));
-	d->paintModeCombo->setCurrentIndex(haveSmudge ? 0 : classic.paint_mode);
-	d->paintModeCombo->setDisabled(haveSmudge);
+		forceDirectMode ? DP_PAINT_MODE_DIRECT : int(classic.paint_mode));
+	d->paintModeCombo->setDisabled(forceDirectMode);
 
 	d->spacingSpinner->setValue(classic.spacing * 100.0 + 0.5);
 	d->spacingSpinner->setVisible(true);
@@ -1384,16 +1383,21 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 
 	d->brushModeCombo->setModel(
 		getBrushBlendModesFor(brush.erase, d->automaticAlphaPreserve));
-	int brushMode = brush.erase ? brush.erase_mode : brush.brush_mode;
+	int brushMode = DP_mypaint_brush_blend_mode(&brush);
 	int brushModeIndex =
 		searchBlendModeComboIndex(d->brushModeCombo, brushMode);
 	if(brushModeIndex != -1) {
 		d->brushModeCombo->setCurrentIndex(brushModeIndex);
 	}
+
+	bool forceDirectMode = canvas::blendmode::directOnly(brushMode);
+	setComboBoxIndexByData(
+		d->paintModeCombo,
+		forceDirectMode ? DP_PAINT_MODE_DIRECT : int(brush.paint_mode));
+	d->paintModeCombo->setDisabled(forceDirectMode);
+
 	d->preserveAlphaBox->setChecked(
 		canvas::blendmode::presentsAsAlphaPreserving(brushMode));
-
-	d->paintModeCombo->setEnabled(true);
 	d->eraseModeBox->setChecked(brush.erase);
 
 	for(int setting = 0; setting < MYPAINT_BRUSH_SETTINGS_COUNT; ++setting) {

@@ -43,6 +43,7 @@ bool preservesAlpha(int mode);
 bool presentsAsEraser(int mode);
 bool presentsAsAlphaPreserving(int mode);
 bool comparesAlpha(int mode);
+bool directOnly(int mode);
 
 bool alphaPreservePair(
 	int mode, DP_BlendMode *outAlphaAffecting,

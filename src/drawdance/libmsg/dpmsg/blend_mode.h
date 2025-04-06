@@ -54,6 +54,8 @@ typedef enum DP_BlendMode {
     DP_BLEND_MODE_COLOR,
     DP_BLEND_MODE_COMPARE_DENSITY_SOFT,
     DP_BLEND_MODE_COMPARE_DENSITY,
+    DP_BLEND_MODE_MARKER,
+    DP_BLEND_MODE_MARKER_WASH,
     DP_BLEND_MODE_GREATER,
     DP_BLEND_MODE_GREATER_WASH,
     DP_BLEND_MODE_ERASE_LIGHT,
@@ -79,6 +81,8 @@ typedef enum DP_BlendMode {
     DP_BLEND_MODE_SATURATION_ALPHA,
     DP_BLEND_MODE_LUMINOSITY_ALPHA,
     DP_BLEND_MODE_COLOR_ALPHA,
+    DP_BLEND_MODE_MARKER_ALPHA,
+    DP_BLEND_MODE_MARKER_ALPHA_WASH,
     DP_BLEND_MODE_GREATER_ALPHA,
     DP_BLEND_MODE_GREATER_ALPHA_WASH,
     // The _PRESERVE blend modes are identical to the ones without that suffix.
@@ -141,6 +145,8 @@ bool DP_blend_mode_presents_as_eraser(int blend_mode);
 bool DP_blend_mode_presents_as_alpha_preserving(int blend_mode);
 
 bool DP_blend_mode_compares_alpha(int blend_mode);
+
+bool DP_blend_mode_direct_only(int blend_mode);
 
 DP_BlendMode DP_blend_mode_by_ora_name(const char *svg_name,
                                        DP_BlendMode not_found_value);

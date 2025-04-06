@@ -844,6 +844,15 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
 
     be->classic.brush = *brush;
     DP_ClassicBrush *cb = &be->classic.brush;
+    if (eraser_override) {
+        cb->erase = true;
+        cb->erase_mode = DP_BLEND_MODE_ERASE;
+    }
+
+    if (DP_blend_mode_direct_only((int)DP_classic_brush_blend_mode(cb))) {
+        cb->paint_mode = DP_PAINT_MODE_DIRECT;
+    }
+
     DP_UPixelFloat color = color_override ? *color_override : brush->color;
     if (cb->paint_mode == DP_PAINT_MODE_DIRECT || cb->smudge.max > 0.0f) {
         // Incremental mode must be used when smudging, because color is not
@@ -861,11 +870,6 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
         }
     }
     be->classic.brush_color = color;
-
-    if (eraser_override) {
-        cb->erase = true;
-        cb->erase_mode = DP_BLEND_MODE_ERASE;
-    }
 }
 
 static void disable_mypaint_dynamics(MyPaintBrush *mb, MyPaintBrushSetting s)
@@ -922,10 +926,13 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     mypaint_brush_set_base_value(mb, MYPAINT_BRUSH_SETTING_COLOR_S, g_s);
     mypaint_brush_set_base_value(mb, MYPAINT_BRUSH_SETTING_COLOR_V, b_v);
 
-    be->mypaint.paint_mode = brush->paint_mode;
     be->mypaint.blend_mode = eraser_override
                                ? DP_BLEND_MODE_ERASE
                                : DP_mypaint_brush_blend_mode(brush);
+    be->mypaint.paint_mode =
+        DP_blend_mode_direct_only((int)be->mypaint.blend_mode)
+            ? DP_PAINT_MODE_DIRECT
+            : brush->paint_mode;
 
     // We don't support spectral painting (aka Pigment mode), so we'll turn
     // that off at the source here. It's like turning the Pigment slider in
@@ -969,14 +976,20 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
 static uint8_t get_dab_blend_mode(DP_PaintMode paint_mode,
                                   DP_BlendMode blend_mode)
 {
-    // Greater looks better in wash mode, so switch to it when using direct
+    // Marker and Greater look better in wash mode, so switch when using direct
     // painting. The soft indirect mode is there if the user really wants it.
     if (paint_mode == DP_PAINT_MODE_DIRECT) {
-        if (blend_mode == DP_BLEND_MODE_GREATER) {
+        switch (blend_mode) {
+        case DP_BLEND_MODE_MARKER:
+            return (uint8_t)DP_BLEND_MODE_MARKER_WASH;
+        case DP_BLEND_MODE_MARKER_ALPHA:
+            return (uint8_t)DP_BLEND_MODE_MARKER_ALPHA_WASH;
+        case DP_BLEND_MODE_GREATER:
             return (uint8_t)DP_BLEND_MODE_GREATER_WASH;
-        }
-        else if (blend_mode == DP_BLEND_MODE_GREATER_ALPHA) {
+        case DP_BLEND_MODE_GREATER_ALPHA:
             return (uint8_t)DP_BLEND_MODE_GREATER_ALPHA_WASH;
+        default:
+            break;
         }
     }
     return (uint8_t)blend_mode;
