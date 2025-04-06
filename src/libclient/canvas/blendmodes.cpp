@@ -283,6 +283,12 @@ bool presentsAsAlphaPreserving(int mode)
 		   DP_blend_mode_presents_as_alpha_preserving(mode);
 }
 
+bool comparesAlpha(int mode)
+{
+	return mode >= 0 && mode < DP_BLEND_MODE_COUNT &&
+		   DP_blend_mode_compares_alpha(mode);
+}
+
 bool alphaPreservePair(
 	int mode, DP_BlendMode *outAlphaAffecting, DP_BlendMode *outAlphaPreserving)
 {
