@@ -929,10 +929,16 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SLOW_TRACKING);
 
     bool indirect = be->mypaint.paint_mode != DP_PAINT_MODE_DIRECT;
-    if (indirect) {
+    DP_BlendMode blend_mode = be->mypaint.blend_mode;
+    if (indirect || DP_blend_mode_compares_alpha((int)blend_mode)) {
         // Opacity linearization is supposed to compensate for direct mode
-        // drawing, in indirect mode it just causes really wrong behavior.
+        // drawing, in indirect mode it just causes really wrong behavior. The
+        // same goes for blend modes like Greater, which effectively do an
+        // indirect mode on top of the existing color.
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_OPAQUE_LINEARIZE);
+    }
+
+    if (indirect) {
         // Indirect mode can't smudge.
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE);
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH);
@@ -942,7 +948,7 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_TRANSPARENCY);
     }
 
-    if (indirect || be->mypaint.blend_mode != DP_BLEND_MODE_NORMAL) {
+    if (indirect || blend_mode != DP_BLEND_MODE_NORMAL) {
         // Indirect mode also can't do any of these. They're also basically
         // blend modes, so they only work when that hasn't been altered.
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_ERASER);
