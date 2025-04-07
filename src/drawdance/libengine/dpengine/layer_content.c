@@ -22,6 +22,7 @@
 #include "layer_content.h"
 #include "canvas_diff.h"
 #include "draw_context.h"
+#include "graphic.h"
 #include "image.h"
 #include "layer_list.h"
 #include "layer_props.h"
@@ -42,11 +43,15 @@
 struct DP_LayerContent {
     DP_Atomic refcount;
     const bool transient;
+    const bool has_graphic;
     const int width, height;
-    struct {
-        DP_LayerList *contents;
-        DP_LayerPropsList *props;
-    } sub;
+    union {
+        struct {
+            DP_LayerList *contents;
+            DP_LayerPropsList *props;
+        } sub;
+        DP_Graphic *graphic;
+    };
     union {
         DP_Tile *const tile;
     } elements[];
@@ -55,17 +60,24 @@ struct DP_LayerContent {
 struct DP_TransientLayerContent {
     DP_Atomic refcount;
     bool transient;
+    bool has_graphic;
     int width, height;
-    struct {
+    union {
+        struct {
+            union {
+                DP_LayerList *contents;
+                DP_TransientLayerList *transient_contents;
+            };
+            union {
+                DP_LayerPropsList *props;
+                DP_TransientLayerPropsList *transient_props;
+            };
+        } sub;
         union {
-            DP_LayerList *contents;
-            DP_TransientLayerList *transient_contents;
+            DP_Graphic *graphic;
+            DP_TransientGraphic *transient_graphic;
         };
-        union {
-            DP_LayerPropsList *props;
-            DP_TransientLayerPropsList *transient_props;
-        };
-    } sub;
+    };
     union {
         DP_Tile *tile;
         DP_TransientTile *transient_tile;
@@ -77,17 +89,24 @@ struct DP_TransientLayerContent {
 struct DP_LayerContent {
     DP_Atomic refcount;
     bool transient;
+    bool has_graphic;
     int width, height;
-    struct {
+    union {
+        struct {
+            union {
+                DP_LayerList *contents;
+                DP_TransientLayerList *transient_contents;
+            };
+            union {
+                DP_LayerPropsList *props;
+                DP_TransientLayerPropsList *transient_props;
+            };
+        } sub;
         union {
-            DP_LayerList *contents;
-            DP_TransientLayerList *transient_contents;
+            DP_Graphic *graphic;
+            DP_TransientGraphic *transient_graphic;
         };
-        union {
-            DP_LayerPropsList *props;
-            DP_TransientLayerPropsList *transient_props;
-        };
-    } sub;
+    };
     union {
         DP_Tile *tile;
         DP_TransientTile *transient_tile;
@@ -305,6 +324,13 @@ int DP_layer_content_height(DP_LayerContent *lc)
     return lc->height;
 }
 
+DP_Graphic *DP_layer_content_graphic(DP_LayerContent *lc)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    return lc->has_graphic ? lc->graphic : NULL;
+}
+
 DP_Tile *DP_layer_content_tile_at_index_noinc(DP_LayerContent *lc, int i)
 {
     DP_ASSERT(lc);
@@ -469,6 +495,7 @@ DP_LayerList *DP_layer_content_sub_contents_noinc(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(!lc->has_graphic);
     return lc->sub.contents;
 }
 
@@ -476,6 +503,7 @@ DP_LayerPropsList *DP_layer_content_sub_props_noinc(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(!lc->has_graphic);
     return lc->sub.props;
 }
 
@@ -1124,13 +1152,15 @@ static bool has_content(DP_LayerContent *lc)
     return false;
 }
 
-static DP_TransientLayerContent *alloc_layer_content(int width, int height)
+static DP_TransientLayerContent *alloc_layer_content(int width, int height,
+                                                     bool has_graphic)
 {
     size_t count = DP_int_to_size(DP_tile_total_round(width, height));
     DP_TransientLayerContent *tlc =
         DP_malloc(DP_FLEX_SIZEOF(DP_TransientLayerContent, elements, count));
     DP_atomic_set(&tlc->refcount, 1);
     tlc->transient = true;
+    tlc->has_graphic = has_graphic;
     tlc->width = width;
     tlc->height = height;
     return tlc;
@@ -1225,7 +1255,7 @@ static DP_TransientLayerContent *
 resize_layer_content_aligned(DP_LayerContent *lc, int top, int left, int width,
                              int height)
 {
-    DP_TransientLayerContent *tlc = alloc_layer_content(width, height);
+    DP_TransientLayerContent *tlc = alloc_layer_content(width, height, false);
     DP_TileCounts new_counts = DP_tile_counts_round(width, height);
     DP_TileCounts old_counts = DP_tile_counts_round(lc->width, lc->height);
     DP_TileCounts offsets = DP_tile_counts_round(-left, -top);
@@ -1330,13 +1360,18 @@ DP_TransientLayerContent *DP_layer_content_resize(DP_LayerContent *lc,
         tlc = DP_transient_layer_content_new_init(width, height, NULL);
     }
 
-    DP_LayerList *sub_ll = lc->sub.contents;
-    if (DP_layer_list_count(sub_ll) != 0) {
-        DP_layer_list_decref(tlc->sub.contents);
-        tlc->sub.transient_contents =
-            DP_layer_list_resize(sub_ll, context_id, top, right, bottom, left);
-        DP_layer_props_list_decref(tlc->sub.props);
-        tlc->sub.props = DP_layer_props_list_incref(lc->sub.props);
+    if (tlc->has_graphic) {
+        // TODO
+    }
+    else {
+        DP_LayerList *sub_ll = lc->sub.contents;
+        if (DP_layer_list_count(sub_ll) != 0) {
+            DP_layer_list_decref(tlc->sub.contents);
+            tlc->sub.transient_contents = DP_layer_list_resize(
+                sub_ll, context_id, top, right, bottom, left);
+            DP_layer_props_list_decref(tlc->sub.props);
+            tlc->sub.props = DP_layer_props_list_incref(lc->sub.props);
+        }
     }
 
     return tlc;
@@ -1346,60 +1381,25 @@ bool DP_layer_content_has_sublayers(DP_LayerContent *lc)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
-    int count = DP_layer_list_count(lc->sub.contents);
-    DP_ASSERT(count == DP_layer_props_list_count(lc->sub.props));
-    return count != 0;
-}
-
-DP_LayerContent *DP_layer_content_merge_sublayers(DP_LayerContent *lc)
-{
-    DP_ASSERT(lc);
-    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
-    DP_LayerList *ll = lc->sub.contents;
-    int count = DP_layer_list_count(ll);
-    if (count > 0) {
-        DP_TransientLayerContent *tlc;
-        if (DP_layer_content_transient(lc)) {
-            tlc = DP_transient_layer_content_new_transient(
-                (DP_TransientLayerContent *)lc);
-        }
-        else {
-            tlc = DP_transient_layer_content_new(lc);
-        }
-        DP_transient_layer_content_merge_all_sublayers(tlc, 0);
-        return DP_transient_layer_content_persist(tlc);
+    if (lc->has_graphic) {
+        return 0;
     }
     else {
-        return DP_layer_content_incref(lc);
+        int count = DP_layer_list_count(lc->sub.contents);
+        DP_ASSERT(count == DP_layer_props_list_count(lc->sub.props));
+        return count != 0;
     }
 }
 
-
-DP_TransientLayerContent *DP_transient_layer_content_new(DP_LayerContent *lc)
-{
-    DP_ASSERT(lc);
-    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
-    DP_ASSERT(!lc->transient);
-    int width = lc->width;
-    int height = lc->height;
-    DP_TransientLayerContent *tlc = alloc_layer_content(width, height);
-    int count = DP_tile_total_round(width, height);
-    for (int i = 0; i < count; ++i) {
-        tlc->elements[i].tile = DP_tile_incref_nullable(lc->elements[i].tile);
-    }
-    tlc->sub.contents = DP_layer_list_incref(lc->sub.contents);
-    tlc->sub.props = DP_layer_props_list_incref(lc->sub.props);
-    return tlc;
-}
-
-DP_TransientLayerContent *
-DP_transient_layer_content_new_transient(DP_TransientLayerContent *tlc)
+static DP_TransientLayerContent *clone_transient(DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(!tlc->has_graphic);
     int width = tlc->width;
     int height = tlc->height;
-    DP_TransientLayerContent *new_tlc = alloc_layer_content(width, height);
+    DP_TransientLayerContent *new_tlc =
+        alloc_layer_content(width, height, false);
     int count = DP_tile_total_round(width, height);
     for (int i = 0; i < count; ++i) {
         DP_Tile *t = tlc->elements[i].tile;
@@ -1421,6 +1421,53 @@ DP_transient_layer_content_new_transient(DP_TransientLayerContent *tlc)
     return new_tlc;
 }
 
+DP_LayerContent *DP_layer_content_merge_sublayers(DP_LayerContent *lc)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    if (!lc->has_graphic) {
+        DP_LayerList *ll = lc->sub.contents;
+        int count = DP_layer_list_count(ll);
+        if (count > 0) {
+            DP_TransientLayerContent *tlc;
+            if (DP_layer_content_transient(lc)) {
+                tlc = clone_transient((DP_TransientLayerContent *)lc);
+            }
+            else {
+                tlc = DP_transient_layer_content_new(lc);
+            }
+            DP_transient_layer_content_merge_all_sublayers(tlc, 0);
+            return DP_transient_layer_content_persist(tlc);
+        }
+    }
+    return DP_layer_content_incref(lc);
+}
+
+
+DP_TransientLayerContent *DP_transient_layer_content_new(DP_LayerContent *lc)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(!lc->transient);
+    int width = lc->width;
+    int height = lc->height;
+    bool has_graphic = lc->has_graphic;
+    DP_TransientLayerContent *tlc =
+        alloc_layer_content(width, height, has_graphic);
+    int count = DP_tile_total_round(width, height);
+    for (int i = 0; i < count; ++i) {
+        tlc->elements[i].tile = DP_tile_incref_nullable(lc->elements[i].tile);
+    }
+    if (has_graphic) {
+        tlc->has_graphic = DP_graphic_incref(lc->graphic);
+    }
+    else {
+        tlc->sub.contents = DP_layer_list_incref(lc->sub.contents);
+        tlc->sub.props = DP_layer_props_list_incref(lc->sub.props);
+    }
+    return tlc;
+}
+
 DP_TransientLayerContent *
 DP_transient_layer_content_new_init(int width, int height, DP_Tile *tile)
 {
@@ -1438,7 +1485,7 @@ DP_transient_layer_content_new_init_with_transient_sublayers_noinc(
     DP_ASSERT(height >= 0);
     DP_ASSERT(sub_tll);
     DP_ASSERT(sub_tlpl);
-    DP_TransientLayerContent *tlc = alloc_layer_content(width, height);
+    DP_TransientLayerContent *tlc = alloc_layer_content(width, height, false);
     int tile_count = DP_tile_total_round(width, height);
     DP_tile_incref_by_nullable(tile, tile_count);
     for (int i = 0; i < tile_count; ++i) {
@@ -1496,11 +1543,18 @@ DP_transient_layer_content_persist(DP_TransientLayerContent *tlc)
             }
         }
     }
-    if (DP_layer_list_transient(tlc->sub.contents)) {
-        DP_transient_layer_list_persist(tlc->sub.transient_contents);
+    if (tlc->has_graphic) {
+        if (DP_graphic_transient(tlc->graphic)) {
+            DP_transient_graphic_persist(tlc->transient_graphic);
+        }
     }
-    if (DP_layer_props_list_transient(tlc->sub.props)) {
-        DP_transient_layer_props_list_persist(tlc->sub.transient_props);
+    else {
+        if (DP_layer_list_transient(tlc->sub.contents)) {
+            DP_transient_layer_list_persist(tlc->sub.transient_contents);
+        }
+        if (DP_layer_props_list_transient(tlc->sub.props)) {
+            DP_transient_layer_props_list_persist(tlc->sub.transient_props);
+        }
     }
     return (DP_LayerContent *)tlc;
 }

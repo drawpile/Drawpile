@@ -27,6 +27,7 @@
 typedef struct DP_BrushStamp DP_BrushStamp;
 typedef struct DP_CanvasDiff DP_CanvasDiff;
 typedef struct DP_CanvasState DP_CanvasState;
+typedef struct DP_Graphic DP_Graphic;
 typedef struct DP_Image DP_Image;
 typedef struct DP_Rect DP_Rect;
 typedef struct DP_Tile DP_Tile;
@@ -76,6 +77,8 @@ void DP_layer_content_diff_mark(DP_LayerContent *lc, DP_CanvasDiff *diff);
 int DP_layer_content_width(DP_LayerContent *lc);
 
 int DP_layer_content_height(DP_LayerContent *lc);
+
+DP_Graphic *DP_layer_content_graphic(DP_LayerContent *lc);
 
 DP_Tile *DP_layer_content_tile_at_index_noinc(DP_LayerContent *lc, int i);
 
@@ -159,9 +162,6 @@ DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
 
 
 DP_TransientLayerContent *DP_transient_layer_content_new(DP_LayerContent *lc);
-
-DP_TransientLayerContent *
-DP_transient_layer_content_new_transient(DP_TransientLayerContent *tlc);
 
 DP_TransientLayerContent *
 DP_transient_layer_content_new_init(int width, int height, DP_Tile *tile);
