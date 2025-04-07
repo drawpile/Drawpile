@@ -288,7 +288,7 @@ void render_brush_preview(
         cs, dc, DP_size_to_int(bp->messages.used), bp->messages.elements);
     DP_VECTOR_CLEAR_TYPE(&bp->messages, DP_Message *, dispose_message);
 
-    bp->cs = handle_preview_message_dec(cs, dc, DP_msg_pen_up_new(1));
+    bp->cs = handle_preview_message_dec(cs, dc, DP_msg_pen_up_new(1, 1));
 }
 
 static void set_preview_classic_brush(void *user, DP_BrushEngine *be,

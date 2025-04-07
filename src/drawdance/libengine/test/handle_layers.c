@@ -208,9 +208,9 @@ static void add_draw_dabs_pixel_square(DP_Output *output, DP_CanvasHistory *ch,
 }
 
 static void add_pen_up(DP_Output *output, DP_CanvasHistory *ch,
-                       DP_DrawContext *dc)
+                       DP_DrawContext *dc, uint16_t layer)
 {
-    add_message(output, ch, dc, DP_msg_pen_up_new(1));
+    add_message(output, ch, dc, DP_msg_pen_up_new(1, layer));
 }
 
 
@@ -261,7 +261,7 @@ static void handle_layers(DP_Output *output, DP_CanvasHistory *ch,
     add_draw_dabs_pixel_square(output, ch, dc, (uint8_t)DP_PAINT_MODE_DIRECT,
                                261, 0, 0, 0x00abcdef, DP_BLEND_MODE_SUBTRACT);
     dump_layers(output, ch, "draw dab in direct mode");
-    add_pen_up(output, ch, dc);
+    add_pen_up(output, ch, dc, 261);
     dump_layers(output, ch, "pen up in direct mode");
 
     add_undo_point(output, ch, dc);
@@ -269,7 +269,7 @@ static void handle_layers(DP_Output *output, DP_CanvasHistory *ch,
                                (uint8_t)DP_PAINT_MODE_INDIRECT_WASH, 261, 0, 0,
                                0x7fabcdef, DP_BLEND_MODE_SCREEN);
     dump_layers(output, ch, "draw dab in indirect mode");
-    add_pen_up(output, ch, dc);
+    add_pen_up(output, ch, dc, 261);
     dump_layers(output, ch, "pen up in indirect mode");
 
     add_undo_point(output, ch, dc);

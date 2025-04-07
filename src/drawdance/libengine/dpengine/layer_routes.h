@@ -86,6 +86,8 @@ int DP_layer_routes_entry_layer_id(DP_LayerRoutesEntry *lre);
 
 bool DP_layer_routes_entry_is_group(DP_LayerRoutesEntry *lre);
 
+int *DP_layer_routes_entry_indexes(DP_LayerRoutesEntry *lre, int *out_count);
+
 int DP_layer_routes_entry_index_count(DP_LayerRoutesEntry *lre);
 
 int DP_layer_routes_entry_index_at(DP_LayerRoutesEntry *lre, int index);
