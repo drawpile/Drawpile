@@ -11,6 +11,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Bring back the indirect normal mode from Drawpile 2.1 as another paint mode option.
  * Feature: Allow using blend modes with MyPaint brushes, rather than restricting them to normal, recolor and erase.
  * Feature: Allow using MyPaint brush color dynamics in indirect mode.
+ * Feature: Remember who changed tiles across session resets and compressing the canvas. Thanks Bluestrings for suggesting and callaa for originally implementing it before it fell off again for compatibility.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.
