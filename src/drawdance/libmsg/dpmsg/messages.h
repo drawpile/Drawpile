@@ -1504,21 +1504,30 @@ uint32_t DP_msg_fill_rect_color(const DP_MsgFillRect *mfr);
 /*
  * DP_MSG_PEN_UP
  *
- * Pen up command
- *
- * The pen up command signals the end of a stroke. In indirect drawing mode, it
- * causes indirect dabs (by this user) to be merged to their parent layers.
+ * Signals the end of a stroke. If one exists, this causes the
+ * sublayer of this user on the given layer to be merged into its
+ * parent. Strokes in indirect paint modes will create such sublayers.
+ * A pen up command for layer 0 causes the sublayers on all layers to
+ * be merged. If the message context id is 0, the sublayers of all
+ * users are merged, either on the given layer or on all layers if
+ * that's 0 too.
  */
 
-#define DP_MSG_PEN_UP_STATIC_LENGTH 0
+#define DP_MSG_PEN_UP_STATIC_LENGTH 2
 
-DP_Message *DP_msg_pen_up_new(unsigned int context_id);
+typedef struct DP_MsgPenUp DP_MsgPenUp;
+
+DP_Message *DP_msg_pen_up_new(unsigned int context_id, uint16_t layer);
 
 DP_Message *DP_msg_pen_up_deserialize(unsigned int context_id,
                                       const unsigned char *buffer,
                                       size_t length);
 
 DP_Message *DP_msg_pen_up_parse(unsigned int context_id, DP_TextReader *reader);
+
+DP_MsgPenUp *DP_msg_pen_up_cast(DP_Message *msg);
+
+uint16_t DP_msg_pen_up_layer(const DP_MsgPenUp *mpu);
 
 
 /*

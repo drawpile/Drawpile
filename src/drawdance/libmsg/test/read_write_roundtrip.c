@@ -554,7 +554,7 @@ static DP_Message *generate_fill_rect(void)
 
 static DP_Message *generate_pen_up(void)
 {
-    return DP_msg_pen_up_new(generate_context_id());
+    return DP_msg_pen_up_new(generate_context_id(), random_uint16());
 }
 
 static DP_Message *generate_annotation_create(void)

@@ -397,6 +397,15 @@ bool DP_layer_routes_entry_is_group(DP_LayerRoutesEntry *lre)
     return lre->is_group;
 }
 
+int *DP_layer_routes_entry_indexes(DP_LayerRoutesEntry *lre, int *out_count)
+{
+    DP_ASSERT(lre);
+    if (out_count) {
+        *out_count = lre->index_count;
+    }
+    return lre->indexes;
+}
+
 int DP_layer_routes_entry_index_count(DP_LayerRoutesEntry *lre)
 {
     DP_ASSERT(lre);
