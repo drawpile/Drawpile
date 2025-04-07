@@ -970,12 +970,14 @@ int LayerList::makeAddLayerOrGroupCommands(
 				layerIdsToGroup.clear();
 			} else if(!canEditAll) {
 				// Toss any layers the user isn't allowed to move.
-				for(QSet<int>::iterator it = layerIdsToGroup.begin(),
-										end = layerIdsToGroup.end();
-					it != end; ++it) {
+				QSet<int>::iterator it = layerIdsToGroup.begin();
+				QSet<int>::iterator end = layerIdsToGroup.end();
+				while(it != end) {
 					int layerId = *it;
-					if(!canvas::AclState::isLayerOwner(layerId, contextId)) {
-						layerIdsToGroup.erase(it);
+					if(canvas::AclState::isLayerOwner(layerId, contextId)) {
+						++it;
+					} else {
+						it = layerIdsToGroup.erase(it);
 					}
 				}
 			}
@@ -1724,17 +1726,21 @@ void LayerList::afterLayerReset()
 				m_selectedIds.insert(m_currentId);
 				selectedChanged = true;
 			}
-			for(QSet<int>::iterator it = m_selectedIds.begin(),
-									end = m_selectedIds.end();
-				it != end; ++it) {
+
+			QSet<int>::iterator it = m_selectedIds.begin();
+			QSet<int>::iterator end = m_selectedIds.end();
+			while(it != end) {
 				int selectedId = *it;
-				if(selectedId != m_currentId) {
+				if(selectedId == m_currentId) {
+					++it;
+				} else {
 					QModelIndex selectedIndex = layers->layerIndex(selectedId);
 					if(selectedIndex.isValid()) {
 						selectionModel->select(
 							selectedIndex, QItemSelectionModel::Select);
+						++it;
 					} else {
-						m_selectedIds.erase(it);
+						it = m_selectedIds.erase(it);
 						selectedChanged = true;
 					}
 				}
