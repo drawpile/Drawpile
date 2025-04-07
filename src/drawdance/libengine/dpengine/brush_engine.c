@@ -486,6 +486,20 @@ static DP_BrushEngine *get_mypaint_surface_brush_engine(MyPaintSurface2 *self)
     return (void *)(bytes - offsetof(DP_BrushEngine, mypaint_surface2));
 }
 
+static bool should_ignore_full_alpha_mypaint_dab(DP_PaintMode paint_mode,
+                                                 DP_BlendMode blend_mode)
+{
+    switch (blend_mode) {
+    case DP_BLEND_MODE_NORMAL:
+        return paint_mode != DP_PAINT_MODE_DIRECT;
+    case DP_BLEND_MODE_ERASE:
+    case DP_BLEND_MODE_ERASE_PRESERVE:
+        return false;
+    default:
+        return true;
+    }
+}
+
 static uint32_t get_mypaint_dab_color(float color_r, float color_g,
                                       float color_b, float alpha_eraser)
 {
@@ -551,77 +565,84 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
     // A radius less than 0.1 pixels is infinitesimally small. A hardness or
     // opacity of zero means the mask is completely blank. Disregard the dab
     // in those cases. MyPaint uses the same logic for this.
-    if (radius >= 0.1f && hardness > 0.0f && opaque > 0.0f) {
-        DP_BrushEngine *be = get_mypaint_surface_brush_engine(self);
-        int32_t dab_x = DP_float_to_int32(x * 4.0f);
-        int32_t dab_y = DP_float_to_int32(y * 4.0f);
-        uint32_t dab_color;
-        uint8_t dab_flags, dab_lock_alpha, dab_colorize, dab_posterize,
-            dab_posterize_num;
-
-        DP_PaintMode paint_mode = be->mypaint.paint_mode;
-        DP_BlendMode blend_mode = be->mypaint.blend_mode;
-        if (paint_mode == DP_PAINT_MODE_DIRECT
-            && blend_mode == DP_BLEND_MODE_NORMAL) {
-            dab_color =
-                get_mypaint_dab_color(color_r, color_g, color_b, alpha_eraser);
-            dab_flags = 0;
-            dab_lock_alpha = get_mypaint_dab_lock_alpha(lock_alpha);
-            dab_colorize = get_mypaint_dab_colorize(colorize);
-            dab_posterize = get_mypaint_dab_posterize(posterize);
-            dab_posterize_num =
-                get_mypaint_dab_posterize_num(dab_posterize, posterize_num);
-        }
-        else {
-            dab_color = get_mypaint_dab_color(color_r, color_g, color_b, 1.0f);
-            dab_flags = (uint8_t)paint_mode;
-            dab_lock_alpha = 0;
-            dab_colorize = 0;
-            dab_posterize = 0;
-            dab_posterize_num = 0;
-        }
-
-        int used = be->dabs.used;
-        int8_t dx, dy;
-        bool can_append = used != 0 && used < DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX
-                       && be->mypaint.dab_color == dab_color
-                       && be->mypaint.dab_flags == dab_flags
-                       && be->mypaint.dab_lock_alpha == dab_lock_alpha
-                       && be->mypaint.dab_colorize == dab_colorize
-                       && be->mypaint.dab_posterize == dab_posterize
-                       && be->mypaint.dab_posterize_num == dab_posterize_num
-                       && delta_xy(be, dab_x, dab_y, &dx, &dy);
-        be->dabs.last_x = dab_x;
-        be->dabs.last_y = dab_y;
-
-        if (!can_append) {
-            DP_brush_engine_dabs_flush(be);
-            be->mypaint.dab_x = dab_x;
-            be->mypaint.dab_y = dab_y;
-            be->mypaint.dab_color = dab_color;
-            be->mypaint.dab_flags = dab_flags;
-            be->mypaint.dab_lock_alpha = dab_lock_alpha;
-            be->mypaint.dab_colorize = dab_colorize;
-            be->mypaint.dab_posterize = dab_posterize;
-            be->mypaint.dab_posterize_num = dab_posterize_num;
-            dx = 0;
-            dy = 0;
-        }
-
-        DP_BrushEngineMyPaintDab *dabs = get_dab_buffer(be, sizeof(*dabs));
-        dabs[be->dabs.used++] = (DP_BrushEngineMyPaintDab){
-            dx,
-            dy,
-            get_mypaint_dab_size(radius),
-            get_uint8(hardness),
-            get_uint8(opaque),
-            get_mypaint_dab_angle(angle),
-            get_mypaint_dab_aspect_ratio(aspect_ratio)};
-        return 1;
-    }
-    else {
+    if (radius < 0.1f && hardness <= 0.0f && opaque <= 0.0f) {
         return 0;
     }
+
+    DP_BrushEngine *be = get_mypaint_surface_brush_engine(self);
+    DP_PaintMode paint_mode = be->mypaint.paint_mode;
+    DP_BlendMode blend_mode = be->mypaint.blend_mode;
+    // Disregard colors with zero alpha if the paint and/or blend modes can't
+    // deal with it. MyPaint brushes do this when they want to smudge at full
+    // alpha, which will use an undefined (in practice: fully red) color.
+    if (alpha_eraser <= 0.0f
+        && should_ignore_full_alpha_mypaint_dab(paint_mode, blend_mode)) {
+        return 0;
+    }
+
+    int32_t dab_x = DP_float_to_int32(x * 4.0f);
+    int32_t dab_y = DP_float_to_int32(y * 4.0f);
+    uint32_t dab_color;
+    uint8_t dab_flags, dab_lock_alpha, dab_colorize, dab_posterize,
+        dab_posterize_num;
+
+    if (paint_mode == DP_PAINT_MODE_DIRECT
+        && blend_mode == DP_BLEND_MODE_NORMAL) {
+        dab_color =
+            get_mypaint_dab_color(color_r, color_g, color_b, alpha_eraser);
+        dab_flags = 0;
+        dab_lock_alpha = get_mypaint_dab_lock_alpha(lock_alpha);
+        dab_colorize = get_mypaint_dab_colorize(colorize);
+        dab_posterize = get_mypaint_dab_posterize(posterize);
+        dab_posterize_num =
+            get_mypaint_dab_posterize_num(dab_posterize, posterize_num);
+    }
+    else {
+        dab_color = get_mypaint_dab_color(color_r, color_g, color_b, 1.0f);
+        dab_flags = (uint8_t)paint_mode;
+        dab_lock_alpha = 0;
+        dab_colorize = 0;
+        dab_posterize = 0;
+        dab_posterize_num = 0;
+    }
+
+    int used = be->dabs.used;
+    int8_t dx, dy;
+    bool can_append = used != 0 && used < DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX
+                   && be->mypaint.dab_color == dab_color
+                   && be->mypaint.dab_flags == dab_flags
+                   && be->mypaint.dab_lock_alpha == dab_lock_alpha
+                   && be->mypaint.dab_colorize == dab_colorize
+                   && be->mypaint.dab_posterize == dab_posterize
+                   && be->mypaint.dab_posterize_num == dab_posterize_num
+                   && delta_xy(be, dab_x, dab_y, &dx, &dy);
+    be->dabs.last_x = dab_x;
+    be->dabs.last_y = dab_y;
+
+    if (!can_append) {
+        DP_brush_engine_dabs_flush(be);
+        be->mypaint.dab_x = dab_x;
+        be->mypaint.dab_y = dab_y;
+        be->mypaint.dab_color = dab_color;
+        be->mypaint.dab_flags = dab_flags;
+        be->mypaint.dab_lock_alpha = dab_lock_alpha;
+        be->mypaint.dab_colorize = dab_colorize;
+        be->mypaint.dab_posterize = dab_posterize;
+        be->mypaint.dab_posterize_num = dab_posterize_num;
+        dx = 0;
+        dy = 0;
+    }
+
+    DP_BrushEngineMyPaintDab *dabs = get_dab_buffer(be, sizeof(*dabs));
+    dabs[be->dabs.used++] =
+        (DP_BrushEngineMyPaintDab){dx,
+                                   dy,
+                                   get_mypaint_dab_size(radius),
+                                   get_uint8(hardness),
+                                   get_uint8(opaque),
+                                   get_mypaint_dab_angle(angle),
+                                   get_mypaint_dab_aspect_ratio(aspect_ratio)};
+    return 1;
 }
 
 static int add_dab_mypaint(MyPaintSurface *self, float x, float y, float radius,
