@@ -411,11 +411,12 @@ static void tile_to_reset_image(struct DP_ResetImageContext *c,
 {
     size_t size = reset_image_compress_tile(c, buffer_index, t);
     if (size != 0) {
-        reset_image_push(
-            c, DP_msg_put_tile_new(c->context_id, layer_id, sublayer_id,
-                                   DP_int_to_uint16(x), DP_int_to_uint16(y),
-                                   repeat, set_tile_data, size,
-                                   c->output_buffers[buffer_index].data));
+        reset_image_push(c, DP_msg_put_tile_new(
+                                c->context_id,
+                                t ? DP_uint_to_uint8(DP_tile_context_id(t)) : 0,
+                                layer_id, sublayer_id, DP_int_to_uint16(x),
+                                DP_int_to_uint16(y), repeat, set_tile_data,
+                                size, c->output_buffers[buffer_index].data));
     }
 }
 

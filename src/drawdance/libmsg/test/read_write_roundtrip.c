@@ -606,9 +606,9 @@ static DP_Message *generate_move_region(void)
 
 static DP_Message *generate_put_tile(void)
 {
-    return DP_msg_put_tile_new(generate_context_id(), random_uint16(),
-                               random_uint8(), random_uint16(), random_uint16(),
-                               random_uint16(), generate_bytes,
+    return DP_msg_put_tile_new(generate_context_id(), random_uint8(),
+                               random_uint16(), random_uint8(), random_uint16(),
+                               random_uint16(), random_uint16(), generate_bytes,
                                size_between(DP_MSG_PUT_TILE_IMAGE_MIN_SIZE,
                                             DP_MSG_PUT_TILE_IMAGE_MAX_SIZE),
                                NULL);

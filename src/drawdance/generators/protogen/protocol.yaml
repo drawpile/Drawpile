@@ -653,6 +653,7 @@ PutTile:
              PutTile can target sublayers as well. This is used when generating a reset image
              with incomplete indirect strokes. Sending a PenUp command will merge the sublayer.
     fields:
+        - user u8
         - layer u16
         - sublayer u8
         - col u16
