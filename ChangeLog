@@ -12,6 +12,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Allow using blend modes with MyPaint brushes, rather than restricting them to normal, recolor and erase.
  * Feature: Allow using MyPaint brush color dynamics in indirect mode.
  * Feature: Remember who changed tiles across session resets and compressing the canvas. Thanks Bluestrings for suggesting and callaa for originally implementing it before it fell off again for compatibility.
+ * Fix: Don't displace annotations when resizing the canvas to the left or top.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.
