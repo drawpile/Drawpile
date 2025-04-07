@@ -278,6 +278,12 @@ void DP_draw_context_layer_indexes_push(DP_DrawContext *dc)
     }
 }
 
+int *DP_draw_context_layer_indexes_push_get(DP_DrawContext *dc, int *out_count)
+{
+    DP_draw_context_layer_indexes_push(dc);
+    return DP_draw_context_layer_indexes(dc, out_count);
+}
+
 void DP_draw_context_layer_indexes_set(DP_DrawContext *dc, int layer_index)
 {
     DP_ASSERT(dc);

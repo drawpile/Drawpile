@@ -4963,28 +4963,86 @@ uint32_t DP_msg_fill_rect_color(const DP_MsgFillRect *mfr)
 
 /* DP_MSG_PEN_UP */
 
-DP_Message *DP_msg_pen_up_new(unsigned int context_id)
+struct DP_MsgPenUp {
+    uint16_t layer;
+};
+
+static size_t msg_pen_up_payload_length(DP_UNUSED DP_Message *msg)
 {
-    return DP_message_new(DP_MSG_PEN_UP, context_id, &zero_length_methods, 0);
+    return ((size_t)2);
+}
+
+static size_t msg_pen_up_serialize_payload(DP_Message *msg, unsigned char *data)
+{
+    DP_MsgPenUp *mpu = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mpu->layer, data + written);
+    DP_ASSERT(written == msg_pen_up_payload_length(msg));
+    return written;
+}
+
+static bool msg_pen_up_write_payload_text(DP_Message *msg,
+                                          DP_TextWriter *writer)
+{
+    DP_MsgPenUp *mpu = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "layer", mpu->layer);
+}
+
+static bool msg_pen_up_equals(DP_Message *DP_RESTRICT msg,
+                              DP_Message *DP_RESTRICT other)
+{
+    DP_MsgPenUp *a = DP_message_internal(msg);
+    DP_MsgPenUp *b = DP_message_internal(other);
+    return a->layer == b->layer;
+}
+
+static const DP_MessageMethods msg_pen_up_methods = {
+    msg_pen_up_payload_length,
+    msg_pen_up_serialize_payload,
+    msg_pen_up_write_payload_text,
+    msg_pen_up_equals,
+};
+
+DP_Message *DP_msg_pen_up_new(unsigned int context_id, uint16_t layer)
+{
+    DP_Message *msg = DP_message_new(DP_MSG_PEN_UP, context_id,
+                                     &msg_pen_up_methods, sizeof(DP_MsgPenUp));
+    DP_MsgPenUp *mpu = DP_message_internal(msg);
+    mpu->layer = layer;
+    return msg;
 }
 
 DP_Message *DP_msg_pen_up_deserialize(unsigned int context_id,
-                                      DP_UNUSED const unsigned char *buffer,
+                                      const unsigned char *buffer,
                                       size_t length)
 {
-    if (length != 0) {
+    if (length != 2) {
         DP_error_set("Wrong length for penup message; "
-                     "expected 0, got %zu",
+                     "expected 2, got %zu",
                      length);
         return NULL;
     }
-    return DP_msg_pen_up_new(context_id);
+    size_t read = 0;
+    uint16_t layer = read_uint16(buffer + read, &read);
+    return DP_msg_pen_up_new(context_id, layer);
 }
 
-DP_Message *DP_msg_pen_up_parse(unsigned int context_id,
-                                DP_UNUSED DP_TextReader *reader)
+DP_Message *DP_msg_pen_up_parse(unsigned int context_id, DP_TextReader *reader)
 {
-    return DP_msg_pen_up_new(context_id);
+    uint16_t layer =
+        (uint16_t)DP_text_reader_get_ulong(reader, "layer", UINT16_MAX);
+    return DP_msg_pen_up_new(context_id, layer);
+}
+
+DP_MsgPenUp *DP_msg_pen_up_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_PEN_UP);
+}
+
+uint16_t DP_msg_pen_up_layer(const DP_MsgPenUp *mpu)
+{
+    DP_ASSERT(mpu);
+    return mpu->layer;
 }
 
 
