@@ -1783,18 +1783,19 @@ size_t DP_msg_move_region_mask_size(const DP_MsgMoveRegion *mmr);
  * the sublayer.
  */
 
-#define DP_MSG_PUT_TILE_STATIC_LENGTH 9
+#define DP_MSG_PUT_TILE_STATIC_LENGTH 10
 
 #define DP_MSG_PUT_TILE_IMAGE_MIN_SIZE 0
-#define DP_MSG_PUT_TILE_IMAGE_MAX_SIZE 65526
+#define DP_MSG_PUT_TILE_IMAGE_MAX_SIZE 65525
 
 typedef struct DP_MsgPutTile DP_MsgPutTile;
 
-DP_Message *
-DP_msg_put_tile_new(unsigned int context_id, uint16_t layer, uint8_t sublayer,
-                    uint16_t col, uint16_t row, uint16_t repeat,
-                    void (*set_image)(size_t, unsigned char *, void *),
-                    size_t image_size, void *image_user);
+DP_Message *DP_msg_put_tile_new(unsigned int context_id, uint8_t user,
+                                uint16_t layer, uint8_t sublayer, uint16_t col,
+                                uint16_t row, uint16_t repeat,
+                                void (*set_image)(size_t, unsigned char *,
+                                                  void *),
+                                size_t image_size, void *image_user);
 
 DP_Message *DP_msg_put_tile_deserialize(unsigned int context_id,
                                         const unsigned char *buffer,
@@ -1804,6 +1805,8 @@ DP_Message *DP_msg_put_tile_parse(unsigned int context_id,
                                   DP_TextReader *reader);
 
 DP_MsgPutTile *DP_msg_put_tile_cast(DP_Message *msg);
+
+uint8_t DP_msg_put_tile_user(const DP_MsgPutTile *mpt);
 
 uint16_t DP_msg_put_tile_layer(const DP_MsgPutTile *mpt);
 

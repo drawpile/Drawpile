@@ -733,7 +733,6 @@ static DP_CanvasState *handle_move_region(DP_CanvasState *cs,
 }
 
 static DP_CanvasState *handle_put_tile(DP_CanvasState *cs, DP_DrawContext *dc,
-                                       unsigned int context_id,
                                        DP_MsgPutTile *mpt)
 {
     DP_TileCounts tile_counts = DP_tile_counts_round(cs->width, cs->height);
@@ -749,8 +748,8 @@ static DP_CanvasState *handle_put_tile(DP_CanvasState *cs, DP_DrawContext *dc,
 
     size_t image_size;
     const unsigned char *image = DP_msg_put_tile_image(mpt, &image_size);
-    DP_Tile *tile =
-        DP_tile_new_from_compressed(dc, context_id, image, image_size);
+    DP_Tile *tile = DP_tile_new_from_compressed(dc, DP_msg_put_tile_user(mpt),
+                                                image, image_size);
     if (!tile) {
         return NULL;
     }
@@ -1385,8 +1384,7 @@ static DP_CanvasState *handle(DP_CanvasState *cs, DP_DrawContext *dc,
                                   DP_message_context_id(msg),
                                   DP_msg_move_region_cast(msg));
     case DP_MSG_PUT_TILE:
-        return handle_put_tile(cs, dc, DP_message_context_id(msg),
-                               DP_msg_put_tile_cast(msg));
+        return handle_put_tile(cs, dc, DP_msg_put_tile_cast(msg));
     case DP_MSG_CANVAS_BACKGROUND:
         return handle_canvas_background(cs, dc, DP_message_context_id(msg),
                                         DP_msg_canvas_background_cast(msg));

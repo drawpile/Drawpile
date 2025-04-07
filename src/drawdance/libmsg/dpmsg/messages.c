@@ -5839,6 +5839,7 @@ size_t DP_msg_move_region_mask_size(const DP_MsgMoveRegion *mmr)
 /* DP_MSG_PUT_TILE */
 
 struct DP_MsgPutTile {
+    uint8_t user;
     uint16_t layer;
     uint8_t sublayer;
     uint16_t col;
@@ -5851,7 +5852,7 @@ struct DP_MsgPutTile {
 static size_t msg_put_tile_payload_length(DP_Message *msg)
 {
     DP_MsgPutTile *mpt = DP_message_internal(msg);
-    return ((size_t)9) + mpt->image_size;
+    return ((size_t)10) + mpt->image_size;
 }
 
 static size_t msg_put_tile_serialize_payload(DP_Message *msg,
@@ -5859,6 +5860,7 @@ static size_t msg_put_tile_serialize_payload(DP_Message *msg,
 {
     DP_MsgPutTile *mpt = DP_message_internal(msg);
     size_t written = 0;
+    written += DP_write_bigendian_uint8(mpt->user, data + written);
     written += DP_write_bigendian_uint16(mpt->layer, data + written);
     written += DP_write_bigendian_uint8(mpt->sublayer, data + written);
     written += DP_write_bigendian_uint16(mpt->col, data + written);
@@ -5879,7 +5881,8 @@ static bool msg_put_tile_write_payload_text(DP_Message *msg,
         && DP_text_writer_write_uint(writer, "layer", mpt->layer)
         && DP_text_writer_write_uint(writer, "repeat", mpt->repeat)
         && DP_text_writer_write_uint(writer, "row", mpt->row)
-        && DP_text_writer_write_uint(writer, "sublayer", mpt->sublayer);
+        && DP_text_writer_write_uint(writer, "sublayer", mpt->sublayer)
+        && DP_text_writer_write_uint(writer, "user", mpt->user);
 }
 
 static bool msg_put_tile_equals(DP_Message *DP_RESTRICT msg,
@@ -5887,9 +5890,9 @@ static bool msg_put_tile_equals(DP_Message *DP_RESTRICT msg,
 {
     DP_MsgPutTile *a = DP_message_internal(msg);
     DP_MsgPutTile *b = DP_message_internal(other);
-    return a->layer == b->layer && a->sublayer == b->sublayer
-        && a->col == b->col && a->row == b->row && a->repeat == b->repeat
-        && a->image_size == b->image_size
+    return a->user == b->user && a->layer == b->layer
+        && a->sublayer == b->sublayer && a->col == b->col && a->row == b->row
+        && a->repeat == b->repeat && a->image_size == b->image_size
         && memcmp(a->image, b->image, DP_uint16_to_size(a->image_size)) == 0;
 }
 
@@ -5900,16 +5903,18 @@ static const DP_MessageMethods msg_put_tile_methods = {
     msg_put_tile_equals,
 };
 
-DP_Message *
-DP_msg_put_tile_new(unsigned int context_id, uint16_t layer, uint8_t sublayer,
-                    uint16_t col, uint16_t row, uint16_t repeat,
-                    void (*set_image)(size_t, unsigned char *, void *),
-                    size_t image_size, void *image_user)
+DP_Message *DP_msg_put_tile_new(unsigned int context_id, uint8_t user,
+                                uint16_t layer, uint8_t sublayer, uint16_t col,
+                                uint16_t row, uint16_t repeat,
+                                void (*set_image)(size_t, unsigned char *,
+                                                  void *),
+                                size_t image_size, void *image_user)
 {
     DP_Message *msg =
         DP_message_new(DP_MSG_PUT_TILE, context_id, &msg_put_tile_methods,
                        DP_FLEX_SIZEOF(DP_MsgPutTile, image, image_size));
     DP_MsgPutTile *mpt = DP_message_internal(msg);
+    mpt->user = user;
     mpt->layer = layer;
     mpt->sublayer = sublayer;
     mpt->col = col;
@@ -5926,13 +5931,14 @@ DP_Message *DP_msg_put_tile_deserialize(unsigned int context_id,
                                         const unsigned char *buffer,
                                         size_t length)
 {
-    if (length < 9 || length > 65535) {
+    if (length < 10 || length > 65535) {
         DP_error_set("Wrong length for puttile message; "
-                     "expected between 9 and 65535, got %zu",
+                     "expected between 10 and 65535, got %zu",
                      length);
         return NULL;
     }
     size_t read = 0;
+    uint8_t user = read_uint8(buffer + read, &read);
     uint16_t layer = read_uint16(buffer + read, &read);
     uint8_t sublayer = read_uint8(buffer + read, &read);
     uint16_t col = read_uint16(buffer + read, &read);
@@ -5941,13 +5947,14 @@ DP_Message *DP_msg_put_tile_deserialize(unsigned int context_id,
     size_t image_bytes = length - read;
     uint16_t image_size = DP_size_to_uint16(image_bytes);
     void *image_user = (void *)(buffer + read);
-    return DP_msg_put_tile_new(context_id, layer, sublayer, col, row, repeat,
-                               read_bytes, image_size, image_user);
+    return DP_msg_put_tile_new(context_id, user, layer, sublayer, col, row,
+                               repeat, read_bytes, image_size, image_user);
 }
 
 DP_Message *DP_msg_put_tile_parse(unsigned int context_id,
                                   DP_TextReader *reader)
 {
+    uint8_t user = (uint8_t)DP_text_reader_get_ulong(reader, "user", UINT8_MAX);
     uint16_t layer =
         (uint16_t)DP_text_reader_get_ulong(reader, "layer", UINT16_MAX);
     uint8_t sublayer =
@@ -5961,14 +5968,20 @@ DP_Message *DP_msg_put_tile_parse(unsigned int context_id,
     size_t image_size;
     DP_TextReaderParseParams image_params =
         DP_text_reader_get_base64_string(reader, "image", &image_size);
-    return DP_msg_put_tile_new(context_id, layer, sublayer, col, row, repeat,
-                               DP_text_reader_parse_base64, image_size,
+    return DP_msg_put_tile_new(context_id, user, layer, sublayer, col, row,
+                               repeat, DP_text_reader_parse_base64, image_size,
                                &image_params);
 }
 
 DP_MsgPutTile *DP_msg_put_tile_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_PUT_TILE);
+}
+
+uint8_t DP_msg_put_tile_user(const DP_MsgPutTile *mpt)
+{
+    DP_ASSERT(mpt);
+    return mpt->user;
 }
 
 uint16_t DP_msg_put_tile_layer(const DP_MsgPutTile *mpt)
