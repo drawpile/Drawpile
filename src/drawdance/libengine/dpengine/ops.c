@@ -79,6 +79,24 @@ DP_CanvasState *DP_ops_canvas_resize(DP_CanvasState *cs,
         DP_transient_canvas_state_transient_layers_set_noinc(tcs, tll);
     }
 
+    if (left > 0 || top > 0) {
+        DP_AnnotationList *al =
+            DP_transient_canvas_state_annotations_noinc(tcs);
+        int annotation_count = DP_annotation_list_count(al);
+        if (annotation_count > 0) {
+            DP_TransientAnnotationList *tal =
+                DP_transient_canvas_state_transient_annotations(tcs, 0);
+            for (int i = 0; i < annotation_count; ++i) {
+                DP_TransientAnnotation *ta =
+                    DP_transient_annotation_list_transient_at_noinc(tal, i);
+                DP_transient_annotation_x_set(ta, DP_transient_annotation_x(ta)
+                                                      + left);
+                DP_transient_annotation_y_set(ta, DP_transient_annotation_y(ta)
+                                                      + top);
+            }
+        }
+    }
+
     DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
     if (ss) {
         DP_TransientSelectionSet *tss =

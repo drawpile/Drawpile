@@ -2173,6 +2173,15 @@ DP_transient_canvas_state_layer_routes_noinc(DP_TransientCanvasState *tcs)
     return DP_canvas_state_layer_routes_noinc((DP_CanvasState *)tcs);
 }
 
+DP_AnnotationList *
+DP_transient_canvas_state_annotations_noinc(DP_TransientCanvasState *tcs)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    return DP_canvas_state_annotations_noinc((DP_CanvasState *)tcs);
+}
+
 DP_DocumentMetadata *
 DP_transient_canvas_state_metadata_noinc(DP_TransientCanvasState *tcs)
 {
