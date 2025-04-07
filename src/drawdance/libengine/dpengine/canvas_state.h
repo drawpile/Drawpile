@@ -243,6 +243,9 @@ DP_transient_canvas_state_layer_props_noinc(DP_TransientCanvasState *tcs);
 DP_LayerRoutes *
 DP_transient_canvas_state_layer_routes_noinc(DP_TransientCanvasState *tcs);
 
+DP_AnnotationList *
+DP_transient_canvas_state_annotations_noinc(DP_TransientCanvasState *tcs);
+
 DP_DocumentMetadata *
 DP_transient_canvas_state_metadata_noinc(DP_TransientCanvasState *tcs);
 
