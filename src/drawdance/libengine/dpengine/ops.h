@@ -108,7 +108,7 @@ DP_CanvasState *DP_ops_put_tile(DP_CanvasState *cs, DP_Tile *tile, int layer_id,
 
 DP_CanvasState *DP_ops_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
                               DP_UserCursors *ucs_or_null,
-                              unsigned int context_id);
+                              unsigned int context_id, int layer_id);
 
 DP_CanvasState *DP_ops_annotation_create(DP_CanvasState *cs, int annotation_id,
                                          int x, int y, int width, int height);

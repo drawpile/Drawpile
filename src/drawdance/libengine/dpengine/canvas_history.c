@@ -1130,7 +1130,7 @@ void DP_canvas_history_cleanup(DP_CanvasHistory *ch, DP_DrawContext *dc,
             DP_warn("Cleanup: %s", DP_error());
         }
     }
-    push_message(user, DP_msg_pen_up_new(0));
+    push_message(user, DP_msg_pen_up_new(0, 0));
 }
 
 
