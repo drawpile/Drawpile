@@ -1870,7 +1870,9 @@ void DP_brush_engine_stroke_end(DP_BrushEngine *be, long long time_msec,
     DP_brush_engine_dabs_flush(be);
 
     if (push_pen_up) {
-        be->push_message(be->user, DP_msg_pen_up_new(be->stroke.context_id));
+        be->push_message(be->user,
+                         DP_msg_pen_up_new(be->stroke.context_id,
+                                           DP_int_to_uint16(be->layer_id)));
     }
     be->stroke.in_progress = false;
 

@@ -119,6 +119,7 @@ void DP_draw_context_layer_indexes_clear(DP_DrawContext *dc);
 // Push only increments the count of the layer index list. Set is used to
 // assign a value to the pushed element. Pop decrements the count again.
 void DP_draw_context_layer_indexes_push(DP_DrawContext *dc);
+int *DP_draw_context_layer_indexes_push_get(DP_DrawContext *dc, int *out_count);
 void DP_draw_context_layer_indexes_set(DP_DrawContext *dc, int layer_index);
 void DP_draw_context_layer_indexes_pop(DP_DrawContext *dc);
 

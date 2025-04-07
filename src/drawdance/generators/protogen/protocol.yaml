@@ -537,11 +537,15 @@ PenMove:
 PenUp:
     id: 140
     comment: |
-             Pen up command
-
-             The pen up command signals the end of a stroke. In indirect drawing mode, it causes
-             indirect dabs (by this user) to be merged to their parent layers.
-    fields: []
+             Signals the end of a stroke. If one exists, this causes the
+             sublayer of this user on the given layer to be merged into its
+             parent. Strokes in indirect paint modes will create such sublayers.
+             A pen up command for layer 0 causes the sublayers on all layers to
+             be merged. If the message context id is 0, the sublayers of all
+             users are merged, either on the given layer or on all layers if
+             that's 0 too.
+    fields:
+        - layer u16
 
 AnnotationCreate:
     id: 141
