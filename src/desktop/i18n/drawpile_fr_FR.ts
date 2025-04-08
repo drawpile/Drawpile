@@ -10230,7 +10230,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+14"/>
         <source>Host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom d&apos;hôte ou adresse IP</translation>
     </message>
     <message>
         <location line="+5"/>
