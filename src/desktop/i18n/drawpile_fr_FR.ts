@@ -10475,7 +10475,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+39"/>
         <location line="+16"/>
         <source>Tag name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de l&apos;étiquette&#xa0;:</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -10612,13 +10612,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+65"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle Palette</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+47"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -10681,7 +10681,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+9"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Espace colorimétrique</translation>
     </message>
     <message>
         <location line="+3"/>
