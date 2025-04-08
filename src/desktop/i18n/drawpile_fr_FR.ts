@@ -10205,12 +10205,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Session password:</source>
-        <translation>Mot de passe de la session</translation>
+        <translation>Mot de passe de la session&#xa0;:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter or generate a session password</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrer ou générer un mot de passe de session</translation>
     </message>
     <message>
         <location line="+3"/>
