@@ -10068,7 +10068,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Laser pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pointeur laser</translation>
     </message>
     <message>
         <location line="+3"/>
