@@ -10068,12 +10068,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Laser pointer:</source>
-        <translation>Pointeur laser</translation>
+        <translation>Pointeur laser&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Animation timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Chronologie d&apos;animation&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
