@@ -10658,7 +10658,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Couldn&apos;t save file</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;enregistrer le fichier</translation>
     </message>
     <message>
         <location line="-58"/>
@@ -10676,7 +10676,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Sliders</source>
-        <translation type="unfinished"></translation>
+        <translation>Curseurs</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10688,14 +10688,14 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+394"/>
         <source>HSV</source>
         <extracomment>Color space HSV (hue, chroma, value)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>TSL</translation>
     </message>
     <message>
         <location line="-383"/>
         <location line="+359"/>
         <source>HSL</source>
         <extracomment>Color space HSL (hue, saturation, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="-348"/>
