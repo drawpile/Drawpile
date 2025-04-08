@@ -10078,7 +10078,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Undo and redo:</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuler et rétablir</translation>
     </message>
     <message>
         <location line="+3"/>
