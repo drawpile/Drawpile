@@ -8873,7 +8873,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+9"/>
         <location filename="../mainwindow.cpp" line="-1247"/>
         <source>Windows Ink</source>
-        <translation type="unfinished">Windows Ink</translation>
+        <translation>Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8885,7 +8885,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Wintab</source>
-        <translation type="unfinished">Wintab</translation>
+        <translation>Wintab</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8903,13 +8903,13 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+9"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished">Qt6 Windows Ink</translation>
+        <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished">Qt6 Wintab</translation>
+        <translation>Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9409,7 +9409,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+9"/>
         <source>Scaling:</source>
-        <translation type="unfinished">Dimensionamento:</translation>
+        <translation>Dimensionamento:</translation>
     </message>
     <message>
         <location line="+20"/>
