@@ -10240,32 +10240,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Server:</source>
-        <translation>Serveur:</translation>
+        <translation>Serveur&#xa0;:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Enter a host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrer un nom d&apos;hôte ou une adresse IP</translation>
     </message>
     <message>
         <location line="+130"/>
         <source>Session: a password is required</source>
-        <translation type="unfinished"></translation>
+        <translation>Session&#xa0;: un mot de passe est nécessaire</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Session: a server is required</source>
-        <translation type="unfinished"></translation>
+        <translation>Session&#xa0;: un serveur est nécessaire</translation>
     </message>
     <message>
         <location line="+70"/>
         <source>This will host your session on the public Drawpile server. It&apos;s freely available for anyone. To keep space available, sessions will be stopped when they&apos;re inactive for a while or after everybody leaves.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ceci hébergera votre session sur le serveur public Drawpile. Il est accessible librement à tous. Pour préserver l&apos;espace disponible, les sessions seront interrompues en cas d&apos;inactivité prolongée ou après le départ de tous les participants.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Sessions must comply with the rules, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;click here to view them&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les sessions doivent obéir aux règles, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;cliquez ici pour les consulter&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -10623,7 +10623,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Rename Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Renommer la Palette</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -10671,7 +10671,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+73"/>
         <source>Color Sliders</source>
-        <translation type="unfinished"></translation>
+        <translation>Curseur de Couleur</translation>
     </message>
     <message>
         <location line="+0"/>
