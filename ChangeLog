@@ -13,6 +13,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Allow using MyPaint brush color dynamics in indirect mode.
  * Feature: Remember who changed tiles across session resets and compressing the canvas. Thanks Bluestrings for suggesting and callaa for originally implementing it before it fell off again for compatibility.
  * Fix: Don't displace annotations when resizing the canvas to the left or top.
+ * Feature: Make the Shine (SAI) blend mode work exactly like in SAI, even with alpha preserve off. Thanks cromachina for providing the logic for this.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.
