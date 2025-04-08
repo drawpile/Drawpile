@@ -10205,7 +10205,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Session password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mot de passe de la session</translation>
     </message>
     <message>
         <location line="+5"/>
