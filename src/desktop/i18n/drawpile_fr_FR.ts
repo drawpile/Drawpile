@@ -10152,7 +10152,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+282"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Charger les Paramètres</translation>
     </message>
     <message>
         <location line="+14"/>
