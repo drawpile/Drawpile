@@ -10078,12 +10078,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Undo and redo:</source>
-        <translation>Annuler et rétablir</translation>
+        <translation>Annuler et rétablir&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Kick and ban:</source>
-        <translation type="unfinished"></translation>
+        <translation>Éjecter et bannir&#xa0;:</translation>
     </message>
     <message>
         <location line="+112"/>
@@ -10116,7 +10116,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to reset to their defaults:</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisissez les sections que vous voulez restaurer à leurs valeurs par défaut&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -10124,7 +10124,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/roles.cpp" line="+36"/>
         <source>Define a password to let anyone become operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Définir un mot de passe pour permettre à n&apos;importe qui de devenir opérateur</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10134,7 +10134,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>No roles imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de rôles importés.</translation>
     </message>
     <message>
         <location line="+47"/>
@@ -10162,7 +10162,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Pick the sections you want to save:</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisissez les sections que vous voulez sauvegarder&#xa0;:</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -10172,17 +10172,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Le préréglage %1 existe déjà, souhaitez-vous le remplacer&#x202f;?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Oui, remplacer</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>Non, garder</translation>
     </message>
 </context>
 <context>
@@ -10190,17 +10190,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/session.cpp" line="+38"/>
         <source>Personal session, only people you invite can join</source>
-        <translation type="unfinished"></translation>
+        <translation>Session personnelle, seules les personnes que vous invitez peuvent rejoindre</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Public session, anyone can freely join</source>
-        <translation type="unfinished"></translation>
+        <translation>Session publique, tout le monde peut rejoindre librement</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Set a session title in the Listing tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Définissez un titre de session dans l’onglet Liste.</translation>
     </message>
     <message>
         <location line="+7"/>
