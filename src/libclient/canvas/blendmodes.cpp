@@ -18,6 +18,8 @@ static constexpr uint8_t UniversalMode = 0x03;
 // Mode is available when the eraser option is checked
 static constexpr uint8_t EraserMode = 0x04;
 
+static constexpr uint8_t SeparatorBelow = 0x08;
+
 struct BlendModeInfo {
 	//! The blend mode's translatable name
 	const char *name;
@@ -62,67 +64,7 @@ static const BlendModeInfo BLEND_MODE[] = {
 		QT_TRANSLATE_NOOP("blendmode", "Marker"),
 		DP_BLEND_MODE_MARKER_ALPHA,
 		DP_BLEND_MODE_MARKER,
-		UniversalMode,
-	},
-	{
-		QT_TRANSLATE_NOOP("blendmode", "Multiply"),
-		DP_BLEND_MODE_MULTIPLY,
-		DP_BLEND_MODE_MULTIPLY_ALPHA,
-		UniversalMode,
-	},
-	{
-		QT_TRANSLATE_NOOP("blendmode", "Screen"),
-		DP_BLEND_MODE_SCREEN,
-		DP_BLEND_MODE_SCREEN_ALPHA,
-		UniversalMode,
-	},
-	{
-		QT_TRANSLATE_NOOP("blendmode", "Overlay"),
-		DP_BLEND_MODE_OVERLAY,
-		DP_BLEND_MODE_OVERLAY_ALPHA,
-		UniversalMode,
-	},
-	{
-		QT_TRANSLATE_NOOP("blendmode", "Divide"),
-		DP_BLEND_MODE_DIVIDE,
-		DP_BLEND_MODE_DIVIDE_ALPHA,
-		UniversalMode,
-	},
-	{
-		QT_TRANSLATE_NOOP("blendmode", "Burn"),
-		DP_BLEND_MODE_BURN,
-		DP_BLEND_MODE_BURN_ALPHA,
-		UniversalMode,
-	},
-	{
-		QT_TRANSLATE_NOOP("blendmode", "Dodge"),
-		DP_BLEND_MODE_DODGE,
-		DP_BLEND_MODE_DODGE_ALPHA,
-		UniversalMode,
-	},
-	{
-		QT_TRANSLATE_NOOP("blendmode", "Darken"),
-		DP_BLEND_MODE_DARKEN,
-		DP_BLEND_MODE_DARKEN_ALPHA,
-		UniversalMode,
-	},
-	{
-		QT_TRANSLATE_NOOP("blendmode", "Lighten"),
-		DP_BLEND_MODE_LIGHTEN,
-		DP_BLEND_MODE_LIGHTEN_ALPHA,
-		UniversalMode,
-	},
-	{
-		QT_TRANSLATE_NOOP("blendmode", "Subtract"),
-		DP_BLEND_MODE_SUBTRACT,
-		DP_BLEND_MODE_SUBTRACT_ALPHA,
-		UniversalMode,
-	},
-	{
-		QT_TRANSLATE_NOOP("blendmode", "Add"),
-		DP_BLEND_MODE_ADD,
-		DP_BLEND_MODE_ADD_ALPHA,
-		UniversalMode,
+		UniversalMode | SeparatorBelow,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Erase"),
@@ -146,19 +88,25 @@ static const BlendModeInfo BLEND_MODE[] = {
 		QT_TRANSLATE_NOOP("blendmode", "Erase Darkness"),
 		DP_BLEND_MODE_ERASE_DARK,
 		DP_BLEND_MODE_ERASE_DARK_PRESERVE,
-		LayerMode | EraserMode,
+		LayerMode | EraserMode | SeparatorBelow,
 	},
 	{
-		QT_TRANSLATE_NOOP("blendmode", "Hard Light"),
-		DP_BLEND_MODE_HARD_LIGHT,
-		DP_BLEND_MODE_HARD_LIGHT_ALPHA,
+		QT_TRANSLATE_NOOP("blendmode", "Multiply"),
+		DP_BLEND_MODE_MULTIPLY,
+		DP_BLEND_MODE_MULTIPLY_ALPHA,
 		UniversalMode,
 	},
 	{
-		QT_TRANSLATE_NOOP("blendmode", "Soft Light"),
-		DP_BLEND_MODE_SOFT_LIGHT,
-		DP_BLEND_MODE_SOFT_LIGHT_ALPHA,
+		QT_TRANSLATE_NOOP("blendmode", "Screen"),
+		DP_BLEND_MODE_SCREEN,
+		DP_BLEND_MODE_SCREEN_ALPHA,
 		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Overlay"),
+		DP_BLEND_MODE_OVERLAY,
+		DP_BLEND_MODE_OVERLAY_ALPHA,
+		UniversalMode | SeparatorBelow,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Linear Burn"),
@@ -167,16 +115,94 @@ static const BlendModeInfo BLEND_MODE[] = {
 		UniversalMode,
 	},
 	{
-		QT_TRANSLATE_NOOP("blendmode", "Linear Light"),
-		DP_BLEND_MODE_LINEAR_LIGHT,
-		DP_BLEND_MODE_LINEAR_LIGHT_ALPHA,
+		QT_TRANSLATE_NOOP("blendmode", "Linear Dodge/Add"),
+		DP_BLEND_MODE_ADD,
+		DP_BLEND_MODE_ADD_ALPHA,
 		UniversalMode,
 	},
 	{
-		QT_TRANSLATE_NOOP("blendmode", "Shine (SAI)"),
-		DP_BLEND_MODE_LUMINOSITY_SHINE_SAI,
-		DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA,
+		QT_TRANSLATE_NOOP("blendmode", "Linear Light"),
+		DP_BLEND_MODE_LINEAR_LIGHT,
+		DP_BLEND_MODE_LINEAR_LIGHT_ALPHA,
+		UniversalMode | SeparatorBelow,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Color Burn"),
+		DP_BLEND_MODE_BURN,
+		DP_BLEND_MODE_BURN_ALPHA,
 		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Color Dodge"),
+		DP_BLEND_MODE_DODGE,
+		DP_BLEND_MODE_DODGE_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Vivid Light"),
+		DP_BLEND_MODE_VIVID_LIGHT,
+		DP_BLEND_MODE_VIVID_LIGHT_ALPHA,
+		UniversalMode | SeparatorBelow,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Soft Light"),
+		DP_BLEND_MODE_SOFT_LIGHT,
+		DP_BLEND_MODE_SOFT_LIGHT_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Hard Light"),
+		DP_BLEND_MODE_HARD_LIGHT,
+		DP_BLEND_MODE_HARD_LIGHT_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Pin Light"),
+		DP_BLEND_MODE_PIN_LIGHT,
+		DP_BLEND_MODE_PIN_LIGHT_ALPHA,
+		UniversalMode | SeparatorBelow,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Darken"),
+		DP_BLEND_MODE_DARKEN,
+		DP_BLEND_MODE_DARKEN_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Lighten"),
+		DP_BLEND_MODE_LIGHTEN,
+		DP_BLEND_MODE_LIGHTEN_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Darker Color"),
+		DP_BLEND_MODE_DARKER_COLOR,
+		DP_BLEND_MODE_DARKER_COLOR_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Lighter Color"),
+		DP_BLEND_MODE_LIGHTER_COLOR,
+		DP_BLEND_MODE_LIGHTER_COLOR_ALPHA,
+		UniversalMode | SeparatorBelow,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Difference"),
+		DP_BLEND_MODE_DIFFERENCE,
+		DP_BLEND_MODE_DIFFERENCE_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Subtract"),
+		DP_BLEND_MODE_SUBTRACT,
+		DP_BLEND_MODE_SUBTRACT_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Divide"),
+		DP_BLEND_MODE_DIVIDE,
+		DP_BLEND_MODE_DIVIDE_ALPHA,
+		UniversalMode | SeparatorBelow,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Hue"),
@@ -200,6 +226,54 @@ static const BlendModeInfo BLEND_MODE[] = {
 		QT_TRANSLATE_NOOP("blendmode", "Color"),
 		DP_BLEND_MODE_COLOR,
 		DP_BLEND_MODE_COLOR_ALPHA,
+		UniversalMode | SeparatorBelow,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Shade (SAI)"),
+		DP_BLEND_MODE_SHADE_SAI,
+		DP_BLEND_MODE_SHADE_SAI_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Shine (SAI)"),
+		DP_BLEND_MODE_LUMINOSITY_SHINE_SAI,
+		DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Shade/Shine (SAI)"),
+		DP_BLEND_MODE_SHADE_SHINE_SAI,
+		DP_BLEND_MODE_SHADE_SHINE_SAI_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Burn (SAI)"),
+		DP_BLEND_MODE_BURN_SAI,
+		DP_BLEND_MODE_BURN_SAI_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Dodge (SAI)"),
+		DP_BLEND_MODE_DODGE_SAI,
+		DP_BLEND_MODE_DODGE_SAI_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Burn/Dodge (SAI)"),
+		DP_BLEND_MODE_BURN_DODGE_SAI,
+		DP_BLEND_MODE_BURN_DODGE_SAI_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Hard Mix (SAI)"),
+		DP_BLEND_MODE_HARD_MIX_SAI,
+		DP_BLEND_MODE_HARD_MIX_SAI_ALPHA,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Difference (SAI)"),
+		DP_BLEND_MODE_DIFFERENCE_SAI,
+		DP_BLEND_MODE_DIFFERENCE_SAI_ALPHA,
 		UniversalMode,
 	},
 };
@@ -221,10 +295,12 @@ static QVector<Named> modeNames(uint8_t flag)
 {
 	QVector<Named> list;
 	for(int i = 0; i < BLEND_MODES; ++i) {
-		if((BLEND_MODE[i].flags & flag)) {
+		uint8_t flags = BLEND_MODE[i].flags;
+		if(flags & flag) {
 			list.append(Named{
 				DP_BlendMode(BLEND_MODE[i].id),
 				QCoreApplication::translate("blendmode", BLEND_MODE[i].name),
+				(flags & SeparatorBelow) != 0,
 			});
 		}
 	}
