@@ -222,6 +222,9 @@ static const char *blend_mode_to_psd(int blend_mode)
     case DP_BLEND_MODE_LINEAR_BURN:
     case DP_BLEND_MODE_LINEAR_BURN_ALPHA:
         return "lbrn";
+    case DP_BLEND_MODE_DARKER_COLOR:
+    case DP_BLEND_MODE_DARKER_COLOR_ALPHA:
+        return "dkCl";
     case DP_BLEND_MODE_LIGHTEN:
     case DP_BLEND_MODE_LIGHTEN_ALPHA:
         return "lite";
@@ -234,6 +237,9 @@ static const char *blend_mode_to_psd(int blend_mode)
     case DP_BLEND_MODE_ADD:
     case DP_BLEND_MODE_ADD_ALPHA:
         return "lddg";
+    case DP_BLEND_MODE_LIGHTER_COLOR:
+    case DP_BLEND_MODE_LIGHTER_COLOR_ALPHA:
+        return "lgCl";
     case DP_BLEND_MODE_OVERLAY:
     case DP_BLEND_MODE_OVERLAY_ALPHA:
         return "over";
@@ -243,9 +249,18 @@ static const char *blend_mode_to_psd(int blend_mode)
     case DP_BLEND_MODE_HARD_LIGHT:
     case DP_BLEND_MODE_HARD_LIGHT_ALPHA:
         return "hLit";
+    case DP_BLEND_MODE_VIVID_LIGHT:
+    case DP_BLEND_MODE_VIVID_LIGHT_ALPHA:
+        return "vLit";
     case DP_BLEND_MODE_LINEAR_LIGHT:
     case DP_BLEND_MODE_LINEAR_LIGHT_ALPHA:
         return "lLit";
+    case DP_BLEND_MODE_PIN_LIGHT:
+    case DP_BLEND_MODE_PIN_LIGHT_ALPHA:
+        return "pLit";
+    case DP_BLEND_MODE_DIFFERENCE:
+    case DP_BLEND_MODE_DIFFERENCE_ALPHA:
+        return "diff";
     case DP_BLEND_MODE_SUBTRACT:
     case DP_BLEND_MODE_SUBTRACT_ALPHA:
         return "fsub";
