@@ -46,8 +46,9 @@ static void addBlendModesTo(
 	QStandardItemModel *model, int recolor,
 	const QVector<canvas::blendmode::Named> &modes)
 {
-	for(const canvas::blendmode::Named &m : modes) {
-		QStandardItem *item = new QStandardItem{m.name};
+	for(int i = 0, count = modes.size(); i < count; ++i) {
+		const canvas::blendmode::Named &m = modes[i];
+		QStandardItem *item = new QStandardItem(m.name);
 		item->setData(int(m.mode), Qt::UserRole);
 		if(m.mode == DP_BLEND_MODE_RECOLOR) {
 			if(recolor == RECOLOR_DISABLED) {
@@ -58,6 +59,15 @@ static void addBlendModesTo(
 			}
 		} else {
 			model->appendRow(item);
+		}
+
+		if(m.separatorBelow && i != count - 1) {
+			QStandardItem *separator = new QStandardItem();
+			separator->setAccessibleDescription(QStringLiteral("separator"));
+			separator->setData(-1, Qt::UserRole);
+			separator->setFlags(
+				item->flags() & ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+			model->appendRow(separator);
 		}
 	}
 }

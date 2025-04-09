@@ -150,6 +150,8 @@ static int extract_blend_mode(uint32_t key)
         return DP_BLEND_MODE_BURN_ALPHA;
     case psd::blendMode::LINEAR_BURN:
         return DP_BLEND_MODE_LINEAR_BURN_ALPHA;
+    case psd::blendMode::DARKER_COLOR:
+        return DP_BLEND_MODE_DARKER_COLOR_ALPHA;
     case psd::blendMode::LIGHTEN:
         return DP_BLEND_MODE_LIGHTEN_ALPHA;
     case psd::blendMode::SCREEN:
@@ -158,14 +160,22 @@ static int extract_blend_mode(uint32_t key)
         return DP_BLEND_MODE_DODGE_ALPHA;
     case psd::blendMode::LINEAR_DODGE:
         return DP_BLEND_MODE_ADD_ALPHA;
+    case psd::blendMode::LIGHTER_COLOR:
+        return DP_BLEND_MODE_LIGHTER_COLOR_ALPHA;
     case psd::blendMode::OVERLAY:
         return DP_BLEND_MODE_OVERLAY_ALPHA;
     case psd::blendMode::SOFT_LIGHT:
         return DP_BLEND_MODE_SOFT_LIGHT_ALPHA;
     case psd::blendMode::HARD_LIGHT:
         return DP_BLEND_MODE_HARD_LIGHT_ALPHA;
+    case psd::blendMode::VIVID_LIGHT:
+        return DP_BLEND_MODE_VIVID_LIGHT_ALPHA;
     case psd::blendMode::LINEAR_LIGHT:
         return DP_BLEND_MODE_LINEAR_LIGHT_ALPHA;
+    case psd::blendMode::PIN_LIGHT:
+        return DP_BLEND_MODE_PIN_LIGHT_ALPHA;
+    case psd::blendMode::DIFFERENCE:
+        return DP_BLEND_MODE_DIFFERENCE_ALPHA;
     case psd::blendMode::SUBTRACT:
         return DP_BLEND_MODE_SUBTRACT_ALPHA;
     case psd::blendMode::DIVIDE:
