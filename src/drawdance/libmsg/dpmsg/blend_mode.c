@@ -265,6 +265,102 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "-dp-compare-density",
             "Compare Density",
         },
+    [DP_BLEND_MODE_VIVID_LIGHT] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_VIVID_LIGHT",
+            "krita:vivid_light",
+            "krita:vivid_light",
+            "Vivid Light",
+        },
+    [DP_BLEND_MODE_PIN_LIGHT] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_PIN_LIGHT",
+            "krita:pin_light",
+            "krita:pin_light",
+            "Pin Light",
+        },
+    [DP_BLEND_MODE_DIFFERENCE] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_DIFFERENCE",
+            "svg:difference",
+            "svg:difference",
+            "Difference",
+        },
+    [DP_BLEND_MODE_DARKER_COLOR] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_DARKER_COLOR",
+            "krita:darker color",
+            "krita:darker color",
+            "Darker Color",
+        },
+    [DP_BLEND_MODE_LIGHTER_COLOR] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_LIGHTER_COLOR",
+            "krita:lighter color",
+            "krita:lighter color",
+            "Lighter Color",
+        },
+    [DP_BLEND_MODE_SHADE_SAI] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_SHADE_SAI",
+            "krita:shade_sai",
+            "krita:shade_sai",
+            "Shade (SAI)",
+        },
+    [DP_BLEND_MODE_SHADE_SHINE_SAI] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_SHADE_SHINE_SAI",
+            "krita:shade_shine_sai",
+            "krita:shade_shine_sai",
+            "Shade/Shine (SAI)",
+        },
+    [DP_BLEND_MODE_BURN_SAI] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_BURN_SAI",
+            "krita:burn_sai",
+            "krita:burn_sai",
+            "Burn (SAI)",
+        },
+    [DP_BLEND_MODE_DODGE_SAI] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_DODGE_SAI",
+            "krita:dodge_sai",
+            "krita:dodge_sai",
+            "Dodge (SAI)",
+        },
+    [DP_BLEND_MODE_BURN_DODGE_SAI] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_BURN_DODGE_SAI",
+            "krita:burn_dodge_sai",
+            "krita:burn_dodge_sai",
+            "Burn/Dodge (SAI)",
+        },
+    [DP_BLEND_MODE_HARD_MIX_SAI] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_HARD_MIX_SAI",
+            "krita:hard_mix_sai",
+            "krita:hard_mix_sai",
+            "Hard Mix (SAI)",
+        },
+    [DP_BLEND_MODE_DIFFERENCE_SAI] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_DIFFERENCE_SAI",
+            "krita:difference_sai",
+            "krita:difference_sai",
+            "Difference (SAI)",
+        },
     [DP_BLEND_MODE_MARKER] =
         {
             LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING
@@ -484,6 +580,102 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "svg:color",
             "-dp-color-alpha",
             "Color Alpha",
+        },
+    [DP_BLEND_MODE_VIVID_LIGHT_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_VIVID_LIGHT_ALPHA",
+            "krita:vivid_light",
+            "-dp-vivid-light-alpha",
+            "Vivid Light Alpha",
+        },
+    [DP_BLEND_MODE_PIN_LIGHT_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_PIN_LIGHT_ALPHA",
+            "krita:pin_light",
+            "-dp-pin-light-alpha",
+            "Pin Light Alpha",
+        },
+    [DP_BLEND_MODE_DIFFERENCE_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_DIFFERENCE_ALPHA",
+            "svg:difference",
+            "-dp-difference-alpha",
+            "Difference Alpha",
+        },
+    [DP_BLEND_MODE_DARKER_COLOR_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_DARKER_COLOR_ALPHA",
+            "krita:darker color",
+            "-dp-darker-color-alpha",
+            "Darker Color Alpha",
+        },
+    [DP_BLEND_MODE_LIGHTER_COLOR_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_LIGHTER_COLOR_ALPHA",
+            "krita:lighter color",
+            "-dp-lighter-color-alpha",
+            "Lighter Color Alpha",
+        },
+    [DP_BLEND_MODE_SHADE_SAI_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_SHADE_SAI_ALPHA",
+            "krita:shade_sai",
+            "-dp-shade-sai-alpha",
+            "Shade (SAI) Alpha",
+        },
+    [DP_BLEND_MODE_SHADE_SHINE_SAI_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_SHADE_SHINE_SAI_ALPHA",
+            "krita:shade_shine_sai",
+            "-dp-shade-shine-sai-alpha",
+            "Shade/Shine (SAI) ALpha",
+        },
+    [DP_BLEND_MODE_BURN_SAI_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_BURN_SAI_ALPHA",
+            "krita:burn_sai",
+            "-dp-burn-sai-alpha",
+            "Burn (SAI) Alpha",
+        },
+    [DP_BLEND_MODE_DODGE_SAI_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_DODGE_SAI_ALPHA",
+            "krita:dodge_sai",
+            "-dp-dodge-sai-alpha",
+            "Dodge (SAI) Alpha",
+        },
+    [DP_BLEND_MODE_BURN_DODGE_SAI_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_BURN_DODGE_SAI_ALPHA",
+            "krita:burn_dodge_sai",
+            "-dp-burn-dodge-sai-alpha",
+            "Burn/Dodge (SAI) Alpha",
+        },
+    [DP_BLEND_MODE_HARD_MIX_SAI_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_HARD_MIX_SAI_ALPHA",
+            "krita:hard_mix_sai",
+            "-dp-hard-mix-sai-alpha",
+            "Hard Mix (SAI) Alpha",
+        },
+    [DP_BLEND_MODE_DIFFERENCE_SAI_ALPHA] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_DIFFERENCE_SAI_ALPHA",
+            "krita:difference_sai",
+            "-dp-difference-sai-alpha",
+            "Difference (SAI) Alpha",
         },
     [DP_BLEND_MODE_MARKER_ALPHA] =
         {
@@ -859,6 +1051,66 @@ bool DP_blend_mode_alpha_preserve_pair(int blend_mode,
         alpha_affecting = DP_BLEND_MODE_COLOR_ALPHA;
         alpha_preserving = DP_BLEND_MODE_COLOR;
         break;
+    case DP_BLEND_MODE_VIVID_LIGHT:
+    case DP_BLEND_MODE_VIVID_LIGHT_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_VIVID_LIGHT_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_VIVID_LIGHT;
+        break;
+    case DP_BLEND_MODE_PIN_LIGHT:
+    case DP_BLEND_MODE_PIN_LIGHT_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_PIN_LIGHT_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_PIN_LIGHT;
+        break;
+    case DP_BLEND_MODE_DIFFERENCE:
+    case DP_BLEND_MODE_DIFFERENCE_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_DIFFERENCE_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_DIFFERENCE;
+        break;
+    case DP_BLEND_MODE_DARKER_COLOR:
+    case DP_BLEND_MODE_DARKER_COLOR_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_DARKER_COLOR_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_DARKER_COLOR;
+        break;
+    case DP_BLEND_MODE_LIGHTER_COLOR:
+    case DP_BLEND_MODE_LIGHTER_COLOR_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_LIGHTER_COLOR_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_LIGHTER_COLOR;
+        break;
+    case DP_BLEND_MODE_SHADE_SAI:
+    case DP_BLEND_MODE_SHADE_SAI_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_SHADE_SAI_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_SHADE_SAI;
+        break;
+    case DP_BLEND_MODE_SHADE_SHINE_SAI:
+    case DP_BLEND_MODE_SHADE_SHINE_SAI_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_SHADE_SHINE_SAI_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_SHADE_SHINE_SAI;
+        break;
+    case DP_BLEND_MODE_BURN_SAI:
+    case DP_BLEND_MODE_BURN_SAI_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_BURN_SAI_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_BURN_SAI;
+        break;
+    case DP_BLEND_MODE_DODGE_SAI:
+    case DP_BLEND_MODE_DODGE_SAI_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_DODGE_SAI_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_DODGE_SAI;
+        break;
+    case DP_BLEND_MODE_BURN_DODGE_SAI:
+    case DP_BLEND_MODE_BURN_DODGE_SAI_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_BURN_DODGE_SAI_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_BURN_DODGE_SAI;
+        break;
+    case DP_BLEND_MODE_HARD_MIX_SAI:
+    case DP_BLEND_MODE_HARD_MIX_SAI_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_HARD_MIX_SAI_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_HARD_MIX_SAI;
+        break;
+    case DP_BLEND_MODE_DIFFERENCE_SAI:
+    case DP_BLEND_MODE_DIFFERENCE_SAI_ALPHA:
+        alpha_affecting = DP_BLEND_MODE_DIFFERENCE_SAI_ALPHA;
+        alpha_preserving = DP_BLEND_MODE_DIFFERENCE_SAI;
+        break;
     case DP_BLEND_MODE_MARKER:
     case DP_BLEND_MODE_MARKER_ALPHA:
         alpha_affecting = DP_BLEND_MODE_MARKER_ALPHA;
@@ -955,6 +1207,30 @@ int DP_blend_mode_to_alpha_affecting(int blend_mode)
         return DP_BLEND_MODE_LUMINOSITY_ALPHA;
     case DP_BLEND_MODE_COLOR:
         return DP_BLEND_MODE_COLOR_ALPHA;
+    case DP_BLEND_MODE_VIVID_LIGHT:
+        return DP_BLEND_MODE_VIVID_LIGHT_ALPHA;
+    case DP_BLEND_MODE_PIN_LIGHT:
+        return DP_BLEND_MODE_PIN_LIGHT_ALPHA;
+    case DP_BLEND_MODE_DIFFERENCE:
+        return DP_BLEND_MODE_DIFFERENCE_ALPHA;
+    case DP_BLEND_MODE_DARKER_COLOR:
+        return DP_BLEND_MODE_DARKER_COLOR_ALPHA;
+    case DP_BLEND_MODE_LIGHTER_COLOR:
+        return DP_BLEND_MODE_LIGHTER_COLOR_ALPHA;
+    case DP_BLEND_MODE_SHADE_SAI:
+        return DP_BLEND_MODE_SHADE_SAI_ALPHA;
+    case DP_BLEND_MODE_SHADE_SHINE_SAI:
+        return DP_BLEND_MODE_SHADE_SHINE_SAI_ALPHA;
+    case DP_BLEND_MODE_BURN_SAI:
+        return DP_BLEND_MODE_BURN_SAI_ALPHA;
+    case DP_BLEND_MODE_DODGE_SAI:
+        return DP_BLEND_MODE_DODGE_SAI_ALPHA;
+    case DP_BLEND_MODE_BURN_DODGE_SAI:
+        return DP_BLEND_MODE_BURN_DODGE_SAI_ALPHA;
+    case DP_BLEND_MODE_HARD_MIX_SAI:
+        return DP_BLEND_MODE_HARD_MIX_SAI_ALPHA;
+    case DP_BLEND_MODE_DIFFERENCE_SAI:
+        return DP_BLEND_MODE_DIFFERENCE_SAI_ALPHA;
     case DP_BLEND_MODE_MARKER:
         return DP_BLEND_MODE_MARKER_ALPHA;
     case DP_BLEND_MODE_MARKER_WASH:
@@ -986,7 +1262,7 @@ int DP_blend_mode_to_alpha_preserving(int blend_mode)
 {
     switch (blend_mode) {
     case DP_BLEND_MODE_ERASE:
-        return DP_BLEND_MODE_ERASE;
+        return DP_BLEND_MODE_ERASE_PRESERVE;
     case DP_BLEND_MODE_NORMAL:
         return DP_BLEND_MODE_RECOLOR;
     case DP_BLEND_MODE_BEHIND:
@@ -1039,6 +1315,30 @@ int DP_blend_mode_to_alpha_preserving(int blend_mode)
         return DP_BLEND_MODE_LUMINOSITY;
     case DP_BLEND_MODE_COLOR_ALPHA:
         return DP_BLEND_MODE_COLOR;
+    case DP_BLEND_MODE_VIVID_LIGHT_ALPHA:
+        return DP_BLEND_MODE_VIVID_LIGHT;
+    case DP_BLEND_MODE_PIN_LIGHT_ALPHA:
+        return DP_BLEND_MODE_PIN_LIGHT;
+    case DP_BLEND_MODE_DIFFERENCE_ALPHA:
+        return DP_BLEND_MODE_DIFFERENCE;
+    case DP_BLEND_MODE_DARKER_COLOR_ALPHA:
+        return DP_BLEND_MODE_DARKER_COLOR;
+    case DP_BLEND_MODE_LIGHTER_COLOR_ALPHA:
+        return DP_BLEND_MODE_LIGHTER_COLOR;
+    case DP_BLEND_MODE_SHADE_SAI_ALPHA:
+        return DP_BLEND_MODE_SHADE_SAI;
+    case DP_BLEND_MODE_SHADE_SHINE_SAI_ALPHA:
+        return DP_BLEND_MODE_SHADE_SHINE_SAI;
+    case DP_BLEND_MODE_BURN_SAI_ALPHA:
+        return DP_BLEND_MODE_BURN_SAI;
+    case DP_BLEND_MODE_DODGE_SAI_ALPHA:
+        return DP_BLEND_MODE_DODGE_SAI;
+    case DP_BLEND_MODE_BURN_DODGE_SAI_ALPHA:
+        return DP_BLEND_MODE_BURN_DODGE_SAI;
+    case DP_BLEND_MODE_HARD_MIX_SAI_ALPHA:
+        return DP_BLEND_MODE_HARD_MIX_SAI;
+    case DP_BLEND_MODE_DIFFERENCE_SAI_ALPHA:
+        return DP_BLEND_MODE_DIFFERENCE_SAI;
     case DP_BLEND_MODE_MARKER_ALPHA:
         return DP_BLEND_MODE_MARKER;
     case DP_BLEND_MODE_MARKER_ALPHA_WASH:
