@@ -250,11 +250,11 @@ void DP_transient_layer_content_put_tile_inc(DP_TransientLayerContent *tlc,
 
 void DP_transient_layer_content_brush_stamp_apply(
     DP_TransientLayerContent *tlc, unsigned int context_id, DP_UPixel15 pixel,
-    uint16_t opacity, int blend_mode, DP_BrushStamp *stamp);
+    uint16_t opacity, int blend_mode, const DP_BrushStamp *stamp);
 
 void DP_transient_layer_content_brush_stamp_apply_posterize(
     DP_TransientLayerContent *tlc, unsigned int context_id, uint16_t opacity,
-    int posterize_num, DP_BrushStamp *stamp);
+    int posterize_num, const DP_BrushStamp *stamp);
 
 void DP_transient_layer_content_transient_sublayer_at(
     DP_TransientLayerContent *tlc, int sublayer_index,

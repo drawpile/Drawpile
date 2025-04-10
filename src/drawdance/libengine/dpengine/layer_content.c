@@ -1988,7 +1988,7 @@ typedef void (*DP_ApplyBrushStampFn)(DP_TransientTile *tt, const uint16_t *mask,
 
 static void apply_brush_stamp_with(DP_TransientLayerContent *tlc,
                                    unsigned int context_id, uint16_t opacity,
-                                   DP_BrushStamp *stamp, bool blend_blank,
+                                   const DP_BrushStamp *stamp, bool blend_blank,
                                    DP_ApplyBrushStampFn apply_fn, void *user)
 {
     DP_ASSERT(tlc);
@@ -2065,7 +2065,7 @@ static void apply_stamp(DP_TransientTile *tt, const uint16_t *mask,
 
 void DP_transient_layer_content_brush_stamp_apply(
     DP_TransientLayerContent *tlc, unsigned int context_id, DP_UPixel15 pixel,
-    uint16_t opacity, int blend_mode, DP_BrushStamp *stamp)
+    uint16_t opacity, int blend_mode, const DP_BrushStamp *stamp)
 {
     struct DP_ApplyStampParams params = {pixel, blend_mode};
     apply_brush_stamp_with(tlc, context_id, opacity, stamp,
@@ -2085,7 +2085,7 @@ static void apply_stamp_posterize(DP_TransientTile *tt, const uint16_t *mask,
 
 void DP_transient_layer_content_brush_stamp_apply_posterize(
     DP_TransientLayerContent *tlc, unsigned int context_id, uint16_t opacity,
-    int posterize_num, DP_BrushStamp *stamp)
+    int posterize_num, const DP_BrushStamp *stamp)
 {
     apply_brush_stamp_with(tlc, context_id, opacity, stamp, true,
                            apply_stamp_posterize, &posterize_num);

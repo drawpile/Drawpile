@@ -37,18 +37,9 @@
 
 
 struct DP_DrawContext {
-    // Brush stamps, transformations, decompression and layer id generation
-    // are used by distinct operations, so their buffers can share memory.
+    // Transformations, decompression and layer id generation are used by
+    // distinct operations, so their buffers can share memory.
     union {
-        // Brush stamp masks. Pixel brushes use only stamp buffer 1, classic
-        // brushes use 1 and 2, MyPaint brushes use 1 and the RR mask buffer.
-        struct {
-            DP_ALIGNAS_SIMD DP_BrushStampBuffer stamp_buffer1;
-            union {
-                DP_ALIGNAS_SIMD DP_BrushStampBuffer stamp_buffer2;
-                DP_ALIGNAS_SIMD DP_RrMaskBuffer rr_mask_buffer;
-            };
-        };
         // Pixel buffer for image transformation. Used by region move transform.
         DP_Pixel8 transform_buffer[DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE];
         // Buffer to hold 8 bit tiles, used e.g. for inflate/deflate.
@@ -59,9 +50,10 @@ struct DP_DrawContext {
             int last_used_id;
         };
     };
-    // Resizable memory pool used by qgrayraster during region move transform
-    // and to collect layers into when reordering them. The pool is allocated
-    // through malloc, so it's always going to be maximally aligned.
+    // Resizable memory pool used by qgrayraster during region move transform,
+    // to collect layers into when reordering them, to hold the brush dab masks
+    // when making brush strokes and other such temporary need. The pool is
+    // allocated through DP_malloc_simd, so it's always going to be aligned.
     size_t pool_size;
     void *pool;
 #ifdef DP_LIBSWSCALE
@@ -72,7 +64,7 @@ struct DP_DrawContext {
 
 DP_DrawContext *DP_draw_context_new(void)
 {
-    DP_DrawContext *dc = DP_malloc_simd(sizeof(*dc));
+    DP_DrawContext *dc = DP_malloc(sizeof(*dc));
     dc->pool_size = 0;
     dc->pool = NULL;
 #ifdef DP_LIBSWSCALE
@@ -87,8 +79,8 @@ void DP_draw_context_free(DP_DrawContext *dc)
 #ifdef DP_LIBSWSCALE
         sws_freeContext(dc->sws_context);
 #endif
-        DP_free(dc->pool);
-        DP_free_simd(dc);
+        DP_free_simd(dc->pool);
+        DP_free(dc);
     }
 }
 
@@ -99,24 +91,6 @@ DP_DrawContextStatistics DP_draw_context_statistics(DP_DrawContext *dc)
     return (DP_DrawContextStatistics){sizeof(*dc), dc->pool_size};
 }
 
-
-uint16_t *DP_draw_context_stamp_buffer1(DP_DrawContext *dc)
-{
-    DP_ASSERT(dc);
-    return dc->stamp_buffer1;
-}
-
-uint16_t *DP_draw_context_stamp_buffer2(DP_DrawContext *dc)
-{
-    DP_ASSERT(dc);
-    return dc->stamp_buffer2;
-}
-
-float *DP_draw_context_rr_mask_buffer(DP_DrawContext *dc)
-{
-    DP_ASSERT(dc);
-    return dc->rr_mask_buffer;
-}
 
 DP_Pixel8 *DP_draw_context_transform_buffer(DP_DrawContext *dc)
 {
@@ -179,16 +153,16 @@ void *DP_draw_context_pool_require(DP_DrawContext *dc, size_t required_capacity)
             // must have been at least enough to hold the minimum size.
             DP_ASSERT(required_capacity
                       >= DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE);
-            DP_free(dc->pool);
+            DP_free_simd(dc->pool);
             dc->pool_size = required_capacity;
-            dc->pool = DP_malloc(required_capacity);
+            dc->pool = DP_malloc_simd(required_capacity);
         }
     }
     else {
         size_t size = DP_max_size(DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE,
                                   required_capacity);
         dc->pool_size = size;
-        dc->pool = DP_malloc(size);
+        dc->pool = DP_malloc_simd(size);
     }
     return dc->pool;
 }
