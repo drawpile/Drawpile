@@ -531,3 +531,12 @@ bool DP_text_writer_write_subfield_decimal(DP_TextWriter *writer,
     return format_subfield(writer, "\"%s\":%s", key,
                            format_decimal(writer, value));
 }
+
+bool DP_text_writer_write_subfield_rgb_color(DP_TextWriter *writer,
+                                             const char *key, uint32_t bgr)
+{
+    DP_ASSERT(writer);
+    DP_ASSERT(key);
+    return format_subfield(writer, "\"%s\":\"#%06" PRIx32 "\"", key,
+                           bgr & RGB_MASK);
+}
