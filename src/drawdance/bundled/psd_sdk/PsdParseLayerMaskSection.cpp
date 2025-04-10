@@ -527,8 +527,12 @@ namespace
 				layer->utf16Name = nullptr;
 				layer->layerMask = nullptr;
 				layer->vectorMask = nullptr;
+				layer->transparencyShapesLayer = 1;
+				layer->blendFillOpacity = 0;
 				layer->type = layerType::ANY;
 				layer->isPassThrough = false;
+				layer->hasTransparencyShapesLayer = false;
+				layer->hasBlendFillOpacity = false;
 
 				layer->top = fileUtil::ReadFromFileBE<int32_t>(reader);
 				layer->left = fileUtil::ReadFromFileBE<int32_t>(reader);
@@ -738,6 +742,28 @@ namespace
 
 						// skip possible padding bytes
 						reader.Skip(length - 4u - characterCountWithoutNull * sizeof(uint16_t));
+					}
+					// read transparency shapes layer
+					else if (key == util::Key<'t', 's', 'l', 'y'>::VALUE)
+					{
+						if (length > 0)
+						{
+							layer->transparencyShapesLayer = fileUtil::ReadFromFileBE<uint8_t>(reader);
+							layer->hasTransparencyShapesLayer = true;
+							// skip padding bytes
+							reader.Skip(length - 1u);
+						}
+					}
+					// read blend fill opacity
+					else if (key == util::Key<'i', 'O', 'p', 'a'>::VALUE)
+					{
+						if (length > 0)
+						{
+							layer->blendFillOpacity = fileUtil::ReadFromFileBE<uint8_t>(reader);
+							layer->hasBlendFillOpacity = true;
+							// skip padding bytes
+							reader.Skip(length - 1u);
+						}
 					}
 					else
 					{

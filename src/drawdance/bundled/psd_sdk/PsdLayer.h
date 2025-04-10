@@ -38,10 +38,14 @@ struct Layer
 	uint32_t blendModeKey;				///< The key denoting the layer's blend mode. Can be any key described in \ref blendMode::Enum.
 	uint8_t opacity;					///< The layer's opacity value, with the range [0, 255] mapped to [0%, 100%].
 	uint8_t clipping;					///< The layer's clipping mode (not used yet).
+	uint8_t transparencyShapesLayer;	///< The layer's transparency shapes layer property (tsly)
+	uint8_t blendFillOpacity;			//< The layer's blend fill opacity (iOpa)
 
 	uint32_t type;						///< The layer's type. Can be any of \ref layerType::Enum.
 	bool isVisible;						///< The layer's visibility.
 	bool isPassThrough;					///< If the layer is a pass-through group.
+	bool hasTransparencyShapesLayer;	///< Whether there was a tsly block
+	bool hasBlendFillOpacity;			///< Whether there was an iOpa block
 };
 
 PSD_NAMESPACE_END
