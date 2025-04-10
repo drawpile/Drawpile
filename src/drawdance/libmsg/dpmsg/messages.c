@@ -1026,6 +1026,12 @@ static uint16_t read_uint16(const unsigned char *buffer, size_t *read)
     return DP_read_bigendian_uint16(buffer);
 }
 
+static uint32_t read_uint24(const unsigned char *buffer, size_t *read)
+{
+    *read += 3;
+    return DP_read_bigendian_uint24(buffer);
+}
+
 static uint32_t read_uint32(const unsigned char *buffer, size_t *read)
 {
     *read += 4;

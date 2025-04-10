@@ -117,5 +117,7 @@ double DP_text_reader_get_subfield_decimal(DP_TextReader *reader, int i,
                                            double multiplier, double min,
                                            double max);
 
+uint32_t DP_text_reader_get_subfield_rgb_color(DP_TextReader *reader, int i,
+                                               const char *subkey);
 
 #endif

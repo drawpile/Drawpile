@@ -212,11 +212,14 @@ class IntegerField(Field):
 
 FieldI8 = IntegerField.F('i8', 1)
 FieldI16 = IntegerField.F('i16', 2)
+FieldI24 = IntegerField.F('i24', 3)
 FieldI32 = IntegerField.F('i32', 4)
 FieldU8 = IntegerField.F('u8', 1)
 FieldU16 = IntegerField.F('u16', 2)
+FieldI24 = IntegerField.F('u24', 3)
 FieldU32 = IntegerField.F('u32', 4)
 FieldArgb32 = IntegerField.F('argb32', 4)
+FieldRgb24 = IntegerField.F('rgb24', 4)
 FieldBlendmode = IntegerField.F('blendmode', 1)
 
 FieldBool = IntegerField.F('bool', 1)

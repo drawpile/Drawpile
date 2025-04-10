@@ -147,6 +147,13 @@ class DrawdanceFieldType:
         else:
             raise RuntimeError(f"Unknown uint subfield format '{fmt}'")
 
+    def parse_subfield_rgb24(self, f, index):
+        fmt = f.format
+        if not fmt:
+            return f'DP_text_reader_get_subfield_rgb_color(reader, i, "{f.field_name}")'
+        else:
+            raise RuntimeError(f"Unknown rgb24 subfield format '{fmt}'")
+
     def write_text_raw(self, f, subject, fn):
         fmt = f.format
         if fmt:
@@ -203,6 +210,14 @@ class DrawdanceFieldType:
             return f"DP_text_writer_write_subfield_decimal(writer, \"{f.field_name}\", (double){a} / 256.0)"
         else:
             raise RuntimeError(f"Unknown uint subfield format '{fmt}'")
+
+    def write_subfield_text_rgb24(self, f, subject):
+        a = self.access(f, subject)
+        fmt = f.format
+        if not fmt:
+            return f"DP_text_writer_write_subfield_rgb_color(writer, \"{f.field_name}\", {a})"
+        else:
+            raise RuntimeError(f"Unknown rgb24 subfield format '{fmt}'")
 
 
 class DrawdancePlainFieldType(DrawdanceFieldType):
@@ -677,6 +692,18 @@ DrawdancePlainFieldType.declare(
 )
 
 DrawdancePlainFieldType.declare(
+    key="rgb24",
+    base_type="uint32_t",
+    payload_length=3,
+    serialize_payload_fn="DP_write_bigendian_uint24",
+    write_payload_text_fn="DP_text_writer_write_rgb_color",
+    write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_rgb24,
+    deserialize_payload_fn="read_uint24",
+    parse_field_fn="DP_text_reader_get_rgb_color",
+    parse_subfield_fn=DrawdanceFieldType.parse_subfield_rgb24,
+)
+
+DrawdancePlainFieldType.declare(
     key="argb32",
     base_type="uint32_t",
     payload_length=4,
@@ -721,6 +748,18 @@ DrawdancePlainFieldType.declare(
 )
 
 DrawdancePlainFieldType.declare(
+    key="i24",
+    base_type="int32_t",
+    payload_length=3,
+    serialize_payload_fn="DP_write_bigendian_int24",
+    write_payload_text_fn=DrawdanceFieldType.write_text_int,
+    write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_int,
+    deserialize_payload_fn="read_int24",
+    parse_field_fn=DrawdanceFieldType.parse_text_int,
+    parse_subfield_fn=DrawdanceFieldType.parse_subfield_int,
+)
+
+DrawdancePlainFieldType.declare(
     key="i32",
     base_type="int32_t",
     payload_length=4,
@@ -752,6 +791,18 @@ DrawdancePlainFieldType.declare(
     write_payload_text_fn=DrawdanceFieldType.write_text_uint,
     write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_uint,
     deserialize_payload_fn="read_uint16",
+    parse_field_fn=DrawdanceFieldType.parse_text_uint,
+    parse_subfield_fn=DrawdanceFieldType.parse_subfield_uint,
+)
+
+DrawdancePlainFieldType.declare(
+    key="u24",
+    base_type="uint32_t",
+    payload_length=3,
+    serialize_payload_fn="DP_write_bigendian_uint24",
+    write_payload_text_fn=DrawdanceFieldType.write_text_uint,
+    write_subfield_payload_text_fn=DrawdanceFieldType.write_subfield_text_uint,
+    deserialize_payload_fn="read_uint24",
     parse_field_fn=DrawdanceFieldType.parse_text_uint,
     parse_subfield_fn=DrawdanceFieldType.parse_subfield_uint,
 )
