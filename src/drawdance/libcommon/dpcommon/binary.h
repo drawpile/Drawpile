@@ -25,34 +25,42 @@
 
 int8_t DP_read_littleendian_int8(const unsigned char *d);
 int16_t DP_read_littleendian_int16(const unsigned char *d);
+int32_t DP_read_littleendian_int24(const unsigned char *d);
 int32_t DP_read_littleendian_int32(const unsigned char *d);
 uint8_t DP_read_littleendian_uint8(const unsigned char *d);
 uint16_t DP_read_littleendian_uint16(const unsigned char *d);
+uint32_t DP_read_littleendian_uint24(const unsigned char *d);
 uint32_t DP_read_littleendian_uint32(const unsigned char *d);
 uint64_t DP_read_littleendian_uint64(const unsigned char *d);
 
 int8_t DP_read_bigendian_int8(const unsigned char *d);
 int16_t DP_read_bigendian_int16(const unsigned char *d);
+int32_t DP_read_bigendian_int24(const unsigned char *d);
 int32_t DP_read_bigendian_int32(const unsigned char *d);
 uint8_t DP_read_bigendian_uint8(const unsigned char *d);
 uint16_t DP_read_bigendian_uint16(const unsigned char *d);
+uint32_t DP_read_bigendian_uint24(const unsigned char *d);
 uint32_t DP_read_bigendian_uint32(const unsigned char *d);
 
 size_t DP_write_littleendian_int8(int8_t x, unsigned char *out);
 size_t DP_write_littleendian_int16(int16_t x, unsigned char *out);
+size_t DP_write_littleendian_int24(int32_t x, unsigned char *out);
 size_t DP_write_littleendian_int32(int32_t x, unsigned char *out);
 size_t DP_write_littleendian_int64(int64_t x, unsigned char *out);
 size_t DP_write_littleendian_uint8(uint8_t x, unsigned char *out);
 size_t DP_write_littleendian_uint16(uint16_t x, unsigned char *out);
+size_t DP_write_littleendian_uint24(uint32_t x, unsigned char *out);
 size_t DP_write_littleendian_uint32(uint32_t x, unsigned char *out);
 size_t DP_write_littleendian_uint64(uint64_t x, unsigned char *out);
 
 size_t DP_write_bigendian_int8(int8_t x, unsigned char *out);
 size_t DP_write_bigendian_int16(int16_t x, unsigned char *out);
+size_t DP_write_bigendian_int24(int32_t x, unsigned char *out);
 size_t DP_write_bigendian_int32(int32_t x, unsigned char *out);
 size_t DP_write_bigendian_int64(int64_t x, unsigned char *out);
 size_t DP_write_bigendian_uint8(uint8_t x, unsigned char *out);
 size_t DP_write_bigendian_uint16(uint16_t x, unsigned char *out);
+size_t DP_write_bigendian_uint24(uint32_t x, unsigned char *out);
 size_t DP_write_bigendian_uint32(uint32_t x, unsigned char *out);
 size_t DP_write_bigendian_uint64(uint64_t x, unsigned char *out);
 
