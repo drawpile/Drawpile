@@ -207,8 +207,9 @@ static int count_layers_recursive(DP_LayerPropsList *lpl)
     return total;
 }
 
-static const char *blend_mode_to_psd(int blend_mode)
+static const char *blend_mode_to_psd(int blend_mode, bool *out_sai)
 {
+    *out_sai = false;
     switch (blend_mode) {
     case DP_BLEND_MODE_DARKEN:
     case DP_BLEND_MODE_DARKEN_ALPHA:
@@ -216,9 +217,17 @@ static const char *blend_mode_to_psd(int blend_mode)
     case DP_BLEND_MODE_MULTIPLY:
     case DP_BLEND_MODE_MULTIPLY_ALPHA:
         return "mul ";
+    case DP_BLEND_MODE_BURN_SAI:
+    case DP_BLEND_MODE_BURN_SAI_ALPHA:
+        *out_sai = true;
+        DP_FALLTHROUGH();
     case DP_BLEND_MODE_BURN:
     case DP_BLEND_MODE_BURN_ALPHA:
         return "idiv";
+    case DP_BLEND_MODE_SHADE_SAI:
+    case DP_BLEND_MODE_SHADE_SAI_ALPHA:
+        *out_sai = true;
+        DP_FALLTHROUGH();
     case DP_BLEND_MODE_LINEAR_BURN:
     case DP_BLEND_MODE_LINEAR_BURN_ALPHA:
         return "lbrn";
@@ -231,9 +240,17 @@ static const char *blend_mode_to_psd(int blend_mode)
     case DP_BLEND_MODE_SCREEN:
     case DP_BLEND_MODE_SCREEN_ALPHA:
         return "scrn";
+    case DP_BLEND_MODE_DODGE_SAI:
+    case DP_BLEND_MODE_DODGE_SAI_ALPHA:
+        *out_sai = true;
+        DP_FALLTHROUGH();
     case DP_BLEND_MODE_DODGE:
     case DP_BLEND_MODE_DODGE_ALPHA:
         return "div ";
+    case DP_BLEND_MODE_LUMINOSITY_SHINE_SAI:
+    case DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA:
+        *out_sai = true;
+        DP_FALLTHROUGH();
     case DP_BLEND_MODE_ADD:
     case DP_BLEND_MODE_ADD_ALPHA:
         return "lddg";
@@ -249,15 +266,31 @@ static const char *blend_mode_to_psd(int blend_mode)
     case DP_BLEND_MODE_HARD_LIGHT:
     case DP_BLEND_MODE_HARD_LIGHT_ALPHA:
         return "hLit";
+    case DP_BLEND_MODE_BURN_DODGE_SAI:
+    case DP_BLEND_MODE_BURN_DODGE_SAI_ALPHA:
+        *out_sai = true;
+        DP_FALLTHROUGH();
     case DP_BLEND_MODE_VIVID_LIGHT:
     case DP_BLEND_MODE_VIVID_LIGHT_ALPHA:
         return "vLit";
+    case DP_BLEND_MODE_SHADE_SHINE_SAI:
+    case DP_BLEND_MODE_SHADE_SHINE_SAI_ALPHA:
+        *out_sai = true;
+        DP_FALLTHROUGH();
     case DP_BLEND_MODE_LINEAR_LIGHT:
     case DP_BLEND_MODE_LINEAR_LIGHT_ALPHA:
         return "lLit";
     case DP_BLEND_MODE_PIN_LIGHT:
     case DP_BLEND_MODE_PIN_LIGHT_ALPHA:
         return "pLit";
+    case DP_BLEND_MODE_HARD_MIX_SAI:
+    case DP_BLEND_MODE_HARD_MIX_SAI_ALPHA:
+        *out_sai = true;
+        return "hMix";
+    case DP_BLEND_MODE_DIFFERENCE_SAI:
+    case DP_BLEND_MODE_DIFFERENCE_SAI_ALPHA:
+        *out_sai = true;
+        DP_FALLTHROUGH();
     case DP_BLEND_MODE_DIFFERENCE:
     case DP_BLEND_MODE_DIFFERENCE_ALPHA:
         return "diff";
@@ -322,6 +355,19 @@ static bool write_lsct_block(DP_Output *out, DP_SavePsdSection section,
         && DP_output_print(out, isolated ? psd_blend_mode : "pass");
 }
 
+static bool write_sai_blend_mode_blocks(DP_Output *out, uint8_t opacity)
+{
+    return DP_OUTPUT_WRITE_BYTES_LITERAL(
+        out, 56, 66, 73, 77, // "8BIM" magic number.
+        105, 79, 112, 97,    // "iOpa" block key.
+        0, 0, 0, 4,          // Block content size.
+        opacity, 0, 0, 1,    // Opacity, three padding bytes.
+        56, 66, 73, 77,      // "8BIM" magic number.
+        116, 115, 108, 121,  // "tsly" block key.
+        0, 0, 0, 4,          // Block content size.
+        0, 0, 0, 0);         // 0, three padding bytes.
+}
+
 static bool write_layer_info(DP_DrawContext *dc, DP_Output *out, int blend_mode,
                              uint8_t opacity, bool hidden, const char *title,
                              DP_SavePsdSection section, bool isolated,
@@ -329,6 +375,7 @@ static bool write_layer_info(DP_DrawContext *dc, DP_Output *out, int blend_mode,
 {
     size_t section_start;
     const char *psd_blend_mode;
+    bool is_sai_blend_mode;
     // We write placeholders for an empty layer. If the layer has content, it
     // will be overwritten later. Channel size is 2, since they have a header.
     return DP_OUTPUT_WRITE_BYTES_LITERAL(
@@ -341,11 +388,12 @@ static bool write_layer_info(DP_DrawContext *dc, DP_Output *out, int blend_mode,
                0, 2, 0, 0, 0, 2,            // Green channel id 2, size 2.
                56, 66, 73, 77)              // "8BIM" magic number.
         // Blend mode.
-        && DP_output_print(out,
-                           (psd_blend_mode = blend_mode_to_psd(blend_mode)))
+        && DP_output_print(out, (psd_blend_mode = blend_mode_to_psd(
+                                     blend_mode, &is_sai_blend_mode)))
         // Opacity, clipping, flags, reserved byte.
         && DP_OUTPUT_WRITE_BIGENDIAN(
-               out, DP_OUTPUT_UINT8(opacity), DP_OUTPUT_UINT8(clip ? 1 : 0),
+               out, DP_OUTPUT_UINT8(is_sai_blend_mode ? 255 : opacity),
+               DP_OUTPUT_UINT8(clip ? 1 : 0),
                DP_OUTPUT_UINT8(layer_section_flags(hidden, section)),
                DP_OUTPUT_UINT8(0), DP_OUTPUT_END)
         // Extra layer data section.
@@ -355,6 +403,8 @@ static bool write_layer_info(DP_DrawContext *dc, DP_Output *out, int blend_mode,
         // Title, in ASCII and UTF16-BE.
         && write_layer_title(dc, out, title)
         && write_layer_utf16be_title(dc, out, title)
+        // Special SAI blend mode properties
+        && (!is_sai_blend_mode || write_sai_blend_mode_blocks(out, opacity))
         // Section block, if the section type requires one.
         && (!needs_lsct_block(section)
             || write_lsct_block(out, section, isolated, psd_blend_mode))
