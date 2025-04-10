@@ -403,7 +403,7 @@ static double get_classic_dabs_cost(DP_MsgDrawDabsClassic *mddc,
         DP_msg_draw_dabs_classic_mode(mddc));
     for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
         double size =
-            DP_int_to_double(DP_classic_dab_size(DP_classic_dab_at(cds, i)));
+            DP_uint32_to_double(DP_classic_dab_size(DP_classic_dab_at(cds, i)));
         double cost = base_cost * size * size;
         dabs_cost += cost;
     }

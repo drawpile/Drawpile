@@ -698,7 +698,7 @@ DrawDabsClassic:
           fields:
             - x i8: div4
             - y i8: div4
-            - size u16: div256
+            - size u24: div256
             - hardness u8
             - opacity u8
 
@@ -722,7 +722,7 @@ DrawDabsPixel:
           fields:
             - x i8
             - y i8
-            - size u8
+            - size u16
             - opacity u8
 
 DrawDabsPixelSquare:
@@ -753,7 +753,7 @@ DrawDabsMyPaint:
           fields:
             - x i8: div4
             - y i8: div4
-            - size u16: div256
+            - size u24: div256
             - hardness u8
             - opacity u8
             - angle u8
@@ -778,7 +778,7 @@ DrawDabsMyPaintBlend:
           fields:
             - x i8: div4
             - y i8: div4
-            - size u16: div256
+            - size u24: div256
             - hardness u8
             - opacity u8
             - angle u8

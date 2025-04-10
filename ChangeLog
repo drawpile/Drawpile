@@ -15,6 +15,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Don't displace annotations when resizing the canvas to the left or top.
  * Feature: Make the Shine (SAI) blend mode work exactly like in SAI, even with alpha preserve off. Thanks cromachina for providing the logic for this.
  * Feature: Implement more blend modes: Vivid Light, Pin Light, Difference, Darker Color, Lighter Color, Shade (SAI), Shade/Shine (SAI), Burn (SAI), Dodge (SAI), Burn/Dodge (SAI), Hard Mix (SAI) and Difference (SAI). Thanks cromachina for providing the logic for the SAI blend modes.
+ * Feature: Increase maximum brush size to 1000. Thanks ariqhadiyan and TGS for suggesting.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

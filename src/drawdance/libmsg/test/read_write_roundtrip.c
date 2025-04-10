@@ -118,6 +118,11 @@ static uint32_t random_uint32(void)
     return DP_read_littleendian_uint32(bytes);
 }
 
+static uint32_t random_uint24(void)
+{
+    return DP_uint32_to_uint16(random_uint32() & (uint32_t)0xffffffu);
+}
+
 static uint16_t random_uint16(void)
 {
     return DP_uint32_to_uint16(random_uint32() & (uint32_t)0xffffu);
@@ -239,7 +244,7 @@ static void generate_classic_dabs(int count, DP_ClassicDab *out,
 {
     for (int i = 0; i < count; ++i) {
         DP_classic_dab_init(out, i, random_int8(), random_int8(),
-                            random_uint16(), random_uint8(), random_uint8());
+                            random_uint24(), random_uint8(), random_uint8());
     }
 }
 
@@ -247,7 +252,7 @@ static void generate_pixel_dabs(int count, DP_PixelDab *out,
                                 DP_UNUSED void *user)
 {
     for (int i = 0; i < count; ++i) {
-        DP_pixel_dab_init(out, i, random_int8(), random_int8(), random_uint8(),
+        DP_pixel_dab_init(out, i, random_int8(), random_int8(), random_uint16(),
                           random_uint8());
     }
 }
@@ -257,7 +262,7 @@ static void generate_mypaint_dabs(int count, DP_MyPaintDab *out,
 {
     for (int i = 0; i < count; ++i) {
         DP_mypaint_dab_init(out, i, random_int8(), random_int8(),
-                            random_uint16(), random_uint8(), random_uint8(),
+                            random_uint24(), random_uint8(), random_uint8(),
                             random_uint8(), random_uint8());
     }
 }
@@ -267,7 +272,7 @@ static void generate_mypaint_blend_dabs(int count, DP_MyPaintBlendDab *out,
 {
     for (int i = 0; i < count; ++i) {
         DP_mypaint_blend_dab_init(
-            out, i, random_int8(), random_int8(), random_uint16(),
+            out, i, random_int8(), random_int8(), random_uint24(),
             random_uint8(), random_uint8(), random_uint8(), random_uint8());
     }
 }

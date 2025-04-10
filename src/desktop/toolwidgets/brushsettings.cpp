@@ -404,7 +404,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	utils::setWidgetRetainSizeWhenHidden(d->ui.paintMode, true);
 
 	// Exponential sliders for easier picking of small values.
-	d->ui.brushsizeBox->setExponentRatio(2.0);
+	d->ui.brushsizeBox->setExponentRatio(3.0);
 	d->ui.brushspacingBox->setExponentRatio(3.0);
 	d->ui.stabilizerBox->setExponentRatio(3.0);
 
@@ -1800,12 +1800,15 @@ void BrushSettings::setBackground(const QColor &color)
 
 void BrushSettings::quickAdjust1(qreal adjustment)
 {
-	// Adjust the currently visible box. Since the MyPaint radius has a much
-	// larger range, we double the adjustment so that it feels responsive.
+	// Adjust the currently visible box. Classic brush size gets increased
+	// exponentially, MyPaint brush size is already logarithmic.
 	if(d->currentIsMyPaint()) {
 		quickAdjustOn(d->ui.radiusLogarithmicBox, adjustment * 2.0);
 	} else {
-		quickAdjustOn(d->ui.brushsizeBox, adjustment);
+		QSpinBox *brushsizeBox = d->ui.brushsizeBox;
+		quickAdjustOn(
+			brushsizeBox,
+			qMax(1.0, std::cbrt(brushsizeBox->value())) * adjustment);
 	}
 }
 

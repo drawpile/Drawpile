@@ -58,7 +58,8 @@
 #    define DP_SIMD_ALIGNMENT 32
 #    define DP_ALIGNAS_SIMD   alignas(DP_SIMD_ALIGNMENT)
 #else
-#    define DP_ALIGNAS_SIMD // nothing
+#    define DP_SIMD_ALIGNMENT 32
+#    define DP_ALIGNAS_SIMD   // nothing
 #endif
 
 #ifdef __GNUC__
@@ -193,6 +194,11 @@ DP_NORETURN void DP_panic_at(const char *file, int line, const char *fmt, ...)
 #define DP_ARRAY_LENGTH(ARR) (sizeof(ARR) / sizeof((ARR)[0]))
 
 DP_INLINE int DP_square_int(int x)
+{
+    return x * x;
+}
+
+DP_INLINE float DP_square_float(float x)
 {
     return x * x;
 }
