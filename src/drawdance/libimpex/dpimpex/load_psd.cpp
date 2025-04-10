@@ -136,7 +136,7 @@ static bool set_layer_title(void *user, const char *title, size_t title_length)
     return true;
 }
 
-static int extract_blend_mode(uint32_t key)
+static int extract_blend_mode(uint32_t key, bool sai)
 {
     psd::blendMode::Enum mode = psd::blendMode::KeyToEnum(key);
     switch (mode) {
@@ -147,9 +147,10 @@ static int extract_blend_mode(uint32_t key)
     case psd::blendMode::MULTIPLY:
         return DP_BLEND_MODE_MULTIPLY_ALPHA;
     case psd::blendMode::COLOR_BURN:
-        return DP_BLEND_MODE_BURN_ALPHA;
+        return sai ? DP_BLEND_MODE_BURN_SAI_ALPHA : DP_BLEND_MODE_BURN_ALPHA;
     case psd::blendMode::LINEAR_BURN:
-        return DP_BLEND_MODE_LINEAR_BURN_ALPHA;
+        return sai ? DP_BLEND_MODE_SHADE_SAI_ALPHA
+                   : DP_BLEND_MODE_LINEAR_BURN_ALPHA;
     case psd::blendMode::DARKER_COLOR:
         return DP_BLEND_MODE_DARKER_COLOR_ALPHA;
     case psd::blendMode::LIGHTEN:
@@ -157,9 +158,10 @@ static int extract_blend_mode(uint32_t key)
     case psd::blendMode::SCREEN:
         return DP_BLEND_MODE_SCREEN_ALPHA;
     case psd::blendMode::COLOR_DODGE:
-        return DP_BLEND_MODE_DODGE_ALPHA;
+        return sai ? DP_BLEND_MODE_DODGE_SAI_ALPHA : DP_BLEND_MODE_DODGE_ALPHA;
     case psd::blendMode::LINEAR_DODGE:
-        return DP_BLEND_MODE_ADD_ALPHA;
+        return sai ? DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA
+                   : DP_BLEND_MODE_ADD_ALPHA;
     case psd::blendMode::LIGHTER_COLOR:
         return DP_BLEND_MODE_LIGHTER_COLOR_ALPHA;
     case psd::blendMode::OVERLAY:
@@ -169,13 +171,20 @@ static int extract_blend_mode(uint32_t key)
     case psd::blendMode::HARD_LIGHT:
         return DP_BLEND_MODE_HARD_LIGHT_ALPHA;
     case psd::blendMode::VIVID_LIGHT:
-        return DP_BLEND_MODE_VIVID_LIGHT_ALPHA;
+        return sai ? DP_BLEND_MODE_BURN_DODGE_SAI_ALPHA
+                   : DP_BLEND_MODE_VIVID_LIGHT_ALPHA;
     case psd::blendMode::LINEAR_LIGHT:
-        return DP_BLEND_MODE_LINEAR_LIGHT_ALPHA;
+        return sai ? DP_BLEND_MODE_SHADE_SHINE_SAI_ALPHA
+                   : DP_BLEND_MODE_LINEAR_LIGHT_ALPHA;
     case psd::blendMode::PIN_LIGHT:
         return DP_BLEND_MODE_PIN_LIGHT_ALPHA;
+    case psd::blendMode::HARD_MIX:
+        // We only support the SAI variant of this, the PS blend mode just maxes
+        // out channels at 0 or 1, which is completely useless.
+        return DP_BLEND_MODE_HARD_MIX_SAI_ALPHA;
     case psd::blendMode::DIFFERENCE:
-        return DP_BLEND_MODE_DIFFERENCE_ALPHA;
+        return sai ? DP_BLEND_MODE_DIFFERENCE_SAI_ALPHA
+                   : DP_BLEND_MODE_DIFFERENCE_ALPHA;
     case psd::blendMode::SUBTRACT:
         return DP_BLEND_MODE_SUBTRACT_ALPHA;
     case psd::blendMode::DIVIDE:
@@ -201,10 +210,18 @@ static void apply_layer_props(DP_TransientLayerProps *tlp, psd::Layer *layer)
         DP_transient_layer_props_title_set(tlp, layer->name.c_str(),
                                            layer->name.GetLength());
     }
-    DP_transient_layer_props_opacity_set(tlp,
-                                         DP_channel8_to_15(layer->opacity));
+    // Paint Tool SAI implements its custom blend modes by setting the
+    // transparency shapes layer (tsly) value to 0 and the blend fill opacity
+    // (iOpa) value to the intended opacity. Regular layer opacity will be 255.
+    DP_transient_layer_props_opacity_set(
+        tlp,
+        DP_channel8_to_15(layer->hasBlendFillOpacity ? layer->blendFillOpacity
+                                                     : layer->opacity));
     DP_transient_layer_props_blend_mode_set(
-        tlp, extract_blend_mode(layer->blendModeKey));
+        tlp, extract_blend_mode(layer->blendModeKey,
+                                layer->hasBlendFillOpacity
+                                    && layer->hasTransparencyShapesLayer
+                                    && layer->transparencyShapesLayer == 0));
     if (!layer->isVisible) {
         DP_transient_layer_props_hidden_set(tlp, true);
     }
