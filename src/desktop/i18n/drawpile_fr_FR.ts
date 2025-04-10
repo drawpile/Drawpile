@@ -9220,7 +9220,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+8"/>
         <source>One-finger tap and hold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Touché et maintenir à un doigt&#xa0;:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -9230,7 +9230,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Pan canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Déplacer la toile</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9240,7 +9240,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>One-finger touch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Touché à un doigt&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
