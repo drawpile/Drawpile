@@ -346,6 +346,8 @@ private:
 
 	void updateLayersVisibleInFrame();
 
+	uint16_t *getSampleColorStampBuffer(int diameter);
+
 	const bool m_useTileCache;
 	const bool m_tileCacheDirtyCheckOnTick;
 	drawdance::AclState m_acls;
@@ -361,8 +363,9 @@ private:
 	DP_Semaphore *m_viewSem;
 	QRect m_canvasViewTileArea;
 	bool m_renderOutsideView = false;
-	uint16_t m_sampleColorStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
-	int m_sampleColorLastDiameter;
+	uint16_t *m_sampleColorStampBuffer = nullptr;
+	size_t m_sampleColorStampBufferCapacity = 0;
+	int m_sampleColorLastDiameter = -1;
 	int m_undoDepthLimit;
 	bool m_updateLayersVisibleInFrame;
 #ifdef DP_HAVE_BUILTIN_SERVER

@@ -6212,7 +6212,7 @@ size_t DP_msg_canvas_background_image_size(const DP_MsgCanvasBackground *mcb)
 struct DP_ClassicDab {
     int8_t x;
     int8_t y;
-    uint16_t size;
+    uint32_t size;
     uint8_t hardness;
     uint8_t opacity;
 };
@@ -6223,7 +6223,7 @@ static size_t classic_dab_serialize_payload(DP_ClassicDab *cd,
     size_t written = 0;
     written += DP_write_bigendian_int8(cd->x, data + written);
     written += DP_write_bigendian_int8(cd->y, data + written);
-    written += DP_write_bigendian_uint16(cd->size, data + written);
+    written += DP_write_bigendian_uint24(cd->size, data + written);
     written += DP_write_bigendian_uint8(cd->hardness, data + written);
     written += DP_write_bigendian_uint8(cd->opacity, data + written);
     return written;
@@ -6292,7 +6292,7 @@ static bool classic_dabs_equal(DP_ClassicDab *DP_RESTRICT a,
 }
 
 void DP_classic_dab_init(DP_ClassicDab *cds, int i, int8_t x, int8_t y,
-                         uint16_t size, uint8_t hardness, uint8_t opacity)
+                         uint32_t size, uint8_t hardness, uint8_t opacity)
 {
     DP_ASSERT(cds);
     DP_ClassicDab *cd = &cds[i];
@@ -6310,7 +6310,7 @@ static void classic_dab_deserialize(int count, DP_ClassicDab *cds, void *user)
     for (int i = 0; i < count; ++i) {
         int8_t x = read_int8(buffer + read, &read);
         int8_t y = read_int8(buffer + read, &read);
-        uint16_t size = read_uint16(buffer + read, &read);
+        uint32_t size = read_uint24(buffer + read, &read);
         uint8_t hardness = read_uint8(buffer + read, &read);
         uint8_t opacity = read_uint8(buffer + read, &read);
         DP_classic_dab_init(cds, i, x, y, size, hardness, opacity);
@@ -6325,8 +6325,8 @@ static void classic_dab_parse(int count, DP_ClassicDab *cds, void *user)
             reader, i, "x", 4.0, INT8_MIN, INT8_MAX);
         int8_t y = (int8_t)DP_text_reader_get_subfield_decimal(
             reader, i, "y", 4.0, INT8_MIN, INT8_MAX);
-        uint16_t size = (uint16_t)DP_text_reader_get_subfield_decimal(
-            reader, i, "size", 256.0, 0, UINT16_MAX);
+        uint32_t size = (uint32_t)DP_text_reader_get_subfield_decimal(
+            reader, i, "size", 256.0, 0, UINT32_MAX);
         uint8_t hardness = (uint8_t)DP_text_reader_get_subfield_ulong(
             reader, i, "hardness", UINT8_MAX);
         uint8_t opacity = (uint8_t)DP_text_reader_get_subfield_ulong(
@@ -6347,7 +6347,7 @@ int8_t DP_classic_dab_y(const DP_ClassicDab *cd)
     return cd->y;
 }
 
-uint16_t DP_classic_dab_size(const DP_ClassicDab *cd)
+uint32_t DP_classic_dab_size(const DP_ClassicDab *cd)
 {
     DP_ASSERT(cd);
     return cd->size;
@@ -6385,7 +6385,7 @@ struct DP_MsgDrawDabsClassic {
 static size_t msg_draw_dabs_classic_payload_length(DP_Message *msg)
 {
     DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
-    return ((size_t)16) + DP_int_to_size(mddc->dabs_count) * 6;
+    return ((size_t)16) + DP_int_to_size(mddc->dabs_count) * 7;
 }
 
 static size_t msg_draw_dabs_classic_serialize_payload(DP_Message *msg,
@@ -6464,9 +6464,9 @@ DP_Message *DP_msg_draw_dabs_classic_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
                                                  size_t length)
 {
-    if (length < 22 || length > 65530) {
+    if (length < 23 || length > 65529) {
         DP_error_set("Wrong length for classicdabs message; "
-                     "expected between 22 and 65530, got %zu",
+                     "expected between 23 and 65529, got %zu",
                      length);
         return NULL;
     }
@@ -6478,13 +6478,13 @@ DP_Message *DP_msg_draw_dabs_classic_deserialize(unsigned int context_id,
     uint32_t color = read_uint32(buffer + read, &read);
     uint8_t mode = read_uint8(buffer + read, &read);
     size_t dabs_bytes = length - read;
-    if ((dabs_bytes % 6) != 0) {
+    if ((dabs_bytes % 7) != 0) {
         DP_error_set("Wrong length for dabs field in classicdabs message; "
-                     "%zu not divisible by 6",
+                     "%zu not divisible by 7",
                      dabs_bytes);
         return NULL;
     }
-    int dabs_count = DP_size_to_int(dabs_bytes) / 6;
+    int dabs_count = DP_size_to_int(dabs_bytes) / 7;
     void *dabs_user = (void *)(buffer + read);
     return DP_msg_draw_dabs_classic_new(context_id, flags, layer, x, y, color,
                                         mode, classic_dab_deserialize,
@@ -6573,7 +6573,7 @@ int DP_msg_draw_dabs_classic_dabs_count(const DP_MsgDrawDabsClassic *mddc)
 struct DP_PixelDab {
     int8_t x;
     int8_t y;
-    uint8_t size;
+    uint16_t size;
     uint8_t opacity;
 };
 
@@ -6582,7 +6582,7 @@ static size_t pixel_dab_serialize_payload(DP_PixelDab *pd, unsigned char *data)
     size_t written = 0;
     written += DP_write_bigendian_int8(pd->x, data + written);
     written += DP_write_bigendian_int8(pd->y, data + written);
-    written += DP_write_bigendian_uint8(pd->size, data + written);
+    written += DP_write_bigendian_uint16(pd->size, data + written);
     written += DP_write_bigendian_uint8(pd->opacity, data + written);
     return written;
 }
@@ -6645,7 +6645,7 @@ static bool pixel_dabs_equal(DP_PixelDab *DP_RESTRICT a,
 }
 
 void DP_pixel_dab_init(DP_PixelDab *pds, int i, int8_t x, int8_t y,
-                       uint8_t size, uint8_t opacity)
+                       uint16_t size, uint8_t opacity)
 {
     DP_ASSERT(pds);
     DP_PixelDab *pd = &pds[i];
@@ -6662,7 +6662,7 @@ static void pixel_dab_deserialize(int count, DP_PixelDab *pds, void *user)
     for (int i = 0; i < count; ++i) {
         int8_t x = read_int8(buffer + read, &read);
         int8_t y = read_int8(buffer + read, &read);
-        uint8_t size = read_uint8(buffer + read, &read);
+        uint16_t size = read_uint16(buffer + read, &read);
         uint8_t opacity = read_uint8(buffer + read, &read);
         DP_pixel_dab_init(pds, i, x, y, size, opacity);
     }
@@ -6676,8 +6676,8 @@ static void pixel_dab_parse(int count, DP_PixelDab *pds, void *user)
                                                             INT8_MIN, INT8_MAX);
         int8_t y = (int8_t)DP_text_reader_get_subfield_long(reader, i, "y",
                                                             INT8_MIN, INT8_MAX);
-        uint8_t size = (uint8_t)DP_text_reader_get_subfield_ulong(
-            reader, i, "size", UINT8_MAX);
+        uint16_t size = (uint16_t)DP_text_reader_get_subfield_ulong(
+            reader, i, "size", UINT16_MAX);
         uint8_t opacity = (uint8_t)DP_text_reader_get_subfield_ulong(
             reader, i, "opacity", UINT8_MAX);
         DP_pixel_dab_init(pds, i, x, y, size, opacity);
@@ -6696,7 +6696,7 @@ int8_t DP_pixel_dab_y(const DP_PixelDab *pd)
     return pd->y;
 }
 
-uint8_t DP_pixel_dab_size(const DP_PixelDab *pd)
+uint16_t DP_pixel_dab_size(const DP_PixelDab *pd)
 {
     DP_ASSERT(pd);
     return pd->size;
@@ -6728,7 +6728,7 @@ struct DP_MsgDrawDabsPixel {
 static size_t msg_draw_dabs_pixel_payload_length(DP_Message *msg)
 {
     DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
-    return ((size_t)16) + DP_int_to_size(mddp->dabs_count) * 4;
+    return ((size_t)16) + DP_int_to_size(mddp->dabs_count) * 5;
 }
 
 static size_t msg_draw_dabs_pixel_serialize_payload(DP_Message *msg,
@@ -6806,9 +6806,9 @@ DP_Message *DP_msg_draw_dabs_pixel_deserialize(unsigned int context_id,
                                                const unsigned char *buffer,
                                                size_t length)
 {
-    if (length < 20 || length > 65532) {
+    if (length < 21 || length > 65531) {
         DP_error_set("Wrong length for pixeldabs message; "
-                     "expected between 20 and 65532, got %zu",
+                     "expected between 21 and 65531, got %zu",
                      length);
         return NULL;
     }
@@ -6820,13 +6820,13 @@ DP_Message *DP_msg_draw_dabs_pixel_deserialize(unsigned int context_id,
     uint32_t color = read_uint32(buffer + read, &read);
     uint8_t mode = read_uint8(buffer + read, &read);
     size_t dabs_bytes = length - read;
-    if ((dabs_bytes % 4) != 0) {
+    if ((dabs_bytes % 5) != 0) {
         DP_error_set("Wrong length for dabs field in pixeldabs message; "
-                     "%zu not divisible by 4",
+                     "%zu not divisible by 5",
                      dabs_bytes);
         return NULL;
     }
-    int dabs_count = DP_size_to_int(dabs_bytes) / 4;
+    int dabs_count = DP_size_to_int(dabs_bytes) / 5;
     void *dabs_user = (void *)(buffer + read);
     return DP_msg_draw_dabs_pixel_new(context_id, flags, layer, x, y, color,
                                       mode, pixel_dab_deserialize, dabs_count,
@@ -6938,9 +6938,9 @@ DP_msg_draw_dabs_pixel_square_new(unsigned int context_id, uint8_t flags,
 DP_Message *DP_msg_draw_dabs_pixel_square_deserialize(
     unsigned int context_id, const unsigned char *buffer, size_t length)
 {
-    if (length < 20 || length > 65532) {
+    if (length < 21 || length > 65531) {
         DP_error_set("Wrong length for squarepixeldabs message; "
-                     "expected between 20 and 65532, got %zu",
+                     "expected between 21 and 65531, got %zu",
                      length);
         return NULL;
     }
@@ -6952,13 +6952,13 @@ DP_Message *DP_msg_draw_dabs_pixel_square_deserialize(
     uint32_t color = read_uint32(buffer + read, &read);
     uint8_t mode = read_uint8(buffer + read, &read);
     size_t dabs_bytes = length - read;
-    if ((dabs_bytes % 4) != 0) {
+    if ((dabs_bytes % 5) != 0) {
         DP_error_set("Wrong length for dabs field in squarepixeldabs message; "
-                     "%zu not divisible by 4",
+                     "%zu not divisible by 5",
                      dabs_bytes);
         return NULL;
     }
-    int dabs_count = DP_size_to_int(dabs_bytes) / 4;
+    int dabs_count = DP_size_to_int(dabs_bytes) / 5;
     void *dabs_user = (void *)(buffer + read);
     return DP_msg_draw_dabs_pixel_square_new(context_id, flags, layer, x, y,
                                              color, mode, pixel_dab_deserialize,
@@ -6996,7 +6996,7 @@ DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg)
 struct DP_MyPaintDab {
     int8_t x;
     int8_t y;
-    uint16_t size;
+    uint32_t size;
     uint8_t hardness;
     uint8_t opacity;
     uint8_t angle;
@@ -7009,7 +7009,7 @@ static size_t mypaint_dab_serialize_payload(DP_MyPaintDab *mpd,
     size_t written = 0;
     written += DP_write_bigendian_int8(mpd->x, data + written);
     written += DP_write_bigendian_int8(mpd->y, data + written);
-    written += DP_write_bigendian_uint16(mpd->size, data + written);
+    written += DP_write_bigendian_uint24(mpd->size, data + written);
     written += DP_write_bigendian_uint8(mpd->hardness, data + written);
     written += DP_write_bigendian_uint8(mpd->opacity, data + written);
     written += DP_write_bigendian_uint8(mpd->angle, data + written);
@@ -7084,7 +7084,7 @@ static bool mypaint_dabs_equal(DP_MyPaintDab *DP_RESTRICT a,
 }
 
 void DP_mypaint_dab_init(DP_MyPaintDab *mpds, int i, int8_t x, int8_t y,
-                         uint16_t size, uint8_t hardness, uint8_t opacity,
+                         uint32_t size, uint8_t hardness, uint8_t opacity,
                          uint8_t angle, uint8_t aspect_ratio)
 {
     DP_ASSERT(mpds);
@@ -7105,7 +7105,7 @@ static void mypaint_dab_deserialize(int count, DP_MyPaintDab *mpds, void *user)
     for (int i = 0; i < count; ++i) {
         int8_t x = read_int8(buffer + read, &read);
         int8_t y = read_int8(buffer + read, &read);
-        uint16_t size = read_uint16(buffer + read, &read);
+        uint32_t size = read_uint24(buffer + read, &read);
         uint8_t hardness = read_uint8(buffer + read, &read);
         uint8_t opacity = read_uint8(buffer + read, &read);
         uint8_t angle = read_uint8(buffer + read, &read);
@@ -7123,8 +7123,8 @@ static void mypaint_dab_parse(int count, DP_MyPaintDab *mpds, void *user)
             reader, i, "x", 4.0, INT8_MIN, INT8_MAX);
         int8_t y = (int8_t)DP_text_reader_get_subfield_decimal(
             reader, i, "y", 4.0, INT8_MIN, INT8_MAX);
-        uint16_t size = (uint16_t)DP_text_reader_get_subfield_decimal(
-            reader, i, "size", 256.0, 0, UINT16_MAX);
+        uint32_t size = (uint32_t)DP_text_reader_get_subfield_decimal(
+            reader, i, "size", 256.0, 0, UINT32_MAX);
         uint8_t hardness = (uint8_t)DP_text_reader_get_subfield_ulong(
             reader, i, "hardness", UINT8_MAX);
         uint8_t opacity = (uint8_t)DP_text_reader_get_subfield_ulong(
@@ -7150,7 +7150,7 @@ int8_t DP_mypaint_dab_y(const DP_MyPaintDab *mpd)
     return mpd->y;
 }
 
-uint16_t DP_mypaint_dab_size(const DP_MyPaintDab *mpd)
+uint32_t DP_mypaint_dab_size(const DP_MyPaintDab *mpd)
 {
     DP_ASSERT(mpd);
     return mpd->size;
@@ -7202,7 +7202,7 @@ struct DP_MsgDrawDabsMyPaint {
 static size_t msg_draw_dabs_mypaint_payload_length(DP_Message *msg)
 {
     DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
-    return ((size_t)18) + DP_int_to_size(mddmp->dabs_count) * 8;
+    return ((size_t)18) + DP_int_to_size(mddmp->dabs_count) * 9;
 }
 
 static size_t msg_draw_dabs_mypaint_serialize_payload(DP_Message *msg,
@@ -7289,9 +7289,9 @@ DP_Message *DP_msg_draw_dabs_mypaint_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
                                                  size_t length)
 {
-    if (length < 26 || length > 65530) {
+    if (length < 27 || length > 65529) {
         DP_error_set("Wrong length for mypaintdabs message; "
-                     "expected between 26 and 65530, got %zu",
+                     "expected between 27 and 65529, got %zu",
                      length);
         return NULL;
     }
@@ -7305,13 +7305,13 @@ DP_Message *DP_msg_draw_dabs_mypaint_deserialize(unsigned int context_id,
     uint8_t posterize = read_uint8(buffer + read, &read);
     uint8_t posterize_num = read_uint8(buffer + read, &read);
     size_t dabs_bytes = length - read;
-    if ((dabs_bytes % 8) != 0) {
+    if ((dabs_bytes % 9) != 0) {
         DP_error_set("Wrong length for dabs field in mypaintdabs message; "
-                     "%zu not divisible by 8",
+                     "%zu not divisible by 9",
                      dabs_bytes);
         return NULL;
     }
-    int dabs_count = DP_size_to_int(dabs_bytes) / 8;
+    int dabs_count = DP_size_to_int(dabs_bytes) / 9;
     void *dabs_user = (void *)(buffer + read);
     return DP_msg_draw_dabs_mypaint_new(
         context_id, layer, x, y, color, lock_alpha, colorize, posterize,
@@ -7419,7 +7419,7 @@ int DP_msg_draw_dabs_mypaint_dabs_count(const DP_MsgDrawDabsMyPaint *mddmp)
 struct DP_MyPaintBlendDab {
     int8_t x;
     int8_t y;
-    uint16_t size;
+    uint32_t size;
     uint8_t hardness;
     uint8_t opacity;
     uint8_t angle;
@@ -7432,7 +7432,7 @@ static size_t mypaint_blend_dab_serialize_payload(DP_MyPaintBlendDab *mpbd,
     size_t written = 0;
     written += DP_write_bigendian_int8(mpbd->x, data + written);
     written += DP_write_bigendian_int8(mpbd->y, data + written);
-    written += DP_write_bigendian_uint16(mpbd->size, data + written);
+    written += DP_write_bigendian_uint24(mpbd->size, data + written);
     written += DP_write_bigendian_uint8(mpbd->hardness, data + written);
     written += DP_write_bigendian_uint8(mpbd->opacity, data + written);
     written += DP_write_bigendian_uint8(mpbd->angle, data + written);
@@ -7512,7 +7512,7 @@ static bool mypaint_blend_dabs_equal(DP_MyPaintBlendDab *DP_RESTRICT a,
 }
 
 void DP_mypaint_blend_dab_init(DP_MyPaintBlendDab *mpbds, int i, int8_t x,
-                               int8_t y, uint16_t size, uint8_t hardness,
+                               int8_t y, uint32_t size, uint8_t hardness,
                                uint8_t opacity, uint8_t angle,
                                uint8_t aspect_ratio)
 {
@@ -7535,7 +7535,7 @@ static void mypaint_blend_dab_deserialize(int count, DP_MyPaintBlendDab *mpbds,
     for (int i = 0; i < count; ++i) {
         int8_t x = read_int8(buffer + read, &read);
         int8_t y = read_int8(buffer + read, &read);
-        uint16_t size = read_uint16(buffer + read, &read);
+        uint32_t size = read_uint24(buffer + read, &read);
         uint8_t hardness = read_uint8(buffer + read, &read);
         uint8_t opacity = read_uint8(buffer + read, &read);
         uint8_t angle = read_uint8(buffer + read, &read);
@@ -7554,8 +7554,8 @@ static void mypaint_blend_dab_parse(int count, DP_MyPaintBlendDab *mpbds,
             reader, i, "x", 4.0, INT8_MIN, INT8_MAX);
         int8_t y = (int8_t)DP_text_reader_get_subfield_decimal(
             reader, i, "y", 4.0, INT8_MIN, INT8_MAX);
-        uint16_t size = (uint16_t)DP_text_reader_get_subfield_decimal(
-            reader, i, "size", 256.0, 0, UINT16_MAX);
+        uint32_t size = (uint32_t)DP_text_reader_get_subfield_decimal(
+            reader, i, "size", 256.0, 0, UINT32_MAX);
         uint8_t hardness = (uint8_t)DP_text_reader_get_subfield_ulong(
             reader, i, "hardness", UINT8_MAX);
         uint8_t opacity = (uint8_t)DP_text_reader_get_subfield_ulong(
@@ -7581,7 +7581,7 @@ int8_t DP_mypaint_blend_dab_y(const DP_MyPaintBlendDab *mpbd)
     return mpbd->y;
 }
 
-uint16_t DP_mypaint_blend_dab_size(const DP_MyPaintBlendDab *mpbd)
+uint32_t DP_mypaint_blend_dab_size(const DP_MyPaintBlendDab *mpbd)
 {
     DP_ASSERT(mpbd);
     return mpbd->size;
@@ -7632,7 +7632,7 @@ struct DP_MsgDrawDabsMyPaintBlend {
 static size_t msg_draw_dabs_mypaint_blend_payload_length(DP_Message *msg)
 {
     DP_MsgDrawDabsMyPaintBlend *mddmpb = DP_message_internal(msg);
-    return ((size_t)16) + DP_int_to_size(mddmpb->dabs_count) * 8;
+    return ((size_t)16) + DP_int_to_size(mddmpb->dabs_count) * 9;
 }
 
 static size_t msg_draw_dabs_mypaint_blend_serialize_payload(DP_Message *msg,
@@ -7712,9 +7712,9 @@ DP_Message *DP_msg_draw_dabs_mypaint_blend_new(
 DP_Message *DP_msg_draw_dabs_mypaint_blend_deserialize(
     unsigned int context_id, const unsigned char *buffer, size_t length)
 {
-    if (length < 24 || length > 65528) {
+    if (length < 25 || length > 65527) {
         DP_error_set("Wrong length for mypaintdabsblend message; "
-                     "expected between 24 and 65528, got %zu",
+                     "expected between 25 and 65527, got %zu",
                      length);
         return NULL;
     }
@@ -7726,13 +7726,13 @@ DP_Message *DP_msg_draw_dabs_mypaint_blend_deserialize(
     uint32_t color = read_uint32(buffer + read, &read);
     uint8_t mode = read_uint8(buffer + read, &read);
     size_t dabs_bytes = length - read;
-    if ((dabs_bytes % 8) != 0) {
+    if ((dabs_bytes % 9) != 0) {
         DP_error_set("Wrong length for dabs field in mypaintdabsblend message; "
-                     "%zu not divisible by 8",
+                     "%zu not divisible by 9",
                      dabs_bytes);
         return NULL;
     }
-    int dabs_count = DP_size_to_int(dabs_bytes) / 8;
+    int dabs_count = DP_size_to_int(dabs_bytes) / 9;
     void *dabs_user = (void *)(buffer + read);
     return DP_msg_draw_dabs_mypaint_blend_new(
         context_id, flags, layer, x, y, color, mode,

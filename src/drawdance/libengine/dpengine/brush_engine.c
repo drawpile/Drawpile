@@ -2,7 +2,6 @@
 #include "brush_engine.h"
 #include "brush.h"
 #include "canvas_state.h"
-#include "draw_context.h"
 #include "layer_content.h"
 #include "layer_routes.h"
 #include <dpcommon/atomic.h>
@@ -52,14 +51,14 @@ typedef enum DP_BrushEngineActiveType {
 typedef struct DP_BrushEnginePixelDab {
     int8_t x;
     int8_t y;
-    uint8_t size;
+    uint16_t size;
     uint8_t opacity;
 } DP_BrushEnginePixelDab;
 
 typedef struct DP_BrushEngineClassicDab {
     int8_t x;
     int8_t y;
-    uint16_t size;
+    uint32_t size;
     uint8_t hardness;
     uint8_t opacity;
 } DP_BrushEngineClassicDab;
@@ -67,7 +66,7 @@ typedef struct DP_BrushEngineClassicDab {
 typedef struct DP_BrushEngineMyPaintDab {
     int8_t x;
     int8_t y;
-    uint16_t size;
+    uint32_t size;
     uint8_t hardness;
     uint8_t opacity;
     uint8_t angle;
@@ -84,7 +83,7 @@ struct DP_BrushEngine {
     int layer_id;
     DP_LayerContent *lc;
     DP_CanvasState *cs;
-    DP_BrushStampBuffer stamp_buffer;
+    uint16_t *stamp_buffer;
     int last_diameter;
     DP_BrushEngineActiveType active;
     MyPaintBrush *mypaint_brush;
@@ -359,7 +358,7 @@ static uint8_t get_uint8(float input)
 static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
                           float pressure, float velocity, float distance)
 {
-    uint8_t dab_size =
+    uint16_t dab_size =
         DP_classic_brush_pixel_dab_size_at(cb, pressure, velocity, distance);
     uint8_t dab_opacity =
         DP_classic_brush_dab_opacity_at(cb, pressure, velocity, distance);
@@ -399,7 +398,7 @@ static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
                          float y, float pressure, float velocity,
                          float distance, bool left, bool up)
 {
-    uint16_t dab_size =
+    uint32_t dab_size =
         DP_classic_brush_soft_dab_size_at(cb, pressure, velocity, distance);
     uint8_t dab_opacity =
         DP_classic_brush_dab_opacity_at(cb, pressure, velocity, distance);
@@ -410,7 +409,7 @@ static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
         // jagged look between them. We can't fix the brush rendering directly
         // because that would break compatibility, so instead we fudge the
         // positioning to compensate.
-        float rrem = fmodf(dab_size / 256.0f, 1.0f);
+        float rrem = fmodf(DP_uint32_to_float(dab_size) / 256.0f, 1.0f);
         if (rrem < 0.00001f) {
             rrem = 1.0f;
         }
@@ -533,10 +532,11 @@ static uint8_t get_mypaint_dab_posterize_num(uint8_t dab_posterize,
     }
 }
 
-static uint16_t get_mypaint_dab_size(float radius)
+static uint32_t get_mypaint_dab_size(float radius)
 {
     float value = radius * 512.0f + 0.5f;
-    return DP_float_to_uint16(CLAMP(value, 0, UINT16_MAX));
+    return DP_float_to_uint32(
+        CLAMP(value, 0, (float)DP_BRUSH_SIZE_MAX * 256.0f));
 }
 
 // Reduce an arbitrary angle in degrees to a value between 0 and 255.
@@ -657,6 +657,15 @@ static int add_dab_mypaint(MyPaintSurface *self, float x, float y, float radius,
                                    lock_alpha, colorize, 0.0f, 0.0f, 0.0f);
 }
 
+static uint16_t *get_stamp_buffer(DP_BrushEngine *be)
+{
+    if (!be->stamp_buffer) {
+        be->stamp_buffer = DP_malloc_simd(
+            DP_square_size(sizeof(*be->stamp_buffer) * (size_t)260));
+    }
+    return be->stamp_buffer;
+}
+
 static void get_color_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
                                       float radius, float *color_r,
                                       float *color_g, float *color_b,
@@ -667,7 +676,7 @@ static void get_color_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
     if (lc) {
         int diameter = DP_min_int(DP_float_to_int(radius * 2.0f + 0.5f), 255);
         DP_UPixelFloat color = DP_layer_content_sample_color_at(
-            lc, be->stamp_buffer, DP_float_to_int(x + 0.5f),
+            lc, get_stamp_buffer(be), DP_float_to_int(x + 0.5f),
             DP_float_to_int(y + 0.5f), diameter, false, &be->last_diameter);
         *color_r = color.r;
         *color_g = color.g;
@@ -766,7 +775,7 @@ DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
         0,
         NULL,
         NULL,
-        {0},
+        NULL,
         -1,
         DP_BRUSH_ENGINE_ACTIVE_PIXEL,
         mypaint_brush_new_with_buckets(SMUDGE_BUCKET_COUNT),
@@ -805,6 +814,7 @@ void DP_brush_engine_free(DP_BrushEngine *be)
         DP_free(be->dabs.buffer);
         mypaint_brush_unref(be->mypaint_brush);
         DP_layer_content_decref_nullable(be->lc);
+        DP_free(be->stamp_buffer);
         DP_free(be->smoother.points);
         DP_vector_dispose(&be->stabilizer.points);
         DP_queue_dispose(&be->stabilizer.queue);
@@ -1180,8 +1190,8 @@ static DP_UPixelFloat sample_classic_smudge(DP_BrushEngine *be,
     int diameter =
         get_classic_smudge_diameter(cb, pressure, velocity, distance);
     return DP_layer_content_sample_color_at(
-        lc, be->stamp_buffer, DP_float_to_int(x), DP_float_to_int(y), diameter,
-        true, &be->last_diameter);
+        lc, get_stamp_buffer(be), DP_float_to_int(x), DP_float_to_int(y),
+        diameter, true, &be->last_diameter);
 }
 
 static void update_classic_smudge(DP_BrushEngine *be, DP_ClassicBrush *cb,

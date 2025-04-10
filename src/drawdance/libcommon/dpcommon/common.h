@@ -197,6 +197,11 @@ DP_INLINE int DP_square_int(int x)
     return x * x;
 }
 
+DP_INLINE float DP_square_float(float x)
+{
+    return x * x;
+}
+
 DP_INLINE double DP_square_double(double x)
 {
     return x * x;

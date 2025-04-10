@@ -82,6 +82,7 @@ PaintEngine::PaintEngine(
 
 PaintEngine::~PaintEngine()
 {
+	DP_free_simd(m_sampleColorStampBuffer);
 	DP_semaphore_free(m_viewSem);
 	DP_mutex_free(m_cacheMutex);
 }
@@ -479,8 +480,8 @@ QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 		} else {
 			return drawdance::sampleColorAt(
 				img.convertToFormat(QImage::Format_ARGB32_Premultiplied),
-				m_sampleColorStampBuffer, pos.x(), pos.y(), diameter, true,
-				m_sampleColorLastDiameter);
+				getSampleColorStampBuffer(diameter), pos.x(), pos.y(), diameter,
+				true, m_sampleColorLastDiameter);
 		}
 	} else {
 		drawdance::LayerSearchResult lsr =
@@ -488,7 +489,7 @@ QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 		if(drawdance::LayerContent *layerContent =
 			   std::get_if<drawdance::LayerContent>(&lsr.data)) {
 			return layerContent->sampleColorAt(
-				m_sampleColorStampBuffer, x, y, diameter, true,
+				getSampleColorStampBuffer(diameter), x, y, diameter, true,
 				m_sampleColorLastDiameter);
 		} else {
 			return Qt::transparent;
@@ -1015,6 +1016,20 @@ void PaintEngine::onRenderResizeTileCache(
 	}
 	emit pe->tileCacheNavigatorDirtyCheckNeeded();
 	DP_mutex_unlock(pe->m_cacheMutex);
+}
+
+uint16_t *PaintEngine::getSampleColorStampBuffer(int diameter)
+{
+	size_t requiredCapacity = DP_square_size(size_t(qMax(32, diameter + 4))) *
+							  sizeof(*m_sampleColorStampBuffer);
+	if(m_sampleColorStampBufferCapacity < requiredCapacity) {
+		m_sampleColorStampBufferCapacity = requiredCapacity;
+		DP_free_simd(m_sampleColorStampBuffer);
+		m_sampleColorStampBuffer =
+			static_cast<uint16_t *>(DP_malloc_simd(requiredCapacity));
+		m_sampleColorLastDiameter = -1;
+	}
+	return m_sampleColorStampBuffer;
 }
 
 }
