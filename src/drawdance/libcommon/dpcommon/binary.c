@@ -32,6 +32,16 @@ static_assert(sizeof(int32_t) == 4, "int32_t has size 4");
 static_assert(sizeof(uint32_t) == 4, "uint32_t has size 4");
 
 
+static int32_t uint24_to_int24(uint32_t value)
+{
+    static_assert((int32_t)((uint32_t)(1u << 23u) | (uint32_t)0xff000000u)
+                      == (int32_t)-8388608,
+                  "Numbers are two's complement");
+    return DP_uint32_to_int32(value & (uint32_t)(1u << 23u)
+                                  ? (value | (uint32_t)0xff000000u)
+                                  : value);
+}
+
 int8_t DP_read_littleendian_int8(const unsigned char *d)
 {
     return DP_uint8_to_int8(DP_read_littleendian_uint8(d));
@@ -40,6 +50,11 @@ int8_t DP_read_littleendian_int8(const unsigned char *d)
 int16_t DP_read_littleendian_int16(const unsigned char *d)
 {
     return DP_uint16_to_int16(DP_read_littleendian_uint16(d));
+}
+
+int32_t DP_read_littleendian_int24(const unsigned char *d)
+{
+    return uint24_to_int24(DP_read_littleendian_uint24(d));
 }
 
 int32_t DP_read_littleendian_int32(const unsigned char *d)
@@ -58,6 +73,14 @@ uint16_t DP_read_littleendian_uint16(const unsigned char *d)
     DP_ASSERT(d);
     return DP_uint_to_uint16(DP_uchar_to_uint(d[0])
                              + (DP_uchar_to_uint(d[1]) << 8u));
+}
+
+uint32_t DP_read_littleendian_uint24(const unsigned char *d)
+{
+    DP_ASSERT(d);
+    return DP_uint_to_uint32(DP_uchar_to_uint(d[0])
+                             + (DP_uchar_to_uint(d[1]) << 8u)
+                             + (DP_uchar_to_uint(d[2]) << 16u));
 }
 
 uint32_t DP_read_littleendian_uint32(const unsigned char *d)
@@ -92,6 +115,11 @@ int16_t DP_read_bigendian_int16(const unsigned char *d)
     return DP_uint16_to_int16(DP_read_bigendian_uint16(d));
 }
 
+int32_t DP_read_bigendian_int24(const unsigned char *d)
+{
+    return uint24_to_int24(DP_read_littleendian_uint24(d));
+}
+
 int32_t DP_read_bigendian_int32(const unsigned char *d)
 {
     return DP_uint32_to_int32(DP_read_bigendian_uint32(d));
@@ -108,6 +136,14 @@ uint16_t DP_read_bigendian_uint16(const unsigned char *d)
     DP_ASSERT(d);
     return DP_uint_to_uint16((DP_uchar_to_uint(d[0]) << 8u)
                              + DP_uchar_to_uint(d[1]));
+}
+
+uint32_t DP_read_bigendian_uint24(const unsigned char *d)
+{
+    DP_ASSERT(d);
+    return DP_uint_to_uint32((DP_uchar_to_uint(d[0]) << 16u)
+                             + (DP_uchar_to_uint(d[1]) << 8u)
+                             + DP_uchar_to_uint(d[2]));
 }
 
 uint32_t DP_read_bigendian_uint32(const unsigned char *d)
@@ -127,6 +163,11 @@ size_t DP_write_littleendian_int8(int8_t x, unsigned char *out)
 size_t DP_write_littleendian_int16(int16_t x, unsigned char *out)
 {
     return DP_write_littleendian_uint16((uint16_t)x, out);
+}
+
+size_t DP_write_littleendian_int24(int32_t x, unsigned char *out)
+{
+    return DP_write_littleendian_uint24((uint32_t)x, out);
 }
 
 size_t DP_write_littleendian_int32(int32_t x, unsigned char *out)
@@ -150,6 +191,14 @@ size_t DP_write_littleendian_uint16(uint16_t x, unsigned char *out)
     out[0] = DP_uint_to_uchar(x & 0xffu);
     out[1] = DP_uint_to_uchar((x >> 8u) & 0xffu);
     return 2;
+}
+
+size_t DP_write_littleendian_uint24(uint32_t x, unsigned char *out)
+{
+    out[0] = DP_uint_to_uchar(x & 0xffu);
+    out[1] = DP_uint_to_uchar((x >> 8u) & 0xffu);
+    out[2] = DP_uint_to_uchar((x >> 16u) & 0xffu);
+    return 3;
 }
 
 size_t DP_write_littleendian_uint32(uint32_t x, unsigned char *out)
@@ -181,6 +230,11 @@ size_t DP_write_bigendian_int16(int16_t x, unsigned char *out)
     return DP_write_bigendian_uint16((uint16_t)x, out);
 }
 
+size_t DP_write_bigendian_int24(int32_t x, unsigned char *out)
+{
+    return DP_write_bigendian_uint24((uint32_t)x, out);
+}
+
 size_t DP_write_bigendian_int32(int32_t x, unsigned char *out)
 {
     return DP_write_bigendian_uint32((uint32_t)x, out);
@@ -202,6 +256,14 @@ size_t DP_write_bigendian_uint16(uint16_t x, unsigned char *out)
     out[0] = DP_uint_to_uchar((x >> 8u) & 0xffu);
     out[1] = DP_uint_to_uchar(x & 0xffu);
     return 2;
+}
+
+size_t DP_write_bigendian_uint24(uint32_t x, unsigned char *out)
+{
+    out[0] = DP_uint_to_uchar((x >> 16u) & 0xffu);
+    out[1] = DP_uint_to_uchar((x >> 8u) & 0xffu);
+    out[2] = DP_uint_to_uchar(x & 0xffu);
+    return 3;
 }
 
 size_t DP_write_bigendian_uint32(uint32_t x, unsigned char *out)
