@@ -1884,20 +1884,20 @@ size_t DP_msg_canvas_background_image_size(const DP_MsgCanvasBackground *mcb);
 #define DP_MSG_DRAW_DABS_CLASSIC_STATIC_LENGTH 16
 
 #define DP_MSG_DRAW_DABS_CLASSIC_DABS_MIN_COUNT 1
-#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX_COUNT 10919
+#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX_COUNT 9359
 
-#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX 10919
+#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX 9359
 
 typedef struct DP_ClassicDab DP_ClassicDab;
 
 void DP_classic_dab_init(DP_ClassicDab *cds, int i, int8_t x, int8_t y,
-                         uint16_t size, uint8_t hardness, uint8_t opacity);
+                         uint32_t size, uint8_t hardness, uint8_t opacity);
 
 int8_t DP_classic_dab_x(const DP_ClassicDab *cd);
 
 int8_t DP_classic_dab_y(const DP_ClassicDab *cd);
 
-uint16_t DP_classic_dab_size(const DP_ClassicDab *cd);
+uint32_t DP_classic_dab_size(const DP_ClassicDab *cd);
 
 uint8_t DP_classic_dab_hardness(const DP_ClassicDab *cd);
 
@@ -1955,20 +1955,20 @@ int DP_msg_draw_dabs_classic_dabs_count(const DP_MsgDrawDabsClassic *mddc);
 #define DP_MSG_DRAW_DABS_PIXEL_STATIC_LENGTH 16
 
 #define DP_MSG_DRAW_DABS_PIXEL_DABS_MIN_COUNT 1
-#define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX_COUNT 16379
+#define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX_COUNT 13103
 
-#define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX 16379
+#define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX 13103
 
 typedef struct DP_PixelDab DP_PixelDab;
 
 void DP_pixel_dab_init(DP_PixelDab *pds, int i, int8_t x, int8_t y,
-                       uint8_t size, uint8_t opacity);
+                       uint16_t size, uint8_t opacity);
 
 int8_t DP_pixel_dab_x(const DP_PixelDab *pd);
 
 int8_t DP_pixel_dab_y(const DP_PixelDab *pd);
 
-uint8_t DP_pixel_dab_size(const DP_PixelDab *pd);
+uint16_t DP_pixel_dab_size(const DP_PixelDab *pd);
 
 uint8_t DP_pixel_dab_opacity(const DP_PixelDab *pd);
 
@@ -2047,21 +2047,21 @@ DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg);
 #define DP_MSG_DRAW_DABS_MYPAINT_STATIC_LENGTH 18
 
 #define DP_MSG_DRAW_DABS_MYPAINT_DABS_MIN_COUNT 1
-#define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX_COUNT 8189
+#define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX_COUNT 7279
 
-#define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX 8189
+#define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX 7279
 
 typedef struct DP_MyPaintDab DP_MyPaintDab;
 
 void DP_mypaint_dab_init(DP_MyPaintDab *mpds, int i, int8_t x, int8_t y,
-                         uint16_t size, uint8_t hardness, uint8_t opacity,
+                         uint32_t size, uint8_t hardness, uint8_t opacity,
                          uint8_t angle, uint8_t aspect_ratio);
 
 int8_t DP_mypaint_dab_x(const DP_MyPaintDab *mpd);
 
 int8_t DP_mypaint_dab_y(const DP_MyPaintDab *mpd);
 
-uint16_t DP_mypaint_dab_size(const DP_MyPaintDab *mpd);
+uint32_t DP_mypaint_dab_size(const DP_MyPaintDab *mpd);
 
 uint8_t DP_mypaint_dab_hardness(const DP_MyPaintDab *mpd);
 
@@ -2126,14 +2126,14 @@ int DP_msg_draw_dabs_mypaint_dabs_count(const DP_MsgDrawDabsMyPaint *mddmp);
 #define DP_MSG_DRAW_DABS_MYPAINT_BLEND_STATIC_LENGTH 16
 
 #define DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MIN_COUNT 1
-#define DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MAX_COUNT 8189
+#define DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MAX_COUNT 7279
 
-#define DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MAX 8189
+#define DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MAX 7279
 
 typedef struct DP_MyPaintBlendDab DP_MyPaintBlendDab;
 
 void DP_mypaint_blend_dab_init(DP_MyPaintBlendDab *mpbds, int i, int8_t x,
-                               int8_t y, uint16_t size, uint8_t hardness,
+                               int8_t y, uint32_t size, uint8_t hardness,
                                uint8_t opacity, uint8_t angle,
                                uint8_t aspect_ratio);
 
@@ -2141,7 +2141,7 @@ int8_t DP_mypaint_blend_dab_x(const DP_MyPaintBlendDab *mpbd);
 
 int8_t DP_mypaint_blend_dab_y(const DP_MyPaintBlendDab *mpbd);
 
-uint16_t DP_mypaint_blend_dab_size(const DP_MyPaintBlendDab *mpbd);
+uint32_t DP_mypaint_blend_dab_size(const DP_MyPaintBlendDab *mpbd);
 
 uint8_t DP_mypaint_blend_dab_hardness(const DP_MyPaintBlendDab *mpbd);
 

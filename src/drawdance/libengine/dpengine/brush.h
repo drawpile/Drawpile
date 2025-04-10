@@ -26,6 +26,7 @@
 #include <dpmsg/blend_mode.h>
 #include <mypaint-brush-settings-gen.h>
 
+#define DP_BRUSH_SIZE_MAX                  1000
 #define DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT 256
 #define DP_MYPAINT_CONTROL_POINTS_COUNT    64
 
@@ -128,13 +129,13 @@ float DP_classic_brush_smudge_at(const DP_ClassicBrush *cb, float pressure,
 DP_BlendMode DP_classic_brush_blend_mode(const DP_ClassicBrush *cb);
 
 
-uint16_t DP_classic_brush_soft_dab_size_at(const DP_ClassicBrush *cb,
+uint32_t DP_classic_brush_soft_dab_size_at(const DP_ClassicBrush *cb,
                                            float pressure, float velocity,
                                            float distance);
 
-uint8_t DP_classic_brush_pixel_dab_size_at(const DP_ClassicBrush *cb,
-                                           float pressure, float velocity,
-                                           float distance);
+uint16_t DP_classic_brush_pixel_dab_size_at(const DP_ClassicBrush *cb,
+                                            float pressure, float velocity,
+                                            float distance);
 
 uint8_t DP_classic_brush_dab_opacity_at(const DP_ClassicBrush *cb,
                                         float pressure, float velocity,

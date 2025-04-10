@@ -754,7 +754,8 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 
 	d->classicSizeSpinner = new KisSliderSpinBox{widget};
 	layout->addWidget(d->classicSizeSpinner);
-	d->classicSizeSpinner->setRange(0, 255);
+	d->classicSizeSpinner->setExponentRatio(3.0);
+	d->classicSizeSpinner->setRange(0, 1000);
 	d->classicSizeSpinner->setPrefix(tr("Size: "));
 	d->classicSizeSpinner->setSuffix(tr("px"));
 	connect(
@@ -771,7 +772,8 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 
 	d->classicSizeMinSpinner = new KisSliderSpinBox{widget};
 	layout->addWidget(d->classicSizeMinSpinner);
-	d->classicSizeMinSpinner->setRange(0, 255);
+	d->classicSizeMinSpinner->setExponentRatio(3.0);
+	d->classicSizeMinSpinner->setRange(0, 1000);
 	d->classicSizeMinSpinner->setPrefix(tr("Minimum Size: "));
 	d->classicSizeMinSpinner->setSuffix(tr("px"));
 	connect(

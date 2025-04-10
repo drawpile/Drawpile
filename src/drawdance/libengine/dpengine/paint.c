@@ -32,6 +32,7 @@
  *
  */
 #include "paint.h"
+#include "brush.h"
 #include "draw_context.h"
 #include "layer_content.h"
 #include "pixels.h"
@@ -69,11 +70,11 @@ static uint16_t *generate_classic_lut(int index)
     return cl;
 }
 
-static const uint16_t *get_classic_lut(double hardness)
+static const uint16_t *get_classic_lut(float hardness)
 {
     DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(lock);
     static uint16_t *classic_luts[CLASSIC_LUT_COUNT];
-    int index = DP_double_to_int(hardness * 100.0);
+    int index = DP_float_to_int(hardness * 100.0f);
     DP_ASSERT(index >= CLASSIC_LUT_MIN_HARDNESS);
     DP_ASSERT(index <= CLASSIC_LUT_MAX_HARDNESS);
     uint16_t *cl = classic_luts[index];
@@ -92,24 +93,34 @@ static const uint16_t *get_classic_lut(double hardness)
     }
 }
 
-
-static DP_BrushStamp make_brush_stamp1(DP_DrawContext *dc)
+uint32_t clamp_subpixel_dab_size(uint32_t size)
 {
-    return (DP_BrushStamp){0, 0, 0, DP_draw_context_stamp_buffer1(dc)};
+    uint32_t max_size = (uint32_t)DP_BRUSH_SIZE_MAX * (uint32_t)256;
+    return size < max_size ? size : max_size;
 }
 
-static DP_BrushStamp make_brush_stamp2(DP_DrawContext *dc)
+void get_classic_stamp_buffers(DP_DrawContext *dc, uint32_t max_size,
+                               uint16_t **out_mask, uint16_t **out_offset_mask)
 {
-    return (DP_BrushStamp){0, 0, 0, DP_draw_context_stamp_buffer2(dc)};
+    float diameter =
+        DP_uint32_to_float(clamp_subpixel_dab_size(max_size)) / 256.0f;
+    size_t diameter_squared =
+        DP_square_size(DP_float_to_size(floorf(diameter + 4.0f)));
+    size_t mask_size = diameter_squared * sizeof(**out_mask);
+    size_t alignment = DP_SIMD_ALIGNMENT;
+    size_t padding = (alignment - (mask_size % alignment)) % alignment;
+    size_t offset_mask_size = diameter_squared * sizeof(**out_offset_mask);
+
+    unsigned char *buffer = DP_draw_context_pool_require(
+        dc, mask_size + padding + offset_mask_size);
+    *out_mask = (void *)buffer;
+    *out_offset_mask = (void *)(buffer + mask_size + padding);
 }
 
-
-static void prepare_stamp(DP_BrushStamp *stamp, double hardness, double radius,
+static void prepare_stamp(DP_BrushStamp *stamp, float hardness, float radius,
                           int diameter, const uint16_t **out_lut,
                           float *out_lut_scale)
 {
-    DP_ASSERT(diameter <= DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER);
-    DP_ASSERT(DP_square_int(diameter) <= DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE);
     stamp->diameter = diameter;
 
     int stamp_offsets = -diameter / 2;
@@ -117,13 +128,12 @@ static void prepare_stamp(DP_BrushStamp *stamp, double hardness, double radius,
     stamp->left = stamp_offsets;
 
     *out_lut = get_classic_lut(hardness);
-    *out_lut_scale = DP_double_to_float(
-        DP_square_double((CLASSIC_LUT_RADIUS - 1.0) / radius));
+    *out_lut_scale = DP_square_float((CLASSIC_LUT_RADIUS - 1.0f) / radius);
 }
 
-static void get_mask(DP_BrushStamp *stamp, double radius, double hardness)
+static void get_mask(DP_BrushStamp *stamp, float radius, float hardness)
 {
-    double r = radius / 2.0;
+    float r = radius / 2.0f;
 
     if (r < 1.0) {
         // Special case for single-pixel brush.
@@ -136,7 +146,7 @@ static void get_mask(DP_BrushStamp *stamp, double radius, double hardness)
     else {
         float offset;
         int diameter;
-        int raw_diameter = DP_double_to_int(ceil(radius) + 2.0);
+        int raw_diameter = DP_float_to_int(ceilf(radius) + 2.0f);
         bool raw_diameter_even = raw_diameter % 2 == 0;
         if (raw_diameter_even) {
             diameter = raw_diameter + 1;
@@ -158,11 +168,12 @@ static void get_mask(DP_BrushStamp *stamp, double radius, double hardness)
         uint16_t *d = stamp->data;
 
         for (int y = 0; y < diameter; ++y) {
-            double yy = DP_square_double(y - r + offset);
+            float yy = DP_square_float(DP_int_to_float(y) - r + offset);
             for (int x = 0; x < diameter; ++x) {
-                double dist =
-                    (DP_square_double(x - r + offset) + yy) * fudge * lut_scale;
-                int i = DP_double_to_int(dist);
+                float dist =
+                    (DP_square_float(DP_int_to_float(x) - r + offset) + yy)
+                    * fudge * lut_scale;
+                int i = DP_float_to_int(dist);
                 *d = i < CLASSIC_LUT_SIZE ? lut[i] : 0;
                 ++d;
             }
@@ -170,12 +181,12 @@ static void get_mask(DP_BrushStamp *stamp, double radius, double hardness)
     }
 }
 
-static void get_high_res_mask(DP_BrushStamp *stamp, double radius,
-                              double hardness)
+static void get_high_res_mask(DP_BrushStamp *stamp, float radius,
+                              float hardness)
 {
 
-    int raw_diameter = DP_double_to_int(ceil(radius) + 2.0);
-    float raw_offset = DP_double_to_float((ceil(radius) - radius) / -2.0);
+    int raw_diameter = DP_float_to_int(ceilf(radius) + 2.0f);
+    float raw_offset = (ceilf(radius) - radius) / -2.0f;
     int diameter;
     float offset;
     if (raw_diameter % 2 == 0) {
@@ -193,17 +204,19 @@ static void get_high_res_mask(DP_BrushStamp *stamp, double radius,
     uint16_t *ptr = stamp->data;
 
     for (int y = 0; y < diameter; ++y) {
-        double yy0 = DP_square_double(y * 2.0 - radius + offset);
-        double yy1 = DP_square_double(y * 2.0 + 1.0 - radius + offset);
+        float y2 = DP_int_to_float(y * 2);
+        float yy0 = DP_square_float(y2 - radius + offset);
+        float yy1 = DP_square_float(y2 + 1.0f - radius + offset);
 
         for (int x = 0; x < diameter; ++x) {
-            double xx0 = DP_square_double(x * 2.0 - radius + offset);
-            double xx1 = DP_square_double(x * 2.0 + 1.0 - radius + offset);
+            float x2 = DP_int_to_float(x * 2);
+            float xx0 = DP_square_float(x2 - radius + offset);
+            float xx1 = DP_square_float(x2 + 1.0f - radius + offset);
 
-            int dist00 = DP_double_to_int((xx0 + yy0) * lut_scale);
-            int dist01 = DP_double_to_int((xx0 + yy1) * lut_scale);
-            int dist10 = DP_double_to_int((xx1 + yy0) * lut_scale);
-            int dist11 = DP_double_to_int((xx1 + yy1) * lut_scale);
+            int dist00 = DP_float_to_int((xx0 + yy0) * lut_scale);
+            int dist01 = DP_float_to_int((xx0 + yy1) * lut_scale);
+            int dist10 = DP_float_to_int((xx1 + yy0) * lut_scale);
+            int dist11 = DP_float_to_int((xx1 + yy1) * lut_scale);
 
             uint32_t acc =
                 (dist00 < CLASSIC_LUT_SIZE ? (uint32_t)lut[dist00] : 0)
@@ -246,11 +259,11 @@ static void offset_mask(DP_BrushStamp *dst_stamp, DP_BrushStamp *src_stamp,
     }
 }
 
-static void get_classic_mask_stamp(DP_BrushStamp *stamp, double radius,
-                                   double hardness)
+static void get_classic_mask_stamp(DP_BrushStamp *stamp, float radius,
+                                   float hardness)
 {
     // Don't bother with a high-resolution mask for large brushes.
-    if (radius < 8.0) {
+    if (radius < 8.0f) {
         get_high_res_mask(stamp, radius, hardness);
     }
     else {
@@ -295,128 +308,154 @@ static void draw_dabs_classic(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                               DP_PaintDrawDabsParams *params,
                               DP_TransientLayerContent *tlc)
 {
-    unsigned int context_id = params->context_id;
-    DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
-    int blend_mode = params->blend_mode;
-    int dab_count = params->dab_count;
-    const DP_ClassicDab *dabs = params->classic.dabs;
-
     int last_x = params->origin_x;
     int last_y = params->origin_y;
-    DP_BrushStamp mask_stamp = make_brush_stamp1(dc);
-    DP_BrushStamp offset_stamp = make_brush_stamp2(dc);
-    for (int i = 0; i < dab_count; ++i) {
-        const DP_ClassicDab *dab = DP_classic_dab_at(dabs, i);
+    const DP_ClassicDab *dabs = params->classic.dabs;
+    int dab_count = params->dab_count;
 
-        int x = last_x + DP_classic_dab_x(dab);
-        int y = last_y + DP_classic_dab_y(dab);
-        double radius = DP_classic_dab_size(dab) / 256.0;
-        uint8_t opacity = DP_classic_dab_opacity(dab);
-
-        // Don't try to draw infinitesimal or fully opaque dabs.
-        if (radius >= 0.1 && opacity != 0) {
-            get_classic_mask_stamp(&mask_stamp, radius,
-                                   DP_classic_dab_hardness(dab) / 255.0);
-
-            get_classic_offset_stamp(&offset_stamp, &mask_stamp, x, y);
-
-            DP_transient_layer_content_brush_stamp_apply(
-                tlc, context_id, pixel, DP_channel8_to_15(opacity), blend_mode,
-                &offset_stamp);
+    uint32_t max_size = DP_classic_dab_size(DP_classic_dab_at(dabs, 0));
+    for (int i = 1; i < dab_count; ++i) {
+        uint32_t size = DP_classic_dab_size(DP_classic_dab_at(dabs, i));
+        if (size > max_size) {
+            max_size = size;
         }
-
-        last_x = x;
-        last_y = y;
     }
 
-    if (ucs_or_null) {
-        DP_user_cursors_activate(ucs_or_null, context_id);
-        DP_user_cursors_move(ucs_or_null, context_id, params->layer_id,
-                             last_x / 4, last_y / 4);
+    if (max_size > 0) {
+        uint16_t *mask;
+        uint16_t *offset_mask;
+        get_classic_stamp_buffers(dc, max_size, &mask, &offset_mask);
+
+        unsigned int context_id = params->context_id;
+        DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
+        int blend_mode = params->blend_mode;
+
+        DP_BrushStamp mask_stamp = {0, 0, 0, mask};
+        DP_BrushStamp offset_stamp = {0, 0, 0, offset_mask};
+        for (int i = 0; i < dab_count; ++i) {
+            const DP_ClassicDab *dab = DP_classic_dab_at(dabs, i);
+
+            int x = last_x + DP_classic_dab_x(dab);
+            int y = last_y + DP_classic_dab_y(dab);
+            float radius = DP_uint32_to_float(clamp_subpixel_dab_size(
+                               DP_classic_dab_size(dab)))
+                         / 256.0f;
+            uint8_t opacity = DP_classic_dab_opacity(dab);
+
+            // Don't try to draw infinitesimal or fully opaque dabs.
+            if (radius >= 0.1f && opacity != 0) {
+                get_classic_mask_stamp(
+                    &mask_stamp, radius,
+                    DP_uint8_to_float(DP_classic_dab_hardness(dab)) / 255.0f);
+
+                get_classic_offset_stamp(&offset_stamp, &mask_stamp, x, y);
+
+                DP_transient_layer_content_brush_stamp_apply(
+                    tlc, context_id, pixel, DP_channel8_to_15(opacity),
+                    blend_mode, &offset_stamp);
+            }
+
+            last_x = x;
+            last_y = y;
+        }
+
+        if (ucs_or_null) {
+            DP_user_cursors_activate(ucs_or_null, context_id);
+            DP_user_cursors_move(ucs_or_null, context_id, params->layer_id,
+                                 last_x / 4, last_y / 4);
+        }
     }
 }
 
 
-static void get_round_pixel_mask_stamp(DP_BrushStamp *stamp, int diameter)
+uint16_t clamp_pixel_dab_size(uint16_t size)
 {
-    DP_ASSERT(diameter <= DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER);
-    DP_ASSERT(DP_square_int(diameter) <= DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE);
-    stamp->diameter = diameter;
+    return size < DP_BRUSH_SIZE_MAX ? size : DP_BRUSH_SIZE_MAX;
+}
 
-    uint16_t *data = stamp->data;
-    double r = diameter / 2.0;
-    double rr = DP_square_double(r);
+static void get_round_pixel_mask_stamp(uint16_t *stamp_buffer, int diameter)
+{
+    DP_ASSERT(diameter <= DP_BRUSH_SIZE_MAX);
+
+    float r = DP_int_to_float(diameter) / 2.0f;
+    float rr = DP_square_float(r);
     for (int y = 0; y < diameter; ++y) {
-        double yy = DP_square_double(y - r + 0.5);
+        float yy = DP_square_float(DP_int_to_float(y) - r + 0.5f);
         for (int x = 0; x < diameter; ++x) {
-            double xx = DP_square_double(x - r + 0.5);
+            float xx = DP_square_float(DP_int_to_float(x) - r + 0.5f);
             uint16_t value = xx + yy <= rr ? DP_BIT15 : 0;
-            data[y * diameter + x] = value;
-        }
-    }
-}
-
-static void get_square_pixel_mask_stamp(DP_BrushStamp *stamp, int diameter)
-{
-    DP_ASSERT(diameter <= DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER);
-    DP_ASSERT(DP_square_int(diameter) <= DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE);
-    stamp->diameter = diameter;
-
-    uint16_t *data = stamp->data;
-    for (int y = 0; y < diameter; ++y) {
-        for (int x = 0; x < diameter; ++x) {
-            data[y * diameter + x] = DP_BIT15;
+            stamp_buffer[y * diameter + x] = value;
         }
     }
 }
 
 static void draw_dabs_pixel(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                             DP_PaintDrawDabsParams *params,
-                            DP_TransientLayerContent *tlc,
-                            void (*get_stamp)(DP_BrushStamp *, int))
+                            DP_TransientLayerContent *tlc, bool square)
 {
-    unsigned int context_id = params->context_id;
-    DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
-    int blend_mode = params->blend_mode;
-    int dab_count = params->dab_count;
-    const DP_PixelDab *dabs = params->pixel.dabs;
-
     int last_x = params->origin_x;
     int last_y = params->origin_y;
-    DP_BrushStamp stamp = make_brush_stamp1(dc);
+    const DP_PixelDab *dabs = params->pixel.dabs;
+    int dab_count = params->dab_count;
 
-    int last_size = -1;
-    for (int i = 0; i < dab_count; ++i) {
-        const DP_PixelDab *dab = DP_pixel_dab_at(dabs, i);
-        int x = last_x + DP_pixel_dab_x(dab);
-        int y = last_y + DP_pixel_dab_y(dab);
-        int size = DP_pixel_dab_size(dab);
-        uint8_t opacity = DP_pixel_dab_opacity(dab);
-
-        // Don't try to draw infinitesimal or fully opaque dabs.
-        if (size != 0 && opacity != 0) {
-            if (size != last_size) {
-                get_stamp(&stamp, size);
-                last_size = size;
-            }
-
-            int offset = size / 2;
-            stamp.left = x - offset;
-            stamp.top = y - offset;
-
-            DP_transient_layer_content_brush_stamp_apply(
-                tlc, context_id, pixel, DP_channel8_to_15(opacity), blend_mode,
-                &stamp);
+    uint16_t max_diameter = DP_pixel_dab_size(DP_pixel_dab_at(dabs, 0));
+    for (int i = 1; i < dab_count; ++i) {
+        uint16_t diameter = DP_pixel_dab_size(DP_pixel_dab_at(dabs, i));
+        if (diameter > max_diameter) {
+            max_diameter = diameter;
         }
-
-        last_x = x;
-        last_y = y;
     }
 
-    if (ucs_or_null) {
-        DP_user_cursors_activate(ucs_or_null, context_id);
-        DP_user_cursors_move(ucs_or_null, context_id, params->layer_id, last_x,
-                             last_y);
+    if (max_diameter > 0) {
+        int max_diameter_squared =
+            DP_square_int(DP_uint16_to_int(clamp_pixel_dab_size(max_diameter)));
+        uint16_t *stamp_buffer = DP_draw_context_pool_require(
+            dc, DP_int_to_size(max_diameter_squared) * sizeof(*stamp_buffer));
+
+        // Square pixel buffer is just a fully opaque square, so we only need to
+        // generate that once for the largest size here.
+        if (square) {
+            for (int i = 0; i < max_diameter_squared; ++i) {
+                stamp_buffer[i] = DP_BIT15;
+            }
+        }
+
+        unsigned int context_id = params->context_id;
+        DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
+        int blend_mode = params->blend_mode;
+        int last_diameter = -1;
+
+        for (int i = 0; i < dab_count; ++i) {
+            const DP_PixelDab *dab = DP_pixel_dab_at(dabs, i);
+            int x = last_x + DP_pixel_dab_x(dab);
+            int y = last_y + DP_pixel_dab_y(dab);
+            int diameter = clamp_pixel_dab_size(DP_pixel_dab_size(dab));
+            uint8_t opacity = DP_pixel_dab_opacity(dab);
+
+            // Don't try to draw infinitesimal or fully transparent dabs.
+            if (diameter != 0 && opacity != 0) {
+                // Round pixel dab masks need to be regenerated for new sizes.
+                if (!square && last_diameter != diameter) {
+                    get_round_pixel_mask_stamp(stamp_buffer, diameter);
+                }
+
+                int offset = diameter / 2;
+                DP_BrushStamp stamp = {y - offset, x - offset, diameter,
+                                       stamp_buffer};
+                DP_transient_layer_content_brush_stamp_apply(
+                    tlc, context_id, pixel, DP_channel8_to_15(opacity),
+                    blend_mode, &stamp);
+            }
+
+            last_x = x;
+            last_y = y;
+        }
+
+        if (ucs_or_null) {
+            DP_user_cursors_activate(ucs_or_null, context_id);
+            DP_user_cursors_move(ucs_or_null, context_id, params->layer_id,
+                                 last_x, last_y);
+        }
     }
 }
 
@@ -837,14 +876,16 @@ static void get_mypaint_brush_stamp_offsets(DP_BrushStamp *stamp, float x,
     stamp->left = DP_float_to_int(x - radius + 0.5f);
 }
 
-static float
-get_mypaint_brush_stamp(DP_BrushStamp *stamp, DP_DrawContext *dc, int raw_x,
-                        int raw_y, uint16_t raw_diameter, uint8_t raw_hardness,
-                        uint8_t raw_aspect_ratio, uint8_t raw_angle)
+static float get_mypaint_brush_stamp(DP_BrushStamp *stamp, uint16_t *mask,
+                                     float *rr_mask, int raw_x, int raw_y,
+                                     uint32_t raw_diameter,
+                                     uint8_t raw_hardness,
+                                     uint8_t raw_aspect_ratio,
+                                     uint8_t raw_angle)
 {
     float x = DP_int_to_float(raw_x) / 4.0f;
     float y = DP_int_to_float(raw_y) / 4.0f;
-    float diameter = DP_uint16_to_float(raw_diameter) / 256.0f;
+    float diameter = DP_uint32_to_float(raw_diameter) / 256.0f;
     float hardness = DP_uint8_to_float(raw_hardness) / 255.0f;
     float aspect_ratio = aspect_ratio_from_uint8(raw_aspect_ratio);
     float angle = DP_uint8_to_float(raw_angle) / 255.0f;
@@ -860,12 +901,10 @@ get_mypaint_brush_stamp(DP_BrushStamp *stamp, DP_DrawContext *dc, int raw_x,
 
     float radius = diameter / 2.0f;
     int idia = DP_float_to_int(floorf(diameter + 2.0f));
-    DP_ASSERT(idia < DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER);
     float one_over_radius2 = 1.0f / (radius * radius);
 
     // Like MyPaint, we precalculate the RR mask because that's way faster than
     // doing each value inline, about twice as fast by my measurements.
-    float *rr_mask = DP_draw_context_rr_mask_buffer(dc);
     if (radius < 3.0f) {
         float aa_start = DP_max_float(0.0f, radius - AA_BORDER);
         float r_aa_start = aa_start * (aa_start / aspect_ratio);
@@ -882,7 +921,6 @@ get_mypaint_brush_stamp(DP_BrushStamp *stamp, DP_DrawContext *dc, int raw_x,
                           one_over_radius2);
     }
 
-    uint16_t *mask = DP_draw_context_stamp_buffer1(dc);
     calculate_opa(mask, rr_mask, idia * idia, hardness, segment1_offset,
                   segment1_slope, segment2_offset, segment2_slope);
 
@@ -893,6 +931,24 @@ get_mypaint_brush_stamp(DP_BrushStamp *stamp, DP_DrawContext *dc, int raw_x,
 }
 
 // End of libmypaint-based code.
+
+void get_mypaint_stamp_buffers(DP_DrawContext *dc, uint32_t max_size,
+                               uint16_t **out_mask, float **out_rr_mask)
+{
+    float diameter =
+        DP_uint32_to_float(clamp_subpixel_dab_size(max_size)) / 256.0f;
+    size_t diameter_squared =
+        DP_square_size(DP_float_to_size(floorf(diameter + 2.0f)));
+    size_t mask_size = diameter_squared * sizeof(**out_mask);
+    size_t alignment = DP_SIMD_ALIGNMENT;
+    size_t padding = (alignment - (mask_size % alignment)) % alignment;
+    size_t rr_mask_size = diameter_squared * sizeof(**out_rr_mask);
+
+    unsigned char *buffer =
+        DP_draw_context_pool_require(dc, mask_size + padding + rr_mask_size);
+    *out_mask = (void *)buffer;
+    *out_rr_mask = (void *)(buffer + mask_size + padding);
+}
 
 static uint16_t scale_opacity(float ratio, float opacity)
 {
@@ -938,83 +994,100 @@ static void draw_dabs_mypaint(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                               DP_PaintDrawDabsParams *params,
                               DP_TransientLayerContent *tlc)
 {
-    unsigned int context_id = params->context_id;
-    DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
-    int dab_count = params->dab_count;
     const DP_MyPaintDab *dabs = params->mypaint.dabs;
-
-    float lock_alpha = DP_uint8_to_float(params->mypaint.lock_alpha) / 255.0f;
-    float colorize = DP_uint8_to_float(params->mypaint.colorize) / 255.0f;
-    float posterize = DP_uint8_to_float(params->mypaint.posterize) / 255.0f;
-    int posterize_num =
-        DP_max_int(0, DP_min_int(127, params->mypaint.posterize_num)) + 1;
-    float normal =
-        1.0f * (1.0f - lock_alpha) * (1.0f - colorize) * (1.0f - posterize);
-
-    // If two subsequent dabs use the same parameters, we can avoid the effort
-    // of generating a new mask. The first dab is guaranteed to exist, a draw
-    // dabs command with 0 dabs is rejected before we get here.
+    int dab_count = params->dab_count;
+    DP_ASSERT(dab_count > 0);
     const DP_MyPaintDab *first_dab = DP_mypaint_dab_at(dabs, 0);
     int last_x = params->origin_x + DP_mypaint_dab_x(first_dab);
     int last_y = params->origin_y + DP_mypaint_dab_y(first_dab);
-    // FIXME: size is supposed to be the radius, not the diameter. I think.
-    uint16_t last_size = DP_mypaint_dab_size(first_dab);
-    uint8_t last_hardness = DP_mypaint_dab_hardness(first_dab);
-    uint8_t last_aspect_ratio = DP_mypaint_dab_aspect_ratio(first_dab);
-    uint8_t last_angle = DP_mypaint_dab_angle(first_dab);
 
-    DP_BrushStamp stamp;
-    float radius =
-        get_mypaint_brush_stamp(&stamp, dc, last_x, last_y, last_size,
-                                last_hardness, last_aspect_ratio, last_angle);
-    apply_mypaint_dab(tlc, context_id, pixel, normal, lock_alpha, colorize,
-                      posterize, posterize_num, &stamp,
-                      DP_mypaint_dab_opacity(first_dab));
-    if (ucs_or_null) {
-        DP_user_cursors_activate(ucs_or_null, context_id);
-        DP_user_cursors_move_smooth(ucs_or_null, context_id, params->layer_id,
-                                    last_x / 4, last_y / 4, radius);
+    uint32_t max_size = DP_mypaint_dab_size(first_dab);
+    for (int i = 1; i < dab_count; ++i) {
+        uint32_t size = DP_mypaint_dab_size(DP_mypaint_dab_at(dabs, i));
+        if (size > max_size) {
+            max_size = size;
+        }
     }
 
-    for (int i = 1; i < dab_count; ++i) {
-        const DP_MyPaintDab *dab = DP_mypaint_dab_at(dabs, i);
-        int x = last_x + DP_mypaint_dab_x(dab);
-        int y = last_y + DP_mypaint_dab_y(dab);
+    if (max_size > 0) {
+        uint16_t *mask;
+        float *rr_mask;
+        get_mypaint_stamp_buffers(dc, max_size, &mask, &rr_mask);
 
-        uint16_t size = DP_mypaint_dab_size(dab);
-        uint8_t hardness = DP_mypaint_dab_hardness(dab);
-        uint8_t aspect_ratio = DP_mypaint_dab_aspect_ratio(dab);
-        uint8_t angle = DP_mypaint_dab_angle(dab);
-        bool needs_new_mask = hardness != last_hardness || size != last_size
-                           || aspect_ratio != last_aspect_ratio
-                           || angle != last_angle;
+        unsigned int context_id = params->context_id;
+        DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
 
-        if (needs_new_mask) {
-            radius = get_mypaint_brush_stamp(&stamp, dc, x, y, size, hardness,
-                                             aspect_ratio, angle);
-            last_hardness = hardness;
-            last_size = size;
-            last_aspect_ratio = aspect_ratio;
-            last_angle = angle;
-        }
-        else {
-            float xf = DP_int_to_float(x) / 4.0f;
-            float yf = DP_int_to_float(y) / 4.0f;
-            radius = DP_int_to_float(size) / 256.0f / 2.0f;
-            get_mypaint_brush_stamp_offsets(&stamp, xf, yf, radius);
-        }
+        float lock_alpha =
+            DP_uint8_to_float(params->mypaint.lock_alpha) / 255.0f;
+        float colorize = DP_uint8_to_float(params->mypaint.colorize) / 255.0f;
+        float posterize = DP_uint8_to_float(params->mypaint.posterize) / 255.0f;
+        int posterize_num =
+            DP_max_int(0, DP_min_int(127, params->mypaint.posterize_num)) + 1;
+        float normal =
+            1.0f * (1.0f - lock_alpha) * (1.0f - colorize) * (1.0f - posterize);
 
+        uint32_t last_size =
+            clamp_subpixel_dab_size(DP_mypaint_dab_size(first_dab));
+        uint8_t last_hardness = DP_mypaint_dab_hardness(first_dab);
+        uint8_t last_aspect_ratio = DP_mypaint_dab_aspect_ratio(first_dab);
+        uint8_t last_angle = DP_mypaint_dab_angle(first_dab);
+
+        DP_BrushStamp stamp;
+        float radius = get_mypaint_brush_stamp(&stamp, mask, rr_mask, last_x,
+                                               last_y, last_size, last_hardness,
+                                               last_aspect_ratio, last_angle);
         apply_mypaint_dab(tlc, context_id, pixel, normal, lock_alpha, colorize,
                           posterize, posterize_num, &stamp,
-                          DP_mypaint_dab_opacity(dab));
-
+                          DP_mypaint_dab_opacity(first_dab));
         if (ucs_or_null) {
+            DP_user_cursors_activate(ucs_or_null, context_id);
             DP_user_cursors_move_smooth(ucs_or_null, context_id,
-                                        params->layer_id, x / 4, y / 4, radius);
+                                        params->layer_id, last_x / 4,
+                                        last_y / 4, radius);
         }
 
-        last_x = x;
-        last_y = y;
+        for (int i = 1; i < dab_count; ++i) {
+            const DP_MyPaintDab *dab = DP_mypaint_dab_at(dabs, i);
+            int x = last_x + DP_mypaint_dab_x(dab);
+            int y = last_y + DP_mypaint_dab_y(dab);
+
+            uint32_t size = clamp_subpixel_dab_size(DP_mypaint_dab_size(dab));
+            uint8_t hardness = DP_mypaint_dab_hardness(dab);
+            uint8_t aspect_ratio = DP_mypaint_dab_aspect_ratio(dab);
+            uint8_t angle = DP_mypaint_dab_angle(dab);
+            bool needs_new_mask = hardness != last_hardness || size != last_size
+                               || aspect_ratio != last_aspect_ratio
+                               || angle != last_angle;
+
+            if (needs_new_mask) {
+                radius =
+                    get_mypaint_brush_stamp(&stamp, mask, rr_mask, x, y, size,
+                                            hardness, aspect_ratio, angle);
+                last_hardness = hardness;
+                last_size = size;
+                last_aspect_ratio = aspect_ratio;
+                last_angle = angle;
+            }
+            else {
+                float xf = DP_int_to_float(x) / 4.0f;
+                float yf = DP_int_to_float(y) / 4.0f;
+                radius = DP_uint32_to_float(size) / 256.0f / 2.0f;
+                get_mypaint_brush_stamp_offsets(&stamp, xf, yf, radius);
+            }
+
+            apply_mypaint_dab(tlc, context_id, pixel, normal, lock_alpha,
+                              colorize, posterize, posterize_num, &stamp,
+                              DP_mypaint_dab_opacity(dab));
+
+            if (ucs_or_null) {
+                DP_user_cursors_move_smooth(ucs_or_null, context_id,
+                                            params->layer_id, x / 4, y / 4,
+                                            radius);
+            }
+
+            last_x = x;
+            last_y = y;
+        }
     }
 }
 
@@ -1023,79 +1096,98 @@ static void draw_dabs_mypaint_blend(DP_DrawContext *dc,
                                     DP_PaintDrawDabsParams *params,
                                     DP_TransientLayerContent *tlc)
 {
-    unsigned int context_id = params->context_id;
-    DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
-    int blend_mode = params->blend_mode;
-    int dab_count = params->dab_count;
     const DP_MyPaintBlendDab *dabs = params->mypaint_blend.dabs;
-
-    // If two subsequent dabs use the same parameters, we can avoid the effort
-    // of generating a new mask. The first dab is guaranteed to exist, a draw
-    // dabs command with 0 dabs is rejected before we get here.
+    int dab_count = params->dab_count;
+    DP_ASSERT(dab_count > 0);
     const DP_MyPaintBlendDab *first_dab = DP_mypaint_blend_dab_at(dabs, 0);
     int last_x = params->origin_x + DP_mypaint_blend_dab_x(first_dab);
     int last_y = params->origin_y + DP_mypaint_blend_dab_y(first_dab);
-    // FIXME: size is supposed to be the radius, not the diameter. I think.
-    uint16_t last_size = DP_mypaint_blend_dab_size(first_dab);
-    uint8_t last_hardness = DP_mypaint_blend_dab_hardness(first_dab);
-    uint8_t last_aspect_ratio = DP_mypaint_blend_dab_aspect_ratio(first_dab);
-    uint8_t last_angle = DP_mypaint_blend_dab_angle(first_dab);
 
-    DP_BrushStamp stamp;
-    float radius =
-        get_mypaint_brush_stamp(&stamp, dc, last_x, last_y, last_size,
-                                last_hardness, last_aspect_ratio, last_angle);
-    DP_transient_layer_content_brush_stamp_apply(
-        tlc, context_id, pixel,
-        DP_channel8_to_15(DP_mypaint_blend_dab_opacity(first_dab)), blend_mode,
-        &stamp);
-
-    if (ucs_or_null) {
-        DP_user_cursors_activate(ucs_or_null, context_id);
-        DP_user_cursors_move_smooth(ucs_or_null, context_id, params->layer_id,
-                                    last_x / 4, last_y / 4, radius);
+    uint32_t max_size = DP_mypaint_blend_dab_size(first_dab);
+    for (int i = 1; i < dab_count; ++i) {
+        uint32_t size =
+            DP_mypaint_blend_dab_size(DP_mypaint_blend_dab_at(dabs, i));
+        if (size > max_size) {
+            max_size = size;
+        }
     }
 
-    for (int i = 1; i < dab_count; ++i) {
-        const DP_MyPaintBlendDab *dab = DP_mypaint_blend_dab_at(dabs, i);
-        int x = last_x + DP_mypaint_blend_dab_x(dab);
-        int y = last_y + DP_mypaint_blend_dab_y(dab);
+    if (max_size > 0) {
+        uint16_t *mask;
+        float *rr_mask;
+        get_mypaint_stamp_buffers(dc, max_size, &mask, &rr_mask);
 
-        uint16_t size = DP_mypaint_blend_dab_size(dab);
-        uint8_t hardness = DP_mypaint_blend_dab_hardness(dab);
-        uint8_t aspect_ratio = DP_mypaint_blend_dab_aspect_ratio(dab);
-        uint8_t angle = DP_mypaint_blend_dab_angle(dab);
-        bool needs_new_mask = hardness != last_hardness || size != last_size
-                           || aspect_ratio != last_aspect_ratio
-                           || angle != last_angle;
+        unsigned int context_id = params->context_id;
+        DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
+        int blend_mode = params->blend_mode;
 
-        if (needs_new_mask) {
-            radius = get_mypaint_brush_stamp(&stamp, dc, x, y, size, hardness,
-                                             aspect_ratio, angle);
-            last_hardness = hardness;
-            last_size = size;
-            last_aspect_ratio = aspect_ratio;
-            last_angle = angle;
-        }
-        else {
-            float xf = DP_int_to_float(x) / 4.0f;
-            float yf = DP_int_to_float(y) / 4.0f;
-            radius = DP_int_to_float(size) / 256.0f / 2.0f;
-            get_mypaint_brush_stamp_offsets(&stamp, xf, yf, radius);
-        }
+        uint32_t last_size =
+            clamp_subpixel_dab_size(DP_mypaint_blend_dab_size(first_dab));
+        uint8_t last_hardness = DP_mypaint_blend_dab_hardness(first_dab);
+        uint8_t last_aspect_ratio =
+            DP_mypaint_blend_dab_aspect_ratio(first_dab);
+        uint8_t last_angle = DP_mypaint_blend_dab_angle(first_dab);
 
+        DP_BrushStamp stamp;
+        float radius = get_mypaint_brush_stamp(&stamp, mask, rr_mask, last_x,
+                                               last_y, last_size, last_hardness,
+                                               last_aspect_ratio, last_angle);
         DP_transient_layer_content_brush_stamp_apply(
             tlc, context_id, pixel,
-            DP_channel8_to_15(DP_mypaint_blend_dab_opacity(dab)), blend_mode,
-            &stamp);
+            DP_channel8_to_15(DP_mypaint_blend_dab_opacity(first_dab)),
+            blend_mode, &stamp);
 
         if (ucs_or_null) {
+            DP_user_cursors_activate(ucs_or_null, context_id);
             DP_user_cursors_move_smooth(ucs_or_null, context_id,
-                                        params->layer_id, x / 4, y / 4, radius);
+                                        params->layer_id, last_x / 4,
+                                        last_y / 4, radius);
         }
 
-        last_x = x;
-        last_y = y;
+        for (int i = 1; i < dab_count; ++i) {
+            const DP_MyPaintBlendDab *dab = DP_mypaint_blend_dab_at(dabs, i);
+            int x = last_x + DP_mypaint_blend_dab_x(dab);
+            int y = last_y + DP_mypaint_blend_dab_y(dab);
+
+            uint32_t size =
+                clamp_subpixel_dab_size(DP_mypaint_blend_dab_size(dab));
+            uint8_t hardness = DP_mypaint_blend_dab_hardness(dab);
+            uint8_t aspect_ratio = DP_mypaint_blend_dab_aspect_ratio(dab);
+            uint8_t angle = DP_mypaint_blend_dab_angle(dab);
+            bool needs_new_mask = hardness != last_hardness || size != last_size
+                               || aspect_ratio != last_aspect_ratio
+                               || angle != last_angle;
+
+            if (needs_new_mask) {
+                radius =
+                    get_mypaint_brush_stamp(&stamp, mask, rr_mask, x, y, size,
+                                            hardness, aspect_ratio, angle);
+                last_hardness = hardness;
+                last_size = size;
+                last_aspect_ratio = aspect_ratio;
+                last_angle = angle;
+            }
+            else {
+                float xf = DP_int_to_float(x) / 4.0f;
+                float yf = DP_int_to_float(y) / 4.0f;
+                radius = DP_uint32_to_float(size) / 256.0f / 2.0f;
+                get_mypaint_brush_stamp_offsets(&stamp, xf, yf, radius);
+            }
+
+            DP_transient_layer_content_brush_stamp_apply(
+                tlc, context_id, pixel,
+                DP_channel8_to_15(DP_mypaint_blend_dab_opacity(dab)),
+                blend_mode, &stamp);
+
+            if (ucs_or_null) {
+                DP_user_cursors_move_smooth(ucs_or_null, context_id,
+                                            params->layer_id, x / 4, y / 4,
+                                            radius);
+            }
+
+            last_x = x;
+            last_y = y;
+        }
     }
 }
 
@@ -1114,12 +1206,10 @@ void DP_paint_draw_dabs(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
         draw_dabs_classic(dc, ucs_or_null, params, tlc);
         break;
     case DP_MSG_DRAW_DABS_PIXEL:
-        draw_dabs_pixel(dc, ucs_or_null, params, tlc,
-                        get_round_pixel_mask_stamp);
+        draw_dabs_pixel(dc, ucs_or_null, params, tlc, false);
         break;
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-        draw_dabs_pixel(dc, ucs_or_null, params, tlc,
-                        get_square_pixel_mask_stamp);
+        draw_dabs_pixel(dc, ucs_or_null, params, tlc, true);
         break;
     case DP_MSG_DRAW_DABS_MYPAINT:
         draw_dabs_mypaint(dc, ucs_or_null, params, tlc);
@@ -1139,22 +1229,23 @@ DP_BrushStamp DP_paint_color_sampling_stamp_make(uint16_t *data, int diameter,
 {
     DP_ASSERT(data);
     DP_ASSERT(diameter > 0);
-    DP_ASSERT(diameter <= DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER);
+    DP_ASSERT(diameter <= 255);
 
     const uint16_t *lut = get_classic_lut(0.5);
     int radius = diameter / 2;
 
     // Optimization, no need to recalculate the mask for the same diameter.
     if (diameter != last_diameter) {
-        float lut_scale = DP_double_to_float(
-            DP_square_double((CLASSIC_LUT_RADIUS - 1.0) / radius));
+        float rf = DP_int_to_float(radius);
+        float lut_scale = DP_square_float((CLASSIC_LUT_RADIUS - 1.0f) / rf);
         uint16_t *d = data;
 
         for (int y = 0; y < diameter; ++y) {
-            int yy = DP_double_to_int(DP_square_double(y - radius));
+            float yy = DP_square_float(DP_int_to_float(y) - rf);
             for (int x = 0; x < diameter; ++x) {
-                double dist = (DP_square_double(x - radius) + yy) * lut_scale;
-                int i = DP_double_to_int(dist);
+                float dist =
+                    (DP_square_float(DP_int_to_float(x) - rf) + yy) * lut_scale;
+                int i = DP_float_to_int(dist);
                 *d = i < CLASSIC_LUT_SIZE ? lut[i] : 0;
                 ++d;
             }

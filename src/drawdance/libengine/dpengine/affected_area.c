@@ -105,11 +105,11 @@ static struct SubpixelDabs subpixel_dabs_init(int32_t x, int32_t y)
 }
 
 static void subpixel_dabs_update(struct SubpixelDabs *s, int32_t dab_x,
-                                 int32_t dab_y, uint16_t dab_size)
+                                 int32_t dab_y, uint32_t dab_size)
 {
     double x = s->last_x + DP_int32_to_double(dab_x) / 4.0;
     double y = s->last_y + DP_int32_to_double(dab_y) / 4.0;
-    double d = DP_uint16_to_double(dab_size) / 256.0;
+    double d = DP_uint32_to_double(dab_size) / 256.0;
     double r = d / 2.0;
     int dim = DP_double_to_int(d) + 1;
     s->bounds = DP_rect_union(s->bounds,
