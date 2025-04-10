@@ -35,10 +35,6 @@ typedef struct DP_LayerProps DP_LayerProps;
 typedef union DP_Pixel8 DP_Pixel8;
 
 
-#define DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER 260
-#define DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE \
-    (DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER * DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER)
-
 #define DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE 204
 #define DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE  8192
 #define DP_DRAW_CONTEXT_RASTER_POOL_MAX_SIZE  (1024 * 1024)
@@ -55,9 +51,6 @@ typedef struct DP_DrawContextStatistics {
     size_t pool_bytes;
 } DP_DrawContextStatistics;
 
-typedef uint16_t DP_BrushStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
-typedef float DP_RrMaskBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
-
 typedef struct DP_DrawContext DP_DrawContext;
 
 
@@ -71,15 +64,6 @@ DP_DrawContextStatistics DP_draw_context_statistics(DP_DrawContext *dc);
 
 // All of the following operations share the same memory, their use can't be
 // intermixed within the same operation, they must be used in sequence.
-
-// You can use both stamp buffer 1 and *either* stamp buffer 2 *or* the RR mask
-// buffer in the same operation. The latter two buffers share the same memory
-// amongst each other again. In practice, pixel brushes only use stamp buffer 1,
-// classic brushes use stamp buffers 1 and 2, MyPaint brushes use stamp buffer 1
-// and the RR mask buffer.
-uint16_t *DP_draw_context_stamp_buffer1(DP_DrawContext *dc);
-uint16_t *DP_draw_context_stamp_buffer2(DP_DrawContext *dc);
-float *DP_draw_context_rr_mask_buffer(DP_DrawContext *dc);
 
 DP_Pixel8 *DP_draw_context_transform_buffer(DP_DrawContext *dc);
 
