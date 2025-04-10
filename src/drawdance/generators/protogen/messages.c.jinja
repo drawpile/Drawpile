@@ -339,12 +339,6 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
     {% for f in message.fields %}
         {% if f.sub %}
 
-            struct {{ f.sub.struct_name }} {
-                {% for sf in f.sub.fields %}
-                    {{ sf.struct_declaration }};
-                {% endfor %}
-            };
-
             static size_t {{ f.sub.func_name }}_serialize_payload({{ f.sub.param }}, unsigned char *data)
             {
                 size_t written = 0;

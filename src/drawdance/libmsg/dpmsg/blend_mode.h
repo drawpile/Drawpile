@@ -99,6 +99,14 @@ typedef enum DP_BlendMode {
     DP_BLEND_MODE_COUNT,
 } DP_BlendMode;
 
+typedef enum DP_PaintMode {
+    DP_PAINT_MODE_DIRECT,
+    DP_PAINT_MODE_INDIRECT_COMPARE_DENSITY,
+    DP_PAINT_MODE_INDIRECT_ALPHA_DARKEN,
+    DP_PAINT_MODE_INDIRECT_NORMAL,
+    DP_PAINT_MODE_COUNT,
+} DP_PaintMode;
+
 
 bool DP_blend_mode_exists(int blend_mode);
 
