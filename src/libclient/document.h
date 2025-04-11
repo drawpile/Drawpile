@@ -285,7 +285,8 @@ public slots:
 	// Convenience slots
 	void sendPointerMove(const QPointF &point);
 	void sendSessionConf(const QJsonObject &sessionconf);
-	void sendFeatureAccessLevelChange(const uint8_t[DP_FEATURE_COUNT]);
+	void sendFeatureAccessLevelChange(const QVector<uint8_t> &tiers);
+	void sendFeatureLimitsChange(const QVector<int32_t> &limits);
 	void sendLockSession(bool lock = true);
 	void sendOpword(const QString &opword);
 	void sendResetSession(

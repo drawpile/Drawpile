@@ -211,6 +211,7 @@ private slots:
 
 	void onOperatorModeChange(bool op);
 	void onFeatureAccessChange(DP_Feature feature, bool canUse);
+	void onBrushSizeLimitChange(int brushSizeLimit);
 	void onUndoDepthLimitSet(int undoDepthLimit);
 
 	void onServerConnected();

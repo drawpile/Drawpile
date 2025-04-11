@@ -291,6 +291,20 @@ static void read_uint16_array(int count, uint16_t *out, void *user)
 #endif
 }
 
+static void read_int32_array(int count, int32_t *out, void *user)
+{
+    const unsigned char *buffer = user;
+#if defined(DP_BYTE_ORDER_LITTLE_ENDIAN)
+    for (int i = 0; i < count; ++i) {
+        out[i] = DP_read_bigendian_int32(buffer + i * 4);
+    }
+#elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
+    memcpy(out, buffer, DP_int_to_size(count) * 4);
+#else
+#   error "Unknown byte order"
+#endif
+}
+
 static size_t write_bytes(const unsigned char *DP_RESTRICT x, int count, unsigned char *DP_RESTRICT out)
 {
     return DP_write_bytes(x, count, 1, out);

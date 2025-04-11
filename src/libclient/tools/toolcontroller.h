@@ -135,6 +135,8 @@ public:
 		m_selectionParams = selectionParams;
 	}
 
+	void setBrushSizeLimit(int brushSizeLimit);
+
 	net::Client *client() const { return m_client; }
 
 	Tool *getTool(Tool::Type type);

@@ -68,6 +68,7 @@ typedef enum DP_MessageType {
     DP_MSG_UNDO_DEPTH = 74,
     DP_MSG_DATA = 75,
     DP_MSG_LOCAL_CHANGE = 76,
+    DP_MSG_FEATURE_LIMITS = 77,
     DP_MSG_UNDO_POINT = 128,
     DP_MSG_CANVAS_RESIZE = 129,
     DP_MSG_REMOVED_LAYER_CREATE = 130,
@@ -995,6 +996,39 @@ const unsigned char *DP_msg_local_change_body(const DP_MsgLocalChange *mlc,
                                               size_t *out_size);
 
 size_t DP_msg_local_change_body_size(const DP_MsgLocalChange *mlc);
+
+
+/*
+ * DP_MSG_FEATURE_LIMITS
+ *
+ * Change feature limits.
+ */
+
+#define DP_MSG_FEATURE_LIMITS_STATIC_LENGTH 0
+
+#define DP_MSG_FEATURE_LIMITS_LIMITS_MIN_COUNT 4
+#define DP_MSG_FEATURE_LIMITS_LIMITS_MAX_COUNT 255
+
+typedef struct DP_MsgFeatureLimits DP_MsgFeatureLimits;
+
+DP_Message *DP_msg_feature_limits_new(unsigned int context_id,
+                                      void (*set_limits)(int, int32_t *,
+                                                         void *),
+                                      int limits_count, void *limits_user);
+
+DP_Message *DP_msg_feature_limits_deserialize(unsigned int context_id,
+                                              const unsigned char *buffer,
+                                              size_t length);
+
+DP_Message *DP_msg_feature_limits_parse(unsigned int context_id,
+                                        DP_TextReader *reader);
+
+DP_MsgFeatureLimits *DP_msg_feature_limits_cast(DP_Message *msg);
+
+const int32_t *DP_msg_feature_limits_limits(const DP_MsgFeatureLimits *mfl,
+                                            int *out_count);
+
+int DP_msg_feature_limits_limits_count(const DP_MsgFeatureLimits *mfl);
 
 
 /*

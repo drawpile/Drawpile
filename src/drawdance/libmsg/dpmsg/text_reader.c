@@ -568,7 +568,7 @@ static unsigned long get_ulong(const char *key, unsigned long max,
             return ul;
         }
         else {
-            DP_warn("Unsigned field '%s' value %f not in bounds [0, %ld]", key,
+            DP_warn("Unsigned field '%s' value %f not in bounds [0, %lu]", key,
                     d, max);
             return 0UL;
         }
@@ -787,9 +787,33 @@ DP_text_reader_get_array(DP_TextReader *reader, const char *key, int *out_count)
     }
 }
 
-static unsigned long parse_array_value(JSON_Array *array, size_t array_count,
-                                       const char *title, unsigned long max,
-                                       int i)
+static long parse_iarray_value(JSON_Array *array, size_t array_count,
+                               const char *title, long min, long max, int i)
+{
+    size_t si = DP_int_to_size(i);
+    if (si >= array_count) {
+        return 0UL;
+    }
+
+    JSON_Value *value = json_array_get_value(array, si);
+    if (json_value_get_type(value) != JSONNumber) {
+        DP_warn("Value %d in %s is not a string", i, title);
+        return 0UL;
+    }
+
+    double d = json_value_get_number(value);
+    long l = lround(d);
+    if (l < min || l > max) {
+        DP_warn("Value %d in %s not in bounds [%ld, %ld]", i, title, min, max);
+        return 0UL;
+    }
+
+    return l;
+}
+
+static unsigned long parse_uarray_value(JSON_Array *array, size_t array_count,
+                                        const char *title, unsigned long max,
+                                        int i)
 {
     size_t si = DP_int_to_size(i);
     if (si >= array_count) {
@@ -805,16 +829,37 @@ static unsigned long parse_array_value(JSON_Array *array, size_t array_count,
     double d = json_value_get_number(value);
     unsigned long ul;
     if (d < 0.0 || (ul = DP_double_to_ulong(d + 0.5)) > max) {
-        DP_warn("Value %d in %s not in bounds [0, %ld]", i, title, max);
+        DP_warn("Value %d in %s not in bounds [0, %lu]", i, title, max);
         return 0UL;
     }
 
     return ul;
 }
 
-static void parse_array(int count, DP_TextReaderParseParams *params,
-                        const char *title, unsigned long max,
-                        void (*set_at)(void *, int, unsigned long), void *user)
+static void parse_iarray(int count, DP_TextReaderParseParams *params,
+                         const char *title, long min, long max,
+                         void (*set_at)(void *, int, long), void *user)
+{
+    if (count != 0) {
+        JSON_Array *array = params->array;
+        size_t array_count = json_array_get_count(array);
+        size_t scount = DP_int_to_size(count);
+        if (array_count != scount) {
+            DP_warn("Got %zu value(s) in array to fill %d %s target value(s)",
+                    array_count, count, title);
+        }
+
+        for (int i = 0; i < count; ++i) {
+            long value =
+                parse_iarray_value(array, array_count, title, min, max, i);
+            set_at(user, i, value);
+        }
+    }
+}
+
+static void parse_uarray(int count, DP_TextReaderParseParams *params,
+                         const char *title, unsigned long max,
+                         void (*set_at)(void *, int, unsigned long), void *user)
 {
     if (count != 0) {
         JSON_Array *array = params->array;
@@ -827,7 +872,7 @@ static void parse_array(int count, DP_TextReaderParseParams *params,
 
         for (int i = 0; i < count; ++i) {
             unsigned long value =
-                parse_array_value(array, array_count, title, max, i);
+                parse_uarray_value(array, array_count, title, max, i);
             set_at(user, i, value);
         }
     }
@@ -842,7 +887,7 @@ static void set_uint8(void *user, int index, unsigned long result)
 
 void DP_text_reader_parse_uint8_array(int count, uint8_t *out, void *user)
 {
-    parse_array(count, user, "uint8", UINT8_MAX, set_uint8, out);
+    parse_uarray(count, user, "uint8", UINT8_MAX, set_uint8, out);
 }
 
 static void set_uint16(void *user, int index, unsigned long result)
@@ -854,7 +899,20 @@ static void set_uint16(void *user, int index, unsigned long result)
 
 void DP_text_reader_parse_uint16_array(int count, uint16_t *out, void *user)
 {
-    parse_array(count, user, "uint16", UINT16_MAX, set_uint16, out);
+    parse_uarray(count, user, "uint16", UINT16_MAX, set_uint16, out);
+}
+
+static void set_int32(void *user, int index, long result)
+{
+    DP_ASSERT(result >= INT32_MIN);
+    DP_ASSERT(result <= INT32_MAX);
+    int32_t *out = user;
+    out[index] = DP_long_to_int32(result);
+}
+
+void DP_text_reader_parse_int32_array(int count, int32_t *out, void *user)
+{
+    parse_iarray(count, user, "int32", INT32_MIN, INT32_MAX, set_int32, out);
 }
 
 static bool get_subfield_value(DP_TextReader *reader, int i, const char *subkey,

@@ -21,7 +21,6 @@
  */
 #ifndef DPENGINE_BRUSHPREVIEW_H
 #define DPENGINE_BRUSHPREVIEW_H
-#include "pixels.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_ClassicBrush DP_ClassicBrush;
@@ -44,6 +43,8 @@ typedef struct DP_BrushPreview DP_BrushPreview;
 DP_BrushPreview *DP_brush_preview_new(void);
 
 void DP_brush_preview_free(DP_BrushPreview *bp);
+
+void DP_brush_preview_size_limit_set(DP_BrushPreview *bp, int limit);
 
 void DP_brush_preview_render_classic(DP_BrushPreview *bp, DP_DrawContext *dc,
                                      int width, int height,
