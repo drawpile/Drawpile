@@ -143,6 +143,11 @@ void BezierTool::undoMultipart()
 	}
 }
 
+void BezierTool::setBrushSizeLimit(int limit)
+{
+	m_brushEngine.setSizeLimit(limit);
+}
+
 PointVector BezierTool::calculateBezierCurve() const
 {
 	long long timeMsec = 0;

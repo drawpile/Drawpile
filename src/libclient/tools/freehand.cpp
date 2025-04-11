@@ -97,6 +97,11 @@ void Freehand::offsetActiveTool(int x, int y)
 	}
 }
 
+void Freehand::setBrushSizeLimit(int limit)
+{
+	m_brushEngine.setSizeLimit(limit);
+}
+
 void Freehand::pollControl(bool enable)
 {
 	if(enable) {

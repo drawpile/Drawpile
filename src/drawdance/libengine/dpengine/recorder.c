@@ -178,7 +178,8 @@ static void write_reset_image_message(void *user, DP_Message *msg)
 static bool write_initial(DP_Recorder *r)
 {
     return write_header(r)
-        && write_message_dec(r, DP_acl_state_msg_feature_access_all_new(0));
+        && write_message_dec(r, DP_acl_state_msg_feature_access_all_new(0))
+        && write_message_dec(r, DP_acl_state_msg_feature_limits_none_new(0));
 }
 
 static bool shift_message(DP_Recorder *r, DP_Message **out_msg)

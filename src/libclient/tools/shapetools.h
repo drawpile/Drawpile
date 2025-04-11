@@ -27,6 +27,7 @@ public:
 
 	void cancelMultipart() final override;
 	bool usesBrushColor() const final override { return true; }
+	void setBrushSizeLimit(int limit) override;
 
 protected:
 	virtual canvas::PointVector pointVector() const = 0;

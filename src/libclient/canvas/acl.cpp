@@ -69,11 +69,14 @@ void AclState::aclsChanged(const drawdance::AclState &acls, int aclChangeFlags, 
 	bool users = aclChangeFlags & DP_ACL_STATE_CHANGE_USERS_BIT;
 	bool layers = aclChangeFlags & DP_ACL_STATE_CHANGE_LAYERS_BIT;
 	bool features = aclChangeFlags & DP_ACL_STATE_CHANGE_FEATURE_TIERS_BIT;
+	bool limits = aclChangeFlags & DP_ACL_STATE_CHANGE_FEATURE_LIMITS_BIT;
 
 #ifdef QT_DEBUG
 	char *dump = acls.dump();
-	qDebug("Acls %s:%s%s%s %s", reset ? "reset" : "changed", users ? " users" : "",
-		layers ? " layers" : "", features ? " features" : "", dump);
+	qDebug(
+		"Acls %s:%s%s%s%s %s", reset ? "reset" : "changed",
+		users ? " users" : "", layers ? " layers" : "",
+		features ? " features" : "", limits ? " limits" : "", dump);
 	DP_free(dump);
 #endif
 
@@ -85,7 +88,7 @@ void AclState::aclsChanged(const drawdance::AclState &acls, int aclChangeFlags, 
 		updateLayers(acls, reset);
 	}
 
-	if(features || reset) {
+	if(features || limits || reset) {
 		updateFeatures(acls, reset);
 	}
 }
@@ -100,14 +103,18 @@ void AclState::resetLockSet(bool locked)
 
 void AclState::updateUserBits(const drawdance::AclState &acls, bool reset)
 {
-	const bool wasOp = amOperator();
-	const bool wasLocked = amLocked();
-	const auto hadFeatures = featureFlags(d->features, d->tier());
+	DP_AccessTier hadTier = d->tier();
+	bool wasOp = amOperator();
+	bool wasLocked = amLocked();
+	int hadFeatures = featureFlags(d->features, hadTier);
+	int hadBrushSizeLimit =
+		d->features.limits[DP_FEATURE_LIMIT_BRUSH_SIZE][hadTier];
 
 	d->users = acls.users();
 
-	const bool amOpNow = amOperator();
-	const bool amLockedNow = amLocked();
+	DP_AccessTier tierNow = d->tier();
+	bool amOpNow = amOperator();
+	bool amLockedNow = amLocked();
 
 	emit userBitsChanged(this);
 
@@ -119,15 +126,22 @@ void AclState::updateUserBits(const drawdance::AclState &acls, bool reset)
 		emit localLockChanged(amLockedNow);
 	}
 
-	emitFeatureChanges(hadFeatures, featureFlags(d->features, d->tier()), reset);
+	emitFeatureChanges(hadFeatures, featureFlags(d->features, tierNow), reset);
+	emitBrushSizeChanges(hadBrushSizeLimit, tierNow, reset);
 }
 
 void AclState::updateFeatures(const drawdance::AclState &acls, bool reset)
 {
-	int hadFeatures = featureFlags(d->features, d->tier());
+	DP_AccessTier tier = DP_user_acls_tier(&d->users, d->localUser);
+	int hadFeatures = featureFlags(d->features, tier);
+	int hadBrushSizeLimit =
+		d->features.limits[DP_FEATURE_LIMIT_BRUSH_SIZE][tier];
+
 	d->features = acls.featureTiers();
 	emit featureTiersChanged(d->features);
-	emitFeatureChanges(hadFeatures, featureFlags(d->features, d->tier()), reset);
+
+	emitFeatureChanges(hadFeatures, featureFlags(d->features, tier), reset);
+	emitBrushSizeChanges(hadBrushSizeLimit, tier, reset);
 }
 
 void AclState::updateLayers(const drawdance::AclState &acls, bool reset)
@@ -189,6 +203,15 @@ void AclState::emitFeatureChanges(int before, int now, bool reset)
 				emit featureAccessChanged(DP_Feature(i), now & (1 << i));
 			}
 		}
+	}
+}
+
+void AclState::emitBrushSizeChanges(
+	int hadBrushSizeLimit, DP_AccessTier tier, bool reset)
+{
+	int brushSizeLimit = d->features.limits[DP_FEATURE_LIMIT_BRUSH_SIZE][tier];
+	if(reset || brushSizeLimit != hadBrushSizeLimit) {
+		emit brushSizeLimitChange(brushSizeLimit);
 	}
 }
 
@@ -257,6 +280,11 @@ bool AclState::canEditLayer(int layerId) const
 bool AclState::isOwnLayer(int layerId) const
 {
 	return isLayerOwner(layerId, localUserId());
+}
+
+int AclState::brushSizeLimit()
+{
+	return d->features.limits[DP_FEATURE_LIMIT_BRUSH_SIZE][d->tier()];
 }
 
 uint8_t AclState::localUserId() const

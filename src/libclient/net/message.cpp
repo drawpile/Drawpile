@@ -67,11 +67,19 @@ Message makeDefaultLayerMessage(uint8_t contextId, uint16_t id)
 }
 
 Message makeFeatureAccessLevelsMessage(
-	uint8_t contextId, int featureCount, const uint8_t *features)
+	uint8_t contextId, const QVector<uint8_t> &features)
 {
 	return Message::noinc(DP_msg_feature_access_levels_new(
-		contextId, Message::setUint8s, featureCount,
-		const_cast<uint8_t *>(features)));
+		contextId, Message::setUint8s, features.size(),
+		const_cast<uint8_t *>(features.constData())));
+}
+
+Message
+makeFeatureLimitsMessage(uint8_t contextId, const QVector<int32_t> &limits)
+{
+	return Message::noinc(DP_msg_feature_limits_new(
+		contextId, Message::setInt32s, limits.size(),
+		const_cast<int32_t *>(limits.constData())));
 }
 
 Message makeFillRectMessage(

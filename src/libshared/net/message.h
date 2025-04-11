@@ -92,6 +92,7 @@ public:
 	static void setUchars(size_t size, unsigned char *out, void *user);
 	static void setUint8s(int count, uint8_t *out, void *user);
 	static void setUint16s(int count, uint16_t *out, void *user);
+	static void setInt32s(int count, int32_t *out, void *user);
 
 private:
 	explicit Message(DP_Message *cs);

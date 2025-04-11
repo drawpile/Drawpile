@@ -146,6 +146,12 @@ uint8_t DP_classic_brush_dab_hardness_at(const DP_ClassicBrush *cb,
                                          float distance);
 
 
+float DP_mypaint_settings_max_size_for(const DP_MyPaintSettings *settings,
+                                       float base_value);
+
+float DP_mypaint_settings_base_value_for_max_size(
+    const DP_MyPaintSettings *settings, float max_size);
+
 bool DP_mypaint_settings_equal_preset(const DP_MyPaintSettings *a,
                                       const DP_MyPaintSettings *b);
 
