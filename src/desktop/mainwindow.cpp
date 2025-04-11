@@ -615,6 +615,7 @@ MainWindow::~MainWindow()
 	dpApp().settings().trySubmit();
 }
 
+// clang-format on
 void MainWindow::autoJoin(const QUrl &url, const QString &autoRecordPath)
 {
 	if(m_singleSession) {
@@ -630,26 +631,59 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 {
 	m_canvasView->setCanvas(canvas);
 
-	connect(canvas->aclState(), &canvas::AclState::localOpChanged, this, &MainWindow::onOperatorModeChange);
-	connect(canvas->aclState(), &canvas::AclState::localLockChanged, this, &MainWindow::updateLockWidget);
-	connect(canvas->aclState(), &canvas::AclState::resetLockChanged, this, &MainWindow::updateLockWidget);
-	connect(canvas->aclState(), &canvas::AclState::featureAccessChanged, this, &MainWindow::onFeatureAccessChange);
-	connect(canvas->paintEngine(), &canvas::PaintEngine::undoDepthLimitSet, this, &MainWindow::onUndoDepthLimitSet);
+	canvas::AclState *aclState = canvas->aclState();
+	connect(
+		aclState, &canvas::AclState::localOpChanged, this,
+		&MainWindow::onOperatorModeChange);
+	connect(
+		aclState, &canvas::AclState::localLockChanged, this,
+		&MainWindow::updateLockWidget);
+	connect(
+		aclState, &canvas::AclState::resetLockChanged, this,
+		&MainWindow::updateLockWidget);
+	connect(
+		aclState, &canvas::AclState::featureAccessChanged, this,
+		&MainWindow::onFeatureAccessChange);
+	connect(
+		aclState, &canvas::AclState::brushSizeLimitChange, this,
+		&MainWindow::onBrushSizeLimitChange);
+
+	tools::ToolController *toolCtrl = m_doc->toolCtrl();
+	connect(
+		aclState, &canvas::AclState::brushSizeLimitChange, toolCtrl,
+		&tools::ToolController::setBrushSizeLimit);
+
+	canvas::PaintEngine *paintEngine = canvas->paintEngine();
+	connect(
+		paintEngine, &canvas::PaintEngine::undoDepthLimitSet, this,
+		&MainWindow::onUndoDepthLimitSet);
 
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, this, [this]() {
 		// Show a "new message" indicator when the chatbox is collapsed
-		const auto sizes = m_splitter->sizes();
-		if(sizes.length() > 1 && sizes.at(1)==0)
+		QList<int> sizes = m_splitter->sizes();
+		if(sizes.length() > 1 && sizes.at(1) == 0) {
 			m_statusChatButton->show();
+		}
 	});
 
-	connect(canvas, &canvas::CanvasModel::layerAutoselectRequest, m_dockLayers, &docks::LayerList::selectLayer);
-	connect(canvas, &canvas::CanvasModel::colorPicked, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
-	connect(canvas, &canvas::CanvasModel::colorPicked, m_dockToolSettings->colorPickerSettings(), &tools::ColorPickerSettings::addColor);
-	connect(canvas, &canvas::CanvasModel::canvasInspected, m_dockToolSettings->inspectorSettings(), &tools::InspectorSettings::onCanvasInspected);
-	connect(canvas, &canvas::CanvasModel::previewAnnotationRequested, m_doc->toolCtrl(), &tools::ToolController::setActiveAnnotation);
+	connect(
+		canvas, &canvas::CanvasModel::layerAutoselectRequest, m_dockLayers,
+		&docks::LayerList::selectLayer);
+	connect(
+		canvas, &canvas::CanvasModel::colorPicked, m_dockToolSettings,
+		&docks::ToolSettings::setForegroundColor);
+	connect(
+		canvas, &canvas::CanvasModel::colorPicked,
+		m_dockToolSettings->colorPickerSettings(),
+		&tools::ColorPickerSettings::addColor);
+	connect(
+		canvas, &canvas::CanvasModel::canvasInspected,
+		m_dockToolSettings->inspectorSettings(),
+		&tools::InspectorSettings::onCanvasInspected);
+	connect(
+		canvas, &canvas::CanvasModel::previewAnnotationRequested, toolCtrl,
+		&tools::ToolController::setActiveAnnotation);
 
-	// clang-format on
 	connect(
 		m_dockLayers, &docks::LayerList::fillSourceSet, canvas->layerlist(),
 		&canvas::LayerListModel::setFillSourceLayerId);
@@ -670,16 +704,23 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		canvas->selection(), &canvas::SelectionModel::selectionChanged,
 		m_dockToolSettings->fillSettings(),
 		&tools::FillSettings::updateSelection);
-	// clang-format off
 
-	connect(canvas, &canvas::CanvasModel::userJoined, this, [this](int, const QString &name) {
-		m_viewStatusBar->showMessage(tr("🙋 %1 joined!").arg(name), 2000);
-	});
+	connect(
+		canvas, &canvas::CanvasModel::userJoined, this,
+		[this](int, const QString &name) {
+			m_viewStatusBar->showMessage(tr("🙋 %1 joined!").arg(name), 2000);
+		});
 
-	connect(m_serverLogDialog, &dialogs::ServerLogDialog::inspectModeChanged, canvas, [this, canvas](unsigned int contextId) {
-		canvas->inspectCanvas(contextId, m_dockToolSettings->inspectorSettings()->isShowTiles());
-	});
-	connect(m_serverLogDialog, &dialogs::ServerLogDialog::inspectModeStopped, canvas, &canvas::CanvasModel::stopInspectingCanvas);
+	connect(
+		m_serverLogDialog, &dialogs::ServerLogDialog::inspectModeChanged,
+		canvas, [this, canvas](unsigned int contextId) {
+			canvas->inspectCanvas(
+				contextId,
+				m_dockToolSettings->inspectorSettings()->isShowTiles());
+		});
+	connect(
+		m_serverLogDialog, &dialogs::ServerLogDialog::inspectModeStopped,
+		canvas, &canvas::CanvasModel::stopInspectingCanvas);
 
 	updateLayerViewMode();
 
@@ -688,11 +729,19 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	m_dockNavigator->setCanvasModel(canvas);
 	m_dockTimeline->setCanvas(canvas);
 
-	connect(m_dockTimeline, &docks::Timeline::frameSelected, canvas->paintEngine(), &canvas::PaintEngine::setViewFrame);
-	connect(m_dockTimeline, &docks::Timeline::trackHidden, canvas->paintEngine(), &canvas::PaintEngine::setTrackVisibility);
-	connect(m_dockTimeline, &docks::Timeline::trackOnionSkinEnabled, canvas->paintEngine(), &canvas::PaintEngine::setTrackOnionSkin);
+	connect(
+		m_dockTimeline, &docks::Timeline::frameSelected, paintEngine,
+		&canvas::PaintEngine::setViewFrame);
+	connect(
+		m_dockTimeline, &docks::Timeline::trackHidden, paintEngine,
+		&canvas::PaintEngine::setTrackVisibility);
+	connect(
+		m_dockTimeline, &docks::Timeline::trackOnionSkinEnabled, paintEngine,
+		&canvas::PaintEngine::setTrackOnionSkin);
 
-	connect(m_dockOnionSkins, &docks::OnionSkinsDock::onionSkinsChanged, canvas->paintEngine(), &canvas::PaintEngine::setOnionSkins);
+	connect(
+		m_dockOnionSkins, &docks::OnionSkinsDock::onionSkinsChanged,
+		paintEngine, &canvas::PaintEngine::setOnionSkins);
 	m_dockOnionSkins->triggerUpdate();
 
 	m_dockToolSettings->inspectorSettings()->setUserList(canvas->userlist());
@@ -702,19 +751,22 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	setDrawingToolsEnabled(true);
 	for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
 		DP_Feature f = DP_Feature(i);
-		onFeatureAccessChange(f, m_doc->canvas()->aclState()->canUseFeature(f));
+		onFeatureAccessChange(f, aclState->canUseFeature(f));
 	}
-	onUndoDepthLimitSet(canvas->paintEngine()->undoDepthLimit());
+	int brushSizeLimit = aclState->brushSizeLimit();
+	onBrushSizeLimitChange(brushSizeLimit);
+	toolCtrl->setBrushSizeLimit(brushSizeLimit);
+	onUndoDepthLimitSet(paintEngine->undoDepthLimit());
 	getAction("resetsession")->setEnabled(true);
 
 	updateSelectTransformActions();
 }
 
-bool MainWindow::canReplace() const {
+bool MainWindow::canReplace() const
+{
 	return !getReplacementCriteria();
 }
 
-// clang-format on
 #ifdef __EMSCRIPTEN__
 bool MainWindow::shouldPreventUnload() const
 {
@@ -2885,7 +2937,8 @@ void MainWindow::hostSession(const HostParams &params)
 			true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS,
 			params.undoLimit, &params.featurePermissions));
 	} else {
-		uint8_t features[DP_FEATURE_COUNT];
+		QVector<uint8_t> features;
+		features.reserve(DP_FEATURE_COUNT);
 		for(int feature = 0; feature < DP_FEATURE_COUNT; ++feature) {
 			QHash<int, int>::const_iterator found =
 				params.featurePermissions.constFind(feature);
@@ -2897,10 +2950,20 @@ void MainWindow::hostSession(const HostParams &params)
 					effectiveTier = tier;
 				}
 			}
-			features[feature] = effectiveTier;
+			features.append(effectiveTier);
 		}
+
+		QVector<int32_t> limits;
+		limits.reserve(int(DP_FEATURE_LIMIT_COUNT) * int(DP_ACCESS_TIER_COUNT));
+		for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
+			for(int j = 0; j < DP_ACCESS_TIER_COUNT; ++j) {
+				limits.append(DP_feature_limit_default(i, j, -1));
+			}
+		}
+
 		login->setInitialState({
-			net::makeFeatureAccessLevelsMessage(0, DP_FEATURE_COUNT, features),
+			net::makeFeatureAccessLevelsMessage(0, features),
+			net::makeFeatureLimitsMessage(0, limits),
 			net::makeUndoDepthMessage(0, params.undoLimit),
 		});
 	}
@@ -3434,6 +3497,11 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 	default: break;
 	}
 	updateLockWidget();
+}
+
+void MainWindow::onBrushSizeLimitChange(int brushSizeLimit)
+{
+	m_dockToolSettings->brushSettings()->setBrushSizeLimit(brushSizeLimit);
 }
 
 void MainWindow::onUndoDepthLimitSet(int undoDepthLimit)

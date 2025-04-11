@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef SESSIONSETTINGSDIALOG_H
 #define SESSIONSETTINGSDIALOG_H
-#include "libclient/canvas/acl.h"
+extern "C" {
+#include <dpmsg/acl.h>
+}
 #include <QDialog>
 #include <QJsonObject>
 
 class Document;
+class KisSliderSpinBox;
 class QComboBox;
 class QLabel;
 class QStringListModel;
@@ -65,6 +68,8 @@ private slots:
 	void allowWebChanged(bool allowWeb);
 
 	void permissionChanged();
+	void limitChanged();
+	void updateBrushSizeLimitText(int value);
 
 	void autoresetThresholdChanged();
 	void keepChatChanged(bool);
@@ -104,9 +109,13 @@ private:
 	static const QByteArray authExportPrefix;
 
 	void initPermissionComboBoxes();
+	void initPermissionLimitSliders();
 	void updateBanImportExportState();
 	void reloadSettings();
 	QComboBox *featureBox(DP_Feature f);
+	KisSliderSpinBox *limitSlider(DP_FeatureLimit fl);
+	int limitSliderValue(DP_FeatureLimit fl);
+	void setLimitSliderValue(DP_FeatureLimit fl, int value);
 	bool checkBanImport(const QString &bans, QString &outErrorMessage) const;
 	bool
 	readAuthListImport(const QByteArray &content, QJsonArray &outList) const;
@@ -121,6 +130,7 @@ private:
 
 	QJsonObject m_sessionconf;
 	bool m_featureTiersChanged = false;
+	bool m_featureLimitsChanged = false;
 
 	bool m_op = false;
 	bool m_isAuth = false;

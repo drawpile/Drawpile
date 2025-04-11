@@ -190,6 +190,9 @@ public:
     // Drawpile addition: override text to be shown, set empty to clear.
     void setOverrideText(const QString &overrideText);
 
+    // Drawpile addition: check whether the soft range is clamping the input.
+    bool isSoftRangeActive() const;
+
 Q_SIGNALS:
     void draggingFinished();
 

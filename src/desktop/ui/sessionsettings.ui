@@ -406,6 +406,29 @@
        <item row="7" column="1">
         <widget class="QComboBox" name="permMyPaint"/>
        </item>
+       <item row="13" column="1">
+        <widget class="KisSliderSpinBox" name="permBrushSize">
+         <property name="suffix">
+          <string>px</string>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>1000</number>
+         </property>
+         <property name="value">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="0">
+        <widget class="QLabel" name="brushSizeLabel">
+         <property name="text">
+          <string>Brush size limit:</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="bansTab">
@@ -648,6 +671,11 @@
    <class>widgets::PresetSelector</class>
    <extends>QWidget</extends>
    <header>desktop/widgets/presetselector.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KisSliderSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>desktop/widgets/kis_slider_spin_box.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

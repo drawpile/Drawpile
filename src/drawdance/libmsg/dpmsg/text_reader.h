@@ -103,6 +103,8 @@ void DP_text_reader_parse_uint8_array(int count, uint8_t *out, void *user);
 
 void DP_text_reader_parse_uint16_array(int count, uint16_t *out, void *user);
 
+void DP_text_reader_parse_int32_array(int count, int32_t *out, void *user);
+
 int DP_text_reader_get_sub_count(DP_TextReader *reader);
 
 long DP_text_reader_get_subfield_long(DP_TextReader *reader, int i,

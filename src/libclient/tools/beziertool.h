@@ -22,6 +22,7 @@ public:
 	void undoMultipart() override;
 	bool isMultipart() const override { return !m_points.isEmpty(); }
 	bool usesBrushColor() const override { return true; }
+	void setBrushSizeLimit(int limit) override;
 
 private:
 	void updatePreview();

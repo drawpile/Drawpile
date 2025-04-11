@@ -175,6 +175,7 @@ struct BrushSettings::Private {
 	BrushMode previousBrushMode = UnknownMode;
 	int previousBlendMode = -1;
 	int globalSmoothing;
+	int brushSizeLimit = -1;
 	bool finishStrokes = true;
 	bool useBrushSampleCount = true;
 	bool shareBrushSlotColor = false;
@@ -629,6 +630,32 @@ void BrushSettings::setMyPaintAllowed(bool myPaintAllowed)
 {
 	d->myPaintAllowed = myPaintAllowed;
 	updateUi();
+}
+
+void BrushSettings::setBrushSizeLimit(int brushSizeLimit)
+{
+	int previousLimit = d->brushSizeLimit;
+	bool unlimited = brushSizeLimit < 0 || brushSizeLimit >= DP_BRUSH_SIZE_MAX;
+	KisSliderSpinBox *brushSizeBox = d->ui.brushsizeBox;
+	if(unlimited) {
+		d->brushSizeLimit = -1;
+		brushSizeBox->setSoftRange(0, 0);
+		brushSizeBox->setSuffix(tr("px"));
+	} else {
+		d->brushSizeLimit = brushSizeLimit;
+		brushSizeBox->setSoftRange(brushSizeBox->minimum(), brushSizeLimit);
+		//: Limit suffix for the brush size slider, %1 is the size limit. So it
+		//: will look something like "100/255px". Unless your language uses a
+		//: different slash symbol or something, leave this unchanged.
+		brushSizeBox->setSuffix(tr("/%1px").arg(brushSizeLimit));
+	}
+	updateRadiusLogarithmicLimit();
+
+	if(d->brushSizeLimit != previousLimit) {
+		changeSizeSetting(brushSizeBox->value());
+		changeRadiusLogarithmicSetting(d->ui.radiusLogarithmicBox->value());
+		d->ui.preview->setBrushSizeLimit(d->brushSizeLimit);
+	}
 }
 
 int BrushSettings::brushSlotCount() const
@@ -1123,14 +1150,17 @@ void BrushSettings::changePaintMode(const QAction *action)
 void BrushSettings::changeSizeSetting(int size)
 {
 	if(d->currentBrush().activeType() == brushes::ActiveBrush::CLASSIC) {
-		emit pixelSizeChanged(size);
+		emit pixelSizeChanged(clampBrushSize(size));
 	}
 }
 
 void BrushSettings::changeRadiusLogarithmicSetting(int radiusLogarithmic)
 {
-	if(d->currentBrush().activeType() == brushes::ActiveBrush::MYPAINT) {
-		emit pixelSizeChanged(radiusLogarithmicToPixelSize(radiusLogarithmic));
+	const brushes::ActiveBrush &brush = d->currentBrush();
+	if(brush.activeType() == brushes::ActiveBrush::MYPAINT) {
+		int size = qRound(myPaintRadiusToPixelSize(brush.myPaint().maxSizeFor(
+			radiusLogarithmicToMyPaintRadius(radiusLogarithmic))));
+		emit pixelSizeChanged(clampBrushSize(size));
 	}
 }
 
@@ -1375,6 +1405,7 @@ void BrushSettings::updateUi()
 	changeSizeSetting(d->ui.brushsizeBox->value());
 	changeRadiusLogarithmicSetting(d->ui.radiusLogarithmicBox->value());
 	updateStabilizationSettingVisibility();
+	updateRadiusLogarithmicLimit();
 	emitBlendModeChanged();
 	emitBrushModeChanged();
 
@@ -1805,7 +1836,7 @@ void BrushSettings::quickAdjust1(qreal adjustment)
 	if(d->currentIsMyPaint()) {
 		quickAdjustOn(d->ui.radiusLogarithmicBox, adjustment * 2.0);
 	} else {
-		QSpinBox *brushsizeBox = d->ui.brushsizeBox;
+		KisSliderSpinBox *brushsizeBox = d->ui.brushsizeBox;
 		quickAdjustOn(
 			brushsizeBox,
 			qMax(1.0, std::cbrt(brushsizeBox->value())) * adjustment);
@@ -1815,26 +1846,29 @@ void BrushSettings::quickAdjust1(qreal adjustment)
 void BrushSettings::stepAdjust1(bool increase)
 {
 	if(d->currentIsMyPaint()) {
-		QSpinBox *radiusLogarithmicBox = d->ui.radiusLogarithmicBox;
-		radiusLogarithmicBox->setValue(stepLinear(
-			radiusLogarithmicBox->minimum(), radiusLogarithmicBox->maximum(),
-			radiusLogarithmicBox->value(), increase));
+		KisSliderSpinBox *radiusLogarithmicBox = d->ui.radiusLogarithmicBox;
+		adjustSizeSlider(
+			radiusLogarithmicBox, stepLinear(
+									  radiusLogarithmicBox->minimum(),
+									  radiusLogarithmicBox->maximum(),
+									  radiusLogarithmicBox->value(), increase));
 	} else {
-		QSpinBox *brushsizeBox = d->ui.brushsizeBox;
-		brushsizeBox->setValue(stepLogarithmic(
-			brushsizeBox->minimum(), brushsizeBox->maximum(),
-			brushsizeBox->value(), increase));
+		KisSliderSpinBox *brushsizeBox = d->ui.brushsizeBox;
+		adjustSizeSlider(
+			brushsizeBox, stepLogarithmic(
+							  brushsizeBox->minimum(), brushsizeBox->maximum(),
+							  brushsizeBox->value(), increase));
 	}
 }
 
-void BrushSettings::quickAdjustOn(QSpinBox *box, qreal adjustment)
+void BrushSettings::quickAdjustOn(KisSliderSpinBox *box, qreal adjustment)
 {
 	d->quickAdjust1 += adjustment;
 	qreal i;
 	qreal f = modf(d->quickAdjust1, &i);
 	if(int(i)) {
 		d->quickAdjust1 = f;
-		box->setValue(box->value() + int(i));
+		adjustSizeSlider(box, box->value() + int(i));
 	}
 }
 
@@ -1950,6 +1984,63 @@ void BrushSettings::triggerUpdate()
 {
 	emit blendModeChanged(getBlendMode());
 	emit brushModeChanged(getBrushMode());
+}
+
+void BrushSettings::updateRadiusLogarithmicLimit()
+{
+	KisSliderSpinBox *radiusLogarithmicBox = d->ui.radiusLogarithmicBox;
+	int brushSizeLimit = d->brushSizeLimit;
+	if(brushSizeLimit < 0) {
+		radiusLogarithmicBox->setSoftRange(0, 0);
+		radiusLogarithmicBox->setSuffix(QString());
+	} else {
+		int minimum = radiusLogarithmicBox->minimum();
+		int radiusLogarithmicLimit = qMax(
+			minimum, qRound(myPaintRadiusToRadiusLogarithmic(
+						 d->currentBrush().myPaint().baseValueForMaxSize(
+							 pixelSizeToMyPaintRadius(brushSizeLimit)))));
+		radiusLogarithmicBox->setSoftRange(minimum, radiusLogarithmicLimit);
+		//: Limit suffix for the brush radius slider, %1 is the size limit. So
+		//: it will look something like "200/400". Unless your language uses a
+		//: different slash symbol or something, leave this unchanged.
+		radiusLogarithmicBox->setSuffix(tr("/%1").arg(radiusLogarithmicLimit));
+	}
+}
+
+void BrushSettings::adjustSizeSlider(KisSliderSpinBox *slider, int value)
+{
+	if(slider->isSoftRangeActive()) {
+		slider->setValue(
+			qBound(slider->softMinimum(), value, slider->softMaximum()));
+	} else {
+		slider->setValue(value);
+	}
+}
+
+int BrushSettings::clampBrushSize(int size) const
+{
+	int limit = d->brushSizeLimit;
+	return qMin(size, limit < 0 ? DP_BRUSH_SIZE_MAX : limit);
+}
+
+float BrushSettings::myPaintRadiusToRadiusLogarithmic(float myPaintRadius)
+{
+	return (myPaintRadius * 100.0f) + 200.0f;
+}
+
+float BrushSettings::radiusLogarithmicToMyPaintRadius(int radiusLogarithmic)
+{
+	return float(radiusLogarithmic - 200) / 100.0f;
+}
+
+float BrushSettings::myPaintRadiusToPixelSize(float myPaintRadius)
+{
+	return std::exp(myPaintRadius) * 2.0f;
+}
+
+float BrushSettings::pixelSizeToMyPaintRadius(float pixelSize)
+{
+	return std::log(pixelSize / 2.0f);
 }
 
 double BrushSettings::radiusLogarithmicToPixelSize(int radiusLogarithmic)

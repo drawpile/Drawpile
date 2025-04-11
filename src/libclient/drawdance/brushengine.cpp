@@ -80,6 +80,11 @@ void BrushEngine::addOffset(float x, float y)
 	DP_brush_engine_offset_add(m_data, x, y);
 }
 
+void BrushEngine::setSizeLimit(int limit)
+{
+	DP_brush_engine_size_limit_set(m_data, limit);
+}
+
 void BrushEngine::sendMessagesTo(net::Client *client)
 {
 	Q_ASSERT(client);

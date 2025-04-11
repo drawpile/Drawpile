@@ -80,11 +80,12 @@ typedef struct DP_SplinePoint {
 } DP_SplinePoint;
 
 struct DP_BrushEngine {
-    int layer_id;
     DP_LayerContent *lc;
     DP_CanvasState *cs;
     uint16_t *stamp_buffer;
+    int layer_id;
     int last_diameter;
+    DP_Atomic size_limit;
     DP_BrushEngineActiveType active;
     MyPaintBrush *mypaint_brush;
     MyPaintSurface2 mypaint_surface2;
@@ -779,11 +780,12 @@ DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
     init_mypaint_once();
     DP_BrushEngine *be = DP_malloc(sizeof(*be));
     *be = (DP_BrushEngine){
+        NULL,
+        NULL,
+        NULL,
         0,
-        NULL,
-        NULL,
-        NULL,
         -1,
+        DP_ATOMIC_INIT(-1),
         DP_BRUSH_ENGINE_ACTIVE_PIXEL,
         mypaint_brush_new_with_buckets(SMUDGE_BUCKET_COUNT),
         {{add_dab_mypaint, get_color_mypaint, NULL, NULL, NULL, NULL, 0},
@@ -829,6 +831,11 @@ void DP_brush_engine_free(DP_BrushEngine *be)
     }
 }
 
+void DP_brush_engine_size_limit_set(DP_BrushEngine *be, int size_limit)
+{
+    DP_ASSERT(be);
+    DP_atomic_set(&be->size_limit, size_limit);
+}
 
 static void set_common_stroke_params(DP_BrushEngine *be,
                                      const DP_StrokeParams *stroke)
@@ -1028,10 +1035,21 @@ static uint8_t get_dab_blend_mode(DP_PaintMode paint_mode,
 
 static void set_pixel_dabs(int count, DP_PixelDab *out, void *user)
 {
-    DP_BrushEnginePixelDab *dabs = user;
+    DP_BrushEngine *be = user;
+    DP_BrushEnginePixelDab *dabs = be->dabs.buffer;
+    int size_limit = DP_atomic_get(&be->size_limit);
+    static_assert(DP_BRUSH_SIZE_MAX <= UINT16_MAX,
+                  "Maximum brush size fits into a u16");
+    uint16_t max_size = size_limit < 0 || size_limit > DP_BRUSH_SIZE_MAX
+                          ? (uint16_t)DP_BRUSH_SIZE_MAX
+                          : DP_int_to_uint16(size_limit);
     for (int i = 0; i < count; ++i) {
         DP_BrushEnginePixelDab *dab = &dabs[i];
-        DP_pixel_dab_init(out, i, dab->x, dab->y, dab->size, dab->opacity);
+        uint16_t size = dab->size;
+        if (size > max_size) {
+            size = max_size;
+        }
+        DP_pixel_dab_init(out, i, dab->x, dab->y, size, dab->opacity);
     }
 }
 
@@ -1053,15 +1071,30 @@ static void flush_pixel_dabs(DP_BrushEngine *be, int used)
                          get_dab_blend_mode(
                              be->classic.brush.paint_mode,
                              DP_classic_brush_blend_mode(&be->classic.brush)),
-                         set_pixel_dabs, used, be->dabs.buffer));
+                         set_pixel_dabs, used, be));
+}
+
+static uint32_t get_subpixel_max_size(DP_BrushEngine *be)
+{
+    int size_limit = DP_atomic_get(&be->size_limit);
+    return (uint32_t)256
+         * (size_limit < 0 || size_limit > DP_BRUSH_SIZE_MAX
+                ? (uint32_t)DP_BRUSH_SIZE_MAX
+                : DP_int_to_uint32(size_limit));
 }
 
 static void set_soft_dabs(int count, DP_ClassicDab *out, void *user)
 {
-    DP_BrushEngineClassicDab *dabs = user;
+    DP_BrushEngine *be = user;
+    DP_BrushEngineClassicDab *dabs = be->dabs.buffer;
+    uint32_t max_size = get_subpixel_max_size(be);
     for (int i = 0; i < count; ++i) {
         DP_BrushEngineClassicDab *dab = &dabs[i];
-        DP_classic_dab_init(out, i, dab->x, dab->y, dab->size, dab->hardness,
+        uint32_t size = dab->size;
+        if (size > max_size) {
+            size = max_size;
+        }
+        DP_classic_dab_init(out, i, dab->x, dab->y, size, dab->hardness,
                             dab->opacity);
     }
 }
@@ -1076,15 +1109,21 @@ static void flush_soft_dabs(DP_BrushEngine *be, int used)
             be->classic.dab_y, be->classic.dab_color,
             get_dab_blend_mode(be->classic.brush.paint_mode,
                                DP_classic_brush_blend_mode(&be->classic.brush)),
-            set_soft_dabs, used, be->dabs.buffer));
+            set_soft_dabs, used, be));
 }
 
 static void set_mypaint_dabs(int count, DP_MyPaintDab *out, void *user)
 {
-    DP_BrushEngineMyPaintDab *dabs = user;
+    DP_BrushEngine *be = user;
+    DP_BrushEngineMyPaintDab *dabs = be->dabs.buffer;
+    uint32_t max_size = get_subpixel_max_size(be);
     for (int i = 0; i < count; ++i) {
         DP_BrushEngineMyPaintDab *dab = &dabs[i];
-        DP_mypaint_dab_init(out, i, dab->x, dab->y, dab->size, dab->hardness,
+        uint32_t size = dab->size;
+        if (size > max_size) {
+            size = max_size;
+        }
+        DP_mypaint_dab_init(out, i, dab->x, dab->y, size, dab->hardness,
                             dab->opacity, dab->angle, dab->aspect_ratio);
     }
 }
@@ -1092,12 +1131,17 @@ static void set_mypaint_dabs(int count, DP_MyPaintDab *out, void *user)
 static void set_mypaint_blend_dabs(int count, DP_MyPaintBlendDab *out,
                                    void *user)
 {
-    DP_BrushEngineMyPaintDab *dabs = user;
+    DP_BrushEngine *be = user;
+    DP_BrushEngineMyPaintDab *dabs = be->dabs.buffer;
+    uint32_t max_size = get_subpixel_max_size(be);
     for (int i = 0; i < count; ++i) {
         DP_BrushEngineMyPaintDab *dab = &dabs[i];
-        DP_mypaint_blend_dab_init(out, i, dab->x, dab->y, dab->size,
-                                  dab->hardness, dab->opacity, dab->angle,
-                                  dab->aspect_ratio);
+        uint32_t size = dab->size;
+        if (size > max_size) {
+            size = max_size;
+        }
+        DP_mypaint_blend_dab_init(out, i, dab->x, dab->y, size, dab->hardness,
+                                  dab->opacity, dab->angle, dab->aspect_ratio);
     }
 }
 
@@ -1113,7 +1157,7 @@ static void flush_mypaint_dabs(DP_BrushEngine *be, int used)
             be->mypaint.dab_x, be->mypaint.dab_y, be->mypaint.dab_color,
             be->mypaint.dab_lock_alpha, be->mypaint.dab_colorize,
             be->mypaint.dab_posterize, be->mypaint.dab_posterize_num,
-            set_mypaint_dabs, used, be->dabs.buffer);
+            set_mypaint_dabs, used, be);
     }
     else {
         msg = DP_msg_draw_dabs_mypaint_blend_new(
@@ -1121,7 +1165,7 @@ static void flush_mypaint_dabs(DP_BrushEngine *be, int used)
             DP_int_to_uint16(be->layer_id), be->mypaint.dab_x,
             be->mypaint.dab_y, be->mypaint.dab_color,
             get_dab_blend_mode(paint_mode, blend_mode), set_mypaint_blend_dabs,
-            used, be->dabs.buffer);
+            used, be);
     }
     be->push_message(be->user, msg);
 }

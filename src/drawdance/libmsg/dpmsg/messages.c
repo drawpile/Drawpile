@@ -76,6 +76,7 @@ bool DP_message_type_client_meta(DP_MessageType type)
     case DP_MSG_UNDO_DEPTH:
     case DP_MSG_DATA:
     case DP_MSG_LOCAL_CHANGE:
+    case DP_MSG_FEATURE_LIMITS:
         return true;
     default:
         return false;
@@ -189,6 +190,8 @@ const char *DP_message_type_name(DP_MessageType type)
         return "data";
     case DP_MSG_LOCAL_CHANGE:
         return "localchange";
+    case DP_MSG_FEATURE_LIMITS:
+        return "featurelimits";
     case DP_MSG_UNDO_POINT:
         return "undopoint";
     case DP_MSG_CANVAS_RESIZE:
@@ -335,6 +338,8 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_DATA";
     case DP_MSG_LOCAL_CHANGE:
         return "DP_MSG_LOCAL_CHANGE";
+    case DP_MSG_FEATURE_LIMITS:
+        return "DP_MSG_FEATURE_LIMITS";
     case DP_MSG_UNDO_POINT:
         return "DP_MSG_UNDO_POINT";
     case DP_MSG_CANVAS_RESIZE:
@@ -499,6 +504,9 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     }
     else if (DP_str_equal(type_name, "localchange")) {
         return DP_MSG_LOCAL_CHANGE;
+    }
+    else if (DP_str_equal(type_name, "featurelimits")) {
+        return DP_MSG_FEATURE_LIMITS;
     }
     else if (DP_str_equal(type_name, "undopoint")) {
         return DP_MSG_UNDO_POINT;
@@ -695,6 +703,8 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
             return DP_msg_data_deserialize(context_id, buf, length);
         case DP_MSG_LOCAL_CHANGE:
             return DP_msg_local_change_deserialize(context_id, buf, length);
+        case DP_MSG_FEATURE_LIMITS:
+            return DP_msg_feature_limits_deserialize(context_id, buf, length);
         case DP_MSG_UNDO_POINT:
             return DP_msg_undo_point_deserialize(context_id, buf, length);
         case DP_MSG_CANVAS_RESIZE:
@@ -880,6 +890,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_data_parse(context_id, reader);
     case DP_MSG_LOCAL_CHANGE:
         return DP_msg_local_change_parse(context_id, reader);
+    case DP_MSG_FEATURE_LIMITS:
+        return DP_msg_feature_limits_parse(context_id, reader);
     case DP_MSG_UNDO_POINT:
         return DP_msg_undo_point_parse(context_id, reader);
     case DP_MSG_CANVAS_RESIZE:
@@ -1093,6 +1105,20 @@ static void read_uint16_array(int count, uint16_t *out, void *user)
     }
 #elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
     memcpy(out, buffer, DP_int_to_size(count) * 2);
+#else
+#    error "Unknown byte order"
+#endif
+}
+
+static void read_int32_array(int count, int32_t *out, void *user)
+{
+    const unsigned char *buffer = user;
+#if defined(DP_BYTE_ORDER_LITTLE_ENDIAN)
+    for (int i = 0; i < count; ++i) {
+        out[i] = DP_read_bigendian_int32(buffer + i * 4);
+    }
+#elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
+    memcpy(out, buffer, DP_int_to_size(count) * 4);
 #else
 #    error "Unknown byte order"
 #endif
@@ -3465,6 +3491,128 @@ const unsigned char *DP_msg_local_change_body(const DP_MsgLocalChange *mlc,
 size_t DP_msg_local_change_body_size(const DP_MsgLocalChange *mlc)
 {
     return mlc->body_size;
+}
+
+
+/* DP_MSG_FEATURE_LIMITS */
+
+struct DP_MsgFeatureLimits {
+    uint16_t limits_count;
+    int32_t limits[];
+};
+
+static size_t msg_feature_limits_payload_length(DP_Message *msg)
+{
+    DP_MsgFeatureLimits *mfl = DP_message_internal(msg);
+    return DP_int_to_size(mfl->limits_count) * 4;
+}
+
+static size_t msg_feature_limits_serialize_payload(DP_Message *msg,
+                                                   unsigned char *data)
+{
+    DP_MsgFeatureLimits *mfl = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_int32_array(mfl->limits, mfl->limits_count,
+                                              data + written);
+    DP_ASSERT(written == msg_feature_limits_payload_length(msg));
+    return written;
+}
+
+static bool msg_feature_limits_write_payload_text(DP_Message *msg,
+                                                  DP_TextWriter *writer)
+{
+    DP_MsgFeatureLimits *mfl = DP_message_internal(msg);
+    return DP_text_writer_write_int32_list(writer, "limits", mfl->limits,
+                                           mfl->limits_count);
+}
+
+static bool msg_feature_limits_equals(DP_Message *DP_RESTRICT msg,
+                                      DP_Message *DP_RESTRICT other)
+{
+    DP_MsgFeatureLimits *a = DP_message_internal(msg);
+    DP_MsgFeatureLimits *b = DP_message_internal(other);
+    return a->limits_count == b->limits_count
+        && memcmp(a->limits, b->limits, DP_uint16_to_size(a->limits_count) * 4)
+               == 0;
+}
+
+static const DP_MessageMethods msg_feature_limits_methods = {
+    msg_feature_limits_payload_length,
+    msg_feature_limits_serialize_payload,
+    msg_feature_limits_write_payload_text,
+    msg_feature_limits_equals,
+};
+
+DP_Message *DP_msg_feature_limits_new(unsigned int context_id,
+                                      void (*set_limits)(int, int32_t *,
+                                                         void *),
+                                      int limits_count, void *limits_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_FEATURE_LIMITS, context_id, &msg_feature_limits_methods,
+        DP_FLEX_SIZEOF(DP_MsgFeatureLimits, limits,
+                       DP_int_to_size(limits_count) * 4));
+    DP_MsgFeatureLimits *mfl = DP_message_internal(msg);
+    mfl->limits_count = DP_int_to_uint16(limits_count);
+    if (set_limits) {
+        set_limits(mfl->limits_count, mfl->limits, limits_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_feature_limits_deserialize(unsigned int context_id,
+                                              const unsigned char *buffer,
+                                              size_t length)
+{
+    if (length < 16 || length > 1020) {
+        DP_error_set("Wrong length for featurelimits message; "
+                     "expected between 16 and 1020, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    size_t limits_bytes = length - read;
+    if ((limits_bytes % 4) != 0) {
+        DP_error_set("Wrong length for limits field in featurelimits message; "
+                     "%zu not divisible by 4",
+                     limits_bytes);
+        return NULL;
+    }
+    uint16_t limits_count = DP_size_to_uint16(limits_bytes / 4);
+    void *limits_user = (void *)(buffer + read);
+    return DP_msg_feature_limits_new(context_id, read_int32_array, limits_count,
+                                     limits_user);
+}
+
+DP_Message *DP_msg_feature_limits_parse(unsigned int context_id,
+                                        DP_TextReader *reader)
+{
+    int limits_count;
+    DP_TextReaderParseParams limits_params =
+        DP_text_reader_get_array(reader, "limits", &limits_count);
+    return DP_msg_feature_limits_new(context_id,
+                                     DP_text_reader_parse_int32_array,
+                                     limits_count, &limits_params);
+}
+
+DP_MsgFeatureLimits *DP_msg_feature_limits_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_FEATURE_LIMITS);
+}
+
+const int32_t *DP_msg_feature_limits_limits(const DP_MsgFeatureLimits *mfl,
+                                            int *out_count)
+{
+    DP_ASSERT(mfl);
+    if (out_count) {
+        *out_count = mfl->limits_count;
+    }
+    return mfl->limits;
+}
+
+int DP_msg_feature_limits_limits_count(const DP_MsgFeatureLimits *mfl)
+{
+    return mfl->limits_count;
 }
 
 

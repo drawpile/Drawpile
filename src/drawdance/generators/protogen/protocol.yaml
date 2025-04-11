@@ -334,6 +334,15 @@ LocalChange:
               - LayerSketch
         - body bytes
 
+FeatureLimits:
+    id: 77
+    comment: |
+        Change feature limits.
+    fields:
+        - limits vec_i32:
+          min_len: 4
+          max_len: 255
+
 # Command messages (opaque)
 UndoPoint:
     id: 128
