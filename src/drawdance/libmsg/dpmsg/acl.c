@@ -884,14 +884,6 @@ static bool handle_move(DP_AclState *acls, uint8_t user_id, bool override,
     }
 }
 
-static bool handle_move_region(DP_AclState *acls, DP_Message *msg,
-                               uint8_t user_id, bool override)
-{
-    DP_MsgMoveRegion *mmr = DP_message_internal(msg);
-    int layer_id = DP_msg_move_region_layer(mmr);
-    return handle_move(acls, user_id, override, layer_id, layer_id);
-}
-
 static bool handle_move_rect(DP_AclState *acls, DP_Message *msg,
                              uint8_t user_id, bool override)
 {
@@ -948,10 +940,6 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
     case DP_MSG_CANVAS_RESIZE:
         return override
             || DP_acl_state_can_use_feature(acls, DP_FEATURE_RESIZE, user_id);
-    case DP_MSG_LAYER_CREATE:
-        return handle_layer_create(
-            acls, DP_msg_layer_create_id(DP_msg_layer_create_cast(msg)),
-            user_id, override);
     case DP_MSG_LAYER_ATTRIBUTES:
         return override
             || can_edit_layer(acls, user_id,
@@ -962,17 +950,6 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
             || can_edit_layer(
                    acls, user_id,
                    DP_msg_layer_retitle_id(DP_msg_layer_retitle_cast(msg)));
-    case DP_MSG_LAYER_ORDER:
-        return override
-            || DP_acl_state_can_use_feature(acls, DP_FEATURE_EDIT_LAYERS,
-                                            user_id);
-    case DP_MSG_LAYER_DELETE: {
-        DP_MsgLayerDelete *mld = DP_msg_layer_delete_cast(msg);
-        return handle_layer_delete(acls, DP_msg_layer_delete_id(mld), 0,
-                                   user_id, override);
-    }
-    case DP_MSG_LAYER_VISIBILITY:
-        return false; // Layer hiding is client-side.
     case DP_MSG_PUT_IMAGE: {
         DP_MsgPutImage *mpi = DP_message_internal(msg);
         return override
@@ -998,8 +975,6 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
         return handle_annotation_edit(acls, msg, user_id, override);
     case DP_MSG_ANNOTATION_DELETE:
         return handle_annotation_delete(acls, msg, user_id, override);
-    case DP_MSG_MOVE_REGION:
-        return handle_move_region(acls, msg, user_id, override);
     case DP_MSG_PUT_TILE:
         return override || DP_acl_state_is_op(acls, user_id);
     case DP_MSG_CANVAS_BACKGROUND:
@@ -1107,8 +1082,6 @@ uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg, bool override)
         case DP_MSG_DEFAULT_LAYER:
             return filter_unless(
                 override || DP_acl_state_is_op(acls, message_user_id(msg)));
-        case DP_MSG_FILTERED:
-            return DP_ACL_STATE_FILTERED_BIT;
         case DP_MSG_UNDO_DEPTH:
             return filter_unless(
                 override || DP_acl_state_is_op(acls, message_user_id(msg)));

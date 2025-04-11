@@ -168,15 +168,6 @@ Message makeLayerAclMessage(
 		const_cast<uint8_t *>(exclusive.constData())));
 }
 
-Message makeLayerCreateMessage(
-	uint8_t contextId, uint16_t id, uint16_t source, uint32_t fill,
-	uint8_t flags, const QString &name)
-{
-	QByteArray bytes = name.toUtf8();
-	return Message::noinc(DP_msg_layer_create_new(
-		contextId, id, source, fill, flags, bytes.constData(), bytes.length()));
-}
-
 Message makeLayerTreeCreateMessage(
 	uint8_t contextId, uint16_t id, uint16_t source, uint16_t target,
 	uint32_t fill, uint8_t flags, const QString &name)
@@ -185,11 +176,6 @@ Message makeLayerTreeCreateMessage(
 	return Message::noinc(DP_msg_layer_tree_create_new(
 		contextId, id, source, target, fill, flags, bytes.constData(),
 		bytes.length()));
-}
-
-Message makeLayerDeleteMessage(uint8_t contextId, uint16_t id, bool merge)
-{
-	return Message::noinc(DP_msg_layer_delete_new(contextId, id, merge));
 }
 
 Message
@@ -216,29 +202,6 @@ makeLayerRetitleMessage(uint8_t contextId, uint16_t id, const QString &title)
 Message makeMovePointerMessage(uint8_t contextId, int32_t x, int32_t y)
 {
 	return Message::noinc(DP_msg_move_pointer_new(contextId, x, y));
-}
-
-static QByteArray compressMonoMask(const QImage &mask)
-{
-	Q_ASSERT(mask.format() == QImage::Format_Mono);
-	return qCompress(mask.constBits(), mask.sizeInBytes());
-}
-
-Message makeMoveRegionMessage(
-	uint8_t contextId, uint16_t layer, int32_t bx, int32_t by, int32_t bw,
-	int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3,
-	int32_t y3, int32_t x4, int32_t y4, const QImage &mask)
-{
-	QByteArray compressed =
-		mask.isNull() ? QByteArray() : compressMonoMask(mask);
-	if(compressed.size() <=
-	   DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_MOVE_REGION_STATIC_LENGTH) {
-		return Message::noinc(DP_msg_move_region_new(
-			contextId, layer, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4, y4,
-			&Message::setUchars, compressed.size(), compressed.data()));
-	} else {
-		return Message::null();
-	}
 }
 
 static QByteArray compressAlphaMask(const QImage &mask)

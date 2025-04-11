@@ -384,36 +384,6 @@ static DP_CanvasState *handle_canvas_resize(DP_CanvasState *cs,
                                 DP_msg_canvas_resize_left(mcr));
 }
 
-static DP_CanvasState *handle_layer_create(DP_CanvasState *cs,
-                                           DP_DrawContext *dc,
-                                           unsigned int context_id,
-                                           DP_MsgLayerCreate *mlc)
-{
-    int layer_id = DP_msg_layer_create_id(mlc);
-    if (layer_id == 0) {
-        DP_error_set("Create layer: layer id 0 is invalid");
-        return NULL;
-    }
-
-    unsigned int flags = DP_msg_layer_create_flags(mlc);
-    bool copy = flags & DP_MSG_LAYER_CREATE_FLAGS_COPY;
-    bool insert = flags & DP_MSG_LAYER_CREATE_FLAGS_INSERT;
-
-    uint32_t fill = DP_msg_layer_create_fill(mlc);
-    DP_Tile *tile = fill == 0 ? NULL : DP_tile_new_from_bgra(context_id, fill);
-
-    size_t title_length;
-    const char *title = DP_msg_layer_create_title(mlc, &title_length);
-
-    int source_id = DP_msg_layer_create_source(mlc);
-    DP_CanvasState *next = DP_ops_layer_tree_create(
-        cs, dc, DP_msg_layer_create_id(mlc), copy ? source_id : 0,
-        insert ? source_id : 0, tile, false, false, title, title_length);
-
-    DP_tile_decref_nullable(tile);
-    return next;
-}
-
 static DP_CanvasState *handle_layer_attr(DP_CanvasState *cs,
                                          DP_MsgLayerAttributes *mla)
 {
@@ -435,22 +405,6 @@ static DP_CanvasState *handle_layer_attr(DP_CanvasState *cs,
 }
 
 
-static int get_order_id(void *user, int index)
-{
-    const uint16_t *layer_ids = user;
-    return layer_ids[index];
-}
-
-static DP_CanvasState *handle_layer_order(DP_CanvasState *cs,
-                                          DP_DrawContext *dc,
-                                          DP_MsgLayerOrder *mlo)
-{
-    int count;
-    const uint16_t *layer_ids = DP_msg_layer_order_layers(mlo, &count);
-    return DP_ops_layer_order(cs, dc, count, get_order_id, (void *)layer_ids);
-}
-
-
 static DP_CanvasState *handle_layer_retitle(DP_CanvasState *cs,
                                             DP_MsgLayerRetitle *mlr)
 {
@@ -464,34 +418,6 @@ static DP_CanvasState *handle_layer_retitle(DP_CanvasState *cs,
     const char *title = DP_msg_layer_retitle_title(mlr, &title_length);
 
     return DP_ops_layer_retitle(cs, layer_id, title, title_length);
-}
-
-static DP_CanvasState *handle_layer_delete(DP_CanvasState *cs,
-                                           DP_DrawContext *dc,
-                                           unsigned int context_id,
-                                           DP_MsgLayerDelete *mld)
-{
-    int layer_id = DP_msg_layer_delete_id(mld);
-    if (layer_id == 0) {
-        DP_error_set("Layer delete: layer id 0 is invalid");
-        return NULL;
-    }
-
-    return DP_ops_layer_delete(cs, dc, context_id, layer_id,
-                               DP_msg_layer_delete_merge(mld));
-}
-
-static DP_CanvasState *handle_layer_visibility(DP_CanvasState *cs,
-                                               DP_MsgLayerVisibility *mlv)
-{
-    int layer_id = DP_msg_layer_visibility_id(mlv);
-    if (layer_id == 0) {
-        DP_error_set("Layer visibility: layer id 0 is invalid");
-        return NULL;
-    }
-
-    return DP_ops_layer_visibility(cs, layer_id,
-                                   DP_msg_layer_visibility_visible(mlv));
 }
 
 static DP_CanvasState *selection_put(DP_CanvasState *cs,
@@ -704,32 +630,6 @@ handle_region(DP_CanvasState *cs, DP_DrawContext *dc,
         &dst_quad, interpolation, mask);
     DP_free(mask);
     return next_cs;
-}
-
-static DP_CanvasState *handle_move_region(DP_CanvasState *cs,
-                                          DP_DrawContext *dc,
-                                          DP_UserCursors *ucs_or_null,
-                                          unsigned int context_id,
-                                          DP_MsgMoveRegion *mmr)
-{
-    int src_layer_id = DP_msg_move_region_layer(mmr);
-    // If the source layer is zero, this is a selection transform. We always
-    // transform the "main" selection, since, at the time of writing, that's the
-    // only selection that actually exists. This message only exists for
-    // backward-compatibility reasons anyway, replaced by TransformRegion.
-    int dst_layer_id = src_layer_id == 0 ? ((1 << 8) | 1) : src_layer_id;
-    size_t in_mask_size;
-    const unsigned char *in_mask = DP_msg_move_region_mask(mmr, &in_mask_size);
-    return handle_region(
-        cs, dc, ucs_or_null, context_id, "Move region", src_layer_id,
-        dst_layer_id, DP_MSG_TRANSFORM_REGION_MODE_BILINEAR,
-        DP_msg_move_region_bx(mmr), DP_msg_move_region_by(mmr),
-        DP_msg_move_region_bw(mmr), DP_msg_move_region_bh(mmr),
-        DP_msg_move_region_x1(mmr), DP_msg_move_region_y1(mmr),
-        DP_msg_move_region_x2(mmr), DP_msg_move_region_y2(mmr),
-        DP_msg_move_region_x3(mmr), DP_msg_move_region_y3(mmr),
-        DP_msg_move_region_x4(mmr), DP_msg_move_region_y4(mmr), in_mask,
-        in_mask_size, DP_image_new_from_compressed_monochrome);
 }
 
 static DP_CanvasState *handle_put_tile(DP_CanvasState *cs, DP_DrawContext *dc,
@@ -1224,6 +1124,12 @@ static DP_CanvasState *handle_track_delete(DP_CanvasState *cs,
     return DP_ops_track_delete(cs, track_id);
 }
 
+static int get_order_id(void *user, int index)
+{
+    const uint16_t *layer_ids = user;
+    return layer_ids[index];
+}
+
 static DP_CanvasState *handle_track_order(DP_CanvasState *cs,
                                           DP_MsgTrackOrder *mto)
 {
@@ -1360,30 +1266,16 @@ static DP_CanvasState *handle(DP_CanvasState *cs, DP_DrawContext *dc,
     case DP_MSG_CANVAS_RESIZE:
         return handle_canvas_resize(cs, DP_message_context_id(msg),
                                     DP_msg_canvas_resize_cast(msg));
-    case DP_MSG_LAYER_CREATE:
-        return handle_layer_create(cs, dc, DP_message_context_id(msg),
-                                   DP_msg_layer_create_cast(msg));
     case DP_MSG_LAYER_ATTRIBUTES:
         return handle_layer_attr(cs, DP_msg_layer_attributes_cast(msg));
-    case DP_MSG_LAYER_ORDER:
-        return handle_layer_order(cs, dc, DP_msg_layer_order_cast(msg));
     case DP_MSG_LAYER_RETITLE:
         return handle_layer_retitle(cs, DP_msg_layer_retitle_cast(msg));
-    case DP_MSG_LAYER_DELETE:
-        return handle_layer_delete(cs, dc, DP_message_context_id(msg),
-                                   DP_msg_layer_delete_cast(msg));
-    case DP_MSG_LAYER_VISIBILITY:
-        return handle_layer_visibility(cs, DP_msg_layer_visibility_cast(msg));
     case DP_MSG_PUT_IMAGE:
         return handle_put_image(cs, ucs_or_null, DP_message_context_id(msg),
                                 DP_msg_put_image_cast(msg));
     case DP_MSG_FILL_RECT:
         return handle_fill_rect(cs, ucs_or_null, DP_message_context_id(msg),
                                 DP_msg_fill_rect_cast(msg));
-    case DP_MSG_MOVE_REGION:
-        return handle_move_region(cs, dc, ucs_or_null,
-                                  DP_message_context_id(msg),
-                                  DP_msg_move_region_cast(msg));
     case DP_MSG_PUT_TILE:
         return handle_put_tile(cs, dc, DP_msg_put_tile_cast(msg));
     case DP_MSG_CANVAS_BACKGROUND:

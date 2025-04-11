@@ -58,34 +58,34 @@ typedef enum DP_MessageType {
     DP_MSG_INTERVAL = 64,
     DP_MSG_LASER_TRAIL = 65,
     DP_MSG_MOVE_POINTER = 66,
-    DP_MSG_MARKER = 67,
+    DP_MSG_REMOVED_MARKER = 67,
     DP_MSG_USER_ACL = 68,
     DP_MSG_LAYER_ACL = 69,
     DP_MSG_FEATURE_ACCESS_LEVELS = 70,
     DP_MSG_DEFAULT_LAYER = 71,
-    DP_MSG_FILTERED = 72,
+    DP_MSG_REMOVED_FILTERED = 72,
     DP_MSG_EXTENSION = 73,
     DP_MSG_UNDO_DEPTH = 74,
     DP_MSG_DATA = 75,
     DP_MSG_LOCAL_CHANGE = 76,
     DP_MSG_UNDO_POINT = 128,
     DP_MSG_CANVAS_RESIZE = 129,
-    DP_MSG_LAYER_CREATE = 130,
+    DP_MSG_REMOVED_LAYER_CREATE = 130,
     DP_MSG_LAYER_ATTRIBUTES = 131,
     DP_MSG_LAYER_RETITLE = 132,
-    DP_MSG_LAYER_ORDER = 133,
-    DP_MSG_LAYER_DELETE = 134,
-    DP_MSG_LAYER_VISIBILITY = 135,
+    DP_MSG_REMOVED_LAYER_ORDER = 133,
+    DP_MSG_REMOVED_LAYER_DELETE = 134,
+    DP_MSG_REMOVED_LAYER_VISIBILITY = 135,
     DP_MSG_PUT_IMAGE = 136,
     DP_MSG_FILL_RECT = 137,
-    DP_MSG_TOOL_CHANGE = 138,
-    DP_MSG_PEN_MOVE = 139,
+    DP_MSG_REMOVED_TOOL_CHANGE = 138,
+    DP_MSG_REMOVED_PEN_MOVE = 139,
     DP_MSG_PEN_UP = 140,
     DP_MSG_ANNOTATION_CREATE = 141,
     DP_MSG_ANNOTATION_RESHAPE = 142,
     DP_MSG_ANNOTATION_EDIT = 143,
     DP_MSG_ANNOTATION_DELETE = 144,
-    DP_MSG_MOVE_REGION = 145,
+    DP_MSG_REMOVED_MOVE_REGION = 145,
     DP_MSG_PUT_TILE = 146,
     DP_MSG_CANVAS_BACKGROUND = 147,
     DP_MSG_DRAW_DABS_CLASSIC = 148,
@@ -700,35 +700,10 @@ int32_t DP_msg_move_pointer_y(const DP_MsgMovePointer *mmp);
 
 
 /*
- * DP_MSG_MARKER
+ * DP_MSG_REMOVED_MARKER
  *
- * A bookmark
- *
- * This is used to bookmark points in the session for quick access when playing
- * back a recording
+ * Removed in version 2.3
  */
-
-#define DP_MSG_MARKER_STATIC_LENGTH 0
-
-#define DP_MSG_MARKER_TEXT_MIN_LEN 0
-#define DP_MSG_MARKER_TEXT_MAX_LEN 65535
-
-typedef struct DP_MsgMarker DP_MsgMarker;
-
-DP_Message *DP_msg_marker_new(unsigned int context_id, const char *text_value,
-                              size_t text_len);
-
-DP_Message *DP_msg_marker_deserialize(unsigned int context_id,
-                                      const unsigned char *buffer,
-                                      size_t length);
-
-DP_Message *DP_msg_marker_parse(unsigned int context_id, DP_TextReader *reader);
-
-DP_MsgMarker *DP_msg_marker_cast(DP_Message *msg);
-
-const char *DP_msg_marker_text(const DP_MsgMarker *mm, size_t *out_len);
-
-size_t DP_msg_marker_text_len(const DP_MsgMarker *mm);
 
 
 /*
@@ -879,39 +854,10 @@ uint16_t DP_msg_default_layer_id(const DP_MsgDefaultLayer *mdl);
 
 
 /*
- * DP_MSG_FILTERED
+ * DP_MSG_REMOVED_FILTERED
  *
- * A message that has been filtered away by the ACL filter
- *
- * This is only used in recordings for mainly debugging purposes.
- * This message should never be sent over the network.
+ * Removed in version 2.3
  */
-
-#define DP_MSG_FILTERED_STATIC_LENGTH 0
-
-#define DP_MSG_FILTERED_MESSAGE_MIN_SIZE 0
-#define DP_MSG_FILTERED_MESSAGE_MAX_SIZE 65535
-
-typedef struct DP_MsgFiltered DP_MsgFiltered;
-
-DP_Message *DP_msg_filtered_new(unsigned int context_id,
-                                void (*set_message)(size_t, unsigned char *,
-                                                    void *),
-                                size_t message_size, void *message_user);
-
-DP_Message *DP_msg_filtered_deserialize(unsigned int context_id,
-                                        const unsigned char *buffer,
-                                        size_t length);
-
-DP_Message *DP_msg_filtered_parse(unsigned int context_id,
-                                  DP_TextReader *reader);
-
-DP_MsgFiltered *DP_msg_filtered_cast(DP_Message *msg);
-
-const unsigned char *DP_msg_filtered_message(const DP_MsgFiltered *mf,
-                                             size_t *out_size);
-
-size_t DP_msg_filtered_message_size(const DP_MsgFiltered *mf);
 
 
 /*
@@ -1113,75 +1059,10 @@ int32_t DP_msg_canvas_resize_left(const DP_MsgCanvasResize *mcr);
 
 
 /*
- * DP_MSG_LAYER_CREATE
+ * DP_MSG_REMOVED_LAYER_CREATE
  *
- * Layer creation command (legacy, subsumed by LayerTreeCreate)
- *
- * A session starts with zero layers, so a layer creation command is typically
- * the second command to be sent, right after setting the canvas size.
- *
- * The layer ID must be prefixed with the context ID of the user creating it.
- * This allows users to choose the layer ID themselves without worrying about
- * clashes. In single user mode, the client can assign IDs as it pleases,
- * but in multiuser mode the server validates the prefix for all new layers.
- *
- * The following flags can be used with layer creation:
- * - COPY   -- a copy of the Source layer is made, rather than a blank layer
- * - INSERT -- the new layer is inserted above the Source layer. Source 0 means
- *             the layer will be placed bottom-most on the stack
- *
- * The Source layer ID should be zero when COPY or INSERT flags are not used.
- * When COPY is used, it should refer to an existing layer. Copy commands
- * referring to missing layers are dropped.
- * When INSERT is used, referring to 0 or a nonexistent layer places
- * the new layer at the bottom of the stack.
- *
- * If layer controls are locked, this command requires session operator
- * privileges.
+ * Removed in version 2.3, sumsubed by LayerTreeCreate
  */
-
-#define DP_MSG_LAYER_CREATE_STATIC_LENGTH 9
-
-#define DP_MSG_LAYER_CREATE_FLAGS_COPY   0x1
-#define DP_MSG_LAYER_CREATE_FLAGS_INSERT 0x2
-
-#define DP_MSG_LAYER_CREATE_NUM_FLAGS 2
-#define DP_MSG_LAYER_CREATE_ALL_FLAGS \
-    DP_MSG_LAYER_CREATE_FLAGS_COPY, DP_MSG_LAYER_CREATE_FLAGS_INSERT
-
-const char *DP_msg_layer_create_flags_flag_name(unsigned int value);
-
-#define DP_MSG_LAYER_CREATE_TITLE_MIN_LEN 0
-#define DP_MSG_LAYER_CREATE_TITLE_MAX_LEN 65526
-
-typedef struct DP_MsgLayerCreate DP_MsgLayerCreate;
-
-DP_Message *DP_msg_layer_create_new(unsigned int context_id, uint16_t id,
-                                    uint16_t source, uint32_t fill,
-                                    uint8_t flags, const char *title_value,
-                                    size_t title_len);
-
-DP_Message *DP_msg_layer_create_deserialize(unsigned int context_id,
-                                            const unsigned char *buffer,
-                                            size_t length);
-
-DP_Message *DP_msg_layer_create_parse(unsigned int context_id,
-                                      DP_TextReader *reader);
-
-DP_MsgLayerCreate *DP_msg_layer_create_cast(DP_Message *msg);
-
-uint16_t DP_msg_layer_create_id(const DP_MsgLayerCreate *mlc);
-
-uint16_t DP_msg_layer_create_source(const DP_MsgLayerCreate *mlc);
-
-uint32_t DP_msg_layer_create_fill(const DP_MsgLayerCreate *mlc);
-
-uint8_t DP_msg_layer_create_flags(const DP_MsgLayerCreate *mlc);
-
-const char *DP_msg_layer_create_title(const DP_MsgLayerCreate *mlc,
-                                      size_t *out_len);
-
-size_t DP_msg_layer_create_title_len(const DP_MsgLayerCreate *mlc);
 
 
 /*
@@ -1274,111 +1155,24 @@ size_t DP_msg_layer_retitle_title_len(const DP_MsgLayerRetitle *mlr);
 
 
 /*
- * DP_MSG_LAYER_ORDER
+ * DP_MSG_REMOVED_LAYER_ORDER
  *
- * Layer order change command (legacy, subsumed by LayerTreeMove)
- *
- * New layers are always added to the top of the stack.
- * This command includes a list of layer IDs that define the new stacking order.
- *
- * An order change should list all layers in the stack, but due to
- * synchronization issues, that is not always possible. The layer order should
- * therefore be sanitized by removing all layers not in the current layer stack
- * and adding all missing layers to the end in their current relative order.
- *
- * For example: if the current stack is [1,2,3,4,5] and the client receives
- * a reordering command [3,4,1], the missing layers are appended: [3,4,1,2,5].
- *
- * If layer controls are locked, this command requires session operator
- * privileges.
+ * Removed in version 2.3, subsumed by LayerTreeMove
  */
-
-#define DP_MSG_LAYER_ORDER_STATIC_LENGTH 0
-
-#define DP_MSG_LAYER_ORDER_LAYERS_MIN_COUNT 0
-#define DP_MSG_LAYER_ORDER_LAYERS_MAX_COUNT 32767
-
-typedef struct DP_MsgLayerOrder DP_MsgLayerOrder;
-
-DP_Message *DP_msg_layer_order_new(unsigned int context_id,
-                                   void (*set_layers)(int, uint16_t *, void *),
-                                   int layers_count, void *layers_user);
-
-DP_Message *DP_msg_layer_order_deserialize(unsigned int context_id,
-                                           const unsigned char *buffer,
-                                           size_t length);
-
-DP_Message *DP_msg_layer_order_parse(unsigned int context_id,
-                                     DP_TextReader *reader);
-
-DP_MsgLayerOrder *DP_msg_layer_order_cast(DP_Message *msg);
-
-const uint16_t *DP_msg_layer_order_layers(const DP_MsgLayerOrder *mlo,
-                                          int *out_count);
-
-int DP_msg_layer_order_layers_count(const DP_MsgLayerOrder *mlo);
 
 
 /*
- * DP_MSG_LAYER_DELETE
+ * DP_MSG_REMOVED_LAYER_DELETE
  *
- * Layer deletion command (legacy, subsumed by LayerTreeDelete)
- *
- * If the merge attribute is set, the contents of the layer is merged
- * to the layer below it. Merging the bottom-most layer does nothing.
- *
- * If the current layer or layer controls in general are locked, this command
- * requires session operator privileges.
+ * Removed in version 2.3, subsumed by LayerTreeDelete
  */
-
-#define DP_MSG_LAYER_DELETE_STATIC_LENGTH 3
-
-typedef struct DP_MsgLayerDelete DP_MsgLayerDelete;
-
-DP_Message *DP_msg_layer_delete_new(unsigned int context_id, uint16_t id,
-                                    bool merge);
-
-DP_Message *DP_msg_layer_delete_deserialize(unsigned int context_id,
-                                            const unsigned char *buffer,
-                                            size_t length);
-
-DP_Message *DP_msg_layer_delete_parse(unsigned int context_id,
-                                      DP_TextReader *reader);
-
-DP_MsgLayerDelete *DP_msg_layer_delete_cast(DP_Message *msg);
-
-uint16_t DP_msg_layer_delete_id(const DP_MsgLayerDelete *mld);
-
-bool DP_msg_layer_delete_merge(const DP_MsgLayerDelete *mld);
 
 
 /*
- * DP_MSG_LAYER_VISIBILITY
+ * DP_MSG_REMOVED_LAYER_VISIBILITY
  *
- * Removed in version 2.2, but still included for compatibility with
- * 2.1 sessions that might send it, the client ignores them though.
- * Effectively replaced by LocalChange.
+ * Removed in version 2.3, layer visibility is local since 2.2
  */
-
-#define DP_MSG_LAYER_VISIBILITY_STATIC_LENGTH 3
-
-typedef struct DP_MsgLayerVisibility DP_MsgLayerVisibility;
-
-DP_Message *DP_msg_layer_visibility_new(unsigned int context_id, uint16_t id,
-                                        bool visible);
-
-DP_Message *DP_msg_layer_visibility_deserialize(unsigned int context_id,
-                                                const unsigned char *buffer,
-                                                size_t length);
-
-DP_Message *DP_msg_layer_visibility_parse(unsigned int context_id,
-                                          DP_TextReader *reader);
-
-DP_MsgLayerVisibility *DP_msg_layer_visibility_cast(DP_Message *msg);
-
-uint16_t DP_msg_layer_visibility_id(const DP_MsgLayerVisibility *mlv);
-
-bool DP_msg_layer_visibility_visible(const DP_MsgLayerVisibility *mlv);
 
 
 /*
@@ -1488,14 +1282,14 @@ uint32_t DP_msg_fill_rect_color(const DP_MsgFillRect *mfr);
 
 
 /*
- * DP_MSG_TOOL_CHANGE
+ * DP_MSG_REMOVED_TOOL_CHANGE
  *
  * Removed in version 2.1
  */
 
 
 /*
- * DP_MSG_PEN_MOVE
+ * DP_MSG_REMOVED_PEN_MOVE
  *
  * Removed in version 2.1
  */
@@ -1696,86 +1490,10 @@ uint16_t DP_msg_annotation_delete_id(const DP_MsgAnnotationDelete *mad);
 
 
 /*
- * DP_MSG_MOVE_REGION
+ * DP_MSG_REMOVED_MOVE_REGION
  *
- * Move (and transform) a region of a layer (legacy, subsumed by
- * TransformRegion)
- *
- * This is used to implement selection moving. It is equivalent
- * to doing two PutImages: the first to mask away the original
- * selection and the other to paste the selection to a new location.
- *
- * This command packages that into a single action that is more
- * bandwidth efficient and can be used even when PutImages in general
- * are locked, since it's not introducing any new pixels onto the canvas.
- *
- * Internally, the paint engine performs the following steps:
- * 1. Copy selected pixels to a buffer
- * 2. Erase selected pixels from the layer
- * 3. Composite transformed buffer onto the layer
- *
- * The pixel selection is determined by the mask bitmap. The mask
- * is DEFLATEd 1 bit per pixel bitmap data.
- *
- * For axis aligned rectangle selections, no bitmap is necessary.
- *
- * If the layer is 0, the selection with id 1 is transformed instead.
+ * Removed in version 2.3, subsumed by TransformRegion
  */
-
-#define DP_MSG_MOVE_REGION_STATIC_LENGTH 50
-
-#define DP_MSG_MOVE_REGION_MASK_MIN_SIZE 0
-#define DP_MSG_MOVE_REGION_MASK_MAX_SIZE 65485
-
-typedef struct DP_MsgMoveRegion DP_MsgMoveRegion;
-
-DP_Message *
-DP_msg_move_region_new(unsigned int context_id, uint16_t layer, int32_t bx,
-                       int32_t by, int32_t bw, int32_t bh, int32_t x1,
-                       int32_t y1, int32_t x2, int32_t y2, int32_t x3,
-                       int32_t y3, int32_t x4, int32_t y4,
-                       void (*set_mask)(size_t, unsigned char *, void *),
-                       size_t mask_size, void *mask_user);
-
-DP_Message *DP_msg_move_region_deserialize(unsigned int context_id,
-                                           const unsigned char *buffer,
-                                           size_t length);
-
-DP_Message *DP_msg_move_region_parse(unsigned int context_id,
-                                     DP_TextReader *reader);
-
-DP_MsgMoveRegion *DP_msg_move_region_cast(DP_Message *msg);
-
-uint16_t DP_msg_move_region_layer(const DP_MsgMoveRegion *mmr);
-
-int32_t DP_msg_move_region_bx(const DP_MsgMoveRegion *mmr);
-
-int32_t DP_msg_move_region_by(const DP_MsgMoveRegion *mmr);
-
-int32_t DP_msg_move_region_bw(const DP_MsgMoveRegion *mmr);
-
-int32_t DP_msg_move_region_bh(const DP_MsgMoveRegion *mmr);
-
-int32_t DP_msg_move_region_x1(const DP_MsgMoveRegion *mmr);
-
-int32_t DP_msg_move_region_y1(const DP_MsgMoveRegion *mmr);
-
-int32_t DP_msg_move_region_x2(const DP_MsgMoveRegion *mmr);
-
-int32_t DP_msg_move_region_y2(const DP_MsgMoveRegion *mmr);
-
-int32_t DP_msg_move_region_x3(const DP_MsgMoveRegion *mmr);
-
-int32_t DP_msg_move_region_y3(const DP_MsgMoveRegion *mmr);
-
-int32_t DP_msg_move_region_x4(const DP_MsgMoveRegion *mmr);
-
-int32_t DP_msg_move_region_y4(const DP_MsgMoveRegion *mmr);
-
-const unsigned char *DP_msg_move_region_mask(const DP_MsgMoveRegion *mmr,
-                                             size_t *out_size);
-
-size_t DP_msg_move_region_mask_size(const DP_MsgMoveRegion *mmr);
 
 
 /*

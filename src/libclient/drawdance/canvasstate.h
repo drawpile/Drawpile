@@ -92,9 +92,6 @@ public:
 
 	void toResetImage(net::MessageList &msgs, uint8_t contextId) const;
 
-	net::Message makeLayerOrder(
-		uint8_t contextId, int sourceId, int targetId, bool below) const;
-
 	net::Message makeLayerTreeMove(
 		uint8_t contextId, int sourceId, int targetId, bool intoGroup,
 		bool below) const;

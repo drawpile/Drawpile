@@ -277,13 +277,6 @@ void CanvasState::toResetImage(net::MessageList &msgs, uint8_t contextId) const
 	DP_reset_image_build(m_data, contextId, &CanvasState::pushMessage, &msgs);
 }
 
-net::Message CanvasState::makeLayerOrder(
-	uint8_t contextId, int sourceId, int targetId, bool below) const
-{
-	return net::Message::noinc(DP_layer_routes_layer_order_make(
-		m_data, contextId, sourceId, targetId, below));
-}
-
 net::Message CanvasState::makeLayerTreeMove(
 	uint8_t contextId, int sourceId, int targetId, bool intoGroup,
 	bool below) const

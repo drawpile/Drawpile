@@ -27,71 +27,6 @@ static void extract_selection_ids(int layer_id, uint8_t *out_source_id,
 }
 
 
-static_assert(DP_MSG_MOVE_REGION_STATIC_LENGTH == 50,
-              "Need to update move region local match");
-
-#define MATCH_MOVE_REGION_SIZE DP_MSG_MOVE_REGION_STATIC_LENGTH
-
-static void set_move_region_data(DP_UNUSED size_t size, unsigned char *out,
-                                 void *user)
-{
-    DP_ASSERT(size == MATCH_MOVE_REGION_SIZE);
-    DP_MsgMoveRegion *mmr = user;
-    DP_ASSERT(DP_msg_move_region_layer(mmr) == 0);
-    size_t written = 0;
-    written +=
-        DP_write_bigendian_int32(DP_msg_move_region_bx(mmr), out + written);
-    written +=
-        DP_write_bigendian_int32(DP_msg_move_region_by(mmr), out + written);
-    written +=
-        DP_write_bigendian_int32(DP_msg_move_region_bw(mmr), out + written);
-    written +=
-        DP_write_bigendian_int32(DP_msg_move_region_bh(mmr), out + written);
-    written +=
-        DP_write_bigendian_int32(DP_msg_move_region_x1(mmr), out + written);
-    written +=
-        DP_write_bigendian_int32(DP_msg_move_region_y1(mmr), out + written);
-    written +=
-        DP_write_bigendian_int32(DP_msg_move_region_x2(mmr), out + written);
-    written +=
-        DP_write_bigendian_int32(DP_msg_move_region_y2(mmr), out + written);
-    written +=
-        DP_write_bigendian_int32(DP_msg_move_region_x3(mmr), out + written);
-    written +=
-        DP_write_bigendian_int32(DP_msg_move_region_y3(mmr), out + written);
-    written +=
-        DP_write_bigendian_int32(DP_msg_move_region_x4(mmr), out + written);
-    written +=
-        DP_write_bigendian_int32(DP_msg_move_region_y4(mmr), out + written);
-    written += DP_write_bigendian_uint16(
-        DP_size_to_uint16(DP_msg_move_region_mask_size(mmr)), out + written);
-    DP_ASSERT(written == size);
-}
-
-static bool match_move_region(DP_MsgMoveRegion *mmr,
-                              DP_Message *local_match_msg)
-{
-    DP_ASSERT(DP_msg_move_region_layer(mmr) == 0);
-    size_t size;
-    const unsigned char *data = local_match_data(local_match_msg, &size);
-    size_t mask_size = DP_msg_move_region_mask_size(mmr);
-    return size == MATCH_MOVE_REGION_SIZE
-        && DP_read_bigendian_int32(data) == DP_msg_move_region_bx(mmr)
-        && DP_read_bigendian_int32(data + 4) == DP_msg_move_region_by(mmr)
-        && DP_read_bigendian_int32(data + 8) == DP_msg_move_region_bw(mmr)
-        && DP_read_bigendian_int32(data + 12) == DP_msg_move_region_bh(mmr)
-        && DP_read_bigendian_int32(data + 16) == DP_msg_move_region_x1(mmr)
-        && DP_read_bigendian_int32(data + 20) == DP_msg_move_region_y1(mmr)
-        && DP_read_bigendian_int32(data + 24) == DP_msg_move_region_x2(mmr)
-        && DP_read_bigendian_int32(data + 28) == DP_msg_move_region_y2(mmr)
-        && DP_read_bigendian_int32(data + 32) == DP_msg_move_region_x3(mmr)
-        && DP_read_bigendian_int32(data + 36) == DP_msg_move_region_y3(mmr)
-        && DP_read_bigendian_int32(data + 40) == DP_msg_move_region_x4(mmr)
-        && DP_read_bigendian_int32(data + 44) == DP_msg_move_region_y4(mmr)
-        && DP_uint16_to_size(DP_read_bigendian_uint16(data + 48)) == mask_size;
-}
-
-
 static_assert(DP_MSG_MOVE_RECT_STATIC_LENGTH == 28,
               "Need to update move rect local match");
 
@@ -300,15 +235,6 @@ DP_Message *DP_msg_local_match_make(DP_Message *msg, bool disguise_as_put_image)
     size_t data_size;
     DP_MessageType type = DP_message_type(msg);
     switch (type) {
-    case DP_MSG_MOVE_REGION:
-        if (DP_msg_move_region_layer(DP_message_internal(msg)) == 0) {
-            set_data = set_move_region_data;
-            data_size = MATCH_MOVE_REGION_SIZE;
-            break;
-        }
-        else {
-            return NULL;
-        }
     case DP_MSG_MOVE_RECT:
         if (DP_msg_move_rect_source(DP_message_internal(msg)) == 0) {
             set_data = set_move_rect_data;
@@ -367,11 +293,6 @@ bool DP_msg_local_match_matches(DP_Message *msg, DP_Message *local_match_msg)
 {
     DP_ASSERT(DP_msg_local_match_is_local_match(local_match_msg));
     switch (DP_message_type(msg)) {
-    case DP_MSG_MOVE_REGION: {
-        DP_MsgMoveRegion *mmr = DP_message_internal(msg);
-        return DP_msg_move_region_layer(mmr) == 0
-            && match_move_region(mmr, local_match_msg);
-    }
     case DP_MSG_MOVE_RECT: {
         DP_MsgMoveRect *mmr = DP_message_internal(msg);
         return DP_msg_move_rect_source(mmr) == 0
