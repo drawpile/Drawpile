@@ -31,16 +31,18 @@ private slots:
 		{
 			QFile testFile(dir.absoluteFilePath("test.dptxt"));
 			QVERIFY(testFile.open(QIODevice::WriteOnly | QIODevice::Truncate));
-			QByteArray testContent =
-				QByteArrayLiteral("!version=" DP_PROTOCOL_VERSION "\n"
-								  "!maxUserCount=1\n"
-								  "!founder=tester\n"
-								  "!password=plain;qwerty123\n"
-								  "!title=Test\n"
-								  "!nsfm=false\n"
-								  "\n"
-								  "1 resize {\"bottom\":3000,\"right\":\"3000\"}\n"
-								  "1 newlayer {\"id\":257,\"title\":\"background\"}\n");
+			QByteArray testContent = QByteArrayLiteral(
+				"!version=" DP_PROTOCOL_VERSION "\n"
+				"!maxUserCount=1\n"
+				"!founder=tester\n"
+				"!password=plain;qwerty123\n"
+				"!title=Test\n"
+				"!nsfm=false\n"
+				"\n"
+				"1 resize {\"bottom\":3000,\"right\":\"3000\"}\n"
+				"1 layertreecreate "
+				"{\"id\":257,\"source\":0,\"target\":0,\"title\":"
+				"\"background\"}\n");
 			QCOMPARE(testFile.write(testContent), testContent.size());
 			QVERIFY(testFile.flush());
 			testFile.close();
@@ -87,7 +89,7 @@ private slots:
 		QCOMPARE(msgs.size(), 2);
 
 		QCOMPARE(msgs.at(0).type(), DP_MSG_CANVAS_RESIZE);
-		QCOMPARE(msgs.at(1).type(), DP_MSG_LAYER_CREATE);
+		QCOMPARE(msgs.at(1).type(), DP_MSG_LAYER_TREE_CREATE);
 	}
 
 private:

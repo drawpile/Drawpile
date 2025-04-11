@@ -54,11 +54,6 @@ DP_CanvasState *DP_ops_layer_attributes(DP_CanvasState *cs, int layer_id,
                                         int blend_mode, bool censored,
                                         bool isolated, bool clip);
 
-DP_CanvasState *DP_ops_layer_order(DP_CanvasState *cs, DP_DrawContext *dc,
-                                   int layer_id_count,
-                                   int (*get_layer_id)(void *, int),
-                                   void *user);
-
 DP_CanvasState *DP_ops_layer_tree_move(DP_CanvasState *cs, DP_DrawContext *dc,
                                        int layer_id, int parent_id,
                                        int sibling_id);
@@ -73,9 +68,6 @@ DP_CanvasState *DP_ops_layer_delete(DP_CanvasState *cs, DP_DrawContext *dc,
 DP_CanvasState *DP_ops_layer_tree_delete(DP_CanvasState *cs, DP_DrawContext *dc,
                                          unsigned int context_id, int layer_id,
                                          int merge_layer_id);
-
-DP_CanvasState *DP_ops_layer_visibility(DP_CanvasState *cs, int layer_id,
-                                        bool visible);
 
 DP_CanvasState *DP_ops_put_image(DP_CanvasState *cs,
                                  DP_UserCursors *ucs_or_null,
