@@ -35,16 +35,10 @@ static long long guess_message_msecs(DP_Message *msg, DP_MessageType type,
     case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
         return 5;
     case DP_MSG_PUT_IMAGE:
-    case DP_MSG_MOVE_REGION:
-    case DP_MSG_MOVE_RECT:
     case DP_MSG_MOVE_POINTER:
         return 10;
-    case DP_MSG_LAYER_CREATE:
     case DP_MSG_LAYER_ATTRIBUTES:
     case DP_MSG_LAYER_RETITLE:
-    case DP_MSG_LAYER_ORDER:
-    case DP_MSG_LAYER_DELETE:
-    case DP_MSG_LAYER_VISIBILITY:
     case DP_MSG_ANNOTATION_RESHAPE:
     case DP_MSG_ANNOTATION_EDIT:
         return 20;

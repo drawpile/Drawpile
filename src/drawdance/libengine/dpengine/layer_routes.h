@@ -70,11 +70,6 @@ DP_LayerRoutesEntry *DP_layer_routes_search(DP_LayerRoutes *lr, int layer_id);
 
 int DP_layer_routes_search_parent_id(DP_LayerRoutes *lr, int layer_id);
 
-DP_Message *DP_layer_routes_layer_order_make(DP_CanvasState *cs,
-                                             unsigned int context_id,
-                                             int source_id, int target_id,
-                                             bool below);
-
 DP_Message *DP_layer_routes_layer_tree_move_make(DP_LayerRoutes *lr,
                                                  DP_CanvasState *cs,
                                                  unsigned int context_id,

@@ -273,7 +273,6 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     switch (type) {
     case DP_MSG_CANVAS_RESIZE:
         return make_everything();
-    case DP_MSG_LAYER_CREATE:
     case DP_MSG_LAYER_TREE_CREATE:
         // Creating a layer is complicated business, it might copy an entire
         // layer group for example. So we'll err on the side of caution and
@@ -286,20 +285,10 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     case DP_MSG_LAYER_RETITLE:
         return make_layer_attrs(
             DP_msg_layer_retitle_id(DP_msg_layer_retitle_cast(msg)));
-    case DP_MSG_LAYER_ORDER:
     case DP_MSG_LAYER_TREE_MOVE:
         // Moving a layer is dependent on the state of the source, parent and
         // sibling layer, which is beyond what we can represent.
         return make_layer_attrs(ALL_IDS);
-    case DP_MSG_LAYER_DELETE: {
-        DP_MsgLayerDelete *mld = DP_msg_layer_delete_cast(msg);
-        // If the layer gets merged, we affect two layers, but we don't know
-        // which ones, since the message doesn't contain the second id. So we
-        // mark it as conflicting with all layers to be safe.
-        return make_layer_attrs(DP_msg_layer_delete_merge(mld)
-                                    ? ALL_IDS
-                                    : DP_msg_layer_delete_id(mld));
-    }
     case DP_MSG_LAYER_TREE_DELETE: {
         DP_MsgLayerTreeDelete *mtld = DP_msg_layer_tree_delete_cast(msg);
         // If this layer gets merged into another, we affect two layers, which
@@ -425,18 +414,6 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     case DP_MSG_ANNOTATION_DELETE:
         return make_annotations(
             DP_msg_annotation_delete_id(DP_msg_annotation_delete_cast(msg)));
-    case DP_MSG_MOVE_REGION: {
-        DP_MsgMoveRegion *mmr = DP_msg_move_region_cast(msg);
-        return make_pixels(
-            DP_msg_move_region_layer(mmr),
-            region_bounds(
-                DP_msg_move_region_bx(mmr), DP_msg_move_region_by(mmr),
-                DP_msg_move_region_bw(mmr), DP_msg_move_region_bh(mmr),
-                DP_msg_move_region_x1(mmr), DP_msg_move_region_y1(mmr),
-                DP_msg_move_region_x2(mmr), DP_msg_move_region_y2(mmr),
-                DP_msg_move_region_x3(mmr), DP_msg_move_region_y3(mmr),
-                DP_msg_move_region_x4(mmr), DP_msg_move_region_y4(mmr)));
-    }
     // Move rect and transform regionmessages can take stuff from one layer and
     // move it to another, affecting two different layers. Since we can't
     // represent that, we punt to affecting all layers in that case. Switching

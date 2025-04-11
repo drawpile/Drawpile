@@ -371,60 +371,6 @@ DP_CanvasState *DP_ops_layer_attributes(DP_CanvasState *cs, int layer_id,
 }
 
 
-DP_CanvasState *DP_ops_layer_order(DP_CanvasState *cs, DP_DrawContext *dc,
-                                   int layer_id_count,
-                                   int (*get_layer_id)(void *, int), void *user)
-{
-    DP_LayerList *ll = DP_canvas_state_layers_noinc(cs);
-    DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
-    int layer_count = DP_layer_list_count(ll);
-    DP_ASSERT(layer_count == DP_layer_props_list_count(lpl));
-
-    DP_TransientLayerList *tll = DP_transient_layer_list_new_init(layer_count);
-    DP_TransientLayerPropsList *tlpl =
-        DP_transient_layer_props_list_new_init(layer_count);
-    DP_TransientCanvasState *tcs =
-        DP_transient_canvas_state_new_with_layers_noinc(cs, tll, tlpl);
-
-    int fill = 0;
-    for (int i = 0; i < layer_id_count; ++i) {
-        int layer_id = get_layer_id(user, i);
-        if (DP_transient_layer_props_list_index_by_id(tlpl, layer_id) == -1) {
-            int from_index = DP_layer_props_list_index_by_id(lpl, layer_id);
-            if (from_index != -1) {
-                DP_LayerListEntry *lle = DP_layer_list_at_noinc(ll, from_index);
-                DP_LayerProps *lp =
-                    DP_layer_props_list_at_noinc(lpl, from_index);
-                DP_transient_layer_list_set_inc(tll, lle, fill);
-                DP_transient_layer_props_list_set_inc(tlpl, lp, fill);
-                ++fill;
-            }
-            else {
-                DP_warn("Layer order: unknown layer id %d", layer_id);
-            }
-        }
-        else {
-            DP_warn("Layer order: duplicate layer id %d", layer_id);
-        }
-    }
-
-    // If further layers remain, just move them over in the order they appear.
-    for (int i = 0; fill < layer_count && i < layer_count; ++i) {
-        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        int layer_id = DP_layer_props_id(lp);
-        if (DP_transient_layer_props_list_index_by_id(tlpl, layer_id) == -1) {
-            DP_LayerListEntry *lle = DP_layer_list_at_noinc(ll, i);
-            DP_transient_layer_list_set_inc(tll, lle, fill);
-            DP_transient_layer_props_list_set_inc(tlpl, lp, fill);
-            ++fill;
-        }
-    }
-
-    DP_transient_canvas_state_layer_routes_reindex(tcs, dc);
-    return DP_transient_canvas_state_persist(tcs);
-}
-
-
 struct DP_LayerTreeMoveLayer {
     DP_LayerProps *lp;
     union {
@@ -778,23 +724,6 @@ DP_CanvasState *DP_ops_layer_tree_delete(DP_CanvasState *cs, DP_DrawContext *dc,
 
     DP_transient_canvas_state_layer_routes_reindex(tcs, dc);
     DP_transient_canvas_state_timeline_cleanup(tcs);
-    return DP_transient_canvas_state_persist(tcs);
-}
-
-
-DP_CanvasState *DP_ops_layer_visibility(DP_CanvasState *cs, int layer_id,
-                                        bool visible)
-{
-    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
-    if (!lre) {
-        DP_error_set("Layer visibility: id %d not found", layer_id);
-        return NULL;
-    }
-
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-    DP_TransientLayerProps *tlp = get_layer_props(tcs, lre, 0);
-    DP_transient_layer_props_hidden_set(tlp, !visible);
     return DP_transient_canvas_state_persist(tcs);
 }
 
