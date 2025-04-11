@@ -81,6 +81,10 @@ bool DP_text_writer_write_uint16_list(DP_TextWriter *writer, const char *key,
                                       const uint16_t *value,
                                       int count) DP_MUST_CHECK;
 
+bool DP_text_writer_write_int32_list(DP_TextWriter *writer, const char *key,
+                                     const int32_t *value,
+                                     int count) DP_MUST_CHECK;
+
 bool DP_text_writer_start_subs(DP_TextWriter *writer) DP_MUST_CHECK;
 
 bool DP_text_writer_finish_subs(DP_TextWriter *writer) DP_MUST_CHECK;
