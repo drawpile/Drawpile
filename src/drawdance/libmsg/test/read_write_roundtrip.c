@@ -388,17 +388,6 @@ static DP_Message *generate_move_pointer(void)
                                    random_int32());
 }
 
-static DP_Message *generate_marker(void)
-{
-    size_t text_len;
-    char *text = generate_string(
-        size_between(DP_MSG_MARKER_TEXT_MIN_LEN, DP_MSG_MARKER_TEXT_MAX_LEN),
-        &text_len);
-    DP_Message *msg = DP_msg_marker_new(generate_context_id(), text, text_len);
-    DP_free(text);
-    return msg;
-}
-
 static DP_Message *generate_user_acl(void)
 {
     return DP_msg_user_acl_new(generate_context_id(), generate_uint8s,
@@ -428,14 +417,6 @@ static DP_Message *generate_feature_access_levels(void)
 static DP_Message *generate_default_layer(void)
 {
     return DP_msg_default_layer_new(generate_context_id(), random_uint16());
-}
-
-static DP_Message *generate_filtered(void)
-{
-    return DP_msg_filtered_new(generate_context_id(), generate_bytes,
-                               size_between(DP_MSG_FILTERED_MESSAGE_MIN_SIZE,
-                                            DP_MSG_FILTERED_MESSAGE_MAX_SIZE),
-                               NULL);
 }
 
 static DP_Message *generate_undo_depth(void)
@@ -478,23 +459,6 @@ static DP_Message *generate_canvas_resize(void)
                                     random_int32());
 }
 
-static DP_Message *generate_layer_create(void)
-{
-    size_t title_len;
-    char *title =
-        generate_string(size_between(DP_MSG_LAYER_CREATE_TITLE_MIN_LEN,
-                                     DP_MSG_LAYER_CREATE_TITLE_MAX_LEN),
-                        &title_len);
-    DP_Message *msg = DP_msg_layer_create_new(
-        generate_context_id(), random_uint16(), random_uint16(),
-        random_uint32(),
-        generate_flags((unsigned int[]){DP_MSG_LAYER_CREATE_ALL_FLAGS},
-                       DP_MSG_LAYER_CREATE_NUM_FLAGS),
-        title, title_len);
-    DP_free(title);
-    return msg;
-}
-
 static DP_Message *generate_layer_attributes(void)
 {
     return DP_msg_layer_attributes_new(
@@ -515,27 +479,6 @@ static DP_Message *generate_layer_retitle(void)
         generate_context_id(), random_uint16(), title, title_len);
     DP_free(title);
     return msg;
-}
-
-static DP_Message *generate_layer_order(void)
-{
-    return DP_msg_layer_order_new(
-        generate_context_id(), generate_uint16s,
-        int_between(DP_MSG_LAYER_ORDER_LAYERS_MIN_COUNT,
-                    DP_MSG_LAYER_ORDER_LAYERS_MAX_COUNT),
-        NULL);
-}
-
-static DP_Message *generate_layer_delete(void)
-{
-    return DP_msg_layer_delete_new(generate_context_id(), random_uint16(),
-                                   random_bool());
-}
-
-static DP_Message *generate_layer_visibility(void)
-{
-    return DP_msg_layer_visibility_new(generate_context_id(), random_uint16(),
-                                       random_bool());
 }
 
 static DP_Message *generate_put_image(void)
@@ -595,18 +538,6 @@ static DP_Message *generate_annotation_edit(void)
 static DP_Message *generate_annotation_delete(void)
 {
     return DP_msg_annotation_delete_new(generate_context_id(), random_uint16());
-}
-
-static DP_Message *generate_move_region(void)
-{
-    return DP_msg_move_region_new(
-        generate_context_id(), random_uint16(), random_int32(), random_int32(),
-        random_int32(), random_int32(), random_int32(), random_int32(),
-        random_int32(), random_int32(), random_int32(), random_int32(),
-        random_int32(), random_int32(), generate_bytes,
-        size_between(DP_MSG_MOVE_REGION_MASK_MIN_SIZE,
-                     DP_MSG_MOVE_REGION_MASK_MAX_SIZE),
-        NULL);
 }
 
 static DP_Message *generate_put_tile(void)
@@ -690,7 +621,7 @@ static DP_Message *generate_move_rect(void)
                                 random_int32(), random_int32(), random_int32(),
                                 random_int32(), generate_bytes,
                                 size_between(DP_MSG_MOVE_RECT_MASK_MIN_SIZE,
-                                             DP_MSG_MOVE_REGION_MASK_MAX_SIZE),
+                                             DP_MSG_MOVE_RECT_MASK_MAX_SIZE),
                                 NULL);
 }
 
@@ -850,23 +781,17 @@ static GenerateFn generate_fns[] = {
     generate_interval,
     generate_laser_trail,
     generate_move_pointer,
-    generate_marker,
     generate_user_acl,
     generate_layer_acl,
     generate_feature_access_levels,
     generate_default_layer,
-    generate_filtered,
     generate_undo_depth,
     generate_data,
     generate_local_change,
     generate_undo_point,
     generate_canvas_resize,
-    generate_layer_create,
     generate_layer_attributes,
     generate_layer_retitle,
-    generate_layer_order,
-    generate_layer_delete,
-    generate_layer_visibility,
     generate_put_image,
     generate_fill_rect,
     generate_pen_up,
@@ -874,7 +799,6 @@ static GenerateFn generate_fns[] = {
     generate_annotation_reshape,
     generate_annotation_edit,
     generate_annotation_delete,
-    generate_move_region,
     generate_put_tile,
     generate_canvas_background,
     generate_draw_dabs_classic,

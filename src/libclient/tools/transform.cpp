@@ -510,7 +510,6 @@ bool TransformTool::checkAndSend(
 			for(const net::Message &msg : msgs) {
 				switch(msg.type()) {
 				case DP_MSG_MOVE_RECT:
-				case DP_MSG_MOVE_REGION:
 				case DP_MSG_TRANSFORM_REGION:
 					if(transformAllowed) {
 						break;
