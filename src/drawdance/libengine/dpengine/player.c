@@ -535,7 +535,6 @@ static bool emit_message(DP_Message *msg, DP_Message **out_msg,
     case DP_MSG_CHAT:
     case DP_MSG_TRUSTED_USERS:
     case DP_MSG_PRIVATE_CHAT:
-    case DP_MSG_MARKER:
     case DP_MSG_USER_ACL:
     case DP_MSG_DATA:
         if (pass < (unsigned char)DP_PLAYER_PASS_ALL) {

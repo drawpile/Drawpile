@@ -657,13 +657,9 @@ void DP_local_state_handle(DP_LocalState *ls, DP_DrawContext *dc,
             handle_local_change(ls, dc, DP_message_internal(msg));
         }
         break;
-    case DP_MSG_LAYER_CREATE:
+    case DP_MSG_LAYER_TREE_CREATE:
         // TODO: Handle group duplication properly. They may create more than
         // one layer, but only the top level id has its state properly cleared.
-        clear_layer_state(ls, DP_msg_layer_create_id(DP_message_internal(msg)));
-        break;
-    case DP_MSG_LAYER_TREE_CREATE:
-        // TODO: Dito to the above.
         clear_layer_state(
             ls, DP_msg_layer_tree_create_id(DP_message_internal(msg)));
         break;

@@ -84,15 +84,9 @@ Message makeLayerAclMessage(
 	uint8_t contextId, uint16_t id, uint8_t flags,
 	const QVector<uint8_t> &exclusive);
 
-Message makeLayerCreateMessage(
-	uint8_t contextId, uint16_t id, uint16_t source, uint32_t fill,
-	uint8_t flags, const QString &name);
-
 Message makeLayerTreeCreateMessage(
 	uint8_t contextId, uint16_t id, uint16_t source, uint16_t target,
 	uint32_t fill, uint8_t flags, const QString &name);
-
-Message makeLayerDeleteMessage(uint8_t contextId, uint16_t id, bool merge);
 
 Message
 makeLayerTreeDeleteMessage(uint8_t contextId, uint16_t id, uint16_t mergeTo);
@@ -104,11 +98,6 @@ Message
 makeLayerRetitleMessage(uint8_t contextId, uint16_t id, const QString &title);
 
 Message makeMovePointerMessage(uint8_t contextId, int32_t x, int32_t y);
-
-Message makeMoveRegionMessage(
-	uint8_t contextId, uint16_t layer, int32_t bx, int32_t by, int32_t bw,
-	int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3,
-	int32_t y3, int32_t x4, int32_t y4, const QImage &mask);
 
 Message makeMoveRectMessage(
 	uint8_t contextId, uint16_t layer, uint16_t source, int32_t sx, int32_t sy,
