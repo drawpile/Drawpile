@@ -19,19 +19,19 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="settingsTab">
       <attribute name="title">
        <string>Settings</string>
       </attribute>
       <layout class="QGridLayout">
        <item row="4" column="0" colspan="3">
-        <widget class="QGroupBox">
+        <widget class="QGroupBox" name="sessionGroup">
          <property name="title">
           <string>Session</string>
          </property>
          <layout class="QFormLayout">
           <item row="0" column="0">
-           <widget class="QLabel">
+           <widget class="QLabel" name="opwordLabel">
             <property name="text">
              <string>Operator password:</string>
             </property>
@@ -45,14 +45,14 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel">
+           <widget class="QLabel" name="autoresetLabel">
             <property name="text">
              <string>Autoreset threshold:</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <layout class="QHBoxLayout">
+           <layout class="QHBoxLayout" name="autoresetLayout">
             <item>
              <widget class="QDoubleSpinBox" name="autoresetThreshold">
               <property name="toolTip">
@@ -85,7 +85,7 @@
            </layout>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel">
+           <widget class="QLabel" name="sessionOptionsLabel">
             <property name="text">
              <string>Options:</string>
             </property>
@@ -149,14 +149,14 @@
         <widget class="QLineEdit" name="title"/>
        </item>
        <item row="0" column="0" colspan="3">
-        <widget class="QLabel">
+        <widget class="QLabel" name="titleLabel">
          <property name="text">
           <string>Title:</string>
          </property>
         </widget>
        </item>
        <item row="5" column="0">
-        <spacer>
+        <spacer name="settingsBottomSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -169,13 +169,13 @@
         </spacer>
        </item>
        <item row="2" column="0" rowspan="2" colspan="3">
-        <widget class="QGroupBox">
+        <widget class="QGroupBox" name="loginGroup">
          <property name="title">
           <string>Login</string>
          </property>
          <layout class="QFormLayout">
           <item row="0" column="0">
-           <widget class="QLabel">
+           <widget class="QLabel" name="sessionPasswordLabel">
             <property name="text">
              <string>Password:</string>
             </property>
@@ -189,7 +189,7 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel">
+           <widget class="QLabel" name="maxUsersLabel">
             <property name="text">
              <string>Max users:</string>
             </property>
@@ -212,7 +212,7 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <spacer>
+           <spacer name="loginSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -253,13 +253,13 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget">
+     <widget class="QWidget" name="permissionsTab">
       <attribute name="title">
        <string>Permissions</string>
       </attribute>
       <layout class="QFormLayout">
        <item row="0" column="0">
-        <widget class="QLabel">
+        <widget class="QLabel" name="labelPutImage">
          <property name="text">
           <string>Cut, Paste &amp; Fill:</string>
          </property>
@@ -272,7 +272,7 @@
         <widget class="QComboBox" name="permRegionMove"/>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel">
+        <widget class="QLabel" name="labelCreateAnnotation">
          <property name="text">
           <string>New Annotations:</string>
          </property>
@@ -289,7 +289,7 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel">
+        <widget class="QLabel" name="labelEditLayers">
          <property name="text">
           <string>General Layer Editing:</string>
          </property>
@@ -299,7 +299,7 @@
         <widget class="QComboBox" name="permEditLayers"/>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel">
+        <widget class="QLabel" name="labelOwnLayers">
          <property name="text">
           <string>Own Layer Editing:</string>
          </property>
@@ -309,7 +309,7 @@
         <widget class="QComboBox" name="permOwnLayers"/>
        </item>
        <item row="5" column="0">
-        <widget class="QLabel">
+        <widget class="QLabel" name="labelResize">
          <property name="text">
           <string>Canvas Resizing:</string>
          </property>
@@ -319,7 +319,7 @@
         <widget class="QComboBox" name="permResize"/>
        </item>
        <item row="6" column="0">
-        <widget class="QLabel">
+        <widget class="QLabel" name="labelBackground">
          <property name="text">
           <string>Canvas Background:</string>
          </property>
@@ -329,7 +329,7 @@
         <widget class="QComboBox" name="permBackground"/>
        </item>
        <item row="8" column="0">
-        <widget class="QLabel">
+        <widget class="QLabel" name="labelLaser">
          <property name="text">
           <string>Laser Pointer:</string>
          </property>
@@ -339,7 +339,7 @@
         <widget class="QComboBox" name="permLaser"/>
        </item>
        <item row="9" column="0">
-        <widget class="QLabel">
+        <widget class="QLabel" name="labelUndo">
          <property name="text">
           <string>Undo &amp; Redo:</string>
          </property>
@@ -349,7 +349,7 @@
         <widget class="QComboBox" name="permUndo"/>
        </item>
        <item row="10" column="0">
-        <widget class="QLabel">
+        <widget class="QLabel" name="labelDeputies">
          <property name="text">
           <string>Kick &amp; Ban:</string>
          </property>
@@ -370,7 +370,7 @@
         </widget>
        </item>
        <item row="11" column="0">
-        <widget class="QLabel">
+        <widget class="QLabel" name="labelTimeline">
          <property name="text">
           <string>Timeline:</string>
          </property>
@@ -390,14 +390,14 @@
         <widget class="QComboBox" name="permMetadata"/>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel">
+        <widget class="QLabel" name="labelRegionMove">
          <property name="text">
           <string>Selection Move &amp; Resize:</string>
          </property>
         </widget>
        </item>
        <item row="7" column="0">
-        <widget class="QLabel">
+        <widget class="QLabel" name="labelMyPaint">
          <property name="text">
           <string>MyPaint Brushes:</string>
          </property>
@@ -408,7 +408,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget">
+     <widget class="QWidget" name="bansTab">
       <attribute name="title">
        <string>Bans</string>
       </attribute>
@@ -437,7 +437,7 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout">
+        <layout class="QHBoxLayout" name="bansButtonLayout">
          <item>
           <widget class="QPushButton" name="importButton">
            <property name="text">
@@ -461,7 +461,7 @@
           </widget>
          </item>
          <item>
-          <spacer>
+          <spacer name="bansButtonSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -492,7 +492,7 @@
        <item>
         <widget class="QLabel" name="authLabel">
          <property name="text">
-          <string notr="true"></string>
+          <string notr="true"/>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -573,7 +573,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget">
+     <widget class="QWidget" name="announcementsTab">
       <attribute name="title">
        <string>Announcements</string>
       </attribute>
@@ -589,9 +589,9 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout">
+        <layout class="QHBoxLayout" name="announcementsButtonLayout">
          <item>
-          <spacer>
+          <spacer name="announcementsButtonSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
