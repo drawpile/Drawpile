@@ -9220,7 +9220,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+8"/>
         <source>One-finger tap and hold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Touché et maintenir à un doigt&#xa0;:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -9230,7 +9230,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Pan canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Déplacer la toile</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9240,7 +9240,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>One-finger touch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Touché à un doigt&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10068,22 +10068,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Laser pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pointeur laser&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Animation timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Chronologie d&apos;animation&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Undo and redo:</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuler et rétablir&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Kick and ban:</source>
-        <translation type="unfinished"></translation>
+        <translation>Éjecter et bannir&#xa0;:</translation>
     </message>
     <message>
         <location line="+112"/>
@@ -10116,7 +10116,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to reset to their defaults:</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisissez les sections que vous voulez restaurer à leurs valeurs par défaut&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -10124,7 +10124,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/roles.cpp" line="+36"/>
         <source>Define a password to let anyone become operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Définir un mot de passe pour permettre à n&apos;importe qui de devenir opérateur</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10134,7 +10134,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>No roles imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de rôles importés.</translation>
     </message>
     <message>
         <location line="+47"/>
@@ -10152,7 +10152,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+282"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Charger les Paramètres</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10162,7 +10162,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Pick the sections you want to save:</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisissez les sections que vous voulez sauvegarder&#xa0;:</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -10172,17 +10172,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Le préréglage %1 existe déjà, souhaitez-vous le remplacer&#x202f;?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Oui, remplacer</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>Non, garder</translation>
     </message>
 </context>
 <context>
@@ -10190,32 +10190,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/session.cpp" line="+38"/>
         <source>Personal session, only people you invite can join</source>
-        <translation type="unfinished"></translation>
+        <translation>Session personnelle, seules les personnes que vous invitez peuvent rejoindre</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Public session, anyone can freely join</source>
-        <translation type="unfinished"></translation>
+        <translation>Session publique, tout le monde peut rejoindre librement</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Set a session title in the Listing tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Définissez un titre de session dans l’onglet Liste.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Session password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mot de passe de la session&#xa0;:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter or generate a session password</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrer ou générer un mot de passe de session</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Generate</source>
-        <translation type="unfinished"></translation>
+        <translation>Générer</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10230,7 +10230,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+14"/>
         <source>Host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom d&apos;hôte ou adresse IP</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -10240,32 +10240,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Server:</source>
-        <translation type="unfinished"></translation>
+        <translation>Serveur&#xa0;:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Enter a host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrer un nom d&apos;hôte ou une adresse IP</translation>
     </message>
     <message>
         <location line="+130"/>
         <source>Session: a password is required</source>
-        <translation type="unfinished"></translation>
+        <translation>Session&#xa0;: un mot de passe est nécessaire</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Session: a server is required</source>
-        <translation type="unfinished"></translation>
+        <translation>Session&#xa0;: un serveur est nécessaire</translation>
     </message>
     <message>
         <location line="+70"/>
         <source>This will host your session on the public Drawpile server. It&apos;s freely available for anyone. To keep space available, sessions will be stopped when they&apos;re inactive for a while or after everybody leaves.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ceci hébergera votre session sur le serveur public Drawpile. Il est accessible librement à tous. Pour préserver l&apos;espace disponible, les sessions seront interrompues en cas d&apos;inactivité prolongée ou après le départ de tous les participants.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Sessions must comply with the rules, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;click here to view them&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les sessions doivent obéir aux règles, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;cliquez ici pour les consulter&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -10475,7 +10475,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+39"/>
         <location line="+16"/>
         <source>Tag name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de l&apos;étiquette&#xa0;:</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -10612,18 +10612,18 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+65"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle Palette</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+47"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Rename Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Renommer la Palette</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -10658,7 +10658,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Couldn&apos;t save file</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;enregistrer le fichier</translation>
     </message>
     <message>
         <location line="-58"/>
@@ -10671,54 +10671,54 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+73"/>
         <source>Color Sliders</source>
-        <translation type="unfinished"></translation>
+        <translation>Curseur de Couleur</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Sliders</source>
-        <translation type="unfinished"></translation>
+        <translation>Curseurs</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Espace colorimétrique</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+394"/>
         <source>HSV</source>
         <extracomment>Color space HSV (hue, chroma, value)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>TSV</translation>
     </message>
     <message>
         <location line="-383"/>
         <location line="+359"/>
         <source>HSL</source>
         <extracomment>Color space HSL (hue, saturation, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>TSL</translation>
     </message>
     <message>
         <location line="-348"/>
         <location line="+360"/>
         <source>HCL</source>
         <extracomment>Color space HCL (hue, chroma, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>TCL</translation>
     </message>
     <message>
         <location line="-347"/>
         <source>Show all sliders at once</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer tous les curseurs en même temps</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show hex input</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher l&apos;entrée hex</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>R</source>
         <extracomment>The &quot;Red&quot; R of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>R</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -10770,35 +10770,35 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <source>C</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Chroma&quot; C of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Luma&quot; L of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>H</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Hue&quot; H of HSV.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>T</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Saturation&quot; S of HSV.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>V</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Value&quot; V of HSV.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
 </context>
 <context>
@@ -10806,39 +10806,39 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/colorspinner.cpp" line="+88"/>
         <source>Shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Forme</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Rotating triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Triangle tournant</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rotating square</source>
-        <translation type="unfinished"></translation>
+        <translation>Carré tournant</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Triangle fixe</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed square</source>
-        <translation type="unfinished"></translation>
+        <translation>Carré fixe</translation>
     </message>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+6"/>
         <location filename="../docks/colorspinner.cpp" line="+15"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Espace colorimétrique</translation>
     </message>
     <message>
         <location line="+4"/>
         <location filename="../docks/colorspinner.cpp" line="+3"/>
         <source>HSV</source>
-        <translation type="unfinished"></translation>
+        <translation>TSL</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -10991,7 +10991,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Fusionner le Groupe de Calques</translation>
     </message>
     <message>
         <location line="+1"/>
