@@ -70,11 +70,10 @@ static uint16_t *generate_classic_lut(int index)
     return cl;
 }
 
-static const uint16_t *get_classic_lut(float hardness)
+static const uint16_t *get_classic_lut(int index)
 {
     DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(lock);
     static uint16_t *classic_luts[CLASSIC_LUT_COUNT];
-    int index = DP_float_to_int(hardness * 100.0f);
     DP_ASSERT(index >= CLASSIC_LUT_MIN_HARDNESS);
     DP_ASSERT(index <= CLASSIC_LUT_MAX_HARDNESS);
     uint16_t *cl = classic_luts[index];
@@ -117,8 +116,8 @@ void get_classic_stamp_buffers(DP_DrawContext *dc, uint32_t max_size,
     *out_offset_mask = (void *)(buffer + mask_size + padding);
 }
 
-static void prepare_stamp(DP_BrushStamp *stamp, float hardness, float radius,
-                          int diameter, const uint16_t **out_lut,
+static void prepare_stamp(DP_BrushStamp *stamp, int scaled_hardness,
+                          float radius, int diameter, const uint16_t **out_lut,
                           float *out_lut_scale)
 {
     stamp->diameter = diameter;
@@ -127,11 +126,11 @@ static void prepare_stamp(DP_BrushStamp *stamp, float hardness, float radius,
     stamp->top = stamp_offsets;
     stamp->left = stamp_offsets;
 
-    *out_lut = get_classic_lut(hardness);
+    *out_lut = get_classic_lut(scaled_hardness);
     *out_lut_scale = DP_square_float((CLASSIC_LUT_RADIUS - 1.0f) / radius);
 }
 
-static void get_mask(DP_BrushStamp *stamp, float radius, float hardness)
+static void get_mask(DP_BrushStamp *stamp, float radius, int scaled_hardness)
 {
     float r = radius / 2.0f;
 
@@ -140,8 +139,8 @@ static void get_mask(DP_BrushStamp *stamp, float radius, float hardness)
         stamp->left = -1;
         stamp->top = -1;
         stamp->diameter = 3;
-        memset(stamp->data, 0, 9);
-        stamp->data[4] = DP_BIT15;
+        uint16_t data[] = {0, 0, 0, 0, DP_BIT15, 0, 0, 0, 0};
+        memcpy(stamp->data, data, sizeof(data));
     }
     else {
         float offset;
@@ -164,7 +163,7 @@ static void get_mask(DP_BrushStamp *stamp, float radius, float hardness)
 
         const uint16_t *lut;
         float lut_scale;
-        prepare_stamp(stamp, hardness, r, diameter, &lut, &lut_scale);
+        prepare_stamp(stamp, scaled_hardness, r, diameter, &lut, &lut_scale);
         uint16_t *d = stamp->data;
 
         for (int y = 0; y < diameter; ++y) {
@@ -182,7 +181,7 @@ static void get_mask(DP_BrushStamp *stamp, float radius, float hardness)
 }
 
 static void get_high_res_mask(DP_BrushStamp *stamp, float radius,
-                              float hardness)
+                              int scaled_hardness)
 {
 
     int raw_diameter = DP_float_to_int(ceilf(radius) + 2.0f);
@@ -200,7 +199,7 @@ static void get_high_res_mask(DP_BrushStamp *stamp, float radius,
 
     const uint16_t *lut;
     float lut_scale;
-    prepare_stamp(stamp, hardness, radius, diameter, &lut, &lut_scale);
+    prepare_stamp(stamp, scaled_hardness, radius, diameter, &lut, &lut_scale);
     uint16_t *ptr = stamp->data;
 
     for (int y = 0; y < diameter; ++y) {
@@ -228,17 +227,13 @@ static void get_high_res_mask(DP_BrushStamp *stamp, float radius,
     }
 }
 
-static void offset_mask(DP_BrushStamp *dst_stamp, DP_BrushStamp *src_stamp,
-                        uint32_t xfrac, uint32_t yfrac)
+static void generate_offset_mask(uint16_t *dst, const uint16_t *src,
+                                 int diameter, uint32_t xfrac, uint32_t yfrac)
 {
-    DP_ASSERT(dst_stamp->diameter == src_stamp->diameter);
-    int diameter = src_stamp->diameter;
     uint32_t k0 = xfrac * yfrac;
     uint32_t k1 = (4 - xfrac) * yfrac;
     uint32_t k2 = xfrac * (4 - yfrac);
     uint32_t k3 = (4 - xfrac) * (4 - yfrac);
-    uint16_t *src = src_stamp->data;
-    uint16_t *dst = dst_stamp->data;
 
     *(dst++) = DP_uint32_to_uint16((src[0] * k3) / 16);
     for (int x = 0; x < diameter - 1; ++x) {
@@ -260,48 +255,56 @@ static void offset_mask(DP_BrushStamp *dst_stamp, DP_BrushStamp *src_stamp,
 }
 
 static void get_classic_mask_stamp(DP_BrushStamp *stamp, float radius,
-                                   float hardness)
+                                   int scaled_hardness)
 {
     // Don't bother with a high-resolution mask for large brushes.
     if (radius < 8.0f) {
-        get_high_res_mask(stamp, radius, hardness);
+        get_high_res_mask(stamp, radius, scaled_hardness);
     }
     else {
-        get_mask(stamp, radius, hardness);
+        get_mask(stamp, radius, scaled_hardness);
     }
 }
 
-static void get_classic_offset_stamp(DP_BrushStamp *offset_stamp,
-                                     DP_BrushStamp *mask_stamp, int x, int y)
+static DP_BrushStamp get_classic_offset_stamp(DP_BrushStamp *mask_stamp,
+                                              uint16_t *offset_mask, int x,
+                                              int y, int scaled_hardness)
 {
-    offset_stamp->diameter = mask_stamp->diameter;
+    int left = mask_stamp->left + x / 4;
+    int top = mask_stamp->top + y / 4;
+    int diameter = mask_stamp->diameter;
+    uint16_t *mask = mask_stamp->data;
 
-    int fx = x >> 2;
-    int fy = y >> 2;
+    // Don't bother offsetting if the brush size is large enough.
+    // Exception: at 100% hardness we'd get a pixely outline instead
+    // of an alternatingly pixely and slightly smooth outline, so we
+    // do generate an offset mask there to keep up the appearance.
+    if (scaled_hardness == 100 || diameter < 48) {
+        uint32_t xfrac = x & 3;
+        uint32_t yfrac = y & 3;
 
-    offset_stamp->left = mask_stamp->left + fx;
-    offset_stamp->top = mask_stamp->top + fy;
+        if (xfrac < 2) {
+            xfrac += 2;
+            --left;
+        }
+        else {
+            xfrac -= 2;
+        }
 
-    uint32_t xfrac = x & 3;
-    uint32_t yfrac = y & 3;
+        if (yfrac < 2) {
+            yfrac += 2;
+            --top;
+        }
+        else {
+            yfrac -= 2;
+        }
 
-    if (xfrac < 2) {
-        xfrac += 2;
-        --offset_stamp->left;
+        generate_offset_mask(offset_mask, mask, diameter, xfrac, yfrac);
+        return (DP_BrushStamp){top, left, diameter, offset_mask};
     }
     else {
-        xfrac -= 2;
+        return (DP_BrushStamp){top, left, diameter, mask};
     }
-
-    if (yfrac < 2) {
-        yfrac += 2;
-        --offset_stamp->top;
-    }
-    else {
-        yfrac -= 2;
-    }
-
-    offset_mask(offset_stamp, mask_stamp, xfrac, yfrac);
 }
 
 static void draw_dabs_classic(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
@@ -331,7 +334,6 @@ static void draw_dabs_classic(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
         int blend_mode = params->blend_mode;
 
         DP_BrushStamp mask_stamp = {0, 0, 0, mask};
-        DP_BrushStamp offset_stamp = {0, 0, 0, offset_mask};
         for (int i = 0; i < dab_count; ++i) {
             const DP_ClassicDab *dab = DP_classic_dab_at(dabs, i);
 
@@ -344,11 +346,14 @@ static void draw_dabs_classic(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
 
             // Don't try to draw infinitesimal or fully opaque dabs.
             if (radius >= 0.1f && opacity != 0) {
-                get_classic_mask_stamp(
-                    &mask_stamp, radius,
-                    DP_uint8_to_float(DP_classic_dab_hardness(dab)) / 255.0f);
+                // Scale hardness to a value between 0 and 100.
+                int scaled_hardness =
+                    DP_uint8_to_int(DP_classic_dab_hardness(dab)) * 100 / 255;
 
-                get_classic_offset_stamp(&offset_stamp, &mask_stamp, x, y);
+                get_classic_mask_stamp(&mask_stamp, radius, scaled_hardness);
+
+                const DP_BrushStamp offset_stamp = get_classic_offset_stamp(
+                    &mask_stamp, offset_mask, x, y, scaled_hardness);
 
                 DP_transient_layer_content_brush_stamp_apply(
                     tlc, context_id, pixel, DP_channel8_to_15(opacity),
@@ -1231,7 +1236,7 @@ DP_BrushStamp DP_paint_color_sampling_stamp_make(uint16_t *data, int diameter,
     DP_ASSERT(diameter > 0);
     DP_ASSERT(diameter <= 255);
 
-    const uint16_t *lut = get_classic_lut(0.5);
+    const uint16_t *lut = get_classic_lut(50);
     int radius = diameter / 2;
 
     // Optimization, no need to recalculate the mask for the same diameter.
