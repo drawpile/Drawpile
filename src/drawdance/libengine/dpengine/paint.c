@@ -333,15 +333,17 @@ static void draw_dabs_classic(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
         DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
         int blend_mode = params->blend_mode;
 
+        uint32_t last_size = 0;
+        int last_scaled_hardness = -1;
+
         DP_BrushStamp mask_stamp = {0, 0, 0, mask};
         for (int i = 0; i < dab_count; ++i) {
             const DP_ClassicDab *dab = DP_classic_dab_at(dabs, i);
 
             int x = last_x + DP_classic_dab_x(dab);
             int y = last_y + DP_classic_dab_y(dab);
-            float radius = DP_uint32_to_float(clamp_subpixel_dab_size(
-                               DP_classic_dab_size(dab)))
-                         / 256.0f;
+            uint32_t size = clamp_subpixel_dab_size(DP_classic_dab_size(dab));
+            float radius = DP_uint32_to_float(size) / 256.0f;
             uint8_t opacity = DP_classic_dab_opacity(dab);
 
             // Don't try to draw infinitesimal or fully opaque dabs.
@@ -350,11 +352,16 @@ static void draw_dabs_classic(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                 int scaled_hardness =
                     DP_uint8_to_int(DP_classic_dab_hardness(dab)) * 100 / 255;
 
-                get_classic_mask_stamp(&mask_stamp, radius, scaled_hardness);
+                if (size != last_size
+                    || scaled_hardness != last_scaled_hardness) {
+                    last_size = size;
+                    last_scaled_hardness = scaled_hardness;
+                    get_classic_mask_stamp(&mask_stamp, radius,
+                                           scaled_hardness);
+                }
 
                 const DP_BrushStamp offset_stamp = get_classic_offset_stamp(
                     &mask_stamp, offset_mask, x, y, scaled_hardness);
-
                 DP_transient_layer_content_brush_stamp_apply(
                     tlc, context_id, pixel, DP_channel8_to_15(opacity),
                     blend_mode, &offset_stamp);
