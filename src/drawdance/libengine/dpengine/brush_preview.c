@@ -84,6 +84,12 @@ void DP_brush_preview_free(DP_BrushPreview *bp)
     }
 }
 
+void DP_brush_preview_size_limit_set(DP_BrushPreview *bp, int limit)
+{
+    DP_ASSERT(bp);
+    DP_brush_engine_size_limit_set(bp->be, limit);
+}
+
 
 static DP_CanvasState *handle_preview_message_dec(DP_CanvasState *cs,
                                                   DP_DrawContext *dc,

@@ -953,7 +953,7 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 				sendInitialState();
 				send("init-complete");
 			} else if(m_mode == Mode::HostBuiltin) {
-				Q_ASSERT(m_initialState.size() == 2);
+				Q_ASSERT(m_initialState.size() == 3);
 				sendInitialState();
 			}
 		}

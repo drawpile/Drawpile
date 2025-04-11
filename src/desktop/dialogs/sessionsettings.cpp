@@ -3,6 +3,7 @@
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/document.h"
 #include "libclient/net/banlistmodel.h"
@@ -60,6 +61,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	m_ui->setupUi(this);
 
 	initPermissionComboBoxes();
+	initPermissionLimitSliders();
 
 	connect(
 		m_doc, &Document::canvasChanged, this,
@@ -172,6 +174,11 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		});
 
 	// Set up permissions tab
+	m_ui->permBrushSize->setExponentRatio(3.0);
+	connect(
+		m_ui->permBrushSize,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+		&SessionSettingsDialog::updateBrushSizeLimitText);
 	connect(
 		m_ui->permissionPresets, &widgets::PresetSelector::saveRequested, this,
 		&SessionSettingsDialog::permissionPresetSaving);
@@ -470,6 +477,38 @@ QComboBox *SessionSettingsDialog::featureBox(DP_Feature f)
 		return nullptr;
 	}
 }
+
+KisSliderSpinBox *SessionSettingsDialog::limitSlider(DP_FeatureLimit fl)
+{
+	switch(fl) {
+	case DP_FEATURE_LIMIT_BRUSH_SIZE:
+		return m_ui->permBrushSize;
+	default:
+		Q_ASSERT_X(false, "limitSlider", "unhandled case");
+		return nullptr;
+	}
+}
+
+int SessionSettingsDialog::limitSliderValue(DP_FeatureLimit fl)
+{
+	switch(fl) {
+	case DP_FEATURE_LIMIT_BRUSH_SIZE: {
+		int value = m_ui->permBrushSize->value();
+		return value < m_ui->permBrushSize->maximum() ? value : -1;
+	}
+	default:
+		Q_ASSERT_X(false, "limitSliderValue", "unhandled case");
+		return -1;
+	}
+}
+
+void SessionSettingsDialog::setLimitSliderValue(DP_FeatureLimit fl, int value)
+{
+	KisSliderSpinBox *slider = limitSlider(fl);
+	QSignalBlocker blocker(slider);
+	slider->setValue(value < 0 ? slider->maximum() : value);
+}
+
 void SessionSettingsDialog::onFeatureTiersChanged(
 	const DP_FeatureTiers &features)
 {
@@ -493,6 +532,9 @@ void SessionSettingsDialog::onFeatureTiersChanged(
 	m_ui->permTimeline->setCurrentIndex(
 		int(features.tiers[DP_FEATURE_TIMELINE]));
 	m_ui->permMyPaint->setCurrentIndex(int(features.tiers[DP_FEATURE_MYPAINT]));
+	setLimitSliderValue(
+		DP_FEATURE_LIMIT_BRUSH_SIZE,
+		features.limits[DP_FEATURE_LIMIT_BRUSH_SIZE][DP_ACCESS_TIER_GUEST]);
 }
 
 const QByteArray SessionSettingsDialog::authExportPrefix =
@@ -516,10 +558,32 @@ void SessionSettingsDialog::initPermissionComboBoxes()
 	}
 }
 
+void SessionSettingsDialog::initPermissionLimitSliders()
+{
+	for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
+		KisSliderSpinBox *slider = limitSlider(DP_FeatureLimit(i));
+		connect(
+			slider, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+			&SessionSettingsDialog::limitChanged);
+	}
+}
+
 void SessionSettingsDialog::permissionChanged()
 {
 	m_featureTiersChanged = true;
 	m_saveTimer->start();
+}
+
+void SessionSettingsDialog::limitChanged()
+{
+	m_featureLimitsChanged = true;
+	m_saveTimer->start();
+}
+
+void SessionSettingsDialog::updateBrushSizeLimitText(int value)
+{
+	m_ui->permBrushSize->setOverrideText(
+		value < m_ui->permBrushSize->maximum() ? QString() : tr("Unlimited"));
 }
 
 void SessionSettingsDialog::permissionPresetSelected(const QString &presetFile)
@@ -688,13 +752,29 @@ void SessionSettingsDialog::sendSessionConf()
 	}
 
 	if(m_featureTiersChanged) {
-		uint8_t tiers[DP_FEATURE_COUNT];
+		QVector<uint8_t> tiers;
+		tiers.reserve(int(DP_FEATURE_COUNT));
 		for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
-			tiers[i] = featureBox(DP_Feature(i))->currentIndex();
+			tiers.append(featureBox(DP_Feature(i))->currentIndex());
 		}
 
 		m_doc->sendFeatureAccessLevelChange(tiers);
 		m_featureTiersChanged = false;
+	}
+
+	if(m_featureLimitsChanged) {
+		QVector<int32_t> limits;
+		limits.reserve(int(DP_FEATURE_LIMIT_COUNT) * int(DP_ACCESS_TIER_COUNT));
+		for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
+			int value = limitSliderValue(DP_FeatureLimit(i));
+			for(int j = 0; j < DP_ACCESS_TIER_COUNT; ++j) {
+				limits.append(
+					int32_t(j == DP_ACCESS_TIER_OPERATOR ? -1 : value));
+			}
+		}
+
+		m_doc->sendFeatureLimitsChange(limits);
+		m_featureLimitsChanged = false;
 	}
 }
 

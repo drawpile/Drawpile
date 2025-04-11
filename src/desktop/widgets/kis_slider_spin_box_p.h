@@ -372,6 +372,12 @@ public:
         }
     }
 
+    // Drawpile patch
+    bool isSoftRangeActive() const
+    {
+        return isSoftRangeValid() && m_isSoftRangeActive;
+    }
+
     void updateWidgetRangeToggleTooltip()
     {
         m_widgetRangeToggle->setToolTip(

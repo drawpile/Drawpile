@@ -239,6 +239,14 @@ static void generate_uint16s(int count, uint16_t *out, DP_UNUSED void *user)
     }
 }
 
+static void generate_int32s(int count, int32_t *out, DP_UNUSED void *user)
+{
+    for (int i = 0; i < count; ++i) {
+        out[i] = random_int32();
+    }
+}
+
+
 static void generate_classic_dabs(int count, DP_ClassicDab *out,
                                   DP_UNUSED void *user)
 {
@@ -444,6 +452,15 @@ static DP_Message *generate_local_change(void)
         generate_bytes,
         size_between(DP_MSG_LOCAL_CHANGE_BODY_MIN_SIZE,
                      DP_MSG_LOCAL_CHANGE_BODY_MAX_SIZE),
+        NULL);
+}
+
+static DP_Message *generate_feature_limits(void)
+{
+    return DP_msg_feature_limits_new(
+        generate_context_id(), generate_int32s,
+        int_between(DP_MSG_FEATURE_LIMITS_LIMITS_MIN_COUNT,
+                    DP_MSG_FEATURE_LIMITS_LIMITS_MAX_COUNT),
         NULL);
 }
 
@@ -788,6 +805,7 @@ static GenerateFn generate_fns[] = {
     generate_undo_depth,
     generate_data,
     generate_local_change,
+    generate_feature_limits,
     generate_undo_point,
     generate_canvas_resize,
     generate_layer_attributes,

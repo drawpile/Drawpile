@@ -40,7 +40,10 @@ Message makeCanvasResizeMessage(
 Message makeDefaultLayerMessage(uint8_t contextId, uint16_t id);
 
 Message makeFeatureAccessLevelsMessage(
-	uint8_t contextId, int featureCount, const uint8_t *features);
+	uint8_t contextId, const QVector<uint8_t> &features);
+
+Message
+makeFeatureLimitsMessage(uint8_t contextId, const QVector<int32_t> &limits);
 
 Message makeFillRectMessage(
 	uint8_t contextId, uint16_t layer, uint8_t mode, uint32_t x, uint32_t y,

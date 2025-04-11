@@ -619,6 +619,17 @@ void MyPaintBrush::setBlendMode(int blendMode, bool isErase)
 	}
 }
 
+float MyPaintBrush::maxSizeFor(float baseValue) const
+{
+	return DP_mypaint_settings_max_size_for(&constSettings(), baseValue);
+}
+
+float MyPaintBrush::baseValueForMaxSize(float maxSize) const
+{
+	return DP_mypaint_settings_base_value_for_max_size(
+		&constSettings(), maxSize);
+}
+
 MyPaintCurve MyPaintBrush::getCurve(int setting, int input) const
 {
 	return m_curves.value({setting, input});

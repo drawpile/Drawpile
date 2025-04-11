@@ -149,6 +149,8 @@ public:
 	//! Current foreground color changed
 	virtual void setForegroundColor(const QColor &color) { Q_UNUSED(color); }
 
+	virtual void setBrushSizeLimit(int limit) { Q_UNUSED(limit); }
+
 protected:
 	bool isActiveTool() const;
 	void setCapability(Capability capability, bool enabled);

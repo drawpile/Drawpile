@@ -244,6 +244,9 @@ public:
 	int smoothing() const { return m_smoothing; }
 	void setSmoothing(int smoothing) { m_smoothing = smoothing; }
 
+	float maxSizeFor(float baseValue) const;
+	float baseValueForMaxSize(float maxSize) const;
+
 	MyPaintCurve getCurve(int setting, int input) const;
 	void setCurve(int setting, int input, const MyPaintCurve &curve);
 	void removeCurve(int setting, int input);

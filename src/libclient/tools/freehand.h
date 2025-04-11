@@ -21,6 +21,8 @@ public:
 
 	void offsetActiveTool(int x, int y) override;
 
+	void setBrushSizeLimit(int limit) override;
+
 private:
 	void pollControl(bool enable);
 	void poll();

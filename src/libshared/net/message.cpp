@@ -338,6 +338,13 @@ void Message::setUint16s(int count, uint16_t *out, void *user)
 	}
 }
 
+void Message::setInt32s(int count, int32_t *out, void *user)
+{
+	if(count > 0) {
+		memcpy(out, user, sizeof(int32_t) * count);
+	}
+}
+
 Message::Message(DP_Message *msg)
 	: m_data{msg}
 {

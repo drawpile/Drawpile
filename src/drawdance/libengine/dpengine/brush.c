@@ -230,6 +230,56 @@ uint8_t DP_classic_brush_dab_hardness_at(const DP_ClassicBrush *cb,
 }
 
 
+float DP_mypaint_settings_max_size_for(const DP_MyPaintSettings *settings,
+                                       float base_value)
+{
+    float max_size = base_value;
+    if (settings) {
+        const DP_MyPaintMapping *mapping =
+            &settings->mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC];
+        for (int i = 0; i < MYPAINT_BRUSH_INPUTS_COUNT; ++i) {
+            const DP_MyPaintControlPoints *cps = &mapping->inputs[i];
+            int n = cps->n;
+            if (n > 0) {
+                float max_y = cps->yvalues[0];
+                for (int j = 1; j < n; ++j) {
+                    float y = cps->yvalues[j];
+                    if (y > max_y) {
+                        max_y = y;
+                    }
+                }
+                max_size += max_y;
+            }
+        }
+    }
+    return max_size;
+}
+
+float DP_mypaint_settings_base_value_for_max_size(
+    const DP_MyPaintSettings *settings, float max_size)
+{
+    float base_value = max_size;
+    if (settings) {
+        const DP_MyPaintMapping *mapping =
+            &settings->mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC];
+        for (int i = 0; i < MYPAINT_BRUSH_INPUTS_COUNT; ++i) {
+            const DP_MyPaintControlPoints *cps = &mapping->inputs[i];
+            int n = cps->n;
+            if (n > 0) {
+                float max_y = cps->yvalues[0];
+                for (int j = 1; j < n; ++j) {
+                    float y = cps->yvalues[j];
+                    if (y > max_y) {
+                        max_y = y;
+                    }
+                }
+                base_value -= max_y;
+            }
+        }
+    }
+    return base_value;
+}
+
 static bool preset_equal_mypaint_inputs(const DP_MyPaintControlPoints *a,
                                         const DP_MyPaintControlPoints *b)
 {

@@ -20,6 +20,7 @@ public:
 	const brushes::ActiveBrush &brush() const { return m_brush; }
 
 	void setBrush(const brushes::ActiveBrush &brush);
+	void setBrushSizeLimit(int brushSizeLimit);
 
 	void clearPreset();
 	void setPreset(const QPixmap &thumbnail, bool changed);

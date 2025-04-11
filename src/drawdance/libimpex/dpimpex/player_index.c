@@ -185,8 +185,10 @@ static bool init_reset_image(void *user, DP_CanvasState *cs)
 {
     DP_BuildIndexEntryContext *e = user;
     e->cs = cs;
-    DP_Message *msg = DP_acl_state_msg_feature_access_all_new(0);
-    return write_index_history_message_dec(e, msg);
+    return write_index_history_message_dec(
+               e, DP_acl_state_msg_feature_access_all_new(0))
+        && write_index_history_message_dec(
+               e, DP_acl_state_msg_feature_limits_none_new(0));
 }
 
 static bool write_reset_image_message(void *user, DP_Message *msg)

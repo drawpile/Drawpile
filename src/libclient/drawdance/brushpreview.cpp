@@ -31,6 +31,11 @@ void BrushPreview::reset(QSize size)
     }
 }
 
+void BrushPreview::setSizeLimit(int limit)
+{
+    DP_brush_preview_size_limit_set(m_data, limit);
+}
+
 void BrushPreview::renderClassic(const DP_ClassicBrush &brush, DP_BrushPreviewShape shape)
 {
     QSize size = m_pixmap.size();

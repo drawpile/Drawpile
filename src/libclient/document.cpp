@@ -1059,11 +1059,16 @@ void Document::sendSessionConf(const QJsonObject &sessionconf)
 		net::ServerCommand::make("sessionconf", QJsonArray(), sessionconf));
 }
 
-void Document::sendFeatureAccessLevelChange(
-	const uint8_t tiers[DP_FEATURE_COUNT])
+void Document::sendFeatureAccessLevelChange(const QVector<uint8_t> &tiers)
 {
-	m_client->sendMessage(net::makeFeatureAccessLevelsMessage(
-		m_client->myId(), DP_FEATURE_COUNT, tiers));
+	m_client->sendMessage(
+		net::makeFeatureAccessLevelsMessage(m_client->myId(), tiers));
+}
+
+void Document::sendFeatureLimitsChange(const QVector<int32_t> &limits)
+{
+	m_client->sendMessage(
+		net::makeFeatureLimitsMessage(m_client->myId(), limits));
 }
 
 void Document::sendLockSession(bool lock)

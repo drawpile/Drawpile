@@ -4,8 +4,8 @@
 #include "desktop/toolwidgets/toolsettings.h"
 #include "libclient/brushes/brushpresetmodel.h"
 
+class KisSliderSpinBox;
 class QAction;
-class QSpinBox;
 
 namespace tools {
 
@@ -85,6 +85,7 @@ public:
 
 	bool isLocked() override;
 	void setMyPaintAllowed(bool myPaintAllowed);
+	void setBrushSizeLimit(int brushSizeLimit);
 
 public slots:
 	void selectBrushSlot(int i);
@@ -128,7 +129,7 @@ private slots:
 	void updateFromUi();
 	void updateFromUiWith(bool updateShared);
 	void updateStabilizationSettingVisibility();
-	void quickAdjustOn(QSpinBox *box, qreal adjustment);
+	void quickAdjustOn(KisSliderSpinBox *box, qreal adjustment);
 	void handlePresetChanged(
 		int presetId, const QString &name, const QString &description,
 		const QPixmap &thumbnail, const brushes::ActiveBrush &brush);
@@ -159,6 +160,14 @@ private:
 	void adjustSettingVisibilities(bool softmode, bool mypaintmode);
 	void emitBlendModeChanged();
 	void emitBrushModeChanged();
+
+	void adjustSizeSlider(KisSliderSpinBox *slider, int value);
+	void updateRadiusLogarithmicLimit();
+	int clampBrushSize(int size) const;
+	static float myPaintRadiusToRadiusLogarithmic(float myPaintRadius);
+	static float radiusLogarithmicToMyPaintRadius(int radiusLogarithmic);
+	static float myPaintRadiusToPixelSize(float myPaintRadius);
+	static float pixelSizeToMyPaintRadius(float pixelSize);
 	static double radiusLogarithmicToPixelSize(int radiusLogarithmic);
 
 	static int translateBrushSlotConfigIndex(int i);

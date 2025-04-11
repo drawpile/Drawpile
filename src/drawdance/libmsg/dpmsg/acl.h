@@ -32,13 +32,15 @@ typedef struct DP_Message DP_Message;
     (DP_ACCESS_TIER_OPERATOR | DP_ACCESS_TIER_TRUSTED \
      | DP_ACCESS_TIER_AUTHENTICATED | DP_ACCESS_TIER_GUEST)
 
-#define DP_ACL_STATE_FILTERED_BIT             (1 << 0)
-#define DP_ACL_STATE_CHANGE_USERS_BIT         (1 << 1)
-#define DP_ACL_STATE_CHANGE_LAYERS_BIT        (1 << 2)
-#define DP_ACL_STATE_CHANGE_FEATURE_TIERS_BIT (1 << 3)
+#define DP_ACL_STATE_FILTERED_BIT              (1 << 0)
+#define DP_ACL_STATE_CHANGE_USERS_BIT          (1 << 1)
+#define DP_ACL_STATE_CHANGE_LAYERS_BIT         (1 << 2)
+#define DP_ACL_STATE_CHANGE_FEATURE_TIERS_BIT  (1 << 3)
+#define DP_ACL_STATE_CHANGE_FEATURE_LIMITS_BIT (1 << 4)
 #define DP_ACL_STATE_CHANGE_MASK                                    \
     (DP_ACL_STATE_CHANGE_USERS_BIT | DP_ACL_STATE_CHANGE_LAYERS_BIT \
-     | DP_ACL_STATE_CHANGE_FEATURE_TIERS_BIT)
+     | DP_ACL_STATE_CHANGE_FEATURE_TIERS_BIT                        \
+     | DP_ACL_STATE_CHANGE_FEATURE_LIMITS_BIT)
 
 #define DP_ACL_STATE_RESET_IMAGE_INCLUDE_SESSION_OWNER       (1 << 0)
 #define DP_ACL_STATE_RESET_IMAGE_INCLUDE_TRUSTED_USERS       (1 << 1)
@@ -82,8 +84,14 @@ typedef enum DP_Feature {
     DP_FEATURE_COUNT,
 } DP_Feature;
 
+typedef enum DP_FeatureLimit {
+    DP_FEATURE_LIMIT_BRUSH_SIZE,
+    DP_FEATURE_LIMIT_COUNT,
+} DP_FeatureLimit;
+
 typedef struct DP_FeatureTiers {
     DP_AccessTier tiers[DP_FEATURE_COUNT];
+    int limits[DP_FEATURE_LIMIT_COUNT][DP_ACCESS_TIER_COUNT];
 } DP_FeatureTiers;
 
 // Bitfield for storing user ids between 0 and 255. 255 / 8 = 32.
@@ -121,6 +129,12 @@ const char *DP_feature_enum_name(int feature);
 const char *DP_feature_name(int feature);
 
 int DP_feature_access_tier_default(int feature, int fallback);
+
+const char *DP_feature_limit_enum_name(int limit);
+
+const char *DP_feature_limit_name(int limit);
+
+int DP_feature_limit_default(int limit, int tier, int fallback);
 
 
 bool DP_user_bit_get(const uint8_t *users, uint8_t user_id);
@@ -184,6 +198,7 @@ uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg,
                             bool override) DP_MUST_CHECK;
 
 DP_Message *DP_acl_state_msg_feature_access_all_new(unsigned int context_id);
+DP_Message *DP_acl_state_msg_feature_limits_none_new(unsigned int context_id);
 
 bool DP_acl_state_reset_image_build(
     DP_AclState *acls, unsigned int context_id, unsigned int include_flags,

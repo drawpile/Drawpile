@@ -26,6 +26,8 @@ public:
 
     void reset(QSize size);
 
+    void setSizeLimit(int limit);
+
     void renderClassic(const DP_ClassicBrush &brush, DP_BrushPreviewShape shape);
 
     void renderMyPaint(

@@ -62,6 +62,8 @@ public:
 
 	void addOffset(float x, float y);
 
+	void setSizeLimit(int limit);
+
 	// Flushes dabs and sends accumulated messages to the client.
 	void sendMessagesTo(net::Client *client);
 

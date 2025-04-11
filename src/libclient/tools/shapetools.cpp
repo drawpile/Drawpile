@@ -91,6 +91,11 @@ void ShapeTool::cancelMultipart()
 	m_drawing = false;
 }
 
+void ShapeTool::setBrushSizeLimit(int limit)
+{
+	m_brushEngine.setSizeLimit(limit);
+}
+
 void ShapeTool::end(const EndParams &params)
 {
 	if(m_drawing) {

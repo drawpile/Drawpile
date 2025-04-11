@@ -110,6 +110,12 @@ void KisSliderSpinBox::setOverrideText(const QString &overrideText)
     d->setOverrideText(overrideText);
 }
 
+// Drawpile patch
+bool KisSliderSpinBox::isSoftRangeActive() const
+{
+    return d->isSoftRangeActive();
+}
+
 void KisSliderSpinBox::setInternalValue(int newValue, bool newBlockUpdateSignal)
 {
     d->setValue(newValue, newBlockUpdateSignal);

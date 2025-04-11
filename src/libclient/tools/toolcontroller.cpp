@@ -395,6 +395,13 @@ void ToolController::setTransformParams(bool accurate, int interpolation)
 	}
 }
 
+void ToolController::setBrushSizeLimit(int brushSizeLimit)
+{
+	for(Tool *tool : m_toolbox) {
+		tool->setBrushSizeLimit(brushSizeLimit);
+	}
+}
+
 void ToolController::startDrawing(
 	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 	qreal ytilt, qreal rotation, bool right, qreal angle, qreal zoom,

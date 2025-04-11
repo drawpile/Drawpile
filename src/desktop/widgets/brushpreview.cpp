@@ -35,6 +35,12 @@ void BrushPreview::setBrush(const brushes::ActiveBrush &brush)
 	m_debounce.setNone();
 }
 
+void BrushPreview::setBrushSizeLimit(int brushSizeLimit)
+{
+	m_brushPreview.setSizeLimit(brushSizeLimit);
+	triggerPreviewUpdate();
+}
+
 void BrushPreview::clearPreset()
 {
 	if(m_presetEnabled) {
