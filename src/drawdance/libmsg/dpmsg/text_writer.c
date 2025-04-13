@@ -464,6 +464,26 @@ bool DP_text_writer_write_uint16_list(DP_TextWriter *writer, const char *key,
     WRITE_LIST(writer, key, value, count, unsigned int, "%u");
 }
 
+bool DP_text_writer_write_uint24_list(DP_TextWriter *writer, const char *key,
+                                      const uint32_t *value, int count)
+{
+    DP_ASSERT(writer);
+    DP_ASSERT(key);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(value || count == 0);
+    WRITE_LIST(writer, key, value, count, unsigned int, "%u");
+}
+
+bool DP_text_writer_write_uint32_list(DP_TextWriter *writer, const char *key,
+                                      const uint32_t *value, int count)
+{
+    DP_ASSERT(writer);
+    DP_ASSERT(key);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(value || count == 0);
+    WRITE_LIST(writer, key, value, count, unsigned int, "%u");
+}
+
 bool DP_text_writer_write_int32_list(DP_TextWriter *writer, const char *key,
                                      const int32_t *value, int count)
 {

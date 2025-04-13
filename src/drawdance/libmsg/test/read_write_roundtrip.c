@@ -239,6 +239,13 @@ static void generate_uint16s(int count, uint16_t *out, DP_UNUSED void *user)
     }
 }
 
+static void generate_uint32s(int count, uint32_t *out, DP_UNUSED void *user)
+{
+    for (int i = 0; i < count; ++i) {
+        out[i] = random_uint32();
+    }
+}
+
 static void generate_int32s(int count, int32_t *out, DP_UNUSED void *user)
 {
     for (int i = 0; i < count; ++i) {
@@ -407,7 +414,7 @@ static DP_Message *generate_user_acl(void)
 static DP_Message *generate_layer_acl(void)
 {
     return DP_msg_layer_acl_new(
-        generate_context_id(), random_uint16(), random_uint8(), generate_uint8s,
+        generate_context_id(), random_uint24(), random_uint8(), generate_uint8s,
         int_between(DP_MSG_LAYER_ACL_EXCLUSIVE_MIN_COUNT,
                     DP_MSG_LAYER_ACL_EXCLUSIVE_MAX_COUNT),
         NULL);
@@ -424,7 +431,7 @@ static DP_Message *generate_feature_access_levels(void)
 
 static DP_Message *generate_default_layer(void)
 {
-    return DP_msg_default_layer_new(generate_context_id(), random_uint16());
+    return DP_msg_default_layer_new(generate_context_id(), random_uint24());
 }
 
 static DP_Message *generate_undo_depth(void)
@@ -479,7 +486,7 @@ static DP_Message *generate_canvas_resize(void)
 static DP_Message *generate_layer_attributes(void)
 {
     return DP_msg_layer_attributes_new(
-        generate_context_id(), random_uint16(), random_uint8(),
+        generate_context_id(), random_uint24(), random_uint8(),
         generate_flags((unsigned int[]){DP_MSG_LAYER_ATTRIBUTES_ALL_FLAGS},
                        DP_MSG_LAYER_ATTRIBUTES_NUM_FLAGS),
         random_uint8(), generate_blend_mode());
@@ -493,14 +500,14 @@ static DP_Message *generate_layer_retitle(void)
                                      DP_MSG_LAYER_RETITLE_TITLE_MAX_LEN),
                         &title_len);
     DP_Message *msg = DP_msg_layer_retitle_new(
-        generate_context_id(), random_uint16(), title, title_len);
+        generate_context_id(), random_uint24(), title, title_len);
     DP_free(title);
     return msg;
 }
 
 static DP_Message *generate_put_image(void)
 {
-    return DP_msg_put_image_new(generate_context_id(), random_uint16(),
+    return DP_msg_put_image_new(generate_context_id(), random_uint24(),
                                 generate_blend_mode(), random_uint32(),
                                 random_uint32(), random_uint32(),
                                 random_uint32(), generate_bytes,
@@ -511,7 +518,7 @@ static DP_Message *generate_put_image(void)
 
 static DP_Message *generate_fill_rect(void)
 {
-    return DP_msg_fill_rect_new(generate_context_id(), random_uint16(),
+    return DP_msg_fill_rect_new(generate_context_id(), random_uint24(),
                                 generate_blend_mode(), random_uint32(),
                                 random_uint32(), random_uint32(),
                                 random_uint32(), random_uint32());
@@ -519,7 +526,7 @@ static DP_Message *generate_fill_rect(void)
 
 static DP_Message *generate_pen_up(void)
 {
-    return DP_msg_pen_up_new(generate_context_id(), random_uint16());
+    return DP_msg_pen_up_new(generate_context_id(), random_uint24());
 }
 
 static DP_Message *generate_annotation_create(void)
@@ -560,7 +567,7 @@ static DP_Message *generate_annotation_delete(void)
 static DP_Message *generate_put_tile(void)
 {
     return DP_msg_put_tile_new(generate_context_id(), random_uint8(),
-                               random_uint16(), random_uint8(), random_uint16(),
+                               random_uint24(), random_uint8(), random_uint16(),
                                random_uint16(), random_uint16(), generate_bytes,
                                size_between(DP_MSG_PUT_TILE_IMAGE_MIN_SIZE,
                                             DP_MSG_PUT_TILE_IMAGE_MAX_SIZE),
@@ -579,7 +586,7 @@ static DP_Message *generate_canvas_background(void)
 static DP_Message *generate_draw_dabs_classic(void)
 {
     return DP_msg_draw_dabs_classic_new(
-        generate_context_id(), random_uint8(), random_uint16(), random_int32(),
+        generate_context_id(), random_uint8(), random_uint24(), random_int32(),
         random_int32(), random_uint32(), generate_blend_mode(),
         generate_classic_dabs,
         int_between(DP_MSG_DRAW_DABS_CLASSIC_DABS_MIN_COUNT,
@@ -590,7 +597,7 @@ static DP_Message *generate_draw_dabs_classic(void)
 static DP_Message *generate_draw_dabs_pixel(void)
 {
     return DP_msg_draw_dabs_pixel_new(
-        generate_context_id(), random_uint8(), random_uint16(), random_int32(),
+        generate_context_id(), random_uint8(), random_uint24(), random_int32(),
         random_int32(), random_uint32(), generate_blend_mode(),
         generate_pixel_dabs,
         int_between(DP_MSG_DRAW_DABS_PIXEL_DABS_MIN_COUNT,
@@ -601,7 +608,7 @@ static DP_Message *generate_draw_dabs_pixel(void)
 static DP_Message *generate_draw_dabs_pixel_square(void)
 {
     return DP_msg_draw_dabs_pixel_square_new(
-        generate_context_id(), random_uint8(), random_uint16(), random_int32(),
+        generate_context_id(), random_uint8(), random_uint24(), random_int32(),
         random_int32(), random_uint32(), generate_blend_mode(),
         generate_pixel_dabs,
         int_between(DP_MSG_DRAW_DABS_PIXEL_DABS_MIN_COUNT,
@@ -612,7 +619,7 @@ static DP_Message *generate_draw_dabs_pixel_square(void)
 static DP_Message *generate_draw_dabs_mypaint(void)
 {
     return DP_msg_draw_dabs_mypaint_new(
-        generate_context_id(), random_uint16(), random_int32(), random_int32(),
+        generate_context_id(), random_uint24(), random_int32(), random_int32(),
         random_uint32(), random_uint8(), random_uint8(), random_uint8(),
         random_uint8(), generate_mypaint_dabs,
         int_between(DP_MSG_DRAW_DABS_MYPAINT_DABS_MIN_COUNT,
@@ -623,7 +630,7 @@ static DP_Message *generate_draw_dabs_mypaint(void)
 static DP_Message *generate_draw_dabs_mypaint_blend(void)
 {
     return DP_msg_draw_dabs_mypaint_blend_new(
-        generate_context_id(), random_uint8(), random_uint16(), random_int32(),
+        generate_context_id(), random_uint8(), random_uint24(), random_int32(),
         random_int32(), random_uint32(), generate_blend_mode(),
         generate_mypaint_blend_dabs,
         int_between(DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MIN_COUNT,
@@ -633,8 +640,8 @@ static DP_Message *generate_draw_dabs_mypaint_blend(void)
 
 static DP_Message *generate_move_rect(void)
 {
-    return DP_msg_move_rect_new(generate_context_id(), random_uint16(),
-                                random_uint16(), random_int32(), random_int32(),
+    return DP_msg_move_rect_new(generate_context_id(), random_uint24(),
+                                random_uint24(), random_int32(), random_int32(),
                                 random_int32(), random_int32(), random_int32(),
                                 random_int32(), generate_bytes,
                                 size_between(DP_MSG_MOVE_RECT_MASK_MIN_SIZE,
@@ -659,8 +666,8 @@ static DP_Message *generate_layer_tree_create(void)
                                      DP_MSG_LAYER_TREE_CREATE_TITLE_MAX_LEN),
                         &title_len);
     DP_Message *msg = DP_msg_layer_tree_create_new(
-        generate_context_id(), random_uint16(), random_uint16(),
-        random_uint16(), random_uint32(),
+        generate_context_id(), random_uint24(), random_uint24(),
+        random_uint24(), random_uint32(),
         generate_flags((unsigned int[]){DP_MSG_LAYER_TREE_CREATE_ALL_FLAGS},
                        DP_MSG_LAYER_TREE_CREATE_NUM_FLAGS),
         title, title_len);
@@ -670,20 +677,20 @@ static DP_Message *generate_layer_tree_create(void)
 
 static DP_Message *generate_layer_tree_move(void)
 {
-    return DP_msg_layer_tree_move_new(generate_context_id(), random_uint16(),
-                                      random_uint16(), random_uint16());
+    return DP_msg_layer_tree_move_new(generate_context_id(), random_uint24(),
+                                      random_uint24(), random_uint24());
 }
 
 static DP_Message *generate_layer_tree_delete(void)
 {
-    return DP_msg_layer_tree_delete_new(generate_context_id(), random_uint16(),
-                                        random_uint16());
+    return DP_msg_layer_tree_delete_new(generate_context_id(), random_uint24(),
+                                        random_uint24());
 }
 
 static DP_Message *generate_transform_region(void)
 {
     return DP_msg_transform_region_new(
-        generate_context_id(), random_uint16(), random_uint16(), random_int32(),
+        generate_context_id(), random_uint24(), random_uint24(), random_int32(),
         random_int32(), random_int32(), random_int32(), random_int32(),
         random_int32(), random_int32(), random_int32(), random_int32(),
         random_int32(), random_int32(), random_int32(),
@@ -740,7 +747,7 @@ static DP_Message *generate_key_frame_set(void)
 {
     return DP_msg_key_frame_set_new(
         generate_context_id(), random_uint16(), random_uint16(),
-        random_uint16(), random_uint16(),
+        random_uint24(), random_uint16(),
         generate_variant((unsigned int[]){DP_MSG_KEY_FRAME_SET_ALL_SOURCE},
                          DP_MSG_KEY_FRAME_SET_NUM_SOURCE));
 }
@@ -763,9 +770,9 @@ static DP_Message *generate_key_frame_layer_attributes(void)
 {
     return DP_msg_key_frame_layer_attributes_new(
         generate_context_id(), random_uint16(), random_uint16(),
-        generate_uint16s,
-        int_between(DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYERS_MIN_COUNT,
-                    DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYERS_MAX_COUNT),
+        generate_uint32s,
+        int_between(DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYER_FLAGS_MIN_COUNT,
+                    DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYER_FLAGS_MAX_COUNT),
         NULL);
 }
 

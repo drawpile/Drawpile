@@ -203,7 +203,7 @@ bool SelectionTool::isInsideSelection(const QPointF &point, bool *atEdge) const
 		canvas::SelectionModel *selection = canvas->selection();
 		if(selection->isValid()) {
 			const QRect &bounds = selection->bounds();
-			const QImage &mask = selection->mask();
+			const QImage &mask = selection->image();
 			QPoint boundsPos = bounds.topLeft();
 			auto isInside = [&](const QPoint &pos) {
 				return bounds.contains(pos) &&

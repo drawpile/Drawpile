@@ -8,6 +8,10 @@
 #   define CHECKER_COLOR2_DEFAULT QColor(135, 135, 135)
 #endif
 
+#ifndef SELECTION_COLOR_DEFAULT
+#   define SELECTION_COLOR_DEFAULT QColor(0, 170, 255)
+#endif
+
 #ifndef ENGINE_UNDO_LIMIT_DEFAULT
 #	define ENGINE_UNDO_LIMIT_DEFAULT 60
 #endif
@@ -37,6 +41,7 @@ SETTING(engineSnapshotCount         , EngineSnapshotCount         , "settings/pa
 SETTING(engineSnapshotInterval      , EngineSnapshotInterval      , "settings/paintengine/snapshotinterval" , 10)
 SETTING(engineUndoDepth             , EngineUndoDepth             , "settings/paintengine/undodepthlimit"   , ENGINE_UNDO_LIMIT_DEFAULT)
 SETTING(listServers                 , ListServers                 , "listservers"                           , QVector<QVariantMap>())
+SETTING(selectionColor              , SelectionColor              , "settings/selectioncolor"               , SELECTION_COLOR_DEFAULT)
 SETTING(serverAutoReset             , ServerAutoReset             , "settings/server/autoreset"             , true)
 SETTING(serverPort                  , ServerPort                  , "settings/server/port"                  , cmake_config::proto::port())
 SETTING(serverTimeout               , ServerTimeout               , "settings/server/timeout"               , 60)

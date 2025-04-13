@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libclient/tools/annotation.h"
+extern "C" {
+#include <dpmsg/ids.h>
+}
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/net/client.h"
 #include "libclient/net/message.h"
+#include "libclient/tools/annotation.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/utils/cursors.h"
 #include <QPixmap>
@@ -64,7 +67,7 @@ void Annotation::begin(const BeginParams &params)
 		m_shape = selection.bounds();
 
 		if(selection.protect() && !m_owner.model()->aclState()->amOperator() &&
-		   (m_selectedId >> 8) != m_owner.client()->myId()) {
+		   !DP_annotation_id_owner(m_selectedId, m_owner.client()->myId())) {
 			m_handle = Handle::Outside;
 		} else {
 			m_handle = handleAt(m_shape, point.toPoint(), handleSize);
@@ -270,7 +273,7 @@ int Annotation::getAvailableAnnotationId()
 	}
 
 	canvas::AclState *aclState = canvas->aclState();
-	int localUserId = aclState->localUserId();
+	unsigned int localUserId = aclState ? aclState->localUserId() : 0u;
 	int annotationId = searchAvailableAnnotationId(takenIds, localUserId);
 	if(annotationId != 0) {
 		return annotationId;
@@ -282,7 +285,7 @@ int Annotation::getAvailableAnnotationId()
 			return annotationId;
 		}
 
-		for(int i = 255; i > 0; --i) {
+		for(unsigned int i = 255; i > 0; --i) {
 			if(i != localUserId) {
 				annotationId = searchAvailableAnnotationId(takenIds, i);
 				if(annotationId != 0) {
@@ -296,11 +299,10 @@ int Annotation::getAvailableAnnotationId()
 }
 
 int Annotation::searchAvailableAnnotationId(
-	const QSet<int> &takenIds, int contextId)
+	const QSet<int> &takenIds, unsigned int contextId)
 {
-	int prefix = contextId << 8;
-	for(int i = 0; i < 256; ++i) {
-		int id = prefix | i;
+	for(int i = 0; i < DP_ANNOTATION_ELEMENT_ID_MAX; ++i) {
+		int id = DP_annotation_id_make(contextId, i);
 		if(!takenIds.contains(id)) {
 			return id;
 		}

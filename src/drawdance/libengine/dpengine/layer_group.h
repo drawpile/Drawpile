@@ -72,7 +72,8 @@ int DP_layer_group_height(DP_LayerGroup *lg);
 
 DP_LayerList *DP_layer_group_children_noinc(DP_LayerGroup *lg);
 
-bool DP_layer_group_bounds(DP_LayerGroup *lg, DP_Rect *out_bounds);
+bool DP_layer_group_bounds(DP_LayerGroup *lg, bool include_sublayers,
+                           DP_Rect *out_bounds);
 
 int DP_layer_group_search_change_bounds(DP_LayerGroup *lg, DP_LayerProps *lp,
                                         unsigned int context_id, int *out_x,

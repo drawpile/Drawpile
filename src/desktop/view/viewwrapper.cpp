@@ -138,11 +138,6 @@ void ViewWrapper::setPointerTracking(bool pointerTracking)
 	m_controller->setPointerTracking(pointerTracking);
 }
 
-void ViewWrapper::setShowSelectionMask(bool showSelectionMask)
-{
-	m_scene->setShowSelectionMask(showSelectionMask);
-}
-
 void ViewWrapper::setShowToggleItems(bool showToggleItems)
 {
 	m_scene->setShowToggleItems(showToggleItems);
@@ -415,6 +410,9 @@ void ViewWrapper::connectMainWindow(MainWindow *mainWindow)
 	connect(
 		mainWindow, &MainWindow::viewShifted, m_controller,
 		&CanvasController::scrollByF);
+	connect(
+		mainWindow, &MainWindow::selectionMaskVisibilityChanged, m_scene,
+		&CanvasScene::setShowSelectionMask);
 }
 
 void ViewWrapper::connectNavigator(docks::Navigator *navigator)

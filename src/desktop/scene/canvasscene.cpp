@@ -12,12 +12,10 @@
 #include "desktop/scene/selectionitem.h"
 #include "desktop/scene/transformitem.h"
 #include "desktop/scene/usermarkeritem.h"
-#include "desktop/utils/widgetutils.h"
 #include "desktop/view/canvasscene.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
-#include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/drawdance/annotationlist.h"
@@ -130,8 +128,7 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	m_usermarkers.clear();
 	m_activeLaserTrail.clear();
 
-	canvas::SelectionModel *selection = m_model->selection();
-	setSelection(selection->isValid(), selection->bounds(), selection->mask());
+	setSelection(m_model->selection()->mask());
 	onTransformChanged();
 
 	QList<QRectF> regions;
@@ -497,15 +494,15 @@ void CanvasScene::previewAnnotation(int id, const QRect &shape)
 }
 
 void CanvasScene::setSelection(
-	bool valid, const QRect &bounds, const QImage &mask)
+	const QSharedPointer<canvas::SelectionMask> &mask)
 {
-	if(valid) {
+	if(mask) {
 		if(!m_selection) {
 			m_selection = new SelectionItem(
 				m_selectionIgnored, m_showSelectionMask, m_zoom, m_group);
 			m_selection->setUpdateSceneOnRefresh(true);
 		}
-		m_selection->setModel(bounds, mask);
+		m_selection->setModel(mask);
 		m_selection->setTransparentDelay(0.0);
 	} else {
 		delete m_selection;

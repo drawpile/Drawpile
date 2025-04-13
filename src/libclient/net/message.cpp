@@ -2,7 +2,6 @@
 
 extern "C" {
 #include <dpengine/local_state.h>
-#include <dpmsg/local_match.h>
 #include <dpmsg/msg_internal.h>
 }
 #include "libclient/canvas/blendmodes.h"
@@ -61,7 +60,7 @@ Message makeCanvasResizeMessage(
 		DP_msg_canvas_resize_new(contextId, top, right, bottom, left));
 }
 
-Message makeDefaultLayerMessage(uint8_t contextId, uint16_t id)
+Message makeDefaultLayerMessage(uint8_t contextId, uint32_t id)
 {
 	return Message::noinc(DP_msg_default_layer_new(contextId, id));
 }
@@ -83,7 +82,7 @@ makeFeatureLimitsMessage(uint8_t contextId, const QVector<int32_t> &limits)
 }
 
 Message makeFillRectMessage(
-	uint8_t contextId, uint16_t layer, uint8_t mode, uint32_t x, uint32_t y,
+	uint8_t contextId, uint32_t layer, uint8_t mode, uint32_t x, uint32_t y,
 	uint32_t w, uint32_t h, const QColor &color)
 {
 	return Message::noinc(
@@ -120,15 +119,15 @@ Message makeInternalSnapshotMessage(uint8_t contextId)
 
 Message makeKeyFrameLayerAttributesMessage(
 	uint8_t contextId, uint16_t trackId, uint16_t frameIndex,
-	const QVector<uint16_t> &layers)
+	const QVector<uint32_t> &layers)
 {
 	return Message::noinc(DP_msg_key_frame_layer_attributes_new(
-		contextId, trackId, frameIndex, Message::setUint16s, layers.size(),
-		const_cast<uint16_t *>(layers.constData())));
+		contextId, trackId, frameIndex, Message::setUint24s, layers.size(),
+		const_cast<uint32_t *>(layers.constData())));
 }
 
 Message makeKeyFrameSetMessage(
-	uint8_t contextId, uint16_t trackId, uint16_t frameIndex, uint16_t sourceId,
+	uint8_t contextId, uint16_t trackId, uint16_t frameIndex, uint32_t sourceId,
 	uint16_t sourceIndex, uint8_t source)
 {
 	return Message::noinc(DP_msg_key_frame_set_new(
@@ -160,7 +159,7 @@ makeLaserTrailMessage(uint8_t contextId, uint32_t color, uint8_t persistence)
 }
 
 Message makeLayerAttributesMessage(
-	uint8_t contextId, uint16_t id, uint8_t sublayer, uint8_t flags,
+	uint8_t contextId, uint32_t id, uint8_t sublayer, uint8_t flags,
 	uint8_t opacity, uint8_t blend)
 {
 	return Message::noinc(DP_msg_layer_attributes_new(
@@ -168,7 +167,7 @@ Message makeLayerAttributesMessage(
 }
 
 Message makeLayerAclMessage(
-	uint8_t contextId, uint16_t id, uint8_t flags,
+	uint8_t contextId, uint32_t id, uint8_t flags,
 	const QVector<uint8_t> &exclusive)
 {
 	return Message::noinc(DP_msg_layer_acl_new(
@@ -177,7 +176,7 @@ Message makeLayerAclMessage(
 }
 
 Message makeLayerTreeCreateMessage(
-	uint8_t contextId, uint16_t id, uint16_t source, uint16_t target,
+	uint8_t contextId, uint32_t id, uint16_t source, uint16_t target,
 	uint32_t fill, uint8_t flags, const QString &name)
 {
 	QByteArray bytes = name.toUtf8();
@@ -187,20 +186,20 @@ Message makeLayerTreeCreateMessage(
 }
 
 Message
-makeLayerTreeDeleteMessage(uint8_t contextId, uint16_t id, uint16_t mergeTo)
+makeLayerTreeDeleteMessage(uint8_t contextId, uint32_t id, uint32_t mergeTo)
 {
 	return Message::noinc(DP_msg_layer_tree_delete_new(contextId, id, mergeTo));
 }
 
 Message makeLayerTreeMoveMessage(
-	uint8_t contextId, uint16_t layer, uint16_t parent, uint16_t sibling)
+	uint8_t contextId, uint32_t layer, uint32_t parent, uint32_t sibling)
 {
 	return Message::noinc(
 		DP_msg_layer_tree_move_new(contextId, layer, parent, sibling));
 }
 
 Message
-makeLayerRetitleMessage(uint8_t contextId, uint16_t id, const QString &title)
+makeLayerRetitleMessage(uint8_t contextId, uint32_t id, const QString &title)
 {
 	QByteArray bytes = title.toUtf8();
 	return Message::noinc(DP_msg_layer_retitle_new(
@@ -229,7 +228,7 @@ static QByteArray compressAlphaMask(const QImage &mask)
 }
 
 Message makeMoveRectMessage(
-	uint8_t contextId, uint16_t layer, uint16_t source, int32_t sx, int32_t sy,
+	uint8_t contextId, uint32_t layer, uint32_t source, int32_t sx, int32_t sy,
 	int32_t tx, int32_t ty, int32_t w, int32_t h, const QImage &mask)
 {
 	QByteArray compressed =
@@ -245,7 +244,7 @@ Message makeMoveRectMessage(
 }
 
 Message makeTransformRegionMessage(
-	uint8_t contextId, uint16_t layer, uint16_t source, int32_t bx, int32_t by,
+	uint8_t contextId, uint32_t layer, uint32_t source, int32_t bx, int32_t by,
 	int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
 	int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
 	const QImage &mask)
@@ -264,7 +263,7 @@ Message makeTransformRegionMessage(
 }
 
 Message makePutImageMessage(
-	uint8_t contextId, uint16_t layer, uint8_t mode, uint32_t x, uint32_t y,
+	uint8_t contextId, uint32_t layer, uint8_t mode, uint32_t x, uint32_t y,
 	uint32_t w, uint32_t h, const QByteArray &compressedImage)
 {
 	return Message::noinc(DP_msg_put_image_new(
@@ -354,7 +353,7 @@ Message makeUserInfoMessage(
 }
 
 static void makePutImagesRecursive(
-	MessageList &msgs, uint8_t contextId, uint16_t layer, uint8_t mode, int x,
+	MessageList &msgs, uint8_t contextId, uint32_t layer, uint8_t mode, int x,
 	int y, const QImage &image, const QRect &bounds, int estimatedSize)
 {
 	int w = bounds.width();
@@ -404,7 +403,7 @@ static void makePutImagesRecursive(
 }
 
 void makePutImageMessages(
-	MessageList &msgs, uint8_t contextId, uint16_t layer, uint8_t mode, int x,
+	MessageList &msgs, uint8_t contextId, uint32_t layer, uint8_t mode, int x,
 	int y, const QImage &image)
 {
 	// If the image is totally outside of the canvas, there's nothing to put.

@@ -22,30 +22,22 @@ QRectF SelectionItem::boundingRect() const
 	return m_boundingRect;
 }
 
-void SelectionItem::setModel(const QRect &bounds, const QImage &mask)
+void SelectionItem::setModel(const QSharedPointer<canvas::SelectionMask> &mask)
 {
 	++m_executionId;
 	emit outlineRegenerating();
-	m_bounds = bounds;
-	m_mask = mask;
+	m_bounds = mask ? mask->bounds() : QRect();
 	m_path.clear();
-	m_maskOpacity = 0.0;
-	m_haveTemporaryMask = true;
 	updateBoundingRectFromBounds();
 	setPos(m_bounds.topLeft());
 	if(m_bounds.isEmpty()) {
 		qWarning("Selection mask is empty");
+		m_mask.clear();
+	} else if(m_showMask) {
+		m_mask = mask;
 	} else {
-		SelectionOutlineGenerator *gen =
-			new SelectionOutlineGenerator(m_executionId, m_mask, false, 0, 0);
-		connect(
-			this, &SelectionItem::outlineRegenerating, gen,
-			&SelectionOutlineGenerator::cancel, Qt::DirectConnection);
-		connect(
-			gen, &SelectionOutlineGenerator::outlineGenerated, this,
-			&SelectionItem::setOutline, Qt::QueuedConnection);
-		gen->setAutoDelete(true);
-		QThreadPool::globalInstance()->start(gen);
+		m_mask.clear();
+		generateOutline(mask->image());
 	}
 }
 
@@ -69,6 +61,10 @@ void SelectionItem::setShowMask(bool showMask)
 {
 	if(m_showMask != showMask) {
 		m_showMask = showMask;
+		if(!showMask && m_mask) {
+			generateOutline(m_mask->image());
+			m_mask.clear();
+		}
 		refresh();
 	}
 }
@@ -85,24 +81,6 @@ void SelectionItem::animationStep(qreal dt)
 {
 	bool havePath = !m_path.isEmpty();
 	bool needsRefresh = false;
-
-	if(m_haveTemporaryMask) {
-		if(havePath) {
-			m_maskOpacity -= dt * 5.0;
-			needsRefresh = !m_showMask;
-			if(m_maskOpacity <= 0.0) {
-				m_haveTemporaryMask = false;
-			}
-		} else if(m_maskOpacity < 1.0) {
-			// Generating a mask for a large selection can take a while, which
-			// leads to the animation lurching ahead. We mitigate that by
-			// checking if we're at the start of the fade-in.
-			m_maskOpacity = m_maskOpacity == 0.0
-								? 0.001
-								: qMin(1.0, m_maskOpacity + dt * 5.0);
-			needsRefresh = !m_showMask;
-		}
-	}
 
 	if(havePath && !m_ignored && !m_showMask) {
 		qreal prevMarchingAnts = std::floor(m_marchingAnts);
@@ -130,37 +108,39 @@ void SelectionItem::paint(
 {
 	Q_UNUSED(opt);
 	Q_UNUSED(widget);
-	if(m_transparentDelay <= 0.0) {
-		if(m_showMask) {
-			painter->setOpacity(0.5);
-			painter->drawImage(QPointF(0.0, 0.0), m_mask);
-		} else {
-			if(m_maskOpacity > 0.01) {
-				qreal opa = m_maskOpacity * m_maskOpacity;
-				painter->setOpacity(opa * 0.5);
-				painter->drawImage(QPointF(0.0, 0.0), m_mask);
-				painter->setOpacity((1.0 - opa));
+	if(m_transparentDelay <= 0.0 && !m_showMask && !m_path.isEmpty()) {
+		if(!m_path.isEmpty()) {
+			QPen pen;
+			pen.setWidth(painter->device()->devicePixelRatioF());
+			pen.setCosmetic(true);
+			pen.setColor(m_ignored ? Qt::darkGray : Qt::black);
+			painter->setPen(pen);
+			painter->drawPath(m_path);
+			pen.setDashPattern({4.0, 4.0});
+			if(m_ignored) {
+				pen.setColor(Qt::lightGray);
+			} else {
+				pen.setColor(Qt::white);
+				pen.setDashOffset(m_marchingAnts);
 			}
-
-			if(!m_path.isEmpty()) {
-				QPen pen;
-				pen.setWidth(painter->device()->devicePixelRatioF());
-				pen.setCosmetic(true);
-				pen.setColor(m_ignored ? Qt::darkGray : Qt::black);
-				painter->setPen(pen);
-				painter->drawPath(m_path);
-				pen.setDashPattern({4.0, 4.0});
-				if(m_ignored) {
-					pen.setColor(Qt::lightGray);
-				} else {
-					pen.setColor(Qt::white);
-					pen.setDashOffset(m_marchingAnts);
-				}
-				painter->setPen(pen);
-				painter->drawPath(m_path);
-			}
+			painter->setPen(pen);
+			painter->drawPath(m_path);
 		}
 	}
+}
+
+void SelectionItem::generateOutline(const QImage &mask)
+{
+	SelectionOutlineGenerator *gen =
+		new SelectionOutlineGenerator(m_executionId, mask, false, 0, 0);
+	connect(
+		this, &SelectionItem::outlineRegenerating, gen,
+		&SelectionOutlineGenerator::cancel, Qt::DirectConnection);
+	connect(
+		gen, &SelectionOutlineGenerator::outlineGenerated, this,
+		&SelectionItem::setOutline, Qt::QueuedConnection);
+	gen->setAutoDelete(true);
+	QThreadPool::globalInstance()->start(gen);
 }
 
 void SelectionItem::setOutline(

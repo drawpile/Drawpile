@@ -3,6 +3,7 @@
 #define DPENGINE_SELECTION_SET_H
 #include <dpcommon/common.h>
 
+typedef struct DP_CanvasDiff DP_CanvasDiff;
 DP_TYPEDEF_PERSISTENT(SelectionSet);
 DP_TYPEDEF_PERSISTENT(Selection);
 
@@ -42,6 +43,14 @@ DP_TransientSelectionSet *DP_selection_set_remove(DP_SelectionSet *ss,
                                                   unsigned int context_id,
                                                   int selection_id);
 
+void DP_selection_set_diff_nullable(DP_SelectionSet *ss_or_null,
+                                    unsigned int active_context_id,
+                                    int active_selection_id,
+                                    DP_SelectionSet *prev_or_null,
+                                    unsigned int prev_active_context_id,
+                                    int prev_active_selection_id,
+                                    DP_CanvasDiff *diff);
+
 
 DP_TransientSelectionSet *DP_transient_selection_set_new_init(int reserve);
 
@@ -61,13 +70,22 @@ void DP_transient_selection_set_decref_nullable(
 
 int DP_transient_selection_set_refcount(DP_TransientSelectionSet *tss);
 
+// May return NULL if all selections are empty. The owner should then decrement
+// the refcount and get rid of the reference to this selection set.
 DP_SelectionSet *
 DP_transient_selection_set_persist(DP_TransientSelectionSet *tss);
 
 int DP_transient_selection_set_count(DP_TransientSelectionSet *tss);
 
+DP_TransientSelection *
+DP_transient_selection_set_transient_at_noinc(DP_TransientSelectionSet *tss,
+                                              int index);
+
 void DP_transient_selection_set_insert_at_noinc(DP_TransientSelectionSet *tss,
                                                 int index, DP_Selection *sel);
+
+void DP_transient_selection_set_insert_transient_at_noinc(
+    DP_TransientSelectionSet *tss, int index, DP_TransientSelection *tsel);
 
 void DP_transient_selection_set_replace_at_noinc(DP_TransientSelectionSet *tss,
                                                  int index, DP_Selection *sel);

@@ -70,6 +70,7 @@ impl PaintEngine {
                 true,
                 0xff646464u32,
                 0xff878787u32,
+                0x0u32,
                 Some(Self::on_renderer_tile),
                 Some(Self::on_renderer_unlock),
                 Some(Self::on_renderer_resize),

@@ -657,6 +657,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(
 		paintEngine, &canvas::PaintEngine::undoDepthLimitSet, this,
 		&MainWindow::onUndoDepthLimitSet);
+	connect(
+		toolCtrl, &tools::ToolController::selectionEditActiveChanged,
+		paintEngine, &canvas::PaintEngine::setSelectionEditActive);
 
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, this, [this]() {
 		// Show a "new message" indicator when the chatbox is collapsed
@@ -757,6 +760,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	onBrushSizeLimitChange(brushSizeLimit);
 	toolCtrl->setBrushSizeLimit(brushSizeLimit);
 	onUndoDepthLimitSet(paintEngine->undoDepthLimit());
+	paintEngine->setShowSelectionMask(
+		getAction("showselectionmask")->isChecked());
+	paintEngine->setSelectionEditActive(toolCtrl->isSelectionEditActive());
 	getAction("resetsession")->setEnabled(true);
 
 	updateSelectTransformActions();
@@ -1434,6 +1440,36 @@ void MainWindow::handleAmbiguousShortcut(QShortcutEvent *shortcutEvent)
 		}
 	});
 	box->show();
+}
+
+void MainWindow::showSelectionMaskColorPicker()
+{
+	QString objectName = QStringLiteral("selectionmaskcolordialog");
+	color_widgets::ColorDialog *dlg = findChild<color_widgets::ColorDialog *>(
+		objectName, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		dlg = dialogs::newDeleteOnCloseColorDialog(
+			dpApp().settings().selectionColor(), this);
+		dlg->setPreviewDisplayMode(color_widgets::ColorPreview::SplitColor);
+		dlg->setObjectName(objectName);
+
+		color_widgets::ColorPreview *preview =
+			dlg->findChild<color_widgets::ColorPreview *>(
+				nullptr, Qt::FindChildrenRecursively);
+		if(preview) {
+			preview->setComparisonColor(SELECTION_COLOR_DEFAULT);
+		}
+
+		connect(
+			dlg, &color_widgets::ColorDialog::colorSelected, this,
+			[](const QColor &color) {
+				dpApp().settings().setSelectionColor(color);
+			});
+		utils::showWindow(dlg, shouldShowDialogMaximized());
+	}
 }
 
 void MainWindow::saveSplitterState()
@@ -3923,6 +3959,7 @@ void MainWindow::updateSelectTransformActions()
 	bool haveAnnotation =
 		getAction("tooltext")->isChecked() &&
 		m_dockToolSettings->annotationSettings()->selected() != 0;
+	bool selectionEditActive = m_doc->toolCtrl()->isSelectionEditActive();
 
 #ifdef __EMSCRIPTEN__
 	getAction("downloadselection")->setEnabled(haveSelection);
@@ -3957,6 +3994,7 @@ void MainWindow::updateSelectTransformActions()
 	getAction("transformrotatecw")->setEnabled(haveTransform);
 	getAction("transformrotateccw")->setEnabled(haveTransform);
 	getAction("transformshrinktoview")->setEnabled(haveTransform);
+	getAction("showselectionmask")->setEnabled(!selectionEditActive);
 	m_dockToolSettings->selectionSettings()->setActionEnabled(haveSelection);
 
 	if(!haveSelection || haveTransform) {
@@ -3967,6 +4005,18 @@ void MainWindow::updateSelectTransformActions()
 		if(dlg) {
 			dlg->deleteLater();
 		}
+	}
+}
+
+void MainWindow::updateSelectionMaskVisibility()
+{
+	bool showSelectionMask = getAction("showselectionmask")->isChecked();
+	bool selectionEditActive = m_doc->toolCtrl()->isSelectionEditActive();
+	emit selectionMaskVisibilityChanged(
+		showSelectionMask || selectionEditActive);
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	if(canvas) {
+		canvas->paintEngine()->setShowSelectionMask(showSelectionMask);
 	}
 }
 
@@ -5376,6 +5426,11 @@ void MainWindow::setupActions()
 			.noDefaultShortcut()
 			.checkable()
 			.remembered();
+	QAction *setselectionmaskcolor =
+		makeAction("setselectionmaskcolor", tr("Set Selection Mask &Color…"))
+			.statusTip(tr("Change the color tint of the selection mask"))
+			.icon("color-picker")
+			.noDefaultShortcut();
 #ifdef SINGLE_MAIN_WINDOW
 	QAction *fittoscreen =
 		makeAction("fittoscreen", tr("&Fit to Screen")).noDefaultShortcut();
@@ -5437,9 +5492,10 @@ void MainWindow::setupActions()
 		&widgets::CanvasFrame::setShowRulers);
 	connect(
 		showselectionmask, &QAction::toggled, this,
-		[this](bool showSelectionMask) {
-			m_canvasView->setShowSelectionMask(showSelectionMask);
-		});
+		&MainWindow::updateSelectionMaskVisibility);
+	connect(
+		setselectionmaskcolor, &QAction::triggered, this,
+		&MainWindow::showSelectionMaskColorPicker);
 
 	m_canvasView->connectActions(
 		{moveleft,		moveright,		moveup,			 movedown,
@@ -5557,6 +5613,7 @@ void MainWindow::setupActions()
 	viewmenu->addAction(showgrid);
 	viewmenu->addAction(showrulers);
 	viewmenu->addAction(showselectionmask);
+	viewmenu->addAction(setselectionmaskcolor);
 
 	viewmenu->addSeparator();
 #ifdef SINGLE_MAIN_WINDOW
@@ -5768,6 +5825,10 @@ void MainWindow::setupActions()
 			.noDefaultShortcut();
 	QAction *stamp =
 		makeAction("stamp", tr("&Stamp Transform")).shortcut("Ctrl+T");
+	QAction *editselection =
+		makeAction("editselection", tr("Dra&w on Selection"))
+			.checkable()
+			.noDefaultShortcut();
 
 	m_currentdoctools->addAction(selectall);
 	m_currentdoctools->addAction(selectnone);
@@ -5775,6 +5836,7 @@ void MainWindow::setupActions()
 	m_currentdoctools->addAction(selectlayerbounds);
 	m_currentdoctools->addAction(selectlayercontents);
 	m_currentdoctools->addAction(selectalter);
+	m_currentdoctools->addAction(editselection);
 
 	m_putimagetools->addAction(fillfgarea);
 	m_putimagetools->addAction(recolorarea);
@@ -5826,6 +5888,18 @@ void MainWindow::setupActions()
 	connect(
 		starttransformmask, &QAction::triggered, m_dockToolSettings,
 		&docks::ToolSettings::startTransformMoveMask);
+	connect(
+		editselection, &QAction::triggered, m_doc->toolCtrl(),
+		&tools::ToolController::setSelectionEditActive);
+	connect(
+		m_doc->toolCtrl(), &tools::ToolController::selectionEditActiveChanged,
+		editselection, &QAction::setChecked);
+	connect(
+		m_doc->toolCtrl(), &tools::ToolController::selectionEditActiveChanged,
+		this, &MainWindow::updateSelectTransformActions);
+	connect(
+		m_doc->toolCtrl(), &tools::ToolController::selectionEditActiveChanged,
+		this, &MainWindow::updateSelectionMaskVisibility);
 
 	QMenu *selectMenu = menuBar()->addMenu(tr("Selectio&n"));
 	selectMenu->addAction(selectall);
@@ -5850,6 +5924,10 @@ void MainWindow::setupActions()
 	selectMenu->addAction(transformrotateccw);
 	selectMenu->addAction(transformshrinktoview);
 	selectMenu->addAction(stamp);
+	selectMenu->addSeparator();
+	selectMenu->addAction(editselection);
+	selectMenu->addAction(showselectionmask);
+	selectMenu->addAction(setselectionmaskcolor);
 
 	m_dockToolSettings->selectionSettings()->setAction(starttransform);
 	m_dockToolSettings->transformSettings()->setActions(

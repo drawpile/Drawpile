@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "preview.h"
-#include "brush.h"
 #include "canvas_state.h"
 #include "draw_context.h"
 #include "image.h"
@@ -56,8 +55,8 @@ struct DP_PreviewRenderer {
     // Temporary buffer to collect layer route entries to render a preview onto.
     struct {
         int capacity;
-        DP_LayerRoutesEntry **entries;
-    } lre_buffer;
+        DP_LayerRoutesSelEntry *entries;
+    } lrse_buffer;
     DP_Queue queue;
     DP_DrawContext *dc;
     DP_Mutex *queue_mutex;
@@ -181,38 +180,38 @@ get_or_make_transient_canvas_state(DP_CanvasState *cs)
     }
 }
 
-static DP_LayerRoutesEntry **
-preview_renderer_lre_buffer_require(DP_PreviewRenderer *pvr, int count)
+static DP_LayerRoutesSelEntry *
+preview_renderer_lrse_buffer_require(DP_PreviewRenderer *pvr, int count)
 {
     DP_ASSERT(pvr);
-    if (pvr->lre_buffer.capacity < count) {
-        DP_free(pvr->lre_buffer.entries);
-        pvr->lre_buffer.entries =
-            DP_malloc(sizeof(*pvr->lre_buffer.entries) * DP_int_to_size(count));
-        pvr->lre_buffer.capacity = count;
+    if (pvr->lrse_buffer.capacity < count) {
+        DP_free(pvr->lrse_buffer.entries);
+        pvr->lrse_buffer.entries = DP_malloc(sizeof(*pvr->lrse_buffer.entries)
+                                             * DP_int_to_size(count));
+        pvr->lrse_buffer.capacity = count;
     }
-    return pvr->lre_buffer.entries;
+    return pvr->lrse_buffer.entries;
 }
 
-static DP_LayerRoutesEntry **get_layer_route_entries(DP_Preview *pv,
-                                                     DP_CanvasState *cs,
-                                                     DP_PreviewRenderer *pvr,
-                                                     int *out_count)
+static DP_LayerRoutesSelEntry *
+get_layer_route_sel_entries(DP_Preview *pv, DP_CanvasState *cs,
+                            DP_PreviewRenderer *pvr, int *out_count)
 {
     int layer_id_count;
     const int *layer_ids = pv->get_layer_ids(pv, &layer_id_count);
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    int lre_count = 0;
-    DP_LayerRoutesEntry **lres =
-        preview_renderer_lre_buffer_require(pvr, layer_id_count);
+    int lrse_count = 0;
+    DP_LayerRoutesSelEntry *lrses =
+        preview_renderer_lrse_buffer_require(pvr, layer_id_count);
     for (int i = 0; i < layer_id_count; ++i) {
-        DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_ids[i]);
-        if (lre && !DP_layer_routes_entry_is_group(lre)) {
-            lres[lre_count++] = lre;
+        DP_LayerRoutesSelEntry lrse =
+            DP_layer_routes_search_sel(lr, cs, layer_ids[i]);
+        if (DP_layer_routes_sel_entry_is_valid_target(&lrse)) {
+            lrses[lrse_count++] = lrse;
         }
     }
-    *out_count = lre_count;
-    return lres;
+    *out_count = lrse_count;
+    return lrses;
 }
 
 DP_CanvasState *DP_preview_apply(DP_Preview *pv, DP_CanvasState *cs,
@@ -222,10 +221,10 @@ DP_CanvasState *DP_preview_apply(DP_Preview *pv, DP_CanvasState *cs,
     DP_ASSERT(DP_atomic_get(&pv->refcount) > 0);
 
     // Figure out where to put the preview or bail out if there's nowhere.
-    int lre_count;
-    DP_LayerRoutesEntry **lres =
-        get_layer_route_entries(pv, cs, pvr, &lre_count);
-    if (lre_count == 0) {
+    int lrse_count;
+    DP_LayerRoutesSelEntry *lrses =
+        get_layer_route_sel_entries(pv, cs, pvr, &lrse_count);
+    if (lrse_count == 0) {
         return cs;
     }
 
@@ -270,10 +269,10 @@ DP_CanvasState *DP_preview_apply(DP_Preview *pv, DP_CanvasState *cs,
 
     // Jam the preview into the canvas state.
     DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
-    for (int i = 0; i < lre_count; ++i) {
-        DP_LayerRoutesEntry *lre = lres[i];
+    for (int i = 0; i < lrse_count; ++i) {
+        DP_LayerRoutesSelEntry *lrse = &lrses[i];
         DP_TransientLayerContent *tlc =
-            DP_layer_routes_entry_transient_content(lre, tcs);
+            DP_layer_routes_sel_entry_transient_content(lrse, tcs);
         DP_transient_layer_content_sublayer_insert_inc(tlc, lc, lp);
     }
     return (DP_CanvasState *)tcs;
@@ -848,7 +847,7 @@ void DP_preview_renderer_free(DP_PreviewRenderer *pvr)
         DP_semaphore_free(pvr->queue_sem);
         DP_mutex_free(pvr->queue_mutex);
         DP_queue_dispose(&pvr->queue);
-        DP_free(pvr->lre_buffer.entries);
+        DP_free(pvr->lrse_buffer.entries);
         DP_free(pvr);
     }
 }

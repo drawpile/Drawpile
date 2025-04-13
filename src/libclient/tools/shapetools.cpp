@@ -140,7 +140,8 @@ void ShapeTool::updatePreview()
 	}
 	m_brushEngine.endStroke(pv.last().timeMsec() + 10, canvasState, false);
 
-	paintEngine->previewDabs(m_owner.activeLayer(), m_brushEngine.messages());
+	paintEngine->previewDabs(
+		m_owner.activeLayerOrSelection(), m_brushEngine.messages());
 	m_brushEngine.clearMessages();
 }
 

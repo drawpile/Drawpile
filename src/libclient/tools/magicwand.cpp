@@ -20,7 +20,7 @@ public:
 		int size, double tolerance, int sourceLayerId, int gap, int expansion,
 		DP_FloodFillKernel kernel, int featherRadius, bool continuous,
 		int targetLayerId, DP_ViewMode viewMode, int activeLayerId,
-		int activeFrameIndex)
+		int activeFrameIndex, const QColor &fillColor)
 		: m_tool(tool)
 		, m_cancel(cancel)
 		, m_canvasState(canvasState)
@@ -37,14 +37,14 @@ public:
 		, m_viewMode(viewMode)
 		, m_activeLayerId(activeLayerId)
 		, m_activeFrameIndex(activeFrameIndex)
+		, m_fillColor(fillColor)
 	{
 	}
 
 	void run() override
 	{
-		QColor fillColor = QColor(0, 170, 255);
 		m_result = m_canvasState.floodFill(
-			0, 0, m_point.x(), m_point.y(), fillColor, m_tolerance,
+			0, 0, m_point.x(), m_point.y(), m_fillColor, m_tolerance,
 			m_sourceLayerId, m_size, m_continuous ? m_gap : 0, m_expansion,
 			m_kernel, m_featherRadius, false, m_continuous, false, m_viewMode,
 			m_activeLayerId, m_activeFrameIndex, m_cancel, m_img, m_x, m_y);
@@ -79,6 +79,7 @@ private:
 	DP_ViewMode m_viewMode;
 	int m_activeLayerId;
 	int m_activeFrameIndex;
+	QColor m_fillColor;
 	DP_FloodFillResult m_result;
 	QImage m_img;
 	int m_x;
@@ -299,7 +300,7 @@ void MagicWandTool::fillAt(const QPointF &point, bool constrain, bool center)
 			DP_FloodFillKernel(selectionParams.kernel),
 			selectionParams.featherRadius, selectionParams.continuous,
 			activeLayerId, paintEngine->viewMode(), paintEngine->viewLayer(),
-			paintEngine->viewFrame()));
+			paintEngine->viewFrame(), m_owner.selectionMaskColor()));
 	}
 }
 

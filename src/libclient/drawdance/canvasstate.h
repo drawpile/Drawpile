@@ -86,7 +86,7 @@ public:
 
 	QImage layerToFlatImage(int layerId, const QRect &rect) const;
 
-	QRect layerBounds(int layerId) const;
+	QRect layerBounds(int layerId, bool includeSublayers = false) const;
 
 	bool isBlankIn(int layerId, const QRect &rect, const QImage &mask) const;
 

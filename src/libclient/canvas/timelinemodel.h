@@ -66,6 +66,9 @@ signals:
 	void tracksChanged();
 
 private:
+	static int searchAvailableTrackId(
+		const QSet<int> &takenIds, unsigned int contextId);
+
 	static TimelineTrack trackToModel(const drawdance::Track &t);
 
 	static TimelineKeyFrame

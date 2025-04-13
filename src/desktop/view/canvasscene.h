@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_VIEW_CANVASSCENE_H
 #define DESKTOP_VIEW_CANVASSCENE_H
+#include "libclient/canvas/selectionmodel.h"
 #include <QColor>
 #include <QElapsedTimer>
 #include <QGraphicsScene>
@@ -144,7 +145,7 @@ private:
 	onCursorMoved(unsigned int flags, int userId, int layerId, int x, int y);
 	void onLaserTrail(int userId, int persistence, const QColor &color);
 
-	void setSelection(bool valid, const QRect &bounds, const QImage &mask);
+	void setSelection(const QSharedPointer<canvas::SelectionMask> &mask);
 	void onTransformChanged();
 
 	void onAnnotationsChanged(const drawdance::AnnotationList &al);

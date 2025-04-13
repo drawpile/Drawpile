@@ -102,8 +102,7 @@ void CanvasScene::setCanvasModel(canvas::CanvasModel *canvasModel)
 	m_userMarkers.clear();
 	m_activeLaserTrails.clear();
 
-	canvas::SelectionModel *selection = canvasModel->selection();
-	setSelection(selection->isValid(), selection->bounds(), selection->mask());
+	setSelection(canvasModel->selection()->mask());
 	onTransformChanged();
 
 	update();
@@ -741,15 +740,15 @@ void CanvasScene::onLaserTrail(int userId, int persistence, const QColor &color)
 }
 
 void CanvasScene::setSelection(
-	bool valid, const QRect &bounds, const QImage &mask)
+	const QSharedPointer<canvas::SelectionMask> &mask)
 {
-	if(valid) {
+	if(mask) {
 		if(!m_selection) {
 			m_selection = new SelectionItem(
 				m_selectionIgnored, m_showSelectionMask, m_zoom, m_canvasGroup);
 			m_selection->setUpdateSceneOnRefresh(true);
 		}
-		m_selection->setModel(bounds, mask);
+		m_selection->setModel(mask);
 		m_selection->setTransparentDelay(0.0);
 	} else {
 		delete m_selection;

@@ -225,7 +225,7 @@ QImage CanvasState::layerToFlatImage(int layerId, const QRect &rect) const
 	}
 }
 
-QRect CanvasState::layerBounds(int layerId) const
+QRect CanvasState::layerBounds(int layerId, bool includeSublayers) const
 {
 	DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(m_data);
 	DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layerId);
@@ -234,10 +234,10 @@ QRect CanvasState::layerBounds(int layerId) const
 	if(lre) {
 		if(DP_layer_routes_entry_is_group(lre)) {
 			DP_LayerGroup *lg = DP_layer_routes_entry_group(lre, m_data);
-			haveBounds = DP_layer_group_bounds(lg, &bounds);
+			haveBounds = DP_layer_group_bounds(lg, includeSublayers, &bounds);
 		} else {
 			DP_LayerContent *lc = DP_layer_routes_entry_content(lre, m_data);
-			haveBounds = DP_layer_content_bounds(lc, &bounds);
+			haveBounds = DP_layer_content_bounds(lc, includeSublayers, &bounds);
 		}
 	}
 	return haveBounds ? QRect(

@@ -66,6 +66,9 @@ class DrawdanceFieldType:
     def dynamic_payload_length(self, f):
         return None
 
+    def local_match_length(self, f):
+        return 0
+
     def array_declaration(self, f):
         return None
 
@@ -83,8 +86,12 @@ class DrawdanceFieldType:
 
     @staticmethod
     def _get_min_max(f):
-        prefix = f.type.base_type.replace("_t", "").upper()
-        return (f"{prefix}_MIN", f"{prefix}_MAX")
+        min_max = f.type.min_max
+        if min_max is None:
+            prefix = f.type.base_type.replace("_t", "").upper()
+            return (f"{prefix}_MIN", f"{prefix}_MAX")
+        else:
+            return min_max
 
     @staticmethod
     def _get_flag_args(f):
@@ -126,6 +133,20 @@ class DrawdanceFieldType:
             return "DP_text_reader_parse_uint16_array"
         else:
             raise RuntimeError(f"Unknown uint16 list format '{fmt}'")
+
+    def parse_text_uint24_list(self, f):
+        fmt = f.format
+        if not fmt:
+            return "DP_text_reader_parse_uint24_array"
+        else:
+            raise RuntimeError(f"Unknown uint24 list format '{fmt}'")
+
+    def parse_text_uint32_list(self, f):
+        fmt = f.format
+        if not fmt:
+            return "DP_text_reader_parse_uint32_array"
+        else:
+            raise RuntimeError(f"Unknown uint32 list format '{fmt}'")
 
     def parse_text_int32_list(self, f):
         fmt = f.format
@@ -198,6 +219,12 @@ class DrawdanceFieldType:
     def write_text_uint16_list(self, f, a, a_count):
         return f'DP_text_writer_write_uint16_list(writer, "{f.name}", {a}, {a_count})'
 
+    def write_text_uint24_list(self, f, a, a_count):
+        return f'DP_text_writer_write_uint24_list(writer, "{f.name}", {a}, {a_count})'
+
+    def write_text_uint32_list(self, f, a, a_count):
+        return f'DP_text_writer_write_uint32_list(writer, "{f.name}", {a}, {a_count})'
+
     def write_text_int32_list(self, f, a, a_count):
         return f'DP_text_writer_write_int32_list(writer, "{f.name}", {a}, {a_count})'
 
@@ -242,6 +269,7 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
         parse_field_fn,
         parse_subfield_fn=None,
         write_subfield_payload_text_fn=None,
+        min_max=None,
     ):
         super().__init__(key, False)
         self.base_type = base_type
@@ -252,6 +280,7 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
         self.parse_field_fn = parse_field_fn
         self.parse_subfield_fn = parse_subfield_fn
         self.write_subfield_payload_text_fn = write_subfield_payload_text_fn
+        self.min_max = min_max
 
     def accessor_return_type(self, f):
         return self.base_type
@@ -288,6 +317,9 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
     def static_payload_length(self, f):
         return self.payload_length
 
+    def local_match_length(self, f):
+        return self.payload_length
+
     def struct_declaration(self, f):
         return f"{self.base_type} {f.name}"
 
@@ -297,6 +329,12 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
     def serialize_payload(self, f, subject, dst):
         a = self.access(f, subject)
         return f"{self.serialize_payload_fn}({a}, {dst})"
+
+    def serialize_local_match(self, f, subject, dst):
+        return self.serialize_payload(f, subject, dst)
+
+    def match_local_match(self, f, subject):
+        return f"{self.deserialize_payload_fn}(buffer + read, &read) == {subject}->{f.field_name}"
 
     def write_payload_text(self, f, subject):
         fn = self.write_payload_text_fn
@@ -420,6 +458,9 @@ class DrawdanceArrayFieldType(DrawdanceFieldType):
         )
         return base + self.multiplier
 
+    def local_match_length(self, f):
+        return 2
+
     def struct_declaration(self, f):
         return f"uint16_t {f.name}_{self.array_size_name(f)}"
 
@@ -444,6 +485,14 @@ class DrawdanceArrayFieldType(DrawdanceFieldType):
         a = self.access(f, subject)
         a_count = f"{subject}->{f.name}_{self.array_size_name(f)}"
         return f"{self.serialize_payload_fn}({a}, {a_count}, {dst})"
+
+    def serialize_local_match(self, f, subject, dst):
+        a_count = f"{subject}->{f.name}_{self.array_size_name(f)}"
+        return f"DP_write_bigendian_uint16({a_count}, {dst})"
+
+    def match_local_match(self, f, subject):
+        a_count = f"{subject}->{f.name}_{self.array_size_name(f)}"
+        return f"read_uint16(buffer + read, &read) == {a_count}"
 
     def write_payload_text(self, f, subject):
         a = self.access(f, subject)
@@ -524,6 +573,10 @@ class DrawdanceStringFieldType(DrawdanceFieldType):
 
     def dynamic_payload_length(self, f):
         return f"DP_uint16_to_size({f.message.param_name}->{f.name}_len)"
+
+    def local_match_length(self, f):
+        # No messages with strings are matched locally.
+        raise NotImplementedError()
 
     def struct_declaration(self, f):
         return f"uint16_t {f.name}_len"
@@ -646,6 +699,9 @@ class DrawdanceStructFieldType(DrawdanceFieldType):
         multiplier = "" if payload_length == 1 else f" * {payload_length}"
         return f"DP_int_to_size({f.message.param_name}->{f.name}_count){multiplier}"
 
+    def local_match_length(self, f):
+        return 2
+
     def struct_declaration(self, f):
         return f"uint16_t {f.name}_count"
 
@@ -666,6 +722,14 @@ class DrawdanceStructFieldType(DrawdanceFieldType):
         a = self.access(f, subject)
         a_count = f"{subject}->{f.name}_count"
         return f"{f.sub.func_name}_serialize_payloads({a}, {a_count}, {dst})"
+
+    def serialize_local_match(self, f, subject, dst):
+        a_count = f"{subject}->{f.name}_{self.array_size_name(f)}"
+        return f"DP_write_bigendian_uint16({a_count}, {dst})"
+
+    def match_local_match(self, f, subject):
+        a_count = f"{subject}->{f.name}_{self.array_size_name(f)}"
+        return f"read_uint16(buffer + read, &read) == {a_count}"
 
     def write_payload_text(self, f, subject):
         fmt = f.format
@@ -815,6 +879,7 @@ DrawdancePlainFieldType.declare(
     deserialize_payload_fn="read_uint24",
     parse_field_fn=DrawdanceFieldType.parse_text_uint,
     parse_subfield_fn=DrawdanceFieldType.parse_subfield_uint,
+    min_max=("DP_UINT24_MIN", "DP_UINT24_MAX")
 )
 
 DrawdancePlainFieldType.declare(
@@ -863,6 +928,30 @@ DrawdanceArrayFieldType.declare(
     deserialize_payload_fn="read_uint16_array",
     parse_get_field_fn="DP_text_reader_get_array",
     parse_constructor_fn=DrawdanceFieldType.parse_text_uint16_list,
+)
+
+DrawdanceArrayFieldType.declare(
+    key="Vec<u24>",
+    base_type="uint32_t",
+    size_type="int",
+    payload_length=3,
+    serialize_payload_fn="DP_write_bigendian_uint24_array",
+    write_payload_text_fn=DrawdanceFieldType.write_text_uint24_list,
+    deserialize_payload_fn="read_uint24_array",
+    parse_get_field_fn="DP_text_reader_get_array",
+    parse_constructor_fn=DrawdanceFieldType.parse_text_uint24_list,
+)
+
+DrawdanceArrayFieldType.declare(
+    key="Vec<u32>",
+    base_type="uint32_t",
+    size_type="int",
+    payload_length=4,
+    serialize_payload_fn="DP_write_bigendian_uint32_array",
+    write_payload_text_fn=DrawdanceFieldType.write_text_uint32_list,
+    deserialize_payload_fn="read_uint32_array",
+    parse_get_field_fn="DP_text_reader_get_array",
+    parse_constructor_fn=DrawdanceFieldType.parse_text_uint32_list,
 )
 
 DrawdanceArrayFieldType.declare(
@@ -941,6 +1030,7 @@ class DrawdanceMessage:
         self.name = message.name
         self.alias = message.alias
         self.reserved = message.reserved
+        self.local_match = message.local_match
         self.comment = "\n".join(
             f" * {c}".rstrip() for c in message.comment.strip().split("\n")
         )
@@ -1004,9 +1094,24 @@ class DrawdanceMessage:
             self.alias_message = None
             self.effective_fields = self.fields
 
+    def local_match_condition(self, subject):
+        checks = []
+        for field in self.local_match.get("layer_ids", []):
+            checks.append(f"local_layer_id({subject}->{field})")
+        for field in self.local_match.get("selection_ids", []):
+            checks.append(f"local_selection_id({subject}->{field})")
+        return " || ".join(checks)
+
     @property
     def static_payload_length(self):
         return sum(f.static_payload_length for f in self.fields)
+
+    @property
+    def local_match_length(self):
+        if self.local_match:
+            return sum(f.local_match_length for f in self.fields)
+        else:
+            raise ValueError("Message local match is false")
 
     @property
     def dynamic_payload_length(self):
@@ -1142,6 +1247,10 @@ class DrawdanceField:
         return self.type.dynamic_payload_length(self)
 
     @property
+    def local_match_length(self):
+        return self.type.local_match_length(self)
+
+    @property
     def struct_declaration(self):
         return self.type.struct_declaration(self)
 
@@ -1167,6 +1276,12 @@ class DrawdanceField:
 
     def serialize_payload(self, subject, dst):
         return self.type.serialize_payload(self, subject, dst)
+
+    def serialize_local_match(self, subject, dst):
+        return self.type.serialize_local_match(self, subject, dst)
+
+    def match_local_match(self, subject):
+        return self.type.match_local_match(self, subject)
 
     def write_payload_text(self, subject):
         return self.type.write_payload_text(self, subject)

@@ -17,10 +17,11 @@ namespace drawdance {
 PaintEngine::PaintEngine(
 	AclState &acls, SnapshotQueue &sq, bool wantCanvasHistoryDump,
 	bool rendererChecker, const QColor &checkerColor1,
-	const QColor &checkerColor2, DP_RendererTileFn rendererTileFn,
-	DP_RendererUnlockFn rendererUnlockFn, DP_RendererResizeFn rendererResizeFn,
-	void *rendererUser, DP_CanvasHistorySoftResetFn softResetFn,
-	void *softResetUser, DP_PaintEnginePlaybackFn playbackFn,
+	const QColor &checkerColor2, const QColor &selectionColor,
+	DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
+	DP_RendererResizeFn rendererResizeFn, void *rendererUser,
+	DP_CanvasHistorySoftResetFn softResetFn, void *softResetUser,
+	DP_PaintEnginePlaybackFn playbackFn,
 	DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 	DP_PaintEngineStreamResetStartFn streamResetStartFn, void *streamResetUser,
 	const CanvasState &canvasState)
@@ -30,12 +31,12 @@ PaintEngine::PaintEngine(
 	, m_data(DP_paint_engine_new_inc(
 		  m_paintDc.get(), m_mainDc.get(), m_previewDc.get(), acls.get(),
 		  canvasState.get(), rendererChecker, checkerColor1.rgba(),
-		  checkerColor2.rgba(), rendererTileFn, rendererUnlockFn,
-		  rendererResizeFn, rendererUser, DP_snapshot_queue_on_save_point,
-		  sq.get(), softResetFn, softResetUser, wantCanvasHistoryDump,
-		  getDumpDir().toUtf8().constData(), &PaintEngine::getTimeMs, nullptr,
-		  nullptr, playbackFn, dumpPlaybackFn, playbackUser, streamResetStartFn,
-		  streamResetUser))
+		  checkerColor2.rgba(), selectionColor.rgba(), rendererTileFn,
+		  rendererUnlockFn, rendererResizeFn, rendererUser,
+		  DP_snapshot_queue_on_save_point, sq.get(), softResetFn, softResetUser,
+		  wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
+		  &PaintEngine::getTimeMs, nullptr, nullptr, playbackFn, dumpPlaybackFn,
+		  playbackUser, streamResetStartFn, streamResetUser))
 {
 }
 
@@ -66,17 +67,19 @@ net::MessageList PaintEngine::reset(
 		DP_paint_engine_want_canvas_history_dump(m_data);
 	QColor checkerColor1(DP_paint_engine_checker_color1(m_data));
 	QColor checkerColor2(DP_paint_engine_checker_color2(m_data));
+	QColor selectionColor =
+		QColor::fromRgba(DP_paint_engine_selection_color(m_data));
 	DP_paint_engine_free_join(m_data);
 	acls.reset(localUserId);
 	m_data = DP_paint_engine_new_inc(
 		m_paintDc.get(), m_mainDc.get(), m_previewDc.get(), acls.get(),
 		canvasState.get(), rendererChecker, checkerColor1.rgba(),
-		checkerColor2.rgba(), rendererTileFn, rendererUnlockFn,
-		rendererResizeFn, rendererUser, DP_snapshot_queue_on_save_point,
-		sq.get(), softResetFn, softResetUser, wantCanvasHistoryDump,
-		getDumpDir().toUtf8().constData(), &PaintEngine::getTimeMs, nullptr,
-		player, playbackFn, dumpPlaybackFn, playbackUser, streamResetStartFn,
-		streamResetUser);
+		checkerColor2.rgba(), selectionColor.rgba(), rendererTileFn,
+		rendererUnlockFn, rendererResizeFn, rendererUser,
+		DP_snapshot_queue_on_save_point, sq.get(), softResetFn, softResetUser,
+		wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
+		&PaintEngine::getTimeMs, nullptr, player, playbackFn, dumpPlaybackFn,
+		playbackUser, streamResetStartFn, streamResetUser);
 	return localResetImage;
 }
 
@@ -147,6 +150,11 @@ void PaintEngine::setCheckerColor1(const QColor &color1)
 void PaintEngine::setCheckerColor2(const QColor &color2)
 {
 	DP_paint_engine_checker_color2_set(m_data, color2.rgba());
+}
+
+void PaintEngine::setSelectionColor(const QColor &color)
+{
+	DP_paint_engine_selection_color_set(m_data, color.rgba());
 }
 
 bool PaintEngine::checkersVisible() const

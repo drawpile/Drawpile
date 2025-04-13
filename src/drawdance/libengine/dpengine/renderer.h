@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DPENGINE_RENDERER_H
 #define DPENGINE_RENDERER_H
+#include "pixels.h"
 #include <dpcommon/common.h>
 #include <dpcommon/geom.h>
 
 typedef struct DP_CanvasDiff DP_CanvasDiff;
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_LocalState DP_LocalState;
-typedef union DP_Pixel8 DP_Pixel8;
 
 
 typedef struct DP_Renderer DP_Renderer;
@@ -31,6 +31,7 @@ typedef enum DP_RendererMode {
 
 DP_Renderer *DP_renderer_new(int thread_count, bool checkers,
                              DP_Pixel8 checker_color1, DP_Pixel8 checker_color2,
+                             DP_UPixel15 selection_color,
                              DP_RendererTileFn tile_fn,
                              DP_RendererUnlockFn unlock_fn,
                              DP_RendererResizeFn resize_fn, void *user);
@@ -47,7 +48,7 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
                        DP_LocalState *ls, DP_CanvasDiff *diff,
                        bool layers_can_decrease_opacity,
                        DP_Pixel8 checker_color1, DP_Pixel8 checker_color2,
-                       DP_Rect view_tile_bounds, bool render_outside_view,
-                       DP_RendererMode mode);
+                       DP_UPixel15 selection_color, DP_Rect view_tile_bounds,
+                       bool render_outside_view, DP_RendererMode mode);
 
 #endif

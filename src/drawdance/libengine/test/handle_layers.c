@@ -26,6 +26,7 @@
 #include <dpengine/layer_props.h>
 #include <dpengine/layer_props_list.h>
 #include <dpmsg/blend_mode.h>
+#include <dpmsg/ids.h>
 
 
 static void dump_layer_list(DP_Output *output, DP_LayerList *ll,
@@ -146,47 +147,51 @@ static void add_canvas_resize(DP_Output *output, DP_CanvasHistory *ch,
 }
 
 static void add_layer_create(DP_Output *output, DP_CanvasHistory *ch,
-                             DP_DrawContext *dc, uint16_t id, uint16_t source,
-                             uint16_t target, uint32_t fill, uint8_t flags,
-                             const char *name)
+                             DP_DrawContext *dc, int id, int source, int target,
+                             uint32_t fill, uint8_t flags, const char *name)
 {
     add_message(output, ch, dc,
-                DP_msg_layer_tree_create_new(1, id, source, target, fill, flags,
-                                             name ? name : "",
+                DP_msg_layer_tree_create_new(1, DP_layer_id_to_protocol(id),
+                                             DP_layer_id_to_protocol(source),
+                                             DP_layer_id_to_protocol(target),
+                                             fill, flags, name ? name : "",
                                              name ? strlen(name) : 0));
 }
 
 static void add_layer_attributes(DP_Output *output, DP_CanvasHistory *ch,
-                                 DP_DrawContext *dc, uint16_t id,
-                                 uint8_t sublayer, uint8_t flags,
-                                 uint8_t opacity, uint8_t blend)
+                                 DP_DrawContext *dc, int id, uint8_t sublayer,
+                                 uint8_t flags, uint8_t opacity, uint8_t blend)
 {
-    add_message(
-        output, ch, dc,
-        DP_msg_layer_attributes_new(1, id, sublayer, flags, opacity, blend));
+    add_message(output, ch, dc,
+                DP_msg_layer_attributes_new(1, DP_layer_id_to_protocol(id),
+                                            sublayer, flags, opacity, blend));
 }
 
 static void add_layer_retitle(DP_Output *output, DP_CanvasHistory *ch,
-                              DP_DrawContext *dc, uint16_t id,
-                              const char *title)
+                              DP_DrawContext *dc, int id, const char *title)
 {
     add_message(output, ch, dc,
-                DP_msg_layer_retitle_new(1, id, title, strlen(title)));
+                DP_msg_layer_retitle_new(1, DP_layer_id_to_protocol(id), title,
+                                         strlen(title)));
 }
 
 static void add_layer_tree_delete(DP_Output *output, DP_CanvasHistory *ch,
-                                  DP_DrawContext *dc, uint16_t id,
-                                  uint16_t merge_to)
+                                  DP_DrawContext *dc, int id, int merge_to)
 {
-    add_message(output, ch, dc, DP_msg_layer_tree_delete_new(1, id, merge_to));
+    add_message(
+        output, ch, dc,
+        DP_msg_layer_tree_delete_new(1, DP_layer_id_to_protocol(id),
+                                     DP_layer_id_to_protocol(merge_to)));
 }
 
 static void add_layer_tree_move(DP_Output *output, DP_CanvasHistory *ch,
-                                DP_DrawContext *dc, uint16_t layer,
-                                uint16_t parent, uint16_t sibling)
+                                DP_DrawContext *dc, int layer, int parent,
+                                int sibling)
 {
     add_message(output, ch, dc,
-                DP_msg_layer_tree_move_new(1, layer, parent, sibling));
+                DP_msg_layer_tree_move_new(1, DP_layer_id_to_protocol(layer),
+                                           DP_layer_id_to_protocol(parent),
+                                           DP_layer_id_to_protocol(sibling)));
 }
 
 static void set_pixel_dab(DP_UNUSED int count, DP_PixelDab *dabs,
@@ -198,19 +203,20 @@ static void set_pixel_dab(DP_UNUSED int count, DP_PixelDab *dabs,
 
 static void add_draw_dabs_pixel_square(DP_Output *output, DP_CanvasHistory *ch,
                                        DP_DrawContext *dc, uint8_t flags,
-                                       uint16_t layer, int32_t x, int32_t y,
+                                       int layer, int32_t x, int32_t y,
                                        uint32_t color, uint8_t mode)
 {
     add_message(output, ch, dc,
-                DP_msg_draw_dabs_pixel_square_new(1, flags, layer, x, y, color,
-                                                  mode, set_pixel_dab, 1,
-                                                  NULL));
+                DP_msg_draw_dabs_pixel_square_new(
+                    1, flags, DP_layer_id_to_protocol(layer), x, y, color, mode,
+                    set_pixel_dab, 1, NULL));
 }
 
 static void add_pen_up(DP_Output *output, DP_CanvasHistory *ch,
-                       DP_DrawContext *dc, uint16_t layer)
+                       DP_DrawContext *dc, int layer)
 {
-    add_message(output, ch, dc, DP_msg_pen_up_new(1, layer));
+    add_message(output, ch, dc,
+                DP_msg_pen_up_new(1, DP_layer_id_to_protocol(layer)));
 }
 
 
@@ -220,37 +226,42 @@ static void handle_layers(DP_Output *output, DP_CanvasHistory *ch,
     dump_layers(output, ch, "initial layers");
 
     add_undo_point(output, ch, dc);
-    add_layer_create(output, ch, dc, 258, 0, 0, 0,
+    int group1_id = DP_layer_id_make(1u, 0);
+    add_layer_create(output, ch, dc, group1_id, 0, 0, 0,
                      DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP, "Group 1");
     dump_layers(output, ch, "create initial group");
 
     add_undo_point(output, ch, dc);
-    add_layer_create(output, ch, dc, 257, 0, 0, 0, 0, "Layer 1");
+    int layer1_id = DP_layer_id_make(1u, 1);
+    add_layer_create(output, ch, dc, layer1_id, 0, 0, 0, 0, "Layer 1");
     dump_layers(output, ch, "create initial layer");
 
     add_undo_point(output, ch, dc);
-    add_layer_create(output, ch, dc, 259, 0, 258, 0,
+    int layer2_id = DP_layer_id_make(1u, 2);
+    add_layer_create(output, ch, dc, layer2_id, 0, group1_id, 0,
                      DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO, "Layer 2");
     dump_layers(output, ch, "create layer in group");
 
     add_undo_point(output, ch, dc);
-    add_layer_create(output, ch, dc, 260, 0, 259, 0,
+    int group2_id = DP_layer_id_make(1u, 3);
+    add_layer_create(output, ch, dc, group2_id, 0, layer2_id, 0,
                      DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP, "Group 2");
     dump_layers(output, ch, "create group in group");
 
     add_undo_point(output, ch, dc);
-    add_layer_attributes(output, ch, dc, 257, 0,
+    add_layer_attributes(output, ch, dc, layer1_id, 0,
                          DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR, 255,
                          DP_BLEND_MODE_MULTIPLY);
     dump_layers(output, ch, "change layer attributes");
 
     add_undo_point(output, ch, dc);
-    add_layer_create(output, ch, dc, 261, 257, 260, 0,
+    int layer1_copy_id = DP_layer_id_make(1u, 4);
+    add_layer_create(output, ch, dc, layer1_copy_id, layer1_id, group2_id, 0,
                      DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO, "Layer 1 Copy");
     dump_layers(output, ch, "create layer duplicate in inner group");
 
     add_undo_point(output, ch, dc);
-    add_layer_retitle(output, ch, dc, 261, "Copy of Layer 1");
+    add_layer_retitle(output, ch, dc, layer1_copy_id, "Copy of Layer 1");
     dump_layers(output, ch, "rename layer");
 
     add_undo_point(output, ch, dc);
@@ -259,73 +270,76 @@ static void handle_layers(DP_Output *output, DP_CanvasHistory *ch,
 
     add_undo_point(output, ch, dc);
     add_draw_dabs_pixel_square(output, ch, dc, (uint8_t)DP_PAINT_MODE_DIRECT,
-                               261, 0, 0, 0x00abcdef, DP_BLEND_MODE_SUBTRACT);
+                               layer1_copy_id, 0, 0, 0x00abcdef,
+                               DP_BLEND_MODE_SUBTRACT);
     dump_layers(output, ch, "draw dab in direct mode");
-    add_pen_up(output, ch, dc, 261);
+    add_pen_up(output, ch, dc, layer1_copy_id);
     dump_layers(output, ch, "pen up in direct mode");
 
     add_undo_point(output, ch, dc);
-    add_draw_dabs_pixel_square(output, ch, dc,
-                               (uint8_t)DP_PAINT_MODE_INDIRECT_WASH, 261, 0, 0,
-                               0x7fabcdef, DP_BLEND_MODE_SCREEN);
+    add_draw_dabs_pixel_square(
+        output, ch, dc, (uint8_t)DP_PAINT_MODE_INDIRECT_WASH, layer1_copy_id, 0,
+        0, 0x7fabcdef, DP_BLEND_MODE_SCREEN);
     dump_layers(output, ch, "draw dab in indirect mode");
-    add_pen_up(output, ch, dc, 261);
+    add_pen_up(output, ch, dc, layer1_copy_id);
     dump_layers(output, ch, "pen up in indirect mode");
 
     add_undo_point(output, ch, dc);
     add_layer_tree_move(output, ch, dc, 0, 0, 0);
-    add_layer_tree_move(output, ch, dc, 257, 257, 0);
-    add_layer_tree_move(output, ch, dc, 257, 0, 257);
-    add_layer_tree_move(output, ch, dc, 257, 258, 258);
+    add_layer_tree_move(output, ch, dc, layer1_id, 0x800000, 0);
+    add_layer_tree_move(output, ch, dc, layer1_id, layer1_id, 0);
+    add_layer_tree_move(output, ch, dc, layer1_id, 0, layer1_id);
+    add_layer_tree_move(output, ch, dc, layer1_id, group1_id, group1_id);
     add_layer_tree_move(output, ch, dc, 111, 0, 0);
-    add_layer_tree_move(output, ch, dc, 257, 222, 0);
-    add_layer_tree_move(output, ch, dc, 257, 0, 333);
-    add_layer_tree_move(output, ch, dc, 258, 260, 0);
-    add_layer_tree_move(output, ch, dc, 257, 261, 0);
-    add_layer_tree_move(output, ch, dc, 257, 260, 258);
+    add_layer_tree_move(output, ch, dc, layer1_id, 222, 0);
+    add_layer_tree_move(output, ch, dc, layer1_id, 0, 333);
+    add_layer_tree_move(output, ch, dc, group1_id, group2_id, 0);
+    add_layer_tree_move(output, ch, dc, layer1_id, layer1_copy_id, 0);
+    add_layer_tree_move(output, ch, dc, layer1_id, group2_id, group1_id);
     dump_layers(output, ch, "invalid layer tree moves");
     add_undo(output, ch, dc);
 
     add_undo_point(output, ch, dc);
-    add_layer_tree_move(output, ch, dc, 257, 0, 258);
+    add_layer_tree_move(output, ch, dc, layer1_id, 0, group1_id);
     dump_layers(output, ch, "swap layers in root");
-    add_layer_tree_move(output, ch, dc, 260, 0, 0);
+    add_layer_tree_move(output, ch, dc, group2_id, 0, 0);
     dump_layers(output, ch, "move layer out of group");
-    add_layer_tree_move(output, ch, dc, 259, 0, 260);
+    add_layer_tree_move(output, ch, dc, layer2_id, 0, group2_id);
     dump_layers(output, ch, "move layer out of nested group");
     add_undo(output, ch, dc);
 
     add_undo_point(output, ch, dc);
-    add_layer_tree_move(output, ch, dc, 259, 260, 261);
+    add_layer_tree_move(output, ch, dc, layer2_id, group2_id, layer1_copy_id);
     dump_layers(output, ch, "move layer into group");
     add_undo(output, ch, dc);
 
     add_undo_point(output, ch, dc);
-    add_layer_create(output, ch, dc, 262, 258, 260, 0,
+    int group1_copy_id = DP_layer_id_make(1u, 5);
+    add_layer_create(output, ch, dc, group1_copy_id, group1_id, group2_id, 0,
                      DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO, "Group 1 Copy");
     dump_layers(output, ch, "create group duplicate in inner group");
     add_undo(output, ch, dc);
 
     add_undo_point(output, ch, dc);
-    add_layer_tree_delete(output, ch, dc, 259, 257);
+    add_layer_tree_delete(output, ch, dc, layer2_id, layer1_id);
     dump_layers(output, ch, "merge layer");
     add_undo(output, ch, dc);
 
     add_undo_point(output, ch, dc);
-    add_layer_tree_delete(output, ch, dc, 260, 259);
+    add_layer_tree_delete(output, ch, dc, group2_id, layer2_id);
     dump_layers(output, ch, "merge group");
     add_undo(output, ch, dc);
 
     add_undo_point(output, ch, dc);
-    add_layer_tree_delete(output, ch, dc, 257, 0);
+    add_layer_tree_delete(output, ch, dc, layer1_id, 0);
     dump_layers(output, ch, "delete layer in root");
 
     add_undo_point(output, ch, dc);
-    add_layer_tree_delete(output, ch, dc, 261, 0);
+    add_layer_tree_delete(output, ch, dc, layer1_copy_id, 0);
     dump_layers(output, ch, "delete nested layer");
 
     add_undo_point(output, ch, dc);
-    add_layer_tree_delete(output, ch, dc, 258, 0);
+    add_layer_tree_delete(output, ch, dc, group1_id, 0);
     dump_layers(output, ch, "delete group");
 }
 

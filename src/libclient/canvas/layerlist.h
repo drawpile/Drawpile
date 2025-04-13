@@ -83,7 +83,10 @@ struct LayerListItem {
 	uint8_t attributeFlags() const;
 
 	//! Get the ID of the user who created this layer
-	uint8_t creatorId() const { return uint8_t((id & 0xff00) >> 8); }
+	uint8_t creatorId() const;
+
+	//! Get the layer element ID, without creator ID
+	int elementId() const;
 
 	bool actuallyCensored() const { return censored || revealed; }
 
@@ -261,7 +264,8 @@ private slots:
 	void updateCheckedLayerAcl(int layerId);
 
 private:
-	static int searchAvailableLayerId(const QSet<int> &takenIds, int contextId);
+	static int
+	searchAvailableLayerId(const QSet<int> &takenIds, unsigned int contextId);
 
 	CheckState flattenLayerList(
 		QVector<LayerListItem> &newItems, QHash<int, CheckState> &checkStates,

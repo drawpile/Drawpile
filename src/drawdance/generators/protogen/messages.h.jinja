@@ -27,6 +27,8 @@ typedef struct DP_Message DP_Message;
 typedef struct DP_TextReader DP_TextReader;
 typedef struct DP_TextWriter DP_TextWriter;
 
+typedef void (*DP_MessageLocalMatchSetFn)(size_t, unsigned char *, void *);
+
 #define DP_PROTOCOL_VERSION_NAMESPACE "{{ version.namespace }}"
 #define DP_PROTOCOL_VERSION_SERVER    {{ version.server }}
 #define DP_PROTOCOL_VERSION_MAJOR     {{ version.major }}
@@ -83,6 +85,9 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id, 
     {% if not message.reserved %}
 
         #define {{ message.enum_name }}_STATIC_LENGTH {{ message.static_payload_length }}
+        {% if message.local_match %}
+            #define {{ message.enum_name }}_MATCH_LENGTH {{ message.local_match_length }}
+        {% endif %}
         {% for f in message.fields %}
             {% if f.min != f.max %}
 
@@ -157,6 +162,12 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id, 
         DP_Message *DP_{{ message.func_name }}_deserialize(unsigned int context_id, const unsigned char *buffer, size_t length);
 
         DP_Message *DP_{{ message.func_name }}_parse(unsigned int context_id, DP_TextReader *reader);
+        {% if message.local_match %}
+
+            void DP_{{ message.func_name }}_local_match_set(size_t size, unsigned char *data, void *user);
+
+            bool DP_{{ message.func_name }}_local_match_matches(const {{ message.param }}, DP_Message *local_match_msg);
+        {% endif %}
         {% if message.fields or message.alias %}
 
             {{ message.struct_name }} *DP_{{ message.func_name }}_cast(DP_Message *msg);
@@ -176,5 +187,11 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id, 
     {% endif %}
 
 {% endfor %}
+
+DP_Message *DP_msg_local_match_make(DP_Message *msg, bool disguise_as_put_image);
+
+bool DP_msg_local_match_is_local_match(DP_Message *msg);
+
+bool DP_msg_local_match_matches(DP_Message *msg, DP_Message *local_match_msg);
 
 #endif

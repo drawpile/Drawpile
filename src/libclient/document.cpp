@@ -22,6 +22,7 @@ extern "C" {
 #include "libshared/util/functionrunnable.h"
 #include "libshared/util/qtcompat.h"
 #include <QBuffer>
+#include <QColor>
 #include <QDir>
 #include <QGuiApplication>
 #include <QPainter>
@@ -82,6 +83,8 @@ Document::Document(
 		m_toolctrl, &tools::ToolController::setInterpolateInputs);
 	m_settings.bindMouseSmoothing(
 		m_toolctrl, &tools::ToolController::setMouseSmoothing);
+	m_settings.bindSelectionColor(
+		m_toolctrl, &tools::ToolController::setSelectionMaskColor);
 	m_banlist = new net::BanlistModel(this);
 	m_authList = new net::AuthListModel(this);
 	m_announcementlist =
@@ -1743,7 +1746,7 @@ void Document::fillArea(const QColor &color, DP_BlendMode mode, float opacity)
 		return;
 	}
 
-	QImage mask = selection->mask();
+	QImage mask = selection->image();
 	if(mask.isNull() || mask.size().isEmpty()) {
 		return;
 	}

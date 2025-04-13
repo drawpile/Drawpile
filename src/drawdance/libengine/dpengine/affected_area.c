@@ -21,10 +21,12 @@
  */
 #include "affected_area.h"
 #include "canvas_state.h"
+#include "pixels.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
 #include <dpmsg/blend_mode.h>
+#include <dpmsg/ids.h>
 #include <dpmsg/message.h>
 
 
@@ -280,34 +282,35 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         // like those are super common anyway, so it shouldn't be disruptive.
         return make_layer_attrs(ALL_IDS);
     case DP_MSG_LAYER_ATTRIBUTES:
-        return make_layer_attrs(
-            DP_msg_layer_attributes_id(DP_msg_layer_attributes_cast(msg)));
+        return make_layer_attrs(DP_protocol_to_layer_id(
+            DP_msg_layer_attributes_id(DP_message_internal(msg))));
     case DP_MSG_LAYER_RETITLE:
-        return make_layer_attrs(
-            DP_msg_layer_retitle_id(DP_msg_layer_retitle_cast(msg)));
+        return make_layer_attrs(DP_protocol_to_layer_id(
+            DP_msg_layer_retitle_id(DP_message_internal(msg))));
     case DP_MSG_LAYER_TREE_MOVE:
         // Moving a layer is dependent on the state of the source, parent and
         // sibling layer, which is beyond what we can represent.
         return make_layer_attrs(ALL_IDS);
     case DP_MSG_LAYER_TREE_DELETE: {
-        DP_MsgLayerTreeDelete *mtld = DP_msg_layer_tree_delete_cast(msg);
+        DP_MsgLayerTreeDelete *mtld = DP_message_internal(msg);
         // If this layer gets merged into another, we affect two layers, which
         // we can't represent in our affected area structure. But since changing
         // layer properties is pretty rare, we'll just say that it conflicts
         // with every other layer domain message and not bother special-casing.
-        return make_layer_attrs(DP_msg_layer_tree_delete_merge_to(mtld) == 0
-                                    ? DP_msg_layer_tree_delete_id(mtld)
-                                    : ALL_IDS);
+        return make_layer_attrs(
+            DP_msg_layer_tree_delete_merge_to(mtld) == 0
+                ? DP_protocol_to_layer_id(DP_msg_layer_tree_delete_id(mtld))
+                : ALL_IDS);
     }
     case DP_MSG_PUT_IMAGE: {
-        DP_MsgPutImage *mpi = DP_msg_put_image_cast(msg);
+        DP_MsgPutImage *mpi = DP_message_internal(msg);
         switch (DP_msg_put_image_mode(mpi)) {
         case DP_BLEND_MODE_COMPAT_LOCAL_MATCH:
             // Compatibility hack: LocalMatch in disguise.
             return make_user_attrs();
         default:
             return make_pixels(
-                DP_msg_put_image_layer(mpi),
+                DP_protocol_to_layer_id(DP_msg_put_image_layer(mpi)),
                 DP_rect_make(DP_uint32_to_int(DP_msg_put_image_x(mpi)),
                              DP_uint32_to_int(DP_msg_put_image_y(mpi)),
                              DP_uint32_to_int(DP_msg_put_image_w(mpi)),
@@ -315,8 +318,8 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         }
     }
     case DP_MSG_PUT_TILE: {
-        DP_MsgPutTile *mpt = DP_msg_put_tile_cast(msg);
-        int layer_id = DP_msg_put_tile_layer(mpt);
+        DP_MsgPutTile *mpt = DP_message_internal(msg);
+        int layer_id = DP_protocol_to_layer_id(DP_msg_put_tile_layer(mpt));
         unsigned int sublayer_id = DP_msg_put_tile_sublayer(mpt);
         // If there's a repetition involved, we can't intuit where it will end,
         // since we don't know the canvas size at this time. So we just act as
@@ -336,8 +339,9 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         }
     }
     case DP_MSG_DRAW_DABS_CLASSIC: {
-        DP_MsgDrawDabsClassic *mddc = DP_msg_draw_dabs_classic_cast(msg);
-        int layer_id = DP_msg_draw_dabs_classic_layer(mddc);
+        DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
+        int layer_id =
+            DP_protocol_to_layer_id(DP_msg_draw_dabs_classic_layer(mddc));
         DP_Rect bounds = classic_dabs_bounds(mddc);
         if (aia_or_null
             && DP_msg_draw_dabs_classic_paint_mode(mddc)
@@ -352,7 +356,8 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     case DP_MSG_DRAW_DABS_PIXEL:
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE: {
         DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
-        int layer_id = DP_msg_draw_dabs_pixel_layer(mddp);
+        int layer_id =
+            DP_protocol_to_layer_id(DP_msg_draw_dabs_pixel_layer(mddp));
         DP_Rect bounds = pixel_dabs_bounds(mddp);
         if (aia_or_null
             && DP_msg_draw_dabs_pixel_paint_mode(mddp)
@@ -366,13 +371,15 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     }
     case DP_MSG_DRAW_DABS_MYPAINT: {
         DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
-        int layer_id = DP_msg_draw_dabs_mypaint_layer(mddmp);
+        int layer_id =
+            DP_protocol_to_layer_id(DP_msg_draw_dabs_mypaint_layer(mddmp));
         DP_Rect bounds = mypaint_dabs_bounds(mddmp);
         return make_pixels(layer_id, bounds);
     }
     case DP_MSG_DRAW_DABS_MYPAINT_BLEND: {
         DP_MsgDrawDabsMyPaintBlend *mddmpb = DP_message_internal(msg);
-        int layer_id = DP_msg_draw_dabs_mypaint_blend_layer(mddmpb);
+        int layer_id = DP_protocol_to_layer_id(
+            DP_msg_draw_dabs_mypaint_blend_layer(mddmpb));
         DP_Rect bounds = mypaint_blend_dabs_bounds(mddmpb);
         if (aia_or_null
             && DP_msg_draw_dabs_mypaint_blend_paint_mode(mddmpb)
@@ -394,9 +401,9 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
                  : take_indirect_area(aia_or_null, context_id);
     }
     case DP_MSG_FILL_RECT: {
-        DP_MsgFillRect *mfr = DP_msg_fill_rect_cast(msg);
+        DP_MsgFillRect *mfr = DP_message_internal(msg);
         return make_pixels(
-            DP_msg_fill_rect_layer(mfr),
+            DP_protocol_to_layer_id(DP_msg_fill_rect_layer(mfr)),
             DP_rect_make(DP_uint32_to_int(DP_msg_fill_rect_x(mfr)),
                          DP_uint32_to_int(DP_msg_fill_rect_y(mfr)),
                          DP_uint32_to_int(DP_msg_fill_rect_w(mfr)),
@@ -404,31 +411,33 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     }
     case DP_MSG_ANNOTATION_CREATE:
         return make_annotations(
-            DP_msg_annotation_create_id(DP_msg_annotation_create_cast(msg)));
+            DP_msg_annotation_create_id(DP_message_internal(msg)));
     case DP_MSG_ANNOTATION_RESHAPE:
         return make_annotations(
-            DP_msg_annotation_reshape_id(DP_msg_annotation_reshape_cast(msg)));
+            DP_msg_annotation_reshape_id(DP_message_internal(msg)));
     case DP_MSG_ANNOTATION_EDIT:
         return make_annotations(
-            DP_msg_annotation_edit_id(DP_msg_annotation_edit_cast(msg)));
+            DP_msg_annotation_edit_id(DP_message_internal(msg)));
     case DP_MSG_ANNOTATION_DELETE:
         return make_annotations(
-            DP_msg_annotation_delete_id(DP_msg_annotation_delete_cast(msg)));
+            DP_msg_annotation_delete_id(DP_message_internal(msg)));
     // Move rect and transform regionmessages can take stuff from one layer and
     // move it to another, affecting two different layers. Since we can't
     // represent that, we punt to affecting all layers in that case. Switching
     // layers during a transform is pretty uncommon, so that's okay.
     case DP_MSG_MOVE_RECT: {
-        DP_MsgMoveRect *mmr = DP_msg_move_rect_cast(msg);
-        int source_id = DP_msg_move_rect_source(mmr);
-        int target_id = DP_msg_move_rect_layer(mmr);
+        DP_MsgMoveRect *mmr = DP_message_internal(msg);
+        int source_id = DP_protocol_to_layer_id(DP_msg_move_rect_source(mmr));
+        int target_id = DP_protocol_to_layer_id(DP_msg_move_rect_layer(mmr));
         return make_pixels(source_id == target_id ? source_id : ALL_IDS,
                            move_rect_bounds(mmr));
     }
     case DP_MSG_TRANSFORM_REGION: {
-        DP_MsgTransformRegion *mtr = DP_msg_transform_region_cast(msg);
-        int source_id = DP_msg_transform_region_source(mtr);
-        int target_id = DP_msg_transform_region_layer(mtr);
+        DP_MsgTransformRegion *mtr = DP_message_internal(msg);
+        int source_id =
+            DP_protocol_to_layer_id(DP_msg_transform_region_source(mtr));
+        int target_id =
+            DP_protocol_to_layer_id(DP_msg_transform_region_layer(mtr));
         return make_pixels(source_id == target_id ? source_id : ALL_IDS,
                            region_bounds(DP_msg_transform_region_bx(mtr),
                                          DP_msg_transform_region_by(mtr),
@@ -448,44 +457,43 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     case DP_MSG_CANVAS_BACKGROUND:
         return make_canvas_background();
     case DP_MSG_SET_METADATA_INT: {
-        int field =
-            DP_msg_set_metadata_int_field(DP_msg_set_metadata_int_cast(msg));
+        int field = DP_msg_set_metadata_int_field(DP_message_internal(msg));
         return field == DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT
                  ? make_timeline(ALL_IDS)
                  : make_document_metadata(field);
     }
     case DP_MSG_TRACK_CREATE: {
-        DP_MsgTrackCreate *mtc = DP_msg_track_create_cast(msg);
+        DP_MsgTrackCreate *mtc = DP_message_internal(msg);
         // Duplicating a track affects two track ids, so we punt to all.
         return make_timeline(DP_msg_track_create_source_id(mtc) == 0
                                  ? DP_msg_track_create_id(mtc)
                                  : ALL_IDS);
     }
     case DP_MSG_TRACK_RETITLE:
-        return make_timeline(
-            DP_msg_track_retitle_id(DP_msg_track_retitle_cast(msg)));
+        return make_timeline(DP_msg_track_retitle_id(DP_message_internal(msg)));
     case DP_MSG_TRACK_DELETE:
-        return make_timeline(
-            DP_msg_track_delete_id(DP_msg_track_delete_cast(msg)));
+        return make_timeline(DP_msg_track_delete_id(DP_message_internal(msg)));
     case DP_MSG_TRACK_ORDER:
         return make_timeline(ALL_IDS);
     case DP_MSG_KEY_FRAME_SET: {
-        DP_MsgKeyFrameSet *mkfs = DP_msg_key_frame_set_cast(msg);
+        DP_MsgKeyFrameSet *mkfs = DP_message_internal(msg);
         int track_id = DP_msg_key_frame_set_track_id(mkfs);
         bool is_layer_source = DP_msg_key_frame_set_source(mkfs)
                             == DP_MSG_KEY_FRAME_SET_SOURCE_LAYER;
         bool single_track_id =
-            is_layer_source || track_id == DP_msg_key_frame_set_source_id(mkfs);
+            is_layer_source
+            || track_id
+                   == DP_uint32_to_int(DP_msg_key_frame_set_source_id(mkfs));
         return make_timeline(single_track_id ? track_id : ALL_IDS);
     }
     case DP_MSG_KEY_FRAME_RETITLE:
-        return make_timeline(DP_msg_key_frame_retitle_track_id(
-            DP_msg_key_frame_retitle_cast(msg)));
+        return make_timeline(
+            DP_msg_key_frame_retitle_track_id(DP_message_internal(msg)));
     case DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES:
         return make_timeline(DP_msg_key_frame_layer_attributes_track_id(
-            DP_msg_key_frame_layer_attributes_cast(msg)));
+            DP_message_internal(msg)));
     case DP_MSG_KEY_FRAME_DELETE: {
-        DP_MsgKeyFrameDelete *mkfd = DP_msg_key_frame_delete_cast(msg);
+        DP_MsgKeyFrameDelete *mkfd = DP_message_internal(msg);
         int track_id = DP_msg_key_frame_delete_track_id(mkfd);
         int move_track_id = DP_msg_key_frame_delete_move_track_id(mkfd);
         bool single_track_id = move_track_id == 0 || track_id == move_track_id;

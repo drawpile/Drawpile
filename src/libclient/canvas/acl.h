@@ -83,16 +83,6 @@ public:
 
 	bool isResetLocked() const;
 
-	static int extractLayerOwnerId(int layerId)
-	{
-		return (layerId >> 8) & 0xff;
-	}
-
-	static bool isLayerOwner(int layerId, int contextId)
-	{
-		return extractLayerOwnerId(layerId) == contextId;
-	}
-
 public slots:
 	void aclsChanged(const drawdance::AclState &acls, int aclChangeFlags, bool reset);
 	void resetLockSet(bool locked);

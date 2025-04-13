@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "desktop/docks/layerlistdock.h"
+extern "C" {
+#include <dpmsg/ids.h>
+}
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/dialogs/layerproperties.h"
 #include "desktop/docks/layeraclmenu.h"
 #include "desktop/docks/layerlistdelegate.h"
+#include "desktop/docks/layerlistdock.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
@@ -604,8 +607,8 @@ void LayerList::updateLockedControls()
 	bool haveCurrent = m_currentId != 0;
 	bool canEditCurrent =
 		!locked && haveCurrent &&
-		(canEdit || (ownLayers && canvas::AclState::isLayerOwner(
-									  m_currentId, m_canvas->localUserId())));
+		(canEdit || (ownLayers &&
+					 DP_layer_id_owner(m_currentId, m_canvas->localUserId())));
 	int selectedCount = m_selectedIds.size();
 	bool haveAnySelected = selectedCount != 0;
 	bool haveMultipleSelected = selectedCount > 1;
@@ -733,8 +736,7 @@ void LayerList::selectLayerIndex(QModelIndex index, bool scrollTo)
 
 QString LayerList::layerCreatorName(int layerId) const
 {
-	return m_canvas->userlist()->getUsername(
-		canvas::AclState::extractLayerOwnerId(layerId));
+	return m_canvas->userlist()->getUsername(DP_layer_id_context_id(layerId));
 }
 
 void LayerList::changeLayersLock(bool locked)
@@ -1009,7 +1011,7 @@ int LayerList::makeAddLayerOrGroupCommands(
 				QSet<int>::iterator end = layerIdsToGroup.end();
 				while(it != end) {
 					int layerId = *it;
-					if(canvas::AclState::isLayerOwner(layerId, contextId)) {
+					if(DP_layer_id_owner(layerId, contextId)) {
 						++it;
 					} else {
 						it = layerIdsToGroup.erase(it);

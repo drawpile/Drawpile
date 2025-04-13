@@ -22,8 +22,9 @@
 #define CHANGE_NONE        0u
 #define CHANGE_RESIZE      (1u << 0u)
 #define CHANGE_CHECKER     (1u << 1u)
-#define CHANGE_LOCAL_STATE (1u << 2u)
-#define CHANGE_UNLOCK      (1u << 3u)
+#define CHANGE_SELECTION   (1u << 2u)
+#define CHANGE_LOCAL_STATE (1u << 3u)
+#define CHANGE_UNLOCK      (1u << 4u)
 
 typedef struct DP_RenderContext {
     DP_ALIGNAS_SIMD DP_Pixel8 pixels[DP_TILE_LENGTH];
@@ -68,10 +69,15 @@ typedef struct DP_RendererChecker {
     DP_Pixel8 color2;
 } DP_RendererChecker;
 
+typedef struct DP_RendererSelection {
+    DP_UPixel15 color;
+} DP_RendererSelection;
+
 typedef struct DP_RendererBlocking {
     unsigned int changes;
     DP_RendererResize resize;
     DP_RendererChecker checker;
+    DP_RendererSelection selection;
     DP_RendererLocalState local_state;
 } DP_RendererBlocking;
 
@@ -100,6 +106,7 @@ struct DP_Renderer {
     } tile;
     DP_Pixel8 checker_color1;
     DP_Pixel8 checker_color2;
+    DP_UPixel15 selection_color;
     DP_TransientTile *checker;
     DP_CanvasState *cs;
     bool checkers_visible;
@@ -131,7 +138,8 @@ static void handle_tile_job(DP_Renderer *renderer, DP_RenderContext *rc,
         &rc->vmb, renderer->local_state.view_mode, cs,
         renderer->local_state.active, renderer->local_state.oss);
 
-    DP_canvas_state_flatten_tile_to(cs, job->tile_index, tt, true, &vmf);
+    DP_canvas_state_flatten_tile_to(cs, job->tile_index, tt, true,
+                                    &renderer->selection_color, &vmf);
 
     if (job->needs_checkers) {
         DP_transient_tile_merge(tt, (DP_Tile *)renderer->checker, DP_BIT15,
@@ -167,6 +175,10 @@ static void handle_blocking_job(DP_Renderer *renderer, DP_Mutex *queue_mutex,
         DP_transient_tile_fill_checker(renderer->checker,
                                        DP_pixel8_to_15(job->checker.color1),
                                        DP_pixel8_to_15(job->checker.color2));
+    }
+
+    if (changes & CHANGE_SELECTION) {
+        renderer->selection_color = job->selection.color;
     }
 
     if (changes & CHANGE_LOCAL_STATE) {
@@ -323,6 +335,7 @@ static void run_worker_thread(void *user)
 
 DP_Renderer *DP_renderer_new(int thread_count, bool checker,
                              DP_Pixel8 checker_color1, DP_Pixel8 checker_color2,
+                             DP_UPixel15 selection_color,
                              DP_RendererTileFn tile_fn,
                              DP_RendererUnlockFn unlock_fn,
                              DP_RendererResizeFn resize_fn, void *user)
@@ -354,6 +367,7 @@ DP_Renderer *DP_renderer_new(int thread_count, bool checker,
     renderer->tile.map = NULL;
     renderer->checker_color1 = checker_color1;
     renderer->checker_color2 = checker_color2;
+    renderer->selection_color = selection_color;
     renderer->checker =
         checker
             ? DP_transient_tile_new_checker(0, DP_pixel8_to_15(checker_color1),
@@ -670,8 +684,8 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
                        DP_LocalState *ls, DP_CanvasDiff *diff,
                        bool layers_can_decrease_opacity,
                        DP_Pixel8 checker_color1, DP_Pixel8 checker_color2,
-                       DP_Rect view_tile_bounds, bool render_outside_view,
-                       DP_RendererMode mode)
+                       DP_UPixel15 selection_color, DP_Rect view_tile_bounds,
+                       bool render_outside_view, DP_RendererMode mode)
 {
     DP_ASSERT(renderer);
     DP_ASSERT(cs);
@@ -718,6 +732,11 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
         renderer->checker_color2 = checker_color2;
         blocking.changes |= CHANGE_CHECKER;
         blocking.checker = (DP_RendererChecker){checker_color1, checker_color2};
+    }
+
+    if (!DP_upixel15_equal(renderer->selection_color, selection_color)) {
+        blocking.changes |= CHANGE_SELECTION;
+        blocking.selection = (DP_RendererSelection){selection_color};
     }
 
     if (local_state_differs(&renderer->local_state, ls)) {

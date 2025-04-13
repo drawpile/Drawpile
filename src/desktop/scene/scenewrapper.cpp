@@ -145,13 +145,6 @@ void SceneWrapper::setPointerTracking(bool pointerTracking)
 	m_view->setPointerTracking(pointerTracking);
 }
 
-void SceneWrapper::setShowSelectionMask(bool showSelectionMask)
-{
-	if(m_scene) {
-		m_scene->setShowSelectionMask(showSelectionMask);
-	}
-}
-
 void SceneWrapper::setShowToggleItems(bool showToggleItems)
 {
 	if(m_scene) {
@@ -427,6 +420,9 @@ void SceneWrapper::connectMainWindow(MainWindow *mainWindow)
 		&MainWindow::discardPreResetImage);
 	connect(
 		mainWindow, &MainWindow::viewShifted, m_view, &CanvasView::scrollByF);
+	connect(
+		mainWindow, &MainWindow::selectionMaskVisibilityChanged, m_scene,
+		&CanvasScene::setShowSelectionMask);
 }
 
 void SceneWrapper::connectNavigator(docks::Navigator *navigator)

@@ -37,7 +37,8 @@ private:
 	Handle handleAt(const QRect &rect, const QPoint &p, int handleSize);
 
 	int getAvailableAnnotationId();
-	int searchAvailableAnnotationId(const QSet<int> &takenIds, int contextId);
+	int searchAvailableAnnotationId(
+		const QSet<int> &takenIds, unsigned int contextId);
 
 	/// ID of the currently selected annotation
 	int m_selectedId = 0;

@@ -4,6 +4,7 @@ extern "C" {
 #include <dpengine/layer_props.h>
 #include <dpengine/preview.h>
 #include <dpmsg/blend_mode.h>
+#include <dpmsg/ids.h>
 }
 #include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"
@@ -16,9 +17,6 @@ extern "C" {
 #include <QPainter>
 
 namespace canvas {
-
-static constexpr int SELECTION_IDS =
-	(CanvasModel::MAIN_SELECTION_ID << 8) | CanvasModel::MAIN_SELECTION_ID;
 
 TransformModel::TransformModel(CanvasModel *canvas)
 	: QObject(canvas)
@@ -285,9 +283,11 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 
 		if(moveIsOnlyTranslated()) {
 			if(moveSelection && !identity) {
+				int selectionId = DP_selection_id_make(
+					contextId, canvas::CanvasModel::MAIN_SELECTION_ID);
 				msgs.append(net::makeMoveRectMessage(
-					contextId, SELECTION_IDS, 0, srcX, srcY, dstTopLeftX,
-					dstTopLeftY, srcW, srcH, QImage()));
+					contextId, selectionId, selectionId, srcX, srcY,
+					dstTopLeftX, dstTopLeftY, srcW, srcH, QImage()));
 			}
 			if(moveContents) {
 				if(singleLayerSourceId > 0) {
@@ -453,7 +453,7 @@ void TransformModel::applyTransformRegionSelection(
 		if(selection->isValid()) {
 			QPoint offset;
 			QImage img = drawdance::transformImage(
-				selection->mask(), m_dstQuad.polygon().toPolygon(),
+				selection->image(), m_dstQuad.polygon().toPolygon(),
 				getEffectiveInterpolation(interpolation), false, &offset);
 			if(img.isNull()) {
 				qWarning(
@@ -472,10 +472,12 @@ void TransformModel::applyTransformRegionSelection(
 					 "selection");
 		}
 	} else {
+		int selectionId = DP_selection_id_make(
+			contextId, canvas::CanvasModel::MAIN_SELECTION_ID);
 		msgs.append(net::makeTransformRegionMessage(
-			contextId, SELECTION_IDS, 0, srcX, srcY, srcW, srcH, dstTopLeftX,
-			dstTopLeftY, dstTopRightX, dstTopRightY, dstBottomRightX,
-			dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
+			contextId, selectionId, selectionId, srcX, srcY, srcW, srcH,
+			dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
+			dstBottomRightX, dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
 			getEffectiveInterpolation(interpolation), QImage()));
 	}
 }

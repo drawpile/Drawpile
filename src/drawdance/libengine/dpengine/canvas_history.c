@@ -31,7 +31,6 @@
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
 #include <dpmsg/acl.h>
-#include <dpmsg/local_match.h>
 #include <dpmsg/message.h>
 #include <dpmsg/msg_internal.h>
 #include <time.h>

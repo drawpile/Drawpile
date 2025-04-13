@@ -127,6 +127,7 @@ void LayerProperties::setNewLayerItem(
 	m_ui->censored->setChecked(false);
 	setSketchParamsFromSettings();
 	m_ui->defaultLayer->setChecked(false);
+	m_ui->createdBy->setToolTip(QString());
 	m_ui->createdByLabel->hide();
 	m_ui->createdBy->hide();
 	updateBlendMode(
@@ -175,6 +176,11 @@ void LayerProperties::setLayerItem(
 	}
 	m_ui->defaultLayer->setChecked(isDefault);
 	m_ui->createdBy->setText(creator);
+	m_ui->createdBy->setToolTip(
+		QStringLiteral("Layer id 0x%1, context id %2, element id %3")
+			.arg(
+				QString::number(item.id, 16), QString::number(item.creatorId()),
+				QString::number(item.elementId())));
 	updateBlendMode(
 		m_ui->blendMode, item.blend, item.group, item.isolated, item.clip,
 		m_automaticAlphaPreserve);

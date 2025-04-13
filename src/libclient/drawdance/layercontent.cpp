@@ -88,14 +88,13 @@ QImage LayerContent::toImage(const QRect &rect) const
 	}
 }
 
-QImage LayerContent::toImageMask(const QRect &rect, const QColor &color) const
+QImage LayerContent::toImageMask(const QRect &rect) const
 {
 	if(rect.isEmpty()) {
-		return QImage{};
+		return QImage();
 	} else {
-		DP_UPixel8 c = {color.rgba()};
 		DP_Pixel8 *pixels = DP_layer_content_to_pixels8_mask(
-			m_data, rect.x(), rect.y(), rect.width(), rect.height(), c);
+			m_data, rect.x(), rect.y(), rect.width(), rect.height());
 		return wrapPixels8(rect.width(), rect.height(), pixels);
 	}
 }

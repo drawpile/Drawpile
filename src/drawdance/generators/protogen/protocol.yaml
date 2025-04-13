@@ -252,7 +252,7 @@ LayerACL:
              The eighth bit of the flags field (0x80) indicates whether the layer is locked in general.
              The first three bits (0x07) indicate the access tier level.
     fields:
-        - id u16
+        - id u24
         - flags u8
         - exclusive vec_u8:
           max_len: 255
@@ -279,7 +279,7 @@ DefaultLayer:
              The default layer is the one new users default to when logging in.
              If no default layer is set, the newest layer will be selected by default.
     fields:
-        - id u16
+        - id u24
 
 RemovedFiltered:
     id: 72
@@ -390,7 +390,7 @@ LayerAttributes:
              Note: the `fixed` flag is unused since version 2.2. It's functionality is replaced
              by the custom timeline feature.
     fields:
-        - id u16
+        - id u24
         - sublayer u8
         - flags flags: [censor, fixed, isolated, clip]
         - opacity u8
@@ -401,7 +401,7 @@ LayerRetitle:
     name: retitlelayer
     comment: Change a layer's title
     fields:
-        - id u16
+        - id u24
         - title utf8
 
 RemovedLayerOrder:
@@ -422,31 +422,25 @@ RemovedLayerVisibility:
 PutImage:
     id: 136
     comment: |
-             Draw a bitmap onto a layer
+             Draw a bitmap onto a layer or selection.
 
-             This is used for pasting images, floodfill, merging annotations and
-             other tasks where image processing is done clientisde.
+             This is used for pasting images, flood-filling, merging annotations
+             and other tasks where image processing is done client-side.
 
              All layer blending modes are supported.
 
              The image data is DEFLATEd 32bit premultiplied ARGB data. The image
-             is prefixed with a 32 bit unsigned integer (big endian) which contains
-             the expected length of the uncompressed data.
+             is prefixed with a 32 bit unsigned integer (big endian) which
+             contains the expected length of the uncompressed data.
 
-             Note that since the message length is fairly limited, a
-             large image may have to be divided into multiple PutImage
-             commands.
+             Note that since the message length is fairly limited, a large image
+             may have to be divided into multiple PutImage commands.
 
-             Compatibility hack: this message is also used to disguise selection
-             messages when drawing on the builtin server. If the blend mode is
-             253, this is really a SelectionPut message; the bottom octet of
-             layer is the selection id, the upper octet is the operation, x and
-             y are actually i32, w and h are clamped to u16, the image is the
-             mask (which may be empty.) If the blend mode is 254, this is really
-             a SelectionClear message; the bottom octet of layer is the
-             selection id and everything else is ignored.
+             The layer id may refer to a selection.
+    local_match:
+        layer_ids: [layer]
     fields:
-        - layer u16
+        - layer u24
         - mode blendmode
         - x u32
         - y u32
@@ -456,9 +450,14 @@ PutImage:
 
 FillRect:
     id: 137
-    comment: Fill a rectangle with solid color
+    comment: |
+        Fill a rectangle with solid color
+
+        The layer id may refer to a selection.
+    local_match:
+        layer_ids: [layer]
     fields:
-        - layer u16
+        - layer u24
         - mode blendmode
         - x u32
         - y u32
@@ -486,8 +485,10 @@ PenUp:
              be merged. If the message context id is 0, the sublayers of all
              users are merged, either on the given layer or on all layers if
              that's 0 too.
+
+             The layer id may refer to a selection.
     fields:
-        - layer u16
+        - layer u24
 
 AnnotationCreate:
     id: 141
@@ -555,16 +556,18 @@ RemovedMoveRegion:
 PutTile:
     id: 146
     comment: |
-             Set the content of a tile
+             Set the content of a tile.
 
-             Unlike PutImage, this replaces an entire tile directly without any blending.
-             This command is typically used during canvas initialization to set the initial content.
+             Unlike PutImage, this replaces an entire tile directly without any
+             blending. This command is typically used during canvas
+             initialization to set the initial content.
 
-             PutTile can target sublayers as well. This is used when generating a reset image
-             with incomplete indirect strokes. Sending a PenUp command will merge the sublayer.
+             PutTile can target sublayers as well. This is used when generating
+             a reset image with incomplete indirect strokes. Sending a PenUp
+             command will merge the sublayer.
     fields:
         - user u8
-        - layer u16
+        - layer u24
         - sublayer u8
         - col u16
         - row u16
@@ -588,13 +591,17 @@ DrawDabsClassic:
     comment: |
              Draw classic brush dabs
 
-             A simple delta compression scheme is used.
-             The coordinates of each dab are relative to the previous dab.
-             The coordinate system has 1/4 pixel resolution. Divide by 4.0 before use.
-             The size field is the brush diameter multiplied by 256.
+             A simple delta compression scheme is used. The coordinates of each
+             dab are relative to the previous dab. The coordinate system has
+             1/4 pixel resolution. Divide by 4.0 before use. The size field is
+             the brush diameter multiplied by 256.
+
+             The layer id may refer to a selection.
+    local_match:
+        layer_ids: [layer]
     fields:
         - flags u8
-        - layer u16
+        - layer u24
         - x i32: div4
         - y i32: div4
         - color argb32
@@ -616,9 +623,13 @@ DrawDabsPixel:
 
              The same kind of delta compression is used as in classicdabs,
              but the fields all have integer precision.
+
+             The layer id may refer to a selection.
+    local_match:
+        layer_ids: [layer]
     fields:
         - flags u8
-        - layer u16
+        - layer u24
         - x i32
         - y i32
         - color argb32
@@ -635,6 +646,8 @@ DrawDabsPixelSquare:
     id: 150
     name: squarepixeldabs
     comment: Draw square pixel brush dabs
+    local_match:
+        layer_ids: [layer]
     alias: DrawDabsPixel
 
 DrawDabsMyPaint:
@@ -645,8 +658,12 @@ DrawDabsMyPaint:
              mode of MyPaint brushes as used in MyPaint itself. Always uses
              direct painting mode. Other blend and indirect painting modes use
              the mypaintdabsblend message instead.
+
+             The layer id may refer to a selection.
+    local_match:
+        layer_ids: [layer]
     fields:
-        - layer u16
+        - layer u24
         - x i32: div4
         - y i32: div4
         - color argb32
@@ -672,9 +689,13 @@ DrawDabsMyPaintBlend:
              Draw MyPaint brush dabs with single blend mode. Used for cases
              where the regular MyPaint blending with "normal and eraser" mode is
              unsuitable.
+
+             The layer id may refer to a selection.
+    local_match:
+        layer_ids: [layer]
     fields:
         - flags u8
-        - layer u16
+        - layer u24
         - x i32: div4
         - y i32: div4
         - color argb32
@@ -700,11 +721,12 @@ MoveRect:
 
              Source and target rects may be (partially) outside the canvas.
 
-             If source is 0, layer refers to a selection instead: the lower
-             octet is the source and the upper octet is the target selection id.
+             The source and layer id may refer to a selection.
+    local_match:
+        layer_ids: [layer, source]
     fields:
-      - layer u16
-      - source u16
+      - layer u24
+      - source u24
       - sx i32
       - sy i32
       - tx i32
@@ -759,9 +781,9 @@ LayerTreeCreate:
 
              If layer controls are locked, this command requires session operator privileges.
     fields:
-        - id u16
-        - source u16
-        - target u16
+        - id u24
+        - source u24
+        - target u24
         - fill argb32
         - flags flags: [group, into]
         - title utf8
@@ -782,9 +804,9 @@ LayerTreeMove:
              would be allowed to create a layer there (which is always, since
              that's currently conflated with being allowed to edit layers.)
     fields:
-      - layer u16
-      - parent u16
-      - sibling u16
+      - layer u24
+      - parent u24
+      - sibling u24
 
 LayerTreeDelete:
     id: 164
@@ -798,8 +820,8 @@ LayerTreeDelete:
              If the current layer or layer controls in general are locked, this command
              requires session operator privileges.
     fields:
-        - id u16
-        - merge_to u16
+        - id u24
+        - merge_to u24
 
 TransformRegion:
     id: 165
@@ -824,11 +846,12 @@ TransformRegion:
 
              For axis aligned rectangle selections, no bitmap is necessary.
 
-             If source is 0, layer refers to a selection instead: the lower
-             octet is the source and the upper octet is the target selection id.
+             The source and layer id may refer to a selection.
+    local_match:
+        layer_ids: [layer, source]
     fields:
-        - layer u16
-        - source u16
+        - layer u24
+        - source u24
         - bx i32
         - by i32
         - bw i32
@@ -900,7 +923,7 @@ KeyFrameSet:
     fields:
         - track_id u16
         - frame_index u16
-        - source_id u16
+        - source_id u24
         - source_index u16
         - source enum:
           name: Source
@@ -938,7 +961,7 @@ KeyFrameLayerAttributes:
     fields:
         - track_id u16
         - frame_index u16
-        - layers vec_u16
+        - layer_flags vec_u32
 
 KeyFrameDelete:
     id: 173
@@ -960,8 +983,10 @@ SelectionPut:
         The mask is DEFLATEd 8 bit alpha. If absent, this fills the entire
         rectangle instead.
 
-        Currently, only selection id 1 is used and these messages are not sent
-        over the network; LocalMatch commands are used instead.
+        Selection ids 1 to 127 are considered local-only and are not sent over
+        the network, they're handled by LocalMatch commands instead.
+    local_match:
+        selection_ids: [selection_id]
     fields:
         - selection_id u8
         - op enum:
@@ -984,8 +1009,10 @@ SelectionClear:
         Remove the selection specified by the selection_id, or all selections if
         it's 0.
 
-        Currently, only selection id 1 is used and these messages are not sent
-        over the network; LocalMatch commands are used instead.
+        Selection ids 1 to 127 are considered local-only and are not sent over
+        the network, they're handled by LocalMatch commands instead.
+    local_match:
+        selection_ids: [selection_id]
     fields:
         - selection_id u8
 
