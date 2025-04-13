@@ -90,8 +90,8 @@ static DP_FeatureAttributes feature_attributes[] = {
                                       DP_ACCESS_TIER_GUEST},
     [DP_FEATURE_LASER] = {"DP_FEATURE_LASER", "laser", DP_ACCESS_TIER_GUEST},
     [DP_FEATURE_UNDO] = {"DP_FEATURE_UNDO", "undo", DP_ACCESS_TIER_GUEST},
-    [DP_FEATURE_METADATA] = {"DP_FEATURE_METADATA", "metadata",
-                             DP_ACCESS_TIER_OPERATOR},
+    [DP_FEATURE_PIGMENT] = {"DP_FEATURE_PIGMENT", "pigment",
+                            DP_ACCESS_TIER_OPERATOR},
     [DP_FEATURE_TIMELINE] = {"DP_FEATURE_TIMELINE", "timeline",
                              DP_ACCESS_TIER_GUEST},
     [DP_FEATURE_MYPAINT] = {"DP_FEATURE_MYPAINT", "mypaint",
@@ -967,6 +967,23 @@ static bool handle_annotation_delete(DP_AclState *acls, DP_Message *msg,
     }                                          \
     return DP_uint32_to_int(max_size / (uint32_t)256);
 
+static bool is_pigment_blend_mode(int blend_mode)
+{
+    switch (blend_mode) {
+    case DP_BLEND_MODE_PIGMENT:
+    case DP_BLEND_MODE_PIGMENT_ALPHA:
+    case DP_BLEND_MODE_PIGMENT_AND_ERASER:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool classic_dabs_pigment(void *internal)
+{
+    return is_pigment_blend_mode(DP_msg_draw_dabs_classic_mode(internal));
+}
+
 static int classic_dabs_layer_id(void *internal)
 {
     return DP_msg_draw_dabs_classic_layer(internal);
@@ -977,6 +994,11 @@ static int classic_dabs_max_dab_size(void *internal)
     int count;
     const DP_ClassicDab *dabs = DP_msg_draw_dabs_classic_dabs(internal, &count);
     RETURN_MAX_SUBPIXEL_SIZE(DP_classic_dab_size(DP_classic_dab_at(dabs, i)));
+}
+
+static bool pixel_dabs_pigment(void *internal)
+{
+    return is_pigment_blend_mode(DP_msg_draw_dabs_pixel_mode(internal));
 }
 
 static int pixel_dabs_layer_id(void *internal)
@@ -998,6 +1020,11 @@ static int pixel_dabs_max_dab_size(void *internal)
     return max_size;
 }
 
+static bool mypaint_dabs_pigment(void *internal)
+{
+    return DP_msg_draw_dabs_mypaint_posterize_num(internal) & (uint8_t)0x80;
+}
+
 static int mypaint_dabs_layer_id(void *internal)
 {
     return DP_msg_draw_dabs_mypaint_layer(internal);
@@ -1008,6 +1035,11 @@ static int mypaint_dabs_max_dab_size(void *internal)
     int count;
     const DP_MyPaintDab *dabs = DP_msg_draw_dabs_mypaint_dabs(internal, &count);
     RETURN_MAX_SUBPIXEL_SIZE(DP_mypaint_dab_size(DP_mypaint_dab_at(dabs, i)));
+}
+
+static bool mypaint_blend_dabs_pigment(void *internal)
+{
+    return is_pigment_blend_mode(DP_msg_draw_dabs_mypaint_blend_mode(internal));
 }
 
 static int mypaint_blend_dabs_layer_id(void *internal)
@@ -1025,10 +1057,16 @@ static int mypaint_blend_dabs_max_dab_size(void *internal)
 }
 
 static bool handle_draw_dabs(DP_AclState *acls, DP_Message *msg,
-                             uint8_t user_id, int (*get_layer_id)(void *),
+                             uint8_t user_id, bool (*is_pigment)(void *),
+                             int (*get_layer_id)(void *),
                              int (*get_max_dab_size)(void *))
 {
     void *internal = DP_message_internal(msg);
+    if (is_pigment
+        && !DP_acl_state_can_use_feature(acls, DP_FEATURE_PIGMENT, user_id)) {
+        return false;
+    }
+
     int layer_id = get_layer_id(internal);
     if (DP_acl_state_layer_locked_for(acls, user_id, layer_id)) {
         return false;
@@ -1090,7 +1128,7 @@ static bool handle_set_metadata_int(DP_AclState *acls, DP_Message *msg,
         feature = DP_FEATURE_TIMELINE;
         break;
     default:
-        feature = DP_FEATURE_METADATA;
+        feature = DP_FEATURE_RESIZE;
         break;
     }
     return DP_acl_state_can_use_feature(acls, feature, user_id);
@@ -1158,22 +1196,25 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
                                             user_id);
     case DP_MSG_DRAW_DABS_CLASSIC:
         return override
-            || handle_draw_dabs(acls, msg, user_id, classic_dabs_layer_id,
+            || handle_draw_dabs(acls, msg, user_id, classic_dabs_pigment,
+                                classic_dabs_layer_id,
                                 classic_dabs_max_dab_size);
     case DP_MSG_DRAW_DABS_PIXEL:
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
         return override
-            || handle_draw_dabs(acls, msg, user_id, pixel_dabs_layer_id,
-                                pixel_dabs_max_dab_size);
+            || handle_draw_dabs(acls, msg, user_id, pixel_dabs_pigment,
+                                pixel_dabs_layer_id, pixel_dabs_max_dab_size);
     case DP_MSG_DRAW_DABS_MYPAINT:
         return override
             || (DP_acl_state_can_use_feature(acls, DP_FEATURE_MYPAINT, user_id)
-                && handle_draw_dabs(acls, msg, user_id, mypaint_dabs_layer_id,
+                && handle_draw_dabs(acls, msg, user_id, mypaint_dabs_pigment,
+                                    mypaint_dabs_layer_id,
                                     mypaint_dabs_max_dab_size));
     case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
         return override
             || (DP_acl_state_can_use_feature(acls, DP_FEATURE_MYPAINT, user_id)
                 && handle_draw_dabs(acls, msg, user_id,
+                                    mypaint_blend_dabs_pigment,
                                     mypaint_blend_dabs_layer_id,
                                     mypaint_blend_dabs_max_dab_size));
     case DP_MSG_MOVE_RECT:

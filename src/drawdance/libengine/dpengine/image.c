@@ -604,7 +604,8 @@ static DP_UPixelFloat sample_dab_color(int width, int height,
         ++yb;
     }
 
-    return DP_paint_sample_to_upixel(diameter, weight, red, green, blue, alpha);
+    return DP_paint_sample_to_upixel(diameter, opaque, false, weight, red,
+                                     green, blue, alpha);
 }
 
 DP_UPixelFloat DP_image_sample_color_at_with(int width, int height,

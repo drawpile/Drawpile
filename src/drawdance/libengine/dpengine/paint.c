@@ -962,6 +962,26 @@ void get_mypaint_stamp_buffers(DP_DrawContext *dc, uint32_t max_size,
     *out_rr_mask = (void *)(buffer + mask_size + padding);
 }
 
+static int get_normal_mypaint_blend_mode(uint16_t alpha, bool pigment)
+{
+    if (alpha == DP_BIT15) {
+        if (pigment) {
+            return DP_BLEND_MODE_PIGMENT_ALPHA;
+        }
+        else {
+            return DP_BLEND_MODE_NORMAL;
+        }
+    }
+    else {
+        if (pigment) {
+            return DP_BLEND_MODE_PIGMENT_AND_ERASER;
+        }
+        else {
+            return DP_BLEND_MODE_NORMAL_AND_ERASER;
+        }
+    }
+}
+
 static uint16_t scale_opacity(float ratio, float opacity)
 {
     return DP_float_to_uint16(ratio * opacity * (float)DP_BIT15);
@@ -971,22 +991,21 @@ static void apply_mypaint_dab(DP_TransientLayerContent *tlc,
                               unsigned int context_id, DP_UPixel15 pixel,
                               float normal, float lock_alpha, float colorize,
                               float posterize, int posterize_num,
-                              DP_BrushStamp *stamp, uint8_t dab_opacity)
+                              DP_BrushStamp *stamp, uint8_t dab_opacity,
+                              bool pigment)
 {
     float opacity = DP_uint8_to_float(dab_opacity) / 255.0f;
 
     if (normal > 0.0f) {
         DP_transient_layer_content_brush_stamp_apply(
             tlc, context_id, pixel, scale_opacity(normal, opacity),
-            pixel.a == DP_BIT15 ? DP_BLEND_MODE_NORMAL
-                                : DP_BLEND_MODE_NORMAL_AND_ERASER,
-            stamp);
+            get_normal_mypaint_blend_mode(pixel.a, pigment), stamp);
     }
 
     if (lock_alpha > 0.0f && pixel.a != 0) {
         DP_transient_layer_content_brush_stamp_apply(
             tlc, context_id, pixel, scale_opacity(lock_alpha, opacity),
-            DP_BLEND_MODE_RECOLOR, stamp);
+            pigment ? DP_BLEND_MODE_PIGMENT : DP_BLEND_MODE_RECOLOR, stamp);
     }
 
     if (colorize > 0.0f) {
@@ -1036,7 +1055,8 @@ static void draw_dabs_mypaint(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
         int posterize_num =
             DP_max_int(0, DP_min_int(127, params->mypaint.posterize_num)) + 1;
         float normal =
-            1.0f * (1.0f - lock_alpha) * (1.0f - colorize) * (1.0f - posterize);
+            (1.0f - lock_alpha) * (1.0f - colorize) * (1.0f - posterize);
+        bool pigment = params->blend_mode == DP_BLEND_MODE_PIGMENT_AND_ERASER;
 
         uint32_t last_size =
             clamp_subpixel_dab_size(DP_mypaint_dab_size(first_dab));
@@ -1050,7 +1070,7 @@ static void draw_dabs_mypaint(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                                                last_aspect_ratio, last_angle);
         apply_mypaint_dab(tlc, context_id, pixel, normal, lock_alpha, colorize,
                           posterize, posterize_num, &stamp,
-                          DP_mypaint_dab_opacity(first_dab));
+                          DP_mypaint_dab_opacity(first_dab), pigment);
         if (ucs_or_null) {
             DP_user_cursors_activate(ucs_or_null, context_id);
             DP_user_cursors_move_smooth(ucs_or_null, context_id,
@@ -1089,7 +1109,7 @@ static void draw_dabs_mypaint(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
 
             apply_mypaint_dab(tlc, context_id, pixel, normal, lock_alpha,
                               colorize, posterize, posterize_num, &stamp,
-                              DP_mypaint_dab_opacity(dab));
+                              DP_mypaint_dab_opacity(dab), pigment);
 
             if (ucs_or_null) {
                 DP_user_cursors_move_smooth(ucs_or_null, context_id,
@@ -1267,26 +1287,38 @@ DP_BrushStamp DP_paint_color_sampling_stamp_make(uint16_t *data, int diameter,
     return (DP_BrushStamp){top - radius, left - radius, diameter, data};
 }
 
-DP_UPixelFloat DP_paint_sample_to_upixel(int diameter, float weight, float red,
+DP_UPixelFloat DP_paint_sample_to_upixel(int diameter, bool opaque,
+                                         bool pigment, float weight, float red,
                                          float green, float blue, float alpha)
 {
     // There must be at least some alpha for the results to make sense
     float required_alpha =
-        DP_int_to_float(DP_square_int(diameter) * 30) / (float)DP_BIT15;
+        pigment && !opaque
+            ? 0.0001f
+            : DP_int_to_float(DP_square_int(diameter) * 30) / (float)DP_BIT15;
     if (alpha < required_alpha || weight < required_alpha) {
         return DP_upixel_float_zero();
     }
 
-    // Calculate final average
-    red /= weight;
-    green /= weight;
-    blue /= weight;
-    alpha /= weight;
+    alpha = CLAMP(alpha / weight, 0.0f, 1.0f);
 
-    // Unpremultiply, clamp against rounding error.
-    red = CLAMP(red / alpha, 0.0f, 1.0f);
-    green = CLAMP(green / alpha, 0.0f, 1.0f);
-    blue = CLAMP(blue / alpha, 0.0f, 1.0f);
+    if (pigment) {
+        // Pigment calculation doesn't need to be divided by weight.
+        red = CLAMP(red, 0.0f, 1.0f);
+        green = CLAMP(green, 0.0f, 1.0f);
+        blue = CLAMP(blue, 0.0f, 1.0f);
+    }
+    else {
+        // Calculate final average
+        red /= weight;
+        green /= weight;
+        blue /= weight;
+
+        // Unpremultiply, clamp against rounding error.
+        red = CLAMP(red / alpha, 0.0f, 1.0f);
+        green = CLAMP(green / alpha, 0.0f, 1.0f);
+        blue = CLAMP(blue / alpha, 0.0f, 1.0f);
+    }
 
     return (DP_UPixelFloat){
         .b = blue,

@@ -373,7 +373,7 @@ bool DP_layer_content_pick_at(DP_LayerContent *lc, int x, int y,
 }
 
 static DP_UPixelFloat sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp,
-                                       bool opaque)
+                                       bool opaque, bool pigment)
 {
     uint16_t *weights = stamp.data;
     int diameter = stamp.diameter;
@@ -392,6 +392,9 @@ static DP_UPixelFloat sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp,
     float blue = 0.0;
     float alpha = 0.0;
 
+    int sample_interval = diameter <= 4 ? 1 : (diameter * 7) / 2;
+    float sample_rate = 1.0f / (14.0f * DP_int_to_float(diameter));
+
     // collect weighted color sums
     while (y < bottom) {
         int yindex = y / DP_TILE_SIZE;
@@ -408,9 +411,18 @@ static DP_UPixelFloat sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp,
                              : DP_TILE_SIZE - xt;
             const int i = xtiles * yindex + xindex;
 
-            DP_tile_sample(lc->elements[i].tile, weights + yb * diameter + xb,
-                           xt, yt, wb, hb, diameter - wb, opaque, &weight, &red,
-                           &green, &blue, &alpha);
+            if (pigment) {
+                DP_tile_sample_pigment(
+                    lc->elements[i].tile, weights + yb * diameter + xb, xt, yt,
+                    wb, hb, diameter - wb, opaque, sample_interval, sample_rate,
+                    &weight, &red, &green, &blue, &alpha);
+            }
+            else {
+                DP_tile_sample(lc->elements[i].tile,
+                               weights + yb * diameter + xb, xt, yt, wb, hb,
+                               diameter - wb, opaque, &weight, &red, &green,
+                               &blue, &alpha);
+            }
 
             x = (xindex + 1) * DP_TILE_SIZE;
             xb = xb + wb;
@@ -419,13 +431,14 @@ static DP_UPixelFloat sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp,
         yb = yb + hb;
     }
 
-    return DP_paint_sample_to_upixel(diameter, weight, red, green, blue, alpha);
+    return DP_paint_sample_to_upixel(diameter, opaque, pigment, weight, red,
+                                     green, blue, alpha);
 }
 
 DP_UPixelFloat DP_layer_content_sample_color_at(DP_LayerContent *lc,
                                                 uint16_t *stamp_buffer, int x,
                                                 int y, int diameter,
-                                                bool opaque,
+                                                bool opaque, bool pigment,
                                                 int *in_out_last_diameter)
 {
     if (x >= 0 && y >= 0 && x < lc->width && y < lc->height) {
@@ -444,7 +457,7 @@ DP_UPixelFloat DP_layer_content_sample_color_at(DP_LayerContent *lc,
             }
             DP_BrushStamp stamp = DP_paint_color_sampling_stamp_make(
                 stamp_buffer, diameter, x, y, last_diameter);
-            return sample_dab_color(lc, stamp, opaque);
+            return sample_dab_color(lc, stamp, opaque, pigment);
         }
     }
     else {
