@@ -258,6 +258,7 @@ void BrushPresetForm::emitPresetDescriptionChanged()
 struct BrushSettingsDialog::Private {
 	struct MyPaintPage {
 		KisDoubleSliderSpinBox *baseValueSpinner;
+		QCheckBox *syncSamplesBox;
 		widgets::MyPaintInput *inputs[MYPAINT_BRUSH_INPUTS_COUNT];
 		QLabel *constantLabel;
 		QLabel *disabledLabel;
@@ -297,6 +298,7 @@ struct BrushSettingsDialog::Private {
 	widgets::CurveWidget *classicHardnessCurve;
 	KisSliderSpinBox *classicSmudgingSpinner;
 	KisSliderSpinBox *classicColorPickupSpinner;
+	QCheckBox *classicSyncSamplesBox;
 	Dynamics classicSmudgeDynamics;
 	KisSliderSpinBox *classicSmudgingMinSpinner;
 	widgets::CurveWidget *classicSmudgingCurve;
@@ -993,6 +995,15 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
 
+	d->classicSyncSamplesBox = buildSyncSamplesBox();
+	layout->addWidget(d->classicSyncSamplesBox);
+	connect(
+		d->classicSyncSamplesBox, &QCheckBox::clicked, this,
+		[this](bool checked) {
+			d->brush.classic().syncSamples = checked;
+			emitChange();
+		});
+
 	d->classicSmudgingSpinner = new KisSliderSpinBox{widget};
 	layout->addWidget(d->classicSmudgingSpinner);
 	d->classicSmudgingSpinner->setRange(0, 100);
@@ -1253,6 +1264,19 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 		mypaint_brush_setting_info(MyPaintBrushSetting(setting));
 	Private::MyPaintPage &page = d->myPaintPages[setting];
 
+	if(isSmudgeMyPaintSetting(setting)) {
+		page.syncSamplesBox = buildSyncSamplesBox();
+		layout->addWidget(page.syncSamplesBox);
+		connect(
+			page.syncSamplesBox, &QCheckBox::clicked, this,
+			[this](bool checked) {
+				d->brush.myPaint().setSyncSamples(checked);
+				emitChange();
+			});
+	} else {
+		page.syncSamplesBox = nullptr;
+	}
+
 	page.baseValueSpinner = new KisDoubleSliderSpinBox{widget};
 	layout->addWidget(page.baseValueSpinner);
 	page.baseValueSpinner->setPrefix(tr("Value: "));
@@ -1342,6 +1366,16 @@ widgets::MyPaintInput *BrushSettingsDialog::buildMyPaintInputUi(
 	return inputWidget;
 }
 
+QCheckBox *BrushSettingsDialog::buildSyncSamplesBox()
+{
+	QCheckBox *box =
+		new QCheckBox(tr("Synchronize smudging (slower, but more accurate)"));
+	box->setToolTip(
+		tr("This will make the brush to wait for its own stroke to finish to "
+		   "allow it to accurately smudge with itself.\nIf fast strokes cause "
+		   "artifacts when smudging, enabling this can help."));
+	return box;
+}
 
 void BrushSettingsDialog::applyCurveToAllClassicSettings(
 	const KisCubicCurve &curve)
@@ -1456,6 +1490,7 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 
 	d->classicSmudgingSpinner->setValue(classic.smudge.max * 100.0 + 0.5);
 	d->classicColorPickupSpinner->setValue(classic.resmudge);
+	d->classicSyncSamplesBox->setChecked(classic.syncSamples);
 	bool haveSmudgeDynamics = updateClassicBrushDynamics(
 		d->classicSmudgeDynamics, classic.smudge_dynamic);
 	d->classicSmudgingMinSpinner->setValue(classic.smudge.min * 100.0 + 0.5);
@@ -1579,6 +1614,11 @@ void BrushSettingsDialog::updateMyPaintSettingPage(int setting)
 	if(page.disabledLabel) {
 		page.disabledLabel->setVisible(!enabled);
 	}
+
+	if(page.syncSamplesBox) {
+		page.syncSamplesBox->setChecked(mypaint.isSyncSamples());
+		page.syncSamplesBox->setVisible(enabled);
+	}
 }
 
 void BrushSettingsDialog::updateStabilizerExplanationText()
@@ -1680,6 +1720,21 @@ BrushSettingsDialog::getMyPaintCondition(int setting)
 		return MyPaintCondition::BlendOrIndirectDisabled;
 	default:
 		return MyPaintCondition::AlwaysEnabled;
+	}
+}
+
+bool BrushSettingsDialog::isSmudgeMyPaintSetting(int setting)
+{
+	switch(setting) {
+	case MYPAINT_BRUSH_SETTING_SMUDGE:
+	case MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH:
+	case MYPAINT_BRUSH_SETTING_SMUDGE_RADIUS_LOG:
+	case MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH_LOG:
+	case MYPAINT_BRUSH_SETTING_SMUDGE_BUCKET:
+	case MYPAINT_BRUSH_SETTING_SMUDGE_TRANSPARENCY:
+		return true;
+	default:
+		return false;
 	}
 }
 

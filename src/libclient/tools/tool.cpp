@@ -5,6 +5,22 @@
 
 namespace tools {
 
+bool Tool::undoRedo(bool redo)
+{
+	Q_UNUSED(redo);
+	return false;
+}
+
+void Tool::finish()
+{
+	if(isMultipart()) {
+		finishMultipart();
+		if(isMultipart()) {
+			cancelMultipart();
+		}
+	}
+}
+
 bool Tool::isActiveTool() const
 {
 	return m_owner.activeTool() == m_type;

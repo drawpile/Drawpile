@@ -160,6 +160,7 @@ struct BrushSettings::Private {
 	QAction *paintModeIndirectWashAction;
 	QAction *paintModeIndirectSoftAction;
 	QAction *paintModeIndirectNormalAction;
+	QAction *syncSamplesAction;
 
 	QActionGroup *stabilizationModeGroup;
 	QAction *stabilizerAction;
@@ -417,10 +418,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	QWidget *widget = new QWidget(parent);
 	d->ui.setupUi(widget);
 
-	// It's really hard to see that the paint mode button is disabled when
-	// smudging is turned on, so we just hide it altogether and keep the space.
-	utils::setWidgetRetainSizeWhenHidden(d->ui.paintMode, true);
-
 	// Exponential sliders for easier picking of small values.
 	d->ui.brushsizeBox->setExponentRatio(3.0);
 	d->ui.brushspacingBox->setExponentRatio(3.0);
@@ -473,6 +470,10 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->paintModeGroup->addAction(d->paintModeIndirectWashAction);
 	d->paintModeGroup->addAction(d->paintModeIndirectSoftAction);
 	d->paintModeGroup->addAction(d->paintModeIndirectNormalAction);
+	paintModeMenu->addSeparator();
+	d->syncSamplesAction = paintModeMenu->addAction(QCoreApplication::translate(
+		"dialogs::BrushSettingsDialog", "Synchronize smudging"));
+	d->syncSamplesAction->setCheckable(true);
 	d->ui.paintMode->setMenu(paintModeMenu);
 	setPaintModeInUi(int(DP_PAINT_MODE_DIRECT));
 
@@ -1152,8 +1153,6 @@ void BrushSettings::changePaintMode(const QAction *action)
 		d->paintMode = DP_PAINT_MODE_INDIRECT_SOFT;
 	} else if(action == d->paintModeIndirectNormalAction) {
 		d->paintMode = DP_PAINT_MODE_INDIRECT_NORMAL;
-	} else {
-		qWarning("Unknown paint mode selected");
 	}
 	updateFromUi();
 	updateUi();
@@ -1395,8 +1394,14 @@ void BrushSettings::updateUi()
 			canChangePaintMode = false;
 		}
 	}
-	d->ui.paintMode->setEnabled(canChangePaintMode);
-	d->ui.paintMode->setVisible(canChangePaintMode);
+
+	d->paintModeDirectAction->setEnabled(canChangePaintMode);
+	d->paintModeIndirectWashAction->setEnabled(
+		canChangePaintMode && !d->compatibilityMode);
+	d->paintModeIndirectSoftAction->setEnabled(canChangePaintMode);
+	d->paintModeIndirectNormalAction->setEnabled(
+		canChangePaintMode && !d->compatibilityMode);
+	d->syncSamplesAction->setChecked(brush.isSyncSamples());
 
 	if(d->useBrushSampleCount) {
 		brushes::StabilizationMode stabilizationMode =
@@ -1499,6 +1504,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			blendMode, d->ui.alphaPreserve->isChecked());
 		brush.setBlendMode(blendMode, brush.isEraser());
 		brush.setPaintMode(int(d->paintMode));
+		brush.setSyncSamples(d->syncSamplesAction->isChecked());
 		bool canChangePaintMode =
 			!isLocked() && !canvas::blendmode::directOnly(blendMode);
 		if(mypaintmode) {
@@ -1526,8 +1532,13 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 				canChangePaintMode = false;
 			}
 		}
-		d->ui.paintMode->setEnabled(canChangePaintMode);
-		d->ui.paintMode->setVisible(canChangePaintMode);
+
+		d->paintModeDirectAction->setEnabled(canChangePaintMode);
+		d->paintModeIndirectWashAction->setEnabled(
+			canChangePaintMode && !d->compatibilityMode);
+		d->paintModeIndirectSoftAction->setEnabled(canChangePaintMode);
+		d->paintModeIndirectNormalAction->setEnabled(
+			canChangePaintMode && !d->compatibilityMode);
 	}
 
 	if(d->useBrushSampleCount) {
@@ -1594,7 +1605,7 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.modeColorpick, !locked && !mypaintmode},
 		{d->ui.alphaPreserve, !locked || lock == Lock::PigmentPermission},
 		{d->ui.modeEraser, !locked || lock == Lock::PigmentPermission},
-		{d->ui.paintMode, d->ui.paintMode->isEnabled() && !locked},
+		{d->ui.paintMode, !locked},
 		{d->ui.blendmode, !locked || lock == Lock::PigmentPermission},
 		{d->ui.pressureHardness, !locked && softmode && !mypaintmode},
 		{d->ui.hardnessBox, !locked && softmode},
@@ -1852,9 +1863,7 @@ void BrushSettings::setCompatibilityMode(bool compatibilityMode)
 {
 	if(compatibilityMode != d->compatibilityMode) {
 		d->compatibilityMode = compatibilityMode;
-		d->ui.alphaPreserve->setEnabled(!compatibilityMode);
-		d->paintModeIndirectWashAction->setEnabled(!compatibilityMode);
-		d->paintModeIndirectNormalAction->setEnabled(!compatibilityMode);
+		updateUi();
 	}
 }
 

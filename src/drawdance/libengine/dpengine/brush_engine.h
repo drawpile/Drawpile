@@ -51,6 +51,7 @@ typedef struct DP_BrushEngineStrokeParams {
     int layer_id;
     int selection_id;
     bool layer_alpha_lock;
+    bool sync_samples;
 } DP_BrushEngineStrokeParams;
 
 
@@ -59,6 +60,7 @@ typedef void (*DP_StrokeEnginePushPointFn)(void *user, DP_BrushPoint bp,
 typedef void (*DP_StrokeEnginePollControlFn)(void *user, bool enable);
 typedef void (*DP_BrushEnginePushMessageFn)(void *user, DP_Message *msg);
 typedef void (*DP_BrushEnginePollControlFn)(void *user, bool enable);
+typedef DP_CanvasState *(*DP_BrushEngineSyncFn)(void *user);
 
 typedef struct DP_StrokeEngine DP_StrokeEngine;
 typedef struct DP_BrushEngine DP_BrushEngine;
@@ -89,7 +91,7 @@ void DP_stroke_engine_stroke_end(DP_StrokeEngine *se, long long time_msec,
 DP_BrushEngine *
 DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
                     DP_BrushEnginePollControlFn poll_control_or_null,
-                    void *user);
+                    DP_BrushEngineSyncFn sync_or_null, void *user);
 
 void DP_brush_engine_free(DP_BrushEngine *be);
 
@@ -109,6 +111,8 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
                                        bool eraser_override);
 
 void DP_brush_engine_dabs_flush(DP_BrushEngine *be);
+
+void DP_brush_engine_message_push_noinc(DP_BrushEngine *be, DP_Message *msg);
 
 // Sets the context id for this stroke, optionally pushes an undo point message.
 void DP_brush_engine_stroke_begin(DP_BrushEngine *be,

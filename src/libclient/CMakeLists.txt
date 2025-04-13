@@ -90,6 +90,8 @@ target_sources(dpclient PRIVATE
 	drawdance/selectionset.h
 	drawdance/snapshotqueue.cpp
 	drawdance/snapshotqueue.h
+	drawdance/strokeworker.cpp
+	drawdance/strokeworker.h
 	drawdance/tile.cpp
 	drawdance/tile.h
 	drawdance/timeline.cpp

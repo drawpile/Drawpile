@@ -3,6 +3,7 @@
 #include "cmake-config/config.h"
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/drawdance/brushengine.h"
+#include "libclient/drawdance/strokeworker.h"
 #include "libshared/util/qtcompat.h"
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -28,30 +29,27 @@ QColor drawdanceColorToQColor(const DP_UPixelFloat &color)
 namespace brushes {
 
 ClassicBrush::ClassicBrush()
-	: DP_ClassicBrush{
-		{1.0f, 10.0f, {}},
-		{0.0f, 1.0f, {}},
-		{0.0f, 1.0f, {}},
-		{0.0f, 0.0f, {}},
-		{0.0f, 0.0f, {}},
-		0.1f,
-		0,
-		{0.0f, 0.0f, 0.0f, 1.0f},
-		DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND,
-		DP_PAINT_MODE_DIRECT,
-		DP_BLEND_MODE_NORMAL,
-		DP_BLEND_MODE_ERASE,
-		false,
-		true,
-		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
-		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
-		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
-		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
-		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
-	}
-	, stabilizationMode(Stabilizer)
-	, stabilizerSampleCount(0)
-	, smoothing(0)
+	: DP_ClassicBrush({
+		  {1.0f, 10.0f, {}},
+		  {0.0f, 1.0f, {}},
+		  {0.0f, 1.0f, {}},
+		  {0.0f, 0.0f, {}},
+		  {0.0f, 0.0f, {}},
+		  0.1f,
+		  0,
+		  {0.0f, 0.0f, 0.0f, 1.0f},
+		  DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND,
+		  DP_PAINT_MODE_DIRECT,
+		  DP_BLEND_MODE_NORMAL,
+		  DP_BLEND_MODE_ERASE,
+		  false,
+		  true,
+		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
+		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
+		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
+		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
+		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
+	  })
 {
 	updateCurve(m_sizeCurve, size.curve);
 	updateCurve(m_opacityCurve, opacity.curve);
@@ -66,7 +64,7 @@ bool ClassicBrush::equalPreset(
 	return DP_classic_brush_equal_preset(this, &other, inEraserSlot) &&
 		   stabilizationMode == other.stabilizationMode &&
 		   stabilizerSampleCount == other.stabilizerSampleCount &&
-		   smoothing == other.smoothing;
+		   smoothing == other.smoothing && syncSamples == other.syncSamples;
 }
 
 void ClassicBrush::setPaintMode(int paintMode)
@@ -133,6 +131,11 @@ void ClassicBrush::setQColor(const QColor &c)
 QColor ClassicBrush::qColor() const
 {
 	return drawdanceColorToQColor(color);
+}
+
+bool ClassicBrush::shouldSyncSamples() const
+{
+	return syncSamples && smudge.max > 0.0f;
 }
 
 QJsonObject ClassicBrush::toJson() const
@@ -241,6 +244,7 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 		o["stabilizationmode"].toInt() == Smoothing ? Smoothing : Stabilizer;
 	b.stabilizerSampleCount = o["stabilizer"].toInt();
 	b.smoothing = o["smoothing"].toInt();
+	b.syncSamples = o.value(QStringLiteral("syncsamples")).toBool();
 
 	return b;
 }
@@ -375,6 +379,7 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 							: Stabilizer;
 	stabilizerSampleCount = settings["stabilizer"].toInt();
 	smoothing = settings["smoothing"].toInt();
+	syncSamples = settings.value(QStringLiteral("syncsamples")).toBool();
 }
 
 QJsonObject ClassicBrush::settingsToJson() const
@@ -452,6 +457,7 @@ QJsonObject ClassicBrush::settingsToJson() const
 	o["stabilizationmode"] = stabilizationMode;
 	o["stabilizer"] = stabilizerSampleCount;
 	o["smoothing"] = smoothing;
+	o[QStringLiteral("syncsamples")] = syncSamples;
 
 	// Note: color is intentionally omitted
 
@@ -552,6 +558,7 @@ MyPaintBrush::MyPaintBrush(const MyPaintBrush &other)
 	, m_stabilizerSampleCount{other.m_stabilizerSampleCount}
 	, m_smoothing{other.m_smoothing}
 	, m_curves{other.m_curves}
+	, m_syncSamples(other.m_syncSamples)
 {
 	if(other.m_settings) {
 		m_settings = new DP_MyPaintSettings;
@@ -566,6 +573,7 @@ MyPaintBrush::MyPaintBrush(MyPaintBrush &&other)
 	, m_stabilizerSampleCount{other.m_stabilizerSampleCount}
 	, m_smoothing{other.m_smoothing}
 	, m_curves{other.m_curves}
+	, m_syncSamples(other.m_syncSamples)
 {
 	other.m_settings = nullptr;
 }
@@ -578,6 +586,7 @@ MyPaintBrush &MyPaintBrush::operator=(MyPaintBrush &&other)
 	std::swap(m_stabilizerSampleCount, other.m_stabilizerSampleCount);
 	std::swap(m_smoothing, other.m_smoothing);
 	std::swap(m_curves, other.m_curves);
+	std::swap(m_syncSamples, other.m_syncSamples);
 	return *this;
 }
 
@@ -597,6 +606,7 @@ MyPaintBrush &MyPaintBrush::operator=(const MyPaintBrush &other)
 	m_stabilizerSampleCount = other.m_stabilizerSampleCount;
 	m_smoothing = other.m_smoothing;
 	m_curves = other.m_curves;
+	m_syncSamples = other.m_syncSamples;
 	return *this;
 }
 
@@ -609,7 +619,8 @@ bool MyPaintBrush::equalPreset(
 			   &constSettings(), &other.constSettings()) &&
 		   m_stabilizationMode == other.m_stabilizationMode &&
 		   m_stabilizerSampleCount == other.m_stabilizerSampleCount &&
-		   m_smoothing == other.m_smoothing;
+		   m_smoothing == other.m_smoothing &&
+		   m_syncSamples == other.m_syncSamples;
 }
 
 DP_MyPaintSettings &MyPaintBrush::settings()
@@ -649,6 +660,29 @@ void MyPaintBrush::setBlendMode(int blendMode, bool isErase)
 			qWarning("Invalid brush blend mode %d", blendMode);
 		}
 	}
+}
+
+bool MyPaintBrush::shouldSyncSamples() const
+{
+	if(m_syncSamples) {
+		const DP_MyPaintMapping *mapping =
+			&constSettings().mappings[MYPAINT_BRUSH_SETTING_SMUDGE];
+		if(mapping->base_value != 0) {
+			return true;
+		}
+
+		for(int i = 0; i < MYPAINT_BRUSH_INPUTS_COUNT; ++i) {
+			if(mapping->inputs[i].n != 0) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void MyPaintBrush::setSyncSamples(bool syncSamples)
+{
+	m_syncSamples = syncSamples;
 }
 
 float MyPaintBrush::maxSizeFor(float baseValue) const
@@ -714,6 +748,7 @@ QJsonObject MyPaintBrush::toJson() const
 			 {"stabilizationmode", m_stabilizationMode},
 			 {"stabilizer", m_stabilizerSampleCount},
 			 {"smoothing", m_smoothing},
+			 {QStringLiteral("syncsamples"), m_syncSamples},
 			 {"mapping", mappingToJson()},
 			 // Backward-compatibility.
 			 {"lock_alpha", m_brush.brush_mode == DP_BLEND_MODE_RECOLOR},
@@ -735,6 +770,7 @@ void MyPaintBrush::exportToJson(QJsonObject &json) const
 		{"stabilizationmode", m_stabilizationMode},
 		{"stabilizer", m_stabilizerSampleCount},
 		{"smoothing", m_smoothing},
+		{QStringLiteral("syncsamples"), m_syncSamples},
 		// Backward-compatibility.
 		{"lock_alpha", m_brush.brush_mode == DP_BLEND_MODE_RECOLOR},
 		{"indirect", m_brush.paint_mode != DP_PAINT_MODE_DIRECT},
@@ -805,6 +841,7 @@ MyPaintBrush MyPaintBrush::fromJson(const QJsonObject &json)
 		o["stabilizationmode"].toInt() == Smoothing ? Smoothing : Stabilizer;
 	b.m_stabilizerSampleCount = stabilizerSampleCount;
 	b.m_smoothing = o["smoothing"].toInt();
+	b.m_syncSamples = o.value(QStringLiteral("syncsamples")).toBool();
 
 	return b;
 }
@@ -872,6 +909,8 @@ bool MyPaintBrush::fromExportJson(const QJsonObject &json)
 																   : Stabilizer;
 	m_stabilizerSampleCount = drawpileSettings["stabilizer"].toInt(-1);
 	m_smoothing = drawpileSettings["smoothing"].toInt();
+	m_syncSamples =
+		drawpileSettings.value(QStringLiteral("syncsamples")).toBool();
 
 	return true;
 }
@@ -1297,6 +1336,33 @@ void ActiveBrush::setSmoothing(int smoothing)
 	}
 }
 
+bool ActiveBrush::shouldSyncSamples() const
+{
+	if(m_activeType == CLASSIC) {
+		return m_classic.shouldSyncSamples();
+	} else {
+		return m_myPaint.shouldSyncSamples();
+	}
+}
+
+bool ActiveBrush::isSyncSamples() const
+{
+	if(m_activeType == CLASSIC) {
+		return m_classic.syncSamples;
+	} else {
+		return m_myPaint.isSyncSamples();
+	}
+}
+
+void ActiveBrush::setSyncSamples(bool syncSamples)
+{
+	if(m_activeType == CLASSIC) {
+		m_classic.syncSamples = syncSamples;
+	} else {
+		m_myPaint.setSyncSamples(syncSamples);
+	}
+}
+
 QByteArray ActiveBrush::toJson(bool includeSlotProperties) const
 {
 	QJsonObject json{
@@ -1413,6 +1479,18 @@ void ActiveBrush::setInBrushEngine(
 		be.setClassicBrush(m_classic, besp, isEraserOverride());
 	} else {
 		be.setMyPaintBrush(
+			m_myPaint.constBrush(), m_myPaint.constSettings(), besp,
+			isEraserOverride());
+	}
+}
+
+void ActiveBrush::setInStrokeWorker(
+	drawdance::StrokeWorker &sw, const DP_BrushEngineStrokeParams &besp) const
+{
+	if(m_activeType == CLASSIC) {
+		sw.setClassicBrush(m_classic, besp, isEraserOverride());
+	} else {
+		sw.setMyPaintBrush(
 			m_myPaint.constBrush(), m_myPaint.constSettings(), besp,
 			isEraserOverride());
 	}

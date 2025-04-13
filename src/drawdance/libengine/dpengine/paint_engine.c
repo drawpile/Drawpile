@@ -361,6 +361,9 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
         }
         break;
     }
+    case DP_MSG_INTERNAL_TYPE_PAINT_SYNC:
+        DP_msg_internal_paint_sync_call(mi);
+        break;
     default:
         DP_warn("Unhandled internal message type %d", (int)type);
         break;
@@ -1145,10 +1148,24 @@ DP_PaintEnginePlayback *DP_paint_engine_playback(DP_PaintEngine *pe)
 }
 
 
-static bool is_pushable_type(DP_MessageType type)
+static bool is_pushable_local(DP_MessageType type)
 {
     return type >= 128 || type == DP_MSG_INTERNAL
         || type == DP_MSG_DEFAULT_LAYER;
+}
+
+static bool is_pushable_remote(DP_MessageType type, DP_Message *msg)
+{
+    if (type >= 128 || type == DP_MSG_DEFAULT_LAYER) {
+        return true;
+    }
+    else if (type == DP_MSG_INTERNAL) {
+        DP_MsgInternal *mi = DP_message_internal(msg);
+        return DP_msg_internal_type(mi) != DP_MSG_INTERNAL_TYPE_PAINT_SYNC;
+    }
+    else {
+        return false;
+    }
 }
 
 static void restart_recording(DP_PaintEngine *pe)
@@ -1242,7 +1259,7 @@ static int should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
     }
     else {
         DP_local_state_handle(pe->local_state, pe->main_dc, msg, false);
-        if (is_pushable_type(type) || type == DP_MSG_UNDO_DEPTH
+        if (is_pushable_remote(type, msg) || type == DP_MSG_UNDO_DEPTH
             || type == DP_MSG_SOFT_RESET) {
             return PUSH_MESSAGE;
         }
@@ -1274,7 +1291,7 @@ static int should_push_message_local(DP_UNUSED DP_PaintEngine *pe,
 {
     DP_MessageType type = DP_message_type(msg);
     DP_local_state_handle(pe->local_state, pe->main_dc, msg, true);
-    if (is_pushable_type(type)) {
+    if (is_pushable_local(type)) {
         return PUSH_MESSAGE;
     }
     else {

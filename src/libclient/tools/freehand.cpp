@@ -1,9 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libclient/tools/freehand.h"
+extern "C" {
+#include <dpcommon/threading.h>
+#include <dpmsg/msg_internal.h>
+}
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/net/client.h"
+#include "libclient/tools/freehand.h"
 #include "libclient/tools/toolcontroller.h"
+#include <QCoreApplication>
 #include <QDateTime>
+#include <QMetaObject>
 
 using std::placeholders::_1;
 
@@ -14,17 +21,29 @@ Freehand::Freehand(ToolController &owner, bool isEraser)
 		  owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor,
 		  Capability::AllowColorPick | Capability::AllowToolAdjust |
 			  Capability::SupportsPressure)
-	, m_brushEngine(std::bind(&Freehand::pollControl, this, _1))
+	, m_strokeWorker(
+		  std::bind(&Freehand::pushMessage, this, _1),
+		  std::bind(&Freehand::pollControl, this, _1),
+		  std::bind(&Freehand::sync, this))
+	, m_mutex(DP_mutex_new())
+	, m_sem(DP_semaphore_new(0))
 {
+	QObject::connect(
+		&m_owner, &ToolController::freehandMessagesAvailable, &m_owner,
+		std::bind(&Freehand::flushMessages, this), Qt::QueuedConnection);
 	m_pollTimer.setSingleShot(false);
 	m_pollTimer.setTimerType(Qt::PreciseTimer);
 	m_pollTimer.setInterval(15);
-	QObject::connect(&m_pollTimer, &QTimer::timeout, [this]() {
+	QObject::connect(&m_pollTimer, &QTimer::timeout, [this] {
 		poll();
 	});
 }
 
-Freehand::~Freehand() {}
+Freehand::~Freehand()
+{
+	DP_semaphore_free(m_sem);
+	DP_mutex_free(m_mutex);
+}
 
 void Freehand::begin(const BeginParams &params)
 {
@@ -36,7 +55,7 @@ void Freehand::begin(const BeginParams &params)
 	m_drawing = true;
 	m_firstPoint = true;
 
-	m_owner.setBrushEngineBrush(m_brushEngine, true);
+	m_owner.setStrokeWorkerBrush(m_strokeWorker, true);
 
 	// The pressure value of the first point is unreliable
 	// because it is (or was?) possible to get a synthetic MousePress event
@@ -56,16 +75,16 @@ void Freehand::motion(const MotionParams &params)
 
 		if(m_firstPoint) {
 			m_firstPoint = false;
-			m_brushEngine.beginStroke(
+			m_strokeWorker.beginStroke(
 				localUserId(), canvasState, isCompatibilityMode(), true,
 				m_mirror, m_flip, m_zoom, m_angle);
 			m_start.setPressure(
 				qMin(m_start.pressure(), params.point.pressure()));
-			m_brushEngine.strokeTo(m_start, canvasState);
+			m_strokeWorker.strokeTo(m_start, canvasState);
 		}
 
-		m_brushEngine.strokeTo(params.point, canvasState);
-		m_brushEngine.sendMessagesTo(m_owner.client());
+		m_strokeWorker.strokeTo(params.point, canvasState);
+		m_strokeWorker.flushDabs();
 	}
 }
 
@@ -78,28 +97,32 @@ void Freehand::end(const EndParams &)
 
 		if(m_firstPoint) {
 			m_firstPoint = false;
-			m_brushEngine.beginStroke(
+			m_strokeWorker.beginStroke(
 				localUserId(), canvasState, isCompatibilityMode(), true,
 				m_mirror, m_flip, m_zoom, m_angle);
-			m_brushEngine.strokeTo(m_start, canvasState);
+			m_strokeWorker.strokeTo(m_start, canvasState);
 		}
 
-		m_brushEngine.endStroke(
+		m_strokeWorker.endStroke(
 			QDateTime::currentMSecsSinceEpoch(), canvasState, true);
-		m_brushEngine.sendMessagesTo(m_owner.client());
 	}
+}
+
+bool Freehand::undoRedo(bool redo)
+{
+	cancelStroke();
+	m_strokeWorker.pushMessageNoinc(DP_msg_undo_new(localUserId(), 0, redo));
+	return true;
 }
 
 void Freehand::offsetActiveTool(int x, int y)
 {
-	if(m_drawing) {
-		m_brushEngine.addOffset(x, y);
-	}
+	m_strokeWorker.addOffset(x, y);
 }
 
 void Freehand::setBrushSizeLimit(int limit)
 {
-	m_brushEngine.setSizeLimit(limit);
+	m_strokeWorker.setSizeLimit(limit);
 }
 
 void Freehand::setSelectionMaskingEnabled(bool selectionMaskingEnabled)
@@ -107,12 +130,63 @@ void Freehand::setSelectionMaskingEnabled(bool selectionMaskingEnabled)
 	setCapability(Capability::IgnoresSelections, !selectionMaskingEnabled);
 }
 
+void Freehand::finish()
+{
+	m_cancelling = true;
+	cancelStroke();
+	DP_SEMAPHORE_MUST_POST(m_sem);
+	m_strokeWorker.finishThread();
+	DP_SEMAPHORE_MUST_WAIT(m_sem);
+	m_cancelling = false;
+}
+
+void Freehand::dispose()
+{
+	m_cancelling = true;
+	cancelStroke();
+	DP_SEMAPHORE_MUST_POST(m_sem);
+	m_strokeWorker.finishThread();
+}
+
+void Freehand::cancelStroke()
+{
+	m_strokeWorker.cancelStroke(QDateTime::currentMSecsSinceEpoch(), true);
+}
+
+void Freehand::pushMessage(DP_Message *msg)
+{
+	DP_MUTEX_MUST_LOCK(m_mutex);
+	bool needsSignal = m_messages.isEmpty();
+	m_messages.append(net::Message::noinc(msg));
+	DP_MUTEX_MUST_UNLOCK(m_mutex);
+	if(needsSignal) {
+		emit m_owner.freehandMessagesAvailable();
+	}
+}
+
+void Freehand::flushMessages()
+{
+	DP_MUTEX_MUST_LOCK(m_mutex);
+	int count = m_messages.size();
+	if(count != 0) {
+		m_owner.client()->sendCommands(count, m_messages.constData());
+		m_messages.clear();
+	}
+	DP_MUTEX_MUST_UNLOCK(m_mutex);
+}
+
 void Freehand::pollControl(bool enable)
 {
-	if(enable) {
-		m_pollTimer.start();
+	if(isOnMainThread()) {
+		if(enable) {
+			m_pollTimer.start();
+		} else {
+			m_pollTimer.stop();
+		}
 	} else {
-		m_pollTimer.stop();
+		QMetaObject::invokeMethod(
+			&m_pollTimer, enable ? "start" : "stop",
+			m_cancelling ? Qt::QueuedConnection : Qt::BlockingQueuedConnection);
 	}
 }
 
@@ -120,8 +194,39 @@ void Freehand::poll()
 {
 	drawdance::CanvasState canvasState =
 		m_owner.model()->paintEngine()->sampleCanvasState();
-	m_brushEngine.poll(QDateTime::currentMSecsSinceEpoch(), canvasState);
-	m_brushEngine.sendMessagesTo(m_owner.client());
+	m_strokeWorker.poll(QDateTime::currentMSecsSinceEpoch(), canvasState);
+	m_strokeWorker.flushDabs();
+}
+
+DP_CanvasState *Freehand::sync()
+{
+	if(isOnMainThread()) {
+		qWarning("Freehand::sync called on main thread");
+		return nullptr;
+	} else if(m_cancelling) {
+		return nullptr;
+	} else {
+		pushMessage(DP_msg_internal_paint_sync_new(
+			0, &Freehand::syncUnlockCallback, this));
+		DP_SEMAPHORE_MUST_WAIT(m_sem);
+		return m_owner.model()->paintEngine()->sampleCanvasState().take();
+	}
+}
+
+void Freehand::syncUnlock()
+{
+	DP_SEMAPHORE_MUST_POST(m_sem);
+}
+
+void Freehand::syncUnlockCallback(void *user)
+{
+	Freehand *freehand = static_cast<Freehand *>(user);
+	freehand->syncUnlock();
+}
+
+bool Freehand::isOnMainThread()
+{
+	return QCoreApplication::instance()->thread() == QThread::currentThread();
 }
 
 }

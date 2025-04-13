@@ -11,6 +11,7 @@
 #include <QThreadPool>
 
 class QCursor;
+struct DP_BrushEngineStrokeParams;
 
 namespace canvas {
 class CanvasModel;
@@ -19,6 +20,7 @@ class CanvasModel;
 namespace drawdance {
 class BrushEngine;
 class StrokeEngine;
+class StrokeWorker;
 }
 
 namespace net {
@@ -176,6 +178,7 @@ public:
 	 * interference when drawing previews, shapes, lines and curves.
 	 */
 	void setBrushEngineBrush(drawdance::BrushEngine &be, bool freehand);
+	void setStrokeWorkerBrush(drawdance::StrokeWorker &sw, bool freehand);
 	void setStrokeEngineParams(drawdance::StrokeEngine &se);
 
 	/**
@@ -219,6 +222,8 @@ public slots:
 
 	//! End a stroke
 	void endDrawing(bool constrain, bool center);
+
+	void undoRedo(bool redo);
 
 	/**
 	 * @brief Undo the latest part of a multipart drawing
@@ -272,6 +277,7 @@ signals:
 	void toolNoticeRequested(const QString &text);
 	void deleteAnnotationRequested(int annotationId);
 
+	void freehandMessagesAvailable();
 	void floodFillStateChanged(bool running, bool pending);
 	void floodFillDragChanged(bool dragging, int tolerance);
 	void gradientStateChanged(bool pending);
@@ -295,6 +301,8 @@ private:
 	void updateSmoothing();
 	void startDrawingFromHotSwapParams();
 	void updateSelectionMaskingEnabled(bool compatibilityMode);
+	const brushes::ActiveBrush &fillBrushEngineStrokeParams(
+		bool freehand, DP_BrushEngineStrokeParams &outStroke) const;
 
 	Tool *m_toolbox[Tool::_LASTTOOL];
 	net::Client *m_client;

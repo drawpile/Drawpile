@@ -1455,7 +1455,7 @@ void Document::undo()
 	// multipart drawing, e.g. with the bezier tool, we only undo the last part.
 	if(!m_toolctrl->isDrawing() && !m_toolctrl->undoMultipartDrawing() &&
 	   checkPermission(DP_FEATURE_UNDO)) {
-		m_client->sendMessage(net::makeUndoMessage(m_client->myId(), 0, false));
+		m_toolctrl->undoRedo(false);
 	}
 }
 
@@ -1467,7 +1467,7 @@ void Document::redo()
 	// multipart drawing, e.g. with a transform, we only redo the last part.
 	if(!m_toolctrl->isDrawing() && !m_toolctrl->redoMultipartDrawing() &&
 	   checkPermission(DP_FEATURE_UNDO)) {
-		m_client->sendMessage(net::makeUndoMessage(m_client->myId(), 0, true));
+		m_toolctrl->undoRedo(true);
 	}
 }
 

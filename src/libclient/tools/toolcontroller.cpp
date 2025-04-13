@@ -126,12 +126,7 @@ TransformTool *ToolController::transformTool()
 void ToolController::finishActiveTool()
 {
 	endDrawing(false, false);
-	if(m_activeTool->isMultipart()) {
-		m_activeTool->finishMultipart();
-		if(m_activeTool->isMultipart()) {
-			m_activeTool->cancelMultipart();
-		}
-	}
+	m_activeTool->finish();
 }
 
 void ToolController::setActiveTool(Tool::Type tool)
@@ -570,6 +565,13 @@ void ToolController::endDrawing(bool constrain, bool center)
 	}
 }
 
+void ToolController::undoRedo(bool redo)
+{
+	if(!m_model || !m_activeTool || !m_activeTool->undoRedo(redo)) {
+		m_client->sendMessage(net::makeUndoMessage(m_client->myId(), 0, redo));
+	}
+}
+
 bool ToolController::undoMultipartDrawing()
 {
 	Q_ASSERT(!m_model || m_activeTool);
@@ -633,37 +635,19 @@ void ToolController::offsetActiveTool(int xOffset, int yOffset)
 void ToolController::setBrushEngineBrush(
 	drawdance::BrushEngine &be, bool freehand)
 {
-	const brushes::ActiveBrush &brush = activeBrush();
-	DP_BrushEngineStrokeParams stroke = {
-		{
-			0,
-			0,
-			false,
-			m_stabilizationMode != brushes::Smoothing || m_finishStrokes,
-			m_finishStrokes,
-		},
-		activeLayerOrSelection(),
-		m_selectionEditActive || !m_selectionMaskingEnabled
-			? 0
-			: DP_SELECTION_ID_MAIN,
-		activeLayerAlphaLock(),
-	};
-	if(freehand) {
-		stroke.se.interpolate = m_interpolateInputs;
-		stroke.se.smoothing =
-			m_applyGlobalSmoothing || m_stabilizationMode == brushes::Smoothing
-				? m_effectiveSmoothing
-				: m_smoothing;
-		if(m_stabilizerUseBrushSampleCount) {
-			if(brush.stabilizationMode() == brushes::Stabilizer) {
-				stroke.se.stabilizer_sample_count =
-					brush.stabilizerSampleCount();
-			}
-		} else if(m_stabilizationMode == brushes::Stabilizer) {
-			stroke.se.stabilizer_sample_count = m_stabilizerSampleCount;
-		}
-	}
+	DP_BrushEngineStrokeParams stroke;
+	const brushes::ActiveBrush &brush =
+		fillBrushEngineStrokeParams(freehand, stroke);
 	brush.setInBrushEngine(be, stroke);
+}
+
+void ToolController::setStrokeWorkerBrush(
+	drawdance::StrokeWorker &sw, bool freehand)
+{
+	DP_BrushEngineStrokeParams stroke;
+	const brushes::ActiveBrush &brush =
+		fillBrushEngineStrokeParams(freehand, stroke);
+	brush.setInStrokeWorker(sw, stroke);
 }
 
 void ToolController::setStrokeEngineParams(drawdance::StrokeEngine &se)
@@ -765,6 +749,44 @@ void ToolController::updateSelectionMaskingEnabled(bool compatibilityMode)
 	for(Tool *t : m_toolbox) {
 		t->setSelectionMaskingEnabled(enabled);
 	}
+}
+
+const brushes::ActiveBrush &ToolController::fillBrushEngineStrokeParams(
+	bool freehand, DP_BrushEngineStrokeParams &outStroke) const
+{
+	const brushes::ActiveBrush &brush = activeBrush();
+	DP_BrushEngineStrokeParams stroke = {
+		{
+			0,
+			0,
+			false,
+			m_stabilizationMode != brushes::Smoothing || m_finishStrokes,
+			m_finishStrokes,
+		},
+		activeLayerOrSelection(),
+		m_selectionEditActive || !m_selectionMaskingEnabled
+			? 0
+			: DP_SELECTION_ID_MAIN,
+		activeLayerAlphaLock(),
+		freehand && brush.shouldSyncSamples(),
+	};
+	if(freehand) {
+		stroke.se.interpolate = m_interpolateInputs;
+		stroke.se.smoothing =
+			m_applyGlobalSmoothing || m_stabilizationMode == brushes::Smoothing
+				? m_effectiveSmoothing
+				: m_smoothing;
+		if(m_stabilizerUseBrushSampleCount) {
+			if(brush.stabilizationMode() == brushes::Stabilizer) {
+				stroke.se.stabilizer_sample_count =
+					brush.stabilizerSampleCount();
+			}
+		} else if(m_stabilizationMode == brushes::Stabilizer) {
+			stroke.se.stabilizer_sample_count = m_stabilizerSampleCount;
+		}
+	}
+	outStroke = stroke;
+	return brush;
 }
 
 }

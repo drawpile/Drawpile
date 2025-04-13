@@ -39,6 +39,7 @@ dp_target_sources(dpengine
     dpengine/selection.c
     dpengine/selection_set.c
     dpengine/snapshots.c
+    dpengine/stroke_worker.c
     dpengine/text.c
     dpengine/tile.c
     dpengine/tile_iterator.c
@@ -85,6 +86,7 @@ dp_target_sources(dpengine
     dpengine/selection.h
     dpengine/selection_set.h
     dpengine/snapshots.h
+    dpengine/stroke_worker.h
     dpengine/text.h
     dpengine/tile.h
     dpengine/tile_iterator.h

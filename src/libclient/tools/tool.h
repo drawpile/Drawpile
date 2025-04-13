@@ -112,6 +112,11 @@ public:
 	virtual void hover(const HoverParams &params) { Q_UNUSED(params); }
 	virtual void end(const EndParams &params) = 0;
 
+	//! Perform an undo or redo operation, return whether it was handled. Most
+	//! tools just return false here and let the regular undo handling happen,
+	//! but the freehand tool sends it through its stroke worker instead.
+	virtual bool undoRedo(bool redo);
+
 	//! Finish and commit a multipart stroke
 	virtual void finishMultipart() {}
 
@@ -127,6 +132,10 @@ public:
 
 	//! Is there a multipart stroke in progress at the moment?
 	virtual bool isMultipart() const { return false; }
+
+	//! Called when switching away from the tool. The base implementation
+	//! tries to finish and then cancel any running multipart operation.
+	virtual void finish();
 
 	//! Called before destruction, get rid of whatever necessary.
 	virtual void dispose() {}

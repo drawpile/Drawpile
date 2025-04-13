@@ -118,8 +118,9 @@ struct DP_StrokeEngine {
 
 struct DP_BrushEngine {
     DP_StrokeEngine se;
-    DP_LayerContent *lc;
     DP_CanvasState *cs;
+    DP_LayerContent *lc;
+    bool lc_valid;
     void *buffer;
     int layer_id;
     int last_diameter;
@@ -131,9 +132,11 @@ struct DP_BrushEngine {
         unsigned int context_id;
         float zoom;
         float angle_rad;
+        bool active;
         bool mirror;
         bool flip;
         bool in_progress;
+        bool sync_samples;
         bool compatibility_mode;
         long long last_time_msec;
     } stroke;
@@ -192,6 +195,7 @@ struct DP_BrushEngine {
     } dabs;
     DP_BrushEnginePushMessageFn push_message;
     DP_BrushEnginePollControlFn poll_control;
+    DP_BrushEngineSyncFn sync;
     void *user;
 };
 
@@ -257,6 +261,46 @@ static float brush_engine_randf(DP_BrushEngine *be)
     return fabsf(fmodf(DP_double_to_float(rng_double_next(
                            mypaint_brush_rng(be->mypaint_brush))),
                        1.0f));
+}
+
+
+static DP_LayerContent *search_layer(DP_CanvasState *cs, int layer_id)
+{
+    if (cs && layer_id > 0) {
+        DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+        DP_LayerRoutesSelEntry lrse =
+            DP_layer_routes_search_sel(lr, cs, layer_id);
+        if (DP_layer_routes_sel_entry_is_valid_source(&lrse)) {
+            DP_LayerContent *lc = DP_layer_routes_sel_entry_content(&lrse, cs);
+            return DP_layer_content_incref(lc);
+        }
+    }
+    return NULL;
+}
+
+static DP_LayerContent *update_sample_layer_content(DP_BrushEngine *be)
+{
+    if (be->stroke.sync_samples) {
+        DP_ASSERT(be->sync); // Checked when setting sync_samples.
+        DP_CanvasState *cs = be->sync(be->user);
+        if (cs) {
+            if (cs == be->cs) {
+                DP_canvas_state_decref(cs);
+            }
+            else {
+                DP_canvas_state_decref_nullable(be->cs);
+                be->cs = cs;
+                be->lc_valid = false;
+            }
+        }
+    }
+
+    if (!be->lc_valid) {
+        be->lc = search_layer(be->cs, be->layer_id);
+        be->lc_valid = true;
+    }
+
+    return be->lc;
 }
 
 
@@ -1437,7 +1481,7 @@ static int get_color_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
                                      float *color_a, DP_UNUSED float paint)
 {
     DP_BrushEngine *be = get_mypaint_surface_brush_engine(self);
-    DP_LayerContent *lc = be->lc;
+    DP_LayerContent *lc = update_sample_layer_content(be);
     bool in_bounds;
     if (lc) {
         int diameter = DP_min_int(DP_float_to_int(radius * 2.0f + 0.5f), 255);
@@ -1560,7 +1604,7 @@ static void brush_engine_handle_stroke_engine_poll_control(void *user,
 DP_BrushEngine *
 DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
                     DP_BrushEnginePollControlFn poll_control_or_null,
-                    void *user)
+                    DP_BrushEngineSyncFn sync_or_null, void *user)
 {
     init_mypaint_once();
     DP_BrushEngine *be = DP_malloc(sizeof(*be));
@@ -1570,6 +1614,7 @@ DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
         NULL,
         NULL,
         NULL,
+        false,
         0,
         -1,
         DP_ATOMIC_INIT(-1),
@@ -1579,12 +1624,13 @@ DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
          add_dab_mypaint_pigment,
          get_color_mypaint_pigment,
          NULL},
-        {0, 1.0f, 0.0f, false, false, false, false, 0},
+        {0, 1.0f, 0.0f, false, false, false, false, false, false, 0},
         {false, false, 0, 0, NULL, 0, NULL, NULL},
         {0},
         {0, 0, 0, 0, NULL},
         push_message,
         poll_control_or_null,
+        sync_or_null,
         user};
     issue_dummy_mypaint_stroke(be->mypaint_brush);
     return be;
@@ -1598,7 +1644,7 @@ void DP_brush_engine_free(DP_BrushEngine *be)
         DP_compress_zstd_free(&be->mask.zstd_cctx);
         DP_free(be->mask.map);
         DP_layer_content_decref_nullable(be->mask.lc);
-        DP_layer_content_decref_nullable(be->lc);
+        DP_canvas_state_decref_nullable(be->cs);
         DP_free(be->buffer);
         stroke_engine_dispose(&be->se);
         DP_free(be);
@@ -1615,6 +1661,7 @@ static void set_common_stroke_params(DP_BrushEngine *be,
                                      const DP_BrushEngineStrokeParams *besp)
 {
     be->layer_id = besp->layer_id;
+    be->stroke.sync_samples = besp->sync_samples && be->sync;
     DP_stroke_engine_params_set(&be->se, &besp->se);
     DP_ASSERT(besp->selection_id < 32); // Only have 5 bits for the id.
     be->mask.next_selection_id = besp->selection_id;
@@ -1970,6 +2017,13 @@ void DP_brush_engine_dabs_flush(DP_BrushEngine *be)
     be->dabs.used = 0;
 }
 
+void DP_brush_engine_message_push_noinc(DP_BrushEngine *be, DP_Message *msg)
+{
+    DP_ASSERT(be);
+    DP_ASSERT(msg);
+    be->push_message(be->user, msg);
+}
+
 
 static DP_LayerContent *search_sel_lc(DP_CanvasState *cs_or_null,
                                       unsigned int context_id, int selection_id)
@@ -2006,6 +2060,7 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
     DP_PERF_BEGIN_DETAIL(fn, "stroke_begin", "active=%d", (int)be->active);
     DP_EVENT_LOG("stroke_begin");
 
+    be->stroke.active = true;
     be->stroke.context_id = context_id;
     be->stroke.zoom = zoom;
     // We currently only use the view angle for MyPaint brushes, which take it
@@ -2082,23 +2137,25 @@ static DP_UPixelFloat sample_classic_smudge(DP_BrushEngine *be,
 }
 
 static void update_classic_smudge(DP_BrushEngine *be, DP_ClassicBrush *cb,
-                                  DP_LayerContent *lc, float x, float y,
-                                  float pressure, float velocity,
-                                  float distance)
+                                  float x, float y, float pressure,
+                                  float velocity, float distance)
 {
     float smudge = DP_classic_brush_smudge_at(cb, pressure, velocity, distance);
     int smudge_distance = ++be->classic.smudge_distance;
-    if (smudge > 0.0f && smudge_distance > cb->resmudge && lc) {
-        DP_UPixelFloat sample = sample_classic_smudge(
-            be, cb, lc, x, y, pressure, velocity, distance);
-        if (sample.a > 0.0f) {
-            float a = sample.a * smudge;
-            DP_UPixelFloat *sp = &be->classic.smudge_color;
-            sp->r = sp->r * (1.0f - a) + sample.r * a;
-            sp->g = sp->g * (1.0f - a) + sample.g * a;
-            sp->b = sp->b * (1.0f - a) + sample.b * a;
+    if (smudge > 0.0f && smudge_distance > cb->resmudge) {
+        DP_LayerContent *lc = update_sample_layer_content(be);
+        if (lc) {
+            DP_UPixelFloat sample = sample_classic_smudge(
+                be, cb, lc, x, y, pressure, velocity, distance);
+            if (sample.a > 0.0f) {
+                float a = sample.a * smudge;
+                DP_UPixelFloat *sp = &be->classic.smudge_color;
+                sp->r = sp->r * (1.0f - a) + sample.r * a;
+                sp->g = sp->g * (1.0f - a) + sample.g * a;
+                sp->b = sp->b * (1.0f - a) + sample.b * a;
+            }
+            be->classic.smudge_distance = 0;
         }
-        be->classic.smudge_distance = 0;
     }
 }
 
@@ -2135,9 +2192,8 @@ static void first_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
                   0.0f, 0.0f);
 }
 
-static void stroke_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb,
-                         DP_LayerContent *lc, float x, float y, float pressure,
-                         float delta_sec)
+static void stroke_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
+                         float y, float pressure, float delta_sec)
 {
     float last_x = be->classic.last_x;
     float last_y = be->classic.last_y;
@@ -2199,7 +2255,7 @@ static void stroke_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb,
         length += 1;
         dab_d += 1.0f;
         if (length >= pixel_spacing) {
-            update_classic_smudge(be, cb, lc, DP_int_to_float(x0),
+            update_classic_smudge(be, cb, DP_int_to_float(x0),
                                   DP_int_to_float(y0), dab_p, dab_v, dab_d);
             add_dab_pixel(be, cb, x0, y0, dab_p, dab_v, dab_d);
             length = 0;
@@ -2218,9 +2274,8 @@ static void first_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
     add_dab_soft(be, cb, x, y, pressure, 0.0f, 0.0f, false, false);
 }
 
-static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
-                        DP_LayerContent *lc, float x, float y, float pressure,
-                        float delta_sec)
+static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
+                        float y, float pressure, float delta_sec)
 {
     float last_x = be->classic.last_x;
     float last_y = be->classic.last_y;
@@ -2275,8 +2330,7 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
                 DP_classic_brush_spacing_at(cb, dab_p, dab_v, dab_d), 1.0f);
             dab_d += spacing;
 
-            update_classic_smudge(be, cb, lc, dab_x, dab_y, dab_p, dab_v,
-                                  dab_d);
+            update_classic_smudge(be, cb, dab_x, dab_y, dab_p, dab_v, dab_d);
             add_dab_soft(be, cb, dab_x, dab_y, dab_p, dab_v, dab_d, left, up);
 
             dab_x += dx * spacing;
@@ -2293,16 +2347,15 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
 static void stroke_to_classic(
     DP_BrushEngine *be, float x, float y, float pressure, long long time_msec,
     void (*first_dab)(DP_BrushEngine *, DP_ClassicBrush *, float, float, float),
-    void (*stroke)(DP_BrushEngine *, DP_ClassicBrush *, DP_LayerContent *,
-                   float, float, float, float))
+    void (*stroke)(DP_BrushEngine *, DP_ClassicBrush *, float, float, float,
+                   float))
 {
     DP_ClassicBrush *cb = &be->classic.brush;
-    DP_LayerContent *lc = be->lc;
     if (be->stroke.in_progress) {
         float delta_sec = DP_max_float(
             DP_llong_to_float(time_msec - be->stroke.last_time_msec) / 1000.0f,
             0.0001f);
-        stroke(be, cb, lc, x, y, pressure, delta_sec);
+        stroke(be, cb, x, y, pressure, delta_sec);
     }
     else {
         be->classic.last_velocity = 0.0f;
@@ -2310,9 +2363,10 @@ static void stroke_to_classic(
         be->classic.last_left = false;
         be->classic.last_up = false;
         be->stroke.in_progress = true;
+        DP_LayerContent *lc;
         bool colorpick = cb->colorpick
                       && get_classic_blend_mode(be) != DP_BLEND_MODE_ERASE
-                      && lc;
+                      && (lc = update_sample_layer_content(be));
         if (colorpick) {
             be->classic.smudge_color =
                 sample_classic_smudge(be, cb, lc, x, y, pressure, 0.0f, 0.0f);
@@ -2399,19 +2453,6 @@ static void stroke_to_mypaint(DP_BrushEngine *be, DP_BrushPoint bp)
                               ytilt, delta_sec, zoom, angle, rotation);
 }
 
-static DP_LayerContent *search_layer(DP_CanvasState *cs, int layer_id)
-{
-    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesSelEntry lrse = DP_layer_routes_search_sel(lr, cs, layer_id);
-    if (DP_layer_routes_sel_entry_is_valid_source(&lrse)) {
-        DP_LayerContent *lc = DP_layer_routes_sel_entry_content(&lrse, cs);
-        return DP_layer_content_incref(lc);
-    }
-    else {
-        return NULL;
-    }
-}
-
 static void stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
                       DP_CanvasState *cs_or_null)
 {
@@ -2419,11 +2460,13 @@ static void stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
     DP_PERF_BEGIN_DETAIL(fn, "stroke_to", "active=%d", (int)active);
 
     if (cs_or_null != be->cs) {
-        DP_PERF_BEGIN(search_layer, "stroke_to:search_layer");
-        be->cs = cs_or_null;
-        DP_layer_content_decref_nullable(be->lc);
-        be->lc = cs_or_null ? search_layer(cs_or_null, be->layer_id) : NULL;
-        DP_PERF_END(search_layer);
+        DP_canvas_state_decref_nullable(be->cs);
+        be->cs = DP_canvas_state_incref_nullable(cs_or_null);
+        be->lc_valid = false;
+    }
+
+    if (bp.time_msec < be->stroke.last_time_msec) {
+        bp.time_msec = be->stroke.last_time_msec;
     }
 
     switch (active) {
@@ -2468,7 +2511,9 @@ void DP_brush_engine_poll(DP_BrushEngine *be, long long time_msec,
                           DP_CanvasState *cs_or_null)
 {
     DP_ASSERT(be);
-    DP_stroke_engine_poll(&be->se, time_msec, cs_or_null);
+    if (be->stroke.active) {
+        DP_stroke_engine_poll(&be->se, time_msec, cs_or_null);
+    }
 }
 
 void DP_brush_engine_stroke_end(DP_BrushEngine *be, long long time_msec,
@@ -2480,9 +2525,9 @@ void DP_brush_engine_stroke_end(DP_BrushEngine *be, long long time_msec,
 
     DP_stroke_engine_stroke_end(&be->se, time_msec, cs_or_null);
 
-    DP_layer_content_decref_nullable(be->lc);
-    be->lc = NULL;
+    DP_canvas_state_decref_nullable(be->cs);
     be->cs = NULL;
+    be->lc_valid = false;
 
     DP_brush_engine_dabs_flush(be);
 
@@ -2494,6 +2539,7 @@ void DP_brush_engine_stroke_end(DP_BrushEngine *be, long long time_msec,
                                             : DP_int_to_uint32(be->layer_id)));
     }
     be->stroke.in_progress = false;
+    be->stroke.active = false;
 
     DP_PERF_END(fn);
 }

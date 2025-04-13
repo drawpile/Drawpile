@@ -20,6 +20,7 @@ struct MyPaintBrush;
 
 namespace drawdance {
 class BrushEngine;
+class StrokeWorker;
 }
 
 namespace brushes {
@@ -158,6 +159,8 @@ public:
 	void setQColor(const QColor &c);
 	QColor qColor() const;
 
+	bool shouldSyncSamples() const;
+
 	QJsonObject toJson() const;
 	void exportToJson(QJsonObject &json) const;
 	static ClassicBrush fromJson(const QJsonObject &json);
@@ -165,9 +168,10 @@ public:
 
 	QPixmap presetThumbnail() const;
 
-	StabilizationMode stabilizationMode;
-	int stabilizerSampleCount;
-	int smoothing;
+	StabilizationMode stabilizationMode = Stabilizer;
+	int stabilizerSampleCount = 0;
+	int smoothing = 0;
+	bool syncSamples = false;
 
 private:
 	static constexpr float DEFAULT_VELOCITY = 5.0f;
@@ -270,6 +274,10 @@ public:
 	int smoothing() const { return m_smoothing; }
 	void setSmoothing(int smoothing) { m_smoothing = smoothing; }
 
+	bool shouldSyncSamples() const;
+	bool isSyncSamples() const { return m_syncSamples; }
+	void setSyncSamples(bool syncSamples);
+
 	float maxSizeFor(float baseValue) const;
 	float baseValueForMaxSize(float maxSize) const;
 
@@ -296,6 +304,7 @@ private:
 	int m_stabilizerSampleCount;
 	int m_smoothing;
 	QHash<QPair<int, int>, MyPaintCurve> m_curves;
+	bool m_syncSamples = false;
 
 	static const DP_MyPaintSettings &getDefaultSettings();
 
@@ -368,6 +377,10 @@ public:
 	int smoothing() const;
 	void setSmoothing(int smoothing);
 
+	bool shouldSyncSamples() const;
+	bool isSyncSamples() const;
+	void setSyncSamples(bool syncSamples);
+
 	QByteArray toJson(bool includeSlotProperties = false) const;
 	QByteArray toExportJson(const QString &description) const;
 	QJsonObject toShareJson() const;
@@ -381,6 +394,10 @@ public:
 
 	void setInBrushEngine(
 		drawdance::BrushEngine &be,
+		const DP_BrushEngineStrokeParams &besp) const;
+
+	void setInStrokeWorker(
+		drawdance::StrokeWorker &sw,
 		const DP_BrushEngineStrokeParams &besp) const;
 
 	void renderPreview(

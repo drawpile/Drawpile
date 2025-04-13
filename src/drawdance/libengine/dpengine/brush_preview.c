@@ -61,8 +61,8 @@ static void push_message(void *user, DP_Message *msg)
 DP_BrushPreview *DP_brush_preview_new(void)
 {
     DP_BrushPreview *bp = DP_malloc(sizeof(*bp));
-    *bp = (DP_BrushPreview){DP_brush_engine_new(push_message, NULL, bp), NULL,
-                            DP_VECTOR_NULL};
+    *bp = (DP_BrushPreview){DP_brush_engine_new(push_message, NULL, NULL, bp),
+                            NULL, DP_VECTOR_NULL};
     DP_VECTOR_INIT_TYPE(&bp->messages, DP_Message *, 64);
     return bp;
 }
@@ -302,7 +302,7 @@ static void set_preview_classic_brush(void *user, DP_BrushEngine *be,
                                       DP_UPixelFloat color)
 {
     DP_BrushEngineStrokeParams besp = {
-        {0, 0, false, false, false}, 1, 0, false};
+        {0, 0, false, false, false}, 1, 0, false, false};
     DP_brush_engine_classic_brush_set(be, user, &besp, &color, false);
 }
 
@@ -324,7 +324,7 @@ static void set_preview_mypaint_brush(void *user, DP_BrushEngine *be,
     const DP_MyPaintBrush *brush = ((void **)user)[0];
     const DP_MyPaintSettings *settings = ((void **)user)[1];
     DP_BrushEngineStrokeParams besp = {
-        {0, 0, false, false, false}, 1, 0, false};
+        {0, 0, false, false, false}, 1, 0, false, false};
     DP_brush_engine_mypaint_brush_set(be, brush, settings, &besp, &color,
                                       false);
 }
