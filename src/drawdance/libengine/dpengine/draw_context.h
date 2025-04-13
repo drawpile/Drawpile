@@ -39,7 +39,7 @@ typedef union DP_Pixel8 DP_Pixel8;
 #define DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE  8192
 #define DP_DRAW_CONTEXT_RASTER_POOL_MAX_SIZE  (1024 * 1024)
 
-#define DP_DRAW_CONTEXT_ID_COUNT 256
+#define DP_DRAW_CONTEXT_ID_COUNT UINT16_MAX
 
 typedef struct DP_DrawContextStatistics {
     size_t static_bytes;

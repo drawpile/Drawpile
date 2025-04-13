@@ -724,10 +724,11 @@ begin testing
 }
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Move layer tree: layer id 0 is invalid
--> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Move layer tree: layer 257, parent 257 and sibling 0 overlap
--> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Move layer tree: layer 257, parent 0 and sibling 257 overlap
--> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Move layer tree: layer 257, parent 258 and sibling 258 overlap
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: invalid layer id 0
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: invalid parent id 8388608
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: layer 257, parent 257 and sibling 0 overlap
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: layer 257, parent 0 and sibling 257 overlap
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: layer 257, parent 258 and sibling 258 overlap
 -> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: id 111 not found
 -> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: parent id 222 not found
 -> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: sibling id 333 not found
@@ -1157,7 +1158,7 @@ begin testing
             2 child layer(s), 2 child layer prop(s)
             [0] = {
                 type: layer
-                id: 265
+                id: 1030
                 title: "Layer 2"
                 opacity: 32768 (100.00%)
                 blend mode: NORMAL
@@ -1170,7 +1171,7 @@ begin testing
             }
             [1] = {
                 type: group
-                id: 263
+                id: 518
                 title: "Group 2"
                 opacity: 32768 (100.00%)
                 blend mode: NORMAL
@@ -1182,7 +1183,7 @@ begin testing
                 1 child layer(s), 1 child layer prop(s)
                 [0] = {
                     type: layer
-                    id: 264
+                    id: 774
                     title: "Copy of Layer 1"
                     opacity: 32768 (100.00%)
                     blend mode: MULTIPLY

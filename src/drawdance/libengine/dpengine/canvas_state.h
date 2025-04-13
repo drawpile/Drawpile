@@ -21,8 +21,6 @@
  */
 #ifndef DPENGINE_CANVAS_STATE_H
 #define DPENGINE_CANVAS_STATE_H
-#include "annotation_list.h"
-#include "pixels.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_AnnotationList DP_AnnotationList;
@@ -52,6 +50,7 @@ typedef struct DP_ViewModeFilter DP_ViewModeFilter;
 typedef struct DP_CanvasState DP_CanvasState;
 
 #ifdef DP_NO_STRICT_ALIASING
+typedef struct DP_TransientAnnotationList DP_TransientAnnotationList;
 typedef struct DP_TransientCanvasState DP_TransientCanvasState;
 typedef struct DP_TransientDocumentMetadata DP_TransientDocumentMetadata;
 typedef struct DP_TransientLayerContent DP_TransientLayerContent;
@@ -62,6 +61,7 @@ typedef struct DP_TransientSelectionSet DP_TransientSelectionSet;
 typedef struct DP_TransientTile DP_TransientTile;
 typedef struct DP_TransientTimeline DP_TransientTimeline;
 #else
+typedef struct DP_AnnotationList DP_TransientAnnotationList;
 typedef struct DP_CanvasState DP_TransientCanvasState;
 typedef struct DP_DocumentMetadata DP_TransientDocumentMetadata;
 typedef struct DP_LayerContent DP_TransientLayerContent;

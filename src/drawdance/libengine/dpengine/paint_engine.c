@@ -56,6 +56,7 @@
 #include <dpcommon/worker.h>
 #include <dpmsg/acl.h>
 #include <dpmsg/blend_mode.h>
+#include <dpmsg/ids.h>
 #include <dpmsg/local_match.h>
 #include <dpmsg/message.h>
 #include <dpmsg/message_queue.h>
@@ -552,8 +553,14 @@ static void handle_single_message(DP_PaintEngine *pe, DP_DrawContext *dc,
     }
     else if (type == DP_MSG_DEFAULT_LAYER) {
         DP_MsgDefaultLayer *mdl = DP_message_internal(msg);
-        int default_layer_id = DP_msg_default_layer_id(mdl);
-        DP_atomic_xch(&pe->default_layer_id, default_layer_id);
+        int default_layer_id =
+            DP_protocol_to_layer_id(DP_msg_default_layer_id(mdl));
+        if (DP_layer_id_normal(default_layer_id)) {
+            DP_atomic_xch(&pe->default_layer_id, default_layer_id);
+        }
+        else {
+            DP_warn("Invalid default layer id %d", default_layer_id);
+        }
     }
     else if (type == DP_MSG_UNDO_DEPTH) {
         DP_MsgUndoDepth *mud = DP_message_internal(msg);

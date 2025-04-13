@@ -12,6 +12,7 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/vector.h>
+#include <dpmsg/ids.h>
 #include <dpmsg/message.h>
 #include <dpmsg/msg_internal.h>
 
@@ -657,7 +658,8 @@ void DP_local_state_handle(DP_LocalState *ls, DP_DrawContext *dc,
         // TODO: Handle group duplication properly. They may create more than
         // one layer, but only the top level id has its state properly cleared.
         clear_layer_state(
-            ls, DP_msg_layer_tree_create_id(DP_message_internal(msg)));
+            ls, DP_protocol_to_layer_id(
+                    DP_msg_layer_tree_create_id(DP_message_internal(msg))));
         break;
     case DP_MSG_TRACK_CREATE:
         update_track_state(ls, DP_msg_track_create_id(DP_message_internal(msg)),

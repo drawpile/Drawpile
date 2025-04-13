@@ -27,7 +27,7 @@ static void extract_selection_ids(int layer_id, uint8_t *out_source_id,
 }
 
 
-static_assert(DP_MSG_MOVE_RECT_STATIC_LENGTH == 28,
+static_assert(DP_MSG_MOVE_RECT_STATIC_LENGTH == 30,
               "Need to update move rect local match");
 
 #define MATCH_MOVE_RECT_SIZE DP_MSG_MOVE_RECT_STATIC_LENGTH
@@ -39,10 +39,12 @@ static void set_move_rect_data(DP_UNUSED size_t size, unsigned char *out,
     DP_MsgMoveRect *mmr = user;
     DP_ASSERT(DP_msg_move_rect_source(mmr) == 0);
     uint8_t source_id, target_id;
-    extract_selection_ids(DP_msg_move_rect_layer(mmr), &source_id, &target_id);
+    extract_selection_ids(DP_uint32_to_int(DP_msg_move_rect_layer(mmr)),
+                          &source_id, &target_id);
     size_t written = 0;
     written += DP_write_bigendian_uint8(source_id, out + written);
     written += DP_write_bigendian_uint8(target_id, out + written);
+    written += DP_write_bigendian_uint16(0, out + written);
     written +=
         DP_write_bigendian_int32(DP_msg_move_rect_sx(mmr), out + written);
     written +=
@@ -64,22 +66,24 @@ static bool match_move_rect(DP_MsgMoveRect *mmr, DP_Message *local_match_msg)
     size_t size;
     const unsigned char *data = local_match_data(local_match_msg, &size);
     uint8_t source_id, target_id;
-    extract_selection_ids(DP_msg_move_rect_layer(mmr), &source_id, &target_id);
+    extract_selection_ids(DP_uint32_to_int(DP_msg_move_rect_layer(mmr)),
+                          &source_id, &target_id);
     size_t mask_size = DP_msg_move_rect_mask_size(mmr);
     return size == MATCH_MOVE_RECT_SIZE
         && DP_read_bigendian_uint8(data) == source_id
         && DP_read_bigendian_uint8(data + 1) == target_id
-        && DP_read_bigendian_int32(data + 2) == DP_msg_move_rect_sx(mmr)
-        && DP_read_bigendian_int32(data + 6) == DP_msg_move_rect_sy(mmr)
-        && DP_read_bigendian_int32(data + 10) == DP_msg_move_rect_tx(mmr)
-        && DP_read_bigendian_int32(data + 14) == DP_msg_move_rect_ty(mmr)
-        && DP_read_bigendian_int32(data + 18) == DP_msg_move_rect_w(mmr)
-        && DP_read_bigendian_int32(data + 22) == DP_msg_move_rect_h(mmr)
-        && DP_uint16_to_size(DP_read_bigendian_uint16(data + 26)) == mask_size;
+        && DP_read_bigendian_uint16(data + 2) == 0
+        && DP_read_bigendian_int32(data + 4) == DP_msg_move_rect_sx(mmr)
+        && DP_read_bigendian_int32(data + 8) == DP_msg_move_rect_sy(mmr)
+        && DP_read_bigendian_int32(data + 12) == DP_msg_move_rect_tx(mmr)
+        && DP_read_bigendian_int32(data + 16) == DP_msg_move_rect_ty(mmr)
+        && DP_read_bigendian_int32(data + 20) == DP_msg_move_rect_w(mmr)
+        && DP_read_bigendian_int32(data + 24) == DP_msg_move_rect_h(mmr)
+        && DP_uint16_to_size(DP_read_bigendian_uint16(data + 28)) == mask_size;
 }
 
 
-static_assert(DP_MSG_TRANSFORM_REGION_STATIC_LENGTH == 53,
+static_assert(DP_MSG_TRANSFORM_REGION_STATIC_LENGTH == 55,
               "Need to update transform region local match");
 
 #define MATCH_TRANSFORM_REGION_SIZE DP_MSG_TRANSFORM_REGION_STATIC_LENGTH
@@ -91,11 +95,12 @@ static void set_transform_region_data(DP_UNUSED size_t size, unsigned char *out,
     DP_MsgTransformRegion *mtr = user;
     DP_ASSERT(DP_msg_transform_region_source(mtr) == 0);
     uint8_t source_id, target_id;
-    extract_selection_ids(DP_msg_transform_region_layer(mtr), &source_id,
-                          &target_id);
+    extract_selection_ids(DP_uint32_to_int(DP_msg_transform_region_layer(mtr)),
+                          &source_id, &target_id);
     size_t written = 0;
     written += DP_write_bigendian_uint8(source_id, out + written);
     written += DP_write_bigendian_uint8(target_id, out + written);
+    written += DP_write_bigendian_uint16(0, out + written);
     written += DP_write_bigendian_int32(DP_msg_transform_region_bx(mtr),
                                         out + written);
     written += DP_write_bigendian_int32(DP_msg_transform_region_by(mtr),
@@ -135,27 +140,28 @@ static bool match_transform_region(DP_MsgTransformRegion *mtr,
     size_t size;
     const unsigned char *data = local_match_data(local_match_msg, &size);
     uint8_t source_id, target_id;
-    extract_selection_ids(DP_msg_transform_region_layer(mtr), &source_id,
-                          &target_id);
+    extract_selection_ids(DP_uint32_to_int(DP_msg_transform_region_layer(mtr)),
+                          &source_id, &target_id);
     size_t mask_size = DP_msg_transform_region_mask_size(mtr);
     return size == MATCH_TRANSFORM_REGION_SIZE
         && DP_read_bigendian_uint8(data) == source_id
         && DP_read_bigendian_uint8(data + 1) == target_id
-        && DP_read_bigendian_int32(data + 2) == DP_msg_transform_region_bx(mtr)
-        && DP_read_bigendian_int32(data + 6) == DP_msg_transform_region_by(mtr)
-        && DP_read_bigendian_int32(data + 10) == DP_msg_transform_region_bw(mtr)
-        && DP_read_bigendian_int32(data + 14) == DP_msg_transform_region_bh(mtr)
-        && DP_read_bigendian_int32(data + 18) == DP_msg_transform_region_x1(mtr)
-        && DP_read_bigendian_int32(data + 22) == DP_msg_transform_region_y1(mtr)
-        && DP_read_bigendian_int32(data + 26) == DP_msg_transform_region_x2(mtr)
-        && DP_read_bigendian_int32(data + 30) == DP_msg_transform_region_y2(mtr)
-        && DP_read_bigendian_int32(data + 34) == DP_msg_transform_region_x3(mtr)
-        && DP_read_bigendian_int32(data + 38) == DP_msg_transform_region_y3(mtr)
-        && DP_read_bigendian_int32(data + 42) == DP_msg_transform_region_x4(mtr)
-        && DP_read_bigendian_int32(data + 46) == DP_msg_transform_region_y4(mtr)
-        && DP_read_bigendian_uint8(data + 50)
+        && DP_read_bigendian_uint8(data + 2) == 0
+        && DP_read_bigendian_int32(data + 4) == DP_msg_transform_region_bx(mtr)
+        && DP_read_bigendian_int32(data + 8) == DP_msg_transform_region_by(mtr)
+        && DP_read_bigendian_int32(data + 12) == DP_msg_transform_region_bw(mtr)
+        && DP_read_bigendian_int32(data + 16) == DP_msg_transform_region_bh(mtr)
+        && DP_read_bigendian_int32(data + 20) == DP_msg_transform_region_x1(mtr)
+        && DP_read_bigendian_int32(data + 24) == DP_msg_transform_region_y1(mtr)
+        && DP_read_bigendian_int32(data + 28) == DP_msg_transform_region_x2(mtr)
+        && DP_read_bigendian_int32(data + 32) == DP_msg_transform_region_y2(mtr)
+        && DP_read_bigendian_int32(data + 36) == DP_msg_transform_region_x3(mtr)
+        && DP_read_bigendian_int32(data + 40) == DP_msg_transform_region_y3(mtr)
+        && DP_read_bigendian_int32(data + 44) == DP_msg_transform_region_x4(mtr)
+        && DP_read_bigendian_int32(data + 48) == DP_msg_transform_region_y4(mtr)
+        && DP_read_bigendian_uint8(data + 52)
                == DP_msg_transform_region_mode(mtr)
-        && DP_uint16_to_size(DP_read_bigendian_uint16(data + 51)) == mask_size;
+        && DP_uint16_to_size(DP_read_bigendian_uint16(data + 53)) == mask_size;
 }
 
 

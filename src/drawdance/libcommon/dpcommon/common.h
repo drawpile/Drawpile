@@ -32,6 +32,9 @@
 #include <string.h>   // IWYU pragma: export
 
 
+#define DP_UINT24_MIN (0)
+#define DP_UINT24_MAX (0xffffff)
+
 #ifndef RUST_BINDGEN
 #    if defined(__EMSCRIPTEN__)
 #        define DP_PLATFORM "emscripten"
@@ -127,11 +130,13 @@ typedef max_align_t DP_max_align_t;
 #    define DP_NORETURN        [[noreturn]]
 #    define DP_ANONYMOUS(NAME) NAME
 #    define DP_NULLPTR         nullptr
+#    define DP_CAST(T, X)      static_cast<T>(X)
 #else
 #    define DP_RESTRICT        restrict
 #    define DP_NORETURN        _Noreturn
 #    define DP_ANONYMOUS(NAME) // nothing
 #    define DP_NULLPTR         NULL
+#    define DP_CAST(T, X)      ((T)(X))
 #endif
 
 #ifdef DP_NO_STRICT_ALIASING

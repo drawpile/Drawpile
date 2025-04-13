@@ -203,7 +203,7 @@ void PaintEngine::enqueueLoadBlank(
 			0, 0, qBound(0, size.width(), int(UINT16_MAX)),
 			qBound(0, size.height(), int(UINT16_MAX)), 0),
 		net::makeLayerTreeCreateMessage(
-			0, 0x100, 0, 0, 0, 0, tr("Layer %1").arg(1)),
+			0, 1, 0, 0, 0, 0, tr("Layer %1").arg(1)),
 		net::makeInternalSnapshotMessage(0),
 	};
 	receiveMessages(false, DP_ARRAY_LENGTH(messages), messages);
@@ -859,7 +859,7 @@ void PaintEngine::onMovePointer(
 void PaintEngine::onDefaultLayer(void *user, int layerId)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
-	emit pe->defaultLayer(layerId >= 0 && layerId <= UINT16_MAX ? layerId : 0);
+	emit pe->defaultLayer(layerId >= 0 ? layerId : 0);
 }
 
 void PaintEngine::onUndoDepthLimitSet(void *user, int undoDepthLimit)

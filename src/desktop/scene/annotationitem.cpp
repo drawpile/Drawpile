@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+extern "C" {
+#include <dpmsg/ids.h>
+}
 #include "desktop/scene/annotationitem.h"
 #include "libclient/utils/annotations.h"
 #include <QApplication>
@@ -13,6 +16,11 @@ AnnotationItem::AnnotationItem(int id, qreal zoom, QGraphicsItem *parent)
 	, m_id(id)
 	, m_handleSize(calculateHandleSize(zoom))
 {
+}
+
+int AnnotationItem::userId() const
+{
+	return DP_annotation_id_context_id(m_id);
 }
 
 void AnnotationItem::setGeometry(const QRect &rect)

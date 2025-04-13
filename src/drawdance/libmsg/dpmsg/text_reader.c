@@ -902,6 +902,30 @@ void DP_text_reader_parse_uint16_array(int count, uint16_t *out, void *user)
     parse_uarray(count, user, "uint16", UINT16_MAX, set_uint16, out);
 }
 
+static void set_uint24(void *user, int index, unsigned long result)
+{
+    DP_ASSERT(result <= (uint32_t)DP_UINT24_MAX);
+    uint32_t *out = user;
+    out[index] = DP_ulong_to_uint32(result);
+}
+
+void DP_text_reader_parse_uint24_array(int count, uint32_t *out, void *user)
+{
+    parse_uarray(count, user, "uint24", DP_UINT24_MAX, set_uint24, out);
+}
+
+static void set_uint32(void *user, int index, unsigned long result)
+{
+    DP_ASSERT(result <= (uint32_t)UINT32_MAX);
+    uint32_t *out = user;
+    out[index] = DP_ulong_to_uint32(result);
+}
+
+void DP_text_reader_parse_uint32_array(int count, uint32_t *out, void *user)
+{
+    parse_uarray(count, user, "uint24", UINT32_MAX, set_uint32, out);
+}
+
 static void set_int32(void *user, int index, long result)
 {
     DP_ASSERT(result >= INT32_MIN);

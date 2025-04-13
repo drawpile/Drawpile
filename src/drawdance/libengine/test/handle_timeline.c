@@ -90,7 +90,7 @@ static void dump_timeline(DP_Output *output, DP_CanvasHistory *ch,
 
 
 static void add_layer_tree_create(DP_Output *output, DP_CanvasHistory *ch,
-                                  DP_DrawContext *dc, uint16_t id,
+                                  DP_DrawContext *dc, uint32_t id,
                                   const char *name, bool group,
                                   uint16_t parent_id)
 {
@@ -104,7 +104,7 @@ static void add_layer_tree_create(DP_Output *output, DP_CanvasHistory *ch,
 }
 
 static void add_layer_tree_delete(DP_Output *output, DP_CanvasHistory *ch,
-                                  DP_DrawContext *dc, uint16_t id)
+                                  DP_DrawContext *dc, uint32_t id)
 {
     add_message(output, ch, dc, DP_msg_layer_tree_delete_new(1, id, 0));
 }
@@ -130,7 +130,7 @@ static void add_track_create(DP_Output *output, DP_CanvasHistory *ch,
                                         title ? strlen(title) : 0));
 }
 
-static void set_uint16s_from_int(int count, uint16_t *out, void *user)
+static void set_track_order_tracks(int count, uint16_t *out, void *user)
 {
     int *tracks = user;
     for (int i = 0; i < count; ++i) {
@@ -145,8 +145,9 @@ static void add_track_order(DP_Output *output, DP_CanvasHistory *ch,
     while (tracks[count] > 0) {
         ++count;
     }
-    add_message(output, ch, dc,
-                DP_msg_track_order_new(1, set_uint16s_from_int, count, tracks));
+    add_message(
+        output, ch, dc,
+        DP_msg_track_order_new(1, set_track_order_tracks, count, tracks));
 }
 
 static void add_track_retitle(DP_Output *output, DP_CanvasHistory *ch,
@@ -166,7 +167,7 @@ static void add_track_delete(DP_Output *output, DP_CanvasHistory *ch,
 
 static void add_key_frame_set(DP_Output *output, DP_CanvasHistory *ch,
                               DP_DrawContext *dc, uint16_t track_id,
-                              uint16_t frame_index, uint16_t source_id,
+                              uint16_t frame_index, uint32_t source_id,
                               uint16_t source_index, uint8_t source)
 {
     add_message(output, ch, dc,
@@ -184,6 +185,17 @@ static void add_key_frame_retitle(DP_Output *output, DP_CanvasHistory *ch,
                                              title ? strlen(title) : 0));
 }
 
+static void set_key_frame_attributes_layers(int count, uint32_t *out,
+                                            void *user)
+{
+    int *layers = user;
+    for (int i = 0; i < count; ++i) {
+        out[i] = DP_int_to_uint32(layers[i * 2])
+               | ((DP_int_to_uint32(layers[i * 2 + 1]) & (uint32_t)0xff)
+                  << (uint32_t)24);
+    }
+}
+
 static void add_key_frame_layer_attributes(DP_Output *output,
                                            DP_CanvasHistory *ch,
                                            DP_DrawContext *dc,
@@ -192,12 +204,13 @@ static void add_key_frame_layer_attributes(DP_Output *output,
 {
     int count = 0;
     while (layers[count] > 0) {
-        count += 2;
+        ++count;
     }
+    DP_ASSERT(count % 2 == 0);
     add_message(output, ch, dc,
-                DP_msg_key_frame_layer_attributes_new(1, track_id, frame_index,
-                                                      set_uint16s_from_int,
-                                                      count, layers));
+                DP_msg_key_frame_layer_attributes_new(
+                    1, track_id, frame_index, set_key_frame_attributes_layers,
+                    count / 2, layers));
 }
 
 static void add_key_frame_delete(DP_Output *output, DP_CanvasHistory *ch,
