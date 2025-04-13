@@ -64,6 +64,12 @@ static const BlendModeInfo BLEND_MODE[] = {
 		QT_TRANSLATE_NOOP("blendmode", "Marker"),
 		DP_BLEND_MODE_MARKER_ALPHA,
 		DP_BLEND_MODE_MARKER,
+		UniversalMode,
+	},
+	{
+		QT_TRANSLATE_NOOP("blendmode", "Pigment"),
+		DP_BLEND_MODE_PIGMENT_ALPHA,
+		DP_BLEND_MODE_PIGMENT,
 		UniversalMode | SeparatorBelow,
 	},
 	{

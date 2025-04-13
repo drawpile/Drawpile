@@ -486,11 +486,18 @@ static DP_BrushEngine *get_mypaint_surface_brush_engine(MyPaintSurface2 *self)
     return (void *)(bytes - offsetof(DP_BrushEngine, mypaint_surface2));
 }
 
+static bool is_normal_mypaint_mode(DP_BlendMode blend_mode)
+{
+    return blend_mode == DP_BLEND_MODE_NORMAL
+        || blend_mode == DP_BLEND_MODE_PIGMENT_ALPHA;
+}
+
 static bool should_ignore_full_alpha_mypaint_dab(DP_PaintMode paint_mode,
                                                  DP_BlendMode blend_mode)
 {
     switch (blend_mode) {
     case DP_BLEND_MODE_NORMAL:
+    case DP_BLEND_MODE_PIGMENT_ALPHA:
         return paint_mode != DP_PAINT_MODE_DIRECT;
     case DP_BLEND_MODE_ERASE:
     case DP_BLEND_MODE_ERASE_PRESERVE:
@@ -529,7 +536,7 @@ static uint8_t get_mypaint_dab_posterize_num(uint8_t dab_posterize,
     }
     else {
         float value = posterize_num * 100.0f + 0.5f - 1.0f;
-        return DP_float_to_uint8(CLAMP(value, 0.0f, 255.0f));
+        return DP_float_to_uint8(CLAMP(value, 0.0f, 127.0f));
     }
 }
 
@@ -588,7 +595,7 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
         dab_posterize_num;
 
     if (paint_mode == DP_PAINT_MODE_DIRECT
-        && blend_mode == DP_BLEND_MODE_NORMAL) {
+        && is_normal_mypaint_mode(blend_mode)) {
         dab_color =
             get_mypaint_dab_color(color_r, color_g, color_b, alpha_eraser);
         dab_flags = 0;
@@ -597,6 +604,10 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
         dab_posterize = get_mypaint_dab_posterize(posterize);
         dab_posterize_num =
             get_mypaint_dab_posterize_num(dab_posterize, posterize_num);
+        DP_ASSERT((dab_posterize_num & 0x80) == 0);
+        if (blend_mode == DP_BLEND_MODE_PIGMENT_ALPHA) {
+            dab_posterize_num |= (uint8_t)0x80;
+        }
     }
     else {
         dab_color = get_mypaint_dab_color(color_r, color_g, color_b, 1.0f);
@@ -667,6 +678,12 @@ static uint16_t *get_stamp_buffer(DP_BrushEngine *be)
     return be->stamp_buffer;
 }
 
+static bool is_pigment_mode(DP_BlendMode blend_mode)
+{
+    return blend_mode == DP_BLEND_MODE_PIGMENT
+        || blend_mode == DP_BLEND_MODE_PIGMENT_ALPHA;
+}
+
 static void get_color_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
                                       float radius, float *color_r,
                                       float *color_g, float *color_b,
@@ -678,7 +695,8 @@ static void get_color_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
         int diameter = DP_min_int(DP_float_to_int(radius * 2.0f + 0.5f), 255);
         DP_UPixelFloat color = DP_layer_content_sample_color_at(
             lc, get_stamp_buffer(be), DP_float_to_int(x + 0.5f),
-            DP_float_to_int(y + 0.5f), diameter, false, &be->last_diameter);
+            DP_float_to_int(y + 0.5f), diameter, false,
+            is_pigment_mode(be->mypaint.blend_mode), &be->last_diameter);
         *color_r = color.r;
         *color_g = color.g;
         *color_b = color.b;
@@ -965,9 +983,8 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
             ? DP_PAINT_MODE_DIRECT
             : brush->paint_mode;
 
-    // We don't support spectral painting (aka Pigment mode), so we'll turn
-    // that off at the source here. It's like turning the Pigment slider in
-    // MyPaint all the way to zero.
+    // We don't support partial pigment mode for performance and usability
+    // reasons, you either enable the pigment blend mode or you don't.
     disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_PAINT_MODE);
 
     // We have our own, better stabilizer, so turn the MyPaint one off.
@@ -993,7 +1010,7 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_TRANSPARENCY);
     }
 
-    if (indirect || blend_mode != DP_BLEND_MODE_NORMAL) {
+    if (indirect || !is_normal_mypaint_mode(blend_mode)) {
         // Indirect mode also can't do any of these. They're also basically
         // blend modes, so they only work when that hasn't been altered.
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_ERASER);
@@ -1144,7 +1161,7 @@ static void flush_mypaint_dabs(DP_BrushEngine *be, int used)
     DP_PaintMode paint_mode = be->mypaint.paint_mode;
     DP_BlendMode blend_mode = be->mypaint.blend_mode;
     if (paint_mode == DP_PAINT_MODE_DIRECT
-        && blend_mode == DP_BLEND_MODE_NORMAL) {
+        && is_normal_mypaint_mode(blend_mode)) {
         msg = DP_msg_draw_dabs_mypaint_new(
             be->stroke.context_id, DP_int_to_uint16(be->layer_id),
             be->mypaint.dab_x, be->mypaint.dab_y, be->mypaint.dab_color,
@@ -1235,7 +1252,8 @@ static DP_UPixelFloat sample_classic_smudge(DP_BrushEngine *be,
         get_classic_smudge_diameter(cb, pressure, velocity, distance);
     return DP_layer_content_sample_color_at(
         lc, get_stamp_buffer(be), DP_float_to_int(x), DP_float_to_int(y),
-        diameter, true, &be->last_diameter);
+        diameter, true, is_pigment_mode(DP_classic_brush_blend_mode(cb)),
+        &be->last_diameter);
 }
 
 static void update_classic_smudge(DP_BrushEngine *be, DP_ClassicBrush *cb,

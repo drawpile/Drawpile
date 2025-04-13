@@ -268,11 +268,6 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		}
 	});
 
-	// Metadata permissions are currently only useful for changing image DPI,
-	// which isn't even possible from within Drawpile and generally useless.
-	// So we'll hide that setting for now, until it actually does something.
-	m_ui->permMetadata->hide();
-	m_ui->labelMetadata->hide();
 	updateBanImportExportState();
 	m_ui->allowWeb->setEnabled(false);
 	m_ui->allowWeb->setVisible(false);
@@ -466,8 +461,8 @@ QComboBox *SessionSettingsDialog::featureBox(DP_Feature f)
 		return m_ui->permLaser;
 	case DP_FEATURE_UNDO:
 		return m_ui->permUndo;
-	case DP_FEATURE_METADATA:
-		return m_ui->permMetadata;
+	case DP_FEATURE_PIGMENT:
+		return m_ui->permPigment;
 	case DP_FEATURE_TIMELINE:
 		return m_ui->permTimeline;
 	case DP_FEATURE_MYPAINT:
@@ -527,8 +522,8 @@ void SessionSettingsDialog::onFeatureTiersChanged(
 		int(features.tiers[DP_FEATURE_CREATE_ANNOTATION]));
 	m_ui->permLaser->setCurrentIndex(int(features.tiers[DP_FEATURE_LASER]));
 	m_ui->permUndo->setCurrentIndex(int(features.tiers[DP_FEATURE_UNDO]));
-	m_ui->permMetadata->setCurrentIndex(
-		int(features.tiers[DP_FEATURE_METADATA]));
+	m_ui->permPigment->setCurrentIndex(
+		int(features.tiers[DP_FEATURE_PIGMENT]));
 	m_ui->permTimeline->setCurrentIndex(
 		int(features.tiers[DP_FEATURE_TIMELINE]));
 	m_ui->permMyPaint->setCurrentIndex(int(features.tiers[DP_FEATURE_MYPAINT]));

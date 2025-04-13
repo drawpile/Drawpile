@@ -85,7 +85,8 @@ DP_BrushStamp DP_paint_color_sampling_stamp_make(uint16_t *data, int diameter,
                                                  int left, int top,
                                                  int last_diameter);
 
-DP_UPixelFloat DP_paint_sample_to_upixel(int diameter, float weight, float red,
+DP_UPixelFloat DP_paint_sample_to_upixel(int diameter, bool opaque,
+                                         bool pigment, float weight, float red,
                                          float green, float blue, float alpha);
 
 #endif
