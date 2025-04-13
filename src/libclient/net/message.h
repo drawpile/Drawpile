@@ -53,6 +53,9 @@ Message makeInternalCatchupMessage(uint8_t contextId, int progress);
 
 Message makeInternalCleanupMessage(uint8_t contextId);
 
+Message makeInternalPaintSyncMessage(
+	uint8_t contextId, void (*callback)(void *), void *user);
+
 Message makeInternalResetMessage(uint8_t contextId);
 
 Message makeInternalStreamResetStartMessage(

@@ -100,6 +100,13 @@ DP_CanvasState *CanvasState::getInc() const
 	return DP_canvas_state_incref_nullable(m_data);
 }
 
+DP_CanvasState *CanvasState::take()
+{
+	DP_CanvasState *data = m_data;
+	m_data = nullptr;
+	return data;
+}
+
 bool CanvasState::isNull() const
 {
 	return !m_data;

@@ -7,6 +7,7 @@ extern "C" {
 #include "libclient/net/message.h"
 #include <functional>
 
+struct DP_CanvasState;
 struct DP_ClassicBrush;
 struct DP_MyPaintBrush;
 struct DP_MyPaintSettings;
@@ -60,8 +61,11 @@ private:
 class BrushEngine final {
 public:
 	using PollControlFn = std::function<void(bool)>;
+	using SyncFn = std::function<DP_CanvasState *()>;
 
-	BrushEngine(PollControlFn pollControl = nullptr);
+	BrushEngine(
+		const PollControlFn &pollControl = nullptr,
+		const SyncFn &sync = nullptr);
 	~BrushEngine();
 
 	BrushEngine(const BrushEngine &) = delete;
@@ -102,12 +106,16 @@ public:
 	// Flushes dabs and sends accumulated messages to the client.
 	void sendMessagesTo(net::Client *client);
 
+	void
+	syncMessagesTo(net::Client *client, void (*callback)(void *), void *user);
+
 private:
 	static void pushMessage(void *user, DP_Message *msg);
 	static void pollControl(void *user, bool enable);
-
+	static DP_CanvasState *sync(void *user);
 	net::MessageList m_messages;
 	PollControlFn m_pollControl;
+	SyncFn m_sync;
 	DP_BrushEngine *m_data;
 };
 

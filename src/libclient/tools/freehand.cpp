@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libclient/tools/freehand.h"
+extern "C" {
+#include <dpcommon/threading.h>
+}
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/tools/freehand.h"
 #include "libclient/tools/toolcontroller.h"
 #include <QDateTime>
 
@@ -14,7 +17,10 @@ Freehand::Freehand(ToolController &owner, bool isEraser)
 		  owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor,
 		  Capability::AllowColorPick | Capability::AllowToolAdjust |
 			  Capability::SupportsPressure)
-	, m_brushEngine(std::bind(&Freehand::pollControl, this, _1))
+	, m_brushEngine(
+		  std::bind(&Freehand::pollControl, this, _1),
+		  std::bind(&Freehand::sync, this))
+	, m_sem(DP_semaphore_new(0))
 {
 	m_pollTimer.setSingleShot(false);
 	m_pollTimer.setTimerType(Qt::PreciseTimer);
@@ -24,7 +30,10 @@ Freehand::Freehand(ToolController &owner, bool isEraser)
 	});
 }
 
-Freehand::~Freehand() {}
+Freehand::~Freehand()
+{
+	DP_semaphore_free(m_sem);
+}
 
 void Freehand::begin(const BeginParams &params)
 {
@@ -122,6 +131,25 @@ void Freehand::poll()
 		m_owner.model()->paintEngine()->sampleCanvasState();
 	m_brushEngine.poll(QDateTime::currentMSecsSinceEpoch(), canvasState);
 	m_brushEngine.sendMessagesTo(m_owner.client());
+}
+
+DP_CanvasState *Freehand::sync()
+{
+	m_brushEngine.syncMessagesTo(
+		m_owner.client(), &Freehand::syncUnlockCallback, this);
+	DP_SEMAPHORE_MUST_WAIT(m_sem);
+	return m_owner.model()->paintEngine()->sampleCanvasState().take();
+}
+
+void Freehand::syncUnlock()
+{
+	DP_SEMAPHORE_MUST_POST(m_sem);
+}
+
+void Freehand::syncUnlockCallback(void *user)
+{
+	Freehand *freehand = static_cast<Freehand *>(user);
+	freehand->syncUnlock();
 }
 
 }

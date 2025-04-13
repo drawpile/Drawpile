@@ -5,6 +5,8 @@
 #include "libclient/tools/tool.h"
 #include <QTimer>
 
+struct DP_Semaphore;
+
 namespace tools {
 
 //! Freehand brush tool
@@ -28,9 +30,13 @@ public:
 private:
 	void pollControl(bool enable);
 	void poll();
+	DP_CanvasState *sync();
+	void syncUnlock();
+	static void syncUnlockCallback(void *user);
 
 	QTimer m_pollTimer;
 	drawdance::BrushEngine m_brushEngine;
+	DP_Semaphore *m_sem;
 	bool m_drawing = false;
 	bool m_firstPoint = false;
 	bool m_mirror = false;

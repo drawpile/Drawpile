@@ -647,6 +647,7 @@ void ToolController::setBrushEngineBrush(
 			? 0
 			: DP_SELECTION_ID_MAIN,
 		activeLayerAlphaLock(),
+		freehand,
 	};
 	if(freehand) {
 		stroke.se.interpolate = m_interpolateInputs;

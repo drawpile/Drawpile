@@ -73,6 +73,12 @@ typedef struct DP_MsgInternalStreamResetStart {
     char correlator[];
 } DP_MsgInternalStreamResetStart;
 
+typedef struct DP_MsgInternalPaintSync {
+    DP_MsgInternal parent;
+    void (*callback)(void *);
+    void *user;
+} DP_MsgInternalPaintSync;
+
 static size_t payload_length(DP_UNUSED DP_Message *msg)
 {
     DP_warn("DP_MsgInternal: payload_length called on internal message");
@@ -246,6 +252,19 @@ DP_Message *DP_msg_internal_stream_reset_start_new(unsigned int context_id,
     return msg;
 }
 
+DP_Message *DP_msg_internal_paint_sync_new(unsigned int context_id,
+                                           void (*callback)(void *), void *user)
+{
+    DP_ASSERT(callback);
+    DP_Message *msg =
+        msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_PAINT_SYNC,
+                         sizeof(DP_MsgInternalPaintSync));
+    DP_MsgInternalPaintSync *mips = DP_message_internal(msg);
+    mips->callback = callback;
+    mips->user = user;
+    return msg;
+}
+
 
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg)
 {
@@ -331,4 +350,10 @@ const char *DP_msg_internal_stream_reset_start_correlator(DP_MsgInternal *mi,
         *out_length = misrs->correlator_length;
     }
     return misrs->correlator;
+}
+
+void DP_msg_internal_paint_sync_call(DP_MsgInternal *mi)
+{
+    DP_MsgInternalPaintSync *mips = (DP_MsgInternalPaintSync *)mi;
+    mips->callback(mips->user);
 }

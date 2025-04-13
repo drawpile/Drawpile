@@ -77,11 +77,13 @@ void StrokeEngine::pollControl(void *user, bool enable)
 }
 
 
-BrushEngine::BrushEngine(PollControlFn pollControl)
+BrushEngine::BrushEngine(const PollControlFn &pollControl, const SyncFn &sync)
 	: m_pollControl(pollControl)
+	, m_sync(sync)
 	, m_data(DP_brush_engine_new(
 		  &BrushEngine::pushMessage,
-		  pollControl ? &BrushEngine::pollControl : nullptr, this))
+		  pollControl ? &BrushEngine::pollControl : nullptr,
+		  sync ? &BrushEngine::sync : nullptr, this))
 {
 }
 
@@ -157,6 +159,16 @@ void BrushEngine::sendMessagesTo(net::Client *client)
 	clearMessages();
 }
 
+void BrushEngine::syncMessagesTo(
+	net::Client *client, void (*callback)(void *), void *user)
+{
+	Q_ASSERT(client);
+	flushDabs();
+	m_messages.append(net::makeInternalPaintSyncMessage(0, callback, user));
+	client->sendCommands(m_messages.count(), m_messages.constData());
+	clearMessages();
+}
+
 void BrushEngine::pushMessage(void *user, DP_Message *msg)
 {
 	BrushEngine *brushEngine = static_cast<BrushEngine *>(user);
@@ -167,6 +179,12 @@ void BrushEngine::pollControl(void *user, bool enable)
 {
 	BrushEngine *brushEngine = static_cast<BrushEngine *>(user);
 	brushEngine->m_pollControl(enable);
+}
+
+DP_CanvasState *BrushEngine::sync(void *user)
+{
+	BrushEngine *brushEngine = static_cast<BrushEngine *>(user);
+	return brushEngine->m_sync();
 }
 
 }
