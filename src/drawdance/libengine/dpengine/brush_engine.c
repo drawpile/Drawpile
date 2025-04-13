@@ -12,6 +12,7 @@
 #include <dpcommon/queue.h>
 #include <dpcommon/vector.h>
 #include <dpmsg/message.h>
+#include <dpmsg/ids.h>
 #include <math.h>
 #include <mypaint-brush.h>
 #include <mypaint.h>
@@ -877,7 +878,7 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
     DP_ASSERT(brush);
     DP_ASSERT(stroke);
     DP_ASSERT(stroke->layer_id >= 0);
-    DP_ASSERT(stroke->layer_id <= UINT16_MAX);
+    DP_ASSERT(stroke->layer_id <= DP_MESSAGE_LAYER_ID_MAX);
 
     set_common_stroke_params(be, stroke);
 
@@ -945,8 +946,8 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     DP_ASSERT(brush);
     DP_ASSERT(settings);
     DP_ASSERT(stroke);
-    DP_ASSERT(stroke->layer_id >= 0);
-    DP_ASSERT(stroke->layer_id <= UINT16_MAX);
+    DP_ASSERT(stroke->layer_id >= DP_LAYER_ID_MIN);
+    DP_ASSERT(stroke->layer_id <= DP_LAYER_ID_MAX);
 
     set_common_stroke_params(be, stroke);
     be->active = DP_BRUSH_ENGINE_ACTIVE_MYPAINT;
@@ -1065,7 +1066,7 @@ static void set_pixel_dabs(int count, DP_PixelDab *out, void *user)
 
 static void flush_pixel_dabs(DP_BrushEngine *be, int used)
 {
-    DP_Message *(*new_fn)(unsigned int, uint8_t, uint16_t, int32_t, int32_t,
+    DP_Message *(*new_fn)(unsigned int, uint8_t, uint32_t, int32_t, int32_t,
                           uint32_t, uint8_t,
                           void (*)(int, DP_PixelDab *, void *), int, void *);
     if (be->classic.brush.shape == DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND) {
@@ -1076,7 +1077,7 @@ static void flush_pixel_dabs(DP_BrushEngine *be, int used)
     }
     be->push_message(
         be->user, new_fn(be->stroke.context_id, (uint8_t)be->classic.dab_flags,
-                         DP_int_to_uint16(be->layer_id), be->classic.dab_x,
+                         DP_int_to_uint32(be->layer_id), be->classic.dab_x,
                          be->classic.dab_y, be->classic.dab_color,
                          get_dab_blend_mode(
                              be->classic.brush.paint_mode,
@@ -1115,7 +1116,7 @@ static void flush_soft_dabs(DP_BrushEngine *be, int used)
         be->user,
         DP_msg_draw_dabs_classic_new(
             be->stroke.context_id, be->classic.dab_flags,
-            DP_int_to_uint16(be->layer_id), be->classic.dab_x,
+            DP_int_to_uint32(be->layer_id), be->classic.dab_x,
             be->classic.dab_y, be->classic.dab_color,
             get_dab_blend_mode(be->classic.brush.paint_mode,
                                DP_classic_brush_blend_mode(&be->classic.brush)),
@@ -1163,7 +1164,7 @@ static void flush_mypaint_dabs(DP_BrushEngine *be, int used)
     if (paint_mode == DP_PAINT_MODE_DIRECT
         && is_normal_mypaint_mode(blend_mode)) {
         msg = DP_msg_draw_dabs_mypaint_new(
-            be->stroke.context_id, DP_int_to_uint16(be->layer_id),
+            be->stroke.context_id, DP_int_to_uint32(be->layer_id),
             be->mypaint.dab_x, be->mypaint.dab_y, be->mypaint.dab_color,
             be->mypaint.dab_lock_alpha, be->mypaint.dab_colorize,
             be->mypaint.dab_posterize, be->mypaint.dab_posterize_num,
@@ -1172,7 +1173,7 @@ static void flush_mypaint_dabs(DP_BrushEngine *be, int used)
     else {
         msg = DP_msg_draw_dabs_mypaint_blend_new(
             be->stroke.context_id, be->mypaint.dab_flags,
-            DP_int_to_uint16(be->layer_id), be->mypaint.dab_x,
+            DP_int_to_uint32(be->layer_id), be->mypaint.dab_x,
             be->mypaint.dab_y, be->mypaint.dab_color,
             get_dab_blend_mode(paint_mode, blend_mode), set_mypaint_blend_dabs,
             used, be);
@@ -1937,7 +1938,7 @@ void DP_brush_engine_stroke_end(DP_BrushEngine *be, long long time_msec,
     if (push_pen_up) {
         be->push_message(be->user,
                          DP_msg_pen_up_new(be->stroke.context_id,
-                                           DP_int_to_uint16(be->layer_id)));
+                                           DP_int_to_uint32(be->layer_id)));
     }
     be->stroke.in_progress = false;
 

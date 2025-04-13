@@ -12,6 +12,7 @@ extern "C" {
 #include <dpengine/layer_props.h>
 #include <dpengine/layer_props_list.h>
 #include <dpmsg/blend_mode.h>
+#include <dpmsg/ids.h>
 }
 #include <Psd.h>
 #include <PsdPlatform.h>
@@ -313,10 +314,11 @@ static void extract_layer_pixels(psd::Document *document, psd::Layer *layer,
 }
 
 static DP_PsdLayerPair extract_layer_content(psd::Document *document,
-                                             int &layer_id, psd::Layer *layer)
+                                             int &element_id, psd::Layer *layer)
 {
     DP_PsdLayerPair p;
-    p.tlp = DP_transient_layer_props_new_init(layer_id++, false);
+    int layer_id = DP_layer_id_make(1u, element_id++);
+    p.tlp = DP_transient_layer_props_new_init(layer_id, false);
     apply_layer_props(p.tlp, layer);
 
     p.t.lc = DP_transient_layer_content_new_init(
@@ -328,7 +330,7 @@ static DP_PsdLayerPair extract_layer_content(psd::Document *document,
 
 static std::vector<DP_PsdLayerPair> extract_layers_recursive(
     psd::Document *document, psd::File *file, psd::Allocator *allocator,
-    psd::LayerMaskSection *section, unsigned int &i, int &layer_id);
+    psd::LayerMaskSection *section, unsigned int &i, int &element_id);
 
 static std::pair<DP_TransientLayerPropsList *, DP_TransientLayerList *>
 build_layer_lists(const std::vector<DP_PsdLayerPair> &layers)
@@ -361,11 +363,11 @@ static DP_PsdLayerPair extract_layer_group(psd::Document *document,
                                            psd::File *file,
                                            psd::Allocator *allocator,
                                            psd::LayerMaskSection *section,
-                                           unsigned int &i, int &layer_id)
+                                           unsigned int &i, int &element_id)
 {
-    int group_id = layer_id++;
+    int group_id = DP_layer_id_make(1u, element_id++);
     std::vector<DP_PsdLayerPair> layers = extract_layers_recursive(
-        document, file, allocator, section, i, layer_id);
+        document, file, allocator, section, i, group_id);
 
     auto [tlpl, tll] = build_layer_lists(layers);
 
@@ -384,7 +386,7 @@ static DP_PsdLayerPair extract_layer_group(psd::Document *document,
 
 static std::vector<DP_PsdLayerPair> extract_layers_recursive(
     psd::Document *document, psd::File *file, psd::Allocator *allocator,
-    psd::LayerMaskSection *section, unsigned int &i, int &layer_id)
+    psd::LayerMaskSection *section, unsigned int &i, int &element_id)
 {
     std::vector<DP_PsdLayerPair> layers;
     while (i < section->layerCount) {
@@ -394,7 +396,7 @@ static std::vector<DP_PsdLayerPair> extract_layers_recursive(
             // Start of a new group.
             ++i;
             layers.push_back(extract_layer_group(document, file, allocator,
-                                                 section, i, layer_id));
+                                                 section, i, element_id));
         }
         else if (type == psd::layerType::OPEN_FOLDER
                  || type == psd::layerType::CLOSED_FOLDER) {
@@ -405,7 +407,8 @@ static std::vector<DP_PsdLayerPair> extract_layers_recursive(
             // Regular layer.
             ++i;
             psd::ExtractLayer(document, file, allocator, layer);
-            layers.push_back(extract_layer_content(document, layer_id, layer));
+            layers.push_back(
+                extract_layer_content(document, element_id, layer));
         }
     }
     return layers;
@@ -423,9 +426,9 @@ static DP_TransientCanvasState *extract_layers(psd::Document *document,
     }
 
     unsigned int i = 0;
-    int layer_id = 0x100;
+    int element_id = 0;
     std::vector<DP_PsdLayerPair> layers = extract_layers_recursive(
-        document, file, allocator, section, i, layer_id);
+        document, file, allocator, section, i, element_id);
     auto [tlpl, tll] = build_layer_lists(layers);
 
     psd::DestroyLayerMaskSection(section, allocator);

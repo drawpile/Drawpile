@@ -22,9 +22,7 @@
 #include "canvas_state.h"
 #include "annotation.h"
 #include "annotation_list.h"
-#include "brush.h"
 #include "canvas_diff.h"
-#include "compress.h"
 #include "document_metadata.h"
 #include "draw_context.h"
 #include "image.h"
@@ -49,6 +47,7 @@
 #include <dpcommon/geom.h>
 #include <dpcommon/perf.h>
 #include <dpmsg/blend_mode.h>
+#include <dpmsg/ids.h>
 #include <dpmsg/message.h>
 
 #define DP_PERF_CONTEXT "canvas_state"
@@ -387,9 +386,9 @@ static DP_CanvasState *handle_canvas_resize(DP_CanvasState *cs,
 static DP_CanvasState *handle_layer_attr(DP_CanvasState *cs,
                                          DP_MsgLayerAttributes *mla)
 {
-    int layer_id = DP_msg_layer_attributes_id(mla);
-    if (layer_id == 0) {
-        DP_error_set("Layer attributes: layer id 0 is invalid");
+    int layer_id = DP_protocol_to_layer_id(DP_msg_layer_attributes_id(mla));
+    if (!DP_layer_id_normal(layer_id)) {
+        DP_error_set("Layer attributes: layer id %d is invalid", layer_id);
         return NULL;
     }
 
@@ -408,9 +407,9 @@ static DP_CanvasState *handle_layer_attr(DP_CanvasState *cs,
 static DP_CanvasState *handle_layer_retitle(DP_CanvasState *cs,
                                             DP_MsgLayerRetitle *mlr)
 {
-    int layer_id = DP_msg_layer_retitle_id(mlr);
-    if (layer_id == 0) {
-        DP_error_set("Layer retitle: layer id 0 is invalid");
+    int layer_id = DP_protocol_to_layer_id(DP_msg_layer_retitle_id(mlr));
+    if (!DP_layer_id_normal(layer_id)) {
+        DP_error_set("Layer retitle: layer id %d is invalid", layer_id);
         return NULL;
     }
 
@@ -520,6 +519,12 @@ static DP_CanvasState *handle_put_image(DP_CanvasState *cs,
                                         unsigned int context_id,
                                         DP_MsgPutImage *mpi)
 {
+    int layer_id = DP_protocol_to_layer_id(DP_msg_put_image_layer(mpi));
+    if (!DP_layer_id_normal_or_selection(layer_id)) {
+        DP_error_set("Put image: invalid layer id %d", layer_id);
+        return NULL;
+    }
+
     int blend_mode = DP_msg_put_image_mode(mpi);
     if (blend_mode == DP_BLEND_MODE_COMPAT_LOCAL_MATCH) {
         // This is a local match message disguised as a put image one for
@@ -533,12 +538,12 @@ static DP_CanvasState *handle_put_image(DP_CanvasState *cs,
 
     size_t image_size;
     const unsigned char *image = DP_msg_put_image_image(mpi, &image_size);
-    return DP_ops_put_image(
-        cs, ucs_or_null, context_id, DP_msg_put_image_layer(mpi), blend_mode,
-        DP_uint32_to_int(DP_msg_put_image_x(mpi)),
-        DP_uint32_to_int(DP_msg_put_image_y(mpi)),
-        DP_uint32_to_int(DP_msg_put_image_w(mpi)),
-        DP_uint32_to_int(DP_msg_put_image_h(mpi)), image, image_size);
+    return DP_ops_put_image(cs, ucs_or_null, context_id, layer_id, blend_mode,
+                            DP_uint32_to_int(DP_msg_put_image_x(mpi)),
+                            DP_uint32_to_int(DP_msg_put_image_y(mpi)),
+                            DP_uint32_to_int(DP_msg_put_image_w(mpi)),
+                            DP_uint32_to_int(DP_msg_put_image_h(mpi)), image,
+                            image_size);
 }
 
 static DP_CanvasState *handle_fill_rect(DP_CanvasState *cs,
@@ -546,6 +551,12 @@ static DP_CanvasState *handle_fill_rect(DP_CanvasState *cs,
                                         unsigned int context_id,
                                         DP_MsgFillRect *mfr)
 {
+    int layer_id = DP_protocol_to_layer_id(DP_msg_fill_rect_layer(mfr));
+    if (!DP_layer_id_normal_or_selection(layer_id)) {
+        DP_error_set("Fill rect: invalid layer id %d", layer_id);
+        return NULL;
+    }
+
     int blend_mode = DP_msg_fill_rect_mode(mfr);
     if (!DP_blend_mode_exists(blend_mode)) {
         DP_error_set("Fill rect: unknown blend mode %d", blend_mode);
@@ -571,9 +582,8 @@ static DP_CanvasState *handle_fill_rect(DP_CanvasState *cs,
     }
 
     DP_UPixel15 pixel = DP_upixel15_from_color(DP_msg_fill_rect_color(mfr));
-    return DP_ops_fill_rect(cs, ucs_or_null, context_id,
-                            DP_msg_fill_rect_layer(mfr), blend_mode, left, top,
-                            right, bottom, pixel);
+    return DP_ops_fill_rect(cs, ucs_or_null, context_id, layer_id, blend_mode,
+                            left, top, right, bottom, pixel);
 }
 
 static DP_CanvasState *
@@ -585,6 +595,16 @@ handle_region(DP_CanvasState *cs, DP_DrawContext *dc,
               const unsigned char *in_mask, size_t in_mask_size,
               DP_Image *(*decompress)(int, int, const unsigned char *, size_t))
 {
+    if (!DP_layer_id_normal_or_selection(src_layer_id)) {
+        DP_error_set("%s: invalid source id %d", title, src_layer_id);
+        return NULL;
+    }
+
+    if (!DP_layer_id_normal_or_selection(dst_layer_id)) {
+        DP_error_set("%s: invalid target id %d", title, dst_layer_id);
+        return NULL;
+    }
+
     if (bw <= 0 || bh <= 0) {
         DP_error_set("%s: selection is empty", title);
         return NULL;
@@ -635,6 +655,12 @@ handle_region(DP_CanvasState *cs, DP_DrawContext *dc,
 static DP_CanvasState *handle_put_tile(DP_CanvasState *cs, DP_DrawContext *dc,
                                        DP_MsgPutTile *mpt)
 {
+    int layer_id = DP_protocol_to_layer_id(DP_msg_put_tile_layer(mpt));
+    if (!DP_layer_id_normal_or_selection(layer_id)) {
+        DP_error_set("Put tile: invalid layer id %d", layer_id);
+        return NULL;
+    }
+
     DP_TileCounts tile_counts = DP_tile_counts_round(cs->width, cs->height);
     int tile_total = tile_counts.x * tile_counts.y;
     int x = DP_msg_put_tile_col(mpt);
@@ -654,9 +680,9 @@ static DP_CanvasState *handle_put_tile(DP_CanvasState *cs, DP_DrawContext *dc,
         return NULL;
     }
 
-    DP_CanvasState *next = DP_ops_put_tile(cs, tile, DP_msg_put_tile_layer(mpt),
-                                           DP_msg_put_tile_sublayer(mpt), x, y,
-                                           DP_msg_put_tile_repeat(mpt));
+    DP_CanvasState *next =
+        DP_ops_put_tile(cs, tile, layer_id, DP_msg_put_tile_sublayer(mpt), x, y,
+                        DP_msg_put_tile_repeat(mpt));
 
     DP_tile_decref(tile);
     return next;
@@ -688,7 +714,12 @@ static DP_CanvasState *handle_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
                                      DP_UserCursors *ucs_or_null,
                                      unsigned int context_id, DP_MsgPenUp *mpu)
 {
-    int layer_id = DP_msg_pen_up_layer(mpu);
+    int layer_id = DP_protocol_to_layer_id(DP_msg_pen_up_layer(mpu));
+    if (!DP_layer_id_normal_or_selection(layer_id)) {
+        DP_error_set("Pen up: invalid layer id %d", layer_id);
+        return NULL;
+    }
+
     return DP_ops_pen_up(cs, dc, ucs_or_null, context_id, layer_id);
 }
 
@@ -757,16 +788,17 @@ get_draw_dabs_classic_params(unsigned int context_id,
 {
     int dab_count;
     const DP_ClassicDab *dabs = DP_msg_draw_dabs_classic_dabs(mddc, &dab_count);
-    return (DP_PaintDrawDabsParams){DP_MSG_DRAW_DABS_CLASSIC,
-                                    context_id,
-                                    DP_msg_draw_dabs_classic_layer(mddc),
-                                    DP_msg_draw_dabs_classic_x(mddc),
-                                    DP_msg_draw_dabs_classic_y(mddc),
-                                    DP_msg_draw_dabs_classic_color(mddc),
-                                    DP_msg_draw_dabs_classic_mode(mddc),
-                                    DP_msg_draw_dabs_classic_paint_mode(mddc),
-                                    dab_count,
-                                    {.classic = {dabs}}};
+    return (DP_PaintDrawDabsParams){
+        DP_MSG_DRAW_DABS_CLASSIC,
+        context_id,
+        DP_protocol_to_layer_id(DP_msg_draw_dabs_classic_layer(mddc)),
+        DP_msg_draw_dabs_classic_x(mddc),
+        DP_msg_draw_dabs_classic_y(mddc),
+        DP_msg_draw_dabs_classic_color(mddc),
+        DP_msg_draw_dabs_classic_mode(mddc),
+        DP_msg_draw_dabs_classic_paint_mode(mddc),
+        dab_count,
+        {.classic = {dabs}}};
 }
 
 static DP_PaintDrawDabsParams
@@ -775,16 +807,17 @@ get_draw_dabs_pixel_params(DP_MessageType type, unsigned int context_id,
 {
     int dab_count;
     const DP_PixelDab *dabs = DP_msg_draw_dabs_pixel_dabs(mddp, &dab_count);
-    return (DP_PaintDrawDabsParams){(int)type,
-                                    context_id,
-                                    DP_msg_draw_dabs_pixel_layer(mddp),
-                                    DP_msg_draw_dabs_pixel_x(mddp),
-                                    DP_msg_draw_dabs_pixel_y(mddp),
-                                    DP_msg_draw_dabs_pixel_color(mddp),
-                                    DP_msg_draw_dabs_pixel_mode(mddp),
-                                    DP_msg_draw_dabs_pixel_paint_mode(mddp),
-                                    dab_count,
-                                    {.pixel = {dabs}}};
+    return (DP_PaintDrawDabsParams){
+        (int)type,
+        context_id,
+        DP_protocol_to_layer_id(DP_msg_draw_dabs_pixel_layer(mddp)),
+        DP_msg_draw_dabs_pixel_x(mddp),
+        DP_msg_draw_dabs_pixel_y(mddp),
+        DP_msg_draw_dabs_pixel_color(mddp),
+        DP_msg_draw_dabs_pixel_mode(mddp),
+        DP_msg_draw_dabs_pixel_paint_mode(mddp),
+        dab_count,
+        {.pixel = {dabs}}};
 }
 
 static DP_PaintDrawDabsParams
@@ -798,7 +831,7 @@ get_draw_dabs_mypaint_params(unsigned int context_id,
     return (DP_PaintDrawDabsParams){
         DP_MSG_DRAW_DABS_MYPAINT,
         context_id,
-        DP_msg_draw_dabs_mypaint_layer(mddmp),
+        DP_protocol_to_layer_id(DP_msg_draw_dabs_mypaint_layer(mddmp)),
         DP_msg_draw_dabs_mypaint_x(mddmp),
         DP_msg_draw_dabs_mypaint_y(mddmp),
         DP_msg_draw_dabs_mypaint_color(mddmp),
@@ -822,7 +855,7 @@ get_draw_dabs_mypaint_blend_params(unsigned int context_id,
     return (DP_PaintDrawDabsParams){
         DP_MSG_DRAW_DABS_MYPAINT_BLEND,
         context_id,
-        DP_msg_draw_dabs_mypaint_blend_layer(mddmpb),
+        DP_protocol_to_layer_id(DP_msg_draw_dabs_mypaint_blend_layer(mddmpb)),
         DP_msg_draw_dabs_mypaint_blend_x(mddmpb),
         DP_msg_draw_dabs_mypaint_blend_y(mddmpb),
         DP_msg_draw_dabs_mypaint_blend_color(mddmpb),
@@ -890,6 +923,18 @@ static DP_CanvasState *handle_move_rect(DP_CanvasState *cs,
                                         unsigned int context_id,
                                         DP_MsgMoveRect *mmr)
 {
+    int src_layer_id = DP_protocol_to_layer_id(DP_msg_move_rect_source(mmr));
+    if (!DP_layer_id_normal_or_selection(src_layer_id)) {
+        DP_error_set("Move rect: invalid source layer id %d", src_layer_id);
+        return NULL;
+    }
+
+    int dst_layer_id = DP_protocol_to_layer_id(DP_msg_move_rect_layer(mmr));
+    if (!DP_layer_id_normal_or_selection(dst_layer_id)) {
+        DP_error_set("Move rect: invalid target layer id %d", dst_layer_id);
+        return NULL;
+    }
+
     int width = DP_msg_move_rect_w(mmr);
     int height = DP_msg_move_rect_h(mmr);
     if (width <= 0 || height <= 0) {
@@ -928,9 +973,9 @@ static DP_CanvasState *handle_move_rect(DP_CanvasState *cs,
         mask = NULL;
     }
 
-    DP_CanvasState *next_cs = DP_ops_move_rect(
-        cs, ucs_or_null, context_id, DP_msg_move_rect_source(mmr),
-        DP_msg_move_rect_layer(mmr), &src_rect, dst_x, dst_y, mask);
+    DP_CanvasState *next_cs =
+        DP_ops_move_rect(cs, ucs_or_null, context_id, src_layer_id,
+                         dst_layer_id, &src_rect, dst_x, dst_y, mask);
     DP_free(mask);
     return next_cs;
 }
@@ -995,9 +1040,23 @@ static DP_CanvasState *handle_layer_tree_create(DP_CanvasState *cs,
                                                 unsigned int context_id,
                                                 DP_MsgLayerTreeCreate *mtlc)
 {
-    int layer_id = DP_msg_layer_tree_create_id(mtlc);
-    if (layer_id == 0) {
-        DP_error_set("Create layer tree: layer id 0 is invalid");
+    int layer_id = DP_protocol_to_layer_id(DP_msg_layer_tree_create_id(mtlc));
+    if (!DP_layer_id_normal(layer_id)) {
+        DP_error_set("Layer tree create: invalid layer id %d", layer_id);
+        return NULL;
+    }
+
+    int source_id =
+        DP_protocol_to_layer_id(DP_msg_layer_tree_create_source(mtlc));
+    if (source_id != 0 && !DP_layer_id_normal(source_id)) {
+        DP_error_set("Layer tree create: invalid source id %d", source_id);
+        return NULL;
+    }
+
+    int target_id =
+        DP_protocol_to_layer_id(DP_msg_layer_tree_create_target(mtlc));
+    if (target_id != 0 && !DP_layer_id_normal(target_id)) {
+        DP_error_set("Layer tree create: invalid target id %d", target_id);
         return NULL;
     }
 
@@ -1012,10 +1071,9 @@ static DP_CanvasState *handle_layer_tree_create(DP_CanvasState *cs,
     size_t title_length;
     const char *title = DP_msg_layer_tree_create_title(mtlc, &title_length);
 
-    DP_CanvasState *next = DP_ops_layer_tree_create(
-        cs, dc, layer_id, DP_msg_layer_tree_create_source(mtlc),
-        DP_msg_layer_tree_create_target(mtlc), tile, into, group, title,
-        title_length);
+    DP_CanvasState *next =
+        DP_ops_layer_tree_create(cs, dc, layer_id, source_id, target_id, tile,
+                                 into, group, title, title_length);
 
     DP_tile_decref_nullable(tile);
     return next;
@@ -1025,19 +1083,31 @@ static DP_CanvasState *handle_layer_tree_move(DP_CanvasState *cs,
                                               DP_DrawContext *dc,
                                               DP_MsgLayerTreeMove *mltm)
 {
-    int layer_id = DP_msg_layer_tree_move_layer(mltm);
-    if (layer_id == 0) {
-        DP_error_set("Move layer tree: layer id 0 is invalid");
+    int layer_id = DP_protocol_to_layer_id(DP_msg_layer_tree_move_layer(mltm));
+    if (!DP_layer_id_normal(layer_id)) {
+        DP_error_set("Layer tree move: invalid layer id %d", layer_id);
         return NULL;
     }
 
-    int parent_id = DP_msg_layer_tree_move_parent(mltm);
-    int sibling_id = DP_msg_layer_tree_move_sibling(mltm);
+    int parent_id =
+        DP_protocol_to_layer_id(DP_msg_layer_tree_move_parent(mltm));
+    if (parent_id != 0 && !DP_layer_id_normal(parent_id)) {
+        DP_error_set("Layer tree move: invalid parent id %d", parent_id);
+        return NULL;
+    }
+
+    int sibling_id =
+        DP_protocol_to_layer_id(DP_msg_layer_tree_move_sibling(mltm));
+    if (sibling_id != 0 && !DP_layer_id_normal(sibling_id)) {
+        DP_error_set("Layer tree move: invalid sibling id %d", sibling_id);
+        return NULL;
+    }
+
     bool overlapping_ids = layer_id == parent_id || layer_id == sibling_id
                         || (parent_id == sibling_id && parent_id != 0);
     if (overlapping_ids) {
         DP_error_set(
-            "Move layer tree: layer %d, parent %d and sibling %d overlap",
+            "Layer tree move: layer %d, parent %d and sibling %d overlap",
             layer_id, parent_id, sibling_id);
         return NULL;
     }
@@ -1050,14 +1120,22 @@ static DP_CanvasState *handle_layer_tree_delete(DP_CanvasState *cs,
                                                 unsigned int context_id,
                                                 DP_MsgLayerTreeDelete *mltd)
 {
-    int layer_id = DP_msg_layer_tree_delete_id(mltd);
-    if (layer_id == 0) {
-        DP_error_set("Layer tree delete: layer id 0 is invalid");
+    int layer_id = DP_protocol_to_layer_id(DP_msg_layer_tree_delete_id(mltd));
+    if (!DP_layer_id_normal(layer_id)) {
+        DP_error_set("Layer tree delete: layer id %d is invalid", layer_id);
+        return NULL;
+    }
+
+    int merge_layer_id =
+        DP_protocol_to_layer_id(DP_msg_layer_tree_delete_merge_to(mltd));
+    if (!DP_layer_id_normal(layer_id)) {
+        DP_error_set("Layer tree delete: merge layer id %d is invalid",
+                     layer_id);
         return NULL;
     }
 
     return DP_ops_layer_tree_delete(cs, dc, context_id, layer_id,
-                                    DP_msg_layer_tree_delete_merge_to(mltd));
+                                    merge_layer_id);
 }
 
 static DP_CanvasState *handle_transform_region(DP_CanvasState *cs,
@@ -1071,7 +1149,8 @@ static DP_CanvasState *handle_transform_region(DP_CanvasState *cs,
         DP_msg_transform_region_mask(mtr, &in_mask_size);
     return handle_region(
         cs, dc, ucs_or_null, context_id, "Transform region",
-        DP_msg_transform_region_source(mtr), DP_msg_transform_region_layer(mtr),
+        DP_protocol_to_layer_id(DP_msg_transform_region_source(mtr)),
+        DP_protocol_to_layer_id(DP_msg_transform_region_layer(mtr)),
         DP_msg_transform_region_mode(mtr), DP_msg_transform_region_bx(mtr),
         DP_msg_transform_region_by(mtr), DP_msg_transform_region_bw(mtr),
         DP_msg_transform_region_bh(mtr), DP_msg_transform_region_x1(mtr),
@@ -1126,10 +1205,10 @@ static DP_CanvasState *handle_track_delete(DP_CanvasState *cs,
     return DP_ops_track_delete(cs, track_id);
 }
 
-static int get_order_id(void *user, int index)
+static int get_track_order_id(void *user, int index)
 {
-    const uint16_t *layer_ids = user;
-    return layer_ids[index];
+    const uint16_t *track_ids = user;
+    return DP_protocol_to_track_id(track_ids[index]);
 }
 
 static DP_CanvasState *handle_track_order(DP_CanvasState *cs,
@@ -1137,7 +1216,7 @@ static DP_CanvasState *handle_track_order(DP_CanvasState *cs,
 {
     int count;
     const uint16_t *track_ids = DP_msg_track_order_tracks(mto, &count);
-    return DP_ops_track_order(cs, count, get_order_id, (void *)track_ids);
+    return DP_ops_track_order(cs, count, get_track_order_id, (void *)track_ids);
 }
 
 static DP_CanvasState *handle_key_frame_set(DP_CanvasState *cs,
@@ -1150,18 +1229,31 @@ static DP_CanvasState *handle_key_frame_set(DP_CanvasState *cs,
     }
 
     int frame_index = DP_msg_key_frame_set_frame_index(mkfs);
-    int source_id = DP_msg_key_frame_set_source_id(mkfs);
+    uint32_t source_id = DP_msg_key_frame_set_source_id(mkfs);
     int source = DP_msg_key_frame_set_source(mkfs);
     switch (source) {
-    case DP_MSG_KEY_FRAME_SET_SOURCE_LAYER:
-        return DP_ops_key_frame_set(cs, track_id, frame_index, source_id);
+    case DP_MSG_KEY_FRAME_SET_SOURCE_LAYER: {
+        int layer_id = DP_protocol_to_layer_id(source_id);
+        if (layer_id != 0 && !DP_layer_id_normal(layer_id)) {
+            DP_error_set("Key frame set: invalid layer id %d", layer_id);
+            return NULL;
+        }
+        return DP_ops_key_frame_set(cs, track_id, frame_index, layer_id);
+    }
     case DP_MSG_KEY_FRAME_SET_SOURCE_KEY_FRAME: {
+        int source_track_id = DP_uint32_to_int(source_id);
+        if (!DP_track_id_normal(source_track_id)) {
+            DP_error_set("Key frame set: invalid source track id %d",
+                         source_track_id);
+            return NULL;
+        }
+
         int source_index = DP_msg_key_frame_set_source_index(mkfs);
-        if (track_id == source_id && frame_index == source_index) {
+        if (track_id == source_track_id && frame_index == source_index) {
             DP_error_set("Key frame set: can't copy a key frame to itself");
             return NULL;
         }
-        return DP_ops_key_frame_copy(cs, track_id, frame_index, source_id,
+        return DP_ops_key_frame_copy(cs, track_id, frame_index, source_track_id,
                                      source_index);
     }
     default:
@@ -1173,7 +1265,8 @@ static DP_CanvasState *handle_key_frame_set(DP_CanvasState *cs,
 static DP_CanvasState *handle_key_frame_retitle(DP_CanvasState *cs,
                                                 DP_MsgKeyFrameRetitle *mkfr)
 {
-    int track_id = DP_msg_key_frame_retitle_track_id(mkfr);
+    int track_id =
+        DP_protocol_to_track_id(DP_msg_key_frame_retitle_track_id(mkfr));
     if (track_id == 0) {
         DP_error_set("Key frame retitle: track id 0 is invalid");
         return NULL;
@@ -1189,9 +1282,11 @@ static DP_CanvasState *handle_key_frame_retitle(DP_CanvasState *cs,
 
 static DP_KeyFrameLayer get_key_frame_layer_attribute(void *user, int index)
 {
-    const uint16_t *layers = user;
-    const uint16_t *pair = &layers[index * 2];
-    return (DP_KeyFrameLayer){pair[0], pair[1]};
+    uint32_t elem = ((const uint32_t *)user)[index];
+    int layer = DP_uint32_to_int(elem & (uint32_t)0xffffff);
+    unsigned int flags =
+        DP_uint32_to_uint((elem >> (uint32_t)24) & (uint32_t)0xff);
+    return (DP_KeyFrameLayer){layer, flags};
 }
 
 static DP_CanvasState *
@@ -1205,16 +1300,11 @@ handle_key_frame_layer_attributes(DP_CanvasState *cs, DP_DrawContext *dc,
     }
 
     int count;
-    const uint16_t *layers =
-        DP_msg_key_frame_layer_attributes_layers(mkfla, &count);
-    if (count % 2 != 0) {
-        DP_error_set("Key frame layer attributes: count %d is not even", count);
-        return NULL;
-    }
-
+    const uint32_t *layer_flags =
+        DP_msg_key_frame_layer_attributes_layer_flags(mkfla, &count);
     return DP_ops_key_frame_layer_attributes(
         cs, dc, track_id, DP_msg_key_frame_layer_attributes_frame_index(mkfla),
-        count / 2, get_key_frame_layer_attribute, (void *)layers);
+        count, get_key_frame_layer_attribute, (void *)layer_flags);
 }
 
 static DP_CanvasState *handle_key_frame_delete(DP_CanvasState *cs,

@@ -20,6 +20,7 @@ dp_target_sources(dpmsg
     dpmsg/binary_reader.h
     dpmsg/binary_writer.h
     dpmsg/blend_mode.h
+    dpmsg/ids.h
     dpmsg/local_match.h
     dpmsg/message.h
     dpmsg/messages.h

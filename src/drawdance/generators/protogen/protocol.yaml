@@ -252,7 +252,7 @@ LayerACL:
              The eighth bit of the flags field (0x80) indicates whether the layer is locked in general.
              The first three bits (0x07) indicate the access tier level.
     fields:
-        - id u16
+        - id u24
         - flags u8
         - exclusive vec_u8:
           max_len: 255
@@ -279,7 +279,7 @@ DefaultLayer:
              The default layer is the one new users default to when logging in.
              If no default layer is set, the newest layer will be selected by default.
     fields:
-        - id u16
+        - id u24
 
 RemovedFiltered:
     id: 72
@@ -390,7 +390,7 @@ LayerAttributes:
              Note: the `fixed` flag is unused since version 2.2. It's functionality is replaced
              by the custom timeline feature.
     fields:
-        - id u16
+        - id u24
         - sublayer u8
         - flags flags: [censor, fixed, isolated, clip]
         - opacity u8
@@ -401,7 +401,7 @@ LayerRetitle:
     name: retitlelayer
     comment: Change a layer's title
     fields:
-        - id u16
+        - id u24
         - title utf8
 
 RemovedLayerOrder:
@@ -436,17 +436,8 @@ PutImage:
              Note that since the message length is fairly limited, a
              large image may have to be divided into multiple PutImage
              commands.
-
-             Compatibility hack: this message is also used to disguise selection
-             messages when drawing on the builtin server. If the blend mode is
-             253, this is really a SelectionPut message; the bottom octet of
-             layer is the selection id, the upper octet is the operation, x and
-             y are actually i32, w and h are clamped to u16, the image is the
-             mask (which may be empty.) If the blend mode is 254, this is really
-             a SelectionClear message; the bottom octet of layer is the
-             selection id and everything else is ignored.
     fields:
-        - layer u16
+        - layer u24
         - mode blendmode
         - x u32
         - y u32
@@ -458,7 +449,7 @@ FillRect:
     id: 137
     comment: Fill a rectangle with solid color
     fields:
-        - layer u16
+        - layer u24
         - mode blendmode
         - x u32
         - y u32
@@ -487,7 +478,7 @@ PenUp:
              users are merged, either on the given layer or on all layers if
              that's 0 too.
     fields:
-        - layer u16
+        - layer u24
 
 AnnotationCreate:
     id: 141
@@ -564,7 +555,7 @@ PutTile:
              with incomplete indirect strokes. Sending a PenUp command will merge the sublayer.
     fields:
         - user u8
-        - layer u16
+        - layer u24
         - sublayer u8
         - col u16
         - row u16
@@ -594,7 +585,7 @@ DrawDabsClassic:
              The size field is the brush diameter multiplied by 256.
     fields:
         - flags u8
-        - layer u16
+        - layer u24
         - x i32: div4
         - y i32: div4
         - color argb32
@@ -618,7 +609,7 @@ DrawDabsPixel:
              but the fields all have integer precision.
     fields:
         - flags u8
-        - layer u16
+        - layer u24
         - x i32
         - y i32
         - color argb32
@@ -646,7 +637,7 @@ DrawDabsMyPaint:
              direct painting mode. Other blend and indirect painting modes use
              the mypaintdabsblend message instead.
     fields:
-        - layer u16
+        - layer u24
         - x i32: div4
         - y i32: div4
         - color argb32
@@ -674,7 +665,7 @@ DrawDabsMyPaintBlend:
              unsuitable.
     fields:
         - flags u8
-        - layer u16
+        - layer u24
         - x i32: div4
         - y i32: div4
         - color argb32
@@ -699,12 +690,9 @@ MoveRect:
              to support non-rectangular selections.
 
              Source and target rects may be (partially) outside the canvas.
-
-             If source is 0, layer refers to a selection instead: the lower
-             octet is the source and the upper octet is the target selection id.
     fields:
-      - layer u16
-      - source u16
+      - layer u24
+      - source u24
       - sx i32
       - sy i32
       - tx i32
@@ -759,9 +747,9 @@ LayerTreeCreate:
 
              If layer controls are locked, this command requires session operator privileges.
     fields:
-        - id u16
-        - source u16
-        - target u16
+        - id u24
+        - source u24
+        - target u24
         - fill argb32
         - flags flags: [group, into]
         - title utf8
@@ -782,9 +770,9 @@ LayerTreeMove:
              would be allowed to create a layer there (which is always, since
              that's currently conflated with being allowed to edit layers.)
     fields:
-      - layer u16
-      - parent u16
-      - sibling u16
+      - layer u24
+      - parent u24
+      - sibling u24
 
 LayerTreeDelete:
     id: 164
@@ -798,8 +786,8 @@ LayerTreeDelete:
              If the current layer or layer controls in general are locked, this command
              requires session operator privileges.
     fields:
-        - id u16
-        - merge_to u16
+        - id u24
+        - merge_to u24
 
 TransformRegion:
     id: 165
@@ -823,12 +811,9 @@ TransformRegion:
              is DEFLATEd 8 bit alpha.
 
              For axis aligned rectangle selections, no bitmap is necessary.
-
-             If source is 0, layer refers to a selection instead: the lower
-             octet is the source and the upper octet is the target selection id.
     fields:
-        - layer u16
-        - source u16
+        - layer u24
+        - source u24
         - bx i32
         - by i32
         - bw i32
@@ -900,7 +885,7 @@ KeyFrameSet:
     fields:
         - track_id u16
         - frame_index u16
-        - source_id u16
+        - source_id u24
         - source_index u16
         - source enum:
           name: Source
@@ -938,7 +923,7 @@ KeyFrameLayerAttributes:
     fields:
         - track_id u16
         - frame_index u16
-        - layers vec_u16
+        - layer_flags vec_u32
 
 KeyFrameDelete:
     id: 173

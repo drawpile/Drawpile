@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
+extern "C" {
+#include <dpmsg/ids.h>
+}
 #include "libclient/canvas/acl.h"
-
 #include <QHash>
 
 namespace canvas {
@@ -279,7 +280,7 @@ bool AclState::canEditLayer(int layerId) const
 
 bool AclState::isOwnLayer(int layerId) const
 {
-	return isLayerOwner(layerId, localUserId());
+	return DP_layer_id_owner(layerId, localUserId());
 }
 
 int AclState::brushSizeLimit()

@@ -18,9 +18,8 @@
 #include <dpengine/timeline.h>
 #include <dpengine/track.h>
 #include <dpmsg/blend_mode.h>
+#include <dpmsg/ids.h>
 
-
-#define BASE_LAYER_ID 0x100
 
 static void assign_load_result(DP_LoadResult *out_result, DP_LoadResult result)
 {
@@ -74,7 +73,7 @@ DP_CanvasState *DP_load_animation_frames(
             child_tll = DP_transient_layer_list_new_init(path_count);
             child_tlpl = DP_transient_layer_props_list_new_init(path_count);
             tt = DP_transient_track_new_init(path_count);
-            DP_transient_track_id_set(tt, BASE_LAYER_ID);
+            DP_transient_track_id_set(tt, DP_track_id_make(1u, 0));
             set_track_title(tt, 0);
         }
 
@@ -86,7 +85,7 @@ DP_CanvasState *DP_load_animation_frames(
         DP_transient_layer_list_insert_transient_content_noinc(child_tll, tlc,
                                                                layer_count);
 
-        int layer_id = BASE_LAYER_ID + 1 + layer_count;
+        int layer_id = DP_layer_id_make(1u, 1 + layer_count);
         DP_TransientLayerProps *tlp =
             DP_transient_layer_props_new_init(layer_id, false);
         set_layer_title(tlp, i);
@@ -127,7 +126,7 @@ DP_CanvasState *DP_load_animation_frames(
 
     DP_TransientLayerProps *group_tlp =
         DP_transient_layer_props_new_init_with_transient_children_noinc(
-            BASE_LAYER_ID, child_tlpl);
+            DP_layer_id_make(1u, 0), child_tlpl);
     set_group_title(group_tlp, 0);
 
     DP_TransientLayerPropsList *root_tlpl =
@@ -242,8 +241,8 @@ static DP_CanvasState *convert_animation(
     int group_index = 0;
     int track_index = 0;
     int key_frame_index = 0;
-    int next_layer_id = BASE_LAYER_ID;
-    int next_track_id = BASE_LAYER_ID;
+    int next_layer_id = 0;
+    int next_track_id = 0;
     while (layer_index < layer_count) {
         // Count frames until the end or the next fixed layer.
         int frame_run =
@@ -253,19 +252,21 @@ static DP_CanvasState *convert_animation(
             DP_transient_layer_list_set_inc(
                 tll, DP_layer_list_at_noinc(ll, layer_index), track_index);
 
+            int layer_id = DP_layer_id_make(1u, next_layer_id);
             DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, layer_index);
             DP_TransientLayerProps *tlp = DP_transient_layer_props_new(lp);
-            DP_transient_layer_props_id_set(tlp, next_layer_id);
+            DP_transient_layer_props_id_set(tlp, layer_id);
             DP_transient_layer_props_list_set_transient_noinc(tlpl, tlp,
                                                               track_index);
 
+            int track_id = DP_track_id_make(1u, next_track_id);
             DP_TransientTrack *tt = DP_transient_track_new_init(1);
-            DP_transient_track_id_set(tt, next_track_id);
+            DP_transient_track_id_set(tt, track_id);
             size_t title_length;
             const char *title = DP_layer_props_title(lp, &title_length);
             DP_transient_track_title_set(tt, title, title_length);
             DP_transient_track_set_transient_noinc(
-                tt, 0, DP_transient_key_frame_new_init(next_layer_id, 0), 0);
+                tt, 0, DP_transient_key_frame_new_init(layer_id, 0), 0);
             DP_transient_timeline_set_transient_noinc(ttl, tt, track_index);
 
             ++layer_index;
@@ -276,27 +277,29 @@ static DP_CanvasState *convert_animation(
             DP_TransientLayerPropsList *child_tlpl =
                 DP_transient_layer_props_list_new_init(frame_run);
 
+            int track_id = DP_track_id_make(1u, next_track_id);
             bool needs_blank_frame =
                 key_frame_index + frame_run < key_frame_count;
             DP_TransientTrack *tt = DP_transient_track_new_init(
                 frame_run + (needs_blank_frame ? 1 : 0));
-            DP_transient_track_id_set(tt, next_track_id);
+            DP_transient_track_id_set(tt, track_id);
             set_track_title(tt, group_index);
 
             for (int i = 0; i < frame_run; ++i) {
                 DP_transient_layer_list_set_inc(
                     child_tll, DP_layer_list_at_noinc(ll, layer_index), i);
 
+                int layer_id = DP_layer_id_make(1u, next_layer_id);
                 DP_TransientLayerProps *child_tlp =
                     DP_transient_layer_props_new(
                         DP_layer_props_list_at_noinc(lpl, layer_index));
-                DP_transient_layer_props_id_set(child_tlp, next_layer_id);
+                DP_transient_layer_props_id_set(child_tlp, layer_id);
                 DP_transient_layer_props_list_set_transient_noinc(child_tlpl,
                                                                   child_tlp, i);
 
                 DP_transient_track_set_transient_noinc(
                     tt, key_frame_index * hold_time,
-                    DP_transient_key_frame_new_init(next_layer_id, 0), i);
+                    DP_transient_key_frame_new_init(layer_id, 0), i);
 
                 ++layer_index;
                 ++key_frame_index;
@@ -311,7 +314,7 @@ static DP_CanvasState *convert_animation(
 
             DP_TransientLayerProps *tlp =
                 DP_transient_layer_props_new_init_with_transient_children_noinc(
-                    next_layer_id, child_tlpl);
+                    DP_layer_id_make(1u, next_layer_id), child_tlpl);
             DP_transient_layer_props_isolated_set(tlp, false);
             set_group_title(tlp, group_index);
             DP_transient_layer_props_list_set_transient_noinc(tlpl, tlp,

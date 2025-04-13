@@ -760,14 +760,14 @@ int DP_msg_user_acl_users_count(const DP_MsgUserAcl *mua);
  * level.
  */
 
-#define DP_MSG_LAYER_ACL_STATIC_LENGTH 3
+#define DP_MSG_LAYER_ACL_STATIC_LENGTH 4
 
 #define DP_MSG_LAYER_ACL_EXCLUSIVE_MIN_COUNT 0
 #define DP_MSG_LAYER_ACL_EXCLUSIVE_MAX_COUNT 255
 
 typedef struct DP_MsgLayerAcl DP_MsgLayerAcl;
 
-DP_Message *DP_msg_layer_acl_new(unsigned int context_id, uint16_t id,
+DP_Message *DP_msg_layer_acl_new(unsigned int context_id, uint32_t id,
                                  uint8_t flags,
                                  void (*set_exclusive)(int, uint8_t *, void *),
                                  int exclusive_count, void *exclusive_user);
@@ -781,7 +781,7 @@ DP_Message *DP_msg_layer_acl_parse(unsigned int context_id,
 
 DP_MsgLayerAcl *DP_msg_layer_acl_cast(DP_Message *msg);
 
-uint16_t DP_msg_layer_acl_id(const DP_MsgLayerAcl *mla);
+uint32_t DP_msg_layer_acl_id(const DP_MsgLayerAcl *mla);
 
 uint8_t DP_msg_layer_acl_flags(const DP_MsgLayerAcl *mla);
 
@@ -836,11 +836,11 @@ int DP_msg_feature_access_levels_feature_tiers_count(
  * If no default layer is set, the newest layer will be selected by default.
  */
 
-#define DP_MSG_DEFAULT_LAYER_STATIC_LENGTH 2
+#define DP_MSG_DEFAULT_LAYER_STATIC_LENGTH 3
 
 typedef struct DP_MsgDefaultLayer DP_MsgDefaultLayer;
 
-DP_Message *DP_msg_default_layer_new(unsigned int context_id, uint16_t id);
+DP_Message *DP_msg_default_layer_new(unsigned int context_id, uint32_t id);
 
 DP_Message *DP_msg_default_layer_deserialize(unsigned int context_id,
                                              const unsigned char *buffer,
@@ -851,7 +851,7 @@ DP_Message *DP_msg_default_layer_parse(unsigned int context_id,
 
 DP_MsgDefaultLayer *DP_msg_default_layer_cast(DP_Message *msg);
 
-uint16_t DP_msg_default_layer_id(const DP_MsgDefaultLayer *mdl);
+uint32_t DP_msg_default_layer_id(const DP_MsgDefaultLayer *mdl);
 
 
 /*
@@ -1114,7 +1114,7 @@ int32_t DP_msg_canvas_resize_left(const DP_MsgCanvasResize *mcr);
  * replaced by the custom timeline feature.
  */
 
-#define DP_MSG_LAYER_ATTRIBUTES_STATIC_LENGTH 6
+#define DP_MSG_LAYER_ATTRIBUTES_STATIC_LENGTH 7
 
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR   0x1
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED    0x2
@@ -1131,7 +1131,7 @@ const char *DP_msg_layer_attributes_flags_flag_name(unsigned int value);
 
 typedef struct DP_MsgLayerAttributes DP_MsgLayerAttributes;
 
-DP_Message *DP_msg_layer_attributes_new(unsigned int context_id, uint16_t id,
+DP_Message *DP_msg_layer_attributes_new(unsigned int context_id, uint32_t id,
                                         uint8_t sublayer, uint8_t flags,
                                         uint8_t opacity, uint8_t blend);
 
@@ -1144,7 +1144,7 @@ DP_Message *DP_msg_layer_attributes_parse(unsigned int context_id,
 
 DP_MsgLayerAttributes *DP_msg_layer_attributes_cast(DP_Message *msg);
 
-uint16_t DP_msg_layer_attributes_id(const DP_MsgLayerAttributes *mla);
+uint32_t DP_msg_layer_attributes_id(const DP_MsgLayerAttributes *mla);
 
 uint8_t DP_msg_layer_attributes_sublayer(const DP_MsgLayerAttributes *mla);
 
@@ -1161,14 +1161,14 @@ uint8_t DP_msg_layer_attributes_blend(const DP_MsgLayerAttributes *mla);
  * Change a layer's title
  */
 
-#define DP_MSG_LAYER_RETITLE_STATIC_LENGTH 2
+#define DP_MSG_LAYER_RETITLE_STATIC_LENGTH 3
 
 #define DP_MSG_LAYER_RETITLE_TITLE_MIN_LEN 0
-#define DP_MSG_LAYER_RETITLE_TITLE_MAX_LEN 65533
+#define DP_MSG_LAYER_RETITLE_TITLE_MAX_LEN 65532
 
 typedef struct DP_MsgLayerRetitle DP_MsgLayerRetitle;
 
-DP_Message *DP_msg_layer_retitle_new(unsigned int context_id, uint16_t id,
+DP_Message *DP_msg_layer_retitle_new(unsigned int context_id, uint32_t id,
                                      const char *title_value, size_t title_len);
 
 DP_Message *DP_msg_layer_retitle_deserialize(unsigned int context_id,
@@ -1180,7 +1180,7 @@ DP_Message *DP_msg_layer_retitle_parse(unsigned int context_id,
 
 DP_MsgLayerRetitle *DP_msg_layer_retitle_cast(DP_Message *msg);
 
-uint16_t DP_msg_layer_retitle_id(const DP_MsgLayerRetitle *mlr);
+uint32_t DP_msg_layer_retitle_id(const DP_MsgLayerRetitle *mlr);
 
 const char *DP_msg_layer_retitle_title(const DP_MsgLayerRetitle *mlr,
                                        size_t *out_len);
@@ -1226,26 +1226,17 @@ size_t DP_msg_layer_retitle_title_len(const DP_MsgLayerRetitle *mlr);
  * Note that since the message length is fairly limited, a
  * large image may have to be divided into multiple PutImage
  * commands.
- *
- * Compatibility hack: this message is also used to disguise selection
- * messages when drawing on the builtin server. If the blend mode is
- * 253, this is really a SelectionPut message; the bottom octet of
- * layer is the selection id, the upper octet is the operation, x and
- * y are actually i32, w and h are clamped to u16, the image is the
- * mask (which may be empty.) If the blend mode is 254, this is really
- * a SelectionClear message; the bottom octet of layer is the
- * selection id and everything else is ignored.
  */
 
-#define DP_MSG_PUT_IMAGE_STATIC_LENGTH 19
+#define DP_MSG_PUT_IMAGE_STATIC_LENGTH 20
 
 #define DP_MSG_PUT_IMAGE_IMAGE_MIN_SIZE 0
-#define DP_MSG_PUT_IMAGE_IMAGE_MAX_SIZE 65516
+#define DP_MSG_PUT_IMAGE_IMAGE_MAX_SIZE 65515
 
 typedef struct DP_MsgPutImage DP_MsgPutImage;
 
 DP_Message *
-DP_msg_put_image_new(unsigned int context_id, uint16_t layer, uint8_t mode,
+DP_msg_put_image_new(unsigned int context_id, uint32_t layer, uint8_t mode,
                      uint32_t x, uint32_t y, uint32_t w, uint32_t h,
                      void (*set_image)(size_t, unsigned char *, void *),
                      size_t image_size, void *image_user);
@@ -1259,7 +1250,7 @@ DP_Message *DP_msg_put_image_parse(unsigned int context_id,
 
 DP_MsgPutImage *DP_msg_put_image_cast(DP_Message *msg);
 
-uint16_t DP_msg_put_image_layer(const DP_MsgPutImage *mpi);
+uint32_t DP_msg_put_image_layer(const DP_MsgPutImage *mpi);
 
 uint8_t DP_msg_put_image_mode(const DP_MsgPutImage *mpi);
 
@@ -1283,11 +1274,11 @@ size_t DP_msg_put_image_image_size(const DP_MsgPutImage *mpi);
  * Fill a rectangle with solid color
  */
 
-#define DP_MSG_FILL_RECT_STATIC_LENGTH 23
+#define DP_MSG_FILL_RECT_STATIC_LENGTH 24
 
 typedef struct DP_MsgFillRect DP_MsgFillRect;
 
-DP_Message *DP_msg_fill_rect_new(unsigned int context_id, uint16_t layer,
+DP_Message *DP_msg_fill_rect_new(unsigned int context_id, uint32_t layer,
                                  uint8_t mode, uint32_t x, uint32_t y,
                                  uint32_t w, uint32_t h, uint32_t color);
 
@@ -1300,7 +1291,7 @@ DP_Message *DP_msg_fill_rect_parse(unsigned int context_id,
 
 DP_MsgFillRect *DP_msg_fill_rect_cast(DP_Message *msg);
 
-uint16_t DP_msg_fill_rect_layer(const DP_MsgFillRect *mfr);
+uint32_t DP_msg_fill_rect_layer(const DP_MsgFillRect *mfr);
 
 uint8_t DP_msg_fill_rect_mode(const DP_MsgFillRect *mfr);
 
@@ -1341,11 +1332,11 @@ uint32_t DP_msg_fill_rect_color(const DP_MsgFillRect *mfr);
  * that's 0 too.
  */
 
-#define DP_MSG_PEN_UP_STATIC_LENGTH 2
+#define DP_MSG_PEN_UP_STATIC_LENGTH 3
 
 typedef struct DP_MsgPenUp DP_MsgPenUp;
 
-DP_Message *DP_msg_pen_up_new(unsigned int context_id, uint16_t layer);
+DP_Message *DP_msg_pen_up_new(unsigned int context_id, uint32_t layer);
 
 DP_Message *DP_msg_pen_up_deserialize(unsigned int context_id,
                                       const unsigned char *buffer,
@@ -1355,7 +1346,7 @@ DP_Message *DP_msg_pen_up_parse(unsigned int context_id, DP_TextReader *reader);
 
 DP_MsgPenUp *DP_msg_pen_up_cast(DP_Message *msg);
 
-uint16_t DP_msg_pen_up_layer(const DP_MsgPenUp *mpu);
+uint32_t DP_msg_pen_up_layer(const DP_MsgPenUp *mpu);
 
 
 /*
@@ -1544,15 +1535,15 @@ uint16_t DP_msg_annotation_delete_id(const DP_MsgAnnotationDelete *mad);
  * the sublayer.
  */
 
-#define DP_MSG_PUT_TILE_STATIC_LENGTH 10
+#define DP_MSG_PUT_TILE_STATIC_LENGTH 11
 
 #define DP_MSG_PUT_TILE_IMAGE_MIN_SIZE 0
-#define DP_MSG_PUT_TILE_IMAGE_MAX_SIZE 65525
+#define DP_MSG_PUT_TILE_IMAGE_MAX_SIZE 65524
 
 typedef struct DP_MsgPutTile DP_MsgPutTile;
 
 DP_Message *DP_msg_put_tile_new(unsigned int context_id, uint8_t user,
-                                uint16_t layer, uint8_t sublayer, uint16_t col,
+                                uint32_t layer, uint8_t sublayer, uint16_t col,
                                 uint16_t row, uint16_t repeat,
                                 void (*set_image)(size_t, unsigned char *,
                                                   void *),
@@ -1569,7 +1560,7 @@ DP_MsgPutTile *DP_msg_put_tile_cast(DP_Message *msg);
 
 uint8_t DP_msg_put_tile_user(const DP_MsgPutTile *mpt);
 
-uint16_t DP_msg_put_tile_layer(const DP_MsgPutTile *mpt);
+uint32_t DP_msg_put_tile_layer(const DP_MsgPutTile *mpt);
 
 uint8_t DP_msg_put_tile_sublayer(const DP_MsgPutTile *mpt);
 
@@ -1633,7 +1624,7 @@ size_t DP_msg_canvas_background_image_size(const DP_MsgCanvasBackground *mcb);
  * The size field is the brush diameter multiplied by 256.
  */
 
-#define DP_MSG_DRAW_DABS_CLASSIC_STATIC_LENGTH 16
+#define DP_MSG_DRAW_DABS_CLASSIC_STATIC_LENGTH 17
 
 #define DP_MSG_DRAW_DABS_CLASSIC_DABS_MIN_COUNT 1
 #define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX_COUNT 9359
@@ -1661,7 +1652,7 @@ const DP_ClassicDab *DP_classic_dab_at(const DP_ClassicDab *cd, int i);
 typedef struct DP_MsgDrawDabsClassic DP_MsgDrawDabsClassic;
 
 DP_Message *DP_msg_draw_dabs_classic_new(unsigned int context_id, uint8_t flags,
-                                         uint16_t layer, int32_t x, int32_t y,
+                                         uint32_t layer, int32_t x, int32_t y,
                                          uint32_t color, uint8_t mode,
                                          void (*set_dabs)(int, DP_ClassicDab *,
                                                           void *),
@@ -1678,7 +1669,7 @@ DP_MsgDrawDabsClassic *DP_msg_draw_dabs_classic_cast(DP_Message *msg);
 
 uint8_t DP_msg_draw_dabs_classic_flags(const DP_MsgDrawDabsClassic *mddc);
 
-uint16_t DP_msg_draw_dabs_classic_layer(const DP_MsgDrawDabsClassic *mddc);
+uint32_t DP_msg_draw_dabs_classic_layer(const DP_MsgDrawDabsClassic *mddc);
 
 int32_t DP_msg_draw_dabs_classic_x(const DP_MsgDrawDabsClassic *mddc);
 
@@ -1704,7 +1695,7 @@ int DP_msg_draw_dabs_classic_dabs_count(const DP_MsgDrawDabsClassic *mddc);
  * but the fields all have integer precision.
  */
 
-#define DP_MSG_DRAW_DABS_PIXEL_STATIC_LENGTH 16
+#define DP_MSG_DRAW_DABS_PIXEL_STATIC_LENGTH 17
 
 #define DP_MSG_DRAW_DABS_PIXEL_DABS_MIN_COUNT 1
 #define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX_COUNT 13103
@@ -1730,7 +1721,7 @@ const DP_PixelDab *DP_pixel_dab_at(const DP_PixelDab *pd, int i);
 typedef struct DP_MsgDrawDabsPixel DP_MsgDrawDabsPixel;
 
 DP_Message *DP_msg_draw_dabs_pixel_new(unsigned int context_id, uint8_t flags,
-                                       uint16_t layer, int32_t x, int32_t y,
+                                       uint32_t layer, int32_t x, int32_t y,
                                        uint32_t color, uint8_t mode,
                                        void (*set_dabs)(int, DP_PixelDab *,
                                                         void *),
@@ -1747,7 +1738,7 @@ DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_cast(DP_Message *msg);
 
 uint8_t DP_msg_draw_dabs_pixel_flags(const DP_MsgDrawDabsPixel *mddp);
 
-uint16_t DP_msg_draw_dabs_pixel_layer(const DP_MsgDrawDabsPixel *mddp);
+uint32_t DP_msg_draw_dabs_pixel_layer(const DP_MsgDrawDabsPixel *mddp);
 
 int32_t DP_msg_draw_dabs_pixel_x(const DP_MsgDrawDabsPixel *mddp);
 
@@ -1773,7 +1764,7 @@ int DP_msg_draw_dabs_pixel_dabs_count(const DP_MsgDrawDabsPixel *mddp);
 
 DP_Message *
 DP_msg_draw_dabs_pixel_square_new(unsigned int context_id, uint8_t flags,
-                                  uint16_t layer, int32_t x, int32_t y,
+                                  uint32_t layer, int32_t x, int32_t y,
                                   uint32_t color, uint8_t mode,
                                   void (*set_dabs)(int, DP_PixelDab *, void *),
                                   int dabs_count, void *dabs_user);
@@ -1796,7 +1787,7 @@ DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg);
  * the mypaintdabsblend message instead.
  */
 
-#define DP_MSG_DRAW_DABS_MYPAINT_STATIC_LENGTH 18
+#define DP_MSG_DRAW_DABS_MYPAINT_STATIC_LENGTH 19
 
 #define DP_MSG_DRAW_DABS_MYPAINT_DABS_MIN_COUNT 1
 #define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX_COUNT 7279
@@ -1829,7 +1820,7 @@ const DP_MyPaintDab *DP_mypaint_dab_at(const DP_MyPaintDab *mpd, int i);
 typedef struct DP_MsgDrawDabsMyPaint DP_MsgDrawDabsMyPaint;
 
 DP_Message *DP_msg_draw_dabs_mypaint_new(
-    unsigned int context_id, uint16_t layer, int32_t x, int32_t y,
+    unsigned int context_id, uint32_t layer, int32_t x, int32_t y,
     uint32_t color, uint8_t lock_alpha, uint8_t colorize, uint8_t posterize,
     uint8_t posterize_num, void (*set_dabs)(int, DP_MyPaintDab *, void *),
     int dabs_count, void *dabs_user);
@@ -1843,7 +1834,7 @@ DP_Message *DP_msg_draw_dabs_mypaint_parse(unsigned int context_id,
 
 DP_MsgDrawDabsMyPaint *DP_msg_draw_dabs_mypaint_cast(DP_Message *msg);
 
-uint16_t DP_msg_draw_dabs_mypaint_layer(const DP_MsgDrawDabsMyPaint *mddmp);
+uint32_t DP_msg_draw_dabs_mypaint_layer(const DP_MsgDrawDabsMyPaint *mddmp);
 
 int32_t DP_msg_draw_dabs_mypaint_x(const DP_MsgDrawDabsMyPaint *mddmp);
 
@@ -1875,7 +1866,7 @@ int DP_msg_draw_dabs_mypaint_dabs_count(const DP_MsgDrawDabsMyPaint *mddmp);
  * unsuitable.
  */
 
-#define DP_MSG_DRAW_DABS_MYPAINT_BLEND_STATIC_LENGTH 16
+#define DP_MSG_DRAW_DABS_MYPAINT_BLEND_STATIC_LENGTH 17
 
 #define DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MIN_COUNT 1
 #define DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MAX_COUNT 7279
@@ -1910,7 +1901,7 @@ DP_mypaint_blend_dab_at(const DP_MyPaintBlendDab *mpbd, int i);
 typedef struct DP_MsgDrawDabsMyPaintBlend DP_MsgDrawDabsMyPaintBlend;
 
 DP_Message *DP_msg_draw_dabs_mypaint_blend_new(
-    unsigned int context_id, uint8_t flags, uint16_t layer, int32_t x,
+    unsigned int context_id, uint8_t flags, uint32_t layer, int32_t x,
     int32_t y, uint32_t color, uint8_t mode,
     void (*set_dabs)(int, DP_MyPaintBlendDab *, void *), int dabs_count,
     void *dabs_user);
@@ -1927,7 +1918,7 @@ DP_msg_draw_dabs_mypaint_blend_cast(DP_Message *msg);
 uint8_t
 DP_msg_draw_dabs_mypaint_blend_flags(const DP_MsgDrawDabsMyPaintBlend *mddmpb);
 
-uint16_t
+uint32_t
 DP_msg_draw_dabs_mypaint_blend_layer(const DP_MsgDrawDabsMyPaintBlend *mddmpb);
 
 int32_t
@@ -1959,20 +1950,17 @@ int DP_msg_draw_dabs_mypaint_blend_dabs_count(
  * to support non-rectangular selections.
  *
  * Source and target rects may be (partially) outside the canvas.
- *
- * If source is 0, layer refers to a selection instead: the lower
- * octet is the source and the upper octet is the target selection id.
  */
 
-#define DP_MSG_MOVE_RECT_STATIC_LENGTH 28
+#define DP_MSG_MOVE_RECT_STATIC_LENGTH 30
 
 #define DP_MSG_MOVE_RECT_MASK_MIN_SIZE 0
-#define DP_MSG_MOVE_RECT_MASK_MAX_SIZE 65507
+#define DP_MSG_MOVE_RECT_MASK_MAX_SIZE 65505
 
 typedef struct DP_MsgMoveRect DP_MsgMoveRect;
 
-DP_Message *DP_msg_move_rect_new(unsigned int context_id, uint16_t layer,
-                                 uint16_t source, int32_t sx, int32_t sy,
+DP_Message *DP_msg_move_rect_new(unsigned int context_id, uint32_t layer,
+                                 uint32_t source, int32_t sx, int32_t sy,
                                  int32_t tx, int32_t ty, int32_t w, int32_t h,
                                  void (*set_mask)(size_t, unsigned char *,
                                                   void *),
@@ -1987,9 +1975,9 @@ DP_Message *DP_msg_move_rect_parse(unsigned int context_id,
 
 DP_MsgMoveRect *DP_msg_move_rect_cast(DP_Message *msg);
 
-uint16_t DP_msg_move_rect_layer(const DP_MsgMoveRect *mmr);
+uint32_t DP_msg_move_rect_layer(const DP_MsgMoveRect *mmr);
 
-uint16_t DP_msg_move_rect_source(const DP_MsgMoveRect *mmr);
+uint32_t DP_msg_move_rect_source(const DP_MsgMoveRect *mmr);
 
 int32_t DP_msg_move_rect_sx(const DP_MsgMoveRect *mmr);
 
@@ -2084,7 +2072,7 @@ int32_t DP_msg_set_metadata_int_value(const DP_MsgSetMetadataInt *msmi);
  * privileges.
  */
 
-#define DP_MSG_LAYER_TREE_CREATE_STATIC_LENGTH 11
+#define DP_MSG_LAYER_TREE_CREATE_STATIC_LENGTH 14
 
 #define DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP 0x1
 #define DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO  0x2
@@ -2096,12 +2084,12 @@ int32_t DP_msg_set_metadata_int_value(const DP_MsgSetMetadataInt *msmi);
 const char *DP_msg_layer_tree_create_flags_flag_name(unsigned int value);
 
 #define DP_MSG_LAYER_TREE_CREATE_TITLE_MIN_LEN 0
-#define DP_MSG_LAYER_TREE_CREATE_TITLE_MAX_LEN 65524
+#define DP_MSG_LAYER_TREE_CREATE_TITLE_MAX_LEN 65521
 
 typedef struct DP_MsgLayerTreeCreate DP_MsgLayerTreeCreate;
 
-DP_Message *DP_msg_layer_tree_create_new(unsigned int context_id, uint16_t id,
-                                         uint16_t source, uint16_t target,
+DP_Message *DP_msg_layer_tree_create_new(unsigned int context_id, uint32_t id,
+                                         uint32_t source, uint32_t target,
                                          uint32_t fill, uint8_t flags,
                                          const char *title_value,
                                          size_t title_len);
@@ -2115,11 +2103,11 @@ DP_Message *DP_msg_layer_tree_create_parse(unsigned int context_id,
 
 DP_MsgLayerTreeCreate *DP_msg_layer_tree_create_cast(DP_Message *msg);
 
-uint16_t DP_msg_layer_tree_create_id(const DP_MsgLayerTreeCreate *mltc);
+uint32_t DP_msg_layer_tree_create_id(const DP_MsgLayerTreeCreate *mltc);
 
-uint16_t DP_msg_layer_tree_create_source(const DP_MsgLayerTreeCreate *mltc);
+uint32_t DP_msg_layer_tree_create_source(const DP_MsgLayerTreeCreate *mltc);
 
-uint16_t DP_msg_layer_tree_create_target(const DP_MsgLayerTreeCreate *mltc);
+uint32_t DP_msg_layer_tree_create_target(const DP_MsgLayerTreeCreate *mltc);
 
 uint32_t DP_msg_layer_tree_create_fill(const DP_MsgLayerTreeCreate *mltc);
 
@@ -2148,12 +2136,12 @@ size_t DP_msg_layer_tree_create_title_len(const DP_MsgLayerTreeCreate *mltc);
  * that's currently conflated with being allowed to edit layers.)
  */
 
-#define DP_MSG_LAYER_TREE_MOVE_STATIC_LENGTH 6
+#define DP_MSG_LAYER_TREE_MOVE_STATIC_LENGTH 9
 
 typedef struct DP_MsgLayerTreeMove DP_MsgLayerTreeMove;
 
-DP_Message *DP_msg_layer_tree_move_new(unsigned int context_id, uint16_t layer,
-                                       uint16_t parent, uint16_t sibling);
+DP_Message *DP_msg_layer_tree_move_new(unsigned int context_id, uint32_t layer,
+                                       uint32_t parent, uint32_t sibling);
 
 DP_Message *DP_msg_layer_tree_move_deserialize(unsigned int context_id,
                                                const unsigned char *buffer,
@@ -2164,11 +2152,11 @@ DP_Message *DP_msg_layer_tree_move_parse(unsigned int context_id,
 
 DP_MsgLayerTreeMove *DP_msg_layer_tree_move_cast(DP_Message *msg);
 
-uint16_t DP_msg_layer_tree_move_layer(const DP_MsgLayerTreeMove *mltm);
+uint32_t DP_msg_layer_tree_move_layer(const DP_MsgLayerTreeMove *mltm);
 
-uint16_t DP_msg_layer_tree_move_parent(const DP_MsgLayerTreeMove *mltm);
+uint32_t DP_msg_layer_tree_move_parent(const DP_MsgLayerTreeMove *mltm);
 
-uint16_t DP_msg_layer_tree_move_sibling(const DP_MsgLayerTreeMove *mltm);
+uint32_t DP_msg_layer_tree_move_sibling(const DP_MsgLayerTreeMove *mltm);
 
 
 /*
@@ -2184,12 +2172,12 @@ uint16_t DP_msg_layer_tree_move_sibling(const DP_MsgLayerTreeMove *mltm);
  * requires session operator privileges.
  */
 
-#define DP_MSG_LAYER_TREE_DELETE_STATIC_LENGTH 4
+#define DP_MSG_LAYER_TREE_DELETE_STATIC_LENGTH 6
 
 typedef struct DP_MsgLayerTreeDelete DP_MsgLayerTreeDelete;
 
-DP_Message *DP_msg_layer_tree_delete_new(unsigned int context_id, uint16_t id,
-                                         uint16_t merge_to);
+DP_Message *DP_msg_layer_tree_delete_new(unsigned int context_id, uint32_t id,
+                                         uint32_t merge_to);
 
 DP_Message *DP_msg_layer_tree_delete_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
@@ -2200,9 +2188,9 @@ DP_Message *DP_msg_layer_tree_delete_parse(unsigned int context_id,
 
 DP_MsgLayerTreeDelete *DP_msg_layer_tree_delete_cast(DP_Message *msg);
 
-uint16_t DP_msg_layer_tree_delete_id(const DP_MsgLayerTreeDelete *mltd);
+uint32_t DP_msg_layer_tree_delete_id(const DP_MsgLayerTreeDelete *mltd);
 
-uint16_t DP_msg_layer_tree_delete_merge_to(const DP_MsgLayerTreeDelete *mltd);
+uint32_t DP_msg_layer_tree_delete_merge_to(const DP_MsgLayerTreeDelete *mltd);
 
 
 /*
@@ -2227,12 +2215,9 @@ uint16_t DP_msg_layer_tree_delete_merge_to(const DP_MsgLayerTreeDelete *mltd);
  * is DEFLATEd 8 bit alpha.
  *
  * For axis aligned rectangle selections, no bitmap is necessary.
- *
- * If source is 0, layer refers to a selection instead: the lower
- * octet is the source and the upper octet is the target selection id.
  */
 
-#define DP_MSG_TRANSFORM_REGION_STATIC_LENGTH 53
+#define DP_MSG_TRANSFORM_REGION_STATIC_LENGTH 55
 
 #define DP_MSG_TRANSFORM_REGION_MODE_NEAREST  0
 #define DP_MSG_TRANSFORM_REGION_MODE_BILINEAR 1
@@ -2244,12 +2229,12 @@ uint16_t DP_msg_layer_tree_delete_merge_to(const DP_MsgLayerTreeDelete *mltd);
 const char *DP_msg_transform_region_mode_variant_name(unsigned int value);
 
 #define DP_MSG_TRANSFORM_REGION_MASK_MIN_SIZE 0
-#define DP_MSG_TRANSFORM_REGION_MASK_MAX_SIZE 65482
+#define DP_MSG_TRANSFORM_REGION_MASK_MAX_SIZE 65480
 
 typedef struct DP_MsgTransformRegion DP_MsgTransformRegion;
 
 DP_Message *DP_msg_transform_region_new(
-    unsigned int context_id, uint16_t layer, uint16_t source, int32_t bx,
+    unsigned int context_id, uint32_t layer, uint32_t source, int32_t bx,
     int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2,
     int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
     void (*set_mask)(size_t, unsigned char *, void *), size_t mask_size,
@@ -2264,9 +2249,9 @@ DP_Message *DP_msg_transform_region_parse(unsigned int context_id,
 
 DP_MsgTransformRegion *DP_msg_transform_region_cast(DP_Message *msg);
 
-uint16_t DP_msg_transform_region_layer(const DP_MsgTransformRegion *mtr);
+uint32_t DP_msg_transform_region_layer(const DP_MsgTransformRegion *mtr);
 
-uint16_t DP_msg_transform_region_source(const DP_MsgTransformRegion *mtr);
+uint32_t DP_msg_transform_region_source(const DP_MsgTransformRegion *mtr);
 
 int32_t DP_msg_transform_region_bx(const DP_MsgTransformRegion *mtr);
 
@@ -2449,7 +2434,7 @@ int DP_msg_track_order_tracks_count(const DP_MsgTrackOrder *mto);
  * track with id `source_id` and frame index `source_index`.
  */
 
-#define DP_MSG_KEY_FRAME_SET_STATIC_LENGTH 9
+#define DP_MSG_KEY_FRAME_SET_STATIC_LENGTH 10
 
 #define DP_MSG_KEY_FRAME_SET_SOURCE_LAYER     0
 #define DP_MSG_KEY_FRAME_SET_SOURCE_KEY_FRAME 1
@@ -2463,7 +2448,7 @@ const char *DP_msg_key_frame_set_source_variant_name(unsigned int value);
 typedef struct DP_MsgKeyFrameSet DP_MsgKeyFrameSet;
 
 DP_Message *DP_msg_key_frame_set_new(unsigned int context_id, uint16_t track_id,
-                                     uint16_t frame_index, uint16_t source_id,
+                                     uint16_t frame_index, uint32_t source_id,
                                      uint16_t source_index, uint8_t source);
 
 DP_Message *DP_msg_key_frame_set_deserialize(unsigned int context_id,
@@ -2479,7 +2464,7 @@ uint16_t DP_msg_key_frame_set_track_id(const DP_MsgKeyFrameSet *mkfs);
 
 uint16_t DP_msg_key_frame_set_frame_index(const DP_MsgKeyFrameSet *mkfs);
 
-uint16_t DP_msg_key_frame_set_source_id(const DP_MsgKeyFrameSet *mkfs);
+uint32_t DP_msg_key_frame_set_source_id(const DP_MsgKeyFrameSet *mkfs);
 
 uint16_t DP_msg_key_frame_set_source_index(const DP_MsgKeyFrameSet *mkfs);
 
@@ -2548,15 +2533,15 @@ size_t DP_msg_key_frame_retitle_title_len(const DP_MsgKeyFrameRetitle *mkfr);
 
 #define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_STATIC_LENGTH 4
 
-#define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYERS_MIN_COUNT 0
-#define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYERS_MAX_COUNT 32765
+#define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYER_FLAGS_MIN_COUNT 0
+#define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYER_FLAGS_MAX_COUNT 16382
 
 typedef struct DP_MsgKeyFrameLayerAttributes DP_MsgKeyFrameLayerAttributes;
 
 DP_Message *DP_msg_key_frame_layer_attributes_new(
     unsigned int context_id, uint16_t track_id, uint16_t frame_index,
-    void (*set_layers)(int, uint16_t *, void *), int layers_count,
-    void *layers_user);
+    void (*set_layer_flags)(int, uint32_t *, void *), int layer_flags_count,
+    void *layer_flags_user);
 
 DP_Message *DP_msg_key_frame_layer_attributes_deserialize(
     unsigned int context_id, const unsigned char *buffer, size_t length);
@@ -2573,10 +2558,10 @@ uint16_t DP_msg_key_frame_layer_attributes_track_id(
 uint16_t DP_msg_key_frame_layer_attributes_frame_index(
     const DP_MsgKeyFrameLayerAttributes *mkfla);
 
-const uint16_t *DP_msg_key_frame_layer_attributes_layers(
+const uint32_t *DP_msg_key_frame_layer_attributes_layer_flags(
     const DP_MsgKeyFrameLayerAttributes *mkfla, int *out_count);
 
-int DP_msg_key_frame_layer_attributes_layers_count(
+int DP_msg_key_frame_layer_attributes_layer_flags_count(
     const DP_MsgKeyFrameLayerAttributes *mkfla);
 
 

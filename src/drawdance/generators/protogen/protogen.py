@@ -320,6 +320,16 @@ class FieldVec_u16(FieldBytes):
     item_len = 2
 
 
+class FieldVec_u24(FieldBytes):
+    field_type = 'Vec<u24>'
+    item_len = 3
+
+
+class FieldVec_u32(FieldBytes):
+    field_type = 'Vec<u32>'
+    item_len = 4
+
+
 class FieldVec_i32(FieldBytes):
     field_type = 'Vec<i32>'
     item_len = 4

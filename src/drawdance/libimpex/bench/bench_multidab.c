@@ -19,7 +19,7 @@
 #include <stdio.h>
 
 
-#define LAYER_ID      0x100
+#define LAYER_ID      1
 #define CANVAS_WIDTH  1000
 #define CANVAS_HEIGHT 1000
 

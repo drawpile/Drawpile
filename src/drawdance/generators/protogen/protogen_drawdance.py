@@ -83,8 +83,12 @@ class DrawdanceFieldType:
 
     @staticmethod
     def _get_min_max(f):
-        prefix = f.type.base_type.replace("_t", "").upper()
-        return (f"{prefix}_MIN", f"{prefix}_MAX")
+        min_max = f.type.min_max
+        if min_max is None:
+            prefix = f.type.base_type.replace("_t", "").upper()
+            return (f"{prefix}_MIN", f"{prefix}_MAX")
+        else:
+            return min_max
 
     @staticmethod
     def _get_flag_args(f):
@@ -126,6 +130,20 @@ class DrawdanceFieldType:
             return "DP_text_reader_parse_uint16_array"
         else:
             raise RuntimeError(f"Unknown uint16 list format '{fmt}'")
+
+    def parse_text_uint24_list(self, f):
+        fmt = f.format
+        if not fmt:
+            return "DP_text_reader_parse_uint24_array"
+        else:
+            raise RuntimeError(f"Unknown uint24 list format '{fmt}'")
+
+    def parse_text_uint32_list(self, f):
+        fmt = f.format
+        if not fmt:
+            return "DP_text_reader_parse_uint32_array"
+        else:
+            raise RuntimeError(f"Unknown uint32 list format '{fmt}'")
 
     def parse_text_int32_list(self, f):
         fmt = f.format
@@ -198,6 +216,12 @@ class DrawdanceFieldType:
     def write_text_uint16_list(self, f, a, a_count):
         return f'DP_text_writer_write_uint16_list(writer, "{f.name}", {a}, {a_count})'
 
+    def write_text_uint24_list(self, f, a, a_count):
+        return f'DP_text_writer_write_uint24_list(writer, "{f.name}", {a}, {a_count})'
+
+    def write_text_uint32_list(self, f, a, a_count):
+        return f'DP_text_writer_write_uint32_list(writer, "{f.name}", {a}, {a_count})'
+
     def write_text_int32_list(self, f, a, a_count):
         return f'DP_text_writer_write_int32_list(writer, "{f.name}", {a}, {a_count})'
 
@@ -242,6 +266,7 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
         parse_field_fn,
         parse_subfield_fn=None,
         write_subfield_payload_text_fn=None,
+        min_max=None,
     ):
         super().__init__(key, False)
         self.base_type = base_type
@@ -252,6 +277,7 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
         self.parse_field_fn = parse_field_fn
         self.parse_subfield_fn = parse_subfield_fn
         self.write_subfield_payload_text_fn = write_subfield_payload_text_fn
+        self.min_max = min_max
 
     def accessor_return_type(self, f):
         return self.base_type
@@ -815,6 +841,7 @@ DrawdancePlainFieldType.declare(
     deserialize_payload_fn="read_uint24",
     parse_field_fn=DrawdanceFieldType.parse_text_uint,
     parse_subfield_fn=DrawdanceFieldType.parse_subfield_uint,
+    min_max=("DP_UINT24_MIN", "DP_UINT24_MAX")
 )
 
 DrawdancePlainFieldType.declare(
@@ -863,6 +890,30 @@ DrawdanceArrayFieldType.declare(
     deserialize_payload_fn="read_uint16_array",
     parse_get_field_fn="DP_text_reader_get_array",
     parse_constructor_fn=DrawdanceFieldType.parse_text_uint16_list,
+)
+
+DrawdanceArrayFieldType.declare(
+    key="Vec<u24>",
+    base_type="uint32_t",
+    size_type="int",
+    payload_length=3,
+    serialize_payload_fn="DP_write_bigendian_uint24_array",
+    write_payload_text_fn=DrawdanceFieldType.write_text_uint24_list,
+    deserialize_payload_fn="read_uint24_array",
+    parse_get_field_fn="DP_text_reader_get_array",
+    parse_constructor_fn=DrawdanceFieldType.parse_text_uint24_list,
+)
+
+DrawdanceArrayFieldType.declare(
+    key="Vec<u32>",
+    base_type="uint32_t",
+    size_type="int",
+    payload_length=4,
+    serialize_payload_fn="DP_write_bigendian_uint32_array",
+    write_payload_text_fn=DrawdanceFieldType.write_text_uint32_list,
+    deserialize_payload_fn="read_uint32_array",
+    parse_get_field_fn="DP_text_reader_get_array",
+    parse_constructor_fn=DrawdanceFieldType.parse_text_uint32_list,
 )
 
 DrawdanceArrayFieldType.declare(

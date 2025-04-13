@@ -1690,7 +1690,7 @@ void TimelineWidget::setKeyFrameProperties(
 				contextId, trackId, frame, title);
 		}
 		if(layersChanged) {
-			QVector<uint16_t> layers;
+			QVector<uint32_t> layers;
 			layers.reserve(layerVisibility.size() * 2);
 			using LayersIt = QHash<int, bool>::const_iterator;
 			const LayersIt end = layerVisibility.constEnd();

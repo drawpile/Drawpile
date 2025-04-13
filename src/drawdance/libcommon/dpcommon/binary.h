@@ -82,6 +82,9 @@ size_t DP_write_bigendian_uint8_array(const uint8_t *DP_RESTRICT x, int count,
 size_t DP_write_bigendian_uint16_array(const uint16_t *DP_RESTRICT x, int count,
                                        unsigned char *DP_RESTRICT out);
 
+size_t DP_write_bigendian_uint24_array(const uint32_t *DP_RESTRICT x, int count,
+                                       unsigned char *DP_RESTRICT out);
+
 size_t DP_write_bigendian_uint32_array(const uint32_t *DP_RESTRICT x, int count,
                                        unsigned char *DP_RESTRICT out);
 

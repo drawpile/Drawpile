@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "desktop/toolwidgets/annotationsettings.h"
+extern "C" {
+#include <dpmsg/ids.h>
+}
 #include "desktop/scene/annotationitem.h"
+#include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/view/canvaswrapper.h"
@@ -491,7 +494,7 @@ void AnnotationSettings::setSelectionId(int id)
 
 		const bool opOrOwner =
 			controller()->model()->aclState()->amOperator() ||
-			(a->id() >> 8) == controller()->client()->myId();
+			DP_annotation_id_owner(a->id(), controller()->client()->myId());
 		m_protectedAction->setEnabled(opOrOwner);
 
 		if(a->protect() && !opOrOwner)

@@ -44,6 +44,7 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
 #include <dpmsg/blend_mode.h>
+#include <dpmsg/ids.h>
 
 
 DP_CanvasState *DP_ops_canvas_resize(DP_CanvasState *cs,
@@ -113,34 +114,36 @@ DP_CanvasState *DP_ops_canvas_resize(DP_CanvasState *cs,
 }
 
 
-static void mark_used_layer_ids(DP_DrawContext *dc, int masked_id,
+static void mark_used_layer_ids(DP_DrawContext *dc, unsigned int context_id,
                                 DP_LayerPropsList *lpl)
 {
     int count = DP_layer_props_list_count(lpl);
     for (int i = 0; i < count; ++i) {
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
         int layer_id = DP_layer_props_id(lp);
-        if ((layer_id & 0xff00) == masked_id) {
-            DP_draw_context_id_generator_mark_used(dc, layer_id & 0xff);
+        if (DP_layer_id_owner(layer_id, context_id)) {
+            DP_draw_context_id_generator_mark_used(
+                dc, DP_layer_id_element_id(layer_id));
         }
         DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
         if (child_lpl) {
-            mark_used_layer_ids(dc, masked_id, child_lpl);
+            mark_used_layer_ids(dc, context_id, child_lpl);
         }
     }
 }
 
 static DP_TransientLayerPropsList *
-clone_layer_props_list(DP_DrawContext *dc, int masked_id,
+clone_layer_props_list(DP_DrawContext *dc, unsigned int context_id,
                        DP_LayerPropsList *lpl);
 
-static DP_TransientLayerProps *
-clone_layer_props(DP_DrawContext *dc, int masked_id, DP_LayerProps *lp)
+static DP_TransientLayerProps *clone_layer_props(DP_DrawContext *dc,
+                                                 unsigned int context_id,
+                                                 DP_LayerProps *lp)
 {
     DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
     if (child_lpl) {
         DP_TransientLayerPropsList *child_tlpl =
-            clone_layer_props_list(dc, masked_id, child_lpl);
+            clone_layer_props_list(dc, context_id, child_lpl);
         if (child_tlpl) {
             return DP_transient_layer_props_new_with_children_noinc(lp,
                                                                     child_tlpl);
@@ -155,20 +158,21 @@ clone_layer_props(DP_DrawContext *dc, int masked_id, DP_LayerProps *lp)
 }
 
 static DP_TransientLayerPropsList *
-clone_layer_props_list(DP_DrawContext *dc, int masked_id,
+clone_layer_props_list(DP_DrawContext *dc, unsigned int context_id,
                        DP_LayerPropsList *lpl)
 {
     int count = DP_layer_props_list_count(lpl);
     DP_TransientLayerPropsList *tlpl =
         DP_transient_layer_props_list_new_init(count);
     for (int i = count - 1; i >= 0; --i) {
-        int base_id = DP_draw_context_id_generator_next(dc);
+        int element_id = DP_draw_context_id_generator_next(dc);
         DP_TransientLayerProps *tlp;
-        if (base_id != -1
-            && (tlp = clone_layer_props(dc, masked_id,
+        if (element_id != -1
+            && (tlp = clone_layer_props(dc, context_id,
                                         DP_layer_props_list_at_noinc(lpl, i)))
                    != NULL) {
-            DP_transient_layer_props_id_set(tlp, base_id | masked_id);
+            DP_transient_layer_props_id_set(
+                tlp, DP_layer_id_make(context_id, element_id));
             DP_transient_layer_props_list_set_noinc(tlpl, (DP_LayerProps *)tlp,
                                                     i);
         }
@@ -239,12 +243,13 @@ DP_CanvasState *DP_ops_layer_tree_create(DP_CanvasState *cs, DP_DrawContext *dc,
         DP_LayerPropsList *source_child_lpl =
             DP_layer_props_children_noinc(source_lp);
         if (source_child_lpl) {
-            DP_draw_context_id_generator_reset(dc, layer_id & 0xff);
-            int masked_id = layer_id & 0xff00;
-            mark_used_layer_ids(dc, masked_id,
+            DP_draw_context_id_generator_reset(
+                dc, DP_layer_id_element_id(layer_id));
+            unsigned int context_id = DP_layer_id_context_id(layer_id);
+            mark_used_layer_ids(dc, context_id,
                                 DP_canvas_state_layer_props_noinc(cs));
             DP_TransientLayerPropsList *tlpl =
-                clone_layer_props_list(dc, masked_id, source_child_lpl);
+                clone_layer_props_list(dc, context_id, source_child_lpl);
             if (tlpl) {
                 tlp = DP_transient_layer_props_new_with_children_noinc(
                     source_lp, tlpl);
@@ -1477,6 +1482,14 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
         }
 
         int layer_id = params.layer_id;
+        if (!DP_layer_id_normal_or_selection(layer_id)) {
+            ++errors;
+            last_error_type = DP_DRAW_DABS_ERROR_LAYER_ID;
+            last_error_arg = layer_id;
+            DP_debug("Draw dabs: invalid layer id %d", layer_id);
+            continue;
+        }
+
         if (layer_id != last_layer_id) {
             DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
             if (lre && !DP_layer_routes_entry_is_group(lre)) {

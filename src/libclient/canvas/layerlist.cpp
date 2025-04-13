@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
 #include <dpengine/pixels.h>
+#include <dpmsg/ids.h>
 #include <dpmsg/message.h>
 }
 #include "libclient/canvas/layerlist.h"
@@ -158,7 +159,7 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 	case IsSketchModeRole:
 		return item.sketchOpacity > 0.0f;
 	case OwnerIdRole:
-		return AclState::extractLayerOwnerId(item.id);
+		return DP_layer_id_context_id(item.id);
 	case ColorRole:
 		return item.color;
 	case IsClipRole:
@@ -1113,7 +1114,7 @@ QVector<int> LayerListModel::getAvailableLayerIds(int count) const
 		takenIds.insert(item.id);
 	}
 
-	int localUserId = m_aclstate->localUserId();
+	unsigned int localUserId = m_aclstate->localUserId();
 	QVector<int> foundIds;
 	foundIds.reserve(count);
 	while(int(foundIds.size()) < count) {
@@ -1121,7 +1122,7 @@ QVector<int> LayerListModel::getAvailableLayerIds(int count) const
 		if(layerId == 0 && m_aclstate->amOperator()) {
 			layerId = searchAvailableLayerId(takenIds, 0);
 			if(layerId == 0) {
-				for(int i = 255; i > 0; --i) {
+				for(unsigned int i = 255; i > 0; --i) {
 					if(i != localUserId) {
 						layerId = searchAvailableLayerId(takenIds, i);
 						if(layerId != 0) {
@@ -1164,11 +1165,10 @@ void LayerListModel::updateCheckedLayerAcl(int layerId)
 }
 
 int LayerListModel::searchAvailableLayerId(
-	const QSet<int> &takenIds, int contextId)
+	const QSet<int> &takenIds, unsigned int contextId)
 {
-	int prefix = contextId << 8;
-	for(int i = 0; i < 256; ++i) {
-		int id = prefix | i;
+	for(int i = 0; i < DP_LAYER_ELEMENT_ID_MAX; ++i) {
+		int id = DP_layer_id_make(contextId, i);
 		if(!takenIds.contains(id)) {
 			return id;
 		}
@@ -1223,6 +1223,11 @@ uint8_t LayerListItem::attributeFlags() const
 {
 	return (actuallyCensored() ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
 		   (isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
+}
+
+uint8_t LayerListItem::creatorId() const
+{
+	return DP_layer_id_context_id(id);
 }
 
 }
