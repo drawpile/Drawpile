@@ -70,6 +70,7 @@ typedef enum DP_BlendMode {
     DP_BLEND_MODE_MARKER_WASH,
     DP_BLEND_MODE_GREATER,
     DP_BLEND_MODE_GREATER_WASH,
+    DP_BLEND_MODE_PIGMENT,
     DP_BLEND_MODE_ERASE_LIGHT,
     DP_BLEND_MODE_ERASE_DARK,
     DP_BLEND_MODE_LIGHT_TO_ALPHA,
@@ -109,6 +110,8 @@ typedef enum DP_BlendMode {
     DP_BLEND_MODE_MARKER_ALPHA_WASH,
     DP_BLEND_MODE_GREATER_ALPHA,
     DP_BLEND_MODE_GREATER_ALPHA_WASH,
+    DP_BLEND_MODE_PIGMENT_ALPHA,
+    DP_BLEND_MODE_PIGMENT_AND_ERASER,
     // The _PRESERVE blend modes are identical to the ones without that suffix.
     // They only exist to track the intended alpha preserve state.
     DP_BLEND_MODE_ERASE_PRESERVE,

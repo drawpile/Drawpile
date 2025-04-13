@@ -79,6 +79,10 @@ typedef struct DP_UPixelFloat {
     float b, g, r, a;
 } DP_UPixelFloat;
 
+typedef struct DP_Spectral {
+    float channels[10];
+} DP_Spectral;
+
 
 uint16_t DP_fix15_mul(uint16_t a, uint16_t b);
 
@@ -192,6 +196,12 @@ void DP_blend_color8_to(DP_Pixel8 *DP_RESTRICT out,
 void DP_blend_pixels8(DP_Pixel8 *DP_RESTRICT dst,
                       const DP_Pixel8 *DP_RESTRICT src, int pixel_count,
                       uint8_t opacity);
+
+
+DP_Spectral DP_rgb_to_spectral(float r, float g, float b);
+
+void DP_spectral_to_rgb(const DP_Spectral *spectral, float *out_r, float *out_g,
+                        float *out_b);
 
 
 #endif

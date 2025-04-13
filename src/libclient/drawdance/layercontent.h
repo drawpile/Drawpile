@@ -31,7 +31,7 @@ public:
 
     QColor sampleColorAt(
         uint16_t *stampBuffer, int x, int y, int diameter, bool opaque,
-        int &lastDiameter) const;
+        bool pigment, int &lastDiameter) const;
 
     bool isTransparentPixelAt(int x, int y) const;
 

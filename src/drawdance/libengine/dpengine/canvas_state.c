@@ -794,6 +794,7 @@ get_draw_dabs_mypaint_params(unsigned int context_id,
     int dab_count;
     const DP_MyPaintDab *dabs =
         DP_msg_draw_dabs_mypaint_dabs(mddmp, &dab_count);
+    uint8_t posterize_num = DP_msg_draw_dabs_mypaint_posterize_num(mddmp);
     return (DP_PaintDrawDabsParams){
         DP_MSG_DRAW_DABS_MYPAINT,
         context_id,
@@ -801,13 +802,14 @@ get_draw_dabs_mypaint_params(unsigned int context_id,
         DP_msg_draw_dabs_mypaint_x(mddmp),
         DP_msg_draw_dabs_mypaint_y(mddmp),
         DP_msg_draw_dabs_mypaint_color(mddmp),
-        DP_BLEND_MODE_NORMAL_AND_ERASER,
+        (posterize_num & 0x80) ? DP_BLEND_MODE_PIGMENT_AND_ERASER
+                               : DP_BLEND_MODE_NORMAL_AND_ERASER,
         DP_PAINT_MODE_DIRECT,
         dab_count,
         {.mypaint = {dabs, DP_msg_draw_dabs_mypaint_lock_alpha(mddmp),
                      DP_msg_draw_dabs_mypaint_colorize(mddmp),
                      DP_msg_draw_dabs_mypaint_posterize(mddmp),
-                     DP_msg_draw_dabs_mypaint_posterize_num(mddmp)}}};
+                     posterize_num & (uint8_t)0x7f}}};
 }
 
 static DP_PaintDrawDabsParams

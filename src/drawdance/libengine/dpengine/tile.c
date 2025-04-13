@@ -38,6 +38,7 @@
 #include <dpcommon/memory_pool.h>
 #include <dpcommon/threading.h>
 #include <dpmsg/blend_mode.h>
+#include <fastapprox/fastpow.h>
 
 
 #ifdef DP_NO_STRICT_ALIASING
@@ -583,6 +584,105 @@ void DP_tile_sample(DP_Tile *tile_or_null, const uint16_t *mask, int x, int y,
     else if (!opaque) {
         sample_blank(mask, width, height, skip, in_out_weight);
     }
+}
+
+// SPDX-SnippetBegin
+// SPDX-License-Identifier: MIT
+// SDPX—SnippetName: Spectral color sampling from libmypaint.
+static void sample_tile_pigment(DP_Pixel15 *src, const uint16_t *mask, int w,
+                                int h, int mask_skip, int base_skip,
+                                bool opaque, int sample_interval,
+                                float sample_rate, float *in_out_weight,
+                                float *in_out_red, float *in_out_green,
+                                float *in_out_blue, float *in_out_alpha)
+{
+    // Sample the canvas as additive and subtractive
+    // According to paint parameter
+    // Average the results normally
+    // Only sample a partially random subset of pixels
+
+    DP_Spectral avg_spectral =
+        DP_rgb_to_spectral(*in_out_red, *in_out_green, *in_out_blue);
+
+    // Rolling counter determining which pixels to sample
+    // This sampling _is_ biased (but hopefully not too bad).
+    // Ideally, the selection of pixels to be sampled should
+    // be determined before this function is called.
+    int interval_counter = 0;
+    int random_sample_threshold =
+        DP_float_to_int((sample_rate * (float)RAND_MAX));
+
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x, ++mask) {
+            // Sample every n pixels, and a percentage of the rest.
+            // At least one pixel (the first) will always be sampled.
+            if (interval_counter == 0 || rand() < random_sample_threshold) {
+                float m = DP_uint16_to_float(*mask);
+                DP_Pixel15 p = src ? *src : DP_pixel15_zero();
+
+                // When working in opaque mode, disregard low alpha values
+                // because the resulting colors are just too inacurate.
+                if (!opaque || (m > 512 && p.a > 512)) {
+                    float a = m * DP_uint16_to_float(p.a) / (float)(1 << 30);
+                    float alpha_sums = a + *in_out_alpha;
+                    *in_out_weight += m / (float)(1 << 15);
+
+                    float fac_a, fac_b;
+                    if (alpha_sums > 0.0f) {
+                        fac_a = a / alpha_sums;
+                        fac_b = 1.0f - fac_a;
+                    }
+                    else {
+                        fac_a = 1.0f;
+                        fac_b = 1.0f;
+                    }
+
+                    if (p.a > 0) {
+                        float pa_f = DP_uint16_to_float(p.a);
+                        DP_Spectral spectral =
+                            DP_rgb_to_spectral(DP_uint16_to_float(p.r) / pa_f,
+                                               DP_uint16_to_float(p.g) / pa_f,
+                                               DP_uint16_to_float(p.b) / pa_f);
+                        for (int i = 0; i < 10; i++) {
+                            avg_spectral.channels[i] =
+                                fastpow(spectral.channels[i], fac_a)
+                                * fastpow(avg_spectral.channels[i], fac_b);
+                        }
+                    }
+
+                    *in_out_alpha += a;
+                }
+            }
+            interval_counter = (interval_counter + 1) % sample_interval;
+            if (src) {
+                ++src;
+            }
+        }
+
+        if (src) {
+            src += base_skip;
+        }
+        mask += mask_skip;
+    }
+
+    // Convert the spectral average to rgb and write the result
+    // back weighted with the rgb average.
+    DP_spectral_to_rgb(&avg_spectral, in_out_red, in_out_green, in_out_blue);
+}
+// SPDX-SnippetEnd
+
+void DP_tile_sample_pigment(DP_Tile *tile_or_null, const uint16_t *mask, int x,
+                            int y, int width, int height, int skip, bool opaque,
+                            int sample_interval, float sample_rate,
+                            float *in_out_weight, float *in_out_red,
+                            float *in_out_green, float *in_out_blue,
+                            float *in_out_alpha)
+{
+    DP_Pixel15 *src =
+        tile_or_null ? tile_or_null->pixels + y * DP_TILE_SIZE + x : NULL;
+    sample_tile_pigment(src, mask, width, height, skip, DP_TILE_SIZE - width,
+                        opaque, sample_interval, sample_rate, in_out_weight,
+                        in_out_red, in_out_green, in_out_blue, in_out_alpha);
 }
 
 

@@ -490,7 +490,7 @@ QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 			   std::get_if<drawdance::LayerContent>(&lsr.data)) {
 			return layerContent->sampleColorAt(
 				getSampleColorStampBuffer(diameter), x, y, diameter, true,
-				m_sampleColorLastDiameter);
+				false, m_sampleColorLastDiameter);
 		} else {
 			return Qt::transparent;
 		}

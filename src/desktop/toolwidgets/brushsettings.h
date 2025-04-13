@@ -85,6 +85,7 @@ public:
 
 	bool isLocked() override;
 	void setMyPaintAllowed(bool myPaintAllowed);
+	void setPigmentAllowed(bool pigmentAllowed);
 	void setBrushSizeLimit(int brushSizeLimit);
 
 public slots:
@@ -138,7 +139,7 @@ private slots:
 
 private:
 	enum class BrushType { PixelRound, PixelSquare, SoftRound, MyPaint };
-	enum class Lock { None, MyPaintPermission };
+	enum class Lock { None, MyPaintPermission, PigmentPermission };
 
 	void changePresetBrush(const brushes::ActiveBrush &brush);
 	void updateChangesInCurrentBrushPreset();

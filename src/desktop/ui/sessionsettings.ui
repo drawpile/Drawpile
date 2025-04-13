@@ -380,14 +380,14 @@
         <widget class="QComboBox" name="permTimeline"/>
        </item>
        <item row="12" column="0">
-        <widget class="QLabel" name="labelMetadata">
+        <widget class="QLabel" name="labelPigment">
          <property name="text">
-          <string>Metadata:</string>
+          <string>Pigment Brushes:</string>
          </property>
         </widget>
        </item>
        <item row="12" column="1">
-        <widget class="QComboBox" name="permMetadata"/>
+        <widget class="QComboBox" name="permPigment"/>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="labelRegionMove">
@@ -699,7 +699,7 @@
   <tabstop>permUndo</tabstop>
   <tabstop>deputies</tabstop>
   <tabstop>permTimeline</tabstop>
-  <tabstop>permMetadata</tabstop>
+  <tabstop>permPigment</tabstop>
   <tabstop>banlistView</tabstop>
   <tabstop>removeBan</tabstop>
   <tabstop>announcementListView</tabstop>

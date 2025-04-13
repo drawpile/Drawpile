@@ -166,6 +166,13 @@ void DP_tile_sample(DP_Tile *tile_or_null, const uint16_t *mask, int x, int y,
                     float *in_out_green, float *in_out_blue,
                     float *in_out_alpha);
 
+void DP_tile_sample_pigment(DP_Tile *tile_or_null, const uint16_t *mask, int x,
+                            int y, int width, int height, int skip, bool opaque,
+                            int sample_interval, float sample_rate,
+                            float *in_out_weight, float *in_out_red,
+                            float *in_out_green, float *in_out_blue,
+                            float *in_out_alpha);
+
 
 DP_TransientTile *DP_transient_tile_new(DP_Tile *tile, unsigned int context_id);
 

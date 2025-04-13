@@ -17,6 +17,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Implement more blend modes: Vivid Light, Pin Light, Difference, Darker Color, Lighter Color, Shade (SAI), Shade/Shine (SAI), Burn (SAI), Dodge (SAI), Burn/Dodge (SAI), Hard Mix (SAI) and Difference (SAI). Thanks cromachina for providing the logic for the SAI blend modes.
  * Feature: Increase maximum brush size to 1000. Session operators can limit this and the default limit for non-operators is 255. Thanks ariqhadiyan and TGS for suggesting.
  * Fix: Make MyPaint brush outline more accurate to the actual maximum size of the brush (although it still can't account for crazier brushes.)
+ * Feature: Pigment blend mode, which allows for more realistic color mixing. Session operators can restrict this mode and by default it's only enabled for operators, since it's very performance-intensive. Thanks chaitae for suggesting.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.
