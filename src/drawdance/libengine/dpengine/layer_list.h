@@ -22,6 +22,7 @@
 #ifndef DPENGINE_LAYER_LIST_H
 #define DPENGINE_LAYER_LIST_H
 #include "canvas_state.h"
+#include "pixels.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_CanvasDiff DP_CanvasDiff;

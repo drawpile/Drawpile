@@ -30,8 +30,8 @@ CanvasModel::CanvasModel(
 {
 	m_paintengine = new PaintEngine(
 		canvasImplementation, settings.checkerColor1(),
-		settings.checkerColor2(), fps, snapshotMaxCount, snapshotMinDelayMs,
-		wantCanvasHistoryDump, this);
+		settings.checkerColor2(), settings.selectionColor(), fps,
+		snapshotMaxCount, snapshotMinDelayMs, wantCanvasHistoryDump, this);
 
 	m_aclstate = new AclState(this);
 	m_layerlist = new LayerListModel(this);
@@ -84,6 +84,9 @@ CanvasModel::CanvasModel(
 	connect(
 		m_paintengine, &PaintEngine::frameVisibilityChanged, m_layerlist,
 		&LayerListModel::setLayersVisibleInFrame);
+	connect(
+		m_transform, &TransformModel::transformChanged, this,
+		&CanvasModel::updatePaintEngineTransform);
 
 	settings.bindEngineFrameRate(m_paintengine, &PaintEngine::setFps);
 	settings.bindEngineSnapshotCount(
@@ -93,6 +96,9 @@ CanvasModel::CanvasModel(
 	});
 	settings.bindCheckerColor1(m_paintengine, &PaintEngine::setCheckerColor1);
 	settings.bindCheckerColor2(m_paintengine, &PaintEngine::setCheckerColor2);
+	settings.bindSelectionColor(m_paintengine, &PaintEngine::setSelectionColor);
+
+	updatePaintEngineTransform();
 }
 
 void CanvasModel::loadBlank(
@@ -441,7 +447,7 @@ QImage CanvasModel::selectionToImage(int layerId, bool *outFound) const
 	if(validSelection) {
 		QPainter mp(&img);
 		mp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-		mp.drawImage(0, 0, m_selection->mask());
+		mp.drawImage(0, 0, m_selection->image());
 	}
 
 	if(outFound) {
@@ -496,6 +502,11 @@ bool CanvasModel::stopRecording()
 bool CanvasModel::isRecording() const
 {
 	return m_paintengine->isRecording();
+}
+
+void CanvasModel::updatePaintEngineTransform()
+{
+	m_paintengine->setTransformActive(m_transform->isActive());
 }
 
 }

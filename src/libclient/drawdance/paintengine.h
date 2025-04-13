@@ -32,8 +32,8 @@ public:
 	PaintEngine(
 		AclState &acls, SnapshotQueue &sq, bool wantCanvasHistoryDump,
 		bool rendererChecker, const QColor &checkerColor1,
-		const QColor &checkerColor2, DP_RendererTileFn rendererTileFn,
-		DP_RendererUnlockFn rendererUnlockFn,
+		const QColor &checkerColor2, const QColor &selectionColor,
+		DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
 		DP_RendererResizeFn rendererResizeFn, void *rendererUser,
 		DP_CanvasHistorySoftResetFn softResetFn, void *softResetUser,
 		DP_PaintEnginePlaybackFn playbackFn,
@@ -86,6 +86,7 @@ public:
 	void setInspect(unsigned int contextId, bool showTiles);
 	void setCheckerColor1(const QColor &color1);
 	void setCheckerColor2(const QColor &color2);
+	void setSelectionColor(const QColor &color);
 	bool checkersVisible() const;
 
 	Tile localBackgroundTile() const;

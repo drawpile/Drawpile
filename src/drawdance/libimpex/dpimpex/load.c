@@ -12,6 +12,7 @@
 #include <dpcommon/vector.h>
 #include <dpcommon/worker.h>
 #include <dpengine/annotation.h>
+#include <dpengine/annotation_list.h>
 #include <dpengine/canvas_state.h>
 #include <dpengine/document_metadata.h>
 #include <dpengine/draw_context.h>
@@ -30,6 +31,7 @@
 #include <dpengine/track.h>
 #include <dpmsg/binary_reader.h>
 #include <dpmsg/blend_mode.h>
+#include <dpmsg/ids.h>
 #include <ctype.h>
 
 #define DP_PERF_CONTEXT "load"
@@ -37,7 +39,6 @@
 
 #define DRAWPILE_NAMESPACE "http://drawpile.net/"
 #define MYPAINT_NAMESPACE  "http://mypaint.org/ns/openraster"
-#define START_ID           0x100
 
 
 const DP_LoadFormat *DP_load_supported_formats(void)
@@ -356,10 +357,10 @@ static bool ora_handle_image(DP_ReadOraContext *c, DP_XmlElement *element)
     return true;
 }
 
-static int ora_get_next_id(int *next_id)
+static int ora_get_next_id(int *next_id, int max_id)
 {
     int id = *next_id;
-    if (id <= UINT16_MAX) {
+    if (id <= max_id) {
         ++*next_id;
         return id;
     }
@@ -557,11 +558,13 @@ static bool ora_handle_layer(DP_ReadOraContext *c, DP_XmlElement *element)
         return true;
     }
 
-    int layer_id = ora_get_next_id(&c->next_layer_id);
-    if (layer_id == -1) {
+    int element_id =
+        ora_get_next_id(&c->next_layer_id, DP_LAYER_ELEMENT_ID_MAX);
+    if (element_id == -1) {
         return false;
     }
 
+    int layer_id = DP_layer_id_make(1u, element_id);
     DP_TransientLayerContent *tlc = DP_transient_layer_content_new_init(
         DP_transient_canvas_state_width(c->tcs),
         DP_transient_canvas_state_height(c->tcs), NULL);
@@ -592,11 +595,13 @@ static bool ora_is_maybe_clipping_group(DP_XmlElement *element)
 
 static bool ora_handle_stack(DP_ReadOraContext *c, DP_XmlElement *element)
 {
-    int layer_id = ora_get_next_id(&c->next_layer_id);
-    if (layer_id == -1) {
+    int element_id =
+        ora_get_next_id(&c->next_layer_id, DP_LAYER_ELEMENT_ID_MAX);
+    if (element_id == -1) {
         return false;
     }
 
+    int layer_id = DP_layer_id_make(1u, element_id);
     DP_TransientLayerGroup *tlg = DP_transient_layer_group_new_init(
         DP_transient_canvas_state_width(c->tcs),
         DP_transient_canvas_state_height(c->tcs), 0);
@@ -759,10 +764,13 @@ static void ora_handle_annotations(DP_ReadOraContext *c, bool in_stack)
 
 static bool ora_handle_annotation(DP_ReadOraContext *c, DP_XmlElement *element)
 {
-    int annotation_id = ora_get_next_id(&c->next_annotation_id);
-    if (annotation_id == -1) {
+    int element_id =
+        ora_get_next_id(&c->next_annotation_id, DP_ANNOTATION_ELEMENT_ID_MAX);
+    if (element_id == -1) {
         return false;
     }
+
+    int annotation_id = DP_annotation_id_make(1u, element_id);
 
     int x = 0;
     ora_read_int_attribute(element, NULL, "x", INT32_MIN, INT32_MAX, &x);
@@ -846,7 +854,8 @@ static void ora_handle_timeline(DP_ReadOraContext *c, DP_XmlElement *element)
 static void ora_handle_track(DP_ReadOraContext *c, DP_XmlElement *element)
 {
     DP_ReadOraTrack rot = {
-        ora_get_next_id(&c->next_track_id),
+        DP_track_id_make(
+            1u, ora_get_next_id(&c->next_track_id, DP_TRACK_ELEMENT_ID_MAX)),
         DP_text_new_nolen(DP_xml_element_attribute(element, NULL, "name")),
         DP_VECTOR_NULL,
     };
@@ -945,14 +954,15 @@ static DP_TransientKeyFrame *ora_fill_key_frame(DP_ReadOraKeyFrame *rokf)
     int layer_count = DP_size_to_int(rokf->layers.used);
     int layer_index = rokf->layer_index;
     DP_TransientKeyFrame *tkf = DP_transient_key_frame_new_init(
-        layer_index == -1 ? 0 : layer_index + START_ID, layer_count);
+        layer_index == -1 ? 0 : DP_layer_id_make(1, layer_index), layer_count);
     size_t title_length;
     const char *title = DP_text_string(rokf->title, &title_length);
     DP_transient_key_frame_title_set(tkf, title, title_length);
     for (int i = 0; i < layer_count; ++i) {
         DP_ReadOraKeyFrameLayer *rokfl =
             &DP_VECTOR_AT_TYPE(&rokf->layers, DP_ReadOraKeyFrameLayer, i);
-        DP_KeyFrameLayer kfl = {rokfl->layer_index + START_ID, rokfl->flags};
+        DP_KeyFrameLayer kfl = {DP_layer_id_make(1, rokfl->layer_index),
+                                rokfl->flags};
         DP_transient_key_frame_layer_set(tkf, kfl, i);
     }
     return tkf;
@@ -1292,9 +1302,9 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
         true,
         true,
         false,
-        START_ID,
-        START_ID,
-        START_ID,
+        0,
+        0,
+        0,
         0,
         DP_VECTOR_NULL,
         DP_VECTOR_NULL,
@@ -1394,8 +1404,7 @@ static DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
         DP_transient_canvas_state_transient_layers(tcs, 1);
     DP_transient_layer_list_insert_transient_content_noinc(tll, tlc, 0);
 
-    DP_TransientLayerProps *tlp =
-        DP_transient_layer_props_new_init(START_ID, false);
+    DP_TransientLayerProps *tlp = DP_transient_layer_props_new_init(1, false);
     const char *title =
         flat_image_layer_title ? flat_image_layer_title : "Layer 1";
     DP_transient_layer_props_title_set(tlp, title, strlen(title));

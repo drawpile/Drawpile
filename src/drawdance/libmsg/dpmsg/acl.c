@@ -21,6 +21,7 @@
  */
 #include "acl.h"
 #include "blend_mode.h"
+#include "ids.h"
 #include "message.h"
 #include "msg_internal.h"
 #include <dpcommon/common.h>
@@ -558,16 +559,29 @@ bool DP_acl_state_layer_locked_for(DP_AclState *acls, uint8_t user_id,
                                    int layer_id)
 {
     DP_ASSERT(acls);
-    DP_LayerAclEntry *entry;
-    HASH_FIND_INT(acls->layers, &layer_id, entry);
-    if (entry) {
-        DP_LayerAcl *l = &entry->layer_acl;
-        return l->locked || !DP_user_bit_get(l->exclusive, user_id)
-            || l->tier < DP_acl_state_user_tier(acls, user_id);
+    unsigned int selection_context_id;
+    if (DP_layer_id_selection_ids(layer_id, &selection_context_id, NULL)) {
+        return selection_context_id != user_id;
     }
     else {
-        return false;
+        DP_LayerAclEntry *entry;
+        HASH_FIND_INT(acls->layers, &layer_id, entry);
+        if (entry) {
+            DP_LayerAcl *l = &entry->layer_acl;
+            return l->locked || !DP_user_bit_get(l->exclusive, user_id)
+                || l->tier < DP_acl_state_user_tier(acls, user_id);
+        }
+        else {
+            return false;
+        }
     }
+}
+
+static bool is_own_selection_id(int layer_id, uint8_t user_id)
+{
+    unsigned int selection_context_id;
+    return DP_layer_id_selection_ids(layer_id, &selection_context_id, NULL)
+        && selection_context_id == user_id;
 }
 
 bool DP_acl_state_annotation_locked(DP_AclState *acls, int annotation_id)
@@ -589,14 +603,9 @@ static uint8_t filter_unless(bool condition)
     return condition ? 0 : DP_ACL_STATE_FILTERED_BIT;
 }
 
-static bool owns_id(uint8_t user_id, int id)
-{
-    return (id >> 8) == user_id;
-}
-
 static uint8_t handle_join(DP_AclState *acls, DP_Message *msg)
 {
-    DP_MsgJoin *mj = DP_msg_join_cast(msg);
+    DP_MsgJoin *mj = DP_message_internal(msg);
     if (DP_msg_join_flags(mj) & DP_MSG_JOIN_FLAGS_AUTH) {
         DP_user_bit_set(acls->users.authenticated, message_user_id(msg));
         return DP_ACL_STATE_CHANGE_USERS_BIT;
@@ -619,7 +628,7 @@ static uint8_t handle_leave(DP_AclState *acls, DP_Message *msg)
 
 static uint8_t handle_session_owner(DP_AclState *acls, DP_Message *msg)
 {
-    DP_MsgSessionOwner *mso = DP_msg_session_owner_cast(msg);
+    DP_MsgSessionOwner *mso = DP_message_internal(msg);
     int count;
     const uint8_t *user_ids = DP_msg_session_owner_users(mso, &count);
     DP_user_bits_replace(acls->users.operators, count, user_ids);
@@ -628,7 +637,7 @@ static uint8_t handle_session_owner(DP_AclState *acls, DP_Message *msg)
 
 static uint8_t handle_trusted_users(DP_AclState *acls, DP_Message *msg)
 {
-    DP_MsgTrustedUsers *mtu = DP_msg_trusted_users_cast(msg);
+    DP_MsgTrustedUsers *mtu = DP_message_internal(msg);
     int count;
     const uint8_t *user_ids = DP_msg_trusted_users_users(mtu, &count);
     DP_user_bits_replace(acls->users.trusted, count, user_ids);
@@ -658,7 +667,7 @@ static uint8_t handle_user_acl(DP_AclState *acls, DP_Message *msg,
                                bool override)
 {
     if (override || DP_acl_state_is_op(acls, message_user_id(msg))) {
-        DP_MsgUserAcl *mua = DP_msg_user_acl_cast(msg);
+        DP_MsgUserAcl *mua = DP_message_internal(msg);
         int count;
         const uint8_t *user_ids = DP_msg_user_acl_users(mua, &count);
         DP_user_bits_replace(acls->users.locked, count, user_ids);
@@ -673,7 +682,7 @@ static bool can_edit_layer(DP_AclState *acls, uint8_t user_id, int layer_id)
 {
     return DP_acl_state_can_use_feature(acls, DP_FEATURE_EDIT_LAYERS, user_id)
         || (DP_acl_state_can_use_feature(acls, DP_FEATURE_OWN_LAYERS, user_id)
-            && owns_id(user_id, layer_id));
+            && DP_layer_id_owner(layer_id, user_id));
 }
 
 static void set_layer_acl(DP_AclState *acls, int layer_id,
@@ -758,14 +767,17 @@ static uint8_t handle_layer_acl(DP_AclState *acls, DP_Message *msg,
                                 bool override)
 {
     uint8_t user_id = message_user_id(msg);
-    DP_MsgLayerAcl *mla = DP_msg_layer_acl_cast(msg);
-    int layer_id = DP_msg_layer_acl_id(mla);
+    DP_MsgLayerAcl *mla = DP_message_internal(msg);
+    int layer_id = DP_protocol_to_layer_id(DP_msg_layer_acl_id(mla));
     // Special case: layer 0 means lock or unlock the whole session.
     if (layer_id == 0) {
         return handle_layer_acl_session_lock(acls, mla, user_id, override);
     }
-    else {
+    else if (DP_layer_id_normal(layer_id)) {
         return handle_layer_acl_layer(acls, mla, user_id, layer_id, override);
+    }
+    else {
+        return DP_ACL_STATE_FILTERED_BIT;
     }
 }
 
@@ -773,8 +785,7 @@ static uint8_t handle_feature_access_levels(DP_AclState *acls, DP_Message *msg,
                                             bool override)
 {
     if (override || DP_acl_state_is_op(acls, message_user_id(msg))) {
-        DP_MsgFeatureAccessLevels *mfal =
-            DP_msg_feature_access_levels_cast(msg);
+        DP_MsgFeatureAccessLevels *mfal = DP_message_internal(msg);
         int feature_tiers_count;
         const uint8_t *feature_tiers =
             DP_msg_feature_access_levels_feature_tiers(mfal,
@@ -833,9 +844,9 @@ static bool handle_layer_create(DP_AclState *acls, int layer_id,
         return true;
     }
     // Only operators can create layers under a different owner.
-    bool can_create =
-        (owns_id(user_id, layer_id) || DP_acl_state_is_op(acls, user_id))
-        && can_edit_any_or_own_layers(acls, user_id);
+    bool can_create = (DP_layer_id_owner(layer_id, user_id)
+                       || DP_acl_state_is_op(acls, user_id))
+                   && can_edit_any_or_own_layers(acls, user_id);
     return can_create;
 }
 
@@ -849,8 +860,9 @@ static bool handle_layer_tree_move(DP_AclState *acls, DP_MsgLayerTreeMove *mltm,
     // since if they're allowed to edit their own layer they'll also have that
     // feature, but it's left in because it matches the idea behind it. Layer
     // access control needs some rethinking anyway, it's too coarse.
-    int layer_id = DP_msg_layer_tree_move_layer(mltm);
-    int parent_id = DP_msg_layer_tree_move_parent(mltm);
+    int layer_id = DP_protocol_to_layer_id(DP_msg_layer_tree_move_layer(mltm));
+    int parent_id =
+        DP_protocol_to_layer_id(DP_msg_layer_tree_move_parent(mltm));
     return can_edit_layer(acls, user_id, layer_id)
         && (parent_id == 0 ? can_edit_any_or_own_layers(acls, user_id)
                            : can_edit_layer(acls, user_id, layer_id));
@@ -887,11 +899,11 @@ static bool handle_annotation_create(DP_AclState *acls, DP_Message *msg,
     if (override) {
         return true;
     }
-    DP_MsgAnnotationCreate *mac = DP_msg_annotation_create_cast(msg);
+    DP_MsgAnnotationCreate *mac = DP_message_internal(msg);
     int annotation_id = DP_msg_annotation_create_id(mac);
     return DP_acl_state_can_use_feature(acls, DP_FEATURE_CREATE_ANNOTATION,
                                         user_id)
-        && (owns_id(user_id, annotation_id)
+        && (DP_annotation_id_owner(annotation_id, user_id)
             || DP_acl_state_is_op(acls, user_id));
 }
 
@@ -901,18 +913,19 @@ static bool handle_annotation_reshape(DP_AclState *acls, DP_Message *msg,
     if (override) {
         return true;
     }
-    DP_MsgAnnotationReshape *mar = DP_msg_annotation_reshape_cast(msg);
+    DP_MsgAnnotationReshape *mar = DP_message_internal(msg);
     int annotation_id = DP_msg_annotation_reshape_id(mar);
-    return owns_id(user_id, annotation_id) || DP_acl_state_is_op(acls, user_id)
+    return DP_annotation_id_owner(annotation_id, user_id)
+        || DP_acl_state_is_op(acls, user_id)
         || !DP_acl_state_annotation_locked(acls, annotation_id);
 }
 
 static bool handle_annotation_edit(DP_AclState *acls, DP_Message *msg,
                                    uint8_t user_id, bool override)
 {
-    DP_MsgAnnotationEdit *mae = DP_msg_annotation_edit_cast(msg);
+    DP_MsgAnnotationEdit *mae = DP_message_internal(msg);
     int annotation_id = DP_msg_annotation_edit_id(mae);
-    bool can_edit = override || owns_id(user_id, annotation_id)
+    bool can_edit = override || DP_annotation_id_owner(annotation_id, user_id)
                  || DP_acl_state_is_op(acls, user_id);
     if (can_edit) {
         DP_AnnotationAclEntry *entry;
@@ -938,9 +951,9 @@ static bool handle_annotation_edit(DP_AclState *acls, DP_Message *msg,
 static bool handle_annotation_delete(DP_AclState *acls, DP_Message *msg,
                                      uint8_t user_id, bool override)
 {
-    DP_MsgAnnotationDelete *mad = DP_msg_annotation_delete_cast(msg);
+    DP_MsgAnnotationDelete *mad = DP_message_internal(msg);
     int annotation_id = DP_msg_annotation_delete_id(mad);
-    bool can_delete = override || owns_id(user_id, annotation_id)
+    bool can_delete = override || DP_annotation_id_owner(annotation_id, user_id)
                    || DP_acl_state_is_op(acls, user_id)
                    || !DP_acl_state_annotation_locked(acls, annotation_id);
     if (can_delete) {
@@ -986,7 +999,7 @@ static bool classic_dabs_pigment(void *internal)
 
 static int classic_dabs_layer_id(void *internal)
 {
-    return DP_msg_draw_dabs_classic_layer(internal);
+    return DP_protocol_to_layer_id(DP_msg_draw_dabs_classic_layer(internal));
 }
 
 static int classic_dabs_max_dab_size(void *internal)
@@ -1003,7 +1016,7 @@ static bool pixel_dabs_pigment(void *internal)
 
 static int pixel_dabs_layer_id(void *internal)
 {
-    return DP_msg_draw_dabs_pixel_layer(internal);
+    return DP_protocol_to_layer_id(DP_msg_draw_dabs_pixel_layer(internal));
 }
 
 static int pixel_dabs_max_dab_size(void *internal)
@@ -1027,7 +1040,7 @@ static bool mypaint_dabs_pigment(void *internal)
 
 static int mypaint_dabs_layer_id(void *internal)
 {
-    return DP_msg_draw_dabs_mypaint_layer(internal);
+    return DP_protocol_to_layer_id(DP_msg_draw_dabs_mypaint_layer(internal));
 }
 
 static int mypaint_dabs_max_dab_size(void *internal)
@@ -1044,7 +1057,8 @@ static bool mypaint_blend_dabs_pigment(void *internal)
 
 static int mypaint_blend_dabs_layer_id(void *internal)
 {
-    return DP_msg_draw_dabs_mypaint_blend_layer(internal);
+    return DP_protocol_to_layer_id(
+        DP_msg_draw_dabs_mypaint_blend_layer(internal));
 }
 
 static int mypaint_blend_dabs_max_dab_size(void *internal)
@@ -1101,17 +1115,19 @@ static bool handle_move_rect(DP_AclState *acls, DP_Message *msg,
                              uint8_t user_id, bool override)
 {
     DP_MsgMoveRect *mmr = DP_message_internal(msg);
-    return handle_move(acls, user_id, override, DP_msg_move_rect_source(mmr),
-                       DP_msg_move_rect_layer(mmr));
+    return handle_move(acls, user_id, override,
+                       DP_protocol_to_layer_id(DP_msg_move_rect_source(mmr)),
+                       DP_protocol_to_layer_id(DP_msg_move_rect_layer(mmr)));
 }
 
 static bool handle_transform_region(DP_AclState *acls, DP_Message *msg,
                                     uint8_t user_id, bool override)
 {
     DP_MsgTransformRegion *mtr = DP_message_internal(msg);
-    return handle_move(acls, user_id, override,
-                       DP_msg_transform_region_source(mtr),
-                       DP_msg_transform_region_layer(mtr));
+    return handle_move(
+        acls, user_id, override,
+        DP_protocol_to_layer_id(DP_msg_transform_region_source(mtr)),
+        DP_protocol_to_layer_id(DP_msg_transform_region_layer(mtr)));
 }
 
 static bool handle_set_metadata_int(DP_AclState *acls, DP_Message *msg,
@@ -1120,7 +1136,7 @@ static bool handle_set_metadata_int(DP_AclState *acls, DP_Message *msg,
     if (override) {
         return true;
     }
-    DP_MsgSetMetadataInt *msmi = DP_msg_set_metadata_int_cast(msg);
+    DP_MsgSetMetadataInt *msmi = DP_message_internal(msg);
     DP_Feature feature;
     switch (DP_msg_set_metadata_int_field(msmi)) {
     case DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE:
@@ -1141,7 +1157,8 @@ static bool handle_track_create(DP_AclState *acls, int track_id,
         return true;
     }
     // Only operators can create tracks under a different owner.
-    return (owns_id(user_id, track_id) || DP_acl_state_is_op(acls, user_id))
+    return (DP_track_id_owner(track_id, user_id)
+            || DP_acl_state_is_op(acls, user_id))
         && DP_acl_state_can_use_feature(acls, DP_FEATURE_TIMELINE, user_id);
 }
 
@@ -1155,14 +1172,15 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
             || DP_acl_state_can_use_feature(acls, DP_FEATURE_RESIZE, user_id);
     case DP_MSG_LAYER_ATTRIBUTES:
         return override
-            || can_edit_layer(acls, user_id,
-                              DP_msg_layer_attributes_id(
-                                  DP_msg_layer_attributes_cast(msg)));
-    case DP_MSG_LAYER_RETITLE:
-        return override
             || can_edit_layer(
                    acls, user_id,
-                   DP_msg_layer_retitle_id(DP_msg_layer_retitle_cast(msg)));
+                   DP_protocol_to_layer_id(
+                       DP_msg_layer_attributes_id(DP_message_internal(msg))));
+    case DP_MSG_LAYER_RETITLE:
+        return override
+            || can_edit_layer(acls, user_id,
+                              DP_protocol_to_layer_id(DP_msg_layer_retitle_id(
+                                  DP_message_internal(msg))));
     case DP_MSG_PUT_IMAGE: {
         DP_MsgPutImage *mpi = DP_message_internal(msg);
         return override
@@ -1170,8 +1188,9 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
             || DP_msg_put_image_mode(mpi) == DP_BLEND_MODE_COMPAT_LOCAL_MATCH
             || (DP_acl_state_can_use_feature(acls, DP_FEATURE_PUT_IMAGE,
                                              user_id)
-                && !DP_acl_state_layer_locked_for(acls, user_id,
-                                                  DP_msg_put_image_layer(mpi)));
+                && !DP_acl_state_layer_locked_for(
+                    acls, user_id,
+                    DP_protocol_to_layer_id(DP_msg_put_image_layer(mpi))));
     }
     case DP_MSG_FILL_RECT:
         return override
@@ -1179,7 +1198,8 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
                                              user_id)
                 && !DP_acl_state_layer_locked_for(
                     acls, user_id,
-                    DP_msg_fill_rect_layer(DP_msg_fill_rect_cast(msg))));
+                    DP_protocol_to_layer_id(
+                        DP_msg_fill_rect_layer(DP_message_internal(msg)))));
     case DP_MSG_ANNOTATION_CREATE:
         return handle_annotation_create(acls, msg, user_id, override);
     case DP_MSG_ANNOTATION_RESHAPE:
@@ -1189,7 +1209,11 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
     case DP_MSG_ANNOTATION_DELETE:
         return handle_annotation_delete(acls, msg, user_id, override);
     case DP_MSG_PUT_TILE:
-        return override || DP_acl_state_is_op(acls, user_id);
+        return override || DP_acl_state_is_op(acls, user_id)
+            || is_own_selection_id(
+                   DP_protocol_to_layer_id(
+                       DP_msg_put_tile_layer(DP_message_internal(msg))),
+                   user_id);
     case DP_MSG_CANVAS_BACKGROUND:
         return override
             || DP_acl_state_can_use_feature(acls, DP_FEATURE_BACKGROUND,
@@ -1224,23 +1248,25 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
     case DP_MSG_LAYER_TREE_CREATE:
         return handle_layer_create(
             acls,
-            DP_msg_layer_tree_create_id(DP_msg_layer_tree_create_cast(msg)),
+            DP_protocol_to_layer_id(
+                DP_msg_layer_tree_create_id(DP_message_internal(msg))),
             user_id, override);
     case DP_MSG_LAYER_TREE_MOVE:
-        return handle_layer_tree_move(acls, DP_msg_layer_tree_move_cast(msg),
-                                      user_id, override);
+        return handle_layer_tree_move(acls, DP_message_internal(msg), user_id,
+                                      override);
     case DP_MSG_LAYER_TREE_DELETE: {
-        DP_MsgLayerTreeDelete *mltd = DP_msg_layer_tree_delete_cast(msg);
-        return handle_layer_delete(acls, DP_msg_layer_tree_delete_id(mltd),
-                                   DP_msg_layer_tree_delete_merge_to(mltd),
-                                   user_id, override);
+        DP_MsgLayerTreeDelete *mltd = DP_message_internal(msg);
+        return handle_layer_delete(
+            acls, DP_protocol_to_layer_id(DP_msg_layer_tree_delete_id(mltd)),
+            DP_protocol_to_layer_id(DP_msg_layer_tree_delete_merge_to(mltd)),
+            user_id, override);
     }
     case DP_MSG_TRANSFORM_REGION:
         return handle_transform_region(acls, msg, user_id, override);
     case DP_MSG_TRACK_CREATE:
         return handle_track_create(
-            acls, DP_msg_track_create_id(DP_msg_track_create_cast(msg)),
-            user_id, override);
+            acls, DP_msg_track_create_id(DP_message_internal(msg)), user_id,
+            override);
     case DP_MSG_TRACK_RETITLE:
     case DP_MSG_TRACK_DELETE:
     case DP_MSG_TRACK_ORDER:

@@ -4224,6 +4224,43 @@ void DP_tint_pixels(DP_Pixel15 *dst, int pixel_count, DP_UPixel8 tint)
     }
 }
 
+void DP_blend_selection(DP_Pixel15 *DP_RESTRICT dst,
+                        const DP_Pixel15 *DP_RESTRICT src, int pixel_count,
+                        DP_UPixel15 color)
+{
+    Fix15 opacity = to_fix(color.a);
+    BGR15 cs = to_ubgr(color);
+    if (opacity != 0) {
+        for (int i = 0; i < pixel_count; ++i) {
+            DP_Pixel15 sp = src[i];
+            Fix15 as = to_fix(sp.a);
+            if (as != 0) {
+                DP_Pixel15 dp = dst[i];
+                Fix15 ab = to_fix(dp.a);
+                Fix15 aso = fix15_mul(as, opacity);
+                if (ab == 0) {
+                    dst[i] = DP_pixel15_premultiply((DP_UPixel15){
+                        .b = color.b,
+                        .g = color.g,
+                        .r = color.r,
+                        .a = from_fix(aso),
+                    });
+                }
+                else {
+                    BGR15 cb = to_bgr(dp);
+                    Fix15 aso1 = BIT15_FIX - aso;
+                    dst[i] = (DP_Pixel15){
+                        .b = from_fix(fix15_sumprods(cs.b, aso, cb.b, aso1)),
+                        .g = from_fix(fix15_sumprods(cs.g, aso, cb.g, aso1)),
+                        .r = from_fix(fix15_sumprods(cs.r, aso, cb.r, aso1)),
+                        .a = from_fix(aso + fix15_mul(ab, aso1)),
+                    };
+                }
+            }
+        }
+    }
+}
+
 void DP_blend_tile(DP_Pixel15 *DP_RESTRICT dst,
                    const DP_Pixel15 *DP_RESTRICT src, uint16_t opacity,
                    int blend_mode)

@@ -438,7 +438,7 @@ TransformTool::tryBeginMove(bool firstClick, bool onlyMask, Mode mode)
 
 	canvas::TransformModel *transform = canvas->transform();
 	transform->beginFromCanvas(
-		selection->bounds(), selection->mask(),
+		selection->bounds(), selection->image(),
 		onlyMask ? QSet<int>() : m_owner.selectedLayers());
 	m_mode = mode;
 	m_firstClick = firstClick;

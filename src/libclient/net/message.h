@@ -37,7 +37,7 @@ Message makeCanvasResizeMessage(
 	uint8_t contextId, int32_t top, int32_t right, int32_t bottom,
 	int32_t left);
 
-Message makeDefaultLayerMessage(uint8_t contextId, uint16_t id);
+Message makeDefaultLayerMessage(uint8_t contextId, uint32_t id);
 
 Message makeFeatureAccessLevelsMessage(
 	uint8_t contextId, const QVector<uint8_t> &features);
@@ -46,7 +46,7 @@ Message
 makeFeatureLimitsMessage(uint8_t contextId, const QVector<int32_t> &limits);
 
 Message makeFillRectMessage(
-	uint8_t contextId, uint16_t layer, uint8_t mode, uint32_t x, uint32_t y,
+	uint8_t contextId, uint32_t layer, uint8_t mode, uint32_t x, uint32_t y,
 	uint32_t w, uint32_t h, const QColor &color);
 
 Message makeInternalCatchupMessage(uint8_t contextId, int progress);
@@ -61,12 +61,12 @@ Message makeInternalStreamResetStartMessage(
 Message makeInternalSnapshotMessage(uint8_t contextId);
 
 Message makeKeyFrameSetMessage(
-	uint8_t contextId, uint16_t trackId, uint16_t frameIndex, uint16_t sourceId,
+	uint8_t contextId, uint16_t trackId, uint16_t frameIndex, uint32_t sourceId,
 	uint16_t sourceIndex, uint8_t source);
 
 Message makeKeyFrameLayerAttributesMessage(
 	uint8_t contextId, uint16_t trackId, uint16_t frameIndex,
-	const QVector<uint16_t> &layers);
+	const QVector<uint32_t> &layers);
 
 Message makeKeyFrameRetitleMessage(
 	uint8_t contextId, uint16_t trackId, uint16_t frameIndex,
@@ -80,40 +80,40 @@ Message
 makeLaserTrailMessage(uint8_t contextId, uint32_t color, uint8_t persistence);
 
 Message makeLayerAttributesMessage(
-	uint8_t contextId, uint16_t id, uint8_t sublayer, uint8_t flags,
+	uint8_t contextId, uint32_t id, uint8_t sublayer, uint8_t flags,
 	uint8_t opacity, uint8_t blend);
 
 Message makeLayerAclMessage(
-	uint8_t contextId, uint16_t id, uint8_t flags,
+	uint8_t contextId, uint32_t id, uint8_t flags,
 	const QVector<uint8_t> &exclusive);
 
 Message makeLayerTreeCreateMessage(
-	uint8_t contextId, uint16_t id, uint16_t source, uint16_t target,
+	uint8_t contextId, uint32_t id, uint16_t source, uint16_t target,
 	uint32_t fill, uint8_t flags, const QString &name);
 
 Message
-makeLayerTreeDeleteMessage(uint8_t contextId, uint16_t id, uint16_t mergeTo);
+makeLayerTreeDeleteMessage(uint8_t contextId, uint32_t id, uint32_t mergeTo);
 
 Message makeLayerTreeMoveMessage(
-	uint8_t contextId, uint16_t layer, uint16_t parent, uint16_t sibling);
+	uint8_t contextId, uint32_t layer, uint32_t parent, uint32_t sibling);
 
 Message
-makeLayerRetitleMessage(uint8_t contextId, uint16_t id, const QString &title);
+makeLayerRetitleMessage(uint8_t contextId, uint32_t id, const QString &title);
 
 Message makeMovePointerMessage(uint8_t contextId, int32_t x, int32_t y);
 
 Message makeMoveRectMessage(
-	uint8_t contextId, uint16_t layer, uint16_t source, int32_t sx, int32_t sy,
+	uint8_t contextId, uint32_t layer, uint32_t source, int32_t sx, int32_t sy,
 	int32_t tx, int32_t ty, int32_t w, int32_t h, const QImage &mask);
 
 Message makeTransformRegionMessage(
-	uint8_t contextId, uint16_t layer, uint16_t source, int32_t bx, int32_t by,
+	uint8_t contextId, uint32_t layer, uint32_t source, int32_t bx, int32_t by,
 	int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
 	int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
 	const QImage &mask);
 
 Message makePutImageMessage(
-	uint8_t contextId, uint16_t layer, uint8_t mode, uint32_t x, uint32_t y,
+	uint8_t contextId, uint32_t layer, uint8_t mode, uint32_t x, uint32_t y,
 	uint32_t w, uint32_t h, const QByteArray &compressedImage);
 
 Message makeSelectionClearMessage(uint8_t contextId, uint8_t selectionId);
@@ -152,7 +152,7 @@ Message makeUserInfoMessage(
 // the image if the given coordinates are negative and splitting it into
 // multiple messages if it doesn't fit into a single one.
 void makePutImageMessages(
-	MessageList &msgs, uint8_t contextId, uint16_t layer, uint8_t mode, int x,
+	MessageList &msgs, uint8_t contextId, uint32_t layer, uint8_t mode, int x,
 	int y, const QImage &image);
 
 void makeSelectionPutMessages(

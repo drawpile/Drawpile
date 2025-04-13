@@ -21,8 +21,6 @@
  */
 #ifndef DPENGINE_CANVAS_STATE_H
 #define DPENGINE_CANVAS_STATE_H
-#include "annotation_list.h"
-#include "pixels.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_AnnotationList DP_AnnotationList;
@@ -39,6 +37,7 @@ typedef struct DP_Selection DP_Selection;
 typedef struct DP_SelectionSet DP_SelectionSet;
 typedef struct DP_Tile DP_Tile;
 typedef struct DP_Timeline DP_Timeline;
+typedef struct DP_UPixel15 DP_UPixel15;
 typedef struct DP_UserCursors DP_UserCursors;
 typedef struct DP_ViewModeFilter DP_ViewModeFilter;
 
@@ -52,6 +51,7 @@ typedef struct DP_ViewModeFilter DP_ViewModeFilter;
 typedef struct DP_CanvasState DP_CanvasState;
 
 #ifdef DP_NO_STRICT_ALIASING
+typedef struct DP_TransientAnnotationList DP_TransientAnnotationList;
 typedef struct DP_TransientCanvasState DP_TransientCanvasState;
 typedef struct DP_TransientDocumentMetadata DP_TransientDocumentMetadata;
 typedef struct DP_TransientLayerContent DP_TransientLayerContent;
@@ -62,6 +62,7 @@ typedef struct DP_TransientSelectionSet DP_TransientSelectionSet;
 typedef struct DP_TransientTile DP_TransientTile;
 typedef struct DP_TransientTimeline DP_TransientTimeline;
 #else
+typedef struct DP_AnnotationList DP_TransientAnnotationList;
 typedef struct DP_CanvasState DP_TransientCanvasState;
 typedef struct DP_DocumentMetadata DP_TransientDocumentMetadata;
 typedef struct DP_LayerContent DP_TransientLayerContent;
@@ -98,6 +99,10 @@ int DP_canvas_state_height(DP_CanvasState *cs);
 int DP_canvas_state_offset_x(DP_CanvasState *cs);
 
 int DP_canvas_state_offset_y(DP_CanvasState *cs);
+
+unsigned int DP_canvas_state_active_context_id(DP_CanvasState *cs);
+
+int DP_canvas_state_active_selection_id(DP_CanvasState *cs);
 
 DP_Tile *DP_canvas_state_background_tile_noinc(DP_CanvasState *cs);
 
@@ -164,6 +169,7 @@ DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
                                                   int tile_index,
                                                   DP_TransientTile *tt_or_null,
                                                   bool include_sublayers,
+                                                  DP_UPixel15 *selection_tint,
                                                   const DP_ViewModeFilter *vmf);
 
 DP_TransientTile *
@@ -225,6 +231,12 @@ void DP_transient_canvas_state_height_set(DP_TransientCanvasState *tcs,
 
 void DP_transient_canvas_state_offsets_add(DP_TransientCanvasState *tcs,
                                            int offset_x, int offset_y);
+
+void DP_transient_canvas_state_active_context_id_set(
+    DP_TransientCanvasState *tcs, unsigned int active_context_id);
+
+void DP_transient_canvas_state_active_selection_id_set(
+    DP_TransientCanvasState *tcs, int active_selection_id);
 
 void DP_transient_canvas_state_background_tile_set_noinc(
     DP_TransientCanvasState *tcs, DP_Tile *tile, bool opaque);
@@ -288,6 +300,10 @@ void DP_transient_canvas_state_transient_timeline_set_noinc(
 
 DP_TransientDocumentMetadata *
 DP_transient_canvas_state_transient_metadata(DP_TransientCanvasState *tcs);
+
+DP_TransientSelectionSet *
+DP_transient_canvas_state_transient_selection_set_noinc_nullable(
+    DP_TransientCanvasState *tcs, int reserve);
 
 void DP_transient_canvas_state_transient_selections_set_noinc(
     DP_TransientCanvasState *tcs, DP_TransientSelectionSet *tss);

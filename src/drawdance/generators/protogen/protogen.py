@@ -38,6 +38,7 @@ class Message:
         self.id = _required(name, desc, 'id', int)
         self.comment = str(desc.get('comment', ''))
         self.reserved = False
+        self.local_match = desc.get('local_match')
 
         if 'alias' in desc:
             self.alias = desc['alias']
@@ -318,6 +319,16 @@ class FieldVec_u8(FieldBytes):
 class FieldVec_u16(FieldBytes):
     field_type = 'Vec<u16>'
     item_len = 2
+
+
+class FieldVec_u24(FieldBytes):
+    field_type = 'Vec<u24>'
+    item_len = 3
+
+
+class FieldVec_u32(FieldBytes):
+    field_type = 'Vec<u32>'
+    item_len = 4
 
 
 class FieldVec_i32(FieldBytes):

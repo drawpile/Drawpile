@@ -37,7 +37,7 @@ public:
 
     QImage toImage(const QRect &rect) const;
 
-    QImage toImageMask(const QRect &rect, const QColor &color) const;
+    QImage toImageMask(const QRect &rect) const;
 
 private:
     explicit LayerContent(DP_LayerContent *lc);

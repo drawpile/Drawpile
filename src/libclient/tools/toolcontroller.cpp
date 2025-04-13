@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libclient/tools/toolcontroller.h"
+extern "C" {
+#include <dpmsg/ids.h>
+}
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/point.h"
 #include "libclient/canvas/transformmodel.h"
+#include "libclient/net/client.h"
 #include "libclient/settings.h"
 #include "libclient/tools/annotation.h"
 #include "libclient/tools/beziertool.h"
@@ -16,6 +19,7 @@
 #include "libclient/tools/pan.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/shapetools.h"
+#include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/transform.h"
 #include "libclient/tools/zoom.h"
 #include "libshared/util/functionrunnable.h"
@@ -152,6 +156,29 @@ void ToolController::setActiveAnnotation(int id)
 	}
 }
 
+void ToolController::setSelectionEditActive(bool selectionEditActive)
+{
+	if(selectionEditActive != m_selectionEditActive) {
+		m_selectionEditActive = selectionEditActive;
+		emit selectionEditActiveChanged(selectionEditActive);
+	}
+}
+
+void ToolController::setSelectionMaskColor(const QColor &selectionMaskColor)
+{
+	m_selectionMaskColor = selectionMaskColor;
+}
+
+int ToolController::activeLayerOrSelection() const
+{
+	if(m_selectionEditActive) {
+		return DP_selection_id_make(
+			m_client->myId(), canvas::CanvasModel::MAIN_SELECTION_ID);
+	} else {
+		return m_activeLayer;
+	}
+}
+
 void ToolController::setSelectedLayers(const QSet<int> &selectedLayers)
 {
 	m_selectedLayers = selectedLayers;
@@ -190,6 +217,9 @@ Capabilities ToolController::activeToolCapabilities() const
 void ToolController::setActiveLayer(int id)
 {
 	if(m_activeLayer != id) {
+		if(m_selectionEditActive) {
+			setSelectionEditActive(false);
+		}
 		m_activeLayer = id;
 		if(m_model) {
 			m_model->paintEngine()->setViewLayer(id);
@@ -539,7 +569,7 @@ void ToolController::setBrushEngineBrush(
 {
 	const brushes::ActiveBrush &brush = activeBrush();
 	DP_StrokeParams stroke = {
-		activeLayer(),
+		activeLayerOrSelection(),
 		false,
 		0,
 		m_stabilizationMode != brushes::Smoothing || m_finishStrokes,

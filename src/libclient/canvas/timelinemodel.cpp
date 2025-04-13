@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
 #include <dpengine/key_frame.h>
+#include <dpmsg/ids.h>
 }
 #include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"
@@ -40,18 +41,31 @@ const TimelineTrack *TimelineModel::getTrackById(int trackId) const
 
 int TimelineModel::getAvailableTrackId() const
 {
-	int prefix = (m_aclState ? int(m_aclState->localUserId()) : 0) << 8;
 	QSet<int> takenIds;
+	takenIds.insert(0);
 	for(const TimelineTrack &track : m_tracks) {
-		if((track.id & 0xff00) == prefix) {
-			takenIds.insert(track.id);
-		}
+		takenIds.insert(track.id);
 	}
 
-	for(int i = 0; i < 256; ++i) {
-		int id = prefix | i;
-		if(!takenIds.contains(id)) {
-			return id;
+	unsigned int localUserId = m_aclState ? m_aclState->localUserId() : 0u;
+	int trackId = searchAvailableTrackId(takenIds, localUserId);
+	if(trackId != 0) {
+		return trackId;
+	}
+
+	if(m_aclState->amOperator()) {
+		trackId = searchAvailableTrackId(takenIds, 0);
+		if(trackId != 0) {
+			return trackId;
+		}
+
+		for(unsigned int i = 255; i > 0; --i) {
+			if(i != localUserId) {
+				trackId = searchAvailableTrackId(takenIds, i);
+				if(trackId != 0) {
+					return trackId;
+				}
+			}
 		}
 	}
 
@@ -86,6 +100,18 @@ void TimelineModel::setTimeline(const drawdance::Timeline &tl)
 		m_tracks.append(trackToModel(tl.trackAt(i)));
 	}
 	emit tracksChanged();
+}
+
+int TimelineModel::searchAvailableTrackId(
+	const QSet<int> &takenIds, unsigned int contextId)
+{
+	for(int i = 0; i < DP_TRACK_ELEMENT_ID_MAX; ++i) {
+		int id = DP_track_id_make(contextId, i);
+		if(!takenIds.contains(id)) {
+			return id;
+		}
+	}
+	return 0;
 }
 
 TimelineTrack TimelineModel::trackToModel(const drawdance::Track &t)

@@ -1690,15 +1690,16 @@ void TimelineWidget::setKeyFrameProperties(
 				contextId, trackId, frame, title);
 		}
 		if(layersChanged) {
-			QVector<uint16_t> layers;
-			layers.reserve(layerVisibility.size() * 2);
+			QVector<uint32_t> layers;
+			layers.reserve(layerVisibility.size());
 			using LayersIt = QHash<int, bool>::const_iterator;
 			const LayersIt end = layerVisibility.constEnd();
 			for(LayersIt it = layerVisibility.constBegin(); it != end; ++it) {
-				layers.append(it.key());
+				uint32_t id = it.key();
+				uint32_t flags = it.value() ? DP_KEY_FRAME_LAYER_REVEALED
+											: DP_KEY_FRAME_LAYER_HIDDEN;
 				layers.append(
-					it.value() ? DP_KEY_FRAME_LAYER_REVEALED
-							   : DP_KEY_FRAME_LAYER_HIDDEN);
+					(id & uint32_t(0xffffffu)) | (flags << uint32_t(24)));
 			}
 			messages[fill++] = net::makeKeyFrameLayerAttributesMessage(
 				contextId, trackId, frame, layers);
