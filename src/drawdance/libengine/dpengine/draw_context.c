@@ -171,7 +171,7 @@ static void init_pool(DP_DrawContext *dc)
 {
     if (!dc->pool) {
         dc->pool_size = DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE;
-        dc->pool = DP_malloc(DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE);
+        dc->pool = DP_malloc_simd(DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE);
     }
 }
 
@@ -191,41 +191,12 @@ unsigned char *DP_draw_context_raster_pool_resize(DP_DrawContext *dc,
     DP_ASSERT(new_size > dc->pool_size);
     DP_ASSERT(new_size < DP_DRAW_CONTEXT_RASTER_POOL_MAX_SIZE);
     DP_ASSERT(dc->pool);
-    DP_free(dc->pool);
-    void *new_raster_pool = DP_malloc(new_size);
+    DP_free_simd(dc->pool);
+    void *new_raster_pool = DP_malloc_simd(new_size);
     dc->pool = new_raster_pool;
     dc->pool_size = new_size;
     return new_raster_pool;
 }
-
-struct DP_LayerPoolEntry *DP_draw_context_layer_pool(DP_DrawContext *dc,
-                                                     int *out_capacity)
-{
-    DP_ASSERT(dc);
-    init_pool(dc);
-    struct DP_LayerPoolEntry *layer_pool = dc->pool;
-    if (out_capacity) {
-        *out_capacity = DP_size_to_int(dc->pool_size / sizeof(*layer_pool));
-    }
-    return layer_pool;
-}
-
-struct DP_LayerPoolEntry *DP_draw_context_layer_pool_resize(DP_DrawContext *dc,
-                                                            int new_capacity)
-{
-    DP_ASSERT(dc);
-    DP_ASSERT(new_capacity > 0);
-    DP_ASSERT(dc->pool);
-
-    size_t new_size =
-        DP_int_to_size(new_capacity) * sizeof(struct DP_LayerPoolEntry);
-    DP_ASSERT(new_size > dc->pool_size);
-
-    dc->pool = DP_realloc(dc->pool, new_size);
-    dc->pool_size = new_size;
-    return dc->pool;
-}
-
 
 // For layer indexes, the memory pool is just used as an array of integers. The
 // first element is the count, subsequent elements are the list of indexes.
