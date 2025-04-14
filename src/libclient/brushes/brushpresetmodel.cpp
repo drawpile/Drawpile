@@ -72,7 +72,7 @@ struct PresetShortcutEntry {
 
 	bool operator<(const PresetShortcutEntry &other) const
 	{
-		return name.compare(other.name, Qt::CaseInsensitive) < 1;
+		return name.compare(other.name, Qt::CaseInsensitive) < 0;
 	}
 };
 
