@@ -41,11 +41,6 @@ typedef union DP_Pixel8 DP_Pixel8;
 
 #define DP_DRAW_CONTEXT_ID_COUNT 256
 
-struct DP_LayerPoolEntry {
-    DP_LayerListEntry *lle;
-    DP_LayerProps *lp;
-};
-
 typedef struct DP_DrawContextStatistics {
     size_t static_bytes;
     size_t pool_bytes;
@@ -90,12 +85,6 @@ unsigned char *DP_draw_context_raster_pool(DP_DrawContext *dc,
 
 unsigned char *DP_draw_context_raster_pool_resize(DP_DrawContext *dc,
                                                   size_t new_size);
-
-struct DP_LayerPoolEntry *DP_draw_context_layer_pool(DP_DrawContext *dc,
-                                                     int *out_capacity);
-
-struct DP_LayerPoolEntry *DP_draw_context_layer_pool_resize(DP_DrawContext *dc,
-                                                            int new_capacity);
 
 // Set the layer index list count to zero. Must be called to initialize.
 void DP_draw_context_layer_indexes_clear(DP_DrawContext *dc);
