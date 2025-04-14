@@ -1856,38 +1856,71 @@ static void blend_mask_color_erase(DP_Pixel15 *dst, DP_UPixel15 src,
 #define WGM_EPSILON 0.001f
 #define WGM_OFFSET  (1.0f - WGM_EPSILON)
 
-static const float T_MATRIX_SMALL[3][10] = {
-    {0.339475473216284f, 0.635401374177222f, 0.771520797089589f,
-     0.113222640692379f, -0.055251113343776f, -0.048222578468680f,
-     -0.012966666339586f, -0.001523814504223f, -0.000094718948810f,
-     -0.000051604594741f},
-    {-0.032601672674412f, -0.061021043498478f, -0.052490001018404f,
-     0.206659098273522f, 0.572496335158169f, 0.317837248815438f,
-     -0.021216624031211f, -0.019387668756117f, -0.001521339050858f,
-     -0.000835181622534f},
-    {0.026595621243689f, 0.049779426257903f, 0.022449850859496f,
-     -0.218453689278271f, -0.256894883201278f, 0.445881722194840f,
-     0.772365886289756f, 0.194498761382537f, 0.014038157587820f,
-     0.007687264480513f},
-};
+#define SPECTRAL_B0 (0.537052150373386f)
+#define SPECTRAL_B1 (0.546646402401469f)
+#define SPECTRAL_B2 (0.575501819073983f)
+#define SPECTRAL_B3 (0.258778829633924f)
+#define SPECTRAL_B4 (0.041709923751716f)
+#define SPECTRAL_B5 (0.012662638828324f)
+#define SPECTRAL_B6 (0.007485593127390f)
+#define SPECTRAL_B7 (0.006766900622462f)
+#define SPECTRAL_B8 (0.006699764779016f)
+#define SPECTRAL_B9 (0.006676219883241f)
 
-static const float SPECTRAL_B_SMALL[10] = {
-    0.537052150373386f, 0.546646402401469f, 0.575501819073983f,
-    0.258778829633924f, 0.041709923751716f, 0.012662638828324f,
-    0.007485593127390f, 0.006766900622462f, 0.006699764779016f,
-    0.006676219883241f};
+#define SPECTRAL_G0 (0.002854127435775f)
+#define SPECTRAL_G1 (0.003917589679914f)
+#define SPECTRAL_G2 (0.012132151699187f)
+#define SPECTRAL_G3 (0.748259205918013f)
+#define SPECTRAL_G4 (1.000000000000000f)
+#define SPECTRAL_G5 (0.865695937531795f)
+#define SPECTRAL_G6 (0.037477469241101f)
+#define SPECTRAL_G7 (0.022816789725717f)
+#define SPECTRAL_G8 (0.021747419446456f)
+#define SPECTRAL_G9 (0.021384940572308f)
 
-static const float SPECTRAL_G_SMALL[10] = {
-    0.002854127435775f, 0.003917589679914f, 0.012132151699187f,
-    0.748259205918013f, 1.000000000000000f, 0.865695937531795f,
-    0.037477469241101f, 0.022816789725717f, 0.021747419446456f,
-    0.021384940572308f};
+#define SPECTRAL_R0 (0.009281362787953f)
+#define SPECTRAL_R1 (0.009732627042016f)
+#define SPECTRAL_R2 (0.011254252737167f)
+#define SPECTRAL_R3 (0.015105578649573f)
+#define SPECTRAL_R4 (0.024797924177217f)
+#define SPECTRAL_R5 (0.083622585502406f)
+#define SPECTRAL_R6 (0.977865045723212f)
+#define SPECTRAL_R7 (1.000000000000000f)
+#define SPECTRAL_R8 (0.999961046144372f)
+#define SPECTRAL_R9 (0.999999992756822f)
 
-static const float SPECTRAL_R_SMALL[10] = {
-    0.009281362787953f, 0.009732627042016f, 0.011254252737167f,
-    0.015105578649573f, 0.024797924177217f, 0.083622585502406f,
-    0.977865045723212f, 1.000000000000000f, 0.999961046144372f,
-    0.999999992756822f};
+#define T_MATRIX_B0 (0.339475473216284f)
+#define T_MATRIX_B1 (0.635401374177222f)
+#define T_MATRIX_B2 (0.771520797089589f)
+#define T_MATRIX_B3 (0.113222640692379f)
+#define T_MATRIX_B4 (-0.055251113343776f)
+#define T_MATRIX_B5 (-0.048222578468680f)
+#define T_MATRIX_B6 (-0.012966666339586f)
+#define T_MATRIX_B7 (-0.001523814504223f)
+#define T_MATRIX_B8 (-0.000094718948810f)
+#define T_MATRIX_B9 (-0.000051604594741f)
+
+#define T_MATRIX_G0 (-0.032601672674412f)
+#define T_MATRIX_G1 (-0.061021043498478f)
+#define T_MATRIX_G2 (-0.052490001018404f)
+#define T_MATRIX_G3 (0.206659098273522f)
+#define T_MATRIX_G4 (0.572496335158169f)
+#define T_MATRIX_G5 (0.317837248815438f)
+#define T_MATRIX_G6 (-0.021216624031211f)
+#define T_MATRIX_G7 (-0.019387668756117f)
+#define T_MATRIX_G8 (-0.001521339050858f)
+#define T_MATRIX_G9 (-0.000835181622534f)
+
+#define T_MATRIX_R0 (0.026595621243689f)
+#define T_MATRIX_R1 (0.049779426257903f)
+#define T_MATRIX_R2 (0.022449850859496f)
+#define T_MATRIX_R3 (-0.218453689278271f)
+#define T_MATRIX_R4 (-0.256894883201278f)
+#define T_MATRIX_R5 (0.445881722194840f)
+#define T_MATRIX_R6 (0.772365886289756f)
+#define T_MATRIX_R7 (0.194498761382537f)
+#define T_MATRIX_R8 (0.014038157587820f)
+#define T_MATRIX_R9 (0.007687264480513f)
 
 static float srgb_to_linear(float x)
 {
@@ -1900,31 +1933,141 @@ static float linear_to_srgb(float x)
                           : fastpow(x, 1.0f / 2.4f) * 1.055f - 0.055f;
 }
 
+#ifdef DP_CPU_X64
+DP_TARGET_BEGIN("avx2")
+static void rgb_to_spectral_avx2(float b, float g, float r, float *out)
+{
+    // First eight elements per channel. This is one big dot product.
+    _mm256_store_ps(
+        out,
+        // B' + (G' + R')
+        _mm256_add_ps(
+            // B' = SPECTRAL_B * b
+            _mm256_mul_ps(_mm256_set_ps(SPECTRAL_B7, SPECTRAL_B6, SPECTRAL_B5,
+                                        SPECTRAL_B4, SPECTRAL_B3, SPECTRAL_B2,
+                                        SPECTRAL_B1, SPECTRAL_B0),
+                          _mm256_set1_ps(b)),
+            // G' + R'
+            _mm256_add_ps(
+                // G' = SPECTRAL_G * g
+                _mm256_mul_ps(_mm256_set_ps(SPECTRAL_G7, SPECTRAL_G6,
+                                            SPECTRAL_G5, SPECTRAL_G4,
+                                            SPECTRAL_G3, SPECTRAL_G2,
+                                            SPECTRAL_G1, SPECTRAL_G0),
+                              _mm256_set1_ps(g)),
+                // R' = SPECTRAL_R * r
+                _mm256_mul_ps(_mm256_set_ps(SPECTRAL_R7, SPECTRAL_R6,
+                                            SPECTRAL_R5, SPECTRAL_R4,
+                                            SPECTRAL_R3, SPECTRAL_R2,
+                                            SPECTRAL_R1, SPECTRAL_R0),
+                              _mm256_set1_ps(r)))));
+    // Last two elements in each channel, two zeroes for scalar calculation.
+    _mm256_store_ps(
+        out + 8,
+        _mm256_mul_ps(_mm256_set_ps(SPECTRAL_R9, SPECTRAL_G9, SPECTRAL_B9,
+                                    SPECTRAL_R8, SPECTRAL_G8, SPECTRAL_B8, 0.0f,
+                                    0.0f),
+                      _mm256_set_ps(r, g, b, r, g, b, 0.0f, 0.0f)));
+    // Sum up the last two channels as a scalar operation.
+    out[8] = out[10] + out[11] + out[12];
+    out[9] = out[13] + out[14] + out[15];
+    _mm256_zeroupper();
+}
+DP_TARGET_END
+
+DP_TARGET_BEGIN("sse4.2")
+static void rgb_to_spectral_sse42(float b, float g, float r, float *out)
+{
+    {
+        __m128 vb = _mm_set1_ps(b);
+        __m128 vg = _mm_set1_ps(g);
+        __m128 vr = _mm_set1_ps(r);
+        // First four elements.
+        _mm_store_ps(out,
+                     // B' + (G' + R')
+                     _mm_add_ps(
+                         // B' = SPECTRAL_B * b
+                         _mm_mul_ps(_mm_set_ps(SPECTRAL_B3, SPECTRAL_B2,
+                                               SPECTRAL_B1, SPECTRAL_B0),
+                                    vb),
+                         // G' + R'
+                         _mm_add_ps(
+                             // G' = SPECTRAL_G * g
+                             _mm_mul_ps(_mm_set_ps(SPECTRAL_G3, SPECTRAL_G2,
+                                                   SPECTRAL_G1, SPECTRAL_G0),
+                                        vg),
+                             // R' = SPECTRAL_R * r
+                             _mm_mul_ps(_mm_set_ps(SPECTRAL_R3, SPECTRAL_R2,
+                                                   SPECTRAL_R1, SPECTRAL_R0),
+                                        vr))));
+        // Next four elements.
+        _mm_store_ps(out + 4,
+                     // B' + (G' + R')
+                     _mm_add_ps(
+                         // B' = SPECTRAL_B * b
+                         _mm_mul_ps(_mm_set_ps(SPECTRAL_B7, SPECTRAL_B6,
+                                               SPECTRAL_B5, SPECTRAL_B4),
+                                    vb),
+                         // G' + R'
+                         _mm_add_ps(
+                             // G' = SPECTRAL_G * g
+                             _mm_mul_ps(_mm_set_ps(SPECTRAL_G7, SPECTRAL_G6,
+                                                   SPECTRAL_G5, SPECTRAL_G4),
+                                        vg),
+                             // R' = SPECTRAL_R * r
+                             _mm_mul_ps(_mm_set_ps(SPECTRAL_R7, SPECTRAL_R6,
+                                                   SPECTRAL_R5, SPECTRAL_R4),
+                                        vr))));
+    }
+    // Last two elements in each channel, two zeroes for scalar calculation.
+    _mm_store_ps(out + 8,
+                 _mm_mul_ps(_mm_set_ps(SPECTRAL_G8, SPECTRAL_B8, 0.0f, 0.0f),
+                            _mm_set_ps(g, b, 0.0f, 0.0f)));
+    _mm_store_ps(out + 12, _mm_mul_ps(_mm_set_ps(SPECTRAL_R9, SPECTRAL_G9,
+                                                 SPECTRAL_B9, SPECTRAL_R8),
+                                      _mm_set_ps(r, g, b, r)));
+    // Sum up the last two channels as a scalar operation.
+    out[8] = out[10] + out[11] + out[12];
+    out[9] = out[13] + out[14] + out[15];
+}
+DP_TARGET_END
+#endif
+
+static void rgb_to_spectral_scalar(float b, float g, float r, float *out)
+{
+    float *aligned_out = DP_ASSUME_SIMD_ALIGNED(out);
+    aligned_out[0] = SPECTRAL_B0 * b + SPECTRAL_G0 * g + SPECTRAL_R0 * r;
+    aligned_out[1] = SPECTRAL_B1 * b + SPECTRAL_G1 * g + SPECTRAL_R1 * r;
+    aligned_out[2] = SPECTRAL_B2 * b + SPECTRAL_G2 * g + SPECTRAL_R2 * r;
+    aligned_out[3] = SPECTRAL_B3 * b + SPECTRAL_G3 * g + SPECTRAL_R3 * r;
+    aligned_out[4] = SPECTRAL_B4 * b + SPECTRAL_G4 * g + SPECTRAL_R4 * r;
+    aligned_out[5] = SPECTRAL_B5 * b + SPECTRAL_G5 * g + SPECTRAL_R5 * r;
+    aligned_out[6] = SPECTRAL_B6 * b + SPECTRAL_G6 * g + SPECTRAL_R6 * r;
+    aligned_out[7] = SPECTRAL_B7 * b + SPECTRAL_G7 * g + SPECTRAL_R7 * r;
+    aligned_out[8] = SPECTRAL_B8 * b + SPECTRAL_G8 * g + SPECTRAL_R8 * r;
+    aligned_out[9] = SPECTRAL_B9 * b + SPECTRAL_G9 * g + SPECTRAL_R9 * r;
+}
+
 static DP_Spectral rgb_to_spectral(BGRf bgr)
 {
     float b = srgb_to_linear(bgr.b) * WGM_OFFSET + WGM_EPSILON;
     float g = srgb_to_linear(bgr.g) * WGM_OFFSET + WGM_EPSILON;
     float r = srgb_to_linear(bgr.r) * WGM_OFFSET + WGM_EPSILON;
-    // upsample rgb to spectral primaries
-    DP_Spectral spec_b;
-    for (int i = 0; i < 10; ++i) {
-        spec_b.channels[i] = SPECTRAL_B_SMALL[i] * b;
+    DP_Spectral out;
+    switch (DP_cpu_support) {
+#ifdef DP_CPU_X64
+    case DP_CPU_SUPPORT_AVX2:
+        rgb_to_spectral_avx2(b, g, r, out.channels);
+        break;
+    case DP_CPU_SUPPORT_SSE42:
+        rgb_to_spectral_sse42(b, g, r, out.channels);
+        break;
+#endif
+    default:
+        rgb_to_spectral_scalar(b, g, r, out.channels);
+        break;
     }
-    DP_Spectral spec_g;
-    for (int i = 0; i < 10; ++i) {
-        spec_g.channels[i] = SPECTRAL_G_SMALL[i] * g;
-    }
-    DP_Spectral spec_r;
-    for (int i = 0; i < 10; ++i) {
-        spec_r.channels[i] = SPECTRAL_R_SMALL[i] * r;
-    }
-    // collapse into one spd
-    DP_Spectral spec_out;
-    for (int i = 0; i < 10; ++i) {
-        spec_out.channels[i] =
-            spec_b.channels[i] + spec_g.channels[i] + spec_r.channels[i];
-    }
-    return spec_out;
+    return out;
 }
 
 static DP_Spectral pixel15_to_spectral(DP_Pixel15 p)
@@ -1941,14 +2084,22 @@ static float clampf(float x)
 
 static BGRf spectral_to_rgb(const float *spectral)
 {
-    float b = 0.0f;
-    float g = 0.0f;
-    float r = 0.0f;
-    for (int i = 0; i < 10; i++) {
-        b += T_MATRIX_SMALL[0][i] * spectral[i];
-        g += T_MATRIX_SMALL[1][i] * spectral[i];
-        r += T_MATRIX_SMALL[2][i] * spectral[i];
-    }
+    const float *aligned = DP_ASSUME_SIMD_ALIGNED(spectral);
+    float b = T_MATRIX_B0 * aligned[0] + T_MATRIX_B1 * aligned[1]
+            + T_MATRIX_B2 * aligned[2] + T_MATRIX_B3 * aligned[3]
+            + T_MATRIX_B4 * aligned[4] + T_MATRIX_B5 * aligned[5]
+            + T_MATRIX_B6 * aligned[6] + T_MATRIX_B7 * aligned[7]
+            + T_MATRIX_B8 * aligned[8] + T_MATRIX_B9 * aligned[9];
+    float g = T_MATRIX_G0 * aligned[0] + T_MATRIX_G1 * aligned[1]
+            + T_MATRIX_G2 * aligned[2] + T_MATRIX_G3 * aligned[3]
+            + T_MATRIX_G4 * aligned[4] + T_MATRIX_G5 * aligned[5]
+            + T_MATRIX_G6 * aligned[6] + T_MATRIX_G7 * aligned[7]
+            + T_MATRIX_G8 * aligned[8] + T_MATRIX_G9 * aligned[9];
+    float r = T_MATRIX_R0 * aligned[0] + T_MATRIX_R1 * aligned[1]
+            + T_MATRIX_R2 * aligned[2] + T_MATRIX_R3 * aligned[3]
+            + T_MATRIX_R4 * aligned[4] + T_MATRIX_R5 * aligned[5]
+            + T_MATRIX_R6 * aligned[6] + T_MATRIX_R7 * aligned[7]
+            + T_MATRIX_R8 * aligned[8] + T_MATRIX_R9 * aligned[9];
     return (BGRf){
         clampf(linear_to_srgb((b - WGM_EPSILON) / WGM_OFFSET)),
         clampf(linear_to_srgb((g - WGM_EPSILON) / WGM_OFFSET)),
@@ -1959,26 +2110,34 @@ static BGRf spectral_to_rgb(const float *spectral)
 static void mix_spectral_channels(const float *a, float *b, float fac_a,
                                   float fac_b)
 {
-    for (int i = 0; i < 10; ++i) {
-        b[i] = fastpow(a[i], fac_a) * fastpow(b[i], fac_b);
-    }
+    const float *aligned_a = DP_ASSUME_SIMD_ALIGNED(a);
+    float *aligned_b = DP_ASSUME_SIMD_ALIGNED(b);
+    aligned_b[0] = fastpow(aligned_a[0], fac_a) * fastpow(aligned_b[0], fac_b);
+    aligned_b[1] = fastpow(aligned_a[1], fac_a) * fastpow(aligned_b[1], fac_b);
+    aligned_b[2] = fastpow(aligned_a[2], fac_a) * fastpow(aligned_b[2], fac_b);
+    aligned_b[3] = fastpow(aligned_a[3], fac_a) * fastpow(aligned_b[3], fac_b);
+    aligned_b[4] = fastpow(aligned_a[4], fac_a) * fastpow(aligned_b[4], fac_b);
+    aligned_b[5] = fastpow(aligned_a[5], fac_a) * fastpow(aligned_b[5], fac_b);
+    aligned_b[6] = fastpow(aligned_a[6], fac_a) * fastpow(aligned_b[6], fac_b);
+    aligned_b[7] = fastpow(aligned_a[7], fac_a) * fastpow(aligned_b[7], fac_b);
+    aligned_b[8] = fastpow(aligned_a[8], fac_a) * fastpow(aligned_b[8], fac_b);
+    aligned_b[9] = fastpow(aligned_a[9], fac_a) * fastpow(aligned_b[9], fac_b);
 }
 
-static DP_Spectral mix_spectral(DP_Pixel15 dp, DP_Spectral spectral_a, Fix15 ab,
-                                Fix15 aso)
+static DP_Spectral mix_spectral(DP_Pixel15 dp, const float *channels_a,
+                                Fix15 ab, Fix15 aso)
 {
     float fac_a = (float)aso / (float)(aso + (DP_BIT15 - aso) * ab / BIT15_FIX);
     float fac_b = 1.0f - fac_a;
     DP_Spectral spectral_b = pixel15_to_spectral(dp);
-    mix_spectral_channels(spectral_a.channels, spectral_b.channels, fac_a,
-                          fac_b);
+    mix_spectral_channels(channels_a, spectral_b.channels, fac_a, fac_b);
     return spectral_b;
 }
 
-static BGRf blend_pigment_mask(DP_Pixel15 dp, DP_Spectral spectral_b, Fix15 ab,
-                               Fix15 aso)
+static BGRf blend_pigment_mask(DP_Pixel15 dp, const float *spectral_b_channels,
+                               Fix15 ab, Fix15 aso)
 {
-    DP_Spectral spectral = mix_spectral(dp, spectral_b, ab, aso);
+    DP_Spectral spectral = mix_spectral(dp, spectral_b_channels, ab, aso);
     return spectral_to_rgb(spectral.channels);
 }
 
@@ -2021,7 +2180,8 @@ static void blend_mask_pigment(DP_Pixel15 *dst, DP_UPixel15 src,
             else {
                 Fix15 ab = from_fix(dp.a);
                 Fix15 aso = fix15_mul(as, opacity);
-                BGRf cr_f = blend_pigment_mask(dp, spectral_b, ab, aso);
+                BGRf cr_f =
+                    blend_pigment_mask(dp, spectral_b.channels, ab, aso);
                 assign_pigment(dst, dp.a, cr_f);
             }
         }
@@ -2059,7 +2219,8 @@ static void blend_mask_pigment_alpha(DP_Pixel15 *dst, DP_UPixel15 src,
             else {
                 Fix15 ab = from_fix(dp.a);
                 Fix15 aso = fix15_mul(as, opacity);
-                BGRf cr_f = blend_pigment_mask(dp, spectral_b, ab, aso);
+                BGRf cr_f =
+                    blend_pigment_mask(dp, spectral_b.channels, ab, aso);
                 assign_pigment_alpha(dst, ab, aso, cr_f);
             }
         }
@@ -3457,8 +3618,9 @@ static void blend_pixels_color_erase(DP_Pixel15 *DP_RESTRICT dst,
 static BGRf blend_pigment_pixel(DP_Pixel15 dp, DP_Pixel15 sp, Fix15 ab,
                                 Fix15 aso)
 {
-    DP_Spectral spectral = mix_spectral(dp, pixel15_to_spectral(sp), ab, aso);
-    return spectral_to_rgb(spectral.channels);
+    DP_Spectral spectral_a = pixel15_to_spectral(sp);
+    DP_Spectral spectral_b = mix_spectral(dp, spectral_a.channels, ab, aso);
+    return spectral_to_rgb(spectral_b.channels);
 }
 
 static void blend_pixels_pigment(DP_Pixel15 *DP_RESTRICT dst,

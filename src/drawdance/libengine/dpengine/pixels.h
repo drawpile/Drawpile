@@ -79,8 +79,9 @@ typedef struct DP_UPixelFloat {
     float b, g, r, a;
 } DP_UPixelFloat;
 
+// Spectral buffer. Only the first 10 floats matter, the rest are for SIMD.
 typedef struct DP_Spectral {
-    float channels[10];
+    DP_ALIGNAS_SIMD float channels[16];
 } DP_Spectral;
 
 
