@@ -393,28 +393,28 @@
     <message>
         <location line="+4"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bạn có thể cài ffmpeg thông qua Homebrew.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bạn có thể cài ffmpeg thông qua trình quản lý gói của mình.</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Không thể khởi động ffmpeg bằng &apos;%1&apos;. %2</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Ffmpeg crashed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ffmpeg bị văng ra!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ffmpeg process error</source>
-        <translation type="unfinished"></translation>
+        <translation>Lỗi tiến trình Ffmpeg</translation>
     </message>
 </context>
 <context>
@@ -422,18 +422,19 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+322"/>
         <source>Filling…</source>
-        <translation type="unfinished"></translation>
+        <translation>Đang đổ màu…</translation>
     </message>
     <message>
         <location line="+73"/>
         <source>No layer selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Không có Lớp được chọn.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Không thể đổ màu vào nhóm lớp %1.
+Hãy chọn một lớp thông thường thay vào đó.</translation>
     </message>
 </context>
 <context>
@@ -441,17 +442,17 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Khả năng hiển thị: Ẩn</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation type="unfinished"></translation>
+        <translation>Khả năng hiển thị: Đã hiển thị</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Khả năng hiển thị: Gốc</translation>
     </message>
 </context>
 <context>
@@ -459,7 +460,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+291"/>
         <source>Selecting…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Đang chọn…</translation>
     </message>
 </context>
 <context>
@@ -467,12 +468,12 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/images.cpp" line="+84"/>
         <source>Images (%1)</source>
-        <translation type="unfinished">Ảnh (%1)</translation>
+        <translation>Ảnh (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>GIF (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Hình động GIF (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -492,52 +493,52 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Performance Profile (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Hồ sơ Hiệu suất (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Debug Dumps (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bản đổ Lỗi (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Tablet Event Log (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bảng Danh sách Sự kiện (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Video MP4 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Video WebM (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Text File (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tệp Văn bản (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bộ Cọ vẽ (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Cấm phiên (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Các Vai Trò (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished">Mọi tập tin hỗ trợ (%1)</translation>
+        <translation>Mọi tệp được hỗ trợ (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -550,7 +551,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+48"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Lớp %1</translation>
     </message>
 </context>
 <context>
@@ -558,7 +559,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-139"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -586,73 +587,73 @@ Select a regular layer instead.</source>
     <message>
         <location line="-446"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1ng%2g%3p</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1g%2p</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1p</translation>
     </message>
     <message numerus="yes">
         <location line="+106"/>
         <source>%1/%n users</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
+            <numerusform>%1/%n người dùng</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n người dùng</numerusform>
         </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Không rõ số lượng người dùng đang hoạt động</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n người dùng đang hoạt động</numerusform>
         </translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tương thích</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Requires compatibility mode (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Yêu cầu chế độ tương thích (%1)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Requires newer client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Yêu cầu máy khách mới hơn (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Không tương thích (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>phiên bản không xác định</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Khả năng tương thích</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -672,7 +673,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Đang hoạt động</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -687,27 +688,27 @@ Select a regular layer instead.</source>
     <message>
         <location line="+169"/>
         <source>incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation>không tương thích</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">không được phép tham gia từ web</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation>đã đóng</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>được bảo vệ bằng mật khẩu</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>Không dành cho dưới 18 tuổi</translation>
     </message>
 </context>
 <context>
@@ -715,47 +716,47 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation type="unfinished">Bình thường</translation>
+        <translation>Bình thường</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation type="unfinished">Recolor</translation>
+        <translation>Tô lại</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished">Đằng sau</translation>
+        <translation>Đặt sau</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Multiply</source>
-        <translation type="unfinished">Nhân</translation>
+        <translation>Nhân Lên</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Màn Hình</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>Che Phủ</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Divide</source>
-        <translation type="unfinished">Chia</translation>
+        <translation>Chia Cắt</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Burn</source>
-        <translation type="unfinished">Đốt</translation>
+        <translation>Cháy</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dodge</source>
-        <translation type="unfinished">Tránh</translation>
+        <translation>Né Tránh</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -765,7 +766,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Lighten</source>
-        <translation type="unfinished">Độ nhat</translation>
+        <translation>Sáng</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -780,27 +781,27 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Xóa</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Xóa Màu</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hard Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Rất Sáng</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Soft Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Sáng Dịu</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Linear Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>Cháy Dòng</translation>
     </message>
     <message>
         <location line="+5"/>
