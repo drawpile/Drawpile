@@ -396,7 +396,7 @@
     <message>
         <location line="+24"/>
         <source>Save Pre-Reset Image</source>
-        <translation type="unfinished">Save Pre-Reset Image</translation>
+        <translation>Lưu Hình Ảnh Trước Khi Đặt Lại</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -719,7 +719,7 @@
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">Hủy bỏ</translation>
+        <translation>Hủy</translation>
     </message>
     <message>
         <location line="-336"/>
@@ -809,7 +809,7 @@
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished">Mark whole tiles</translation>
+        <translation>Đánh dấu toàn bộ gạch</translation>
     </message>
 </context>
 <context>
