@@ -26,7 +26,7 @@
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (conflito)</translation>
     </message>
     <message>
         <location line="+85"/>
@@ -36,7 +36,7 @@
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Atalho</translation>
+        <translation>Atalho</translation>
     </message>
 </context>
 <context>
@@ -83,13 +83,13 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished">Conflito</translation>
+        <translation>Conflito</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (conflito)</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -239,12 +239,12 @@
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Mudar Saturação de Cor</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Mudar Claridade de Cor</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -327,7 +327,7 @@
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (conflito)</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -380,7 +380,7 @@
     <message>
         <location line="+664"/>
         <source>Error saving image</source>
-        <translation type="unfinished"></translation>
+        <translation>Falha ao gravar imagem</translation>
     </message>
 </context>
 <context>
@@ -422,12 +422,12 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+322"/>
         <source>Filling…</source>
-        <translation type="unfinished"></translation>
+        <translation>Preenchendo…</translation>
     </message>
     <message>
         <location line="+73"/>
         <source>No layer selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenhuma camada selecionada.</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -622,9 +622,9 @@ Select a regular layer instead.</source>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n utilizador activo a desenhar</numerusform>
+            <numerusform>%n utilizadores activos a desenhar</numerusform>
         </translation>
     </message>
     <message>
@@ -695,7 +695,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrada pela web não permitida</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1376,34 +1376,34 @@ Select a regular layer instead.</source>
         <location line="+16"/>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Utilizado %1 por %2</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Created %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Criado %1 por %2</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Operator and Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Operador e Confiável</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished">Operador</translation>
+        <translation>Operador</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">Confiável</translation>
+        <translation>Confiável</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1/%2</source>
         <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1/%2</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1467,7 +1467,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+64"/>
         <source>Failed to retrieve server info</source>
-        <translation type="unfinished"></translation>
+        <translation>Falha ao obter informação do servidor</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -1645,7 +1645,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation type="unfinished">Nome de hospede inválido.</translation>
+        <translation>Nome de hospede inválido.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1688,12 +1688,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Closed (not allowed to join from the web browser)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fechado (não permitido entrar pelo navegador web)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (not allowed to join via WebSocket)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fechado (não permitido entrada pelo Websocket)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1718,14 +1718,14 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Número de utilizadores activos a desenhar desconhecido</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n utilizador activo a desenhar</numerusform>
+            <numerusform>%n utilizadores activos a desenhar</numerusform>
         </translation>
     </message>
     <message>
@@ -1746,31 +1746,31 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished">Ativo</translation>
+        <translation>Ativa</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Está cheio ou fechou.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Esta necessita de conta.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Esta não permite entrar pelo navegador de web.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>It does not allow joining via WebSockets.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Esta não permite entrar por Websockets.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1838,7 +1838,7 @@ Select a regular layer instead.</source>
         <location line="+4"/>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (falha %2)</translation>
     </message>
 </context>
 <context>
@@ -1846,27 +1846,27 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/transform.cpp" line="+425"/>
         <source>You don&apos;t have permission to transform selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não tem permissão para transformar selecções.</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>No canvas present.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sem tela.</translation>
     </message>
     <message>
         <location line="-254"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não tem permissão para essa transformação.</translation>
     </message>
     <message>
         <location line="+207"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não tem permissão para carimbar a selecção.</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>Nothing selected that could be transformed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nada selecionado que possa ser transformado.</translation>
     </message>
 </context>
 <context>
@@ -1951,7 +1951,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>O servidor pode não deixar entrar pelo navegador de web.</translation>
     </message>
 </context>
 </TS>
