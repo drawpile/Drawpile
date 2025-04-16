@@ -342,12 +342,12 @@
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished">Ad:</translation>
+        <translation>Ad:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished">Yaz:</translation>
+        <translation>Tür:</translation>
     </message>
 </context>
 <context>
@@ -462,98 +462,98 @@
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Animasyon Karelerini İçe Aktar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Kare Resimleri</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Katmanlardan Animasyonu İçe Aktar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Katmanlı Görseller</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırçaları İçe Aktar</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum Ayarların İçe Aktar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm Desteklenen Dosyalar (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+391"/>
         <source>Session Settings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum Ayarları (%1)</translation>
     </message>
     <message>
         <location line="-390"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum Yasakları (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum Rolleri (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Error opening temporary file for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 için geçici dosyayı açmak başarısız oldu.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation type="unfinished">Resmi Aç</translation>
+        <translation>Resmi Aç</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça Önayar Küçük Resmini Ayarla</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosyayı Yapıştır</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Reference Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Referans Görseli</translation>
     </message>
     <message>
         <location line="+168"/>
         <source>Export Frames in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>ZIP Şeklinde Kareleri Dışa Aktar</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBM Videosunu Dışa Aktar</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>Animasyonlu WEBP&apos;yi Dışa Aktar</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -578,7 +578,7 @@
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum Ayarlarını Dışa Aktar</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -629,7 +629,7 @@
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+143"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Boyut Sınırı: Sınırsız</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-298"/>
@@ -651,13 +651,13 @@
         <location line="-135"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-115"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opaklık: </translation>
+        <translation>Opaklık: </translation>
     </message>
     <message>
         <location line="+174"/>
@@ -675,74 +675,74 @@
         <location line="+18"/>
         <location line="+3"/>
         <source>Fill continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>Devamlı olan alanı doldur</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill all similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm benzer renkleri doldur</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill entire selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm seçimi doldur</translation>
     </message>
     <message>
         <location line="+78"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+59"/>
         <source>Merged image</source>
-        <translation type="unfinished"></translation>
+        <translation>Birleştirilmiş görsel</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Merged without background</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkaplan olmadan birleştirildi</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Mevcut katman</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill source layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaynak katmanı doldur</translation>
     </message>
     <message>
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>Herkes için görünür hale getirerek, mevcut doldurmayı uygula</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Uygula</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished"></translation>
+        <translation>Başkaları etkilerini görmeden, bekleyen doldurmayı iptal et</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">İptal</translation>
+        <translation>İptal</translation>
     </message>
     <message>
         <location line="-336"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Boyut Sınırı: </translation>
     </message>
     <message>
         <location line="+279"/>
@@ -809,7 +809,7 @@
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished"></translation>
+        <translation>Karoları bütüncül olarak işaretle</translation>
     </message>
 </context>
 <context>
@@ -822,7 +822,7 @@
     <message>
         <location line="+17"/>
         <source>Session</source>
-        <translation type="unfinished">Oturum</translation>
+        <translation>Oturum</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -842,12 +842,12 @@
     <message>
         <location line="+30"/>
         <source>Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Kodlar</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Create</source>
-        <translation type="unfinished">Oluştur</translation>
+        <translation>Oluştur</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -857,7 +857,7 @@
     <message>
         <location line="+11"/>
         <source>Copy</source>
-        <translation type="unfinished">Kopyala</translation>
+        <translation>Kopyala</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -872,7 +872,7 @@
     <message>
         <location line="+37"/>
         <source>Allow session operators to manage invite codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum operatörlerinin davet kodlarını yönetmesine izin ver</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -989,7 +989,7 @@ Alt aralık: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Sketch mode for you</source>
-        <translation type="unfinished"></translation>
+        <translation>Kendiniz için eskiz modu</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1019,17 +1019,17 @@ Alt aralık: [%3, %4]</translation>
     <message>
         <location line="+81"/>
         <source>No tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Tonlama yok</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Mavi ton</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçiniz…</translation>
     </message>
 </context>
 <context>
@@ -1065,22 +1065,22 @@ Alt aralık: [%3, %4]</translation>
     <message>
         <location filename="../utils/widgetutils.cpp" line="+1129"/>
         <source>Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantıyı Aç</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu bağlantı sizi Drawpile tarafından işletilmeyen &quot;%1&quot; sitesine götürecektir. Gitmek istediğinizden emin misiniz?</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Yes, visit website</source>
-        <translation type="unfinished"></translation>
+        <translation>Evet, websiteyi ziyaret et</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Hayır, iptal et</translation>
     </message>
 </context>
 <context>
@@ -1275,61 +1275,61 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <location line="+92"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>oturumdan bağlantınızı kesecektir</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>lose any unsaved changes</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>kaydedilmemiş değişiklikleri kaybedeceksiniz</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>stop your recording</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>kaydınızı durduracaktır</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>discard your playback</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>oynatmanızı iptal edecektir</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+15"/>
         <source>Doing so will %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yapmak şu etkilere sahip olacaktır: %1.</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Doing so will %1 and %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yapmak %1 ve %2.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Doing so will %1, %2 and %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yapmak %1, %2 ve %3.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yapmak %1, %2, %3 ve %4.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Devam etmek istediğinizden emin misiniz?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Evet, devam et</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Hayır, iptal et</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -1341,12 +1341,12 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <location line="-2081"/>
         <location line="+3793"/>
         <source>Export Again</source>
-        <translation type="unfinished"></translation>
+        <translation>Tekrardan Dışa Aktar</translation>
     </message>
     <message>
         <location line="-3789"/>
         <source>Export Again to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tekrardan %1&apos;e Dışa Aktar</translation>
     </message>
     <message>
         <location line="+439"/>
@@ -1405,52 +1405,52 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <location line="+131"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kesmeye, yapıştırmaya, doldurmaya ya da silmeye izniniz yok.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvalı yeniden boyutlandırmaya izniniz yok.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum arkaplanını değiştirmeye izniniz yok.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ek açıklamalar oluşturmaya izniniz yok.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eylemi geri ya da ileri almaya izniniz yok.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bunu yapmaya izniniz yok.</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>New</source>
-        <translation type="unfinished">Yeni</translation>
+        <translation>Yeni</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu pencereyi kapatıp yeni bir tuval oluşturmak üzeresiniz.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Open Recent File</source>
-        <translation type="unfinished"></translation>
+        <translation>En Son Dosyayı Aç</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recent file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>En son dosyayı açıp bu pencereyi kapatmak üzeresiniz.</translation>
     </message>
     <message>
         <location line="+102"/>
@@ -1460,12 +1460,12 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="-1254"/>
         <source>Open</source>
-        <translation type="unfinished">Aç</translation>
+        <translation>Aç</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a new file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni bir dosya açıp bu pencereyi kapatmak üzeresiniz.</translation>
     </message>
     <message>
         <location line="+1438"/>
@@ -1475,7 +1475,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="+24"/>
         <source>Image saving failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Resmi kaydetmek başarısız oldu</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1490,12 +1490,12 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="+35"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>İndirme Tamamlandı</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation type="unfinished"></translation>
+        <translation>İndirme tamamlandı, dosyanızı kaydetmek için &quot;Kaydet&quot;e basınız.</translation>
     </message>
     <message>
         <location line="+67"/>
@@ -1561,7 +1561,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="+22"/>
         <source>Error downloading profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Profili indirmek hatalı.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1576,7 +1576,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="+22"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet olay günlüğünü indirmekte hata oluştu.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1591,7 +1591,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="+183"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Çoktan bir oturuma bağlısınız! Başka bir oturuma ev sahipliği yapmak için bağlantınızı kesin.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1611,12 +1611,12 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="+127"/>
         <source>Reconnect</source>
-        <translation type="unfinished">Yeniden Bağlan</translation>
+        <translation>Yeniden Bağlan</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu oturuma yeniden bağlanıp bu pencereyi kapatmak üzeresiniz.</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -1662,12 +1662,12 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="-2698"/>
         <source>Join Session</source>
-        <translation type="unfinished">Oturuma Katıl</translation>
+        <translation>Oturuma Katıl</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to connect to a new session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni bir oturuma katılıp bu pencereyi kapatmak üzeresiniz.</translation>
     </message>
     <message>
         <location line="+141"/>
@@ -1697,13 +1697,13 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="+33"/>
         <source>Error</source>
-        <translation type="unfinished">Hata</translation>
+        <translation>Hata</translation>
     </message>
     <message>
         <location line="+489"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Bu görsel yüklenemedi: %1.</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1718,7 +1718,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="+50"/>
         <source>Altering selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçim değiştiriliyor…</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -1789,22 +1789,22 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+17"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished">Hata Ayıklama Çöplüğünü Aç</translation>
+        <translation>Hata Ayıklama Çöplüğünü Aç</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a debug dump and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hata ayıklama çöplüğü açıp bu pencereyi kapatmak üzeresiniz.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Cause Crash</source>
-        <translation type="unfinished"></translation>
+        <translation>Çökmeye Sebep Ol</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you really want to crash Drawpile? This will terminate the program and you will lose any unsaved data!</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile&apos;ı gerçekten çökertmek istiyor musunuz? Bu programı sona erdirecektir ve kaydedilmemiş verileri kaybedeceksiniz!</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1849,7 +1849,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+8"/>
         <source>Show Icons on Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Sekmelerde Simgeleri Göster</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -1881,12 +1881,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+3"/>
         <source>&amp;Download Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Resmi İndir…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Download Selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçimi İndir…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1906,17 +1906,17 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+9"/>
         <source>Export &amp;Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>Dışa Aktar &amp;Animasyon…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation>Animasyonu İçe Aktar &amp;Kareler…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Animasyonu Burdan İçe Aktar &amp;Katmanlar…</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2045,112 +2045,112 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+72"/>
         <source>Expand &amp;Up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Genişlet &amp;Yukarı…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Down…</source>
-        <translation type="unfinished"></translation>
+        <translation>Genişlet &amp; Aşağı…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Left…</source>
-        <translation type="unfinished"></translation>
+        <translation>Genişlet &amp;Sola…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Right…</source>
-        <translation type="unfinished"></translation>
+        <translation>Genişlet &amp;Sağa…</translation>
     </message>
     <message>
         <location line="+170"/>
         <source>Zoom In On Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Merkeze Doğru Yakınlaştır</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Merkezden Uzaklaştır</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Yakınlaştırmayı Sıfırla</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Merkezde Yakınlaştırmayı Sıfırla</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Fit Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Tuvale Sığdır</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fit Canvas &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvale Sığdır&amp;Genişlik</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fit Canvas &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvale Sığdır &amp;Uzunluk</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Tuval Döndürmesini Sıfırla</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvali Saat Yönünün Tersine Doğru Çevir</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvali Aynala</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvali yatay olarak aynala</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>tuvali yatay olarak aynala/çevir</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvali Çevir</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvali ters çevir</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvali dikey aynala/çevir</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Hide From Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>İmleçten Sakla</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation type="unfinished"></translation>
+        <translation>Göster &amp;Cetveller</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçimi Göster &amp;Maskele</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2160,7 +2160,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+6"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ekrana Sığdır</translation>
     </message>
     <message>
         <location line="+116"/>
@@ -2181,36 +2181,36 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location line="+4"/>
         <source>1 Second</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Saniye</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>10 Seconds</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>10 Saniye</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Minute</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Dakika</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Hour</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Saat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Forever</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>Sonsuza Dek</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Clear Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Doldurma Kaynağını Temizle</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2220,12 +2220,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Tümünü İşaretle</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Uncheck All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Tümünün İşaretini Kaldır</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2240,42 +2240,42 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+40"/>
         <source>Mirror the transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Dönüştürülmüş resmi yatay olarak aynala</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>dönüştürülmüş resmi yatay olarak aynala/çevir</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Flip the transformed image upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Dönüştürülmüş resmi ters çevir</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>mirror/flip transformed image vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>dönüştürülmüş resmi dikey olarak aynala/çevir</translation>
     </message>
     <message>
         <location line="+119"/>
         <source>Create Layers on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Mevcut Anahtar Karede Katmanlar Oluştur</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Sıradaki Anahtar Karede Katmanlar Oluştur</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Önceki Anahtar Karede Katmanlar Oluştur</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Create Layers on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Anahtar Karede Katmanlar Oluştur</translation>
     </message>
     <message>
         <location line="-697"/>
@@ -2305,22 +2305,22 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="-1918"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Bağlantı Kesildi</translation>
+        <translation>Bağlantı Kesildi</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;ve been disconnected from the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sunucuyla bağlantınız kesildi.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Connection Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı Başarısız Oldu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Could not establish a connection to the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sunucuya bağlantı sağlanamadı.</translation>
     </message>
     <message>
         <location line="+1414"/>
@@ -2842,7 +2842,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+1"/>
         <source>&amp;Lasso Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kayış Seçim</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2852,22 +2852,22 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+1"/>
         <source>&amp;Magic Wand Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sihirli Değnek Seçim</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select areas with similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Benzer renkli alanları seç</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Transform Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dönüşüm Aleti</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Transform selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçimi dönüştür</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2882,37 +2882,37 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+28"/>
         <source>System Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistem Bilgisi…</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Cause Crash…</source>
-        <translation type="unfinished"></translation>
+        <translation>Çökmeye Sebep Ol…</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Choose the current foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Mevcut önplan rengini seç</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Choose the current background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Mevcut arkaplan rengini seç</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Swap current foreground and background color with each other</source>
-        <translation type="unfinished"></translation>
+        <translation>Mevcut önplan ve arkaplan rengini birbiriyle değiştir</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set foreground color to black and background color to white</source>
-        <translation type="unfinished"></translation>
+        <translation>Önplan rengini siyah ve arkaplan rengini beyaz yap</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fırçayı Sıfırla</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2922,17 +2922,17 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+3"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Hepsini Sıfırla &amp;Fırçalar</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Next Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sonraki Fırça</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Previous Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Önceki Fırça</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2957,12 +2957,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+143"/>
         <source>Could not write log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Günlük dosyası yazılamadı: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Could not read log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Günlük dostası okunamadı: %1</translation>
     </message>
     <message>
         <location line="-339"/>
@@ -3436,7 +3436,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location filename="../utils/widgetutils.cpp" line="-87"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -3635,17 +3635,17 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+3"/>
         <source>Selection (Magic Wand)</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçim (Sihirli Değnek)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Transform</source>
-        <translation type="unfinished">Dönüştür</translation>
+        <translation>Dönüştür</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaydır</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4414,22 +4414,22 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+1"/>
         <source>MP4 Video</source>
-        <translation type="unfinished">MP4 Video</translation>
+        <translation>MP4 Videosu</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBM Videosu</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Format:</source>
-        <translation type="unfinished">Format:</translation>
+        <translation>Biçim:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loops:</source>
-        <translation type="unfinished"></translation>
+        <translation>Döngüler:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4439,47 +4439,47 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished">Yumuşat</translation>
+        <translation>Yumuşat</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Scaling:</source>
-        <translation type="unfinished"></translation>
+        <translation>Boyutlandırma:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Input</source>
-        <translation type="unfinished">Girdi</translation>
+        <translation>Girdi</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kare Aralığı:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source> FPS</source>
-        <translation type="unfinished"> FPS</translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Kare Hızı:</translation>
+        <translation>Kare Hızı:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Crop X:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kırp X:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Crop Y:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kırp Y:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Reset</source>
-        <translation type="unfinished">Sıfırla</translation>
+        <translation>Sıfırla</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4572,7 +4572,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+7"/>
         <source>Layers</source>
-        <translation type="unfinished">Katmanlar</translation>
+        <translation>Katmanlar</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4685,7 +4685,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+2"/>
         <source>Continuous lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>Devamlı hafiflik</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4695,7 +4695,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+2"/>
         <source>Continuous value</source>
-        <translation type="unfinished"></translation>
+        <translation>Devamlı değer</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4705,7 +4705,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+8"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Yok</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4720,12 +4720,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+15"/>
         <source>Mask opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Maske opaklığı: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -4761,7 +4761,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location line="+5"/>
         <source>Split</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Bölünmüş</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4788,7 +4788,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location line="-6"/>
         <source>Couldn&apos;t read image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Görsel okunamadı: %1.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4839,27 +4839,27 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+70"/>
         <source>Change…</source>
-        <translation type="unfinished"></translation>
+        <translation>Değiştir…</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kısayol:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Choose File…</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya Seç…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>64x64 pixele yeniden boyutlandırılacaktır.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished">Küçük Resim:</translation>
+        <translation>Küçük Resim:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4869,17 +4869,17 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+8"/>
         <source>Name:</source>
-        <translation type="unfinished">Ad:</translation>
+        <translation>Ad:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Description:</source>
-        <translation type="unfinished">Açıklama:</translation>
+        <translation>Açıklama:</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>No shortcut assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>Kısayol atanmadı</translation>
     </message>
 </context>
 <context>
@@ -4892,12 +4892,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+105"/>
         <source>Brush</source>
-        <translation type="unfinished">Fırça</translation>
+        <translation>Fırça</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Brush metadata settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça üstveri ayarları.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4912,12 +4912,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+62"/>
         <source>Save as New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Fırça olarak Kaydet</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırçanın Üstüne Yaz</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -6607,7 +6607,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tuvali Özgür Döndür</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6643,12 +6643,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Renk Doygunluğunu Değiştir</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Renk Değerini Değiştir</translation>
     </message>
     <message>
         <location line="+4"/>
