@@ -575,6 +575,10 @@ bool DP_test_file_eq_ok(DP_TestContext *T, const char *file, int line,
         unsigned char byte_a = content_a[i];
         unsigned char byte_b = content_b[i];
         if (byte_a != byte_b) {
+            va_list ap;
+            va_start(ap, fmt);
+            DP_test_vok(T, file, line, false, fmt, ap);
+            va_end(ap);
             DIAG("file bytes differ at %zu\n"
                  "actual byte:   %02x\n"
                  "expected byte: %02x",
