@@ -1213,9 +1213,9 @@ LayerListItem LayerListItem::null()
 {
 	return LayerListItem{
 		0,	   QString(), QColor(), 1.0f,  DP_BLEND_MODE_NORMAL,
-		0.0f,  QColor(),  false, false,
-		false, false,	  false, false,
-		0,	   0,		  0,	 0,
+		0.0f,  QColor(),  false,	false, false,
+		false, false,	  false,	0,	   0,
+		0,	   0,
 	};
 }
 
@@ -1228,6 +1228,11 @@ uint8_t LayerListItem::attributeFlags() const
 uint8_t LayerListItem::creatorId() const
 {
 	return DP_layer_id_context_id(id);
+}
+
+int LayerListItem::elementId() const
+{
+	return DP_layer_id_element_id(id);
 }
 
 }

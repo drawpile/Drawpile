@@ -176,6 +176,8 @@ private:
 	void handleChat(const net::Message &msg);
 	void handlePrivateChat(const net::Message &msg);
 
+	void updatePaintEngineTransform();
+
 	AclState *m_aclstate;
 	UserListModel *m_userlist;
 	LayerListModel *m_layerlist;

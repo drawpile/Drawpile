@@ -87,6 +87,11 @@ public:
 	void setActiveAnnotation(int id);
 	int activeAnnotation() const { return m_activeAnnotation; }
 
+	void setSelectionEditActive(bool selectionEditActive);
+	bool isSelectionEditActive() const { return m_selectionEditActive; }
+
+	int activeLayerOrSelection() const;
+
 	void setSelectedLayers(const QSet<int> &selectedLayers);
 	const QSet<int> &selectedLayers() const { return m_selectedLayers; }
 
@@ -231,6 +236,7 @@ signals:
 	void activeLayerChanged(int layerId);
 	void activeAnnotationChanged(int annotationId);
 	void activeBrushChanged(const brushes::ActiveBrush &);
+	bool selectionEditActiveChanged(bool selectionEditActive);
 	void transformToolStateChanged(int mode, int handle, bool dragging);
 	void modelChanged(canvas::CanvasModel *model);
 	void globalSmoothingChanged(int smoothing);
@@ -283,6 +289,7 @@ private:
 	int m_activeAnnotation;
 	QSet<int> m_selectedLayers;
 	QColor m_foregroundColor;
+	bool m_selectionEditActive = false;
 	bool m_drawing;
 	bool m_applyGlobalSmoothing;
 	bool m_mouseSmoothing;

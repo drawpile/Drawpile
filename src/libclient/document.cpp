@@ -1743,7 +1743,7 @@ void Document::fillArea(const QColor &color, DP_BlendMode mode, float opacity)
 		return;
 	}
 
-	QImage mask = selection->mask();
+	QImage mask = selection->image();
 	if(mask.isNull() || mask.size().isEmpty()) {
 		return;
 	}

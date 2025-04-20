@@ -17,6 +17,9 @@
 
 #define DP_LAYER_ID_SELECTION_FLAG (1 << 23)
 
+#define DP_SELECTION_ID_MAIN         1
+#define DP_SELECTION_ID_FIRST_REMOTE 128
+
 
 DP_INLINE int DP_protocol_to_layer_id(uint32_t protocol_layer_id)
 {
@@ -39,7 +42,7 @@ DP_INLINE bool DP_layer_id_normal(int layer_id)
 DP_INLINE bool DP_layer_id_selection(int layer_id)
 {
     return layer_id > 0 && (layer_id & DP_LAYER_ID_SELECTION_FLAG)
-        && (layer_id & 0xff00) == 0;
+        && (layer_id & 0x7f0000) == 0;
 }
 
 DP_INLINE bool DP_layer_id_normal_or_selection(int layer_id)
@@ -51,8 +54,9 @@ DP_INLINE int DP_selection_id_make(unsigned int context_id, int element_id)
 {
     DP_ASSERT(context_id <= DP_CONTEXT_ID_MAX);
     DP_ASSERT(element_id >= 0);
-    DP_ASSERT(element_id >= UINT8_MAX);
-    return DP_CAST(int, (context_id & 0xffu) << 8u) | (element_id & 0xff);
+    DP_ASSERT(element_id <= UINT8_MAX);
+    return DP_LAYER_ID_SELECTION_FLAG | (element_id & 0xff) << 8
+         | DP_CAST(int, context_id & 0xffu);
 }
 
 DP_INLINE unsigned int DP_layer_id_context_id(int layer_id)
@@ -70,12 +74,33 @@ DP_INLINE bool DP_layer_id_owner(int layer_id, unsigned int context_id)
     return DP_layer_id_context_id(layer_id) == context_id;
 }
 
-DP_INLINE int DP_layer_id_selection_id(unsigned int context_id, int layer_id)
+DP_INLINE bool DP_layer_id_selection_ids(int layer_id,
+                                         unsigned int *out_context_id,
+                                         int *out_element_id)
 {
-    DP_ASSERT(context_id <= DP_CONTEXT_ID_MAX);
+    if (DP_layer_id_selection(layer_id)) {
+        if (out_context_id) {
+            *out_context_id = DP_CAST(unsigned int, layer_id & 0xff);
+        }
+        if (out_element_id) {
+            *out_element_id = (layer_id >> 8) & 0xff;
+        }
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+DP_INLINE bool DP_selection_id_local(int selection_id)
+{
+    return selection_id < DP_SELECTION_ID_FIRST_REMOTE;
+}
+
+DP_INLINE bool DP_layer_id_local(int layer_id)
+{
     return DP_layer_id_selection(layer_id)
-             ? DP_selection_id_make(context_id, layer_id)
-             : 0;
+        && DP_selection_id_local((layer_id >> 8) & 0xff);
 }
 
 DP_INLINE int DP_layer_id_make(unsigned int context_id, int element_id)

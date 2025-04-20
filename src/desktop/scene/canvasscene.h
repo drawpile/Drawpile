@@ -2,6 +2,7 @@
 #ifndef CANVAS_SCENE_H
 #define CANVAS_SCENE_H
 #include "desktop/scene/toggleitem.h"
+#include "libclient/canvas/selectionmodel.h"
 #include <QColor>
 #include <QGraphicsScene>
 #include <QHash>
@@ -177,7 +178,7 @@ private slots:
 	void annotationsChanged(const drawdance::AnnotationList &al);
 	void previewAnnotation(int id, const QRect &shape);
 
-	void setSelection(bool valid, const QRect &bounds, const QImage &mask);
+	void setSelection(const QSharedPointer<canvas::SelectionMask> &mask);
 	void onTransformChanged();
 
 private:

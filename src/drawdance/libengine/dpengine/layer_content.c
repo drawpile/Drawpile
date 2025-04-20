@@ -265,6 +265,16 @@ void DP_layer_content_diff(DP_LayerContent *lc, DP_LayerProps *lp,
     }
 }
 
+void DP_layer_content_diff_selection(DP_LayerContent *lc,
+                                     DP_LayerContent *prev_lc,
+                                     DP_CanvasDiff *diff)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(prev_lc);
+    DP_ASSERT(diff);
+    layer_content_diff(lc, false, prev_lc, false, diff);
+}
+
 static bool mark(void *data, int tile_index)
 {
     DP_ASSERT(data);
@@ -595,6 +605,62 @@ static bool get_sublayer_change_bounds(DP_LayerContent *lc, int i, int *out_x,
     }
 }
 
+static bool layer_content_crop_top(DP_LayerContent *lc, DP_Rect rect,
+                                   int *out_top)
+{
+    for (int y = rect.y1; y <= rect.y2; ++y) {
+        for (int x = rect.x1; x <= rect.x2; ++x) {
+            if (DP_layer_content_pixel_at(lc, x, y).a != 0) {
+                *out_top = y;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+static bool layer_content_crop_bottom(DP_LayerContent *lc, DP_Rect rect,
+                                      int *out_bottom)
+{
+    for (int y = rect.y2; y >= rect.y1; --y) {
+        for (int x = rect.x1; x <= rect.x2; ++x) {
+            if (DP_layer_content_pixel_at(lc, x, y).a != 0) {
+                *out_bottom = y;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+static bool layer_content_crop_left(DP_LayerContent *lc, DP_Rect rect,
+                                    int *out_left)
+{
+    for (int x = rect.x1; x <= rect.x2; ++x) {
+        for (int y = rect.y1; y <= rect.y2; ++y) {
+            if (DP_layer_content_pixel_at(lc, x, y).a != 0) {
+                *out_left = x;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+static bool layer_content_crop_right(DP_LayerContent *lc, DP_Rect rect,
+                                     int *out_right)
+{
+    for (int x = rect.x2; x >= rect.x1; --x) {
+        for (int y = rect.y1; y <= rect.y2; ++y) {
+            if (DP_layer_content_pixel_at(lc, x, y).a != 0) {
+                *out_right = x;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 static bool layer_content_crop(DP_LayerContent *lc, int *out_x, int *out_y,
                                int *out_width, int *out_height)
 {
@@ -604,66 +670,123 @@ static bool layer_content_crop(DP_LayerContent *lc, int *out_x, int *out_y,
         return false;
     }
 
-    DP_Rect dst =
+    DP_Rect rect =
         DP_rect_make(tile_left * DP_TILE_SIZE, tile_top * DP_TILE_SIZE,
                      (tile_right - tile_left + 1) * DP_TILE_SIZE,
                      (tile_bottom - tile_top + 1) * DP_TILE_SIZE);
-    DP_Rect crop = {INT_MAX, INT_MAX, INT_MIN, INT_MIN};
-    DP_TileIterator ti = DP_tile_iterator_make(lc->width, lc->height, dst);
-    while (DP_tile_iterator_next(&ti)) {
-        DP_Tile *t = DP_layer_content_tile_at_noinc(lc, ti.col, ti.row);
-        if (t) {
-            DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
-            while (DP_tile_into_dst_iterator_next(&tidi)) {
-                bool crop_left = tidi.dst_x < crop.x1;
-                bool crop_right = tidi.dst_x > crop.x2;
-                bool crop_top = tidi.dst_y < crop.y1;
-                bool crop_bottom = tidi.dst_y > crop.y2;
-                bool change_crop =
-                    (crop_left || crop_right || crop_top || crop_bottom)
-                    && DP_tile_pixel_at(t, tidi.tile_x, tidi.tile_y).a != 0;
-                if (change_crop) {
-                    if (crop_left) {
-                        crop.x1 = tidi.dst_x;
-                    }
-                    if (crop_right) {
-                        crop.x2 = tidi.dst_x;
-                    }
-                    if (crop_top) {
-                        crop.y1 = tidi.dst_y;
-                    }
-                    if (crop_bottom) {
-                        crop.y2 = tidi.dst_y;
-                    }
-                }
-            }
-        }
+
+    int max_x = lc->width - 1;
+    if (rect.x2 > max_x) {
+        rect.x2 = max_x;
     }
 
-    if (crop.x2 < crop.x1 || crop.y2 < crop.y1) {
-        return false;
+    int max_y = lc->height - 1;
+    if (rect.y2 > max_y) {
+        rect.y2 = max_y;
     }
 
-    *out_x = dst.x1 + crop.x1;
-    *out_y = dst.y1 + crop.y1;
-    *out_width = DP_rect_width(crop);
-    *out_height = DP_rect_height(crop);
-    return true;
-}
+    bool crop_ok = layer_content_crop_top(lc, rect, &rect.y1)
+                && layer_content_crop_bottom(lc, rect, &rect.y2)
+                && layer_content_crop_left(lc, rect, &rect.x1)
+                && layer_content_crop_right(lc, rect, &rect.x2);
 
-bool DP_layer_content_bounds(DP_LayerContent *lc, DP_Rect *out_bounds)
-{
-    DP_ASSERT(lc);
-    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
-    DP_ASSERT(out_bounds);
-    int x, y, width, height;
-    if (layer_content_crop(lc, &x, &y, &width, &height)) {
-        *out_bounds = DP_rect_make(x, y, width, height);
+    if (crop_ok) {
+        *out_x = rect.x1;
+        *out_y = rect.y1;
+        *out_width = DP_rect_width(rect);
+        *out_height = DP_rect_height(rect);
         return true;
     }
     else {
         return false;
     }
+}
+
+static bool layer_content_crop_prev(DP_LayerContent *lc, DP_Rect prev,
+                                    int *out_x, int *out_y, int *out_width,
+                                    int *out_height)
+{
+    int tile_left, tile_top, tile_right, tile_bottom;
+    if (!layer_content_tile_bounds(lc, &tile_left, &tile_top, &tile_right,
+                                   &tile_bottom)) {
+        return false;
+    }
+
+    DP_Rect rect =
+        DP_rect_make(tile_left * DP_TILE_SIZE, tile_top * DP_TILE_SIZE,
+                     (tile_right - tile_left + 1) * DP_TILE_SIZE,
+                     (tile_bottom - tile_top + 1) * DP_TILE_SIZE);
+
+    int max_x = lc->width - 1;
+    if (rect.x2 > max_x) {
+        rect.x2 = max_x;
+    }
+
+    int max_y = lc->height - 1;
+    if (rect.y2 > max_y) {
+        rect.y2 = max_y;
+    }
+
+    bool crop_ok =
+        (prev.y1 <= rect.y1 || layer_content_crop_top(lc, rect, &rect.y1))
+        && (prev.y2 >= rect.y2 || layer_content_crop_bottom(lc, rect, &rect.y2))
+        && (prev.x1 <= rect.x1 || layer_content_crop_left(lc, rect, &rect.x1))
+        && (prev.x2 >= rect.x2 || layer_content_crop_right(lc, rect, &rect.x2));
+
+    if (crop_ok) {
+        *out_x = rect.x1;
+        *out_y = rect.y1;
+        *out_width = DP_rect_width(rect);
+        *out_height = DP_rect_height(rect);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+static void layer_content_union_bounds(DP_LayerContent *lc, bool *in_out_valid,
+                                       DP_Rect *in_out_bounds)
+{
+    int x, y, width, height;
+    bool prev_valid = *in_out_valid;
+    bool valid = prev_valid ? layer_content_crop_prev(lc, *in_out_bounds, &x,
+                                                      &y, &width, &height)
+                            : layer_content_crop(lc, &x, &y, &width, &height);
+    if (valid) {
+        DP_Rect bounds = DP_rect_make(x, y, width, height);
+        if (prev_valid) {
+            *in_out_bounds = DP_rect_union(*in_out_bounds, bounds);
+        }
+        else {
+            *in_out_valid = true;
+            *in_out_bounds = bounds;
+        }
+    }
+}
+
+bool DP_layer_content_bounds(DP_LayerContent *lc, bool include_sublayers,
+                             DP_Rect *out_bounds)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+
+    bool valid = false;
+    DP_Rect bounds;
+    layer_content_union_bounds(lc, &valid, &bounds);
+    if (include_sublayers) {
+        DP_LayerList *sub_ll = lc->sub.contents;
+        int sub_count = DP_layer_list_count(sub_ll);
+        for (int i = 0; i < sub_count; ++i) {
+            layer_content_union_bounds(
+                DP_layer_list_content_at_noinc(sub_ll, i), &valid, &bounds);
+        }
+    }
+
+    if (valid && out_bounds) {
+        *out_bounds = bounds;
+    }
+    return valid;
 }
 
 bool DP_layer_content_search_change_bounds(DP_LayerContent *lc,
@@ -925,8 +1048,7 @@ DP_Pixel8 *DP_layer_content_to_pixels8(DP_LayerContent *lc, int x, int y,
 }
 
 DP_Pixel8 *DP_layer_content_to_pixels8_mask(DP_LayerContent *lc, int x, int y,
-                                            int width, int height,
-                                            DP_UPixel8 color)
+                                            int width, int height)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
@@ -945,13 +1067,11 @@ DP_Pixel8 *DP_layer_content_to_pixels8_mask(DP_LayerContent *lc, int x, int y,
             while (DP_tile_into_dst_iterator_next(&tidi)) {
                 uint16_t a = DP_tile_pixel_at(t, tidi.tile_x, tidi.tile_y).a;
                 if (a != 0) {
-                    unsigned int a8 = DP_max_uint(
-                        1, DP_pixel8_mul(DP_channel15_to_8(a), color.a));
                     pixels[tidi.dst_y * width + tidi.dst_x] = (DP_Pixel8){
-                        .b = DP_pixel8_mul(a8, color.b),
-                        .g = DP_pixel8_mul(a8, color.g),
-                        .r = DP_pixel8_mul(a8, color.r),
-                        .a = DP_uint_to_uint8(a8),
+                        .b = 0,
+                        .g = 0,
+                        .r = 0,
+                        .a = DP_channel15_to_8(a),
                     };
                 }
             }
@@ -1572,13 +1692,15 @@ DP_transient_layer_content_sub_props_noinc(DP_TransientLayerContent *tlc)
 
 
 bool DP_transient_layer_content_bounds(DP_TransientLayerContent *tlc,
+                                       bool include_sublayers,
                                        DP_Rect *out_bounds)
 {
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_ASSERT(out_bounds);
-    return DP_layer_content_bounds((DP_LayerContent *)tlc, out_bounds);
+    return DP_layer_content_bounds((DP_LayerContent *)tlc, include_sublayers,
+                                   out_bounds);
 }
 
 

@@ -453,7 +453,7 @@ void TransformModel::applyTransformRegionSelection(
 		if(selection->isValid()) {
 			QPoint offset;
 			QImage img = drawdance::transformImage(
-				selection->mask(), m_dstQuad.polygon().toPolygon(),
+				selection->image(), m_dstQuad.polygon().toPolygon(),
 				getEffectiveInterpolation(interpolation), false, &offset);
 			if(img.isNull()) {
 				qWarning(

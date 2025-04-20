@@ -11,6 +11,7 @@ extern "C" {
 #include "libclient/drawdance/paintengine.h"
 #include "libclient/drawdance/selectionset.h"
 #include "libclient/drawdance/snapshotqueue.h"
+#include <QColor>
 #include <QObject>
 #include <QPainter>
 #include <QPixmap>
@@ -36,9 +37,9 @@ class PaintEngine final : public QObject {
 public:
 	PaintEngine(
 		int canvasImplementation, const QColor &checkerColor1,
-		const QColor &checkerColor2, int fps, int snapshotMaxCount,
-		long long snapshotMinDelayMs, bool wantCanvasHistoryDump,
-		QObject *parent = nullptr);
+		const QColor &checkerColor2, const QColor &selectionColor, int fps,
+		int snapshotMaxCount, long long snapshotMinDelayMs,
+		bool wantCanvasHistoryDump, QObject *parent = nullptr);
 
 	~PaintEngine() override;
 
@@ -179,6 +180,10 @@ public:
 	void setInspect(unsigned int contextId, bool showTiles);
 	void setCheckerColor1(const QColor &color1);
 	void setCheckerColor2(const QColor &color2);
+	void setSelectionColor(const QColor &color);
+	void setShowSelectionMask(bool showSelectionMask);
+	void setSelectionEditActive(bool selectionEditActive);
+	void setTransformActive(bool transformActive);
 	bool checkersVisible() const;
 
 	//! The current canvas state with the local view (hidden layers, local
@@ -346,6 +351,8 @@ private:
 
 	void updateLayersVisibleInFrame();
 
+	void updateSelectionColor();
+
 	uint16_t *getSampleColorStampBuffer(int diameter);
 
 	const bool m_useTileCache;
@@ -367,6 +374,10 @@ private:
 	size_t m_sampleColorStampBufferCapacity = 0;
 	int m_sampleColorLastDiameter = -1;
 	int m_undoDepthLimit;
+	QColor m_selectionColor;
+	bool m_showSelectionMask = false;
+	bool m_selectionEditActive = false;
+	bool m_transformActive = false;
 	bool m_updateLayersVisibleInFrame;
 #ifdef DP_HAVE_BUILTIN_SERVER
 	server::BuiltinServer *m_server = nullptr;

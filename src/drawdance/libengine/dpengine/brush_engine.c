@@ -11,8 +11,8 @@
 #include <dpcommon/perf.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/vector.h>
-#include <dpmsg/message.h>
 #include <dpmsg/ids.h>
+#include <dpmsg/message.h>
 #include <math.h>
 #include <mypaint-brush.h>
 #include <mypaint.h>
@@ -877,8 +877,8 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
     DP_ASSERT(be);
     DP_ASSERT(brush);
     DP_ASSERT(stroke);
-    DP_ASSERT(stroke->layer_id >= 0);
-    DP_ASSERT(stroke->layer_id <= DP_MESSAGE_LAYER_ID_MAX);
+    DP_ASSERT(stroke->layer_id == 0
+              || DP_layer_id_normal_or_selection(stroke->layer_id));
 
     set_common_stroke_params(be, stroke);
 
@@ -1578,9 +1578,9 @@ static void stroke_to_mypaint(DP_BrushEngine *be, DP_BrushPoint bp)
 static DP_LayerContent *search_layer(DP_CanvasState *cs, int layer_id)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
-    if (lre) {
-        DP_LayerContent *lc = DP_layer_routes_entry_content(lre, cs);
+    DP_LayerRoutesSelEntry lrse = DP_layer_routes_search_sel(lr, cs, layer_id);
+    if (DP_layer_routes_sel_entry_is_valid_source(&lrse)) {
+        DP_LayerContent *lc = DP_layer_routes_sel_entry_content(&lrse, cs);
         return DP_layer_content_incref(lc);
     }
     else {

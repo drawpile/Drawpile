@@ -42,8 +42,9 @@ namespace canvas {
 
 PaintEngine::PaintEngine(
 	int canvasImplementation, const QColor &checkerColor1,
-	const QColor &checkerColor2, int fps, int snapshotMaxCount,
-	long long snapshotMinDelayMs, bool wantCanvasHistoryDump, QObject *parent)
+	const QColor &checkerColor2, const QColor &selectionColor, int fps,
+	int snapshotMaxCount, long long snapshotMinDelayMs,
+	bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
 	, m_useTileCache(
 		  canvasImplementation !=
@@ -55,7 +56,7 @@ PaintEngine::PaintEngine(
 	, m_snapshotQueue{snapshotMaxCount, snapshotMinDelayMs}
 	, m_paintEngine(
 		  m_acls, m_snapshotQueue, wantCanvasHistoryDump, !m_useTileCache,
-		  checkerColor1, checkerColor2,
+		  checkerColor1, checkerColor2, Qt::transparent,
 		  m_useTileCache ? PaintEngine::onRenderTileToTileCache
 						 : PaintEngine::onRenderTileToPixmap,
 		  PaintEngine::onRenderUnlock,
@@ -73,6 +74,7 @@ PaintEngine::PaintEngine(
 	, m_viewSem{nullptr}
 	, m_sampleColorLastDiameter(-1)
 	, m_undoDepthLimit{DP_UNDO_DEPTH_DEFAULT}
+	, m_selectionColor(selectionColor)
 	, m_updateLayersVisibleInFrame{false}
 {
 	m_cacheMutex = DP_mutex_new();
@@ -441,6 +443,44 @@ void PaintEngine::setCheckerColor1(const QColor &color1)
 void PaintEngine::setCheckerColor2(const QColor &color2)
 {
 	m_paintEngine.setCheckerColor2(color2);
+}
+
+void PaintEngine::setSelectionColor(const QColor &color)
+{
+	QColor c =
+		color.isValid() && color.alpha() > 0 ? color : QColor(0, 170, 255);
+	c.setAlphaF(0.5);
+	if(c != m_selectionColor) {
+		m_selectionColor = c;
+		if((m_showSelectionMask || m_selectionEditActive) &&
+		   !m_transformActive) {
+			updateSelectionColor();
+		}
+	}
+}
+
+void PaintEngine::setShowSelectionMask(bool showSelectionMask)
+{
+	if(showSelectionMask != m_showSelectionMask) {
+		m_showSelectionMask = showSelectionMask;
+		updateSelectionColor();
+	}
+}
+
+void PaintEngine::setSelectionEditActive(bool selectionEditActive)
+{
+	if(selectionEditActive != m_selectionEditActive) {
+		m_selectionEditActive = selectionEditActive;
+		updateSelectionColor();
+	}
+}
+
+void PaintEngine::setTransformActive(bool transformActive)
+{
+	if(transformActive != m_transformActive) {
+		m_transformActive = transformActive;
+		updateSelectionColor();
+	}
 }
 
 bool PaintEngine::checkersVisible() const
@@ -1016,6 +1056,14 @@ void PaintEngine::onRenderResizeTileCache(
 	}
 	emit pe->tileCacheNavigatorDirtyCheckNeeded();
 	DP_mutex_unlock(pe->m_cacheMutex);
+}
+
+void PaintEngine::updateSelectionColor()
+{
+	m_paintEngine.setSelectionColor(
+		(m_showSelectionMask || m_selectionEditActive) && !m_transformActive
+			? m_selectionColor
+			: QColor(Qt::transparent));
 }
 
 uint16_t *PaintEngine::getSampleColorStampBuffer(int diameter)

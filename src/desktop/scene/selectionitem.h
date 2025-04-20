@@ -2,6 +2,7 @@
 #ifndef DESKTOP_SCENE_SELECTIONITEM_H
 #define DESKTOP_SCENE_SELECTIONITEM_H
 #include "desktop/scene/baseitem.h"
+#include "libclient/canvas/selectionmodel.h"
 #include <QImage>
 #include <QPainterPath>
 
@@ -26,7 +27,7 @@ public:
 
 	QRectF boundingRect() const override;
 
-	void setModel(const QRect &bounds, const QImage &mask);
+	void setModel(const QSharedPointer<canvas::SelectionMask> &mask);
 
 	void setTransparentDelay(qreal transparentDelay);
 
@@ -45,19 +46,18 @@ protected:
 		QWidget *widget) override;
 
 private:
+	void generateOutline(const QImage &mask);
 	void setOutline(unsigned int executionId, const SelectionOutlinePath &path);
 	void updateBoundingRectFromBounds();
 
 	QRectF m_boundingRect;
 	QRect m_bounds;
+	QSharedPointer<canvas::SelectionMask> m_mask;
 	QPainterPath m_path;
-	QImage m_mask;
 	qreal m_zoom;
 	qreal m_marchingAnts = 0.0;
-	qreal m_maskOpacity = 0.0;
 	qreal m_transparentDelay = 0.0;
 	unsigned int m_executionId = 0;
-	bool m_haveTemporaryMask = false;
 	bool m_ignored;
 	bool m_showMask;
 };

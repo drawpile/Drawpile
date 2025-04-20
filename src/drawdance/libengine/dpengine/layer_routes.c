@@ -27,9 +27,12 @@
 #include "layer_list.h"
 #include "layer_props.h"
 #include "layer_props_list.h"
+#include "selection.h"
+#include "selection_set.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpmsg/ids.h>
 #include <dpmsg/message.h>
 #include <uthash_inc.h>
 
@@ -568,5 +571,126 @@ void DP_layer_routes_entry_transient_children(
 
         *out_tll = tll;
         *out_tlpl = tlpl;
+    }
+}
+
+
+DP_LayerRoutesSelEntry DP_layer_routes_search_sel(DP_LayerRoutes *lr,
+                                                  DP_CanvasState *cs,
+                                                  int layer_or_selection_id)
+{
+    DP_ASSERT(lr);
+    DP_ASSERT(cs);
+    DP_LayerRoutesSelEntry lrse;
+    lrse.is_selection = DP_layer_id_selection_ids(
+        layer_or_selection_id, &lrse.sel.context_id, &lrse.sel.selection_id);
+    if (lrse.is_selection) {
+        DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+        lrse.sel.index =
+            ss ? DP_selection_set_search_index(ss, lrse.sel.context_id,
+                                               lrse.sel.selection_id)
+               : -1;
+        lrse.exists = lrse.sel.index >= 0;
+    }
+    else {
+        lrse.lre = DP_layer_routes_search(lr, layer_or_selection_id);
+        lrse.exists = lrse.lre != NULL;
+    }
+    return lrse;
+}
+
+DP_LayerRoutesSelEntry
+DP_layer_routes_sel_entry_from_selection_index(DP_CanvasState *cs, int index)
+{
+    DP_ASSERT(cs);
+    DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+    DP_Selection *sel = DP_selection_set_at_noinc(ss, index);
+    return (DP_LayerRoutesSelEntry){
+        true,
+        true,
+        {.sel = {DP_selection_context_id(sel), DP_selection_id(sel), index}}};
+}
+
+bool DP_layer_routes_sel_entry_is_valid_source(DP_LayerRoutesSelEntry *lrse)
+{
+    DP_ASSERT(lrse);
+    return lrse->exists && (lrse->is_selection || !lrse->lre->is_group);
+}
+
+bool DP_layer_routes_sel_entry_is_valid_target(DP_LayerRoutesSelEntry *lrse)
+{
+    DP_ASSERT(lrse);
+    if (lrse->is_selection) {
+        return lrse->exists || lrse->sel.selection_id > 0;
+    }
+    else {
+        return lrse->exists && !lrse->lre->is_group;
+    }
+}
+
+bool DP_layer_routes_sel_entry_is_group(DP_LayerRoutesSelEntry *lrse)
+{
+    DP_ASSERT(lrse);
+    return !lrse->is_selection && DP_layer_routes_entry_is_group(lrse->lre);
+}
+
+int *DP_layer_routes_sel_entry_indexes(DP_LayerRoutesSelEntry *lrse,
+                                       int *out_count)
+{
+    DP_ASSERT(lrse);
+    DP_ASSERT(!lrse->is_selection);
+    return DP_layer_routes_entry_indexes(lrse->lre, out_count);
+}
+
+DP_LayerContent *DP_layer_routes_sel_entry_content(DP_LayerRoutesSelEntry *lrse,
+                                                   DP_CanvasState *cs)
+{
+    DP_ASSERT(lrse);
+    DP_ASSERT(lrse->exists);
+    if (lrse->is_selection) {
+        DP_ASSERT(lrse->sel.index >= 0);
+        DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+        DP_ASSERT(ss);
+        DP_Selection *sel = DP_selection_set_at_noinc(ss, lrse->sel.index);
+        return DP_selection_content_noinc(sel);
+    }
+    else {
+        return DP_layer_routes_entry_content(lrse->lre, cs);
+    }
+}
+
+DP_TransientLayerContent *
+DP_layer_routes_sel_entry_transient_content(DP_LayerRoutesSelEntry *lrse,
+                                            DP_TransientCanvasState *tcs)
+{
+    DP_ASSERT(lrse);
+    if (lrse->is_selection) {
+        DP_TransientSelection *tsel;
+        if (lrse->exists) {
+            DP_TransientSelectionSet *tss =
+                DP_transient_canvas_state_transient_selection_set_noinc_nullable(
+                    tcs, 0);
+            tsel = DP_transient_selection_set_transient_at_noinc(
+                tss, lrse->sel.index);
+        }
+        else {
+            DP_TransientSelectionSet *tss =
+                DP_transient_canvas_state_transient_selection_set_noinc_nullable(
+                    tcs, 1);
+            tsel = DP_transient_selection_new_init(
+                lrse->sel.context_id, lrse->sel.selection_id,
+                DP_transient_canvas_state_width(tcs),
+                DP_transient_canvas_state_height(tcs));
+            int index = DP_transient_selection_set_count(tss) - 1;
+            DP_transient_selection_set_insert_transient_at_noinc(tss, index,
+                                                                 tsel);
+            lrse->exists = true;
+            lrse->sel.index = index;
+        }
+        return DP_transient_selection_transient_content_noinc(tsel);
+    }
+    else {
+        DP_ASSERT(lrse->exists);
+        return DP_layer_routes_entry_transient_content(lrse->lre, tcs);
     }
 }

@@ -85,6 +85,9 @@ struct LayerListItem {
 	//! Get the ID of the user who created this layer
 	uint8_t creatorId() const;
 
+	//! Get the layer element ID, without creator ID
+	int elementId() const;
+
 	bool actuallyCensored() const { return censored || revealed; }
 
 	QString titleWithColor() const { return makeTitleWithColor(title, color); }

@@ -38,6 +38,7 @@ class Message:
         self.id = _required(name, desc, 'id', int)
         self.comment = str(desc.get('comment', ''))
         self.reserved = False
+        self.local_match = desc.get('local_match')
 
         if 'alias' in desc:
             self.alias = desc['alias']

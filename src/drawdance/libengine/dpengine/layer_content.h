@@ -71,6 +71,10 @@ void DP_layer_content_diff(DP_LayerContent *lc, DP_LayerProps *lp,
                            DP_LayerContent *prev_lc, DP_LayerProps *prev_lp,
                            DP_CanvasDiff *diff, int only_layer_id);
 
+void DP_layer_content_diff_selection(DP_LayerContent *lc,
+                                     DP_LayerContent *prev_lc,
+                                     DP_CanvasDiff *diff);
+
 void DP_layer_content_diff_mark(DP_LayerContent *lc, DP_CanvasDiff *diff);
 
 int DP_layer_content_width(DP_LayerContent *lc);
@@ -98,7 +102,8 @@ DP_LayerPropsList *DP_layer_content_sub_props_noinc(DP_LayerContent *lc);
 
 bool DP_layer_content_same_pixel(DP_LayerContent *lc, DP_Pixel15 *out_pixel);
 
-bool DP_layer_content_bounds(DP_LayerContent *lc, DP_Rect *out_bounds);
+bool DP_layer_content_bounds(DP_LayerContent *lc, bool include_sublayers,
+                             DP_Rect *out_bounds);
 
 bool DP_layer_content_search_change_bounds(DP_LayerContent *lc,
                                            unsigned int context_id, int *out_x,
@@ -133,8 +138,7 @@ DP_Pixel8 *DP_layer_content_to_pixels8(DP_LayerContent *lc, int x, int y,
                                        int width, int height);
 
 DP_Pixel8 *DP_layer_content_to_pixels8_mask(DP_LayerContent *lc, int x, int y,
-                                            int width, int height,
-                                            DP_UPixel8 color);
+                                            int width, int height);
 
 DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,
                                   DP_Image *mask);
@@ -202,6 +206,7 @@ DP_LayerPropsList *
 DP_transient_layer_content_sub_props_noinc(DP_TransientLayerContent *tlc);
 
 bool DP_transient_layer_content_bounds(DP_TransientLayerContent *tlc,
+                                       bool include_sublayers,
                                        DP_Rect *out_bounds);
 
 DP_TransientLayerContent *

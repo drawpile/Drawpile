@@ -136,6 +136,7 @@ signals:
 	void dockTabUpdateRequested();
 	void intendedDockStateRestoreRequested();
 	void resizeReactionRequested();
+	void selectionMaskVisibilityChanged(bool visible);
 
 public slots:
 	// Triggerable actions
@@ -270,6 +271,7 @@ private slots:
 	void handleFreehandToolButtonClicked();
 
 	void updateSelectTransformActions();
+	void updateSelectionMaskVisibility();
 
 	void setFreezeDocks(bool freeze);
 	void setDocksHidden(bool hidden);
@@ -365,6 +367,8 @@ private:
 	showErrorMessageWithDetails(const QString &message, const QString &details);
 	void showLoadResultMessage(DP_LoadResult result);
 	void handleAmbiguousShortcut(QShortcutEvent *shortcutEvent);
+
+	void showSelectionMaskColorPicker();
 
 	void readSettings(bool windowpos = true);
 	void restoreSettings(const desktop::settings::Settings &settings);

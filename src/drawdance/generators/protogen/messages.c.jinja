@@ -20,6 +20,8 @@
  * from generators/protogen/messages.c.jinja. Don't edit it directly.
  */
 #include "messages.h"
+#include "blend_mode.h"
+#include "ids.h"
 #include "message.h"
 #include "text_reader.h"
 #include "text_writer.h"
@@ -331,6 +333,18 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
     return written + DP_write_bytes(x, 1, len, out + written);
 }
 
+static const unsigned char *local_match_data(DP_Message *msg, size_t *out_size)
+{
+    switch (DP_message_type(msg)) {
+    case DP_MSG_LOCAL_MATCH:
+        return DP_msg_local_match_data(DP_message_internal(msg), out_size);
+    case DP_MSG_PUT_IMAGE:
+        return DP_msg_put_image_image(DP_message_internal(msg), out_size);
+    default:
+        DP_UNREACHABLE();
+    }
+}
+
 {% for message in messages if not message.reserved %}
 
 /* {{ message.enum_name }} */
@@ -553,8 +567,30 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
                     {%- if not loop.last %} && {% endif -%}
                 {% endfor %};
         }
-    {% endif %}
-    {% if message.fields %}
+        {% if message.local_match %}
+
+            void DP_{{ message.func_name }}_local_match_set(DP_UNUSED size_t size, unsigned char *data, void *user)
+            {
+                DP_ASSERT(size == {{ message.enum_name }}_MATCH_LENGTH);
+                const {{ message.param }} = user;
+                size_t written = 0;
+                {% for f in message.fields %}
+                    written += {{ f.serialize_local_match(message.param_name, "data + written") }};
+                {% endfor %}
+                DP_ASSERT(written == {{ message.enum_name }}_MATCH_LENGTH);
+            }
+
+            bool DP_{{ message.func_name }}_local_match_matches(const {{ message.param }}, DP_Message *local_match_msg)
+            {
+                size_t size;
+                const unsigned char *buffer = local_match_data(local_match_msg, &size);
+                size_t read = 0;
+                return size == {{ message.enum_name }}_MATCH_LENGTH
+                {% for f in message.fields %}
+                    && {{ f.match_local_match(message.param_name) }}
+                {% endfor %};
+            }
+        {% endif %}
 
         static const DP_MessageMethods {{ message.func_name }}_methods = {
             {{ message.func_name }}_payload_length,
@@ -713,3 +749,98 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
     {% endfor %}
 
 {% endfor %}
+
+static bool local_layer_id(uint32_t layer_id)
+{
+    return DP_layer_id_local(DP_protocol_to_layer_id(layer_id));
+}
+
+static bool local_selection_id(uint8_t selection_id)
+{
+    return DP_selection_id_local(selection_id);
+}
+
+static DP_Message *make_local_match(bool disguise_as_put_image, uint8_t type,
+                                    unsigned int context_id,
+                                    DP_MessageLocalMatchSetFn set, size_t size,
+                                    void *user)
+{
+    if (disguise_as_put_image) {
+        return DP_msg_put_image_new(context_id, type,
+                                    DP_BLEND_MODE_COMPAT_LOCAL_MATCH, 0, 0, 0,
+                                    0, set, size, user);
+    }
+    else {
+        return DP_msg_local_match_new(context_id, type, set, size, user);
+    }
+}
+
+DP_Message *DP_msg_local_match_make(DP_Message *msg, bool disguise_as_put_image)
+{
+    DP_ASSERT(msg);
+    DP_MessageType type = DP_message_type(msg);
+    switch(type) {
+    {% for message in messages %}
+        {% if message.local_match and not message.alias %}
+            case {{ message.enum_name }}:
+            {% for alias_message in messages %}
+                {% if alias_message.alias == message.name %}
+                    case {{ alias_message.enum_name }}:
+                {% endif %}
+            {% endfor %} {
+                {{ message.param }} = DP_message_internal(msg);
+                if ({{ message.local_match_condition(message.param_name) }}) {
+                    return make_local_match(
+                        disguise_as_put_image, (uint8_t)type,
+                        DP_message_context_id(msg),
+                        DP_{{ message.func_name }}_local_match_set,
+                        {{ message.enum_name }}_MATCH_LENGTH,
+                        {{ message.param_name }});
+                    break;
+                } else {
+                    return NULL;
+                }
+            }
+        {% endif %}
+    {% endfor %}
+    default:
+        return NULL;
+    }
+}
+
+bool DP_msg_local_match_is_local_match(DP_Message *msg)
+{
+    switch (DP_message_type(msg)) {
+    case DP_MSG_LOCAL_MATCH:
+        return true;
+    case DP_MSG_PUT_IMAGE:
+        return DP_msg_put_image_mode(DP_message_internal(msg))
+            == DP_BLEND_MODE_COMPAT_LOCAL_MATCH;
+    default:
+        return false;
+    }
+}
+
+bool DP_msg_local_match_matches(DP_Message *msg, DP_Message *local_match_msg)
+{
+    DP_ASSERT(msg);
+    DP_MessageType type = DP_message_type(msg);
+    switch(type) {
+    {% for message in messages %}
+        {% if message.local_match and not message.alias %}
+            case {{ message.enum_name }}:
+            {% for alias_message in messages %}
+                {% if alias_message.alias == message.name %}
+                    case {{ alias_message.enum_name }}:
+                {% endif %}
+            {% endfor %} {
+                {{ message.param }} = DP_message_internal(msg);
+                return ({{ message.local_match_condition(message.param_name) }})
+                    && DP_{{ message.func_name }}_local_match_matches({{ message.param_name }}, local_match_msg);
+            }
+        {% endif %}
+    {% endfor %}
+    default:
+        return false;
+    }
+}

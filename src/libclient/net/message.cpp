@@ -2,7 +2,6 @@
 
 extern "C" {
 #include <dpengine/local_state.h>
-#include <dpmsg/local_match.h>
 #include <dpmsg/msg_internal.h>
 }
 #include "libclient/canvas/blendmodes.h"

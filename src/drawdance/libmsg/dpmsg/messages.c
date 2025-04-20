@@ -20,6 +20,8 @@
  * from generators/protogen/messages.c.jinja. Don't edit it directly.
  */
 #include "messages.h"
+#include "blend_mode.h"
+#include "ids.h"
 #include "message.h"
 #include "text_reader.h"
 #include "text_writer.h"
@@ -1149,6 +1151,18 @@ static size_t write_string_with_length(const char *DP_RESTRICT x, size_t len,
 {
     size_t written = DP_write_bigendian_uint8(DP_size_to_uint8(len), out);
     return written + DP_write_bytes(x, 1, len, out + written);
+}
+
+static const unsigned char *local_match_data(DP_Message *msg, size_t *out_size)
+{
+    switch (DP_message_type(msg)) {
+    case DP_MSG_LOCAL_MATCH:
+        return DP_msg_local_match_data(DP_message_internal(msg), out_size);
+    case DP_MSG_PUT_IMAGE:
+        return DP_msg_put_image_image(DP_message_internal(msg), out_size);
+    default:
+        DP_UNREACHABLE();
+    }
 }
 
 
@@ -4138,6 +4152,38 @@ static bool msg_put_image_equals(DP_Message *DP_RESTRICT msg,
         && memcmp(a->image, b->image, DP_uint16_to_size(a->image_size)) == 0;
 }
 
+void DP_msg_put_image_local_match_set(DP_UNUSED size_t size,
+                                      unsigned char *data, void *user)
+{
+    DP_ASSERT(size == DP_MSG_PUT_IMAGE_MATCH_LENGTH);
+    const DP_MsgPutImage *mpi = user;
+    size_t written = 0;
+    written += DP_write_bigendian_uint24(mpi->layer, data + written);
+    written += DP_write_bigendian_uint8(mpi->mode, data + written);
+    written += DP_write_bigendian_uint32(mpi->x, data + written);
+    written += DP_write_bigendian_uint32(mpi->y, data + written);
+    written += DP_write_bigendian_uint32(mpi->w, data + written);
+    written += DP_write_bigendian_uint32(mpi->h, data + written);
+    written += DP_write_bigendian_uint16(mpi->image_size, data + written);
+    DP_ASSERT(written == DP_MSG_PUT_IMAGE_MATCH_LENGTH);
+}
+
+bool DP_msg_put_image_local_match_matches(const DP_MsgPutImage *mpi,
+                                          DP_Message *local_match_msg)
+{
+    size_t size;
+    const unsigned char *buffer = local_match_data(local_match_msg, &size);
+    size_t read = 0;
+    return size == DP_MSG_PUT_IMAGE_MATCH_LENGTH
+        && read_uint24(buffer + read, &read) == mpi->layer
+        && read_uint8(buffer + read, &read) == mpi->mode
+        && read_uint32(buffer + read, &read) == mpi->x
+        && read_uint32(buffer + read, &read) == mpi->y
+        && read_uint32(buffer + read, &read) == mpi->w
+        && read_uint32(buffer + read, &read) == mpi->h
+        && read_uint16(buffer + read, &read) == mpi->image_size;
+}
+
 static const DP_MessageMethods msg_put_image_methods = {
     msg_put_image_payload_length,
     msg_put_image_serialize_payload,
@@ -4320,6 +4366,38 @@ static bool msg_fill_rect_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgFillRect *b = DP_message_internal(other);
     return a->layer == b->layer && a->mode == b->mode && a->x == b->x
         && a->y == b->y && a->w == b->w && a->h == b->h && a->color == b->color;
+}
+
+void DP_msg_fill_rect_local_match_set(DP_UNUSED size_t size,
+                                      unsigned char *data, void *user)
+{
+    DP_ASSERT(size == DP_MSG_FILL_RECT_MATCH_LENGTH);
+    const DP_MsgFillRect *mfr = user;
+    size_t written = 0;
+    written += DP_write_bigendian_uint24(mfr->layer, data + written);
+    written += DP_write_bigendian_uint8(mfr->mode, data + written);
+    written += DP_write_bigendian_uint32(mfr->x, data + written);
+    written += DP_write_bigendian_uint32(mfr->y, data + written);
+    written += DP_write_bigendian_uint32(mfr->w, data + written);
+    written += DP_write_bigendian_uint32(mfr->h, data + written);
+    written += DP_write_bigendian_uint32(mfr->color, data + written);
+    DP_ASSERT(written == DP_MSG_FILL_RECT_MATCH_LENGTH);
+}
+
+bool DP_msg_fill_rect_local_match_matches(const DP_MsgFillRect *mfr,
+                                          DP_Message *local_match_msg)
+{
+    size_t size;
+    const unsigned char *buffer = local_match_data(local_match_msg, &size);
+    size_t read = 0;
+    return size == DP_MSG_FILL_RECT_MATCH_LENGTH
+        && read_uint24(buffer + read, &read) == mfr->layer
+        && read_uint8(buffer + read, &read) == mfr->mode
+        && read_uint32(buffer + read, &read) == mfr->x
+        && read_uint32(buffer + read, &read) == mfr->y
+        && read_uint32(buffer + read, &read) == mfr->w
+        && read_uint32(buffer + read, &read) == mfr->h
+        && read_uint32(buffer + read, &read) == mfr->color;
 }
 
 static const DP_MessageMethods msg_fill_rect_methods = {
@@ -5134,6 +5212,38 @@ static bool msg_put_tile_equals(DP_Message *DP_RESTRICT msg,
         && memcmp(a->image, b->image, DP_uint16_to_size(a->image_size)) == 0;
 }
 
+void DP_msg_put_tile_local_match_set(DP_UNUSED size_t size, unsigned char *data,
+                                     void *user)
+{
+    DP_ASSERT(size == DP_MSG_PUT_TILE_MATCH_LENGTH);
+    const DP_MsgPutTile *mpt = user;
+    size_t written = 0;
+    written += DP_write_bigendian_uint8(mpt->user, data + written);
+    written += DP_write_bigendian_uint24(mpt->layer, data + written);
+    written += DP_write_bigendian_uint8(mpt->sublayer, data + written);
+    written += DP_write_bigendian_uint16(mpt->col, data + written);
+    written += DP_write_bigendian_uint16(mpt->row, data + written);
+    written += DP_write_bigendian_uint16(mpt->repeat, data + written);
+    written += DP_write_bigendian_uint16(mpt->image_size, data + written);
+    DP_ASSERT(written == DP_MSG_PUT_TILE_MATCH_LENGTH);
+}
+
+bool DP_msg_put_tile_local_match_matches(const DP_MsgPutTile *mpt,
+                                         DP_Message *local_match_msg)
+{
+    size_t size;
+    const unsigned char *buffer = local_match_data(local_match_msg, &size);
+    size_t read = 0;
+    return size == DP_MSG_PUT_TILE_MATCH_LENGTH
+        && read_uint8(buffer + read, &read) == mpt->user
+        && read_uint24(buffer + read, &read) == mpt->layer
+        && read_uint8(buffer + read, &read) == mpt->sublayer
+        && read_uint16(buffer + read, &read) == mpt->col
+        && read_uint16(buffer + read, &read) == mpt->row
+        && read_uint16(buffer + read, &read) == mpt->repeat
+        && read_uint16(buffer + read, &read) == mpt->image_size;
+}
+
 static const DP_MessageMethods msg_put_tile_methods = {
     msg_put_tile_payload_length,
     msg_put_tile_serialize_payload,
@@ -5604,6 +5714,38 @@ static bool msg_draw_dabs_classic_equals(DP_Message *DP_RESTRICT msg,
         && classic_dabs_equal(a->dabs, b->dabs, a->dabs_count);
 }
 
+void DP_msg_draw_dabs_classic_local_match_set(DP_UNUSED size_t size,
+                                              unsigned char *data, void *user)
+{
+    DP_ASSERT(size == DP_MSG_DRAW_DABS_CLASSIC_MATCH_LENGTH);
+    const DP_MsgDrawDabsClassic *mddc = user;
+    size_t written = 0;
+    written += DP_write_bigendian_uint8(mddc->flags, data + written);
+    written += DP_write_bigendian_uint24(mddc->layer, data + written);
+    written += DP_write_bigendian_int32(mddc->x, data + written);
+    written += DP_write_bigendian_int32(mddc->y, data + written);
+    written += DP_write_bigendian_uint32(mddc->color, data + written);
+    written += DP_write_bigendian_uint8(mddc->mode, data + written);
+    written += DP_write_bigendian_uint16(mddc->dabs_count, data + written);
+    DP_ASSERT(written == DP_MSG_DRAW_DABS_CLASSIC_MATCH_LENGTH);
+}
+
+bool DP_msg_draw_dabs_classic_local_match_matches(
+    const DP_MsgDrawDabsClassic *mddc, DP_Message *local_match_msg)
+{
+    size_t size;
+    const unsigned char *buffer = local_match_data(local_match_msg, &size);
+    size_t read = 0;
+    return size == DP_MSG_DRAW_DABS_CLASSIC_MATCH_LENGTH
+        && read_uint8(buffer + read, &read) == mddc->flags
+        && read_uint24(buffer + read, &read) == mddc->layer
+        && read_int32(buffer + read, &read) == mddc->x
+        && read_int32(buffer + read, &read) == mddc->y
+        && read_uint32(buffer + read, &read) == mddc->color
+        && read_uint8(buffer + read, &read) == mddc->mode
+        && read_uint16(buffer + read, &read) == mddc->dabs_count;
+}
+
 static const DP_MessageMethods msg_draw_dabs_classic_methods = {
     msg_draw_dabs_classic_payload_length,
     msg_draw_dabs_classic_serialize_payload,
@@ -5944,6 +6086,38 @@ static bool msg_draw_dabs_pixel_equals(DP_Message *DP_RESTRICT msg,
         && a->y == b->y && a->color == b->color && a->mode == b->mode
         && a->dabs_count == b->dabs_count
         && pixel_dabs_equal(a->dabs, b->dabs, a->dabs_count);
+}
+
+void DP_msg_draw_dabs_pixel_local_match_set(DP_UNUSED size_t size,
+                                            unsigned char *data, void *user)
+{
+    DP_ASSERT(size == DP_MSG_DRAW_DABS_PIXEL_MATCH_LENGTH);
+    const DP_MsgDrawDabsPixel *mddp = user;
+    size_t written = 0;
+    written += DP_write_bigendian_uint8(mddp->flags, data + written);
+    written += DP_write_bigendian_uint24(mddp->layer, data + written);
+    written += DP_write_bigendian_int32(mddp->x, data + written);
+    written += DP_write_bigendian_int32(mddp->y, data + written);
+    written += DP_write_bigendian_uint32(mddp->color, data + written);
+    written += DP_write_bigendian_uint8(mddp->mode, data + written);
+    written += DP_write_bigendian_uint16(mddp->dabs_count, data + written);
+    DP_ASSERT(written == DP_MSG_DRAW_DABS_PIXEL_MATCH_LENGTH);
+}
+
+bool DP_msg_draw_dabs_pixel_local_match_matches(const DP_MsgDrawDabsPixel *mddp,
+                                                DP_Message *local_match_msg)
+{
+    size_t size;
+    const unsigned char *buffer = local_match_data(local_match_msg, &size);
+    size_t read = 0;
+    return size == DP_MSG_DRAW_DABS_PIXEL_MATCH_LENGTH
+        && read_uint8(buffer + read, &read) == mddp->flags
+        && read_uint24(buffer + read, &read) == mddp->layer
+        && read_int32(buffer + read, &read) == mddp->x
+        && read_int32(buffer + read, &read) == mddp->y
+        && read_uint32(buffer + read, &read) == mddp->color
+        && read_uint8(buffer + read, &read) == mddp->mode
+        && read_uint16(buffer + read, &read) == mddp->dabs_count;
 }
 
 static const DP_MessageMethods msg_draw_dabs_pixel_methods = {
@@ -6428,6 +6602,42 @@ static bool msg_draw_dabs_mypaint_equals(DP_Message *DP_RESTRICT msg,
         && mypaint_dabs_equal(a->dabs, b->dabs, a->dabs_count);
 }
 
+void DP_msg_draw_dabs_mypaint_local_match_set(DP_UNUSED size_t size,
+                                              unsigned char *data, void *user)
+{
+    DP_ASSERT(size == DP_MSG_DRAW_DABS_MYPAINT_MATCH_LENGTH);
+    const DP_MsgDrawDabsMyPaint *mddmp = user;
+    size_t written = 0;
+    written += DP_write_bigendian_uint24(mddmp->layer, data + written);
+    written += DP_write_bigendian_int32(mddmp->x, data + written);
+    written += DP_write_bigendian_int32(mddmp->y, data + written);
+    written += DP_write_bigendian_uint32(mddmp->color, data + written);
+    written += DP_write_bigendian_uint8(mddmp->lock_alpha, data + written);
+    written += DP_write_bigendian_uint8(mddmp->colorize, data + written);
+    written += DP_write_bigendian_uint8(mddmp->posterize, data + written);
+    written += DP_write_bigendian_uint8(mddmp->posterize_num, data + written);
+    written += DP_write_bigendian_uint16(mddmp->dabs_count, data + written);
+    DP_ASSERT(written == DP_MSG_DRAW_DABS_MYPAINT_MATCH_LENGTH);
+}
+
+bool DP_msg_draw_dabs_mypaint_local_match_matches(
+    const DP_MsgDrawDabsMyPaint *mddmp, DP_Message *local_match_msg)
+{
+    size_t size;
+    const unsigned char *buffer = local_match_data(local_match_msg, &size);
+    size_t read = 0;
+    return size == DP_MSG_DRAW_DABS_MYPAINT_MATCH_LENGTH
+        && read_uint24(buffer + read, &read) == mddmp->layer
+        && read_int32(buffer + read, &read) == mddmp->x
+        && read_int32(buffer + read, &read) == mddmp->y
+        && read_uint32(buffer + read, &read) == mddmp->color
+        && read_uint8(buffer + read, &read) == mddmp->lock_alpha
+        && read_uint8(buffer + read, &read) == mddmp->colorize
+        && read_uint8(buffer + read, &read) == mddmp->posterize
+        && read_uint8(buffer + read, &read) == mddmp->posterize_num
+        && read_uint16(buffer + read, &read) == mddmp->dabs_count;
+}
+
 static const DP_MessageMethods msg_draw_dabs_mypaint_methods = {
     msg_draw_dabs_mypaint_payload_length,
     msg_draw_dabs_mypaint_serialize_payload,
@@ -6852,6 +7062,39 @@ static bool msg_draw_dabs_mypaint_blend_equals(DP_Message *DP_RESTRICT msg,
         && mypaint_blend_dabs_equal(a->dabs, b->dabs, a->dabs_count);
 }
 
+void DP_msg_draw_dabs_mypaint_blend_local_match_set(DP_UNUSED size_t size,
+                                                    unsigned char *data,
+                                                    void *user)
+{
+    DP_ASSERT(size == DP_MSG_DRAW_DABS_MYPAINT_BLEND_MATCH_LENGTH);
+    const DP_MsgDrawDabsMyPaintBlend *mddmpb = user;
+    size_t written = 0;
+    written += DP_write_bigendian_uint8(mddmpb->flags, data + written);
+    written += DP_write_bigendian_uint24(mddmpb->layer, data + written);
+    written += DP_write_bigendian_int32(mddmpb->x, data + written);
+    written += DP_write_bigendian_int32(mddmpb->y, data + written);
+    written += DP_write_bigendian_uint32(mddmpb->color, data + written);
+    written += DP_write_bigendian_uint8(mddmpb->mode, data + written);
+    written += DP_write_bigendian_uint16(mddmpb->dabs_count, data + written);
+    DP_ASSERT(written == DP_MSG_DRAW_DABS_MYPAINT_BLEND_MATCH_LENGTH);
+}
+
+bool DP_msg_draw_dabs_mypaint_blend_local_match_matches(
+    const DP_MsgDrawDabsMyPaintBlend *mddmpb, DP_Message *local_match_msg)
+{
+    size_t size;
+    const unsigned char *buffer = local_match_data(local_match_msg, &size);
+    size_t read = 0;
+    return size == DP_MSG_DRAW_DABS_MYPAINT_BLEND_MATCH_LENGTH
+        && read_uint8(buffer + read, &read) == mddmpb->flags
+        && read_uint24(buffer + read, &read) == mddmpb->layer
+        && read_int32(buffer + read, &read) == mddmpb->x
+        && read_int32(buffer + read, &read) == mddmpb->y
+        && read_uint32(buffer + read, &read) == mddmpb->color
+        && read_uint8(buffer + read, &read) == mddmpb->mode
+        && read_uint16(buffer + read, &read) == mddmpb->dabs_count;
+}
+
 static const DP_MessageMethods msg_draw_dabs_mypaint_blend_methods = {
     msg_draw_dabs_mypaint_blend_payload_length,
     msg_draw_dabs_mypaint_blend_serialize_payload,
@@ -7062,6 +7305,42 @@ static bool msg_move_rect_equals(DP_Message *DP_RESTRICT msg,
         && a->sy == b->sy && a->tx == b->tx && a->ty == b->ty && a->w == b->w
         && a->h == b->h && a->mask_size == b->mask_size
         && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size)) == 0;
+}
+
+void DP_msg_move_rect_local_match_set(DP_UNUSED size_t size,
+                                      unsigned char *data, void *user)
+{
+    DP_ASSERT(size == DP_MSG_MOVE_RECT_MATCH_LENGTH);
+    const DP_MsgMoveRect *mmr = user;
+    size_t written = 0;
+    written += DP_write_bigendian_uint24(mmr->layer, data + written);
+    written += DP_write_bigendian_uint24(mmr->source, data + written);
+    written += DP_write_bigendian_int32(mmr->sx, data + written);
+    written += DP_write_bigendian_int32(mmr->sy, data + written);
+    written += DP_write_bigendian_int32(mmr->tx, data + written);
+    written += DP_write_bigendian_int32(mmr->ty, data + written);
+    written += DP_write_bigendian_int32(mmr->w, data + written);
+    written += DP_write_bigendian_int32(mmr->h, data + written);
+    written += DP_write_bigendian_uint16(mmr->mask_size, data + written);
+    DP_ASSERT(written == DP_MSG_MOVE_RECT_MATCH_LENGTH);
+}
+
+bool DP_msg_move_rect_local_match_matches(const DP_MsgMoveRect *mmr,
+                                          DP_Message *local_match_msg)
+{
+    size_t size;
+    const unsigned char *buffer = local_match_data(local_match_msg, &size);
+    size_t read = 0;
+    return size == DP_MSG_MOVE_RECT_MATCH_LENGTH
+        && read_uint24(buffer + read, &read) == mmr->layer
+        && read_uint24(buffer + read, &read) == mmr->source
+        && read_int32(buffer + read, &read) == mmr->sx
+        && read_int32(buffer + read, &read) == mmr->sy
+        && read_int32(buffer + read, &read) == mmr->tx
+        && read_int32(buffer + read, &read) == mmr->ty
+        && read_int32(buffer + read, &read) == mmr->w
+        && read_int32(buffer + read, &read) == mmr->h
+        && read_uint16(buffer + read, &read) == mmr->mask_size;
 }
 
 static const DP_MessageMethods msg_move_rect_methods = {
@@ -7847,6 +8126,56 @@ static bool msg_transform_region_equals(DP_Message *DP_RESTRICT msg,
         && a->y3 == b->y3 && a->x4 == b->x4 && a->y4 == b->y4
         && a->mode == b->mode && a->mask_size == b->mask_size
         && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size)) == 0;
+}
+
+void DP_msg_transform_region_local_match_set(DP_UNUSED size_t size,
+                                             unsigned char *data, void *user)
+{
+    DP_ASSERT(size == DP_MSG_TRANSFORM_REGION_MATCH_LENGTH);
+    const DP_MsgTransformRegion *mtr = user;
+    size_t written = 0;
+    written += DP_write_bigendian_uint24(mtr->layer, data + written);
+    written += DP_write_bigendian_uint24(mtr->source, data + written);
+    written += DP_write_bigendian_int32(mtr->bx, data + written);
+    written += DP_write_bigendian_int32(mtr->by, data + written);
+    written += DP_write_bigendian_int32(mtr->bw, data + written);
+    written += DP_write_bigendian_int32(mtr->bh, data + written);
+    written += DP_write_bigendian_int32(mtr->x1, data + written);
+    written += DP_write_bigendian_int32(mtr->y1, data + written);
+    written += DP_write_bigendian_int32(mtr->x2, data + written);
+    written += DP_write_bigendian_int32(mtr->y2, data + written);
+    written += DP_write_bigendian_int32(mtr->x3, data + written);
+    written += DP_write_bigendian_int32(mtr->y3, data + written);
+    written += DP_write_bigendian_int32(mtr->x4, data + written);
+    written += DP_write_bigendian_int32(mtr->y4, data + written);
+    written += DP_write_bigendian_uint8(mtr->mode, data + written);
+    written += DP_write_bigendian_uint16(mtr->mask_size, data + written);
+    DP_ASSERT(written == DP_MSG_TRANSFORM_REGION_MATCH_LENGTH);
+}
+
+bool DP_msg_transform_region_local_match_matches(
+    const DP_MsgTransformRegion *mtr, DP_Message *local_match_msg)
+{
+    size_t size;
+    const unsigned char *buffer = local_match_data(local_match_msg, &size);
+    size_t read = 0;
+    return size == DP_MSG_TRANSFORM_REGION_MATCH_LENGTH
+        && read_uint24(buffer + read, &read) == mtr->layer
+        && read_uint24(buffer + read, &read) == mtr->source
+        && read_int32(buffer + read, &read) == mtr->bx
+        && read_int32(buffer + read, &read) == mtr->by
+        && read_int32(buffer + read, &read) == mtr->bw
+        && read_int32(buffer + read, &read) == mtr->bh
+        && read_int32(buffer + read, &read) == mtr->x1
+        && read_int32(buffer + read, &read) == mtr->y1
+        && read_int32(buffer + read, &read) == mtr->x2
+        && read_int32(buffer + read, &read) == mtr->y2
+        && read_int32(buffer + read, &read) == mtr->x3
+        && read_int32(buffer + read, &read) == mtr->y3
+        && read_int32(buffer + read, &read) == mtr->x4
+        && read_int32(buffer + read, &read) == mtr->y4
+        && read_uint8(buffer + read, &read) == mtr->mode
+        && read_uint16(buffer + read, &read) == mtr->mask_size;
 }
 
 static const DP_MessageMethods msg_transform_region_methods = {
@@ -9213,6 +9542,38 @@ static bool msg_selection_put_equals(DP_Message *DP_RESTRICT msg,
         && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size)) == 0;
 }
 
+void DP_msg_selection_put_local_match_set(DP_UNUSED size_t size,
+                                          unsigned char *data, void *user)
+{
+    DP_ASSERT(size == DP_MSG_SELECTION_PUT_MATCH_LENGTH);
+    const DP_MsgSelectionPut *msp = user;
+    size_t written = 0;
+    written += DP_write_bigendian_uint8(msp->selection_id, data + written);
+    written += DP_write_bigendian_uint8(msp->op, data + written);
+    written += DP_write_bigendian_int32(msp->x, data + written);
+    written += DP_write_bigendian_int32(msp->y, data + written);
+    written += DP_write_bigendian_uint16(msp->w, data + written);
+    written += DP_write_bigendian_uint16(msp->h, data + written);
+    written += DP_write_bigendian_uint16(msp->mask_size, data + written);
+    DP_ASSERT(written == DP_MSG_SELECTION_PUT_MATCH_LENGTH);
+}
+
+bool DP_msg_selection_put_local_match_matches(const DP_MsgSelectionPut *msp,
+                                              DP_Message *local_match_msg)
+{
+    size_t size;
+    const unsigned char *buffer = local_match_data(local_match_msg, &size);
+    size_t read = 0;
+    return size == DP_MSG_SELECTION_PUT_MATCH_LENGTH
+        && read_uint8(buffer + read, &read) == msp->selection_id
+        && read_uint8(buffer + read, &read) == msp->op
+        && read_int32(buffer + read, &read) == msp->x
+        && read_int32(buffer + read, &read) == msp->y
+        && read_uint16(buffer + read, &read) == msp->w
+        && read_uint16(buffer + read, &read) == msp->h
+        && read_uint16(buffer + read, &read) == msp->mask_size;
+}
+
 static const DP_MessageMethods msg_selection_put_methods = {
     msg_selection_put_payload_length,
     msg_selection_put_serialize_payload,
@@ -9379,6 +9740,26 @@ static bool msg_selection_clear_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgSelectionClear *a = DP_message_internal(msg);
     DP_MsgSelectionClear *b = DP_message_internal(other);
     return a->selection_id == b->selection_id;
+}
+
+void DP_msg_selection_clear_local_match_set(DP_UNUSED size_t size,
+                                            unsigned char *data, void *user)
+{
+    DP_ASSERT(size == DP_MSG_SELECTION_CLEAR_MATCH_LENGTH);
+    const DP_MsgSelectionClear *msc = user;
+    size_t written = 0;
+    written += DP_write_bigendian_uint8(msc->selection_id, data + written);
+    DP_ASSERT(written == DP_MSG_SELECTION_CLEAR_MATCH_LENGTH);
+}
+
+bool DP_msg_selection_clear_local_match_matches(const DP_MsgSelectionClear *msc,
+                                                DP_Message *local_match_msg)
+{
+    size_t size;
+    const unsigned char *buffer = local_match_data(local_match_msg, &size);
+    size_t read = 0;
+    return size == DP_MSG_SELECTION_CLEAR_MATCH_LENGTH
+        && read_uint8(buffer + read, &read) == msc->selection_id;
 }
 
 static const DP_MessageMethods msg_selection_clear_methods = {
@@ -9651,4 +10032,271 @@ bool DP_msg_undo_redo(const DP_MsgUndo *mu)
 {
     DP_ASSERT(mu);
     return mu->redo;
+}
+
+
+static bool local_layer_id(uint32_t layer_id)
+{
+    return DP_layer_id_local(DP_protocol_to_layer_id(layer_id));
+}
+
+static bool local_selection_id(uint8_t selection_id)
+{
+    return DP_selection_id_local(selection_id);
+}
+
+static DP_Message *make_local_match(bool disguise_as_put_image, uint8_t type,
+                                    unsigned int context_id,
+                                    DP_MessageLocalMatchSetFn set, size_t size,
+                                    void *user)
+{
+    if (disguise_as_put_image) {
+        return DP_msg_put_image_new(context_id, type,
+                                    DP_BLEND_MODE_COMPAT_LOCAL_MATCH, 0, 0, 0,
+                                    0, set, size, user);
+    }
+    else {
+        return DP_msg_local_match_new(context_id, type, set, size, user);
+    }
+}
+
+DP_Message *DP_msg_local_match_make(DP_Message *msg, bool disguise_as_put_image)
+{
+    DP_ASSERT(msg);
+    DP_MessageType type = DP_message_type(msg);
+    switch (type) {
+    case DP_MSG_PUT_IMAGE: {
+        DP_MsgPutImage *mpi = DP_message_internal(msg);
+        if (local_layer_id(mpi->layer)) {
+            return make_local_match(disguise_as_put_image, (uint8_t)type,
+                                    DP_message_context_id(msg),
+                                    DP_msg_put_image_local_match_set,
+                                    DP_MSG_PUT_IMAGE_MATCH_LENGTH, mpi);
+            break;
+        }
+        else {
+            return NULL;
+        }
+    }
+    case DP_MSG_FILL_RECT: {
+        DP_MsgFillRect *mfr = DP_message_internal(msg);
+        if (local_layer_id(mfr->layer)) {
+            return make_local_match(disguise_as_put_image, (uint8_t)type,
+                                    DP_message_context_id(msg),
+                                    DP_msg_fill_rect_local_match_set,
+                                    DP_MSG_FILL_RECT_MATCH_LENGTH, mfr);
+            break;
+        }
+        else {
+            return NULL;
+        }
+    }
+    case DP_MSG_PUT_TILE: {
+        DP_MsgPutTile *mpt = DP_message_internal(msg);
+        if (local_layer_id(mpt->layer)) {
+            return make_local_match(disguise_as_put_image, (uint8_t)type,
+                                    DP_message_context_id(msg),
+                                    DP_msg_put_tile_local_match_set,
+                                    DP_MSG_PUT_TILE_MATCH_LENGTH, mpt);
+            break;
+        }
+        else {
+            return NULL;
+        }
+    }
+    case DP_MSG_DRAW_DABS_CLASSIC: {
+        DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
+        if (local_layer_id(mddc->layer)) {
+            return make_local_match(disguise_as_put_image, (uint8_t)type,
+                                    DP_message_context_id(msg),
+                                    DP_msg_draw_dabs_classic_local_match_set,
+                                    DP_MSG_DRAW_DABS_CLASSIC_MATCH_LENGTH,
+                                    mddc);
+            break;
+        }
+        else {
+            return NULL;
+        }
+    }
+    case DP_MSG_DRAW_DABS_PIXEL:
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE: {
+        DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
+        if (local_layer_id(mddp->layer)) {
+            return make_local_match(disguise_as_put_image, (uint8_t)type,
+                                    DP_message_context_id(msg),
+                                    DP_msg_draw_dabs_pixel_local_match_set,
+                                    DP_MSG_DRAW_DABS_PIXEL_MATCH_LENGTH, mddp);
+            break;
+        }
+        else {
+            return NULL;
+        }
+    }
+    case DP_MSG_DRAW_DABS_MYPAINT: {
+        DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
+        if (local_layer_id(mddmp->layer)) {
+            return make_local_match(disguise_as_put_image, (uint8_t)type,
+                                    DP_message_context_id(msg),
+                                    DP_msg_draw_dabs_mypaint_local_match_set,
+                                    DP_MSG_DRAW_DABS_MYPAINT_MATCH_LENGTH,
+                                    mddmp);
+            break;
+        }
+        else {
+            return NULL;
+        }
+    }
+    case DP_MSG_DRAW_DABS_MYPAINT_BLEND: {
+        DP_MsgDrawDabsMyPaintBlend *mddmpb = DP_message_internal(msg);
+        if (local_layer_id(mddmpb->layer)) {
+            return make_local_match(
+                disguise_as_put_image, (uint8_t)type,
+                DP_message_context_id(msg),
+                DP_msg_draw_dabs_mypaint_blend_local_match_set,
+                DP_MSG_DRAW_DABS_MYPAINT_BLEND_MATCH_LENGTH, mddmpb);
+            break;
+        }
+        else {
+            return NULL;
+        }
+    }
+    case DP_MSG_MOVE_RECT: {
+        DP_MsgMoveRect *mmr = DP_message_internal(msg);
+        if (local_layer_id(mmr->layer) || local_layer_id(mmr->source)) {
+            return make_local_match(disguise_as_put_image, (uint8_t)type,
+                                    DP_message_context_id(msg),
+                                    DP_msg_move_rect_local_match_set,
+                                    DP_MSG_MOVE_RECT_MATCH_LENGTH, mmr);
+            break;
+        }
+        else {
+            return NULL;
+        }
+    }
+    case DP_MSG_TRANSFORM_REGION: {
+        DP_MsgTransformRegion *mtr = DP_message_internal(msg);
+        if (local_layer_id(mtr->layer) || local_layer_id(mtr->source)) {
+            return make_local_match(disguise_as_put_image, (uint8_t)type,
+                                    DP_message_context_id(msg),
+                                    DP_msg_transform_region_local_match_set,
+                                    DP_MSG_TRANSFORM_REGION_MATCH_LENGTH, mtr);
+            break;
+        }
+        else {
+            return NULL;
+        }
+    }
+    case DP_MSG_SELECTION_PUT: {
+        DP_MsgSelectionPut *msp = DP_message_internal(msg);
+        if (local_selection_id(msp->selection_id)) {
+            return make_local_match(disguise_as_put_image, (uint8_t)type,
+                                    DP_message_context_id(msg),
+                                    DP_msg_selection_put_local_match_set,
+                                    DP_MSG_SELECTION_PUT_MATCH_LENGTH, msp);
+            break;
+        }
+        else {
+            return NULL;
+        }
+    }
+    case DP_MSG_SELECTION_CLEAR: {
+        DP_MsgSelectionClear *msc = DP_message_internal(msg);
+        if (local_selection_id(msc->selection_id)) {
+            return make_local_match(disguise_as_put_image, (uint8_t)type,
+                                    DP_message_context_id(msg),
+                                    DP_msg_selection_clear_local_match_set,
+                                    DP_MSG_SELECTION_CLEAR_MATCH_LENGTH, msc);
+            break;
+        }
+        else {
+            return NULL;
+        }
+    }
+    default:
+        return NULL;
+    }
+}
+
+bool DP_msg_local_match_is_local_match(DP_Message *msg)
+{
+    switch (DP_message_type(msg)) {
+    case DP_MSG_LOCAL_MATCH:
+        return true;
+    case DP_MSG_PUT_IMAGE:
+        return DP_msg_put_image_mode(DP_message_internal(msg))
+            == DP_BLEND_MODE_COMPAT_LOCAL_MATCH;
+    default:
+        return false;
+    }
+}
+
+bool DP_msg_local_match_matches(DP_Message *msg, DP_Message *local_match_msg)
+{
+    DP_ASSERT(msg);
+    DP_MessageType type = DP_message_type(msg);
+    switch (type) {
+    case DP_MSG_PUT_IMAGE: {
+        DP_MsgPutImage *mpi = DP_message_internal(msg);
+        return (local_layer_id(mpi->layer))
+            && DP_msg_put_image_local_match_matches(mpi, local_match_msg);
+    }
+    case DP_MSG_FILL_RECT: {
+        DP_MsgFillRect *mfr = DP_message_internal(msg);
+        return (local_layer_id(mfr->layer))
+            && DP_msg_fill_rect_local_match_matches(mfr, local_match_msg);
+    }
+    case DP_MSG_PUT_TILE: {
+        DP_MsgPutTile *mpt = DP_message_internal(msg);
+        return (local_layer_id(mpt->layer))
+            && DP_msg_put_tile_local_match_matches(mpt, local_match_msg);
+    }
+    case DP_MSG_DRAW_DABS_CLASSIC: {
+        DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
+        return (local_layer_id(mddc->layer))
+            && DP_msg_draw_dabs_classic_local_match_matches(mddc,
+                                                            local_match_msg);
+    }
+    case DP_MSG_DRAW_DABS_PIXEL:
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE: {
+        DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
+        return (local_layer_id(mddp->layer))
+            && DP_msg_draw_dabs_pixel_local_match_matches(mddp,
+                                                          local_match_msg);
+    }
+    case DP_MSG_DRAW_DABS_MYPAINT: {
+        DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
+        return (local_layer_id(mddmp->layer))
+            && DP_msg_draw_dabs_mypaint_local_match_matches(mddmp,
+                                                            local_match_msg);
+    }
+    case DP_MSG_DRAW_DABS_MYPAINT_BLEND: {
+        DP_MsgDrawDabsMyPaintBlend *mddmpb = DP_message_internal(msg);
+        return (local_layer_id(mddmpb->layer))
+            && DP_msg_draw_dabs_mypaint_blend_local_match_matches(
+                   mddmpb, local_match_msg);
+    }
+    case DP_MSG_MOVE_RECT: {
+        DP_MsgMoveRect *mmr = DP_message_internal(msg);
+        return (local_layer_id(mmr->layer) || local_layer_id(mmr->source))
+            && DP_msg_move_rect_local_match_matches(mmr, local_match_msg);
+    }
+    case DP_MSG_TRANSFORM_REGION: {
+        DP_MsgTransformRegion *mtr = DP_message_internal(msg);
+        return (local_layer_id(mtr->layer) || local_layer_id(mtr->source))
+            && DP_msg_transform_region_local_match_matches(mtr,
+                                                           local_match_msg);
+    }
+    case DP_MSG_SELECTION_PUT: {
+        DP_MsgSelectionPut *msp = DP_message_internal(msg);
+        return (local_selection_id(msp->selection_id))
+            && DP_msg_selection_put_local_match_matches(msp, local_match_msg);
+    }
+    case DP_MSG_SELECTION_CLEAR: {
+        DP_MsgSelectionClear *msc = DP_message_internal(msg);
+        return (local_selection_id(msc->selection_id))
+            && DP_msg_selection_clear_local_match_matches(msc, local_match_msg);
+    }
+    default:
+        return false;
+    }
 }

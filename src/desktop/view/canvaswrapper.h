@@ -109,7 +109,6 @@ public:
 	virtual void setShowOwnUserMarker(bool showOwnUserMarker) = 0;
 	virtual void setPointerTracking(bool pointerTracking) = 0;
 	virtual void setShowToggleItems(bool showToggleItems) = 0;
-	virtual void setShowSelectionMask(bool showSelectionMask) = 0;
 
 	virtual void setCatchupProgress(int percent, bool force) = 0;
 	virtual void setStreamResetProgress(int percent) = 0;

@@ -559,16 +559,29 @@ bool DP_acl_state_layer_locked_for(DP_AclState *acls, uint8_t user_id,
                                    int layer_id)
 {
     DP_ASSERT(acls);
-    DP_LayerAclEntry *entry;
-    HASH_FIND_INT(acls->layers, &layer_id, entry);
-    if (entry) {
-        DP_LayerAcl *l = &entry->layer_acl;
-        return l->locked || !DP_user_bit_get(l->exclusive, user_id)
-            || l->tier < DP_acl_state_user_tier(acls, user_id);
+    unsigned int selection_context_id;
+    if (DP_layer_id_selection_ids(layer_id, &selection_context_id, NULL)) {
+        return selection_context_id != user_id;
     }
     else {
-        return false;
+        DP_LayerAclEntry *entry;
+        HASH_FIND_INT(acls->layers, &layer_id, entry);
+        if (entry) {
+            DP_LayerAcl *l = &entry->layer_acl;
+            return l->locked || !DP_user_bit_get(l->exclusive, user_id)
+                || l->tier < DP_acl_state_user_tier(acls, user_id);
+        }
+        else {
+            return false;
+        }
     }
+}
+
+static bool is_own_selection_id(int layer_id, uint8_t user_id)
+{
+    unsigned int selection_context_id;
+    return DP_layer_id_selection_ids(layer_id, &selection_context_id, NULL)
+        && selection_context_id == user_id;
 }
 
 bool DP_acl_state_annotation_locked(DP_AclState *acls, int annotation_id)
@@ -1196,7 +1209,11 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
     case DP_MSG_ANNOTATION_DELETE:
         return handle_annotation_delete(acls, msg, user_id, override);
     case DP_MSG_PUT_TILE:
-        return override || DP_acl_state_is_op(acls, user_id);
+        return override || DP_acl_state_is_op(acls, user_id)
+            || is_own_selection_id(
+                   DP_protocol_to_layer_id(
+                       DP_msg_put_tile_layer(DP_message_internal(msg))),
+                   user_id);
     case DP_MSG_CANVAS_BACKGROUND:
         return override
             || DP_acl_state_can_use_feature(acls, DP_FEATURE_BACKGROUND,

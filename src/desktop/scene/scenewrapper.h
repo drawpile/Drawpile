@@ -48,7 +48,6 @@ public:
 	void setShowOwnUserMarker(bool showOwnUserMarker) override;
 	void setPointerTracking(bool pointerTracking) override;
 	void setShowToggleItems(bool showToggleItems) override;
-	void setShowSelectionMask(bool showSelectionMask) override;
 
 	void setCatchupProgress(int percent, bool force) override;
 	void setStreamResetProgress(int percent) override;

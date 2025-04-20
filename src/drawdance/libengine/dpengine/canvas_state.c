@@ -35,6 +35,7 @@
 #include "layer_routes.h"
 #include "ops.h"
 #include "paint.h"
+#include "selection.h"
 #include "selection_set.h"
 #include "tile.h"
 #include "tile_iterator.h"
@@ -60,6 +61,8 @@ struct DP_CanvasState {
     const bool transient;
     const int width, height;
     const int offset_x, offset_y;
+    const unsigned int active_context_id;
+    const int active_selection_id;
     DP_Tile *const background_tile;
     const bool background_opaque;
     DP_LayerList *const layers;
@@ -76,6 +79,8 @@ struct DP_TransientCanvasState {
     bool transient;
     int width, height;
     int offset_x, offset_y;
+    unsigned int active_context_id;
+    int active_selection_id;
     DP_Tile *background_tile;
     bool background_opaque;
     union {
@@ -112,6 +117,8 @@ struct DP_CanvasState {
     bool transient;
     int width, height;
     int offset_x, offset_y;
+    unsigned int active_context_id;
+    int active_selection_id;
     DP_Tile *background_tile;
     bool background_opaque;
     union {
@@ -144,9 +151,10 @@ struct DP_CanvasState {
 #endif
 
 
-static DP_TransientCanvasState *allocate_canvas_state(bool transient, int width,
-                                                      int height, int offset_x,
-                                                      int offset_y)
+static DP_TransientCanvasState *
+allocate_canvas_state(bool transient, int width, int height, int offset_x,
+                      int offset_y, unsigned int active_context_id,
+                      int active_selection_id)
 {
     DP_TransientCanvasState *cs = DP_malloc(sizeof(*cs));
     *cs = (DP_TransientCanvasState){DP_ATOMIC_INIT(1),
@@ -155,6 +163,8 @@ static DP_TransientCanvasState *allocate_canvas_state(bool transient, int width,
                                     height,
                                     offset_x,
                                     offset_y,
+                                    active_context_id,
+                                    active_selection_id,
                                     NULL,
                                     false,
                                     {NULL},
@@ -169,7 +179,8 @@ static DP_TransientCanvasState *allocate_canvas_state(bool transient, int width,
 
 DP_CanvasState *DP_canvas_state_new(void)
 {
-    DP_TransientCanvasState *tcs = allocate_canvas_state(false, 0, 0, 0, 0);
+    DP_TransientCanvasState *tcs =
+        allocate_canvas_state(false, 0, 0, 0, 0, 1u, 1);
     tcs->layers = DP_layer_list_new();
     tcs->layer_props = DP_layer_props_list_new();
     tcs->layer_routes = DP_layer_routes_new();
@@ -183,7 +194,8 @@ DP_CanvasState *DP_canvas_state_new_with_selections_noinc(DP_CanvasState *cs,
                                                           DP_SelectionSet *ss)
 {
     DP_TransientCanvasState *tcs = allocate_canvas_state(
-        false, cs->width, cs->height, cs->offset_x, cs->offset_y);
+        false, cs->width, cs->height, cs->offset_x, cs->offset_y,
+        cs->active_context_id, cs->active_selection_id);
     tcs->background_tile = DP_tile_incref_nullable(cs->background_tile);
     tcs->background_opaque = cs->background_opaque;
     tcs->layers = DP_layer_list_incref(cs->layers);
@@ -273,6 +285,20 @@ int DP_canvas_state_offset_y(DP_CanvasState *cs)
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     return cs->offset_y;
+}
+
+unsigned int DP_canvas_state_active_context_id(DP_CanvasState *cs)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return cs->active_context_id;
+}
+
+int DP_canvas_state_active_selection_id(DP_CanvasState *cs)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return cs->active_selection_id;
 }
 
 DP_Tile *DP_canvas_state_background_tile_noinc(DP_CanvasState *cs)
@@ -1545,7 +1571,8 @@ DP_canvas_state_to_flat_layer(DP_CanvasState *cs, unsigned int flags,
         DP_TransientTile *tt = DP_transient_tile_new_blank(0);
         init_flattening_tile(tt, background_tile);
         int i = ti.row * wt + ti.col;
-        DP_canvas_state_flatten_tile_to(cs, i, tt, include_sublayers, &vmf);
+        DP_canvas_state_flatten_tile_to(cs, i, tt, include_sublayers, NULL,
+                                        &vmf);
         DP_transient_layer_content_transient_tile_set_noinc(tlc, tt, i);
     }
 
@@ -1588,10 +1615,51 @@ static DP_ViewModeContext get_clip_layer(void *user, int i,
     return DP_view_mode_context_root_at_clip(vmcr, cs, i, out_lle, out_lp);
 }
 
+static DP_TransientTile *flatten_active_selection(DP_CanvasState *cs,
+                                                  int tile_index,
+                                                  DP_TransientTile *tt,
+                                                  bool include_sublayers,
+                                                  DP_UPixel15 color)
+{
+    int active_selection_id = cs->active_selection_id;
+    if (active_selection_id <= 0) {
+        return tt;
+    }
+
+    DP_SelectionSet *ss = cs->selections;
+    if (!ss) {
+        return tt;
+    }
+
+    DP_Selection *sel = DP_selection_set_search_noinc(ss, cs->active_context_id,
+                                                      active_selection_id);
+    if (!sel) {
+        return tt;
+    }
+
+    DP_LayerContent *lc = DP_selection_content_noinc(sel);
+    DP_Tile *t =
+        DP_layer_content_flatten_tile(lc, tile_index, false, include_sublayers);
+    if (!t) {
+        return tt;
+    }
+
+    if (!tt) {
+        tt = DP_transient_tile_new_blank(0);
+    }
+
+    DP_blend_selection(DP_transient_tile_pixels(tt), DP_tile_pixels(t),
+                       DP_TILE_LENGTH, color);
+    DP_tile_decref(t);
+
+    return tt;
+}
+
 DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
                                                   int tile_index,
                                                   DP_TransientTile *tt_or_null,
                                                   bool include_sublayers,
+                                                  DP_UPixel15 *selection_tint,
                                                   const DP_ViewModeFilter *vmf)
 {
     DP_ViewModeContextRoot vmcr = DP_view_mode_context_root_init(vmf, cs);
@@ -1624,6 +1692,10 @@ DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
             }
         }
     }
+    if (selection_tint) {
+        tt = flatten_active_selection(cs, tile_index, tt, include_sublayers,
+                                      *selection_tint);
+    }
     return tt;
 }
 
@@ -1652,7 +1724,8 @@ static void *flatten_canvas(
     while (DP_tile_iterator_next(&ti)) {
         init_flattening_tile(tt, background_tile);
         int i = ti.row * wt + ti.col;
-        DP_canvas_state_flatten_tile_to(cs, i, tt, include_sublayers, &vmf);
+        DP_canvas_state_flatten_tile_to(cs, i, tt, include_sublayers, NULL,
+                                        &vmf);
         to_buffer(buffer, tt, &ti);
     }
     DP_transient_tile_decref(tt);
@@ -1801,7 +1874,7 @@ DP_canvas_state_flatten_tile(DP_CanvasState *cs, int tile_index,
     DP_ViewModeFilter vmf =
         vmf_or_null ? *vmf_or_null : DP_view_mode_filter_make_default();
     return DP_canvas_state_flatten_tile_to(cs, tile_index, tt,
-                                           include_sublayers, &vmf);
+                                           include_sublayers, NULL, &vmf);
 }
 
 DP_TransientTile *
@@ -1831,6 +1904,10 @@ static void diff_states(DP_CanvasState *cs, DP_CanvasState *prev,
     else {
         DP_layer_list_diff(cs->layers, cs->layer_props, prev->layers,
                            prev->layer_props, diff, only_layer_id);
+        DP_selection_set_diff_nullable(
+            cs->selections, cs->active_context_id, cs->active_selection_id,
+            prev->selections, prev->active_context_id,
+            prev->active_selection_id, diff);
     }
 }
 
@@ -1880,7 +1957,8 @@ DP_TransientLayerContent *DP_canvas_state_render(DP_CanvasState *cs,
 
 DP_TransientCanvasState *DP_transient_canvas_state_new_init(void)
 {
-    DP_TransientCanvasState *tcs = allocate_canvas_state(true, 0, 0, 0, 0);
+    DP_TransientCanvasState *tcs =
+        allocate_canvas_state(true, 0, 0, 0, 0, 1u, 1);
     tcs->layers = DP_layer_list_new();
     tcs->layer_props = DP_layer_props_list_new();
     tcs->layer_routes = DP_layer_routes_new();
@@ -1896,7 +1974,8 @@ static DP_TransientCanvasState *new_transient_canvas_state(DP_CanvasState *cs)
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
     DP_ASSERT(!cs->transient);
     DP_TransientCanvasState *tcs = allocate_canvas_state(
-        true, cs->width, cs->height, cs->offset_x, cs->offset_y);
+        true, cs->width, cs->height, cs->offset_x, cs->offset_y,
+        cs->active_context_id, cs->active_selection_id);
     tcs->background_tile = DP_tile_incref_nullable(cs->background_tile);
     tcs->background_opaque = cs->background_opaque;
     return tcs;
@@ -1996,7 +2075,13 @@ DP_CanvasState *DP_transient_canvas_state_persist(DP_TransientCanvasState *tcs)
         DP_transient_document_metadata_persist(tcs->transient_metadata);
     }
     if (tcs->selections && DP_selection_set_transient(tcs->selections)) {
-        DP_transient_selection_set_persist(tcs->transient_selections);
+        // Selections check if they have content when persisting them and delete
+        // themselves if not. The selection set in turn deletes itself if it
+        // contains no selections and persisting it will return NULL.
+        if (!DP_transient_selection_set_persist(tcs->transient_selections)) {
+            DP_transient_selection_set_decref(tcs->transient_selections);
+            tcs->selections = NULL;
+        }
     }
     tcs->transient = false;
     return (DP_CanvasState *)tcs;
@@ -2034,6 +2119,24 @@ void DP_transient_canvas_state_height_set(DP_TransientCanvasState *tcs,
     DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     tcs->height = height;
+}
+
+void DP_transient_canvas_state_active_context_id_set(
+    DP_TransientCanvasState *tcs, unsigned int active_context_id)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    tcs->active_context_id = active_context_id;
+}
+
+void DP_transient_canvas_state_active_selection_id_set(
+    DP_TransientCanvasState *tcs, int active_selection_id)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    tcs->active_selection_id = active_selection_id;
 }
 
 void DP_transient_canvas_state_offsets_add(DP_TransientCanvasState *tcs,
@@ -2339,6 +2442,37 @@ DP_transient_canvas_state_transient_metadata(DP_TransientCanvasState *tcs)
         DP_document_metadata_decref(dm);
     }
     return tcs->transient_metadata;
+}
+
+DP_TransientSelectionSet *
+DP_transient_canvas_state_transient_selection_set_noinc_nullable(
+    DP_TransientCanvasState *tcs, int reserve)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_SelectionSet *ss = tcs->selections;
+    if (ss) {
+        if (DP_selection_set_transient(ss)) {
+            return tcs->transient_selections;
+        }
+        else {
+            DP_TransientSelectionSet *tss =
+                DP_transient_selection_set_new(ss, reserve);
+            DP_selection_set_decref(ss);
+            tcs->transient_selections = tss;
+            return tss;
+        }
+    }
+    else if (reserve > 0) {
+        DP_TransientSelectionSet *tss =
+            DP_transient_selection_set_new_init(reserve);
+        tcs->transient_selections = tss;
+        return tss;
+    }
+    else {
+        return NULL;
+    }
 }
 
 void DP_transient_canvas_state_transient_selections_set_noinc(

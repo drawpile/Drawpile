@@ -162,6 +162,11 @@ DP_INLINE bool DP_pixel15_equal(DP_Pixel15 a, DP_Pixel15 b)
     return a.b == b.b && a.g == b.g && a.r == b.r && a.a == b.a;
 }
 
+DP_INLINE bool DP_upixel15_equal(DP_UPixel15 a, DP_UPixel15 b)
+{
+    return a.b == b.b && a.g == b.g && a.r == b.r && a.a == b.a;
+}
+
 
 void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
                    const uint16_t *mask, uint16_t opacity, int w, int h,
@@ -173,6 +178,10 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
                      uint16_t opacity, int blend_mode);
 
 void DP_tint_pixels(DP_Pixel15 *dst, int pixel_count, DP_UPixel8 tint);
+
+void DP_blend_selection(DP_Pixel15 *DP_RESTRICT dst,
+                        const DP_Pixel15 *DP_RESTRICT src, int pixel_count,
+                        DP_UPixel15 color);
 
 // Needs big SIMD alignment of dst and src, max_align_t is not enough! Only the
 // pixels of tiles are properly aligned, really.

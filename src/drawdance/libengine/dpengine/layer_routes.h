@@ -52,6 +52,19 @@ typedef struct DP_LayerPropsList DP_TransientLayerPropsList;
 typedef struct DP_LayerRoutesEntry DP_LayerRoutesEntry;
 typedef struct DP_LayerRoutes DP_LayerRoutes;
 
+typedef struct DP_LayerRoutesSelEntry {
+    bool exists;
+    bool is_selection;
+    union {
+        DP_LayerRoutesEntry *lre;
+        struct {
+            unsigned int context_id;
+            int selection_id;
+            int index;
+        } sel;
+    } DP_ANONYMOUS(u);
+} DP_LayerRoutesSelEntry;
+
 
 DP_LayerRoutes *DP_layer_routes_new(void);
 
@@ -132,6 +145,32 @@ void DP_layer_routes_entry_transient_children(
     DP_LayerRoutesEntry *lre, DP_TransientCanvasState *tcs, int offset,
     int reserve, DP_TransientLayerList **out_tll,
     DP_TransientLayerPropsList **out_tlpl);
+
+
+DP_LayerRoutesSelEntry DP_layer_routes_search_sel(DP_LayerRoutes *lr,
+                                                  DP_CanvasState *cs,
+                                                  int layer_or_selection_id);
+
+DP_LayerRoutesSelEntry
+DP_layer_routes_sel_entry_from_selection_index(DP_CanvasState *cs, int index);
+
+// Layer or selection exists and is not a group.
+bool DP_layer_routes_sel_entry_is_valid_source(DP_LayerRoutesSelEntry *lrse);
+
+// Layer exists and is not a group, selection exists or can be auto-created.
+bool DP_layer_routes_sel_entry_is_valid_target(DP_LayerRoutesSelEntry *lrse);
+
+bool DP_layer_routes_sel_entry_is_group(DP_LayerRoutesSelEntry *lrse);
+
+int *DP_layer_routes_sel_entry_indexes(DP_LayerRoutesSelEntry *lrse,
+                                       int *out_count);
+
+DP_LayerContent *DP_layer_routes_sel_entry_content(DP_LayerRoutesSelEntry *lrse,
+                                                   DP_CanvasState *cs);
+
+DP_TransientLayerContent *
+DP_layer_routes_sel_entry_transient_content(DP_LayerRoutesSelEntry *lrse,
+                                            DP_TransientCanvasState *tcs);
 
 
 #endif

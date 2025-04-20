@@ -27,6 +27,8 @@ typedef struct DP_Message DP_Message;
 typedef struct DP_TextReader DP_TextReader;
 typedef struct DP_TextWriter DP_TextWriter;
 
+typedef void (*DP_MessageLocalMatchSetFn)(size_t, unsigned char *, void *);
+
 #define DP_PROTOCOL_VERSION_NAMESPACE "dp"
 #define DP_PROTOCOL_VERSION_SERVER    4
 #define DP_PROTOCOL_VERSION_MAJOR     25
@@ -1095,7 +1097,7 @@ int32_t DP_msg_canvas_resize_left(const DP_MsgCanvasResize *mcr);
 /*
  * DP_MSG_REMOVED_LAYER_CREATE
  *
- * Removed in version 2.3, sumsubed by LayerTreeCreate
+ * Removed in version 2.3, subsumed by LayerTreeCreate
  */
 
 
@@ -1212,23 +1214,25 @@ size_t DP_msg_layer_retitle_title_len(const DP_MsgLayerRetitle *mlr);
 /*
  * DP_MSG_PUT_IMAGE
  *
- * Draw a bitmap onto a layer
+ * Draw a bitmap onto a layer or selection.
  *
- * This is used for pasting images, floodfill, merging annotations and
- * other tasks where image processing is done clientisde.
+ * This is used for pasting images, flood-filling, merging annotations
+ * and other tasks where image processing is done client-side.
  *
  * All layer blending modes are supported.
  *
  * The image data is DEFLATEd 32bit premultiplied ARGB data. The image
- * is prefixed with a 32 bit unsigned integer (big endian) which contains
- * the expected length of the uncompressed data.
+ * is prefixed with a 32 bit unsigned integer (big endian) which
+ * contains the expected length of the uncompressed data.
  *
- * Note that since the message length is fairly limited, a
- * large image may have to be divided into multiple PutImage
- * commands.
+ * Note that since the message length is fairly limited, a large image
+ * may have to be divided into multiple PutImage commands.
+ *
+ * The layer id may refer to a selection.
  */
 
 #define DP_MSG_PUT_IMAGE_STATIC_LENGTH 20
+#define DP_MSG_PUT_IMAGE_MATCH_LENGTH  22
 
 #define DP_MSG_PUT_IMAGE_IMAGE_MIN_SIZE 0
 #define DP_MSG_PUT_IMAGE_IMAGE_MAX_SIZE 65515
@@ -1247,6 +1251,12 @@ DP_Message *DP_msg_put_image_deserialize(unsigned int context_id,
 
 DP_Message *DP_msg_put_image_parse(unsigned int context_id,
                                    DP_TextReader *reader);
+
+void DP_msg_put_image_local_match_set(size_t size, unsigned char *data,
+                                      void *user);
+
+bool DP_msg_put_image_local_match_matches(const DP_MsgPutImage *mpi,
+                                          DP_Message *local_match_msg);
 
 DP_MsgPutImage *DP_msg_put_image_cast(DP_Message *msg);
 
@@ -1272,9 +1282,12 @@ size_t DP_msg_put_image_image_size(const DP_MsgPutImage *mpi);
  * DP_MSG_FILL_RECT
  *
  * Fill a rectangle with solid color
+ *
+ * The layer id may refer to a selection.
  */
 
 #define DP_MSG_FILL_RECT_STATIC_LENGTH 24
+#define DP_MSG_FILL_RECT_MATCH_LENGTH  24
 
 typedef struct DP_MsgFillRect DP_MsgFillRect;
 
@@ -1288,6 +1301,12 @@ DP_Message *DP_msg_fill_rect_deserialize(unsigned int context_id,
 
 DP_Message *DP_msg_fill_rect_parse(unsigned int context_id,
                                    DP_TextReader *reader);
+
+void DP_msg_fill_rect_local_match_set(size_t size, unsigned char *data,
+                                      void *user);
+
+bool DP_msg_fill_rect_local_match_matches(const DP_MsgFillRect *mfr,
+                                          DP_Message *local_match_msg);
 
 DP_MsgFillRect *DP_msg_fill_rect_cast(DP_Message *msg);
 
@@ -1330,6 +1349,8 @@ uint32_t DP_msg_fill_rect_color(const DP_MsgFillRect *mfr);
  * be merged. If the message context id is 0, the sublayers of all
  * users are merged, either on the given layer or on all layers if
  * that's 0 too.
+ *
+ * The layer id may refer to a selection.
  */
 
 #define DP_MSG_PEN_UP_STATIC_LENGTH 3
@@ -1524,18 +1545,21 @@ uint16_t DP_msg_annotation_delete_id(const DP_MsgAnnotationDelete *mad);
 /*
  * DP_MSG_PUT_TILE
  *
- * Set the content of a tile
+ * Set the content of a tile.
  *
- * Unlike PutImage, this replaces an entire tile directly without any blending.
- * This command is typically used during canvas initialization to set the
- * initial content.
+ * Unlike PutImage, this replaces an entire tile directly without any
+ * blending. This command is typically used during canvas
+ * initialization to set the initial content.
  *
- * PutTile can target sublayers as well. This is used when generating a reset
- * image with incomplete indirect strokes. Sending a PenUp command will merge
- * the sublayer.
+ * PutTile can target sublayers as well. This is used when generating
+ * a reset image with incomplete indirect strokes. Sending a PenUp
+ * command will merge the sublayer.
+ *
+ * The layer id may refer to a selection.
  */
 
 #define DP_MSG_PUT_TILE_STATIC_LENGTH 11
+#define DP_MSG_PUT_TILE_MATCH_LENGTH  13
 
 #define DP_MSG_PUT_TILE_IMAGE_MIN_SIZE 0
 #define DP_MSG_PUT_TILE_IMAGE_MAX_SIZE 65524
@@ -1555,6 +1579,12 @@ DP_Message *DP_msg_put_tile_deserialize(unsigned int context_id,
 
 DP_Message *DP_msg_put_tile_parse(unsigned int context_id,
                                   DP_TextReader *reader);
+
+void DP_msg_put_tile_local_match_set(size_t size, unsigned char *data,
+                                     void *user);
+
+bool DP_msg_put_tile_local_match_matches(const DP_MsgPutTile *mpt,
+                                         DP_Message *local_match_msg);
 
 DP_MsgPutTile *DP_msg_put_tile_cast(DP_Message *msg);
 
@@ -1618,13 +1648,16 @@ size_t DP_msg_canvas_background_image_size(const DP_MsgCanvasBackground *mcb);
  *
  * Draw classic brush dabs
  *
- * A simple delta compression scheme is used.
- * The coordinates of each dab are relative to the previous dab.
- * The coordinate system has 1/4 pixel resolution. Divide by 4.0 before use.
- * The size field is the brush diameter multiplied by 256.
+ * A simple delta compression scheme is used. The coordinates of each
+ * dab are relative to the previous dab. The coordinate system has
+ * 1/4 pixel resolution. Divide by 4.0 before use. The size field is
+ * the brush diameter multiplied by 256.
+ *
+ * The layer id may refer to a selection.
  */
 
 #define DP_MSG_DRAW_DABS_CLASSIC_STATIC_LENGTH 17
+#define DP_MSG_DRAW_DABS_CLASSIC_MATCH_LENGTH  19
 
 #define DP_MSG_DRAW_DABS_CLASSIC_DABS_MIN_COUNT 1
 #define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX_COUNT 9359
@@ -1665,6 +1698,12 @@ DP_Message *DP_msg_draw_dabs_classic_deserialize(unsigned int context_id,
 DP_Message *DP_msg_draw_dabs_classic_parse(unsigned int context_id,
                                            DP_TextReader *reader);
 
+void DP_msg_draw_dabs_classic_local_match_set(size_t size, unsigned char *data,
+                                              void *user);
+
+bool DP_msg_draw_dabs_classic_local_match_matches(
+    const DP_MsgDrawDabsClassic *mddc, DP_Message *local_match_msg);
+
 DP_MsgDrawDabsClassic *DP_msg_draw_dabs_classic_cast(DP_Message *msg);
 
 uint8_t DP_msg_draw_dabs_classic_flags(const DP_MsgDrawDabsClassic *mddc);
@@ -1693,9 +1732,12 @@ int DP_msg_draw_dabs_classic_dabs_count(const DP_MsgDrawDabsClassic *mddc);
  *
  * The same kind of delta compression is used as in classicdabs,
  * but the fields all have integer precision.
+ *
+ * The layer id may refer to a selection.
  */
 
 #define DP_MSG_DRAW_DABS_PIXEL_STATIC_LENGTH 17
+#define DP_MSG_DRAW_DABS_PIXEL_MATCH_LENGTH  19
 
 #define DP_MSG_DRAW_DABS_PIXEL_DABS_MIN_COUNT 1
 #define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX_COUNT 13103
@@ -1734,6 +1776,12 @@ DP_Message *DP_msg_draw_dabs_pixel_deserialize(unsigned int context_id,
 DP_Message *DP_msg_draw_dabs_pixel_parse(unsigned int context_id,
                                          DP_TextReader *reader);
 
+void DP_msg_draw_dabs_pixel_local_match_set(size_t size, unsigned char *data,
+                                            void *user);
+
+bool DP_msg_draw_dabs_pixel_local_match_matches(const DP_MsgDrawDabsPixel *mddp,
+                                                DP_Message *local_match_msg);
+
 DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_cast(DP_Message *msg);
 
 uint8_t DP_msg_draw_dabs_pixel_flags(const DP_MsgDrawDabsPixel *mddp);
@@ -1761,6 +1809,7 @@ int DP_msg_draw_dabs_pixel_dabs_count(const DP_MsgDrawDabsPixel *mddp);
  */
 
 #define DP_MSG_DRAW_DABS_PIXEL_SQUARE_STATIC_LENGTH 0
+#define DP_MSG_DRAW_DABS_PIXEL_SQUARE_MATCH_LENGTH  0
 
 DP_Message *
 DP_msg_draw_dabs_pixel_square_new(unsigned int context_id, uint8_t flags,
@@ -1775,6 +1824,13 @@ DP_Message *DP_msg_draw_dabs_pixel_square_deserialize(
 DP_Message *DP_msg_draw_dabs_pixel_square_parse(unsigned int context_id,
                                                 DP_TextReader *reader);
 
+void DP_msg_draw_dabs_pixel_square_local_match_set(size_t size,
+                                                   unsigned char *data,
+                                                   void *user);
+
+bool DP_msg_draw_dabs_pixel_square_local_match_matches(
+    const DP_MsgDrawDabsPixel *mddps, DP_Message *local_match_msg);
+
 DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg);
 
 
@@ -1785,9 +1841,12 @@ DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg);
  * mode of MyPaint brushes as used in MyPaint itself. Always uses
  * direct painting mode. Other blend and indirect painting modes use
  * the mypaintdabsblend message instead.
+ *
+ * The layer id may refer to a selection.
  */
 
 #define DP_MSG_DRAW_DABS_MYPAINT_STATIC_LENGTH 19
+#define DP_MSG_DRAW_DABS_MYPAINT_MATCH_LENGTH  21
 
 #define DP_MSG_DRAW_DABS_MYPAINT_DABS_MIN_COUNT 1
 #define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX_COUNT 7279
@@ -1832,6 +1891,12 @@ DP_Message *DP_msg_draw_dabs_mypaint_deserialize(unsigned int context_id,
 DP_Message *DP_msg_draw_dabs_mypaint_parse(unsigned int context_id,
                                            DP_TextReader *reader);
 
+void DP_msg_draw_dabs_mypaint_local_match_set(size_t size, unsigned char *data,
+                                              void *user);
+
+bool DP_msg_draw_dabs_mypaint_local_match_matches(
+    const DP_MsgDrawDabsMyPaint *mddmp, DP_Message *local_match_msg);
+
 DP_MsgDrawDabsMyPaint *DP_msg_draw_dabs_mypaint_cast(DP_Message *msg);
 
 uint32_t DP_msg_draw_dabs_mypaint_layer(const DP_MsgDrawDabsMyPaint *mddmp);
@@ -1864,9 +1929,12 @@ int DP_msg_draw_dabs_mypaint_dabs_count(const DP_MsgDrawDabsMyPaint *mddmp);
  * Draw MyPaint brush dabs with single blend mode. Used for cases
  * where the regular MyPaint blending with "normal and eraser" mode is
  * unsuitable.
+ *
+ * The layer id may refer to a selection.
  */
 
 #define DP_MSG_DRAW_DABS_MYPAINT_BLEND_STATIC_LENGTH 17
+#define DP_MSG_DRAW_DABS_MYPAINT_BLEND_MATCH_LENGTH  19
 
 #define DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MIN_COUNT 1
 #define DP_MSG_DRAW_DABS_MYPAINT_BLEND_DABS_MAX_COUNT 7279
@@ -1912,6 +1980,13 @@ DP_Message *DP_msg_draw_dabs_mypaint_blend_deserialize(
 DP_Message *DP_msg_draw_dabs_mypaint_blend_parse(unsigned int context_id,
                                                  DP_TextReader *reader);
 
+void DP_msg_draw_dabs_mypaint_blend_local_match_set(size_t size,
+                                                    unsigned char *data,
+                                                    void *user);
+
+bool DP_msg_draw_dabs_mypaint_blend_local_match_matches(
+    const DP_MsgDrawDabsMyPaintBlend *mddmpb, DP_Message *local_match_msg);
+
 DP_MsgDrawDabsMyPaintBlend *
 DP_msg_draw_dabs_mypaint_blend_cast(DP_Message *msg);
 
@@ -1950,9 +2025,12 @@ int DP_msg_draw_dabs_mypaint_blend_dabs_count(
  * to support non-rectangular selections.
  *
  * Source and target rects may be (partially) outside the canvas.
+ *
+ * The source and layer id may refer to a selection.
  */
 
 #define DP_MSG_MOVE_RECT_STATIC_LENGTH 30
+#define DP_MSG_MOVE_RECT_MATCH_LENGTH  32
 
 #define DP_MSG_MOVE_RECT_MASK_MIN_SIZE 0
 #define DP_MSG_MOVE_RECT_MASK_MAX_SIZE 65505
@@ -1972,6 +2050,12 @@ DP_Message *DP_msg_move_rect_deserialize(unsigned int context_id,
 
 DP_Message *DP_msg_move_rect_parse(unsigned int context_id,
                                    DP_TextReader *reader);
+
+void DP_msg_move_rect_local_match_set(size_t size, unsigned char *data,
+                                      void *user);
+
+bool DP_msg_move_rect_local_match_matches(const DP_MsgMoveRect *mmr,
+                                          DP_Message *local_match_msg);
 
 DP_MsgMoveRect *DP_msg_move_rect_cast(DP_Message *msg);
 
@@ -2215,9 +2299,12 @@ uint32_t DP_msg_layer_tree_delete_merge_to(const DP_MsgLayerTreeDelete *mltd);
  * is DEFLATEd 8 bit alpha.
  *
  * For axis aligned rectangle selections, no bitmap is necessary.
+ *
+ * The source and layer id may refer to a selection.
  */
 
 #define DP_MSG_TRANSFORM_REGION_STATIC_LENGTH 55
+#define DP_MSG_TRANSFORM_REGION_MATCH_LENGTH  57
 
 #define DP_MSG_TRANSFORM_REGION_MODE_NEAREST  0
 #define DP_MSG_TRANSFORM_REGION_MODE_BILINEAR 1
@@ -2246,6 +2333,12 @@ DP_Message *DP_msg_transform_region_deserialize(unsigned int context_id,
 
 DP_Message *DP_msg_transform_region_parse(unsigned int context_id,
                                           DP_TextReader *reader);
+
+void DP_msg_transform_region_local_match_set(size_t size, unsigned char *data,
+                                             void *user);
+
+bool DP_msg_transform_region_local_match_matches(
+    const DP_MsgTransformRegion *mtr, DP_Message *local_match_msg);
 
 DP_MsgTransformRegion *DP_msg_transform_region_cast(DP_Message *msg);
 
@@ -2611,11 +2704,12 @@ DP_msg_key_frame_delete_move_frame_index(const DP_MsgKeyFrameDelete *mkfd);
  * The mask is DEFLATEd 8 bit alpha. If absent, this fills the entire
  * rectangle instead.
  *
- * Currently, only selection id 1 is used and these messages are not sent
- * over the network; LocalMatch commands are used instead.
+ * Selection ids 1 to 127 are considered local-only and are not sent over
+ * the network, they're handled by LocalMatch commands instead.
  */
 
 #define DP_MSG_SELECTION_PUT_STATIC_LENGTH 14
+#define DP_MSG_SELECTION_PUT_MATCH_LENGTH  16
 
 #define DP_MSG_SELECTION_PUT_OP_REPLACE    0
 #define DP_MSG_SELECTION_PUT_OP_UNITE      1
@@ -2650,6 +2744,12 @@ DP_Message *DP_msg_selection_put_deserialize(unsigned int context_id,
 DP_Message *DP_msg_selection_put_parse(unsigned int context_id,
                                        DP_TextReader *reader);
 
+void DP_msg_selection_put_local_match_set(size_t size, unsigned char *data,
+                                          void *user);
+
+bool DP_msg_selection_put_local_match_matches(const DP_MsgSelectionPut *msp,
+                                              DP_Message *local_match_msg);
+
 DP_MsgSelectionPut *DP_msg_selection_put_cast(DP_Message *msg);
 
 uint8_t DP_msg_selection_put_selection_id(const DP_MsgSelectionPut *msp);
@@ -2676,11 +2776,12 @@ size_t DP_msg_selection_put_mask_size(const DP_MsgSelectionPut *msp);
  * Remove the selection specified by the selection_id, or all selections if
  * it's 0.
  *
- * Currently, only selection id 1 is used and these messages are not sent
- * over the network; LocalMatch commands are used instead.
+ * Selection ids 1 to 127 are considered local-only and are not sent over
+ * the network, they're handled by LocalMatch commands instead.
  */
 
 #define DP_MSG_SELECTION_CLEAR_STATIC_LENGTH 1
+#define DP_MSG_SELECTION_CLEAR_MATCH_LENGTH  1
 
 typedef struct DP_MsgSelectionClear DP_MsgSelectionClear;
 
@@ -2693,6 +2794,12 @@ DP_Message *DP_msg_selection_clear_deserialize(unsigned int context_id,
 
 DP_Message *DP_msg_selection_clear_parse(unsigned int context_id,
                                          DP_TextReader *reader);
+
+void DP_msg_selection_clear_local_match_set(size_t size, unsigned char *data,
+                                            void *user);
+
+bool DP_msg_selection_clear_local_match_matches(const DP_MsgSelectionClear *msc,
+                                                DP_Message *local_match_msg);
 
 DP_MsgSelectionClear *DP_msg_selection_clear_cast(DP_Message *msg);
 
@@ -2773,5 +2880,12 @@ uint8_t DP_msg_undo_override_user(const DP_MsgUndo *mu);
 
 bool DP_msg_undo_redo(const DP_MsgUndo *mu);
 
+
+DP_Message *DP_msg_local_match_make(DP_Message *msg,
+                                    bool disguise_as_put_image);
+
+bool DP_msg_local_match_is_local_match(DP_Message *msg);
+
+bool DP_msg_local_match_matches(DP_Message *msg, DP_Message *local_match_msg);
 
 #endif
