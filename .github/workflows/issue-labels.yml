@@ -1,0 +1,58 @@
+name: Add Issue Labels
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  add-labels:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body;
+            
+            // Array to store all labels we'll add
+            const labelsToAdd = [];
+            
+            // Extract type from the form
+            const typeRegex = /### type Level\s*\n\s*(\w+)/i;
+            const typeMatch = body.match(typeRegex);
+            
+            if (typeMatch) {
+              const type = typeMatch[1].trim().toLowerCase();
+              console.log(`Detected type: ${type}`);
+              labelsToAdd.push(type);
+            }
+            
+            // Extract platform from the form
+            const platformRegex = /### platform\s*\n\s*(\w+)/i;
+            const platformMatch = body.match(platformRegex);
+            
+            if (platformMatch) {
+              const platform = platformMatch[1].trim().toLowerCase();
+              console.log(`Detected platform: ${platform}`);
+              labelsToAdd.push(platform);
+            }
+            
+            // Add all collected labels if we found any
+            if (labelsToAdd.length > 0) {
+              console.log(`Adding labels: ${labelsToAdd.join(', ')}`);
+              
+              try {
+                await github.rest.issues.addLabels({
+                  issue_number: issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  labels: labelsToAdd
+                });
+                console.log('Labels added successfully');
+              } catch (error) {
+                console.log(`Error adding labels: ${error.message}`);
+              }
+            } else {
+              console.log('No labels to add based on issue body');
+            }
