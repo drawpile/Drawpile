@@ -1,0 +1,50 @@
+name: Issue Creation
+description: Propose a new feature or report a bug
+labels: ["issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature for our project!
+  - type: input
+    id: feature-name
+    attributes:
+      label: Feature Name
+      description: Provide a concise name for this feature
+      placeholder: ex. Better Icon for Annotation Tool
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Please describe the feature in detail. What would it do? How would it work? Provide images if possible.
+      placeholder: Describe the feature and its functionality...
+    validations:
+      required: false
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type of issue
+      description: Is this a Feature Request, question, or a Bug Report?
+      options:
+        - bug
+        - feature
+        - question
+      default: 1
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Is this issue specific to a platform?
+      options:
+        - linux
+        - windows
+        - android
+        - macOS
+        - web
+      default: 1
+    validations:
+      required: false
