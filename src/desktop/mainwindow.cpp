@@ -4166,7 +4166,7 @@ void MainWindow::updateBackgroundActions()
 // clang-format on
 void MainWindow::changeCanvasBackground()
 {
-	if(m_doc->checkPermission(DP_FEATURE_RESIZE)) {
+	if(m_doc->checkPermission(DP_FEATURE_BACKGROUND)) {
 		color_widgets::ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(
 			m_doc->canvas()->paintEngine()->historyBackgroundColor(), this);
 		dlg->setPreviewDisplayMode(color_widgets::ColorPreview::AllAlpha);
