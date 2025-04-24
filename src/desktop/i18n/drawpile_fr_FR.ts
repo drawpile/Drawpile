@@ -11694,7 +11694,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+12"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Centrer</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11771,7 +11771,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../view/canvasview.cpp" line="+134"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer _sous…</translation>
     </message>
 </context>
 <context>
