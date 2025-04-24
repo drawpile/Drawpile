@@ -11804,22 +11804,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Layer is locked</source>
-        <translation>Calque verrouillé</translation>
+        <translation>Le calque est verrouillé</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is censored</source>
-        <translation type="unfinished"></translation>
+        <translation>Le calque est censuré</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Le calque est caché</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is not visible in this frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Le calque n&apos;est pas visible dans cette image</translation>
     </message>
     <message>
         <location line="+2"/>
