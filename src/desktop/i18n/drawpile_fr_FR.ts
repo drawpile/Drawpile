@@ -11294,7 +11294,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../toolwidgets/annotationsettings.cpp" line="+59"/>
         <source>Protect</source>
-        <translation type="unfinished"></translation>
+        <translation>Protéger</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -11315,7 +11315,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+3"/>
         <location line="+20"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Centrer</translation>
     </message>
     <message>
         <location line="-17"/>
