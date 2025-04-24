@@ -11196,7 +11196,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+2"/>
         <source>Could not open reference image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>N&apos;a pas pu ouvrir l&apos;image de référence&#xa0;: %1.</translation>
     </message>
 </context>
 <context>
@@ -11204,7 +11204,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/timeline.cpp" line="+19"/>
         <source>Timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>Chronologie</translation>
     </message>
     <message>
         <location line="+181"/>
@@ -11248,7 +11248,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../scene/canvasscene.cpp" line="+331"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Rétablissement de la toile…</translation>
     </message>
 </context>
 <context>
@@ -11256,37 +11256,37 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../tabletinput.cpp" line="+151"/>
         <source>Qt tablet input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrée de tablette QT</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrée de KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink non-native input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrée non native de KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>KisTablet Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrée de KisTablet Wintab</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input with relative pen mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrée de KisTablet Wintab avec mode stylo relatif</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Qt6 Windows Ink input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrée de Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrée de Qt6 Wintab</translation>
     </message>
 </context>
 <context>
