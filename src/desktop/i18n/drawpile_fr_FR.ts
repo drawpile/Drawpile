@@ -11689,7 +11689,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+20"/>
         <source>Constrain</source>
-        <translation type="unfinished"></translation>
+        <translation>Contrainte</translation>
     </message>
     <message>
         <location line="+12"/>
