@@ -11390,67 +11390,67 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+6"/>
         <source>&amp;Delete Brush</source>
-        <translation>Effacer la brosse</translation>
+        <translation>Supp&amp;rimer le Pinceau</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>De&amp;tach Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Dé&amp;tacher le Pinceau</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Stabilisateur Basé sur le Temps</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Moyenne de Lissage</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ralentit le mouvement et le stabilise au fil du temps. Peut produire des résultats très fluides, mais peut être lent.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
-        <translation type="unfinished"></translation>
+        <translation>Moyenne simple des entrées pour obtenir un résultat plus fluide. Plus rapide que le stabilisateur temporel, mais moins fluide.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Finish Strokes</source>
-        <translation type="unfinished"></translation>
+        <translation>Finir les Traits</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Draws stabilized strokes to the end, rather than cutting them off.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dessine des traits stabilisés jusqu&apos;au bout, plutôt que de les couper.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronize With Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchroniser Avec le Pinceau</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Makes the stabilizer a brush setting, like in MyPaint, rather than an independent setting, like in Krita.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fait du stabilisateur un paramètre de pinceau, comme dans MyPaint, plutôt qu&apos;un paramètre indépendant, comme dans Krita.</translation>
     </message>
     <message>
         <location line="+161"/>
         <source>This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cette session est hébergée avec Drawpile 2.1, les pinceaux MyPaint ne sont pas disponibles.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode with opacity dynamics is unavailable. &lt;a href=&quot;#inc&quot;&gt;Click here to switch to Direct/Build-Up Mode&lt;/a&gt; or &lt;a href=&quot;#opa&quot;&gt;here to disable opacity dynamics&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cette session est hébergée avec Drawpile 2.1, le Mode Indirect/Lavage avec opacité dynamique est indisponible. &lt;a href=&quot;#inc&quot;&gt;Cliquez ici pour basculer vers le Mode Direct/Accumulation&lt;/a&gt; ou &lt;a href=&quot;#opa&quot;&gt;ici pour désactiver les dynamiques d&apos;opacité&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="-5"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous n&apos;avez pas la permission d&apos;utiliser les pinceaux MyPaint.</translation>
     </message>
 </context>
 <context>
@@ -11458,7 +11458,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../toolwidgets/colorpickersettings.cpp" line="+90"/>
         <source>Pick from screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisir à partir de l&apos;écran</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -11476,37 +11476,37 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="+74"/>
         <source>Fill tool settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Paramètres de l&apos;outil de remplissage</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Edit pending fills</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifi&amp;er les remplissages en attente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply changes in settings, color and layer to fills not yet applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Appliquer les modifications des paramètres, de la couleur et du calque aux remplissages pas encore appliqués</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Confirm fills with second click</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Confirme les remplissages avec un second clic</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lets you apply fills with a click instead of starting another fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous permet d&apos;appliquer des remplissages en un clic au lieu de démarrer un autre remplissage</translation>
     </message>
     <message>
         <location line="+116"/>
         <source>You don&apos;t have permission to use the fill tool.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous n&apos;avez pas la permission d&apos;utiliser l&apos;outil de remplissage.</translation>
     </message>
     <message>
         <location line="+231"/>
         <source>Size Limit: Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite de Taille&#xa0;: Sélection</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11519,13 +11519,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../toolwidgets/lasersettings.cpp" line="+93"/>
         <source>You don&apos;t have permission to use the laser pointer.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous n&apos;avez pas la permission d&apos;utiliser le pointeur laser.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Laser trails are hidden. </source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Les trainées des lasers sont cachées. </translation>
     </message>
     <message>
         <location line="+3"/>
