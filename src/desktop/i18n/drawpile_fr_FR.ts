@@ -11714,7 +11714,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Apply the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Appliquer la transformation</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11724,7 +11724,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Cancel the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuler la transformation</translation>
     </message>
 </context>
 <context>
@@ -11745,7 +11745,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../utils/recents.cpp" line="+432"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>Plus…</translation>
     </message>
 </context>
 <context>
