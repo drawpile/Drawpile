@@ -11549,7 +11549,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+9"/>
         <source>Intersect with selection</source>
-        <translation>Intersection de la sélection</translation>
+        <translation>Intersection avec la sélection</translation>
     </message>
     <message>
         <location line="+10"/>
