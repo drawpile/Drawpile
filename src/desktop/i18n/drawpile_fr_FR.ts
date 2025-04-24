@@ -11602,7 +11602,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+8"/>
         <source>Accurate</source>
-        <translation type="unfinished"></translation>
+        <translation>Précis</translation>
     </message>
     <message>
         <location line="+2"/>
