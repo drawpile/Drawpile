@@ -11380,7 +11380,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>&amp;New Brush…</source>
-        <translation>Nouvelle brosse</translation>
+        <translation>&amp;Nouveau Pinceau…</translation>
     </message>
     <message>
         <location line="+6"/>
