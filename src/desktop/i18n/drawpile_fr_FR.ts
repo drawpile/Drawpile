@@ -11789,17 +11789,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation>La toile est bloquée</translation>
+        <translation>La toile est verrouillée</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>User is locked</source>
-        <translation>Utilisateur verrouillé</translation>
+        <translation>L&apos;utilisateur est verrouillé</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer is a group</source>
-        <translation type="unfinished"></translation>
+        <translation>Le calque est un groupe</translation>
     </message>
     <message>
         <location line="+2"/>
