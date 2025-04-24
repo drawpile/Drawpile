@@ -11804,7 +11804,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Layer is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Calque verrouillé</translation>
     </message>
     <message>
         <location line="+2"/>
