@@ -11341,7 +11341,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+81"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation>Annotations cachées </translation>
+        <translation>Les annotations sont cachées. </translation>
     </message>
     <message>
         <location line="+3"/>
