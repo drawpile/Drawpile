@@ -11689,7 +11689,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+20"/>
         <source>Constrain</source>
-        <translation>Contrainte</translation>
+        <translation>Contraindre</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -11753,17 +11753,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../view/canvasscene.cpp" line="+573"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaurer la toile…</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Compressing canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Compresser la toile…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Uploading canvas %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Déversement de la toile %1%</translation>
     </message>
 </context>
 <context>
