@@ -11643,7 +11643,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+13"/>
         <source>Sampling:</source>
         <extracomment>Refers to the transform interpolation, but &quot;interpolation&quot; is uncomfortably long in English, it causes a lot of blank space and the tool settings to get wider. Try to take that into account if possible.</extracomment>
-        <translation>Échantillonnage</translation>
+        <translation>Échantillonnage&#xa0;:</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -11653,7 +11653,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Show transform handles instead of just moving</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher les poignées de transformation au lieu de simplement les déplacer</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11663,17 +11663,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Shows scaling handles on corners and edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Affiche les poignées de mise à l&apos;échelle sur les coins et les bords</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Distort</source>
-        <translation type="unfinished"></translation>
+        <translation>Déforme</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shows distortion handles on corners and edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Affiche les poignées de distorsion sur les coins et les bords</translation>
     </message>
     <message>
         <location line="+12"/>
