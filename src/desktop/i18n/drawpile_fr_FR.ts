@@ -11771,7 +11771,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../view/canvasview.cpp" line="+134"/>
         <source>Save As…</source>
-        <translation>Enregistrer _sous…</translation>
+        <translation>Enregistrer Sous…</translation>
     </message>
 </context>
 <context>
@@ -11779,17 +11779,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../view/lock.cpp" line="+29"/>
         <source>Out of space, use Session &gt; Reset to fix this</source>
-        <translation type="unfinished"></translation>
+        <translation>Manque d&apos;espace, utilisez Session &gt; Réinitialiser pour résoudre ce problème</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Reset in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialisation en cours</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>La toile est bloquée</translation>
     </message>
     <message>
         <location line="+4"/>
