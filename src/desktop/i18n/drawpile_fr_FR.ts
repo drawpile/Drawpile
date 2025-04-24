@@ -11632,12 +11632,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Bilinear</source>
-        <translation>interpolation bilinéaire</translation>
+        <translation>Bilinéaire</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothed interpolation</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolation lissée</translation>
     </message>
     <message>
         <location line="+13"/>
