@@ -11352,7 +11352,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+343"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
-        <translation>Vous n&apos;avez pas la permission de créer des annotations.</translation>
+        <translation>Vous n&apos;avez pas la permission de coller des annotations groupées.</translation>
     </message>
 </context>
 <context>
@@ -11360,22 +11360,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-106"/>
         <source>&amp;Edit Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifi&amp;er le pinceau…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Restaurer le Pinceau</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialiser tous le&amp;s Pinceaux et Emplacements</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialiser tous les &amp;Pinceaux</translation>
     </message>
     <message>
         <location line="+5"/>
