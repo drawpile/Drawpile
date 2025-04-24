@@ -11554,7 +11554,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+10"/>
         <source>Remove from selection</source>
-        <translation>Enlever de la Sélection</translation>
+        <translation>Retirer de la sélection</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -11564,27 +11564,27 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Smoothe out selection edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisser les bords de la sélection</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Drag to move</source>
-        <translation type="unfinished"></translation>
+        <translation>Faire glisser pour déplacer</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Allow dragging the selection for a quick move operation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Permet de faire glisser la sélection pour une opération de déplacement rapide.</translation>
     </message>
     <message>
         <location line="+161"/>
         <source>Select continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner une aire continue</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Select similar color</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner une couleur similaire</translation>
     </message>
 </context>
 <context>
@@ -11597,7 +11597,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Quick preview not taking into account layering, opacity or anything else</source>
-        <translation type="unfinished"></translation>
+        <translation>Aperçu rapide ne prenant pas en compte la superposition, l&apos;opacité ou quoi que ce soit d&apos;autre</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -11607,12 +11607,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Preview the transform exactly how will look when applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Prévisualisez la transformation exactement à quoi elle ressemblera une fois appliquée</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Too many layers selected for accurate preview, only fast preview is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Trop de calques sélectionnés pour un aperçu précis, seul un aperçu rapide est disponible.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -11627,7 +11627,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Nearest-neighbor interpolation, no smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolation par le plus proche voisin, sans lissage</translation>
     </message>
     <message>
         <location line="+7"/>
