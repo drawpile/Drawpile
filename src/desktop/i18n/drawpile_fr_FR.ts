@@ -11554,7 +11554,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+10"/>
         <source>Remove from selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Enlever de la Sélection</translation>
     </message>
     <message>
         <location line="+24"/>
