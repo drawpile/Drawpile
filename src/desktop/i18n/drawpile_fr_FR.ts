@@ -11352,7 +11352,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+343"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous n&apos;avez pas la permission de créer des annotations.</translation>
     </message>
 </context>
 <context>
