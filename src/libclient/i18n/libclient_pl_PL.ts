@@ -1427,7 +1427,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Uses</source>
-        <translation type="unfinished"></translation>
+        <translation>Użyć</translation>
     </message>
 </context>
 <context>
@@ -1507,7 +1507,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+86"/>
         <source>Invalid ident intent response.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowa odpowiedź.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1542,7 +1542,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+10"/>
         <source>Blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesja zablokowana przez kontrolę rodzicielską</translation>
     </message>
     <message>
         <location line="+9"/>
