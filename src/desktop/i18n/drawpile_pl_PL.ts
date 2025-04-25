@@ -2265,7 +2265,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="-434"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Edytuj</translation>
     </message>
     <message>
         <location line="-1918"/>
@@ -2410,7 +2410,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+75"/>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Widok</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2420,7 +2420,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+8"/>
         <source>Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrót</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2691,7 +2691,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>New Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Nowa ścieżka</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2716,7 +2716,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń utwór</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2983,7 +2983,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozłączono:%1</translation>
     </message>
     <message>
         <location line="+77"/>
@@ -3074,7 +3074,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Browse...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Przeglądaj...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3099,7 +3099,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustawienia...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3145,7 +3145,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+17"/>
         <source>Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>Freehand</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3155,7 +3155,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>Gumka</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3165,7 +3165,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Line</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Linia</translation>
     </message>
     <message>
         <location line="+0"/>
