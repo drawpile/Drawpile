@@ -863,7 +863,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieotagowany</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -878,7 +878,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+198"/>
         <source>Default</source>
-        <translation type="unfinished">Domyślne</translation>
+        <translation>Domyślnie</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1045,17 +1045,17 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+34"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Użytkownik</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodzaj</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location line="+182"/>
@@ -1093,22 +1093,22 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished">Operator</translation>
+        <translation>Zarządca</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">Zaufany</translation>
+        <translation>Zaufane</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Użytkownik</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Role</translation>
     </message>
 </context>
 <context>
@@ -1123,12 +1123,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <location line="-13"/>
         <location line="+15"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Użytkownik</translation>
     </message>
     <message>
         <location line="-13"/>
         <source>IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Adres IP</translation>
     </message>
     <message>
         <location line="+2"/>
