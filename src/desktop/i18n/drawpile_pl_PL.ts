@@ -3610,7 +3610,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+4"/>
         <source>Flood Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Wypełnianie</translation>
     </message>
     <message>
         <location line="+5"/>
