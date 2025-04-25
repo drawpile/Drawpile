@@ -3145,7 +3145,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+17"/>
         <source>Freehand</source>
-        <translation>Freehand</translation>
+        <translation>Pędzel</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3170,7 +3170,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+0"/>
         <source>Draw straight lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Rysuj proste linie</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3180,7 +3180,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+0"/>
         <source>Draw unfilled squares and rectangles</source>
-        <translation type="unfinished"></translation>
+        <translation>Narysuj niewypełnione kwadraty lub prostokąty</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3210,7 +3210,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+0"/>
         <source>Fill areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Wypełnij obszar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3220,27 +3220,27 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+0"/>
         <source>Add text to the picture</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj tekst do obrazka</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Color Picker</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wybór koloru</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Pick colors from the image</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz kolory z obrazka</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Laser Pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wskaźnik laserowy</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Point out things on the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Wskaż rzeczy na płótnie</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3260,7 +3260,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+0"/>
         <source>Find out who did it</source>
-        <translation type="unfinished"></translation>
+        <translation>Dowiedz się, kto co zrobił</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -3320,38 +3320,38 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+43"/>
         <source>Toggle Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Przełącz tryb gumki</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle Recolor Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Przełącz tryb zmiany koloru</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Decrease Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zmniejsz rozmiar pędzla</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Increase Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zwiększ rozmiar pędzla</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>Drawing tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Narzędzia do rysowania</translation>
     </message>
     <message>
         <location line="+52"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Strona główna</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb Testowania Tabletów</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3388,7 +3388,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik dziennika nie istnieje. Czy należy włączyć rejestrowanie w preferencjach?</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3405,22 +3405,22 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+31"/>
         <source>Brush slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Slot Pędzla#%1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Swap With Brush Slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Wymiana z slotem pędzla #%1</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Próbka koloru %1</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Finish action</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukończ akcje</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3435,7 +3435,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-13"/>
         <source>Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Okienko</translation>
     </message>
     <message>
         <location filename="../utils/widgetutils.cpp" line="-87"/>
@@ -3464,17 +3464,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+14"/>
         <source>Tile Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pamięć kafelków:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Contexts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Konteksty:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Context Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pamięć kontekstowa:</translation>
     </message>
     <message>
         <location line="-86"/>
@@ -3497,7 +3497,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+21"/>
         <source>Rewind to Beginning</source>
-        <translation type="unfinished"></translation>
+        <translation>Przewiń do początku</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3507,7 +3507,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+17"/>
         <source>Play</source>
-        <translation type="unfinished">Odtwarzanie</translation>
+        <translation>Odtwarz</translation>
     </message>
     <message>
         <location line="+20"/>
