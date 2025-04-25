@@ -721,7 +721,7 @@
         <location line="+58"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-51"/>
         <source>Close Gaps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Zamykanie przerw: </translation>
     </message>
     <message>
         <location line="+38"/>
