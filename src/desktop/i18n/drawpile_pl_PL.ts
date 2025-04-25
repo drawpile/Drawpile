@@ -4121,7 +4121,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+51"/>
         <source>Protocol Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wersja protokołu:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4134,7 +4134,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../ui/videoexport.ui" line="+14"/>
         <source>Export video</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz wideo</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4154,7 +4154,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+7"/>
         <source>Framerate:</source>
-        <translation type="unfinished"></translation>
+        <translation>Odświeżanie Obrazu:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4164,17 +4164,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+72"/>
         <source>Export Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Export Options</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Image format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Format obrazu:</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>File name pattern:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wzorce nazwy pliku</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -4194,7 +4194,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+16"/>
         <source>Custom Arguments:</source>
-        <translation type="unfinished"></translation>
+        <translation>Niestandardowe argumenty</translation>
     </message>
 </context>
 <context>
@@ -4380,7 +4380,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+11"/>
         <source>Checking %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Sprawdzam %s.</translation>
     </message>
 </context>
 <context>
@@ -4443,7 +4443,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>Gładki</translation>
     </message>
     <message>
         <location line="+6"/>
