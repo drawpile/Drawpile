@@ -1386,7 +1386,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <location line="+24"/>
         <source>Created %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Utworzony przez: %1$s</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1412,12 +1412,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+22"/>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Kod</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation type="unfinished"></translation>
+        <translation>Twórca</translation>
     </message>
     <message>
         <location line="+2"/>
