@@ -3829,17 +3829,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+13"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tytuł:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation>Login</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Password:</source>
-        <translation type="unfinished">Hasło:</translation>
+        <translation>Hasło:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3869,7 +3869,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+11"/>
         <source>Permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Uprawnienia</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3884,7 +3884,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+10"/>
         <source>permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>uprawnienia</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3930,7 +3930,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location line="+5"/>
         <location line="+201"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaufane</translation>
     </message>
     <message>
         <location line="-193"/>
@@ -3950,12 +3950,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+7"/>
         <source>MyPaint Brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pędzel MyPaint</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Bany</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3966,13 +3966,13 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location line="+25"/>
         <location line="+82"/>
         <source>Import</source>
-        <translation type="unfinished">Import</translation>
+        <translation>Importuj</translation>
     </message>
     <message>
         <location line="-71"/>
         <location line="+82"/>
         <source>Export</source>
-        <translation type="unfinished">Eksport</translation>
+        <translation>Exportuj</translation>
     </message>
     <message>
         <location line="-58"/>
@@ -3982,7 +3982,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+10"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Roles</translation>
     </message>
     <message>
         <location line="+72"/>
