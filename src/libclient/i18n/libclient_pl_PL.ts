@@ -1308,65 +1308,65 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>Przygotowywanie do zresetowania sesji przez %1! Proszę czekać, sesja powinna być wkrótce ponownie dostępna…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 kompresuje Canve! Proszę czekać, sesja powinna być wkrótce ponownie dostępna…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 zastępuje Canve! Proszę czekać, sesja powinna być wkrótce ponownie dostępna…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 przywraca Canve do poprzedniego stanu! Proszę czekać, sesja powinna być wkrótce ponownie dostępna…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sesja zakończona przez moderatora (%1).</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj ponownie do %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sesja zakończona przez moderatora (%1): %2</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 trusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 jest zaufany przez serwer.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 zaufany przez %2.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>%1 trusted via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 zaufano na podstawie zaproszenia utworzonego przez %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>%1 untrusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 nie jest zaufany przez serwer.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 nie jest godny zaufania ze strony %2.</translation>
     </message>
 </context>
 <context>
@@ -1374,13 +1374,13 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location filename="../net/invitelistmodel.cpp" line="+119"/>
         <source>No invite codes, click Create to add one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Brak kodów zaproszeń. Kliknij Utwórz, aby je dodać.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Użyto %1 przez %2</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1391,7 +1391,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+10"/>
         <source>Operator and Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator i Zaufany</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1407,7 +1407,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <location line="+8"/>
         <source>%1/%2</source>
         <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1/%2</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1451,58 +1451,58 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="-793"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation type="unfinished"></translation>
+        <translation>Serwer jest przeznaczony dla innej wersji Drawpile!</translation>
     </message>
     <message>
         <location line="+86"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ten serwer nie umożliwia zalogowania się w celu dołączenia do sesji!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ten serwer nie umożliwia zalogowania się w celu hostowania sesji!</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation type="unfinished"></translation>
+        <translation>Serwer oczekuje STARTTLS na nieobsługiwanym gnieździe.</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Failed to retrieve server info</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie udało się pobrać informacji o serwerze</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Session lookup failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie udało się wyszukać sesji</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>This server does not allow guest logins</source>
-        <translation type="unfinished"></translation>
+        <translation>Ten serwer nie zezwala na logowanie gościnne</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Aby zalogować się jako &quot;%1&quot; wymagane jest hasło</translation>
     </message>
     <message>
         <location line="+74"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd serwera uwierzytelniania: %1</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Group membership needed</source>
-        <translation type="unfinished"></translation>
+        <translation>Wymagane członkostwo w grupie</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unexpected ext-auth response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieoczekiwana odpowiedź ext-auth: %1</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -1512,22 +1512,22 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+22"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowa konfiguracja serwera: nieprawidłowy adres URL ext-auth</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Unsupported ext-auth URL scheme</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieobsługiwany schemat adresu URL ext-auth</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Server reported two different ext-auth URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>Serwer zgłosił dwa różne adresy URL uwierzytelniania zewnętrznego</translation>
     </message>
     <message>
         <location line="+118"/>
         <source>Got multiple sessions when only one was expected</source>
-        <translation type="unfinished"></translation>
+        <translation>Wystąpiło kilka sesji, chociaż spodziewano się tylko jednej</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -1537,7 +1537,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="-45"/>
         <source>Session not yet started!</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesja jeszcze się nie zaczęła!</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1547,39 +1547,39 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+9"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation type="unfinished"></translation>
+        <translation>Trwa sesja innej wersji Drawpile (%1)!</translation>
     </message>
     <message>
         <location line="+214"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
-        <translation type="unfinished"></translation>
+        <translation>Protokół TLS nie jest obsługiwany przez ten typ gniazda</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można ustawić stanu ignorowania błędów TLS</translation>
     </message>
     <message>
         <location line="+32"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowy certyfikat SSL dla hosta %1</translation>
     </message>
     <message>
         <location line="-856"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb bezpieczny nie jest włączony na hoście z przypiętym certyfikatem!</translation>
     </message>
     <message>
         <location line="+558"/>
         <source>Unknown version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznana wersja %1</translation>
     </message>
     <message>
         <location line="+280"/>
         <source>Pinned certificate has changed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Przypięty certyfikat uległ zmianie!</translation>
     </message>
     <message>
         <location line="+64"/>
