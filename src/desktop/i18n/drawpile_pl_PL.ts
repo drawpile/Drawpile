@@ -11534,7 +11534,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Accurate</source>
-        <translation type="unfinished"></translation>
+        <translation>Celna</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11575,7 +11575,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+13"/>
         <source>Sampling:</source>
         <extracomment>Refers to the transform interpolation, but &quot;interpolation&quot; is uncomfortably long in English, it causes a lot of blank space and the tool settings to get wider. Try to take that into account if possible.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Próbkowanie</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -11600,7 +11600,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Distort</source>
-        <translation type="unfinished"></translation>
+        <translation>Zniekształcanie</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11611,7 +11611,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+12"/>
         <source>Handles:</source>
         <extracomment>Refers to the handles on the corners and edges of a transform. Which are either arrows to scale the transformation or squares to distort it.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Uchwyty</translation>
     </message>
     <message>
         <location line="+15"/>
