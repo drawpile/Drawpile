@@ -3580,7 +3580,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+79"/>
         <source>Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>Dowolny układ</translation>
     </message>
     <message>
         <location line="+3"/>
