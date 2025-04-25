@@ -3585,27 +3585,27 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+3"/>
         <source>Eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>Gumka</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Line</source>
-        <translation type="unfinished"></translation>
+        <translation>Linia</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Prostokąt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ellipse</source>
-        <translation type="unfinished"></translation>
+        <translation>Elipsa</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bezier Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Krzywa Beziera</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -3615,12 +3615,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+5"/>
         <source>Annotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Annotacja</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color Picker</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybór kolorów</translation>
     </message>
     <message>
         <location line="+5"/>
