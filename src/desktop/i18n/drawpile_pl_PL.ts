@@ -3987,12 +3987,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+72"/>
         <source>Operator</source>
-        <translation>Operator</translation>
+        <translation>Zarządca</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogłoszenia</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -4018,42 +4018,42 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../ui/textsettings.ui" line="+75"/>
         <source>Horizontal alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyrównanie w poziomie</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Vertical alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyrównanie w pionie</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolor tła</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Text color</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolor tekstu</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Pogrubiony</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation>Kursywa</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation>Podkreślenie</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Strikethrough</source>
-        <translation type="unfinished"></translation>
+        <translation>Przekreślenie</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -4066,7 +4066,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../ui/userinfodialog.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Okno dialogowe</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4111,7 +4111,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+20"/>
         <source>Operating System:</source>
-        <translation type="unfinished"></translation>
+        <translation>System operacyjny</translation>
     </message>
     <message>
         <location line="+7"/>
