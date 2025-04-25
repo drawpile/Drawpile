@@ -2260,7 +2260,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+3"/>
         <source>Color Erase Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybór koloru</translation>
     </message>
     <message>
         <location line="-434"/>
@@ -2355,17 +2355,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+6"/>
         <source>Zoom &amp;In</source>
-        <translation type="unfinished"></translation>
+        <translation>Pow&amp;iększ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
+        <translation>P&amp;omniejsz</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Rotate Canvas Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Obróć o 90° w prawo</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -2405,7 +2405,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+22"/>
         <source>&amp;Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Pełny Ekran</translation>
     </message>
     <message>
         <location line="+75"/>
@@ -2475,7 +2475,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Nowa Grupa Warstw</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="+483"/>
@@ -2525,7 +2525,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+13"/>
         <source>&amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Warstwa</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -2676,7 +2676,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Delete Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń klatkę</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2711,7 +2711,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień nazwę ścieżki</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2721,7 +2721,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Next Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Następna klatka</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2736,7 +2736,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Poprzednia klatka kluczowa</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2776,7 +2776,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+12"/>
         <source>&amp;Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Animacja</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -3018,17 +3018,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+890"/>
         <source>Export Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj obraz</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Export Selection...</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj zaznaczenie</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Import &amp;Brushes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj Pędzle…</translation>
     </message>
     <message>
         <location line="-16"/>
@@ -3038,12 +3038,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+19"/>
         <source>Export &amp;Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj Pędzle</translation>
     </message>
     <message>
         <location line="+203"/>
         <source>&amp;Copy Merged</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiuj złączone</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3064,7 +3064,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
         <location filename="../mainwindow.cpp" line="+562"/>
         <source>Layer Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>Właściwości warstwy…</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+298"/>
@@ -3084,7 +3084,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Leave</source>
-        <translation type="unfinished"></translation>
+        <translation>Opuść</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3109,12 +3109,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Undo Limit…</source>
-        <translation type="unfinished"></translation>
+        <translation>Limit cofania</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Become Operator...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zostań operatorem</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3135,12 +3135,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location line="+30"/>
         <location filename="../widgets/macmenu.cpp" line="-2"/>
         <source>&amp;Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesja</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Moderation</source>
-        <translation type="unfinished"></translation>
+        <translation>Moderacja</translation>
     </message>
     <message>
         <location line="+17"/>
