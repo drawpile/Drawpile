@@ -1065,7 +1065,7 @@ Podzakres: [%3, %4]</translation>
     <message>
         <location filename="../utils/widgetutils.cpp" line="+1129"/>
         <source>Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz link</translation>
     </message>
     <message>
         <location line="+1"/>
