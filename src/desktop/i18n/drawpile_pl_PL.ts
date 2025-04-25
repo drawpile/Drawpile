@@ -83,7 +83,7 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+64"/>
         <source>Brush type</source>
-        <translation type="unfinished"></translation>
+        <translation>Typy pędzla</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -457,12 +457,12 @@
     <message>
         <location line="-271"/>
         <source>Add Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj awatara</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj klatki animacji</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -472,17 +472,17 @@
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Ramy Obrazu</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj animację z warstwami</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Warstwy  obrazu.</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -748,7 +748,7 @@
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+131"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Limit rozmiaru: Brak</translation>
     </message>
 </context>
 <context>
@@ -822,7 +822,7 @@
     <message>
         <location line="+17"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesja</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -842,7 +842,7 @@
     <message>
         <location line="+30"/>
         <source>Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Kody</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -852,7 +852,7 @@
     <message>
         <location line="+11"/>
         <source>Revoke</source>
-        <translation type="unfinished"></translation>
+        <translation>Anuluj (Wycofaj)</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -872,7 +872,7 @@
     <message>
         <location line="+37"/>
         <source>Allow session operators to manage invite codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Zezwalaj operatorom sesji na zarządzanie kodami zaproszeń</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -989,17 +989,17 @@ Podzakres: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Sketch mode for you</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb szkicowania dla specjalne Ciebie</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Sketch Opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokrycie szkicu:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Sketch Tint:</source>
-        <translation type="unfinished"></translation>
+        <translation>Odcień szkicu:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1019,17 +1019,17 @@ Podzakres: [%3, %4]</translation>
     <message>
         <location line="+81"/>
         <source>No tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Bez odcienia</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Niebieski odcień</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybieranie....…</translation>
     </message>
 </context>
 <context>
@@ -1057,7 +1057,7 @@ Podzakres: [%3, %4]</translation>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wigety Drawpile można dowolnie rozmieszczać. Możesz użyć View &gt; Docks &gt; Arrange Docks, aby łatwiej je przeciągać. Upewnij się, że układ pasuje do rozdzielczości, w przeciwnym razie niektóre elementy sterujące mogą zostać przesunięte poza ekran.</translation>
     </message>
 </context>
 <context>
@@ -1070,12 +1070,12 @@ Podzakres: [%3, %4]</translation>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ten link przeniesie Cię do witryny „%1”, która nie jest zarządzana przez Drawpile. Czy na pewno chcesz tam przejść?</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Yes, visit website</source>
-        <translation type="unfinished"></translation>
+        <translation>Tak, odwiedź stronę internetową</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1114,7 +1114,7 @@ Podzakres: [%3, %4]</translation>
     <message>
         <location line="+13"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -1277,19 +1277,22 @@ Uprość płótno i zresetuj ręcznie, zanim skończy się miejsce.</translation
         <location line="+92"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>UWAGA!!
+Rozłączyło cię sesji serwera</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>lose any unsaved changes</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>To efekt tego, co się stanie po zamknięciu okna. Potencjalnie zostanie umieszczony na liście z innymi efektami.
+utrata wszelkich niezapisanych zmian</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>stop your recording</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>To jest efekt tego, co się stanie po zamknięciu okna. Potencjalnie może wystąpić na liście z innymi efektami.
+zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1301,22 +1304,22 @@ Uprość płótno i zresetuj ręcznie, zanim skończy się miejsce.</translation
         <location line="+5"/>
         <location line="+15"/>
         <source>Doing so will %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Spowoduje to %1.</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Doing so will %1 and %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Spowoduje to, że %1 i %2.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Doing so will %1, %2 and %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Spowoduje to, że %1, %2 i %3.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation type="unfinished"></translation>
+        <translation>Spowoduje to, że %1, %2, %3 i %4.</translation>
     </message>
     <message>
         <location line="+14"/>
