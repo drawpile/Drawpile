@@ -11524,7 +11524,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/transformsettings.cpp" line="+143"/>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Szybki</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11549,12 +11549,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>Preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>Podgląd:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Nearest</source>
-        <translation type="unfinished"></translation>
+        <translation>Najbliższy</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11564,7 +11564,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Bilinear</source>
-        <translation type="unfinished"></translation>
+        <translation>Dwuliniowa</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11590,7 +11590,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Skala</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11641,7 +11641,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>Zatwierdź</translation>
     </message>
     <message>
         <location line="+1"/>
