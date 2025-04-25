@@ -26,7 +26,7 @@
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation>%1konflikt</translation>
+        <translation>%1(konflikt)</translation>
     </message>
     <message>
         <location line="+85"/>
@@ -179,7 +179,7 @@
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Obróć płótno</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -498,7 +498,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+10"/>
         <source>Debug Dumps (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrzuty debugowania (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -513,27 +513,27 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Wideo WebM (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Text File (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik tekstowy (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik tekstowy (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakazy sesji (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Role (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -620,7 +620,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+12"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznana liczba aktywnie rysujących użytkowników</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
@@ -639,12 +639,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Requires compatibility mode (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Wymagany tryb zgodności (%1)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Requires newer client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Wymaga nowszego klienta (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -699,7 +699,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>dołączanie z sieci jest niedozwolone</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1263,7 +1263,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importowanie zaszyfrowanych banów nie jest obsługiwane przez ten serwer.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1599,7 +1599,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>This username has been locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta nazwa użytkownika została zablokowana</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1609,12 +1609,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Session is closed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesja zamknięta!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server is full!</source>
-        <translation type="unfinished"></translation>
+        <translation>Serwer jest pełny!</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1629,22 +1629,22 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Session alias is reserved!</source>
-        <translation type="unfinished"></translation>
+        <translation>Alias sesji jest zarezerwowany!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwykle oznacza to, że Twoja wersja Drawpile jest za stara. Czy musisz dokonać aktualizacji?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesja nie została znaleziona, mogła się zakończyć lub jej link zaproszeniowy uległ zmianie</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Do sesji na tym serwerze można dołączać wyłącznie za pomocą bezpośredniego łącza.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1654,12 +1654,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie masz uprawnień do organizowania sesji publicznych, dozwolone są tylko sesje osobiste. Możesz przełączać się z sesji publicznej na osobistą w zakładce Sesja.</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Client failed to serialize command</source>
-        <translation type="unfinished"></translation>
+        <translation>Klient nie mógł zserializować polecenia</translation>
     </message>
 </context>
 <context>
@@ -1672,17 +1672,17 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+53"/>
         <source>%1 (incompatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (niezgodne)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.1 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.1 (tryb zgodności)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (w pełni kompatybilny)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1692,22 +1692,22 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+3"/>
         <source>Closed (not allowed to join from the web browser)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamknięte (nie można dołączyć z poziomu przeglądarki internetowej)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (not allowed to join via WebSocket)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamknięte (nie można dołączyć przez WebSocket)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Closed (guest logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamknięte (zablokowano możliwość logowania gości)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamknięte (nowe logowania zablokowane)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1722,7 +1722,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+6"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznana liczba aktywnie rysujących użytkowników</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
@@ -1757,43 +1757,43 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <location line="+42"/>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Jest pełny lub zamknięty.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wymagane jest założenie konta.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Dołączenie za pomocą przeglądarki internetowej nie jest możliwe.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>It does not allow joining via WebSockets.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nie pozwala na łączenie się przez WebSockets.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Jest hostowany w nowszej wersji Drawpile, musisz dokonać aktualizacji. Jeśli nie ma dostępnej aktualizacji, może być hostowany w wersji rozwojowej Drawpile.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Jest hostowany przy użyciu starej, niekompatybilnej wersji Drawpile.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>It is hosted with an incompatible protocol.</translation>
     </message>
 </context>
 <context>
@@ -1801,12 +1801,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location filename="../net/server.cpp" line="+214"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jeśli nie zamierzasz korzystać z serwera proxy, możesz wyłączyć serwer proxy sieciowy w preferencjach Drawpile na karcie Sieć.</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Network read error</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd odczytu sieci</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1831,13 +1831,13 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+97"/>
         <source>Received invalid data</source>
-        <translation type="unfinished"></translation>
+        <translation>Otrzymano nieprawidłowe dane</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Błąd gniazda %1: %2</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1851,27 +1851,27 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location filename="../tools/transform.cpp" line="+164"/>
         <source>You don&apos;t have permission for that transformation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie masz pozwolenia na tę transformację.</translation>
     </message>
     <message>
         <location line="+207"/>
         <source>You don&apos;t have permission to stamp selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie masz uprawnień do stemplowania zaznaczeń.</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>No canvas present.</source>
-        <translation type="unfinished"></translation>
+        <translation>Brak płótna.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You don&apos;t have permission to transform selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie masz uprawnień do zmiany zaznaczenia.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Nothing selected that could be transformed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie wybrano niczego, co można by przekształcić.</translation>
     </message>
 </context>
 <context>
@@ -1893,12 +1893,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatyczne sprawdzanie aktualizacji jest wyłączone. &lt;a href=&quot;#autoupdate&quot;&gt;Kliknij tutaj, aby je włączyć&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Jeśli nie chcesz, aby kontrole były automatyczne, &lt;a href=&quot;#checkupdates&quot;&gt;kliknij tutaj, aby sprawdzić ręcznie&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -1908,22 +1908,22 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie udało się zrozumieć pobranych danych.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie udało się zrozumieć pobranych aktualizacji.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie udało się zapisać aktualizacji.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie udało się zrozumieć pobranych wiadomości.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1941,22 +1941,22 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location filename="../wasmsupport.cpp" line="+109"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie używasz oficjalnego klienta na web.drawpile.net. Większość serwerów nie zezwala na połączenia z innych miejsc.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The session address does not look like a valid WebSocket URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>Adres sesji nie wygląda na prawidłowy adres URL WebSocket.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
-        <translation type="unfinished"></translation>
+        <translation>Próbujesz połączyć się z adresem IP zamiast z właściwą nazwą domeny. Zwykle nie działa, chyba że najpierw skonfigurujesz przeglądarkę, aby to umożliwić.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>Serwer może nie obsługiwać dołączania za pośrednictwem przeglądarki internetowej.</translation>
     </message>
 </context>
 </TS>
