@@ -224,7 +224,7 @@
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Obróć Płótno</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -422,7 +422,7 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+322"/>
         <source>Filling…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wypełnienie</translation>
     </message>
     <message>
         <location line="+73"/>
@@ -858,7 +858,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="-128"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Wszystkie</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -888,7 +888,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Converted from %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konwertuj z</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1065,7 +1065,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+7"/>
         <source>User #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Użytkownik %1</translation>
     </message>
 </context>
 <context>
@@ -1074,13 +1074,13 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <location filename="../import/animationimporter.cpp" line="+30"/>
         <source>Frame %1</source>
         <extracomment>Title for imported animation layers.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ramka %1</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Klatka %1</translation>
     </message>
 </context>
 <context>
@@ -1117,7 +1117,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1133,13 +1133,13 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation type="unfinished"></translation>
+        <translation>CCcam Klient Info</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+11"/>
         <source>Banned by</source>
-        <translation type="unfinished"></translation>
+        <translation>Zbanowany/-a</translation>
     </message>
 </context>
 <context>
@@ -1187,7 +1187,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zostałeś usunięty z czatu</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1248,7 +1248,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowe dane.</translation>
     </message>
     <message>
         <location line="+2"/>
