@@ -26,12 +26,12 @@
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1konflikt</translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pędzel</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -89,7 +89,7 @@
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>konflikt</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -174,7 +174,7 @@
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Główne płótno</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -184,42 +184,42 @@
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Obróć kanwę</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz kolor</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz warstwę</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień rozmiar pędzla</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Narzędzie Ogranicz</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Narzędzie centrujące</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Narzędzie „Ogranicz i wyśrodkuj”</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Constraint 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznane ograniczenie 0x%1</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -229,32 +229,32 @@
     <message>
         <location line="+2"/>
         <source>Free Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Dowolne obracanie płótna</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień odcień koloru</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień nasycenie kolorów</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień wartość koloru</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Action %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznana akcja %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Odwróć, zamień osie</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -264,7 +264,7 @@
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamień osie</translation>
     </message>
 </context>
 <context>
@@ -272,47 +272,47 @@
     <message>
         <location filename="../utils/certificatestoremodel.cpp" line="+25"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; nie zawiera żadnych prawidłowych certyfikatów hosta.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; zawiera wiele certyfikatów hosta, co obecnie nie jest obsługiwane.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; zawiera nieprawidłowy certyfikat.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>„%1” zawiera certyfikat z wieloma nazwami hostów, co obecnie nie jest obsługiwane.</translation>
     </message>
     <message>
         <location line="+140"/>
         <source>Could not read certificate from &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można odczytać certyfikatu z &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Could not open &apos;%1&apos; for writing: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można otworzyć &apos;%1&apos; do zapisu: %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not write &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można zapisać &apos;%1&apos;: %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można przenieść &apos;%1&apos; do &apos;%2&apos;: %3.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Could not delete &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można usunąć &apos;%1&apos;: %2.</translation>
     </message>
 </context>
 <context>
@@ -327,7 +327,7 @@
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (konflikt)</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -342,7 +342,7 @@
     <message>
         <location line="+2"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternatywny</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -360,7 +360,7 @@
     <message>
         <location line="+3"/>
         <source>Header error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd nagłówka.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -370,7 +370,7 @@
     <message>
         <location line="+3"/>
         <source>Error starting recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd podczas uruchamiania rejestratora.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -380,7 +380,7 @@
     <message>
         <location line="+664"/>
         <source>Error saving image</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd podczas zapisywania obrazu</translation>
     </message>
 </context>
 <context>
@@ -388,33 +388,33 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+62"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Możesz pobrać wersję ffmpeg dla systemu Windows ze strony &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Wybierz ffmpeg.exe jako ścieżkę do ffmpeg w Drawpile.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation type="unfinished"></translation>
+        <translation>Możesz zainstalować ffmpeg przez Homebrew.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>Prawdopodobnie możesz zainstalować ffmpeg za pomocą menedżera pakietów.</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nie udało się uruchomić ffmpeg przy użyciu &apos;%1&apos;. %2</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Ffmpeg crashed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ffmpeg się zawiesił!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ffmpeg process error</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd procesu ffmpeg</translation>
     </message>
 </context>
 <context>
@@ -427,13 +427,14 @@
     <message>
         <location line="+73"/>
         <source>No layer selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie wybrano warstwy.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można wypełnić grupy warstw %1.
+Zamiast tego wybierz zwykłą warstwę.</translation>
     </message>
 </context>
 <context>
@@ -441,17 +442,17 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Niewidoczny</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation type="unfinished"></translation>
+        <translation>Widoczny</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation type="unfinished"></translation>
+        <translation>Widoczność: Nadrzędny</translation>
     </message>
 </context>
 <context>
@@ -459,7 +460,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+291"/>
         <source>Selecting…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybieranie…</translation>
     </message>
 </context>
 <context>
@@ -477,22 +478,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Binary Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nagrania binarne pliku(%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Text Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nagranie tekstu (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nagrania (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Performance Profile (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Wydajności: (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -761,7 +762,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation>Unik</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -791,7 +792,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Color Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń kolor</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -816,7 +817,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Luminosity/Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Jasność/Blask (SAI)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -841,7 +842,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznany</translation>
     </message>
 </context>
 <context>
@@ -867,12 +868,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż wszystkie pędzle, niezależnie od tagowania.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż pędzle, które nie zostały przypisane do żadnego tagu.</translation>
     </message>
     <message>
         <location line="+198"/>
@@ -882,7 +883,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+18"/>
         <source>Classic Brush %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Klasyczny pędzel %1</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -893,87 +894,87 @@ Select a regular layer instead.</source>
         <location line="+16"/>
         <location line="+457"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można otworzyć &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="-423"/>
         <source>Invalid brush pack: order.conf not found inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowy pakiet pędzli: order.conf nie został znaleziony w środku</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Niekategoryzowane %1</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowy pakiet pędzli: order.conf nie zawiera żadnych pędzli</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Could not create tag &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można utworzyć tagu &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Could not create brush preset &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można utworzyć ustawienia pędzla &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można przypisać pędzla &apos;%1&apos; do znacznika &apos;%2&apos;.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można odczytać pliku pędzla &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown brush format in file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznany format pędzla w pliku &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik pędzla &apos;%1&apos; nie zawiera prawidłowego kodu JSON: %1</translation>
     </message>
     <message>
         <location line="-55"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można załadować pędzla z pliku pędzla &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik pędzla „%1” nie zawiera obiektu JSON</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Brush file &apos;%1&apos; has invalid version %d</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik pędzla &apos;%1&apos; ma nieprawidłową wersję %d</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik pędzla &apos;%1&apos; zawiera nieprawidłowe ustawienie &apos;color&apos;</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik pędzla &apos;%1&apos; zawiera przestarzałe ustawienie &apos;%2&apos;</translation>
     </message>
     <message>
         <location line="+129"/>
         <source>No brushes exported</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie wyeksportowano żadnych pędzli</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Can&apos;t export order.conf</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można wyeksportować pliku order.conf</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -983,22 +984,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+14"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można wyeksportować tagu &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Missing preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Brak ustawienia wstępnego&quot; %1&quot;</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można wyeksportować ustawienia wstępnego &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można wyeksportować wstępnie ustawionej miniatury &apos;%1&apos;</translation>
     </message>
 </context>
 <context>
@@ -1146,42 +1147,42 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/client.cpp" line="+541"/>
         <source>%1 banned by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Użytkownik %1 zablokowany przez %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 kicked by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 wyrzucony przez %2.</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>%1 made operator by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 został utworzony przez serwer jako Admin.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 został awansowany na administratora przez %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 został operatorem za pośrednictwem zaproszenia utworzonego przez administratora serwera.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 został operatorem na podstawie zaproszenia utworzonego przez %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Status operatora %1 został cofnięty przez serwer.</translation>
     </message>
     <message>
         <location line="-511"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zostałeś wyrzucony z serwera.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1191,12 +1192,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wystąpił błąd serwera.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Wystąpił błąd serwera: %1</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1206,7 +1207,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesja została zamknięta: %1</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1222,7 +1223,7 @@ Select a regular layer instead.</source>
         <location line="+420"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tylko moderatorzy mogą banować.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1232,17 +1233,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;Exporting encrypted bans&quot; nie jest skonfigurowany na tym serwerze.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;Exporting encrypted bans&quot; nie jest obsługiwany przez ten serwer.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation type="unfinished"></translation>
+        <translation>Serwer nie mógł odczytać danych importu. Prawdopodobnie dlatego, że zostały wyeksportowane z innego serwera. Możesz importować bany tylko do tego samego serwera, z którego zostały wyeksportowane.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1252,12 +1253,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Malformed import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowo sformatowane dane importu.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importowanie zaszyfrowanych zakazów nieskonfigurowanych na tym serwerze.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1267,42 +1268,42 @@ Select a regular layer instead.</source>
     <message>
         <location line="+14"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hasło sesji usunięte przez administratora serwera. Ten serwer nie zezwala na przeglądarki internetowe w sesjach publicznych, zostaną one rozłączone.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hasło sesji zostało usunięte przez %1. Ten serwer nie zezwala przeglądarkom internetowym na sesje publiczne. Będą one rozłączane.</translation>
     </message>
     <message>
         <location line="+93"/>
         <source>%1 trusted via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 zaufało zaproszeniu utworzonemu przez administratora serwera.</translation>
     </message>
     <message>
         <location line="-62"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Status operatora został cofnięty dla %1 przez %2.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesja nie ma już miejsca! Aby kontynuować rysowanie, operator musi ją zresetować, aby zmniejszyć jej rozmiar. Można to zrobić za pomocą opcji Sesja &gt; Resetuj.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset sesji anulowany! Operator musi odblokować płótno i ręcznie zresetować sesję.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset sesji nie powiódł się! Operator musi odblokować płótno i ręcznie zresetować sesję.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>Przygotowywanie do resetu sesji! Proszę czekać, sesja powinna być wkrótce ponownie dostępna…</translation>
     </message>
     <message>
         <location line="+4"/>
