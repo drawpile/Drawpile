@@ -4111,7 +4111,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+20"/>
         <source>Operating System:</source>
-        <translation>System operacyjny</translation>
+        <translation>System operacyjny[Linux najlepszy]</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4126,7 +4126,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+7"/>
         <source>Global Pressure Curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>Krzywa ciśnienia globalnego:</translation>
     </message>
 </context>
 <context>
@@ -4139,7 +4139,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+6"/>
         <source>Video Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opcje wideo</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4184,7 +4184,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+14"/>
         <source>Path to ffmpeg:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ścieżka do ffmpeg:</translation>
     </message>
     <message>
         <location line="+16"/>
