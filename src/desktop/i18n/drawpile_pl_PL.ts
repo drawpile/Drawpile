@@ -4149,7 +4149,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+28"/>
         <source>Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4159,7 +4159,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+7"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Format:</translation>
     </message>
     <message>
         <location line="+72"/>
@@ -4189,7 +4189,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+16"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -4202,7 +4202,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.cpp" line="+63"/>
         <source>Pick</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz</translation>
     </message>
 </context>
 <context>
@@ -4210,7 +4210,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette.cpp" line="+422"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>Bez nazwy</translation>
     </message>
 </context>
 <context>
@@ -4218,12 +4218,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_model.cpp" line="+55"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>Bez nazwy</translation>
     </message>
     <message>
         <location line="+75"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 kolory)</translation>
     </message>
 </context>
 <context>
@@ -4231,81 +4231,82 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.ui" line="+64"/>
         <source>Open a new palette from file</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz nową paletę z pliku</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Create a new palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Utwórz nową paletę</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Duplicate the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplikuj obecną paletę</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>Delete the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń obecną paletę</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Revert changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Cofnij zmiany obecnej palety</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Save changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz zmiany do obecnej palety</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Add a color to the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj kolor do palety</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove the selected color from the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień wybrany kolor z palety</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.cpp" line="+181"/>
         <location line="+15"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Nowa paleta</translation>
     </message>
     <message>
         <location line="-14"/>
         <location line="+15"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>GIMP Palettes (*.gpl)</source>
-        <translation type="unfinished"></translation>
+        <translation>Palety GIMP (*.gpl)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Palette Image (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Obraz palety (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Wszystkie pliki (*)</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+13"/>
         <source>Open Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz paletę</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to load the palette file
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie udało się otworzyć palety z pliku
+%1</translation>
     </message>
 </context>
 <context>
@@ -4313,17 +4314,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_editor.cpp" line="+321"/>
         <source>Add Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj kolor</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Remove Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń kolor</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Edit Color...</source>
-        <translation type="unfinished"></translation>
+        <translation>Edytuj kolor...</translation>
     </message>
 </context>
 <context>
@@ -4331,7 +4332,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_list_model.cpp" line="+215"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 kolory)</translation>
     </message>
 </context>
 <context>
@@ -4339,12 +4340,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../bundled/QtColorWidgets/swatch.cpp" line="+855"/>
         <source>Clear Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyczyść kolor</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -4352,7 +4353,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
         <source>Report</source>
-        <translation type="unfinished"></translation>
+        <translation>Raport</translation>
     </message>
 </context>
 <context>
@@ -4370,12 +4371,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+74"/>
         <source>Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Sprawdź</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj</translation>
     </message>
     <message>
         <location line="+11"/>
