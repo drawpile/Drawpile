@@ -83,7 +83,7 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+64"/>
         <source>Brush type</source>
-        <translation>Typy pędzla</translation>
+        <translation>Rodzaj pędzla</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -98,7 +98,7 @@
     <message>
         <location line="+14"/>
         <source>Eraser mode</source>
-        <translation>Tryb gumki</translation>
+        <translation>Tryb usuwania</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -161,12 +161,12 @@
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation>Stabilizator: </translation>
+        <translation>Stabilizator </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation>Wygładzanie: </translation>
+        <translation>Wygładzanie </translation>
     </message>
 </context>
 <context>
@@ -487,7 +487,7 @@
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj Pędzle…</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -548,7 +548,7 @@
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj wideo WebM</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -658,7 +658,7 @@
         <location line="-19"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-26"/>
         <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Limit rozmiaru </translation>
     </message>
     <message>
         <location line="+37"/>
@@ -709,7 +709,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Bieżąca warstwa:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -1708,7 +1708,7 @@ zatrzymaj nagrywanie</translation>
         <location line="+489"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nie można załadować obrazu</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1886,12 +1886,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+3"/>
         <source>&amp;Download Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>Pobierz obraz</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Download Selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Pobierz zaznaczenie</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2080,7 +2080,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zresetuj powiększenie</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2110,7 +2110,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Obróć o 90° w lewo</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4640,7 +4640,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+86"/>
         <source>Continuous hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Ciągły</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4744,7 +4744,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location line="+5"/>
         <source>Atmospheric triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Atmosferyczna Triada</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4762,7 +4762,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location line="+5"/>
         <source>Shifted triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Przesunięta Triada</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4774,13 +4774,13 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location line="+5"/>
         <source>Split complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sąsiednie Dopełniające</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tetradic</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tetradyczny</translation>
     </message>
 </context>
 <context>
@@ -4855,7 +4855,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrót:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4876,7 +4876,7 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+3"/>
         <source>Add Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj etykietę</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6556,7 +6556,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień odcień koloru</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6642,32 +6642,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+426"/>
         <source>Create Invite Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Tworzenie zaproszenia</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Uses:</source>
-        <translation type="unfinished"></translation>
+        <translation>Użyć</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Żadne</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaufane</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Role:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rola:</translation>
     </message>
 </context>
 <context>
@@ -7725,22 +7725,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Load settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wczytaj ustawienia</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisać ustawienia?</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import from file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj z pliku</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Export to file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj do pliku</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8068,7 +8068,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Watermelon</source>
-        <translation type="unfinished"></translation>
+        <translation>Arbuz</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8813,7 +8813,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Wintab</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9023,7 +9023,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+19"/>
         <source>ms</source>
         <extracomment>This stands for millseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ms</translation>
     </message>
     <message numerus="yes">
         <location line="+31"/>
@@ -9567,7 +9567,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+55"/>
         <source>Failed to read file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie udało się odczytać pliku</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9798,7 +9798,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+504"/>
         <source>Export Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj ustawienia</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9808,7 +9808,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+35"/>
         <source>Export Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd eksportowania</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -9834,7 +9834,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/listing.cpp" line="+37"/>
         <source>Set title automatically</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw automatycznie</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9859,7 +9859,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Announcements:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogłoszenia</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9869,7 +9869,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Remove selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń zaznaczone</translation>
     </message>
     <message>
         <location line="+139"/>
@@ -9892,7 +9892,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-356"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Wczytaj ustawienia</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -9924,7 +9924,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Taki plik już istnieje. Czy chcesz go zamienić?</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9940,7 +9940,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-2"/>
         <source>Are you sure you want to delete preset %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>Jesteś pewien, że chcesz usunąć &quot;%(preset)s&quot;?</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9953,7 +9953,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/permissions.cpp" line="+97"/>
         <source>Undo Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Limit cofania </translation>
     </message>
     <message>
         <location line="+26"/>
@@ -9963,7 +9963,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Transform selections:</source>
-        <translation type="unfinished"></translation>
+        <translation>Przekształć zaznaczenie</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9988,7 +9988,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Change background:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw tło</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10008,7 +10008,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Undo and redo:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cofanie i powtarzanie</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10082,7 +10082,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+282"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Wczytaj ustawienia</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10102,7 +10102,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Taki plik już istnieje. Czy chcesz go zamienić?</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10155,12 +10155,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation type="unfinished"></translation>
+        <translation>Zachowaj historię rozmów</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa hosta lub adres IP</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -10228,7 +10228,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Invalid role format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieważny format pliku.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -10452,7 +10452,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Configure…</source>
-        <translation type="unfinished"></translation>
+        <translation>Konfiguruj</translation>
     </message>
 </context>
 <context>
@@ -10475,7 +10475,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10609,7 +10609,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Sliders</source>
-        <translation type="unfinished"></translation>
+        <translation>Suwaki</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10969,7 +10969,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1366"/>
         <source>Sketch: </source>
-        <translation type="unfinished"></translation>
+        <translation>Szkic </translation>
     </message>
     <message>
         <location line="+165"/>
@@ -11063,7 +11063,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11108,12 +11108,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Zoom to fit</source>
-        <translation type="unfinished"></translation>
+        <translation>Dopasuj powiększenie</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Zoom: </source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11622,7 +11622,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+20"/>
         <source>Constrain</source>
-        <translation type="unfinished"></translation>
+        <translation>Ograniczenie</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -11647,7 +11647,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Apply the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Zatwierdź zmiany</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11657,7 +11657,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Cancel the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Anuluj przekształcenie</translation>
     </message>
 </context>
 <context>
@@ -11717,7 +11717,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Reset in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Zresetuj cały postęp</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -11737,7 +11737,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Layer is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Zablokowana Warstwa</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11747,7 +11747,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Warstwa &apos;{}&apos; jest ukryta</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11757,7 +11757,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>No layer selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie wybrano warstwy.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12119,12 +12119,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/dualcolorbutton.cpp" line="+31"/>
         <source>Set foreground color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz kolor pierwszoplanowy</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Set background color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw kolor tła</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12152,7 +12152,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Shrink</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwiń</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12167,7 +12167,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+93"/>
         <source>Shrink: </source>
-        <translation type="unfinished"></translation>
+        <translation>Zwiń </translation>
     </message>
     <message>
         <location line="+0"/>
@@ -12233,7 +12233,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Known self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Certyfikat z podpisem własnym</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12243,7 +12243,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowy certyfikat</translation>
     </message>
     <message>
         <location line="+5"/>
