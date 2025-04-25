@@ -847,7 +847,7 @@
     <message>
         <location line="+38"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Utwórz</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -857,7 +857,7 @@
     <message>
         <location line="+11"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiuj</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -1080,7 +1080,7 @@ Podzakres: [%3, %4]</translation>
     <message>
         <location line="+2"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie, anuluj</translation>
     </message>
 </context>
 <context>
@@ -1324,7 +1324,7 @@ zatrzymaj nagrywanie</translation>
     <message>
         <location line="+14"/>
         <source>Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontynuować?</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12577,7 +12577,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+46"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Powiększanie</translation>
     </message>
 </context>
 </TS>
