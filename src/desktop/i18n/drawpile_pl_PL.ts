@@ -4444,7 +4444,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation>Gładki</translation>
+        <translation>Wygładzenie</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4459,7 +4459,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+3"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakres ramek:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4474,12 +4474,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+3"/>
         <source>Crop X:</source>
-        <translation type="unfinished"></translation>
+        <translation>Przytnij oś X:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Crop Y:</source>
-        <translation type="unfinished"></translation>
+        <translation>Przytnij oś Y:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4489,17 +4489,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>Reset inputs to the whole canvas and timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>Zresetuj dane wejściowe dla całego obszaru roboczego i osi czasu</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Set from Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Zestaw z Flipbooka</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set inputs to what is being previewed in the flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw dane wejściowe na to, co jest podglądane w flipbooku</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4509,7 +4509,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+125"/>
         <source>Output resolution will be %1x%2 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozdzielczość wyjściowa wyniesie %1x%2 pikseli.</translation>
     </message>
 </context>
 <context>
@@ -4527,17 +4527,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+3"/>
         <source>Import a series of images as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj serię obrazów jako klatki osi czasu.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Importing animation frames is not supported in the web browser version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importowanie klatek animacji nie jest obsługiwane w wersji Drawpile dostępnej w przeglądarce internetowej.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas Background:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tło płótna:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4557,12 +4557,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+7"/>
         <source>Numeric Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Numerycznie rosnąco</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Numeric Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Malejąco numerycznie</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4582,7 +4582,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+4"/>
         <source>Import the layers of an ORA or PSD file as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj warstwy pliku ORA lub PSD jako klatki osi czasu.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4908,7 +4908,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+0"/>
         <source>Brush metadata settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustawienia metadanych pędzla.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4923,7 +4923,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+62"/>
         <source>Save as New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz jako nowy pędzel</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7027,7 +7027,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+198"/>
         <source>You can&apos;t join this session because:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie możesz dołączyć do tej sesji, ponieważ:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7037,7 +7037,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Can&apos;t join session</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można dołączyć do sesji</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -7202,12 +7202,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+71"/>
         <source>Error opening file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd otwierania pliku: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error opening file: %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd otwierania pliku: %1 (%2)</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -7225,17 +7225,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Expand left</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozszerz w lewo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand right</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozszerz w prawo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand down</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozwiń w dół</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7275,7 +7275,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+48"/>
         <source>Shrink and feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kurczenie się i rozwarstwianie od krawędzi płótna</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7320,7 +7320,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Error saving bans: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd podczas zapisywania zakazów: %1</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7506,12 +7506,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-97"/>
         <source>File does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik nie zawiera prawidłowego eksportu roli.</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Error saving roles: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd podczas zapisywania ról: %1</translation>
     </message>
     <message numerus="yes">
         <location line="+61"/>
@@ -7988,13 +7988,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+2"/>
         <source>Hardware (experimental)</source>
         <extracomment>One of the canvas renderer options. Hardware meaning it uses the GPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sprzęt (eksperymentalny)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Software (experimental)</source>
         <extracomment>One of the canvas renderer options. Software meaning it uses the CPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Oprogramowanie (eksperymentalne)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8017,7 +8017,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Current renderer: %1. Changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualny renderer: %1. Zmiany zostaną zastosowane po ponownym uruchomieniu Drawpile.</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -8215,7 +8215,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Network proxy:</source>
-        <translation type="unfinished"></translation>
+        <translation>Serwer proxy sieciowy:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8638,7 +8638,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <location line="+65"/>
         <source>Unpin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Odepnij wybrane certyfikaty</translation>
     </message>
     <message>
         <location line="-35"/>
@@ -8666,7 +8666,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Show conflicts only</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż tylko konflikty</translation>
     </message>
 </context>
 <context>
@@ -8696,7 +8696,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-17"/>
         <source>Add canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj skrót do płótna…</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8731,7 +8731,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Remove canvas shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń skrót do płótna</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
@@ -8745,12 +8745,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Przywróć domyślne skróty Canvas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really restore all canvas shortcuts to their default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>Czy naprawdę przywrócić wszystkie skróty klawiaturowe do wartości domyślnych?</translation>
     </message>
     <message>
         <location line="+95"/>
@@ -8779,7 +8779,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/tablet.cpp" line="+30"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Tester tabletów</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -8794,7 +8794,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Global pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>Krzywa ciśnienia globalnego:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -8841,7 +8841,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Tablet driver:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sterownik tabletu:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8851,12 +8851,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Pen pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nacisk pióra:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Global smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Globalne wygładzanie: </translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8866,33 +8866,33 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Apply global smoothing to mouse</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastosuj globalne wygładzanie dla mouse</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Compensate jagged curves</source>
-        <translation type="unfinished"></translation>
+        <translation>Kompensuj nierówne krzywizny</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Treat as regular pen tip</source>
-        <translation type="unfinished"></translation>
+        <translation>Traktuj jak zwykłą końcówkę długopisu</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Przełącz na gniazdo gumki</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Wymaż za pomocą bieżącego pędzla</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser tip behavior:</source>
         <extracomment>This refers to the eraser end tablet pen, not a tooltip or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zachowanie końcówki gumki:</translation>
     </message>
 </context>
 <context>
@@ -8920,17 +8920,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Attach selected brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Dołącz wybrane pędzle</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>When enabled, changes in a brush slot will be saved to the brush itself automatically. When disabled, the brush itself only changes when you save it explicitly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gdy włączone, zmiany w slocie pędzla zostaną automatycznie zapisane w samym pędzlu. Gdy wyłączone, sam pędzel zmienia się tylko wtedy, gdy zapiszesz go jawnie.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Brush slots:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sloty Pędzli:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8956,12 +8956,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-71"/>
         <source>Brush outline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Zarys pędzla:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Same as brush cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Tak samo jak kursor pędzla</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8996,22 +8996,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Brush cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kursor pędzla:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Eraser cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kursor gumki:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Alpha lock cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kursor blokady alfa:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sampling ring</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż pierścień próbny</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -9103,27 +9103,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Toggle color picker</source>
-        <translation type="unfinished"></translation>
+        <translation>Przełącz selektor kolorów</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>Przełącz gumkę</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle erase mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Przełącz w tryb wymazywania</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle recolor mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Przełącz w tryb zmiany koloru</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>One-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Stuknięcie jednym palcem:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9133,12 +9133,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Three-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Stuknięcie trzema palcami:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Four-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Stuknięcie czterema palcami:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -9148,7 +9148,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>One-finger tap and hold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Stuknięcie i przytrzymanie jednym palcem:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -9158,7 +9158,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Pan canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Płótno &quot;Pan&quot;</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9168,7 +9168,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>One-finger touch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dotyk jednym palcem:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -9188,7 +9188,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Free rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Płótno bez ograniczeń</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9236,7 +9236,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Small screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Mały ekran</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -9282,27 +9282,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+23"/>
         <source>First checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>Pierwszy kolor sprawdzarki</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Second checker color</source>
-        <translation type="unfinished"></translation>
+        <translation>Drugi kolor kratki</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Colors behind canvas:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolory za płótnem:</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Zoom, rotate, mirror and flip notices</source>
-        <translation type="unfinished"></translation>
+        <translation>Powiększaj, obracaj, odbijaj i odwracaj powiadomienia</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>On-canvas notices:</source>
-        <translation type="unfinished"></translation>
+        <translation>Powiadomienia na płótnie:</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -9312,12 +9312,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Override system scale factor</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastąp współczynnik skali systemu</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Changes apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmiany zostaną zastosowane po ponownym uruchomieniu Drawpile. Aktualny współczynnik skali wynosi %1%, rozmiar czcionki wynosi %2.</translation>
     </message>
     <message>
         <location line="-139"/>
@@ -9337,7 +9337,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Prompt when creating layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Monituj podczas tworzenia warstw</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9362,7 +9362,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Vertical sync:</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronizacja pionowa:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9703,7 +9703,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/welcome.cpp" line="+50"/>
         <source>Standalone Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb autonomiczny</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10260,17 +10260,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-580"/>
         <source>&amp;Edit Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Edytuj pędzel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Resetuj pędzel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Zresetuj wszystkie &amp;pędzle</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10285,32 +10285,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Usuń pędzel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Brush &amp;Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Pędzel i tagi</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Icon Size</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rozmiar ikony</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ne&amp;w Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>No&amp;wy tag</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rena&amp;me Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień nazwę tagu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>De&amp;lete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń tag</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10320,7 +10320,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>E&amp;xport Tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;eksportuj tag…</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -10340,7 +10340,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Really overwrite brush &apos;%1&apos; with the current one?</source>
-        <translation type="unfinished"></translation>
+        <translation>Czy na pewno nadpisać pędzel &apos;%1&apos; obecnym?</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10428,12 +10428,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-3"/>
         <source>Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń pędzel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete brush &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Na pewno usunąć pędzel &apos;%1&apos;?</translation>
     </message>
 </context>
 <context>
@@ -10479,22 +10479,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>Duplicate palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplikat palety</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń paletę</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rename palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień nazwę palety</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj paletę…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10639,7 +10639,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-347"/>
         <source>Show all sliders at once</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż wszystkie suwaki na raz</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10743,17 +10743,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Rotating triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Obracający się trójkąt</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rotating square</source>
-        <translation type="unfinished"></translation>
+        <translation>Obracający się kwadrat</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Trójkąt</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -10828,7 +10828,7 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../docks/colorcircle.cpp" line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>Preview selected color</source>
-        <translation type="unfinished"></translation>
+        <translation>Podgląd wybranego koloru</translation>
     </message>
 </context>
 <context>
@@ -10948,22 +10948,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Check Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Sprawdź grupę warstw</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Odznacz grupę warstw</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Check Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Sprawdź warstwę</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Sprawdź sytuację</translation>
     </message>
     <message>
         <location line="+1366"/>
@@ -11273,7 +11273,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+81"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Adnotacje są ukryte. </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11284,7 +11284,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+343"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie masz uprawnień do wklejania scalonych adnotacji.</translation>
     </message>
 </context>
 <context>
@@ -11292,22 +11292,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-106"/>
         <source>&amp;Edit Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Edytuj pędzel…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Resetuj pędzel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Zresetuj wszystkie pędzle i gniazda</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Zresetuj wszystkie &amp;pędzle</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -11322,12 +11322,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Usuń pędzel</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>De&amp;tach Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Odłącz Pędzel</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -11408,42 +11408,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="+74"/>
         <source>Fill tool settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustawienia narzędzia wypełniania</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Edit pending fills</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Edytuj oczekujące wypełnienia</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply changes in settings, color and layer to fills not yet applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastosuj zmiany w ustawieniach, kolorze i warstwie do wypełnień, które nie zostały jeszcze zastosowane</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Confirm fills with second click</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Potwierdź wypełnienie drugim kliknięciem</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lets you apply fills with a click instead of starting another fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Umożliwia zastosowanie wypełnień za pomocą kliknięcia zamiast rozpoczynania kolejnego wypełnienia</translation>
     </message>
     <message>
         <location line="+116"/>
         <source>You don&apos;t have permission to use the fill tool.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie masz uprawnień do korzystania z narzędzia wypełniania.</translation>
     </message>
     <message>
         <location line="+231"/>
         <source>Size Limit: Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Limit rozmiaru: Wybierz</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Limit rozmiaru: Brak</translation>
     </message>
 </context>
 <context>
@@ -11451,13 +11451,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/lasersettings.cpp" line="+93"/>
         <source>You don&apos;t have permission to use the laser pointer.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie masz uprawnień do używania wskaźnika laserowego.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Laser trails are hidden. </source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ślady laserowe są ukryte. </translation>
     </message>
     <message>
         <location line="+3"/>
