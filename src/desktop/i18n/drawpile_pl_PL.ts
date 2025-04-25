@@ -11496,7 +11496,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Smoothe out selection edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Wygładź krawędzie zaznaczenia</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -11511,12 +11511,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+161"/>
         <source>Select continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz obszar ciągły</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Select similar color</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz podobny kolor</translation>
     </message>
 </context>
 <context>
@@ -11529,7 +11529,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Quick preview not taking into account layering, opacity or anything else</source>
-        <translation type="unfinished"></translation>
+        <translation>Szybki podgląd nie uwzględniający warstw, krycia ani niczego innego</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -11539,12 +11539,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Preview the transform exactly how will look when applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobacz podgląd transformacji dokładnie tak, jak będzie wyglądała po zastosowaniu</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Too many layers selected for accurate preview, only fast preview is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybrano zbyt wiele warstw do dokładnego podglądu. Dostępny jest tylko szybki podgląd.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -11559,7 +11559,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Nearest-neighbor interpolation, no smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolacja najbliższego sąsiada, bez wygładzania</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -11569,7 +11569,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Smoothed interpolation</source>
-        <translation type="unfinished"></translation>
+        <translation>Wygładzona interpolacja</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -11595,7 +11595,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Shows scaling handles on corners and edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokazuje uchwyty skalowania na rogach i krawędziach</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -11605,7 +11605,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Shows distortion handles on corners and edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokazuje uchwyty zniekształceń na rogach i krawędziach</translation>
     </message>
     <message>
         <location line="+12"/>
