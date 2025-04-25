@@ -3844,7 +3844,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+14"/>
         <source>Max users:</source>
-        <translation type="unfinished"></translation>
+        <translation>Maks. użytkowników</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3904,7 +3904,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+10"/>
         <source>Canvas Background:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tło płótna</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3914,7 +3914,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+10"/>
         <source>Undo &amp; Redo:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cofnij / Ponów</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3935,12 +3935,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="-193"/>
         <source>Timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Oś czasu</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Metadata:</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadane:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3977,7 +3977,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="-58"/>
         <source>Remove selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń wybrane</translation>
     </message>
     <message>
         <location line="+10"/>
