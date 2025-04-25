@@ -3789,42 +3789,42 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation>Zachowaj historię rozmów</translation>
+        <translation>Zachowaj historię chatu</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Don&apos;t terminate session when the last user leaves</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie kończ sesji, gdy ostatni użytkownik opuści sesję</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Persist without users</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontynuuj bez użytkowników</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This session contains age-restricted content</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta sesja zawiera treści przeznaczone dla osób w różnym wieku</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieodpowiednie dla nieletnich (NSFM)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Idle timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Limit czasu bezczynności:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>X seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>X sekund.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Disable idle timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyłącz limit czasu bezczynności</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3849,7 +3849,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+7"/>
         <source>How many users to let in. Does not affect users already logged in</source>
-        <translation type="unfinished"></translation>
+        <translation>Ilu użytkowników wpuścić. Nie dotyczy użytkowników już zalogowanych.</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -3864,7 +3864,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+7"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Zezwalaj na dołączanie z przeglądarki internetowej</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -3874,12 +3874,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+6"/>
         <source>Cut, Paste &amp; Fill:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wytnij, wklej i wypełnij:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>New Annotations:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nowe adnotacje:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3889,17 +3889,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+7"/>
         <source>General Layer Editing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogólna edycja warstw:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Own Layer Editing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Własna edycja warstw:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Canvas Resizing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmiana rozmiaru płótna:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3909,7 +3909,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+10"/>
         <source>Laser Pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wskaźnik laserowy:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3919,12 +3919,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+10"/>
         <source>Kick &amp; Ban:</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń i banuj:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>Admini</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3945,7 +3945,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+10"/>
         <source>Selection Move &amp; Resize:</source>
-        <translation type="unfinished"></translation>
+        <translation>Przenoszenie i zmiana rozmiaru zaznaczenia:</translation>
     </message>
     <message>
         <location line="+7"/>
