@@ -3620,22 +3620,22 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+5"/>
         <source>Color Picker</source>
-        <translation>Wybór kolorów</translation>
+        <translation>Wybierz Kolor</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Laser Pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>Wskaźnik laserowy</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Selection (Rectangular)</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybór (prostokątny)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Selection (Free-Form)</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybór (forma dowolna)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3706,7 +3706,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="-8"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Użytkownicy</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -3739,7 +3739,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../ui/sessionsettings.ui" line="+14"/>
         <source>Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustawienia sesji</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3754,22 +3754,22 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+6"/>
         <source>Operator password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hasło operatora:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Autoreset threshold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Próg automatycznego resetowania:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Session history size at which autoreset triggers</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar historii sesji, przy którym następuje automatyczne resetowanie</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No autoreset</source>
-        <translation type="unfinished"></translation>
+        <translation>Brak automatycznego resetowania</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3784,7 +3784,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+7"/>
         <source>Include chat in session history so new users can see it as well</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodaj czat do historii sesji, aby nowi użytkownicy również mogli go zobaczyć</translation>
     </message>
     <message>
         <location line="+3"/>
