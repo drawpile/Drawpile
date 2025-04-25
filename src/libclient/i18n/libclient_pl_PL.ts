@@ -503,12 +503,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+6"/>
         <source>Tablet Event Log (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Dziennik zdarzeń tabletu...</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 (Wideo)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -582,7 +582,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+76"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation>za %1d %2g %3m</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -649,7 +649,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Niekompatybilny Plik</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -694,7 +694,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+169"/>
         <source>incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Niezgodna</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1594,7 +1594,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+15"/>
         <source>Invalid username!</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieprawidłowa nazwa użytkownika!</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1604,7 +1604,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Username already taken!</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa użytkownika jest już zajęta</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1619,12 +1619,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Hosting not authorized</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieautoryzowany</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Zostałeś wykluczony z tego pokoju</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1649,7 +1649,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+3"/>
         <source>Invalid host name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Niewłaściwa nazwa hosta</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1687,7 +1687,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation>Niezgodna wersja</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1712,12 +1712,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Session password required</source>
-        <translation type="unfinished"></translation>
+        <translation>Wymagane hasło</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż sesje nieodpowiednie dla nieletnich (NSFM)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1741,7 +1741,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Started by</source>
-        <translation type="unfinished"></translation>
+        <translation>Uruchomiony przez</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1811,22 +1811,22 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd połączenia: %1$s</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Network write error</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd sieci</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd połączenia: %1$s</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Network connection timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>Przekroczono limit czasu połączenia</translation>
     </message>
     <message>
         <location line="+97"/>
@@ -1843,7 +1843,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <location line="+4"/>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Błąd %1$s: %2$s</translation>
     </message>
 </context>
 <context>
@@ -1903,7 +1903,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd połączenia: %1$s</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1933,7 +1933,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Brak dostępnych informacji</translation>
     </message>
 </context>
 <context>
