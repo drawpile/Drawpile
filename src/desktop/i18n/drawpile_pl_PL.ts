@@ -4469,7 +4469,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished"></translation>
+        <translation>Odświeżanie Obrazu:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4522,7 +4522,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+18"/>
         <source>Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Klatki</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4567,12 +4567,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+6"/>
         <source>Alphabetic Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Alfabetycznie - rosnąco</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Alfabetycznie - malejąco</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4928,7 +4928,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+7"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Nadpisać Pędzel?</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -6524,7 +6524,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Obróć Płótno</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6863,7 +6863,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/layerproperties.cpp" line="+92"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Nowa Grupa Warstw</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7220,7 +7220,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+30"/>
         <source>Expand up</source>
-        <translation type="unfinished"></translation>
+        <translation>Powiększ {}</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7281,7 +7281,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wtapianie krawędzi płótna</translation>
     </message>
 </context>
 <context>
@@ -7571,7 +7571,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Touch</source>
-        <translation type="unfinished"></translation>
+        <translation>Dotyk</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8005,7 +8005,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Renderer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Silnik rendereujący:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8626,7 +8626,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <location line="+82"/>
         <source>Pin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Usunąć wybrane certyfikaty?</translation>
     </message>
     <message>
         <location line="-65"/>
@@ -8648,7 +8648,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Import certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj certyfikat</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -8691,7 +8691,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+123"/>
         <location line="+27"/>
         <source>Edit Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrót płótna</translation>
     </message>
     <message>
         <location line="-17"/>
@@ -8706,7 +8706,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>New Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Skrót płótna</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8721,7 +8721,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Remove selected canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń zaznaczony skrót</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8760,12 +8760,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Pędzle</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Płótno</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -8846,7 +8846,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Wykrywanie nacisku</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8861,7 +8861,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Smoothing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wygładzanie</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9016,7 +9016,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Color picker:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybór koloru</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -9059,17 +9059,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+25"/>
         <source>Touch Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Test dotyku</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Touch mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb dotykowy</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekran dotykowy</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9098,7 +9098,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Hide docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukryj Doki</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9128,7 +9128,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Two-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Stuknięcie dwoma palcami</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9163,7 +9163,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Guess</source>
-        <translation type="unfinished"></translation>
+        <translation>Zgdanij</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9357,7 +9357,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Font size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmiar tekstu:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -10275,12 +10275,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>&amp;New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Nowy Pędzel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Nadpisać Pędzel?</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10315,7 +10315,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Im&amp;port Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj Pędzle…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10335,7 +10335,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+227"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Nadpisać Pędzel?</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10401,7 +10401,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+23"/>
         <source>No brush selected</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but no brush is actually selected.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nie wybrano pędzla</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -10464,7 +10464,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-249"/>
         <source>New palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Nowa paleta</translation>
     </message>
     <message>
         <location line="-12"/>
@@ -10499,7 +10499,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Export palette…</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj paletę</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -10613,7 +10613,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Przestrzeń kolorów</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10627,7 +10627,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+359"/>
         <source>HSL</source>
         <extracomment>Color space HSL (hue, saturation, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="-348"/>
@@ -10644,7 +10644,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Show hex input</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyświetlanie wprowadzanych danych</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -10764,7 +10764,7 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../docks/colorcircle.cpp" line="+6"/>
         <location filename="../docks/colorspinner.cpp" line="+15"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Przestrzeń kolorów</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10776,7 +10776,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>HSL</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -10938,7 +10938,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw widoczność grup</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11312,12 +11312,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>&amp;New Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Nowy Pędzel</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Nadpisać Pędzel?</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -11471,7 +11471,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-271"/>
         <source>Replace selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamień zaznaczone</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11481,12 +11481,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Intersect with selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Przecinaj Zaznaczenie</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove from selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń z zaznaczenia</translation>
     </message>
     <message>
         <location line="+24"/>
