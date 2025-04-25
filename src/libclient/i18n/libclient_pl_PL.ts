@@ -104,7 +104,7 @@
     <message>
         <location line="+2"/>
         <source>Modifiers</source>
-        <translation>Modyfikatory</translation>
+        <translation>Modyfikacje</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -559,22 +559,22 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-139"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation>Meta</translation>
     </message>
 </context>
 <context>
@@ -587,12 +587,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1h%2m</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 m</translation>
     </message>
     <message>
         <location line="+437"/>
@@ -1422,7 +1422,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Role</source>
-        <translation type="unfinished"></translation>
+        <translation>Rola</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1746,12 +1746,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Users</source>
-        <translation type="unfinished">Użytkownicy</translation>
+        <translation>Users</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished">Aktywni</translation>
+        <translation>Aktywna</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -1879,7 +1879,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Domyślny</translation>
     </message>
 </context>
 <context>
@@ -1888,7 +1888,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <location filename="../utils/news.cpp" line="+286"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>Sprawdzanie aktualizacji…</translation>
     </message>
     <message>
         <location line="-23"/>
@@ -1928,7 +1928,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można zapisać „%s”</translation>
     </message>
     <message>
         <location line="+8"/>
