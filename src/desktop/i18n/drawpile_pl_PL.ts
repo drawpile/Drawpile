@@ -1324,17 +1324,17 @@ zatrzymaj nagrywanie</translation>
     <message>
         <location line="+14"/>
         <source>Are you sure you want to continue?</source>
-        <translation>Kontynuować?</translation>
+        <translation>Na Pewno?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Tak, kontynuuj</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie, anuluj</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -1346,12 +1346,12 @@ zatrzymaj nagrywanie</translation>
         <location line="-2081"/>
         <location line="+3793"/>
         <source>Export Again</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj ponownie</translation>
     </message>
     <message>
         <location line="-3789"/>
         <source>Export Again to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj ponownie do %1</translation>
     </message>
     <message>
         <location line="+439"/>
@@ -1410,52 +1410,52 @@ zatrzymaj nagrywanie</translation>
         <location line="+131"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nie masz uprawnień do wycinania, wklejania, wypełniania ani usuwania.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie masz uprawnień do zmiany rozmiaru płótna.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie masz uprawnień do zmiany tła sesji.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie masz uprawnień do tworzenia adnotacji.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie masz uprawnień do cofania lub ponawiania.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie masz uprawnień, żeby to zrobić.</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Nowy</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamierzasz utworzyć nowe płótno i zamknąć to okno.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Open Recent File</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz ostatni plik</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recent file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamierzasz otworzyć ostatnio używany plik i zamknąć to okno.</translation>
     </message>
     <message>
         <location line="+102"/>
@@ -1470,7 +1470,7 @@ zatrzymaj nagrywanie</translation>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a new file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamierzasz otworzyć nowy plik i zamknąć to okno.</translation>
     </message>
     <message>
         <location line="+1438"/>
@@ -1480,7 +1480,7 @@ zatrzymaj nagrywanie</translation>
     <message>
         <location line="+24"/>
         <source>Image saving failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie udało się zapisać obrazu</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1495,12 +1495,12 @@ zatrzymaj nagrywanie</translation>
     <message>
         <location line="+35"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Pobieranie Ukończone</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pobieranie zakończone. Kliknij „Zapisz”, aby zapisać plik.</translation>
     </message>
     <message>
         <location line="+67"/>
@@ -1566,7 +1566,7 @@ zatrzymaj nagrywanie</translation>
     <message>
         <location line="+22"/>
         <source>Error downloading profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd podczas pobierania profilu.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1581,7 +1581,7 @@ zatrzymaj nagrywanie</translation>
     <message>
         <location line="+22"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd podczas pobierania dziennika zdarzeń tabletu.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1829,12 +1829,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wprowadź Dane:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Primary screen:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekran główny:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2004,7 +2004,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+5"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz z ekranu</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2240,7 +2240,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+3"/>
         <source>&amp;Deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Odznacz</translation>
     </message>
     <message>
         <location line="-494"/>
@@ -2250,12 +2250,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+513"/>
         <source>Fill Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Wypełnij zaznaczone</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Recolor Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybór koloru</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2295,62 +2295,62 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+516"/>
         <source>&amp;Expand Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rozwiń płótno</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Canvas Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Tło płótna</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Sterowniki Tabletu</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Edit Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Narzędzia do edycji</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>&amp;Layouts...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Układy...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Narzędnik</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dok</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Czat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Move Canvas Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Przesuń płótno w lewo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Przesuń płótno w prawo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Przesuń płótno w górę</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Przesuń płótno w dół</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2370,37 +2370,37 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+26"/>
         <source>Show &amp;Annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż adnotacje</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show User &amp;Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż użytkownika i wskaźniki</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż nazwy</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż warstwy</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Avatars</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż awatary</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show La&amp;ser Trails</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż laserek</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Pixel &amp;Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż piksel i siatkę</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -2415,7 +2415,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+11"/>
         <source>&amp;Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Powiększenie</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -2425,52 +2425,52 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+10"/>
         <source>Normal View</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalny Widok</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show all layers normally</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż wszystkie warstwy normalnie</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer View</source>
-        <translation type="unfinished"></translation>
+        <translation>Widok warstwy</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only the current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż tylko bieżącą warstwę</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Frame View</source>
-        <translation type="unfinished"></translation>
+        <translation>Widok ramki</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only layers in the current frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż tylko warstwy w bieżącej klatce</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Censored Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż warstwy cenzurowane</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Layer View Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb widoku warstwy</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>User Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>Wskaźniki użytkownika</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>New Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Nowa Warstwa</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2481,19 +2481,19 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location filename="../docks/layerlistdock.cpp" line="+483"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Duplicate Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiuj Warstwę</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Merge Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Połącz Warstwy</translation>
     </message>
     <message>
         <location line="+6"/>
         <location filename="../mainwindow.cpp" line="+2"/>
         <source>Delete Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń Warstwę</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2510,17 +2510,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Set as Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw jako Źródło wypełnienia</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Select Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz powyżej</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Select Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz powyżej</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2631,47 +2631,47 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+0"/>
         <source>Show animation preview window</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż okno podglądu animacji</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change Frame Count...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień liczbę klatek...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change Frame Rate (FPS)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień liczbę klatek na sekundę (FPS)...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw klatkę kluczową na bieżącą warstwę</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Blank Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw pustą klatkę kluczową</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cut Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Wytnij kluczową klatkę</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiuj kluczową klatkę</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Paste Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Wklej klatkę kluczową</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key Frame Properties...</source>
-        <translation type="unfinished"></translation>
+        <translation>Właściwości klatki kluczowej...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2681,12 +2681,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Increase Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwiększ ekspozycję klatek kluczowych</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Decrease Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmniejsz ekspozycję klatek kluczowych</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2696,17 +2696,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Track Visible</source>
-        <translation type="unfinished"></translation>
+        <translation>Śledź widoczny</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin</source>
-        <translation type="unfinished"></translation>
+        <translation>Śledź skórkę cebuli</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplikuj utwór</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2726,12 +2726,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Previous Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Poprzednia klatka</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Następna klatka kluczowa</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2741,7 +2741,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Track Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Śledź powyżej</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2781,38 +2781,38 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+23"/>
         <source>Create Group on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Utwórz grupę na podstawie klatki kluczowej</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Duplicate Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplikuj klatkę kluczową</translation>
     </message>
     <message>
         <location line="+27"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Host...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Admin</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished"></translation>
+        <translation>Podziel się swoim płótnem z innymi</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Invite...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaproś</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Invite another user to this session</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaproś innego użytkownika do tej sesji</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Prevent changes to the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapobiegaj zmianom na płótnie</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -2953,22 +2953,22 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location line="-339"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Join...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dołączyć...</translation>
     </message>
     <message>
         <location line="-3547"/>
         <source>Joined the session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Dołączyłem do sesji!</translation>
     </message>
     <message>
         <location line="+589"/>
         <source>Hosting on this computer is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>Hosting na tym komputerze jest niedostępny</translation>
     </message>
     <message>
         <location line="+138"/>
         <source>Really leave and terminate the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>Naprawdę opuścić i zakończyć sesję?</translation>
     </message>
     <message>
         <location line="+117"/>
@@ -2978,7 +2978,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+179"/>
         <source>You&apos;ve been disconnected from the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zostałeś rozłączony z sesją.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2988,32 +2988,32 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+77"/>
         <source>Canvas locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Płótno zablokowane</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Płótno odblokowane</translation>
     </message>
     <message>
         <location line="+432"/>
         <source>Freehand (erase mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>Freehand (tryb wymazywania, kliknij, aby zresetować)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (erase mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Narzędzie pędzla odręcznego (tryb wymazywania)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Freehand (alpha lock mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>Freehand (tryb blokady alfa, kliknij, aby zresetować)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (alpha lock mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Narzędzie pędzla odręcznego (tryb blokady alfa)</translation>
     </message>
     <message>
         <location line="+890"/>
@@ -3033,7 +3033,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="-16"/>
         <source>Export Session &amp;Template...</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj sesję i szablon...</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -3048,17 +3048,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+5"/>
         <source>Copy Without Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiuj bez tła</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy From &amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiuj z Warstwy</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Cu&amp;t From Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Wytnij z Warstwy</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
@@ -3069,7 +3069,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../mainwindow.cpp" line="+298"/>
         <source>Join another user&apos;s drawing session</source>
-        <translation type="unfinished"></translation>
+        <translation>Dołącz do sesji rysowania innego użytkownika</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3079,7 +3079,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+0"/>
         <source>Browse session listings</source>
-        <translation type="unfinished"></translation>
+        <translation>Przeglądaj listę sesji</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3089,12 +3089,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+0"/>
         <source>Leave this drawing session</source>
-        <translation type="unfinished"></translation>
+        <translation>Opuść tę sesję rysunkową</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Dziennik Logów</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3104,7 +3104,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+0"/>
         <source>Change session settings, permissions, announcements and bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień ustawienia sesji, uprawnienia, ogłoszenia i zakazy</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3119,17 +3119,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Reset...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Resetuj</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Report...</source>
-        <translation type="unfinished"></translation>
+        <translation>Raport...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Lock Everything</source>
-        <translation type="unfinished"></translation>
+        <translation>Zablokuj wszystko</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -3150,7 +3150,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+0"/>
         <source>Freehand brush tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Narzędzie Pędzla</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3160,7 +3160,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+0"/>
         <source>Freehand eraser brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pędzel do usuwania</translation>
     </message>
     <message>
         <location line="+1"/>
