@@ -2150,7 +2150,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż linijki</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2170,7 +2170,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+116"/>
         <source>Group View</source>
-        <translation type="unfinished"></translation>
+        <translation>Widok Grupowy</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2186,19 +2186,19 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location line="+4"/>
         <source>1 Second</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 sekunda</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>10 Seconds</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>10 Sekund</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1 Minute</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 Minuta</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2280,7 +2280,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>Connection Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Połączenie Nieudane</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2561,7 +2561,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>Transform Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Przekształć zaznaczenie</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2877,12 +2877,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+17"/>
         <source>Choose the current foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz kolor pierwszego planu</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Choose the current background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz kolor tła</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2942,12 +2942,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+143"/>
         <source>Could not write log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można zapisać pliku: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Could not read log file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można odczytać pliku: %s</translation>
     </message>
     <message>
         <location line="-339"/>
@@ -3557,7 +3557,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+13"/>
         <source>Save frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz klatki</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4002,7 +4002,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+11"/>
         <source>Remove selected listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń wybraną ocenę</translation>
     </message>
 </context>
 <context>
@@ -4419,12 +4419,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 (Wideo)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBM (Wideo)</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4434,7 +4434,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>Loops:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pętle</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4587,7 +4587,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+5"/>
         <source>File to Import:</source>
-        <translation type="unfinished"></translation>
+        <translation>Plik do importu:</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4608,7 +4608,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished"></translation>
+        <translation>Odświeżanie Obrazu:</translation>
     </message>
     <message>
         <location line="+7"/>
