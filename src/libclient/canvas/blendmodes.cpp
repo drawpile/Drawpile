@@ -18,7 +18,8 @@ static constexpr uint8_t UniversalMode = 0x03;
 // Mode is available when the eraser option is checked
 static constexpr uint8_t EraserMode = 0x04;
 
-static constexpr uint8_t SeparatorBelow = 0x08;
+static constexpr uint8_t SeparatorAbove = 0x08;
+static constexpr uint8_t SeparatorBelow = 0x10;
 
 struct BlendModeInfo {
 	//! The blend mode's translatable name
@@ -70,7 +71,7 @@ static const BlendModeInfo BLEND_MODE[] = {
 		QT_TRANSLATE_NOOP("blendmode", "Pigment"),
 		DP_BLEND_MODE_PIGMENT_ALPHA,
 		DP_BLEND_MODE_PIGMENT,
-		UniversalMode | SeparatorBelow,
+		UniversalMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Erase"),
@@ -85,22 +86,10 @@ static const BlendModeInfo BLEND_MODE[] = {
 		EraserMode,
 	},
 	{
-		QT_TRANSLATE_NOOP("blendmode", "Erase Lightness"),
-		DP_BLEND_MODE_ERASE_LIGHT,
-		DP_BLEND_MODE_ERASE_LIGHT_PRESERVE,
-		LayerMode | EraserMode,
-	},
-	{
-		QT_TRANSLATE_NOOP("blendmode", "Erase Darkness"),
-		DP_BLEND_MODE_ERASE_DARK,
-		DP_BLEND_MODE_ERASE_DARK_PRESERVE,
-		LayerMode | EraserMode | SeparatorBelow,
-	},
-	{
 		QT_TRANSLATE_NOOP("blendmode", "Multiply"),
 		DP_BLEND_MODE_MULTIPLY,
 		DP_BLEND_MODE_MULTIPLY_ALPHA,
-		UniversalMode,
+		UniversalMode | SeparatorAbove,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Screen"),
@@ -306,6 +295,7 @@ static QVector<Named> modeNames(uint8_t flag)
 			list.append(Named{
 				DP_BlendMode(BLEND_MODE[i].id),
 				QCoreApplication::translate("blendmode", BLEND_MODE[i].name),
+				(flags & SeparatorAbove) != 0,
 				(flags & SeparatorBelow) != 0,
 			});
 		}

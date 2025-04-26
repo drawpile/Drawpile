@@ -405,22 +405,6 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "-dp-pigment",
             "Pigment",
         },
-    [DP_BLEND_MODE_ERASE_LIGHT] =
-        {
-            LAYER | BRUSH | DECREASE_OPACITY | PRESENTS_AS_ERASER,
-            "DP_BLEND_MODE_ERASE_LIGHT",
-            "-dp-erase-light",
-            "-dp-erase-light",
-            "Erase Lightness",
-        },
-    [DP_BLEND_MODE_ERASE_DARK] =
-        {
-            LAYER | BRUSH | DECREASE_OPACITY | PRESENTS_AS_ERASER,
-            "DP_BLEND_MODE_ERASE_DARK",
-            "-dp-erase-dark",
-            "-dp-erase-dark",
-            "Erase Darkness",
-        },
     [DP_BLEND_MODE_LIGHT_TO_ALPHA] =
         {
             LAYER | BRUSH | DECREASE_OPACITY,
@@ -759,24 +743,6 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "-dp-cerase",
             "-dp-cerase-preserve",
             "Color Erase Preserve",
-        },
-    [DP_BLEND_MODE_ERASE_LIGHT_PRESERVE] =
-        {
-            LAYER | BRUSH | DECREASE_OPACITY | PRESENTS_AS_ERASER
-                | PRESENTS_AS_ALPHA_PRESERVING | SECONDARY_ALIAS,
-            "DP_BLEND_MODE_ERASE_LIGHT_PRESERVE",
-            "-dp-erase-light",
-            "-dp-erase-light-preserve",
-            "Erase Lightness Preserve",
-        },
-    [DP_BLEND_MODE_ERASE_DARK_PRESERVE] =
-        {
-            LAYER | BRUSH | DECREASE_OPACITY | PRESENTS_AS_ERASER
-                | PRESENTS_AS_ALPHA_PRESERVING | SECONDARY_ALIAS,
-            "DP_BLEND_MODE_ERASE_DARK_PRESERVE",
-            "-dp-erase-dark",
-            "-dp-erase-dark-preserve",
-            "Erase Darkness Preserve",
         },
     [DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE] =
         {
@@ -1160,16 +1126,6 @@ bool DP_blend_mode_alpha_preserve_pair(int blend_mode,
         alpha_affecting = DP_BLEND_MODE_PIGMENT_ALPHA;
         alpha_preserving = DP_BLEND_MODE_PIGMENT;
         break;
-    case DP_BLEND_MODE_ERASE_LIGHT:
-    case DP_BLEND_MODE_ERASE_LIGHT_PRESERVE:
-        alpha_affecting = DP_BLEND_MODE_ERASE_LIGHT;
-        alpha_preserving = DP_BLEND_MODE_ERASE_LIGHT_PRESERVE;
-        break;
-    case DP_BLEND_MODE_ERASE_DARK:
-    case DP_BLEND_MODE_ERASE_DARK_PRESERVE:
-        alpha_affecting = DP_BLEND_MODE_ERASE_DARK;
-        alpha_preserving = DP_BLEND_MODE_ERASE_DARK_PRESERVE;
-        break;
     case DP_BLEND_MODE_LIGHT_TO_ALPHA:
     case DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE:
         alpha_affecting = DP_BLEND_MODE_LIGHT_TO_ALPHA;
@@ -1276,10 +1232,6 @@ int DP_blend_mode_to_alpha_affecting(int blend_mode)
         return DP_BLEND_MODE_BEHIND;
     case DP_BLEND_MODE_COLOR_ERASE_PRESERVE:
         return DP_BLEND_MODE_COLOR_ERASE;
-    case DP_BLEND_MODE_ERASE_LIGHT_PRESERVE:
-        return DP_BLEND_MODE_ERASE_LIGHT;
-    case DP_BLEND_MODE_ERASE_DARK_PRESERVE:
-        return DP_BLEND_MODE_ERASE_DARK;
     case DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE:
         return DP_BLEND_MODE_LIGHT_TO_ALPHA;
     case DP_BLEND_MODE_DARK_TO_ALPHA_PRESERVE:
@@ -1300,10 +1252,6 @@ int DP_blend_mode_to_alpha_preserving(int blend_mode)
         return DP_BLEND_MODE_BEHIND_PRESERVE;
     case DP_BLEND_MODE_COLOR_ERASE:
         return DP_BLEND_MODE_COLOR_ERASE_PRESERVE;
-    case DP_BLEND_MODE_ERASE_LIGHT:
-        return DP_BLEND_MODE_ERASE_LIGHT_PRESERVE;
-    case DP_BLEND_MODE_ERASE_DARK:
-        return DP_BLEND_MODE_ERASE_DARK_PRESERVE;
     case DP_BLEND_MODE_LIGHT_TO_ALPHA:
         return DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE;
     case DP_BLEND_MODE_DARK_TO_ALPHA:

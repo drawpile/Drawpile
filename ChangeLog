@@ -1,6 +1,6 @@
 Unreleased Version 2.3.0-pre
  * Removed Feature: Compatibility with the old 2.1 versions, which was originally released 6 years ago. 2.3 is compatible with 2.2 instead.
- * Feature: Add Erase Lightness/Darkness blend modes, along with Edit -> Lightness/Darkness to Alpha options. Thanks Ben for suggesting.
+ * Feature: Add Edit > Lightness/Darkness to Alpha action. Thanks Ben for suggesting.
  * Feature: Allow switching annotation rendering between vector, smooth and pixel fonts. Thanks cvrsoiioo4 for suggesting.
  * Feature: "Clip to layer below" toggle on layers, for people used to that way of alpha preserving. Will be loaded from and saved to PSD files.
  * Fix: Change the dptxt recording format to use JSON to represent message bodies instead of a bespoke format that sometimes doesn't round-trip properly.

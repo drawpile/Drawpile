@@ -1571,8 +1571,6 @@ void MainWindow::fillArea(const QColor &color, int blendMode, float opacity)
 {
 	switch(blendMode) {
 	case DP_BLEND_MODE_ERASE:
-	case DP_BLEND_MODE_ERASE_LIGHT:
-	case DP_BLEND_MODE_ERASE_DARK:
 	case DP_BLEND_MODE_LIGHT_TO_ALPHA:
 	case DP_BLEND_MODE_DARK_TO_ALPHA:
 		break;
