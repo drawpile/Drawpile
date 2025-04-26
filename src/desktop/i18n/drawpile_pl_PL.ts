@@ -2120,7 +2120,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Odbij ścieżkę w poziomie</translation>
     </message>
     <message>
         <location line="+2"/>
