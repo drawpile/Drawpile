@@ -15,6 +15,7 @@ namespace blendmode {
 struct Named {
 	DP_BlendMode mode;
 	QString name;
+	bool separatorAbove;
 	bool separatorBelow;
 };
 

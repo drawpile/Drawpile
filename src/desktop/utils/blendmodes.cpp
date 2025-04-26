@@ -42,12 +42,26 @@ static constexpr int RECOLOR_ENABLED = 0;
 static constexpr int RECOLOR_DISABLED = 1;
 static constexpr int RECOLOR_OMITTED = 2;
 
+static void addSeparator(QStandardItemModel *model)
+{
+	QStandardItem *separator = new QStandardItem();
+	separator->setAccessibleDescription(QStringLiteral("separator"));
+	separator->setData(-1, Qt::UserRole);
+	separator->setFlags(
+		separator->flags() & ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+	model->appendRow(separator);
+}
+
 static void addBlendModesTo(
 	QStandardItemModel *model, int recolor,
 	const QVector<canvas::blendmode::Named> &modes)
 {
 	for(int i = 0, count = modes.size(); i < count; ++i) {
 		const canvas::blendmode::Named &m = modes[i];
+		if(m.separatorAbove && i != 0) {
+			addSeparator(model);
+		}
+
 		QStandardItem *item = new QStandardItem(m.name);
 		item->setData(int(m.mode), Qt::UserRole);
 		if(m.mode == DP_BLEND_MODE_RECOLOR) {
@@ -62,12 +76,7 @@ static void addBlendModesTo(
 		}
 
 		if(m.separatorBelow && i != count - 1) {
-			QStandardItem *separator = new QStandardItem();
-			separator->setAccessibleDescription(QStringLiteral("separator"));
-			separator->setData(-1, Qt::UserRole);
-			separator->setFlags(
-				item->flags() & ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
-			model->appendRow(separator);
+			addSeparator(model);
 		}
 	}
 }
