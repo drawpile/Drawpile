@@ -5252,7 +5252,7 @@ do 64x64 pikseli.</translation>
         <source>Pressure</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Ciśnienie</translation>
+        <translation>Nacisk</translation>
     </message>
     <message>
         <location line="+4"/>
