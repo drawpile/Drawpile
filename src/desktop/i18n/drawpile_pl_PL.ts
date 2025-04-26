@@ -5273,21 +5273,21 @@ do 64x64 pikseli.</translation>
         <source>Random</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Losowy</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Stroke</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Obrys</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Direction</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kierunek</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5308,7 +5308,7 @@ do 64x64 pikseli.</translation>
         <source>Custom</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. the input is the output of the &quot;Custom input&quot; setting</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Własne</translation>
     </message>
     <message>
         <location line="+4"/>
