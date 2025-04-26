@@ -5259,14 +5259,14 @@ do 64x64 pikseli.</translation>
         <source>Fine speed</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. &quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Prędkość odpowiednia</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Prędkość całkowita</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5294,14 +5294,14 @@ do 64x64 pikseli.</translation>
         <source>Declination/Tilt</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Deklinacja/pochylenie</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ascension</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Obrót nachylenia rysika</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5315,63 +5315,63 @@ do 64x64 pikseli.</translation>
         <source>Direction 360</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to the direction of the stroke</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kierunek 360</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Attack Angle</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kąt Natarcia</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination/Tilt X</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Deklinacja/pochylenie w osi X</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination/Tilt Y</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Deklinacja/pochylenie w osi Y</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap X</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mapa siatki X</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap Y</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mapa siatki Y</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Zoom Level</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to canvas zoom</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Poziom przybliżenia</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Barrel Rotation</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Obrót:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Base Brush Radius</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Podstawowy Promień Pędzla</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5384,28 +5384,29 @@ do 64x64 pikseli.</translation>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nacisk raportowany przez tablet. Przeważnie między 0.0 i 1.0 - ta wartość może wzrastać gdy &apos;wzmocnienie nacisku&apos; jest używane. Jeśli używasz myszki wartość będzie wynosić 0.5 przy naciśniętym przycisku.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Jak szybko poruszasz kursorem. Ta wartość może się bardzo szybko zmieniać. Jeśli chcesz zobaczyć wartości prędkości użyj funkcji &apos;Wyświetl na konsoli informacje o urządzeniach wskazujących&apos; z menu pomoc.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Podobnie jak &apos;Prędkość odpowiednia&apos; lecz wolniej zmienia swoje wartości.
+Sprawdź również &apos;Filtr prędkości całkowitej&apos;.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Szybki losowy szum. Jego wartość zmienia się przy każdej wartości zwróconej przez tablet. Przyjmuje wartości od 0 do 1.</translation>
     </message>
     <message>
         <location line="+3"/>
