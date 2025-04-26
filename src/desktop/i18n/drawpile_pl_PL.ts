@@ -4914,7 +4914,7 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+2"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogólne</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -4964,7 +4964,7 @@ do 64x64 pikseli.</translation>
         <location line="+23"/>
         <location line="+14"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb mieszania kolorów:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4984,7 +4984,7 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+14"/>
         <source>Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb usuwania</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -5057,7 +5057,7 @@ do 64x64 pikseli.</translation>
         <location line="+10"/>
         <location line="+419"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Wymiary</translation>
     </message>
     <message>
         <location line="-419"/>
@@ -5065,7 +5065,7 @@ do 64x64 pikseli.</translation>
         <location line="+59"/>
         <location line="+71"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>Wejście</translation>
     </message>
     <message>
         <location line="-158"/>
@@ -5081,7 +5081,7 @@ do 64x64 pikseli.</translation>
         <location line="+11"/>
         <location line="+362"/>
         <source>Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Przeźroczystość</translation>
     </message>
     <message>
         <location line="-331"/>
@@ -5252,7 +5252,7 @@ do 64x64 pikseli.</translation>
         <source>Pressure</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ciśnienie</translation>
     </message>
     <message>
         <location line="+4"/>
