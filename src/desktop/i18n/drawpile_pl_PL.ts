@@ -4899,7 +4899,7 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+133"/>
         <source>Brush Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Edytor Ikon Pędzli</translation>
     </message>
     <message>
         <location line="+105"/>
@@ -4934,7 +4934,7 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+80"/>
         <source>Brush Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Typ Pędzla</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4969,7 +4969,7 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+14"/>
         <source>Paint Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb Malowania</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4989,12 +4989,12 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+12"/>
         <source>Pick Initial Color from Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz początkowy kolor z warstwy</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Lock Alpha (Recolor Mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zablokuj alfa (tryb rekoloryzacji)</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -5051,7 +5051,7 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="-1"/>
         <source>Minimum Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimalny rozmiar: </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -5075,7 +5075,7 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+17"/>
         <source>Minimum Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Przezroczystość minimapy </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -5097,7 +5097,7 @@ do 64x64 pikseli.</translation>
         <location line="+11"/>
         <location line="+308"/>
         <source>Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Twardość</translation>
     </message>
     <message>
         <location line="-277"/>
@@ -5118,7 +5118,7 @@ do 64x64 pikseli.</translation>
         <location line="+11"/>
         <location line="+241"/>
         <source>Smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozmazywanie:</translation>
     </message>
     <message>
         <location line="-217"/>
@@ -5143,19 +5143,19 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Maksymalna prędkość: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Maksymalna odległość </translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+19"/>
         <location line="+36"/>
         <source>Apply to All</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastosuj dla wszystkich</translation>
     </message>
     <message>
         <location line="-53"/>
@@ -5190,7 +5190,7 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+21"/>
         <source>Value: </source>
-        <translation type="unfinished"></translation>
+        <translation>Wartość: </translation>
     </message>
     <message>
         <location line="+11"/>
