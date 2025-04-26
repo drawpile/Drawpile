@@ -198,7 +198,7 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.brush_mode = DP_BlendMode(brushBlendMode);
 
 	int eraseBlendMode = canvas::blendmode::fromOraName(
-		o.value(QStringLiteral("blend")).toString());
+		o.value(QStringLiteral("blenderase")).toString());
 	if(o.contains(QStringLiteral("blenderasealpha"))) {
 		canvas::blendmode::adjustAlphaBehavior(
 			eraseBlendMode,
@@ -319,7 +319,7 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 	brush_mode = DP_BlendMode(brushBlendMode);
 
 	int eraseBlendMode = canvas::blendmode::fromOraName(
-		settings.value(QStringLiteral("blend")).toString());
+		settings.value(QStringLiteral("blenderase")).toString());
 	if(settings.contains(QStringLiteral("blenderasealpha"))) {
 		canvas::blendmode::adjustAlphaBehavior(
 			eraseBlendMode,

@@ -853,9 +853,13 @@ void BrushSettings::selectBrushSlot(int i)
 		emit backgroundColorChanged(d->currentBackgroundColor());
 	}
 
-	updateUi();
-
 	bool inEraserSlot = i == ERASER_SLOT_INDEX;
+	if(inEraserSlot) {
+		setEraserMode(true);
+	} else {
+		updateUi();
+	}
+
 	if((previousSlot == ERASER_SLOT_INDEX) != inEraserSlot) {
 		emit eraseModeChanged(inEraserSlot);
 	}
@@ -958,7 +962,7 @@ void BrushSettings::changeCurrentPresetThumbnail(const QPixmap &thumbnail)
 
 void BrushSettings::setEraserMode(bool erase)
 {
-	Q_ASSERT(!isCurrentEraserSlot());
+	Q_ASSERT(erase || !isCurrentEraserSlot());
 
 	brushes::ActiveBrush &brush = d->currentBrush();
 	brushes::ClassicBrush &classic = brush.classic();
