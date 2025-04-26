@@ -4618,16 +4618,16 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message numerus="yes">
         <location line="+88"/>
         <source> frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform> klatka</numerusform>
+            <numerusform> klatki</numerusform>
+            <numerusform> klatki</numerusform>
         </translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Animation Import Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Błąd importu animacji</translation>
     </message>
 </context>
 <context>
@@ -4789,7 +4789,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
         <location line="+8"/>
         <source>Import Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj awatara</translation>
     </message>
     <message>
         <location line="-6"/>
@@ -4800,7 +4800,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+6"/>
         <source>Picture is too small</source>
-        <translation type="unfinished"></translation>
+        <translation>Obraz jest za mały</translation>
     </message>
 </context>
 <context>
@@ -4819,7 +4819,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+164"/>
         <source>Brush Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj pędzel</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
@@ -4833,7 +4833,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>Brush export failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksport pędzla nie powiódł się.</translation>
     </message>
     <message numerus="yes">
         <location line="+7"/>
@@ -4919,7 +4919,7 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+0"/>
         <source>Core brush settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Podstawowe ustawienia pędzla.</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -4940,19 +4940,19 @@ do 64x64 pikseli.</translation>
         <location line="+2"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+425"/>
         <source>Round Pixel Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Okrągły pędzel pikselowy</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Square Pixel Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pędzel pikselowy kwadratowy</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Soft Round Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Miękki okrągły pędzel</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5015,17 +5015,17 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="-267"/>
         <source>Stabilization Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb stabilizacji:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Stabilizator oparty na czasie</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Średnie wygładzanie</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -5091,7 +5091,7 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+17"/>
         <source>Minimum Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimalna twardość: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -5112,7 +5112,7 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+17"/>
         <source>Minimum Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimalne rozmazywanie: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -5123,7 +5123,7 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="-217"/>
         <source>No dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Brak dynamiki</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5160,32 +5160,32 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="-53"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw maksymalną prędkość dla rozmiaru, krycia, twardości i rozmazywania jednocześnie.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maksymalna prędkość ustawiona dla wszystkich ustawień tego pędzla.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw maksymalną odległość dla opcji Rozmiar, Krycie, Twardość i Rozmazywanie jednocześnie.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maksymalna odległość ustawiona dla wszystkich ustawień tego pędzla.</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw tę krzywą jednocześnie dla opcji Rozmiar, Krycie, Twardość i Rozmazywanie.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Curve set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zestaw krzywych dla wszystkich ustawień tego pędzla.</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -5210,42 +5210,42 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+59"/>
         <source>The radius of the brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Promień pędzla.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Opaqueness of the brush, 0% is transparent, 100% fully opaque.</source>
-        <translation type="unfinished"></translation>
+        <translation>Krycie pędzla: 0% oznacza przezroczystość, 100% oznacza całkowite krycie.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Edge hardness, 0% is blurry, 100% is sharp.</source>
-        <translation type="unfinished"></translation>
+        <translation>Twardość krawędzi: 0% oznacza krawędź rozmytą, 100% ostrą.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mieszanie kolorów na warstwie, na której rysujesz.</translation>
     </message>
     <message>
         <location line="+175"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Spowalnia ruch, aby ustabilizować go w czasie. Wysokie wartości dają bardzo gładkie linie, ale będą rysowane powoli. Gdy przestaniesz się poruszać, linia dogoni kursor. Wygładzanie tabletu z preferencji wprowadzania danych również ma zastosowanie.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>Po prostu uśrednia liczbę danych wejściowych. Wydaje się szybszy niż stabilizator oparty na czasie, ale nie tak płynny i nie dogoni kursora, gdy przestaniesz się poruszać. Zastępuje wygładzanie tabletu z preferencji wejściowych.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown stabilization mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nieznany tryb stabilizacji.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronizing stabilization settings with brushes is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronizacja ustawień stabilizacji z pędzlami jest wyłączona.</translation>
     </message>
     <message>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+14"/>
