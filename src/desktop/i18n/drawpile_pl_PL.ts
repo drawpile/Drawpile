@@ -2204,13 +2204,13 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location line="+1"/>
         <source>1 Hour</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>1 godzina</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Forever</source>
         <comment>user pointer stay time</comment>
-        <translation type="unfinished"></translation>
+        <translation>Zawsze</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -2270,7 +2270,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="-1918"/>
         <source>Disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozłączony</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2285,7 +2285,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>Could not establish a connection to the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie można nawiązać&#xa0;połączenia z serwerem RDP „%s”.</translation>
     </message>
     <message>
         <location line="+1414"/>
@@ -2499,7 +2499,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Przełącz widoczność programu uruchamiającego</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2530,7 +2530,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+38"/>
         <source>&amp;Invert Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Odwróć zaznaczenie</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -3562,7 +3562,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+7"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Zatrzymaj</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -3650,7 +3650,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Panoramuj</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4394,7 +4394,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+10"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyjście</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4429,7 +4429,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+12"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Format:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4592,7 +4592,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+6"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz</translation>
     </message>
     <message>
         <location line="+13"/>
