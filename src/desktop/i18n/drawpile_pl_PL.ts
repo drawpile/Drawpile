@@ -161,12 +161,12 @@
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation>Stabilizator </translation>
+        <translation>Stabilizacja: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation>Wygładzanie </translation>
+        <translation>Wygładzanie: </translation>
     </message>
 </context>
 <context>
@@ -2090,22 +2090,22 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>&amp;Fit Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dopasuj płótno</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fit Canvas &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Dostosuj płótno &amp;szerokość</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fit Canvas &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Dopasuj płótno &amp;wysokość</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Resetuj obrót płótna</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -2115,7 +2115,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Odwróć płótno lustrzanie</translation>
     </message>
     <message>
         <location line="+2"/>
