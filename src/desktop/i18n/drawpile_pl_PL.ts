@@ -2120,17 +2120,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation>Odbij ścieżkę w poziomie</translation>
+        <translation>Odbij płótno w poziomie</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>odbij/odwróć płótno poziomo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Odwróć płótno</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2145,7 +2145,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+9"/>
         <source>Hide From Cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukryj przed kursorem</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2155,17 +2155,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+3"/>
         <source>Show Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż wybraną &amp;maskę</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle selection display between a mask and an outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Przełączanie wyświetlania zaznaczenia pomiędzy maską i konturem</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dopasuj do ekranu</translation>
     </message>
     <message>
         <location line="+116"/>
@@ -2175,12 +2175,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+0"/>
         <source>Show only the current parent layer group</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż tylko bieżącą grupę warstw nadrzędnych</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Stay Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Czas pobytu</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2215,22 +2215,22 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+57"/>
         <source>Clear Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Wyczyść źródło wypełnienia</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Toggle Layer Check State</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Przełącz stan sprawdzania warstwy</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zaznacz wszystko</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Uncheck All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Odznacz wszystko</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2275,7 +2275,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>You&apos;ve been disconnected from the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zostałeś rozłączony z serwerem.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2535,28 +2535,28 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+4"/>
         <source>Select Layer &amp;Bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz granice &amp;warstw</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Layer to Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wybór warstw</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Expand/Shrink/Feather Selection</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rozwiń/Zmniejsz/Rozmyj zaznaczone</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>&amp;Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Modyfikuj</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Transform the selection, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Przekształć wybór, a następnie przełącz narzędzia z powrotem</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2566,52 +2566,52 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Przekształć tylko samą maskę wyboru, a następnie przełącz narzędzia z powrotem</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Mirror Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Modyfikuj (lustro)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Odbij przekształcony obraz poziomo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>odbicie lustrzane/odwrócenie przekształconego obrazu w poziomie</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Flip Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Przekształć</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the transformed image upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Odwróć przekształcony obraz do góry nogami</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>mirror/flip transformed image vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>odbicie lustrzane/odwrócenie przekształconego obrazu w pionie</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Rotate Transform Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rotate Transform Clockwise</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotate Transform &amp;Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Obróć i przekształć w kierunku przeciwnym do ruchu wskazówek zegara</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Shrink Transform to &amp;Fit View</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmniejsz i przekształcaj, aby dopasować widok</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2621,7 +2621,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+48"/>
         <source>Selectio&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybie&amp;rz</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -2751,7 +2751,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+5"/>
         <source>Create Group on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Utwórz grupę na podstawie bieżącej klatki kluczowej</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2872,7 +2872,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+35"/>
         <source>Cause Crash…</source>
-        <translation type="unfinished"></translation>
+        <translation>Spowoduj awarię…</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2887,57 +2887,57 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Swap current foreground and background color with each other</source>
-        <translation type="unfinished"></translation>
+        <translation>Zamień bieżący kolor pierwszego planu i tła</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set foreground color to black and background color to white</source>
-        <translation type="unfinished"></translation>
+        <translation>Ustaw kolor pierwszego planu na czarny, a kolor tła na biały</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Resetuj pędzel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Zresetuj wszystkie sloty &amp; na pędzle</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Zresetuj wszystkie &amp;pędzle</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Next Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Następny pędzel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Previous Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Poprzedni pędzel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Następny tag pędzla</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Poprzedni tag pędzla</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Następny slot pędzla</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Poprzednie slot pędzla</translation>
     </message>
     <message>
         <location line="+143"/>
@@ -3295,12 +3295,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="-193"/>
         <source>Create Layers on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Utwórz warstwy na bieżącej klatce kluczowej</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Utwórz warstwy w następnej klatce kluczowej</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3640,12 +3640,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+3"/>
         <source>Selection (Magic Wand)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaznacz (Różdżka)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>Modyfikuj</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3673,7 +3673,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+50"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aby zresetować sesję, musisz być operatorem.</translation>
     </message>
 </context>
 <context>
@@ -4366,7 +4366,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+106"/>
         <source>Retrieving %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Pobieranie %1...</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -4389,7 +4389,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../dialogs/animationexportdialog.cpp" line="+29"/>
         <source>Export Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Eksportuj animację</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4399,22 +4399,22 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+4"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished"></translation>
+        <translation>Klatki jako PNG</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Klatki jako pliki PNG w formacie ZIP</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>Animowany GIF</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>Animowany WEBP</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4517,7 +4517,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location filename="../dialogs/animationimportdialog.cpp" line="+43"/>
         <source>Import Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Importuj animację</translation>
     </message>
     <message>
         <location line="+18"/>
