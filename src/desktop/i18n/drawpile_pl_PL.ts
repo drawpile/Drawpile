@@ -6924,7 +6924,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/keyframepropertiesdialog.cpp" line="+127"/>
         <source>Key Frame Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Właściwości Kadru</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6962,7 +6962,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+110"/>
         <source>Pass Through</source>
-        <translation type="unfinished"></translation>
+        <translation>Przekaz do aplikacji</translation>
     </message>
 </context>
 <context>
@@ -7000,7 +7000,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+31"/>
         <source>Layout Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa układu</translation>
     </message>
     <message>
         <location line="-242"/>
@@ -7025,7 +7025,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Hyena</source>
-        <translation type="unfinished"></translation>
+        <translation>Hiena</translation>
     </message>
     <message>
         <location line="+1"/>
