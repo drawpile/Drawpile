@@ -6862,7 +6862,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-122"/>
         <source>Invite link copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Link z zaproszeniem skopiowany do schowka.</translation>
     </message>
     <message numerus="yes">
         <location line="+22"/>
@@ -6929,7 +6929,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tytuł:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6990,7 +6990,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+136"/>
         <source>Undelete</source>
-        <translation type="unfinished"></translation>
+        <translation>Cofnij usunięcie</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7005,7 +7005,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-242"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Domyślnie</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7020,7 +7020,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Poziomo</translation>
     </message>
     <message>
         <location line="+1"/>
