@@ -7025,17 +7025,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Hyena</source>
-        <translation>Hiena</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>W stylu Krity</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>MediBang-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>W stylu MediBang</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7045,17 +7045,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Paint.NET-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>W stylu Paint.NET</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>SAI-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>w stylu SAI</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Spider</source>
-        <translation type="unfinished"></translation>
+        <translation>Pająk</translation>
     </message>
 </context>
 <context>
@@ -7063,7 +7063,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/logindialog.cpp" line="+169"/>
         <source>Report...</source>
-        <translation type="unfinished"></translation>
+        <translation>Raport...</translation>
     </message>
     <message>
         <location line="+157"/>
@@ -7078,17 +7078,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+20"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wprowadź hasło do konta. Jeśli nie masz konta, musisz je założyć. Ten serwer nie podaje informacji, jak to zrobić.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wprowadź hasło do konta. Jeśli nie masz konta, musisz je założyć na %1.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta nazwa użytkownika należy do zarejestrowanego konta. Jeśli to nie jest Twoje konto, anuluj i spróbuj ponownie z inną nazwą.</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -7142,82 +7142,82 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+48"/>
         <location line="+161"/>
         <source>Enter the name you want to use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wprowadź nazwę, której chcesz użyć.</translation>
     </message>
     <message>
         <location line="-99"/>
         <source>Server Rules for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Reguły serwera ( %1)</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Log in with %1 account</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaloguj się za pomocą konta %1</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wprowadź nazwę, której chcesz użyć. Zobacz %1, aby uzyskać więcej informacji o tym serwerze.</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta nazwa użytkownika nie należy do konta na tym serwerze. To nie jest twoje konto drawpile.net!</translation>
     </message>
     <message>
         <location line="+552"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Wprowadź nazwę użytkownika i hasło do swojego konta na tym serwerze. To nie jest twoje konto drawpile.net!</translation>
     </message>
     <message>
         <location line="-636"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Możesz kontynuować bez konta. Jeśli mimo wszystko chcesz je zarejestrować, możesz to zrobić na %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>An account is required. You can register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wymagane jest konto. Możesz je założyć na %1.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
-        <translation type="unfinished"></translation>
+        <translation>Możesz kontynuować bez konta. Serwer nie udostępnia również żadnych informacji o tym, jak je zarejestrować.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wymagane jest założenie konta, ale serwer nie udostępnia informacji o tym, jak je założyć.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>See %1 for more information about this server. To register an account, visit %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zobacz %1, aby uzyskać więcej informacji o tym serwerze. Aby zarejestrować konto, odwiedź %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Więcej informacji o tym serwerze znajdziesz na %1.</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>This username belongs to an account, pick a different one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta nazwa użytkownika jest przypisana do konta, wybierz inną.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>The %1 authentication is not working.</source>
-        <translation type="unfinished"></translation>
+        <translation>Uwierzytelnianie %1 nie działa.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta nazwa użytkownika nie pasuje do konta na %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta nazwa użytkownika należy do konta serwera. Nie możesz jej używać do logowania się przez %1 na tym serwerze.</translation>
     </message>
     <message>
         <location line="+6"/>
