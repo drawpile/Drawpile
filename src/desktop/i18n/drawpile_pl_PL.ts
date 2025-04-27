@@ -2867,7 +2867,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+28"/>
         <source>System Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>Informacje o systemie</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -3502,7 +3502,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation type="unfinished"></translation>
+        <translation>Skocz do tyłu</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3517,12 +3517,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+17"/>
         <source>Skip Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>Skocz do &amp;przodu</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Prędkość odtwarzania </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5413,42 +5413,42 @@ Sprawdź również &apos;Filtr prędkości całkowitej&apos;.</translation>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wartość ta powoli wzrasta od zera do jedynki przy pociągnięciu pędzlem. Można tą opcję również skonfigurować tak, by wartość przeskoczyła do zera i z powrotem wzrastała. Zobacz również na parametry: &apos;Czas pociągnięcia&apos; i &apos;wstrzymanie pociągnięcia&apos;.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kąt nachylenia pędzla w stopniach. Może przyjmować wartości od 0.0 do 180.0 stopni. Domyślną wartością jest 180.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Odchylenie nachylenia rysika. Wartość 0 gdy rysik jest ustawiony równolegle do tabletu, a gdy prostopadle, wartość wynosi 90.0.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Faktyczny obrót nachylenia rysika. Wartość wynosi 0 gdy końcówka rysika jest zwrócona do ciebie, +90 gdy jest obrócona w prawo o 90 stopni, a -90 gdy jest obrócona w lewo o 90 stopni.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Te wartości są definiowane przez użytkownika. Więcej szczegółów znajdziesz pod opcją &apos;Dowolna wartość&apos;.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The angle of the stroke, from 0 to 360 degrees.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kąt pociągnięcia, od 0 do 360 stopni.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5470,14 +5470,14 @@ Zakres wynosi +/-180,0.
         <source>Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Deklinacja pochylenia rysika na osi X. 90/-90, gdy rysik jest ustawiony równolegle do tabletu, a 0, gdy jest prostopadły do tabletu.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt on Y-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Deklinacja pochylenia rysika na osi Y. 90/-90, gdy rysik jest ustawiony równolegle do tabletu, a 0, gdy jest prostopadły do tabletu.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5504,7 +5504,9 @@ Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Aktualny poziom powiększenia widoku płótna.
+Logarytmicznie: 0,0 to 100%, 0,69 to 200%, -1,38 to 25%.
+W przypadku ustawienia Promień, użycie wartości -4,15 powoduje, że rozmiar pędzla jest w przybliżeniu stały, w stosunku do poziomu powiększenia.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5542,14 +5544,14 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Opacity multiply</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mnożenie krycia</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Opacity linearize</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Liniowość krycia</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5563,70 +5565,70 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Hardness</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Twardość</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pixel feather</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wygładzanie pikseli</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Dabs per basic radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ilość ciapek na podstawowy promień</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Dabs per actual radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ilość ciapek na właściwy promień</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Dabs per second</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ilość ciapek na sekundę</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Radius by random</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Losowa średnica</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fine speed filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Filtr prędkości odpowiedniej</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Gross speed filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Filtr prędkości całkowitej</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fine speed gamma</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Gamma prędkości odpowiedniej</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Gross speed gamma</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Gamma całkowitej prędkości</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5640,35 +5642,35 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Offset by speed</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Odstęp zależny od prędkości</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Offset by speed filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Filtr odstępu zależnego od prędkości</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Slow position tracking</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Powolnienie wygładzanie pozycji</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Slow tracking per dab</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Powolnie wygładzanie na kropkę</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Tracking noise</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Szum wygładzania</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5676,7 +5678,7 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Color hue</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Barwa koloru</translation>
     </message>
     <message>
         <location line="-198"/>
@@ -5684,77 +5686,77 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Color saturation</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nasycenie koloru</translation>
     </message>
     <message>
         <location line="-198"/>
         <source>Color value</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Jasność koloru</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zapisz kolor</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color hue</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zmień odcień koloru</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color lightness (HSL)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zmień jasność koloru (HSL)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color satur. (HSL)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zmień nasycenie koloru (HSL)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color value (HSV)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zmień wartość koloru (HSV)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color satur. (HSV)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zmień nasycenie koloru (HSV)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Rozmazanie</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge length</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Długość rozmycia</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Promień rozmycia</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5768,63 +5770,63 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Stroke threshold</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Margines pociągnięcia</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Stroke duration</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Długość pociągnięcia</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Stroke hold time</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wstrzymanie pociągnięcia</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Custom input</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Dowolna wartość</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Custom input filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Filtr wartości dowolnej</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Elliptical dab: ratio</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Eliptyczna kropka: proporcja</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Elliptical dab: angle</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Eliptyczna kropka: kąt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Direction filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Filtr kierunkowy</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Lock alpha</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zablokuj kanał alfa</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5838,35 +5840,35 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Snap to pixel</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Przyczep do piksela</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pressure gain</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wzmocnienie nacisku</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap Scale</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Skala siatki</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap Scale X</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Skala siatki</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap Scale Y</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Skala siatki</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5971,14 +5973,14 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Posterization levels</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Poziomy posteryzacji</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Pigment</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5992,7 +5994,7 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
 (also known as alpha or opacity)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>0 oznacza przeźroczysty pędzel, 1 oznacza w pełni widoczny</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6000,7 +6002,8 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
 This setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to &apos;opaque&apos;.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>To zostaje zwielokrotnione z nieprzeźroczystością. Powinieneś jedynie zmienić wejściowy nacisk dla tego ustawienia. Zamiast tego użyj &apos;nieprzeźroczystości&apos; żeby krycie było zależne od szybkości.
+To ustawienie odpowiada za zatrzymanie malowania gdy zaniknie nacisk - zachowanie jest identyczne z &quot;nieprzezroczyste&quot;.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6009,7 +6012,10 @@ This setting is responsible to stop painting when there is zero pressure. This i
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Poprawia nieliniowość poprzez łączenie wielu ciapek jedna z drugą. Ta operacja daje naturalny wygląd przejścia podczas zmiany nacisku i ustawionej opcji&quot;Mnożenia krycia&quot;.
+0.9 jest dobrą wartością przy standardowych pociągnięciach pędzla. Jeśli ustawisz mniej pędzel będzie &quot;skakał&quot;. Możesz ustawić więcej przy używaniu opcji &quot;ilość ciapek na sekundę&quot;.
+0.0 używana jest przy rysowaniu pojedynczych ciapek
+1.0 używana jest do końcowych posunięć pędzla - każdy piksel otrzymuje (ciapek na promień * 2) średnio podczas posunięcia</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6018,14 +6024,16 @@ This setting is responsible to stop painting when there is zero pressure. This i
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Podstawowa wielkość pędzla (logarytmiczna)
+ 0.7 oznacza 2 piksele
+ 3.0 oznacza 20 pikseli</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Twardość brzegów okręgu pędzla (ustawienie 0 oznacza, że pędzel nie będzie malował). By osiągnąć maksimum twardości wyłącz Wygładzanie pikseli.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6035,28 +6043,31 @@ This setting is responsible to stop painting when there is zero pressure. This i
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Te ustawienie zmniejsza twardość gdy potrzeba zapobiec efektom schodkowania pikseli (aliasing) bardziej rozmywając kropki.
+0.0 wyłącz (dla bardzo mocnych gumek i pędzli pikselowych)
+1.0 rozmyj jeden piksel (dobra wartość)
+5.0 widoczne rozmycie, a cienkie kreski zanikną</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ilość rysowanych ciapek podczas posunięcia pędzlem na odległość jednego promienia (precyzyjniej: wartość bazowa promienia)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ilość rysowanych ciapek podczas posunięcia pędzlem na odległość rzeczywistego promienia, które może zmieniać się dynamicznie poprzez nacisk</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ilość ciapek na sekundę - niezależnie od ruchów kursora</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6065,7 +6076,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zmienia losowo średnicę każdej ciapki. Podobny efekt uzyskuje opcja &quot;Wartość losowa&quot; z tą różnicą, że losowy promień zmniejsza krycie przy większej ciapce oraz nie jest zależny od parametru &quot;ilość ciapek na właściwy promień&quot;</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6073,14 +6084,15 @@ This setting is responsible to stop painting when there is zero pressure. This i
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wartość określa jak bardzo prawdziwa prędkość jest łagodzona przez wartość &apos;prędkości odpowiedniej&apos;.
+0.0 oznacza natychmiastową zmianę prędkości do rzeczywistej (nie zalecane ale można eksperymentować)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Podobnie jak &apos;filtr prędkości odpowiedniej&apos; ale ma inny zasięg</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6090,14 +6102,17 @@ This setting is responsible to stop painting when there is zero pressure. This i
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ta wartość zmienia reakcję &apos;prędkości odpowiedniej&apos; przy bardzo szybkim i bardzo wolnym poruszaniu kursorem. Najlepiej widoczne efekty są w przypadku ustawienia tej opcji na wartość promienia.
+-8.0 &apos;prędkość odpowiednia&apos; nie zostaje zwiększana przez bardzo szybkie ruchy
++8.0 &apos;prędkość odpowiednia&apos; zostaje znacznie zwiększona przez bardzo szybkie ruchy
+W przypadku bardzo wolnych ruchów reakcje są odwrotne.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as &apos;fine speed gamma&apos; for gross speed</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Podobnie jak &apos;gamma prędkości odpowiedniej&apos; ale dla &apos;prędkości całkowitej&apos;</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6107,7 +6122,10 @@ For very slow speed the opposite happens.</source>
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Dodaje losowy odstęp pomiędzy linią pędzla miejscem gdzie zostanie narysowana kropka
+0.0 wyłączone
+1.0 maksymalny odstęp do wielkości podstawowego promienia
+&lt;0.0 ujemne wartości wyłączają drgania</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6117,42 +6135,45 @@ For very slow speed the opposite happens.</source>
 &lt; 0 draw where the pointer comes from</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>W odległości od kursora pędzla zależnej od prędkości
+= 0 wyłączone
+&gt; 0 przed kursorem
+&lt; 0 maluj za kursorem</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wartość określa jak szybko odstęp wraca do zera gdy kursor się zatrzyma</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Parametr spowalnia rysowanie posunięcia pędzla w celu jej wygładzenia. Opcja przydaje się w przypadku rysowania gładkich, komiksowych linii. 0 wyłącza opcje. Im większa wartość tym większe wygładzenie.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Similar as above but at brushdab level (ignoring how much time has passed if brushdabs do not depend on time)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Podobnie jak &apos;Powolne wygładzanie pozycji&apos;, z tą różnicą, że nie jest zależne od czasu, a tylko od ilości rysowanych ciapek</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Dodaje wartości losowe do pobranej pozycji kursora powodując rysowanie wielu małych linii w losowym kierunku. Można poeksperymentować mieszając tę opcję z &apos;Powolnym wygładzaniem&apos;</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wartość koloru (jasność, intensywność)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6162,7 +6183,10 @@ For very slow speed the opposite happens.</source>
  1.0 set the active color to the brush color when selected</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Gdy wybierasz pędzle kolor może być przywrócony do koloru zapisanego z pędzlem.
+0.0 nie modyfikuj aktywnego koloru podczas wybierania pędzla
+0.5 zmień aktywny kolor do koloru pędzla
+1.0 ustaw aktywny kolor do koloru pędzla gdy zostanie wybrany</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6172,7 +6196,10 @@ For very slow speed the opposite happens.</source>
  0.5 counterclockwise hue shift by 180 degrees</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zmiana odcienia koloru.
+-0.1 mała zmiana odcienia (zgodnie ze wskazówkami zegara)
+ 0.0 wyłączone
+ 0.5 zmienia odcień w przeciwnym kierunku do wskazówek zegara o 180 stopni</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6182,7 +6209,10 @@ For very slow speed the opposite happens.</source>
  1.0 whiter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zmiana jasności koloru (luminacji) poprzez użycie modelu kolorów HSL.
+-1.0 mniej światła
+ 0.0 wyłączone
+ 1.0 więcej światła</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6192,7 +6222,10 @@ For very slow speed the opposite happens.</source>
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zmień nasycenie koloru poprzez użycie modelu kolorów HSL
+-1.0 bardziej szare
+ 0.0 wyłączone
+ 1.0 więcej koloru</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6202,7 +6235,10 @@ For very slow speed the opposite happens.</source>
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zmień wartość koloru (jasność i intensywność) poprzez użycie modelu kolorów HSV. Nastawy HSV są zastosowane przed HSL.
+ -1.0 ciemniej
+ 0.0 wyłączone
+ 1.0 jaśniej</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6212,7 +6248,10 @@ For very slow speed the opposite happens.</source>
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Zmień nasycenie koloru poprzez użycie modelu kolorów HSV. Nastawy HSV są zastosowane przed HSL.
+-1.0 bardziej szare
+ 0.0 wyłączone
+ 1.0 więcej koloru</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6222,7 +6261,10 @@ For very slow speed the opposite happens.</source>
  1.0 use only the smudge color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Maluje rozmazanym kolorem aktualnego rysunku powoli przechodząc do koloru pędzla.
+0.0 nie używaj koloru rozmazania
+0.5 mieszaj kolor rozmazania z kolorem pędzla
+1.0 używaj tylko koloru rozmazania</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6232,7 +6274,10 @@ For very slow speed the opposite happens.</source>
 1.0 never change the smudge color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ten parametr kontroluje jak szybko kolor rozmazania przejdzie w faktyczny kolor pędzla.
+0.0 natychmiastowe przejście na kolor pędzla
+0.5 płynnie zmieniaj kolor rozmazania do koloru płótna
+1.0 zawsze używaj koloru rozmycia</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6243,7 +6288,11 @@ For very slow speed the opposite happens.</source>
 +1.6 five times the brush radius (slow performance)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Te ustawienie modyfikuje promień okręgu gdzie pobrano kolor dla rozmazania
+0.0 używaj promienia pędzla
+-0.7 połowa z promienia pędzla (szybkie, ale nie zawsze intuicyjne)
++0.7 podwojony promień pędzla
++1.6 pięciokrotny promień pędzla (wolne działanie)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6253,21 +6302,24 @@ For very slow speed the opposite happens.</source>
  0.5 pixels go towards 50% transparency</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Jak bardzo pędzel ma zachowywać się jak gumka
+ 0.0 zwykłe malowanie
+ 1.0 pełna gumka
+ 0.5 działa w 50% jako gumka, a w 50% jako pędzel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Określa jaki jest wymagany nacisk by zacząć posunięcie pędzla. Wartość ta dotyczy tylko parametrów &apos;Pociągnięcia pędzla&apos;. MyPaint nie wymaga minimalnego nacisku by rozpocząć malowanie.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Określa wymaganą odległość pociągnięcia by wartość &apos;pociągnięcie pędzla&apos; doszła do 1.0. Wartość jest wartością logarytmiczną (ujemne wartości nie odwrócą procesu).</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6276,7 +6328,9 @@ For very slow speed the opposite happens.</source>
 9.9 or higher stands for infinite</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Określa jak długo wartość &apos;pociągniecie pędzla&apos; będzie wynosiła 1.0. Po przekroczeniu &apos;wstrzymania&apos; wartość wróci do 0 i będzie ponownie rosła.
+2.0 oznacza podwójną wartość &apos;długości pociągnięcia&apos;
+9.9 i większe oznaczają nieskończoność</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6284,7 +6338,9 @@ For very slow speed the opposite happens.</source>
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Możesz ustawić dowolną wartość wejściową. Wartość ta polega na uzależnieniu jej od nacisku/prędkości/itp. Później wartość tą można wykorzystać zmieniając tylko ten parametr a nie wszystkie z osobna.
+
+Jeśli ustawisz by wartość zmieniała się przez &apos;losową&apos; możesz uzyskać powolny (gładki) losowy wynik.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6292,14 +6348,15 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
 0.0 no slowdown (changes apply instantly)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Wartość określa jak szybko &apos;wartość dowolna&apos; dochodzi do wartości pożądanej. Opóźnienie te nie jest zależne od czasu ale tylko od ilości rysowanych ciapek.
+0.0 brak opóźnienia (zmiany stosują się bezpośrednio)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Proporcja ciapek; musi wynosić &gt;=10 gdzie 1.0 oznacza idealnie okrągłą ciapkę.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6309,14 +6366,16 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ta wartość określa kąt, w jakim będzie rysowana kropka
+0.0 i 180.0 rysuje horyzontalnie
+45.0 rysuje kropkę pod kątem 45 stopni (zgodnie ze wskazówkami zegara)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Przy małych wartościach zapewnia szybszą reakcję na zmianę kierunku kursora, większe wartości złagodzą reakcję na kierunek</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6326,28 +6385,31 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  1.0 alpha channel fully locked</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nie modyfikuje kanału alfa warstwy (maluj tylko tam gdzie już jest pomalowane)
+0.0 normalne malowanie
+0.5 zastosowana tylko połowa farby
+1.0 kanał alfa całkowicie zablokowany</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Koloryzuj docelową warstwę zmieniając jej barwę i nasycenie z aktywnego koloru pędzla zachowując przy tym wartość i kanał alfa.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Snap brush dab&apos;s center and its radius to pixels. Set this to 1.0 for a thin pixel brush.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Przyczep środek i promień kropki do pikseli. Ustaw 1.0 dla cienkiego pędzla pikselowego.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This changes how hard you have to press. It multiplies tablet pressure by a constant factor.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ta wartość zmienia siłę której musisz użyć do nacisku - zwielokrotnia nacisk tabletu przez stały współczynnik.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6535,7 +6597,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Constraint Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Ograniczenie</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6545,7 +6607,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Obróć Płótno</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6567,7 +6629,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz Kolor</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6577,7 +6639,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmień Pędzel…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6597,7 +6659,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Ogranicz do:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6632,7 +6694,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Unknown type %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>zły typ &apos;%q&apos;</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -6701,7 +6763,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/curvepresetdialog.cpp" line="+32"/>
         <source>Use</source>
-        <translation type="unfinished"></translation>
+        <translation>Użyj</translation>
     </message>
     <message>
         <location line="+3"/>
