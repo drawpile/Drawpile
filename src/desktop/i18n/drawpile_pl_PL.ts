@@ -467,7 +467,7 @@
     <message>
         <location line="+2"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2817,7 +2817,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+66"/>
         <source>&amp;Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wybierz</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2857,7 +2857,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Panoramuj</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3441,7 +3441,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location filename="../utils/widgetutils.cpp" line="-87"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -4814,7 +4814,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location line="+17"/>
         <source>Export</source>
         <extracomment>This text on a button, so it&apos;s a verb, not a noun.</extracomment>
-        <translation type="unfinished">Eksport</translation>
+        <translation>Exportuj</translation>
     </message>
     <message>
         <location line="+164"/>
@@ -5535,7 +5535,7 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Opacity</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Przeźroczystość</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5556,7 +5556,7 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Promień</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5633,7 +5633,7 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Jitter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Odchylenie</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5761,7 +5761,7 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Eraser</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Gumka</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5831,7 +5831,7 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Colorize</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kolorowanie</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5894,14 +5894,14 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Offset Y</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Przesunięcie Y</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Offset X</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Przesunięcie X</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5964,7 +5964,7 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Posterize</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Posteryzacja</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6733,7 +6733,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+0"/>
         <location line="+16"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nazwa</translation>
     </message>
     <message>
         <location line="+0"/>
