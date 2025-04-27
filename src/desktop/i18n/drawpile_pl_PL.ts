@@ -7068,7 +7068,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+157"/>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>Akceptuj</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -7098,20 +7098,20 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Decline</source>
-        <translation type="unfinished"></translation>
+        <translation>Odmów</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+12"/>
         <location line="+12"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Reguły</translation>
     </message>
     <message>
         <location line="-16"/>
         <location line="+22"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Wstecz</translation>
     </message>
     <message>
         <location line="+198"/>
@@ -7131,7 +7131,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+63"/>
         <source>Remove Account</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuń konto</translation>
     </message>
     <message>
         <location line="+1"/>
