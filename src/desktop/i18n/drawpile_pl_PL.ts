@@ -6815,12 +6815,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Smooth Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Wygładź</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth In</source>
-        <translation type="unfinished"></translation>
+        <translation>Wygładź</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6835,7 +6835,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualny (niezapisany)</translation>
     </message>
 </context>
 <context>
@@ -6975,17 +6975,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>%1 (new)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (nowy)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (usunięto)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (renamed from %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (zmieniono nazwę z %2)</translation>
     </message>
     <message>
         <location line="+136"/>
@@ -7010,12 +7010,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Default Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Domyślna animacja</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>FireAlpaca-esque</source>
-        <translation type="unfinished"></translation>
+        <translation>W stylu FireAlpaca</translation>
     </message>
     <message>
         <location line="+1"/>
