@@ -34,7 +34,7 @@
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation>الجلسة:</translation>
+        <translation>الجَلسة:</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -44,7 +44,7 @@
     <message>
         <location line="+28"/>
         <source>Entire session</source>
-        <translation>الجلسة كاملة</translation>
+        <translation>الجَلسة كاملة</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -83,17 +83,17 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+64"/>
         <source>Brush type</source>
-        <translation>نوع الفرشه</translation>
+        <translation>نوع الفُرشاة</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Pick initial color from layer</source>
-        <translation>اختر اللون الأولي من الطبقة</translation>
+        <translation>اختر اللون المبدئي من الطبقة</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation>قفل ألفا (وضع إعادة التلوين)</translation>
+        <translation>قُفْل الشفافية (وضع إعادة التلوين)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -108,7 +108,7 @@
     <message>
         <location line="+24"/>
         <source>px</source>
-        <translation>بيكسل</translation>
+        <translation>بكسل</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -123,12 +123,12 @@
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation>العتامة: </translation>
+        <translation>الشفافية: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation>الحدة: </translation>
+        <translation>الحِدَّة: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -174,7 +174,7 @@
     <message>
         <location filename="../ui/canvasshortcutsdialog.ui" line="+14"/>
         <source>Canvas Shortcut</source>
-        <translation>اختصار اللوحه</translation>
+        <translation>اختصار للوحة</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -190,27 +190,27 @@
         <location line="+16"/>
         <location line="+50"/>
         <source>Action</source>
-        <translation>فعل</translation>
+        <translation>إجراء</translation>
     </message>
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation>عكس الفعل, مثال عجله الماوس اللف إلى الأمام لتصغير بدل التكبير.</translation>
+        <translation>عكس اتجاه الإدخال. مثالًا، لف عجله الفأرة إلى الأمام للتبعيد بدل التقريب.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation>معكوسا</translation>
+        <translation>معكوس</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation>عكس يسار يمين وفوق تحت, مثل ان تحرك الماوس اماما وخلفا لتغيير حجم الفرشه بدل ان تتحرك يمينا او يسارا.</translation>
+        <translation>تبديل بين الاتجاهات الأفقية و الرأسية، مثلًا، تحريك المؤشر لأعلى و أسفل لتغير حجم الفرشاة بدلًا من تحريكه يمينًا و يسارًا.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation>تبادل المحاور</translation>
+        <translation>تبديل المحاور</translation>
     </message>
 </context>
 <context>
@@ -224,7 +224,7 @@
         <location line="+6"/>
         <location line="+107"/>
         <source>Organization:</source>
-        <translation>تنظيم:</translation>
+        <translation>المنظَمة:</translation>
     </message>
     <message>
         <location line="-100"/>
@@ -234,7 +234,7 @@
     <message>
         <location line="+23"/>
         <source>Issued by</source>
-        <translation>أصدرت من</translation>
+        <translation>أُصدرت بواسطة</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -250,7 +250,7 @@
         <location line="+14"/>
         <location line="+14"/>
         <source>Organization unit:</source>
-        <translation>وحدة التنظيم:</translation>
+        <translation>وحدة المنظَمة:</translation>
     </message>
     <message>
         <location line="-7"/>
@@ -266,17 +266,17 @@
     <message>
         <location line="-43"/>
         <source>Serial number:</source>
-        <translation>رقم سري:</translation>
+        <translation>الرقم التسلسلي:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Issued to</source>
-        <translation>أصدرت ل</translation>
+        <translation>أُصدرت لـ</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Validity period</source>
-        <translation>فترة الصلاحية</translation>
+        <translation>مدّة الصَّلاحِيَة</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -286,7 +286,7 @@
     <message>
         <location line="+41"/>
         <source>Details</source>
-        <translation>التفصيلات</translation>
+        <translation>التفاصيل</translation>
     </message>
 </context>
 <context>
@@ -294,7 +294,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+19"/>
         <source>Select Color</source>
-        <translation>إختر لون</translation>
+        <translation>اختر لون</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -304,12 +304,12 @@
     <message>
         <location line="+7"/>
         <source>Hue</source>
-        <translation>مسحة</translation>
+        <translation>تدرُّج</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Hex</source>
-        <translation>هاكس</translation>
+        <translation>رَقْم سادس عشري</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -324,17 +324,17 @@
     <message>
         <location line="+7"/>
         <source>Green</source>
-        <translation>اخضر</translation>
+        <translation>أخضر</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Alpha</source>
-        <translation>ألفا</translation>
+        <translation>الشفافية</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Red</source>
-        <translation>احمر</translation>
+        <translation>أحمر</translation>
     </message>
 </context>
 <context>
@@ -360,7 +360,7 @@
     <message>
         <location line="+10"/>
         <source>Import</source>
-        <translation>ستورد</translation>
+        <translation>استورد</translation>
     </message>
     <message>
         <location line="-135"/>
@@ -375,7 +375,7 @@
     <message>
         <location line="+16"/>
         <source>Import Session Bans</source>
-        <translation>ستورد المحظورين</translation>
+        <translation>استورد محظوري الجَلسة</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -386,7 +386,7 @@
         <location line="+137"/>
         <location line="+298"/>
         <source>Save Image</source>
-        <translation>حفظ الصور</translation>
+        <translation>حفظ الصورة</translation>
     </message>
     <message>
         <location line="-298"/>
@@ -401,17 +401,17 @@
     <message>
         <location line="+17"/>
         <source>Save Selection</source>
-        <translation>حفظ المختار</translation>
+        <translation>حفظ التحديد</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Record Session</source>
-        <translation>تصوير اللوحه</translation>
+        <translation>تسجيل الجَلسة</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Session Template</source>
-        <translation>حافظ النموذج اللوحه</translation>
+        <translation>احفظ قالب الجَلسة</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -426,38 +426,38 @@
     <message>
         <location line="+7"/>
         <source>Tablet Event Log</source>
-        <translation>سجل أحداث الجهاز اللوحي</translation>
+        <translation>سِجِل أحداث الجهاز اللوحي</translation>
     </message>
     <message>
         <location line="+143"/>
         <source>Log File</source>
-        <translation>ملف تسجيل</translation>
+        <translation>ملف السِجِل</translation>
     </message>
     <message>
         <location line="-171"/>
         <location line="+36"/>
         <source>Export MP4 Video</source>
-        <translation>تصدير MP4 فيديو</translation>
+        <translation>تصدير فيديو MP4</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation>تصدير WebM فيديو</translation>
+        <translation>تصدير فيديوWebM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Custom FFmpeg Video</source>
-        <translation>تصدير FFmpeg فيديو</translation>
+        <translation>تصدير فيديو FFmpeg مخصص</translation>
     </message>
     <message>
         <location line="-77"/>
         <source>Save Animation Frames</source>
-        <translation>حفظ Frames الرسوم المتحركة</translation>
+        <translation>حفظ إطارات الرسوم المتحركة</translation>
     </message>
     <message>
         <location line="-271"/>
         <source>Add Avatar</source>
-        <translation>إضافة الصورة الرمزية</translation>
+        <translation>إضافة صورة رمزية</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -472,7 +472,7 @@
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation>صور المفاتيح</translation>
+        <translation>صور الإطار</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -482,17 +482,17 @@
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation>صور الطبقات</translation>
+        <translation type="unfinished">صور الطبقات</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation>استيراد &amp;الفرش</translation>
+        <translation>استيراد فُرَش</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation>استيراد إعدادات الجلسة</translation>
+        <translation>استيراد إعدادات الجَلسة</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -503,17 +503,17 @@
         <location line="+2"/>
         <location line="+391"/>
         <source>Session Settings (%1)</source>
-        <translation>إعدادات الجلسة (%1)</translation>
+        <translation>إعدادات الجَلسة (%1)</translation>
     </message>
     <message>
         <location line="-390"/>
         <source>Session Bans (%1)</source>
-        <translation>ممنوع الجلسة (%1)</translation>
+        <translation>محظوري الجَلسة (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation>أدوار الجلسة (%1)</translation>
+        <translation>أدوار الجَلسة (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -523,22 +523,22 @@
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation>افتح الصوره</translation>
+        <translation>افتح صورة</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation>ضبط الصورة المصغرة للفرشاة مسبقًا</translation>
+        <translation type="unfinished">ضبط الصورة المصغرة للفرشاة مسبقًا</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation>لصق الملف</translation>
+        <translation>لصق ملف</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Reference Image</source>
-        <translation>صور مراجعه</translation>
+        <translation>صورة مرجعية</translation>
     </message>
     <message>
         <location line="+168"/>
@@ -548,7 +548,7 @@
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation>تصدير WebM فيديو</translation>
+        <translation>تصدير فيديو WEBM</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -563,12 +563,12 @@
     <message>
         <location line="+74"/>
         <source>Export Brushes</source>
-        <translation>تصدير الفرش</translation>
+        <translation>تصدير الفُرَش</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Export Session Bans</source>
-        <translation>تصدير المحظورين</translation>
+        <translation>تصدير محظوري الجَلسة</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -578,32 +578,32 @@
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation>تصدير إعدادات الجلسة</translation>
+        <translation>تصدير إعدادات الجَلسة</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation>نوع الملف ( PSD ) مش بيشتغل مع اداه النص, والرسومات المتحركه وبعض انواع الطبقات. استخدم نوع الملف (ORA) لو عايز الحاجات دي.</translation>
+        <translation>صيغة (PSD) تفتقر لدعم للتعليقات التوضيحية، والرسومات المتحركة وبعض أوضاع المزج. ذا كنت تريد الاحتفاظ بتلك الأشياء بشكل صحيح، عليك حفظ ملف بصيغة ORA.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation>نوع الملف هذا لا يدعم طبقات اللوحه ,لو تريد استرجاع طبقات اللوحه استخدم نوع الفايل (ORA).</translation>
+        <translation>سيؤدي التنسيق المحدد إلى حفظ صورة مدمجة. إذا كنت تريد الاحتفاظ بالطبقات، و التعليقات التوضيحية، و الخط الزمني للتحريك؛ عليك حفظ بملف ORA.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Save as Selected Format</source>
-        <translation>استخدم شكل المختار</translation>
+        <translation>حفظ بالتنسيق المحدد</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as %1</source>
-        <translation>احفظ ك %1</translation>
+        <translation>احفظ كـ %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save as ORA</source>
-        <translation>احفظ ك ORA</translation>
+        <translation>احفظ كـ ORA</translation>
     </message>
     <message>
         <location line="+70"/>
@@ -639,7 +639,7 @@
         <location line="+51"/>
         <location line="+12"/>
         <source>px</source>
-        <translation>px</translation>
+        <translation>بكسل</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -651,13 +651,13 @@
         <location line="-135"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-115"/>
         <source>%</source>
-        <translation>%</translation>
+        <translation>٪</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation>العتامة: </translation>
+        <translation>الشفافية: </translation>
     </message>
     <message>
         <location line="+174"/>
@@ -687,7 +687,7 @@
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill entire selection</source>
-        <translation>ملء التحديد بأكمله</translation>
+        <translation>ملء التحديد كُلََّه</translation>
     </message>
     <message>
         <location line="+78"/>
@@ -701,7 +701,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Merged without background</source>
-        <translation>صورة مدمجة بدون خلفية</translation>
+        <translation>مدمجة دون خلفية</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -714,7 +714,7 @@
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill source layer</source>
-        <translation>ملء طبقة كالمصدر</translation>
+        <translation>ملء طبقة المصدر</translation>
     </message>
     <message>
         <location line="+96"/>
@@ -725,18 +725,18 @@
     <message>
         <location line="+3"/>
         <source>Apply</source>
-        <translation>افعل</translation>
+        <translation>طبِّق</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation>قم بإلغاء التعبئة المعلقة، دون أن يرى أي شخص آخر آثارها</translation>
+        <translation>ألغ التعبئة المعلقة، دون أن يرى أي شخص آخر آثارها</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation>الغي</translation>
+        <translation>إلغاء</translation>
     </message>
     <message>
         <location line="-336"/>
@@ -748,7 +748,7 @@
         <location line="+279"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+62"/>
         <source>Close Gaps: </source>
-        <translation>الفجوات: </translation>
+        <translation>إغلاق الفجوات: </translation>
     </message>
 </context>
 <context>
@@ -756,17 +756,17 @@
     <message>
         <location filename="../ui/flipbook.ui" line="+14"/>
         <source>Flipbook</source>
-        <translation>دفتر صور متحركة</translation>
+        <translation>معاينة الإطارات المتتابعة</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Reset Zoom</source>
-        <translation>اعاده التكبير</translation>
+        <translation>إعادة ضبط التقريب</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Refresh</source>
-        <translation>إعادة تشغيل</translation>
+        <translation>تحديث</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -776,22 +776,22 @@
     <message>
         <location line="+23"/>
         <source>Play</source>
-        <translation>لعب</translation>
+        <translation>تشغيل</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Frame:</source>
-        <translation>طبقه:</translation>
+        <translation>إطار:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Range</source>
-        <translation>التراوح</translation>
+        <translation>المدى</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Speed: </source>
-        <translation>السرعه: </translation>
+        <translation>السرعة: </translation>
     </message>
     <message>
         <location line="+29"/>
@@ -804,12 +804,12 @@
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
         <source>Last edited by:</source>
-        <translation>مين عمل التغيير الاخير:</translation>
+        <translation>آخر تعديل بواسطة:</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation>ضع علامة على البلاط بأكمله</translation>
+        <translation type="unfinished">ضع علامة على البلاط بأكمله</translation>
     </message>
 </context>
 <context>
@@ -817,27 +817,27 @@
     <message>
         <location filename="../ui/invitedialog.ui" line="+14"/>
         <source>Invite</source>
-        <translation>دعوه</translation>
+        <translation>دعوة</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Session</source>
-        <translation>الجلسه</translation>
+        <translation>الجَلسة</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy Invite Link</source>
-        <translation>حفظ وصلة (link) دعوه</translation>
+        <translation>انسخ رابط الدعوة</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Include password</source>
-        <translation>وضع كلمه المرور</translation>
+        <translation>تضمين كلمة المرور</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>انت تستخدم جهازك لاستضاف, لو المدعوين لا يقدروا ان يدخلوا انظر الى &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt; للمساعده&lt;/a&gt;.</translation>
+        <translation>أنت تستضيف الجَلسة محليًا، إذا لم يتمكن الآخرون من الانضمام لجلستك، القي نَظْرَة على &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt; صفحة المساعدة حول الاستضافة &lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -847,7 +847,7 @@
     <message>
         <location line="+38"/>
         <source>Create</source>
-        <translation>خلق</translation>
+        <translation>إنشاء</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -862,22 +862,22 @@
     <message>
         <location line="+42"/>
         <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>انت بتستخدم جهازك للاستضافه, Drawpile يحتاج ان يجد الاي IP بتاعك ليعطي لك الدعوه. انظر الى&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt; المساعده للاستضافه&lt;/a&gt;</translation>
+        <translation>أنت تستضيف الجَلسة محليًا، لذا على Drawpile أن يجد عنوان IP المرئي الخارجي الخاص بك ليعطيك رابط الدعوة. لمزيد من المعلومات، تحقق من &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt; صفحة المساعدة حول الاستضافة &lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Get externally visible IP address</source>
-        <translation>جد IP</translation>
+        <translation>احصل على عنوان IP المرئي الخارجي</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Allow session operators to manage invite codes</source>
-        <translation>السماح لمشغلي الجلسة بإدارة رموز الدعوة</translation>
+        <translation>السماح لمشرفي الجَلسة بإدارة رموز الدعوة</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show this dialog when hosting a session</source>
-        <translation>أظهر الحوار هذا عند استضافة جلسة</translation>
+        <translation>أظهر الحِوار هذا عند استضافة جَلسة</translation>
     </message>
 </context>
 <context>
@@ -885,12 +885,12 @@
     <message>
         <location filename="../widgets/kis_curve_widget.cpp" line="+46"/>
         <source>Remove point</source>
-        <translation>امسح النقطه</translation>
+        <translation>امسح النقطة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset</source>
-        <translation>اعاده الضبط</translation>
+        <translation>إعادة الضبط</translation>
     </message>
 </context>
 <context>
@@ -930,17 +930,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+87"/>
         <source>Track hovering pointer</source>
-        <translation>تتبع المؤشر المتحرك</translation>
+        <translation>تتبّع المؤشر عند التحويم</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>s</source>
-        <translation>s</translation>
+        <translation>ث</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trail: </source>
-        <translation>أثر: </translation>
+        <translation>مدة الأثر: </translation>
     </message>
 </context>
 <context>
@@ -958,7 +958,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+10"/>
         <source>Opacity:</source>
-        <translation>العتامة:</translation>
+        <translation>الشفافية:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -969,7 +969,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-45"/>
         <source>Blending Mode:</source>
-        <translation>نوع الطبقه:</translation>
+        <translation>وضع المزج:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -979,42 +979,42 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Visible to you</source>
-        <translation>الرؤيه لك</translation>
+        <translation>مرئي لك</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Censor content</source>
-        <translation>اخفاء الطبقه</translation>
+        <translation>حجب المحتوى</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Sketch mode for you</source>
-        <translation>وضع المراجعه رسم بالنسبة لك</translation>
+        <translation type="unfinished">وضع الرسم لك</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Sketch Opacity:</source>
-        <translation>عتامة الرسم:</translation>
+        <translation>شفافية الرسم:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Sketch Tint:</source>
-        <translation>لون الرسمه:</translation>
+        <translation type="unfinished">لون الرسم:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Collaboration:</source>
-        <translation>تعاون:</translation>
+        <translation>التعاون:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Default for new users</source>
-        <translation>Default للمستخدمين الجدده</translation>
+        <translation>افتراضي للمستخدمين الجُدد</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Created by:</source>
-        <translation>انشأ من:</translation>
+        <translation>أُنشِئ بواسطة:</translation>
     </message>
     <message>
         <location line="+81"/>
@@ -1029,7 +1029,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+13"/>
         <source>Choose…</source>
-        <translation>ختار…</translation>
+        <translation>اختر…</translation>
     </message>
 </context>
 <context>
@@ -1047,17 +1047,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Rename</source>
-        <translation>تسمى</translation>
+        <translation>إعادة تسمية</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Delete</source>
-        <translation>امسح</translation>
+        <translation>احذف</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation>يمكن ترتيب أرصفة Drawpile بحرية. يمكنك استخدام View &gt; Docks &gt; Arrange Docks للسماح لك بسحبها بسهولة أكبر. تأكد من أن ترتيبك يناسب الدقة التي اخترتها، وإلا فقد يتم دفع بعض عناصر التحكم خارج الشاشة.</translation>
+        <translation type="unfinished">يمكن ترتيب أرصفة Drawpile بحرية. يمكنك استخدام View &gt; Docks &gt; Arrange Docks للسماح لك بسحبها بسهولة أكبر. تأكد من أن ترتيبك يناسب الدقة التي اخترتها، وإلا فقد يتم دفع بعض عناصر التحكم خارج الشاشة.</translation>
     </message>
 </context>
 <context>
@@ -1065,17 +1065,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../utils/widgetutils.cpp" line="+1129"/>
         <source>Open Link</source>
-        <translation>افتح الرابط</translation>
+        <translation>افتح رابط</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation>سينقلك هذا الارتباط إلى موقع الويب &quot;%1&quot;، والذي لا يتم تشغيله بواسطة Drawpile. هل أنت متأكد أنك تريد الذهاب إلى هناك؟</translation>
+        <translation>سينقلك هذا الرابط إلى موقع الويب &quot;%1&quot;، والذي لا يتم تشغيله بواسطة Drawpile. هل أنت متيقِّن أنك تريد الذَّهاب إلى هناك؟</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Yes, visit website</source>
-        <translation>نعم، قم بزيارة الموقع</translation>
+        <translation>نعم، زُر الموقع</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1089,7 +1089,7 @@ Subrange: [%3, %4]</source>
         <location filename="../ui/logindialog.ui" line="+103"/>
         <location line="+230"/>
         <source>Incorrect password.</source>
-        <translation>كلمه المرور خاطئه.</translation>
+        <translation>كلمه مرور خاطئة.</translation>
     </message>
     <message>
         <location line="-187"/>
@@ -1099,7 +1099,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-36"/>
         <source>Remember my password</source>
-        <translation>افتكر كلمه المرور</translation>
+        <translation>تذكر كلمة المرور</translation>
     </message>
     <message>
         <location line="-24"/>
@@ -1109,107 +1109,107 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+158"/>
         <source>Filter</source>
-        <translation>منقي</translation>
+        <translation>مرشح</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>NSFM</source>
-        <translation>NSFMغير صالح للاطفال</translation>
+        <translation>غير صالح لغير البالغين</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>This session is password-protected.</source>
-        <translation>هذه الجلسة محمية بكلمة مرور.</translation>
+        <translation>هذه الجَلسة محمية بكلمة مرور.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Password:</source>
-        <translation>بكلمة مرور:</translation>
+        <translation>كلمة المرور:</translation>
     </message>
     <message>
         <location line="+183"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;الاشياء الذي موجوده في هذه الجلسه &lt;em&gt;ليست مناسبه للاشخاص صغيرين في السن&lt;/em&gt;( كNSFW)&lt;/p&gt;&lt;p&gt;&lt;strong&gt; انت تحتاج ان تكون اكبر من 18 سنه عشان تكملز&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;هل انت متاكد انك تريد الدخول؟&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;أشارت هذه الجلسة إلى أن محتواها &lt;em&gt;ليس مناسبًا لغير البالغين&lt;/em&gt;.(NSFW)&lt;/p&gt;&lt;p&gt;&lt;strong&gt; يجب أن يكون عمرك أكثر من 18 عامًا وأن يُسمح لك باستهلاك المحتوى المخصص للبالغين للمتابعة &lt;/strong&gt;&lt;/p&gt;&lt;p&gt;أمتاكد من أنك تريد الانضمام لهذه الجَلسة؟&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Show this warning again next time</source>
-        <translation>اظهر هذا التحذير المره الجايه</translation>
+        <translation>اظهر هذا التحذير مجددًا المرة القادمة</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Continue without account</source>
-        <translation>ادخل من غير حساب</translation>
+        <translation>تابع دون حساب</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Log in with server account</source>
-        <translation>ادخل بحساب</translation>
+        <translation>سجل دخول بحساب خادم</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Continue with this account, but change the avatar, username or password.</source>
-        <translation>ادخل بهذا الحساب لكن, غير شيئا ما.</translation>
+        <translation>تابع بهذا الحساب، لكن غيِّر الصورة الرمزية، أو اسم المستخدم، أو كلمة المرور.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Edit and log in</source>
-        <translation>غير وادخل</translation>
+        <translation>عدِّل و سجِّل الدخول</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation>لا تستخدم اي من هذه الحسابات.</translation>
+        <translation>لا تستخدم أيًا من هذه الحسابات.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in a different way</source>
-        <translation>ادخل بطريقه اخرى</translation>
+        <translation>سجل دخول بطريقة أخرى</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Log in with the selected account.</source>
-        <translation>ادخل بالحساب الحاضر.</translation>
+        <translation>سجل الدخول بالحساب المُحَدَّد.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in with this account</source>
-        <translation>ادخل بهذا الحساب</translation>
+        <translation>سجل دخول بهذا الحساب</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation>انسى الحساب ده.</translation>
+        <translation>إنس هذا الحساب.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Forget this account</source>
-        <translation>انسى الحساب ده</translation>
+        <translation>إنس هذا الحساب</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation>لا اظهر هذا مره اخرى الا الاول قوانين اتغيرت</translation>
+        <translation>لا تسأل مجددًا إلا إذا تغيَّرت القواعد</translation>
     </message>
     <message>
         <location line="-574"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation>اظهر الجلسات غير مناسبه اشخاص اندر السن (NSFM)</translation>
+        <translation>أظهر الجلسات الغير مناسبة للأشخاص الغير بالغين (NSFM)</translation>
     </message>
     <message>
         <location line="+86"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation>ادخل&lt;b&gt; كلمه المرور للجلسه &lt;/b&gt;&lt;i&gt;مش كلمه&lt;/i&gt; المرور للحساب.</translation>
+        <translation>ادخل&lt;b&gt; كلمه مرور الجَلسة &lt;/b&gt;&lt;i&gt;، وليس&lt;/i&gt; كلمة مرور حسابك.</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Catching up...</source>
-        <translation>بيتم الوصول...</translation>
+        <translation type="unfinished">يتم الوصول...</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>View old</source>
-        <translation>عرض قديم</translation>
+        <translation>عرض القديم</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1233,18 +1233,18 @@ Subrange: [%3, %4]</source>
         <location line="+129"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
-            <numerusform>انت عندك %nصور مش محفوظه. هل تعيد اعاده النظر فيهم قبل ان تغلق؟</numerusform>
-            <numerusform>انت عندك %nصوره مش محفوظه. هل تعيد اعاده النظر فيهم قبل ان تغلق؟</numerusform>
-            <numerusform>انت عندك %nصور مش محفوظه. هل تعيد اعاده النظر فيهم قبل ان تغلق؟</numerusform>
-            <numerusform>انت عندك %nصور مش محفوظه. هل تعيد اعاده النظر فيهم قبل ان تغلق؟</numerusform>
-            <numerusform>انت عندك %nصور مش محفوظه. هل تعيد اعاده النظر فيهم قبل ان تغلق؟</numerusform>
-            <numerusform>انت عندك %nصور مش محفوظه. هل تعيد اعاده النظر فيهم قبل ان تغلق؟</numerusform>
+            <numerusform>ليس لديك صور بتعديلات غير محفوظة. هل تريد مراجعة هذه التغييرات قبل الخروج؟</numerusform>
+            <numerusform>لديك صور واحدة بتعديلات غير محفوظة. هل تريد مراجعة هذه التغييرات قبل الخروج؟</numerusform>
+            <numerusform>لديك صورتان بتعديلات غير محفوظة. هل تريد مراجعة هذه التغييرات قبل الخروج؟</numerusform>
+            <numerusform>لديك %n صور بتعديلات غير محفوظة. هل تريد مراجعة هذه التغييرات قبل الخروج؟</numerusform>
+            <numerusform>لديك %n صورة بتعديلات غير محفوظة. هل تريد مراجعة هذه التغييرات قبل الخروج؟</numerusform>
+            <numerusform>لديك %n صورة بتعديلات غير محفوظة. هل تريد مراجعة هذه التغييرات قبل الخروج؟</numerusform>
         </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>If you don&apos;t review your documents, all changes will be lost</source>
-        <translation>إذا لم تقم بمراجعة مستنداتك، فسيتم فقدان جميع التغييرات</translation>
+        <translation>إذا لم تراجع مستنداتك، فسيتم فقدان جميع التغييرات</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1262,31 +1262,31 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../mainwindow.cpp" line="+330"/>
         <source>Server out of space</source>
-        <translation>خلصت المساحه</translation>
+        <translation>نفدت مساحة الخادم</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-        <translation>الجلسه ينفذ منها التاريخ والمساحه لا تقدر تعيد الضبط تلقائيا! (حد هو%1 MB)
-عد الضبط قبل تنتهي المساحه.</translation>
+        <translation>الخادم على وشك نفاد مساحة تاريخ التعديلات وحجم الجَلسة أصبح كبيرًا جدًا بحيث لا يمكن إعادة ضبطه تلقائيًا (الحد الأقصى: %1 م.ب).
+يرجى تبسيط اللوحة وإعادة الضبط يدويًا قبل نفاد المساحة.</translation>
     </message>
     <message>
         <location line="+344"/>
         <source>🙋 %1 joined!</source>
-        <translation>!دخل%1🙋</translation>
+        <translation>%1🙋 قام بالانضمام!</translation>
     </message>
     <message>
         <location line="+92"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation>افصلك عن الجلسة</translation>
+        <translation>قطع اتصالك بالجلسة</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>lose any unsaved changes</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation>فقد أي تغييرات غير محفوظة</translation>
+        <translation>فقدان أي تغييرات غير محفوظة</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1324,7 +1324,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+14"/>
         <source>Are you sure you want to continue?</source>
-        <translation>هل أنت متأكد أنك تريد الاستمرار؟</translation>
+        <translation>أمتأكد من أنك تريد المتابعة؟</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1346,22 +1346,22 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="-2081"/>
         <location line="+3793"/>
         <source>Export Again</source>
-        <translation>تصدير مرة أخرى</translation>
+        <translation>تصدير مجددًا</translation>
     </message>
     <message>
         <location line="-3789"/>
         <source>Export Again to %1</source>
-        <translation>قم بالتصدير مرة أخرى إلى %1</translation>
+        <translation>صدِّر مجددًا إلى %1</translation>
     </message>
     <message>
         <location line="+439"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation>&lt;p&gt;الاختصار &apos;%1&apos; مش باين، وهو يطابق:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
+        <translation>&lt;p&gt;الاختصار &apos;%1&apos; غامض، فهو يطابق:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Ambiguous Shortcut</source>
-        <translation>اختصار غريب</translation>
+        <translation>اختصار غامض</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1372,29 +1372,29 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+200"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
-        <translation>اخرج منDrawpile</translation>
+        <translation>اخرج من Drawpile</translation>
     </message>
     <message>
         <location line="-27"/>
         <source>You are still connected to a drawing session.</source>
-        <translation>انت لسه موجود في جلسه.</translation>
+        <translation>إنك مازلت متصل بجلسة رسم.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Exit anyway</source>
-        <translation>اخرج</translation>
+        <translation>اخرج على أي حال</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+29"/>
         <location line="+788"/>
         <source>Cancel</source>
-        <translation>الغي</translation>
+        <translation>ألغ</translation>
     </message>
     <message>
         <location line="-797"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation>هناك تغييرات غير محفوظة. حفظهم قبل الخروج؟</translation>
+        <translation>هناك تغييرات غير محفوظة. احفظهم قبل الخروج؟</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1415,52 +1415,52 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation>ليس لديك إذن لتغيير حجم اللوحة القماشية.</translation>
+        <translation>ليس لديك إذن لتغيير حجم اللوحة.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation>اصلح</translation>
+        <translation>ليس لديك إذن لتغييرخلفية الجَلسة.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation>معاكش إذن كتابة توضيحات.</translation>
+        <translation>ليس لديك إذن لإنشاء تعليقات توضيحية.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation>معاكش إذن التّراجع أو عكس التّراجع.</translation>
+        <translation>ليس لديك إذن بالتراجع أو بالإعادة.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation>ما فكش تساوي كدا.</translation>
+        <translation>ليس لديك إذن لتفعل ذلك.</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>New</source>
-        <translation>جديد...</translation>
+        <translation>جديد</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation>سيتمّ إنشاء لوح جديد و إغلاق هذه النّافذة.</translation>
+        <translation>أنت على وشك إنشاء لوحة جديدة و إغلاق هذه النّافذة.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Open Recent File</source>
-        <translation>فتح ملفّ لاحق</translation>
+        <translation>فتح الملف الأخير</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recent file and close this window.</source>
-        <translation>سيُفتح ملفّ تمّ تعديله لاحقا، و تُغلق هذه النّافذة.</translation>
+        <translation type="unfinished">سيُفتح ملفّ تمّ تعديله لاحقا، و تُغلق هذه النّافذة.</translation>
     </message>
     <message>
         <location line="+102"/>
         <source>Opening file…</source>
-        <translation>افتح ملف…</translation>
+        <translation>جار فتح ملف…</translation>
     </message>
     <message>
         <location line="-1254"/>
@@ -1470,42 +1470,42 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a new file and close this window.</source>
-        <translation>سيُفتح ملفّ جديد، و تُغلق هذه النّافذة.</translation>
+        <translation>انت على وشك فتح ملفّ جديد، و تُغلق هذه النّافذة.</translation>
     </message>
     <message>
         <location line="+1438"/>
         <source>Saving...</source>
-        <translation>بيتم الحفظ...</translation>
+        <translation>جار الحفظ...</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Image saving failed</source>
-        <translation>ما انحفظش الملفّ</translation>
+        <translation>فشل حفظ الصورة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Couldn&apos;t save image</source>
-        <translation>ما يمكنش حفظ الصّورة</translation>
+        <translation>لا يمكن حفظ الصّورة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Image saved</source>
-        <translation>انحفظت الصّوره</translation>
+        <translation>تم حفظ الصورة</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Download Complete</source>
-        <translation>خلّص التّنزيل</translation>
+        <translation>اكتمل التحميل</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation>خلّص التّنزيل، انقر زرّ &quot;إحفظ&quot; تتحفظ ملفّك.</translation>
+        <translation>اكتمل التحميل، انقر على &quot;حفظ&quot; لحفظ ملفك.</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
-        <translation>هاذي الجلسه مقامة على إصدار Drawpile قديم، في من الخصائص الجديدة مش هتكون موجودة. الإصدارات المختلفة مش هتورّي رسومات متناسقة مع بعضها، و ممكن يبقى تغيّرات كبيرة لمّا تغلق الجلسة و ينعاد فتحها.</translation>
+        <translation>اُستضيفت هذه الجَلسة باستخدام إصدار أقدم من Drawpile، ولن تتوفر بعض الميزات الأحدث. ستظهر إصدارات Drawpile الأخرى نتائج مختلفة، وقد تؤدي إعادة ضبط الجَلسة إلى تغييرات مفاجئة.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1515,32 +1515,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+19"/>
         <source>Session template saved</source>
-        <translation>انحفظ نموذج الجلسة</translation>
+        <translation>تم حفظ قالب الجَلسة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export session template</source>
-        <translation>ما اتمكّن حفظ نموذج الجلسه</translation>
+        <translation>تعذر تصدير قالب الجَلسة</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Saving animation...</source>
-        <translation>حافظه الصور المتحركه...</translation>
+        <translation>جار حفظ الصورة المتحركة...</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Pause</source>
-        <translation>وقف</translation>
+        <translation>أوقف</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Play</source>
-        <translation>لعب</translation>
+        <translation>شغّل</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Stop Recording</source>
-        <translation>قف التسجيل</translation>
+        <translation>أوقف التسجيل</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1556,87 +1556,87 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Couldn&apos;t start recording.</source>
-        <translation>لا استطيع ان العب التسجيل.</translation>
+        <translation>تعذر بدء التسجيل.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation>صار خطأ مجهول.</translation>
+        <translation>خطأ مجهول.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Error downloading profile.</source>
-        <translation type="unfinished">ما اتنزّلش العزئيل.</translation>
+        <translation>خطأ في تحميل الملف الشخصي.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error closing profile.</source>
-        <translation type="unfinished">ما اتسكّرش الغزئيل صحّ.</translation>
+        <translation>خطأ في إغلاق الملف الشخصي.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error opening profile.</source>
-        <translation>ما انفتحش العزئيل.</translation>
+        <translation>خطأ خلال فتح الملف الشخصي.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Error downloading tablet event log.</source>
-        <translation>ما اتنزّلش مكتوب عمليّات لوح الرّسم.</translation>
+        <translation>حدث خطأ خلال تنزيل سجل أحداث الجهاز اللوحي.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Error closing tablet event log.</source>
-        <translation>ما اتشكّرش مكتوب عمليّات لوح الرّسم.</translation>
+        <translation>حدث خطأ خلال إغلاق سجل أحداث الجهاز اللوحي.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Error opening tablet event log.</source>
-        <translation>ما قدرش ينفتح مكتوب عمليّات لوح الرّسم.</translation>
+        <translation>حدث خطأ أثناء فتح سجل أحداث الجهاز اللوحي.</translation>
     </message>
     <message>
         <location line="+183"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
-        <translation>انت جوّاة جلسة برضو! لازم تنفصل الجلسة أوّلاً تتبلش وحدة جديدة.</translation>
+        <translation>أنت فعلًا متصل بجلسة! اقطع الاتصال أولًا لاستضافة واحدة.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>No canvas to host! Create one or open a file.</source>
-        <translation>لازم يكون في لوح تتبلش جلسة عالإنترنت: ممكن ينفتح لوح أو ينتشأ لوح جديد.</translation>
+        <translation>لا توجد لوحة للاستضافة! أنشئ واحدة أو افتح ملفًا.</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Invalid address</source>
-        <translation>العنوان ده مش صالح</translation>
+        <translation>عنوان غير صالح</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Host Session</source>
-        <translation>بلّش جلسة</translation>
+        <translation>استضف جَلسة</translation>
     </message>
     <message>
         <location line="+127"/>
         <source>Reconnect</source>
-        <translation>برضو اتّصل</translation>
+        <translation>إعادة الاتصال</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about reconnect to the session and close this window.</source>
-        <translation>هينعاد الإتّصال بهالجلسة و ينغلق هادا الشّبّاك.</translation>
+        <translation>أنت على وشك إعادة الاتصال بالجلسة وإغلاق هذه النافذة.</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Really leave the session?</source>
-        <translation>جدّ هتترك دي الجلسه؟</translation>
+        <translation>أمتأكد من مغادرة الجَلسة؟</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Leave</source>
-        <translation>اخرج</translation>
+        <translation>غادر</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Stay</source>
-        <translation>ضلّ</translation>
+        <translation>ابق</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1646,48 +1646,48 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+39"/>
         <source>Become Operator</source>
-        <translation type="unfinished">اصبح رئيس</translation>
+        <translation>اصبح مشغلًا</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Enter operator password</source>
-        <translation type="unfinished">ضع كلمه المرور</translation>
+        <translation>ضع كلمه مرور المشغل</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Terminate session</source>
-        <translation>إنهاء الجلسه</translation>
+        <translation>قاطع الجَلسة</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+2712"/>
         <source>Terminate</source>
-        <translation type="unfinished">انهي</translation>
+        <translation>مقاطعة</translation>
     </message>
     <message>
         <location line="-2698"/>
         <source>Join Session</source>
-        <translation type="unfinished">انضم لجلسه</translation>
+        <translation>انضم لجلسة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to connect to a new session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>أنت على وشك الاتصال بجلسة جديدة و إغلاق هذه النافذة.</translation>
     </message>
     <message>
         <location line="+141"/>
         <source>Would you like to join the session instead?</source>
-        <translation type="unfinished">هل تريد دخول الجلسه؟</translation>
+        <translation>هل تريد الانضمام للجلسة بدلًا من ذلك؟</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Join</source>
-        <translation type="unfinished">ادخل</translation>
+        <translation>انضم</translation>
     </message>
     <message>
         <location line="+135"/>
         <source>Session blocked by parental controls</source>
-        <translation type="unfinished">تم حظر الجلسة بواسطة أدوات الرقابة الأبوية</translation>
+        <translation>تم حظر الجَلسة بواسطة أدوات الرِّقابة الأبوية</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -1697,7 +1697,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation type="unfinished">غير حد الترجيعو, حدد ترجيع الان %1.</translation>
+        <translation>عدل حد التراجع، حدد التراجع الآن %1.</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -1708,7 +1708,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+489"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>لم نتمكن من تحميل الصورة: %1.</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1723,7 +1723,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+50"/>
         <source>Altering selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير التحديد…</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -1797,17 +1797,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a debug dump and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>أنت على وشك فتح (debug dump) و إغلاق هذه النافذة.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Cause Crash</source>
-        <translation type="unfinished"></translation>
+        <translation>سبب التوقف عن العمل</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you really want to crash Drawpile? This will terminate the program and you will lose any unsaved data!</source>
-        <translation type="unfinished"></translation>
+        <translation>أحقًا تريد ايقاف Drawpile؟ سيقاطع ذلك عمل البرنامَج و ستفقد أي بيانات غير محفوظة!</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1852,7 +1852,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>Show Icons on Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>إظهار الأيقونات على علامات التبويب</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -1884,7 +1884,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Download Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;يجري تحميل الصورة…</translation>
     </message>
     <message>
         <location line="+4"/>
