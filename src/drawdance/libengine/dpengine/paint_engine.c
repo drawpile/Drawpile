@@ -2040,9 +2040,7 @@ void DP_paint_engine_preview_cut(DP_PaintEngine *pe, int x, int y, int width,
         DP_Preview *pv =
             DP_preview_new_cut(offset_x, offset_y, x, y, width, height,
                                mask_or_null, layer_id_count, layer_ids);
-        DP_preview_renderer_push_noinc(
-            pe->preview_renderer, pv, DP_canvas_state_width(cs),
-            DP_canvas_state_height(cs), offset_x, offset_y);
+        DP_preview_renderer_push_noinc_inc(pe->preview_renderer, pv, cs);
     }
     else {
         DP_paint_engine_preview_clear(pe, DP_PREVIEW_CUT);
@@ -2063,9 +2061,7 @@ void DP_paint_engine_preview_transform(
         DP_Preview *pv = DP_preview_new_transform(
             id, offset_x, offset_y, layer_id, blend_mode, opacity, x, y, width,
             height, dst_quad, interpolation, get_pixels, dispose_pixels, user);
-        DP_preview_renderer_push_noinc(
-            pe->preview_renderer, pv, DP_canvas_state_width(cs),
-            DP_canvas_state_height(cs), offset_x, offset_y);
+        DP_preview_renderer_push_noinc_inc(pe->preview_renderer, pv, cs);
     }
     else {
         dispose_pixels(user);
@@ -2083,9 +2079,7 @@ void DP_paint_engine_preview_dabs_inc(DP_PaintEngine *pe, int layer_id,
         int offset_y = DP_canvas_state_offset_y(cs);
         DP_Preview *pv = DP_preview_new_dabs_inc(offset_x, offset_y, layer_id,
                                                  count, messages);
-        DP_preview_renderer_push_noinc(
-            pe->preview_renderer, pv, DP_canvas_state_width(cs),
-            DP_canvas_state_height(cs), offset_x, offset_y);
+        DP_preview_renderer_push_noinc_inc(pe->preview_renderer, pv, cs);
     }
     else {
         DP_paint_engine_preview_clear(pe, DP_PREVIEW_DABS);
@@ -2105,9 +2099,7 @@ void DP_paint_engine_preview_fill(DP_PaintEngine *pe, int layer_id,
         DP_Preview *pv =
             DP_preview_new_fill(offset_x, offset_y, layer_id, blend_mode,
                                 opacity, x, y, width, height, pixels);
-        DP_preview_renderer_push_noinc(
-            pe->preview_renderer, pv, DP_canvas_state_width(cs),
-            DP_canvas_state_height(cs), offset_x, offset_y);
+        DP_preview_renderer_push_noinc_inc(pe->preview_renderer, pv, cs);
     }
     else {
         DP_paint_engine_preview_clear(pe, DP_PREVIEW_FILL);

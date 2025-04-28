@@ -14,7 +14,7 @@ Freehand::Freehand(ToolController &owner, bool isEraser)
 	: Tool(
 		  owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor,
 		  Capability::AllowColorPick | Capability::AllowToolAdjust |
-			  Capability::SupportsPressure | Capability::IgnoresSelections)
+			  Capability::SupportsPressure)
 	, m_brushEngine(std::bind(&Freehand::pollControl, this, _1))
 {
 	m_pollTimer.setSingleShot(false);
@@ -60,7 +60,8 @@ void Freehand::motion(const MotionParams &params)
 	if(m_firstPoint) {
 		m_firstPoint = false;
 		m_brushEngine.beginStroke(
-			m_owner.client()->myId(), true, m_mirror, m_flip, m_zoom, m_angle);
+			m_owner.client()->myId(), canvasState, true, m_mirror, m_flip,
+			m_zoom, m_angle);
 		m_start.setPressure(qMin(m_start.pressure(), params.point.pressure()));
 		m_brushEngine.strokeTo(m_start, canvasState);
 	}
@@ -79,8 +80,8 @@ void Freehand::end(const EndParams &)
 		if(m_firstPoint) {
 			m_firstPoint = false;
 			m_brushEngine.beginStroke(
-				m_owner.client()->myId(), true, m_mirror, m_flip, m_zoom,
-				m_angle);
+				m_owner.client()->myId(), canvasState, true, m_mirror, m_flip,
+				m_zoom, m_angle);
 			m_brushEngine.strokeTo(m_start, canvasState);
 		}
 

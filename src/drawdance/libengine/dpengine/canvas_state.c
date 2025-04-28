@@ -818,6 +818,7 @@ get_draw_dabs_classic_params(unsigned int context_id,
         DP_MSG_DRAW_DABS_CLASSIC,
         context_id,
         DP_protocol_to_layer_id(DP_msg_draw_dabs_classic_layer(mddc)),
+        DP_msg_draw_dabs_classic_mask_selection_id(mddc),
         DP_msg_draw_dabs_classic_x(mddc),
         DP_msg_draw_dabs_classic_y(mddc),
         DP_msg_draw_dabs_classic_color(mddc),
@@ -837,6 +838,7 @@ get_draw_dabs_pixel_params(DP_MessageType type, unsigned int context_id,
         (int)type,
         context_id,
         DP_protocol_to_layer_id(DP_msg_draw_dabs_pixel_layer(mddp)),
+        DP_msg_draw_dabs_pixel_mask_selection_id(mddp),
         DP_msg_draw_dabs_pixel_x(mddp),
         DP_msg_draw_dabs_pixel_y(mddp),
         DP_msg_draw_dabs_pixel_color(mddp),
@@ -858,6 +860,7 @@ get_draw_dabs_mypaint_params(unsigned int context_id,
         DP_MSG_DRAW_DABS_MYPAINT,
         context_id,
         DP_protocol_to_layer_id(DP_msg_draw_dabs_mypaint_layer(mddmp)),
+        DP_msg_draw_dabs_mypaint_mask_selection_id(mddmp),
         DP_msg_draw_dabs_mypaint_x(mddmp),
         DP_msg_draw_dabs_mypaint_y(mddmp),
         DP_msg_draw_dabs_mypaint_color(mddmp),
@@ -882,6 +885,7 @@ get_draw_dabs_mypaint_blend_params(unsigned int context_id,
         DP_MSG_DRAW_DABS_MYPAINT_BLEND,
         context_id,
         DP_protocol_to_layer_id(DP_msg_draw_dabs_mypaint_blend_layer(mddmpb)),
+        DP_msg_draw_dabs_mypaint_blend_mask_selection_id(mddmpb),
         DP_msg_draw_dabs_mypaint_blend_x(mddmpb),
         DP_msg_draw_dabs_mypaint_blend_y(mddmpb),
         DP_msg_draw_dabs_mypaint_blend_color(mddmpb),
@@ -1376,6 +1380,54 @@ static DP_CanvasState *handle_selection_clear(DP_CanvasState *cs,
                            DP_msg_selection_clear_selection_id(msc));
 }
 
+static DP_CanvasState *handle_sync_selection_tile(DP_CanvasState *cs,
+                                                  DP_DrawContext *dc,
+                                                  DP_MsgSyncSelectionTile *msst)
+{
+    int selection_id = DP_msg_sync_selection_tile_selection_id(msst);
+    if (selection_id < DP_SELECTION_ID_FIRST_REMOTE) {
+        DP_error_set("Sync selection tile: invalid selection id %d",
+                     selection_id);
+        return NULL;
+    }
+
+    unsigned int context_id = DP_msg_sync_selection_tile_user(msst);
+    DP_TileCounts tile_counts = DP_tile_counts_round(cs->width, cs->height);
+    int tile_total = tile_counts.x * tile_counts.y;
+    int x = DP_msg_sync_selection_tile_col(msst);
+    int y = DP_msg_sync_selection_tile_row(msst);
+    size_t mask_size;
+    const unsigned char *mask =
+        DP_msg_sync_selection_tile_mask(msst, &mask_size);
+    // Special case: maxed out coordinates and empty mask means clear selection.
+    if (x == 0xffff && y == 0xffff && mask_size == 0) {
+        return selection_clear(cs, context_id, selection_id);
+    }
+
+    int index = y * tile_counts.x + x;
+    if (index >= tile_total) {
+        DP_error_set("Sync selection tile: index %d beyond total %d", index,
+                     tile_total);
+        return NULL;
+    }
+
+    DP_Tile *t;
+    if (mask_size == 0) {
+        t = NULL;
+    }
+    else if (mask_size == 1 && mask[0] == 0) {
+        t = DP_tile_opaque_inc();
+    }
+    else {
+        t = DP_tile_new_mask_from_compressed(dc, context_id, mask, mask_size);
+        if (!t) {
+            return NULL;
+        }
+    }
+
+    return DP_ops_sync_selection_tile(cs, context_id, selection_id, index, t);
+}
+
 static DP_CanvasState *handle(DP_CanvasState *cs, DP_DrawContext *dc,
                               DP_UserCursors *ucs_or_null, DP_Message *msg,
                               DP_MessageType type)
@@ -1461,6 +1513,8 @@ static DP_CanvasState *handle(DP_CanvasState *cs, DP_DrawContext *dc,
         // Local synchronization message, presumably from another user. It
         // doesn't contain any interesting information for us.
         return DP_canvas_state_incref(cs);
+    case DP_MSG_SYNC_SELECTION_TILE:
+        return handle_sync_selection_tile(cs, dc, DP_message_internal(msg));
     default:
         DP_error_set("Unhandled draw message type %d", (int)type);
         return NULL;

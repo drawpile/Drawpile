@@ -189,6 +189,13 @@ void DP_blend_tile(DP_Pixel15 *DP_RESTRICT dst,
                    const DP_Pixel15 *DP_RESTRICT src, uint16_t opacity,
                    int blend_mode);
 
+void DP_mask_tile(DP_Pixel15 *DP_RESTRICT dst,
+                  const DP_Pixel15 *DP_RESTRICT src,
+                  const DP_Pixel15 *DP_RESTRICT mask);
+
+void DP_mask_tile_in_place(DP_Pixel15 *DP_RESTRICT dst,
+                           const DP_Pixel15 *DP_RESTRICT mask);
+
 
 void DP_posterize_mask(DP_Pixel15 *dst, int posterize_num, const uint16_t *mask,
                        uint16_t opacity, int w, int h, int mask_skip,

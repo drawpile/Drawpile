@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
 #include <dpcommon/geom.h>
+#include <dpengine/layer_content.h>
 #include <dpengine/selection.h>
 }
 #include "libclient/drawdance/selection.h"
@@ -69,10 +70,15 @@ int Selection::selectionId() const
 	return DP_selection_id(m_data);
 }
 
-QRect Selection::bounds() const
+QRect Selection::calculateBounds() const
 {
-	DP_Rect r = *DP_selection_bounds(m_data);
-	return QRect(QPoint(r.x1, r.y1), QPoint(r.x2, r.y2));
+	DP_LayerContent *lc = DP_selection_content_noinc(m_data);
+	DP_Rect r;
+	if(DP_layer_content_bounds(lc, true, &r)) {
+		return QRect(QPoint(r.x1, r.y1), QPoint(r.x2, r.y2));
+	} else {
+		return QRect();
+	}
 }
 
 LayerContent Selection::content() const

@@ -113,6 +113,7 @@ typedef enum DP_MessageType {
     DP_MSG_SELECTION_PUT = 174,
     DP_MSG_SELECTION_CLEAR = 175,
     DP_MSG_LOCAL_MATCH = 176,
+    DP_MSG_SYNC_SELECTION_TILE = 177,
     DP_MSG_UNDO = 255,
     DP_MSG_TYPE_COUNT,
 } DP_MessageType;
@@ -1836,8 +1837,8 @@ DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg);
  * The layer id may refer to a selection.
  */
 
-#define DP_MSG_DRAW_DABS_MYPAINT_STATIC_LENGTH 19
-#define DP_MSG_DRAW_DABS_MYPAINT_MATCH_LENGTH  21
+#define DP_MSG_DRAW_DABS_MYPAINT_STATIC_LENGTH 20
+#define DP_MSG_DRAW_DABS_MYPAINT_MATCH_LENGTH  22
 
 #define DP_MSG_DRAW_DABS_MYPAINT_DABS_MIN_COUNT 1
 #define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX_COUNT 7279
@@ -1870,10 +1871,11 @@ const DP_MyPaintDab *DP_mypaint_dab_at(const DP_MyPaintDab *mpd, int i);
 typedef struct DP_MsgDrawDabsMyPaint DP_MsgDrawDabsMyPaint;
 
 DP_Message *DP_msg_draw_dabs_mypaint_new(
-    unsigned int context_id, uint32_t layer, int32_t x, int32_t y,
-    uint32_t color, uint8_t lock_alpha, uint8_t colorize, uint8_t posterize,
-    uint8_t posterize_num, void (*set_dabs)(int, DP_MyPaintDab *, void *),
-    int dabs_count, void *dabs_user);
+    unsigned int context_id, uint8_t flags, uint32_t layer, int32_t x,
+    int32_t y, uint32_t color, uint8_t lock_alpha, uint8_t colorize,
+    uint8_t posterize, uint8_t posterize_num,
+    void (*set_dabs)(int, DP_MyPaintDab *, void *), int dabs_count,
+    void *dabs_user);
 
 DP_Message *DP_msg_draw_dabs_mypaint_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
@@ -1889,6 +1891,8 @@ bool DP_msg_draw_dabs_mypaint_local_match_matches(
     const DP_MsgDrawDabsMyPaint *mddmp, DP_Message *local_match_msg);
 
 DP_MsgDrawDabsMyPaint *DP_msg_draw_dabs_mypaint_cast(DP_Message *msg);
+
+uint8_t DP_msg_draw_dabs_mypaint_flags(const DP_MsgDrawDabsMyPaint *mddmp);
 
 uint32_t DP_msg_draw_dabs_mypaint_layer(const DP_MsgDrawDabsMyPaint *mddmp);
 
@@ -2695,8 +2699,9 @@ DP_msg_key_frame_delete_move_frame_index(const DP_MsgKeyFrameDelete *mkfd);
  * The mask is DEFLATEd 8 bit alpha. If absent, this fills the entire
  * rectangle instead.
  *
- * Selection ids 1 to 127 are considered local-only and are not sent over
- * the network, they're handled by LocalMatch commands instead.
+ * This message is never sent over the network, it's matched by LocalMatch
+ * messages instead and selections are synchronized to the remote using
+ * SyncSelectionTile messages.
  */
 
 #define DP_MSG_SELECTION_PUT_STATIC_LENGTH 14
@@ -2767,8 +2772,9 @@ size_t DP_msg_selection_put_mask_size(const DP_MsgSelectionPut *msp);
  * Remove the selection specified by the selection_id, or all selections if
  * it's 0.
  *
- * Selection ids 1 to 127 are considered local-only and are not sent over
- * the network, they're handled by LocalMatch commands instead.
+ * This message is never sent over the network, it's matched by LocalMatch
+ * messages instead and selections are synchronized to the remote using
+ * SyncSelectionTile messages.
  */
 
 #define DP_MSG_SELECTION_CLEAR_STATIC_LENGTH 1
@@ -2845,6 +2851,58 @@ const unsigned char *DP_msg_local_match_data(const DP_MsgLocalMatch *mlm,
                                              size_t *out_size);
 
 size_t DP_msg_local_match_data_size(const DP_MsgLocalMatch *mlm);
+
+
+/*
+ * DP_MSG_SYNC_SELECTION_TILE
+ *
+ * Synchronizes a tile from a local selection into a remote one. The
+ * selection id must be 128 or higher.
+ *
+ * The mask is DEFLATEd 8 bit alpha. A zero-length mask will make the tile
+ * blank. A mask with a single zero byte will make the tile fully opaque.
+ * When the column and row are both 0xffff and the mask has a length of
+ * zero, the selection is cleared instead.
+ *
+ * This command isn't rolled back by undos.
+ */
+
+#define DP_MSG_SYNC_SELECTION_TILE_STATIC_LENGTH 6
+
+#define DP_MSG_SYNC_SELECTION_TILE_MASK_MIN_SIZE 0
+#define DP_MSG_SYNC_SELECTION_TILE_MASK_MAX_SIZE 65529
+
+typedef struct DP_MsgSyncSelectionTile DP_MsgSyncSelectionTile;
+
+DP_Message *DP_msg_sync_selection_tile_new(
+    unsigned int context_id, uint8_t user, uint8_t selection_id, uint16_t col,
+    uint16_t row, void (*set_mask)(size_t, unsigned char *, void *),
+    size_t mask_size, void *mask_user);
+
+DP_Message *DP_msg_sync_selection_tile_deserialize(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length);
+
+DP_Message *DP_msg_sync_selection_tile_parse(unsigned int context_id,
+                                             DP_TextReader *reader);
+
+DP_MsgSyncSelectionTile *DP_msg_sync_selection_tile_cast(DP_Message *msg);
+
+uint8_t DP_msg_sync_selection_tile_user(const DP_MsgSyncSelectionTile *msst);
+
+uint8_t
+DP_msg_sync_selection_tile_selection_id(const DP_MsgSyncSelectionTile *msst);
+
+uint16_t DP_msg_sync_selection_tile_col(const DP_MsgSyncSelectionTile *msst);
+
+uint16_t DP_msg_sync_selection_tile_row(const DP_MsgSyncSelectionTile *msst);
+
+const unsigned char *
+DP_msg_sync_selection_tile_mask(const DP_MsgSyncSelectionTile *msst,
+                                size_t *out_size);
+
+size_t
+DP_msg_sync_selection_tile_mask_size(const DP_MsgSyncSelectionTile *msst);
 
 
 /*

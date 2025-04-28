@@ -20,6 +20,7 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "message.h"
+#include "ids.h"
 #include "text_writer.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/binary.h>
@@ -364,20 +365,60 @@ DP_Message *DP_message_deserialize(const unsigned char *buf, size_t bufsize,
 }
 
 
+static int unpack_paint_mode(int flags)
+{
+    return flags & 0x3;
+}
+
 int DP_msg_draw_dabs_classic_paint_mode(DP_MsgDrawDabsClassic *mddc)
 {
     DP_ASSERT(mddc);
-    return DP_msg_draw_dabs_classic_flags(mddc) & 0x3;
+    return unpack_paint_mode(DP_msg_draw_dabs_classic_flags(mddc));
 }
 
 int DP_msg_draw_dabs_pixel_paint_mode(DP_MsgDrawDabsPixel *mddp)
 {
     DP_ASSERT(mddp);
-    return DP_msg_draw_dabs_pixel_flags(mddp) & 0x3;
+    return unpack_paint_mode(DP_msg_draw_dabs_pixel_flags(mddp));
 }
 
-int DP_msg_draw_dabs_mypaint_blend_paint_mode(DP_MsgDrawDabsMyPaintBlend *mddmb)
+int DP_msg_draw_dabs_mypaint_blend_paint_mode(
+    DP_MsgDrawDabsMyPaintBlend *mddmpb)
 {
-    DP_ASSERT(mddmb);
-    return DP_msg_draw_dabs_mypaint_blend_flags(mddmb) & 0x3;
+    DP_ASSERT(mddmpb);
+    return unpack_paint_mode(DP_msg_draw_dabs_mypaint_blend_flags(mddmpb));
+}
+
+
+static int unpack_mask_selection_id(int flags)
+{
+    int n = (flags & 0xf8) >> 3;
+    return n == 0 ? 0 : DP_SELECTION_ID_FIRST_REMOTE - 1 + n;
+}
+
+int DP_msg_draw_dabs_classic_mask_selection_id(DP_MsgDrawDabsClassic *mddc)
+{
+    DP_ASSERT(mddc);
+    return unpack_mask_selection_id(DP_msg_draw_dabs_classic_flags(mddc));
+}
+
+int DP_msg_draw_dabs_pixel_mask_selection_id(DP_MsgDrawDabsPixel *mddp)
+{
+    DP_ASSERT(mddp);
+    return unpack_mask_selection_id(DP_msg_draw_dabs_pixel_flags(mddp));
+}
+
+int DP_msg_draw_dabs_mypaint_mask_selection_id(DP_MsgDrawDabsMyPaint *mddmp)
+{
+    DP_ASSERT(mddmp);
+    return unpack_mask_selection_id(DP_msg_draw_dabs_mypaint_flags(mddmp));
+}
+
+
+int DP_msg_draw_dabs_mypaint_blend_mask_selection_id(
+    DP_MsgDrawDabsMyPaintBlend *mddmpb)
+{
+    DP_ASSERT(mddmpb);
+    return unpack_mask_selection_id(
+        DP_msg_draw_dabs_mypaint_blend_flags(mddmpb));
 }

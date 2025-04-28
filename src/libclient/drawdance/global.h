@@ -16,6 +16,8 @@ void initCpuSupport();
 
 void initImageImportExport();
 
+void initStaticTiles();
+
 
 class DrawContextPool;
 

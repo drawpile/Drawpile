@@ -151,6 +151,10 @@ DP_LayerRoutesSelEntry DP_layer_routes_search_sel(DP_LayerRoutes *lr,
                                                   DP_CanvasState *cs,
                                                   int layer_or_selection_id);
 
+DP_LayerRoutesSelEntry DP_layer_routes_search_sel_only(DP_CanvasState *cs,
+                                                       unsigned int context_id,
+                                                       int selection_id);
+
 DP_LayerRoutesSelEntry
 DP_layer_routes_sel_entry_from_selection_index(DP_CanvasState *cs, int index);
 

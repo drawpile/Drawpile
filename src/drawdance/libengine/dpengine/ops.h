@@ -186,5 +186,10 @@ DP_CanvasState *DP_ops_selection_clear(DP_CanvasState *cs,
                                        unsigned int context_id,
                                        int selection_id);
 
+DP_CanvasState *DP_ops_sync_selection_tile(DP_CanvasState *cs,
+                                           unsigned int context_id,
+                                           int selection_id, int index,
+                                           DP_Tile *tile_or_null);
+
 
 #endif

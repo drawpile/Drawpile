@@ -56,9 +56,8 @@ int DP_preview_type(DP_Preview *pv);
 DP_CanvasState *DP_preview_apply(DP_Preview *pv, DP_CanvasState *cs,
                                  DP_PreviewRenderer *pvr);
 
-void DP_preview_render_reset(DP_Preview *pv, DP_PreviewRenderer *pvr,
-                             int canvas_width, int canvas_height, int offset_x,
-                             int offset_y);
+void DP_preview_render_reset_inc(DP_Preview *pv, DP_PreviewRenderer *pvr,
+                                 DP_CanvasState *cs);
 
 
 DP_Preview *DP_preview_new_cut(int initial_offset_x, int initial_offset_y,
@@ -91,14 +90,12 @@ DP_PreviewRenderer *DP_preview_renderer_new(DP_DrawContext *dc,
 
 void DP_preview_renderer_free(DP_PreviewRenderer *pvr);
 
-void DP_preview_renderer_push_noinc(DP_PreviewRenderer *pvr, DP_Preview *pv,
-                                    int canvas_width, int canvas_height,
-                                    int offset_x, int offset_y);
+void DP_preview_renderer_push_noinc_inc(DP_PreviewRenderer *pvr, DP_Preview *pv,
+                                        DP_CanvasState *cs);
 
-void DP_preview_renderer_push_rerender_inc(DP_PreviewRenderer *pvr,
-                                           DP_Preview *pv, int canvas_width,
-                                           int canvas_height, int offset_x,
-                                           int offset_y);
+void DP_preview_renderer_push_rerender_inc_inc(DP_PreviewRenderer *pvr,
+                                               DP_Preview *pv,
+                                               DP_CanvasState *cs);
 
 void DP_preview_renderer_cancel(DP_PreviewRenderer *pvr, int type);
 void DP_preview_renderer_cancel_all_transforms(DP_PreviewRenderer *pvr);

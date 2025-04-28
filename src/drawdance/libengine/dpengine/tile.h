@@ -100,12 +100,24 @@ DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
                                      const unsigned char *image,
                                      size_t image_size);
 
+DP_Tile *DP_tile_new_mask_from_compressed(DP_DrawContext *dc,
+                                          unsigned int context_id,
+                                          const unsigned char *mask,
+                                          size_t mask_size);
+
 DP_Tile *DP_tile_new_zebra(unsigned int context_id, DP_Pixel15 pixel1,
                            DP_Pixel15 pixel2);
 
 DP_Tile *DP_tile_censored_noinc(void);
 
 DP_Tile *DP_tile_censored_inc(void);
+
+DP_Tile *DP_tile_opaque_noinc(void);
+
+DP_Tile *DP_tile_opaque_inc(void);
+
+// Is the given tile identical to the tile returned by DP_tile_opaque_(no)inc?
+bool DP_tile_opaque_ident(DP_Tile *tile);
 
 DP_Tile *DP_tile_incref(DP_Tile *tile);
 
@@ -150,6 +162,11 @@ size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
                         unsigned char *(*get_output_buffer)(size_t, void *),
                         void *user);
 
+size_t DP_tile_compress_mask(DP_Tile *t, unsigned char *channel_buffer,
+                             unsigned char *(*get_output_buffer)(size_t,
+                                                                 void *),
+                             void *user);
+
 
 void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y);
 
@@ -175,6 +192,10 @@ void DP_tile_sample_pigment(DP_Tile *tile_or_null, const uint16_t *mask, int x,
 
 
 DP_TransientTile *DP_transient_tile_new(DP_Tile *tile, unsigned int context_id);
+
+DP_TransientTile *DP_transient_tile_new_masked(DP_Tile *DP_RESTRICT t,
+                                               DP_Tile *DP_RESTRICT mt,
+                                               unsigned int context_id);
 
 DP_TransientTile *DP_transient_tile_new_transient(DP_TransientTile *tt,
                                                   unsigned int context_id);
@@ -222,6 +243,14 @@ void DP_transient_tile_fill_checker(DP_TransientTile *tt, DP_Pixel15 pixel1,
 void DP_transient_tile_copy(DP_TransientTile *tt, DP_Tile *t);
 
 bool DP_transient_tile_blank(DP_TransientTile *tt);
+
+bool DP_transient_tile_opaque(DP_TransientTile *tt);
+
+void DP_transient_tile_mask(DP_TransientTile *DP_RESTRICT tt,
+                            DP_Tile *DP_RESTRICT t, DP_Tile *DP_RESTRICT mt);
+
+void DP_transient_tile_mask_in_place(DP_TransientTile *DP_RESTRICT tt,
+                                     DP_Tile *DP_RESTRICT mt);
 
 void DP_transient_tile_merge(DP_TransientTile *DP_RESTRICT tt,
                              DP_Tile *DP_RESTRICT t, uint16_t opacity,

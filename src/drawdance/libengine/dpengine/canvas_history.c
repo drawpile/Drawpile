@@ -1183,7 +1183,12 @@ static void mark_entries_undone(DP_CanvasHistory *ch, unsigned int context_id,
     int used = ch->used;
     for (int i = undo_start; i < used; ++i) {
         DP_CanvasHistoryEntry *entry = &entries[i];
-        if (is_done_entry_by(entry, context_id)) {
+        // Mark entries by the undoing user as undone so that they don't get
+        // executed again when replaying. Selection synchronization entries
+        // don't get undone because they're not part of the user's actions,
+        // they're just there to lazily transmit local selections to the remote.
+        if (is_done_entry_by(entry, context_id)
+            && DP_message_type(entry->msg) != DP_MSG_SYNC_SELECTION_TILE) {
             entry->undo = DP_UNDO_UNDONE;
         }
         // Clear out any states that were left behind by local fork starts, they

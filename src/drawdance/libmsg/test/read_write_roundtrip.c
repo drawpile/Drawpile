@@ -619,9 +619,9 @@ static DP_Message *generate_draw_dabs_pixel_square(void)
 static DP_Message *generate_draw_dabs_mypaint(void)
 {
     return DP_msg_draw_dabs_mypaint_new(
-        generate_context_id(), random_uint24(), random_int32(), random_int32(),
-        random_uint32(), random_uint8(), random_uint8(), random_uint8(),
-        random_uint8(), generate_mypaint_dabs,
+        generate_context_id(), random_uint8(), random_uint24(), random_int32(),
+        random_int32(), random_uint32(), random_uint8(), random_uint8(),
+        random_uint8(), random_uint8(), generate_mypaint_dabs,
         int_between(DP_MSG_DRAW_DABS_MYPAINT_DABS_MIN_COUNT,
                     DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX_COUNT),
         NULL);

@@ -165,7 +165,7 @@ DP_Tile *DP_tile_new_from_bgra(unsigned int context_id, uint32_t bgra)
 
 
 struct DP_TileInflateArgs {
-    DP_Pixel8 *buffer;
+    void *buffer;
     unsigned int context_id;
     DP_TransientTile *tt;
 };
@@ -212,6 +212,46 @@ DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
     }
 }
 
+static unsigned char *get_inflate_mask_output_buffer(size_t out_size,
+                                                     void *user)
+{
+    if (out_size == DP_TILE_LENGTH) {
+        struct DP_TileInflateArgs *args = user;
+        args->tt = alloc_tile(false, true, args->context_id);
+        return (unsigned char *)args->buffer;
+    }
+    else {
+        DP_error_set("Tile mask decompression needs size %zu, but got %zu",
+                     (size_t)DP_TILE_LENGTH, out_size);
+        return NULL;
+    }
+}
+
+DP_Tile *DP_tile_new_mask_from_compressed(DP_DrawContext *dc,
+                                          unsigned int context_id,
+                                          const unsigned char *mask,
+                                          size_t mask_size)
+{
+    struct DP_TileInflateArgs args = {
+        DP_draw_context_tile8_buffer(dc),
+        context_id,
+        NULL,
+    };
+    if (DP_compress_inflate(mask, mask_size, get_inflate_mask_output_buffer,
+                            &args)) {
+        const unsigned char *buffer = args.buffer;
+        DP_Pixel15 *pixels = args.tt->pixels;
+        for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+            pixels[i] = (DP_Pixel15){0, 0, 0, DP_channel8_to_15(buffer[i])};
+        }
+        return (DP_Tile *)args.tt;
+    }
+    else {
+        DP_tile_decref_nullable((DP_Tile *)args.tt);
+        return NULL;
+    }
+}
+
 DP_Tile *DP_tile_new_zebra(unsigned int context_id, DP_Pixel15 pixel1,
                            DP_Pixel15 pixel2)
 {
@@ -246,6 +286,36 @@ DP_Tile *DP_tile_censored_inc(void)
     return DP_tile_incref(DP_tile_censored_noinc());
 }
 
+static DP_Tile *opaque_tile;
+
+DP_Tile *DP_tile_opaque_noinc(void)
+{
+    DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(opaque_tile_lock);
+    if (!opaque_tile) {
+        DP_atomic_lock(&opaque_tile_lock);
+        if (!opaque_tile) {
+            DP_TransientTile *tt = alloc_tile(false, false, 0);
+            DP_Pixel15 *pixels = tt->pixels;
+            for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+                pixels[i] = (DP_Pixel15){0, 0, 0, DP_BIT15};
+            }
+            opaque_tile = (DP_Tile *)tt;
+        }
+        DP_atomic_unlock(&opaque_tile_lock);
+    }
+    return opaque_tile;
+}
+
+DP_Tile *DP_tile_opaque_inc(void)
+{
+    return DP_tile_incref(DP_tile_opaque_noinc());
+}
+
+// Is the given tile identical to the tile returned by DP_tile_opaque_(no)inc?
+bool DP_tile_opaque_ident(DP_Tile *tile)
+{
+    return tile == opaque_tile;
+}
 
 DP_Tile *DP_tile_incref(DP_Tile *tile)
 {
@@ -342,7 +412,7 @@ bool DP_tile_opaque(DP_Tile *tile_or_null)
 {
     if (tile_or_null) {
         DP_Pixel15 *pixels = tile_or_null->pixels;
-        for (int i = 1; i < DP_TILE_LENGTH; ++i) {
+        for (int i = 0; i < DP_TILE_LENGTH; ++i) {
             if (pixels[i].a < DP_BIT15) {
                 return false;
             }
@@ -439,6 +509,29 @@ size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
         return DP_compress_deflate((const unsigned char *)pixel_buffer,
                                    DP_TILE_COMPRESSED_BYTES, get_output_buffer,
                                    user);
+    }
+}
+
+size_t DP_tile_compress_mask(DP_Tile *t, unsigned char *channel_buffer,
+                             unsigned char *(*get_output_buffer)(size_t,
+                                                                 void *),
+                             void *user)
+{
+    DP_ASSERT(t);
+    DP_ASSERT(DP_atomic_get(&t->refcount) > 0);
+
+    if (DP_tile_opaque_ident(t)) {
+        unsigned char *mask = get_output_buffer(1, user);
+        mask[0] = 0;
+        return 1;
+    }
+    else {
+        const DP_Pixel15 *pixels = DP_tile_pixels(t);
+        for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+            channel_buffer[i] = DP_channel15_to_8(pixels[i].a);
+        }
+        return DP_compress_deflate(channel_buffer, DP_TILE_LENGTH,
+                                   get_output_buffer, user);
     }
 }
 
@@ -695,6 +788,19 @@ DP_TransientTile *DP_transient_tile_new(DP_Tile *tile, unsigned int context_id)
     return tt;
 }
 
+DP_TransientTile *DP_transient_tile_new_masked(DP_Tile *DP_RESTRICT t,
+                                               DP_Tile *DP_RESTRICT mt,
+                                               unsigned int context_id)
+{
+    DP_ASSERT(t);
+    DP_ASSERT(mt);
+    DP_ASSERT(DP_atomic_get(&t->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&mt->refcount) > 0);
+    DP_TransientTile *tt = alloc_tile(true, true, context_id);
+    DP_transient_tile_mask(tt, t, mt);
+    return tt;
+}
+
 DP_TransientTile *DP_transient_tile_new_transient(DP_TransientTile *tt,
                                                   unsigned int context_id)
 {
@@ -886,6 +992,45 @@ bool DP_transient_tile_blank(DP_TransientTile *tt)
 #endif
         return false;
     }
+}
+
+bool DP_transient_tile_opaque(DP_TransientTile *tt)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    DP_Pixel15 *pixels = tt->pixels;
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        if (pixels[i].a < DP_BIT15) {
+            return false;
+        }
+    }
+    tt->maybe_blank = false;
+    return true;
+}
+
+void DP_transient_tile_mask(DP_TransientTile *DP_RESTRICT tt,
+                            DP_Tile *DP_RESTRICT t, DP_Tile *DP_RESTRICT mt)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(t);
+    DP_ASSERT(mt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&t->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&mt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    DP_mask_tile(tt->pixels, t->pixels, mt->pixels);
+}
+
+void DP_transient_tile_mask_in_place(DP_TransientTile *DP_RESTRICT tt,
+                                     DP_Tile *DP_RESTRICT mt)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(mt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(DP_atomic_get(&mt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    DP_mask_tile_in_place(tt->pixels, mt->pixels);
 }
 
 void DP_transient_tile_merge(DP_TransientTile *DP_RESTRICT tt,

@@ -67,7 +67,8 @@ void SelectionModel::setSelections(const drawdance::SelectionSet &ss)
 	} else {
 		drawdance::LayerContent content = sel.content();
 		if(!m_mask || m_mask->content().get() != content.get()) {
-			m_mask.reset(new SelectionMask(this, content, sel.bounds()));
+			m_mask.reset(
+				new SelectionMask(this, content, sel.calculateBounds()));
 			emit selectionChanged(m_mask);
 		}
 	}

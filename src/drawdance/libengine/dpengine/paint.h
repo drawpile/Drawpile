@@ -24,9 +24,9 @@
 #include "pixels.h"
 #include <dpcommon/common.h>
 
-typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_ClassicDab DP_ClassicDab;
 typedef struct DP_DrawContext DP_DrawContext;
+typedef struct DP_LayerContent DP_LayerContent;
 typedef struct DP_MyPaintBlendDab DP_MyPaintBlendDab;
 typedef struct DP_MyPaintDab DP_MyPaintDab;
 typedef struct DP_PixelDab DP_PixelDab;
@@ -50,6 +50,7 @@ typedef struct DP_PaintDrawDabsParams {
     int type;
     unsigned int context_id;
     int layer_id;
+    int mask_selection_id;
     int origin_x;
     int origin_y;
     uint32_t color;
@@ -79,7 +80,8 @@ typedef struct DP_PaintDrawDabsParams {
 
 void DP_paint_draw_dabs(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                         DP_PaintDrawDabsParams *params,
-                        DP_TransientLayerContent *tlc);
+                        DP_TransientLayerContent *tlc,
+                        DP_LayerContent *mask_lc_or_null);
 
 DP_BrushStamp DP_paint_color_sampling_stamp_make(uint16_t *data, int diameter,
                                                  int left, int top,

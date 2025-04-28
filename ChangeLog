@@ -21,6 +21,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Increase maximum layer count to 32767 per user, up from the previous 256. Thanks haxekhaex2 for suggesting.
  * Feature: Allow drawing on selections via Selection → Draw on Selection.
  * Feature: Allow changing the color of the selection mask via View → Set Selection Mask Color.
+ * Feature: Make selections mask brush strokes.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.
