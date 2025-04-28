@@ -4302,6 +4302,62 @@ void DP_blend_tile(DP_Pixel15 *DP_RESTRICT dst,
                     blend_mode);
 }
 
+void DP_mask_tile(DP_Pixel15 *DP_RESTRICT dst,
+                  const DP_Pixel15 *DP_RESTRICT src,
+                  const DP_Pixel15 *DP_RESTRICT mask)
+{
+    DP_Pixel15 *aligned_dst = DP_ASSUME_SIMD_ALIGNED(dst);
+    const DP_Pixel15 *aligned_src = DP_ASSUME_SIMD_ALIGNED(src);
+    const DP_Pixel15 *aligned_mask = DP_ASSUME_SIMD_ALIGNED(mask);
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        DP_Pixel15 sp = aligned_src[i];
+        uint16_t mask_a = aligned_mask[i].a;
+        if (sp.a == 0 || mask_a == 0) {
+            aligned_dst[i] = (DP_Pixel15){0, 0, 0, 0};
+        }
+        else if (sp.a == DP_BIT15 && mask_a == DP_BIT15) {
+            aligned_dst[i] = sp;
+        }
+        else {
+            BGRA15 bgra = to_bgra(sp);
+            Fix15 m = to_fix(mask_a);
+            aligned_dst[i] = (DP_Pixel15){
+                .b = from_fix(fix15_mul(bgra.b, m)),
+                .g = from_fix(fix15_mul(bgra.g, m)),
+                .r = from_fix(fix15_mul(bgra.r, m)),
+                .a = from_fix(fix15_mul(bgra.a, m)),
+            };
+        }
+    }
+}
+
+void DP_mask_tile_in_place(DP_Pixel15 *DP_RESTRICT dst,
+                           const DP_Pixel15 *DP_RESTRICT mask)
+{
+    DP_Pixel15 *aligned_dst = DP_ASSUME_SIMD_ALIGNED(dst);
+    const DP_Pixel15 *aligned_mask = DP_ASSUME_SIMD_ALIGNED(mask);
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        DP_Pixel15 sp = aligned_dst[i];
+        uint16_t mask_a = aligned_mask[i].a;
+        if (sp.a == 0 || (sp.a == DP_BIT15 && mask_a == DP_BIT15)) {
+            // Nothing to do.
+        }
+        else if (mask_a == 0) {
+            aligned_dst[i] = (DP_Pixel15){0, 0, 0, 0};
+        }
+        else {
+            BGRA15 bgra = to_bgra(sp);
+            Fix15 m = to_fix(mask_a);
+            aligned_dst[i] = (DP_Pixel15){
+                .b = from_fix(fix15_mul(bgra.b, m)),
+                .g = from_fix(fix15_mul(bgra.g, m)),
+                .r = from_fix(fix15_mul(bgra.r, m)),
+                .a = from_fix(fix15_mul(bgra.a, m)),
+            };
+        }
+    }
+}
+
 
 // Posterization adapted from libmypaint, see license above.
 

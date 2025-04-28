@@ -570,6 +570,7 @@ void ToolController::setBrushEngineBrush(
 	const brushes::ActiveBrush &brush = activeBrush();
 	DP_StrokeParams stroke = {
 		activeLayerOrSelection(),
+		m_selectionEditActive ? 0 : DP_SELECTION_ID_MAIN,
 		false,
 		0,
 		m_stabilizationMode != brushes::Smoothing || m_finishStrokes,

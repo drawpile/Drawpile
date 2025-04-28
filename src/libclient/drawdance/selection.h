@@ -28,7 +28,7 @@ public:
 
 	int selectionId() const;
 
-	QRect bounds() const;
+	QRect calculateBounds() const;
 
 	LayerContent content() const;
 

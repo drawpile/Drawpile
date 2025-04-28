@@ -508,6 +508,11 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
             DP_uint_to_uint8(DP_message_context_id(msg)),
             DP_msg_selection_clear_selection_id(DP_message_internal(msg)));
     case DP_MSG_LOCAL_CHANGE:
+        return make_user_attrs();
+    case DP_MSG_SYNC_SELECTION_TILE:
+        return make_selections(
+            DP_uint_to_uint8(DP_message_context_id(msg)),
+            DP_msg_sync_selection_tile_selection_id(DP_message_internal(msg)));
     case DP_MSG_UNDO:
         return make_user_attrs();
     default:

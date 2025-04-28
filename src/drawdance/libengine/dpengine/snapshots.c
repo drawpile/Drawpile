@@ -27,6 +27,8 @@
 #include "layer_props.h"
 #include "layer_props_list.h"
 #include "pixels.h"
+#include "selection.h"
+#include "selection_set.h"
 #include "tile.h"
 #include "timeline.h"
 #include "track.h"
@@ -421,11 +423,43 @@ static void tile_to_reset_image(struct DP_ResetImageContext *c,
     }
 }
 
+static void selection_tile_to_reset_image(struct DP_ResetImageContext *c,
+                                          int buffer_index, uint8_t context_id,
+                                          uint8_t selection_id, uint16_t x,
+                                          uint16_t y, DP_Tile *t)
+{
+    struct DP_ResetImageOutputBuffer *output_buffer =
+        &c->output_buffers[buffer_index];
+    size_t mask_size = DP_tile_compress_mask(
+        t, (unsigned char *)c->pixel_buffers[buffer_index].data,
+        reset_image_get_output_buffer, output_buffer);
+    if (mask_size > 0) {
+        reset_image_push(c, DP_msg_sync_selection_tile_new(
+                                c->context_id, context_id, selection_id, x, y,
+                                set_tile_data, mask_size, output_buffer->data));
+    }
+    else {
+        DP_warn("Reset image: error selection tile: %s", DP_error());
+    }
+}
+
 static void tile_to_reset_image_job(void *user, int thread_index)
 {
     struct DP_ResetImageJob *job = user;
-    tile_to_reset_image(job->c, thread_index, job->layer_id, job->sublayer_id,
-                        job->repeat, job->x, job->y, job->tile);
+    unsigned int selection_context_id;
+    int selection_element_id;
+    if (DP_layer_id_selection_ids(DP_protocol_to_layer_id(job->layer_id),
+                                  &selection_context_id,
+                                  &selection_element_id)) {
+        selection_tile_to_reset_image(
+            job->c, thread_index, DP_uint_to_uint8(selection_context_id),
+            DP_int_to_uint8(selection_element_id), job->x, job->y, job->tile);
+    }
+    else {
+        tile_to_reset_image(job->c, thread_index, job->layer_id,
+                            job->sublayer_id, job->repeat, job->x, job->y,
+                            job->tile);
+    }
 }
 
 static void flush_tile(struct DP_ResetImageContext *c, uint32_t layer_id,
@@ -550,6 +584,54 @@ static void layers_to_reset_image(struct DP_ResetImageContext *c,
         else {
             layer_content_to_reset_image(
                 c, target_id, DP_layer_list_entry_content_noinc(lle), lp);
+        }
+    }
+}
+
+static void flush_selection_tile(struct DP_ResetImageContext *c,
+                                 unsigned int context_id, int selection_id,
+                                 int x, int y, DP_Tile *t)
+{
+    uint16_t x16 = DP_int_to_uint16(x);
+    uint16_t y16 = DP_int_to_uint16(y);
+    DP_Worker *worker = c->worker;
+    if (worker) {
+        uint32_t layer_id = DP_layer_id_to_protocol(
+            DP_selection_id_make(context_id, selection_id));
+        struct DP_ResetImageJob job = {c, layer_id, 0, 0, x16, y16, t};
+        DP_worker_push(worker, &job);
+    }
+    else {
+        selection_tile_to_reset_image(c, 0, DP_uint_to_uint8(context_id),
+                                      DP_int_to_uint8(selection_id), x16, y16,
+                                      t);
+    }
+}
+
+static void selections_to_reset_image(struct DP_ResetImageContext *c,
+                                      DP_CanvasState *cs)
+{
+    DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+    if (ss) {
+        DP_TileCounts tc = DP_tile_counts_round(DP_canvas_state_width(cs),
+                                                DP_canvas_state_height(cs));
+        int count = DP_selection_set_count(ss);
+        for (int i = 0; i < count; ++i) {
+            DP_Selection *sel = DP_selection_set_at_noinc(ss, i);
+            int selection_id = DP_selection_id(sel);
+            if (selection_id >= DP_SELECTION_ID_FIRST_REMOTE) {
+                unsigned int context_id = DP_selection_context_id(sel);
+                DP_LayerContent *lc = DP_selection_content_noinc(sel);
+                for (int y = 0; y < tc.y; ++y) {
+                    for (int x = 0; x < tc.x; ++x) {
+                        DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
+                        if (t) {
+                            flush_selection_tile(c, context_id, selection_id, x,
+                                                 y, t);
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -709,6 +791,10 @@ static void canvas_state_to_reset_image(struct DP_ResetImageContext *c,
     layers_to_reset_image(c, 0, DP_canvas_state_layers_noinc(cs),
                           DP_canvas_state_layer_props_noinc(cs));
     DP_PERF_END(layers);
+
+    DP_PERF_BEGIN(selections, "selections");
+    selections_to_reset_image(c, cs);
+    DP_PERF_END(selections);
 
     DP_PERF_BEGIN(annotations, "annotations");
     annotations_to_reset_image(c, DP_canvas_state_annotations_noinc(cs));

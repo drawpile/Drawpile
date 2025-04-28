@@ -674,6 +674,12 @@ static void source_flood_all(DP_FloodFillContext *c)
 }
 
 
+static bool get_selection_bounds(DP_Selection *sel, DP_Rect *out_bounds)
+{
+    DP_LayerContent *lc = DP_selection_content_noinc(sel);
+    return DP_layer_content_bounds(lc, false, out_bounds);
+}
+
 static void init_selection(DP_FillContext *c, DP_CanvasState *cs,
                            unsigned int context_id, int selection_id)
 {
@@ -681,8 +687,8 @@ static void init_selection(DP_FillContext *c, DP_CanvasState *cs,
         DP_Selection *sel = DP_canvas_state_selection_search_noinc(
             cs, context_id, selection_id);
         if (sel) {
-            DP_Rect sel_bounds = *DP_selection_bounds(sel);
-            if (!DP_rect_empty(sel_bounds)) {
+            DP_Rect sel_bounds;
+            if (get_selection_bounds(sel, &sel_bounds)) {
                 c->sel = sel;
                 c->area = DP_rect_intersection(c->area, sel_bounds);
             }
@@ -1442,8 +1448,8 @@ static bool selection_fill_get_bounds(DP_FillContext *c, DP_CanvasState *cs,
         return false;
     }
 
-    DP_Rect sel_bounds = *DP_selection_bounds(c->sel);
-    if (DP_rect_empty(sel_bounds)) {
+    DP_Rect sel_bounds;
+    if (!get_selection_bounds(c->sel, &sel_bounds)) {
         DP_error_set("Selection %d of user %u has empty bounds", selection_id,
                      context_id);
         return false;

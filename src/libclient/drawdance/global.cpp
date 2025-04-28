@@ -4,6 +4,7 @@ extern "C" {
 #include <dpcommon/cpu.h>
 #include <dpcommon/threading.h>
 #include <dpengine/draw_context.h>
+#include <dpengine/tile.h>
 #include <dpimpex/image_impex.h>
 }
 #include "libclient/drawdance/global.h"
@@ -69,6 +70,14 @@ void initCpuSupport()
 void initImageImportExport()
 {
 	DP_image_impex_init();
+}
+
+void initStaticTiles()
+{
+	// These tiles are created on demand, so this shouldn't be necessary, but
+	// we'll do it anyway just to be safe.
+	DP_tile_censored_noinc();
+	DP_tile_opaque_noinc();
 }
 
 

@@ -108,6 +108,12 @@ static void free_deflate_z_stream(z_stream *stream)
     }
 }
 
+size_t DP_compress_deflate_bound(size_t in_size)
+{
+    unsigned long bound = compressBound(DP_size_to_ulong(in_size));
+    return DP_ulong_to_size(bound) + (size_t)4;
+}
+
 size_t DP_compress_deflate(const unsigned char *in, size_t in_size,
                            unsigned char *(*get_output_buffer)(size_t, void *),
                            void *user)

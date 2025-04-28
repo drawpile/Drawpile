@@ -599,6 +599,18 @@ DP_LayerRoutesSelEntry DP_layer_routes_search_sel(DP_LayerRoutes *lr,
     return lrse;
 }
 
+DP_LayerRoutesSelEntry DP_layer_routes_search_sel_only(DP_CanvasState *cs,
+                                                       unsigned int context_id,
+                                                       int selection_id)
+{
+    DP_ASSERT(cs);
+    DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+    int index =
+        ss ? DP_selection_set_search_index(ss, context_id, selection_id) : -1;
+    return (DP_LayerRoutesSelEntry){
+        index >= 0, true, {.sel = {context_id, selection_id, index}}};
+}
+
 DP_LayerRoutesSelEntry
 DP_layer_routes_sel_entry_from_selection_index(DP_CanvasState *cs, int index)
 {

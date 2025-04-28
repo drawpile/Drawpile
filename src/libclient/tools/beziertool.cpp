@@ -18,7 +18,7 @@ BezierTool::BezierTool(ToolController &owner)
 	: Tool(
 		  owner, BEZIER, utils::Cursors::curve(),
 		  Capability::AllowColorPick | Capability::AllowToolAdjust |
-			  Capability::Fractional | Capability::IgnoresSelections)
+			  Capability::Fractional)
 {
 }
 
@@ -112,7 +112,7 @@ void BezierTool::finishMultipart()
 
 		const PointVector pv = calculateBezierCurve();
 		m_brushEngine.beginStroke(
-			contextId, true, m_mirror, m_flip, m_zoom, m_angle);
+			contextId, canvasState, true, m_mirror, m_flip, m_zoom, m_angle);
 		for(const canvas::Point &p : pv) {
 			m_brushEngine.strokeTo(p, canvasState);
 		}
@@ -220,7 +220,9 @@ void BezierTool::updatePreview()
 
 	canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 	drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
-	m_brushEngine.beginStroke(0, false, m_mirror, m_flip, m_zoom, m_angle);
+	m_brushEngine.beginStroke(
+		m_owner.client()->myId(), canvasState, false, m_mirror, m_flip, m_zoom,
+		m_angle);
 	for(const canvas::Point &p : pv) {
 		m_brushEngine.strokeTo(p, canvasState);
 	}

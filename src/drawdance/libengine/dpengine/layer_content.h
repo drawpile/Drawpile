@@ -100,6 +100,8 @@ DP_LayerPropsList *DP_layer_content_sub_props_noinc(DP_LayerContent *lc);
 
 bool DP_layer_content_same_pixel(DP_LayerContent *lc, DP_Pixel15 *out_pixel);
 
+bool DP_layer_content_has_content(DP_LayerContent *lc);
+
 bool DP_layer_content_bounds(DP_LayerContent *lc, bool include_sublayers,
                              DP_Rect *out_bounds);
 
@@ -183,6 +185,9 @@ int DP_transient_layer_content_refcount(DP_TransientLayerContent *tlc);
 DP_LayerContent *
 DP_transient_layer_content_persist(DP_TransientLayerContent *tlc);
 
+DP_LayerContent *
+DP_transient_layer_content_persist_mask(DP_TransientLayerContent *tlc);
+
 int DP_transient_layer_content_width(DP_TransientLayerContent *tlc);
 
 int DP_transient_layer_content_height(DP_TransientLayerContent *tlc);
@@ -197,15 +202,26 @@ DP_Tile *DP_transient_layer_content_tile_at_noinc(DP_TransientLayerContent *tlc,
 void DP_transient_layer_content_transient_tile_at_set_noinc(
     DP_TransientLayerContent *tlc, int x, int y, DP_TransientTile *tt);
 
+DP_LayerContent *
+DP_transient_layer_content_mask_noinc_nullable(DP_TransientLayerContent *tlc);
+
 DP_LayerList *
 DP_transient_layer_content_sub_contents_noinc(DP_TransientLayerContent *tlc);
 
 DP_LayerPropsList *
 DP_transient_layer_content_sub_props_noinc(DP_TransientLayerContent *tlc);
 
+bool DP_transient_layer_content_has_content(DP_TransientLayerContent *tlc);
+
 bool DP_transient_layer_content_bounds(DP_TransientLayerContent *tlc,
                                        bool include_sublayers,
                                        DP_Rect *out_bounds);
+
+void DP_transient_layer_content_mask_set_noinc_nullable(
+    DP_TransientLayerContent *tlc, DP_LayerContent *mask_or_null);
+
+void DP_transient_layer_content_mask_set_inc_nullable(
+    DP_TransientLayerContent *tlc, DP_LayerContent *mask_or_null);
 
 DP_TransientLayerContent *
 DP_transient_layer_content_resize_to(DP_TransientLayerContent *tlc,

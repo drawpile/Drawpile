@@ -40,6 +40,7 @@ typedef struct DP_BrushPoint {
 
 typedef struct DP_StrokeParams {
     int layer_id;
+    int selection_id;
     bool interpolate;
     int smoothing;
     bool smoothing_finish_strokes;
@@ -78,9 +79,11 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
 void DP_brush_engine_dabs_flush(DP_BrushEngine *be);
 
 // Sets the context id for this stroke, optionally pushes an undo point message.
-void DP_brush_engine_stroke_begin(DP_BrushEngine *be, unsigned int context_id,
-                                  bool push_undo_point, bool mirror, bool flip,
-                                  float zoom, float angle);
+void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
+                                  DP_CanvasState *cs_or_null,
+                                  unsigned int context_id, bool push_undo_point,
+                                  bool mirror, bool flip, float zoom,
+                                  float angle);
 
 // Pushes draw dabs messages or fills up the stabilizer.
 void DP_brush_engine_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,

@@ -1239,6 +1239,15 @@ DP_CanvasState *DP_ops_annotation_delete(DP_CanvasState *cs, int annotation_id)
 }
 
 
+static DP_Selection *draw_dabs_search_selection(DP_CanvasState *cs,
+                                                unsigned int context_id,
+                                                int selection_id)
+{
+    DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
+    return ss ? DP_selection_set_search_noinc(ss, context_id, selection_id)
+              : NULL;
+}
+
 static void draw_dabs_adjust_indirect_mode(DP_PaintDrawDabsParams *params,
                                            DP_TransientLayerProps *sub_tlp,
                                            int alternate_blend_mode)
@@ -1293,12 +1302,16 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
     DP_TransientLayerContent *tlc = NULL;
     DP_TransientLayerContent *sub_tlc = NULL;
     DP_TransientLayerProps *sub_tlp = NULL;
+    DP_LayerContent *last_mask_lc = NULL;
     int last_layer_id = -1;
     int last_sublayer_id = -1;
+    unsigned int last_mask_context_id = 0;
+    int last_mask_selection_id = -1;
     int errors = 0;
     enum {
         DP_DRAW_DABS_ERROR_BLEND_MODE,
         DP_DRAW_DABS_ERROR_LAYER_ID,
+        DP_DRAW_DABS_ERROR_SELECTION_ID,
     } last_error_type;
     int last_error_arg;
 
@@ -1347,6 +1360,35 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
             }
         }
 
+        int mask_selection_id = params.mask_selection_id;
+        DP_LayerContent *mask_lc;
+        if (mask_selection_id == 0) {
+            mask_lc = NULL;
+        }
+        else {
+            unsigned int mask_context_id = params.context_id;
+            if (mask_context_id != last_mask_context_id
+                || mask_selection_id != last_mask_selection_id) {
+                DP_Selection *sel = draw_dabs_search_selection(
+                    cs, mask_context_id, mask_selection_id);
+                if (sel) {
+                    last_mask_context_id = mask_context_id;
+                    last_mask_selection_id = mask_selection_id;
+                    last_mask_lc = DP_selection_content_noinc(sel);
+                }
+                else {
+                    ++errors;
+                    last_error_type = DP_DRAW_DABS_ERROR_SELECTION_ID;
+                    last_error_arg = DP_selection_id_make(mask_context_id,
+                                                          mask_selection_id);
+                    DP_debug("Draw dabs: bad context id %u selection id %d",
+                             mask_context_id, mask_selection_id);
+                    continue;
+                }
+            }
+            mask_lc = last_mask_lc;
+        }
+
         DP_TransientLayerContent *target;
         if (DP_paint_mode_indirect(params.paint_mode, &params.blend_mode)) {
             int sublayer_id = DP_uint_to_int(params.context_id);
@@ -1354,7 +1396,6 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
                 draw_dabs_check_indirect_color(&params, sub_tlp);
             }
             else {
-
                 last_sublayer_id = sublayer_id;
                 DP_LayerPropsList *lpl =
                     DP_transient_layer_content_sub_props_noinc(tlc);
@@ -1383,14 +1424,21 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
                         tlc, sublayer_index, &sub_tlc, &sub_tlp);
                     draw_dabs_check_indirect_color(&params, sub_tlp);
                 }
+
+                if (DP_transient_layer_content_mask_noinc_nullable(tlc)
+                    != mask_lc) {
+                    DP_transient_layer_content_mask_set_inc_nullable(sub_tlc,
+                                                                     mask_lc);
+                }
             }
             target = sub_tlc;
+            mask_lc = NULL;
         }
         else {
             target = tlc;
         }
 
-        DP_paint_draw_dabs(dc, ucs_or_null, &params, target);
+        DP_paint_draw_dabs(dc, ucs_or_null, &params, target, mask_lc);
     }
 
     switch (errors) {
@@ -1405,6 +1453,9 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
         case DP_DRAW_DABS_ERROR_LAYER_ID:
             DP_error_set("Draw dabs: bad layer id %d", last_error_arg);
             break;
+        case DP_DRAW_DABS_ERROR_SELECTION_ID:
+            DP_error_set("Draw dabs: bad selection id %d", last_error_arg);
+            break;
         }
         break;
     default:
@@ -1418,6 +1469,11 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
         case DP_DRAW_DABS_ERROR_LAYER_ID:
             DP_error_set("Draw dabs: %d errors, last one is: bad layer id %d",
                          errors, last_error_arg);
+            break;
+        case DP_DRAW_DABS_ERROR_SELECTION_ID:
+            DP_error_set(
+                "Draw dabs: %d errors, last one is: bad selection id %d",
+                errors, last_error_arg);
             break;
         }
     }
@@ -1868,10 +1924,8 @@ DP_Selection *search_selection(DP_CanvasState *cs, unsigned int context_id,
 DP_CanvasState *set_selection(DP_CanvasState *cs, unsigned int context_id,
                               int selection_id, DP_LayerContent *lc)
 {
-    DP_Rect bounds;
-    if (DP_layer_content_bounds(lc, true, &bounds)) {
-        DP_Selection *sel =
-            DP_selection_new_init(context_id, selection_id, lc, &bounds);
+    if (DP_layer_content_has_content(lc)) {
+        DP_Selection *sel = DP_selection_new_init(context_id, selection_id, lc);
         DP_SelectionSet *ss = DP_canvas_state_selections_noinc_nullable(cs);
         DP_TransientSelectionSet *tss;
         if (ss) {
@@ -1920,7 +1974,7 @@ DP_CanvasState *DP_ops_selection_put_replace(DP_CanvasState *cs,
     }
 
     return set_selection(cs, context_id, selection_id,
-                         DP_transient_layer_content_persist(tlc));
+                         DP_transient_layer_content_persist_mask(tlc));
 }
 
 DP_CanvasState *DP_ops_selection_put_unite(DP_CanvasState *cs,
@@ -1945,7 +1999,7 @@ DP_CanvasState *DP_ops_selection_put_unite(DP_CanvasState *cs,
         }
 
         return set_selection(cs, context_id, selection_id,
-                             DP_transient_layer_content_persist(tlc));
+                             DP_transient_layer_content_persist_mask(tlc));
     }
     else {
         return DP_ops_selection_put_replace(cs, context_id, selection_id, left,
@@ -1986,7 +2040,7 @@ DP_CanvasState *DP_ops_selection_put_intersect(DP_CanvasState *cs,
         DP_transient_layer_content_decref(mask_tlc);
 
         return set_selection(cs, context_id, selection_id,
-                             DP_transient_layer_content_persist(tlc));
+                             DP_transient_layer_content_persist_mask(tlc));
     }
     else {
         return DP_canvas_state_incref(cs);
@@ -2015,7 +2069,7 @@ DP_CanvasState *DP_ops_selection_put_exclude(DP_CanvasState *cs,
         }
 
         return set_selection(cs, context_id, selection_id,
-                             DP_transient_layer_content_persist(tlc));
+                             DP_transient_layer_content_persist_mask(tlc));
     }
     else {
         return DP_canvas_state_incref(cs);
@@ -2048,7 +2102,7 @@ DP_CanvasState *DP_ops_selection_put_complement(DP_CanvasState *cs,
                                          DP_BIT15, DP_BLEND_MODE_ERASE, false);
 
         return set_selection(cs, context_id, selection_id,
-                             DP_transient_layer_content_persist(tlc));
+                             DP_transient_layer_content_persist_mask(tlc));
     }
     else {
         return DP_ops_selection_put_replace(cs, context_id, selection_id, left,
@@ -2076,4 +2130,25 @@ DP_CanvasState *DP_ops_selection_clear(DP_CanvasState *cs,
         }
     }
     return DP_canvas_state_incref(cs);
+}
+
+DP_CanvasState *DP_ops_sync_selection_tile(DP_CanvasState *cs,
+                                           unsigned int context_id,
+                                           int selection_id, int index,
+                                           DP_Tile *tile_or_null)
+{
+    DP_LayerRoutesSelEntry lrse =
+        DP_layer_routes_search_sel_only(cs, context_id, selection_id);
+
+    // No point putting a blank tile on a blank selection. It's like, how much
+    // more blank could it be? The answer is none, none more blank.
+    if (!lrse.exists && !tile_or_null) {
+        return DP_canvas_state_incref(cs);
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientLayerContent *tlc =
+        DP_layer_routes_sel_entry_transient_content(&lrse, tcs);
+    DP_transient_layer_content_tile_set_noinc(tlc, tile_or_null, index);
+    return DP_transient_canvas_state_persist(tcs);
 }

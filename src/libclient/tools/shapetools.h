@@ -16,7 +16,7 @@ public:
 		: Tool(
 			  owner, type, cursor,
 			  Capability::AllowColorPick | Capability::AllowToolAdjust |
-				  Capability::Fractional | Capability::IgnoresSelections)
+				  Capability::Fractional)
 	{
 	}
 

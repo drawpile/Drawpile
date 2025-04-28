@@ -76,6 +76,7 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	drawdance::initLogging();
 	drawdance::initCpuSupport();
 	drawdance::initImageImportExport();
+	drawdance::initStaticTiles();
 	drawdance::DrawContextPool::init();
 	utils::Cursors::init();
 

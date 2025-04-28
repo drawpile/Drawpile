@@ -130,6 +130,7 @@ bool DP_message_type_command(DP_MessageType type)
     case DP_MSG_SELECTION_PUT:
     case DP_MSG_SELECTION_CLEAR:
     case DP_MSG_LOCAL_MATCH:
+    case DP_MSG_SYNC_SELECTION_TILE:
     case DP_MSG_UNDO:
         return true;
     default:
@@ -278,6 +279,8 @@ const char *DP_message_type_name(DP_MessageType type)
         return "selectionclear";
     case DP_MSG_LOCAL_MATCH:
         return "localmatch";
+    case DP_MSG_SYNC_SELECTION_TILE:
+        return "syncselectiontile";
     case DP_MSG_UNDO:
         return "undo";
     default:
@@ -426,6 +429,8 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_SELECTION_CLEAR";
     case DP_MSG_LOCAL_MATCH:
         return "DP_MSG_LOCAL_MATCH";
+    case DP_MSG_SYNC_SELECTION_TILE:
+        return "DP_MSG_SYNC_SELECTION_TILE";
     case DP_MSG_UNDO:
         return "DP_MSG_UNDO";
     default:
@@ -614,6 +619,9 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     }
     else if (DP_str_equal(type_name, "localmatch")) {
         return DP_MSG_LOCAL_MATCH;
+    }
+    else if (DP_str_equal(type_name, "syncselectiontile")) {
+        return DP_MSG_SYNC_SELECTION_TILE;
     }
     else if (DP_str_equal(type_name, "undo")) {
         return DP_MSG_UNDO;
@@ -817,6 +825,9 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
             return DP_msg_selection_clear_deserialize(context_id, buf, length);
         case DP_MSG_LOCAL_MATCH:
             return DP_msg_local_match_deserialize(context_id, buf, length);
+        case DP_MSG_SYNC_SELECTION_TILE:
+            return DP_msg_sync_selection_tile_deserialize(context_id, buf,
+                                                          length);
         case DP_MSG_UNDO:
             return DP_msg_undo_deserialize(context_id, buf, length);
         default:
@@ -992,6 +1003,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_selection_clear_parse(context_id, reader);
     case DP_MSG_LOCAL_MATCH:
         return DP_msg_local_match_parse(context_id, reader);
+    case DP_MSG_SYNC_SELECTION_TILE:
+        return DP_msg_sync_selection_tile_parse(context_id, reader);
     case DP_MSG_UNDO:
         return DP_msg_undo_parse(context_id, reader);
     default:
@@ -6503,6 +6516,7 @@ const DP_MyPaintDab *DP_mypaint_dab_at(const DP_MyPaintDab *mpd, int i)
 }
 
 struct DP_MsgDrawDabsMyPaint {
+    uint8_t flags;
     uint32_t layer;
     int32_t x;
     int32_t y;
@@ -6518,7 +6532,7 @@ struct DP_MsgDrawDabsMyPaint {
 static size_t msg_draw_dabs_mypaint_payload_length(DP_Message *msg)
 {
     DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
-    return ((size_t)19) + DP_int_to_size(mddmp->dabs_count) * 9;
+    return ((size_t)20) + DP_int_to_size(mddmp->dabs_count) * 9;
 }
 
 static size_t msg_draw_dabs_mypaint_serialize_payload(DP_Message *msg,
@@ -6526,6 +6540,7 @@ static size_t msg_draw_dabs_mypaint_serialize_payload(DP_Message *msg,
 {
     DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
     size_t written = 0;
+    written += DP_write_bigendian_uint8(mddmp->flags, data + written);
     written += DP_write_bigendian_uint24(mddmp->layer, data + written);
     written += DP_write_bigendian_int32(mddmp->x, data + written);
     written += DP_write_bigendian_int32(mddmp->y, data + written);
@@ -6546,6 +6561,7 @@ static bool msg_draw_dabs_mypaint_write_payload_text(DP_Message *msg,
     DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
     return DP_text_writer_write_argb_color(writer, "color", mddmp->color)
         && DP_text_writer_write_uint(writer, "colorize", mddmp->colorize)
+        && DP_text_writer_write_uint(writer, "flags", mddmp->flags)
         && DP_text_writer_write_uint(writer, "layer", mddmp->layer)
         && DP_text_writer_write_uint(writer, "lock_alpha", mddmp->lock_alpha)
         && DP_text_writer_write_uint(writer, "posterize", mddmp->posterize)
@@ -6562,10 +6578,10 @@ static bool msg_draw_dabs_mypaint_equals(DP_Message *DP_RESTRICT msg,
 {
     DP_MsgDrawDabsMyPaint *a = DP_message_internal(msg);
     DP_MsgDrawDabsMyPaint *b = DP_message_internal(other);
-    return a->layer == b->layer && a->x == b->x && a->y == b->y
-        && a->color == b->color && a->lock_alpha == b->lock_alpha
-        && a->colorize == b->colorize && a->posterize == b->posterize
-        && a->posterize_num == b->posterize_num
+    return a->flags == b->flags && a->layer == b->layer && a->x == b->x
+        && a->y == b->y && a->color == b->color
+        && a->lock_alpha == b->lock_alpha && a->colorize == b->colorize
+        && a->posterize == b->posterize && a->posterize_num == b->posterize_num
         && a->dabs_count == b->dabs_count
         && mypaint_dabs_equal(a->dabs, b->dabs, a->dabs_count);
 }
@@ -6576,6 +6592,7 @@ void DP_msg_draw_dabs_mypaint_local_match_set(DP_UNUSED size_t size,
     DP_ASSERT(size == DP_MSG_DRAW_DABS_MYPAINT_MATCH_LENGTH);
     const DP_MsgDrawDabsMyPaint *mddmp = user;
     size_t written = 0;
+    written += DP_write_bigendian_uint8(mddmp->flags, data + written);
     written += DP_write_bigendian_uint24(mddmp->layer, data + written);
     written += DP_write_bigendian_int32(mddmp->x, data + written);
     written += DP_write_bigendian_int32(mddmp->y, data + written);
@@ -6595,6 +6612,7 @@ bool DP_msg_draw_dabs_mypaint_local_match_matches(
     const unsigned char *buffer = local_match_data(local_match_msg, &size);
     size_t read = 0;
     return size == DP_MSG_DRAW_DABS_MYPAINT_MATCH_LENGTH
+        && read_uint8(buffer + read, &read) == mddmp->flags
         && read_uint24(buffer + read, &read) == mddmp->layer
         && read_int32(buffer + read, &read) == mddmp->x
         && read_int32(buffer + read, &read) == mddmp->y
@@ -6614,16 +6632,18 @@ static const DP_MessageMethods msg_draw_dabs_mypaint_methods = {
 };
 
 DP_Message *DP_msg_draw_dabs_mypaint_new(
-    unsigned int context_id, uint32_t layer, int32_t x, int32_t y,
-    uint32_t color, uint8_t lock_alpha, uint8_t colorize, uint8_t posterize,
-    uint8_t posterize_num, void (*set_dabs)(int, DP_MyPaintDab *, void *),
-    int dabs_count, void *dabs_user)
+    unsigned int context_id, uint8_t flags, uint32_t layer, int32_t x,
+    int32_t y, uint32_t color, uint8_t lock_alpha, uint8_t colorize,
+    uint8_t posterize, uint8_t posterize_num,
+    void (*set_dabs)(int, DP_MyPaintDab *, void *), int dabs_count,
+    void *dabs_user)
 {
     DP_Message *msg = DP_message_new(
         DP_MSG_DRAW_DABS_MYPAINT, context_id, &msg_draw_dabs_mypaint_methods,
         DP_FLEX_SIZEOF(DP_MsgDrawDabsMyPaint, dabs,
                        DP_int_to_size(dabs_count) * sizeof(DP_MyPaintDab)));
     DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
+    mddmp->flags = flags;
     mddmp->layer = layer;
     mddmp->x = x;
     mddmp->y = y;
@@ -6641,13 +6661,14 @@ DP_Message *DP_msg_draw_dabs_mypaint_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
                                                  size_t length)
 {
-    if (length < 28 || length > 65530) {
+    if (length < 29 || length > 65531) {
         DP_error_set("Wrong length for mypaintdabs message; "
-                     "expected between 28 and 65530, got %zu",
+                     "expected between 29 and 65531, got %zu",
                      length);
         return NULL;
     }
     size_t read = 0;
+    uint8_t flags = read_uint8(buffer + read, &read);
     uint32_t layer = read_uint24(buffer + read, &read);
     int32_t x = read_int32(buffer + read, &read);
     int32_t y = read_int32(buffer + read, &read);
@@ -6666,13 +6687,15 @@ DP_Message *DP_msg_draw_dabs_mypaint_deserialize(unsigned int context_id,
     int dabs_count = DP_size_to_int(dabs_bytes) / 9;
     void *dabs_user = (void *)(buffer + read);
     return DP_msg_draw_dabs_mypaint_new(
-        context_id, layer, x, y, color, lock_alpha, colorize, posterize,
+        context_id, flags, layer, x, y, color, lock_alpha, colorize, posterize,
         posterize_num, mypaint_dab_deserialize, dabs_count, dabs_user);
 }
 
 DP_Message *DP_msg_draw_dabs_mypaint_parse(unsigned int context_id,
                                            DP_TextReader *reader)
 {
+    uint8_t flags =
+        (uint8_t)DP_text_reader_get_ulong(reader, "flags", UINT8_MAX);
     uint32_t layer =
         (uint32_t)DP_text_reader_get_ulong(reader, "layer", DP_UINT24_MAX);
     int32_t x = (int32_t)DP_text_reader_get_decimal(reader, "x", 4.0, INT32_MIN,
@@ -6691,13 +6714,19 @@ DP_Message *DP_msg_draw_dabs_mypaint_parse(unsigned int context_id,
     int dabs_count = DP_text_reader_get_sub_count(reader);
     void *dabs_user = reader;
     return DP_msg_draw_dabs_mypaint_new(
-        context_id, layer, x, y, color, lock_alpha, colorize, posterize,
+        context_id, flags, layer, x, y, color, lock_alpha, colorize, posterize,
         posterize_num, mypaint_dab_parse, dabs_count, dabs_user);
 }
 
 DP_MsgDrawDabsMyPaint *DP_msg_draw_dabs_mypaint_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_DRAW_DABS_MYPAINT);
+}
+
+uint8_t DP_msg_draw_dabs_mypaint_flags(const DP_MsgDrawDabsMyPaint *mddmp)
+{
+    DP_ASSERT(mddmp);
+    return mddmp->flags;
 }
 
 uint32_t DP_msg_draw_dabs_mypaint_layer(const DP_MsgDrawDabsMyPaint *mddmp)
@@ -9904,6 +9933,175 @@ const unsigned char *DP_msg_local_match_data(const DP_MsgLocalMatch *mlm,
 size_t DP_msg_local_match_data_size(const DP_MsgLocalMatch *mlm)
 {
     return mlm->data_size;
+}
+
+
+/* DP_MSG_SYNC_SELECTION_TILE */
+
+struct DP_MsgSyncSelectionTile {
+    uint8_t user;
+    uint8_t selection_id;
+    uint16_t col;
+    uint16_t row;
+    uint16_t mask_size;
+    unsigned char mask[];
+};
+
+static size_t msg_sync_selection_tile_payload_length(DP_Message *msg)
+{
+    DP_MsgSyncSelectionTile *msst = DP_message_internal(msg);
+    return ((size_t)6) + msst->mask_size;
+}
+
+static size_t msg_sync_selection_tile_serialize_payload(DP_Message *msg,
+                                                        unsigned char *data)
+{
+    DP_MsgSyncSelectionTile *msst = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint8(msst->user, data + written);
+    written += DP_write_bigendian_uint8(msst->selection_id, data + written);
+    written += DP_write_bigendian_uint16(msst->col, data + written);
+    written += DP_write_bigendian_uint16(msst->row, data + written);
+    written += write_bytes(msst->mask, msst->mask_size, data + written);
+    DP_ASSERT(written == msg_sync_selection_tile_payload_length(msg));
+    return written;
+}
+
+static bool msg_sync_selection_tile_write_payload_text(DP_Message *msg,
+                                                       DP_TextWriter *writer)
+{
+    DP_MsgSyncSelectionTile *msst = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "col", msst->col)
+        && DP_text_writer_write_base64(writer, "mask", msst->mask,
+                                       msst->mask_size)
+        && DP_text_writer_write_uint(writer, "row", msst->row)
+        && DP_text_writer_write_uint(writer, "selection_id", msst->selection_id)
+        && DP_text_writer_write_uint(writer, "user", msst->user);
+}
+
+static bool msg_sync_selection_tile_equals(DP_Message *DP_RESTRICT msg,
+                                           DP_Message *DP_RESTRICT other)
+{
+    DP_MsgSyncSelectionTile *a = DP_message_internal(msg);
+    DP_MsgSyncSelectionTile *b = DP_message_internal(other);
+    return a->user == b->user && a->selection_id == b->selection_id
+        && a->col == b->col && a->row == b->row && a->mask_size == b->mask_size
+        && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size)) == 0;
+}
+
+static const DP_MessageMethods msg_sync_selection_tile_methods = {
+    msg_sync_selection_tile_payload_length,
+    msg_sync_selection_tile_serialize_payload,
+    msg_sync_selection_tile_write_payload_text,
+    msg_sync_selection_tile_equals,
+};
+
+DP_Message *DP_msg_sync_selection_tile_new(
+    unsigned int context_id, uint8_t user, uint8_t selection_id, uint16_t col,
+    uint16_t row, void (*set_mask)(size_t, unsigned char *, void *),
+    size_t mask_size, void *mask_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_SYNC_SELECTION_TILE, context_id,
+        &msg_sync_selection_tile_methods,
+        DP_FLEX_SIZEOF(DP_MsgSyncSelectionTile, mask, mask_size));
+    DP_MsgSyncSelectionTile *msst = DP_message_internal(msg);
+    msst->user = user;
+    msst->selection_id = selection_id;
+    msst->col = col;
+    msst->row = row;
+    msst->mask_size = DP_size_to_uint16(mask_size);
+    if (set_mask) {
+        set_mask(msst->mask_size, msst->mask, mask_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_sync_selection_tile_deserialize(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length)
+{
+    if (length < 6 || length > 65535) {
+        DP_error_set("Wrong length for syncselectiontile message; "
+                     "expected between 6 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint8_t user = read_uint8(buffer + read, &read);
+    uint8_t selection_id = read_uint8(buffer + read, &read);
+    uint16_t col = read_uint16(buffer + read, &read);
+    uint16_t row = read_uint16(buffer + read, &read);
+    size_t mask_bytes = length - read;
+    uint16_t mask_size = DP_size_to_uint16(mask_bytes);
+    void *mask_user = (void *)(buffer + read);
+    return DP_msg_sync_selection_tile_new(context_id, user, selection_id, col,
+                                          row, read_bytes, mask_size,
+                                          mask_user);
+}
+
+DP_Message *DP_msg_sync_selection_tile_parse(unsigned int context_id,
+                                             DP_TextReader *reader)
+{
+    uint8_t user = (uint8_t)DP_text_reader_get_ulong(reader, "user", UINT8_MAX);
+    uint8_t selection_id =
+        (uint8_t)DP_text_reader_get_ulong(reader, "selection_id", UINT8_MAX);
+    uint16_t col =
+        (uint16_t)DP_text_reader_get_ulong(reader, "col", UINT16_MAX);
+    uint16_t row =
+        (uint16_t)DP_text_reader_get_ulong(reader, "row", UINT16_MAX);
+    size_t mask_size;
+    DP_TextReaderParseParams mask_params =
+        DP_text_reader_get_base64_string(reader, "mask", &mask_size);
+    return DP_msg_sync_selection_tile_new(context_id, user, selection_id, col,
+                                          row, DP_text_reader_parse_base64,
+                                          mask_size, &mask_params);
+}
+
+DP_MsgSyncSelectionTile *DP_msg_sync_selection_tile_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_SYNC_SELECTION_TILE);
+}
+
+uint8_t DP_msg_sync_selection_tile_user(const DP_MsgSyncSelectionTile *msst)
+{
+    DP_ASSERT(msst);
+    return msst->user;
+}
+
+uint8_t
+DP_msg_sync_selection_tile_selection_id(const DP_MsgSyncSelectionTile *msst)
+{
+    DP_ASSERT(msst);
+    return msst->selection_id;
+}
+
+uint16_t DP_msg_sync_selection_tile_col(const DP_MsgSyncSelectionTile *msst)
+{
+    DP_ASSERT(msst);
+    return msst->col;
+}
+
+uint16_t DP_msg_sync_selection_tile_row(const DP_MsgSyncSelectionTile *msst)
+{
+    DP_ASSERT(msst);
+    return msst->row;
+}
+
+const unsigned char *
+DP_msg_sync_selection_tile_mask(const DP_MsgSyncSelectionTile *msst,
+                                size_t *out_size)
+{
+    DP_ASSERT(msst);
+    if (out_size) {
+        *out_size = msst->mask_size;
+    }
+    return msst->mask;
+}
+
+size_t DP_msg_sync_selection_tile_mask_size(const DP_MsgSyncSelectionTile *msst)
+{
+    return msst->mask_size;
 }
 
 

@@ -104,7 +104,17 @@ int DP_msg_draw_dabs_classic_paint_mode(DP_MsgDrawDabsClassic *mddc);
 int DP_msg_draw_dabs_pixel_paint_mode(DP_MsgDrawDabsPixel *mddp);
 
 int DP_msg_draw_dabs_mypaint_blend_paint_mode(
-    DP_MsgDrawDabsMyPaintBlend *mddmb);
+    DP_MsgDrawDabsMyPaintBlend *mddmpb);
+
+
+int DP_msg_draw_dabs_classic_mask_selection_id(DP_MsgDrawDabsClassic *mddc);
+
+int DP_msg_draw_dabs_pixel_mask_selection_id(DP_MsgDrawDabsPixel *mddp);
+
+int DP_msg_draw_dabs_mypaint_mask_selection_id(DP_MsgDrawDabsMyPaint *mddmp);
+
+int DP_msg_draw_dabs_mypaint_blend_mask_selection_id(
+    DP_MsgDrawDabsMyPaintBlend *mddmpb);
 
 
 #endif

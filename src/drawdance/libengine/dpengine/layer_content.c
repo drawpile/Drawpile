@@ -43,6 +43,7 @@ struct DP_LayerContent {
     DP_Atomic refcount;
     const bool transient;
     const int width, height;
+    DP_LayerContent *mask;
     struct {
         DP_LayerList *contents;
         DP_LayerPropsList *props;
@@ -56,6 +57,10 @@ struct DP_TransientLayerContent {
     DP_Atomic refcount;
     bool transient;
     int width, height;
+    union {
+        DP_LayerContent *mask;
+        DP_TransientLayerContent *transient_mask;
+    };
     struct {
         union {
             DP_LayerList *contents;
@@ -78,6 +83,10 @@ struct DP_LayerContent {
     DP_Atomic refcount;
     bool transient;
     int width, height;
+    union {
+        DP_LayerContent *mask;
+        DP_TransientLayerContent *transient_mask;
+    };
     struct {
         union {
             DP_LayerList *contents;
@@ -121,6 +130,7 @@ void DP_layer_content_decref(DP_LayerContent *lc)
         }
         DP_layer_props_list_decref(lc->sub.props);
         DP_layer_list_decref(lc->sub.contents);
+        DP_layer_content_decref_nullable(lc->mask);
         DP_free(lc);
     }
 }
@@ -537,6 +547,20 @@ bool DP_layer_content_same_pixel(DP_LayerContent *lc, DP_Pixel15 *out_pixel)
     else {
         return false;
     }
+}
+
+bool DP_layer_content_has_content(DP_LayerContent *lc)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    int count = DP_tile_total_round(lc->width, lc->height);
+    for (int i = 0; i < count; ++i) {
+        DP_Tile *tile = lc->elements[i].tile;
+        if (tile && !DP_tile_blank(tile)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 static bool layer_content_tile_bounds(DP_LayerContent *lc, int *out_left,
@@ -1126,53 +1150,98 @@ DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,
     return img;
 }
 
+static bool get_mask_tile(DP_LayerContent *mask, int i, DP_Tile **out_mt)
+{
+    if (mask) {
+        DP_Tile *mt = mask->elements[i].tile;
+        if (mt) {
+            *out_mt = mt;
+            return true;
+        }
+        else {
+            *out_mt = NULL;
+            return false;
+        }
+    }
+    else {
+        *out_mt = NULL;
+        return true;
+    }
+}
+
+static bool tile_needs_masking(DP_Tile *mt)
+{
+    return mt && !DP_tile_opaque_ident(mt);
+}
+
 static DP_Tile *flatten_tile(DP_LayerContent *lc, int tile_index,
                              DP_UPixel8 tint, bool include_sublayers)
 {
     DP_ASSERT(tile_index >= 0);
     DP_ASSERT(tile_index < DP_tile_total_round(lc->width, lc->height));
-    DP_Tile *t = lc->elements[tile_index].tile;
-    DP_LayerList *ll = lc->sub.contents;
-    if (!include_sublayers || DP_layer_list_count(ll) == 0) {
-        if (t) {
-            if (tint.a == 0) {
-                return DP_tile_incref(t);
+    DP_Tile *mt;
+    if (get_mask_tile(lc->mask, tile_index, &mt)) {
+        DP_Tile *t = lc->elements[tile_index].tile;
+        DP_LayerList *ll = lc->sub.contents;
+        if (!include_sublayers || DP_layer_list_count(ll) == 0) {
+            if (t) {
+                bool needs_masking = tile_needs_masking(mt);
+                if (tint.a == 0 && !needs_masking) {
+                    return DP_tile_incref(t);
+                }
+                else {
+                    DP_TransientTile *tt =
+                        needs_masking ? DP_transient_tile_new_masked(t, mt, 0)
+                                      : DP_transient_tile_new(t, 0);
+                    if (tint.a != 0) {
+                        DP_transient_tile_tint(tt, tint);
+                    }
+                    return DP_transient_tile_persist(tt);
+                }
             }
-            else {
-                DP_TransientTile *tt = DP_transient_tile_new(t, 0);
+        }
+        else if (t) {
+            DP_TransientTile *tt = DP_transient_tile_new(t, 0);
+            DP_ViewModeContext vmc = DP_view_mode_context_make_default();
+            DP_layer_list_flatten_tile_to(ll, lc->sub.props, tile_index, tt,
+                                          DP_BIT15, (DP_UPixel8){.color = 0},
+                                          false, false, false, &vmc);
+            if (tile_needs_masking(mt)) {
+                DP_transient_tile_mask_in_place(tt, mt);
+            }
+            if (tint.a != 0) {
                 DP_transient_tile_tint(tt, tint);
-                return DP_transient_tile_persist(tt);
             }
+            return DP_transient_tile_persist(tt);
         }
         else {
-            return NULL;
+            DP_ViewModeContext vmc = DP_view_mode_context_make_default();
+            DP_TransientTile *tt_or_null = DP_layer_list_flatten_tile_to(
+                ll, lc->sub.props, tile_index, NULL, DP_BIT15,
+                (DP_UPixel8){.color = 0}, false, false, false, &vmc);
+            if (tt_or_null) {
+                if (tile_needs_masking(mt)) {
+                    DP_transient_tile_mask_in_place(tt_or_null, mt);
+                }
+                if (tint.a != 0) {
+                    DP_transient_tile_tint(tt_or_null, tint);
+                }
+                return DP_transient_tile_persist(tt_or_null);
+            }
         }
     }
-    else if (t) {
-        DP_TransientTile *tt = DP_transient_tile_new(t, 0);
-        DP_ViewModeContext vmc = DP_view_mode_context_make_default();
-        DP_layer_list_flatten_tile_to(ll, lc->sub.props, tile_index, tt,
-                                      DP_BIT15, (DP_UPixel8){.color = 0}, false,
-                                      false, false, &vmc);
-        if (tint.a != 0) {
-            DP_transient_tile_tint(tt, tint);
-        }
+    return NULL;
+}
+
+static DP_Tile *mask_censor_tile(DP_Tile *mt)
+{
+    if (mt) {
+        DP_TransientTile *tt =
+            DP_transient_tile_new_masked(DP_tile_censored_noinc(), mt, 0);
         return DP_transient_tile_persist(tt);
     }
     else {
-        DP_ViewModeContext vmc = DP_view_mode_context_make_default();
-        DP_TransientTile *tt_or_null = DP_layer_list_flatten_tile_to(
-            ll, lc->sub.props, tile_index, NULL, DP_BIT15,
-            (DP_UPixel8){.color = 0}, false, false, false, &vmc);
-        if (tt_or_null) {
-            if (tint.a != 0) {
-                DP_transient_tile_tint(tt_or_null, tint);
-            }
-            return DP_transient_tile_persist(tt_or_null);
-        }
-        else {
-            return NULL;
-        }
+        return DP_tile_censored_inc();
     }
 }
 
@@ -1181,25 +1250,25 @@ static DP_Tile *flatten_censored_tile(DP_LayerContent *lc, int tile_index,
 {
     DP_ASSERT(tile_index >= 0);
     DP_ASSERT(tile_index < DP_tile_total_round(lc->width, lc->height));
-    DP_Tile *t = lc->elements[tile_index].tile;
-    if (t) {
-        return DP_tile_censored_inc();
-    }
-    else if (include_sublayers) {
-        DP_LayerList *ll = lc->sub.contents;
-        int sublayer_count = DP_layer_list_count(ll);
-        for (int i = 0; i < sublayer_count; ++i) {
-            DP_LayerContent *sub_lc = DP_layer_list_entry_content_noinc(
-                DP_layer_list_at_noinc(ll, i));
-            if (sub_lc->elements[tile_index].tile) {
-                return DP_tile_censored_inc();
+    DP_Tile *mt;
+    if (get_mask_tile(lc->mask, tile_index, &mt)) {
+        DP_Tile *t = lc->elements[tile_index].tile;
+        if (t) {
+            return mask_censor_tile(mt);
+        }
+        else if (include_sublayers) {
+            DP_LayerList *ll = lc->sub.contents;
+            int sublayer_count = DP_layer_list_count(ll);
+            for (int i = 0; i < sublayer_count; ++i) {
+                DP_LayerContent *sub_lc = DP_layer_list_entry_content_noinc(
+                    DP_layer_list_at_noinc(ll, i));
+                if (sub_lc->elements[tile_index].tile) {
+                    return mask_censor_tile(mt);
+                }
             }
         }
-        return NULL;
     }
-    else {
-        return NULL;
-    }
+    return NULL;
 }
 
 DP_Tile *DP_layer_content_flatten_tile(DP_LayerContent *lc, int tile_index,
@@ -1235,20 +1304,6 @@ DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
 }
 
 
-static bool has_content(DP_LayerContent *lc)
-{
-    DP_ASSERT(lc);
-    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
-    int count = DP_tile_total_round(lc->width, lc->height);
-    for (int i = 0; i < count; ++i) {
-        DP_Tile *tile = lc->elements[i].tile;
-        if (tile && !DP_tile_blank(tile)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 static DP_TransientLayerContent *alloc_layer_content(int width, int height)
 {
     size_t count = DP_int_to_size(DP_tile_total_round(width, height));
@@ -1258,6 +1313,7 @@ static DP_TransientLayerContent *alloc_layer_content(int width, int height)
     tlc->transient = true;
     tlc->width = width;
     tlc->height = height;
+    tlc->mask = NULL;
     return tlc;
 }
 
@@ -1447,12 +1503,18 @@ DP_TransientLayerContent *DP_layer_content_resize(DP_LayerContent *lc,
     int width = lc->width + left + right;
     int height = lc->height + top + bottom;
     DP_TransientLayerContent *tlc;
-    if (has_content(lc)) {
+    if (DP_layer_content_has_content(lc)) {
         tlc = resize_layer_content(lc, context_id, top, left, width, height);
     }
     else {
         DP_debug("Resize: layer is blank");
         tlc = DP_transient_layer_content_new_init(width, height, NULL);
+    }
+
+    DP_LayerContent *mask = lc->mask;
+    if (mask) {
+        tlc->transient_mask =
+            DP_layer_content_resize(mask, context_id, top, right, bottom, left);
     }
 
     DP_LayerList *sub_ll = lc->sub.contents;
@@ -1512,6 +1574,7 @@ DP_TransientLayerContent *DP_transient_layer_content_new(DP_LayerContent *lc)
     for (int i = 0; i < count; ++i) {
         tlc->elements[i].tile = DP_tile_incref_nullable(lc->elements[i].tile);
     }
+    tlc->mask = DP_layer_content_incref_nullable(lc->mask);
     tlc->sub.contents = DP_layer_list_incref(lc->sub.contents);
     tlc->sub.props = DP_layer_props_list_incref(lc->sub.props);
     return tlc;
@@ -1541,6 +1604,7 @@ DP_transient_layer_content_new_transient(DP_TransientLayerContent *tlc)
             new_tlc->elements[i].tile = NULL;
         }
     }
+    new_tlc->mask = DP_layer_content_incref_nullable(tlc->mask);
     new_tlc->sub.contents = DP_layer_list_incref(tlc->sub.contents);
     new_tlc->sub.props = DP_layer_props_list_incref(tlc->sub.props);
     return new_tlc;
@@ -1600,12 +1664,8 @@ int DP_transient_layer_content_refcount(DP_TransientLayerContent *tlc)
     return DP_layer_content_refcount((DP_LayerContent *)tlc);
 }
 
-DP_LayerContent *
-DP_transient_layer_content_persist(DP_TransientLayerContent *tlc)
+static DP_LayerContent *persist_with(DP_TransientLayerContent *tlc, bool mask)
 {
-    DP_ASSERT(tlc);
-    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
-    DP_ASSERT(tlc->transient);
     tlc->transient = false;
     int count = DP_tile_total_round(tlc->width, tlc->height);
     for (int i = 0; i < count; ++i) {
@@ -1616,10 +1676,17 @@ DP_transient_layer_content_persist(DP_TransientLayerContent *tlc)
                 DP_transient_tile_decref(tt);
                 tlc->elements[i].transient_tile = NULL;
             }
+            else if (mask && DP_transient_tile_opaque(tt)) {
+                DP_transient_tile_decref(tt);
+                tlc->elements[i].tile = DP_tile_opaque_inc();
+            }
             else {
                 DP_transient_tile_persist(tt);
             }
         }
+    }
+    if (tlc->mask && DP_layer_content_transient(tlc->mask)) {
+        persist_with(tlc->transient_mask, true);
     }
     if (DP_layer_list_transient(tlc->sub.contents)) {
         DP_transient_layer_list_persist(tlc->sub.transient_contents);
@@ -1628,6 +1695,24 @@ DP_transient_layer_content_persist(DP_TransientLayerContent *tlc)
         DP_transient_layer_props_list_persist(tlc->sub.transient_props);
     }
     return (DP_LayerContent *)tlc;
+}
+
+DP_LayerContent *
+DP_transient_layer_content_persist(DP_TransientLayerContent *tlc)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    return persist_with(tlc, false);
+}
+
+DP_LayerContent *
+DP_transient_layer_content_persist_mask(DP_TransientLayerContent *tlc)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    return persist_with(tlc, true);
 }
 
 int DP_transient_layer_content_width(DP_TransientLayerContent *tlc)
@@ -1676,6 +1761,14 @@ void DP_transient_layer_content_transient_tile_at_set_noinc(
     tlc->elements[i].transient_tile = tt;
 }
 
+DP_LayerContent *
+DP_transient_layer_content_mask_noinc_nullable(DP_TransientLayerContent *tlc)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    return tlc->mask;
+}
 
 DP_LayerList *
 DP_transient_layer_content_sub_contents_noinc(DP_TransientLayerContent *tlc)
@@ -1695,6 +1788,13 @@ DP_transient_layer_content_sub_props_noinc(DP_TransientLayerContent *tlc)
     return DP_layer_content_sub_props_noinc((DP_LayerContent *)tlc);
 }
 
+bool DP_transient_layer_content_has_content(DP_TransientLayerContent *tlc)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    return DP_layer_content_has_content((DP_LayerContent *)tlc);
+}
 
 bool DP_transient_layer_content_bounds(DP_TransientLayerContent *tlc,
                                        bool include_sublayers,
@@ -1708,6 +1808,25 @@ bool DP_transient_layer_content_bounds(DP_TransientLayerContent *tlc,
                                    out_bounds);
 }
 
+void DP_transient_layer_content_mask_set_noinc_nullable(
+    DP_TransientLayerContent *tlc, DP_LayerContent *mask_or_null)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    DP_layer_content_decref_nullable(tlc->mask);
+    tlc->mask = mask_or_null;
+}
+
+void DP_transient_layer_content_mask_set_inc_nullable(
+    DP_TransientLayerContent *tlc, DP_LayerContent *mask_or_null)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    DP_transient_layer_content_mask_set_noinc_nullable(
+        tlc, DP_layer_content_incref_nullable(mask_or_null));
+}
 
 DP_TransientLayerContent *
 DP_transient_layer_content_resize_to(DP_TransientLayerContent *tlc,
@@ -1751,6 +1870,28 @@ static bool can_blend_blank(int blend_mode, uint16_t opacity)
     return DP_blend_mode_blend_blank(blend_mode) && opacity != 0;
 }
 
+static DP_TransientTile *merge_tile(DP_TransientTile *DP_RESTRICT tt,
+                                    DP_Tile *DP_RESTRICT t,
+                                    DP_Tile *DP_RESTRICT mt,
+                                    DP_TransientTile *DP_RESTRICT tmp_tt,
+                                    uint16_t opacity, int blend_mode)
+{
+    if (tile_needs_masking(mt)) {
+        if (tmp_tt) {
+            DP_transient_tile_mask(tmp_tt, t, mt);
+        }
+        else {
+            tmp_tt = DP_transient_tile_new_masked(t, mt, 0);
+        }
+        DP_transient_tile_merge(tt, (DP_Tile *)tmp_tt, opacity, blend_mode);
+        return tmp_tt;
+    }
+    else {
+        DP_transient_tile_merge(tt, t, opacity, blend_mode);
+        return NULL;
+    }
+}
+
 void DP_transient_layer_content_merge(DP_TransientLayerContent *tlc,
                                       unsigned int context_id,
                                       DP_LayerContent *lc, uint16_t opacity,
@@ -1766,21 +1907,24 @@ void DP_transient_layer_content_merge(DP_TransientLayerContent *tlc,
     int count = DP_tile_total_round(lc->width, lc->height);
     bool blend_blank = can_blend_blank(blend_mode, opacity);
     DP_Tile *censor_tile = censored ? DP_tile_censored_noinc() : NULL;
+    DP_LayerContent *mask = lc->mask;
+    DP_TransientTile *tmp_tt = NULL;
     for (int i = 0; i < count; ++i) {
         DP_Tile *t = lc->elements[i].tile;
-        if (t) {
+        DP_Tile *mt;
+        if (t && get_mask_tile(mask, i, &mt)) {
             if (tlc->elements[i].tile) {
                 DP_TransientTile *tt = get_transient_tile(tlc, context_id, i);
                 DP_ASSERT((void *)tt != (void *)t);
-                DP_transient_tile_merge(tt, censored ? censor_tile : t, opacity,
-                                        blend_mode);
+                tmp_tt = merge_tile(tt, censored ? censor_tile : t, mt, tmp_tt,
+                                    opacity, blend_mode);
             }
             else if (blend_blank) {
                 // For blend modes like normal and behind, do regular blending.
                 DP_TransientTile *tt =
                     create_transient_tile(tlc, context_id, i);
-                DP_transient_tile_merge(tt, censored ? censor_tile : t, opacity,
-                                        blend_mode);
+                tmp_tt = merge_tile(tt, censored ? censor_tile : t, mt, tmp_tt,
+                                    opacity, blend_mode);
             }
             else {
                 // For most other blend modes merging with transparent pixels
@@ -1789,6 +1933,7 @@ void DP_transient_layer_content_merge(DP_TransientLayerContent *tlc,
             }
         }
     }
+    DP_transient_tile_decref_nullable(tmp_tt);
 }
 
 

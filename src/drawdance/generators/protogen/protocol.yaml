@@ -663,6 +663,7 @@ DrawDabsMyPaint:
     local_match:
         layer_ids: [layer]
     fields:
+        - flags u8
         - layer u24
         - x i32: div4
         - y i32: div4
@@ -983,8 +984,9 @@ SelectionPut:
         The mask is DEFLATEd 8 bit alpha. If absent, this fills the entire
         rectangle instead.
 
-        Selection ids 1 to 127 are considered local-only and are not sent over
-        the network, they're handled by LocalMatch commands instead.
+        This message is never sent over the network, it's matched by LocalMatch
+        messages instead and selections are synchronized to the remote using
+        SyncSelectionTile messages.
     local_match:
         selection_ids: [selection_id]
     fields:
@@ -1009,8 +1011,9 @@ SelectionClear:
         Remove the selection specified by the selection_id, or all selections if
         it's 0.
 
-        Selection ids 1 to 127 are considered local-only and are not sent over
-        the network, they're handled by LocalMatch commands instead.
+        This message is never sent over the network, it's matched by LocalMatch
+        messages instead and selections are synchronized to the remote using
+        SyncSelectionTile messages.
     local_match:
         selection_ids: [selection_id]
     fields:
@@ -1038,6 +1041,25 @@ LocalMatch:
     fields:
         - type u8
         - data bytes
+
+SyncSelectionTile:
+    id: 177
+    comment: |
+        Synchronizes a tile from a local selection into a remote one. The
+        selection id must be 128 or higher.
+
+        The mask is DEFLATEd 8 bit alpha. A zero-length mask will make the tile
+        blank. A mask with a single zero byte will make the tile fully opaque.
+        When the column and row are both 0xffff and the mask has a length of
+        zero, the selection is cleared instead.
+
+        This command isn't rolled back by undos.
+    fields:
+        - user u8
+        - selection_id u8
+        - col u16
+        - row u16
+        - mask bytes
 
 Undo:
     id: 255
