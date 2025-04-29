@@ -284,7 +284,7 @@ static void handle_background_tile(DP_LocalState *ls, DP_DrawContext *dc,
         set_background_tile(ls, NULL);
     }
     else {
-        DP_Tile *t = DP_tile_new_from_compressed(dc, 0, body, size);
+        DP_Tile *t = DP_tile_new_from_deflate(dc, 0, body, size);
         if (t) {
             set_background_tile(ls, t);
         }
@@ -786,9 +786,9 @@ DP_Message *DP_local_state_msg_background_tile_new(DP_DrawContext *dc,
 {
     if (tile_or_null) {
         DP_ASSERT(dc);
-        size_t size =
-            DP_tile_compress(tile_or_null, DP_draw_context_tile8_buffer(dc),
-                             get_compression_buffer, dc);
+        size_t size = DP_tile_compress_deflate(tile_or_null,
+                                               DP_draw_context_tile8_buffer(dc),
+                                               get_compression_buffer, dc);
         if (size == 0) {
             return NULL;
         }

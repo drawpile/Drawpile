@@ -184,10 +184,8 @@ static unsigned char *get_inflate_output_buffer(size_t out_size, void *user)
     }
 }
 
-DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
-                                     unsigned int context_id,
-                                     const unsigned char *image,
-                                     size_t image_size)
+DP_Tile *DP_tile_new_from_deflate(DP_DrawContext *dc, unsigned int context_id,
+                                  const unsigned char *image, size_t image_size)
 {
     if (image_size == 4) {
         uint32_t bgra = DP_read_bigendian_uint32(image);
@@ -199,10 +197,38 @@ DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
             context_id,
             NULL,
         };
-        if (DP_compress_inflate(image, image_size, get_inflate_output_buffer,
-                                &args)) {
+        if (DP_decompress_deflate(image, image_size, get_inflate_output_buffer,
+                                  &args)) {
             DP_pixels8_to_15_checked(args.tt->pixels, args.buffer,
                                      DP_TILE_LENGTH);
+            return (DP_Tile *)args.tt;
+        }
+        else {
+            DP_tile_decref_nullable((DP_Tile *)args.tt);
+            return NULL;
+        }
+    }
+}
+
+DP_Tile *DP_tile_new_from_split_delta_zstd8le(DP_DrawContext *dc,
+                                              unsigned int context_id,
+                                              const unsigned char *image,
+                                              size_t image_size)
+{
+    if (image_size == 4) {
+        uint32_t bgra = DP_read_littleendian_uint32(image);
+        return DP_tile_new_from_bgra(context_id, bgra);
+    }
+    else {
+        struct DP_TileInflateArgs args = {
+            DP_draw_context_split_tile8_buffer(dc),
+            context_id,
+            NULL,
+        };
+        if (DP_decompress_zstd(DP_draw_context_zstd_dctx(dc), image, image_size,
+                               get_inflate_output_buffer, &args)) {
+            DP_split_tile8_delta_to_pixels15_checked(args.tt->pixels,
+                                                     args.buffer);
             return (DP_Tile *)args.tt;
         }
         else {
@@ -227,28 +253,37 @@ static unsigned char *get_inflate_mask_output_buffer(size_t out_size,
     }
 }
 
-DP_Tile *DP_tile_new_mask_from_compressed(DP_DrawContext *dc,
-                                          unsigned int context_id,
-                                          const unsigned char *mask,
-                                          size_t mask_size)
+DP_Tile *DP_tile_new_mask_from_delta_zstd8le(DP_DrawContext *dc,
+                                             unsigned int context_id,
+                                             const unsigned char *mask,
+                                             size_t mask_size)
 {
-    struct DP_TileInflateArgs args = {
-        DP_draw_context_tile8_buffer(dc),
-        context_id,
-        NULL,
-    };
-    if (DP_compress_inflate(mask, mask_size, get_inflate_mask_output_buffer,
-                            &args)) {
-        const unsigned char *buffer = args.buffer;
-        DP_Pixel15 *pixels = args.tt->pixels;
-        for (int i = 0; i < DP_TILE_LENGTH; ++i) {
-            pixels[i] = (DP_Pixel15){0, 0, 0, DP_channel8_to_15(buffer[i])};
-        }
-        return (DP_Tile *)args.tt;
+    DP_ASSERT(mask);
+    DP_ASSERT(mask_size > 0);
+    if (mask_size == 1 && mask[0] == 0) {
+        return DP_tile_opaque_inc();
     }
     else {
-        DP_tile_decref_nullable((DP_Tile *)args.tt);
-        return NULL;
+        struct DP_TileInflateArgs args = {
+            DP_draw_context_tile8_buffer(dc),
+            context_id,
+            NULL,
+        };
+        if (DP_decompress_zstd(DP_draw_context_zstd_dctx(dc), mask, mask_size,
+                               get_inflate_mask_output_buffer, &args)) {
+            const uint8_t *buffer = args.buffer;
+            DP_Pixel15 *pixels = args.tt->pixels;
+            uint8_t a = 0;
+            for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+                a += buffer[i];
+                pixels[i] = (DP_Pixel15){0, 0, 0, DP_channel8_to_15(a)};
+            }
+            return (DP_Tile *)args.tt;
+        }
+        else {
+            DP_tile_decref_nullable((DP_Tile *)args.tt);
+            return NULL;
+        }
     }
 }
 
@@ -476,46 +511,86 @@ bool DP_tile_pixels_equal_pixel(DP_Tile *tile, DP_Pixel15 pixel)
 }
 
 
-size_t DP_tile_compress_pixel(DP_Pixel15 pixel,
-                              unsigned char *(*get_output_buffer)(size_t,
-                                                                  void *),
-                              void *user)
+static size_t
+compress_pixel(DP_Pixel15 pixel, size_t (*write_fn)(uint32_t, unsigned char *),
+               unsigned char *(*get_output_buffer)(size_t, void *), void *user)
 {
     unsigned char *buffer = get_output_buffer(4, user);
     if (buffer) {
         uint32_t color =
             DP_upixel15_to_8(DP_pixel15_unpremultiply(pixel)).color;
-        DP_write_bigendian_uint32(color, buffer);
-        return 4;
+        return write_fn(color, buffer);
     }
     else {
         return 0; // The function should have already set the error message.
     }
 }
 
-size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
-                        unsigned char *(*get_output_buffer)(size_t, void *),
-                        void *user)
+size_t DP_tile_compress_pixel8be(DP_Pixel15 pixel,
+                                 unsigned char *(*get_output_buffer)(size_t,
+                                                                     void *),
+                                 void *user)
+{
+    return compress_pixel(pixel, DP_write_bigendian_uint32, get_output_buffer,
+                          user);
+}
+
+size_t DP_tile_compress_pixel8le(DP_Pixel15 pixel,
+                                 unsigned char *(*get_output_buffer)(size_t,
+                                                                     void *),
+                                 void *user)
+{
+    return compress_pixel(pixel, DP_write_littleendian_uint32,
+                          get_output_buffer, user);
+}
+
+size_t DP_tile_compress_deflate(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
+                                unsigned char *(*get_output_buffer)(size_t,
+                                                                    void *),
+                                void *user)
 {
     DP_ASSERT(tile);
     DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
     DP_ASSERT(pixel_buffer);
     DP_Pixel15 pixel;
     if (DP_tile_same_pixel(tile, &pixel)) {
-        return DP_tile_compress_pixel(pixel, get_output_buffer, user);
+        return DP_tile_compress_pixel8be(pixel, get_output_buffer, user);
     }
     else {
         DP_pixels15_to_8(pixel_buffer, tile->pixels, DP_TILE_LENGTH);
+        static_assert(sizeof(DP_Pixel8[DP_TILE_LENGTH])
+                          == DP_TILE_COMPRESSED_BYTES,
+                      "Tile of DP_Pixel8 has expected size");
         return DP_compress_deflate((const unsigned char *)pixel_buffer,
                                    DP_TILE_COMPRESSED_BYTES, get_output_buffer,
                                    user);
     }
 }
 
-size_t DP_tile_compress_mask(DP_Tile *t, unsigned char *channel_buffer,
-                             unsigned char *(*get_output_buffer)(size_t,
-                                                                 void *),
-                             void *user)
+size_t DP_tile_compress_split_delta_zstd8le(
+    DP_Tile *t, ZSTD_CCtx **in_out_ctx_or_null, DP_SplitTile8 *split_buffer,
+    unsigned char *(*get_output_buffer)(size_t, void *), void *user)
+{
+    DP_ASSERT(t);
+    DP_ASSERT(DP_atomic_get(&t->refcount) > 0);
+    DP_ASSERT(split_buffer);
+    DP_Pixel15 pixel;
+    if (DP_tile_same_pixel(t, &pixel)) {
+        return DP_tile_compress_pixel8be(pixel, get_output_buffer, user);
+    }
+    else {
+        DP_pixels15_to_split_tile8_delta(split_buffer, t->pixels);
+        static_assert(sizeof(DP_SplitTile8) == DP_TILE_COMPRESSED_BYTES,
+                      "Tile of split 8 bit channels has expected size");
+        return DP_compress_zstd(
+            in_out_ctx_or_null, (const unsigned char *)split_buffer,
+            DP_TILE_COMPRESSED_BYTES, get_output_buffer, user);
+    }
+}
+
+size_t DP_tile_compress_mask_delta_zstd8le(
+    DP_Tile *t, ZSTD_CCtx **in_out_ctx_or_null, uint8_t *channel_buffer,
+    unsigned char *(*get_output_buffer)(size_t, void *), void *user)
 {
     DP_ASSERT(t);
     DP_ASSERT(DP_atomic_get(&t->refcount) > 0);
@@ -527,11 +602,14 @@ size_t DP_tile_compress_mask(DP_Tile *t, unsigned char *channel_buffer,
     }
     else {
         const DP_Pixel15 *pixels = DP_tile_pixels(t);
+        uint8_t last_a = 0;
         for (int i = 0; i < DP_TILE_LENGTH; ++i) {
-            channel_buffer[i] = DP_channel15_to_8(pixels[i].a);
+            uint8_t a = DP_channel15_to_8(pixels[i].a);
+            channel_buffer[i] = a - last_a;
+            last_a = a;
         }
-        return DP_compress_deflate(channel_buffer, DP_TILE_LENGTH,
-                                   get_output_buffer, user);
+        return DP_compress_zstd(in_out_ctx_or_null, channel_buffer,
+                                DP_TILE_LENGTH, get_output_buffer, user);
     }
 }
 

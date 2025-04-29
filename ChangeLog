@@ -22,6 +22,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Allow drawing on selections via Selection → Draw on Selection.
  * Feature: Allow changing the color of the selection mask via View → Set Selection Mask Color.
  * Feature: Make selections mask brush strokes.
+ * Feature: Switch pixel compression algorithm to zstd, which is many times faster than the old gzip. Thanks Bonbli for suggesting a way to get better compression with this.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

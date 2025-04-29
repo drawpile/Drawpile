@@ -569,23 +569,49 @@ void DP_pixels8_to_15(DP_Pixel15 *dst, const DP_Pixel8 *src, int count)
     }
 }
 
+static DP_Pixel8 clamp_pixel8(DP_Pixel8 pixel)
+{
+    uint8_t a = pixel.a;
+    if (pixel.b > a) {
+        pixel.b = a;
+    }
+    if (pixel.g > a) {
+        pixel.g = a;
+    }
+    if (pixel.r > a) {
+        pixel.r = a;
+    }
+    return pixel;
+}
+
 void DP_pixels8_to_15_checked(DP_Pixel15 *dst, const DP_Pixel8 *src, int count)
 {
     DP_ASSERT(count <= 0 || dst);
     DP_ASSERT(count <= 0 || src);
     for (int i = 0; i < count; ++i) {
-        DP_Pixel8 pixel = src[i];
-        uint8_t a = pixel.a;
-        if (pixel.b > a) {
-            pixel.b = a;
-        }
-        if (pixel.g > a) {
-            pixel.g = a;
-        }
-        if (pixel.r > a) {
-            pixel.r = a;
-        }
-        dst[i] = DP_pixel8_to_15(pixel);
+        dst[i] = DP_pixel8_to_15(clamp_pixel8(src[i]));
+    }
+}
+
+void DP_pixels8_clamp(DP_Pixel8 *pixels, int count)
+{
+    DP_ASSERT(count <= 0 || pixels);
+    for (int i = 0; i < count; ++i) {
+        pixels[i] = clamp_pixel8(pixels[i]);
+    }
+}
+
+void DP_pixels8_swap_clamp(DP_Pixel8 *pixels, int count)
+{
+    DP_ASSERT(count <= 0 || pixels);
+    for (int i = 0; i < count; ++i) {
+        DP_Pixel8 pixel = pixels[i];
+        pixels[i] = clamp_pixel8((DP_Pixel8){
+            .b = pixel.a,
+            .g = pixel.r,
+            .r = pixel.g,
+            .a = pixel.b,
+        });
     }
 }
 
@@ -736,6 +762,210 @@ void DP_pixels15_to_8_tile(DP_Pixel8 *dst, const DP_Pixel15 *src)
     default:
         DP_pixels15_to_8(aligned_dst, aligned_src, DP_TILE_LENGTH);
         break;
+    }
+}
+
+
+void DP_pixels15_to_split_tile8(DP_SplitTile8 *dst, const DP_Pixel15 *src)
+{
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        DP_Pixel15 p = src[i];
+        dst->b[i] = DP_channel15_to_8(p.b);
+        dst->g[i] = DP_channel15_to_8(p.g);
+        dst->r[i] = DP_channel15_to_8(p.r);
+        dst->a[i] = DP_channel15_to_8(p.a);
+    }
+}
+
+void DP_split_tile8_to_pixels15(DP_Pixel15 *dst, const DP_SplitTile8 *src)
+{
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        dst[i] = (DP_Pixel15){
+            .b = DP_channel8_to_15(src->b[i]),
+            .g = DP_channel8_to_15(src->g[i]),
+            .r = DP_channel8_to_15(src->r[i]),
+            .a = DP_channel8_to_15(src->a[i]),
+        };
+    }
+}
+
+void DP_split_tile8_to_pixels15_checked(DP_Pixel15 *dst,
+                                        const DP_SplitTile8 *src)
+{
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        dst[i] = DP_pixel8_to_15(clamp_pixel8((DP_Pixel8){
+            .b = src->b[i],
+            .g = src->g[i],
+            .r = src->r[i],
+            .a = src->a[i],
+        }));
+    }
+}
+
+void DP_pixels15_to_split_tile8_delta(DP_SplitTile8 *dst, const DP_Pixel15 *src)
+{
+    uint8_t last_b = 0;
+    uint8_t last_g = 0;
+    uint8_t last_r = 0;
+    uint8_t last_a = 0;
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        DP_Pixel15 p = src[i];
+        uint8_t b = DP_channel15_to_8(p.b);
+        uint8_t g = DP_channel15_to_8(p.g);
+        uint8_t r = DP_channel15_to_8(p.r);
+        uint8_t a = DP_channel15_to_8(p.a);
+        dst->b[i] = b - last_b;
+        dst->g[i] = g - last_g;
+        dst->r[i] = r - last_r;
+        dst->a[i] = a - last_a;
+        last_b = b;
+        last_g = g;
+        last_r = r;
+        last_a = a;
+    }
+}
+
+void DP_split_tile8_delta_to_pixels15(DP_Pixel15 *dst, const DP_SplitTile8 *src)
+{
+    uint8_t b = 0;
+    uint8_t g = 0;
+    uint8_t r = 0;
+    uint8_t a = 0;
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        b += src->b[i];
+        g += src->g[i];
+        r += src->r[i];
+        a += src->a[i];
+        dst[i] = (DP_Pixel15){
+            .b = DP_channel8_to_15(b),
+            .g = DP_channel8_to_15(g),
+            .r = DP_channel8_to_15(r),
+            .a = DP_channel8_to_15(a),
+        };
+    }
+}
+
+void DP_split_tile8_delta_to_pixels15_checked(DP_Pixel15 *dst,
+                                              const DP_SplitTile8 *src)
+{
+    uint8_t b = 0;
+    uint8_t g = 0;
+    uint8_t r = 0;
+    uint8_t a = 0;
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        b += src->b[i];
+        g += src->g[i];
+        r += src->r[i];
+        a += src->a[i];
+        dst[i] = DP_pixel8_to_15(clamp_pixel8((DP_Pixel8){
+            .b = b,
+            .g = g,
+            .r = r,
+            .a = a,
+        }));
+    }
+}
+
+void DP_split8_delta_to_pixels8(DP_Pixel8 *DP_RESTRICT dst,
+                                const uint8_t *DP_RESTRICT src, int count)
+{
+    const uint8_t *DP_RESTRICT src_b = src;
+    const uint8_t *DP_RESTRICT src_g = src + count;
+    const uint8_t *DP_RESTRICT src_r = src + count * 2;
+    const uint8_t *DP_RESTRICT src_a = src + count * 3;
+    uint8_t b = 0;
+    uint8_t g = 0;
+    uint8_t r = 0;
+    uint8_t a = 0;
+    for (int i = 0; i < count; ++i) {
+        b += src_b[i];
+        g += src_g[i];
+        r += src_r[i];
+        a += src_a[i];
+        dst[i] = (DP_Pixel8){
+            .b = b,
+            .g = g,
+            .r = r,
+            .a = a,
+        };
+    }
+}
+
+void DP_pixels8_to_split8_delta(uint8_t *DP_RESTRICT dst,
+                                const DP_Pixel8 *DP_RESTRICT src, int count)
+{
+    uint8_t *DP_RESTRICT dst_b = dst;
+    uint8_t *DP_RESTRICT dst_g = dst + count;
+    uint8_t *DP_RESTRICT dst_r = dst + count * 2;
+    uint8_t *DP_RESTRICT dst_a = dst + count * 3;
+    uint8_t last_b = 0;
+    uint8_t last_g = 0;
+    uint8_t last_r = 0;
+    uint8_t last_a = 0;
+    for (int i = 0; i < count; ++i) {
+        DP_Pixel8 p = src[i];
+        dst_b[i] = p.b - last_b;
+        dst_g[i] = p.g - last_g;
+        dst_r[i] = p.r - last_r;
+        dst_a[i] = p.a - last_a;
+        last_b = p.b;
+        last_g = p.g;
+        last_r = p.r;
+        last_a = p.a;
+    }
+}
+
+void DP_split8_delta_to_pixels8_checked(DP_Pixel8 *DP_RESTRICT dst,
+                                        const uint8_t *DP_RESTRICT src,
+                                        int count)
+{
+    const uint8_t *DP_RESTRICT src_b = src;
+    const uint8_t *DP_RESTRICT src_g = src + count;
+    const uint8_t *DP_RESTRICT src_r = src + count * 2;
+    const uint8_t *DP_RESTRICT src_a = src + count * 3;
+    uint8_t b = 0;
+    uint8_t g = 0;
+    uint8_t r = 0;
+    uint8_t a = 0;
+    for (int i = 0; i < count; ++i) {
+        b += src_b[i];
+        g += src_g[i];
+        r += src_r[i];
+        a += src_a[i];
+        dst[i] = clamp_pixel8((DP_Pixel8){
+            .b = b,
+            .g = g,
+            .r = r,
+            .a = a,
+        });
+    }
+}
+
+void DP_alpha_to_pixels8(DP_Pixel8 *DP_RESTRICT dst,
+                         const uint8_t *DP_RESTRICT src, int count)
+{
+    for (int i = 0; i < count; ++i) {
+        dst[i] = (DP_Pixel8){
+            .b = 0,
+            .g = 0,
+            .r = 0,
+            .a = src[i],
+        };
+    }
+}
+
+void DP_alpha_delta_to_pixels8(DP_Pixel8 *DP_RESTRICT dst,
+                               const uint8_t *DP_RESTRICT src, int count)
+{
+    uint8_t a = 0;
+    for (int i = 0; i < count; ++i) {
+        a += src[i];
+        dst[i] = (DP_Pixel8){
+            .b = 0,
+            .g = 0,
+            .r = 0,
+            .a = a,
+        };
     }
 }
 

@@ -736,9 +736,7 @@ DP_CanvasState *DP_ops_layer_tree_delete(DP_CanvasState *cs, DP_DrawContext *dc,
 DP_CanvasState *DP_ops_put_image(DP_CanvasState *cs,
                                  DP_UserCursors *ucs_or_null,
                                  unsigned int context_id, int layer_id,
-                                 int blend_mode, int x, int y, int width,
-                                 int height, const unsigned char *image,
-                                 size_t image_size)
+                                 int blend_mode, int x, int y, DP_Image *img)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
     DP_LayerRoutesSelEntry lrse = DP_layer_routes_search_sel(lr, cs, layer_id);
@@ -747,16 +745,11 @@ DP_CanvasState *DP_ops_put_image(DP_CanvasState *cs,
         return NULL;
     }
 
-    DP_Image *img =
-        DP_image_new_from_compressed(width, height, image, image_size);
-    if (!img) {
-        return NULL;
-    }
-
     if (ucs_or_null && !lrse.is_selection) {
         DP_user_cursors_activate(ucs_or_null, context_id);
-        DP_user_cursors_move(ucs_or_null, context_id, layer_id, x + width / 2,
-                             y + height / 2);
+        DP_user_cursors_move(ucs_or_null, context_id, layer_id,
+                             x + DP_image_width(img) / 2,
+                             y + DP_image_height(img) / 2);
     }
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);

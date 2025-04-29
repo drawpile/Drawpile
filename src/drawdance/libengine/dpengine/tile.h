@@ -27,6 +27,7 @@
 
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
+typedef struct ZSTD_CCtx_s ZSTD_CCtx;
 
 #define DP_TILE_BYTES            (DP_TILE_LENGTH * sizeof(DP_Pixel15))
 #define DP_TILE_COMPRESSED_BYTES (DP_TILE_LENGTH * sizeof(DP_Pixel8))
@@ -95,15 +96,19 @@ DP_Tile *DP_tile_new_from_pixels8(unsigned int context_id,
 
 DP_Tile *DP_tile_new_from_bgra(unsigned int context_id, uint32_t bgra);
 
-DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
-                                     unsigned int context_id,
-                                     const unsigned char *image,
-                                     size_t image_size);
+DP_Tile *DP_tile_new_from_deflate(DP_DrawContext *dc, unsigned int context_id,
+                                  const unsigned char *image,
+                                  size_t image_size);
 
-DP_Tile *DP_tile_new_mask_from_compressed(DP_DrawContext *dc,
-                                          unsigned int context_id,
-                                          const unsigned char *mask,
-                                          size_t mask_size);
+DP_Tile *DP_tile_new_from_split_delta_zstd8le(DP_DrawContext *dc,
+                                              unsigned int context_id,
+                                              const unsigned char *image,
+                                              size_t image_size);
+
+DP_Tile *DP_tile_new_mask_from_delta_zstd8le(DP_DrawContext *dc,
+                                             unsigned int context_id,
+                                             const unsigned char *mask,
+                                             size_t mask_size);
 
 DP_Tile *DP_tile_new_zebra(unsigned int context_id, DP_Pixel15 pixel1,
                            DP_Pixel15 pixel2);
@@ -153,19 +158,28 @@ bool DP_tile_pixels_equal(DP_Tile *t1, DP_Tile *t2);
 bool DP_tile_pixels_equal_pixel(DP_Tile *tile, DP_Pixel15 pixel);
 
 
-size_t DP_tile_compress_pixel(DP_Pixel15 pixel,
-                              unsigned char *(*get_output_buffer)(size_t,
-                                                                  void *),
-                              void *user);
+size_t DP_tile_compress_pixel8be(DP_Pixel15 pixel,
+                                 unsigned char *(*get_output_buffer)(size_t,
+                                                                     void *),
+                                 void *user);
 
-size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
-                        unsigned char *(*get_output_buffer)(size_t, void *),
-                        void *user);
+size_t DP_tile_compress_pixel8le(DP_Pixel15 pixel,
+                                 unsigned char *(*get_output_buffer)(size_t,
+                                                                     void *),
+                                 void *user);
 
-size_t DP_tile_compress_mask(DP_Tile *t, unsigned char *channel_buffer,
-                             unsigned char *(*get_output_buffer)(size_t,
-                                                                 void *),
-                             void *user);
+size_t DP_tile_compress_deflate(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
+                                unsigned char *(*get_output_buffer)(size_t,
+                                                                    void *),
+                                void *user);
+
+size_t DP_tile_compress_split_delta_zstd8le(
+    DP_Tile *t, ZSTD_CCtx **in_out_ctx_or_null, DP_SplitTile8 *split_buffer,
+    unsigned char *(*get_output_buffer)(size_t, void *), void *user);
+
+size_t DP_tile_compress_mask_delta_zstd8le(
+    DP_Tile *t, ZSTD_CCtx **in_out_ctx_or_null, uint8_t *channel_buffer,
+    unsigned char *(*get_output_buffer)(size_t, void *), void *user);
 
 
 void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y);

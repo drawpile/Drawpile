@@ -445,7 +445,7 @@ void FloodFill::flushPending()
 			net::Client *client = m_owner.client();
 			uint8_t contextId = client->myId();
 			net::MessageList msgs;
-			net::makePutImageMessages(
+			net::makePutImageZstdMessages(
 				msgs, contextId, layerId,
 				m_pendingEditable ? m_blendMode : m_originalBlendMode,
 				m_pendingPos.x(), m_pendingPos.y(), m_pendingImage);

@@ -32,6 +32,8 @@
 
 typedef struct DP_LayerListEntry DP_LayerListEntry;
 typedef struct DP_LayerProps DP_LayerProps;
+typedef struct DP_SplitTile8 DP_SplitTile8;
+typedef struct ZSTD_DCtx_s ZSTD_DCtx;
 typedef union DP_Pixel8 DP_Pixel8;
 
 
@@ -63,6 +65,8 @@ DP_DrawContextStatistics DP_draw_context_statistics(DP_DrawContext *dc);
 DP_Pixel8 *DP_draw_context_transform_buffer(DP_DrawContext *dc);
 
 DP_Pixel8 *DP_draw_context_tile8_buffer(DP_DrawContext *dc);
+
+DP_SplitTile8 *DP_draw_context_split_tile8_buffer(DP_DrawContext *dc);
 
 void DP_draw_context_id_generator_reset(DP_DrawContext *dc, int last_used_id);
 
@@ -98,6 +102,8 @@ void DP_draw_context_layer_indexes_pop(DP_DrawContext *dc);
 
 // Get the contents of the layer index list.
 int *DP_draw_context_layer_indexes(DP_DrawContext *dc, int *out_count);
+
+ZSTD_DCtx **DP_draw_context_zstd_dctx(DP_DrawContext *dc);
 
 #ifdef DP_LIBSWSCALE
 struct SwsContext *DP_draw_context_sws_context(DP_DrawContext *dc,

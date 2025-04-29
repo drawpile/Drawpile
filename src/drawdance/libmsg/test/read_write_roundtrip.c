@@ -687,6 +687,17 @@ static DP_Message *generate_layer_tree_delete(void)
                                         random_uint24());
 }
 
+static DP_Message *generate_move_rect_zstd(void)
+{
+    return DP_msg_move_rect_zstd_new(
+        generate_context_id(), random_uint24(), random_uint24(), random_int32(),
+        random_int32(), random_int32(), random_int32(), random_int32(),
+        random_int32(), generate_bytes,
+        size_between(DP_MSG_MOVE_RECT_MASK_MIN_SIZE,
+                     DP_MSG_MOVE_RECT_MASK_MAX_SIZE),
+        NULL);
+}
+
 static DP_Message *generate_transform_region(void)
 {
     return DP_msg_transform_region_new(
@@ -817,6 +828,51 @@ static DP_Message *generate_sync_selection_tile(void)
         NULL);
 }
 
+static DP_Message *generate_put_image_zstd(void)
+{
+    return DP_msg_put_image_zstd_new(
+        generate_context_id(), random_uint24(), generate_blend_mode(),
+        random_uint32(), random_uint32(), random_uint32(), random_uint32(),
+        generate_bytes,
+        size_between(DP_MSG_PUT_IMAGE_IMAGE_MIN_SIZE,
+                     DP_MSG_PUT_IMAGE_IMAGE_MAX_SIZE),
+        NULL);
+}
+
+static DP_Message *generate_canvas_background_zstd(void)
+{
+    return DP_msg_canvas_background_zstd_new(
+        generate_context_id(), generate_bytes,
+        size_between(DP_MSG_CANVAS_BACKGROUND_IMAGE_MIN_SIZE,
+                     DP_MSG_CANVAS_BACKGROUND_IMAGE_MAX_SIZE),
+        NULL);
+}
+
+static DP_Message *generate_transform_region_zstd(void)
+{
+    return DP_msg_transform_region_zstd_new(
+        generate_context_id(), random_uint24(), random_uint24(), random_int32(),
+        random_int32(), random_int32(), random_int32(), random_int32(),
+        random_int32(), random_int32(), random_int32(), random_int32(),
+        random_int32(), random_int32(), random_int32(),
+        generate_variant((unsigned int[]){DP_MSG_TRANSFORM_REGION_ALL_MODE},
+                         DP_MSG_TRANSFORM_REGION_NUM_MODE),
+        generate_bytes,
+        size_between(DP_MSG_TRANSFORM_REGION_MASK_MIN_SIZE,
+                     DP_MSG_TRANSFORM_REGION_MASK_MAX_SIZE),
+        NULL);
+}
+
+static DP_Message *generate_put_tile_zstd(void)
+{
+    return DP_msg_put_tile_zstd_new(
+        generate_context_id(), random_uint8(), random_uint24(), random_uint8(),
+        random_uint16(), random_uint16(), random_uint16(), generate_bytes,
+        size_between(DP_MSG_PUT_TILE_IMAGE_MIN_SIZE,
+                     DP_MSG_PUT_TILE_IMAGE_MAX_SIZE),
+        NULL);
+}
+
 static DP_Message *generate_undo(void)
 {
     return DP_msg_undo_new(generate_context_id(), random_uint8(),
@@ -883,6 +939,11 @@ static GenerateFn generate_fns[] = {
     generate_selection_clear,
     generate_local_match,
     generate_sync_selection_tile,
+    generate_put_image_zstd,
+    generate_canvas_background_zstd,
+    generate_move_rect_zstd,
+    generate_transform_region_zstd,
+    generate_put_tile_zstd,
     generate_undo,
 };
 
