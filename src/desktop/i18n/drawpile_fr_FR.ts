@@ -6,7 +6,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+52"/>
         <source>Add New</source>
-        <translation>Ajouter nouveau</translation>
+        <translation>Ajouter un Nouveau</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -118,12 +118,12 @@
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation>Opacité&#x202f;: </translation>
+        <translation>Opacité&#xa0;: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation>Dureté&#x202f;: </translation>
+        <translation>Dureté&#xa0;: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -136,7 +136,7 @@
     <message>
         <location line="-16"/>
         <source>Smudging: </source>
-        <translation>Étalement&#x202f;: </translation>
+        <translation>Étalement&#xa0;: </translation>
     </message>
     <message>
         <location line="+30"/>
@@ -146,22 +146,22 @@
     <message>
         <location line="+16"/>
         <source>Spacing: </source>
-        <translation>Espacement&#x202f;: </translation>
+        <translation>Espacement&#xa0;: </translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation>Grain&#x202f;: </translation>
+        <translation>Grain&#xa0;: </translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation>Stabilisateur&#x202f;: </translation>
+        <translation>Stabilisateur&#xa0;: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation>Lissage&#x202f;: </translation>
+        <translation>Lissage&#xa0;: </translation>
     </message>
     <message>
         <location line="-206"/>
@@ -1129,7 +1129,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+183"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Cette session a du contenu &lt;em&gt;qui n&apos;est pas approprié à un public mineur&lt;/em&gt;(NSFM). &lt;/p&gt;&lt;p&gt;&lt;strong&gt;Vous devez avoir 18 ans ou plus, et être autorisé à consulter du contenu destiné à un public mature. &lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Êtes-vous sûr de vouloir rejoindre cette session&#x202f;?&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Cette session a du contenu &lt;em&gt;qui n&apos;est pas approprié à un public mineur&lt;/em&gt;(NAAM). &lt;/p&gt;&lt;p&gt;&lt;strong&gt;Vous devez avoir 18 ans ou plus, et être autorisé à consulter du contenu destiné à un public mature. &lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Êtes-vous sûr de vouloir rejoindre cette session&#x202f;?&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1194,7 +1194,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="-574"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation>Montrer les sessions non-adaptées aux mineurs (NSFM)</translation>
+        <translation>Montrer les sessions non-adaptées aux mineur·e·s (NAAM)</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -8501,7 +8501,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+56"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
-        <translation type="unfinished"></translation>
+        <translation>Considérer les sessions dont les titres contiennent des mot-clés NAAM.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8521,32 +8521,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Remove NSFM sessions from listings</source>
-        <translation type="unfinished"></translation>
+        <translation>Retirer les sessions NAAM des listes</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prevent joining NSFM sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Empêcher de rejoindre les sessions NAAM</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prevent joining NSFM sessions and disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Empêcher de rejoindre les sessions NSFM et déconnecter</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings, but can still be joined by following a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les sessions NAAM seront masquées dans les listes de serveurs, mais pourront toujours être rejointes en suivant un lien direct.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les sessions NAAM seront masquées dans les listes de serveurs et ne peuvent pas être rejointes.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les sessions NAAM seront masquées dans la liste des serveurs et impossibles à rejoindre. Les sessions connectées qui changent de titre ou d&apos;indicateur NAAM seront automatiquement déconnectées.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8556,7 +8556,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Warn when joining NSFM sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Prévenir lorsque vous rejoignez des sessions NAAM</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -8582,7 +8582,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+20"/>
         <source>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ces paramètres configurent la gestion des sessions marquées comme non adaptées aux mineur·e·s (NAAM) et des couches qui ont été censurées.</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -9502,7 +9502,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished">Montrer les sessions non-adaptées aux mineurs (NSFM)</translation>
+        <translation>Montrer les sessions non-adaptées aux mineur·e·s (NAAM)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -10220,7 +10220,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Non adapté aux mineur·e·s (NAAM)</translation>
     </message>
     <message>
         <location line="+3"/>
