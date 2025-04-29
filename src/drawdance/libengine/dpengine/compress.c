@@ -24,6 +24,7 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <zlib.h>
+#include <zstd.h>
 
 
 static voidpf malloc_z(DP_UNUSED voidpf opaque, uInt items, uInt size)
@@ -51,9 +52,9 @@ static void free_inflate_z_stream(z_stream *stream)
     }
 }
 
-bool DP_compress_inflate(const unsigned char *in, size_t in_size,
-                         unsigned char *(*get_output_buffer)(size_t, void *),
-                         void *user)
+bool DP_decompress_deflate(const unsigned char *in, size_t in_size,
+                           unsigned char *(*get_output_buffer)(size_t, void *),
+                           void *user)
 {
     if (in_size < 4) {
         DP_error_set("Inflate input too short to fit header");
@@ -118,6 +119,11 @@ size_t DP_compress_deflate(const unsigned char *in, size_t in_size,
                            unsigned char *(*get_output_buffer)(size_t, void *),
                            void *user)
 {
+    if (in_size > UINT32_MAX) {
+        DP_error_set("Deflate input size %zu out of bounds", in_size);
+        return 0;
+    }
+
     z_stream stream = {0};
     stream.zalloc = malloc_z;
     stream.zfree = free_z;
@@ -129,7 +135,7 @@ size_t DP_compress_deflate(const unsigned char *in, size_t in_size,
     }
 
     unsigned long bound = deflateBound(&stream, DP_size_to_ulong(in_size));
-    size_t out_size = bound + 4;
+    size_t out_size = bound + (size_t)4;
 
     unsigned char *out = get_output_buffer(out_size, user);
     if (!out) {
@@ -154,4 +160,129 @@ size_t DP_compress_deflate(const unsigned char *in, size_t in_size,
     size_t out_used = out_size - stream.avail_out;
     free_deflate_z_stream(&stream);
     return out_used;
+}
+
+
+bool DP_decompress_zstd(ZSTD_DCtx **in_out_ctx_or_null, const unsigned char *in,
+                        size_t in_size,
+                        unsigned char *(*get_output_buffer)(size_t, void *),
+                        void *user)
+{
+    if (in_size < 4) {
+        DP_error_set("Zstd decompress input too short to fit header");
+        return false;
+    }
+
+    size_t out_size = DP_read_littleendian_uint32(in);
+    unsigned char *out = get_output_buffer(out_size, user);
+    if (!out) {
+        return false; // The function should have already set the error message.
+    }
+
+    size_t result;
+    if (in_out_ctx_or_null) {
+        ZSTD_DCtx *ctx = *in_out_ctx_or_null;
+        if (!ctx) {
+            ctx = ZSTD_createDCtx();
+            if (ctx) {
+                *in_out_ctx_or_null = ctx;
+            }
+            else {
+                DP_error_set("Zstd decompress create context failed");
+                return false;
+            }
+        }
+        result = ZSTD_decompressDCtx(ctx, out, out_size, in + 4, in_size - 4);
+    }
+    else {
+        result = ZSTD_decompress(out, out_size, in + 4, in_size - 4);
+    }
+
+    if (ZSTD_isError(result)) {
+        DP_error_set("Zstd decompress error %zu: %s", result,
+                     ZSTD_getErrorName(result));
+        return false;
+    }
+
+    if (result != out_size) {
+        DP_error_set("Zstd decompress result size is %zu, but expected %zu",
+                     result, out_size);
+        return false;
+    }
+
+    return true;
+}
+
+void DP_decompress_zstd_free(ZSTD_DCtx **in_out_ctx_or_null)
+{
+    if (in_out_ctx_or_null && *in_out_ctx_or_null) {
+        ZSTD_freeDCtx(*in_out_ctx_or_null);
+        *in_out_ctx_or_null = NULL;
+    }
+}
+
+size_t DP_compress_zstd(ZSTD_CCtx **in_out_ctx_or_null, const unsigned char *in,
+                        size_t in_size,
+                        unsigned char *(*get_output_buffer)(size_t, void *),
+                        void *user)
+{
+    if (in_size > UINT32_MAX) {
+        DP_error_set("Zstd compress input size %zu out of bounds", in_size);
+        return 0;
+    }
+
+    size_t bound = ZSTD_compressBound(in_size);
+    if (ZSTD_isError(bound)) {
+        DP_error_set("Zstd compress bound error %zu: %s", bound,
+                     ZSTD_getErrorName(bound));
+        return 0;
+    }
+
+    size_t out_size = bound + (size_t)4;
+    unsigned char *out = get_output_buffer(out_size, user);
+    if (!out) {
+        return 0; // The function should have already set the error message.
+    }
+
+    DP_write_littleendian_uint32(DP_size_to_uint32(in_size), out);
+
+    size_t result;
+    if (in_out_ctx_or_null) {
+        ZSTD_CCtx *cctx = *in_out_ctx_or_null;
+        if (!cctx) {
+            cctx = ZSTD_createCCtx();
+            if (cctx) {
+                *in_out_ctx_or_null = cctx;
+            }
+            else {
+                DP_error_set("Zstd compress create context failed");
+                return 0;
+            }
+        }
+        result = ZSTD_compressCCtx(cctx, out + 4, bound, in, in_size, 0);
+    }
+    else {
+        result = ZSTD_compress(out + 4, bound, in, in_size, 0);
+    }
+
+    if (ZSTD_isError(result)) {
+        DP_error_set("Zstd compress error %zu: %s", result,
+                     ZSTD_getErrorName(result));
+        return 0;
+    }
+
+    return result + (size_t)4;
+}
+
+size_t DP_compress_zstd_bounds(size_t in_size)
+{
+    return ZSTD_compressBound(in_size) + 4;
+}
+
+void DP_compress_zstd_free(ZSTD_CCtx **in_out_ctx_or_null)
+{
+    if (in_out_ctx_or_null && *in_out_ctx_or_null) {
+        ZSTD_freeCCtx(*in_out_ctx_or_null);
+        *in_out_ctx_or_null = NULL;
+    }
 }

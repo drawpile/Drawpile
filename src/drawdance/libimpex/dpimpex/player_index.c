@@ -266,7 +266,7 @@ static unsigned char *get_compression_buffer(size_t size, void *user)
 
 static size_t write_index_tile(DP_BuildIndexEntryContext *e, DP_Tile *t)
 {
-    size_t size = DP_tile_compress(t, DP_draw_context_tile8_buffer(e->dc),
+    size_t size = DP_tile_compress_deflate(t, DP_draw_context_tile8_buffer(e->dc),
                                    get_compression_buffer, e->dc);
     if (size == 0) {
         return 0;
@@ -1344,7 +1344,7 @@ static bool read_index_tile_inc(DP_ReadSnapshotContext *c, size_t offset,
             return false;
         }
 
-        DP_Tile *t = DP_tile_new_from_compressed(c->dc, 0, input->buffer, size);
+        DP_Tile *t = DP_tile_new_from_deflate(c->dc, 0, input->buffer, size);
         if (!t) {
             return false;
         }

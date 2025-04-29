@@ -601,7 +601,7 @@ void AnnotationSettings::bake()
 		net::makeUndoPointMessage(contextId),
 		net::makeAnnotationDeleteMessage(contextId, selected()),
 	};
-	net::makePutImageMessages(
+	net::makePutImageZstdMessages(
 		msgs, contextId, layer, DP_BLEND_MODE_NORMAL, rect.x(), rect.y(), img);
 	client->sendCommands(msgs.count(), msgs.data());
 }

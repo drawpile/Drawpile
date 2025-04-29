@@ -27,6 +27,7 @@
  * See 3rdparty/licenses/qt/license.GPL3 for details.
  */
 #include "draw_context.h"
+#include "compress.h"
 #include "pixels.h"
 #include "tile.h"
 #include <dpcommon/common.h>
@@ -44,6 +45,8 @@ struct DP_DrawContext {
         DP_Pixel8 transform_buffer[DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE];
         // Buffer to hold 8 bit tiles, used e.g. for inflate/deflate.
         DP_Pixel8 tile8_buffer[DP_TILE_LENGTH];
+        // Split channel buffer, same as above.
+        DP_SplitTile8 split_tile8_buffer;
         // Layer id generation, masking off already used ids.
         struct {
             bool ids_used[DP_DRAW_CONTEXT_ID_COUNT];
@@ -56,6 +59,7 @@ struct DP_DrawContext {
     // allocated through DP_malloc_simd, so it's always going to be aligned.
     size_t pool_size;
     void *pool;
+    ZSTD_DCtx *zstd_dctx;
 #ifdef DP_LIBSWSCALE
     struct SwsContext *sws_context;
 #endif
@@ -67,6 +71,7 @@ DP_DrawContext *DP_draw_context_new(void)
     DP_DrawContext *dc = DP_malloc(sizeof(*dc));
     dc->pool_size = 0;
     dc->pool = NULL;
+    dc->zstd_dctx = NULL;
 #ifdef DP_LIBSWSCALE
     dc->sws_context = NULL;
 #endif
@@ -79,6 +84,7 @@ void DP_draw_context_free(DP_DrawContext *dc)
 #ifdef DP_LIBSWSCALE
         sws_freeContext(dc->sws_context);
 #endif
+        DP_decompress_zstd_free(&dc->zstd_dctx);
         DP_free_simd(dc->pool);
         DP_free(dc);
     }
@@ -102,6 +108,12 @@ DP_Pixel8 *DP_draw_context_tile8_buffer(DP_DrawContext *dc)
 {
     DP_ASSERT(dc);
     return dc->tile8_buffer;
+}
+
+DP_SplitTile8 *DP_draw_context_split_tile8_buffer(DP_DrawContext *dc)
+{
+    DP_ASSERT(dc);
+    return &dc->split_tile8_buffer;
 }
 
 void DP_draw_context_id_generator_reset(DP_DrawContext *dc, int last_used_id)
@@ -255,6 +267,12 @@ int *DP_draw_context_layer_indexes(DP_DrawContext *dc, int *out_count)
         *out_count = indexes[0];
     }
     return indexes + 1;
+}
+
+ZSTD_DCtx **DP_draw_context_zstd_dctx(DP_DrawContext *dc)
+{
+    DP_ASSERT(dc);
+    return &dc->zstd_dctx;
 }
 
 #ifdef DP_LIBSWSCALE

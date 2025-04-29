@@ -114,6 +114,11 @@ typedef enum DP_MessageType {
     DP_MSG_SELECTION_CLEAR = 175,
     DP_MSG_LOCAL_MATCH = 176,
     DP_MSG_SYNC_SELECTION_TILE = 177,
+    DP_MSG_PUT_IMAGE_ZSTD = 178,
+    DP_MSG_PUT_TILE_ZSTD = 179,
+    DP_MSG_CANVAS_BACKGROUND_ZSTD = 180,
+    DP_MSG_MOVE_RECT_ZSTD = 181,
+    DP_MSG_TRANSFORM_REGION_ZSTD = 182,
     DP_MSG_UNDO = 255,
     DP_MSG_TYPE_COUNT,
 } DP_MessageType;
@@ -2696,8 +2701,8 @@ DP_msg_key_frame_delete_move_frame_index(const DP_MsgKeyFrameDelete *mkfd);
  * The selection_id specifies which of the user's selections is affected.
  * An id of 0 is invalid.
  *
- * The mask is DEFLATEd 8 bit alpha. If absent, this fills the entire
- * rectangle instead.
+ * The mask is delta-encoded, zstd-compressed 8 bit alpha. If absent, this
+ * fills the entire rectangle instead.
  *
  * This message is never sent over the network, it's matched by LocalMatch
  * messages instead and selections are synchronized to the remote using
@@ -2859,10 +2864,10 @@ size_t DP_msg_local_match_data_size(const DP_MsgLocalMatch *mlm);
  * Synchronizes a tile from a local selection into a remote one. The
  * selection id must be 128 or higher.
  *
- * The mask is DEFLATEd 8 bit alpha. A zero-length mask will make the tile
- * blank. A mask with a single zero byte will make the tile fully opaque.
- * When the column and row are both 0xffff and the mask has a length of
- * zero, the selection is cleared instead.
+ * The mask is zstd-compressed, delta-encoded 8 bit alpha. A zero-length
+ * mask will make the tile blank. A mask with a single zero byte will make
+ * the tile fully opaque.  When the column and row are both 0xffff and the
+ * mask has a length of zero, the selection is cleared instead.
  *
  * This command isn't rolled back by undos.
  */
@@ -2903,6 +2908,129 @@ DP_msg_sync_selection_tile_mask(const DP_MsgSyncSelectionTile *msst,
 
 size_t
 DP_msg_sync_selection_tile_mask_size(const DP_MsgSyncSelectionTile *msst);
+
+
+/*
+ * DP_MSG_PUT_IMAGE_ZSTD
+ *
+ * Like PutImage, but the image is split channel delta-encoded
+ * zstd-compressed 8 bit pixel data instead, prefixed by four bytes of
+ * length in little-endian. If the mask is exactly four bytes long, it
+ * represents a fill color in little-endian.
+ */
+
+#define DP_MSG_PUT_IMAGE_ZSTD_STATIC_LENGTH 0
+
+DP_Message *
+DP_msg_put_image_zstd_new(unsigned int context_id, uint32_t layer, uint8_t mode,
+                          uint32_t x, uint32_t y, uint32_t w, uint32_t h,
+                          void (*set_image)(size_t, unsigned char *, void *),
+                          size_t image_size, void *image_user);
+
+DP_Message *DP_msg_put_image_zstd_deserialize(unsigned int context_id,
+                                              const unsigned char *buffer,
+                                              size_t length);
+
+DP_Message *DP_msg_put_image_zstd_parse(unsigned int context_id,
+                                        DP_TextReader *reader);
+
+DP_MsgPutImage *DP_msg_put_image_zstd_cast(DP_Message *msg);
+
+
+/*
+ * DP_MSG_PUT_TILE_ZSTD
+ *
+ * Analogous to PutImageZstd but for PutTile.
+ */
+
+#define DP_MSG_PUT_TILE_ZSTD_STATIC_LENGTH 0
+
+DP_Message *
+DP_msg_put_tile_zstd_new(unsigned int context_id, uint8_t user, uint32_t layer,
+                         uint8_t sublayer, uint16_t col, uint16_t row,
+                         uint16_t repeat,
+                         void (*set_image)(size_t, unsigned char *, void *),
+                         size_t image_size, void *image_user);
+
+DP_Message *DP_msg_put_tile_zstd_deserialize(unsigned int context_id,
+                                             const unsigned char *buffer,
+                                             size_t length);
+
+DP_Message *DP_msg_put_tile_zstd_parse(unsigned int context_id,
+                                       DP_TextReader *reader);
+
+DP_MsgPutTile *DP_msg_put_tile_zstd_cast(DP_Message *msg);
+
+
+/*
+ * DP_MSG_CANVAS_BACKGROUND_ZSTD
+ *
+ * Analogous to PutImageZstd but for CanvasBackground.
+ */
+
+#define DP_MSG_CANVAS_BACKGROUND_ZSTD_STATIC_LENGTH 0
+
+DP_Message *DP_msg_canvas_background_zstd_new(
+    unsigned int context_id, void (*set_image)(size_t, unsigned char *, void *),
+    size_t image_size, void *image_user);
+
+DP_Message *DP_msg_canvas_background_zstd_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_canvas_background_zstd_parse(unsigned int context_id,
+                                                DP_TextReader *reader);
+
+DP_MsgCanvasBackground *DP_msg_canvas_background_zstd_cast(DP_Message *msg);
+
+
+/*
+ * DP_MSG_MOVE_RECT_ZSTD
+ *
+ * Like MoveRect, but the mask is delta-encoded zstd-compressed 8 bit pixel
+ * data instead, prefixed by four bytes of length in little-endian.
+ */
+
+#define DP_MSG_MOVE_RECT_ZSTD_STATIC_LENGTH 0
+
+DP_Message *
+DP_msg_move_rect_zstd_new(unsigned int context_id, uint32_t layer,
+                          uint32_t source, int32_t sx, int32_t sy, int32_t tx,
+                          int32_t ty, int32_t w, int32_t h,
+                          void (*set_mask)(size_t, unsigned char *, void *),
+                          size_t mask_size, void *mask_user);
+
+DP_Message *DP_msg_move_rect_zstd_deserialize(unsigned int context_id,
+                                              const unsigned char *buffer,
+                                              size_t length);
+
+DP_Message *DP_msg_move_rect_zstd_parse(unsigned int context_id,
+                                        DP_TextReader *reader);
+
+DP_MsgMoveRect *DP_msg_move_rect_zstd_cast(DP_Message *msg);
+
+
+/*
+ * DP_MSG_TRANSFORM_REGION_ZSTD
+ *
+ * Analogous to MoveRectZstd but for TransformRegion.
+ */
+
+#define DP_MSG_TRANSFORM_REGION_ZSTD_STATIC_LENGTH 0
+
+DP_Message *DP_msg_transform_region_zstd_new(
+    unsigned int context_id, uint32_t layer, uint32_t source, int32_t bx,
+    int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2,
+    int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
+    void (*set_mask)(size_t, unsigned char *, void *), size_t mask_size,
+    void *mask_user);
+
+DP_Message *DP_msg_transform_region_zstd_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_transform_region_zstd_parse(unsigned int context_id,
+                                               DP_TextReader *reader);
+
+DP_MsgTransformRegion *DP_msg_transform_region_zstd_cast(DP_Message *msg);
 
 
 /*

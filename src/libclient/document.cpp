@@ -1773,7 +1773,7 @@ void Document::fillArea(const QColor &color, DP_BlendMode mode, float opacity)
 	uint8_t contextId = m_client->myId();
 	QPoint pos = selection->bounds().topLeft();
 	for(int layerId : layerIds) {
-		net::makePutImageMessages(
+		net::makePutImageZstdMessages(
 			m_messageBuffer, contextId, layerId, mode, pos.x(), pos.y(), mask);
 	}
 	if(m_messageBuffer.isEmpty()) {

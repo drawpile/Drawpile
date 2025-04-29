@@ -131,6 +131,11 @@ bool DP_message_type_command(DP_MessageType type)
     case DP_MSG_SELECTION_CLEAR:
     case DP_MSG_LOCAL_MATCH:
     case DP_MSG_SYNC_SELECTION_TILE:
+    case DP_MSG_PUT_IMAGE_ZSTD:
+    case DP_MSG_PUT_TILE_ZSTD:
+    case DP_MSG_CANVAS_BACKGROUND_ZSTD:
+    case DP_MSG_MOVE_RECT_ZSTD:
+    case DP_MSG_TRANSFORM_REGION_ZSTD:
     case DP_MSG_UNDO:
         return true;
     default:
@@ -281,6 +286,16 @@ const char *DP_message_type_name(DP_MessageType type)
         return "localmatch";
     case DP_MSG_SYNC_SELECTION_TILE:
         return "syncselectiontile";
+    case DP_MSG_PUT_IMAGE_ZSTD:
+        return "putimagezstd";
+    case DP_MSG_PUT_TILE_ZSTD:
+        return "puttilezstd";
+    case DP_MSG_CANVAS_BACKGROUND_ZSTD:
+        return "canvasbackgroundzstd";
+    case DP_MSG_MOVE_RECT_ZSTD:
+        return "moverectzstd";
+    case DP_MSG_TRANSFORM_REGION_ZSTD:
+        return "transformregionzstd";
     case DP_MSG_UNDO:
         return "undo";
     default:
@@ -431,6 +446,16 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_LOCAL_MATCH";
     case DP_MSG_SYNC_SELECTION_TILE:
         return "DP_MSG_SYNC_SELECTION_TILE";
+    case DP_MSG_PUT_IMAGE_ZSTD:
+        return "DP_MSG_PUT_IMAGE_ZSTD";
+    case DP_MSG_PUT_TILE_ZSTD:
+        return "DP_MSG_PUT_TILE_ZSTD";
+    case DP_MSG_CANVAS_BACKGROUND_ZSTD:
+        return "DP_MSG_CANVAS_BACKGROUND_ZSTD";
+    case DP_MSG_MOVE_RECT_ZSTD:
+        return "DP_MSG_MOVE_RECT_ZSTD";
+    case DP_MSG_TRANSFORM_REGION_ZSTD:
+        return "DP_MSG_TRANSFORM_REGION_ZSTD";
     case DP_MSG_UNDO:
         return "DP_MSG_UNDO";
     default:
@@ -622,6 +647,21 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     }
     else if (DP_str_equal(type_name, "syncselectiontile")) {
         return DP_MSG_SYNC_SELECTION_TILE;
+    }
+    else if (DP_str_equal(type_name, "putimagezstd")) {
+        return DP_MSG_PUT_IMAGE_ZSTD;
+    }
+    else if (DP_str_equal(type_name, "puttilezstd")) {
+        return DP_MSG_PUT_TILE_ZSTD;
+    }
+    else if (DP_str_equal(type_name, "canvasbackgroundzstd")) {
+        return DP_MSG_CANVAS_BACKGROUND_ZSTD;
+    }
+    else if (DP_str_equal(type_name, "moverectzstd")) {
+        return DP_MSG_MOVE_RECT_ZSTD;
+    }
+    else if (DP_str_equal(type_name, "transformregionzstd")) {
+        return DP_MSG_TRANSFORM_REGION_ZSTD;
     }
     else if (DP_str_equal(type_name, "undo")) {
         return DP_MSG_UNDO;
@@ -828,6 +868,18 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
         case DP_MSG_SYNC_SELECTION_TILE:
             return DP_msg_sync_selection_tile_deserialize(context_id, buf,
                                                           length);
+        case DP_MSG_PUT_IMAGE_ZSTD:
+            return DP_msg_put_image_zstd_deserialize(context_id, buf, length);
+        case DP_MSG_PUT_TILE_ZSTD:
+            return DP_msg_put_tile_zstd_deserialize(context_id, buf, length);
+        case DP_MSG_CANVAS_BACKGROUND_ZSTD:
+            return DP_msg_canvas_background_zstd_deserialize(context_id, buf,
+                                                             length);
+        case DP_MSG_MOVE_RECT_ZSTD:
+            return DP_msg_move_rect_zstd_deserialize(context_id, buf, length);
+        case DP_MSG_TRANSFORM_REGION_ZSTD:
+            return DP_msg_transform_region_zstd_deserialize(context_id, buf,
+                                                            length);
         case DP_MSG_UNDO:
             return DP_msg_undo_deserialize(context_id, buf, length);
         default:
@@ -1005,6 +1057,16 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_local_match_parse(context_id, reader);
     case DP_MSG_SYNC_SELECTION_TILE:
         return DP_msg_sync_selection_tile_parse(context_id, reader);
+    case DP_MSG_PUT_IMAGE_ZSTD:
+        return DP_msg_put_image_zstd_parse(context_id, reader);
+    case DP_MSG_PUT_TILE_ZSTD:
+        return DP_msg_put_tile_zstd_parse(context_id, reader);
+    case DP_MSG_CANVAS_BACKGROUND_ZSTD:
+        return DP_msg_canvas_background_zstd_parse(context_id, reader);
+    case DP_MSG_MOVE_RECT_ZSTD:
+        return DP_msg_move_rect_zstd_parse(context_id, reader);
+    case DP_MSG_TRANSFORM_REGION_ZSTD:
+        return DP_msg_transform_region_zstd_parse(context_id, reader);
     case DP_MSG_UNDO:
         return DP_msg_undo_parse(context_id, reader);
     default:
@@ -10105,6 +10167,409 @@ size_t DP_msg_sync_selection_tile_mask_size(const DP_MsgSyncSelectionTile *msst)
 }
 
 
+/* DP_MSG_PUT_IMAGE_ZSTD */
+
+DP_Message *
+DP_msg_put_image_zstd_new(unsigned int context_id, uint32_t layer, uint8_t mode,
+                          uint32_t x, uint32_t y, uint32_t w, uint32_t h,
+                          void (*set_image)(size_t, unsigned char *, void *),
+                          size_t image_size, void *image_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_PUT_IMAGE_ZSTD, context_id, &msg_put_image_methods,
+        DP_FLEX_SIZEOF(DP_MsgPutImage, image, image_size));
+    DP_MsgPutImage *mpiz = DP_message_internal(msg);
+    mpiz->layer = layer;
+    mpiz->mode = mode;
+    mpiz->x = x;
+    mpiz->y = y;
+    mpiz->w = w;
+    mpiz->h = h;
+    mpiz->image_size = DP_size_to_uint16(image_size);
+    if (set_image) {
+        set_image(mpiz->image_size, mpiz->image, image_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_put_image_zstd_deserialize(unsigned int context_id,
+                                              const unsigned char *buffer,
+                                              size_t length)
+{
+    if (length < 20 || length > 65535) {
+        DP_error_set("Wrong length for putimagezstd message; "
+                     "expected between 20 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint32_t layer = read_uint24(buffer + read, &read);
+    uint8_t mode = read_uint8(buffer + read, &read);
+    uint32_t x = read_uint32(buffer + read, &read);
+    uint32_t y = read_uint32(buffer + read, &read);
+    uint32_t w = read_uint32(buffer + read, &read);
+    uint32_t h = read_uint32(buffer + read, &read);
+    size_t image_bytes = length - read;
+    uint16_t image_size = DP_size_to_uint16(image_bytes);
+    void *image_user = (void *)(buffer + read);
+    return DP_msg_put_image_zstd_new(context_id, layer, mode, x, y, w, h,
+                                     read_bytes, image_size, image_user);
+}
+
+DP_Message *DP_msg_put_image_zstd_parse(unsigned int context_id,
+                                        DP_TextReader *reader)
+{
+    uint32_t layer =
+        (uint32_t)DP_text_reader_get_ulong(reader, "layer", DP_UINT24_MAX);
+    uint8_t mode = DP_text_reader_get_blend_mode(reader, "mode");
+    uint32_t x = (uint32_t)DP_text_reader_get_ulong(reader, "x", UINT32_MAX);
+    uint32_t y = (uint32_t)DP_text_reader_get_ulong(reader, "y", UINT32_MAX);
+    uint32_t w = (uint32_t)DP_text_reader_get_ulong(reader, "w", UINT32_MAX);
+    uint32_t h = (uint32_t)DP_text_reader_get_ulong(reader, "h", UINT32_MAX);
+    size_t image_size;
+    DP_TextReaderParseParams image_params =
+        DP_text_reader_get_base64_string(reader, "image", &image_size);
+    return DP_msg_put_image_zstd_new(context_id, layer, mode, x, y, w, h,
+                                     DP_text_reader_parse_base64, image_size,
+                                     &image_params);
+}
+
+DP_MsgPutImage *DP_msg_put_image_zstd_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_PUT_IMAGE_ZSTD);
+}
+
+
+/* DP_MSG_PUT_TILE_ZSTD */
+
+DP_Message *
+DP_msg_put_tile_zstd_new(unsigned int context_id, uint8_t user, uint32_t layer,
+                         uint8_t sublayer, uint16_t col, uint16_t row,
+                         uint16_t repeat,
+                         void (*set_image)(size_t, unsigned char *, void *),
+                         size_t image_size, void *image_user)
+{
+    DP_Message *msg =
+        DP_message_new(DP_MSG_PUT_TILE_ZSTD, context_id, &msg_put_tile_methods,
+                       DP_FLEX_SIZEOF(DP_MsgPutTile, image, image_size));
+    DP_MsgPutTile *mptz = DP_message_internal(msg);
+    mptz->user = user;
+    mptz->layer = layer;
+    mptz->sublayer = sublayer;
+    mptz->col = col;
+    mptz->row = row;
+    mptz->repeat = repeat;
+    mptz->image_size = DP_size_to_uint16(image_size);
+    if (set_image) {
+        set_image(mptz->image_size, mptz->image, image_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_put_tile_zstd_deserialize(unsigned int context_id,
+                                             const unsigned char *buffer,
+                                             size_t length)
+{
+    if (length < 11 || length > 65535) {
+        DP_error_set("Wrong length for puttilezstd message; "
+                     "expected between 11 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint8_t user = read_uint8(buffer + read, &read);
+    uint32_t layer = read_uint24(buffer + read, &read);
+    uint8_t sublayer = read_uint8(buffer + read, &read);
+    uint16_t col = read_uint16(buffer + read, &read);
+    uint16_t row = read_uint16(buffer + read, &read);
+    uint16_t repeat = read_uint16(buffer + read, &read);
+    size_t image_bytes = length - read;
+    uint16_t image_size = DP_size_to_uint16(image_bytes);
+    void *image_user = (void *)(buffer + read);
+    return DP_msg_put_tile_zstd_new(context_id, user, layer, sublayer, col, row,
+                                    repeat, read_bytes, image_size, image_user);
+}
+
+DP_Message *DP_msg_put_tile_zstd_parse(unsigned int context_id,
+                                       DP_TextReader *reader)
+{
+    uint8_t user = (uint8_t)DP_text_reader_get_ulong(reader, "user", UINT8_MAX);
+    uint32_t layer =
+        (uint32_t)DP_text_reader_get_ulong(reader, "layer", DP_UINT24_MAX);
+    uint8_t sublayer =
+        (uint8_t)DP_text_reader_get_ulong(reader, "sublayer", UINT8_MAX);
+    uint16_t col =
+        (uint16_t)DP_text_reader_get_ulong(reader, "col", UINT16_MAX);
+    uint16_t row =
+        (uint16_t)DP_text_reader_get_ulong(reader, "row", UINT16_MAX);
+    uint16_t repeat =
+        (uint16_t)DP_text_reader_get_ulong(reader, "repeat", UINT16_MAX);
+    size_t image_size;
+    DP_TextReaderParseParams image_params =
+        DP_text_reader_get_base64_string(reader, "image", &image_size);
+    return DP_msg_put_tile_zstd_new(context_id, user, layer, sublayer, col, row,
+                                    repeat, DP_text_reader_parse_base64,
+                                    image_size, &image_params);
+}
+
+DP_MsgPutTile *DP_msg_put_tile_zstd_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_PUT_TILE_ZSTD);
+}
+
+
+/* DP_MSG_CANVAS_BACKGROUND_ZSTD */
+
+DP_Message *DP_msg_canvas_background_zstd_new(
+    unsigned int context_id, void (*set_image)(size_t, unsigned char *, void *),
+    size_t image_size, void *image_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_CANVAS_BACKGROUND_ZSTD, context_id,
+        &msg_canvas_background_methods,
+        DP_FLEX_SIZEOF(DP_MsgCanvasBackground, image, image_size));
+    DP_MsgCanvasBackground *mcbz = DP_message_internal(msg);
+    mcbz->image_size = DP_size_to_uint16(image_size);
+    if (set_image) {
+        set_image(mcbz->image_size, mcbz->image, image_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_canvas_background_zstd_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length > 65535) {
+        DP_error_set("Wrong length for canvasbackgroundzstd message; "
+                     "expected between 0 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    size_t image_bytes = length - read;
+    uint16_t image_size = DP_size_to_uint16(image_bytes);
+    void *image_user = (void *)(buffer + read);
+    return DP_msg_canvas_background_zstd_new(context_id, read_bytes, image_size,
+                                             image_user);
+}
+
+DP_Message *DP_msg_canvas_background_zstd_parse(unsigned int context_id,
+                                                DP_TextReader *reader)
+{
+    size_t image_size;
+    DP_TextReaderParseParams image_params =
+        DP_text_reader_get_base64_string(reader, "image", &image_size);
+    return DP_msg_canvas_background_zstd_new(
+        context_id, DP_text_reader_parse_base64, image_size, &image_params);
+}
+
+DP_MsgCanvasBackground *DP_msg_canvas_background_zstd_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_CANVAS_BACKGROUND_ZSTD);
+}
+
+
+/* DP_MSG_MOVE_RECT_ZSTD */
+
+DP_Message *
+DP_msg_move_rect_zstd_new(unsigned int context_id, uint32_t layer,
+                          uint32_t source, int32_t sx, int32_t sy, int32_t tx,
+                          int32_t ty, int32_t w, int32_t h,
+                          void (*set_mask)(size_t, unsigned char *, void *),
+                          size_t mask_size, void *mask_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_MOVE_RECT_ZSTD, context_id, &msg_move_rect_methods,
+        DP_FLEX_SIZEOF(DP_MsgMoveRect, mask, mask_size));
+    DP_MsgMoveRect *mmrz = DP_message_internal(msg);
+    mmrz->layer = layer;
+    mmrz->source = source;
+    mmrz->sx = sx;
+    mmrz->sy = sy;
+    mmrz->tx = tx;
+    mmrz->ty = ty;
+    mmrz->w = w;
+    mmrz->h = h;
+    mmrz->mask_size = DP_size_to_uint16(mask_size);
+    if (set_mask) {
+        set_mask(mmrz->mask_size, mmrz->mask, mask_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_move_rect_zstd_deserialize(unsigned int context_id,
+                                              const unsigned char *buffer,
+                                              size_t length)
+{
+    if (length < 30 || length > 65535) {
+        DP_error_set("Wrong length for moverectzstd message; "
+                     "expected between 30 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint32_t layer = read_uint24(buffer + read, &read);
+    uint32_t source = read_uint24(buffer + read, &read);
+    int32_t sx = read_int32(buffer + read, &read);
+    int32_t sy = read_int32(buffer + read, &read);
+    int32_t tx = read_int32(buffer + read, &read);
+    int32_t ty = read_int32(buffer + read, &read);
+    int32_t w = read_int32(buffer + read, &read);
+    int32_t h = read_int32(buffer + read, &read);
+    size_t mask_bytes = length - read;
+    uint16_t mask_size = DP_size_to_uint16(mask_bytes);
+    void *mask_user = (void *)(buffer + read);
+    return DP_msg_move_rect_zstd_new(context_id, layer, source, sx, sy, tx, ty,
+                                     w, h, read_bytes, mask_size, mask_user);
+}
+
+DP_Message *DP_msg_move_rect_zstd_parse(unsigned int context_id,
+                                        DP_TextReader *reader)
+{
+    uint32_t layer =
+        (uint32_t)DP_text_reader_get_ulong(reader, "layer", DP_UINT24_MAX);
+    uint32_t source =
+        (uint32_t)DP_text_reader_get_ulong(reader, "source", DP_UINT24_MAX);
+    int32_t sx =
+        (int32_t)DP_text_reader_get_long(reader, "sx", INT32_MIN, INT32_MAX);
+    int32_t sy =
+        (int32_t)DP_text_reader_get_long(reader, "sy", INT32_MIN, INT32_MAX);
+    int32_t tx =
+        (int32_t)DP_text_reader_get_long(reader, "tx", INT32_MIN, INT32_MAX);
+    int32_t ty =
+        (int32_t)DP_text_reader_get_long(reader, "ty", INT32_MIN, INT32_MAX);
+    int32_t w =
+        (int32_t)DP_text_reader_get_long(reader, "w", INT32_MIN, INT32_MAX);
+    int32_t h =
+        (int32_t)DP_text_reader_get_long(reader, "h", INT32_MIN, INT32_MAX);
+    size_t mask_size;
+    DP_TextReaderParseParams mask_params =
+        DP_text_reader_get_base64_string(reader, "mask", &mask_size);
+    return DP_msg_move_rect_zstd_new(context_id, layer, source, sx, sy, tx, ty,
+                                     w, h, DP_text_reader_parse_base64,
+                                     mask_size, &mask_params);
+}
+
+DP_MsgMoveRect *DP_msg_move_rect_zstd_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_MOVE_RECT_ZSTD);
+}
+
+
+/* DP_MSG_TRANSFORM_REGION_ZSTD */
+
+DP_Message *DP_msg_transform_region_zstd_new(
+    unsigned int context_id, uint32_t layer, uint32_t source, int32_t bx,
+    int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2,
+    int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
+    void (*set_mask)(size_t, unsigned char *, void *), size_t mask_size,
+    void *mask_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_TRANSFORM_REGION_ZSTD, context_id, &msg_transform_region_methods,
+        DP_FLEX_SIZEOF(DP_MsgTransformRegion, mask, mask_size));
+    DP_MsgTransformRegion *mtrz = DP_message_internal(msg);
+    mtrz->layer = layer;
+    mtrz->source = source;
+    mtrz->bx = bx;
+    mtrz->by = by;
+    mtrz->bw = bw;
+    mtrz->bh = bh;
+    mtrz->x1 = x1;
+    mtrz->y1 = y1;
+    mtrz->x2 = x2;
+    mtrz->y2 = y2;
+    mtrz->x3 = x3;
+    mtrz->y3 = y3;
+    mtrz->x4 = x4;
+    mtrz->y4 = y4;
+    mtrz->mode = mode;
+    mtrz->mask_size = DP_size_to_uint16(mask_size);
+    if (set_mask) {
+        set_mask(mtrz->mask_size, mtrz->mask, mask_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_transform_region_zstd_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length < 55 || length > 65535) {
+        DP_error_set("Wrong length for transformregionzstd message; "
+                     "expected between 55 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint32_t layer = read_uint24(buffer + read, &read);
+    uint32_t source = read_uint24(buffer + read, &read);
+    int32_t bx = read_int32(buffer + read, &read);
+    int32_t by = read_int32(buffer + read, &read);
+    int32_t bw = read_int32(buffer + read, &read);
+    int32_t bh = read_int32(buffer + read, &read);
+    int32_t x1 = read_int32(buffer + read, &read);
+    int32_t y1 = read_int32(buffer + read, &read);
+    int32_t x2 = read_int32(buffer + read, &read);
+    int32_t y2 = read_int32(buffer + read, &read);
+    int32_t x3 = read_int32(buffer + read, &read);
+    int32_t y3 = read_int32(buffer + read, &read);
+    int32_t x4 = read_int32(buffer + read, &read);
+    int32_t y4 = read_int32(buffer + read, &read);
+    uint8_t mode = read_uint8(buffer + read, &read);
+    size_t mask_bytes = length - read;
+    uint16_t mask_size = DP_size_to_uint16(mask_bytes);
+    void *mask_user = (void *)(buffer + read);
+    return DP_msg_transform_region_zstd_new(
+        context_id, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4,
+        y4, mode, read_bytes, mask_size, mask_user);
+}
+
+DP_Message *DP_msg_transform_region_zstd_parse(unsigned int context_id,
+                                               DP_TextReader *reader)
+{
+    uint32_t layer =
+        (uint32_t)DP_text_reader_get_ulong(reader, "layer", DP_UINT24_MAX);
+    uint32_t source =
+        (uint32_t)DP_text_reader_get_ulong(reader, "source", DP_UINT24_MAX);
+    int32_t bx =
+        (int32_t)DP_text_reader_get_long(reader, "bx", INT32_MIN, INT32_MAX);
+    int32_t by =
+        (int32_t)DP_text_reader_get_long(reader, "by", INT32_MIN, INT32_MAX);
+    int32_t bw =
+        (int32_t)DP_text_reader_get_long(reader, "bw", INT32_MIN, INT32_MAX);
+    int32_t bh =
+        (int32_t)DP_text_reader_get_long(reader, "bh", INT32_MIN, INT32_MAX);
+    int32_t x1 =
+        (int32_t)DP_text_reader_get_long(reader, "x1", INT32_MIN, INT32_MAX);
+    int32_t y1 =
+        (int32_t)DP_text_reader_get_long(reader, "y1", INT32_MIN, INT32_MAX);
+    int32_t x2 =
+        (int32_t)DP_text_reader_get_long(reader, "x2", INT32_MIN, INT32_MAX);
+    int32_t y2 =
+        (int32_t)DP_text_reader_get_long(reader, "y2", INT32_MIN, INT32_MAX);
+    int32_t x3 =
+        (int32_t)DP_text_reader_get_long(reader, "x3", INT32_MIN, INT32_MAX);
+    int32_t y3 =
+        (int32_t)DP_text_reader_get_long(reader, "y3", INT32_MIN, INT32_MAX);
+    int32_t x4 =
+        (int32_t)DP_text_reader_get_long(reader, "x4", INT32_MIN, INT32_MAX);
+    int32_t y4 =
+        (int32_t)DP_text_reader_get_long(reader, "y4", INT32_MIN, INT32_MAX);
+    uint8_t mode = (uint8_t)DP_text_reader_get_ulong(reader, "mode", UINT8_MAX);
+    size_t mask_size;
+    DP_TextReaderParseParams mask_params =
+        DP_text_reader_get_base64_string(reader, "mask", &mask_size);
+    return DP_msg_transform_region_zstd_new(
+        context_id, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4,
+        y4, mode, DP_text_reader_parse_base64, mask_size, &mask_params);
+}
+
+DP_MsgTransformRegion *DP_msg_transform_region_zstd_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_TRANSFORM_REGION_ZSTD);
+}
+
+
 /* DP_MSG_UNDO */
 
 struct DP_MsgUndo {
@@ -10231,7 +10696,8 @@ DP_Message *DP_msg_local_match_make(DP_Message *msg, bool disguise_as_put_image)
     DP_ASSERT(msg);
     DP_MessageType type = DP_message_type(msg);
     switch (type) {
-    case DP_MSG_PUT_IMAGE: {
+    case DP_MSG_PUT_IMAGE:
+    case DP_MSG_PUT_IMAGE_ZSTD: {
         DP_MsgPutImage *mpi = DP_message_internal(msg);
         if (local_layer_id(mpi->layer)) {
             return make_local_match(disguise_as_put_image, (uint8_t)type,
@@ -10313,7 +10779,8 @@ DP_Message *DP_msg_local_match_make(DP_Message *msg, bool disguise_as_put_image)
             return NULL;
         }
     }
-    case DP_MSG_MOVE_RECT: {
+    case DP_MSG_MOVE_RECT:
+    case DP_MSG_MOVE_RECT_ZSTD: {
         DP_MsgMoveRect *mmr = DP_message_internal(msg);
         if (local_layer_id(mmr->layer) || local_layer_id(mmr->source)) {
             return make_local_match(disguise_as_put_image, (uint8_t)type,
@@ -10326,7 +10793,8 @@ DP_Message *DP_msg_local_match_make(DP_Message *msg, bool disguise_as_put_image)
             return NULL;
         }
     }
-    case DP_MSG_TRANSFORM_REGION: {
+    case DP_MSG_TRANSFORM_REGION:
+    case DP_MSG_TRANSFORM_REGION_ZSTD: {
         DP_MsgTransformRegion *mtr = DP_message_internal(msg);
         if (local_layer_id(mtr->layer) || local_layer_id(mtr->source)) {
             return make_local_match(disguise_as_put_image, (uint8_t)type,
@@ -10388,7 +10856,8 @@ bool DP_msg_local_match_matches(DP_Message *msg, DP_Message *local_match_msg)
     DP_ASSERT(msg);
     DP_MessageType type = DP_message_type(msg);
     switch (type) {
-    case DP_MSG_PUT_IMAGE: {
+    case DP_MSG_PUT_IMAGE:
+    case DP_MSG_PUT_IMAGE_ZSTD: {
         DP_MsgPutImage *mpi = DP_message_internal(msg);
         return (local_layer_id(mpi->layer))
             && DP_msg_put_image_local_match_matches(mpi, local_match_msg);
@@ -10423,12 +10892,14 @@ bool DP_msg_local_match_matches(DP_Message *msg, DP_Message *local_match_msg)
             && DP_msg_draw_dabs_mypaint_blend_local_match_matches(
                    mddmpb, local_match_msg);
     }
-    case DP_MSG_MOVE_RECT: {
+    case DP_MSG_MOVE_RECT:
+    case DP_MSG_MOVE_RECT_ZSTD: {
         DP_MsgMoveRect *mmr = DP_message_internal(msg);
         return (local_layer_id(mmr->layer) || local_layer_id(mmr->source))
             && DP_msg_move_rect_local_match_matches(mmr, local_match_msg);
     }
-    case DP_MSG_TRANSFORM_REGION: {
+    case DP_MSG_TRANSFORM_REGION:
+    case DP_MSG_TRANSFORM_REGION_ZSTD: {
         DP_MsgTransformRegion *mtr = DP_message_internal(msg);
         return (local_layer_id(mtr->layer) || local_layer_id(mtr->source))
             && DP_msg_transform_region_local_match_matches(mtr,

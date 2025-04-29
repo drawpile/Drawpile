@@ -285,7 +285,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 			if(moveSelection && !identity) {
 				int selectionId = DP_selection_id_make(
 					contextId, canvas::CanvasModel::MAIN_SELECTION_ID);
-				msgs.append(net::makeMoveRectMessage(
+				msgs.append(net::makeMoveRectZstdMessage(
 					contextId, selectionId, selectionId, srcX, srcY,
 					dstTopLeftX, dstTopLeftY, srcW, srcH, QImage()));
 			}
@@ -396,12 +396,12 @@ void TransformModel::applyMoveRect(
 		} else {
 			applyCut(msgs, contextId, sourceId, srcX, srcY, srcW, srcH, mask);
 			applyOpacityToImage(img);
-			net::makePutImageMessages(
+			net::makePutImageZstdMessages(
 				msgs, contextId, layerId, m_blendMode, dstTopLeftX, dstTopLeftY,
 				img);
 		}
 	} else {
-		msgs.append(net::makeMoveRectMessage(
+		msgs.append(net::makeMoveRectZstdMessage(
 			contextId, layerId, sourceId, srcX, srcY, dstTopLeftX, dstTopLeftY,
 			srcW, srcH, mask));
 	}
@@ -428,12 +428,12 @@ void TransformModel::applyTransformRegion(
 		} else {
 			applyCut(msgs, contextId, sourceId, srcX, srcY, srcW, srcH, mask);
 			applyOpacityToImage(img);
-			net::makePutImageMessages(
+			net::makePutImageZstdMessages(
 				msgs, contextId, layerId, m_blendMode, offset.x(), offset.y(),
 				img);
 		}
 	} else {
-		msgs.append(net::makeTransformRegionMessage(
+		msgs.append(net::makeTransformRegionZstdMessage(
 			contextId, layerId, sourceId, srcX, srcY, srcW, srcH, dstTopLeftX,
 			dstTopLeftY, dstTopRightX, dstTopRightY, dstBottomRightX,
 			dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
@@ -474,7 +474,7 @@ void TransformModel::applyTransformRegionSelection(
 	} else {
 		int selectionId = DP_selection_id_make(
 			contextId, canvas::CanvasModel::MAIN_SELECTION_ID);
-		msgs.append(net::makeTransformRegionMessage(
+		msgs.append(net::makeTransformRegionZstdMessage(
 			contextId, selectionId, selectionId, srcX, srcY, srcW, srcH,
 			dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
 			dstBottomRightX, dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
@@ -500,7 +500,7 @@ void TransformModel::applyCut(
 			contextId, sourceId, DP_BLEND_MODE_ERASE, srcX, srcY, srcW, srcH,
 			Qt::black));
 	} else {
-		net::makePutImageMessages(
+		net::makePutImageZstdMessages(
 			msgs, contextId, sourceId, DP_BLEND_MODE_ERASE, srcX, srcY, mask);
 	}
 }
@@ -537,7 +537,7 @@ QVector<net::Message> TransformModel::applyFloating(
 		msgs.append(net::makeUndoPointMessage(contextId));
 	}
 
-	net::makePutImageMessages(
+	net::makePutImageZstdMessages(
 		msgs, contextId, layerId, m_blendMode, offset.x(), offset.y(),
 		transformedImage);
 

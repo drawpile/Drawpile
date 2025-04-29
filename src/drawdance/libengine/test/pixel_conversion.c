@@ -53,7 +53,8 @@ static void pixels15_to_8_tile(TEST_PARAMS)
     int pixel_count = DP_BIT15 / 4;
     size_t pixel_scount = DP_int_to_size(pixel_count);
 
-    DP_Pixel15 *src = DP_malloc_simd(pixel_scount * sizeof(*src));
+    size_t src_size = pixel_scount * sizeof(DP_Pixel15);
+    DP_Pixel15 *src = DP_malloc_simd(src_size);
     for (int i = 0; i < pixel_count; ++i) {
         src[i] = (DP_Pixel15){
             .b = DP_int_to_uint16(i * 4),
@@ -74,6 +75,23 @@ static void pixels15_to_8_tile(TEST_PARAMS)
                    "pixels15_to_8_tile(%d)", i);
     }
 
+    DP_Pixel15 *out = DP_malloc_simd(src_size);
+    DP_pixels8_to_15(out, dst, pixel_count);
+
+    DP_SplitTile8 *split = DP_malloc_simd(sizeof(*split));
+    DP_Pixel15 *split_out = DP_malloc_simd(src_size);
+    DP_pixels15_to_split_tile8_delta(split, src);
+    DP_split_tile8_delta_to_pixels15(split_out, split);
+    DP_pixels15_to_split_tile8_delta(split, src + DP_TILE_LENGTH);
+    DP_split_tile8_delta_to_pixels15(split_out + DP_TILE_LENGTH, split);
+    for (int i = 0; i < pixel_count; ++i) {
+        UINT_EQ_OK(((uint16_t *)split_out)[i], ((uint16_t *)out)[i],
+                   "pixels15_to_split_tile8_delta(%d)", i);
+    }
+
+    DP_free_simd(split_out);
+    DP_free_simd(split);
+    DP_free_simd(out);
     DP_free_simd(dst);
     DP_free_simd(src);
 }

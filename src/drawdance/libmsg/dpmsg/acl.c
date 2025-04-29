@@ -1188,7 +1188,8 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
             || can_edit_layer(acls, user_id,
                               DP_protocol_to_layer_id(DP_msg_layer_retitle_id(
                                   DP_message_internal(msg))));
-    case DP_MSG_PUT_IMAGE: {
+    case DP_MSG_PUT_IMAGE:
+    case DP_MSG_PUT_IMAGE_ZSTD: {
         DP_MsgPutImage *mpi = DP_message_internal(msg);
         return override
             // Compatibility hack: local match command disguised as put image.
@@ -1216,8 +1217,10 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
     case DP_MSG_ANNOTATION_DELETE:
         return handle_annotation_delete(acls, msg, user_id, override);
     case DP_MSG_PUT_TILE:
+    case DP_MSG_PUT_TILE_ZSTD:
         return override || DP_acl_state_is_op(acls, user_id);
     case DP_MSG_CANVAS_BACKGROUND:
+    case DP_MSG_CANVAS_BACKGROUND_ZSTD:
         return override
             || DP_acl_state_can_use_feature(acls, DP_FEATURE_BACKGROUND,
                                             user_id);
@@ -1245,6 +1248,7 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
                                     mypaint_blend_dabs_layer_id,
                                     mypaint_blend_dabs_max_dab_size));
     case DP_MSG_MOVE_RECT:
+    case DP_MSG_MOVE_RECT_ZSTD:
         return handle_move_rect(acls, msg, user_id, override);
     case DP_MSG_SET_METADATA_INT:
         return handle_set_metadata_int(acls, msg, user_id, override);
@@ -1265,6 +1269,7 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
             user_id, override);
     }
     case DP_MSG_TRANSFORM_REGION:
+    case DP_MSG_TRANSFORM_REGION_ZSTD:
         return handle_transform_region(acls, msg, user_id, override);
     case DP_MSG_TRACK_CREATE:
         return handle_track_create(

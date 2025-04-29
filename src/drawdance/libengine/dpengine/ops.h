@@ -72,9 +72,7 @@ DP_CanvasState *DP_ops_layer_tree_delete(DP_CanvasState *cs, DP_DrawContext *dc,
 DP_CanvasState *DP_ops_put_image(DP_CanvasState *cs,
                                  DP_UserCursors *ucs_or_null,
                                  unsigned int context_id, int layer_id,
-                                 int blend_mode, int x, int y, int width,
-                                 int height, const unsigned char *image,
-                                 size_t image_size);
+                                 int blend_mode, int x, int y, DP_Image *img);
 
 DP_CanvasState *DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
                                    DP_UserCursors *ucs_or_null,

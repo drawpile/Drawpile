@@ -28,6 +28,7 @@ typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Input DP_Input;
 typedef struct DP_Output DP_Output;
 typedef struct DP_Quad DP_Quad;
+typedef struct ZSTD_DCtx_s ZSTD_DCtx;
 
 // A bit larger than 8K. TODO: make this limit configurable in sessions.
 #define DP_IMAGE_TRANSFORM_MAX_AREA 35000000LL
@@ -62,16 +63,22 @@ DP_Image *DP_image_new(int width, int height);
 
 DP_ImageFileType DP_image_guess(const unsigned char *buf, size_t size);
 
-DP_Image *DP_image_new_from_compressed(int width, int height,
+DP_Image *DP_image_new_from_deflate8be(int width, int height,
                                        const unsigned char *in, size_t in_size);
 
-DP_Image *DP_image_new_from_compressed_alpha_mask(int width, int height,
+DP_Image *DP_image_new_from_delta_zstd8le(DP_DrawContext *dc, int width,
+                                          int height, const unsigned char *in,
+                                          size_t in_size);
+
+DP_Image *DP_image_new_from_alpha_mask_deflate8be(DP_DrawContext *dc, int width,
+                                                  int height,
                                                   const unsigned char *in,
                                                   size_t in_size);
 
-DP_Image *DP_image_new_from_compressed_monochrome(int width, int height,
-                                                  const unsigned char *in,
-                                                  size_t in_size);
+DP_Image *DP_image_new_from_alpha_mask_delta_zstd8le(DP_DrawContext *dc,
+                                                     int width, int height,
+                                                     const unsigned char *in,
+                                                     size_t in_size);
 
 DP_Image *DP_image_new_subimage(DP_Image *img, int x, int y, int width,
                                 int height);

@@ -23,16 +23,37 @@
 #define DPENGINE_COMPRESS_H
 #include <dpcommon/common.h>
 
+typedef struct ZSTD_CCtx_s ZSTD_CCtx;
+typedef struct ZSTD_DCtx_s ZSTD_DCtx;
 
-bool DP_compress_inflate(const unsigned char *in, size_t in_size,
-                         unsigned char *(*get_output_buffer)(size_t, void *),
-                         void *user);
+
+bool DP_decompress_deflate(const unsigned char *in, size_t in_size,
+                           unsigned char *(*get_output_buffer)(size_t, void *),
+                           void *user);
 
 size_t DP_compress_deflate_bound(size_t in_size);
 
 size_t DP_compress_deflate(const unsigned char *in, size_t in_size,
                            unsigned char *(*get_output_buffer)(size_t, void *),
                            void *user);
+
+
+bool DP_decompress_zstd(ZSTD_DCtx **in_out_ctx_or_null, const unsigned char *in,
+                        size_t in_size,
+                        unsigned char *(*get_output_buffer)(size_t, void *),
+                        void *user);
+
+void DP_decompress_zstd_free(ZSTD_DCtx **in_out_ctx_or_null);
+
+
+size_t DP_compress_zstd(ZSTD_CCtx **in_out_ctx_or_null, const unsigned char *in,
+                        size_t in_size,
+                        unsigned char *(*get_output_buffer)(size_t, void *),
+                        void *user);
+
+size_t DP_compress_zstd_bounds(size_t in_size);
+
+void DP_compress_zstd_free(ZSTD_CCtx **in_out_ctx_or_null);
 
 
 #endif

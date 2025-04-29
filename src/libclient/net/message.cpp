@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 extern "C" {
+#include <dpengine/compress.h>
 #include <dpengine/local_state.h>
 #include <dpmsg/msg_internal.h>
 }
@@ -8,6 +8,7 @@ extern "C" {
 #include "libclient/drawdance/global.h"
 #include "libclient/drawdance/tile.h"
 #include "libclient/net/message.h"
+#include "libshared/util/qtcompat.h"
 #include <QByteArray>
 #include <QImage>
 #include <QJsonDocument>
@@ -211,31 +212,121 @@ Message makeMovePointerMessage(uint8_t contextId, int32_t x, int32_t y)
 	return Message::noinc(DP_msg_move_pointer_new(contextId, x, y));
 }
 
-static QByteArray compressAlphaMask(const QImage &mask)
+static unsigned char *getByteArrayBuffer(size_t size, void *user)
+{
+	QByteArray *buffer = static_cast<QByteArray *>(user);
+	buffer->resize(compat::castSize(size));
+	return reinterpret_cast<unsigned char *>(buffer->data());
+}
+
+static QByteArray compressImageSplitDeltaZstd(
+	ZSTD_CCtx **inOutCtx, QByteArray &splitBuffer,
+	QByteArray &compressionBuffer, const QImage &img)
+{
+	Q_ASSERT(img.format() == QImage::Format_ARGB32_Premultiplied);
+	int width = img.width();
+	int height = img.height();
+	int count = width * height;
+	splitBuffer.resize(count * 4);
+	DP_pixels8_to_split8_delta(
+		reinterpret_cast<uint8_t *>(splitBuffer.data()),
+		reinterpret_cast<const DP_Pixel8 *>(img.constBits()), count);
+
+	size_t size = DP_compress_zstd(
+		inOutCtx,
+		reinterpret_cast<const unsigned char *>(splitBuffer.constData()),
+		size_t(splitBuffer.size()), getByteArrayBuffer, &compressionBuffer);
+	compressionBuffer.truncate(compat::castSize(size));
+	return compressionBuffer;
+}
+
+static QByteArray compressAlphaMaskDeflate(
+	QByteArray &alphaMaskBuffer, QByteArray &compressionBuffer,
+	const QImage &mask)
 {
 	Q_ASSERT(mask.format() == QImage::Format_ARGB32_Premultiplied);
 	int width = mask.width();
 	int height = mask.height();
-	QByteArray alphaMask;
-	alphaMask.reserve(width * height);
+	alphaMaskBuffer.clear();
+	alphaMaskBuffer.reserve(width * height);
 	for(int y = 0; y < height; ++y) {
 		const uchar *scanLine = mask.scanLine(y);
 		for(int x = 0; x < width; ++x) {
-			alphaMask.append(scanLine[x * 4 + 3]);
+			alphaMaskBuffer.append(scanLine[x * 4 + 3]);
 		}
 	}
-	return qCompress(alphaMask);
+
+	size_t size = DP_compress_deflate(
+		reinterpret_cast<const unsigned char *>(alphaMaskBuffer.constData()),
+		size_t(alphaMaskBuffer.size()), getByteArrayBuffer, &compressionBuffer);
+	compressionBuffer.truncate(compat::castSize(size));
+	return compressionBuffer;
+}
+
+static QByteArray compressAlphaMaskDeltaZstd(
+	ZSTD_CCtx **inOutCtx, QByteArray &alphaMaskBuffer,
+	QByteArray &compressionBuffer, const QImage &mask)
+{
+	Q_ASSERT(mask.format() == QImage::Format_ARGB32_Premultiplied);
+	int width = mask.width();
+	int height = mask.height();
+	alphaMaskBuffer.clear();
+	alphaMaskBuffer.reserve(width * height);
+	uchar lastA = 0;
+	for(int y = 0; y < height; ++y) {
+		const uchar *scanLine = mask.scanLine(y);
+		for(int x = 0; x < width; ++x) {
+			uchar a = scanLine[x * 4 + 3];
+			alphaMaskBuffer.append(a - lastA);
+			lastA = a;
+		}
+	}
+
+	size_t size = DP_compress_zstd(
+		inOutCtx,
+		reinterpret_cast<const unsigned char *>(alphaMaskBuffer.constData()),
+		size_t(alphaMaskBuffer.size()), getByteArrayBuffer, &compressionBuffer);
+	compressionBuffer.truncate(compat::castSize(size));
+	return compressionBuffer;
 }
 
 Message makeMoveRectMessage(
 	uint8_t contextId, uint32_t layer, uint32_t source, int32_t sx, int32_t sy,
 	int32_t tx, int32_t ty, int32_t w, int32_t h, const QImage &mask)
 {
-	QByteArray compressed =
-		mask.isNull() ? QByteArray{} : compressAlphaMask(mask);
+	QByteArray compressed;
+	if(!mask.isNull()) {
+		QByteArray alphaMaskBuffer;
+		QByteArray compressionBuffer;
+		compressed =
+			compressAlphaMaskDeflate(alphaMaskBuffer, compressionBuffer, mask);
+	}
+
 	if(compressed.size() <=
 	   DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_MOVE_RECT_STATIC_LENGTH) {
 		return Message::noinc(DP_msg_move_rect_new(
+			contextId, layer, source, sx, sy, tx, ty, w, h, &Message::setUchars,
+			compressed.size(), compressed.data()));
+	} else {
+		return Message::null();
+	}
+}
+
+Message makeMoveRectZstdMessage(
+	uint8_t contextId, uint32_t layer, uint32_t source, int32_t sx, int32_t sy,
+	int32_t tx, int32_t ty, int32_t w, int32_t h, const QImage &mask)
+{
+	QByteArray compressed;
+	if(!mask.isNull()) {
+		QByteArray alphaMaskBuffer;
+		QByteArray compressionBuffer;
+		compressed = compressAlphaMaskDeltaZstd(
+			nullptr, alphaMaskBuffer, compressionBuffer, mask);
+	}
+
+	if(compressed.size() <=
+	   DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_MOVE_RECT_STATIC_LENGTH) {
+		return Message::noinc(DP_msg_move_rect_zstd_new(
 			contextId, layer, source, sx, sy, tx, ty, w, h, &Message::setUchars,
 			compressed.size(), compressed.data()));
 	} else {
@@ -249,11 +340,42 @@ Message makeTransformRegionMessage(
 	int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
 	const QImage &mask)
 {
-	QByteArray compressed =
-		mask.isNull() ? QByteArray{} : compressAlphaMask(mask);
+	QByteArray compressed;
+	if(!mask.isNull()) {
+		QByteArray alphaMaskBuffer;
+		QByteArray compressionBuffer;
+		compressed =
+			compressAlphaMaskDeflate(alphaMaskBuffer, compressionBuffer, mask);
+	}
+
 	if(compressed.size() <=
 	   DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_TRANSFORM_REGION_STATIC_LENGTH) {
 		return Message::noinc(DP_msg_transform_region_new(
+			contextId, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3,
+			x4, y4, mode, &Message::setUchars, compressed.size(),
+			compressed.data()));
+	} else {
+		return Message::null();
+	}
+}
+
+Message makeTransformRegionZstdMessage(
+	uint8_t contextId, uint32_t layer, uint32_t source, int32_t bx, int32_t by,
+	int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
+	int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
+	const QImage &mask)
+{
+	QByteArray compressed;
+	if(!mask.isNull()) {
+		QByteArray alphaMaskBuffer;
+		QByteArray compressionBuffer;
+		compressed = compressAlphaMaskDeltaZstd(
+			nullptr, alphaMaskBuffer, compressionBuffer, mask);
+	}
+
+	if(compressed.size() <=
+	   DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_TRANSFORM_REGION_STATIC_LENGTH) {
+		return Message::noinc(DP_msg_transform_region_zstd_new(
 			contextId, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3,
 			x4, y4, mode, &Message::setUchars, compressed.size(),
 			compressed.data()));
@@ -267,6 +389,15 @@ Message makePutImageMessage(
 	uint32_t w, uint32_t h, const QByteArray &compressedImage)
 {
 	return Message::noinc(DP_msg_put_image_new(
+		contextId, layer, mode, x, y, w, h, Message::setUchars,
+		compressedImage.size(), const_cast<char *>(compressedImage.data())));
+}
+
+Message makePutImageZstdMessage(
+	uint8_t contextId, uint32_t layer, uint8_t mode, uint32_t x, uint32_t y,
+	uint32_t w, uint32_t h, const QByteArray &compressedImage)
+{
+	return Message::noinc(DP_msg_put_image_zstd_new(
 		contextId, layer, mode, x, y, w, h, Message::setUchars,
 		compressedImage.size(), const_cast<char *>(compressedImage.data())));
 }
@@ -352,9 +483,11 @@ Message makeUserInfoMessage(
 		msgBytes.length(), const_cast<char *>(msgBytes.constData())));
 }
 
-static void makePutImagesRecursive(
-	MessageList &msgs, uint8_t contextId, uint32_t layer, uint8_t mode, int x,
-	int y, const QImage &image, const QRect &bounds, int estimatedSize)
+static void makePutImageZstdRecursive(
+	ZSTD_CCtx **inOutCtx, QByteArray &splitBuffer,
+	QByteArray &compressionBuffer, MessageList &msgs, uint8_t contextId,
+	uint32_t layer, uint8_t mode, int x, int y, const QImage &image,
+	const QRect &bounds, int estimatedSize)
 {
 	int w = bounds.width();
 	int h = bounds.height();
@@ -366,11 +499,11 @@ static void makePutImagesRecursive(
 		if(estimatedSize < maxSize) {
 			QImage subImage =
 				bounds == image.rect() ? image : image.copy(bounds);
-			QByteArray compressed =
-				qCompress(subImage.constBits(), subImage.sizeInBytes());
+			QByteArray compressed = compressImageSplitDeltaZstd(
+				inOutCtx, splitBuffer, compressionBuffer, subImage);
 			compressedSize = compressed.size();
 			if(compressedSize <= maxSize) {
-				msgs.append(makePutImageMessage(
+				msgs.append(makePutImageZstdMessage(
 					contextId, layer, mode, x, y, w, h, compressed));
 				return;
 			}
@@ -383,26 +516,30 @@ static void makePutImagesRecursive(
 		if(w > h) {
 			int sx1 = w / 2;
 			int sx2 = w - sx1;
-			makePutImagesRecursive(
-				msgs, contextId, layer, mode, x, y, image,
-				bounds.adjusted(0, 0, -sx1, 0), estimatedSliceSize);
-			makePutImagesRecursive(
-				msgs, contextId, layer, mode, x + sx2, y, image,
-				bounds.adjusted(sx2, 0, 0, 0), estimatedSliceSize);
+			makePutImageZstdRecursive(
+				inOutCtx, splitBuffer, compressionBuffer, msgs, contextId,
+				layer, mode, x, y, image, bounds.adjusted(0, 0, -sx1, 0),
+				estimatedSliceSize);
+			makePutImageZstdRecursive(
+				inOutCtx, splitBuffer, compressionBuffer, msgs, contextId,
+				layer, mode, x + sx2, y, image, bounds.adjusted(sx2, 0, 0, 0),
+				estimatedSliceSize);
 		} else {
 			int sy1 = h / 2;
 			int sy2 = h - sy1;
-			makePutImagesRecursive(
-				msgs, contextId, layer, mode, x, y, image,
-				bounds.adjusted(0, 0, 0, -sy1), estimatedSliceSize);
-			makePutImagesRecursive(
-				msgs, contextId, layer, mode, x, y + sy2, image,
-				bounds.adjusted(0, sy2, 0, 0), estimatedSliceSize);
+			makePutImageZstdRecursive(
+				inOutCtx, splitBuffer, compressionBuffer, msgs, contextId,
+				layer, mode, x, y, image, bounds.adjusted(0, 0, 0, -sy1),
+				estimatedSliceSize);
+			makePutImageZstdRecursive(
+				inOutCtx, splitBuffer, compressionBuffer, msgs, contextId,
+				layer, mode, x, y + sy2, image, bounds.adjusted(0, sy2, 0, 0),
+				estimatedSliceSize);
 		}
 	}
 }
 
-void makePutImageMessages(
+void makePutImageZstdMessages(
 	MessageList &msgs, uint8_t contextId, uint32_t layer, uint8_t mode, int x,
 	int y, const QImage &image)
 {
@@ -410,6 +547,7 @@ void makePutImageMessages(
 	if(x >= -image.width() && y >= -image.height()) {
 		QImage converted =
 			image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+		ZSTD_CCtx *ctx = nullptr;
 		if(x < 0 || y < 0) {
 			// Crop image, since the protocol doesn't do negative coordinates.
 			int xoffset = x < 0 ? -x : 0;
@@ -417,20 +555,27 @@ void makePutImageMessages(
 			QImage cropped = converted.copy(
 				xoffset, yoffset, image.width() - xoffset,
 				image.height() - yoffset);
-			makePutImagesRecursive(
-				msgs, contextId, layer, mode, x + xoffset, y + yoffset, cropped,
-				cropped.rect(), 0);
+			QByteArray splitBuffer;
+			QByteArray compressionBuffer;
+			makePutImageZstdRecursive(
+				&ctx, splitBuffer, compressionBuffer, msgs, contextId, layer,
+				mode, x + xoffset, y + yoffset, cropped, cropped.rect(), 0);
 		} else {
-			makePutImagesRecursive(
-				msgs, contextId, layer, mode, x, y, converted, converted.rect(),
-				0);
+			QByteArray alphaMaskBuffer;
+			QByteArray compressionBuffer;
+			makePutImageZstdRecursive(
+				&ctx, alphaMaskBuffer, compressionBuffer, msgs, contextId,
+				layer, mode, x, y, converted, converted.rect(), 0);
 		}
+		DP_compress_zstd_free(&ctx);
 	}
 }
 
 static void makeSelectionsPutRecursive(
-	MessageList &msgs, uint8_t contextId, uint8_t selectionId, uint8_t &op,
-	int x, int y, const QImage &image, const QRect &bounds, int estimatedSize)
+	ZSTD_CCtx **inOutCtx, QByteArray &alphaMaskBuffer,
+	QByteArray &compressionBuffer, MessageList &msgs, uint8_t contextId,
+	uint8_t selectionId, uint8_t &op, int x, int y, const QImage &image,
+	const QRect &bounds, int estimatedSize)
 {
 	int w = bounds.width();
 	int h = bounds.height();
@@ -440,7 +585,8 @@ static void makeSelectionsPutRecursive(
 		if(estimatedSize < maxSize) {
 			QImage subImage =
 				bounds == image.rect() ? image : image.copy(bounds);
-			QByteArray compressed = compressAlphaMask(subImage);
+			QByteArray compressed = compressAlphaMaskDeltaZstd(
+				inOutCtx, alphaMaskBuffer, compressionBuffer, subImage);
 			compressedSize = compressed.size();
 			if(compressedSize <= maxSize) {
 				msgs.append(makeSelectionPutMessage(
@@ -459,19 +605,23 @@ static void makeSelectionsPutRecursive(
 			int sx1 = w / 2;
 			int sx2 = w - sx1;
 			makeSelectionsPutRecursive(
-				msgs, contextId, selectionId, op, x, y, image,
-				bounds.adjusted(0, 0, -sx1, 0), estimatedSliceSize);
+				inOutCtx, alphaMaskBuffer, compressionBuffer, msgs, contextId,
+				selectionId, op, x, y, image, bounds.adjusted(0, 0, -sx1, 0),
+				estimatedSliceSize);
 			makeSelectionsPutRecursive(
-				msgs, contextId, selectionId, op, x + sx2, y, image,
+				inOutCtx, alphaMaskBuffer, compressionBuffer, msgs, contextId,
+				selectionId, op, x + sx2, y, image,
 				bounds.adjusted(sx2, 0, 0, 0), estimatedSliceSize);
 		} else {
 			int sy1 = h / 2;
 			int sy2 = h - sy1;
 			makeSelectionsPutRecursive(
-				msgs, contextId, selectionId, op, x, y, image,
-				bounds.adjusted(0, 0, 0, -sy1), estimatedSliceSize);
+				inOutCtx, alphaMaskBuffer, compressionBuffer, msgs, contextId,
+				selectionId, op, x, y, image, bounds.adjusted(0, 0, 0, -sy1),
+				estimatedSliceSize);
 			makeSelectionsPutRecursive(
-				msgs, contextId, selectionId, op, x, y + sy2, image,
+				inOutCtx, alphaMaskBuffer, compressionBuffer, msgs, contextId,
+				selectionId, op, x, y + sy2, image,
 				bounds.adjusted(0, sy2, 0, 0), estimatedSliceSize);
 		}
 	}
@@ -487,20 +637,27 @@ void makeSelectionPutMessages(
 	} else if(x >= -image.width() && y >= -image.height()) {
 		QImage converted =
 			image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+		ZSTD_CCtx *ctx = nullptr;
 		if(x < 0 || y < 0) {
 			int xoffset = x < 0 ? -x : 0;
 			int yoffset = y < 0 ? -y : 0;
 			QImage cropped = converted.copy(
 				xoffset, yoffset, image.width() - xoffset,
 				image.height() - yoffset);
+			QByteArray alphaMaskBuffer;
+			QByteArray compressionBuffer;
 			makeSelectionsPutRecursive(
-				msgs, contextId, selectionId, op, x + xoffset, y + yoffset,
-				cropped, cropped.rect(), 0);
+				&ctx, alphaMaskBuffer, compressionBuffer, msgs, contextId,
+				selectionId, op, x + xoffset, y + yoffset, cropped,
+				cropped.rect(), 0);
 		} else {
+			QByteArray alphaMaskBuffer;
+			QByteArray compressionBuffer;
 			makeSelectionsPutRecursive(
-				msgs, contextId, selectionId, op, x, y, converted,
-				converted.rect(), 0);
+				&ctx, alphaMaskBuffer, compressionBuffer, msgs, contextId,
+				selectionId, op, x, y, converted, converted.rect(), 0);
 		}
+		DP_compress_zstd_free(&ctx);
 	}
 }
 

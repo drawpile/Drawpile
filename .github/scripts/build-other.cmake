@@ -7,6 +7,8 @@ list(APPEND CMAKE_MODULE_PATH
 
 set(ZLIB "1.3.1" CACHE STRING
 	"The version of zlib to build")
+set(ZSTD "1.5.7" CACHE STRING
+	"The version of zstd to build")
 set(LIBMICROHTTPD "1.0.1" CACHE STRING
 	"The version of libmicrohttpd to build")
 set(LIBSODIUM "1.0.20" CACHE STRING
@@ -90,6 +92,32 @@ if(WIN32 AND ZLIB)
 		ALL_PLATFORMS
 			CMAKE
 				ALL -DBUILD_SHARED_LIBS=on ${extra_cmake_flags}
+	)
+endif()
+
+if(ZSTD)
+	build_dependency(zstd ${ZSTD} ${BUILD_TYPE}
+		URL https://github.com/facebook/zstd/releases/download/v@version@/zstd-@version@.tar.gz
+		TARGET_ARCH "${TARGET_ARCH}"
+		SOURCE_BUILD_PATH "build/cmake"
+		VERSIONS
+			1.5.7
+			SHA384=e1785f47b0f0564c28d51f939980c024e731f585eff5648585c1547b785610032674c2cf8456b39c2a98200d7dff1c55
+		ALL_PLATFORMS
+			CMAKE
+				ALL
+					-DZSTD_BUILD_COMPRESSION=on
+					-DZSTD_BUILD_CONTRIB=off
+					-DZSTD_BUILD_DECOMPRESSION=on
+					-DZSTD_BUILD_DEPRECATED=off
+					-DZSTD_BUILD_DICTBUILDER=off
+					-DZSTD_BUILD_PROGRAMS=off
+					-DZSTD_BUILD_SHARED=off
+					-DZSTD_BUILD_STATIC=on
+					-DZSTD_BUILD_TESTS=off
+					-DZSTD_LEGACY_SUPPORT=off
+					-DZSTD_MULTITHREAD_SUPPORT=off
+					${extra_cmake_flags}
 	)
 endif()
 

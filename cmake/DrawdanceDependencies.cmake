@@ -7,6 +7,8 @@ if(NOT WIN32)
 endif()
 
 if(CLIENT OR TOOLS)
+    dp_find_package(zstd REQUIRED CONFIG)
+
     if(NOT EMSCRIPTEN)
         find_package(PkgConfig QUIET)
         if(PKGCONFIG_FOUND)

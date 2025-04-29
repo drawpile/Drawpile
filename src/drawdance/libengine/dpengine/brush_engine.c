@@ -135,6 +135,7 @@ struct DP_BrushEngine {
         DP_LayerContent *lc;
         size_t capacity;
         bool *map;
+        ZSTD_CCtx *zstd_cctx;
     } mask;
     union {        // Active type decides which of these is relevant.
         int dummy; // Make this initializable without the compiler whining.
@@ -465,8 +466,9 @@ static bool sync_mask_state(DP_BrushEngine *be, DP_LayerContent *mask_lc,
             if (t) {
                 unsigned char *buffer = get_mask_buffer(be);
                 mask = buffer + DP_TILE_LENGTH;
-                mask_size = DP_tile_compress_mask(
-                    t, buffer, get_mask_compress_buffer, mask);
+                mask_size = DP_tile_compress_mask_delta_zstd8le(
+                    t, &be->mask.zstd_cctx, (uint8_t *)buffer,
+                    get_mask_compress_buffer, mask);
                 if (mask_size == 0) {
                     DP_warn("Error compressing selection tile: %s", DP_error());
                     return false;
@@ -1019,7 +1021,7 @@ DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
          DP_QUEUE_NULL,
          DP_VECTOR_NULL,
          {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0}},
-        {false, false, 0, NULL, 0, NULL},
+        {false, false, 0, NULL, 0, NULL, NULL},
         {0},
         {0, 0, 0, 0, NULL},
         push_message,
@@ -1036,6 +1038,7 @@ void DP_brush_engine_free(DP_BrushEngine *be)
     if (be) {
         DP_free(be->dabs.buffer);
         mypaint_brush_unref(be->mypaint_brush);
+        DP_compress_zstd_free(&be->mask.zstd_cctx);
         DP_free(be->mask.map);
         DP_layer_content_decref_nullable(be->mask.lc);
         DP_layer_content_decref_nullable(be->lc);

@@ -302,7 +302,8 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
                 ? DP_protocol_to_layer_id(DP_msg_layer_tree_delete_id(mtld))
                 : ALL_IDS);
     }
-    case DP_MSG_PUT_IMAGE: {
+    case DP_MSG_PUT_IMAGE:
+    case DP_MSG_PUT_IMAGE_ZSTD: {
         DP_MsgPutImage *mpi = DP_message_internal(msg);
         switch (DP_msg_put_image_mode(mpi)) {
         case DP_BLEND_MODE_COMPAT_LOCAL_MATCH:
@@ -317,7 +318,8 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
                              DP_uint32_to_int(DP_msg_put_image_h(mpi))));
         }
     }
-    case DP_MSG_PUT_TILE: {
+    case DP_MSG_PUT_TILE:
+    case DP_MSG_PUT_TILE_ZSTD: {
         DP_MsgPutTile *mpt = DP_message_internal(msg);
         int layer_id = DP_protocol_to_layer_id(DP_msg_put_tile_layer(mpt));
         unsigned int sublayer_id = DP_msg_put_tile_sublayer(mpt);
@@ -421,18 +423,20 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     case DP_MSG_ANNOTATION_DELETE:
         return make_annotations(
             DP_msg_annotation_delete_id(DP_message_internal(msg)));
-    // Move rect and transform regionmessages can take stuff from one layer and
+    // Move rect and transform region messages can take stuff from one layer and
     // move it to another, affecting two different layers. Since we can't
     // represent that, we punt to affecting all layers in that case. Switching
     // layers during a transform is pretty uncommon, so that's okay.
-    case DP_MSG_MOVE_RECT: {
+    case DP_MSG_MOVE_RECT:
+    case DP_MSG_MOVE_RECT_ZSTD: {
         DP_MsgMoveRect *mmr = DP_message_internal(msg);
         int source_id = DP_protocol_to_layer_id(DP_msg_move_rect_source(mmr));
         int target_id = DP_protocol_to_layer_id(DP_msg_move_rect_layer(mmr));
         return make_pixels(source_id == target_id ? source_id : ALL_IDS,
                            move_rect_bounds(mmr));
     }
-    case DP_MSG_TRANSFORM_REGION: {
+    case DP_MSG_TRANSFORM_REGION:
+    case DP_MSG_TRANSFORM_REGION_ZSTD: {
         DP_MsgTransformRegion *mtr = DP_message_internal(msg);
         int source_id =
             DP_protocol_to_layer_id(DP_msg_transform_region_source(mtr));
@@ -455,6 +459,7 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     case DP_MSG_UNDO_POINT:
         return make_user_attrs();
     case DP_MSG_CANVAS_BACKGROUND:
+    case DP_MSG_CANVAS_BACKGROUND_ZSTD:
         return make_canvas_background();
     case DP_MSG_SET_METADATA_INT: {
         int field = DP_msg_set_metadata_int_field(DP_message_internal(msg));

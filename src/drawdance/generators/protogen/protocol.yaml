@@ -981,8 +981,8 @@ SelectionPut:
         The selection_id specifies which of the user's selections is affected.
         An id of 0 is invalid.
 
-        The mask is DEFLATEd 8 bit alpha. If absent, this fills the entire
-        rectangle instead.
+        The mask is delta-encoded, zstd-compressed 8 bit alpha. If absent, this
+        fills the entire rectangle instead.
 
         This message is never sent over the network, it's matched by LocalMatch
         messages instead and selections are synchronized to the remote using
@@ -1048,10 +1048,10 @@ SyncSelectionTile:
         Synchronizes a tile from a local selection into a remote one. The
         selection id must be 128 or higher.
 
-        The mask is DEFLATEd 8 bit alpha. A zero-length mask will make the tile
-        blank. A mask with a single zero byte will make the tile fully opaque.
-        When the column and row are both 0xffff and the mask has a length of
-        zero, the selection is cleared instead.
+        The mask is zstd-compressed, delta-encoded 8 bit alpha. A zero-length
+        mask will make the tile blank. A mask with a single zero byte will make
+        the tile fully opaque.  When the column and row are both 0xffff and the
+        mask has a length of zero, the selection is cleared instead.
 
         This command isn't rolled back by undos.
     fields:
@@ -1060,6 +1060,40 @@ SyncSelectionTile:
         - col u16
         - row u16
         - mask bytes
+
+PutImageZstd:
+    id: 178
+    comment: |
+        Like PutImage, but the image is split channel delta-encoded
+        zstd-compressed 8 bit pixel data instead, prefixed by four bytes of
+        length in little-endian. If the mask is exactly four bytes long, it
+        represents a fill color in little-endian.
+    alias: PutImage
+
+PutTileZstd:
+    id: 179
+    comment: |
+        Analogous to PutImageZstd but for PutTile.
+    alias: PutTile
+
+CanvasBackgroundZstd:
+    id: 180
+    comment: |
+        Analogous to PutImageZstd but for CanvasBackground.
+    alias: CanvasBackground
+
+MoveRectZstd:
+    id: 181
+    comment: |
+        Like MoveRect, but the mask is delta-encoded zstd-compressed 8 bit pixel
+        data instead, prefixed by four bytes of length in little-endian.
+    alias: MoveRect
+
+TransformRegionZstd:
+    id: 182
+    comment: |
+        Analogous to MoveRectZstd but for TransformRegion.
+    alias: TransformRegion
 
 Undo:
     id: 255

@@ -19,6 +19,7 @@
 #include "annotation_list.h"
 #include "canvas_history.h"
 #include "canvas_state.h"
+#include "compress.h"
 #include "document_metadata.h"
 #include "key_frame.h"
 #include "layer_content.h"
@@ -228,8 +229,16 @@ struct DP_ResetImageOutputBuffer {
     void *data;
 };
 
-struct DP_ResetImagePixelBuffer {
-    DP_Pixel8 data[DP_TILE_LENGTH];
+union DP_ResetImagePixelBuffer {
+    DP_Pixel8 tile[DP_TILE_LENGTH];
+    DP_SplitTile8 split;
+    uint8_t channel[DP_TILE_LENGTH];
+};
+
+struct DP_ResetImageBuffer {
+    struct DP_ResetImageOutputBuffer output;
+    union DP_ResetImagePixelBuffer *pixels;
+    ZSTD_CCtx *zstd_context;
 };
 
 struct DP_ResetImageContext {
@@ -237,8 +246,7 @@ struct DP_ResetImageContext {
     DP_Worker *worker;
     void (*push_message)(void *, DP_Message *);
     void *push_message_user;
-    struct DP_ResetImageOutputBuffer *output_buffers;
-    struct DP_ResetImagePixelBuffer *pixel_buffers;
+    struct DP_ResetImageBuffer *buffers;
 };
 
 struct DP_ResetImageJob {
@@ -283,14 +291,13 @@ static void set_tile_data(size_t size, unsigned char *out, void *bytes)
 static size_t reset_image_compress_tile(struct DP_ResetImageContext *c,
                                         int buffer_index, DP_Tile *t)
 {
-    struct DP_ResetImageOutputBuffer *output_buffer =
-        &c->output_buffers[buffer_index];
-    size_t size =
-        t ? DP_tile_compress(t, c->pixel_buffers[buffer_index].data,
-                             reset_image_get_output_buffer, output_buffer)
-          : DP_tile_compress_pixel(DP_pixel15_zero(),
-                                   reset_image_get_output_buffer,
-                                   output_buffer);
+    struct DP_ResetImageBuffer *buffer = &c->buffers[buffer_index];
+    size_t size = t ? DP_tile_compress_split_delta_zstd8le(
+                          t, &buffer->zstd_context, &buffer->pixels->split,
+                          reset_image_get_output_buffer, &buffer->output)
+                    : DP_tile_compress_pixel8le(DP_pixel15_zero(),
+                                                reset_image_get_output_buffer,
+                                                &buffer->output);
     if (size == 0) {
         DP_warn("Reset image: error tile: %s", DP_error());
     }
@@ -414,12 +421,12 @@ static void tile_to_reset_image(struct DP_ResetImageContext *c,
 {
     size_t size = reset_image_compress_tile(c, buffer_index, t);
     if (size != 0) {
-        reset_image_push(c, DP_msg_put_tile_new(
+        reset_image_push(c, DP_msg_put_tile_zstd_new(
                                 c->context_id,
                                 t ? DP_uint_to_uint8(DP_tile_context_id(t)) : 0,
                                 layer_id, sublayer_id, DP_int_to_uint16(x),
                                 DP_int_to_uint16(y), repeat, set_tile_data,
-                                size, c->output_buffers[buffer_index].data));
+                                size, c->buffers[buffer_index].output.data));
     }
 }
 
@@ -428,15 +435,14 @@ static void selection_tile_to_reset_image(struct DP_ResetImageContext *c,
                                           uint8_t selection_id, uint16_t x,
                                           uint16_t y, DP_Tile *t)
 {
-    struct DP_ResetImageOutputBuffer *output_buffer =
-        &c->output_buffers[buffer_index];
-    size_t mask_size = DP_tile_compress_mask(
-        t, (unsigned char *)c->pixel_buffers[buffer_index].data,
-        reset_image_get_output_buffer, output_buffer);
+    struct DP_ResetImageBuffer *buffer = &c->buffers[buffer_index];
+    size_t mask_size = DP_tile_compress_mask_delta_zstd8le(
+        t, &buffer->zstd_context, buffer->pixels->channel,
+        reset_image_get_output_buffer, &buffer->output);
     if (mask_size > 0) {
         reset_image_push(c, DP_msg_sync_selection_tile_new(
                                 c->context_id, context_id, selection_id, x, y,
-                                set_tile_data, mask_size, output_buffer->data));
+                                set_tile_data, mask_size, buffer->output.data));
     }
     else {
         DP_warn("Reset image: error selection tile: %s", DP_error());
@@ -783,7 +789,7 @@ static void canvas_state_to_reset_image(struct DP_ResetImageContext *c,
     if (size != 0) {
         reset_image_push(
             c, DP_msg_canvas_background_new(c->context_id, set_tile_data, size,
-                                            c->output_buffers[0].data));
+                                            c->buffers[0].output.data));
     }
     DP_PERF_END(canvas);
 
@@ -823,26 +829,22 @@ void DP_reset_image_build(DP_CanvasState *cs, unsigned int context_id,
     }
 
     struct DP_ResetImageContext c = {
-        context_id,
-        worker,
-        push_message,
-        user,
-        DP_malloc(sizeof(struct DP_ResetImageOutputBuffer)
-                  * DP_int_to_size(buffers_count)),
-        DP_malloc(sizeof(struct DP_ResetImagePixelBuffer)
-                  * DP_int_to_size(buffers_count)),
-    };
+        context_id, worker, push_message, user,
+        DP_malloc(sizeof(*c.buffers) * DP_int_to_size(buffers_count))};
     for (int i = 0; i < buffers_count; ++i) {
-        c.output_buffers[i] = (struct DP_ResetImageOutputBuffer){0, NULL};
+        c.buffers[i] = (struct DP_ResetImageBuffer){
+            {0, NULL}, DP_malloc(sizeof(*c.buffers[i].pixels)), NULL};
     }
 
     canvas_state_to_reset_image(&c, cs);
 
     DP_worker_free_join(worker);
     for (int i = 0; i < buffers_count; ++i) {
-        DP_free(c.output_buffers[i].data);
+        struct DP_ResetImageBuffer *buffer = &c.buffers[i];
+        DP_compress_zstd_free(&buffer->zstd_context);
+        DP_free(buffer->pixels);
+        DP_free(buffer->output.data);
     }
-    DP_free(c.output_buffers);
-    DP_free(c.pixel_buffers);
+    DP_free(c.buffers);
     DP_PERF_END(fn);
 }

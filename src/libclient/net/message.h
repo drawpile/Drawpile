@@ -106,13 +106,27 @@ Message makeMoveRectMessage(
 	uint8_t contextId, uint32_t layer, uint32_t source, int32_t sx, int32_t sy,
 	int32_t tx, int32_t ty, int32_t w, int32_t h, const QImage &mask);
 
+Message makeMoveRectZstdMessage(
+	uint8_t contextId, uint32_t layer, uint32_t source, int32_t sx, int32_t sy,
+	int32_t tx, int32_t ty, int32_t w, int32_t h, const QImage &mask);
+
 Message makeTransformRegionMessage(
 	uint8_t contextId, uint32_t layer, uint32_t source, int32_t bx, int32_t by,
 	int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
 	int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
 	const QImage &mask);
 
+Message makeTransformRegionZstdMessage(
+	uint8_t contextId, uint32_t layer, uint32_t source, int32_t bx, int32_t by,
+	int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
+	int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
+	const QImage &mask);
+
 Message makePutImageMessage(
+	uint8_t contextId, uint32_t layer, uint8_t mode, uint32_t x, uint32_t y,
+	uint32_t w, uint32_t h, const QByteArray &compressedImage);
+
+Message makePutImageZstdMessage(
 	uint8_t contextId, uint32_t layer, uint8_t mode, uint32_t x, uint32_t y,
 	uint32_t w, uint32_t h, const QByteArray &compressedImage);
 
@@ -151,7 +165,7 @@ Message makeUserInfoMessage(
 // Fills given message list with put image messages, potentially cropping
 // the image if the given coordinates are negative and splitting it into
 // multiple messages if it doesn't fit into a single one.
-void makePutImageMessages(
+void makePutImageZstdMessages(
 	MessageList &msgs, uint8_t contextId, uint32_t layer, uint8_t mode, int x,
 	int y, const QImage &image);
 
