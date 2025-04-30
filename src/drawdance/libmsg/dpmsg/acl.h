@@ -86,6 +86,7 @@ typedef enum DP_Feature {
 
 typedef enum DP_FeatureLimit {
     DP_FEATURE_LIMIT_BRUSH_SIZE,
+    DP_FEATURE_LIMIT_LAYER_COUNT,
     DP_FEATURE_LIMIT_COUNT,
 } DP_FeatureLimit;
 

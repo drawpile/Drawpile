@@ -175,10 +175,15 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 
 	// Set up permissions tab
 	m_ui->permBrushSize->setExponentRatio(3.0);
+	m_ui->permLayerCount->setExponentRatio(3.0);
 	connect(
 		m_ui->permBrushSize,
 		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&SessionSettingsDialog::updateBrushSizeLimitText);
+	connect(
+		m_ui->permLayerCount,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+		&SessionSettingsDialog::updateLayerCountLimitText);
 	connect(
 		m_ui->permissionPresets, &widgets::PresetSelector::saveRequested, this,
 		&SessionSettingsDialog::permissionPresetSaving);
@@ -478,6 +483,8 @@ KisSliderSpinBox *SessionSettingsDialog::limitSlider(DP_FeatureLimit fl)
 	switch(fl) {
 	case DP_FEATURE_LIMIT_BRUSH_SIZE:
 		return m_ui->permBrushSize;
+	case DP_FEATURE_LIMIT_LAYER_COUNT:
+		return m_ui->permLayerCount;
 	default:
 		Q_ASSERT_X(false, "limitSlider", "unhandled case");
 		return nullptr;
@@ -490,6 +497,10 @@ int SessionSettingsDialog::limitSliderValue(DP_FeatureLimit fl)
 	case DP_FEATURE_LIMIT_BRUSH_SIZE: {
 		int value = m_ui->permBrushSize->value();
 		return value < m_ui->permBrushSize->maximum() ? value : -1;
+	}
+	case DP_FEATURE_LIMIT_LAYER_COUNT: {
+		int value = m_ui->permLayerCount->value();
+		return value < m_ui->permLayerCount->maximum() ? value : -1;
 	}
 	default:
 		Q_ASSERT_X(false, "limitSliderValue", "unhandled case");
@@ -526,6 +537,9 @@ void SessionSettingsDialog::onFeatureTiersChanged(
 	m_ui->permTimeline->setCurrentIndex(
 		int(features.tiers[DP_FEATURE_TIMELINE]));
 	m_ui->permMyPaint->setCurrentIndex(int(features.tiers[DP_FEATURE_MYPAINT]));
+	setLimitSliderValue(
+		DP_FEATURE_LIMIT_BRUSH_SIZE,
+		features.limits[DP_FEATURE_LIMIT_BRUSH_SIZE][DP_ACCESS_TIER_GUEST]);
 	setLimitSliderValue(
 		DP_FEATURE_LIMIT_BRUSH_SIZE,
 		features.limits[DP_FEATURE_LIMIT_BRUSH_SIZE][DP_ACCESS_TIER_GUEST]);
@@ -578,6 +592,12 @@ void SessionSettingsDialog::updateBrushSizeLimitText(int value)
 {
 	m_ui->permBrushSize->setOverrideText(
 		value < m_ui->permBrushSize->maximum() ? QString() : tr("Unlimited"));
+}
+
+void SessionSettingsDialog::updateLayerCountLimitText(int value)
+{
+	m_ui->permLayerCount->setOverrideText(
+		value < m_ui->permLayerCount->maximum() ? QString() : tr("Unlimited"));
 }
 
 void SessionSettingsDialog::permissionPresetSelected(const QString &presetFile)

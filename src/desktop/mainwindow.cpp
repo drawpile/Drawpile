@@ -645,18 +645,14 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		aclState, &canvas::AclState::featureAccessChanged, this,
 		&MainWindow::onFeatureAccessChange);
 	connect(
-		aclState, &canvas::AclState::brushSizeLimitChange, this,
-		&MainWindow::onBrushSizeLimitChange);
-
-	tools::ToolController *toolCtrl = m_doc->toolCtrl();
-	connect(
-		aclState, &canvas::AclState::brushSizeLimitChange, toolCtrl,
-		&tools::ToolController::setBrushSizeLimit);
+		aclState, &canvas::AclState::featureLimitChanged, this,
+		&MainWindow::onFeatureLimitChanged);
 
 	canvas::PaintEngine *paintEngine = canvas->paintEngine();
 	connect(
 		paintEngine, &canvas::PaintEngine::undoDepthLimitSet, this,
 		&MainWindow::onUndoDepthLimitSet);
+	tools::ToolController *toolCtrl = m_doc->toolCtrl();
 	connect(
 		toolCtrl, &tools::ToolController::selectionEditActiveChanged,
 		paintEngine, &canvas::PaintEngine::setSelectionEditActive);
@@ -756,9 +752,10 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		DP_Feature f = DP_Feature(i);
 		onFeatureAccessChange(f, aclState->canUseFeature(f));
 	}
-	int brushSizeLimit = aclState->brushSizeLimit();
-	onBrushSizeLimitChange(brushSizeLimit);
-	toolCtrl->setBrushSizeLimit(brushSizeLimit);
+	for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
+		DP_FeatureLimit fl = DP_FeatureLimit(i);
+		onFeatureLimitChanged(fl, aclState->featureLimit(fl));
+	}
 	onUndoDepthLimitSet(paintEngine->undoDepthLimit());
 	paintEngine->setShowSelectionMask(
 		getAction("showselectionmask")->isChecked());
@@ -3536,10 +3533,19 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 	updateLockWidget();
 }
 
-void MainWindow::onBrushSizeLimitChange(int brushSizeLimit)
+// clang-format on
+void MainWindow::onFeatureLimitChanged(DP_FeatureLimit featureLimit, int value)
 {
-	m_dockToolSettings->brushSettings()->setBrushSizeLimit(brushSizeLimit);
+	switch(featureLimit) {
+	case DP_FEATURE_LIMIT_BRUSH_SIZE:
+		m_dockToolSettings->brushSettings()->setBrushSizeLimit(value);
+		m_doc->toolCtrl()->setBrushSizeLimit(value);
+		break;
+	default:
+		break;
+	}
 }
+// clang-format off
 
 void MainWindow::onUndoDepthLimitSet(int undoDepthLimit)
 {

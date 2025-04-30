@@ -77,6 +77,7 @@ LayerListItem::makeTitleWithColor(const QString &title, const QColor &color)
 LayerListModel::LayerListModel(QObject *parent)
 	: QAbstractItemModel(parent)
 	, m_viewMode(DP_VIEW_MODE_NORMAL)
+	, m_layerIdLimit(DP_LAYER_ELEMENT_ID_MAX)
 {
 }
 
@@ -923,6 +924,15 @@ void LayerListModel::setFillSourceLayerId(int fillSourceLayerId)
 	}
 }
 
+void LayerListModel::updateFeatureLimit(DP_FeatureLimit featureLimit, int value)
+{
+	if(featureLimit == DP_FEATURE_LIMIT_LAYER_COUNT) {
+		m_layerIdLimit = value >= 0 && value < DP_LAYER_ELEMENT_ID_MAX
+							 ? value
+							 : DP_LAYER_ELEMENT_ID_MAX;
+	}
+}
+
 void LayerListModel::setAclState(AclState *aclstate)
 {
 	m_aclstate = aclstate;
@@ -1109,22 +1119,26 @@ QVector<int> LayerListModel::getAvailableLayerIds(int count) const
 	Q_ASSERT(m_aclstate);
 
 	QSet<int> takenIds;
+	QVector<int> takenPerUser(256, 0);
 	takenIds.insert(0);
 	for(const LayerListItem &item : m_items) {
 		takenIds.insert(item.id);
+		++takenPerUser[DP_layer_id_context_id(item.id)];
 	}
 
 	unsigned int localUserId = m_aclstate->localUserId();
 	QVector<int> foundIds;
 	foundIds.reserve(count);
 	while(int(foundIds.size()) < count) {
-		int layerId = searchAvailableLayerId(takenIds, localUserId);
+		int layerId =
+			searchAvailableLayerId(takenIds, takenPerUser, localUserId);
 		if(layerId == 0 && m_aclstate->amOperator()) {
-			layerId = searchAvailableLayerId(takenIds, 0);
+			layerId = searchAvailableLayerId(takenIds, takenPerUser, 0);
 			if(layerId == 0) {
 				for(unsigned int i = 255; i > 0; --i) {
 					if(i != localUserId) {
-						layerId = searchAvailableLayerId(takenIds, i);
+						layerId =
+							searchAvailableLayerId(takenIds, takenPerUser, i);
 						if(layerId != 0) {
 							break;
 						}
@@ -1165,12 +1179,15 @@ void LayerListModel::updateCheckedLayerAcl(int layerId)
 }
 
 int LayerListModel::searchAvailableLayerId(
-	const QSet<int> &takenIds, unsigned int contextId)
+	const QSet<int> &takenIds, const QVector<int> &takenPerUser,
+	unsigned int contextId) const
 {
-	for(int i = 0; i < DP_LAYER_ELEMENT_ID_MAX; ++i) {
-		int id = DP_layer_id_make(contextId, i);
-		if(!takenIds.contains(id)) {
-			return id;
+	if(takenPerUser[contextId] < m_layerIdLimit) {
+		for(int i = 0; i < m_layerIdLimit; ++i) {
+			int id = DP_layer_id_make(contextId, i);
+			if(!takenIds.contains(id)) {
+				return id;
+			}
 		}
 	}
 	return 0;

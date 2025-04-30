@@ -70,6 +70,7 @@ private slots:
 	void permissionChanged();
 	void limitChanged();
 	void updateBrushSizeLimitText(int value);
+	void updateLayerCountLimitText(int value);
 
 	void autoresetThresholdChanged();
 	void keepChatChanged(bool);

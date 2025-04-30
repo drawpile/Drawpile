@@ -18,7 +18,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Increase maximum brush size to 1000. Session operators can limit this and the default limit for non-operators is 255. Thanks ariqhadiyan and TGS for suggesting.
  * Fix: Make MyPaint brush outline more accurate to the actual maximum size of the brush (although it still can't account for crazier brushes.)
  * Feature: Pigment blend mode, which allows for more realistic color mixing. Session operators can restrict this mode and by default it's only enabled for operators, since it's very performance-intensive. Thanks chaitae for suggesting.
- * Feature: Increase maximum layer count to 32767 per user, up from the previous 256. Thanks haxekhaex2 for suggesting.
+ * Feature: Increase maximum layer count to 32767 per user, up from the previous 256. Operators can also now limit the layer count in the session settings. Thanks haxekhaex2 for suggesting.
  * Feature: Allow drawing on selections via Selection → Draw on Selection.
  * Feature: Allow changing the color of the selection mask via View → Set Selection Mask Color.
  * Feature: Make selections mask brush strokes.

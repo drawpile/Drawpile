@@ -108,8 +108,10 @@ void AclState::updateUserBits(const drawdance::AclState &acls, bool reset)
 	bool wasOp = amOperator();
 	bool wasLocked = amLocked();
 	int hadFeatures = featureFlags(d->features, hadTier);
-	int hadBrushSizeLimit =
-		d->features.limits[DP_FEATURE_LIMIT_BRUSH_SIZE][hadTier];
+	int hadLimits[DP_FEATURE_LIMIT_COUNT];
+	for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
+		hadLimits[i] = d->features.limits[i][hadTier];
+	}
 
 	d->users = acls.users();
 
@@ -128,21 +130,23 @@ void AclState::updateUserBits(const drawdance::AclState &acls, bool reset)
 	}
 
 	emitFeatureChanges(hadFeatures, featureFlags(d->features, tierNow), reset);
-	emitBrushSizeChanges(hadBrushSizeLimit, tierNow, reset);
+	emitLimitChanges(hadLimits, tierNow, reset);
 }
 
 void AclState::updateFeatures(const drawdance::AclState &acls, bool reset)
 {
 	DP_AccessTier tier = DP_user_acls_tier(&d->users, d->localUser);
 	int hadFeatures = featureFlags(d->features, tier);
-	int hadBrushSizeLimit =
-		d->features.limits[DP_FEATURE_LIMIT_BRUSH_SIZE][tier];
+	int hadLimits[DP_FEATURE_LIMIT_COUNT];
+	for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
+		hadLimits[i] = d->features.limits[i][tier];
+	}
 
 	d->features = acls.featureTiers();
 	emit featureTiersChanged(d->features);
 
 	emitFeatureChanges(hadFeatures, featureFlags(d->features, tier), reset);
-	emitBrushSizeChanges(hadBrushSizeLimit, tier, reset);
+	emitLimitChanges(hadLimits, tier, reset);
 }
 
 void AclState::updateLayers(const drawdance::AclState &acls, bool reset)
@@ -207,12 +211,14 @@ void AclState::emitFeatureChanges(int before, int now, bool reset)
 	}
 }
 
-void AclState::emitBrushSizeChanges(
-	int hadBrushSizeLimit, DP_AccessTier tier, bool reset)
+void AclState::emitLimitChanges(
+	const int *hadLimits, DP_AccessTier tier, bool reset)
 {
-	int brushSizeLimit = d->features.limits[DP_FEATURE_LIMIT_BRUSH_SIZE][tier];
-	if(reset || brushSizeLimit != hadBrushSizeLimit) {
-		emit brushSizeLimitChange(brushSizeLimit);
+	for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
+		int limit = d->features.limits[i][tier];
+		if(reset || limit != hadLimits[i]) {
+			emit featureLimitChanged(DP_FeatureLimit(i), limit);
+		}
 	}
 }
 
@@ -262,13 +268,8 @@ bool AclState::isLayerLocked(int layerId) const
 
 bool AclState::canUseFeature(DP_Feature feature) const
 {
-	const DP_AccessTier t = d->tier();
-	for (int i = 0; i < DP_FEATURE_COUNT; ++i) {
-		if (feature == i) {
-			return t <= d->features.tiers[i];
-		}
-	}
-	return false;
+	return feature >= 0 && feature < DP_FEATURE_COUNT &&
+		   d->tier() <= d->features.tiers[feature];
 }
 
 bool AclState::canEditLayer(int layerId) const
@@ -283,9 +284,11 @@ bool AclState::isOwnLayer(int layerId) const
 	return DP_layer_id_owner(layerId, localUserId());
 }
 
-int AclState::brushSizeLimit()
+int AclState::featureLimit(DP_FeatureLimit featureLimit)
 {
-	return d->features.limits[DP_FEATURE_LIMIT_BRUSH_SIZE][d->tier()];
+	return featureLimit >= 0 && featureLimit < DP_FEATURE_LIMIT_COUNT
+			   ? d->features.limits[featureLimit][d->tier()]
+			   : -1;
 }
 
 uint8_t AclState::localUserId() const
