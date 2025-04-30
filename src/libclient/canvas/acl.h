@@ -69,8 +69,8 @@ public:
 	//! Do we own the given layer?
 	bool isOwnLayer(int layerId) const;
 
-	//! Get our brush size limit in pixels. A negative number means no limit.
-	int brushSizeLimit();
+	//! Get the given feature limit for us. A negative number means no limit.
+	int featureLimit(DP_FeatureLimit featureLimit);
 
 	//! Get the ID of the local user
 	uint8_t localUserId() const;
@@ -106,14 +106,14 @@ signals:
 	//! Feature access tiers have changed
 	void featureTiersChanged(const DP_FeatureTiers&);
 
-	void brushSizeLimitChange(int limit);
+	void featureLimitChanged(DP_FeatureLimit featureLimit, int value);
 
 	void resetLockChanged(bool locked);
 
 private:
 	void emitFeatureChanges(int before, int now, bool reset);
 	void
-	emitBrushSizeChanges(int hadBrushSizeLimit, DP_AccessTier tier, bool reset);
+	emitLimitChanges(const int *hadLimits, DP_AccessTier tier, bool reset);
 
 	struct Data;
 	Data *d;

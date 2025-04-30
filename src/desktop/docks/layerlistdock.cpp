@@ -925,7 +925,12 @@ void LayerList::changeLayerAcl(
 void LayerList::addOrPromptLayerOrGroup(bool group)
 {
 	if(dpApp().settings().promptLayerCreate()) {
-		showPropertiesForNew(group);
+		const canvas::LayerListModel *layers = m_canvas->layerlist();
+		if(layers->getAvailableLayerIds(1).isEmpty()) {
+			showOutOfIdsError(layers->layerIdLimit(), 1);
+		} else {
+			showPropertiesForNew(group);
+		}
 	} else {
 		addLayerOrGroup(group, false, false, 0);
 	}
@@ -1036,7 +1041,7 @@ int LayerList::makeAddLayerOrGroupCommands(
 
 	QVector<int> ids = layers->getAvailableLayerIds(requiredIdCount);
 	if(ids.isEmpty() || int(ids.size()) < requiredIdCount) {
-		qWarning("Couldn't find %d free layer id(s)", requiredIdCount);
+		showOutOfIdsError(layers->layerIdLimit(), requiredIdCount);
 		return 0;
 	}
 
@@ -1301,14 +1306,18 @@ void LayerList::duplicateLayer()
 	canvas::LayerListModel *layers = m_canvas->layerlist();
 	Q_ASSERT(layers);
 
-	const int id = layers->getAvailableLayerId();
-	if(id == 0) {
-		qWarning("Couldn't find a free ID for duplicating layer!");
-		return;
+	int id;
+	{
+		int requiredIdCount = countRequiredIds(layers, index);
+		QVector<int> ids = layers->getAvailableLayerIds(requiredIdCount);
+		if(ids.isEmpty() || int(ids.size()) < requiredIdCount) {
+			showOutOfIdsError(layers->layerIdLimit(), requiredIdCount);
+			return;
+		}
+		id = ids[0];
 	}
 
 	uint8_t contextId = m_canvas->localUserId();
-
 	net::Message msg = net::makeLayerTreeCreateMessage(
 		contextId, id, layer.id, layer.id, 0, 0,
 		layers->getAvailableLayerName(layer.title));
@@ -1540,6 +1549,18 @@ void LayerList::setLayerColor(QAction *action)
 		msgs.prepend(net::makeUndoPointMessage(contextId));
 		emit layerCommands(count + 1, msgs.constData());
 	}
+}
+
+void LayerList::showOutOfIdsError(int layerIdLimit, int requiredIdCount)
+{
+	utils::showWarning(
+		this, tr("Layer Limit Reached"),
+		//: Singular should be "can't create another layer", plural "can't
+		//: create %n more layers". Change this to make sense in your language.
+		tr("Can't create another/%n more layer(s).", nullptr, requiredIdCount),
+		tr("The layer limit for you is %n layer(s), session operators can "
+		   "change this in the session settings.",
+		   nullptr, layerIdLimit));
 }
 
 void LayerList::showPropertiesForNew(bool group)

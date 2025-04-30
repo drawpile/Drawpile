@@ -103,6 +103,9 @@ static DP_FeatureLimitAttributes feature_limit_attributes[] = {
     [DP_FEATURE_LIMIT_BRUSH_SIZE] = {"DP_FEATURE_LIMIT_BRUSH_SIZE",
                                      "brush_size",
                                      {-1, 255, 255, 255}},
+    [DP_FEATURE_LIMIT_LAYER_COUNT] = {"DP_FEATURE_LIMIT_LAYER_COUNT",
+                                      "layer_count",
+                                      {-1, 1000, 1000, 1000}},
 };
 
 int DP_access_tier_clamp(int tier)
@@ -835,9 +838,21 @@ static bool handle_layer_create(DP_AclState *acls, int layer_id,
     if (override) {
         return true;
     }
+
+    DP_AccessTier tier = DP_acl_state_user_tier(acls, user_id);
+    bool op = tier == DP_ACCESS_TIER_OPERATOR;
+    if (!op) {
+        int *layer_limits = acls->feature.limits[DP_FEATURE_LIMIT_LAYER_COUNT];
+        int tier_limit = layer_limits[DP_acl_state_user_tier(acls, user_id)];
+        if (tier_limit == 0
+            || (tier_limit > 0
+                && DP_layer_id_element_id(layer_id) >= tier_limit)) {
+            return false;
+        }
+    }
+
     // Only operators can create layers under a different owner.
-    bool can_create = (DP_layer_id_owner(layer_id, user_id)
-                       || DP_acl_state_is_op(acls, user_id))
+    bool can_create = (op || DP_layer_id_owner(layer_id, user_id))
                    && can_edit_any_or_own_layers(acls, user_id);
     return can_create;
 }

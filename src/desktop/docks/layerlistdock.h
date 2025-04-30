@@ -202,6 +202,8 @@ private:
 
 	void setLayerColor(QAction *action);
 
+	void showOutOfIdsError(int layerIdLimit, int requiredIdCount);
+
 	void showPropertiesForNew(bool group);
 	void showPropertiesOfCurrent();
 	void showPropertiesOfIndex(const QModelIndex &index);

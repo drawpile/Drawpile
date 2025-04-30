@@ -179,6 +179,7 @@ public:
 	void setDefaultLayer(int id);
 
 	int fillSourceLayerId() const { return m_fillSourceLayerId; }
+	int layerIdLimit() const { return m_layerIdLimit; }
 
 	AclState::Layer layerAcl(int id);
 
@@ -244,6 +245,7 @@ public slots:
 	void setLayersVisibleInFrame(const QSet<int> &layers, int viewMode);
 	void setLayerChecked(int layerId, bool checked);
 	void setFillSourceLayerId(int fillSourceLayerId);
+	void updateFeatureLimit(DP_FeatureLimit featureLimit, int value);
 
 signals:
 	void layersChanged(const QVector<LayerListItem> &items);
@@ -264,8 +266,9 @@ private slots:
 	void updateCheckedLayerAcl(int layerId);
 
 private:
-	static int
-	searchAvailableLayerId(const QSet<int> &takenIds, unsigned int contextId);
+	int searchAvailableLayerId(
+		const QSet<int> &takenIds, const QVector<int> &takenPerUser,
+		unsigned int contextId) const;
 
 	CheckState flattenLayerList(
 		QVector<LayerListItem> &newItems, QHash<int, CheckState> &checkStates,
@@ -309,6 +312,7 @@ private:
 	int m_viewMode;
 	int m_layerIdToSelect = 0;
 	int m_fillSourceLayerId = 0;
+	int m_layerIdLimit;
 };
 
 /**
