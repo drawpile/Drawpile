@@ -1966,9 +1966,9 @@ void LayerList::updateUiFromCurrent()
 		m_blendModeCombo, layer.blend, layer.group, layer.isolated,
 		m_canvas->isCompatibilityMode());
 	m_opacitySlider->setPrefix(m_sketchMode ? tr("Sketch: ") : tr("Opacity: "));
+	m_opacitySlider->setMinimum(m_sketchMode ? 1 : 0);
 	m_opacitySlider->setValue(
 		(m_sketchMode ? layer.sketchOpacity : layer.opacity) * 100.0 + 0.5);
-	m_opacitySlider->setMinimum(m_sketchMode ? 1 : 0);
 
 	layerLockStatusChanged(layer.id);
 	updateActionLabels();
