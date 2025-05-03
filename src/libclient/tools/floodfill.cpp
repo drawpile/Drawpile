@@ -388,7 +388,7 @@ void FloodFill::previewPending()
 	QString toolNoticeText;
 	if(canvas) {
 		if(havePending()) {
-			int layerId = m_owner.activeLayer();
+			int layerId = lastActiveLayerId();
 			if(layerId <= 0) {
 				canvas->paintEngine()->clearFillPreview();
 				if(m_pendingEditable) {
@@ -446,7 +446,7 @@ void FloodFill::flushPending()
 			uint8_t contextId = client->myId();
 			net::MessageList msgs;
 			net::makePutImageMessages(
-				msgs, contextId, m_owner.activeLayer(),
+				msgs, contextId, layerId,
 				m_pendingEditable ? m_blendMode : m_originalBlendMode,
 				m_pendingPos.x(), m_pendingPos.y(), m_pendingImage);
 			disposePending();

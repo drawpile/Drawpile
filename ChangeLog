@@ -15,6 +15,7 @@ Unreleased Version 2.2.3-pre
  * Fix: Don't crash on some systems when selecting multiple layers and merging them. Thanks cromachina for reporting.
  * Fix: A rare crash when faced with a lot of identically-named brushes assigned to the same shortcut. Thanks Blozzom for reporting.
  * Fix: Allow changing the background color when you have background permissions, previously it checked for canvas resize permission instead.
+ * Fix: Make fill tool apply to the layer it was executed on when "edit pending fills" is disabled. Thanks Greendyno for reporting.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.
