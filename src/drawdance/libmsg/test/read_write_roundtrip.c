@@ -783,6 +783,40 @@ static DP_Message *generate_key_frame_delete(void)
                                        random_uint16());
 }
 
+static DP_Message *generate_selection_put(void)
+{
+    return DP_msg_selection_put_new(
+        generate_context_id(), random_uint8(), random_uint8(), random_int32(),
+        random_int32(), random_uint16(), random_uint16(), generate_bytes,
+        size_between(DP_MSG_SELECTION_PUT_MASK_MIN_SIZE,
+                     DP_MSG_SELECTION_PUT_MASK_MAX_SIZE),
+        NULL);
+}
+
+static DP_Message *generate_selection_clear(void)
+{
+    return DP_msg_selection_clear_new(generate_context_id(), random_uint8());
+}
+
+static DP_Message *generate_local_match(void)
+{
+    return DP_msg_local_match_new(
+        generate_context_id(), random_uint8(), generate_bytes,
+        size_between(DP_MSG_LOCAL_MATCH_DATA_MIN_SIZE,
+                     DP_MSG_LOCAL_MATCH_DATA_MAX_SIZE),
+        NULL);
+}
+
+static DP_Message *generate_sync_selection_tile(void)
+{
+    return DP_msg_sync_selection_tile_new(
+        generate_context_id(), random_uint8(), random_uint8(), random_uint16(),
+        random_uint16(), generate_bytes,
+        size_between(DP_MSG_SYNC_SELECTION_TILE_MASK_MIN_SIZE,
+                     DP_MSG_SYNC_SELECTION_TILE_MASK_MAX_SIZE),
+        NULL);
+}
+
 static DP_Message *generate_undo(void)
 {
     return DP_msg_undo_new(generate_context_id(), random_uint8(),
@@ -845,6 +879,10 @@ static GenerateFn generate_fns[] = {
     generate_key_frame_retitle,
     generate_key_frame_layer_attributes,
     generate_key_frame_delete,
+    generate_selection_put,
+    generate_selection_clear,
+    generate_local_match,
+    generate_sync_selection_tile,
     generate_undo,
 };
 
