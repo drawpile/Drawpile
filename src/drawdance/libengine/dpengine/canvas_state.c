@@ -957,6 +957,18 @@ handle_move_rect(DP_CanvasState *cs, DP_DrawContext *dc,
         return NULL;
     }
 
+    int blend_mode = DP_msg_move_rect_blend(mmr);
+    if (!DP_blend_mode_exists(blend_mode)) {
+        DP_error_set("Move rect: unknown blend mode %d", blend_mode);
+        return NULL;
+    }
+
+    uint8_t opacity = DP_msg_move_rect_opacity(mmr);
+    if (opacity == 0) {
+        DP_error_set("Move rect: opacity is zero");
+        return NULL;
+    }
+
     size_t in_mask_size;
     const unsigned char *in_mask = DP_msg_move_rect_mask(mmr, &in_mask_size);
     DP_Image *mask;
@@ -970,9 +982,9 @@ handle_move_rect(DP_CanvasState *cs, DP_DrawContext *dc,
         mask = NULL;
     }
 
-    DP_CanvasState *next_cs =
-        DP_ops_move_rect(cs, ucs_or_null, context_id, src_layer_id,
-                         dst_layer_id, &src_rect, dst_x, dst_y, mask);
+    DP_CanvasState *next_cs = DP_ops_move_rect(
+        cs, ucs_or_null, context_id, src_layer_id, dst_layer_id, &src_rect,
+        dst_x, dst_y, blend_mode, opacity, mask);
     DP_free(mask);
     return next_cs;
 }
@@ -1193,6 +1205,18 @@ static DP_CanvasState *handle_transform_region(
         return NULL;
     }
 
+    int blend_mode = DP_msg_transform_region_blend(mtr);
+    if (!DP_blend_mode_exists(blend_mode)) {
+        DP_error_set("Transform region: unknown blend mode %d", blend_mode);
+        return NULL;
+    }
+
+    uint8_t opacity = DP_msg_transform_region_opacity(mtr);
+    if (opacity == 0) {
+        DP_error_set("Transform region: opacity is zero");
+        return NULL;
+    }
+
     size_t in_mask_size;
     const unsigned char *in_mask =
         DP_msg_transform_region_mask(mtr, &in_mask_size);
@@ -1207,9 +1231,10 @@ static DP_CanvasState *handle_transform_region(
         mask = NULL;
     }
 
-    DP_CanvasState *next_cs = DP_ops_move_region(
+    DP_CanvasState *next_cs = DP_ops_transform_region(
         cs, dc, ucs_or_null, context_id, src_layer_id, dst_layer_id, &src_rect,
-        &dst_quad, DP_msg_transform_region_mode(mtr), mask);
+        &dst_quad, DP_msg_transform_region_mode(mtr), blend_mode, opacity,
+        mask);
     DP_free(mask);
     return next_cs;
 }

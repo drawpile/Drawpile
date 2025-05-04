@@ -7311,6 +7311,8 @@ struct DP_MsgMoveRect {
     int32_t ty;
     int32_t w;
     int32_t h;
+    uint8_t blend;
+    uint8_t opacity;
     uint16_t mask_size;
     unsigned char mask[];
 };
@@ -7318,7 +7320,7 @@ struct DP_MsgMoveRect {
 static size_t msg_move_rect_payload_length(DP_Message *msg)
 {
     DP_MsgMoveRect *mmr = DP_message_internal(msg);
-    return ((size_t)30) + mmr->mask_size;
+    return ((size_t)32) + mmr->mask_size;
 }
 
 static size_t msg_move_rect_serialize_payload(DP_Message *msg,
@@ -7334,6 +7336,8 @@ static size_t msg_move_rect_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_int32(mmr->ty, data + written);
     written += DP_write_bigendian_int32(mmr->w, data + written);
     written += DP_write_bigendian_int32(mmr->h, data + written);
+    written += DP_write_bigendian_uint8(mmr->blend, data + written);
+    written += DP_write_bigendian_uint8(mmr->opacity, data + written);
     written += write_bytes(mmr->mask, mmr->mask_size, data + written);
     DP_ASSERT(written == msg_move_rect_payload_length(msg));
     return written;
@@ -7343,10 +7347,12 @@ static bool msg_move_rect_write_payload_text(DP_Message *msg,
                                              DP_TextWriter *writer)
 {
     DP_MsgMoveRect *mmr = DP_message_internal(msg);
-    return DP_text_writer_write_int(writer, "h", mmr->h)
+    return DP_text_writer_write_blend_mode(writer, "blend", mmr->blend)
+        && DP_text_writer_write_int(writer, "h", mmr->h)
         && DP_text_writer_write_uint(writer, "layer", mmr->layer)
         && DP_text_writer_write_base64(writer, "mask", mmr->mask,
                                        mmr->mask_size)
+        && DP_text_writer_write_uint(writer, "opacity", mmr->opacity)
         && DP_text_writer_write_uint(writer, "source", mmr->source)
         && DP_text_writer_write_int(writer, "sx", mmr->sx)
         && DP_text_writer_write_int(writer, "sy", mmr->sy)
@@ -7362,7 +7368,8 @@ static bool msg_move_rect_equals(DP_Message *DP_RESTRICT msg,
     DP_MsgMoveRect *b = DP_message_internal(other);
     return a->layer == b->layer && a->source == b->source && a->sx == b->sx
         && a->sy == b->sy && a->tx == b->tx && a->ty == b->ty && a->w == b->w
-        && a->h == b->h && a->mask_size == b->mask_size
+        && a->h == b->h && a->blend == b->blend && a->opacity == b->opacity
+        && a->mask_size == b->mask_size
         && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size)) == 0;
 }
 
@@ -7380,6 +7387,8 @@ void DP_msg_move_rect_local_match_set(DP_UNUSED size_t size,
     written += DP_write_bigendian_int32(mmr->ty, data + written);
     written += DP_write_bigendian_int32(mmr->w, data + written);
     written += DP_write_bigendian_int32(mmr->h, data + written);
+    written += DP_write_bigendian_uint8(mmr->blend, data + written);
+    written += DP_write_bigendian_uint8(mmr->opacity, data + written);
     written += DP_write_bigendian_uint16(mmr->mask_size, data + written);
     DP_ASSERT(written == DP_MSG_MOVE_RECT_MATCH_LENGTH);
 }
@@ -7399,6 +7408,8 @@ bool DP_msg_move_rect_local_match_matches(const DP_MsgMoveRect *mmr,
         && read_int32(buffer + read, &read) == mmr->ty
         && read_int32(buffer + read, &read) == mmr->w
         && read_int32(buffer + read, &read) == mmr->h
+        && read_uint8(buffer + read, &read) == mmr->blend
+        && read_uint8(buffer + read, &read) == mmr->opacity
         && read_uint16(buffer + read, &read) == mmr->mask_size;
 }
 
@@ -7409,12 +7420,12 @@ static const DP_MessageMethods msg_move_rect_methods = {
     msg_move_rect_equals,
 };
 
-DP_Message *DP_msg_move_rect_new(unsigned int context_id, uint32_t layer,
-                                 uint32_t source, int32_t sx, int32_t sy,
-                                 int32_t tx, int32_t ty, int32_t w, int32_t h,
-                                 void (*set_mask)(size_t, unsigned char *,
-                                                  void *),
-                                 size_t mask_size, void *mask_user)
+DP_Message *
+DP_msg_move_rect_new(unsigned int context_id, uint32_t layer, uint32_t source,
+                     int32_t sx, int32_t sy, int32_t tx, int32_t ty, int32_t w,
+                     int32_t h, uint8_t blend, uint8_t opacity,
+                     void (*set_mask)(size_t, unsigned char *, void *),
+                     size_t mask_size, void *mask_user)
 {
     DP_Message *msg =
         DP_message_new(DP_MSG_MOVE_RECT, context_id, &msg_move_rect_methods,
@@ -7428,6 +7439,8 @@ DP_Message *DP_msg_move_rect_new(unsigned int context_id, uint32_t layer,
     mmr->ty = ty;
     mmr->w = w;
     mmr->h = h;
+    mmr->blend = blend;
+    mmr->opacity = opacity;
     mmr->mask_size = DP_size_to_uint16(mask_size);
     if (set_mask) {
         set_mask(mmr->mask_size, mmr->mask, mask_user);
@@ -7439,9 +7452,9 @@ DP_Message *DP_msg_move_rect_deserialize(unsigned int context_id,
                                          const unsigned char *buffer,
                                          size_t length)
 {
-    if (length < 30 || length > 65535) {
+    if (length < 32 || length > 65535) {
         DP_error_set("Wrong length for moverect message; "
-                     "expected between 30 and 65535, got %zu",
+                     "expected between 32 and 65535, got %zu",
                      length);
         return NULL;
     }
@@ -7454,11 +7467,14 @@ DP_Message *DP_msg_move_rect_deserialize(unsigned int context_id,
     int32_t ty = read_int32(buffer + read, &read);
     int32_t w = read_int32(buffer + read, &read);
     int32_t h = read_int32(buffer + read, &read);
+    uint8_t blend = read_uint8(buffer + read, &read);
+    uint8_t opacity = read_uint8(buffer + read, &read);
     size_t mask_bytes = length - read;
     uint16_t mask_size = DP_size_to_uint16(mask_bytes);
     void *mask_user = (void *)(buffer + read);
     return DP_msg_move_rect_new(context_id, layer, source, sx, sy, tx, ty, w, h,
-                                read_bytes, mask_size, mask_user);
+                                blend, opacity, read_bytes, mask_size,
+                                mask_user);
 }
 
 DP_Message *DP_msg_move_rect_parse(unsigned int context_id,
@@ -7480,12 +7496,15 @@ DP_Message *DP_msg_move_rect_parse(unsigned int context_id,
         (int32_t)DP_text_reader_get_long(reader, "w", INT32_MIN, INT32_MAX);
     int32_t h =
         (int32_t)DP_text_reader_get_long(reader, "h", INT32_MIN, INT32_MAX);
+    uint8_t blend = DP_text_reader_get_blend_mode(reader, "blend");
+    uint8_t opacity =
+        (uint8_t)DP_text_reader_get_ulong(reader, "opacity", UINT8_MAX);
     size_t mask_size;
     DP_TextReaderParseParams mask_params =
         DP_text_reader_get_base64_string(reader, "mask", &mask_size);
     return DP_msg_move_rect_new(context_id, layer, source, sx, sy, tx, ty, w, h,
-                                DP_text_reader_parse_base64, mask_size,
-                                &mask_params);
+                                blend, opacity, DP_text_reader_parse_base64,
+                                mask_size, &mask_params);
 }
 
 DP_MsgMoveRect *DP_msg_move_rect_cast(DP_Message *msg)
@@ -7539,6 +7558,18 @@ int32_t DP_msg_move_rect_h(const DP_MsgMoveRect *mmr)
 {
     DP_ASSERT(mmr);
     return mmr->h;
+}
+
+uint8_t DP_msg_move_rect_blend(const DP_MsgMoveRect *mmr)
+{
+    DP_ASSERT(mmr);
+    return mmr->blend;
+}
+
+uint8_t DP_msg_move_rect_opacity(const DP_MsgMoveRect *mmr)
+{
+    DP_ASSERT(mmr);
+    return mmr->opacity;
 }
 
 const unsigned char *DP_msg_move_rect_mask(const DP_MsgMoveRect *mmr,
@@ -8116,6 +8147,8 @@ struct DP_MsgTransformRegion {
     int32_t x4;
     int32_t y4;
     uint8_t mode;
+    uint8_t blend;
+    uint8_t opacity;
     uint16_t mask_size;
     unsigned char mask[];
 };
@@ -8123,7 +8156,7 @@ struct DP_MsgTransformRegion {
 static size_t msg_transform_region_payload_length(DP_Message *msg)
 {
     DP_MsgTransformRegion *mtr = DP_message_internal(msg);
-    return ((size_t)55) + mtr->mask_size;
+    return ((size_t)57) + mtr->mask_size;
 }
 
 static size_t msg_transform_region_serialize_payload(DP_Message *msg,
@@ -8146,6 +8179,8 @@ static size_t msg_transform_region_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_int32(mtr->x4, data + written);
     written += DP_write_bigendian_int32(mtr->y4, data + written);
     written += DP_write_bigendian_uint8(mtr->mode, data + written);
+    written += DP_write_bigendian_uint8(mtr->blend, data + written);
+    written += DP_write_bigendian_uint8(mtr->opacity, data + written);
     written += write_bytes(mtr->mask, mtr->mask_size, data + written);
     DP_ASSERT(written == msg_transform_region_payload_length(msg));
     return written;
@@ -8156,6 +8191,7 @@ static bool msg_transform_region_write_payload_text(DP_Message *msg,
 {
     DP_MsgTransformRegion *mtr = DP_message_internal(msg);
     return DP_text_writer_write_int(writer, "bh", mtr->bh)
+        && DP_text_writer_write_blend_mode(writer, "blend", mtr->blend)
         && DP_text_writer_write_int(writer, "bw", mtr->bw)
         && DP_text_writer_write_int(writer, "bx", mtr->bx)
         && DP_text_writer_write_int(writer, "by", mtr->by)
@@ -8163,6 +8199,7 @@ static bool msg_transform_region_write_payload_text(DP_Message *msg,
         && DP_text_writer_write_base64(writer, "mask", mtr->mask,
                                        mtr->mask_size)
         && DP_text_writer_write_uint(writer, "mode", mtr->mode)
+        && DP_text_writer_write_uint(writer, "opacity", mtr->opacity)
         && DP_text_writer_write_uint(writer, "source", mtr->source)
         && DP_text_writer_write_int(writer, "x1", mtr->x1)
         && DP_text_writer_write_int(writer, "x2", mtr->x2)
@@ -8183,7 +8220,8 @@ static bool msg_transform_region_equals(DP_Message *DP_RESTRICT msg,
         && a->by == b->by && a->bw == b->bw && a->bh == b->bh && a->x1 == b->x1
         && a->y1 == b->y1 && a->x2 == b->x2 && a->y2 == b->y2 && a->x3 == b->x3
         && a->y3 == b->y3 && a->x4 == b->x4 && a->y4 == b->y4
-        && a->mode == b->mode && a->mask_size == b->mask_size
+        && a->mode == b->mode && a->blend == b->blend
+        && a->opacity == b->opacity && a->mask_size == b->mask_size
         && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size)) == 0;
 }
 
@@ -8208,6 +8246,8 @@ void DP_msg_transform_region_local_match_set(DP_UNUSED size_t size,
     written += DP_write_bigendian_int32(mtr->x4, data + written);
     written += DP_write_bigendian_int32(mtr->y4, data + written);
     written += DP_write_bigendian_uint8(mtr->mode, data + written);
+    written += DP_write_bigendian_uint8(mtr->blend, data + written);
+    written += DP_write_bigendian_uint8(mtr->opacity, data + written);
     written += DP_write_bigendian_uint16(mtr->mask_size, data + written);
     DP_ASSERT(written == DP_MSG_TRANSFORM_REGION_MATCH_LENGTH);
 }
@@ -8234,6 +8274,8 @@ bool DP_msg_transform_region_local_match_matches(
         && read_int32(buffer + read, &read) == mtr->x4
         && read_int32(buffer + read, &read) == mtr->y4
         && read_uint8(buffer + read, &read) == mtr->mode
+        && read_uint8(buffer + read, &read) == mtr->blend
+        && read_uint8(buffer + read, &read) == mtr->opacity
         && read_uint16(buffer + read, &read) == mtr->mask_size;
 }
 
@@ -8248,6 +8290,7 @@ DP_Message *DP_msg_transform_region_new(
     unsigned int context_id, uint32_t layer, uint32_t source, int32_t bx,
     int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2,
     int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
+    uint8_t blend, uint8_t opacity,
     void (*set_mask)(size_t, unsigned char *, void *), size_t mask_size,
     void *mask_user)
 {
@@ -8270,6 +8313,8 @@ DP_Message *DP_msg_transform_region_new(
     mtr->x4 = x4;
     mtr->y4 = y4;
     mtr->mode = mode;
+    mtr->blend = blend;
+    mtr->opacity = opacity;
     mtr->mask_size = DP_size_to_uint16(mask_size);
     if (set_mask) {
         set_mask(mtr->mask_size, mtr->mask, mask_user);
@@ -8281,9 +8326,9 @@ DP_Message *DP_msg_transform_region_deserialize(unsigned int context_id,
                                                 const unsigned char *buffer,
                                                 size_t length)
 {
-    if (length < 55 || length > 65535) {
+    if (length < 57 || length > 65535) {
         DP_error_set("Wrong length for transformregion message; "
-                     "expected between 55 and 65535, got %zu",
+                     "expected between 57 and 65535, got %zu",
                      length);
         return NULL;
     }
@@ -8303,12 +8348,14 @@ DP_Message *DP_msg_transform_region_deserialize(unsigned int context_id,
     int32_t x4 = read_int32(buffer + read, &read);
     int32_t y4 = read_int32(buffer + read, &read);
     uint8_t mode = read_uint8(buffer + read, &read);
+    uint8_t blend = read_uint8(buffer + read, &read);
+    uint8_t opacity = read_uint8(buffer + read, &read);
     size_t mask_bytes = length - read;
     uint16_t mask_size = DP_size_to_uint16(mask_bytes);
     void *mask_user = (void *)(buffer + read);
-    return DP_msg_transform_region_new(context_id, layer, source, bx, by, bw,
-                                       bh, x1, y1, x2, y2, x3, y3, x4, y4, mode,
-                                       read_bytes, mask_size, mask_user);
+    return DP_msg_transform_region_new(
+        context_id, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4,
+        y4, mode, blend, opacity, read_bytes, mask_size, mask_user);
 }
 
 DP_Message *DP_msg_transform_region_parse(unsigned int context_id,
@@ -8343,12 +8390,16 @@ DP_Message *DP_msg_transform_region_parse(unsigned int context_id,
     int32_t y4 =
         (int32_t)DP_text_reader_get_long(reader, "y4", INT32_MIN, INT32_MAX);
     uint8_t mode = (uint8_t)DP_text_reader_get_ulong(reader, "mode", UINT8_MAX);
+    uint8_t blend = DP_text_reader_get_blend_mode(reader, "blend");
+    uint8_t opacity =
+        (uint8_t)DP_text_reader_get_ulong(reader, "opacity", UINT8_MAX);
     size_t mask_size;
     DP_TextReaderParseParams mask_params =
         DP_text_reader_get_base64_string(reader, "mask", &mask_size);
     return DP_msg_transform_region_new(
         context_id, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4,
-        y4, mode, DP_text_reader_parse_base64, mask_size, &mask_params);
+        y4, mode, blend, opacity, DP_text_reader_parse_base64, mask_size,
+        &mask_params);
 }
 
 DP_MsgTransformRegion *DP_msg_transform_region_cast(DP_Message *msg)
@@ -8444,6 +8495,18 @@ uint8_t DP_msg_transform_region_mode(const DP_MsgTransformRegion *mtr)
 {
     DP_ASSERT(mtr);
     return mtr->mode;
+}
+
+uint8_t DP_msg_transform_region_blend(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->blend;
+}
+
+uint8_t DP_msg_transform_region_opacity(const DP_MsgTransformRegion *mtr)
+{
+    DP_ASSERT(mtr);
+    return mtr->opacity;
 }
 
 const unsigned char *
@@ -10371,12 +10434,11 @@ DP_MsgCanvasBackground *DP_msg_canvas_background_zstd_cast(DP_Message *msg)
 
 /* DP_MSG_MOVE_RECT_ZSTD */
 
-DP_Message *
-DP_msg_move_rect_zstd_new(unsigned int context_id, uint32_t layer,
-                          uint32_t source, int32_t sx, int32_t sy, int32_t tx,
-                          int32_t ty, int32_t w, int32_t h,
-                          void (*set_mask)(size_t, unsigned char *, void *),
-                          size_t mask_size, void *mask_user)
+DP_Message *DP_msg_move_rect_zstd_new(
+    unsigned int context_id, uint32_t layer, uint32_t source, int32_t sx,
+    int32_t sy, int32_t tx, int32_t ty, int32_t w, int32_t h, uint8_t blend,
+    uint8_t opacity, void (*set_mask)(size_t, unsigned char *, void *),
+    size_t mask_size, void *mask_user)
 {
     DP_Message *msg = DP_message_new(
         DP_MSG_MOVE_RECT_ZSTD, context_id, &msg_move_rect_methods,
@@ -10390,6 +10452,8 @@ DP_msg_move_rect_zstd_new(unsigned int context_id, uint32_t layer,
     mmrz->ty = ty;
     mmrz->w = w;
     mmrz->h = h;
+    mmrz->blend = blend;
+    mmrz->opacity = opacity;
     mmrz->mask_size = DP_size_to_uint16(mask_size);
     if (set_mask) {
         set_mask(mmrz->mask_size, mmrz->mask, mask_user);
@@ -10401,9 +10465,9 @@ DP_Message *DP_msg_move_rect_zstd_deserialize(unsigned int context_id,
                                               const unsigned char *buffer,
                                               size_t length)
 {
-    if (length < 30 || length > 65535) {
+    if (length < 32 || length > 65535) {
         DP_error_set("Wrong length for moverectzstd message; "
-                     "expected between 30 and 65535, got %zu",
+                     "expected between 32 and 65535, got %zu",
                      length);
         return NULL;
     }
@@ -10416,11 +10480,14 @@ DP_Message *DP_msg_move_rect_zstd_deserialize(unsigned int context_id,
     int32_t ty = read_int32(buffer + read, &read);
     int32_t w = read_int32(buffer + read, &read);
     int32_t h = read_int32(buffer + read, &read);
+    uint8_t blend = read_uint8(buffer + read, &read);
+    uint8_t opacity = read_uint8(buffer + read, &read);
     size_t mask_bytes = length - read;
     uint16_t mask_size = DP_size_to_uint16(mask_bytes);
     void *mask_user = (void *)(buffer + read);
     return DP_msg_move_rect_zstd_new(context_id, layer, source, sx, sy, tx, ty,
-                                     w, h, read_bytes, mask_size, mask_user);
+                                     w, h, blend, opacity, read_bytes,
+                                     mask_size, mask_user);
 }
 
 DP_Message *DP_msg_move_rect_zstd_parse(unsigned int context_id,
@@ -10442,12 +10509,15 @@ DP_Message *DP_msg_move_rect_zstd_parse(unsigned int context_id,
         (int32_t)DP_text_reader_get_long(reader, "w", INT32_MIN, INT32_MAX);
     int32_t h =
         (int32_t)DP_text_reader_get_long(reader, "h", INT32_MIN, INT32_MAX);
+    uint8_t blend = DP_text_reader_get_blend_mode(reader, "blend");
+    uint8_t opacity =
+        (uint8_t)DP_text_reader_get_ulong(reader, "opacity", UINT8_MAX);
     size_t mask_size;
     DP_TextReaderParseParams mask_params =
         DP_text_reader_get_base64_string(reader, "mask", &mask_size);
-    return DP_msg_move_rect_zstd_new(context_id, layer, source, sx, sy, tx, ty,
-                                     w, h, DP_text_reader_parse_base64,
-                                     mask_size, &mask_params);
+    return DP_msg_move_rect_zstd_new(
+        context_id, layer, source, sx, sy, tx, ty, w, h, blend, opacity,
+        DP_text_reader_parse_base64, mask_size, &mask_params);
 }
 
 DP_MsgMoveRect *DP_msg_move_rect_zstd_cast(DP_Message *msg)
@@ -10462,6 +10532,7 @@ DP_Message *DP_msg_transform_region_zstd_new(
     unsigned int context_id, uint32_t layer, uint32_t source, int32_t bx,
     int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2,
     int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
+    uint8_t blend, uint8_t opacity,
     void (*set_mask)(size_t, unsigned char *, void *), size_t mask_size,
     void *mask_user)
 {
@@ -10484,6 +10555,8 @@ DP_Message *DP_msg_transform_region_zstd_new(
     mtrz->x4 = x4;
     mtrz->y4 = y4;
     mtrz->mode = mode;
+    mtrz->blend = blend;
+    mtrz->opacity = opacity;
     mtrz->mask_size = DP_size_to_uint16(mask_size);
     if (set_mask) {
         set_mask(mtrz->mask_size, mtrz->mask, mask_user);
@@ -10494,9 +10567,9 @@ DP_Message *DP_msg_transform_region_zstd_new(
 DP_Message *DP_msg_transform_region_zstd_deserialize(
     unsigned int context_id, const unsigned char *buffer, size_t length)
 {
-    if (length < 55 || length > 65535) {
+    if (length < 57 || length > 65535) {
         DP_error_set("Wrong length for transformregionzstd message; "
-                     "expected between 55 and 65535, got %zu",
+                     "expected between 57 and 65535, got %zu",
                      length);
         return NULL;
     }
@@ -10516,12 +10589,14 @@ DP_Message *DP_msg_transform_region_zstd_deserialize(
     int32_t x4 = read_int32(buffer + read, &read);
     int32_t y4 = read_int32(buffer + read, &read);
     uint8_t mode = read_uint8(buffer + read, &read);
+    uint8_t blend = read_uint8(buffer + read, &read);
+    uint8_t opacity = read_uint8(buffer + read, &read);
     size_t mask_bytes = length - read;
     uint16_t mask_size = DP_size_to_uint16(mask_bytes);
     void *mask_user = (void *)(buffer + read);
     return DP_msg_transform_region_zstd_new(
         context_id, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4,
-        y4, mode, read_bytes, mask_size, mask_user);
+        y4, mode, blend, opacity, read_bytes, mask_size, mask_user);
 }
 
 DP_Message *DP_msg_transform_region_zstd_parse(unsigned int context_id,
@@ -10556,12 +10631,16 @@ DP_Message *DP_msg_transform_region_zstd_parse(unsigned int context_id,
     int32_t y4 =
         (int32_t)DP_text_reader_get_long(reader, "y4", INT32_MIN, INT32_MAX);
     uint8_t mode = (uint8_t)DP_text_reader_get_ulong(reader, "mode", UINT8_MAX);
+    uint8_t blend = DP_text_reader_get_blend_mode(reader, "blend");
+    uint8_t opacity =
+        (uint8_t)DP_text_reader_get_ulong(reader, "opacity", UINT8_MAX);
     size_t mask_size;
     DP_TextReaderParseParams mask_params =
         DP_text_reader_get_base64_string(reader, "mask", &mask_size);
     return DP_msg_transform_region_zstd_new(
         context_id, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4,
-        y4, mode, DP_text_reader_parse_base64, mask_size, &mask_params);
+        y4, mode, blend, opacity, DP_text_reader_parse_base64, mask_size,
+        &mask_params);
 }
 
 DP_MsgTransformRegion *DP_msg_transform_region_zstd_cast(DP_Message *msg)

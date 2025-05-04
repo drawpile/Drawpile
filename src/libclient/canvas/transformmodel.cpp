@@ -194,10 +194,7 @@ bool TransformModel::isAllowedToApplyActiveTransform() const
 		if(m_pasted) {
 			return aclState->canUseFeature(DP_FEATURE_PUT_IMAGE);
 		} else if(aclState->canUseFeature(DP_FEATURE_REGION_MOVE)) {
-			bool sizeOutOfBounds = isDstQuadBoundingRectAreaSizeOutOfBounds();
-			bool adjustsImage =
-				m_blendMode != int(DP_BLEND_MODE_NORMAL) || m_opacity < 1.0;
-			bool needsPutImage = sizeOutOfBounds || adjustsImage;
+			bool needsPutImage = isDstQuadBoundingRectAreaSizeOutOfBounds();
 			return !needsPutImage ||
 				   aclState->canUseFeature(DP_FEATURE_PUT_IMAGE);
 		} else {
@@ -287,7 +284,8 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 					contextId, canvas::CanvasModel::MAIN_SELECTION_ID);
 				msgs.append(net::makeMoveRectZstdMessage(
 					contextId, selectionId, selectionId, srcX, srcY,
-					dstTopLeftX, dstTopLeftY, srcW, srcH, QImage()));
+					dstTopLeftX, dstTopLeftY, srcW, srcH, 255,
+					uint8_t(DP_BLEND_MODE_NORMAL), QImage()));
 			}
 			if(moveContents) {
 				if(singleLayerSourceId > 0) {
@@ -295,7 +293,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 						applyMoveRect(
 							msgs, contextId, layerId, singleLayerSourceId, srcX,
 							srcY, dstTopLeftX, dstTopLeftY, srcW, srcH,
-							needsMask ? m_mask : QImage(), adjustsImage);
+							needsMask ? m_mask : QImage(), false);
 					}
 				} else {
 					for(int layerIdToMove : m_layerIds) {
@@ -303,8 +301,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 							applyMoveRect(
 								msgs, contextId, layerIdToMove, layerIdToMove,
 								srcX, srcY, dstTopLeftX, dstTopLeftY, srcW,
-								srcH, needsMask ? m_mask : QImage(),
-								adjustsImage);
+								srcH, needsMask ? m_mask : QImage(), false);
 						}
 					}
 				}
@@ -332,8 +329,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 							dstTopRightX, dstTopRightY, dstBottomRightX,
 							dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
 							getEffectiveInterpolation(interpolation),
-							needsMask ? m_mask : QImage(),
-							sizeOutOfBounds || adjustsImage);
+							needsMask ? m_mask : QImage(), sizeOutOfBounds);
 					}
 				} else {
 					for(int layerIdToMove : m_layerIds) {
@@ -345,8 +341,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 								dstBottomRightX, dstBottomRightY,
 								dstBottomLeftX, dstBottomLeftY,
 								getEffectiveInterpolation(interpolation),
-								needsMask ? m_mask : QImage(),
-								sizeOutOfBounds || adjustsImage);
+								needsMask ? m_mask : QImage(), sizeOutOfBounds);
 						}
 					}
 				}
@@ -403,7 +398,7 @@ void TransformModel::applyMoveRect(
 	} else {
 		msgs.append(net::makeMoveRectZstdMessage(
 			contextId, layerId, sourceId, srcX, srcY, dstTopLeftX, dstTopLeftY,
-			srcW, srcH, mask));
+			srcW, srcH, uint8_t(m_blendMode), getUint8Opacity(), mask));
 	}
 }
 
@@ -437,7 +432,8 @@ void TransformModel::applyTransformRegion(
 			contextId, layerId, sourceId, srcX, srcY, srcW, srcH, dstTopLeftX,
 			dstTopLeftY, dstTopRightX, dstTopRightY, dstBottomRightX,
 			dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
-			getEffectiveInterpolation(interpolation), mask));
+			getEffectiveInterpolation(interpolation), uint8_t(m_blendMode),
+			getUint8Opacity(), mask));
 	}
 }
 
@@ -478,7 +474,8 @@ void TransformModel::applyTransformRegionSelection(
 			contextId, selectionId, selectionId, srcX, srcY, srcW, srcH,
 			dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
 			dstBottomRightX, dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
-			getEffectiveInterpolation(interpolation), QImage()));
+			getEffectiveInterpolation(interpolation),
+			uint8_t(DP_BLEND_MODE_NORMAL), 255, QImage()));
 	}
 }
 
