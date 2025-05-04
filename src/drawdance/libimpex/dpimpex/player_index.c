@@ -950,7 +950,7 @@ static bool write_index_messages(DP_BuildIndexContext *c)
                     DP_message_context_id(msg));
             }
             else {
-                DP_local_state_handle(ls, dc, msg);
+                DP_local_state_handle(ls, dc, msg, false);
                 if (DP_message_type_command(DP_message_type(msg))) {
                     if (!DP_canvas_history_handle(ch, dc, msg)) {
                         DP_warn("Error handling message in index: %s",

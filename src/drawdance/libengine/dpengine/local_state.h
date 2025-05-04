@@ -62,7 +62,7 @@ int DP_local_state_track_state_count(DP_LocalState *ls);
 bool DP_local_state_track_visible(DP_LocalState *ls, int track_id);
 
 void DP_local_state_handle(DP_LocalState *ls, DP_DrawContext *dc,
-                           DP_Message *msg);
+                           DP_Message *msg, bool local);
 
 bool DP_local_state_reset_image_build(DP_LocalState *ls, DP_DrawContext *dc,
                                       DP_LocalStateAcceptResetMessageFn fn,

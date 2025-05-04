@@ -641,17 +641,21 @@ static void clear_layer_state(DP_LocalState *ls, int layer_id)
 }
 
 void DP_local_state_handle(DP_LocalState *ls, DP_DrawContext *dc,
-                           DP_Message *msg)
+                           DP_Message *msg, bool local)
 {
     DP_ASSERT(ls);
     DP_ASSERT(dc);
     DP_ASSERT(msg);
     switch (DP_message_type(msg)) {
     case DP_MSG_INTERNAL:
-        handle_internal(ls, DP_message_internal(msg));
+        if (!local) {
+            handle_internal(ls, DP_message_internal(msg));
+        }
         break;
     case DP_MSG_LOCAL_CHANGE:
-        handle_local_change(ls, dc, DP_message_internal(msg));
+        if (!local) {
+            handle_local_change(ls, dc, DP_message_internal(msg));
+        }
         break;
     case DP_MSG_LAYER_CREATE:
         // TODO: Handle group duplication properly. They may create more than

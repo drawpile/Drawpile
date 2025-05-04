@@ -1195,7 +1195,7 @@ static int should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
         }
     }
     else {
-        DP_local_state_handle(pe->local_state, pe->main_dc, msg);
+        DP_local_state_handle(pe->local_state, pe->main_dc, msg, false);
         if (is_pushable_type(type) || type == DP_MSG_UNDO_DEPTH
             || type == DP_MSG_SOFT_RESET) {
             return PUSH_MESSAGE;
@@ -1227,6 +1227,7 @@ static int should_push_message_local(DP_UNUSED DP_PaintEngine *pe,
                                      DP_UNUSED bool ignore_acls)
 {
     DP_MessageType type = DP_message_type(msg);
+    DP_local_state_handle(pe->local_state, pe->main_dc, msg, true);
     if (is_pushable_type(type)) {
         return PUSH_MESSAGE;
     }
