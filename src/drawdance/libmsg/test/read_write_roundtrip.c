@@ -640,13 +640,13 @@ static DP_Message *generate_draw_dabs_mypaint_blend(void)
 
 static DP_Message *generate_move_rect(void)
 {
-    return DP_msg_move_rect_new(generate_context_id(), random_uint24(),
-                                random_uint24(), random_int32(), random_int32(),
-                                random_int32(), random_int32(), random_int32(),
-                                random_int32(), generate_bytes,
-                                size_between(DP_MSG_MOVE_RECT_MASK_MIN_SIZE,
-                                             DP_MSG_MOVE_RECT_MASK_MAX_SIZE),
-                                NULL);
+    return DP_msg_move_rect_new(
+        generate_context_id(), random_uint24(), random_uint24(), random_int32(),
+        random_int32(), random_int32(), random_int32(), random_int32(),
+        random_int32(), generate_blend_mode(), random_uint8(), generate_bytes,
+        size_between(DP_MSG_MOVE_RECT_MASK_MIN_SIZE,
+                     DP_MSG_MOVE_RECT_MASK_MAX_SIZE),
+        NULL);
 }
 
 static DP_Message *generate_set_metadata_int(void)
@@ -692,7 +692,7 @@ static DP_Message *generate_move_rect_zstd(void)
     return DP_msg_move_rect_zstd_new(
         generate_context_id(), random_uint24(), random_uint24(), random_int32(),
         random_int32(), random_int32(), random_int32(), random_int32(),
-        random_int32(), generate_bytes,
+        random_int32(), generate_blend_mode(), random_uint8(), generate_bytes,
         size_between(DP_MSG_MOVE_RECT_MASK_MIN_SIZE,
                      DP_MSG_MOVE_RECT_MASK_MAX_SIZE),
         NULL);
@@ -707,7 +707,7 @@ static DP_Message *generate_transform_region(void)
         random_int32(), random_int32(), random_int32(),
         generate_variant((unsigned int[]){DP_MSG_TRANSFORM_REGION_ALL_MODE},
                          DP_MSG_TRANSFORM_REGION_NUM_MODE),
-        generate_bytes,
+        generate_blend_mode(), random_uint8(), generate_bytes,
         size_between(DP_MSG_TRANSFORM_REGION_MASK_MIN_SIZE,
                      DP_MSG_TRANSFORM_REGION_MASK_MAX_SIZE),
         NULL);
@@ -857,7 +857,7 @@ static DP_Message *generate_transform_region_zstd(void)
         random_int32(), random_int32(), random_int32(),
         generate_variant((unsigned int[]){DP_MSG_TRANSFORM_REGION_ALL_MODE},
                          DP_MSG_TRANSFORM_REGION_NUM_MODE),
-        generate_bytes,
+        generate_blend_mode(), random_uint8(), generate_bytes,
         size_between(DP_MSG_TRANSFORM_REGION_MASK_MIN_SIZE,
                      DP_MSG_TRANSFORM_REGION_MASK_MAX_SIZE),
         NULL);

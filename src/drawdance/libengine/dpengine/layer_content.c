@@ -1116,7 +1116,7 @@ static uint8_t mask_opacity_at(DP_Image *mask, int dst_x, int dst_y)
 }
 
 DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,
-                                  DP_Image *mask)
+                                  DP_Image *mask, uint16_t opacity)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
@@ -1130,15 +1130,18 @@ DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,
         if (t) {
             DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
             while (DP_tile_into_dst_iterator_next(&tidi)) {
-                uint8_t opacity = mask_opacity_at(mask, tidi.dst_x, tidi.dst_y);
-                if (opacity != 0) {
+                uint8_t mask_opacity =
+                    mask_opacity_at(mask, tidi.dst_x, tidi.dst_y);
+                if (mask_opacity != 0) {
                     DP_Pixel15 pixel =
                         DP_tile_pixel_at(t, tidi.tile_x, tidi.tile_y);
-                    if (opacity != 255) {
-                        DP_UPixel15 upixel = DP_pixel15_unpremultiply(pixel);
-                        upixel.a =
-                            DP_fix15_mul(upixel.a, DP_channel8_to_15(opacity));
-                        pixel = DP_pixel15_premultiply(upixel);
+                    if (opacity != DP_BIT15 || mask_opacity != 255) {
+                        uint16_t a = DP_fix15_mul(
+                            opacity, DP_channel8_to_15(mask_opacity));
+                        pixel.b = DP_fix15_mul(pixel.b, a);
+                        pixel.g = DP_fix15_mul(pixel.g, a);
+                        pixel.r = DP_fix15_mul(pixel.r, a);
+                        pixel.a = DP_fix15_mul(pixel.a, a);
                     }
                     DP_image_pixel_at_set(img, tidi.dst_x, tidi.dst_y,
                                           DP_pixel15_to_8(pixel));

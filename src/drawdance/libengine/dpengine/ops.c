@@ -774,7 +774,7 @@ static DP_CanvasState *
 move_image(DP_CanvasState *cs, DP_LayerRoutesSelEntry *src_lrse,
            DP_LayerRoutesSelEntry *dst_lrse, unsigned int context_id,
            const DP_Rect *src_rect, DP_Image *mask, DP_Image *src_img,
-           int offset_x, int offset_y, DP_Image *dst_img)
+           int offset_x, int offset_y, int blend_mode, DP_Image *dst_img)
 {
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientLayerContent *src_tlc =
@@ -794,8 +794,8 @@ move_image(DP_CanvasState *cs, DP_LayerRoutesSelEntry *src_lrse,
             DP_upixel15_zero());
     }
 
-    DP_transient_layer_content_put_image(
-        dst_tlc, context_id, DP_BLEND_MODE_NORMAL, offset_x, offset_y, dst_img);
+    DP_transient_layer_content_put_image(dst_tlc, context_id, blend_mode,
+                                         offset_x, offset_y, dst_img);
 
     if (dst_img != src_img) {
         DP_image_free(dst_img);
@@ -805,12 +805,11 @@ move_image(DP_CanvasState *cs, DP_LayerRoutesSelEntry *src_lrse,
     return DP_transient_canvas_state_persist(tcs);
 }
 
-DP_CanvasState *DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
-                                   DP_UserCursors *ucs_or_null,
-                                   unsigned int context_id, int src_layer_id,
-                                   int dst_layer_id, const DP_Rect *src_rect,
-                                   const DP_Quad *dst_quad, int interpolation,
-                                   DP_Image *mask)
+DP_CanvasState *DP_ops_transform_region(
+    DP_CanvasState *cs, DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
+    unsigned int context_id, int src_layer_id, int dst_layer_id,
+    const DP_Rect *src_rect, const DP_Quad *dst_quad, int interpolation,
+    int blend_mode, uint8_t opacity, DP_Image *mask)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
     DP_LayerRoutesSelEntry src_lrse =
@@ -836,7 +835,8 @@ DP_CanvasState *DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
     }
 
     DP_Image *src_img = DP_layer_content_select(
-        DP_layer_routes_sel_entry_content(&src_lrse, cs), src_rect, mask);
+        DP_layer_routes_sel_entry_content(&src_lrse, cs), src_rect, mask,
+        DP_channel8_to_15(opacity));
 
     int offset_x, offset_y;
     DP_Image *dst_img;
@@ -864,14 +864,15 @@ DP_CanvasState *DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
     }
 
     return move_image(cs, &src_lrse, dst_lrse, context_id, src_rect, mask,
-                      src_img, offset_x, offset_y, dst_img);
+                      src_img, offset_x, offset_y, blend_mode, dst_img);
 }
 
 DP_CanvasState *DP_ops_move_rect(DP_CanvasState *cs,
                                  DP_UserCursors *ucs_or_null,
                                  unsigned int context_id, int src_layer_id,
                                  int dst_layer_id, const DP_Rect *src_rect,
-                                 int dst_x, int dst_y, DP_Image *mask)
+                                 int dst_x, int dst_y, int blend_mode,
+                                 uint8_t opacity, DP_Image *mask)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
     DP_LayerRoutesSelEntry src_lrse =
@@ -904,9 +905,10 @@ DP_CanvasState *DP_ops_move_rect(DP_CanvasState *cs,
     }
 
     DP_Image *src_img = DP_layer_content_select(
-        DP_layer_routes_sel_entry_content(&src_lrse, cs), src_rect, mask);
+        DP_layer_routes_sel_entry_content(&src_lrse, cs), src_rect, mask,
+        DP_channel8_to_15(opacity));
     return move_image(cs, &src_lrse, dst_lrse, context_id, src_rect, mask,
-                      src_img, dst_x, dst_y, src_img);
+                      src_img, dst_x, dst_y, blend_mode, src_img);
 }
 
 

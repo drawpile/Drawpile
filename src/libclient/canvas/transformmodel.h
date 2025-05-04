@@ -129,6 +129,11 @@ private:
 
 	static bool isVisibleInViewModeCallback(void *user, DP_LayerProps *lp);
 
+	uint8_t getUint8Opacity() const
+	{
+		return qBound(0, qRound(m_opacity * 255.0), 255);
+	}
+
 	CanvasModel *m_canvas;
 	bool m_active = false;
 	bool m_pasted = false;

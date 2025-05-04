@@ -141,7 +141,7 @@ DP_Pixel8 *DP_layer_content_to_pixels8_mask(DP_LayerContent *lc, int x, int y,
                                             int width, int height);
 
 DP_Image *DP_layer_content_select(DP_LayerContent *lc, const DP_Rect *rect,
-                                  DP_Image *mask);
+                                  DP_Image *mask, uint16_t opacity);
 
 DP_TransientLayerContent *DP_layer_content_resize(DP_LayerContent *lc,
                                                   unsigned int context_id,

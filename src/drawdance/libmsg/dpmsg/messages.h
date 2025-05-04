@@ -2029,20 +2029,20 @@ int DP_msg_draw_dabs_mypaint_blend_dabs_count(
  * The source and layer id may refer to a selection.
  */
 
-#define DP_MSG_MOVE_RECT_STATIC_LENGTH 30
-#define DP_MSG_MOVE_RECT_MATCH_LENGTH  32
+#define DP_MSG_MOVE_RECT_STATIC_LENGTH 32
+#define DP_MSG_MOVE_RECT_MATCH_LENGTH  34
 
 #define DP_MSG_MOVE_RECT_MASK_MIN_SIZE 0
-#define DP_MSG_MOVE_RECT_MASK_MAX_SIZE 65505
+#define DP_MSG_MOVE_RECT_MASK_MAX_SIZE 65503
 
 typedef struct DP_MsgMoveRect DP_MsgMoveRect;
 
-DP_Message *DP_msg_move_rect_new(unsigned int context_id, uint32_t layer,
-                                 uint32_t source, int32_t sx, int32_t sy,
-                                 int32_t tx, int32_t ty, int32_t w, int32_t h,
-                                 void (*set_mask)(size_t, unsigned char *,
-                                                  void *),
-                                 size_t mask_size, void *mask_user);
+DP_Message *
+DP_msg_move_rect_new(unsigned int context_id, uint32_t layer, uint32_t source,
+                     int32_t sx, int32_t sy, int32_t tx, int32_t ty, int32_t w,
+                     int32_t h, uint8_t blend, uint8_t opacity,
+                     void (*set_mask)(size_t, unsigned char *, void *),
+                     size_t mask_size, void *mask_user);
 
 DP_Message *DP_msg_move_rect_deserialize(unsigned int context_id,
                                          const unsigned char *buffer,
@@ -2074,6 +2074,10 @@ int32_t DP_msg_move_rect_ty(const DP_MsgMoveRect *mmr);
 int32_t DP_msg_move_rect_w(const DP_MsgMoveRect *mmr);
 
 int32_t DP_msg_move_rect_h(const DP_MsgMoveRect *mmr);
+
+uint8_t DP_msg_move_rect_blend(const DP_MsgMoveRect *mmr);
+
+uint8_t DP_msg_move_rect_opacity(const DP_MsgMoveRect *mmr);
 
 const unsigned char *DP_msg_move_rect_mask(const DP_MsgMoveRect *mmr,
                                            size_t *out_size);
@@ -2303,8 +2307,8 @@ uint32_t DP_msg_layer_tree_delete_merge_to(const DP_MsgLayerTreeDelete *mltd);
  * The source and layer id may refer to a selection.
  */
 
-#define DP_MSG_TRANSFORM_REGION_STATIC_LENGTH 55
-#define DP_MSG_TRANSFORM_REGION_MATCH_LENGTH  57
+#define DP_MSG_TRANSFORM_REGION_STATIC_LENGTH 57
+#define DP_MSG_TRANSFORM_REGION_MATCH_LENGTH  59
 
 #define DP_MSG_TRANSFORM_REGION_MODE_NEAREST  0
 #define DP_MSG_TRANSFORM_REGION_MODE_BILINEAR 1
@@ -2316,7 +2320,7 @@ uint32_t DP_msg_layer_tree_delete_merge_to(const DP_MsgLayerTreeDelete *mltd);
 const char *DP_msg_transform_region_mode_variant_name(unsigned int value);
 
 #define DP_MSG_TRANSFORM_REGION_MASK_MIN_SIZE 0
-#define DP_MSG_TRANSFORM_REGION_MASK_MAX_SIZE 65480
+#define DP_MSG_TRANSFORM_REGION_MASK_MAX_SIZE 65478
 
 typedef struct DP_MsgTransformRegion DP_MsgTransformRegion;
 
@@ -2324,6 +2328,7 @@ DP_Message *DP_msg_transform_region_new(
     unsigned int context_id, uint32_t layer, uint32_t source, int32_t bx,
     int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2,
     int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
+    uint8_t blend, uint8_t opacity,
     void (*set_mask)(size_t, unsigned char *, void *), size_t mask_size,
     void *mask_user);
 
@@ -2371,6 +2376,10 @@ int32_t DP_msg_transform_region_x4(const DP_MsgTransformRegion *mtr);
 int32_t DP_msg_transform_region_y4(const DP_MsgTransformRegion *mtr);
 
 uint8_t DP_msg_transform_region_mode(const DP_MsgTransformRegion *mtr);
+
+uint8_t DP_msg_transform_region_blend(const DP_MsgTransformRegion *mtr);
+
+uint8_t DP_msg_transform_region_opacity(const DP_MsgTransformRegion *mtr);
 
 const unsigned char *
 DP_msg_transform_region_mask(const DP_MsgTransformRegion *mtr,
@@ -2992,12 +3001,11 @@ DP_MsgCanvasBackground *DP_msg_canvas_background_zstd_cast(DP_Message *msg);
 
 #define DP_MSG_MOVE_RECT_ZSTD_STATIC_LENGTH 0
 
-DP_Message *
-DP_msg_move_rect_zstd_new(unsigned int context_id, uint32_t layer,
-                          uint32_t source, int32_t sx, int32_t sy, int32_t tx,
-                          int32_t ty, int32_t w, int32_t h,
-                          void (*set_mask)(size_t, unsigned char *, void *),
-                          size_t mask_size, void *mask_user);
+DP_Message *DP_msg_move_rect_zstd_new(
+    unsigned int context_id, uint32_t layer, uint32_t source, int32_t sx,
+    int32_t sy, int32_t tx, int32_t ty, int32_t w, int32_t h, uint8_t blend,
+    uint8_t opacity, void (*set_mask)(size_t, unsigned char *, void *),
+    size_t mask_size, void *mask_user);
 
 DP_Message *DP_msg_move_rect_zstd_deserialize(unsigned int context_id,
                                               const unsigned char *buffer,
@@ -3021,6 +3029,7 @@ DP_Message *DP_msg_transform_region_zstd_new(
     unsigned int context_id, uint32_t layer, uint32_t source, int32_t bx,
     int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2,
     int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
+    uint8_t blend, uint8_t opacity,
     void (*set_mask)(size_t, unsigned char *, void *), size_t mask_size,
     void *mask_user);
 

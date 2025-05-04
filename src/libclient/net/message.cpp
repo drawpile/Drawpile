@@ -292,7 +292,8 @@ static QByteArray compressAlphaMaskDeltaZstd(
 
 Message makeMoveRectMessage(
 	uint8_t contextId, uint32_t layer, uint32_t source, int32_t sx, int32_t sy,
-	int32_t tx, int32_t ty, int32_t w, int32_t h, const QImage &mask)
+	int32_t tx, int32_t ty, int32_t w, int32_t h, uint8_t blend,
+	uint8_t opacity, const QImage &mask)
 {
 	QByteArray compressed;
 	if(!mask.isNull()) {
@@ -305,8 +306,8 @@ Message makeMoveRectMessage(
 	if(compressed.size() <=
 	   DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_MOVE_RECT_STATIC_LENGTH) {
 		return Message::noinc(DP_msg_move_rect_new(
-			contextId, layer, source, sx, sy, tx, ty, w, h, &Message::setUchars,
-			compressed.size(), compressed.data()));
+			contextId, layer, source, sx, sy, tx, ty, w, h, blend, opacity,
+			&Message::setUchars, compressed.size(), compressed.data()));
 	} else {
 		return Message::null();
 	}
@@ -314,7 +315,8 @@ Message makeMoveRectMessage(
 
 Message makeMoveRectZstdMessage(
 	uint8_t contextId, uint32_t layer, uint32_t source, int32_t sx, int32_t sy,
-	int32_t tx, int32_t ty, int32_t w, int32_t h, const QImage &mask)
+	int32_t tx, int32_t ty, int32_t w, int32_t h, uint8_t blend,
+	uint8_t opacity, const QImage &mask)
 {
 	QByteArray compressed;
 	if(!mask.isNull()) {
@@ -327,8 +329,8 @@ Message makeMoveRectZstdMessage(
 	if(compressed.size() <=
 	   DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_MOVE_RECT_STATIC_LENGTH) {
 		return Message::noinc(DP_msg_move_rect_zstd_new(
-			contextId, layer, source, sx, sy, tx, ty, w, h, &Message::setUchars,
-			compressed.size(), compressed.data()));
+			contextId, layer, source, sx, sy, tx, ty, w, h, blend, opacity,
+			&Message::setUchars, compressed.size(), compressed.data()));
 	} else {
 		return Message::null();
 	}
@@ -337,8 +339,8 @@ Message makeMoveRectZstdMessage(
 Message makeTransformRegionMessage(
 	uint8_t contextId, uint32_t layer, uint32_t source, int32_t bx, int32_t by,
 	int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
-	int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
-	const QImage &mask)
+	int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode, uint8_t blend,
+	uint8_t opacity, const QImage &mask)
 {
 	QByteArray compressed;
 	if(!mask.isNull()) {
@@ -352,8 +354,8 @@ Message makeTransformRegionMessage(
 	   DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_TRANSFORM_REGION_STATIC_LENGTH) {
 		return Message::noinc(DP_msg_transform_region_new(
 			contextId, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3,
-			x4, y4, mode, &Message::setUchars, compressed.size(),
-			compressed.data()));
+			x4, y4, mode, blend, opacity, &Message::setUchars,
+			compressed.size(), compressed.data()));
 	} else {
 		return Message::null();
 	}
@@ -362,8 +364,8 @@ Message makeTransformRegionMessage(
 Message makeTransformRegionZstdMessage(
 	uint8_t contextId, uint32_t layer, uint32_t source, int32_t bx, int32_t by,
 	int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2,
-	int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
-	const QImage &mask)
+	int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode, uint8_t blend,
+	uint8_t opacity, const QImage &mask)
 {
 	QByteArray compressed;
 	if(!mask.isNull()) {
@@ -377,8 +379,8 @@ Message makeTransformRegionZstdMessage(
 	   DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_TRANSFORM_REGION_STATIC_LENGTH) {
 		return Message::noinc(DP_msg_transform_region_zstd_new(
 			contextId, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3,
-			x4, y4, mode, &Message::setUchars, compressed.size(),
-			compressed.data()));
+			x4, y4, mode, blend, opacity, &Message::setUchars,
+			compressed.size(), compressed.data()));
 	} else {
 		return Message::null();
 	}

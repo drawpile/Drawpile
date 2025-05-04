@@ -74,18 +74,18 @@ DP_CanvasState *DP_ops_put_image(DP_CanvasState *cs,
                                  unsigned int context_id, int layer_id,
                                  int blend_mode, int x, int y, DP_Image *img);
 
-DP_CanvasState *DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
-                                   DP_UserCursors *ucs_or_null,
-                                   unsigned int context_id, int src_layer_id,
-                                   int dst_layer_id, const DP_Rect *src_rect,
-                                   const DP_Quad *dst_quad, int interpolation,
-                                   DP_Image *mask);
+DP_CanvasState *DP_ops_transform_region(
+    DP_CanvasState *cs, DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
+    unsigned int context_id, int src_layer_id, int dst_layer_id,
+    const DP_Rect *src_rect, const DP_Quad *dst_quad, int interpolation,
+    int blend_mode, uint8_t opacity, DP_Image *mask);
 
 DP_CanvasState *DP_ops_move_rect(DP_CanvasState *cs,
                                  DP_UserCursors *ucs_or_null,
                                  unsigned int context_id, int src_layer_id,
                                  int dst_layer_id, const DP_Rect *src_rect,
-                                 int dst_x, int dst_y, DP_Image *mask);
+                                 int dst_x, int dst_y, int blend_mode,
+                                 uint8_t opacity, DP_Image *mask);
 
 DP_CanvasState *DP_ops_fill_rect(DP_CanvasState *cs,
                                  DP_UserCursors *ucs_or_null,

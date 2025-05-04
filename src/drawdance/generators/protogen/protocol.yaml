@@ -734,6 +734,8 @@ MoveRect:
       - ty i32
       - w i32
       - h i32
+      - blend blendmode
+      - opacity u8
       - mask bytes
 
 SetMetadataInt:
@@ -870,6 +872,8 @@ TransformRegion:
           variants:
               - Nearest
               - Bilinear
+        - blend blendmode
+        - opacity u8
         - mask bytes
 
 TrackCreate:
