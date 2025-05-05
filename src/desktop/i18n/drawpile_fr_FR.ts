@@ -912,7 +912,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+10"/>
         <source>&amp;Step up</source>
-        <translation type="unfinished">Monter d&apos;un pa&amp;s</translation>
+        <translation>Monter d&apos;un &amp;cran</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1114,7 +1114,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+13"/>
         <source>NSFM</source>
-        <translation type="unfinished">NAAM</translation>
+        <translation>NAAM</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -1382,7 +1382,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+25"/>
         <source>Error opening tablet event log.</source>
-        <translation type="unfinished">Erreurs lors de l&apos;ouverture de la table des évènements.</translation>
+        <translation>Erreurs lors de l&apos;ouverture de la table des évènements.</translation>
     </message>
     <message>
         <location line="+209"/>
@@ -1493,13 +1493,13 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+436"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished">déconnection à la session</translation>
+        <translation>vous déconnecte de la session</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>lose any unsaved changes</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished">perte des changements non enregistrés</translation>
+        <translation>perte des changements non enregistrés</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1511,28 +1511,28 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+5"/>
         <source>discard your playback</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished">rejet de l&apos;enregistrement</translation>
+        <translation>rejeter votre enregistrement</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+15"/>
         <source>Doing so will %1.</source>
-        <translation type="unfinished">Cette action va %1.</translation>
+        <translation>Cette action va %1.</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Doing so will %1 and %2.</source>
-        <translation type="unfinished">Cette action va %1 et %2.</translation>
+        <translation>Cette action va %1 et %2.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Doing so will %1, %2 and %3.</source>
-        <translation type="unfinished">Cette action va %1, %2 et %3.</translation>
+        <translation>Cette action va %1, %2 et %3.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation type="unfinished">Cette action va %1, %2, %3 et %4.</translation>
+        <translation>Cette action va %1, %2, %3 et %4.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1624,7 +1624,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+2060"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
-        <translation type="unfinished">Vous êtes déjà connecté à cette session&#x202f;! Déconnectez-vous pour pouvoir en héberger une.</translation>
+        <translation>Vous êtes déjà connecté à une session&#x202f;! Déconnectez-vous pour pouvoir en héberger une.</translation>
     </message>
     <message>
         <location line="+170"/>
@@ -1681,17 +1681,17 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+438"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished">Ouvrir le Cliché de Débogage</translation>
+        <translation>Ouvrir le Dépôt de Débogage</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a debug dump and close this window.</source>
-        <translation type="unfinished">Vous êtes sur le point d&apos;ouvrir une archive de débogage et de fermer cette fenêtre.</translation>
+        <translation>Vous êtes sur le point d&apos;ouvrir un dépôt de débogage et de fermer cette fenêtre.</translation>
     </message>
     <message>
         <location line="+233"/>
         <source>Show Icons on Tabs</source>
-        <translation type="unfinished">Montrer les Icônes sur les Onglets</translation>
+        <translation>Montrer les Icônes sur les Onglets</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1701,7 +1701,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+5"/>
         <source>Arrange Docks</source>
-        <translation type="unfinished">Arranger les Panneaux</translation>
+        <translation>Arranger les Panneaux</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -1769,7 +1769,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+9"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished">Prendre depuis l&apos;écran (&amp;k)</translation>
+        <translation>Prendre depuis l&apos;écran (&amp;k)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1795,17 +1795,17 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+257"/>
         <source>&amp;Fit Canvas</source>
-        <translation type="unfinished">Adapter Canevas (&amp;f)</translation>
+        <translation>Adapter la Toile (&amp;f)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fit Canvas &amp;Width</source>
-        <translation type="unfinished">Adapter Largeur Canevas (&amp;w)</translation>
+        <translation>Adapter la Largeur de la Toile (&amp;w)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fit Canvas &amp;Height</source>
-        <translation type="unfinished">Adapter &amp;Hauteur Canevas</translation>
+        <translation>Adapter la &amp;Hauteur de la Toile</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1820,12 +1820,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation type="unfinished">Refléter la toile</translation>
+        <translation>Refléter la toile</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation type="unfinished">Miroir horizontal des tracés</translation>
+        <translation>Refléter la toile horizontalement</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1835,12 +1835,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished">Inverser la Toile</translation>
+        <translation>Retourner la Toile</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the canvas upside-down</source>
-        <translation type="unfinished">Inverser la Toile à l&apos;Envers</translation>
+        <translation>Retourner la toile à l&apos;envers</translation>
     </message>
     <message>
         <location line="+2"/>
