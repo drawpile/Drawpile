@@ -135,6 +135,7 @@ private slots:
 
 	void showContextMenu(const QPoint &pos);
 	void changeLayersLock(bool locked);
+	void changeLayersAlphaLock(bool alphaLock);
 	void changeLayersAccessTier(int tier);
 	void changeLayersUserAccess(int userId, bool access);
 	void changeLayersCensor(bool censor);

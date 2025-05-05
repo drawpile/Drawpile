@@ -279,6 +279,9 @@ LayerList::LayerList(QWidget *parent)
 		m_aclmenu, &LayerAclMenu::layerLockChange, this,
 		&LayerList::changeLayersLock);
 	connect(
+		m_aclmenu, &LayerAclMenu::layerAlphaLockChange, this,
+		&LayerList::changeLayersAlphaLock);
+	connect(
 		m_aclmenu, &LayerAclMenu::layerAccessTierChange, this,
 		&LayerList::changeLayersAccessTier);
 	connect(
@@ -535,9 +538,11 @@ void LayerList::updateActionLabels()
 		check = checkState == int(canvas::LayerListModel::Unchecked) ||
 				checkState == int(canvas::LayerListModel::NotApplicable) ||
 				checkState == int(canvas::LayerListModel::NotCheckable);
+		m_aclmenu->setAlphaLockEnabled(!group);
 	} else {
 		group = false;
 		check = true;
+		m_aclmenu->setAlphaLockEnabled(false);
 	}
 
 	if(group) {
@@ -758,6 +763,21 @@ void LayerList::changeLayersLock(bool locked)
 
 	if(!msgs.isEmpty()) {
 		emit layerCommands(msgs.size(), msgs.constData());
+	}
+}
+
+void LayerList::changeLayersAlphaLock(bool alphaLock)
+{
+	QItemSelectionModel *selectionModel = m_view->selectionModel();
+	if(m_canvas && selectionModel) {
+		canvas::PaintEngine *paintEngine = m_canvas->paintEngine();
+		for(QModelIndex idx : selectionModel->selectedIndexes()) {
+			const canvas::LayerListItem layer =
+				idx.data().value<canvas::LayerListItem>();
+			if(!layer.group && layer.alphaLock != alphaLock) {
+				paintEngine->setLayerAlphaLock(layer.id, alphaLock);
+			}
+		}
 	}
 }
 
@@ -2012,6 +2032,7 @@ void LayerList::updateUiFromCurrent()
 	}
 
 	m_aclmenu->setCensored(layer.actuallyCensored());
+	m_aclmenu->setAlphaLock(layer.alphaLock);
 	dialogs::LayerProperties::updateBlendMode(
 		m_blendModeCombo, layer.blend, layer.group, layer.isolated, layer.clip,
 		m_automaticAlphaPreserve);

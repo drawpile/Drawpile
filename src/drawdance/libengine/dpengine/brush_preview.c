@@ -300,7 +300,7 @@ void render_brush_preview(
 static void set_preview_classic_brush(void *user, DP_BrushEngine *be,
                                       DP_UPixelFloat color)
 {
-    DP_StrokeParams stroke = {1, 0, false, 0, false, 0, false};
+    DP_StrokeParams stroke = {1, 0, 0, 0, false, false, false, false};
     DP_brush_engine_classic_brush_set(be, user, &stroke, &color, false);
 }
 
@@ -321,7 +321,7 @@ static void set_preview_mypaint_brush(void *user, DP_BrushEngine *be,
 {
     const DP_MyPaintBrush *brush = ((void **)user)[0];
     const DP_MyPaintSettings *settings = ((void **)user)[1];
-    DP_StrokeParams stroke = {1, 0, false, 0, false, 0, false};
+    DP_StrokeParams stroke = {1, 0, 0, 0, false, false, false, false};
     DP_brush_engine_mypaint_brush_set(be, brush, settings, &stroke, &color,
                                       false);
 }

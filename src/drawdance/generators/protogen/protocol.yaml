@@ -332,6 +332,7 @@ LocalChange:
               - TrackVisibility
               - TrackOnionSkin
               - LayerSketch
+              - LayerAlphaLock
         - body bytes
 
 FeatureLimits:

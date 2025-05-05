@@ -108,6 +108,11 @@ bool LayerProps::clip() const
     return DP_layer_props_clip(m_data);
 }
 
+bool LayerProps::alphaLock() const
+{
+    return DP_layer_props_alpha_lock(m_data);
+}
+
 uint16_t LayerProps::sketchOpacity() const
 {
     return DP_layer_props_sketch_opacity(m_data);

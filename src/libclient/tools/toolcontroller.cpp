@@ -2,7 +2,9 @@
 extern "C" {
 #include <dpmsg/ids.h>
 }
+#include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/point.h"
 #include "libclient/canvas/transformmodel.h"
@@ -179,6 +181,12 @@ int ToolController::activeLayerOrSelection() const
 	}
 }
 
+bool ToolController::activeLayerAlphaLock() const
+{
+	return m_model && !m_selectionEditActive &&
+		   m_model->paintEngine()->isLayerAlphaLocked(m_activeLayer);
+}
+
 void ToolController::setSelectedLayers(const QSet<int> &selectedLayers)
 {
 	m_selectedLayers = selectedLayers;
@@ -291,6 +299,9 @@ void ToolController::setModel(canvas::CanvasModel *model)
 {
 	m_model = model;
 	connect(
+		m_model->layerlist(), &canvas::LayerListModel::layerAlphaLockChanged,
+		this, &ToolController::updateLayerAlphaLock);
+	connect(
 		m_model->transform(), &canvas::TransformModel::transformChanged, this,
 		&ToolController::updateTransformPreview);
 	connect(
@@ -302,6 +313,14 @@ void ToolController::setModel(canvas::CanvasModel *model)
 	m_model->setTransformInterpolation(m_transformInterpolation);
 	m_model->transform()->setPreviewAccurate(m_transformPreviewAccurate);
 	emit modelChanged(model);
+}
+
+void ToolController::updateLayerAlphaLock(int layerId, bool alphaLock)
+{
+	if(m_activeLayer == layerId) {
+		m_activeTool->setLayerAlphaLock(alphaLock);
+		updateTransformPreview();
+	}
 }
 
 void ToolController::updateTransformPreview()
@@ -344,8 +363,13 @@ void ToolController::updateTransformPreview()
 				}
 			} else {
 				paintEngine->previewTransform(
-					idsUsed++, m_activeLayer, blendMode, opacity, x, y,
-					transform->floatingImage(), dstPolygon, interpolation);
+					idsUsed++, m_activeLayer,
+					transform->isAffectedByLayerAlphaLock() &&
+							activeLayerAlphaLock()
+						? canvas::blendmode::toAlphaPreserving(blendMode)
+						: blendMode,
+					opacity, x, y, transform->floatingImage(), dstPolygon,
+					interpolation);
 			}
 
 			for(int i = idsUsed; i < m_transformPreviewIdsUsed; ++i) {
@@ -571,10 +595,11 @@ void ToolController::setBrushEngineBrush(
 	DP_StrokeParams stroke = {
 		activeLayerOrSelection(),
 		m_selectionEditActive ? 0 : DP_SELECTION_ID_MAIN,
+		0,
+		0,
+		activeLayerAlphaLock(),
 		false,
-		0,
 		m_stabilizationMode != brushes::Smoothing || m_finishStrokes,
-		0,
 		m_finishStrokes,
 	};
 	if(freehand) {

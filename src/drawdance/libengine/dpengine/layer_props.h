@@ -71,6 +71,8 @@ bool DP_layer_props_isolated(DP_LayerProps *lp);
 
 bool DP_layer_props_clip(DP_LayerProps *lp);
 
+bool DP_layer_props_alpha_lock(DP_LayerProps *lp);
+
 bool DP_layer_props_visible(DP_LayerProps *lp);
 
 const char *DP_layer_props_title(DP_LayerProps *lp, size_t *out_length);
@@ -122,6 +124,8 @@ bool DP_transient_layer_props_isolated(DP_TransientLayerProps *tlp);
 
 bool DP_transient_layer_props_clip(DP_TransientLayerProps *tlp);
 
+bool DP_transient_layer_props_alpha_lock(DP_TransientLayerProps *tlp);
+
 bool DP_transient_layer_props_visible(DP_TransientLayerProps *tlp);
 
 const char *DP_transient_layer_props_title(DP_TransientLayerProps *tlp,
@@ -159,6 +163,9 @@ void DP_transient_layer_props_isolated_set(DP_TransientLayerProps *tlp,
                                            bool isolated);
 
 void DP_transient_layer_props_clip_set(DP_TransientLayerProps *tlp, bool clip);
+
+void DP_transient_layer_props_alpha_lock_set(DP_TransientLayerProps *tlp,
+                                             bool alpha_lock);
 
 void DP_transient_layer_props_title_set(DP_TransientLayerProps *tlp,
                                         const char *title, size_t length);

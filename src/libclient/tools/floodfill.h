@@ -37,6 +37,7 @@ public:
 	void flushPreviewedActions() override;
 	bool usesBrushColor() const override { return true; }
 	void setActiveLayer(int layerId) override;
+	void setLayerAlphaLock(bool alphaLock) override;
 	void setForegroundColor(const QColor &color) override;
 
 	void setParameters(
@@ -66,6 +67,11 @@ private:
 	void updateCursor();
 
 	void emitFloodFillStateChanged();
+
+	int getEffectiveBlendModeForLayer(
+		int layerId, bool canUseOriginal = true) const;
+
+	static bool blendModeHandlesColor(int blendMode);
 
 	int m_tolerance = 0;
 	int m_expansion = 0;

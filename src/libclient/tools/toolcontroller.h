@@ -94,6 +94,7 @@ public:
 	const QColor &selectionMaskColor() const { return m_selectionMaskColor; }
 
 	int activeLayerOrSelection() const;
+	bool activeLayerAlphaLock() const;
 
 	void setSelectedLayers(const QSet<int> &selectedLayers);
 	const QSet<int> &selectedLayers() const { return m_selectedLayers; }
@@ -269,6 +270,7 @@ signals:
 	void asyncExecutionFinished(Task *task);
 
 private slots:
+	void updateLayerAlphaLock(int layerId, bool alphaLock);
 	void updateTransformPreview();
 	void setTransformCutPreview(
 		const QSet<int> &layerIds, const QRect &maskBounds, const QImage &mask);
