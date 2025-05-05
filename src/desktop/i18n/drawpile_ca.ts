@@ -29,7 +29,7 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation type="unfinished">Informa d&apos;un abús</translation>
+        <translation>Informa d&apos;un abús</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -44,12 +44,12 @@
     <message>
         <location line="+28"/>
         <source>Entire session</source>
-        <translation type="unfinished">Tota la sessió</translation>
+        <translation>Tota la sessió</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation type="unfinished"></translation>
+        <translation>Infractor:</translation>
     </message>
 </context>
 <context>
@@ -62,12 +62,12 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished">Introdueix l&apos;URL d&apos;una llista de servidors:</translation>
+        <translation>Introdueix l&apos;URL d&apos;una llista de servidors:</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation type="unfinished">Pots trobar algunes llistes de servidors a &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
+        <translation>Podeu trobar algunes llistes de servidors a &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -88,7 +88,7 @@
     <message>
         <location line="+26"/>
         <source>Pick initial color from layer</source>
-        <translation type="unfinished">Tria el color inicial des de la capa</translation>
+        <translation>Tria el color inicial des de la capa</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -103,7 +103,7 @@
     <message>
         <location line="+14"/>
         <source>Direct drawing mode</source>
-        <translation type="unfinished">Mode de dibuix directe</translation>
+        <translation>Mode de dibuix directe</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -136,7 +136,7 @@
         <location line="+14"/>
         <location line="+33"/>
         <source>Pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Sensibilitat de pressió</translation>
     </message>
     <message>
         <location line="-16"/>
@@ -205,12 +205,12 @@
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation type="unfinished">Commuta les direccions horitzontal i vertical. Per exemple, moure el cursor amunt i avall per a canviar la mida del pinzell en comptes de moure&apos;l a dreta i esquerra.</translation>
+        <translation>Commuta les direccions horitzontal i vertical. Per exemple, moure el cursor amunt i avall per a canviar la mida del pinzell en comptes de moure&apos;l a dreta i esquerra.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercanviar Eixos</translation>
     </message>
 </context>
 <context>
@@ -229,7 +229,7 @@
     <message>
         <location line="-100"/>
         <source>SHA1 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>Petjada SHA1:</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -244,13 +244,13 @@
     <message>
         <location line="+63"/>
         <source>MD5 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>Petjada MD5:</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+14"/>
         <source>Organization unit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Unitat d&apos;organització:</translation>
     </message>
     <message>
         <location line="-7"/>
@@ -271,17 +271,17 @@
     <message>
         <location line="+26"/>
         <source>Issued to</source>
-        <translation type="unfinished"></translation>
+        <translation>Emès per a</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Validity period</source>
-        <translation type="unfinished"></translation>
+        <translation>Període de validesa</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Fingerprints</source>
-        <translation type="unfinished"></translation>
+        <translation>Petjades</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -309,7 +309,7 @@
     <message>
         <location line="+17"/>
         <source>Hex</source>
-        <translation type="unfinished"></translation>
+        <translation>Hexadecimal</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -421,7 +421,7 @@
     <message>
         <location line="+35"/>
         <source>Performance Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Perfil de rendiment</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -431,7 +431,7 @@
     <message>
         <location line="+143"/>
         <source>Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Fitxer de registre</translation>
     </message>
     <message>
         <location line="-171"/>
@@ -447,7 +447,7 @@
     <message>
         <location line="+7"/>
         <source>Export Custom FFmpeg Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar vídeo FFmpeg personalitzat</translation>
     </message>
     <message>
         <location line="-77"/>
@@ -472,12 +472,12 @@
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Imatges de fotograma</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar animació des de capes</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -518,7 +518,7 @@
     <message>
         <location line="+22"/>
         <source>Error opening temporary file for %1.</source>
-        <translation type="unfinished">Error en obrir el fitxer temporal per %1.</translation>
+        <translation>Error en obrir el fitxer temporal per a %1.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1238,7 +1238,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+1"/>
         <source>If you don&apos;t review your documents, all changes will be lost</source>
-        <translation>Si no reviseu els vostres documents, tots els canvis es perdran.</translation>
+        <translation>Si no reviseu els vostres documents, tots els canvis es perdran</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1439,7 +1439,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation type="unfinished">Esteu a punt de crear un nou llenç i tancar aquesta finestra</translation>
+        <translation>Esteu a punt de crear un nou llenç i tancar aquesta finestra.</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -1866,7 +1866,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+3"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
-        <translation>&amp;Obrir</translation>
+        <translation>&amp;Obrir...</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1901,7 +1901,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+9"/>
         <source>Export &amp;Animation…</source>
-        <translation>Exportar &amp;Animació</translation>
+        <translation>Exportar &amp;Animació…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2295,7 +2295,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-434"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Edita</translation>
     </message>
     <message>
         <location line="-1918"/>
@@ -2305,7 +2305,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>You&apos;ve been disconnected from the server.</source>
-        <translation>T&apos;has desconnectat del servidor</translation>
+        <translation>T&apos;has desconnectat del servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2350,7 +2350,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>&amp;Toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Barres d&apos;eines</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2445,7 +2445,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+11"/>
         <source>&amp;Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zoom</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -2480,7 +2480,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Show only layers in the current frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra només les capes en el fotograma actual</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2545,12 +2545,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Select Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecciona per sobre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Select Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecciona per sota</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2852,7 +2852,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Select areas with similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar àrees amb colors similars</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2892,7 +2892,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Choose the current background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Tria el color de fons actual</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2968,12 +2968,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-3547"/>
         <source>Joined the session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Us heu unit a la sessió!</translation>
     </message>
     <message>
         <location line="+589"/>
         <source>Hosting on this computer is not available</source>
-        <translation>Allotjar en aquest ordenador no esta disponible</translation>
+        <translation>Allotjar en aquest ordinador no està disponible</translation>
     </message>
     <message>
         <location line="+138"/>
@@ -7037,7 +7037,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+48"/>
         <location line="+161"/>
         <source>Enter the name you want to use.</source>
-        <translation>Introduïu el nom que voleu utilitzar</translation>
+        <translation>Introduïu el nom que voleu utilitzar.</translation>
     </message>
     <message>
         <location line="-99"/>
@@ -7163,7 +7163,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+165"/>
         <source>Video error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de video</translation>
     </message>
 </context>
 <context>
@@ -7171,7 +7171,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resetdialog.cpp" line="+132"/>
         <source>Reset Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Reinicialitzar sessió</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -7186,17 +7186,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+71"/>
         <source>Error opening file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error obrint el fitxer: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error opening file: %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Error obrint el fitxer: %1 (%2)</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Reinicialitza</translation>
     </message>
 </context>
 <context>
@@ -7204,22 +7204,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+30"/>
         <source>Expand up</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir amunt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand left</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir a l&apos;esquerra</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand right</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir a la dreta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand down</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir avall</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7379,27 +7379,27 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+6"/>
         <source>%n hour(s)</source>
         <extracomment>Idle timeout hours. May be joined with minutes and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n hora</numerusform>
+            <numerusform>%n hores</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n minute(s)</source>
         <extracomment>Idle timeout minutes. May be joined with hours and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n minut</numerusform>
+            <numerusform>%n minuts</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n segon</numerusform>
+            <numerusform>%n segons</numerusform>
         </translation>
     </message>
     <message>
@@ -7422,7 +7422,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Session Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Contrasenya de la sessió</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -7432,13 +7432,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Operator Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Contrasenya de l&apos;operador</translation>
     </message>
     <message>
         <location line="+31"/>
         <location line="+122"/>
         <source>Error opening &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error obrint &apos;%1&apos;:%2</translation>
     </message>
     <message>
         <location line="-91"/>
@@ -7468,12 +7468,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>Encriptat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Plain</source>
-        <translation type="unfinished"></translation>
+        <translation>Pla</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -7490,14 +7490,14 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+37"/>
         <source>Error saving roles: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error guardant els rols: %1</translation>
     </message>
     <message numerus="yes">
         <location line="+61"/>
         <source>%n role(s) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n rol importat.</numerusform>
+            <numerusform>%n rols importats.</numerusform>
         </translation>
     </message>
     <message>
@@ -7516,7 +7516,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Undo Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Limit de desfer: </translation>
     </message>
     <message>
         <location line="+9"/>
@@ -7534,37 +7534,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+55"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>General</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>Interfície d&apos;usuari</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>Tauleta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touch</source>
-        <translation type="unfinished"></translation>
+        <translation>Tactil</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Eines</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network</source>
-        <translation type="unfinished"></translation>
+        <translation>Xarxa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Notificacions</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7672,27 +7672,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>Preferències</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Change application settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia la configuració de l&apos;aplicació</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Record</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistra</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegir servidor</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Save/Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Guarda/Carrega</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7712,7 +7712,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Import from file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa des d&apos;un fitxer…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7722,45 +7722,45 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Check for Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Comprova les actualitzacions</translation>
     </message>
     <message>
         <location line="+338"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>Comprovant…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Last check: today.</source>
-        <translation type="unfinished"></translation>
+        <translation>Última comprovació: avui.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Última comprovació: fa %n dia.</numerusform>
+            <numerusform>Última comprovació: fa %n dies.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Last check: never.</source>
-        <translation type="unfinished"></translation>
+        <translation>Última comprovació: mai.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation>Unir-se</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation>Allotja</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea</translation>
     </message>
 </context>
 <context>
@@ -7768,12 +7768,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/systeminfodialog.cpp" line="+27"/>
         <source>System Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Informació del sistema</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia</translation>
     </message>
 </context>
 <context>
@@ -7781,12 +7781,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/touchtestdialog.cpp" line="+214"/>
         <source>Enable touch</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilitat tactil</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enable gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilitar gestos</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -7804,7 +7804,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-236"/>
         <source>Touch here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Toqueu aqui.</translation>
     </message>
 </context>
 <context>
@@ -7812,7 +7812,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/userinfodialog.cpp" line="+31"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Refresca</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -7824,12 +7824,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+9"/>
         <location line="+7"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconegut</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>Draw</source>
-        <translation type="unfinished"></translation>
+        <translation>Dibuixa</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7844,12 +7844,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Activat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Desactivat</translation>
     </message>
 </context>
 <context>
@@ -7862,12 +7862,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Vídeo MP4</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Vídeo WebM</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7888,12 +7888,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+80"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Executables</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation type="unfinished"></translation>
+        <translation>Tria el camí de ffmpeg</translation>
     </message>
     <message>
         <location line="+107"/>
@@ -8079,32 +8079,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Style:</source>
-        <translation type="unfinished"></translation>
+        <translation>Estil:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Clar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Fosc</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Bright</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Clar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Fosc</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Darker</source>
-        <translation type="unfinished"></translation>
+        <translation>Krita Més Fosc</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8119,12 +8119,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Color scheme:</source>
-        <translation type="unfinished"></translation>
+        <translation>Esquema de colors:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Session history:</source>
-        <translation type="unfinished"></translation>
+        <translation>Historial de la sessió:</translation>
     </message>
 </context>
 <context>
