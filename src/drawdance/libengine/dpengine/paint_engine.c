@@ -1588,6 +1588,7 @@ static void set_local_layer_states(DP_LocalState *ls,
                 DP_TransientLayerProps *tlp =
                     DP_layer_routes_entry_transient_props(lre, tcs);
                 DP_transient_layer_props_hidden_set(tlp, lls->hidden);
+                DP_transient_layer_props_alpha_lock_set(tlp, lls->alpha_lock);
                 DP_transient_layer_props_sketch_opacity_set(
                     tlp, lls->sketch_opacity);
                 DP_transient_layer_props_sketch_tint_set(tlp, lls->sketch_tint);

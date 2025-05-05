@@ -3472,6 +3472,8 @@ const char *DP_msg_local_change_type_variant_name(unsigned int value)
         return "TrackOnionSkin";
     case DP_MSG_LOCAL_CHANGE_TYPE_LAYER_SKETCH:
         return "LayerSketch";
+    case DP_MSG_LOCAL_CHANGE_TYPE_LAYER_ALPHA_LOCK:
+        return "LayerAlphaLock";
     default:
         return NULL;
     }

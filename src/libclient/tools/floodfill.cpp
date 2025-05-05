@@ -2,6 +2,7 @@
 extern "C" {
 #include <dpmsg/blend_mode.h>
 }
+#include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
@@ -220,6 +221,12 @@ void FloodFill::setActiveLayer(int layerId)
 	updatePendingPreview();
 }
 
+void FloodFill::setLayerAlphaLock(bool alphaLock)
+{
+	Q_UNUSED(alphaLock);
+	updatePendingPreview();
+}
+
 void FloodFill::setForegroundColor(const QColor &color)
 {
 	Q_UNUSED(color);
@@ -287,12 +294,7 @@ void FloodFill::fillAt(const QPointF &point, int activeLayerId, bool editable)
 		m_lastPoint = point;
 		m_lastActiveLayerId = activeLayerId;
 		m_originalLayerId = activeLayerId;
-		m_originalBlendMode = m_blendMode;
 		m_originalOpacity = m_opacity;
-
-		QColor fillColor = m_blendMode == DP_BLEND_MODE_ERASE
-							   ? Qt::black
-							   : m_owner.foregroundColor();
 
 		int layerId;
 		switch(m_source) {
@@ -313,9 +315,16 @@ void FloodFill::fillAt(const QPointF &point, int activeLayerId, bool editable)
 			break;
 		}
 
+		canvas::PaintEngine *paintEngine = canvas->paintEngine();
+		int blendMode = getEffectiveBlendModeForLayer(layerId, false);
+		m_originalBlendMode = blendMode;
+
+		QColor fillColor = blendModeHandlesColor(blendMode)
+							   ? m_owner.foregroundColor()
+							   : Qt::black;
+
 		m_running = true;
 		m_cancel = false;
-		canvas::PaintEngine *paintEngine = canvas->paintEngine();
 		setCapability(Capability::HandlesRightClick, true);
 		emitFloodFillStateChanged();
 		requestToolNotice(
@@ -388,7 +397,8 @@ void FloodFill::previewPending()
 	QString toolNoticeText;
 	if(canvas) {
 		if(havePending()) {
-			int layerId = lastActiveLayerId();
+			int layerId =
+				m_pendingEditable ? lastActiveLayerId() : m_originalLayerId;
 			if(layerId <= 0) {
 				canvas->paintEngine()->clearFillPreview();
 				if(m_pendingEditable) {
@@ -418,8 +428,9 @@ void FloodFill::previewPending()
 				} else {
 					adjustPendingImage(true, false);
 					canvas->paintEngine()->previewFill(
-						layerId, m_blendMode, m_opacity, m_pendingPos.x(),
-						m_pendingPos.y(), m_pendingImage);
+						layerId, getEffectiveBlendModeForLayer(layerId),
+						m_pendingEditable ? m_opacity : m_originalOpacity,
+						m_pendingPos.x(), m_pendingPos.y(), m_pendingImage);
 				}
 			}
 		} else {
@@ -447,8 +458,8 @@ void FloodFill::flushPending()
 			net::MessageList msgs;
 			net::makePutImageZstdMessages(
 				msgs, contextId, layerId,
-				m_pendingEditable ? m_blendMode : m_originalBlendMode,
-				m_pendingPos.x(), m_pendingPos.y(), m_pendingImage);
+				getEffectiveBlendModeForLayer(layerId), m_pendingPos.x(),
+				m_pendingPos.y(), m_pendingImage);
 			disposePending();
 			if(!msgs.isEmpty()) {
 				msgs.prepend(net::makeUndoPointMessage(contextId));
@@ -475,7 +486,7 @@ void FloodFill::adjustPendingImage(bool adjustColor, bool adjustOpacity)
 {
 	QColor color = m_owner.foregroundColor();
 	qreal opacity = m_pendingEditable ? m_opacity : m_originalOpacity;
-	bool needsColorChange = adjustColor && m_blendMode != DP_BLEND_MODE_ERASE &&
+	bool needsColorChange = adjustColor && blendModeHandlesColor(m_blendMode) &&
 							m_pendingColor != color;
 	bool needsOpacityChange = adjustOpacity && opacity < 1.0;
 	if(needsColorChange || needsOpacityChange) {
@@ -508,6 +519,32 @@ void FloodFill::updateCursor()
 void FloodFill::emitFloodFillStateChanged()
 {
 	emit m_owner.floodFillStateChanged(m_running, havePending());
+}
+
+int FloodFill::getEffectiveBlendModeForLayer(
+	int layerId, bool canUseOriginal) const
+{
+	if(m_pendingEditable || !canUseOriginal) {
+		canvas::CanvasModel *canvas = m_owner.model();
+		if(canvas && canvas->paintEngine()->isLayerAlphaLocked(layerId)) {
+			return canvas::blendmode::toAlphaPreserving(m_blendMode);
+		} else {
+			return m_blendMode;
+		}
+	} else {
+		return m_originalBlendMode;
+	}
+}
+
+bool FloodFill::blendModeHandlesColor(int blendMode)
+{
+	switch(blendMode) {
+	case DP_BLEND_MODE_ERASE:
+	case DP_BLEND_MODE_ERASE_PRESERVE:
+		return false;
+	default:
+		return true;
+	}
 }
 
 }

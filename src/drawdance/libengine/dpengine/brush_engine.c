@@ -1078,6 +1078,15 @@ static void set_common_stroke_params(DP_BrushEngine *be,
     be->mask.selection_id = stroke->selection_id;
 }
 
+static void apply_layer_alpha_lock(DP_BlendMode *in_out_blend_mode,
+                                   bool layer_alpha_lock)
+{
+    if (layer_alpha_lock) {
+        *in_out_blend_mode = (DP_BlendMode)DP_blend_mode_to_alpha_preserving(
+            (int)*in_out_blend_mode);
+    }
+}
+
 void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
                                        const DP_ClassicBrush *brush,
                                        const DP_StrokeParams *stroke,
@@ -1108,6 +1117,9 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
         cb->erase = true;
         cb->erase_mode = DP_BLEND_MODE_ERASE;
     }
+
+    apply_layer_alpha_lock(cb->erase ? &cb->erase_mode : &cb->brush_mode,
+                           stroke->layer_alpha_lock);
 
     if (DP_blend_mode_direct_only((int)DP_classic_brush_blend_mode(cb))) {
         cb->paint_mode = DP_PAINT_MODE_DIRECT;
@@ -1189,10 +1201,12 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     be->mypaint.blend_mode = eraser_override
                                ? DP_BLEND_MODE_ERASE
                                : DP_mypaint_brush_blend_mode(brush);
-    be->mypaint.paint_mode =
-        DP_blend_mode_direct_only((int)be->mypaint.blend_mode)
-            ? DP_PAINT_MODE_DIRECT
-            : brush->paint_mode;
+    apply_layer_alpha_lock(&be->mypaint.blend_mode, stroke->layer_alpha_lock);
+
+    DP_BlendMode blend_mode = be->mypaint.blend_mode;
+    be->mypaint.paint_mode = DP_blend_mode_direct_only((int)blend_mode)
+                               ? DP_PAINT_MODE_DIRECT
+                               : brush->paint_mode;
 
     // We don't support partial pigment mode for performance and usability
     // reasons, you either enable the pigment blend mode or you don't.
@@ -1202,7 +1216,6 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SLOW_TRACKING);
 
     bool indirect = be->mypaint.paint_mode != DP_PAINT_MODE_DIRECT;
-    DP_BlendMode blend_mode = be->mypaint.blend_mode;
     if (indirect || DP_blend_mode_compares_alpha((int)blend_mode)) {
         // Opacity linearization is supposed to compensate for direct mode
         // drawing, in indirect mode it just causes really wrong behavior. The

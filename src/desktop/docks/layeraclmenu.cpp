@@ -11,11 +11,17 @@ LayerAclMenu::LayerAclMenu(QWidget *parent)
 	: QMenu(parent)
 	, m_userlist(nullptr)
 {
-	m_lock = addAction(tr("Lock this layer"));
+	m_lock = addAction(tr("Lock layer"));
 	m_lock->setCheckable(true);
 	connect(m_lock, &QAction::triggered, this, &LayerAclMenu::layerLockChange);
 
-	m_censored = addAction(tr("Censor"));
+	m_alphaLock = addAction(tr("Alpha lock layer for you"));
+	m_alphaLock->setCheckable(true);
+	connect(
+		m_alphaLock, &QAction::triggered, this,
+		&LayerAclMenu::layerAlphaLockChange);
+
+	m_censored = addAction(tr("Censor layer"));
 	m_censored->setCheckable(true);
 	connect(
 		m_censored, &QAction::triggered, this,
@@ -101,6 +107,16 @@ void LayerAclMenu::setAcl(bool lock, int tier, const QVector<uint8_t> exclusive)
 void LayerAclMenu::setCensored(bool censor)
 {
 	m_censored->setChecked(censor);
+}
+
+void LayerAclMenu::setAlphaLock(bool alphaLock)
+{
+	m_alphaLock->setChecked(alphaLock);
+}
+
+void LayerAclMenu::setAlphaLockEnabled(bool alphaLockEnabled)
+{
+	m_alphaLock->setEnabled(alphaLockEnabled);
 }
 
 }

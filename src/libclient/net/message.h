@@ -186,6 +186,7 @@ Message makeLocalChangeTrackVisibilityMessage(int trackId, bool hidden);
 Message makeLocalChangeTrackOnionSkinMessage(int trackId, bool onionSkin);
 Message makeLocalChangeLayerSketchMessage(
 	int layerId, uint16_t opacity, const QColor &tint);
+Message makeLocalChangeLayerAlphaLockMessage(int layerId, bool alphaLock);
 
 DP_Message *makeLocalMatchMessage(const Message &msg, bool disguiseAsPutImage);
 

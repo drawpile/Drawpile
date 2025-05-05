@@ -723,6 +723,12 @@ Message makeLocalChangeLayerSketchMessage(
 		DP_local_state_msg_layer_sketch_new(layerId, opacity, tint.rgba()));
 }
 
+Message makeLocalChangeLayerAlphaLockMessage(int layerId, bool alphaLock)
+{
+	return Message::noinc(
+		DP_local_state_msg_layer_alpha_lock_new(layerId, alphaLock));
+}
+
 DP_Message *makeLocalMatchMessage(const Message &msg, bool disguiseAsPutImage)
 {
 	return DP_msg_local_match_make(msg.get(), disguiseAsPutImage);

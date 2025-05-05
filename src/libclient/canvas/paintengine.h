@@ -152,6 +152,7 @@ public:
 
 	void setLayerVisibility(int layerId, bool hidden);
 	void setLayerSketch(int layerId, uint16_t opacity, const QColor &tint);
+	void setLayerAlphaLock(int layerId, bool alphaLock);
 	void setTrackVisibility(int trackId, bool hidden);
 	void setTrackOnionSkin(int trackId, bool onionSkin);
 
@@ -169,6 +170,8 @@ public:
 	//! Set the active view frame (for frame and onionskin modes)
 	void setViewFrame(int frame);
 	int viewFrame() const;
+
+	bool isLayerAlphaLocked(int layerId) const;
 
 	void setOnionSkins(
 		bool wrap, const QVector<QPair<float, QColor>> &skinsBelow,

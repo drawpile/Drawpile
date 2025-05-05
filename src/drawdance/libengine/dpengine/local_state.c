@@ -40,11 +40,13 @@ static void apply_layer_states_recursive(DP_Vector *layer_states,
     for (int i = 0; i < count; ++i) {
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
         bool hidden = DP_layer_props_hidden(lp);
+        bool alpha_lock = DP_layer_props_alpha_lock(lp);
         uint16_t sketch_opacity = DP_layer_props_sketch_opacity(lp);
-        if (hidden || sketch_opacity != 0) {
+        if (hidden || alpha_lock || sketch_opacity != 0) {
             DP_LocalLayerState lls = {
                 DP_layer_props_id(lp),
                 hidden,
+                alpha_lock,
                 sketch_opacity,
                 sketch_opacity == 0 ? 0 : DP_layer_props_sketch_tint(lp),
             };
@@ -205,39 +207,6 @@ static bool is_layer_state(void *element, void *user)
     return (*(DP_LocalLayerState *)element).layer_id == *(int *)user;
 }
 
-static void set_layer_visibility(DP_LocalState *ls, int layer_id, bool hidden)
-{
-    DP_Vector *layer_states = &ls->layer_states;
-    int index = DP_vector_search_index(layer_states, sizeof(DP_LocalLayerState),
-                                       is_layer_state, &layer_id);
-    if (hidden) {
-        if (index == -1) {
-            DP_LocalLayerState lls = {layer_id, hidden, 0, 0};
-            DP_VECTOR_PUSH_TYPE(layer_states, DP_LocalLayerState, lls);
-            notify_view_invalidated(ls, false, layer_id);
-        }
-        else {
-            DP_LocalLayerState *lls =
-                &DP_VECTOR_AT_TYPE(layer_states, DP_LocalLayerState, index);
-            if (!lls->hidden) {
-                lls->hidden = true;
-                notify_view_invalidated(ls, false, layer_id);
-            }
-        }
-    }
-    else if (!hidden && index != -1) {
-        DP_LocalLayerState *lls =
-            &DP_VECTOR_AT_TYPE(layer_states, DP_LocalLayerState, index);
-        if (lls->sketch_opacity == 0) {
-            DP_VECTOR_REMOVE_TYPE(layer_states, DP_LocalLayerState, index);
-        }
-        else {
-            lls->hidden = false;
-        }
-        notify_view_invalidated(ls, false, layer_id);
-    }
-}
-
 static bool read_id_bool_message(DP_MsgLocalChange *mlc, const char *title,
                                  int *out_id, bool *out_value)
 {
@@ -260,7 +229,36 @@ static void handle_layer_visibility(DP_LocalState *ls, DP_MsgLocalChange *mlc)
     int layer_id;
     bool hidden;
     if (read_id_bool_message(mlc, "layer visibility", &layer_id, &hidden)) {
-        set_layer_visibility(ls, layer_id, hidden);
+        DP_Vector *layer_states = &ls->layer_states;
+        int index =
+            DP_vector_search_index(layer_states, sizeof(DP_LocalLayerState),
+                                   is_layer_state, &layer_id);
+        if (hidden) {
+            if (index == -1) {
+                DP_LocalLayerState lls = {layer_id, hidden, false, 0, 0};
+                DP_VECTOR_PUSH_TYPE(layer_states, DP_LocalLayerState, lls);
+                notify_view_invalidated(ls, false, layer_id);
+            }
+            else {
+                DP_LocalLayerState *lls =
+                    &DP_VECTOR_AT_TYPE(layer_states, DP_LocalLayerState, index);
+                if (!lls->hidden) {
+                    lls->hidden = true;
+                    notify_view_invalidated(ls, false, layer_id);
+                }
+            }
+        }
+        else if (!hidden && index != -1) {
+            DP_LocalLayerState *lls =
+                &DP_VECTOR_AT_TYPE(layer_states, DP_LocalLayerState, index);
+            if (!lls->alpha_lock && lls->sketch_opacity == 0) {
+                DP_VECTOR_REMOVE_TYPE(layer_states, DP_LocalLayerState, index);
+            }
+            else {
+                lls->hidden = false;
+            }
+            notify_view_invalidated(ls, false, layer_id);
+        }
     }
 }
 
@@ -535,7 +533,7 @@ static void set_layer_sketch(DP_LocalState *ls, int layer_id, uint16_t opacity,
     bool enabled = opacity != 0;
     if (enabled) {
         if (index == -1) {
-            DP_LocalLayerState lls = {layer_id, false, opacity, tint};
+            DP_LocalLayerState lls = {layer_id, false, false, opacity, tint};
             DP_VECTOR_PUSH_TYPE(layer_states, DP_LocalLayerState, lls);
             notify_view_invalidated(ls, false, layer_id);
         }
@@ -552,7 +550,7 @@ static void set_layer_sketch(DP_LocalState *ls, int layer_id, uint16_t opacity,
     else if (!enabled && index != -1) {
         DP_LocalLayerState *lls =
             &DP_VECTOR_AT_TYPE(layer_states, DP_LocalLayerState, index);
-        if (!lls->hidden) {
+        if (!lls->hidden && !lls->alpha_lock) {
             DP_VECTOR_REMOVE_TYPE(layer_states, DP_LocalLayerState, index);
         }
         else {
@@ -581,6 +579,44 @@ static void handle_layer_sketch(DP_LocalState *ls, DP_MsgLocalChange *mlc)
     uint32_t tint = read_uint32(body, &read);
     DP_ASSERT(read == required_size);
     set_layer_sketch(ls, layer_id, opacity, tint);
+}
+
+static void handle_layer_alpha_lock(DP_LocalState *ls, DP_MsgLocalChange *mlc)
+{
+    int layer_id;
+    bool alpha_lock;
+    if (read_id_bool_message(mlc, "layer alpha lock", &layer_id, &alpha_lock)) {
+        DP_Vector *layer_states = &ls->layer_states;
+        int index =
+            DP_vector_search_index(layer_states, sizeof(DP_LocalLayerState),
+                                   is_layer_state, &layer_id);
+        if (alpha_lock) {
+            if (index == -1) {
+                DP_LocalLayerState lls = {layer_id, false, alpha_lock, 0, 0};
+                DP_VECTOR_PUSH_TYPE(layer_states, DP_LocalLayerState, lls);
+                notify_view_invalidated(ls, false, layer_id);
+            }
+            else {
+                DP_LocalLayerState *lls =
+                    &DP_VECTOR_AT_TYPE(layer_states, DP_LocalLayerState, index);
+                if (!lls->alpha_lock) {
+                    lls->alpha_lock = true;
+                    notify_view_invalidated(ls, false, layer_id);
+                }
+            }
+        }
+        else if (!alpha_lock && index != -1) {
+            DP_LocalLayerState *lls =
+                &DP_VECTOR_AT_TYPE(layer_states, DP_LocalLayerState, index);
+            if (!lls->hidden && lls->sketch_opacity == 0) {
+                DP_VECTOR_REMOVE_TYPE(layer_states, DP_LocalLayerState, index);
+            }
+            else {
+                lls->alpha_lock = false;
+            }
+            notify_view_invalidated(ls, false, layer_id);
+        }
+    }
 }
 
 static void handle_internal(DP_LocalState *ls, DP_MsgInternal *mi)
@@ -624,6 +660,9 @@ static void handle_local_change(DP_LocalState *ls, DP_DrawContext *dc,
         break;
     case DP_MSG_LOCAL_CHANGE_TYPE_LAYER_SKETCH:
         handle_layer_sketch(ls, mlc);
+        break;
+    case DP_MSG_LOCAL_CHANGE_TYPE_LAYER_ALPHA_LOCK:
+        handle_layer_alpha_lock(ls, mlc);
         break;
     default:
         DP_warn("Unknown local change type %d", type);
@@ -892,4 +931,11 @@ DP_Message *DP_local_state_msg_layer_sketch_new(int layer_id, uint16_t opacity,
     DP_ASSERT(written == sizeof(body));
     return DP_msg_local_change_new(0, DP_MSG_LOCAL_CHANGE_TYPE_LAYER_SKETCH,
                                    set_body, written, body);
+}
+
+DP_Message *DP_local_state_msg_layer_alpha_lock_new(int layer_id,
+                                                    bool alpha_lock)
+{
+    return make_id_bool_message(DP_MSG_LOCAL_CHANGE_TYPE_LAYER_ALPHA_LOCK,
+                                layer_id, alpha_lock);
 }

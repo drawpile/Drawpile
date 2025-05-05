@@ -145,6 +145,7 @@ public:
 
 	//! Active layer id changed, most tools don't need to do anything here
 	virtual void setActiveLayer(int layerId) { Q_UNUSED(layerId); }
+	virtual void setLayerAlphaLock(bool alphaLock) { Q_UNUSED(alphaLock); }
 
 	//! Current foreground color changed
 	virtual void setForegroundColor(const QColor &color) { Q_UNUSED(color); }

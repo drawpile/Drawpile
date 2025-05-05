@@ -338,6 +338,13 @@ void PaintEngine::setLayerSketch(
 	receiveMessages(false, 1, &msg);
 }
 
+void PaintEngine::setLayerAlphaLock(int layerId, bool alphaLock)
+{
+	net::Message msg =
+		net::makeLocalChangeLayerAlphaLockMessage(layerId, alphaLock);
+	receiveMessages(false, 1, &msg);
+}
+
 void PaintEngine::setTrackVisibility(int trackId, bool hidden)
 {
 	net::Message msg =
@@ -418,6 +425,14 @@ void PaintEngine::setViewFrame(int frame)
 int PaintEngine::viewFrame() const
 {
 	return m_paintEngine.activeFrameIndex();
+}
+
+bool PaintEngine::isLayerAlphaLocked(int layerId) const
+{
+	drawdance::LayerProps layerProps =
+		viewCanvasState().searchLayerProps(layerId);
+	return !layerProps.isNull() && !layerProps.isGroup() &&
+		   layerProps.alphaLock();
 }
 
 int PaintEngine::pickLayer(int x, int y)

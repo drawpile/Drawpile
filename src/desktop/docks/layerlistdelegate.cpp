@@ -28,6 +28,7 @@ LayerListDelegate::LayerListDelegate(LayerList *dock)
 	, m_sketchIcon(QIcon::fromTheme("draw-freehand"))
 	, m_fillIcon(QIcon::fromTheme("tag"))
 	, m_forbiddenIcon(QIcon::fromTheme("cards-block"))
+	, m_alphaLockIcon(QIcon::fromTheme("drawpile_alpha_locked"))
 {
 }
 
@@ -97,22 +98,20 @@ void LayerListDelegate::paint(
 		textRect.setRight(checkRect.left());
 	}
 
-	if(index.data(canvas::LayerListModel::IsSketchModeRole).toBool()) {
-		glyphRect = QRect(
-			glyphRect.topRight() +
-				QPoint(0, opt.rect.height() / 2 - GLYPH_SIZE / 2),
-			QSize(GLYPH_SIZE, GLYPH_SIZE));
-		drawBackgroundFor(painter, opt, index, glyphRect, 0, -1);
-		drawGlyph(m_sketchIcon, glyphRect, painter);
-	}
-
-	if(index.data(canvas::LayerListModel::IsFillSourceRole).toBool()) {
-		glyphRect = QRect(
-			glyphRect.topRight() +
-				QPoint(0, opt.rect.height() / 2 - GLYPH_SIZE / 2),
-			QSize(GLYPH_SIZE, GLYPH_SIZE));
-		drawBackgroundFor(painter, opt, index, glyphRect, 0, -1);
-		drawGlyph(m_fillIcon, glyphRect, painter);
+	QPair<int, const QIcon *> glyphPairs[] = {
+		{int(canvas::LayerListModel::IsAlphaLockedRole), &m_alphaLockIcon},
+		{int(canvas::LayerListModel::IsSketchModeRole), &m_sketchIcon},
+		{int(canvas::LayerListModel::IsFillSourceRole), &m_fillIcon},
+	};
+	for(const QPair<int, const QIcon *> &p : glyphPairs) {
+		if(index.data(p.first).toBool()) {
+			glyphRect = QRect(
+				glyphRect.topRight() +
+					QPoint(0, opt.rect.height() / 2 - GLYPH_SIZE / 2),
+				QSize(GLYPH_SIZE, GLYPH_SIZE));
+			drawBackgroundFor(painter, opt, index, glyphRect, 0, -1);
+			drawGlyph(*p.second, glyphRect, painter);
+		}
 	}
 
 	textRect.setLeft(glyphRect.right());

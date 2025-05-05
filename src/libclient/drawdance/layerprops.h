@@ -37,10 +37,11 @@ public:
     bool censored() const;
     bool isolated() const;
     bool clip() const;
+    bool alphaLock() const;
     uint16_t sketchOpacity() const;
     uint32_t sketchTint() const;
 
-    bool isGroup(drawdance::LayerPropsList *outChildren);
+    bool isGroup(drawdance::LayerPropsList *outChildren = nullptr);
 
 private:
     explicit LayerProps(DP_LayerProps *lp);

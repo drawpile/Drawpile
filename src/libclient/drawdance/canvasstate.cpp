@@ -307,6 +307,17 @@ LayerSearchResult CanvasState::searchLayer(int layerId, bool showCensored) const
 	}
 }
 
+LayerProps CanvasState::searchLayerProps(int layerId) const
+{
+	DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(m_data);
+	DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layerId);
+	if(lre) {
+		return LayerProps::inc(DP_layer_routes_entry_props(lre, m_data));
+	} else {
+		return LayerProps::null();
+	}
+}
+
 bool CanvasState::selectionExists(unsigned int contextId, int selectionId) const
 {
 	return DP_canvas_state_selection_search_noinc(

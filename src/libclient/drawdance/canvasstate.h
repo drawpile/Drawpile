@@ -97,6 +97,7 @@ public:
 		bool below) const;
 
 	LayerSearchResult searchLayer(int layerId, bool showCensored) const;
+	LayerProps searchLayerProps(int layerId) const;
 
 	bool selectionExists(unsigned int contextId, int selectionId) const;
 

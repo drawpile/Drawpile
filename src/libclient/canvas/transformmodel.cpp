@@ -7,6 +7,7 @@ extern "C" {
 #include <dpmsg/ids.h>
 }
 #include "libclient/canvas/acl.h"
+#include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
@@ -392,13 +393,15 @@ void TransformModel::applyMoveRect(
 			applyCut(msgs, contextId, sourceId, srcX, srcY, srcW, srcH, mask);
 			applyOpacityToImage(img);
 			net::makePutImageZstdMessages(
-				msgs, contextId, layerId, m_blendMode, dstTopLeftX, dstTopLeftY,
-				img);
+				msgs, contextId, layerId,
+				uint8_t(getEffectiveBlendModeForLayer(layerId)), dstTopLeftX,
+				dstTopLeftY, img);
 		}
 	} else {
 		msgs.append(net::makeMoveRectZstdMessage(
 			contextId, layerId, sourceId, srcX, srcY, dstTopLeftX, dstTopLeftY,
-			srcW, srcH, uint8_t(m_blendMode), getUint8Opacity(), mask));
+			srcW, srcH, uint8_t(getEffectiveBlendModeForLayer(layerId)),
+			getUint8Opacity(), mask));
 	}
 }
 
@@ -424,16 +427,18 @@ void TransformModel::applyTransformRegion(
 			applyCut(msgs, contextId, sourceId, srcX, srcY, srcW, srcH, mask);
 			applyOpacityToImage(img);
 			net::makePutImageZstdMessages(
-				msgs, contextId, layerId, m_blendMode, offset.x(), offset.y(),
-				img);
+				msgs, contextId, layerId,
+				uint8_t(getEffectiveBlendModeForLayer(layerId)), offset.x(),
+				offset.y(), img);
 		}
 	} else {
 		msgs.append(net::makeTransformRegionZstdMessage(
 			contextId, layerId, sourceId, srcX, srcY, srcW, srcH, dstTopLeftX,
 			dstTopLeftY, dstTopRightX, dstTopRightY, dstBottomRightX,
 			dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
-			getEffectiveInterpolation(interpolation), uint8_t(m_blendMode),
-			getUint8Opacity(), mask));
+			getEffectiveInterpolation(interpolation),
+			uint8_t(getEffectiveBlendModeForLayer(layerId)), getUint8Opacity(),
+			mask));
 	}
 }
 
@@ -535,8 +540,8 @@ QVector<net::Message> TransformModel::applyFloating(
 	}
 
 	net::makePutImageZstdMessages(
-		msgs, contextId, layerId, m_blendMode, offset.x(), offset.y(),
-		transformedImage);
+		msgs, contextId, layerId, getEffectiveBlendModeForLayer(layerId),
+		offset.x(), offset.y(), transformedImage);
 
 	return msgs;
 }
@@ -782,6 +787,16 @@ bool TransformModel::isRightAngleRotationOrReflection(const QTransform &t) const
 		}
 	}
 	return false;
+}
+
+int TransformModel::getEffectiveBlendModeForLayer(int layerId) const
+{
+	if(isAffectedByLayerAlphaLock() &&
+	   m_canvas->paintEngine()->isLayerAlphaLocked(layerId)) {
+		return blendmode::toAlphaPreserving(m_blendMode);
+	} else {
+		return m_blendMode;
+	}
 }
 
 bool TransformModel::isQuadValid(const TransformQuad &quad)

@@ -167,6 +167,8 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 		return item.clip;
 	case IsAtBottomRole:
 		return item.relIndex == rowCount(index.parent()) - 1;
+	case IsAlphaLockedRole:
+		return !item.group && item.alphaLock;
 	}
 
 	return QVariant();
@@ -456,6 +458,7 @@ static LayerListItem makeItem(
 		revealedLayers.contains(id),
 		lp.isolated(),
 		lp.clip(),
+		lp.alphaLock(),
 		isGroup,
 		isGroup ? children.count() : 0,
 		relIndex,
@@ -578,6 +581,14 @@ static int getAutoselect(
 void LayerListModel::setLayers(
 	const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers)
 {
+	QSet<int> alphaLockedLayers;
+	for(const LayerListItem &item : m_items) {
+		bool alphaLock = !item.group && item.alphaLock;
+		if(alphaLock) {
+			alphaLockedLayers.insert(item.id);
+		}
+	}
+
 	QVector<LayerListItem> newItems;
 	QHash<int, CheckState> checkStates;
 	int index = 0;
@@ -612,6 +623,13 @@ void LayerListModel::setLayers(
 	}
 	if(autoselect >= 0) {
 		emit autoSelectRequest(autoselect);
+	}
+
+	for(const LayerListItem &item : m_items) {
+		bool alphaLock = !item.group && item.alphaLock;
+		if(alphaLock != alphaLockedLayers.contains(item.id)) {
+			emit layerAlphaLockChanged(item.id, alphaLock);
+		}
 	}
 }
 
@@ -1231,8 +1249,8 @@ LayerListItem LayerListItem::null()
 	return LayerListItem{
 		0,	   QString(), QColor(), 1.0f,  DP_BLEND_MODE_NORMAL,
 		0.0f,  QColor(),  false,	false, false,
-		false, false,	  false,	0,	   0,
-		0,	   0,
+		false, false,	  false,	false, 0,
+		0,	   0,		  0,
 	};
 }
 

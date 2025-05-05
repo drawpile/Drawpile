@@ -61,6 +61,9 @@ struct LayerListItem {
 	//! Does this layer clip to the one below?
 	bool clip;
 
+	//! Is the layer alpha-locked?
+	bool alphaLock;
+
 	//! Is this a layer group?
 	bool group;
 
@@ -127,6 +130,7 @@ public:
 		ColorRole,
 		IsClipRole,
 		IsAtBottomRole,
+		IsAlphaLockedRole,
 	};
 
 	enum CheckState {
@@ -261,6 +265,7 @@ signals:
 	void layersVisibleInFrameChanged();
 	void layerCheckStateToggled();
 	void fillSourceSet(int layerId);
+	void layerAlphaLockChanged(int layerId, bool alphaLock);
 
 private slots:
 	void updateCheckedLayerAcl(int layerId);

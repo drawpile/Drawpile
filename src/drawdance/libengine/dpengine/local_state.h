@@ -17,6 +17,7 @@ typedef struct DP_LocalState DP_LocalState;
 typedef struct DP_LocalLayerState {
     int layer_id;
     bool hidden;
+    bool alpha_lock;
     uint16_t sketch_opacity;
     uint32_t sketch_tint;
 } DP_LocalLayerState;
@@ -90,6 +91,9 @@ DP_Message *DP_local_state_msg_track_onion_skin_new(int track_id,
 
 DP_Message *DP_local_state_msg_layer_sketch_new(int layer_id, uint16_t opacity,
                                                 uint32_t tint);
+
+DP_Message *DP_local_state_msg_layer_alpha_lock_new(int layer_id,
+                                                    bool alpha_lock);
 
 
 #endif

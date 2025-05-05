@@ -37,6 +37,7 @@ struct DP_LayerProps {
     const bool censored;
     const bool isolated;
     const bool clip;
+    const bool alpha_lock;
     const uint16_t opacity;
     const uint16_t sketch_opacity;
     const uint32_t sketch_tint;
@@ -55,6 +56,7 @@ struct DP_TransientLayerProps {
     bool censored;
     bool isolated;
     bool clip;
+    bool alpha_lock;
     uint16_t opacity;
     uint16_t sketch_opacity;
     uint32_t sketch_tint;
@@ -76,6 +78,7 @@ struct DP_LayerProps {
     bool censored;
     bool isolated;
     bool clip;
+    bool alpha_lock;
     uint16_t opacity;
     uint16_t sketch_opacity;
     uint32_t sketch_tint;
@@ -214,6 +217,13 @@ bool DP_layer_props_clip(DP_LayerProps *lp)
     return lp->clip;
 }
 
+bool DP_layer_props_alpha_lock(DP_LayerProps *lp)
+{
+    DP_ASSERT(lp);
+    DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
+    return lp->alpha_lock;
+}
+
 bool DP_layer_props_visible(DP_LayerProps *lp)
 {
     DP_ASSERT(lp);
@@ -258,6 +268,7 @@ static DP_TransientLayerProps *alloc_transient_layer_props(DP_LayerProps *lp)
         lp->censored,
         lp->isolated,
         lp->clip,
+        lp->alpha_lock,
         lp->opacity,
         lp->sketch_opacity,
         lp->sketch_tint,
@@ -321,6 +332,7 @@ DP_transient_layer_props_new_init_with_transient_children_noinc(
         false,
         false,
         tlpl_or_null != NULL,
+        false,
         false,
         DP_BIT15,
         0,
@@ -442,6 +454,14 @@ bool DP_transient_layer_props_clip(DP_TransientLayerProps *tlp)
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
     DP_ASSERT(tlp->transient);
     return DP_layer_props_clip((DP_LayerProps *)tlp);
+}
+
+bool DP_transient_layer_props_alpha_lock(DP_TransientLayerProps *tlp)
+{
+    DP_ASSERT(tlp);
+    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
+    DP_ASSERT(tlp->transient);
+    return DP_layer_props_alpha_lock((DP_LayerProps *)tlp);
 }
 
 bool DP_transient_layer_props_visible(DP_TransientLayerProps *tlp)
@@ -568,6 +588,15 @@ void DP_transient_layer_props_clip_set(DP_TransientLayerProps *tlp, bool clip)
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
     DP_ASSERT(tlp->transient);
     tlp->clip = clip;
+}
+
+void DP_transient_layer_props_alpha_lock_set(DP_TransientLayerProps *tlp,
+                                             bool alpha_lock)
+{
+    DP_ASSERT(tlp);
+    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
+    DP_ASSERT(tlp->transient);
+    tlp->alpha_lock = alpha_lock;
 }
 
 void DP_transient_layer_props_title_set(DP_TransientLayerProps *tlp,

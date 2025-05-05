@@ -91,6 +91,7 @@ private:
 	QIcon m_sketchIcon;
 	QIcon m_fillIcon;
 	QIcon m_forbiddenIcon;
+	QIcon m_alphaLockIcon;
 	int m_toggledSelectionId = 0;
 	int m_toggledVisibilityId = 0;
 	bool m_targetSelection = false;

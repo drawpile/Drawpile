@@ -21,6 +21,7 @@ public:
 	bool isActive() const { return m_active; }
 	bool isMovedFromCanvas() const { return m_active && !m_pasted; }
 	bool isStampable() const { return m_pasted || m_layerIds.size() == 1; }
+	bool isAffectedByLayerAlphaLock() const { return m_pasted && !m_stamped; }
 	bool isDstQuadValid() const { return m_dstQuadValid; }
 	bool isJustApplied() const { return m_justApplied; }
 	bool isPreviewAccurate() const;
@@ -122,17 +123,19 @@ private:
 	QPolygonF srcPolygon() const;
 	bool isRightAngleRotationOrReflection(const QTransform &t) const;
 
+	uint8_t getUint8Opacity() const
+	{
+		return qBound(0, qRound(m_opacity * 255.0), 255);
+	}
+
+	int getEffectiveBlendModeForLayer(int layerId) const;
+
 	static bool isQuadValid(const TransformQuad &quad);
 
 	static int
 	crossProductSign(const QPointF &a, const QPointF &b, const QPointF &c);
 
 	static bool isVisibleInViewModeCallback(void *user, DP_LayerProps *lp);
-
-	uint8_t getUint8Opacity() const
-	{
-		return qBound(0, qRound(m_opacity * 255.0), 255);
-	}
 
 	CanvasModel *m_canvas;
 	bool m_active = false;
