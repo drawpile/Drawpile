@@ -90,6 +90,81 @@ DP_SaveImageType DP_save_image_type_guess(const char *path)
     }
 }
 
+const char *DP_save_image_type_name(DP_SaveImageType type)
+{
+    switch (type) {
+    case DP_SAVE_IMAGE_ORA:
+        return "ORA";
+    case DP_SAVE_IMAGE_PNG:
+        return "PNG";
+    case DP_SAVE_IMAGE_PSD:
+        return "PSD";
+    case DP_SAVE_IMAGE_JPEG:
+        return "JPEG";
+    case DP_SAVE_IMAGE_WEBP:
+        return "WEBP";
+    case DP_SAVE_IMAGE_UNKNOWN:
+        break;
+    }
+    return "UNKNOWN";
+}
+
+bool DP_save_check_type_dimensions(DP_CanvasState *cs, DP_SaveImageType type)
+{
+    return DP_save_check_dimensions(cs, DP_save_image_type_max_dimension(type));
+}
+
+int DP_save_image_type_max_dimension(DP_SaveImageType type)
+{
+    switch (type) {
+    case DP_SAVE_IMAGE_ORA:
+    case DP_SAVE_IMAGE_PNG:
+        return 2147483647;
+    case DP_SAVE_IMAGE_PSD:
+        return 30000;
+    case DP_SAVE_IMAGE_JPEG:
+        return 65535;
+    case DP_SAVE_IMAGE_WEBP:
+        return 16384;
+    case DP_SAVE_IMAGE_UNKNOWN:
+        break;
+    }
+    DP_warn("Unknown save image type %d", (int)type);
+    return INT_MAX;
+}
+
+bool DP_save_check_width_height(int width, int height, int max_dimension)
+{
+    bool width_in_bounds = width > 0 && width <= max_dimension;
+    bool height_in_bounds = height > 0 && height <= max_dimension;
+    if (width_in_bounds) {
+        if (height_in_bounds) {
+            return true;
+        }
+        else {
+            DP_error_set("Canvas height %d out of bounds [1, %d]", height,
+                         max_dimension);
+            return false;
+        }
+    }
+    else if (height_in_bounds) {
+        DP_error_set("Canvas width %d out of bounds [1, %d]", width,
+                     max_dimension);
+        return false;
+    }
+    else {
+        DP_error_set("Canvas width %d and height %d out of bounds [1, %d]",
+                     width, height, max_dimension);
+        return false;
+    }
+}
+
+bool DP_save_check_dimensions(DP_CanvasState *cs, int max_dimension)
+{
+    int width = cs ? DP_canvas_state_width(cs) : 0;
+    int height = cs ? DP_canvas_state_height(cs) : 0;
+    return DP_save_check_width_height(width, height, max_dimension);
+}
 
 bool DP_save_image_type_is_flat_image(DP_SaveImageType type)
 {
@@ -765,6 +840,10 @@ static bool ora_store_xml(DP_SaveOraContext *c, DP_CanvasState *cs)
 static DP_SaveResult save_ora(DP_CanvasState *cs, const char *path,
                               DP_DrawContext *dc)
 {
+    if (!DP_save_check_type_dimensions(cs, DP_SAVE_IMAGE_ORA)) {
+        return false;
+    }
+
     DP_ZipWriter *zw = DP_zip_writer_new(path);
     if (!zw) {
         DP_warn("Save '%s': %s", path, DP_error());
@@ -882,11 +961,15 @@ static void bake_annotations(DP_AnnotationList *al, DP_DrawContext *dc,
 
 static DP_SaveResult
 save_flat_image(DP_CanvasState *cs, DP_DrawContext *dc, DP_Rect *crop,
-                const char *path,
+                DP_SaveImageType type, const char *path,
                 DP_SaveResult (*save_fn)(DP_Image *, DP_Output *),
                 const DP_ViewModeFilter *vmf_or_null,
                 DP_SaveBakeAnnotationFn bake_annotation, void *user)
 {
+    if (!DP_save_check_type_dimensions(cs, type)) {
+        return DP_SAVE_RESULT_BAD_DIMENSIONS;
+    }
+
     DP_Image *img = DP_canvas_state_to_flat_image(
         cs, DP_FLAT_IMAGE_RENDER_FLAGS, crop, vmf_or_null);
     if (!img) {
@@ -922,13 +1005,13 @@ static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
     case DP_SAVE_IMAGE_ORA:
         return save_ora(cs, path, dc);
     case DP_SAVE_IMAGE_PNG:
-        return save_flat_image(cs, dc, NULL, path, save_png, vmf_or_null,
+        return save_flat_image(cs, dc, NULL, type, path, save_png, vmf_or_null,
                                bake_annotation, user);
     case DP_SAVE_IMAGE_JPEG:
-        return save_flat_image(cs, dc, NULL, path, save_jpeg, vmf_or_null,
+        return save_flat_image(cs, dc, NULL, type, path, save_jpeg, vmf_or_null,
                                bake_annotation, user);
     case DP_SAVE_IMAGE_WEBP:
-        return save_flat_image(cs, dc, NULL, path, save_webp, vmf_or_null,
+        return save_flat_image(cs, dc, NULL, type, path, save_webp, vmf_or_null,
                                bake_annotation, user);
     case DP_SAVE_IMAGE_PSD:
         return DP_save_psd(cs, path, dc);

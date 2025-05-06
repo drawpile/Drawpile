@@ -15,18 +15,6 @@ extern "C" {
 
 namespace utils {
 
-//! Check if image dimensions are not too big. Returns true if size is OK
-bool checkImageSize(const QSize &size)
-{
-	// The protocol limits width and height to 2^29 (PenMove, 2^32 for others)
-	// However, QPixmap can be at most 32767 pixels wide/tall
-	static const int MAX_SIZE = 32767;
-
-	return
-		size.width() <= MAX_SIZE &&
-		size.height() <= MAX_SIZE;
-}
-
 using ImageFormat = QPair<QString,QVector<QString>>;
 
 static void appendFormats(QVector<ImageFormat> &formats, const char *title, const char **extensions)

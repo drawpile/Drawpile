@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "save_psd.h"
+#include "save.h"
 #include "utf16be.h"
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
@@ -837,7 +838,7 @@ static bool write_psd(DP_CanvasState *cs, DP_DrawContext *dc, DP_Output *out)
                // Number of channels, we always use RGBA, so it's 4.
                DP_OUTPUT_UINT16(4),
                // Dimensions, height first for some reason. PSD supports at most
-               // 30,000 pixels in either direction, more than the uint16 we do.
+               // 30,000 pixels in either direction.
                DP_OUTPUT_UINT32(DP_int_to_uint32(DP_canvas_state_height(cs))),
                DP_OUTPUT_UINT32(DP_int_to_uint32(DP_canvas_state_width(cs))),
                // Channel depth, we use 8 bit channels.
@@ -857,6 +858,10 @@ static bool write_psd(DP_CanvasState *cs, DP_DrawContext *dc, DP_Output *out)
 DP_SaveResult DP_save_psd(DP_CanvasState *cs, const char *path,
                           DP_DrawContext *dc)
 {
+    if (!DP_save_check_type_dimensions(cs, DP_SAVE_IMAGE_PSD)) {
+        return DP_SAVE_RESULT_BAD_DIMENSIONS;
+    }
+
     DP_Output *out = DP_file_output_new_from_path(path);
     if (out) {
         bool write_ok = write_psd(cs, dc, out);

@@ -420,6 +420,16 @@ void DrawpileApp::initBrushPresets()
 	m_brushPresets = new brushes::BrushPresetTagModel(this);
 }
 
+QSize DrawpileApp::safeNewCanvasSize() const
+{
+	// We don't load extremely small or extremely large sizes by default, since
+	// they have a high chance of causing confusion, being slow or even crashing
+	// weaker devices.
+	QSize size = m_settings.newCanvasSize();
+	return QSize(
+		qBound(400, size.width(), 10000), qBound(400, size.height(), 10000));
+}
+
 QPair<QSize, QSizeF> DrawpileApp::screenResolution()
 {
 	QScreen *screen = primaryScreen();
@@ -561,11 +571,14 @@ void DrawpileApp::joinUrl(
 void DrawpileApp::openBlank(
 	int width, int height, QColor backgroundColor, bool restoreWindowPosition)
 {
-	if(width <= 0) {
-		width = m_settings.newCanvasSize().width();
-	}
-	if(height <= 0) {
-		height = m_settings.newCanvasSize().height();
+	if(width <= 0 || height <= 0) {
+		QSize safeSize = safeNewCanvasSize();
+		if(width <= 0) {
+			width = safeSize.width();
+		}
+		if(height <= 0) {
+			height = safeSize.height();
+		}
 	}
 	if(!backgroundColor.isValid()) {
 		backgroundColor = m_settings.newCanvasBackColor();
@@ -596,8 +609,7 @@ dialogs::StartDialog::Entry getStartDialogEntry(const QString &page)
 void DrawpileApp::openStart(const QString &page, bool restoreWindowPosition)
 {
 	MainWindow *win = new MainWindow(restoreWindowPosition);
-	win->newDocument(
-		m_settings.newCanvasSize(), m_settings.newCanvasBackColor());
+	win->newDocument(safeNewCanvasSize(), m_settings.newCanvasBackColor());
 	// Importing an animation is not actually a start dialog page, it's just
 	// here as an internal option to let us start a new process if the user
 	// requests an animation import on a dirty canvas.

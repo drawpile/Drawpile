@@ -70,6 +70,11 @@ DP_CanvasState *DP_load_animation_frames(
         if (layer_count == 0) {
             width = DP_image_width(img);
             height = DP_image_height(img);
+            if (!DP_canvas_state_dimensions_in_bounds(width, height)) {
+                DP_error_set("Canvas dimensions out of bounds");
+                assign_load_result(out_result, DP_LOAD_RESULT_BAD_DIMENSIONS);
+                return NULL;
+            }
             child_tll = DP_transient_layer_list_new_init(path_count);
             child_tlpl = DP_transient_layer_props_list_new_init(path_count);
             tt = DP_transient_track_new_init(path_count);

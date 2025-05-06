@@ -27,6 +27,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Allow alpha locking layers. This basically works the same as enabling alpha lock on the tool you're using, it's just there for people that are used to doing it this way from other programs.
  * Feature: Allow locking layer properties to avoid accidentally changing e.g. the blend mode.
  * Feature: Allow locking layer positions to avoid accidentally moving them. Thanks Athena for suggesting.
+ * Feature: Increase canvas size limit to up to 1 million pixels as long as the total canvas size doesn't exceed 1073676289 pixels (32767 squared). Previously each dimension was limited to 32767 instead. Thanks johannesCmayer and yvantot for suggesting.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

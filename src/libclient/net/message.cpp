@@ -411,7 +411,7 @@ Message makeSelectionClearMessage(uint8_t contextId, uint8_t selectionId)
 
 Message makeSelectionPutMessage(
 	uint8_t contextId, uint8_t selectionId, uint8_t op, int32_t x, int32_t y,
-	uint16_t w, uint16_t h, const QByteArray &compressedMask)
+	uint32_t w, uint32_t h, const QByteArray &compressedMask)
 {
 	return Message::noinc(DP_msg_selection_put_new(
 		contextId, selectionId, op, x, y, w, h, &Message::setUchars,

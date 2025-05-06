@@ -2723,8 +2723,8 @@ DP_msg_key_frame_delete_move_frame_index(const DP_MsgKeyFrameDelete *mkfd);
  * SyncSelectionTile messages.
  */
 
-#define DP_MSG_SELECTION_PUT_STATIC_LENGTH 14
-#define DP_MSG_SELECTION_PUT_MATCH_LENGTH  16
+#define DP_MSG_SELECTION_PUT_STATIC_LENGTH 18
+#define DP_MSG_SELECTION_PUT_MATCH_LENGTH  20
 
 #define DP_MSG_SELECTION_PUT_OP_REPLACE    0
 #define DP_MSG_SELECTION_PUT_OP_UNITE      1
@@ -2741,14 +2741,14 @@ DP_msg_key_frame_delete_move_frame_index(const DP_MsgKeyFrameDelete *mkfd);
 const char *DP_msg_selection_put_op_variant_name(unsigned int value);
 
 #define DP_MSG_SELECTION_PUT_MASK_MIN_SIZE 0
-#define DP_MSG_SELECTION_PUT_MASK_MAX_SIZE 65521
+#define DP_MSG_SELECTION_PUT_MASK_MAX_SIZE 65517
 
 typedef struct DP_MsgSelectionPut DP_MsgSelectionPut;
 
 DP_Message *
 DP_msg_selection_put_new(unsigned int context_id, uint8_t selection_id,
-                         uint8_t op, int32_t x, int32_t y, uint16_t w,
-                         uint16_t h,
+                         uint8_t op, int32_t x, int32_t y, uint32_t w,
+                         uint32_t h,
                          void (*set_mask)(size_t, unsigned char *, void *),
                          size_t mask_size, void *mask_user);
 
@@ -2775,9 +2775,9 @@ int32_t DP_msg_selection_put_x(const DP_MsgSelectionPut *msp);
 
 int32_t DP_msg_selection_put_y(const DP_MsgSelectionPut *msp);
 
-uint16_t DP_msg_selection_put_w(const DP_MsgSelectionPut *msp);
+uint32_t DP_msg_selection_put_w(const DP_MsgSelectionPut *msp);
 
-uint16_t DP_msg_selection_put_h(const DP_MsgSelectionPut *msp);
+uint32_t DP_msg_selection_put_h(const DP_MsgSelectionPut *msp);
 
 const unsigned char *DP_msg_selection_put_mask(const DP_MsgSelectionPut *msp,
                                                size_t *out_size);

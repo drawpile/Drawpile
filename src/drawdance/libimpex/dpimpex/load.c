@@ -134,6 +134,7 @@ typedef struct DP_ReadOraContext {
     DP_ZipReader *zr;
     DP_Worker *worker;
     DP_ReadOraExpect expect;
+    DP_LoadResult error;
     DP_TransientCanvasState *tcs;
     bool want_layers;
     bool want_annotations;
@@ -327,6 +328,12 @@ static bool ora_handle_image(DP_ReadOraContext *c, DP_XmlElement *element)
     int height;
     if (!ora_read_int_attribute(element, NULL, "h", 1, INT16_MAX, &height)) {
         DP_error_set("Invalid height");
+        return false;
+    }
+
+    if (!DP_canvas_state_dimensions_in_bounds(width, height)) {
+        DP_error_set("Canvas dimensions out of bounds");
+        c->error = DP_LOAD_RESULT_BAD_DIMENSIONS;
         return false;
     }
 
@@ -1296,6 +1303,7 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
         zr,
         NULL,
         DP_READ_ORA_EXPECT_IMAGE,
+        DP_LOAD_RESULT_SUCCESS,
         NULL,
         true,
         true,
@@ -1330,7 +1338,9 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
         return cs;
     }
     else {
-        assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
+        assign_load_result(out_result, c.error == DP_LOAD_RESULT_SUCCESS
+                                           ? DP_LOAD_RESULT_READ_ERROR
+                                           : c.error);
         return NULL;
     }
 }
@@ -1391,6 +1401,12 @@ static DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
 
     int width = DP_image_width(img);
     int height = DP_image_height(img);
+    if (!DP_canvas_state_dimensions_in_bounds(width, height)) {
+        DP_error_set("Canvas dimensions out of bounds");
+        assign_load_result(out_result, DP_LOAD_RESULT_BAD_DIMENSIONS);
+        return NULL;
+    }
+
     DP_transient_canvas_state_width_set(tcs, width);
     DP_transient_canvas_state_height_set(tcs, height);
 

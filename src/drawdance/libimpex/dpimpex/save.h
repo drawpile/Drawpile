@@ -25,6 +25,15 @@ typedef bool (*DP_SaveBakeAnnotationFn)(void *user, DP_Annotation *a,
 
 DP_SaveImageType DP_save_image_type_guess(const char *path);
 
+const char *DP_save_image_type_name(DP_SaveImageType type);
+
+int DP_save_image_type_max_dimension(DP_SaveImageType type);
+
+// Calls DP_error_set with an appropriate error message if out of bounds.
+bool DP_save_check_width_height(int width, int height, int max_dimension);
+bool DP_save_check_dimensions(DP_CanvasState *cs, int max_dimension);
+bool DP_save_check_type_dimensions(DP_CanvasState *cs, DP_SaveImageType type);
+
 bool DP_save_image_type_is_flat_image(DP_SaveImageType type);
 
 DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc,

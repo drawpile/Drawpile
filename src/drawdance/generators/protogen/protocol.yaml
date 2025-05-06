@@ -1010,8 +1010,8 @@ SelectionPut:
               - Complement
         - x i32
         - y i32
-        - w u16
-        - h u16
+        - w u32
+        - h u32
         - mask bytes
 
 SelectionClear:
