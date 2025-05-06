@@ -176,15 +176,18 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags LayerListModel::flags(const QModelIndex &index) const
 {
+	Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 	if(index.isValid()) {
-		bool isGroup = m_items.at(index.internalId()).group;
-		return Qt::ItemIsEnabled | Qt::ItemIsDragEnabled |
-			   Qt::ItemIsSelectable | Qt::ItemIsEditable |
-			   (isGroup ? Qt::ItemIsDropEnabled : Qt::NoItemFlags);
+		const LayerListItem &item = m_items[index.internalId()];
+		flags.setFlag(Qt::ItemIsSelectable);
+		flags.setFlag(Qt::ItemIsEditable);
+		flags.setFlag(Qt::ItemIsDragEnabled, isLayerMovable(item.id));
+		flags.setFlag(Qt::ItemIsDropEnabled, item.group);
 	} else {
-		return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled |
-			   Qt::ItemIsDropEnabled | Qt::ItemIsEnabled;
+		flags.setFlag(Qt::ItemIsDragEnabled);
+		flags.setFlag(Qt::ItemIsDropEnabled);
 	}
+	return flags;
 }
 
 Qt::DropActions LayerListModel::supportedDropActions() const
@@ -1108,6 +1111,11 @@ bool LayerListModel::isLayerOrClippingGroupHidden(
 	} else {
 		return false;
 	}
+}
+
+bool LayerListModel::isLayerMovable(int layerId) const
+{
+	return !m_aclstate || !m_aclstate->isLayerMoveLocked(layerId);
 }
 
 QStringList LayerMimeData::formats() const

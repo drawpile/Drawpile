@@ -39,7 +39,6 @@ extern "C" {
 
 namespace docks {
 
-
 namespace {
 class LayerListTreeView : public QTreeView {
 public:
@@ -276,11 +275,20 @@ LayerList::LayerList(QWidget *parent)
 	m_lockButton->setMenu(m_aclmenu);
 
 	connect(
-		m_aclmenu, &LayerAclMenu::layerLockChange, this,
-		&LayerList::changeLayersLock);
-	connect(
 		m_aclmenu, &LayerAclMenu::layerAlphaLockChange, this,
 		&LayerList::changeLayersAlphaLock);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerContentLockChange, this,
+		&LayerList::changeLayersContentLock);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerPropsLockChange, this,
+		&LayerList::changeLayersPropsLock);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerMoveLockChange, this,
+		&LayerList::changeLayersMoveLock);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerLockAllChange, this,
+		&LayerList::changeLayersLockAll);
 	connect(
 		m_aclmenu, &LayerAclMenu::layerAccessTierChange, this,
 		&LayerList::changeLayersAccessTier);
@@ -610,10 +618,13 @@ void LayerList::updateLockedControls()
 
 	// Rest of the controls need a selection to work.
 	bool haveCurrent = m_currentId != 0;
-	bool canEditCurrent =
+	bool isCurrentPropsLocked =
+		haveCurrent && acls && acls->isLayerPropsLocked(m_currentId);
+	bool canAclEditCurrent =
 		!locked && haveCurrent &&
 		(canEdit || (ownLayers &&
 					 DP_layer_id_owner(m_currentId, m_canvas->localUserId())));
+	bool canEditCurrent = !isCurrentPropsLocked && canAclEditCurrent;
 	int selectedCount = m_selectedIds.size();
 	bool haveAnySelected = selectedCount != 0;
 	bool haveMultipleSelected = selectedCount > 1;
@@ -621,8 +632,8 @@ void LayerList::updateLockedControls()
 	bool canEditSelected = !locked && haveAnySelected &&
 						   (canEdit || (ownLayers && ownsAll(topLevelIds)));
 
-	m_lockButton->setEnabled(
-		canEditCurrent && haveAnySelected && canEditCurrent);
+	m_aclmenu->setCanEdit(canAclEditCurrent);
+	m_lockButton->setEnabled(haveAnySelected);
 	m_alphaPreserveButton->setEnabled(
 		canEditCurrent && haveAnySelected && canEditSelected &&
 		m_actions.layerAlphaPreserve &&
@@ -744,28 +755,6 @@ QString LayerList::layerCreatorName(int layerId) const
 	return m_canvas->userlist()->getUsername(DP_layer_id_context_id(layerId));
 }
 
-void LayerList::changeLayersLock(bool locked)
-{
-	uint8_t contextId = m_canvas->localUserId();
-	uint8_t lockedFlag = locked ? DP_ACL_ALL_LOCKED_BIT : 0;
-	canvas::AclState *aclState = m_canvas->aclState();
-	net::MessageList msgs;
-	msgs.reserve(m_selectedIds.size());
-
-	for(int layerId : m_selectedIds) {
-		canvas::AclState::Layer acl = aclState->layerAcl(layerId);
-		if(acl.locked != locked) {
-			msgs.append(net::makeLayerAclMessage(
-				contextId, layerId, lockedFlag | uint8_t(acl.tier),
-				acl.exclusive));
-		}
-	}
-
-	if(!msgs.isEmpty()) {
-		emit layerCommands(msgs.size(), msgs.constData());
-	}
-}
-
 void LayerList::changeLayersAlphaLock(bool alphaLock)
 {
 	QItemSelectionModel *selectionModel = m_view->selectionModel();
@@ -781,30 +770,89 @@ void LayerList::changeLayersAlphaLock(bool alphaLock)
 	}
 }
 
+void LayerList::changeLayersContentLock(bool contentLock)
+{
+	changeLayersAclWith([contentLock](canvas::AclState::Layer &l) {
+		if(l.contentLocked != contentLock) {
+			l.contentLocked = contentLock;
+			return true;
+		} else {
+			return false;
+		}
+	});
+}
+
+void LayerList::changeLayersPropsLock(bool propsLock)
+{
+	changeLayersAclWith([propsLock](canvas::AclState::Layer &l) {
+		if(l.propsLocked != propsLock) {
+			l.propsLocked = propsLock;
+			return true;
+		} else {
+			return false;
+		}
+	});
+}
+
+void LayerList::changeLayersMoveLock(bool moveLock)
+{
+	changeLayersAclWith([moveLock](canvas::AclState::Layer &l) {
+		if(l.moveLocked != moveLock) {
+			l.moveLocked = moveLock;
+			return true;
+		} else {
+			return false;
+		}
+	});
+}
+
+void LayerList::changeLayersLockAll(bool lockAll)
+{
+	changeLayersAclWith([lockAll](canvas::AclState::Layer &l) {
+		if(l.contentLocked != lockAll || l.propsLocked != lockAll ||
+		   l.moveLocked != lockAll) {
+			l.contentLocked = lockAll;
+			l.propsLocked = lockAll;
+			l.moveLocked = lockAll;
+			return true;
+		} else {
+			return false;
+		}
+	});
+}
+
 void LayerList::changeLayersAccessTier(int tier)
 {
-	uint8_t contextId = m_canvas->localUserId();
-	canvas::AclState *aclState = m_canvas->aclState();
-	net::MessageList msgs;
-	msgs.reserve(m_selectedIds.size());
-
-	for(int layerId : m_selectedIds) {
-		canvas::AclState::Layer acl = aclState->layerAcl(layerId);
-		if(acl.tier != tier) {
-			msgs.append(net::makeLayerAclMessage(
-				contextId, layerId,
-				uint8_t(acl.locked ? DP_ACL_ALL_LOCKED_BIT : 0) | uint8_t(tier),
-				acl.exclusive));
+	DP_AccessTier t = DP_AccessTier(tier);
+	changeLayersAclWith([t](canvas::AclState::Layer &l) {
+		if(l.tier != t) {
+			l.tier = t;
+			return true;
+		} else {
+			return false;
 		}
-	}
-
-	if(!msgs.isEmpty()) {
-		emit layerCommands(msgs.size(), msgs.constData());
-	}
+	});
 }
 
 void LayerList::changeLayersUserAccess(int userId, bool access)
 {
+	changeLayersAclWith([userId, access](canvas::AclState::Layer &l) {
+		if(access) {
+			if(l.exclusive.contains(userId)) {
+				return false;
+			} else {
+				l.exclusive.append(userId);
+				return true;
+			}
+		} else {
+			return l.exclusive.removeOne(userId);
+		}
+	});
+}
+
+void LayerList::changeLayersAclWith(
+	const std::function<bool(canvas::AclState::Layer &)> &fn)
+{
 	uint8_t contextId = m_canvas->localUserId();
 	canvas::AclState *aclState = m_canvas->aclState();
 	net::MessageList msgs;
@@ -812,19 +860,10 @@ void LayerList::changeLayersUserAccess(int userId, bool access)
 
 	for(int layerId : m_selectedIds) {
 		canvas::AclState::Layer acl = aclState->layerAcl(layerId);
-		if(access) {
-			if(acl.exclusive.contains(userId)) {
-				continue;
-			} else {
-				acl.exclusive.append(userId);
-			}
-		} else if(!acl.exclusive.removeOne(userId)) {
-			continue;
+		if(fn(acl)) {
+			msgs.append(net::makeLayerAclMessage(
+				contextId, layerId, acl.flags(), acl.exclusive));
 		}
-		msgs.append(net::makeLayerAclMessage(
-			contextId, layerId,
-			uint8_t(acl.locked ? DP_ACL_ALL_LOCKED_BIT : 0) | uint8_t(acl.tier),
-			acl.exclusive));
 	}
 
 	if(!msgs.isEmpty()) {
@@ -2081,10 +2120,12 @@ void LayerList::layerLockStatusChanged(int layerId)
 	if(m_currentId == layerId) {
 		const auto acl = m_canvas->aclState()->layerAcl(layerId);
 		m_lockButton->setChecked(
-			acl.locked || acl.tier != DP_ACCESS_TIER_GUEST ||
-			!acl.exclusive.isEmpty());
-		m_aclmenu->setAcl(acl.locked, int(acl.tier), acl.exclusive);
-
+			acl.contentLocked || acl.propsLocked || acl.moveLocked ||
+			acl.tier != DP_ACCESS_TIER_GUEST || !acl.exclusive.isEmpty());
+		m_aclmenu->setAcl(
+			acl.contentLocked, acl.propsLocked, acl.moveLocked, int(acl.tier),
+			acl.exclusive);
+		updateLockedControls();
 		emit activeLayerVisibilityChanged();
 	}
 }

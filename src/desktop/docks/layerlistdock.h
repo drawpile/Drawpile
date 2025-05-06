@@ -1,18 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef LAYERLISTDOCK_H
-#define LAYERLISTDOCK_H
-extern "C" {
-#include <dpmsg/acl.h>
-}
+#ifndef DESKTOP_DOCKS_LAYERLISTDOCK_H
+#define DESKTOP_DOCKS_LAYERLISTDOCK_H
 #include "desktop/docks/dockbase.h"
 #include "desktop/view/lock.h"
+#include "libclient/canvas/acl.h"
 #include "libclient/net/message.h"
 #include <QColor>
 #include <QModelIndexList>
 #include <QScroller>
 #include <QSet>
 #include <QVector>
+#include <functional>
 
 class KisSliderSpinBox;
 class QAction;
@@ -99,7 +97,6 @@ public:
 
 	void updateLayerColorMenuIcon();
 
-public slots:
 	void selectLayer(int id);
 	void selectAbove();
 	void selectBelow();
@@ -118,7 +115,7 @@ signals:
 
 	void layerCommands(int count, const net::Message *msgs);
 
-private slots:
+private:
 	void beforeLayerReset();
 	void afterLayerReset();
 
@@ -134,10 +131,15 @@ private slots:
 	void uncheckAll();
 
 	void showContextMenu(const QPoint &pos);
-	void changeLayersLock(bool locked);
 	void changeLayersAlphaLock(bool alphaLock);
+	void changeLayersContentLock(bool contentLock);
+	void changeLayersPropsLock(bool propsLock);
+	void changeLayersMoveLock(bool moveLock);
+	void changeLayersLockAll(bool lockAll);
 	void changeLayersAccessTier(int tier);
 	void changeLayersUserAccess(int userId, bool access);
+	void changeLayersAclWith(
+		const std::function<bool(canvas::AclState::Layer &)> &fn);
 	void changeLayersCensor(bool censor);
 	void disableAutoselectAny();
 	void toggleLayerVisibility();
@@ -157,7 +159,6 @@ private slots:
 
 	void triggerUpdate();
 
-private:
 	void updateActionLabels();
 	void setActionLabel(QAction *action, const QString &text);
 	void updateLockedControls();

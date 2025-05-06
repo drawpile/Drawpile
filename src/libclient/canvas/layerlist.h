@@ -305,6 +305,8 @@ private:
 	bool isLayerOrClippingGroupHidden(
 		const QModelIndex &index, const LayerListItem &item) const;
 
+	bool isLayerMovable(int layerId) const;
+
 	QVector<LayerListItem> m_items;
 	QSet<int> m_frameLayers;
 	QHash<int, CheckState> m_checkStates;

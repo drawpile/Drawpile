@@ -11,10 +11,6 @@ LayerAclMenu::LayerAclMenu(QWidget *parent)
 	: QMenu(parent)
 	, m_userlist(nullptr)
 {
-	m_lock = addAction(tr("Lock layer"));
-	m_lock->setCheckable(true);
-	connect(m_lock, &QAction::triggered, this, &LayerAclMenu::layerLockChange);
-
 	m_alphaLock = addAction(tr("Alpha lock layer for you"));
 	m_alphaLock->setCheckable(true);
 	connect(
@@ -26,6 +22,34 @@ LayerAclMenu::LayerAclMenu(QWidget *parent)
 	connect(
 		m_censored, &QAction::triggered, this,
 		&LayerAclMenu::layerCensoredChange);
+
+	addSection(tr("Locks:"));
+
+	m_lockAll = addAction(tr("Lock layer entirely"));
+	m_lockAll->setCheckable(true);
+	connect(
+		m_lockAll, &QAction::triggered, this,
+		&LayerAclMenu::layerLockAllChange);
+
+	addSeparator();
+
+	m_contentLock = addAction(tr("Lock layer content"));
+	m_contentLock->setCheckable(true);
+	connect(
+		m_contentLock, &QAction::triggered, this,
+		&LayerAclMenu::layerContentLockChange);
+
+	m_propsLock = addAction(tr("Lock layer properties"));
+	m_propsLock->setCheckable(true);
+	connect(
+		m_propsLock, &QAction::triggered, this,
+		&LayerAclMenu::layerPropsLockChange);
+
+	m_moveLock = addAction(tr("Lock layer position"));
+	m_moveLock->setCheckable(true);
+	connect(
+		m_moveLock, &QAction::triggered, this,
+		&LayerAclMenu::layerMoveLockChange);
 
 	addSection(tr("Access tier:"));
 	m_tiers = new QActionGroup(this);
@@ -75,7 +99,7 @@ void LayerAclMenu::showEvent(QShowEvent *e)
 			QAction *ua = m_users->addAction(
 				idx.data(canvas::UserListModel::NameRole).toString());
 			ua->setCheckable(true);
-			ua->setChecked(m_exclusives.contains(userId));
+			ua->setChecked(m_exclusive.contains(userId));
 			addAction(ua);
 			connect(
 				ua, &QAction::triggered, this, [this, userId](bool checked) {
@@ -87,12 +111,18 @@ void LayerAclMenu::showEvent(QShowEvent *e)
 	QMenu::showEvent(e);
 }
 
-void LayerAclMenu::setAcl(bool lock, int tier, const QVector<uint8_t> exclusive)
+void LayerAclMenu::setAcl(
+	bool contentLock, bool propsLock, bool moveLock, int tier,
+	const QVector<uint8_t> exclusive)
 {
-	m_lock->setChecked(lock);
+	m_contentLock->setChecked(contentLock);
+	m_propsLock->setChecked(propsLock);
+	m_moveLock->setChecked(moveLock);
+	m_lockAll->setChecked(contentLock && propsLock && moveLock);
 
-	m_users->setEnabled(!lock);
-	m_tiers->setEnabled(!lock);
+	m_allUsersLocked = contentLock;
+	m_users->setEnabled(!m_allUsersLocked && m_canEdit);
+	m_tiers->setEnabled(!m_allUsersLocked && m_canEdit);
 
 	for(QAction *t : m_tiers->actions()) {
 		if(t->property("userTier").toInt() == tier) {
@@ -101,7 +131,7 @@ void LayerAclMenu::setAcl(bool lock, int tier, const QVector<uint8_t> exclusive)
 		}
 	}
 
-	m_exclusives = exclusive;
+	m_exclusive = exclusive;
 }
 
 void LayerAclMenu::setCensored(bool censor)
@@ -117,6 +147,20 @@ void LayerAclMenu::setAlphaLock(bool alphaLock)
 void LayerAclMenu::setAlphaLockEnabled(bool alphaLockEnabled)
 {
 	m_alphaLock->setEnabled(alphaLockEnabled);
+}
+
+void LayerAclMenu::setCanEdit(bool canEdit)
+{
+	if(m_canEdit != canEdit) {
+		m_canEdit = canEdit;
+		m_censored->setEnabled(m_canEdit);
+		m_contentLock->setEnabled(m_canEdit);
+		m_propsLock->setEnabled(m_canEdit);
+		m_moveLock->setEnabled(m_canEdit);
+		m_lockAll->setEnabled(m_canEdit);
+		m_users->setEnabled(!m_allUsersLocked && m_canEdit);
+		m_tiers->setEnabled(!m_allUsersLocked && m_canEdit);
+	}
 }
 
 }
