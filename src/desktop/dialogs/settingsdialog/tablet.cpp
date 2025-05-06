@@ -3,6 +3,7 @@
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/curvewidget.h"
+#include "desktop/widgets/kis_curve_widget.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include <QCheckBox>
 #include <QDialogButtonBox>
@@ -63,6 +64,7 @@ void Tablet::initPressureCurve(
 			settings.setGlobalPressureCurve(newCurve.toString());
 		});
 	form->addRow(tr("Global pressure curve:"), curve);
+	disableKineticScrollingOnWidget(curve->curveWidget());
 }
 
 void Tablet::initTablet(
@@ -107,6 +109,7 @@ void Tablet::initTablet(
 	smoothing->setPrefix(tr("Global smoothing: "));
 	settings.bindSmoothing(smoothing);
 	form->addRow(tr("Smoothing:"), smoothing);
+	disableKineticScrollingOnWidget(smoothing);
 
 	auto *mouseSmoothing = new QCheckBox(tr("Apply global smoothing to mouse"));
 	settings.bindMouseSmoothing(mouseSmoothing);

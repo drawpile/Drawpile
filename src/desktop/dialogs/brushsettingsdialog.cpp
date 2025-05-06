@@ -5,6 +5,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/curvewidget.h"
 #include "desktop/widgets/keysequenceedit.h"
+#include "desktop/widgets/kis_curve_widget.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/toolmessage.h"
 #include "libclient/canvas/blendmodes.h"
@@ -570,7 +571,8 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
-	utils::bindKineticScrolling(scroll);
+	utils::KineticScroller *kineticScroller =
+		utils::bindKineticScrolling(scroll);
 
 	QFormLayout *layout = new QFormLayout;
 	widget->setLayout(layout);
@@ -695,6 +697,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->spacingSpinner->setExponentRatio(3.0);
 	d->spacingSpinner->setPrefix(tr("Spacing: "));
 	d->spacingSpinner->setSuffix(tr("%"));
+	kineticScroller->disableKineticScrollingOnWidget(d->spacingSpinner);
 	connect(
 		d->spacingSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
@@ -723,6 +726,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->stabilizerSpinner->setPrefix(tr("Stabilizer: "));
 	d->stabilizerSpinner->setSingleStep(1);
 	d->stabilizerSpinner->setExponentRatio(3.0);
+	kineticScroller->disableKineticScrollingOnWidget(d->stabilizerSpinner);
 	connect(
 		d->stabilizerSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
@@ -735,6 +739,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->smoothingSpinner->setRange(0, 20);
 	d->smoothingSpinner->setPrefix(tr("Smoothing: "));
 	d->smoothingSpinner->setSingleStep(1);
+	kineticScroller->disableKineticScrollingOnWidget(d->smoothingSpinner);
 	connect(
 		d->smoothingSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
@@ -756,7 +761,8 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
-	utils::bindKineticScrolling(scroll);
+	utils::KineticScroller *kineticScroller =
+		utils::bindKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -766,6 +772,7 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 	d->classicSizeSpinner->setRange(0, 255);
 	d->classicSizeSpinner->setPrefix(tr("Size: "));
 	d->classicSizeSpinner->setSuffix(tr("px"));
+	kineticScroller->disableKineticScrollingOnWidget(d->classicSizeSpinner);
 	connect(
 		d->classicSizeSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
@@ -783,6 +790,7 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 	d->classicSizeMinSpinner->setRange(0, 255);
 	d->classicSizeMinSpinner->setPrefix(tr("Minimum Size: "));
 	d->classicSizeMinSpinner->setSuffix(tr("px"));
+	kineticScroller->disableKineticScrollingOnWidget(d->classicSizeMinSpinner);
 	connect(
 		d->classicSizeMinSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
@@ -794,6 +802,8 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 		new widgets::CurveWidget{tr("Input"), tr("Size"), false, widget};
 	layout->addWidget(d->classicSizeCurve);
 	buildClassicApplyToAllButton(d->classicSizeCurve);
+	kineticScroller->disableKineticScrollingOnWidget(
+		d->classicSizeCurve->curveWidget());
 	connect(
 		d->classicSizeCurve, &widgets::CurveWidget::curveChanged,
 		makeBrushChangeCallbackArg<const KisCubicCurve &>(
@@ -814,7 +824,8 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
-	utils::bindKineticScrolling(scroll);
+	utils::KineticScroller *kineticScroller =
+		utils::bindKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -824,6 +835,7 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 	d->classicOpacitySpinner->setRange(0, 100);
 	d->classicOpacitySpinner->setPrefix(tr("Opacity: "));
 	d->classicOpacitySpinner->setSuffix(tr("%"));
+	kineticScroller->disableKineticScrollingOnWidget(d->classicOpacitySpinner);
 	connect(
 		d->classicOpacitySpinner, QOverload<int>::of(&QSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
@@ -841,6 +853,8 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 	d->classicOpacityMinSpinner->setRange(0, 100);
 	d->classicOpacityMinSpinner->setPrefix(tr("Minimum Opacity: "));
 	d->classicOpacityMinSpinner->setSuffix(tr("%"));
+	kineticScroller->disableKineticScrollingOnWidget(
+		d->classicOpacityMinSpinner);
 	connect(
 		d->classicOpacityMinSpinner,
 		QOverload<int>::of(&QSpinBox::valueChanged),
@@ -853,6 +867,8 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 		new widgets::CurveWidget{tr("Input"), tr("Opacity"), false, widget};
 	layout->addWidget(d->classicOpacityCurve);
 	buildClassicApplyToAllButton(d->classicOpacityCurve);
+	kineticScroller->disableKineticScrollingOnWidget(
+		d->classicOpacityCurve->curveWidget());
 	connect(
 		d->classicOpacityCurve, &widgets::CurveWidget::curveChanged,
 		makeBrushChangeCallbackArg<const KisCubicCurve &>(
@@ -873,7 +889,8 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
-	utils::bindKineticScrolling(scroll);
+	utils::KineticScroller *kineticScroller =
+		utils::bindKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -883,6 +900,7 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 	d->classicHardnessSpinner->setRange(0, 100);
 	d->classicHardnessSpinner->setPrefix(tr("Hardness: "));
 	d->classicHardnessSpinner->setSuffix(tr("%"));
+	kineticScroller->disableKineticScrollingOnWidget(d->classicHardnessSpinner);
 	connect(
 		d->classicHardnessSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
@@ -900,6 +918,8 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 	d->classicHardnessMinSpinner->setRange(0, 100);
 	d->classicHardnessMinSpinner->setPrefix(tr("Minimum Hardness: "));
 	d->classicHardnessMinSpinner->setSuffix(tr("%"));
+	kineticScroller->disableKineticScrollingOnWidget(
+		d->classicHardnessMinSpinner);
 	connect(
 		d->classicHardnessMinSpinner,
 		QOverload<int>::of(&QSpinBox::valueChanged),
@@ -912,6 +932,8 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 		new widgets::CurveWidget{tr("Input"), tr("Hardness"), false, widget};
 	layout->addWidget(d->classicHardnessCurve);
 	buildClassicApplyToAllButton(d->classicHardnessCurve);
+	kineticScroller->disableKineticScrollingOnWidget(
+		d->classicHardnessCurve->curveWidget());
 	connect(
 		d->classicHardnessCurve, &widgets::CurveWidget::curveChanged,
 		makeBrushChangeCallbackArg<const KisCubicCurve &>(
@@ -932,7 +954,8 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
-	utils::bindKineticScrolling(scroll);
+	utils::KineticScroller *kineticScroller =
+		utils::bindKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -942,6 +965,7 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	d->classicSmudgingSpinner->setRange(0, 100);
 	d->classicSmudgingSpinner->setPrefix(tr("Smudging: "));
 	d->classicSmudgingSpinner->setSuffix(tr("%"));
+	kineticScroller->disableKineticScrollingOnWidget(d->classicSmudgingSpinner);
 	connect(
 		d->classicSmudgingSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
 		makeBrushChangeCallbackArg<int>([this](int value) {
@@ -953,6 +977,8 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	layout->addWidget(d->classicColorPickupSpinner);
 	d->classicColorPickupSpinner->setRange(1, 32);
 	d->classicColorPickupSpinner->setPrefix(tr("Color Pickup: 1/"));
+	kineticScroller->disableKineticScrollingOnWidget(
+		d->classicColorPickupSpinner);
 	connect(
 		d->classicColorPickupSpinner,
 		QOverload<int>::of(&QSpinBox::valueChanged),
@@ -971,6 +997,8 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	d->classicSmudgingMinSpinner->setRange(0, 100);
 	d->classicSmudgingMinSpinner->setPrefix(tr("Minimum Smudging: "));
 	d->classicSmudgingMinSpinner->setSuffix(tr("%"));
+	kineticScroller->disableKineticScrollingOnWidget(
+		d->classicSmudgingMinSpinner);
 	connect(
 		d->classicSmudgingMinSpinner,
 		QOverload<int>::of(&QSpinBox::valueChanged),
@@ -983,6 +1011,8 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 		new widgets::CurveWidget{tr("Input"), tr("Smudging"), false, widget};
 	layout->addWidget(d->classicSmudgingCurve);
 	buildClassicApplyToAllButton(d->classicSmudgingCurve);
+	kineticScroller->disableKineticScrollingOnWidget(
+		d->classicSmudgingCurve->curveWidget());
 	connect(
 		d->classicSmudgingCurve, &widgets::CurveWidget::curveChanged,
 		makeBrushChangeCallbackArg<const KisCubicCurve &>(
@@ -1114,7 +1144,8 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
-	utils::bindKineticScrolling(scroll);
+	utils::KineticScroller *kineticScroller =
+		utils::bindKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -1127,6 +1158,7 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 	layout->addWidget(page.baseValueSpinner);
 	page.baseValueSpinner->setPrefix(tr("Value: "));
 	page.baseValueSpinner->setRange(settingInfo->min, settingInfo->max, 2);
+	kineticScroller->disableKineticScrollingOnWidget(page.baseValueSpinner);
 	connect(
 		page.baseValueSpinner,
 		QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged),
@@ -1141,7 +1173,8 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 		layout->addWidget(page.constantLabel);
 	} else {
 		for(int input = 0; input < MYPAINT_BRUSH_INPUTS_COUNT; ++input) {
-			layout->addWidget(buildMyPaintInputUi(setting, input, settingInfo));
+			layout->addWidget(buildMyPaintInputUi(
+				setting, input, settingInfo, kineticScroller));
 		}
 	}
 
@@ -1164,7 +1197,8 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 }
 
 widgets::MyPaintInput *BrushSettingsDialog::buildMyPaintInputUi(
-	int setting, int input, const MyPaintBrushSettingInfo *settingInfo)
+	int setting, int input, const MyPaintBrushSettingInfo *settingInfo,
+	utils::KineticScroller *kineticScroller)
 {
 	widgets::MyPaintInput *inputWidget = new widgets::MyPaintInput{
 		getMyPaintInputTitle(input), getMyPaintInputDescription(input),
@@ -1182,6 +1216,18 @@ widgets::MyPaintInput *BrushSettingsDialog::buildMyPaintInputUi(
 				otherWidget->controlPoints();
 			emitChange();
 		}));
+	connect(
+		inputWidget, &widgets::MyPaintInput::curveWidgetsConstructed, this,
+		[kineticScroller, inputWidget] {
+			kineticScroller->disableKineticScrollingOnWidget(
+				inputWidget->ySpinner());
+			kineticScroller->disableKineticScrollingOnWidget(
+				inputWidget->xMinSpinner());
+			kineticScroller->disableKineticScrollingOnWidget(
+				inputWidget->xMaxSpinner());
+			kineticScroller->disableKineticScrollingOnWidget(
+				inputWidget->curveWidget()->curveWidget());
+		});
 	return inputWidget;
 }
 

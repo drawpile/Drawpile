@@ -75,6 +75,7 @@ void UserInterface::initKineticScrolling(
 	threshold->setBlockUpdateSignalOnDrag(true);
 	settings.bindKineticScrollThreshold(threshold);
 	form->addRow(nullptr, threshold);
+	disableKineticScrollingOnWidget(threshold);
 
 	QCheckBox *hideBars = new QCheckBox(tr("Hide scroll bars"));
 	settings.bindKineticScrollHideBars(hideBars);
@@ -196,6 +197,7 @@ void UserInterface::initRequiringRestart(
 			scalingSettings->setValue(QStringLiteral("scaling_factor"), value);
 		});
 	form->addRow(nullptr, scaleFactor);
+	disableKineticScrollingOnWidget(scaleFactor);
 
 	connect(
 		overrideScaleFactor, &QCheckBox::clicked, scaleFactor,
@@ -214,6 +216,7 @@ void UserInterface::initRequiringRestart(
 	settings.bindFontSize(fontSize);
 	settings.bindOverrideFontSize(fontSize, &QWidget::setEnabled);
 	form->addRow(nullptr, fontSize);
+	disableKineticScrollingOnWidget(fontSize);
 
 	QButtonGroup *vsyncButtons = utils::addRadioGroup(
 		form, tr("Vertical sync:"), true,

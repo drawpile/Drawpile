@@ -22,6 +22,8 @@ protected:
 
 	virtual void
 	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) = 0;
+
+	void disableKineticScrollingOnWidget(QWidget *widget);
 };
 
 

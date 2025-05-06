@@ -192,6 +192,7 @@ void Tools::initSlots(desktop::settings::Settings &settings, QFormLayout *form)
 		brushSlotCount->setSuffix(parts.join(sep));
 	});
 	form->addRow(nullptr, brushSlotCount);
+	disableKineticScrollingOnWidget(brushSlotCount);
 }
 
 } // namespace settingsdialog

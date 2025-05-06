@@ -17,6 +17,10 @@ class QPlainTextEdit;
 class QPushButton;
 class QVBoxLayout;
 
+namespace utils {
+class KineticScroller;
+}
+
 namespace dialogs {
 
 class BrushPresetForm final : public QWidget {
@@ -123,7 +127,8 @@ private:
 	void buildClassicApplyToAllButton(widgets::CurveWidget *curve);
 	QWidget *buildMyPaintPageUi(int setting);
 	widgets::MyPaintInput *buildMyPaintInputUi(
-		int setting, int input, const MyPaintBrushSettingInfo *settingInfo);
+		int setting, int input, const MyPaintBrushSettingInfo *settingInfo,
+		utils::KineticScroller *kineticScroller);
 
 	void applyCurveToAllClassicSettings(const KisCubicCurve &curve);
 

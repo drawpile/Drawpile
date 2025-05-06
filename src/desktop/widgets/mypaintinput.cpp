@@ -190,6 +190,8 @@ void MyPaintInput::constructCurveWidgets()
 	connect(
 		m_curve, &CurveWidget::curveChanged, this,
 		&MyPaintInput::controlPointsChanged);
+
+	emit curveWidgetsConstructed();
 }
 
 KisCubicCurve MyPaintInput::getCurve() const

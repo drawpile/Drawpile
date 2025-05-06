@@ -30,6 +30,8 @@ public:
 	CurveWidget &operator=(const CurveWidget &) = delete;
 	CurveWidget &operator=(CurveWidget &&) = delete;
 
+	KisCurveWidget *curveWidget() { return m_curve; }
+
 	void setCurveSize(int width, int height);
 
 	KisCubicCurve curve() const;

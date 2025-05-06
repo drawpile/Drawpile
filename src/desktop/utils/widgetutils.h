@@ -92,6 +92,8 @@ public:
 	void setKineticScrollThresholdDelayed(int kineticScrollThreshold);
 	void setKineticScrollHideBarsDelayed(bool kineticScrollHideBars);
 
+	void disableKineticScrollingOnWidget(QWidget *widget);
+
 protected:
 	bool eventFilter(QObject *watched, QEvent *event) override;
 

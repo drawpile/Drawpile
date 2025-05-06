@@ -159,6 +159,7 @@ void Notifications::initOptions(
 	settings.bindSoundVolume(volume);
 #endif
 	form->addRow(tr("Sound volume:"), volume);
+	disableKineticScrollingOnWidget(volume);
 
 	QCheckBox *mentionEnabled =
 		new QCheckBox(tr("Use private message notification for mentions"));

@@ -144,6 +144,7 @@ void Network::initNetwork(
 	form->addRow(
 		nullptr, utils::formNote(tr("The higher the value, the smoother "
 									"strokes from other users come in.")));
+	disableKineticScrollingOnWidget(messageQueueDrainRate);
 }
 
 } // namespace settingsdialog

@@ -301,6 +301,11 @@ void KineticScroller::setKineticScrollHideBarsDelayed(
 	}
 }
 
+void KineticScroller::disableKineticScrollingOnWidget(QWidget *widget)
+{
+	widget->installEventFilter(this);
+}
+
 // SPDX-SnippetBegin
 // SPDX-License-Identifier: GPL-3.0-or-later
 // SDPX—SnippetName: Based on the kinetic scroll event filter from Krita

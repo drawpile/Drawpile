@@ -34,5 +34,17 @@ void Page::init(desktop::settings::Settings &settings, bool stretch)
 	}
 }
 
+void Page::disableKineticScrollingOnWidget(QWidget *widget)
+{
+	Q_ASSERT(widget);
+	utils::KineticScroller *kineticScroller =
+		findChild<utils::KineticScroller *>(Qt::FindDirectChildrenOnly);
+	if(kineticScroller) {
+		kineticScroller->disableKineticScrollingOnWidget(widget);
+	} else {
+		qWarning("No kinetic scroller installed");
+	}
+}
+
 }
 }

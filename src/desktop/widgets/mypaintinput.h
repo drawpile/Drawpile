@@ -31,8 +31,14 @@ public:
 	brushes::MyPaintCurve myPaintCurve() const;
 	void setMyPaintCurve(const brushes::MyPaintCurve &curve);
 
+	KisDoubleSliderSpinBox *ySpinner() { return m_ySpinner; }
+	KisDoubleSliderSpinBox *xMinSpinner() { return m_xMinSpinner; }
+	KisDoubleSliderSpinBox *xMaxSpinner() { return m_xMaxSpinner; }
+	CurveWidget *curveWidget() { return m_curve; }
+
 signals:
 	void controlPointsChanged();
+	void curveWidgetsConstructed();
 
 private slots:
 	void changeBoxState(compat::CheckBoxState state);

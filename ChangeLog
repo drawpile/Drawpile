@@ -18,6 +18,7 @@ Unreleased Version 2.2.3-pre
  * Fix: Make fill tool apply to the layer it was executed on when "edit pending fills" is disabled. Thanks Greendyno for reporting.
  * Fix: Don't set a 0% opacity layer to 1% opacity when switching it out of sketch mode. Thanks Meru for reporting.
  * Fix: Properly reset layer visibility when creating a layer with the same ID as a previously hidden layer when you have a high-ish ping. Thanks MachKerman for reporting.
+ * Fix: Don't start a kinetic scroll of the surrounding view when trying to adjust curve or slider. Thanks 3rd_EFNO for reporting.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.
