@@ -18,12 +18,15 @@ struct AclState::Data {
 };
 
 AclState::Layer::Layer()
-	: locked(false), tier(DP_ACCESS_TIER_GUEST)
-{ }
+	: locked(false)
+	, tier(DP_ACCESS_TIER_GUEST)
+{
+}
 
 bool AclState::Layer::operator!=(const Layer &other) const
 {
-	return locked != other.locked || tier != other.tier || exclusive != other.exclusive;
+	return locked != other.locked || tier != other.tier ||
+		   exclusive != other.exclusive;
 }
 
 DP_AccessTier AclState::Data::tier() const
@@ -31,10 +34,11 @@ DP_AccessTier AclState::Data::tier() const
 	return DP_user_acls_tier(&users, localUser);
 }
 
-static int featureFlags(const DP_FeatureTiers &features, DP_AccessTier t) {
+static int featureFlags(const DP_FeatureTiers &features, DP_AccessTier t)
+{
 	int f = 0;
-	for (int i = 0; i < DP_FEATURE_COUNT; ++i) {
-		if (t <= features.tiers[i]) {
+	for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
+		if(t <= features.tiers[i]) {
 			f |= 1 << i;
 		}
 	}
@@ -42,7 +46,8 @@ static int featureFlags(const DP_FeatureTiers &features, DP_AccessTier t) {
 }
 
 AclState::AclState(QObject *parent)
-	: QObject(parent), d(new Data)
+	: QObject(parent)
+	, d(new Data)
 {
 	memset(&d->users, 0, sizeof(DP_UserAcls));
 	memset(&d->features, 0, sizeof(DP_FeatureTiers));
@@ -65,7 +70,8 @@ AclState::~AclState()
 	delete d;
 }
 
-void AclState::aclsChanged(const drawdance::AclState &acls, int aclChangeFlags, bool reset)
+void AclState::aclsChanged(
+	const drawdance::AclState &acls, int aclChangeFlags, bool reset)
 {
 	bool users = aclChangeFlags & DP_ACL_STATE_CHANGE_USERS_BIT;
 	bool layers = aclChangeFlags & DP_ACL_STATE_CHANGE_LAYERS_BIT;
@@ -160,7 +166,7 @@ void AclState::updateLayers(const drawdance::AclState &acls, bool reset)
 		l.exclusive.clear();
 
 		bool allOnes = true;
-		for(unsigned int i=0;i < sizeof(DP_UserBits); ++i) {
+		for(unsigned int i = 0; i < sizeof(DP_UserBits); ++i) {
 			if(acl->exclusive[i] != 0xff) {
 				allOnes = false;
 				break;
@@ -190,8 +196,9 @@ void AclState::updateLayers(const drawdance::AclState &acls, bool reset)
 	QHashIterator<int, Layer> oldi(oldLayers);
 	while(oldi.hasNext()) {
 		oldi.next();
-		if(!layers.contains(oldi.key()))
+		if(!layers.contains(oldi.key())) {
 			emit layerAclChanged(oldi.key());
+		}
 	}
 }
 
@@ -259,11 +266,12 @@ bool AclState::isSessionLocked() const
 
 bool AclState::isLayerLocked(int layerId) const
 {
-	if(!d->layers.contains(layerId))
-		return false;
-	const Layer &l = d->layers[layerId];
-	return l.locked || DP_user_acls_tier(&d->users, d->localUser) > l.tier ||
-		(!l.exclusive.isEmpty() && !l.exclusive.contains(d->localUser));
+	QHash<int, Layer>::const_iterator it = d->layers.constFind(layerId);
+	return it != d->layers.constEnd() &&
+		   (it->locked ||
+			DP_user_acls_tier(&d->users, d->localUser) > it->tier ||
+			(!it->exclusive.isEmpty() &&
+			 !it->exclusive.contains(d->localUser)));
 }
 
 bool AclState::canUseFeature(DP_Feature feature) const

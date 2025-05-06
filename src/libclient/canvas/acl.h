@@ -1,15 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef CANVAS_ACL_STATE_H
-#define CANVAS_ACL_STATE_H
-
+#ifndef LIBCLIENT_CANVAS_ACL_H
+#define LIBCLIENT_CANVAS_ACL_H
 #include "libclient/drawdance/aclstate.h"
 #include <QObject>
 #include <QVector>
 
 namespace canvas {
-
-class PaintEngine;
 
 /**
  * Access control list state that is relevant to the UI.
@@ -18,15 +14,15 @@ class AclState final : public QObject {
 	Q_OBJECT
 public:
 	struct Layer {
-		bool locked;                // layer is locked for all users
-		DP_AccessTier tier;         // layer access tier (if not exclusive)
-		QVector<uint8_t> exclusive; // if not empty, only these users can draw on this layer
+		bool locked;
+		DP_AccessTier tier;
+		QVector<uint8_t> exclusive;
 
 		Layer();
 		bool operator!=(const Layer &other) const;
 	};
 
-	explicit AclState(QObject *parent=nullptr);
+	explicit AclState(QObject *parent = nullptr);
 	~AclState() override;
 
 	uint8_t localUserId();
@@ -83,15 +79,16 @@ public:
 
 	bool isResetLocked() const;
 
-public slots:
-	void aclsChanged(const drawdance::AclState &acls, int aclChangeFlags, bool reset);
+	void aclsChanged(
+		const drawdance::AclState &acls, int aclChangeFlags, bool reset);
 	void resetLockSet(bool locked);
 
 signals:
 	//! Local user's operator status has changed
 	void localOpChanged(bool op);
 
-	//! Local user's lock status (either via user specific lock or general lock) has changed
+	//! Local user's lock status (either via user specific lock or general lock)
+	//! has changed
 	void localLockChanged(bool locked);
 
 	//! The ACL for this layer has changed
@@ -104,7 +101,7 @@ signals:
 	void userBitsChanged(const AclState *acl);
 
 	//! Feature access tiers have changed
-	void featureTiersChanged(const DP_FeatureTiers&);
+	void featureTiersChanged(const DP_FeatureTiers &);
 
 	void featureLimitChanged(DP_FeatureLimit featureLimit, int value);
 
@@ -112,8 +109,7 @@ signals:
 
 private:
 	void emitFeatureChanges(int before, int now, bool reset);
-	void
-	emitLimitChanges(const int *hadLimits, DP_AccessTier tier, bool reset);
+	void emitLimitChanges(const int *hadLimits, DP_AccessTier tier, bool reset);
 
 	struct Data;
 	Data *d;
@@ -122,4 +118,3 @@ private:
 }
 
 #endif
-
