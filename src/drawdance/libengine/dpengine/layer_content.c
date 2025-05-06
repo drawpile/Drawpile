@@ -422,13 +422,19 @@ static DP_UPixelFloat sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp,
     return DP_paint_sample_to_upixel(diameter, weight, red, green, blue, alpha);
 }
 
-DP_UPixelFloat DP_layer_content_sample_color_at(DP_LayerContent *lc,
-                                                uint16_t *stamp_buffer, int x,
-                                                int y, int diameter,
-                                                bool opaque,
-                                                int *in_out_last_diameter)
+DP_UPixelFloat
+DP_layer_content_sample_color_at(DP_LayerContent *lc, uint16_t *stamp_buffer,
+                                 int x, int y, int diameter, bool opaque,
+                                 int *in_out_last_diameter, bool *out_in_bounds)
 {
-    if (x >= 0 && y >= 0 && x < lc->width && y < lc->height) {
+    int radius = diameter < 2 ? 0 : diameter / 2;
+    bool in_bounds = x + radius >= 0 && y + radius >= 0
+                  && x - radius < lc->width && y - radius < lc->height;
+    if (out_in_bounds) {
+        *out_in_bounds = in_bounds;
+    }
+
+    if (in_bounds) {
         if (diameter < 2) {
             DP_Pixel15 pixel = DP_layer_content_pixel_at(lc, x, y);
             return DP_upixel15_to_float(DP_pixel15_unpremultiply(pixel));

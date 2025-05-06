@@ -32,6 +32,8 @@ typedef struct MyPaintSurface MyPaintSurface;
  * of the given surface, selected and weighted respectively by the area
  * and opacity of a uniform dab with a given center and radius.
  *
+ * Drawpile patch: add a return value indicating whether anything could be sampled.
+ *
  * @param self The surface to fetch the pixels from
  * @param x, y The center of the dab that determine which pixels
  * to include, and their respective impact on the result.
@@ -39,7 +41,7 @@ typedef struct MyPaintSurface MyPaintSurface;
  * @param[out] color_r, color_g, color_b, color_a
  * The destination of the resulting colors, range: [0.0, 1.0]
  */
-typedef void (*MyPaintSurfaceGetColorFunction) (
+typedef int (*MyPaintSurfaceGetColorFunction) (
   MyPaintSurface *self,
   float x, float y,
   float radius,
@@ -183,10 +185,12 @@ int mypaint_surface_draw_dab(
 /*!
  * Invoke MyPaintSurface::get_color
  *
+ * Drawpile patch: add a return value indicating whether anything could be sampled.
+ *
  * @memberof MyPaintSurface
  * @sa MyPaintSurfaceGetColorFunction
  */
-void mypaint_surface_get_color(
+int mypaint_surface_get_color(
     MyPaintSurface* self, float x, float y, float radius, float* color_r, float* color_g, float* color_b,
     float* color_a);
 
@@ -279,6 +283,8 @@ typedef int (*MyPaintSurfaceDrawDabFunction2) (
 /*!
  * Like #MyPaintSurfaceGetColorFunction, but for spectral colors.
  *
+ * Drawpile patch: add a return value indicating whether anything could be sampled.
+ *
  * @param paint Spectral mixing factor.
  * To what extent spectral weighting will be used in place of straight averaging.
  * Input value range: [0.0, 1.0]
@@ -286,7 +292,7 @@ typedef int (*MyPaintSurfaceDrawDabFunction2) (
  * @sa MyPaintSurfaceGetColorFunction
  * @memberof MyPaintSurface2
  */
-typedef void (*MyPaintSurfaceGetColorFunction2) (
+typedef int (*MyPaintSurfaceGetColorFunction2) (
   MyPaintSurface2 *self,
   float x, float y,
   float radius,
@@ -341,9 +347,11 @@ MyPaintSurface* mypaint_surface2_to_surface(MyPaintSurface2 *self);
  *
  * See #MyPaintSurfaceGetColorFunction2 for details.
  *
+ * Drawpile patch: add a return value indicating whether anything could be sampled.
+ *
  * @memberof MyPaintSurface2
  */
-void mypaint_surface2_get_color(
+int mypaint_surface2_get_color(
     MyPaintSurface2* self, float x, float y, float radius,float* color_r, float* color_g, float* color_b,
     float* color_a, float paint);
 

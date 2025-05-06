@@ -649,37 +649,41 @@ static int add_dab_mypaint(MyPaintSurface *self, float x, float y, float radius,
                                    lock_alpha, colorize, 0.0f, 0.0f, 0.0f);
 }
 
-static void get_color_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
-                                      float radius, float *color_r,
-                                      float *color_g, float *color_b,
-                                      float *color_a, DP_UNUSED float paint)
+static int get_color_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
+                                     float radius, float *color_r,
+                                     float *color_g, float *color_b,
+                                     float *color_a, DP_UNUSED float paint)
 {
     DP_BrushEngine *be = get_mypaint_surface_brush_engine(self);
     DP_LayerContent *lc = be->lc;
+    bool in_bounds;
     if (lc) {
         int diameter = DP_min_int(DP_float_to_int(radius * 2.0f + 0.5f), 255);
         DP_UPixelFloat color = DP_layer_content_sample_color_at(
             lc, be->stamp_buffer, DP_float_to_int(x + 0.5f),
-            DP_float_to_int(y + 0.5f), diameter, false, &be->last_diameter);
+            DP_float_to_int(y + 0.5f), diameter, false, &be->last_diameter,
+            &in_bounds);
         *color_r = color.r;
         *color_g = color.g;
         *color_b = color.b;
         *color_a = color.a;
     }
     else {
+        in_bounds = false;
         *color_r = 0.0f;
         *color_g = 0.0f;
         *color_b = 0.0f;
         *color_a = 0.0f;
     }
+    return in_bounds;
 }
 
-static void get_color_mypaint(MyPaintSurface *self, float x, float y,
-                              float radius, float *color_r, float *color_g,
-                              float *color_b, float *color_a)
+static int get_color_mypaint(MyPaintSurface *self, float x, float y,
+                             float radius, float *color_r, float *color_g,
+                             float *color_b, float *color_a)
 {
-    get_color_mypaint_pigment((MyPaintSurface2 *)self, x, y, radius, color_r,
-                              color_g, color_b, color_a, 0.0f);
+    return get_color_mypaint_pigment((MyPaintSurface2 *)self, x, y, radius,
+                                     color_r, color_g, color_b, color_a, 0.0f);
 }
 
 
@@ -711,24 +715,27 @@ static int add_dab_mypaint_dummy(MyPaintSurface *self, float x, float y,
         colorize, 0.0f, 0.0f, 0.0f);
 }
 
-static void get_color_mypaint_pigment_dummy(
-    DP_UNUSED MyPaintSurface2 *self, DP_UNUSED float x, DP_UNUSED float y,
-    DP_UNUSED float radius, float *color_r, float *color_g, float *color_b,
-    float *color_a, DP_UNUSED float paint)
+static int get_color_mypaint_pigment_dummy(DP_UNUSED MyPaintSurface2 *self,
+                                           DP_UNUSED float x, DP_UNUSED float y,
+                                           DP_UNUSED float radius,
+                                           float *color_r, float *color_g,
+                                           float *color_b, float *color_a,
+                                           DP_UNUSED float paint)
 {
     *color_r = 0.0f;
     *color_g = 0.0f;
     *color_b = 0.0f;
     *color_a = 0.0f;
+    return 0;
 }
 
-static void get_color_mypaint_dummy(MyPaintSurface *self, float x, float y,
-                                    float radius, float *color_r,
-                                    float *color_g, float *color_b,
-                                    float *color_a)
+static int get_color_mypaint_dummy(MyPaintSurface *self, float x, float y,
+                                   float radius, float *color_r, float *color_g,
+                                   float *color_b, float *color_a)
 {
-    get_color_mypaint_pigment_dummy((MyPaintSurface2 *)self, x, y, radius,
-                                    color_r, color_g, color_b, color_a, 0.0f);
+    return get_color_mypaint_pigment_dummy((MyPaintSurface2 *)self, x, y,
+                                           radius, color_r, color_g, color_b,
+                                           color_a, 0.0f);
 }
 
 static void issue_dummy_mypaint_stroke(MyPaintBrush *mb)
@@ -1112,7 +1119,7 @@ static DP_UPixelFloat sample_classic_smudge(DP_BrushEngine *be,
         get_classic_smudge_diameter(cb, pressure, velocity, distance);
     return DP_layer_content_sample_color_at(
         lc, be->stamp_buffer, DP_float_to_int(x), DP_float_to_int(y), diameter,
-        true, &be->last_diameter);
+        true, &be->last_diameter, NULL);
 }
 
 static void update_classic_smudge(DP_BrushEngine *be, DP_ClassicBrush *cb,

@@ -86,11 +86,9 @@ DP_Pixel15 DP_layer_content_pixel_at(DP_LayerContent *lc, int x, int y);
 bool DP_layer_content_pick_at(DP_LayerContent *lc, int x, int y,
                               unsigned int *out_context_id);
 
-DP_UPixelFloat DP_layer_content_sample_color_at(DP_LayerContent *lc,
-                                                uint16_t *stamp_buffer, int x,
-                                                int y, int diameter,
-                                                bool opaque,
-                                                int *in_out_last_diameter);
+DP_UPixelFloat DP_layer_content_sample_color_at(
+    DP_LayerContent *lc, uint16_t *stamp_buffer, int x, int y, int diameter,
+    bool opaque, int *in_out_last_diameter, bool *out_in_bounds);
 
 DP_LayerList *DP_layer_content_sub_contents_noinc(DP_LayerContent *lc);
 

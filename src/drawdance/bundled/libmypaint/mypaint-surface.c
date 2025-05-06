@@ -52,7 +52,8 @@ mypaint_surface_draw_dab(MyPaintSurface *self,
                    lock_alpha, colorize);
 }
 
-void
+// Drawpile patch: add a return value indicating whether anything could be sampled.
+int
 mypaint_surface_get_color(MyPaintSurface *self,
                         float x, float y,
                         float radius,
@@ -60,7 +61,7 @@ mypaint_surface_get_color(MyPaintSurface *self,
                         )
 {
     assert(self->get_color);
-    self->get_color(self, x, y, radius, color_r, color_g, color_b, color_a);
+    return self->get_color(self, x, y, radius, color_r, color_g, color_b, color_a);
 }
 
 
@@ -161,8 +162,9 @@ MyPaintSurface* mypaint_surface2_to_surface(MyPaintSurface2 *self)
 
 /**
  * mypaint_surface2_get_color: (skip)
+ * Drawpile patch: add a return value indicating whether anything could be sampled.
  */
-void
+int
 mypaint_surface2_get_color(
   MyPaintSurface2 *self,
   float x, float y,
@@ -172,7 +174,7 @@ mypaint_surface2_get_color(
   )
 {
     assert(self->get_color_pigment);
-    self->get_color_pigment(self, x, y, radius, color_r, color_g, color_b, color_a, paint);
+    return self->get_color_pigment(self, x, y, radius, color_r, color_g, color_b, color_a, paint);
 }
 
 /**

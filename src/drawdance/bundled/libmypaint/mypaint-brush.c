@@ -872,11 +872,14 @@ void print_inputs(MyPaintBrush *self, float* inputs)
 
           // Sample colors on the canvas, using a negative value for the paint factor
           // means that the old sampling method is used, instead of weighted spectral.
+          // Drawpile patch: allow bailing out early when sampling out of bounds.
           if (legacy) {
-              mypaint_surface_get_color(surface, px, py, smudge_radius, &r, &g, &b, &a);
-          } else {
-              mypaint_surface2_get_color(
-                  (MyPaintSurface2*)surface, px, py, smudge_radius, &r, &g, &b, &a, legacy_smudge ? -1.0 : paint_factor);
+              if (!mypaint_surface_get_color(surface, px, py, smudge_radius, &r, &g, &b, &a)) {
+                return FALSE;
+              }
+          } else if (!mypaint_surface2_get_color(
+                  (MyPaintSurface2*)surface, px, py, smudge_radius, &r, &g, &b, &a, legacy_smudge ? -1.0 : paint_factor)) {
+              return FALSE;
           }
 
           // don't draw unless the picked-up alpha is above a certain level
