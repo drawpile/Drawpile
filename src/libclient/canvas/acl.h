@@ -14,11 +14,13 @@ class AclState final : public QObject {
 	Q_OBJECT
 public:
 	struct Layer {
-		bool locked;
-		DP_AccessTier tier;
+		bool contentLocked = false;
+		bool propsLocked = false;
+		bool moveLocked = false;
+		DP_AccessTier tier = DP_ACCESS_TIER_GUEST;
 		QVector<uint8_t> exclusive;
 
-		Layer();
+		uint8_t flags() const;
 		bool operator!=(const Layer &other) const;
 	};
 
@@ -55,6 +57,8 @@ public:
 
 	//! Is the given layer locked for this user (ignoring canvaswide lock)
 	bool isLayerLocked(int layerId) const;
+	bool isLayerPropsLocked(int layerId) const;
+	bool isLayerMoveLocked(int layerId) const;
 
 	//! Is this feature available for us?
 	bool canUseFeature(DP_Feature feature) const;

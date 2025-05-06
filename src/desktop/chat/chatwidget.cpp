@@ -1192,7 +1192,7 @@ bool ChatWidget::changeLayerAclTier(
 	if(shouldChange) {
 		emit message(net::makeLayerAclMessage(
 			d->myId, layerId,
-			(layerAcl.locked ? DP_ACL_ALL_LOCKED_BIT : 0) | uint8_t(tier),
+			(layerAcl.contentLocked ? DP_ACL_ALL_LOCKED_BIT : 0) | uint8_t(tier),
 			layerAcl.exclusive));
 	}
 	return shouldChange;

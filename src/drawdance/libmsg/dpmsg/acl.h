@@ -26,7 +26,10 @@
 typedef struct DP_Message DP_Message;
 
 
-#define DP_ACL_ALL_LOCKED_BIT 0x80
+#define DP_ACL_PROPS_LOCKED_BIT   (1 << 5)
+#define DP_ACL_MOVE_LOCKED_BIT    (1 << 6)
+#define DP_ACL_CONTENT_LOCKED_BIT (1 << 7)
+#define DP_ACL_ALL_LOCKED_BIT     (1 << 7)
 
 #define DP_ACCESS_TIER_MASK                           \
     (DP_ACCESS_TIER_OPERATOR | DP_ACCESS_TIER_TRUSTED \
@@ -107,7 +110,9 @@ typedef struct DP_UserAcls {
 } DP_UserAcls;
 
 typedef struct DP_LayerAcl {
-    bool locked;
+    bool content_locked;
+    bool move_locked;
+    bool props_locked;
     DP_AccessTier tier;
     DP_UserBits exclusive;
 } DP_LayerAcl;

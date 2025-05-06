@@ -309,6 +309,11 @@ DP_INLINE bool DP_add_overflow_int(int x, int y, int *res)
 }
 #endif
 
+DP_INLINE uint8_t DP_flag_uint8(bool cond, uint8_t flag)
+{
+    return cond ? flag : DP_CAST(uint8_t, 0);
+}
+
 /*
  * Overly correct way of getting the size of a structure with a flexible array
  * member. Takes potential trailing padding being used as part of the flexible

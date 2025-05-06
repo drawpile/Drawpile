@@ -752,20 +752,23 @@ int DP_msg_user_acl_users_count(const DP_MsgUserAcl *mua);
 /*
  * DP_MSG_LAYER_ACL
  *
- * Change layer access control list
+ * Change layer access control list, setting permission flags, access level
+ * and exclusive access on a layer.
  *
- * This is an opaque meta command. It is used to set the general layer lock
- * as well as give exclusive access to selected users.
+ * The first two bits of the flags field indicate the access tier level, 0
+ * standing for operators only, 1 for operators and trusted users, 2 for
+ * operators, trusted and registered users and 3 for everyone having
+ * access.
  *
- * When the OWNLAYERS mode is set, any user can use this to change the ACLs on
- * layers they themselves have created (identified by the ID prefix.)
+ * The sixth bit of the flags field locks or unlocks the layer properties.
  *
- * Using layer ID 0 sets or clears a general canvaswide lock. The tier and
- * exclusive user list is not used in this case.
+ * The seventh bit of the flags field locks or unlocks the layer from being
+ * moved.
  *
- * The eighth bit of the flags field (0x80) indicates whether the layer is
- * locked in general. The first three bits (0x07) indicate the access tier
- * level.
+ * The eigth bit of the flags field locks or unlocks the layer.
+ *
+ * As a special case, setting the ACLs of ID 0 sets or clears the canvas
+ * lock. The tier and exclusive user list is not used in this case.
  */
 
 #define DP_MSG_LAYER_ACL_STATIC_LENGTH 4

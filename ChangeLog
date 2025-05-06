@@ -25,6 +25,8 @@ Unreleased Version 2.3.0-pre
  * Feature: Switch pixel compression algorithm to zstd, which is many times faster than the old gzip. Thanks Bonbli for suggesting a way to get better compression with this.
  * Feature: Don't require paste permission for transforms that modify the opacity or blend mode.
  * Feature: Allow alpha locking layers. This basically works the same as enabling alpha lock on the tool you're using, it's just there for people that are used to doing it this way from other programs.
+ * Feature: Allow locking layer properties to avoid accidentally changing e.g. the blend mode.
+ * Feature: Allow locking layer positions to avoid accidentally moving them. Thanks Athena for suggesting.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

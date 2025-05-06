@@ -442,10 +442,12 @@ static void dump_layer_acls(DP_Output *output, DP_AclState *acls)
         DP_LayerAclEntry *entry, *tmp;
         HASH_ITER(hh, acls->layers, entry, tmp) {
             DP_LayerAcl *la = &entry->layer_acl;
-            DP_output_format(
-                output, "        layer_id %d, locked %d, tier %s, exclusive: ",
-                entry->layer_id, la->locked ? 1 : 0,
-                access_tier_attributes[la->tier].name);
+            DP_output_format(output,
+                             "        layer_id %d, content locked %d, move "
+                             "locekd %d, props locked %d, tier %s, exclusive: ",
+                             entry->layer_id, la->content_locked ? 1 : 0,
+                             la->move_locked ? 1 : 0, la->props_locked ? 1 : 0,
+                             access_tier_attributes[la->tier].name);
             dump_user_bits(output, NULL, la->exclusive);
         }
     }
@@ -570,7 +572,7 @@ bool DP_acl_state_layer_locked_for(DP_AclState *acls, uint8_t user_id,
         HASH_FIND_INT(acls->layers, &layer_id, entry);
         if (entry) {
             DP_LayerAcl *l = &entry->layer_acl;
-            return l->locked || !DP_user_bit_get(l->exclusive, user_id)
+            return l->content_locked || !DP_user_bit_get(l->exclusive, user_id)
                 || l->tier < DP_acl_state_user_tier(acls, user_id);
         }
         else {
@@ -673,11 +675,34 @@ static uint8_t handle_user_acl(DP_AclState *acls, DP_Message *msg,
     }
 }
 
+static bool is_layer_movable(DP_AclState *acls, int layer_id)
+{
+    DP_ASSERT(acls);
+    DP_LayerAclEntry *entry;
+    HASH_FIND_INT(acls->layers, &layer_id, entry);
+    return !entry || !entry->layer_acl.move_locked;
+}
+
+static bool is_layer_props_editable(DP_AclState *acls, int layer_id)
+{
+    DP_ASSERT(acls);
+    DP_LayerAclEntry *entry;
+    HASH_FIND_INT(acls->layers, &layer_id, entry);
+    return !entry || !entry->layer_acl.props_locked;
+}
+
 static bool can_edit_layer(DP_AclState *acls, uint8_t user_id, int layer_id)
 {
     return DP_acl_state_can_use_feature(acls, DP_FEATURE_EDIT_LAYERS, user_id)
         || (DP_acl_state_can_use_feature(acls, DP_FEATURE_OWN_LAYERS, user_id)
             && DP_layer_id_owner(layer_id, user_id));
+}
+
+static bool can_edit_layer_props(DP_AclState *acls, uint8_t user_id,
+                                 int layer_id)
+{
+    return can_edit_layer(acls, user_id, layer_id)
+        && is_layer_props_editable(acls, layer_id);
 }
 
 static void set_layer_acl(DP_AclState *acls, int layer_id,
@@ -691,7 +716,9 @@ static void set_layer_acl(DP_AclState *acls, int layer_id,
     }
 
     DP_LayerAcl *l = &entry->layer_acl;
-    l->locked = flags & DP_ACL_ALL_LOCKED_BIT;
+    l->content_locked = flags & DP_ACL_CONTENT_LOCKED_BIT;
+    l->move_locked = flags & DP_ACL_MOVE_LOCKED_BIT;
+    l->props_locked = flags & DP_ACL_PROPS_LOCKED_BIT;
     l->tier = DP_min_uint8(flags & DP_ACCESS_TIER_MASK, DP_ACCESS_TIER_GUEST);
 
     // If no exclusive user ids are given, all users are allowed to use this.
@@ -871,6 +898,7 @@ static bool handle_layer_tree_move(DP_AclState *acls, DP_MsgLayerTreeMove *mltm,
     int parent_id =
         DP_protocol_to_layer_id(DP_msg_layer_tree_move_parent(mltm));
     return can_edit_layer(acls, user_id, layer_id)
+        && is_layer_movable(acls, layer_id)
         && (parent_id == 0 ? can_edit_any_or_own_layers(acls, user_id)
                            : can_edit_layer(acls, user_id, layer_id));
 }
@@ -1179,15 +1207,16 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
             || DP_acl_state_can_use_feature(acls, DP_FEATURE_RESIZE, user_id);
     case DP_MSG_LAYER_ATTRIBUTES:
         return override
-            || can_edit_layer(
+            || can_edit_layer_props(
                    acls, user_id,
                    DP_protocol_to_layer_id(
                        DP_msg_layer_attributes_id(DP_message_internal(msg))));
     case DP_MSG_LAYER_RETITLE:
         return override
-            || can_edit_layer(acls, user_id,
-                              DP_protocol_to_layer_id(DP_msg_layer_retitle_id(
-                                  DP_message_internal(msg))));
+            || can_edit_layer_props(
+                   acls, user_id,
+                   DP_protocol_to_layer_id(
+                       DP_msg_layer_retitle_id(DP_message_internal(msg))));
     case DP_MSG_PUT_IMAGE:
     case DP_MSG_PUT_IMAGE_ZSTD: {
         DP_MsgPutImage *mpi = DP_message_internal(msg);
@@ -1448,7 +1477,10 @@ bool DP_acl_state_reset_image_build(
     HASH_ITER(hh, acls->layers, entry, tmp) {
         DP_LayerAcl *l = &entry->layer_acl;
         uint8_t flags =
-            DP_uint_to_uint8(l->tier | (l->locked ? DP_ACL_ALL_LOCKED_BIT : 0));
+            (uint8_t)l->tier
+            | DP_flag_uint8(l->props_locked, DP_ACL_PROPS_LOCKED_BIT)
+            | DP_flag_uint8(l->move_locked, DP_ACL_MOVE_LOCKED_BIT)
+            | DP_flag_uint8(l->content_locked, DP_ACL_CONTENT_LOCKED_BIT);
         int exclusive_count = count_user_bits(l->exclusive);
         bool exclusive = include_exclusive && exclusive_count != 256;
         DP_Message *layer_acl_msg = DP_msg_layer_acl_new(

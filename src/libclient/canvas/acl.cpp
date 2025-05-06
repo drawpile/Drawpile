@@ -17,16 +17,18 @@ struct AclState::Data {
 	DP_AccessTier tier() const;
 };
 
-AclState::Layer::Layer()
-	: locked(false)
-	, tier(DP_ACCESS_TIER_GUEST)
+uint8_t AclState::Layer::flags() const
 {
+	return uint8_t(tier) | DP_flag_uint8(propsLocked, DP_ACL_PROPS_LOCKED_BIT) |
+		   DP_flag_uint8(moveLocked, DP_ACL_MOVE_LOCKED_BIT) |
+		   DP_flag_uint8(contentLocked, DP_ACL_CONTENT_LOCKED_BIT);
 }
 
 bool AclState::Layer::operator!=(const Layer &other) const
 {
-	return locked != other.locked || tier != other.tier ||
-		   exclusive != other.exclusive;
+	return contentLocked != other.contentLocked ||
+		   propsLocked != other.propsLocked || moveLocked != other.moveLocked ||
+		   tier != other.tier || exclusive != other.exclusive;
 }
 
 DP_AccessTier AclState::Data::tier() const
@@ -161,7 +163,9 @@ void AclState::updateLayers(const drawdance::AclState &acls, bool reset)
 	QHash<int, Layer> layers;
 	acls.eachLayerAcl([&layers](int layerId, const DP_LayerAcl *acl) {
 		AclState::Layer l;
-		l.locked = acl->locked;
+		l.contentLocked = acl->content_locked;
+		l.propsLocked = acl->props_locked;
+		l.moveLocked = acl->move_locked;
 		l.tier = acl->tier;
 		l.exclusive.clear();
 
@@ -268,10 +272,22 @@ bool AclState::isLayerLocked(int layerId) const
 {
 	QHash<int, Layer>::const_iterator it = d->layers.constFind(layerId);
 	return it != d->layers.constEnd() &&
-		   (it->locked ||
+		   (it->contentLocked ||
 			DP_user_acls_tier(&d->users, d->localUser) > it->tier ||
 			(!it->exclusive.isEmpty() &&
 			 !it->exclusive.contains(d->localUser)));
+}
+
+bool AclState::isLayerPropsLocked(int layerId) const
+{
+	QHash<int, Layer>::const_iterator it = d->layers.constFind(layerId);
+	return it != d->layers.constEnd() && it->propsLocked;
+}
+
+bool AclState::isLayerMoveLocked(int layerId) const
+{
+	QHash<int, Layer>::const_iterator it = d->layers.constFind(layerId);
+	return it != d->layers.constEnd() && it->moveLocked;
 }
 
 bool AclState::canUseFeature(DP_Feature feature) const
