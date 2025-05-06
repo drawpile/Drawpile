@@ -38,7 +38,8 @@ void Page::disableKineticScrollingOnWidget(QWidget *widget)
 {
 	Q_ASSERT(widget);
 	utils::KineticScroller *kineticScroller =
-		findChild<utils::KineticScroller *>(Qt::FindDirectChildrenOnly);
+		findChild<utils::KineticScroller *>(
+			QString(), Qt::FindDirectChildrenOnly);
 	if(kineticScroller) {
 		kineticScroller->disableKineticScrollingOnWidget(widget);
 	} else {
