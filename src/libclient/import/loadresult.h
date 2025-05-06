@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_IMPORT_LOADMESSAGE_H
 #define LIBCLIENT_IMPORT_LOADMESSAGE_H
 extern "C" {

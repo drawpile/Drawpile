@@ -798,7 +798,7 @@ static DP_Message *generate_selection_put(void)
 {
     return DP_msg_selection_put_new(
         generate_context_id(), random_uint8(), random_uint8(), random_int32(),
-        random_int32(), random_uint16(), random_uint16(), generate_bytes,
+        random_int32(), random_uint32(), random_uint32(), generate_bytes,
         size_between(DP_MSG_SELECTION_PUT_MASK_MIN_SIZE,
                      DP_MSG_SELECTION_PUT_MASK_MAX_SIZE),
         NULL);

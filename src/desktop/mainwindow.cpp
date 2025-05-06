@@ -2889,8 +2889,14 @@ void MainWindow::hostSession(const HostParams &params)
 		return;
 	}
 
-	if(!m_doc->canvas()) {
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	if(!canvas) {
 		showErrorMessage(tr("No canvas to host! Create one or open a file."));
+		return;
+	}
+
+	if(!canvas->paintEngine()->viewCanvasState().isSizeInBounds()) {
+		showErrorMessage(tr("Canvas size too large to host."));
 		return;
 	}
 

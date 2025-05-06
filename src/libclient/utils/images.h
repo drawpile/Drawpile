@@ -12,9 +12,6 @@ class QColor;
 
 namespace utils {
 
-//! Check if image dimensions are not too big. Returns true if size is OK
-bool checkImageSize(const QSize &size);
-
 enum FileFormatOption {
 	Images = 0x01,
 	Recordings = 0x02,

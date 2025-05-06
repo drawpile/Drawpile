@@ -266,8 +266,8 @@ static unsigned char *get_compression_buffer(size_t size, void *user)
 
 static size_t write_index_tile(DP_BuildIndexEntryContext *e, DP_Tile *t)
 {
-    size_t size = DP_tile_compress_deflate(t, DP_draw_context_tile8_buffer(e->dc),
-                                   get_compression_buffer, e->dc);
+    size_t size = DP_tile_compress_deflate(
+        t, DP_draw_context_tile8_buffer(e->dc), get_compression_buffer, e->dc);
     if (size == 0) {
         return 0;
     }
@@ -1386,7 +1386,7 @@ static bool read_index_offsets(DP_BufferedInput *input, int count,
 static bool read_index_canvas_state(DP_ReadSnapshotContext *c,
                                     unsigned int width, unsigned int height)
 {
-    if (width > UINT16_MAX || height > UINT16_MAX) {
+    if (DP_canvas_state_dimensions_in_bounds(width, height)) {
         DP_error_set("Canvas dimensions %ux%u out of bounds", width, height);
         return false;
     }

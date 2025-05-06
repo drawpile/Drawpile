@@ -202,8 +202,8 @@ void PaintEngine::enqueueLoadBlank(
 		net::makeUndoDepthMessage(0, undoDepthLimit),
 		net::makeCanvasBackgroundMessage(0, backgroundColor),
 		net::makeCanvasResizeMessage(
-			0, 0, qBound(0, size.width(), int(UINT16_MAX)),
-			qBound(0, size.height(), int(UINT16_MAX)), 0),
+			0, 0, qBound(0, size.width(), int(DP_CANVAS_STATE_MAX_DIMENSION)),
+			qBound(0, size.height(), int(DP_CANVAS_STATE_MAX_DIMENSION)), 0),
 		net::makeLayerTreeCreateMessage(
 			0, 1, 0, 0, 0, 0, tr("Layer %1").arg(1)),
 		net::makeInternalSnapshotMessage(0),

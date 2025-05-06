@@ -153,7 +153,7 @@ void AnimationSaverRunnable::run()
 	}
 	QFile::remove(path);
 #else
-	emit saveComplete(CanvasSaverRunnable::saveResultToErrorString(result));
+	emit saveComplete(saveResultToErrorString(result));
 #endif
 }
 
@@ -199,6 +199,32 @@ int AnimationSaverRunnable::formatToSaveVideoFormat() const
 	}
 }
 #endif
+
+QString
+AnimationSaverRunnable::saveResultToErrorString(DP_SaveResult result) const
+{
+	if(result == DP_SAVE_RESULT_BAD_DIMENSIONS) {
+		switch(m_format) {
+		case int(AnimationFormat::Frames):
+		case int(AnimationFormat::Zip):
+			return CanvasSaverRunnable::badDimensionsErrorString(
+				2147483647, QStringLiteral("PNG"));
+		case int(AnimationFormat::Gif):
+			return CanvasSaverRunnable::badDimensionsErrorString(
+				65536, QStringLiteral("GIF"));
+		case int(AnimationFormat::Webp):
+			return CanvasSaverRunnable::badDimensionsErrorString(
+				16384, QStringLiteral("WEBP"));
+		case int(AnimationFormat::Mp4):
+			return CanvasSaverRunnable::badDimensionsErrorString(
+				2147483646, QStringLiteral("MP4"));
+		case int(AnimationFormat::Webm):
+			return CanvasSaverRunnable::badDimensionsErrorString(
+				65536, QStringLiteral("WEBM"));
+		}
+	}
+	return CanvasSaverRunnable::saveResultToErrorString(result);
+}
 
 bool AnimationSaverRunnable::onProgress(void *user, double progress)
 {

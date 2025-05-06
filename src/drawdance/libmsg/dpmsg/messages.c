@@ -9613,8 +9613,8 @@ struct DP_MsgSelectionPut {
     uint8_t op;
     int32_t x;
     int32_t y;
-    uint16_t w;
-    uint16_t h;
+    uint32_t w;
+    uint32_t h;
     uint16_t mask_size;
     unsigned char mask[];
 };
@@ -9622,7 +9622,7 @@ struct DP_MsgSelectionPut {
 static size_t msg_selection_put_payload_length(DP_Message *msg)
 {
     DP_MsgSelectionPut *msp = DP_message_internal(msg);
-    return ((size_t)14) + msp->mask_size;
+    return ((size_t)18) + msp->mask_size;
 }
 
 static size_t msg_selection_put_serialize_payload(DP_Message *msg,
@@ -9634,8 +9634,8 @@ static size_t msg_selection_put_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint8(msp->op, data + written);
     written += DP_write_bigendian_int32(msp->x, data + written);
     written += DP_write_bigendian_int32(msp->y, data + written);
-    written += DP_write_bigendian_uint16(msp->w, data + written);
-    written += DP_write_bigendian_uint16(msp->h, data + written);
+    written += DP_write_bigendian_uint32(msp->w, data + written);
+    written += DP_write_bigendian_uint32(msp->h, data + written);
     written += write_bytes(msp->mask, msp->mask_size, data + written);
     DP_ASSERT(written == msg_selection_put_payload_length(msg));
     return written;
@@ -9676,8 +9676,8 @@ void DP_msg_selection_put_local_match_set(DP_UNUSED size_t size,
     written += DP_write_bigendian_uint8(msp->op, data + written);
     written += DP_write_bigendian_int32(msp->x, data + written);
     written += DP_write_bigendian_int32(msp->y, data + written);
-    written += DP_write_bigendian_uint16(msp->w, data + written);
-    written += DP_write_bigendian_uint16(msp->h, data + written);
+    written += DP_write_bigendian_uint32(msp->w, data + written);
+    written += DP_write_bigendian_uint32(msp->h, data + written);
     written += DP_write_bigendian_uint16(msp->mask_size, data + written);
     DP_ASSERT(written == DP_MSG_SELECTION_PUT_MATCH_LENGTH);
 }
@@ -9693,8 +9693,8 @@ bool DP_msg_selection_put_local_match_matches(const DP_MsgSelectionPut *msp,
         && read_uint8(buffer + read, &read) == msp->op
         && read_int32(buffer + read, &read) == msp->x
         && read_int32(buffer + read, &read) == msp->y
-        && read_uint16(buffer + read, &read) == msp->w
-        && read_uint16(buffer + read, &read) == msp->h
+        && read_uint32(buffer + read, &read) == msp->w
+        && read_uint32(buffer + read, &read) == msp->h
         && read_uint16(buffer + read, &read) == msp->mask_size;
 }
 
@@ -9707,8 +9707,8 @@ static const DP_MessageMethods msg_selection_put_methods = {
 
 DP_Message *
 DP_msg_selection_put_new(unsigned int context_id, uint8_t selection_id,
-                         uint8_t op, int32_t x, int32_t y, uint16_t w,
-                         uint16_t h,
+                         uint8_t op, int32_t x, int32_t y, uint32_t w,
+                         uint32_t h,
                          void (*set_mask)(size_t, unsigned char *, void *),
                          size_t mask_size, void *mask_user)
 {
@@ -9733,9 +9733,9 @@ DP_Message *DP_msg_selection_put_deserialize(unsigned int context_id,
                                              const unsigned char *buffer,
                                              size_t length)
 {
-    if (length < 14 || length > 65535) {
+    if (length < 18 || length > 65535) {
         DP_error_set("Wrong length for selectionput message; "
-                     "expected between 14 and 65535, got %zu",
+                     "expected between 18 and 65535, got %zu",
                      length);
         return NULL;
     }
@@ -9744,8 +9744,8 @@ DP_Message *DP_msg_selection_put_deserialize(unsigned int context_id,
     uint8_t op = read_uint8(buffer + read, &read);
     int32_t x = read_int32(buffer + read, &read);
     int32_t y = read_int32(buffer + read, &read);
-    uint16_t w = read_uint16(buffer + read, &read);
-    uint16_t h = read_uint16(buffer + read, &read);
+    uint32_t w = read_uint32(buffer + read, &read);
+    uint32_t h = read_uint32(buffer + read, &read);
     size_t mask_bytes = length - read;
     uint16_t mask_size = DP_size_to_uint16(mask_bytes);
     void *mask_user = (void *)(buffer + read);
@@ -9763,8 +9763,8 @@ DP_Message *DP_msg_selection_put_parse(unsigned int context_id,
         (int32_t)DP_text_reader_get_long(reader, "x", INT32_MIN, INT32_MAX);
     int32_t y =
         (int32_t)DP_text_reader_get_long(reader, "y", INT32_MIN, INT32_MAX);
-    uint16_t w = (uint16_t)DP_text_reader_get_ulong(reader, "w", UINT16_MAX);
-    uint16_t h = (uint16_t)DP_text_reader_get_ulong(reader, "h", UINT16_MAX);
+    uint32_t w = (uint32_t)DP_text_reader_get_ulong(reader, "w", UINT32_MAX);
+    uint32_t h = (uint32_t)DP_text_reader_get_ulong(reader, "h", UINT32_MAX);
     size_t mask_size;
     DP_TextReaderParseParams mask_params =
         DP_text_reader_get_base64_string(reader, "mask", &mask_size);
@@ -9802,13 +9802,13 @@ int32_t DP_msg_selection_put_y(const DP_MsgSelectionPut *msp)
     return msp->y;
 }
 
-uint16_t DP_msg_selection_put_w(const DP_MsgSelectionPut *msp)
+uint32_t DP_msg_selection_put_w(const DP_MsgSelectionPut *msp)
 {
     DP_ASSERT(msp);
     return msp->w;
 }
 
-uint16_t DP_msg_selection_put_h(const DP_MsgSelectionPut *msp)
+uint32_t DP_msg_selection_put_h(const DP_MsgSelectionPut *msp)
 {
     DP_ASSERT(msp);
     return msp->h;

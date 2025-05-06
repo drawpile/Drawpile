@@ -44,6 +44,8 @@ private:
 	int formatToSaveVideoFormat() const;
 #endif
 
+	QString saveResultToErrorString(DP_SaveResult result) const;
+
 	static bool onProgress(void *user, double progress);
 
 #ifndef __EMSCRIPTEN__

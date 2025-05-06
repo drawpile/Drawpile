@@ -71,10 +71,11 @@ void CanvasSaverRunnable::run()
 	}
 #endif
 
-	emit saveComplete(saveResultToErrorString(result));
+	emit saveComplete(saveResultToErrorString(result, m_type));
 }
 
-QString CanvasSaverRunnable::saveResultToErrorString(DP_SaveResult result)
+QString CanvasSaverRunnable::saveResultToErrorString(
+	DP_SaveResult result, DP_SaveImageType type)
 {
 	switch(result) {
 	case DP_SAVE_RESULT_SUCCESS:
@@ -82,6 +83,10 @@ QString CanvasSaverRunnable::saveResultToErrorString(DP_SaveResult result)
 		return QString{};
 	case DP_SAVE_RESULT_BAD_ARGUMENTS:
 		return tr("Bad arguments, this is probably a bug in Drawpile.");
+	case DP_SAVE_RESULT_BAD_DIMENSIONS:
+		return badDimensionsErrorString(
+			DP_save_image_type_max_dimension(type),
+			QString::fromUtf8(DP_save_image_type_name(type)));
 	case DP_SAVE_RESULT_UNKNOWN_FORMAT:
 		return tr("Unsupported format.");
 	case DP_SAVE_RESULT_FLATTEN_ERROR:
@@ -95,6 +100,16 @@ QString CanvasSaverRunnable::saveResultToErrorString(DP_SaveResult result)
 		return tr("Internal error during saving.");
 	}
 	return tr("Unknown error.");
+}
+
+QString CanvasSaverRunnable::badDimensionsErrorString(
+	int maxDimension, const QString &format)
+{
+	//: %1 is a number and %2 is a file format. For example, the message
+	//: will say "…must be between 1 and 65535 for JPEG."
+	return tr("Canvas size out of bounds, width and height must be between 1 "
+			  "and %1 for %2.")
+		.arg(QString::number(maxDimension), format);
 }
 
 bool CanvasSaverRunnable::bakeAnnotation(

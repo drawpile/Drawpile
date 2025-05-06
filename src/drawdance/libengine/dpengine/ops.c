@@ -62,7 +62,7 @@ DP_CanvasState *DP_ops_canvas_resize(DP_CanvasState *cs,
 
     int width = east + left;
     int height = south + top;
-    if (width < 1 || height < 1 || width > INT16_MAX || height > INT16_MAX) {
+    if (!DP_canvas_state_dimensions_in_bounds(width, height)) {
         DP_error_set("Invalid resize: %dx%d", width, height);
         return NULL;
     }

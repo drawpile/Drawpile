@@ -78,7 +78,7 @@ bool DP_save_video_format_supported(int format)
 }
 
 
-DP_Rect get_crop(DP_CanvasState *cs, const DP_Rect *area)
+static DP_Rect get_crop(DP_CanvasState *cs, const DP_Rect *area)
 {
     int width = DP_canvas_state_width(cs);
     int height = DP_canvas_state_height(cs);
@@ -86,7 +86,7 @@ DP_Rect get_crop(DP_CanvasState *cs, const DP_Rect *area)
     return area ? DP_rect_intersection(canvas_area, *area) : canvas_area;
 }
 
-const char *get_format_name(int format)
+static const char *get_format_name(int format)
 {
     switch (format) {
     case DP_SAVE_VIDEO_FORMAT_MP4:
@@ -101,6 +101,21 @@ const char *get_format_name(int format)
         return "gif";
     default:
         return NULL;
+    }
+}
+
+static bool check_format_dimensions(DP_CanvasState *cs, int format)
+{
+    switch (format) {
+    case DP_SAVE_VIDEO_FORMAT_MP4:
+        return DP_save_check_dimensions(cs, 2147483646);
+    case DP_SAVE_VIDEO_FORMAT_WEBM:
+    case DP_SAVE_VIDEO_FORMAT_GIF:
+        return DP_save_check_dimensions(cs, 65536);
+    case DP_SAVE_VIDEO_FORMAT_WEBP:
+        return DP_save_check_dimensions(cs, 16384);
+    default:
+        return true;
     }
 }
 
@@ -464,6 +479,11 @@ DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
     if (!params_ok) {
         DP_error_set("Invalid arguments");
         result = DP_SAVE_RESULT_BAD_ARGUMENTS;
+        goto cleanup;
+    }
+
+    if (!check_format_dimensions(params.cs, params.format)) {
+        result = DP_SAVE_RESULT_BAD_DIMENSIONS;
         goto cleanup;
     }
 
@@ -1036,6 +1056,10 @@ static bool on_gif_progress_gif(void *user, double progress)
 
 DP_SaveResult DP_save_animation_video_gif(DP_SaveGifParams params)
 {
+    if (!check_format_dimensions(params.cs, DP_SAVE_VIDEO_FORMAT_GIF)) {
+        return DP_SAVE_RESULT_BAD_DIMENSIONS;
+    }
+
     // Generate GIF palette into an in-memory buffer.
     void **buffer_ptr;
     size_t *size_ptr;

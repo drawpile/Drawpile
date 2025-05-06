@@ -42,6 +42,9 @@ typedef struct DP_UserCursors DP_UserCursors;
 typedef struct DP_ViewModeFilter DP_ViewModeFilter;
 
 
+#define DP_CANVAS_STATE_MAX_DIMENSION 1000000
+#define DP_CANVAS_STATE_MAX_PIXELS    (INT16_MAX * INT16_MAX)
+
 #define DP_FLAT_IMAGE_INCLUDE_BACKGROUND (1u << 0u)
 #define DP_FLAT_IMAGE_INCLUDE_SUBLAYERS  (1u << 1u)
 #define DP_FLAT_IMAGE_ONE_BIT_ALPHA      (1u << 2u)
@@ -188,6 +191,10 @@ void DP_canvas_state_diff(DP_CanvasState *cs, DP_CanvasState *prev_or_null,
 DP_TransientLayerContent *DP_canvas_state_render(DP_CanvasState *cs,
                                                  DP_TransientLayerContent *lc,
                                                  DP_CanvasDiff *diff);
+
+bool DP_canvas_state_in_max_dimension_bound(long long dimension);
+bool DP_canvas_state_in_max_pixels_bound(long long width, long long height);
+bool DP_canvas_state_dimensions_in_bounds(long long width, long long height);
 
 
 DP_TransientCanvasState *DP_transient_canvas_state_new_init(void);

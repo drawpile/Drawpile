@@ -32,7 +32,11 @@ public:
 
 	void run() override;
 
-	static QString saveResultToErrorString(DP_SaveResult result);
+	static QString saveResultToErrorString(
+		DP_SaveResult result, DP_SaveImageType type = DP_SAVE_IMAGE_UNKNOWN);
+
+	static QString
+	badDimensionsErrorString(int maxDimension, const QString &format);
 
 signals:
 	/**

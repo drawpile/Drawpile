@@ -38,6 +38,9 @@ public:
 	QRect newBounds() const;
 	ResizeVector resizeVector() const;
 
+	static bool checkDimensions(
+		long long width, long long height, QString *outError = nullptr);
+
 public slots:
 	void done(int r) override;
 
@@ -53,6 +56,8 @@ private slots:
 
 private:
 	static constexpr int EXPAND = 64;
+
+	void updateError();
 
 	Ui_ResizeDialog *m_ui;
 

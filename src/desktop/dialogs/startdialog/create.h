@@ -6,6 +6,7 @@
 #include "desktop/dialogs/startdialog/page.h"
 #include <QWidget>
 
+class QLabel;
 class QSpinBox;
 
 namespace color_widgets {
@@ -38,6 +39,7 @@ private:
 	QSpinBox *m_widthSpinner;
 	QSpinBox *m_heightSpinner;
 	color_widgets::ColorPreview *m_backgroundPreview;
+	QLabel *m_errorLabel;
 };
 
 }

@@ -90,6 +90,8 @@ public:
 
 	bool isBlankIn(int layerId, const QRect &rect, const QImage &mask) const;
 
+	bool isSizeInBounds() const;
+
 	void toResetImage(net::MessageList &msgs, uint8_t contextId) const;
 
 	net::Message makeLayerTreeMove(

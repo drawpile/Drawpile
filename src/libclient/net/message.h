@@ -136,7 +136,7 @@ Message makeSelectionClearMessage(uint8_t contextId, uint8_t selectionId);
 
 Message makeSelectionPutMessage(
 	uint8_t contextId, uint8_t selectionId, uint8_t op, int32_t x, int32_t y,
-	uint16_t w, uint16_t h, const QByteArray &compressedMask);
+	uint32_t w, uint32_t h, const QByteArray &compressedMask);
 
 Message
 makeSetMetadataIntMessage(uint8_t contextId, uint8_t field, int32_t value);

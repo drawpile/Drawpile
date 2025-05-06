@@ -69,6 +69,8 @@ public:
 		return m_canvasImplementationFromSettings;
 	}
 
+	QSize safeNewCanvasSize() const;
+
 	// Returns a pair of (pixel size, physical size) of the primary screen.
 	static QPair<QSize, QSizeF> screenResolution();
 

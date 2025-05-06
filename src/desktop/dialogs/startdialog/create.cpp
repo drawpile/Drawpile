@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/create.h"
 #include "desktop/dialogs/colordialog.h"
+#include "desktop/dialogs/resizedialog.h"
 #include "desktop/main.h"
 #include "libclient/utils/images.h"
 #include <QFormLayout>
+#include <QLabel>
 #include <QSpinBox>
 #include <QtColorWidgets/ColorPreview>
 
@@ -24,26 +26,33 @@ Create::Create(QWidget *parent)
 
 	m_widthSpinner = new QSpinBox;
 	m_widthSpinner->setSuffix(tr("px"));
-	m_widthSpinner->setSingleStep(10);
-	m_widthSpinner->setRange(1, INT16_MAX);
+	m_widthSpinner->setRange(1, 99999999);
 	m_widthSpinner->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	layout->addRow(tr("Width:"), m_widthSpinner);
 
 	m_heightSpinner = new QSpinBox;
 	m_heightSpinner->setSuffix(tr("px"));
-	m_heightSpinner->setSingleStep(10);
-	m_heightSpinner->setRange(1, INT16_MAX);
+	m_heightSpinner->setRange(1, 99999999);
 	m_heightSpinner->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
 	layout->addRow(tr("Height:"), m_heightSpinner);
 
-	const desktop::settings::Settings &settings = dpApp().settings();
-	QSize lastSize = settings.newCanvasSize();
-	bool lastSizeValid = lastSize.isValid() && utils::checkImageSize(lastSize);
+	const DrawpileApp &app = dpApp();
+	QSize lastSize = app.safeNewCanvasSize();
+	bool lastSizeValid =
+		lastSize.isValid() &&
+		ResizeDialog::checkDimensions(lastSize.width(), lastSize.height());
 	m_widthSpinner->setValue(lastSizeValid ? lastSize.width() : 1920);
 	m_heightSpinner->setValue(lastSizeValid ? lastSize.height() : 1080);
 
-	m_backgroundPreview = makeBackgroundPreview(settings.newCanvasBackColor());
+	m_backgroundPreview =
+		makeBackgroundPreview(app.settings().newCanvasBackColor());
 	layout->addRow(tr("Background:"), m_backgroundPreview);
+
+	m_errorLabel = new QLabel;
+	m_errorLabel->setTextFormat(Qt::PlainText);
+	m_errorLabel->setVisible(false);
+	m_errorLabel->setWordWrap(true);
+	layout->addRow(m_errorLabel);
 
 	connect(
 		m_widthSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
@@ -85,8 +94,12 @@ color_widgets::ColorPreview *Create::makeBackgroundPreview(const QColor &color)
 
 void Create::updateCreateButton()
 {
-	QSize size{m_widthSpinner->value(), m_heightSpinner->value()};
-	emit enableCreate(size.isValid() && utils::checkImageSize(size));
+	QString error;
+	bool ok = ResizeDialog::checkDimensions(
+		m_widthSpinner->value(), m_heightSpinner->value(), &error);
+	m_errorLabel->setText(error);
+	m_errorLabel->setVisible(!ok);
+	emit enableCreate(ok);
 }
 
 void Create::showColorPicker()

@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+extern "C" {
+#include <dpengine/canvas_state.h>
+}
 #include "desktop/dialogs/resizedialog.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/utils/images.h"
@@ -52,6 +55,7 @@ ResizeDialog::ResizeDialog(
 
 	m_ui->width->setValue(m_oldsize.width());
 	m_ui->height->setValue(m_oldsize.height());
+	updateError();
 
 	connect(
 		m_ui->width, QOverload<int>::of(&QSpinBox::valueChanged), this,
@@ -139,8 +143,10 @@ void ResizeDialog::initialExpand(int expandDirection)
 void ResizeDialog::done(int r)
 {
 	if(r == QDialog::Accepted) {
-		if(!utils::checkImageSize(newSize())) {
-			utils::showInformation(this, tr("Error"), tr("Size is too large"));
+		QString error;
+		if(!checkDimensions(
+			   m_ui->width->value(), m_ui->height->value(), &error)) {
+			utils::showWarning(this, tr("Error"), error);
 			return;
 		}
 	}
@@ -156,6 +162,7 @@ void ResizeDialog::widthChanged(int newWidth)
 	}
 	m_ui->resizer->setTargetSize(QSize(newWidth, m_ui->height->value()));
 	m_lastchanged = 0;
+	updateError();
 }
 
 void ResizeDialog::heightChanged(int newHeight)
@@ -166,6 +173,7 @@ void ResizeDialog::heightChanged(int newHeight)
 	}
 	m_ui->resizer->setTargetSize(QSize(m_ui->width->value(), newHeight));
 	m_lastchanged = 1;
+	updateError();
 }
 
 void ResizeDialog::toggleAspectRatio(bool keep)
@@ -238,6 +246,56 @@ ResizeVector ResizeDialog::resizeVector() const
 	rv.bottom = s.height() - m_oldsize.height() - o.y();
 
 	return rv;
+}
+
+bool ResizeDialog::checkDimensions(
+	long long width, long long height, QString *outError)
+{
+	bool widthInBounds = DP_canvas_state_in_max_dimension_bound(width);
+	bool heightInBounds = DP_canvas_state_in_max_dimension_bound(height);
+	bool inPixelBounds = DP_canvas_state_in_max_pixels_bound(width, height);
+	if(!widthInBounds) {
+		if(!heightInBounds) {
+			if(outError) {
+				*outError =
+					tr("Width and height must be between 1 and %1 pixels.")
+						.arg(DP_CANVAS_STATE_MAX_DIMENSION);
+			}
+			return false;
+		} else {
+			if(outError) {
+				*outError = tr("Width must be between 1 and %1 pixels.")
+								.arg(DP_CANVAS_STATE_MAX_DIMENSION);
+			}
+			return false;
+		}
+	} else if(!heightInBounds) {
+		if(outError) {
+			*outError = tr("Height must be between 1 and %1 pixels.")
+							.arg(DP_CANVAS_STATE_MAX_DIMENSION);
+		}
+		return false;
+	} else if(!inPixelBounds) {
+		if(outError) {
+			*outError =
+				tr("Total size must be between 1 and %1 pixels (you're at %2.)")
+					.arg(DP_CANVAS_STATE_MAX_PIXELS)
+					.arg(width * height);
+		}
+		return false;
+	} else {
+		return true;
+	}
+}
+
+void ResizeDialog::updateError()
+{
+	QString error;
+	bool ok =
+		checkDimensions(m_ui->width->value(), m_ui->height->value(), &error);
+	m_ui->errorLabel->setText(error);
+	m_ui->errorLabel->setVisible(!ok);
+	m_ui->buttons->button(QDialogButtonBox::Ok)->setEnabled(ok);
 }
 
 }

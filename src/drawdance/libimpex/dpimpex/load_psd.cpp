@@ -483,9 +483,9 @@ extern "C" DP_CanvasState *DP_load_psd(DP_DrawContext *dc, DP_Input *input,
 
     unsigned int width = document->width;
     unsigned int height = document->height;
-    if (width > UINT16_MAX || height > UINT16_MAX) {
-        DP_error_set("PSD dimensions %ux%u too large", width, height);
-        assign_load_result(out_result, DP_LOAD_RESULT_IMAGE_TOO_LARGE);
+    if (DP_canvas_state_dimensions_in_bounds(width, height)) {
+        DP_error_set("Canvas dimensions out of bounds");
+        assign_load_result(out_result, DP_LOAD_RESULT_BAD_DIMENSIONS);
         psd::DestroyDocument(document, &allocator);
         file.Close();
         return nullptr;

@@ -1417,8 +1417,9 @@ static DP_CanvasState *handle_selection_put(DP_CanvasState *cs,
     return selection_put(
         cs, dc, context_id, DP_msg_selection_put_selection_id(msp),
         DP_msg_selection_put_op(msp), DP_msg_selection_put_x(msp),
-        DP_msg_selection_put_y(msp), DP_msg_selection_put_w(msp),
-        DP_msg_selection_put_h(msp), in_mask_size, in_mask);
+        DP_msg_selection_put_y(msp),
+        DP_uint32_to_int(DP_msg_selection_put_w(msp)),
+        DP_uint32_to_int(DP_msg_selection_put_h(msp)), in_mask_size, in_mask);
 }
 
 static DP_CanvasState *handle_selection_clear(DP_CanvasState *cs,
@@ -2076,6 +2077,26 @@ DP_TransientLayerContent *DP_canvas_state_render(DP_CanvasState *cs,
         DP_transient_layer_content_resize_to(lc, 0, cs->width, cs->height);
     DP_canvas_diff_each_index(diff, render_tile, (void *[]){cs, target});
     return target;
+}
+
+bool DP_canvas_state_in_max_dimension_bound(long long dimension)
+{
+    return dimension > 0LL
+        && dimension <= (long long)DP_CANVAS_STATE_MAX_DIMENSION;
+}
+
+bool DP_canvas_state_in_max_pixels_bound(long long width, long long height)
+{
+    long long max_pixels = DP_CANVAS_STATE_MAX_PIXELS;
+    return width > 0LL && width <= max_pixels && height > 0LL
+        && height < max_pixels && width * height <= max_pixels;
+}
+
+bool DP_canvas_state_dimensions_in_bounds(long long width, long long height)
+{
+    return DP_canvas_state_in_max_dimension_bound(width)
+        && DP_canvas_state_in_max_dimension_bound(height)
+        && DP_canvas_state_in_max_pixels_bound(width, height);
 }
 
 
