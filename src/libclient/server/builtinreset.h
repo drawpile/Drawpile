@@ -37,7 +37,8 @@ public:
 	void appendAclsToPostResetMessages(
 		const drawdance::AclState &acls, uint8_t localUserId);
 
-	void generateResetImage(const drawdance::CanvasState &canvasState);
+	void generateResetImage(
+		const drawdance::CanvasState &canvasState, bool compatibilityMode);
 
 	net::MessageList takeResetImage();
 

@@ -161,6 +161,7 @@ void DP_reset_image_build_with(
     void (*handle_entry)(void *, const DP_ResetEntry *), void *user);
 
 void DP_reset_image_build(DP_CanvasState *cs, unsigned int context_id,
+                          bool compatibility_mode,
                           void (*push_message)(void *, DP_Message *),
                           void *user);
 

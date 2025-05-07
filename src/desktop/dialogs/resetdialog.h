@@ -25,7 +25,7 @@ public:
 
 	void setCanReset(bool canReset);
 
-	net::MessageList getResetImage() const;
+	net::MessageList getResetImage(bool compatibilityMode) const;
 	QString getResetImageType() const;
 	bool isExternalResetImage() const;
 

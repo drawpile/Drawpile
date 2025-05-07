@@ -51,7 +51,8 @@ public:
 
 	void beginStroke(
 		unsigned int contextId, const drawdance::CanvasState &cs,
-		bool pushUndoPoint, bool mirror, bool flip, float zoom, float angle);
+		bool compatibilityMode, bool pushUndoPoint, bool mirror, bool flip,
+		float zoom, float angle);
 
 	void strokeTo(const canvas::Point &point, const drawdance::CanvasState &cs);
 

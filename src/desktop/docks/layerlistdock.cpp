@@ -631,16 +631,18 @@ void LayerList::updateLockedControls()
 	QSet<int> topLevelIds = topLevelSelectedIds();
 	bool canEditSelected = !locked && haveAnySelected &&
 						   (canEdit || (ownLayers && ownsAll(topLevelIds)));
+	bool compatibilityMode = m_canvas && m_canvas->isCompatibilityMode();
 
-	m_aclmenu->setCanEdit(canAclEditCurrent);
+	m_aclmenu->setCanEdit(canAclEditCurrent, compatibilityMode);
 	m_lockButton->setEnabled(haveAnySelected);
 	m_alphaPreserveButton->setEnabled(
 		canEditCurrent && haveAnySelected && canEditSelected &&
-		m_actions.layerAlphaPreserve &&
+		!compatibilityMode && m_actions.layerAlphaPreserve &&
 		m_actions.layerAlphaPreserve->isEnabled());
 	m_clipButton->setEnabled(
 		canEditCurrent && haveAnySelected && canEditSelected &&
-		m_actions.layerClip && m_actions.layerClip->isEnabled());
+		!compatibilityMode && m_actions.layerClip &&
+		m_actions.layerClip->isEnabled());
 	m_blendModeCombo->setEnabled(
 		canEditCurrent && haveAnySelected && canEditSelected);
 	m_opacitySlider->setEnabled(
@@ -2081,6 +2083,8 @@ void LayerList::updateUiFromCurrent()
 		(m_sketchMode ? layer.sketchOpacity : layer.opacity) * 100.0 + 0.5);
 
 	if(m_actions.layerAlphaGroup) {
+		bool compatibilityMode = m_canvas && m_canvas->isCompatibilityMode();
+		m_actions.layerAlphaGroup->setEnabled(!compatibilityMode);
 		bool enabled = !layer.group || layer.isolated;
 		m_actions.layerAlphaBlend->setEnabled(enabled);
 		m_actions.layerAlphaPreserve->setEnabled(enabled);

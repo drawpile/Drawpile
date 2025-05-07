@@ -2,7 +2,6 @@
 #include "libclient/tools/shapetools.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
-#include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/utils.h"
 #include "libclient/utils/cursors.h"
@@ -102,7 +101,6 @@ void ShapeTool::end(const EndParams &params)
 		updateShape(params.constrain, params.center);
 		m_drawing = false;
 
-		net::Client *client = m_owner.client();
 		canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 		drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
 
@@ -110,15 +108,15 @@ void ShapeTool::end(const EndParams &params)
 
 		const canvas::PointVector pv = pointVector();
 		m_brushEngine.beginStroke(
-			client->myId(), canvasState, true, m_mirror, m_flip, m_zoom,
-			m_angle);
+			localUserId(), canvasState, isCompatibilityMode(), true, m_mirror,
+			m_flip, m_zoom, m_angle);
 		for(const canvas::Point &p : pv) {
 			m_brushEngine.strokeTo(p, canvasState);
 		}
 		m_brushEngine.endStroke(pv.last().timeMsec() + 10, canvasState, true);
 
 		paintEngine->clearDabsPreview();
-		m_brushEngine.sendMessagesTo(client);
+		m_brushEngine.sendMessagesTo(m_owner.client());
 	}
 }
 
@@ -136,8 +134,8 @@ void ShapeTool::updatePreview()
 	const canvas::PointVector pv = pointVector();
 	Q_ASSERT(pv.count() > 1);
 	m_brushEngine.beginStroke(
-		m_owner.client()->myId(), canvasState, false, m_mirror, m_flip, m_zoom,
-		m_angle);
+		localUserId(), canvasState, isCompatibilityMode(), false, m_mirror,
+		m_flip, m_zoom, m_angle);
 	for(const canvas::Point &p : pv) {
 		m_brushEngine.strokeTo(p, canvasState);
 	}

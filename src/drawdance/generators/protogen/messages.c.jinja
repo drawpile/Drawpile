@@ -86,6 +86,22 @@ bool DP_message_type_command(DP_MessageType type)
         return false;
     }
 }
+{% if compat_version %}
+
+bool DP_message_type_compatible(DP_MessageType type)
+{
+    switch (type) {
+    {% for message in messages %}
+        {% if not message.incompatible %}
+        case {{ message.enum_name }}:
+        {% endif %}
+    {% endfor %}
+        return true;
+    default:
+        return false;
+    }
+}
+{% endif %}
 
 const char *DP_message_type_name(DP_MessageType type)
 {
@@ -130,20 +146,6 @@ DP_MessageType DP_message_type_from_name(const char *type_name, DP_MessageType n
     }
 }
 
-bool DP_message_type_parse_multiline_tuples(DP_MessageType type)
-{
-    switch (type) {
-        {% for message in messages %}
-            {% if message.field_with_subfields %}
-                case {{ message.enum_name }}:
-            {% endif %}
-        {% endfor %}
-        return true;
-    default:
-        return false;
-    }
-}
-
 
 DP_Message *DP_message_deserialize_body(int type, unsigned int context_id, const unsigned char *buf, size_t length, bool decode_opaque)
 {
@@ -162,10 +164,39 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id, const
             DP_error_set("Can't deserialize unknown message type %d", type);
             return NULL;
         }
-    } else {
+    }
+    else {
         return DP_message_new_opaque((DP_MessageType)type, context_id, buf, length);
     }
 }
+{% if compat_version %}
+
+DP_Message *DP_message_deserialize_body_compat(int type, unsigned int context_id, const unsigned char *buf, size_t length, bool decode_opaque)
+{
+    if (type < DP_MESSAGE_TYPE_RANGE_START_CLIENT || decode_opaque) {
+        switch (type) {
+        {% for message in messages %}
+            case {{ message.enum_name }}:
+                {% if message.reserved %}
+                    DP_error_set("Can't deserialize reserved message type {{ message.id }} {{ message.enum_name }}");
+                    return NULL;
+                {% elif message.incompatible %}
+                    DP_error_set("Can't deserialize incompatible message type {{ message.id }} {{ message.enum_name }}");
+                    return NULL;
+                {% else %}
+                    return DP_{{ message.func_name }}_deserialize_compat(context_id, buf, length);
+                {% endif %}
+        {% endfor %}
+        default:
+            DP_error_set("Can't deserialize unknown message type %d", type);
+            return NULL;
+        }
+    }
+    else {
+        return DP_message_new_opaque((DP_MessageType)type, context_id, buf, length);
+    }
+}
+{% endif %}
 
 DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id, DP_TextReader *reader)
 {
@@ -209,6 +240,10 @@ static bool zero_length_equals(DP_UNUSED DP_Message *DP_RESTRICT msg, DP_UNUSED 
 static const DP_MessageMethods zero_length_methods = {
     zero_length_payload_length,
     zero_length_serialize_payload,
+    {% if compat_version %}
+    zero_length_payload_length,
+    zero_length_serialize_payload,
+    {% endif %}
     zero_length_write_payload_text,
     zero_length_equals,
 };
@@ -342,6 +377,94 @@ static const unsigned char *local_match_data(DP_Message *msg, size_t *out_size)
         return DP_msg_put_image_image(DP_message_internal(msg), out_size);
     default:
         DP_UNREACHABLE();
+    }
+}
+
+static uint16_t serialize_layer_id_compat(uint32_t layer_id)
+{
+    return DP_uint32_to_uint16(((layer_id & (uint32_t)0xff00u) >> (uint32_t)8u)
+                               | ((layer_id & (uint32_t)0xffu) << (uint32_t)8u));
+}
+
+static uint32_t deserialize_layer_id_compat(uint16_t layer_id)
+{
+    uint32_t u = DP_uint16_to_uint32(layer_id);
+    return ((u & (uint32_t)0xffu) << (uint32_t)8u)
+         | ((u & (uint32_t)0xff00u) >> (uint32_t)8u);
+}
+
+static uint16_t convert_other_id_compat(unsigned int id)
+{
+    return DP_uint_to_uint16(((id & 0xffu) << 8u) | ((id & 0xff00u) >> 8u));
+}
+
+static uint8_t get_draw_dabs_flags_compat(uint32_t color)
+{
+    if (color & (uint32_t)0xff000000u) {
+        return (uint8_t)DP_PAINT_MODE_INDIRECT_SOFT;
+    } else {
+        return (uint8_t)DP_PAINT_MODE_DIRECT;
+    }
+}
+
+static void read_track_ids_compat(int count, uint16_t *out, void *user)
+{
+    const unsigned char *buffer = user;
+    for (int i = 0; i < count; ++i) {
+        out[i] =
+            convert_other_id_compat(DP_read_bigendian_uint16(buffer + i * 2));
+    }
+}
+
+static size_t write_track_ids_compat(const uint16_t *DP_RESTRICT track_ids,
+                                     int count, unsigned char *DP_RESTRICT out)
+{
+    if (count > 0) {
+        size_t written = 0;
+        for (int i = 0; i < count; ++i) {
+            written += DP_write_bigendian_uint16(
+                convert_other_id_compat(track_ids[i]), out + written);
+        }
+        return written;
+    }
+    else {
+        return 0;
+    }
+}
+
+static void read_key_frame_layer_flags_compat(int count, uint32_t *out,
+                                              void *user)
+{
+    const unsigned char *buffer = user;
+    for (int i = 0; i < count; ++i) {
+        uint16_t layer_id = DP_read_bigendian_uint16(buffer + i * 4);
+        uint16_t flags = DP_read_bigendian_uint16(buffer + i * 4 + 2);
+        out[i] =
+            deserialize_layer_id_compat(layer_id)
+            | ((DP_uint16_to_uint32(flags) & (uint32_t)0xffu) << (uint32_t)24u);
+    }
+}
+
+static size_t
+write_key_frame_layer_flags_compat(const uint32_t *DP_RESTRICT id_flag_pairs,
+                                   int count, unsigned char *DP_RESTRICT out)
+{
+    if (count > 0) {
+        size_t written = 0;
+        for (int i = 0; i < count; ++i) {
+            written += DP_write_bigendian_uint16(
+                serialize_layer_id_compat(id_flag_pairs[i]
+                                          & (uint32_t)0xffffffu),
+                out + written);
+            written += DP_write_bigendian_uint16(
+                DP_uint32_to_uint16((id_flag_pairs[i] & (uint32_t)0xff000000u)
+                                    >> (uint32_t)24u),
+                out + written);
+        }
+        return written;
+    }
+    else {
+        return 0;
     }
 }
 
@@ -508,6 +631,45 @@ static const unsigned char *local_match_data(DP_Message *msg, size_t *out_size)
             }
         {% endif %}
     {% endfor %}
+    {% if compat_version and message.compat and not message.alias %}
+        {% for f in message.compat.fields %}
+            {% if f.sub %}
+
+                static size_t {{ f.sub.func_name }}_serialize_payload_compat({{ f.sub.param }}, unsigned char *data)
+                {
+                    size_t written = 0;
+                    {% for sf in f.sub.fields %}
+                        written += {{ sf.serialize_payload_compat(f.sub.param_name, "data + written") }};
+                    {% endfor %}
+                    return written;
+                }
+
+                static size_t {{ f.sub.func_name }}_serialize_payloads_compat({{ f.sub.param }}, int count, unsigned char *data)
+                {
+                    size_t written = 0;
+                    for (int i = 0; i < count; ++i) {
+                        written += {{ f.sub.func_name }}_serialize_payload_compat(&{{ f.sub.param_name }}[i], data + written);
+                    }
+                    return written;
+                }
+
+                static void {{ f.sub.func_name }}_deserialize_compat(int count, {{ f.sub.param }}s, void *user)
+                {
+                    const unsigned char *buffer = user;
+                    size_t read = 0;
+                    for (int i = 0; i < count; ++i) {
+                        {% for sf in f.sub.fields %}
+                            {{ sf.deserialize_field }}
+                        {% endfor %}
+                        DP_{{ f.sub.func_name }}_init({{ f.sub.param_name }}s, i
+                            {%- for sf in f.sub.fields %}
+                                , {{ sf.deserialize_constructor_arg }}
+                            {% endfor %});
+                    }
+                }
+            {% endif %}
+        {% endfor %}
+    {% endif %}
     {% if message.fields %}
 
         struct {{ message.struct_name }} {
@@ -532,6 +694,22 @@ static const unsigned char *local_match_data(DP_Message *msg, size_t *out_size)
                    {% if spl and dpl %} + {% endif -%}
                    {% if dpl %}{{ dpl }}{% endif %};
         }
+        {% if compat_version and message.compat and message.compat.fields %}
+
+        {% set splc = message.static_payload_length_compat %}
+        {% set dplc = message.dynamic_payload_length_compat %}
+        static size_t {{ message.func_name }}_payload_length_compat(
+            {%- if not dplc %}DP_UNUSED {% endif -%}
+            DP_Message *msg)
+        {
+            {% if dplc %}
+                {{ message.param }} = DP_message_internal(msg);
+            {% endif %}
+            return {% if splc %}((size_t){{ splc }}){% endif -%}
+                   {% if splc and dplc %} + {% endif -%}
+                   {% if dplc %}{{ dplc }}{% endif %};
+        }
+        {% endif %}
 
         static size_t {{ message.func_name }}_serialize_payload(DP_Message *msg, unsigned char *data)
         {
@@ -543,6 +721,19 @@ static const unsigned char *local_match_data(DP_Message *msg, size_t *out_size)
             DP_ASSERT(written == {{ message.func_name }}_payload_length(msg));
             return written;
         }
+        {% if compat_version and message.compat and message.compat.fields %}
+
+        static size_t {{ message.func_name }}_serialize_payload_compat(DP_Message *msg, unsigned char *data)
+        {
+            {{ message.param }} = DP_message_internal(msg);
+            size_t written = 0;
+            {% for f in message.compat.fields %}
+                written += {{ f.serialize_payload_compat(message.param_name, "data + written") }};
+            {% endfor %}
+            DP_ASSERT(written == {{ message.func_name }}_payload_length_compat(msg));
+            return written;
+        }
+        {% endif %}
 
         static bool {{ message.func_name }}_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
         {
@@ -595,6 +786,20 @@ static const unsigned char *local_match_data(DP_Message *msg, size_t *out_size)
         static const DP_MessageMethods {{ message.func_name }}_methods = {
             {{ message.func_name }}_payload_length,
             {{ message.func_name }}_serialize_payload,
+            {% if compat_version %}
+                {% if message.compat %}
+                    {% if message.compat.fields %}
+                        {{ message.func_name }}_payload_length_compat,
+                        {{ message.func_name }}_serialize_payload_compat,
+                    {% else %}
+                        zero_length_payload_length,
+                        zero_length_serialize_payload,
+                    {% endif %}
+                {% else %}
+                    {{ message.func_name }}_payload_length,
+                    {{ message.func_name }}_serialize_payload,
+                {% endif %}
+            {% endif %}
             {{ message.func_name }}_write_payload_text,
             {{ message.func_name }}_equals,
         };
@@ -699,6 +904,85 @@ static const unsigned char *local_match_data(DP_Message *msg, size_t *out_size)
                 , {{ f.deserialize_constructor_arg }}
             {% endfor %});
     }
+    {% if compat_version and not message.incompatible %}
+
+    {% set mc = message.compat %}
+    DP_Message *DP_{{ message.func_name }}_deserialize_compat(
+        unsigned int context_id,
+        {% if mc and not mc.fields %}DP_UNUSED {% endif %}const unsigned char *buffer,
+        size_t length)
+    {
+        {% if mc %}
+            {% if mc.min_length == mc.max_length %}
+                if (length != {{ mc.min_length }}) {
+                    DP_error_set("Wrong length for {{ message.cmd_name }} compat message; "
+                                "expected {{ mc.min_length }}, got %zu", length);
+                    return NULL;
+                }
+            {% else %}
+                if ({% if mc.min_length > 0 %}length < {{ mc.min_length }} || {% endif %}
+                        length > {{ mc.max_length }}) {
+                    DP_error_set("Wrong length for {{ message.cmd_name }} compat message; "
+                                "expected between {{ mc.min_length }} and {{ mc.max_length }}, got %zu", length);
+                    return NULL;
+                }
+            {% endif %}
+            {% if mc.fields %}
+                size_t read = 0;
+                {% for f in mc.fields %}
+                    {% set deserialize_field_size = f.deserialize_field_size %}
+                    {% if deserialize_field_size %}
+                        size_t {{ f.name }}_bytes = {{ deserialize_field_size }};
+                    {% endif %}
+                    {% set deserialize_field_divisor = f.deserialize_field_divisor %}
+                    {% if deserialize_field_divisor > 1 %}
+                        if (({{ f.name }}_bytes % {{ deserialize_field_divisor }}) != 0) {
+                            DP_error_set("Wrong length for {{ f.name }} field in {{ message.cmd_name }} message; "
+                                        "%zu not divisible by {{ deserialize_field_divisor }}",
+                                        {{ f.name }}_bytes);
+                            return NULL;
+                        }
+                    {% endif %}
+                    {% if f.deserialize_field_check_remaining %}
+                        if (read + {{ f.name }}_bytes > length) {
+                            DP_error_set("Wrong length for {{ f.name }} field in {{ message.cmd_name }} message; "
+                                        "field length %zu exceeds total length %zu",
+                                        {{ f.name }}_bytes, length);
+                            return NULL;
+                        }
+                    {% endif %}
+                    {% set deserialize_field_count = f.deserialize_field_count %}
+                    {% if deserialize_field_count %}
+                        {{ deserialize_field_count }}
+                    {% endif %}
+                    {{ f.deserialize_field }}
+                {% endfor %}
+            {% endif %}
+            DP_Message *msg = DP_{{ message.func_name }}_new(context_id
+                {% if mc.deserialize_fields %}
+                    {%- for df in mc.deserialize_fields %}
+                        {% if df is string %}
+                            {%- for f in mc.fields %}
+                                {% if f.name == df %}
+                                    , {{ f.deserialize_constructor_arg }}
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            , {{ df.literal }}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {%- for f in mc.fields %}
+                        , {{ f.deserialize_constructor_arg }}
+                    {% endfor %}
+                {% endif %});
+        {% else %}
+            DP_Message *msg = DP_{{ message.func_name }}_deserialize(context_id, buffer, length);
+        {% endif %}
+            DP_message_compat_set(msg);
+            return msg;
+    }
+    {% endif %}
 
     DP_Message *DP_{{ message.func_name }}_parse(unsigned int context_id, {% if not message.effective_fields %}DP_UNUSED {% endif %}DP_TextReader *reader)
     {
@@ -797,7 +1081,8 @@ DP_Message *DP_msg_local_match_make(DP_Message *msg, bool disguise_as_put_image)
                         {{ message.enum_name }}_MATCH_LENGTH,
                         {{ message.param_name }});
                     break;
-                } else {
+                }
+                else {
                     return NULL;
                 }
             }

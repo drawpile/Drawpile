@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "protover.h"
-#include "message.h"
+#include "messages.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 
@@ -217,6 +217,21 @@ bool DP_protocol_version_is_past(const DP_ProtocolVersion *protover)
                         && protover->minor < DP_PROTOCOL_VERSION_MINOR))));
 }
 
+bool DP_protocol_version_is_past_compatible(const DP_ProtocolVersion *protover)
+{
+    return protover
+        && DP_str_equal(protover->ns, DP_PROTOCOL_COMPAT_VERSION_NAMESPACE)
+        && protover->server == DP_PROTOCOL_COMPAT_VERSION_SERVER
+        && protover->major == DP_PROTOCOL_COMPAT_VERSION_MAJOR
+        && protover->minor == DP_PROTOCOL_COMPAT_VERSION_MINOR;
+}
+
+bool DP_protocol_version_is_compatible(DP_ProtocolVersion *protover)
+{
+    return DP_protocol_version_is_current(protover)
+        || DP_protocol_version_is_past_compatible(protover);
+}
+
 static bool is_at_least_4_24_0(const DP_ProtocolVersion *protover)
 {
     return protover && DP_str_equal(protover->ns, DP_PROTOCOL_VERSION_NAMESPACE)
@@ -262,7 +277,10 @@ const char *DP_protocol_version_name(const DP_ProtocolVersion *protover)
 {
     if (protover && DP_str_equal(protover->ns, DP_PROTOCOL_VERSION_NAMESPACE)
         && protover->server == 4) {
-        if (protover->major == 24) {
+        if (protover->major == 25) {
+            return "2.3.x";
+        }
+        else if (protover->major == 24) {
             return "2.2.x";
         }
         else if (protover->major == 22 || protover->major == 23) {

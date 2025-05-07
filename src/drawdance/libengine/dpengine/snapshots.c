@@ -844,9 +844,11 @@ static void canvas_state_to_reset_image(struct DP_ResetImageContext *c,
                           DP_canvas_state_layer_props_noinc(cs));
     DP_PERF_END(layers);
 
-    DP_PERF_BEGIN(selections, "image:selections");
-    selections_to_reset_image(c, cs);
-    DP_PERF_END(selections);
+    if (c->options.include_selections) {
+        DP_PERF_BEGIN(selections, "image:selections");
+        selections_to_reset_image(c, cs);
+        DP_PERF_END(selections);
+    }
 
     DP_PERF_BEGIN(annotations, "image:annotations");
     annotations_to_reset_image(c, DP_canvas_state_annotations_noinc(cs));
@@ -1167,11 +1169,15 @@ static void reset_entry_to_message(void *user, const DP_ResetEntry *re)
 }
 
 void DP_reset_image_build(DP_CanvasState *cs, unsigned int context_id,
+                          bool compatibility_mode,
                           void (*push_message)(void *, DP_Message *),
                           void *user)
 {
+    DP_ResetImageCompression compression =
+        compatibility_mode ? DP_RESET_IMAGE_COMPRESSION_GZIP8BE
+                           : DP_RESET_IMAGE_COMPRESSION_ZSTD8LE;
     DP_ResetImageOptions options = {
-        true, false, true, DP_RESET_IMAGE_COMPRESSION_ZSTD8LE, 0, 0, NULL};
+        true, false, !compatibility_mode, compression, 0, 0, NULL};
     struct DP_ResetImageMessageContext c = {context_id, 0, DP_mutex_new(),
                                             push_message, user};
     if (!c.mutex) {

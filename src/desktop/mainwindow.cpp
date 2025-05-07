@@ -490,6 +490,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		m_viewStatusBar->setSessionHistorySize(-1);
 		m_viewStatusBar->setLatency(-1);
 	});
+	connect(
+		m_doc, &Document::compatibilityModeChanged, this,
+		&MainWindow::onCompatibilityModeChanged);
 	connect(m_doc, &Document::sessionNsfmChanged, this, &MainWindow::onNsfmChanged);
 
 	connect(m_doc, &Document::serverConnected, m_netstatus, &widgets::NetStatus::connectingToHost);
@@ -2399,10 +2402,27 @@ void MainWindow::savePreResetImageAs()
 	}
 }
 
+// clang-format on
 void MainWindow::discardPreResetImage()
 {
 	m_preResetCanvasState = drawdance::CanvasState::null();
 	m_canvasView->hideResetNotice();
+}
+
+void MainWindow::showCompatibilityModeWarning()
+{
+	if(m_doc->isCompatibilityMode()) {
+		QString message =
+			tr("This session was hosted with an older version of Drawpile. "
+			   "Several features – such as layer clipping, some blend modes "
+			   "and drawing within a selection mask – will be unavailable.");
+		QMessageBox *box = new QMessageBox(
+			QMessageBox::Warning, tr("Compatibility Mode"), message,
+			QMessageBox::Ok, this);
+		box->setAttribute(Qt::WA_DeleteOnClose);
+		box->setModal(false);
+		box->show();
+	}
 }
 
 void MainWindow::exportTemplate()
@@ -2412,6 +2432,7 @@ void MainWindow::exportTemplate()
 		m_doc->exportTemplate(filename);
 	}
 }
+// clang-format off
 
 void MainWindow::onTemplateExported(const QString &errorMessage)
 {
@@ -3162,14 +3183,12 @@ void MainWindow::tryToGainOp()
 			}
 		});
 }
-// clang-format off
 
 void MainWindow::resetSession()
 {
 	utils::ScopedOverrideCursor waitCursor;
 	dialogs::ResetDialog *dlg = new dialogs::ResetDialog(
-		m_doc->canvas()->paintEngine(),
-		m_singleSession, this);
+		m_doc->canvas()->paintEngine(), m_singleSession, this);
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -3177,7 +3196,8 @@ void MainWindow::resetSession()
 	// It's always possible to create a new document from a snapshot
 	connect(dlg, &dialogs::ResetDialog::newSelected, this, [dlg]() {
 		MainWindow *w = new MainWindow(false);
-		w->m_doc->sendResetSession(dlg->getResetImage());
+		w->m_doc->sendResetSession(
+			dlg->getResetImage(w->m_doc->isCompatibilityMode()));
 		dlg->deleteLater();
 	});
 #endif
@@ -3193,9 +3213,11 @@ void MainWindow::resetSession()
 					// save file path so they don't accidentally overwrite it.
 					m_doc->clearPaths();
 				}
-				net::MessageList snapshot = dlg->getResetImage();
+				net::MessageList snapshot =
+					dlg->getResetImage(m_doc->isCompatibilityMode());
 				canvas->amendSnapshotMetadata(
-					snapshot, true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
+					snapshot, true,
+					DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
 				m_doc->sendResetSession(snapshot, dlg->getResetImageType());
 			}
 			dlg->deleteLater();
@@ -3208,7 +3230,6 @@ void MainWindow::resetSession()
 	utils::showWindow(dlg, shouldShowDialogMaximized());
 }
 
-// clang-format on
 void MainWindow::terminateSession()
 {
 	// When hosting on the builtin server, terminating the session isn't done
@@ -3289,6 +3310,9 @@ void MainWindow::connectToSession(
 	connect(
 		m_doc, &Document::serverLoggedIn, dlg,
 		&dialogs::LoginDialog::onLoginDone);
+	connect(
+		dlg, &dialogs::LoginDialog::destroyed, this,
+		&MainWindow::showCompatibilityModeWarning);
 	m_canvasView->connectLoginDialog(m_doc, dlg);
 
 	dlg->show();
@@ -3412,6 +3436,12 @@ void MainWindow::onServerDisconnected(
 		QTimer::singleShot(100, this, &QMainWindow::close);
 	}
 #endif
+}
+
+void MainWindow::onCompatibilityModeChanged(bool compatibilityMode)
+{
+	getAction("lightnesstoalphaarea")->setEnabled(!compatibilityMode);
+	getAction("darknesstoalphaarea")->setEnabled(!compatibilityMode);
 }
 
 /**
@@ -3972,6 +4002,7 @@ void MainWindow::updateSelectTransformActions()
 		getAction("tooltext")->isChecked() &&
 		m_dockToolSettings->annotationSettings()->selected() != 0;
 	bool selectionEditActive = m_doc->toolCtrl()->isSelectionEditActive();
+	bool compatibilityMode = m_doc->isCompatibilityMode();
 
 #ifdef __EMSCRIPTEN__
 	getAction("downloadselection")->setEnabled(haveSelection);
@@ -3997,8 +4028,10 @@ void MainWindow::updateSelectTransformActions()
 	getAction("fillfgarea")->setEnabled(haveSelection);
 	getAction("recolorarea")->setEnabled(haveSelection);
 	getAction("colorerasearea")->setEnabled(haveSelection);
-	getAction("lightnesstoalphaarea")->setEnabled(haveSelection);
-	getAction("darknesstoalphaarea")->setEnabled(haveSelection);
+	getAction("lightnesstoalphaarea")
+		->setEnabled(haveSelection && !compatibilityMode);
+	getAction("darknesstoalphaarea")
+		->setEnabled(haveSelection && !compatibilityMode);
 	getAction("starttransform")->setEnabled(haveSelection);
 	getAction("starttransformmask")->setEnabled(haveSelection);
 	getAction("transformmirror")->setEnabled(haveTransform);

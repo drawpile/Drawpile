@@ -52,6 +52,7 @@ bool alphaPreservePair(
 	DP_BlendMode *outAlphaPreserving);
 int toAlphaAffecting(int mode);
 int toAlphaPreserving(int mode);
+int toCompatible(int mode);
 
 void adjustAlphaBehavior(int &mode, bool preserveAlpha);
 

@@ -28,6 +28,12 @@ public:
 	static Message
 	deserializeWs(const unsigned char *buf, size_t bufsize, bool decodeOpaque);
 
+	static Message deserializeCompat(
+		const unsigned char *buf, size_t bufsize, bool decodeOpaque);
+
+	static Message deserializeWsCompat(
+		const unsigned char *buf, size_t bufsize, bool decodeOpaque);
+
 	static DP_Message **asRawMessages(const Message *msgs);
 
 	Message();
@@ -59,8 +65,6 @@ public:
 	unsigned int contextId() const;
 	void setContextId(unsigned int contextId);
 
-	void setIndirectCompatFlag();
-
 	size_t length() const;
 	size_t wsLength() const;
 
@@ -86,6 +90,8 @@ public:
 
 	bool serialize(QByteArray &buffer) const;
 	bool serializeWs(QByteArray &buffer) const;
+	bool serializeCompat(QByteArray &buffer) const;
+	bool serializeWsCompat(QByteArray &buffer) const;
 
 	bool shouldSmoothe() const;
 

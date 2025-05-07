@@ -113,6 +113,11 @@ public:
 
 	void setContextId(unsigned int contextId) { m_contextId = contextId; }
 
+	void setCompatibilityMode(bool compatibilityMode)
+	{
+		m_compatibilityMode = compatibilityMode;
+	}
+
 public slots:
 	/**
 	 * @brief Send a Ping message
@@ -191,6 +196,8 @@ protected:
 
 	void handlePing(bool isPong);
 
+	bool compatibilityMode() const { return m_compatibilityMode; }
+
 	bool m_decodeOpaque;
 	net::MessageList m_inbox; // received (complete) messages
 	bool m_gracefullyDisconnecting;
@@ -238,6 +245,7 @@ private:
 	QVector<long long> m_artificialLagTimes;
 	QVector<net::Message> m_artificialLagMessages;
 	QTimer *m_artificialLagTimer;
+	bool m_compatibilityMode = false;
 };
 
 }

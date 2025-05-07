@@ -103,10 +103,11 @@ static bool equals(DP_Message *DP_RESTRICT msg, DP_Message *DP_RESTRICT other)
 }
 
 static const DP_MessageMethods methods = {
-    payload_length,
-    serialize_payload,
-    write_payload_text,
-    equals,
+    payload_length,     serialize_payload,
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+    payload_length,     serialize_payload,
+#endif
+    write_payload_text, equals,
 };
 
 static DP_Message *msg_internal_new(unsigned int context_id,

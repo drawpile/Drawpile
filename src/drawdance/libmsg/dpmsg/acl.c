@@ -1070,7 +1070,8 @@ static int pixel_dabs_max_dab_size(void *internal)
 
 static bool mypaint_dabs_pigment(void *internal)
 {
-    return DP_msg_draw_dabs_mypaint_posterize_num(internal) & (uint8_t)0x80;
+    return DP_msg_draw_dabs_mypaint_flags(internal)
+         & (uint8_t)DP_MYPAINT_BRUSH_PIGMENT_FLAG;
 }
 
 static int mypaint_dabs_layer_id(void *internal)

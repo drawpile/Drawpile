@@ -206,7 +206,8 @@ static void run_recorder(void *user)
 
     if (write_initial(r)) {
         if (cs_or_null) {
-            DP_reset_image_build(cs_or_null, 0, write_reset_image_message, r);
+            DP_reset_image_build(cs_or_null, 0, false,
+                                 write_reset_image_message, r);
             DP_canvas_state_decref(cs_or_null);
         }
         DP_Semaphore *sem = r->sem;

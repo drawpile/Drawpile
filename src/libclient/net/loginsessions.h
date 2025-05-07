@@ -13,6 +13,7 @@ struct LoginSessionVersion {
 	bool compatible;
 	bool future;
 	bool past;
+	bool compatibilityMode;
 };
 
 /**
@@ -32,7 +33,7 @@ struct LoginSession {
 	bool persistent;
 	bool newLoginsBlocked;
 	bool guestLoginBlocked; // Will only be true if we're a guest.
-	bool webLoginBlocked; // Will only be true if we're connected via browser.
+	bool webLoginBlocked;	// Will only be true if we're connected via browser.
 	bool unlisted;
 	bool nsfm;
 
@@ -74,7 +75,8 @@ public:
 		IncompatibleRole, // Is the session meant for some other client version
 		JoinableRole,	  // Is this session joinable
 		NsfmRole,		  // Is this session tagged as Not Suitable For Minors
-		InactiveRole,	  // Does this session have zero active users
+		CompatibilityModeRole, // Is this a Drawpile 2.2.x session
+		InactiveRole,		   // Does this session have zero active users
 		JoinDenyReasonsRole, // Human-readable explanations why they can't join.
 		JoinDenyIcon,		 // Icon for the can't join message box.
 	};

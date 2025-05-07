@@ -309,7 +309,7 @@ static void dump_snapshot_message(void *user, DP_Message *msg)
 static void dump_snapshot(DP_CanvasHistory *ch, DP_CanvasState *cs)
 {
     if (dump_check(ch, NULL)) {
-        DP_reset_image_build(cs, 0, dump_snapshot_message, ch);
+        DP_reset_image_build(cs, 0, false, dump_snapshot_message, ch);
     }
 }
 

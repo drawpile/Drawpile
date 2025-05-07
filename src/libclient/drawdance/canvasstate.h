@@ -92,7 +92,9 @@ public:
 
 	bool isSizeInBounds() const;
 
-	void toResetImage(net::MessageList &msgs, uint8_t contextId) const;
+	void toResetImage(
+		net::MessageList &msgs, uint8_t contextId,
+		bool compatibilityMode) const;
 
 	net::Message makeLayerTreeMove(
 		uint8_t contextId, int sourceId, int targetId, bool intoGroup,

@@ -2,7 +2,6 @@
 #include "libclient/tools/beziertool.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
-#include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/utils/cursors.h"
 #include <QLineF>
@@ -105,21 +104,20 @@ void BezierTool::finishMultipart()
 
 		m_owner.setBrushEngineBrush(m_brushEngine, false);
 
-		net::Client *client = m_owner.client();
-		const uint8_t contextId = client->myId();
 		drawdance::CanvasState canvasState =
 			m_owner.model()->paintEngine()->sampleCanvasState();
 
 		const PointVector pv = calculateBezierCurve();
 		m_brushEngine.beginStroke(
-			contextId, canvasState, true, m_mirror, m_flip, m_zoom, m_angle);
+			localUserId(), canvasState, isCompatibilityMode(), true, m_mirror,
+			m_flip, m_zoom, m_angle);
 		for(const canvas::Point &p : pv) {
 			m_brushEngine.strokeTo(p, canvasState);
 		}
 		m_brushEngine.endStroke(
 			pv.last().timeMsec() + DELTA_MSEC, canvasState, true);
 
-		m_brushEngine.sendMessagesTo(client);
+		m_brushEngine.sendMessagesTo(m_owner.client());
 	}
 	cancelMultipart();
 }
@@ -221,8 +219,8 @@ void BezierTool::updatePreview()
 	canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 	drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
 	m_brushEngine.beginStroke(
-		m_owner.client()->myId(), canvasState, false, m_mirror, m_flip, m_zoom,
-		m_angle);
+		localUserId(), canvasState, isCompatibilityMode(), false, m_mirror,
+		m_flip, m_zoom, m_angle);
 	for(const canvas::Point &p : pv) {
 		m_brushEngine.strokeTo(p, canvasState);
 	}

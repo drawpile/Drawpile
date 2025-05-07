@@ -31,8 +31,11 @@ private slots:
 private:
 	void afterDisconnectSent() override;
 
+	bool serializeMessage(const net::Message &msg);
+	net::Message deserializeMessage(const unsigned char *buf, size_t bufsize);
+
 	QWebSocket *m_socket;
-    QByteArray m_serializationBuffer;
+	QByteArray m_serializationBuffer;
 };
 
 }

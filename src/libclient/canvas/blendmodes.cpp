@@ -395,6 +395,11 @@ int toAlphaPreserving(int mode)
 			   : DP_BLEND_MODE_RECOLOR;
 }
 
+int toCompatible(int mode)
+{
+	return DP_blend_mode_to_compatible(uint8_t(mode));
+}
+
 void adjustAlphaBehavior(int &mode, bool preserveAlpha)
 {
 	if(preserveAlpha) {

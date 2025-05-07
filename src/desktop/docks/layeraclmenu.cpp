@@ -149,15 +149,16 @@ void LayerAclMenu::setAlphaLockEnabled(bool alphaLockEnabled)
 	m_alphaLock->setEnabled(alphaLockEnabled);
 }
 
-void LayerAclMenu::setCanEdit(bool canEdit)
+void LayerAclMenu::setCanEdit(bool canEdit, bool compatibilityMode)
 {
-	if(m_canEdit != canEdit) {
+	if(m_canEdit != canEdit || m_compatibilityMode != compatibilityMode) {
 		m_canEdit = canEdit;
+		m_compatibilityMode = compatibilityMode;
 		m_censored->setEnabled(m_canEdit);
 		m_contentLock->setEnabled(m_canEdit);
-		m_propsLock->setEnabled(m_canEdit);
-		m_moveLock->setEnabled(m_canEdit);
-		m_lockAll->setEnabled(m_canEdit);
+		m_propsLock->setEnabled(m_canEdit && !m_compatibilityMode);
+		m_moveLock->setEnabled(m_canEdit && !m_compatibilityMode);
+		m_lockAll->setEnabled(m_canEdit && !m_compatibilityMode);
 		m_users->setEnabled(!m_allUsersLocked && m_canEdit);
 		m_tiers->setEnabled(!m_allUsersLocked && m_canEdit);
 	}

@@ -195,6 +195,7 @@ public slots:
 	void handleTouchTapAction(int action);
 
 	void savePreResetImageAs();
+	void showCompatibilityModeWarning();
 	void discardPreResetImage();
 
 private slots:
@@ -220,6 +221,7 @@ private slots:
 	void onServerDisconnected(
 		const QString &message, const QString &errorcode, bool localDisconnect,
 		bool anyMessageReceived);
+	void onCompatibilityModeChanged(bool compatibilityMode);
 	void onNsfmChanged(bool nsfm);
 
 	void updateLockWidget();

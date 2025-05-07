@@ -319,14 +319,15 @@ DP_LoadResult Document::loadRecording(
 }
 
 void Document::onServerLogin(
-	bool join, const QString &joinPassword, const QString &authId)
+	bool join, bool compatibilityMode, const QString &joinPassword,
+	const QString &authId)
 {
 	if(join)
 		initCanvas();
 
 	Q_ASSERT(m_canvas);
 
-	m_canvas->connectedToServer(m_client->myId(), join);
+	m_canvas->connectedToServer(m_client->myId(), join, compatibilityMode);
 	m_banlist->setShowSensitive(m_client->isModerator());
 	m_authList->setOwnAuthId(authId);
 
@@ -339,6 +340,7 @@ void Document::onServerLogin(
 	m_sessionHistoryMaxSize = 0;
 	m_baseResetThreshold = 0;
 	emit serverLoggedIn(join, joinPassword);
+	emit compatibilityModeChanged(compatibilityMode);
 }
 
 void Document::onServerDisconnect()
@@ -357,6 +359,7 @@ void Document::onServerDisconnect()
 	setSessionPreferWebSockets(false);
 	setSessionInviteCodesEnabled(false);
 	setServerSupportsInviteCodes(false);
+	emit compatibilityModeChanged(false);
 	setPreparingReset(false);
 	m_autoResetCorrelator = QString();
 	setStreamResetState(StreamResetState::None);
@@ -910,6 +913,11 @@ void Document::setDownloadName(const QString &downloadName)
 	m_downloadName = downloadName;
 }
 
+bool Document::isCompatibilityMode() const
+{
+	return m_client->isCompatibilityMode();
+}
+
 void Document::handleCommands(int count, const net::Message *msgs)
 {
 	if(m_canvas) {
@@ -1315,7 +1323,8 @@ net::MessageList Document::generateStreamSnapshot(
 
 	ResetStreamImageContext ctx = {rsp, 0, true};
 	DP_reset_image_build(
-		canvasState.get(), 0, ResetStreamImageContext::push, &ctx);
+		canvasState.get(), 0, isCompatibilityMode(),
+		ResetStreamImageContext::push, &ctx);
 	if(!ctx.ok) {
 		DP_reset_stream_producer_free_discard(rsp);
 		return {};
@@ -1773,8 +1782,9 @@ void Document::fillArea(const QColor &color, DP_BlendMode mode, float opacity)
 	uint8_t contextId = m_client->myId();
 	QPoint pos = selection->bounds().topLeft();
 	for(int layerId : layerIds) {
-		net::makePutImageZstdMessages(
-			m_messageBuffer, contextId, layerId, mode, pos.x(), pos.y(), mask);
+		net::makePutImageMessagesCompat(
+			m_messageBuffer, contextId, layerId, mode, pos.x(), pos.y(), mask,
+			m_client->isCompatibilityMode());
 	}
 	if(m_messageBuffer.isEmpty()) {
 		return;

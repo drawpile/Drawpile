@@ -154,6 +154,8 @@ public:
 
 protected:
 	bool isActiveTool() const;
+	bool isCompatibilityMode() const;
+	uint8_t localUserId() const;
 	void setCapability(Capability capability, bool enabled);
 	void setCursor(const QCursor &cursor);
 	void requestToolNotice(const QString &text);

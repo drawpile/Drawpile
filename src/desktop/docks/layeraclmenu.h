@@ -25,7 +25,7 @@ public:
 	void setCensored(bool censor);
 	void setAlphaLock(bool alphaLock);
 	void setAlphaLockEnabled(bool alphaLockEnabled);
-	void setCanEdit(bool canEdit);
+	void setCanEdit(bool canEdit, bool compatibilityMode);
 
 signals:
 	void layerAlphaLockChange(bool alphaLock);
@@ -55,6 +55,7 @@ private:
 	QActionGroup *m_users;
 	bool m_allUsersLocked = false;
 	bool m_canEdit = true;
+	bool m_compatibilityMode = false;
 };
 
 }

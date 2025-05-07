@@ -222,10 +222,11 @@ void ResetDialog::onOpenError(const QString &error, const QString &detail)
 			: tr("Error opening file: %1 (%2)").arg(error, detail));
 }
 
-net::MessageList ResetDialog::getResetImage() const
+net::MessageList ResetDialog::getResetImage(bool compatibilityMode) const
 {
 	net::MessageList resetImage;
-	d->resetPoints[d->selection].canvasState.toResetImage(resetImage, 0);
+	d->resetPoints[d->selection].canvasState.toResetImage(
+		resetImage, 0, compatibilityMode);
 	return resetImage;
 }
 

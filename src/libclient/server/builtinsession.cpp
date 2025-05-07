@@ -243,9 +243,11 @@ void BuiltinSession::startInternalReset(
 
 	m_reset->appendAclsToPostResetMessages(m_acls, localUserId);
 
-	utils::FunctionRunnable *runnable =
-		new utils::FunctionRunnable([reset = m_reset, canvasState]() {
-			reset->generateResetImage(canvasState);
+	utils::FunctionRunnable *runnable = new utils::FunctionRunnable(
+		[reset = m_reset,
+		 compatibilityMode = history()->protocolVersion().isPastCompatible(),
+		 canvasState]() {
+			reset->generateResetImage(canvasState, compatibilityMode);
 		});
 	connect(
 		m_reset.get(), &BuiltinReset::resetImageGenerated, this,

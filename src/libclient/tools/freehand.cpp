@@ -2,7 +2,6 @@
 #include "libclient/tools/freehand.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
-#include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
 #include <QDateTime>
 
@@ -51,23 +50,23 @@ void Freehand::begin(const BeginParams &params)
 
 void Freehand::motion(const MotionParams &params)
 {
-	if(!m_drawing)
-		return;
+	if(m_drawing) {
+		drawdance::CanvasState canvasState =
+			m_owner.model()->paintEngine()->sampleCanvasState();
 
-	drawdance::CanvasState canvasState =
-		m_owner.model()->paintEngine()->sampleCanvasState();
+		if(m_firstPoint) {
+			m_firstPoint = false;
+			m_brushEngine.beginStroke(
+				localUserId(), canvasState, isCompatibilityMode(), true,
+				m_mirror, m_flip, m_zoom, m_angle);
+			m_start.setPressure(
+				qMin(m_start.pressure(), params.point.pressure()));
+			m_brushEngine.strokeTo(m_start, canvasState);
+		}
 
-	if(m_firstPoint) {
-		m_firstPoint = false;
-		m_brushEngine.beginStroke(
-			m_owner.client()->myId(), canvasState, true, m_mirror, m_flip,
-			m_zoom, m_angle);
-		m_start.setPressure(qMin(m_start.pressure(), params.point.pressure()));
-		m_brushEngine.strokeTo(m_start, canvasState);
+		m_brushEngine.strokeTo(params.point, canvasState);
+		m_brushEngine.sendMessagesTo(m_owner.client());
 	}
-
-	m_brushEngine.strokeTo(params.point, canvasState);
-	m_brushEngine.sendMessagesTo(m_owner.client());
 }
 
 void Freehand::end(const EndParams &)
@@ -80,8 +79,8 @@ void Freehand::end(const EndParams &)
 		if(m_firstPoint) {
 			m_firstPoint = false;
 			m_brushEngine.beginStroke(
-				m_owner.client()->myId(), canvasState, true, m_mirror, m_flip,
-				m_zoom, m_angle);
+				localUserId(), canvasState, isCompatibilityMode(), true,
+				m_mirror, m_flip, m_zoom, m_angle);
 			m_brushEngine.strokeTo(m_start, canvasState);
 		}
 

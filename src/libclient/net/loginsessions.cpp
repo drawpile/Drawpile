@@ -174,6 +174,8 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 			return ls.isJoinable(m_moderatorMode);
 		case NsfmRole:
 			return isNsfm(ls);
+		case CompatibilityModeRole:
+			return ls.version.compatibilityMode;
 		case InactiveRole:
 			return ls.activeDrawingUserCount == 0;
 		case JoinDenyReasonsRole:

@@ -214,6 +214,8 @@ public:
 
 	bool mustAuth() const { return m_mustAuth; }
 
+	bool compatibilityMode() const { return m_compatibilityMode; }
+
 	const QStringList &userFlags() const { return m_userFlags; }
 
 	/**
@@ -292,8 +294,8 @@ public slots:
 	 * @param needPassword if true, ask for password before joining
 	 */
 	void prepareJoinSelectedSession(
-		const QString &id, bool needPassword, const QString &title, bool nsfm,
-		bool autoJoin);
+		const QString &id, bool needPassword, bool compatibilityMode,
+		const QString &title, bool nsfm, bool autoJoin);
 
 	/**
 	 * @brief Actually join the session that the user selected.
@@ -578,6 +580,7 @@ private:
 	bool m_supportsClientInfo = false;
 	bool m_supportsLookup = false;
 	bool m_supportsExtAuthAvatars = false;
+	bool m_compatibilityMode = false;
 	bool m_needSessionPassword = false;
 	bool m_isGuest = true;
 

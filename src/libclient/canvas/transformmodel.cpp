@@ -195,7 +195,10 @@ bool TransformModel::isAllowedToApplyActiveTransform() const
 		if(m_pasted) {
 			return aclState->canUseFeature(DP_FEATURE_PUT_IMAGE);
 		} else if(aclState->canUseFeature(DP_FEATURE_REGION_MOVE)) {
-			bool needsPutImage = isDstQuadBoundingRectAreaSizeOutOfBounds();
+			bool needsPutImage =
+				isDstQuadBoundingRectAreaSizeOutOfBounds() ||
+				(m_canvas->isCompatibilityMode() &&
+				 (m_blendMode != int(DP_BLEND_MODE_NORMAL) || m_opacity < 1.0));
 			return !needsPutImage ||
 				   aclState->canUseFeature(DP_FEATURE_PUT_IMAGE);
 		} else {
@@ -283,10 +286,11 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 			if(moveSelection && !identity) {
 				int selectionId = DP_selection_id_make(
 					contextId, canvas::CanvasModel::MAIN_SELECTION_ID);
-				msgs.append(net::makeMoveRectZstdMessage(
+				msgs.append(net::makeMoveRectMessageCompat(
 					contextId, selectionId, selectionId, srcX, srcY,
 					dstTopLeftX, dstTopLeftY, srcW, srcH, 255,
-					uint8_t(DP_BLEND_MODE_NORMAL), QImage()));
+					uint8_t(DP_BLEND_MODE_NORMAL), QImage(),
+					m_canvas->isCompatibilityMode()));
 			}
 			if(moveContents) {
 				if(singleLayerSourceId > 0) {
@@ -392,16 +396,16 @@ void TransformModel::applyMoveRect(
 		} else {
 			applyCut(msgs, contextId, sourceId, srcX, srcY, srcW, srcH, mask);
 			applyOpacityToImage(img);
-			net::makePutImageZstdMessages(
+			net::makePutImageMessagesCompat(
 				msgs, contextId, layerId,
 				uint8_t(getEffectiveBlendModeForLayer(layerId)), dstTopLeftX,
-				dstTopLeftY, img);
+				dstTopLeftY, img, m_canvas->isCompatibilityMode());
 		}
 	} else {
-		msgs.append(net::makeMoveRectZstdMessage(
+		msgs.append(net::makeMoveRectMessageCompat(
 			contextId, layerId, sourceId, srcX, srcY, dstTopLeftX, dstTopLeftY,
 			srcW, srcH, uint8_t(getEffectiveBlendModeForLayer(layerId)),
-			getUint8Opacity(), mask));
+			getUint8Opacity(), mask, m_canvas->isCompatibilityMode()));
 	}
 }
 
@@ -426,19 +430,19 @@ void TransformModel::applyTransformRegion(
 		} else {
 			applyCut(msgs, contextId, sourceId, srcX, srcY, srcW, srcH, mask);
 			applyOpacityToImage(img);
-			net::makePutImageZstdMessages(
+			net::makePutImageMessagesCompat(
 				msgs, contextId, layerId,
 				uint8_t(getEffectiveBlendModeForLayer(layerId)), offset.x(),
-				offset.y(), img);
+				offset.y(), img, m_canvas->isCompatibilityMode());
 		}
 	} else {
-		msgs.append(net::makeTransformRegionZstdMessage(
+		msgs.append(net::makeTransformRegionMessageCompat(
 			contextId, layerId, sourceId, srcX, srcY, srcW, srcH, dstTopLeftX,
 			dstTopLeftY, dstTopRightX, dstTopRightY, dstBottomRightX,
 			dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
 			getEffectiveInterpolation(interpolation),
 			uint8_t(getEffectiveBlendModeForLayer(layerId)), getUint8Opacity(),
-			mask));
+			mask, m_canvas->isCompatibilityMode()));
 	}
 }
 
@@ -475,12 +479,13 @@ void TransformModel::applyTransformRegionSelection(
 	} else {
 		int selectionId = DP_selection_id_make(
 			contextId, canvas::CanvasModel::MAIN_SELECTION_ID);
-		msgs.append(net::makeTransformRegionZstdMessage(
+		msgs.append(net::makeTransformRegionMessageCompat(
 			contextId, selectionId, selectionId, srcX, srcY, srcW, srcH,
 			dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
 			dstBottomRightX, dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
 			getEffectiveInterpolation(interpolation),
-			uint8_t(DP_BLEND_MODE_NORMAL), 255, QImage()));
+			uint8_t(DP_BLEND_MODE_NORMAL), 255, QImage(),
+			m_canvas->isCompatibilityMode()));
 	}
 }
 
@@ -502,8 +507,9 @@ void TransformModel::applyCut(
 			contextId, sourceId, DP_BLEND_MODE_ERASE, srcX, srcY, srcW, srcH,
 			Qt::black));
 	} else {
-		net::makePutImageZstdMessages(
-			msgs, contextId, sourceId, DP_BLEND_MODE_ERASE, srcX, srcY, mask);
+		net::makePutImageMessagesCompat(
+			msgs, contextId, sourceId, DP_BLEND_MODE_ERASE, srcX, srcY, mask,
+			m_canvas->isCompatibilityMode());
 	}
 }
 
@@ -539,9 +545,10 @@ QVector<net::Message> TransformModel::applyFloating(
 		msgs.append(net::makeUndoPointMessage(contextId));
 	}
 
-	net::makePutImageZstdMessages(
+	net::makePutImageMessagesCompat(
 		msgs, contextId, layerId, getEffectiveBlendModeForLayer(layerId),
-		offset.x(), offset.y(), transformedImage);
+		offset.x(), offset.y(), transformedImage,
+		m_canvas->isCompatibilityMode());
 
 	return msgs;
 }
@@ -791,11 +798,18 @@ bool TransformModel::isRightAngleRotationOrReflection(const QTransform &t) const
 
 int TransformModel::getEffectiveBlendModeForLayer(int layerId) const
 {
+	int blendMode;
 	if(isAffectedByLayerAlphaLock() &&
 	   m_canvas->paintEngine()->isLayerAlphaLocked(layerId)) {
-		return blendmode::toAlphaPreserving(m_blendMode);
+		blendMode = blendmode::toAlphaPreserving(m_blendMode);
 	} else {
-		return m_blendMode;
+		blendMode = m_blendMode;
+	}
+
+	if(m_canvas->isCompatibilityMode()) {
+		return blendmode::toCompatible(blendMode);
+	} else {
+		return blendMode;
 	}
 }
 

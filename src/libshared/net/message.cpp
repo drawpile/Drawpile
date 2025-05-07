@@ -35,6 +35,20 @@ Message Message::deserializeWs(
 		DP_message_deserialize_length(buf, bufsize, bufsize - 2, decodeOpaque));
 }
 
+Message Message::deserializeCompat(
+	const unsigned char *buf, size_t bufsize, bool decodeOpaque)
+{
+	return Message::noinc(
+		DP_message_deserialize_compat(buf, bufsize, decodeOpaque));
+}
+
+Message Message::deserializeWsCompat(
+	const unsigned char *buf, size_t bufsize, bool decodeOpaque)
+{
+	return Message::noinc(DP_message_deserialize_length_compat(
+		buf, bufsize, bufsize - 2, decodeOpaque));
+}
+
 
 DP_Message **Message::asRawMessages(const net::Message *msgs)
 {
@@ -300,6 +314,18 @@ bool Message::serializeWs(QByteArray &buffer) const
 {
 	return DP_message_serialize(m_data, false, getDeserializeBuffer, &buffer) !=
 		   0;
+}
+
+bool Message::serializeCompat(QByteArray &buffer) const
+{
+	return DP_message_serialize_compat(
+			   m_data, true, getDeserializeBuffer, &buffer) != 0;
+}
+
+bool Message::serializeWsCompat(QByteArray &buffer) const
+{
+	return DP_message_serialize_compat(
+			   m_data, false, getDeserializeBuffer, &buffer) != 0;
 }
 
 bool Message::shouldSmoothe() const
