@@ -222,7 +222,7 @@ void DP_transient_document_metadata_dpix_set(DP_TransientDocumentMetadata *tdm,
     DP_ASSERT(tdm);
     DP_ASSERT(DP_atomic_get(&tdm->refcount) > 0);
     DP_ASSERT(tdm->transient);
-    tdm->dpix = dpix;
+    tdm->dpix = DP_max_int(1, dpix);
 }
 
 void DP_transient_document_metadata_dpiy_set(DP_TransientDocumentMetadata *tdm,
@@ -231,7 +231,7 @@ void DP_transient_document_metadata_dpiy_set(DP_TransientDocumentMetadata *tdm,
     DP_ASSERT(tdm);
     DP_ASSERT(DP_atomic_get(&tdm->refcount) > 0);
     DP_ASSERT(tdm->transient);
-    tdm->dpiy = dpiy;
+    tdm->dpiy = DP_max_int(1, dpiy);
 }
 
 void DP_transient_document_metadata_framerate_set(
@@ -240,7 +240,7 @@ void DP_transient_document_metadata_framerate_set(
     DP_ASSERT(tdm);
     DP_ASSERT(DP_atomic_get(&tdm->refcount) > 0);
     DP_ASSERT(tdm->transient);
-    tdm->framerate = framerate;
+    tdm->framerate = DP_max_int(1, framerate);
 }
 
 void DP_transient_document_metadata_frame_count_set(
