@@ -31,6 +31,29 @@ class BadDefinition(Exception):
     pass
 
 
+def _collect_fields(msg, fields):
+    if fields:
+        last = len(fields) - 1
+        names = set()
+        for idx, field in enumerate(fields):
+            new_field = make_field(msg, field, idx == last, msg.min_len, msg.max_len)
+            if new_field.name in names:
+                raise BadDefinition(f"Duplicate field name '{new_field.name}' in {msg.name}")
+            names.add(new_field.name)
+
+            msg.fields.append(new_field)
+            msg.min_len += new_field.min_len
+            msg.max_len = min(0xffff, msg.max_len + new_field.max_len)
+
+class Compat:
+    def __init__(self, parent, desc):
+        self.parent = parent
+        self.fields = []
+        self.min_len = 0
+        self.max_len = 0
+        self.deserialize_fields = desc.get('deserialize_fields')
+        _collect_fields(self, desc['fields'])
+
 class Message:
     def __init__(self, name, desc, messages):
         self.name = name
@@ -39,6 +62,8 @@ class Message:
         self.comment = str(desc.get('comment', ''))
         self.reserved = False
         self.local_match = desc.get('local_match')
+        self.compat = None
+        self.incompatible = desc.get('incompatible')
 
         if 'alias' in desc:
             self.alias = desc['alias']
@@ -48,6 +73,9 @@ class Message:
                 messages[self.alias].is_aliased = True
             except KeyError:
                 raise BadDefinition(f"Message {alias} not found!")
+
+            if 'compat' in desc:
+                raise BadDefinition("Can't have compat key in alias message")
 
         else:
             if desc.get('reserved', False):
@@ -61,18 +89,10 @@ class Message:
             self.fields = []
             self.min_len = 0
             self.max_len = 0
-            last = len(fields) - 1
-            names = set()
+            _collect_fields(self, fields)
 
-            for idx, field in enumerate(fields):
-                new_field = make_field(self, field, idx == last, self.min_len, self.max_len)
-                if new_field.name in names:
-                    raise BadDefinition(f"Duplicate field name '{new_field.name}' in {self.name}")
-                names.add(new_field.name)
-
-                self.fields.append(new_field)
-                self.min_len += new_field.min_len
-                self.max_len = min(0xffff, self.max_len + new_field.max_len)
+            if 'compat' in desc:
+                self.compat = Compat(self, desc['compat'])
 
     @property
     def is_fixed_len(self):
@@ -182,9 +202,11 @@ def make_field(message, desc, is_last, prev_minlen, prev_maxlen):
 
 
 class Field:
-    def __init__(self, name):
+    def __init__(self, name, attributes):
         self.name = name
         self.format = ''
+        self.convert = attributes.get('convert')
+        self.convert_args = attributes.get('convert_args')
 
     @property
     def is_fixed_len(self):
@@ -199,7 +221,7 @@ class Field:
 
 class IntegerField(Field):
     def __init__(self, name, attributes, **kwargs):
-        super().__init__(name)
+        super().__init__(name, attributes)
         self.format = attributes.get('format', attributes.get('_type_params', ''))
 
     @classmethod
@@ -228,7 +250,7 @@ FieldBool = IntegerField.F('bool', 1)
 
 class FieldFlags(Field):
     def __init__(self, name, attributes, **kwargs):
-        super().__init__(name)
+        super().__init__(name, attributes)
         self.flags = [(v, 1<<i) for i,v in enumerate(attributes['_type_params'])]
         if len(self.flags) <= 8:
             minlen = 1
@@ -261,7 +283,7 @@ class FieldFlags(Field):
 
 class FieldEnum(Field):
     def __init__(self, name, attributes, **kwargs):
-        super().__init__(name)
+        super().__init__(name, attributes)
         self.variants = attributes['variants']
         self.enum_name = attributes['name']
         self.min_len = 1
@@ -280,7 +302,7 @@ class FieldBytes(Field):
     item_len = 1
 
     def __init__(self, name, attributes, is_last, prev_minlen, prev_maxlen, **kwargs):
-        super().__init__(name)
+        super().__init__(name, attributes)
 
         self.format = attributes.get('format', attributes.get('_type_params', ''))
 
@@ -344,7 +366,7 @@ class FieldStruct(Field):
     field_type = 'struct'
 
     def __init__(self, name, attributes, is_last, prev_minlen, prev_maxlen):
-        super().__init__(name)
+        super().__init__(name, attributes)
 
         if not is_last:
             raise BadDefinition("struct field must be the last field")

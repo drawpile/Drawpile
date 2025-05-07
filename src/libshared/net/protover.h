@@ -70,10 +70,12 @@ public:
 	 */
 	bool isPast() const;
 
+	bool isPastCompatible() const;
+
 	/**
-	 * Is this some kind of compatible recording?
+	 * Is this some kind of compatible version?
 	 */
-	bool isCompatible() const { return isCurrent(); }
+	bool isCompatible() const { return isCurrent() || isPastCompatible(); }
 
 	bool shouldHaveSystemId() const;
 	bool shouldSupportLookup() const;

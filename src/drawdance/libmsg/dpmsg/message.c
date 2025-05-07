@@ -20,6 +20,7 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "message.h"
+#include "blend_mode.h"
 #include "ids.h"
 #include "text_writer.h"
 #include <dpcommon/atomic.h>
@@ -28,6 +29,7 @@
 
 #define FLAG_NONE   0x0
 #define FLAG_OPAQUE 0x1
+#define FLAG_COMPAT 0x2
 
 typedef DP_Message *(*DP_MessageDeserializeFn)(unsigned int context_id,
                                                const unsigned char *buffer,
@@ -110,10 +112,11 @@ static bool opaque_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods opaque_methods = {
-    opaque_payload_length,
-    opaque_serialize_payload,
-    opaque_write_payload_text,
-    opaque_equals,
+    opaque_payload_length,     opaque_serialize_payload,
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+    opaque_payload_length,     opaque_serialize_payload,
+#endif
+    opaque_write_payload_text, opaque_equals,
 };
 
 DP_Message *DP_message_new_opaque(DP_MessageType type, unsigned int context_id,
@@ -190,6 +193,20 @@ bool DP_message_opaque(DP_Message *msg)
     return msg->flags & FLAG_OPAQUE;
 }
 
+bool DP_message_compat(DP_Message *msg)
+{
+    DP_ASSERT(msg);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
+    return msg->flags & FLAG_COMPAT;
+}
+
+void DP_message_compat_set(DP_Message *msg)
+{
+    DP_ASSERT(msg);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
+    msg->flags |= FLAG_COMPAT;
+}
+
 const char *DP_message_name(DP_Message *msg)
 {
     return DP_message_type_name(DP_message_type(msg));
@@ -255,13 +272,11 @@ size_t DP_message_ws_length(DP_Message *msg)
     return message_length(msg, DP_MESSAGE_WS_HEADER_LENGTH);
 }
 
-size_t DP_message_serialize(DP_Message *msg, bool write_body_length,
-                            DP_GetMessageBufferFn get_buffer, void *user)
+static size_t serialize_message(
+    DP_Message *msg, bool write_body_length, DP_GetMessageBufferFn get_buffer,
+    void *user, size_t (*payload_length_fn)(DP_Message *msg),
+    size_t (*serialize_payload_fn)(DP_Message *msg, unsigned char *data))
 {
-    DP_ASSERT(msg);
-    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
-    DP_ASSERT(get_buffer);
-
     DP_MessageType type = (DP_MessageType)msg->type;
     if (type < 0 || type > UINT8_MAX) {
         DP_error_set("Message type out of bounds: %d", (int)type);
@@ -274,7 +289,7 @@ size_t DP_message_serialize(DP_Message *msg, bool write_body_length,
         return 0;
     }
 
-    size_t length = msg->methods->payload_length(msg);
+    size_t length = payload_length_fn(msg);
     if (length > UINT16_MAX) {
         DP_error_set("Message body length out of bounds: %zu", length);
         return 0;
@@ -294,10 +309,41 @@ size_t DP_message_serialize(DP_Message *msg, bool write_body_length,
     }
     written += DP_write_bigendian_uint8((uint8_t)type, buffer + written);
     written += DP_write_bigendian_uint8((uint8_t)context_id, buffer + written);
-    written += msg->methods->serialize_payload(msg, buffer + written);
+    written += serialize_payload_fn(msg, buffer + written);
     DP_ASSERT(written == length_with_header);
     return written;
 }
+
+size_t DP_message_serialize(DP_Message *msg, bool write_body_length,
+                            DP_GetMessageBufferFn get_buffer, void *user)
+{
+    DP_ASSERT(msg);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
+    DP_ASSERT(get_buffer);
+    return serialize_message(msg, write_body_length, get_buffer, user,
+                             msg->methods->payload_length,
+                             msg->methods->serialize_payload);
+}
+
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+size_t DP_message_serialize_compat(DP_Message *msg, bool write_body_length,
+                                   DP_GetMessageBufferFn get_buffer, void *user)
+{
+    DP_ASSERT(msg);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
+    DP_ASSERT(get_buffer);
+    if (DP_message_type_compatible(msg->type)) {
+        return serialize_message(msg, write_body_length, get_buffer, user,
+                                 msg->methods->payload_length_compat,
+                                 msg->methods->serialize_payload_compat);
+    }
+    else {
+        DP_error_set("Message type %d is not backward-compatible",
+                     DP_message_type(msg));
+        return 0;
+    }
+}
+#endif
 
 bool DP_message_write_text(DP_Message *msg, DP_TextWriter *writer)
 {
@@ -364,6 +410,41 @@ DP_Message *DP_message_deserialize(const unsigned char *buf, size_t bufsize,
     }
 }
 
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+DP_Message *DP_message_deserialize_length_compat(const unsigned char *buf,
+                                                 size_t bufsize,
+                                                 size_t body_length,
+                                                 bool decode_opaque)
+{
+    DP_ASSERT(buf);
+    size_t total_length = 2 + body_length;
+    if (bufsize >= total_length) {
+        return DP_message_deserialize_body_compat(buf[0], buf[1], buf + 2,
+                                                  body_length, decode_opaque);
+    }
+    else {
+        DP_error_set("Buffer size %zu shorter than message length %zu", bufsize,
+                     total_length);
+        return NULL;
+    }
+}
+
+DP_Message *DP_message_deserialize_compat(const unsigned char *buf,
+                                          size_t bufsize, bool decode_opaque)
+{
+    if (bufsize >= DP_MESSAGE_HEADER_LENGTH) {
+        DP_ASSERT(buf);
+        size_t body_length = DP_read_bigendian_uint16(buf);
+        return DP_message_deserialize_length_compat(buf + 2, bufsize - 2,
+                                                    body_length, decode_opaque);
+    }
+    else {
+        DP_error_set("Buffer size %zu too short for message header", bufsize);
+        return NULL;
+    }
+}
+#endif
+
 
 static int unpack_paint_mode(int flags)
 {
@@ -414,11 +495,74 @@ int DP_msg_draw_dabs_mypaint_mask_selection_id(DP_MsgDrawDabsMyPaint *mddmp)
     return unpack_mask_selection_id(DP_msg_draw_dabs_mypaint_flags(mddmp));
 }
 
-
 int DP_msg_draw_dabs_mypaint_blend_mask_selection_id(
     DP_MsgDrawDabsMyPaintBlend *mddmpb)
 {
     DP_ASSERT(mddmpb);
     return unpack_mask_selection_id(
         DP_msg_draw_dabs_mypaint_blend_flags(mddmpb));
+}
+
+
+void DP_msg_draw_dabs_mypaint_mode_extract(DP_MsgDrawDabsMyPaint *mddmp,
+                                           int *out_blend_mode,
+                                           int *out_paint_mode,
+                                           uint8_t *out_posterize_num)
+{
+    DP_ASSERT(mddmp);
+    uint8_t flags = DP_msg_draw_dabs_mypaint_flags(mddmp);
+    uint8_t mode = DP_msg_draw_dabs_mypaint_mode(mddmp);
+
+    int blend_mode;
+    int paint_mode;
+    uint8_t posterize_num;
+    if (mode & DP_MYPAINT_BRUSH_MODE_FLAG) {
+        posterize_num = 0;
+        switch (mode & DP_MYPAINT_BRUSH_MODE_MASK) {
+        case DP_MYPAINT_BRUSH_MODE_NORMAL:
+            blend_mode = DP_BLEND_MODE_NORMAL;
+            paint_mode = DP_PAINT_MODE_INDIRECT_SOFT;
+            break;
+        case DP_MYPAINT_BRUSH_MODE_RECOLOR:
+            blend_mode = DP_BLEND_MODE_RECOLOR;
+            paint_mode = DP_PAINT_MODE_INDIRECT_SOFT;
+            break;
+        case DP_MYPAINT_BRUSH_MODE_ERASE:
+            blend_mode = DP_BLEND_MODE_ERASE;
+            paint_mode = DP_PAINT_MODE_INDIRECT_SOFT;
+            break;
+        default:
+            blend_mode = DP_BLEND_MODE_NORMAL_AND_ERASER;
+            paint_mode = DP_PAINT_MODE_DIRECT;
+            break;
+        }
+    }
+    else {
+        blend_mode = flags & DP_MYPAINT_BRUSH_PIGMENT_FLAG
+                       ? DP_BLEND_MODE_PIGMENT_AND_ERASER
+                       : DP_BLEND_MODE_NORMAL_AND_ERASER;
+        paint_mode = DP_PAINT_MODE_DIRECT;
+        posterize_num = mode;
+    }
+
+    if (out_blend_mode) {
+        *out_blend_mode = blend_mode;
+    }
+    if (out_paint_mode) {
+        *out_paint_mode = paint_mode;
+    }
+    if (out_posterize_num) {
+        *out_posterize_num = posterize_num;
+    }
+}
+
+int DP_msg_draw_dabs_mypaint_paint_mode(DP_MsgDrawDabsMyPaint *mddmp)
+{
+    DP_ASSERT(mddmp);
+    if (DP_msg_draw_dabs_mypaint_mode(mddmp) & DP_MYPAINT_BRUSH_MODE_FLAG) {
+        return DP_PAINT_MODE_INDIRECT_SOFT;
+    }
+    else {
+        return DP_PAINT_MODE_DIRECT;
+    }
 }

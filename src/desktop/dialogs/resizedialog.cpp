@@ -114,6 +114,14 @@ void ResizeDialog::setBounds(const QRect &rect, bool clamp)
 	m_ui->resizer->setTargetSize(rectIn.size());
 }
 
+void ResizeDialog::setCompatibilityMode(bool compatibilityMode)
+{
+	if(compatibilityMode != m_compatibilityMode) {
+		m_compatibilityMode = compatibilityMode;
+		updateError();
+	}
+}
+
 void ResizeDialog::initialExpand(int expandDirection)
 {
 	QToolButton *button;
@@ -145,7 +153,8 @@ void ResizeDialog::done(int r)
 	if(r == QDialog::Accepted) {
 		QString error;
 		if(!checkDimensions(
-			   m_ui->width->value(), m_ui->height->value(), &error)) {
+			   m_ui->width->value(), m_ui->height->value(), m_compatibilityMode,
+			   &error)) {
 			utils::showWarning(this, tr("Error"), error);
 			return;
 		}
@@ -249,50 +258,84 @@ ResizeVector ResizeDialog::resizeVector() const
 }
 
 bool ResizeDialog::checkDimensions(
-	long long width, long long height, QString *outError)
+	long long width, long long height, bool compatibilityMode,
+	QString *outError)
 {
-	bool widthInBounds = DP_canvas_state_in_max_dimension_bound(width);
-	bool heightInBounds = DP_canvas_state_in_max_dimension_bound(height);
-	bool inPixelBounds = DP_canvas_state_in_max_pixels_bound(width, height);
-	if(!widthInBounds) {
-		if(!heightInBounds) {
+	if(compatibilityMode) {
+		bool widthInBounds = width <= INT16_MAX;
+		bool heightInBounds = height <= INT16_MAX;
+		if(!widthInBounds) {
+			if(!heightInBounds) {
+				if(outError) {
+					*outError =
+						tr("Width and height must be between 1 and %1 pixels "
+						   "in sessions hosted with Drawpile 2.2.")
+							.arg(INT16_MAX);
+				}
+				return false;
+			} else {
+				if(outError) {
+					*outError = tr("Width must be between 1 and %1 pixels in "
+								   "sessions hosted with Drawpile 2.2.")
+									.arg(INT16_MAX);
+				}
+				return false;
+			}
+		} else if(!heightInBounds) {
 			if(outError) {
-				*outError =
-					tr("Width and height must be between 1 and %1 pixels.")
-						.arg(DP_CANVAS_STATE_MAX_DIMENSION);
+				*outError = tr("Height must be between 1 and %1 pixels in "
+							   "sessions hosted with Drawpile 2.2.")
+								.arg(INT16_MAX);
 			}
 			return false;
 		} else {
+			return true;
+		}
+	} else {
+		bool widthInBounds = DP_canvas_state_in_max_dimension_bound(width);
+		bool heightInBounds = DP_canvas_state_in_max_dimension_bound(height);
+		bool inPixelBounds = DP_canvas_state_in_max_pixels_bound(width, height);
+		if(!widthInBounds) {
+			if(!heightInBounds) {
+				if(outError) {
+					*outError =
+						tr("Width and height must be between 1 and %1 pixels.")
+							.arg(DP_CANVAS_STATE_MAX_DIMENSION);
+				}
+				return false;
+			} else {
+				if(outError) {
+					*outError = tr("Width must be between 1 and %1 pixels.")
+									.arg(DP_CANVAS_STATE_MAX_DIMENSION);
+				}
+				return false;
+			}
+		} else if(!heightInBounds) {
 			if(outError) {
-				*outError = tr("Width must be between 1 and %1 pixels.")
+				*outError = tr("Height must be between 1 and %1 pixels.")
 								.arg(DP_CANVAS_STATE_MAX_DIMENSION);
 			}
 			return false;
+		} else if(!inPixelBounds) {
+			if(outError) {
+				*outError = tr("Total size must be between 1 and %1 pixels "
+							   "(you're at %2.)")
+								.arg(DP_CANVAS_STATE_MAX_PIXELS)
+								.arg(width * height);
+			}
+			return false;
+		} else {
+			return true;
 		}
-	} else if(!heightInBounds) {
-		if(outError) {
-			*outError = tr("Height must be between 1 and %1 pixels.")
-							.arg(DP_CANVAS_STATE_MAX_DIMENSION);
-		}
-		return false;
-	} else if(!inPixelBounds) {
-		if(outError) {
-			*outError =
-				tr("Total size must be between 1 and %1 pixels (you're at %2.)")
-					.arg(DP_CANVAS_STATE_MAX_PIXELS)
-					.arg(width * height);
-		}
-		return false;
-	} else {
-		return true;
 	}
 }
 
 void ResizeDialog::updateError()
 {
 	QString error;
-	bool ok =
-		checkDimensions(m_ui->width->value(), m_ui->height->value(), &error);
+	bool ok = checkDimensions(
+		m_ui->width->value(), m_ui->height->value(), m_compatibilityMode,
+		&error);
 	m_ui->errorLabel->setText(error);
 	m_ui->errorLabel->setVisible(!ok);
 	m_ui->buttons->button(QDialogButtonBox::Ok)->setEnabled(ok);

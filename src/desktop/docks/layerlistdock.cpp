@@ -631,16 +631,18 @@ void LayerList::updateLockedControls()
 	QSet<int> topLevelIds = topLevelSelectedIds();
 	bool canEditSelected = !locked && haveAnySelected &&
 						   (canEdit || (ownLayers && ownsAll(topLevelIds)));
+	bool compatibilityMode = m_canvas && m_canvas->isCompatibilityMode();
 
-	m_aclmenu->setCanEdit(canAclEditCurrent);
+	m_aclmenu->setCanEdit(canAclEditCurrent, compatibilityMode);
 	m_lockButton->setEnabled(haveAnySelected);
 	m_alphaPreserveButton->setEnabled(
 		canEditCurrent && haveAnySelected && canEditSelected &&
-		m_actions.layerAlphaPreserve &&
+		!compatibilityMode && m_actions.layerAlphaPreserve &&
 		m_actions.layerAlphaPreserve->isEnabled());
 	m_clipButton->setEnabled(
 		canEditCurrent && haveAnySelected && canEditSelected &&
-		m_actions.layerClip && m_actions.layerClip->isEnabled());
+		!compatibilityMode && m_actions.layerClip &&
+		m_actions.layerClip->isEnabled());
 	m_blendModeCombo->setEnabled(
 		canEditCurrent && haveAnySelected && canEditSelected);
 	m_opacitySlider->setEnabled(
@@ -1008,16 +1010,22 @@ void LayerList::addLayerOrGroupFromPrompt(
 		title);
 	if(layerId > 0 && !msgs.isEmpty()) {
 		uint8_t contextId = m_canvas->localUserId();
-		if(clip) {
+		bool compatibilityMode = m_canvas->isCompatibilityMode();
+
+		if(compatibilityMode) {
+			blendMode = canvas::blendmode::toCompatible(blendMode);
+		} else if(clip) {
 			blendMode = canvas::blendmode::toAlphaAffecting(blendMode);
 		}
+
 		if(opacityPercent != 100 || blendMode != DP_BLEND_MODE_NORMAL ||
 		   (group && !isolated) || censored) {
 			uint8_t flags =
 				(group && isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED
 								   : 0) |
 				(censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
-				(clip ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP : 0);
+				(!compatibilityMode && clip ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP
+											: 0);
 			msgs.append(net::makeLayerAttributesMessage(
 				contextId, layerId, 0, flags,
 				qRound(opacityPercent / 100.0 * 255), blendMode));
@@ -1617,9 +1625,12 @@ void LayerList::showOutOfIdsError(int layerIdLimit, int requiredIdCount)
 		//: Singular should be "can't create another layer", plural "can't
 		//: create %n more layers". Change this to make sense in your language.
 		tr("Can't create another/%n more layer(s).", nullptr, requiredIdCount),
-		tr("The layer limit for you is %n layer(s), session operators can "
-		   "change this in the session settings.",
-		   nullptr, layerIdLimit));
+		m_canvas->isCompatibilityMode()
+			? tr("The layer limit in sessions hosted with Drawpile 2.2 is 256 "
+				 "per user.")
+			: tr("The layer limit for you is %n layer(s), session operators "
+				 "can change this in the session settings.",
+				 nullptr, layerIdLimit));
 }
 
 void LayerList::showPropertiesForNew(bool group)
@@ -1717,6 +1728,7 @@ dialogs::LayerProperties *LayerList::makeLayerPropertiesDialog(
 		 isOwnLayer);
 	dlg->setControlsEnabled(canEdit);
 	dlg->setOpControlsEnabled(canEditAll);
+	dlg->setCompatibilityMode(m_canvas->isCompatibilityMode());
 
 	return dlg;
 }
@@ -2072,15 +2084,17 @@ void LayerList::updateUiFromCurrent()
 
 	m_aclmenu->setCensored(layer.actuallyCensored());
 	m_aclmenu->setAlphaLock(layer.alphaLock);
+	bool compatibilityMode = m_canvas && m_canvas->isCompatibilityMode();
 	dialogs::LayerProperties::updateBlendMode(
 		m_blendModeCombo, layer.blend, layer.group, layer.isolated, layer.clip,
-		m_automaticAlphaPreserve);
+		m_automaticAlphaPreserve, compatibilityMode);
 	m_opacitySlider->setPrefix(m_sketchMode ? tr("Sketch: ") : tr("Opacity: "));
 	m_opacitySlider->setMinimum(m_sketchMode ? 1 : 0);
 	m_opacitySlider->setValue(
 		(m_sketchMode ? layer.sketchOpacity : layer.opacity) * 100.0 + 0.5);
 
 	if(m_actions.layerAlphaGroup) {
+		m_actions.layerAlphaGroup->setEnabled(!compatibilityMode);
 		bool enabled = !layer.group || layer.isolated;
 		m_actions.layerAlphaBlend->setEnabled(enabled);
 		m_actions.layerAlphaPreserve->setEnabled(enabled);
@@ -2111,7 +2125,8 @@ void LayerList::setAutomaticAlphaPreserve(bool automaticAlphaPreserve)
 			currentSelection().data().value<canvas::LayerListItem>();
 		dialogs::LayerProperties::updateBlendMode(
 			m_blendModeCombo, layer.blend, layer.group, layer.isolated,
-			layer.clip, m_automaticAlphaPreserve);
+			layer.clip, m_automaticAlphaPreserve,
+			m_canvas && m_canvas->isCompatibilityMode());
 	}
 }
 
@@ -2188,8 +2203,10 @@ void LayerList::triggerUpdate()
 	m_debounceTimer->stop();
 
 	int selectedCount = m_selectedIds.size();
-	bool haveClipUpdate = m_updateClip != -1;
-	bool haveAlphaPreserveUpdate = m_updateAlphaPreserve != -1;
+	bool compatibilityMode = m_canvas && m_canvas->isCompatibilityMode();
+	bool haveClipUpdate = !compatibilityMode && m_updateClip != -1;
+	bool haveAlphaPreserveUpdate =
+		!compatibilityMode && m_updateAlphaPreserve != -1;
 	bool haveBlendModeUpdate = m_updateBlendModeIndex != -1;
 	bool haveOpacityUpdate = m_updateOpacity != -1;
 	bool haveAnyAttributeUpdate = haveClipUpdate || haveAlphaPreserveUpdate ||
@@ -2281,6 +2298,11 @@ void LayerList::triggerUpdate()
 												  : alphaPreservingMode;
 				}
 
+				if(compatibilityMode) {
+					mode = DP_BlendMode(
+						canvas::blendmode::toCompatible(int(mode)));
+				}
+
 				float opacity =
 					haveOpacityUpdate ? targetOpacity : layer.opacity;
 
@@ -2289,7 +2311,9 @@ void LayerList::triggerUpdate()
 						 ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR
 						 : 0) |
 					(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0) |
-					(clip ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP : 0);
+					(!compatibilityMode && clip
+						 ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP
+						 : 0);
 
 				msgs.append(net::makeLayerAttributesMessage(
 					contextId, layer.id, 0, flags, opacity * 255.0f + 0.5f,

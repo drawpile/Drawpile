@@ -696,6 +696,13 @@ void ToolSettings::setBackgroundColor(const QColor &color)
 	}
 }
 
+void ToolSettings::setCompatibilityMode(bool compatibilityMode)
+{
+	for(QSharedPointer<tools::ToolSettings> &ts : d->toolSettings) {
+		ts->setCompatibilityMode(compatibilityMode);
+	}
+}
+
 void ToolSettings::changeForegroundColor()
 {
 	d->foregroundColorDialog->showColor(d->foregroundColor);

@@ -131,7 +131,7 @@ QUrl Client::sessionUrl(bool includeUser) const
 void Client::handleConnect(
 	const QUrl &url, uint8_t userid, bool join, bool auth,
 	const QStringList &userFlags, bool supportsAutoReset,
-	const QString &joinPassword, const QString &authId)
+	bool compatibilityMode, const QString &joinPassword, const QString &authId)
 {
 	m_lastUrl = url;
 	m_myId = userid;
@@ -145,8 +145,9 @@ void Client::handleConnect(
 	}
 	m_isAuthenticated = auth;
 	m_supportsAutoReset = supportsAutoReset;
+	m_compatibilityMode = compatibilityMode;
 
-	emit serverLoggedIn(join, joinPassword, authId);
+	emit serverLoggedIn(join, compatibilityMode, joinPassword, authId);
 }
 
 void Client::handleDisconnect(
@@ -158,6 +159,7 @@ void Client::handleDisconnect(
 	emit serverDisconnected(
 		message, errorcode, localDisconnect, anyMessageReceived);
 	if(isConnected()) {
+		m_compatibilityMode = false;
 		m_server->deleteLater();
 		m_server = nullptr;
 		m_userFlags = UserFlag::None;

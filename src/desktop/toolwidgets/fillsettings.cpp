@@ -138,7 +138,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		QCoreApplication::translate("BrushDock", "Preserve alpha"));
 	m_ui->alphaPreserve->setStatusTip(m_ui->alphaPreserve->toolTip());
 
-	initBlendModeOptions();
+	initBlendModeOptions(false);
 
 	connect(
 		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
@@ -243,6 +243,12 @@ void FillSettings::setFeatureAccess(bool featureAccess)
 	}
 	m_featureAccess = featureAccess;
 	updateWidgets();
+}
+
+void FillSettings::setCompatibilityMode(bool compatibilityMode)
+{
+	initBlendModeOptions(compatibilityMode);
+	m_ui->alphaPreserve->setEnabled(!compatibilityMode);
 }
 
 void FillSettings::pushSettings()
@@ -479,13 +485,13 @@ int FillSettings::calculatePixelSize(int size) const
 	return unlimited ? 0 : size * 2 + 1;
 }
 
-void FillSettings::initBlendModeOptions()
+void FillSettings::initBlendModeOptions(bool compatibilityMode)
 {
 	int selectedBlendMode = getCurrentBlendMode();
 	{
-		QSignalBlocker blocker(m_ui->blendModeCombo);
+		QSignalBlocker blockerc(m_ui->blendModeCombo);
 		m_ui->blendModeCombo->setModel(
-			getFillBlendModesFor(m_automaticAlphaPreserve));
+			getFillBlendModesFor(m_automaticAlphaPreserve, compatibilityMode));
 	}
 	selectBlendMode(selectedBlendMode);
 }
@@ -576,7 +582,8 @@ void FillSettings::setAutomaticAlphaPerserve(bool automaticAlphaPreserve)
 {
 	if(automaticAlphaPreserve != m_automaticAlphaPreserve) {
 		m_automaticAlphaPreserve = automaticAlphaPreserve;
-		initBlendModeOptions();
+		canvas::CanvasModel *canvas = controller()->model();
+		initBlendModeOptions(canvas && canvas->isCompatibilityMode());
 	}
 }
 

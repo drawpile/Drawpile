@@ -175,6 +175,11 @@ public:
 
 	void setLayerIdToSelect(int layerId) { m_layerIdToSelect = layerId; }
 
+	void setCompatibilityMode(bool compatibilityMode)
+	{
+		m_compatibilityMode = compatibilityMode;
+	}
+
 	/**
 	 * @brief Get the default layer to select when logging in
 	 * Zero means no default.
@@ -316,6 +321,7 @@ private:
 	int m_defaultLayer = 0;
 	bool m_autoselectAny = true;
 	bool m_checkMode = false;
+	bool m_compatibilityMode = false;
 	int m_viewMode;
 	int m_layerIdToSelect = 0;
 	int m_fillSourceLayerId = 0;

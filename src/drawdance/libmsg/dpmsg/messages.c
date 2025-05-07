@@ -143,6 +143,81 @@ bool DP_message_type_command(DP_MessageType type)
     }
 }
 
+bool DP_message_type_compatible(DP_MessageType type)
+{
+    switch (type) {
+    case DP_MSG_SERVER_COMMAND:
+    case DP_MSG_DISCONNECT:
+    case DP_MSG_PING:
+    case DP_MSG_KEEP_ALIVE:
+    case DP_MSG_INTERNAL:
+    case DP_MSG_JOIN:
+    case DP_MSG_LEAVE:
+    case DP_MSG_SESSION_OWNER:
+    case DP_MSG_CHAT:
+    case DP_MSG_TRUSTED_USERS:
+    case DP_MSG_SOFT_RESET:
+    case DP_MSG_PRIVATE_CHAT:
+    case DP_MSG_RESET_STREAM:
+    case DP_MSG_INTERVAL:
+    case DP_MSG_LASER_TRAIL:
+    case DP_MSG_MOVE_POINTER:
+    case DP_MSG_REMOVED_MARKER:
+    case DP_MSG_USER_ACL:
+    case DP_MSG_LAYER_ACL:
+    case DP_MSG_FEATURE_ACCESS_LEVELS:
+    case DP_MSG_DEFAULT_LAYER:
+    case DP_MSG_REMOVED_FILTERED:
+    case DP_MSG_EXTENSION:
+    case DP_MSG_UNDO_DEPTH:
+    case DP_MSG_DATA:
+    case DP_MSG_LOCAL_CHANGE:
+    case DP_MSG_UNDO_POINT:
+    case DP_MSG_CANVAS_RESIZE:
+    case DP_MSG_REMOVED_LAYER_CREATE:
+    case DP_MSG_LAYER_ATTRIBUTES:
+    case DP_MSG_LAYER_RETITLE:
+    case DP_MSG_REMOVED_LAYER_ORDER:
+    case DP_MSG_REMOVED_LAYER_DELETE:
+    case DP_MSG_REMOVED_LAYER_VISIBILITY:
+    case DP_MSG_PUT_IMAGE:
+    case DP_MSG_FILL_RECT:
+    case DP_MSG_REMOVED_TOOL_CHANGE:
+    case DP_MSG_REMOVED_PEN_MOVE:
+    case DP_MSG_PEN_UP:
+    case DP_MSG_ANNOTATION_CREATE:
+    case DP_MSG_ANNOTATION_RESHAPE:
+    case DP_MSG_ANNOTATION_EDIT:
+    case DP_MSG_ANNOTATION_DELETE:
+    case DP_MSG_REMOVED_MOVE_REGION:
+    case DP_MSG_PUT_TILE:
+    case DP_MSG_CANVAS_BACKGROUND:
+    case DP_MSG_DRAW_DABS_CLASSIC:
+    case DP_MSG_DRAW_DABS_PIXEL:
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+    case DP_MSG_DRAW_DABS_MYPAINT:
+    case DP_MSG_MOVE_RECT:
+    case DP_MSG_SET_METADATA_INT:
+    case DP_MSG_LAYER_TREE_CREATE:
+    case DP_MSG_LAYER_TREE_MOVE:
+    case DP_MSG_LAYER_TREE_DELETE:
+    case DP_MSG_TRANSFORM_REGION:
+    case DP_MSG_TRACK_CREATE:
+    case DP_MSG_TRACK_RETITLE:
+    case DP_MSG_TRACK_DELETE:
+    case DP_MSG_TRACK_ORDER:
+    case DP_MSG_KEY_FRAME_SET:
+    case DP_MSG_KEY_FRAME_RETITLE:
+    case DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES:
+    case DP_MSG_KEY_FRAME_DELETE:
+    case DP_MSG_LOCAL_MATCH:
+    case DP_MSG_UNDO:
+        return true;
+    default:
+        return false;
+    }
+}
+
 const char *DP_message_type_name(DP_MessageType type)
 {
     switch (type) {
@@ -671,20 +746,6 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     }
 }
 
-bool DP_message_type_parse_multiline_tuples(DP_MessageType type)
-{
-    switch (type) {
-    case DP_MSG_DRAW_DABS_CLASSIC:
-    case DP_MSG_DRAW_DABS_PIXEL:
-    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-    case DP_MSG_DRAW_DABS_MYPAINT:
-    case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
-        return true;
-    default:
-        return false;
-    }
-}
-
 
 DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
                                         const unsigned char *buf, size_t length,
@@ -882,6 +943,260 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
                                                             length);
         case DP_MSG_UNDO:
             return DP_msg_undo_deserialize(context_id, buf, length);
+        default:
+            DP_error_set("Can't deserialize unknown message type %d", type);
+            return NULL;
+        }
+    }
+    else {
+        return DP_message_new_opaque((DP_MessageType)type, context_id, buf,
+                                     length);
+    }
+}
+
+DP_Message *DP_message_deserialize_body_compat(int type,
+                                               unsigned int context_id,
+                                               const unsigned char *buf,
+                                               size_t length,
+                                               bool decode_opaque)
+{
+    if (type < DP_MESSAGE_TYPE_RANGE_START_CLIENT || decode_opaque) {
+        switch (type) {
+        case DP_MSG_SERVER_COMMAND:
+            return DP_msg_server_command_deserialize_compat(context_id, buf,
+                                                            length);
+        case DP_MSG_DISCONNECT:
+            return DP_msg_disconnect_deserialize_compat(context_id, buf,
+                                                        length);
+        case DP_MSG_PING:
+            return DP_msg_ping_deserialize_compat(context_id, buf, length);
+        case DP_MSG_KEEP_ALIVE:
+            return DP_msg_keep_alive_deserialize_compat(context_id, buf,
+                                                        length);
+        case DP_MSG_INTERNAL:
+            DP_error_set(
+                "Can't deserialize reserved message type 31 DP_MSG_INTERNAL");
+            return NULL;
+        case DP_MSG_JOIN:
+            return DP_msg_join_deserialize_compat(context_id, buf, length);
+        case DP_MSG_LEAVE:
+            return DP_msg_leave_deserialize_compat(context_id, buf, length);
+        case DP_MSG_SESSION_OWNER:
+            return DP_msg_session_owner_deserialize_compat(context_id, buf,
+                                                           length);
+        case DP_MSG_CHAT:
+            return DP_msg_chat_deserialize_compat(context_id, buf, length);
+        case DP_MSG_TRUSTED_USERS:
+            return DP_msg_trusted_users_deserialize_compat(context_id, buf,
+                                                           length);
+        case DP_MSG_SOFT_RESET:
+            return DP_msg_soft_reset_deserialize_compat(context_id, buf,
+                                                        length);
+        case DP_MSG_PRIVATE_CHAT:
+            return DP_msg_private_chat_deserialize_compat(context_id, buf,
+                                                          length);
+        case DP_MSG_RESET_STREAM:
+            return DP_msg_reset_stream_deserialize_compat(context_id, buf,
+                                                          length);
+        case DP_MSG_INTERVAL:
+            return DP_msg_interval_deserialize_compat(context_id, buf, length);
+        case DP_MSG_LASER_TRAIL:
+            return DP_msg_laser_trail_deserialize_compat(context_id, buf,
+                                                         length);
+        case DP_MSG_MOVE_POINTER:
+            return DP_msg_move_pointer_deserialize_compat(context_id, buf,
+                                                          length);
+        case DP_MSG_REMOVED_MARKER:
+            DP_error_set("Can't deserialize reserved message type 67 "
+                         "DP_MSG_REMOVED_MARKER");
+            return NULL;
+        case DP_MSG_USER_ACL:
+            return DP_msg_user_acl_deserialize_compat(context_id, buf, length);
+        case DP_MSG_LAYER_ACL:
+            return DP_msg_layer_acl_deserialize_compat(context_id, buf, length);
+        case DP_MSG_FEATURE_ACCESS_LEVELS:
+            return DP_msg_feature_access_levels_deserialize_compat(context_id,
+                                                                   buf, length);
+        case DP_MSG_DEFAULT_LAYER:
+            return DP_msg_default_layer_deserialize_compat(context_id, buf,
+                                                           length);
+        case DP_MSG_REMOVED_FILTERED:
+            DP_error_set("Can't deserialize reserved message type 72 "
+                         "DP_MSG_REMOVED_FILTERED");
+            return NULL;
+        case DP_MSG_EXTENSION:
+            DP_error_set(
+                "Can't deserialize reserved message type 73 DP_MSG_EXTENSION");
+            return NULL;
+        case DP_MSG_UNDO_DEPTH:
+            return DP_msg_undo_depth_deserialize_compat(context_id, buf,
+                                                        length);
+        case DP_MSG_DATA:
+            return DP_msg_data_deserialize_compat(context_id, buf, length);
+        case DP_MSG_LOCAL_CHANGE:
+            return DP_msg_local_change_deserialize_compat(context_id, buf,
+                                                          length);
+        case DP_MSG_FEATURE_LIMITS:
+            DP_error_set("Can't deserialize incompatible message type 77 "
+                         "DP_MSG_FEATURE_LIMITS");
+            return NULL;
+        case DP_MSG_UNDO_POINT:
+            return DP_msg_undo_point_deserialize_compat(context_id, buf,
+                                                        length);
+        case DP_MSG_CANVAS_RESIZE:
+            return DP_msg_canvas_resize_deserialize_compat(context_id, buf,
+                                                           length);
+        case DP_MSG_REMOVED_LAYER_CREATE:
+            DP_error_set("Can't deserialize reserved message type 130 "
+                         "DP_MSG_REMOVED_LAYER_CREATE");
+            return NULL;
+        case DP_MSG_LAYER_ATTRIBUTES:
+            return DP_msg_layer_attributes_deserialize_compat(context_id, buf,
+                                                              length);
+        case DP_MSG_LAYER_RETITLE:
+            return DP_msg_layer_retitle_deserialize_compat(context_id, buf,
+                                                           length);
+        case DP_MSG_REMOVED_LAYER_ORDER:
+            DP_error_set("Can't deserialize reserved message type 133 "
+                         "DP_MSG_REMOVED_LAYER_ORDER");
+            return NULL;
+        case DP_MSG_REMOVED_LAYER_DELETE:
+            DP_error_set("Can't deserialize reserved message type 134 "
+                         "DP_MSG_REMOVED_LAYER_DELETE");
+            return NULL;
+        case DP_MSG_REMOVED_LAYER_VISIBILITY:
+            DP_error_set("Can't deserialize reserved message type 135 "
+                         "DP_MSG_REMOVED_LAYER_VISIBILITY");
+            return NULL;
+        case DP_MSG_PUT_IMAGE:
+            return DP_msg_put_image_deserialize_compat(context_id, buf, length);
+        case DP_MSG_FILL_RECT:
+            return DP_msg_fill_rect_deserialize_compat(context_id, buf, length);
+        case DP_MSG_REMOVED_TOOL_CHANGE:
+            DP_error_set("Can't deserialize reserved message type 138 "
+                         "DP_MSG_REMOVED_TOOL_CHANGE");
+            return NULL;
+        case DP_MSG_REMOVED_PEN_MOVE:
+            DP_error_set("Can't deserialize reserved message type 139 "
+                         "DP_MSG_REMOVED_PEN_MOVE");
+            return NULL;
+        case DP_MSG_PEN_UP:
+            return DP_msg_pen_up_deserialize_compat(context_id, buf, length);
+        case DP_MSG_ANNOTATION_CREATE:
+            return DP_msg_annotation_create_deserialize_compat(context_id, buf,
+                                                               length);
+        case DP_MSG_ANNOTATION_RESHAPE:
+            return DP_msg_annotation_reshape_deserialize_compat(context_id, buf,
+                                                                length);
+        case DP_MSG_ANNOTATION_EDIT:
+            return DP_msg_annotation_edit_deserialize_compat(context_id, buf,
+                                                             length);
+        case DP_MSG_ANNOTATION_DELETE:
+            return DP_msg_annotation_delete_deserialize_compat(context_id, buf,
+                                                               length);
+        case DP_MSG_REMOVED_MOVE_REGION:
+            DP_error_set("Can't deserialize reserved message type 145 "
+                         "DP_MSG_REMOVED_MOVE_REGION");
+            return NULL;
+        case DP_MSG_PUT_TILE:
+            return DP_msg_put_tile_deserialize_compat(context_id, buf, length);
+        case DP_MSG_CANVAS_BACKGROUND:
+            return DP_msg_canvas_background_deserialize_compat(context_id, buf,
+                                                               length);
+        case DP_MSG_DRAW_DABS_CLASSIC:
+            return DP_msg_draw_dabs_classic_deserialize_compat(context_id, buf,
+                                                               length);
+        case DP_MSG_DRAW_DABS_PIXEL:
+            return DP_msg_draw_dabs_pixel_deserialize_compat(context_id, buf,
+                                                             length);
+        case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+            return DP_msg_draw_dabs_pixel_square_deserialize_compat(
+                context_id, buf, length);
+        case DP_MSG_DRAW_DABS_MYPAINT:
+            return DP_msg_draw_dabs_mypaint_deserialize_compat(context_id, buf,
+                                                               length);
+        case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
+            DP_error_set("Can't deserialize incompatible message type 152 "
+                         "DP_MSG_DRAW_DABS_MYPAINT_BLEND");
+            return NULL;
+        case DP_MSG_MOVE_RECT:
+            return DP_msg_move_rect_deserialize_compat(context_id, buf, length);
+        case DP_MSG_SET_METADATA_INT:
+            return DP_msg_set_metadata_int_deserialize_compat(context_id, buf,
+                                                              length);
+        case DP_MSG_LAYER_TREE_CREATE:
+            return DP_msg_layer_tree_create_deserialize_compat(context_id, buf,
+                                                               length);
+        case DP_MSG_LAYER_TREE_MOVE:
+            return DP_msg_layer_tree_move_deserialize_compat(context_id, buf,
+                                                             length);
+        case DP_MSG_LAYER_TREE_DELETE:
+            return DP_msg_layer_tree_delete_deserialize_compat(context_id, buf,
+                                                               length);
+        case DP_MSG_TRANSFORM_REGION:
+            return DP_msg_transform_region_deserialize_compat(context_id, buf,
+                                                              length);
+        case DP_MSG_TRACK_CREATE:
+            return DP_msg_track_create_deserialize_compat(context_id, buf,
+                                                          length);
+        case DP_MSG_TRACK_RETITLE:
+            return DP_msg_track_retitle_deserialize_compat(context_id, buf,
+                                                           length);
+        case DP_MSG_TRACK_DELETE:
+            return DP_msg_track_delete_deserialize_compat(context_id, buf,
+                                                          length);
+        case DP_MSG_TRACK_ORDER:
+            return DP_msg_track_order_deserialize_compat(context_id, buf,
+                                                         length);
+        case DP_MSG_KEY_FRAME_SET:
+            return DP_msg_key_frame_set_deserialize_compat(context_id, buf,
+                                                           length);
+        case DP_MSG_KEY_FRAME_RETITLE:
+            return DP_msg_key_frame_retitle_deserialize_compat(context_id, buf,
+                                                               length);
+        case DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES:
+            return DP_msg_key_frame_layer_attributes_deserialize_compat(
+                context_id, buf, length);
+        case DP_MSG_KEY_FRAME_DELETE:
+            return DP_msg_key_frame_delete_deserialize_compat(context_id, buf,
+                                                              length);
+        case DP_MSG_SELECTION_PUT:
+            DP_error_set("Can't deserialize incompatible message type 174 "
+                         "DP_MSG_SELECTION_PUT");
+            return NULL;
+        case DP_MSG_SELECTION_CLEAR:
+            DP_error_set("Can't deserialize incompatible message type 175 "
+                         "DP_MSG_SELECTION_CLEAR");
+            return NULL;
+        case DP_MSG_LOCAL_MATCH:
+            return DP_msg_local_match_deserialize_compat(context_id, buf,
+                                                         length);
+        case DP_MSG_SYNC_SELECTION_TILE:
+            DP_error_set("Can't deserialize incompatible message type 177 "
+                         "DP_MSG_SYNC_SELECTION_TILE");
+            return NULL;
+        case DP_MSG_PUT_IMAGE_ZSTD:
+            DP_error_set("Can't deserialize incompatible message type 178 "
+                         "DP_MSG_PUT_IMAGE_ZSTD");
+            return NULL;
+        case DP_MSG_PUT_TILE_ZSTD:
+            DP_error_set("Can't deserialize incompatible message type 179 "
+                         "DP_MSG_PUT_TILE_ZSTD");
+            return NULL;
+        case DP_MSG_CANVAS_BACKGROUND_ZSTD:
+            DP_error_set("Can't deserialize incompatible message type 180 "
+                         "DP_MSG_CANVAS_BACKGROUND_ZSTD");
+            return NULL;
+        case DP_MSG_MOVE_RECT_ZSTD:
+            DP_error_set("Can't deserialize incompatible message type 181 "
+                         "DP_MSG_MOVE_RECT_ZSTD");
+            return NULL;
+        case DP_MSG_TRANSFORM_REGION_ZSTD:
+            DP_error_set("Can't deserialize incompatible message type 182 "
+                         "DP_MSG_TRANSFORM_REGION_ZSTD");
+            return NULL;
+        case DP_MSG_UNDO:
+            return DP_msg_undo_deserialize_compat(context_id, buf, length);
         default:
             DP_error_set("Can't deserialize unknown message type %d", type);
             return NULL;
@@ -1100,10 +1415,9 @@ static bool zero_length_equals(DP_UNUSED DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods zero_length_methods = {
-    zero_length_payload_length,
-    zero_length_serialize_payload,
-    zero_length_write_payload_text,
-    zero_length_equals,
+    zero_length_payload_length,     zero_length_serialize_payload,
+    zero_length_payload_length,     zero_length_serialize_payload,
+    zero_length_write_payload_text, zero_length_equals,
 };
 
 
@@ -1240,6 +1554,96 @@ static const unsigned char *local_match_data(DP_Message *msg, size_t *out_size)
     }
 }
 
+static uint16_t serialize_layer_id_compat(uint32_t layer_id)
+{
+    return DP_uint32_to_uint16(
+        ((layer_id & (uint32_t)0xff00u) >> (uint32_t)8u)
+        | ((layer_id & (uint32_t)0xffu) << (uint32_t)8u));
+}
+
+static uint32_t deserialize_layer_id_compat(uint16_t layer_id)
+{
+    uint32_t u = DP_uint16_to_uint32(layer_id);
+    return ((u & (uint32_t)0xffu) << (uint32_t)8u)
+         | ((u & (uint32_t)0xff00u) >> (uint32_t)8u);
+}
+
+static uint16_t convert_other_id_compat(unsigned int id)
+{
+    return DP_uint_to_uint16(((id & 0xffu) << 8u) | ((id & 0xff00u) >> 8u));
+}
+
+static uint8_t get_draw_dabs_flags_compat(uint32_t color)
+{
+    if (color & (uint32_t)0xff000000u) {
+        return (uint8_t)DP_PAINT_MODE_INDIRECT_SOFT;
+    }
+    else {
+        return (uint8_t)DP_PAINT_MODE_DIRECT;
+    }
+}
+
+static void read_track_ids_compat(int count, uint16_t *out, void *user)
+{
+    const unsigned char *buffer = user;
+    for (int i = 0; i < count; ++i) {
+        out[i] =
+            convert_other_id_compat(DP_read_bigendian_uint16(buffer + i * 2));
+    }
+}
+
+static size_t write_track_ids_compat(const uint16_t *DP_RESTRICT track_ids,
+                                     int count, unsigned char *DP_RESTRICT out)
+{
+    if (count > 0) {
+        size_t written = 0;
+        for (int i = 0; i < count; ++i) {
+            written += DP_write_bigendian_uint16(
+                convert_other_id_compat(track_ids[i]), out + written);
+        }
+        return written;
+    }
+    else {
+        return 0;
+    }
+}
+
+static void read_key_frame_layer_flags_compat(int count, uint32_t *out,
+                                              void *user)
+{
+    const unsigned char *buffer = user;
+    for (int i = 0; i < count; ++i) {
+        uint16_t layer_id = DP_read_bigendian_uint16(buffer + i * 4);
+        uint16_t flags = DP_read_bigendian_uint16(buffer + i * 4 + 2);
+        out[i] =
+            deserialize_layer_id_compat(layer_id)
+            | ((DP_uint16_to_uint32(flags) & (uint32_t)0xffu) << (uint32_t)24u);
+    }
+}
+
+static size_t
+write_key_frame_layer_flags_compat(const uint32_t *DP_RESTRICT id_flag_pairs,
+                                   int count, unsigned char *DP_RESTRICT out)
+{
+    if (count > 0) {
+        size_t written = 0;
+        for (int i = 0; i < count; ++i) {
+            written += DP_write_bigendian_uint16(
+                serialize_layer_id_compat(id_flag_pairs[i]
+                                          & (uint32_t)0xffffffu),
+                out + written);
+            written += DP_write_bigendian_uint16(
+                DP_uint32_to_uint16((id_flag_pairs[i] & (uint32_t)0xff000000u)
+                                    >> (uint32_t)24u),
+                out + written);
+        }
+        return written;
+    }
+    else {
+        return 0;
+    }
+}
+
 
 /* DP_MSG_SERVER_COMMAND */
 
@@ -1280,10 +1684,9 @@ static bool msg_server_command_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_server_command_methods = {
-    msg_server_command_payload_length,
-    msg_server_command_serialize_payload,
-    msg_server_command_write_payload_text,
-    msg_server_command_equals,
+    msg_server_command_payload_length,     msg_server_command_serialize_payload,
+    msg_server_command_payload_length,     msg_server_command_serialize_payload,
+    msg_server_command_write_payload_text, msg_server_command_equals,
 };
 
 DP_Message *DP_msg_server_command_new(unsigned int context_id,
@@ -1313,6 +1716,15 @@ DP_Message *DP_msg_server_command_deserialize(unsigned int context_id,
     uint16_t msg_len = DP_size_to_uint16(msg_bytes);
     const char *msg = (const char *)buffer + read;
     return DP_msg_server_command_new(context_id, msg, msg_len);
+}
+
+DP_Message *DP_msg_server_command_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    DP_Message *msg =
+        DP_msg_server_command_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_server_command_parse(unsigned int context_id,
@@ -1403,10 +1815,9 @@ static bool msg_disconnect_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_disconnect_methods = {
-    msg_disconnect_payload_length,
-    msg_disconnect_serialize_payload,
-    msg_disconnect_write_payload_text,
-    msg_disconnect_equals,
+    msg_disconnect_payload_length,     msg_disconnect_serialize_payload,
+    msg_disconnect_payload_length,     msg_disconnect_serialize_payload,
+    msg_disconnect_write_payload_text, msg_disconnect_equals,
 };
 
 DP_Message *DP_msg_disconnect_new(unsigned int context_id, uint8_t reason,
@@ -1438,6 +1849,15 @@ DP_Message *DP_msg_disconnect_deserialize(unsigned int context_id,
     uint16_t message_len = DP_size_to_uint16(message_bytes);
     const char *message = (const char *)buffer + read;
     return DP_msg_disconnect_new(context_id, reason, message, message_len);
+}
+
+DP_Message *DP_msg_disconnect_deserialize_compat(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length)
+{
+    DP_Message *msg = DP_msg_disconnect_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_disconnect_parse(unsigned int context_id,
@@ -1513,10 +1933,9 @@ static bool msg_ping_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_ping_methods = {
-    msg_ping_payload_length,
-    msg_ping_serialize_payload,
-    msg_ping_write_payload_text,
-    msg_ping_equals,
+    msg_ping_payload_length,     msg_ping_serialize_payload,
+    msg_ping_payload_length,     msg_ping_serialize_payload,
+    msg_ping_write_payload_text, msg_ping_equals,
 };
 
 DP_Message *DP_msg_ping_new(unsigned int context_id, bool is_pong)
@@ -1540,6 +1959,15 @@ DP_Message *DP_msg_ping_deserialize(unsigned int context_id,
     size_t read = 0;
     bool is_pong = read_bool(buffer + read, &read);
     return DP_msg_ping_new(context_id, is_pong);
+}
+
+DP_Message *DP_msg_ping_deserialize_compat(unsigned int context_id,
+                                           const unsigned char *buffer,
+                                           size_t length)
+{
+    DP_Message *msg = DP_msg_ping_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_ping_parse(unsigned int context_id, DP_TextReader *reader)
@@ -1579,6 +2007,15 @@ DP_Message *DP_msg_keep_alive_deserialize(unsigned int context_id,
         return NULL;
     }
     return DP_msg_keep_alive_new(context_id);
+}
+
+DP_Message *DP_msg_keep_alive_deserialize_compat(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length)
+{
+    DP_Message *msg = DP_msg_keep_alive_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_keep_alive_parse(unsigned int context_id,
@@ -1662,10 +2099,9 @@ static bool msg_join_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_join_methods = {
-    msg_join_payload_length,
-    msg_join_serialize_payload,
-    msg_join_write_payload_text,
-    msg_join_equals,
+    msg_join_payload_length,     msg_join_serialize_payload,
+    msg_join_payload_length,     msg_join_serialize_payload,
+    msg_join_write_payload_text, msg_join_equals,
 };
 
 DP_Message *DP_msg_join_new(unsigned int context_id, uint8_t flags,
@@ -1713,6 +2149,15 @@ DP_Message *DP_msg_join_deserialize(unsigned int context_id,
     void *avatar_user = (void *)(buffer + read);
     return DP_msg_join_new(context_id, flags, name, name_len, read_bytes,
                            avatar_size, avatar_user);
+}
+
+DP_Message *DP_msg_join_deserialize_compat(unsigned int context_id,
+                                           const unsigned char *buffer,
+                                           size_t length)
+{
+    DP_Message *msg = DP_msg_join_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_join_parse(unsigned int context_id, DP_TextReader *reader)
@@ -1791,6 +2236,15 @@ DP_Message *DP_msg_leave_deserialize(unsigned int context_id,
     return DP_msg_leave_new(context_id);
 }
 
+DP_Message *DP_msg_leave_deserialize_compat(unsigned int context_id,
+                                            const unsigned char *buffer,
+                                            size_t length)
+{
+    DP_Message *msg = DP_msg_leave_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
+}
+
 DP_Message *DP_msg_leave_parse(unsigned int context_id,
                                DP_UNUSED DP_TextReader *reader)
 {
@@ -1840,10 +2294,9 @@ static bool msg_session_owner_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_session_owner_methods = {
-    msg_session_owner_payload_length,
-    msg_session_owner_serialize_payload,
-    msg_session_owner_write_payload_text,
-    msg_session_owner_equals,
+    msg_session_owner_payload_length,     msg_session_owner_serialize_payload,
+    msg_session_owner_payload_length,     msg_session_owner_serialize_payload,
+    msg_session_owner_write_payload_text, msg_session_owner_equals,
 };
 
 DP_Message *DP_msg_session_owner_new(unsigned int context_id,
@@ -1877,6 +2330,16 @@ DP_Message *DP_msg_session_owner_deserialize(unsigned int context_id,
     void *users_user = (void *)(buffer + read);
     return DP_msg_session_owner_new(context_id, read_uint8_array, users_count,
                                     users_user);
+}
+
+DP_Message *DP_msg_session_owner_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length)
+{
+    DP_Message *msg =
+        DP_msg_session_owner_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_session_owner_parse(unsigned int context_id,
@@ -1989,10 +2452,9 @@ static bool msg_chat_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_chat_methods = {
-    msg_chat_payload_length,
-    msg_chat_serialize_payload,
-    msg_chat_write_payload_text,
-    msg_chat_equals,
+    msg_chat_payload_length,     msg_chat_serialize_payload,
+    msg_chat_payload_length,     msg_chat_serialize_payload,
+    msg_chat_write_payload_text, msg_chat_equals,
 };
 
 DP_Message *DP_msg_chat_new(unsigned int context_id, uint8_t tflags,
@@ -2026,6 +2488,15 @@ DP_Message *DP_msg_chat_deserialize(unsigned int context_id,
     uint16_t message_len = DP_size_to_uint16(message_bytes);
     const char *message = (const char *)buffer + read;
     return DP_msg_chat_new(context_id, tflags, oflags, message, message_len);
+}
+
+DP_Message *DP_msg_chat_deserialize_compat(unsigned int context_id,
+                                           const unsigned char *buffer,
+                                           size_t length)
+{
+    DP_Message *msg = DP_msg_chat_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_chat_parse(unsigned int context_id, DP_TextReader *reader)
@@ -2118,10 +2589,9 @@ static bool msg_trusted_users_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_trusted_users_methods = {
-    msg_trusted_users_payload_length,
-    msg_trusted_users_serialize_payload,
-    msg_trusted_users_write_payload_text,
-    msg_trusted_users_equals,
+    msg_trusted_users_payload_length,     msg_trusted_users_serialize_payload,
+    msg_trusted_users_payload_length,     msg_trusted_users_serialize_payload,
+    msg_trusted_users_write_payload_text, msg_trusted_users_equals,
 };
 
 DP_Message *DP_msg_trusted_users_new(unsigned int context_id,
@@ -2155,6 +2625,16 @@ DP_Message *DP_msg_trusted_users_deserialize(unsigned int context_id,
     void *users_user = (void *)(buffer + read);
     return DP_msg_trusted_users_new(context_id, read_uint8_array, users_count,
                                     users_user);
+}
+
+DP_Message *DP_msg_trusted_users_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length)
+{
+    DP_Message *msg =
+        DP_msg_trusted_users_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_trusted_users_parse(unsigned int context_id,
@@ -2208,6 +2688,15 @@ DP_Message *DP_msg_soft_reset_deserialize(unsigned int context_id,
         return NULL;
     }
     return DP_msg_soft_reset_new(context_id);
+}
+
+DP_Message *DP_msg_soft_reset_deserialize_compat(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length)
+{
+    DP_Message *msg = DP_msg_soft_reset_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_soft_reset_parse(unsigned int context_id,
@@ -2265,10 +2754,9 @@ static bool msg_private_chat_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_private_chat_methods = {
-    msg_private_chat_payload_length,
-    msg_private_chat_serialize_payload,
-    msg_private_chat_write_payload_text,
-    msg_private_chat_equals,
+    msg_private_chat_payload_length,     msg_private_chat_serialize_payload,
+    msg_private_chat_payload_length,     msg_private_chat_serialize_payload,
+    msg_private_chat_write_payload_text, msg_private_chat_equals,
 };
 
 DP_Message *DP_msg_private_chat_new(unsigned int context_id, uint8_t target,
@@ -2304,6 +2792,16 @@ DP_Message *DP_msg_private_chat_deserialize(unsigned int context_id,
     const char *message = (const char *)buffer + read;
     return DP_msg_private_chat_new(context_id, target, oflags, message,
                                    message_len);
+}
+
+DP_Message *DP_msg_private_chat_deserialize_compat(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length)
+{
+    DP_Message *msg =
+        DP_msg_private_chat_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_private_chat_parse(unsigned int context_id,
@@ -2394,10 +2892,9 @@ static bool msg_reset_stream_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_reset_stream_methods = {
-    msg_reset_stream_payload_length,
-    msg_reset_stream_serialize_payload,
-    msg_reset_stream_write_payload_text,
-    msg_reset_stream_equals,
+    msg_reset_stream_payload_length,     msg_reset_stream_serialize_payload,
+    msg_reset_stream_payload_length,     msg_reset_stream_serialize_payload,
+    msg_reset_stream_write_payload_text, msg_reset_stream_equals,
 };
 
 DP_Message *DP_msg_reset_stream_new(unsigned int context_id,
@@ -2432,6 +2929,16 @@ DP_Message *DP_msg_reset_stream_deserialize(unsigned int context_id,
     void *data_user = (void *)(buffer + read);
     return DP_msg_reset_stream_new(context_id, read_bytes, data_size,
                                    data_user);
+}
+
+DP_Message *DP_msg_reset_stream_deserialize_compat(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length)
+{
+    DP_Message *msg =
+        DP_msg_reset_stream_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_reset_stream_parse(unsigned int context_id,
@@ -2502,10 +3009,9 @@ static bool msg_interval_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_interval_methods = {
-    msg_interval_payload_length,
-    msg_interval_serialize_payload,
-    msg_interval_write_payload_text,
-    msg_interval_equals,
+    msg_interval_payload_length,     msg_interval_serialize_payload,
+    msg_interval_payload_length,     msg_interval_serialize_payload,
+    msg_interval_write_payload_text, msg_interval_equals,
 };
 
 DP_Message *DP_msg_interval_new(unsigned int context_id, uint16_t msecs)
@@ -2531,6 +3037,15 @@ DP_Message *DP_msg_interval_deserialize(unsigned int context_id,
     size_t read = 0;
     uint16_t msecs = read_uint16(buffer + read, &read);
     return DP_msg_interval_new(context_id, msecs);
+}
+
+DP_Message *DP_msg_interval_deserialize_compat(unsigned int context_id,
+                                               const unsigned char *buffer,
+                                               size_t length)
+{
+    DP_Message *msg = DP_msg_interval_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_interval_parse(unsigned int context_id,
@@ -2593,10 +3108,9 @@ static bool msg_laser_trail_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_laser_trail_methods = {
-    msg_laser_trail_payload_length,
-    msg_laser_trail_serialize_payload,
-    msg_laser_trail_write_payload_text,
-    msg_laser_trail_equals,
+    msg_laser_trail_payload_length,     msg_laser_trail_serialize_payload,
+    msg_laser_trail_payload_length,     msg_laser_trail_serialize_payload,
+    msg_laser_trail_write_payload_text, msg_laser_trail_equals,
 };
 
 DP_Message *DP_msg_laser_trail_new(unsigned int context_id, uint32_t color,
@@ -2625,6 +3139,16 @@ DP_Message *DP_msg_laser_trail_deserialize(unsigned int context_id,
     uint32_t color = read_uint32(buffer + read, &read);
     uint8_t persistence = read_uint8(buffer + read, &read);
     return DP_msg_laser_trail_new(context_id, color, persistence);
+}
+
+DP_Message *DP_msg_laser_trail_deserialize_compat(unsigned int context_id,
+                                                  const unsigned char *buffer,
+                                                  size_t length)
+{
+    DP_Message *msg =
+        DP_msg_laser_trail_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_laser_trail_parse(unsigned int context_id,
@@ -2694,10 +3218,9 @@ static bool msg_move_pointer_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_move_pointer_methods = {
-    msg_move_pointer_payload_length,
-    msg_move_pointer_serialize_payload,
-    msg_move_pointer_write_payload_text,
-    msg_move_pointer_equals,
+    msg_move_pointer_payload_length,     msg_move_pointer_serialize_payload,
+    msg_move_pointer_payload_length,     msg_move_pointer_serialize_payload,
+    msg_move_pointer_write_payload_text, msg_move_pointer_equals,
 };
 
 DP_Message *DP_msg_move_pointer_new(unsigned int context_id, int32_t x,
@@ -2726,6 +3249,16 @@ DP_Message *DP_msg_move_pointer_deserialize(unsigned int context_id,
     int32_t x = read_int32(buffer + read, &read);
     int32_t y = read_int32(buffer + read, &read);
     return DP_msg_move_pointer_new(context_id, x, y);
+}
+
+DP_Message *DP_msg_move_pointer_deserialize_compat(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length)
+{
+    DP_Message *msg =
+        DP_msg_move_pointer_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_move_pointer_parse(unsigned int context_id,
@@ -2798,10 +3331,9 @@ static bool msg_user_acl_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_user_acl_methods = {
-    msg_user_acl_payload_length,
-    msg_user_acl_serialize_payload,
-    msg_user_acl_write_payload_text,
-    msg_user_acl_equals,
+    msg_user_acl_payload_length,     msg_user_acl_serialize_payload,
+    msg_user_acl_payload_length,     msg_user_acl_serialize_payload,
+    msg_user_acl_write_payload_text, msg_user_acl_equals,
 };
 
 DP_Message *DP_msg_user_acl_new(unsigned int context_id,
@@ -2835,6 +3367,15 @@ DP_Message *DP_msg_user_acl_deserialize(unsigned int context_id,
     void *users_user = (void *)(buffer + read);
     return DP_msg_user_acl_new(context_id, read_uint8_array, users_count,
                                users_user);
+}
+
+DP_Message *DP_msg_user_acl_deserialize_compat(unsigned int context_id,
+                                               const unsigned char *buffer,
+                                               size_t length)
+{
+    DP_Message *msg = DP_msg_user_acl_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_user_acl_parse(unsigned int context_id,
@@ -2882,6 +3423,12 @@ static size_t msg_layer_acl_payload_length(DP_Message *msg)
     return ((size_t)4) + DP_int_to_size(mla->exclusive_count);
 }
 
+static size_t msg_layer_acl_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgLayerAcl *mla = DP_message_internal(msg);
+    return ((size_t)3) + DP_int_to_size(mla->exclusive_count);
+}
+
 static size_t msg_layer_acl_serialize_payload(DP_Message *msg,
                                               unsigned char *data)
 {
@@ -2892,6 +3439,21 @@ static size_t msg_layer_acl_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint8_array(
         mla->exclusive, mla->exclusive_count, data + written);
     DP_ASSERT(written == msg_layer_acl_payload_length(msg));
+    return written;
+}
+
+static size_t msg_layer_acl_serialize_payload_compat(DP_Message *msg,
+                                                     unsigned char *data)
+{
+    DP_MsgLayerAcl *mla = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mla->id),
+                                         data + written);
+    written +=
+        DP_write_bigendian_uint8(mla->flags & (uint8_t)0x83, data + written);
+    written += DP_write_bigendian_uint8_array(
+        mla->exclusive, mla->exclusive_count, data + written);
+    DP_ASSERT(written == msg_layer_acl_payload_length_compat(msg));
     return written;
 }
 
@@ -2918,10 +3480,9 @@ static bool msg_layer_acl_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_layer_acl_methods = {
-    msg_layer_acl_payload_length,
-    msg_layer_acl_serialize_payload,
-    msg_layer_acl_write_payload_text,
-    msg_layer_acl_equals,
+    msg_layer_acl_payload_length,        msg_layer_acl_serialize_payload,
+    msg_layer_acl_payload_length_compat, msg_layer_acl_serialize_payload_compat,
+    msg_layer_acl_write_payload_text,    msg_layer_acl_equals,
 };
 
 DP_Message *DP_msg_layer_acl_new(unsigned int context_id, uint32_t id,
@@ -2961,6 +3522,29 @@ DP_Message *DP_msg_layer_acl_deserialize(unsigned int context_id,
     void *exclusive_user = (void *)(buffer + read);
     return DP_msg_layer_acl_new(context_id, id, flags, read_uint8_array,
                                 exclusive_count, exclusive_user);
+}
+
+DP_Message *DP_msg_layer_acl_deserialize_compat(unsigned int context_id,
+                                                const unsigned char *buffer,
+                                                size_t length)
+{
+    if (length < 3 || length > 258) {
+        DP_error_set("Wrong length for layeracl compat message; "
+                     "expected between 3 and 258, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    uint8_t flags = read_uint8(buffer + read, &read);
+    size_t exclusive_bytes = length - read;
+    uint16_t exclusive_count = DP_size_to_uint16(exclusive_bytes);
+    void *exclusive_user = (void *)(buffer + read);
+    DP_Message *msg = DP_msg_layer_acl_new(
+        context_id, deserialize_layer_id_compat(id), flags & (uint8_t)0x83,
+        read_uint8_array, exclusive_count, exclusive_user);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_layer_acl_parse(unsigned int context_id,
@@ -3058,6 +3642,8 @@ static bool msg_feature_access_levels_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_feature_access_levels_methods = {
     msg_feature_access_levels_payload_length,
     msg_feature_access_levels_serialize_payload,
+    msg_feature_access_levels_payload_length,
+    msg_feature_access_levels_serialize_payload,
     msg_feature_access_levels_write_payload_text,
     msg_feature_access_levels_equals,
 };
@@ -3095,6 +3681,15 @@ DP_Message *DP_msg_feature_access_levels_deserialize(
     void *feature_tiers_user = (void *)(buffer + read);
     return DP_msg_feature_access_levels_new(
         context_id, read_uint8_array, feature_tiers_count, feature_tiers_user);
+}
+
+DP_Message *DP_msg_feature_access_levels_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    DP_Message *msg =
+        DP_msg_feature_access_levels_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_feature_access_levels_parse(unsigned int context_id,
@@ -3141,6 +3736,11 @@ static size_t msg_default_layer_payload_length(DP_UNUSED DP_Message *msg)
     return ((size_t)3);
 }
 
+static size_t msg_default_layer_payload_length_compat(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)2);
+}
+
 static size_t msg_default_layer_serialize_payload(DP_Message *msg,
                                                   unsigned char *data)
 {
@@ -3148,6 +3748,17 @@ static size_t msg_default_layer_serialize_payload(DP_Message *msg,
     size_t written = 0;
     written += DP_write_bigendian_uint24(mdl->id, data + written);
     DP_ASSERT(written == msg_default_layer_payload_length(msg));
+    return written;
+}
+
+static size_t msg_default_layer_serialize_payload_compat(DP_Message *msg,
+                                                         unsigned char *data)
+{
+    DP_MsgDefaultLayer *mdl = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mdl->id),
+                                         data + written);
+    DP_ASSERT(written == msg_default_layer_payload_length_compat(msg));
     return written;
 }
 
@@ -3169,6 +3780,8 @@ static bool msg_default_layer_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_default_layer_methods = {
     msg_default_layer_payload_length,
     msg_default_layer_serialize_payload,
+    msg_default_layer_payload_length_compat,
+    msg_default_layer_serialize_payload_compat,
     msg_default_layer_write_payload_text,
     msg_default_layer_equals,
 };
@@ -3196,6 +3809,24 @@ DP_Message *DP_msg_default_layer_deserialize(unsigned int context_id,
     size_t read = 0;
     uint32_t id = read_uint24(buffer + read, &read);
     return DP_msg_default_layer_new(context_id, id);
+}
+
+DP_Message *DP_msg_default_layer_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length)
+{
+    if (length != 2) {
+        DP_error_set("Wrong length for defaultlayer compat message; "
+                     "expected 2, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    DP_Message *msg =
+        DP_msg_default_layer_new(context_id, deserialize_layer_id_compat(id));
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_default_layer_parse(unsigned int context_id,
@@ -3255,10 +3886,9 @@ static bool msg_undo_depth_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_undo_depth_methods = {
-    msg_undo_depth_payload_length,
-    msg_undo_depth_serialize_payload,
-    msg_undo_depth_write_payload_text,
-    msg_undo_depth_equals,
+    msg_undo_depth_payload_length,     msg_undo_depth_serialize_payload,
+    msg_undo_depth_payload_length,     msg_undo_depth_serialize_payload,
+    msg_undo_depth_write_payload_text, msg_undo_depth_equals,
 };
 
 DP_Message *DP_msg_undo_depth_new(unsigned int context_id, uint8_t depth)
@@ -3284,6 +3914,15 @@ DP_Message *DP_msg_undo_depth_deserialize(unsigned int context_id,
     size_t read = 0;
     uint8_t depth = read_uint8(buffer + read, &read);
     return DP_msg_undo_depth_new(context_id, depth);
+}
+
+DP_Message *DP_msg_undo_depth_deserialize_compat(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length)
+{
+    DP_Message *msg = DP_msg_undo_depth_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_undo_depth_parse(unsigned int context_id,
@@ -3361,10 +4000,9 @@ static bool msg_data_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_data_methods = {
-    msg_data_payload_length,
-    msg_data_serialize_payload,
-    msg_data_write_payload_text,
-    msg_data_equals,
+    msg_data_payload_length,     msg_data_serialize_payload,
+    msg_data_payload_length,     msg_data_serialize_payload,
+    msg_data_write_payload_text, msg_data_equals,
 };
 
 DP_Message *DP_msg_data_new(unsigned int context_id, uint8_t type,
@@ -3402,6 +4040,15 @@ DP_Message *DP_msg_data_deserialize(unsigned int context_id,
     void *body_user = (void *)(buffer + read);
     return DP_msg_data_new(context_id, type, recipient, read_bytes, body_size,
                            body_user);
+}
+
+DP_Message *DP_msg_data_deserialize_compat(unsigned int context_id,
+                                           const unsigned char *buffer,
+                                           size_t length)
+{
+    DP_Message *msg = DP_msg_data_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_data_parse(unsigned int context_id, DP_TextReader *reader)
@@ -3521,10 +4168,9 @@ static bool msg_local_change_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_local_change_methods = {
-    msg_local_change_payload_length,
-    msg_local_change_serialize_payload,
-    msg_local_change_write_payload_text,
-    msg_local_change_equals,
+    msg_local_change_payload_length,     msg_local_change_serialize_payload,
+    msg_local_change_payload_length,     msg_local_change_serialize_payload,
+    msg_local_change_write_payload_text, msg_local_change_equals,
 };
 
 DP_Message *DP_msg_local_change_new(unsigned int context_id, uint8_t type,
@@ -3561,6 +4207,16 @@ DP_Message *DP_msg_local_change_deserialize(unsigned int context_id,
     void *body_user = (void *)(buffer + read);
     return DP_msg_local_change_new(context_id, type, read_bytes, body_size,
                                    body_user);
+}
+
+DP_Message *DP_msg_local_change_deserialize_compat(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length)
+{
+    DP_Message *msg =
+        DP_msg_local_change_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_local_change_parse(unsigned int context_id,
@@ -3644,10 +4300,9 @@ static bool msg_feature_limits_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_feature_limits_methods = {
-    msg_feature_limits_payload_length,
-    msg_feature_limits_serialize_payload,
-    msg_feature_limits_write_payload_text,
-    msg_feature_limits_equals,
+    msg_feature_limits_payload_length,     msg_feature_limits_serialize_payload,
+    msg_feature_limits_payload_length,     msg_feature_limits_serialize_payload,
+    msg_feature_limits_write_payload_text, msg_feature_limits_equals,
 };
 
 DP_Message *DP_msg_feature_limits_new(unsigned int context_id,
@@ -3744,6 +4399,15 @@ DP_Message *DP_msg_undo_point_deserialize(unsigned int context_id,
     return DP_msg_undo_point_new(context_id);
 }
 
+DP_Message *DP_msg_undo_point_deserialize_compat(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length)
+{
+    DP_Message *msg = DP_msg_undo_point_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
+}
+
 DP_Message *DP_msg_undo_point_parse(unsigned int context_id,
                                     DP_UNUSED DP_TextReader *reader)
 {
@@ -3798,10 +4462,9 @@ static bool msg_canvas_resize_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_canvas_resize_methods = {
-    msg_canvas_resize_payload_length,
-    msg_canvas_resize_serialize_payload,
-    msg_canvas_resize_write_payload_text,
-    msg_canvas_resize_equals,
+    msg_canvas_resize_payload_length,     msg_canvas_resize_serialize_payload,
+    msg_canvas_resize_payload_length,     msg_canvas_resize_serialize_payload,
+    msg_canvas_resize_write_payload_text, msg_canvas_resize_equals,
 };
 
 DP_Message *DP_msg_canvas_resize_new(unsigned int context_id, int32_t top,
@@ -3835,6 +4498,16 @@ DP_Message *DP_msg_canvas_resize_deserialize(unsigned int context_id,
     int32_t bottom = read_int32(buffer + read, &read);
     int32_t left = read_int32(buffer + read, &read);
     return DP_msg_canvas_resize_new(context_id, top, right, bottom, left);
+}
+
+DP_Message *DP_msg_canvas_resize_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length)
+{
+    DP_Message *msg =
+        DP_msg_canvas_resize_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_canvas_resize_parse(unsigned int context_id,
@@ -3912,6 +4585,12 @@ static size_t msg_layer_attributes_payload_length(DP_UNUSED DP_Message *msg)
     return ((size_t)7);
 }
 
+static size_t
+msg_layer_attributes_payload_length_compat(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)6);
+}
+
 static size_t msg_layer_attributes_serialize_payload(DP_Message *msg,
                                                      unsigned char *data)
 {
@@ -3923,6 +4602,22 @@ static size_t msg_layer_attributes_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint8(mla->opacity, data + written);
     written += DP_write_bigendian_uint8(mla->blend, data + written);
     DP_ASSERT(written == msg_layer_attributes_payload_length(msg));
+    return written;
+}
+
+static size_t msg_layer_attributes_serialize_payload_compat(DP_Message *msg,
+                                                            unsigned char *data)
+{
+    DP_MsgLayerAttributes *mla = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mla->id),
+                                         data + written);
+    written += DP_write_bigendian_uint8(mla->sublayer, data + written);
+    written +=
+        DP_write_bigendian_uint8(mla->flags & (uint8_t)0x7, data + written);
+    written += DP_write_bigendian_uint8(mla->opacity, data + written);
+    written += DP_write_bigendian_uint8(mla->blend, data + written);
+    DP_ASSERT(written == msg_layer_attributes_payload_length_compat(msg));
     return written;
 }
 
@@ -3955,6 +4650,8 @@ static bool msg_layer_attributes_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_layer_attributes_methods = {
     msg_layer_attributes_payload_length,
     msg_layer_attributes_serialize_payload,
+    msg_layer_attributes_payload_length_compat,
+    msg_layer_attributes_serialize_payload_compat,
     msg_layer_attributes_write_payload_text,
     msg_layer_attributes_equals,
 };
@@ -3993,6 +4690,28 @@ DP_Message *DP_msg_layer_attributes_deserialize(unsigned int context_id,
     uint8_t blend = read_uint8(buffer + read, &read);
     return DP_msg_layer_attributes_new(context_id, id, sublayer, flags, opacity,
                                        blend);
+}
+
+DP_Message *DP_msg_layer_attributes_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length != 6) {
+        DP_error_set("Wrong length for layerattr compat message; "
+                     "expected 6, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    uint8_t sublayer = read_uint8(buffer + read, &read);
+    uint8_t flags = read_uint8(buffer + read, &read);
+    uint8_t opacity = read_uint8(buffer + read, &read);
+    uint8_t blend = read_uint8(buffer + read, &read);
+    DP_Message *msg = DP_msg_layer_attributes_new(
+        context_id, deserialize_layer_id_compat(id), sublayer,
+        flags & (uint8_t)0x7, opacity, blend);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_layer_attributes_parse(unsigned int context_id,
@@ -4066,6 +4785,12 @@ static size_t msg_layer_retitle_payload_length(DP_Message *msg)
     return ((size_t)3) + DP_uint16_to_size(mlr->title_len);
 }
 
+static size_t msg_layer_retitle_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgLayerRetitle *mlr = DP_message_internal(msg);
+    return ((size_t)2) + DP_uint16_to_size(mlr->title_len);
+}
+
 static size_t msg_layer_retitle_serialize_payload(DP_Message *msg,
                                                   unsigned char *data)
 {
@@ -4074,6 +4799,18 @@ static size_t msg_layer_retitle_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint24(mlr->id, data + written);
     written += DP_write_bytes(mlr->title, 1, mlr->title_len, data + written);
     DP_ASSERT(written == msg_layer_retitle_payload_length(msg));
+    return written;
+}
+
+static size_t msg_layer_retitle_serialize_payload_compat(DP_Message *msg,
+                                                         unsigned char *data)
+{
+    DP_MsgLayerRetitle *mlr = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mlr->id),
+                                         data + written);
+    written += DP_write_bytes(mlr->title, 1, mlr->title_len, data + written);
+    DP_ASSERT(written == msg_layer_retitle_payload_length_compat(msg));
     return written;
 }
 
@@ -4097,6 +4834,8 @@ static bool msg_layer_retitle_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_layer_retitle_methods = {
     msg_layer_retitle_payload_length,
     msg_layer_retitle_serialize_payload,
+    msg_layer_retitle_payload_length_compat,
+    msg_layer_retitle_serialize_payload_compat,
     msg_layer_retitle_write_payload_text,
     msg_layer_retitle_equals,
 };
@@ -4130,6 +4869,27 @@ DP_Message *DP_msg_layer_retitle_deserialize(unsigned int context_id,
     uint16_t title_len = DP_size_to_uint16(title_bytes);
     const char *title = (const char *)buffer + read;
     return DP_msg_layer_retitle_new(context_id, id, title, title_len);
+}
+
+DP_Message *DP_msg_layer_retitle_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length)
+{
+    if (length < 2 || length > 65535) {
+        DP_error_set("Wrong length for retitlelayer compat message; "
+                     "expected between 2 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    size_t title_bytes = length - read;
+    uint16_t title_len = DP_size_to_uint16(title_bytes);
+    const char *title = (const char *)buffer + read;
+    DP_Message *msg = DP_msg_layer_retitle_new(
+        context_id, deserialize_layer_id_compat(id), title, title_len);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_layer_retitle_parse(unsigned int context_id,
@@ -4188,6 +4948,12 @@ static size_t msg_put_image_payload_length(DP_Message *msg)
     return ((size_t)20) + mpi->image_size;
 }
 
+static size_t msg_put_image_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgPutImage *mpi = DP_message_internal(msg);
+    return ((size_t)19) + mpi->image_size;
+}
+
 static size_t msg_put_image_serialize_payload(DP_Message *msg,
                                               unsigned char *data)
 {
@@ -4201,6 +4967,24 @@ static size_t msg_put_image_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint32(mpi->h, data + written);
     written += write_bytes(mpi->image, mpi->image_size, data + written);
     DP_ASSERT(written == msg_put_image_payload_length(msg));
+    return written;
+}
+
+static size_t msg_put_image_serialize_payload_compat(DP_Message *msg,
+                                                     unsigned char *data)
+{
+    DP_MsgPutImage *mpi = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mpi->layer),
+                                         data + written);
+    written += DP_write_bigendian_uint8(DP_blend_mode_to_compatible(mpi->mode),
+                                        data + written);
+    written += DP_write_bigendian_uint32(mpi->x, data + written);
+    written += DP_write_bigendian_uint32(mpi->y, data + written);
+    written += DP_write_bigendian_uint32(mpi->w, data + written);
+    written += DP_write_bigendian_uint32(mpi->h, data + written);
+    written += write_bytes(mpi->image, mpi->image_size, data + written);
+    DP_ASSERT(written == msg_put_image_payload_length_compat(msg));
     return written;
 }
 
@@ -4262,10 +5046,9 @@ bool DP_msg_put_image_local_match_matches(const DP_MsgPutImage *mpi,
 }
 
 static const DP_MessageMethods msg_put_image_methods = {
-    msg_put_image_payload_length,
-    msg_put_image_serialize_payload,
-    msg_put_image_write_payload_text,
-    msg_put_image_equals,
+    msg_put_image_payload_length,        msg_put_image_serialize_payload,
+    msg_put_image_payload_length_compat, msg_put_image_serialize_payload_compat,
+    msg_put_image_write_payload_text,    msg_put_image_equals,
 };
 
 DP_Message *
@@ -4313,6 +5096,34 @@ DP_Message *DP_msg_put_image_deserialize(unsigned int context_id,
     void *image_user = (void *)(buffer + read);
     return DP_msg_put_image_new(context_id, layer, mode, x, y, w, h, read_bytes,
                                 image_size, image_user);
+}
+
+DP_Message *DP_msg_put_image_deserialize_compat(unsigned int context_id,
+                                                const unsigned char *buffer,
+                                                size_t length)
+{
+    if (length < 19 || length > 65535) {
+        DP_error_set("Wrong length for putimage compat message; "
+                     "expected between 19 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t layer = read_uint16(buffer + read, &read);
+    uint8_t mode = read_uint8(buffer + read, &read);
+    uint32_t x = read_uint32(buffer + read, &read);
+    uint32_t y = read_uint32(buffer + read, &read);
+    uint32_t w = read_uint32(buffer + read, &read);
+    uint32_t h = read_uint32(buffer + read, &read);
+    size_t image_bytes = length - read;
+    uint16_t image_size = DP_size_to_uint16(image_bytes);
+    void *image_user = (void *)(buffer + read);
+    DP_Message *msg =
+        DP_msg_put_image_new(context_id, deserialize_layer_id_compat(layer),
+                             DP_blend_mode_to_compatible(mode), x, y, w, h,
+                             read_bytes, image_size, image_user);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_put_image_parse(unsigned int context_id,
@@ -4407,6 +5218,11 @@ static size_t msg_fill_rect_payload_length(DP_UNUSED DP_Message *msg)
     return ((size_t)24);
 }
 
+static size_t msg_fill_rect_payload_length_compat(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)23);
+}
+
 static size_t msg_fill_rect_serialize_payload(DP_Message *msg,
                                               unsigned char *data)
 {
@@ -4420,6 +5236,24 @@ static size_t msg_fill_rect_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint32(mfr->h, data + written);
     written += DP_write_bigendian_uint32(mfr->color, data + written);
     DP_ASSERT(written == msg_fill_rect_payload_length(msg));
+    return written;
+}
+
+static size_t msg_fill_rect_serialize_payload_compat(DP_Message *msg,
+                                                     unsigned char *data)
+{
+    DP_MsgFillRect *mfr = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mfr->layer),
+                                         data + written);
+    written += DP_write_bigendian_uint8(DP_blend_mode_to_compatible(mfr->mode),
+                                        data + written);
+    written += DP_write_bigendian_uint32(mfr->x, data + written);
+    written += DP_write_bigendian_uint32(mfr->y, data + written);
+    written += DP_write_bigendian_uint32(mfr->w, data + written);
+    written += DP_write_bigendian_uint32(mfr->h, data + written);
+    written += DP_write_bigendian_uint32(mfr->color, data + written);
+    DP_ASSERT(written == msg_fill_rect_payload_length_compat(msg));
     return written;
 }
 
@@ -4478,10 +5312,9 @@ bool DP_msg_fill_rect_local_match_matches(const DP_MsgFillRect *mfr,
 }
 
 static const DP_MessageMethods msg_fill_rect_methods = {
-    msg_fill_rect_payload_length,
-    msg_fill_rect_serialize_payload,
-    msg_fill_rect_write_payload_text,
-    msg_fill_rect_equals,
+    msg_fill_rect_payload_length,        msg_fill_rect_serialize_payload,
+    msg_fill_rect_payload_length_compat, msg_fill_rect_serialize_payload_compat,
+    msg_fill_rect_write_payload_text,    msg_fill_rect_equals,
 };
 
 DP_Message *DP_msg_fill_rect_new(unsigned int context_id, uint32_t layer,
@@ -4521,6 +5354,31 @@ DP_Message *DP_msg_fill_rect_deserialize(unsigned int context_id,
     uint32_t h = read_uint32(buffer + read, &read);
     uint32_t color = read_uint32(buffer + read, &read);
     return DP_msg_fill_rect_new(context_id, layer, mode, x, y, w, h, color);
+}
+
+DP_Message *DP_msg_fill_rect_deserialize_compat(unsigned int context_id,
+                                                const unsigned char *buffer,
+                                                size_t length)
+{
+    if (length != 23) {
+        DP_error_set("Wrong length for fillrect compat message; "
+                     "expected 23, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t layer = read_uint16(buffer + read, &read);
+    uint8_t mode = read_uint8(buffer + read, &read);
+    uint32_t x = read_uint32(buffer + read, &read);
+    uint32_t y = read_uint32(buffer + read, &read);
+    uint32_t w = read_uint32(buffer + read, &read);
+    uint32_t h = read_uint32(buffer + read, &read);
+    uint32_t color = read_uint32(buffer + read, &read);
+    DP_Message *msg = DP_msg_fill_rect_new(
+        context_id, deserialize_layer_id_compat(layer),
+        DP_blend_mode_to_compatible(mode), x, y, w, h, color);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_fill_rect_parse(unsigned int context_id,
@@ -4621,10 +5479,9 @@ static bool msg_pen_up_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_pen_up_methods = {
-    msg_pen_up_payload_length,
-    msg_pen_up_serialize_payload,
-    msg_pen_up_write_payload_text,
-    msg_pen_up_equals,
+    msg_pen_up_payload_length,     msg_pen_up_serialize_payload,
+    zero_length_payload_length,    zero_length_serialize_payload,
+    msg_pen_up_write_payload_text, msg_pen_up_equals,
 };
 
 DP_Message *DP_msg_pen_up_new(unsigned int context_id, uint32_t layer)
@@ -4649,6 +5506,22 @@ DP_Message *DP_msg_pen_up_deserialize(unsigned int context_id,
     size_t read = 0;
     uint32_t layer = read_uint24(buffer + read, &read);
     return DP_msg_pen_up_new(context_id, layer);
+}
+
+DP_Message *
+DP_msg_pen_up_deserialize_compat(unsigned int context_id,
+                                 DP_UNUSED const unsigned char *buffer,
+                                 size_t length)
+{
+    if (length != 0) {
+        DP_error_set("Wrong length for penup compat message; "
+                     "expected 0, got %zu",
+                     length);
+        return NULL;
+    }
+    DP_Message *msg = DP_msg_pen_up_new(context_id, 0);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_pen_up_parse(unsigned int context_id, DP_TextReader *reader)
@@ -4685,6 +5558,12 @@ static size_t msg_annotation_create_payload_length(DP_UNUSED DP_Message *msg)
     return ((size_t)14);
 }
 
+static size_t
+msg_annotation_create_payload_length_compat(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)14);
+}
+
 static size_t msg_annotation_create_serialize_payload(DP_Message *msg,
                                                       unsigned char *data)
 {
@@ -4696,6 +5575,22 @@ static size_t msg_annotation_create_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint16(mac->w, data + written);
     written += DP_write_bigendian_uint16(mac->h, data + written);
     DP_ASSERT(written == msg_annotation_create_payload_length(msg));
+    return written;
+}
+
+static size_t
+msg_annotation_create_serialize_payload_compat(DP_Message *msg,
+                                               unsigned char *data)
+{
+    DP_MsgAnnotationCreate *mac = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(convert_other_id_compat(mac->id),
+                                         data + written);
+    written += DP_write_bigendian_int32(mac->x, data + written);
+    written += DP_write_bigendian_int32(mac->y, data + written);
+    written += DP_write_bigendian_uint16(mac->w, data + written);
+    written += DP_write_bigendian_uint16(mac->h, data + written);
+    DP_ASSERT(written == msg_annotation_create_payload_length_compat(msg));
     return written;
 }
 
@@ -4722,6 +5617,8 @@ static bool msg_annotation_create_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_annotation_create_methods = {
     msg_annotation_create_payload_length,
     msg_annotation_create_serialize_payload,
+    msg_annotation_create_payload_length_compat,
+    msg_annotation_create_serialize_payload_compat,
     msg_annotation_create_write_payload_text,
     msg_annotation_create_equals,
 };
@@ -4759,6 +5656,27 @@ DP_Message *DP_msg_annotation_create_deserialize(unsigned int context_id,
     uint16_t w = read_uint16(buffer + read, &read);
     uint16_t h = read_uint16(buffer + read, &read);
     return DP_msg_annotation_create_new(context_id, id, x, y, w, h);
+}
+
+DP_Message *DP_msg_annotation_create_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length != 14) {
+        DP_error_set("Wrong length for newannotation compat message; "
+                     "expected 14, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    int32_t x = read_int32(buffer + read, &read);
+    int32_t y = read_int32(buffer + read, &read);
+    uint16_t w = read_uint16(buffer + read, &read);
+    uint16_t h = read_uint16(buffer + read, &read);
+    DP_Message *msg = DP_msg_annotation_create_new(
+        context_id, convert_other_id_compat(id), x, y, w, h);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_annotation_create_parse(unsigned int context_id,
@@ -4825,6 +5743,12 @@ static size_t msg_annotation_reshape_payload_length(DP_UNUSED DP_Message *msg)
     return ((size_t)14);
 }
 
+static size_t
+msg_annotation_reshape_payload_length_compat(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)14);
+}
+
 static size_t msg_annotation_reshape_serialize_payload(DP_Message *msg,
                                                        unsigned char *data)
 {
@@ -4836,6 +5760,22 @@ static size_t msg_annotation_reshape_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint16(mar->w, data + written);
     written += DP_write_bigendian_uint16(mar->h, data + written);
     DP_ASSERT(written == msg_annotation_reshape_payload_length(msg));
+    return written;
+}
+
+static size_t
+msg_annotation_reshape_serialize_payload_compat(DP_Message *msg,
+                                                unsigned char *data)
+{
+    DP_MsgAnnotationReshape *mar = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(convert_other_id_compat(mar->id),
+                                         data + written);
+    written += DP_write_bigendian_int32(mar->x, data + written);
+    written += DP_write_bigendian_int32(mar->y, data + written);
+    written += DP_write_bigendian_uint16(mar->w, data + written);
+    written += DP_write_bigendian_uint16(mar->h, data + written);
+    DP_ASSERT(written == msg_annotation_reshape_payload_length_compat(msg));
     return written;
 }
 
@@ -4862,6 +5802,8 @@ static bool msg_annotation_reshape_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_annotation_reshape_methods = {
     msg_annotation_reshape_payload_length,
     msg_annotation_reshape_serialize_payload,
+    msg_annotation_reshape_payload_length_compat,
+    msg_annotation_reshape_serialize_payload_compat,
     msg_annotation_reshape_write_payload_text,
     msg_annotation_reshape_equals,
 };
@@ -4899,6 +5841,27 @@ DP_Message *DP_msg_annotation_reshape_deserialize(unsigned int context_id,
     uint16_t w = read_uint16(buffer + read, &read);
     uint16_t h = read_uint16(buffer + read, &read);
     return DP_msg_annotation_reshape_new(context_id, id, x, y, w, h);
+}
+
+DP_Message *DP_msg_annotation_reshape_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length != 14) {
+        DP_error_set("Wrong length for reshapeannotation compat message; "
+                     "expected 14, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    int32_t x = read_int32(buffer + read, &read);
+    int32_t y = read_int32(buffer + read, &read);
+    uint16_t w = read_uint16(buffer + read, &read);
+    uint16_t h = read_uint16(buffer + read, &read);
+    DP_Message *msg = DP_msg_annotation_reshape_new(
+        context_id, convert_other_id_compat(id), x, y, w, h);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_annotation_reshape_parse(unsigned int context_id,
@@ -4985,6 +5948,12 @@ static size_t msg_annotation_edit_payload_length(DP_Message *msg)
     return ((size_t)8) + DP_uint16_to_size(mae->text_len);
 }
 
+static size_t msg_annotation_edit_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgAnnotationEdit *mae = DP_message_internal(msg);
+    return ((size_t)8) + DP_uint16_to_size(mae->text_len);
+}
+
 static size_t msg_annotation_edit_serialize_payload(DP_Message *msg,
                                                     unsigned char *data)
 {
@@ -4996,6 +5965,22 @@ static size_t msg_annotation_edit_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint8(mae->border, data + written);
     written += DP_write_bytes(mae->text, 1, mae->text_len, data + written);
     DP_ASSERT(written == msg_annotation_edit_payload_length(msg));
+    return written;
+}
+
+static size_t msg_annotation_edit_serialize_payload_compat(DP_Message *msg,
+                                                           unsigned char *data)
+{
+    DP_MsgAnnotationEdit *mae = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(convert_other_id_compat(mae->id),
+                                         data + written);
+    written += DP_write_bigendian_uint32(mae->bg, data + written);
+    written +=
+        DP_write_bigendian_uint8(mae->flags & (uint8_t)0x7, data + written);
+    written += DP_write_bigendian_uint8(mae->border, data + written);
+    written += DP_write_bytes(mae->text, 1, mae->text_len, data + written);
+    DP_ASSERT(written == msg_annotation_edit_payload_length_compat(msg));
     return written;
 }
 
@@ -5031,6 +6016,8 @@ static bool msg_annotation_edit_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_annotation_edit_methods = {
     msg_annotation_edit_payload_length,
     msg_annotation_edit_serialize_payload,
+    msg_annotation_edit_payload_length_compat,
+    msg_annotation_edit_serialize_payload_compat,
     msg_annotation_edit_write_payload_text,
     msg_annotation_edit_equals,
 };
@@ -5073,6 +6060,30 @@ DP_Message *DP_msg_annotation_edit_deserialize(unsigned int context_id,
     const char *text = (const char *)buffer + read;
     return DP_msg_annotation_edit_new(context_id, id, bg, flags, border, text,
                                       text_len);
+}
+
+DP_Message *DP_msg_annotation_edit_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length < 8 || length > 65535) {
+        DP_error_set("Wrong length for editannotation compat message; "
+                     "expected between 8 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    uint32_t bg = read_uint32(buffer + read, &read);
+    uint8_t flags = read_uint8(buffer + read, &read);
+    uint8_t border = read_uint8(buffer + read, &read);
+    size_t text_bytes = length - read;
+    uint16_t text_len = DP_size_to_uint16(text_bytes);
+    const char *text = (const char *)buffer + read;
+    DP_Message *msg = DP_msg_annotation_edit_new(
+        context_id, convert_other_id_compat(id), bg, flags & (uint8_t)0x7,
+        border, text, text_len);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_annotation_edit_parse(unsigned int context_id,
@@ -5153,6 +6164,12 @@ static size_t msg_annotation_delete_payload_length(DP_UNUSED DP_Message *msg)
     return ((size_t)2);
 }
 
+static size_t
+msg_annotation_delete_payload_length_compat(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)2);
+}
+
 static size_t msg_annotation_delete_serialize_payload(DP_Message *msg,
                                                       unsigned char *data)
 {
@@ -5160,6 +6177,18 @@ static size_t msg_annotation_delete_serialize_payload(DP_Message *msg,
     size_t written = 0;
     written += DP_write_bigendian_uint16(mad->id, data + written);
     DP_ASSERT(written == msg_annotation_delete_payload_length(msg));
+    return written;
+}
+
+static size_t
+msg_annotation_delete_serialize_payload_compat(DP_Message *msg,
+                                               unsigned char *data)
+{
+    DP_MsgAnnotationDelete *mad = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(convert_other_id_compat(mad->id),
+                                         data + written);
+    DP_ASSERT(written == msg_annotation_delete_payload_length_compat(msg));
     return written;
 }
 
@@ -5181,6 +6210,8 @@ static bool msg_annotation_delete_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_annotation_delete_methods = {
     msg_annotation_delete_payload_length,
     msg_annotation_delete_serialize_payload,
+    msg_annotation_delete_payload_length_compat,
+    msg_annotation_delete_serialize_payload_compat,
     msg_annotation_delete_write_payload_text,
     msg_annotation_delete_equals,
 };
@@ -5208,6 +6239,23 @@ DP_Message *DP_msg_annotation_delete_deserialize(unsigned int context_id,
     size_t read = 0;
     uint16_t id = read_uint16(buffer + read, &read);
     return DP_msg_annotation_delete_new(context_id, id);
+}
+
+DP_Message *DP_msg_annotation_delete_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length != 2) {
+        DP_error_set("Wrong length for deleteannotation compat message; "
+                     "expected 2, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    DP_Message *msg =
+        DP_msg_annotation_delete_new(context_id, convert_other_id_compat(id));
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_annotation_delete_parse(unsigned int context_id,
@@ -5248,6 +6296,12 @@ static size_t msg_put_tile_payload_length(DP_Message *msg)
     return ((size_t)11) + mpt->image_size;
 }
 
+static size_t msg_put_tile_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgPutTile *mpt = DP_message_internal(msg);
+    return ((size_t)9) + mpt->image_size;
+}
+
 static size_t msg_put_tile_serialize_payload(DP_Message *msg,
                                              unsigned char *data)
 {
@@ -5261,6 +6315,22 @@ static size_t msg_put_tile_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint16(mpt->repeat, data + written);
     written += write_bytes(mpt->image, mpt->image_size, data + written);
     DP_ASSERT(written == msg_put_tile_payload_length(msg));
+    return written;
+}
+
+static size_t msg_put_tile_serialize_payload_compat(DP_Message *msg,
+                                                    unsigned char *data)
+{
+    DP_MsgPutTile *mpt = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mpt->layer),
+                                         data + written);
+    written += DP_write_bigendian_uint8(mpt->sublayer, data + written);
+    written += DP_write_bigendian_uint16(mpt->col, data + written);
+    written += DP_write_bigendian_uint16(mpt->row, data + written);
+    written += DP_write_bigendian_uint16(mpt->repeat, data + written);
+    written += write_bytes(mpt->image, mpt->image_size, data + written);
+    DP_ASSERT(written == msg_put_tile_payload_length_compat(msg));
     return written;
 }
 
@@ -5290,10 +6360,9 @@ static bool msg_put_tile_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_put_tile_methods = {
-    msg_put_tile_payload_length,
-    msg_put_tile_serialize_payload,
-    msg_put_tile_write_payload_text,
-    msg_put_tile_equals,
+    msg_put_tile_payload_length,        msg_put_tile_serialize_payload,
+    msg_put_tile_payload_length_compat, msg_put_tile_serialize_payload_compat,
+    msg_put_tile_write_payload_text,    msg_put_tile_equals,
 };
 
 DP_Message *DP_msg_put_tile_new(unsigned int context_id, uint8_t user,
@@ -5342,6 +6411,32 @@ DP_Message *DP_msg_put_tile_deserialize(unsigned int context_id,
     void *image_user = (void *)(buffer + read);
     return DP_msg_put_tile_new(context_id, user, layer, sublayer, col, row,
                                repeat, read_bytes, image_size, image_user);
+}
+
+DP_Message *DP_msg_put_tile_deserialize_compat(unsigned int context_id,
+                                               const unsigned char *buffer,
+                                               size_t length)
+{
+    if (length < 9 || length > 65535) {
+        DP_error_set("Wrong length for puttile compat message; "
+                     "expected between 9 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t layer = read_uint16(buffer + read, &read);
+    uint8_t sublayer = read_uint8(buffer + read, &read);
+    uint16_t col = read_uint16(buffer + read, &read);
+    uint16_t row = read_uint16(buffer + read, &read);
+    uint16_t repeat = read_uint16(buffer + read, &read);
+    size_t image_bytes = length - read;
+    uint16_t image_size = DP_size_to_uint16(image_bytes);
+    void *image_user = (void *)(buffer + read);
+    DP_Message *msg = DP_msg_put_tile_new(
+        context_id, 0, deserialize_layer_id_compat(layer), sublayer, col, row,
+        repeat, read_bytes, image_size, image_user);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_put_tile_parse(unsigned int context_id,
@@ -5466,6 +6561,8 @@ static bool msg_canvas_background_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_canvas_background_methods = {
     msg_canvas_background_payload_length,
     msg_canvas_background_serialize_payload,
+    msg_canvas_background_payload_length,
+    msg_canvas_background_serialize_payload,
     msg_canvas_background_write_payload_text,
     msg_canvas_background_equals,
 };
@@ -5502,6 +6599,15 @@ DP_Message *DP_msg_canvas_background_deserialize(unsigned int context_id,
     void *image_user = (void *)(buffer + read);
     return DP_msg_canvas_background_new(context_id, read_bytes, image_size,
                                         image_user);
+}
+
+DP_Message *DP_msg_canvas_background_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    DP_Message *msg =
+        DP_msg_canvas_background_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_canvas_background_parse(unsigned int context_id,
@@ -5700,6 +6806,46 @@ const DP_ClassicDab *DP_classic_dab_at(const DP_ClassicDab *cd, int i)
     return &cd[i];
 }
 
+static size_t classic_dab_serialize_payload_compat(DP_ClassicDab *cd,
+                                                   unsigned char *data)
+{
+    size_t written = 0;
+    written += DP_write_bigendian_int8(cd->x, data + written);
+    written += DP_write_bigendian_int8(cd->y, data + written);
+    written += DP_write_bigendian_uint16(DP_uint32_to_uint16(cd->size),
+                                         data + written);
+    written += DP_write_bigendian_uint8(cd->hardness, data + written);
+    written += DP_write_bigendian_uint8(cd->opacity, data + written);
+    return written;
+}
+
+static size_t classic_dab_serialize_payloads_compat(DP_ClassicDab *cd,
+                                                    int count,
+                                                    unsigned char *data)
+{
+    size_t written = 0;
+    for (int i = 0; i < count; ++i) {
+        written += classic_dab_serialize_payload_compat(&cd[i], data + written);
+    }
+    return written;
+}
+
+static void classic_dab_deserialize_compat(int count, DP_ClassicDab *cds,
+                                           void *user)
+{
+    const unsigned char *buffer = user;
+    size_t read = 0;
+    for (int i = 0; i < count; ++i) {
+        int8_t x = read_int8(buffer + read, &read);
+        int8_t y = read_int8(buffer + read, &read);
+        uint16_t size = read_uint16(buffer + read, &read);
+        uint8_t hardness = read_uint8(buffer + read, &read);
+        uint8_t opacity = read_uint8(buffer + read, &read);
+        DP_classic_dab_init(cds, i, x, y, DP_uint16_to_uint32(size), hardness,
+                            opacity);
+    }
+}
+
 struct DP_MsgDrawDabsClassic {
     uint8_t flags;
     uint32_t layer;
@@ -5717,6 +6863,12 @@ static size_t msg_draw_dabs_classic_payload_length(DP_Message *msg)
     return ((size_t)17) + DP_int_to_size(mddc->dabs_count) * 7;
 }
 
+static size_t msg_draw_dabs_classic_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
+    return ((size_t)15) + DP_int_to_size(mddc->dabs_count) * 6;
+}
+
 static size_t msg_draw_dabs_classic_serialize_payload(DP_Message *msg,
                                                       unsigned char *data)
 {
@@ -5731,6 +6883,25 @@ static size_t msg_draw_dabs_classic_serialize_payload(DP_Message *msg,
     written += classic_dab_serialize_payloads(mddc->dabs, mddc->dabs_count,
                                               data + written);
     DP_ASSERT(written == msg_draw_dabs_classic_payload_length(msg));
+    return written;
+}
+
+static size_t
+msg_draw_dabs_classic_serialize_payload_compat(DP_Message *msg,
+                                               unsigned char *data)
+{
+    DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mddc->layer),
+                                         data + written);
+    written += DP_write_bigendian_int32(mddc->x, data + written);
+    written += DP_write_bigendian_int32(mddc->y, data + written);
+    written += DP_write_bigendian_uint32(mddc->color, data + written);
+    written += DP_write_bigendian_uint8(DP_blend_mode_to_compatible(mddc->mode),
+                                        data + written);
+    written += classic_dab_serialize_payloads_compat(
+        mddc->dabs, mddc->dabs_count, data + written);
+    DP_ASSERT(written == msg_draw_dabs_classic_payload_length_compat(msg));
     return written;
 }
 
@@ -5794,6 +6965,8 @@ bool DP_msg_draw_dabs_classic_local_match_matches(
 static const DP_MessageMethods msg_draw_dabs_classic_methods = {
     msg_draw_dabs_classic_payload_length,
     msg_draw_dabs_classic_serialize_payload,
+    msg_draw_dabs_classic_payload_length_compat,
+    msg_draw_dabs_classic_serialize_payload_compat,
     msg_draw_dabs_classic_write_payload_text,
     msg_draw_dabs_classic_equals,
 };
@@ -5850,6 +7023,39 @@ DP_Message *DP_msg_draw_dabs_classic_deserialize(unsigned int context_id,
     return DP_msg_draw_dabs_classic_new(context_id, flags, layer, x, y, color,
                                         mode, classic_dab_deserialize,
                                         dabs_count, dabs_user);
+}
+
+DP_Message *DP_msg_draw_dabs_classic_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length < 21 || length > 65535) {
+        DP_error_set("Wrong length for classicdabs compat message; "
+                     "expected between 21 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t layer = read_uint16(buffer + read, &read);
+    int32_t x = read_int32(buffer + read, &read);
+    int32_t y = read_int32(buffer + read, &read);
+    uint32_t color = read_uint32(buffer + read, &read);
+    uint8_t mode = read_uint8(buffer + read, &read);
+    size_t dabs_bytes = length - read;
+    if ((dabs_bytes % 6) != 0) {
+        DP_error_set("Wrong length for dabs field in classicdabs message; "
+                     "%zu not divisible by 6",
+                     dabs_bytes);
+        return NULL;
+    }
+    int dabs_count = DP_size_to_int(dabs_bytes) / 6;
+    void *dabs_user = (void *)(buffer + read);
+    DP_Message *msg = DP_msg_draw_dabs_classic_new(
+        context_id, get_draw_dabs_flags_compat(color),
+        deserialize_layer_id_compat(layer), x, y, color,
+        DP_blend_mode_to_compatible(mode), classic_dab_deserialize_compat,
+        dabs_count, dabs_user);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_draw_dabs_classic_parse(unsigned int context_id,
@@ -6075,6 +7281,42 @@ const DP_PixelDab *DP_pixel_dab_at(const DP_PixelDab *pd, int i)
     return &pd[i];
 }
 
+static size_t pixel_dab_serialize_payload_compat(DP_PixelDab *pd,
+                                                 unsigned char *data)
+{
+    size_t written = 0;
+    written += DP_write_bigendian_int8(pd->x, data + written);
+    written += DP_write_bigendian_int8(pd->y, data + written);
+    written +=
+        DP_write_bigendian_uint8(DP_uint16_to_uint8(pd->size), data + written);
+    written += DP_write_bigendian_uint8(pd->opacity, data + written);
+    return written;
+}
+
+static size_t pixel_dab_serialize_payloads_compat(DP_PixelDab *pd, int count,
+                                                  unsigned char *data)
+{
+    size_t written = 0;
+    for (int i = 0; i < count; ++i) {
+        written += pixel_dab_serialize_payload_compat(&pd[i], data + written);
+    }
+    return written;
+}
+
+static void pixel_dab_deserialize_compat(int count, DP_PixelDab *pds,
+                                         void *user)
+{
+    const unsigned char *buffer = user;
+    size_t read = 0;
+    for (int i = 0; i < count; ++i) {
+        int8_t x = read_int8(buffer + read, &read);
+        int8_t y = read_int8(buffer + read, &read);
+        uint8_t size = read_uint8(buffer + read, &read);
+        uint8_t opacity = read_uint8(buffer + read, &read);
+        DP_pixel_dab_init(pds, i, x, y, DP_uint8_to_uint16(size), opacity);
+    }
+}
+
 struct DP_MsgDrawDabsPixel {
     uint8_t flags;
     uint32_t layer;
@@ -6092,6 +7334,12 @@ static size_t msg_draw_dabs_pixel_payload_length(DP_Message *msg)
     return ((size_t)17) + DP_int_to_size(mddp->dabs_count) * 5;
 }
 
+static size_t msg_draw_dabs_pixel_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
+    return ((size_t)15) + DP_int_to_size(mddp->dabs_count) * 4;
+}
+
 static size_t msg_draw_dabs_pixel_serialize_payload(DP_Message *msg,
                                                     unsigned char *data)
 {
@@ -6106,6 +7354,24 @@ static size_t msg_draw_dabs_pixel_serialize_payload(DP_Message *msg,
     written += pixel_dab_serialize_payloads(mddp->dabs, mddp->dabs_count,
                                             data + written);
     DP_ASSERT(written == msg_draw_dabs_pixel_payload_length(msg));
+    return written;
+}
+
+static size_t msg_draw_dabs_pixel_serialize_payload_compat(DP_Message *msg,
+                                                           unsigned char *data)
+{
+    DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mddp->layer),
+                                         data + written);
+    written += DP_write_bigendian_int32(mddp->x, data + written);
+    written += DP_write_bigendian_int32(mddp->y, data + written);
+    written += DP_write_bigendian_uint32(mddp->color, data + written);
+    written += DP_write_bigendian_uint8(DP_blend_mode_to_compatible(mddp->mode),
+                                        data + written);
+    written += pixel_dab_serialize_payloads_compat(mddp->dabs, mddp->dabs_count,
+                                                   data + written);
+    DP_ASSERT(written == msg_draw_dabs_pixel_payload_length_compat(msg));
     return written;
 }
 
@@ -6168,6 +7434,8 @@ bool DP_msg_draw_dabs_pixel_local_match_matches(const DP_MsgDrawDabsPixel *mddp,
 static const DP_MessageMethods msg_draw_dabs_pixel_methods = {
     msg_draw_dabs_pixel_payload_length,
     msg_draw_dabs_pixel_serialize_payload,
+    msg_draw_dabs_pixel_payload_length_compat,
+    msg_draw_dabs_pixel_serialize_payload_compat,
     msg_draw_dabs_pixel_write_payload_text,
     msg_draw_dabs_pixel_equals,
 };
@@ -6224,6 +7492,39 @@ DP_Message *DP_msg_draw_dabs_pixel_deserialize(unsigned int context_id,
     return DP_msg_draw_dabs_pixel_new(context_id, flags, layer, x, y, color,
                                       mode, pixel_dab_deserialize, dabs_count,
                                       dabs_user);
+}
+
+DP_Message *DP_msg_draw_dabs_pixel_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length < 19 || length > 65535) {
+        DP_error_set("Wrong length for pixeldabs compat message; "
+                     "expected between 19 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t layer = read_uint16(buffer + read, &read);
+    int32_t x = read_int32(buffer + read, &read);
+    int32_t y = read_int32(buffer + read, &read);
+    uint32_t color = read_uint32(buffer + read, &read);
+    uint8_t mode = read_uint8(buffer + read, &read);
+    size_t dabs_bytes = length - read;
+    if ((dabs_bytes % 4) != 0) {
+        DP_error_set("Wrong length for dabs field in pixeldabs message; "
+                     "%zu not divisible by 4",
+                     dabs_bytes);
+        return NULL;
+    }
+    int dabs_count = DP_size_to_int(dabs_bytes) / 4;
+    void *dabs_user = (void *)(buffer + read);
+    DP_Message *msg = DP_msg_draw_dabs_pixel_new(
+        context_id, get_draw_dabs_flags_compat(color),
+        deserialize_layer_id_compat(layer), x, y, color,
+        DP_blend_mode_to_compatible(mode), pixel_dab_deserialize_compat,
+        dabs_count, dabs_user);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_draw_dabs_pixel_parse(unsigned int context_id,
@@ -6356,6 +7657,39 @@ DP_Message *DP_msg_draw_dabs_pixel_square_deserialize(
     return DP_msg_draw_dabs_pixel_square_new(context_id, flags, layer, x, y,
                                              color, mode, pixel_dab_deserialize,
                                              dabs_count, dabs_user);
+}
+
+DP_Message *DP_msg_draw_dabs_pixel_square_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length < 19 || length > 65535) {
+        DP_error_set("Wrong length for squarepixeldabs compat message; "
+                     "expected between 19 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t layer = read_uint16(buffer + read, &read);
+    int32_t x = read_int32(buffer + read, &read);
+    int32_t y = read_int32(buffer + read, &read);
+    uint32_t color = read_uint32(buffer + read, &read);
+    uint8_t mode = read_uint8(buffer + read, &read);
+    size_t dabs_bytes = length - read;
+    if ((dabs_bytes % 4) != 0) {
+        DP_error_set("Wrong length for dabs field in squarepixeldabs message; "
+                     "%zu not divisible by 4",
+                     dabs_bytes);
+        return NULL;
+    }
+    int dabs_count = DP_size_to_int(dabs_bytes) / 4;
+    void *dabs_user = (void *)(buffer + read);
+    DP_Message *msg = DP_msg_draw_dabs_pixel_square_new(
+        context_id, get_draw_dabs_flags_compat(color),
+        deserialize_layer_id_compat(layer), x, y, color,
+        DP_blend_mode_to_compatible(mode), pixel_dab_deserialize_compat,
+        dabs_count, dabs_user);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_draw_dabs_pixel_square_parse(unsigned int context_id,
@@ -6579,6 +7913,51 @@ const DP_MyPaintDab *DP_mypaint_dab_at(const DP_MyPaintDab *mpd, int i)
     return &mpd[i];
 }
 
+static size_t mypaint_dab_serialize_payload_compat(DP_MyPaintDab *mpd,
+                                                   unsigned char *data)
+{
+    size_t written = 0;
+    written += DP_write_bigendian_int8(mpd->x, data + written);
+    written += DP_write_bigendian_int8(mpd->y, data + written);
+    written += DP_write_bigendian_uint16(DP_uint32_to_uint16(mpd->size),
+                                         data + written);
+    written += DP_write_bigendian_uint8(mpd->hardness, data + written);
+    written += DP_write_bigendian_uint8(mpd->opacity, data + written);
+    written += DP_write_bigendian_uint8(mpd->angle, data + written);
+    written += DP_write_bigendian_uint8(mpd->aspect_ratio, data + written);
+    return written;
+}
+
+static size_t mypaint_dab_serialize_payloads_compat(DP_MyPaintDab *mpd,
+                                                    int count,
+                                                    unsigned char *data)
+{
+    size_t written = 0;
+    for (int i = 0; i < count; ++i) {
+        written +=
+            mypaint_dab_serialize_payload_compat(&mpd[i], data + written);
+    }
+    return written;
+}
+
+static void mypaint_dab_deserialize_compat(int count, DP_MyPaintDab *mpds,
+                                           void *user)
+{
+    const unsigned char *buffer = user;
+    size_t read = 0;
+    for (int i = 0; i < count; ++i) {
+        int8_t x = read_int8(buffer + read, &read);
+        int8_t y = read_int8(buffer + read, &read);
+        uint16_t size = read_uint16(buffer + read, &read);
+        uint8_t hardness = read_uint8(buffer + read, &read);
+        uint8_t opacity = read_uint8(buffer + read, &read);
+        uint8_t angle = read_uint8(buffer + read, &read);
+        uint8_t aspect_ratio = read_uint8(buffer + read, &read);
+        DP_mypaint_dab_init(mpds, i, x, y, DP_uint16_to_uint32(size), hardness,
+                            opacity, angle, aspect_ratio);
+    }
+}
+
 struct DP_MsgDrawDabsMyPaint {
     uint8_t flags;
     uint32_t layer;
@@ -6588,7 +7967,7 @@ struct DP_MsgDrawDabsMyPaint {
     uint8_t lock_alpha;
     uint8_t colorize;
     uint8_t posterize;
-    uint8_t posterize_num;
+    uint8_t mode;
     uint16_t dabs_count;
     DP_MyPaintDab dabs[];
 };
@@ -6597,6 +7976,12 @@ static size_t msg_draw_dabs_mypaint_payload_length(DP_Message *msg)
 {
     DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
     return ((size_t)20) + DP_int_to_size(mddmp->dabs_count) * 9;
+}
+
+static size_t msg_draw_dabs_mypaint_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
+    return ((size_t)18) + DP_int_to_size(mddmp->dabs_count) * 8;
 }
 
 static size_t msg_draw_dabs_mypaint_serialize_payload(DP_Message *msg,
@@ -6612,10 +7997,31 @@ static size_t msg_draw_dabs_mypaint_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint8(mddmp->lock_alpha, data + written);
     written += DP_write_bigendian_uint8(mddmp->colorize, data + written);
     written += DP_write_bigendian_uint8(mddmp->posterize, data + written);
-    written += DP_write_bigendian_uint8(mddmp->posterize_num, data + written);
+    written += DP_write_bigendian_uint8(mddmp->mode, data + written);
     written += mypaint_dab_serialize_payloads(mddmp->dabs, mddmp->dabs_count,
                                               data + written);
     DP_ASSERT(written == msg_draw_dabs_mypaint_payload_length(msg));
+    return written;
+}
+
+static size_t
+msg_draw_dabs_mypaint_serialize_payload_compat(DP_Message *msg,
+                                               unsigned char *data)
+{
+    DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(
+        serialize_layer_id_compat(mddmp->layer), data + written);
+    written += DP_write_bigendian_int32(mddmp->x, data + written);
+    written += DP_write_bigendian_int32(mddmp->y, data + written);
+    written += DP_write_bigendian_uint32(mddmp->color, data + written);
+    written += DP_write_bigendian_uint8(mddmp->lock_alpha, data + written);
+    written += DP_write_bigendian_uint8(mddmp->colorize, data + written);
+    written += DP_write_bigendian_uint8(mddmp->posterize, data + written);
+    written += DP_write_bigendian_uint8(mddmp->mode, data + written);
+    written += mypaint_dab_serialize_payloads_compat(
+        mddmp->dabs, mddmp->dabs_count, data + written);
+    DP_ASSERT(written == msg_draw_dabs_mypaint_payload_length_compat(msg));
     return written;
 }
 
@@ -6628,9 +8034,8 @@ static bool msg_draw_dabs_mypaint_write_payload_text(DP_Message *msg,
         && DP_text_writer_write_uint(writer, "flags", mddmp->flags)
         && DP_text_writer_write_uint(writer, "layer", mddmp->layer)
         && DP_text_writer_write_uint(writer, "lock_alpha", mddmp->lock_alpha)
+        && DP_text_writer_write_uint(writer, "mode", mddmp->mode)
         && DP_text_writer_write_uint(writer, "posterize", mddmp->posterize)
-        && DP_text_writer_write_uint(writer, "posterize_num",
-                                     mddmp->posterize_num)
         && DP_text_writer_write_decimal(writer, "x", (double)mddmp->x / 4.0)
         && DP_text_writer_write_decimal(writer, "y", (double)mddmp->y / 4.0)
         && mypaint_dab_write_payload_texts(mddmp->dabs, mddmp->dabs_count,
@@ -6645,7 +8050,7 @@ static bool msg_draw_dabs_mypaint_equals(DP_Message *DP_RESTRICT msg,
     return a->flags == b->flags && a->layer == b->layer && a->x == b->x
         && a->y == b->y && a->color == b->color
         && a->lock_alpha == b->lock_alpha && a->colorize == b->colorize
-        && a->posterize == b->posterize && a->posterize_num == b->posterize_num
+        && a->posterize == b->posterize && a->mode == b->mode
         && a->dabs_count == b->dabs_count
         && mypaint_dabs_equal(a->dabs, b->dabs, a->dabs_count);
 }
@@ -6664,7 +8069,7 @@ void DP_msg_draw_dabs_mypaint_local_match_set(DP_UNUSED size_t size,
     written += DP_write_bigendian_uint8(mddmp->lock_alpha, data + written);
     written += DP_write_bigendian_uint8(mddmp->colorize, data + written);
     written += DP_write_bigendian_uint8(mddmp->posterize, data + written);
-    written += DP_write_bigendian_uint8(mddmp->posterize_num, data + written);
+    written += DP_write_bigendian_uint8(mddmp->mode, data + written);
     written += DP_write_bigendian_uint16(mddmp->dabs_count, data + written);
     DP_ASSERT(written == DP_MSG_DRAW_DABS_MYPAINT_MATCH_LENGTH);
 }
@@ -6684,23 +8089,26 @@ bool DP_msg_draw_dabs_mypaint_local_match_matches(
         && read_uint8(buffer + read, &read) == mddmp->lock_alpha
         && read_uint8(buffer + read, &read) == mddmp->colorize
         && read_uint8(buffer + read, &read) == mddmp->posterize
-        && read_uint8(buffer + read, &read) == mddmp->posterize_num
+        && read_uint8(buffer + read, &read) == mddmp->mode
         && read_uint16(buffer + read, &read) == mddmp->dabs_count;
 }
 
 static const DP_MessageMethods msg_draw_dabs_mypaint_methods = {
     msg_draw_dabs_mypaint_payload_length,
     msg_draw_dabs_mypaint_serialize_payload,
+    msg_draw_dabs_mypaint_payload_length_compat,
+    msg_draw_dabs_mypaint_serialize_payload_compat,
     msg_draw_dabs_mypaint_write_payload_text,
     msg_draw_dabs_mypaint_equals,
 };
 
-DP_Message *DP_msg_draw_dabs_mypaint_new(
-    unsigned int context_id, uint8_t flags, uint32_t layer, int32_t x,
-    int32_t y, uint32_t color, uint8_t lock_alpha, uint8_t colorize,
-    uint8_t posterize, uint8_t posterize_num,
-    void (*set_dabs)(int, DP_MyPaintDab *, void *), int dabs_count,
-    void *dabs_user)
+DP_Message *
+DP_msg_draw_dabs_mypaint_new(unsigned int context_id, uint8_t flags,
+                             uint32_t layer, int32_t x, int32_t y,
+                             uint32_t color, uint8_t lock_alpha,
+                             uint8_t colorize, uint8_t posterize, uint8_t mode,
+                             void (*set_dabs)(int, DP_MyPaintDab *, void *),
+                             int dabs_count, void *dabs_user)
 {
     DP_Message *msg = DP_message_new(
         DP_MSG_DRAW_DABS_MYPAINT, context_id, &msg_draw_dabs_mypaint_methods,
@@ -6715,7 +8123,7 @@ DP_Message *DP_msg_draw_dabs_mypaint_new(
     mddmp->lock_alpha = lock_alpha;
     mddmp->colorize = colorize;
     mddmp->posterize = posterize;
-    mddmp->posterize_num = posterize_num;
+    mddmp->mode = mode;
     mddmp->dabs_count = DP_int_to_uint16(dabs_count);
     set_dabs(mddmp->dabs_count, mddmp->dabs, dabs_user);
     return msg;
@@ -6740,7 +8148,7 @@ DP_Message *DP_msg_draw_dabs_mypaint_deserialize(unsigned int context_id,
     uint8_t lock_alpha = read_uint8(buffer + read, &read);
     uint8_t colorize = read_uint8(buffer + read, &read);
     uint8_t posterize = read_uint8(buffer + read, &read);
-    uint8_t posterize_num = read_uint8(buffer + read, &read);
+    uint8_t mode = read_uint8(buffer + read, &read);
     size_t dabs_bytes = length - read;
     if ((dabs_bytes % 9) != 0) {
         DP_error_set("Wrong length for dabs field in mypaintdabs message; "
@@ -6752,7 +8160,42 @@ DP_Message *DP_msg_draw_dabs_mypaint_deserialize(unsigned int context_id,
     void *dabs_user = (void *)(buffer + read);
     return DP_msg_draw_dabs_mypaint_new(
         context_id, flags, layer, x, y, color, lock_alpha, colorize, posterize,
-        posterize_num, mypaint_dab_deserialize, dabs_count, dabs_user);
+        mode, mypaint_dab_deserialize, dabs_count, dabs_user);
+}
+
+DP_Message *DP_msg_draw_dabs_mypaint_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length < 26 || length > 65530) {
+        DP_error_set("Wrong length for mypaintdabs compat message; "
+                     "expected between 26 and 65530, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t layer = read_uint16(buffer + read, &read);
+    int32_t x = read_int32(buffer + read, &read);
+    int32_t y = read_int32(buffer + read, &read);
+    uint32_t color = read_uint32(buffer + read, &read);
+    uint8_t lock_alpha = read_uint8(buffer + read, &read);
+    uint8_t colorize = read_uint8(buffer + read, &read);
+    uint8_t posterize = read_uint8(buffer + read, &read);
+    uint8_t mode = read_uint8(buffer + read, &read);
+    size_t dabs_bytes = length - read;
+    if ((dabs_bytes % 8) != 0) {
+        DP_error_set("Wrong length for dabs field in mypaintdabs message; "
+                     "%zu not divisible by 8",
+                     dabs_bytes);
+        return NULL;
+    }
+    int dabs_count = DP_size_to_int(dabs_bytes) / 8;
+    void *dabs_user = (void *)(buffer + read);
+    DP_Message *msg = DP_msg_draw_dabs_mypaint_new(
+        context_id, 0, deserialize_layer_id_compat(layer), x, y, color,
+        lock_alpha, colorize, posterize, mode, mypaint_dab_deserialize_compat,
+        dabs_count, dabs_user);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_draw_dabs_mypaint_parse(unsigned int context_id,
@@ -6773,13 +8216,12 @@ DP_Message *DP_msg_draw_dabs_mypaint_parse(unsigned int context_id,
         (uint8_t)DP_text_reader_get_ulong(reader, "colorize", UINT8_MAX);
     uint8_t posterize =
         (uint8_t)DP_text_reader_get_ulong(reader, "posterize", UINT8_MAX);
-    uint8_t posterize_num =
-        (uint8_t)DP_text_reader_get_ulong(reader, "posterize_num", UINT8_MAX);
+    uint8_t mode = (uint8_t)DP_text_reader_get_ulong(reader, "mode", UINT8_MAX);
     int dabs_count = DP_text_reader_get_sub_count(reader);
     void *dabs_user = reader;
     return DP_msg_draw_dabs_mypaint_new(
         context_id, flags, layer, x, y, color, lock_alpha, colorize, posterize,
-        posterize_num, mypaint_dab_parse, dabs_count, dabs_user);
+        mode, mypaint_dab_parse, dabs_count, dabs_user);
 }
 
 DP_MsgDrawDabsMyPaint *DP_msg_draw_dabs_mypaint_cast(DP_Message *msg)
@@ -6835,11 +8277,10 @@ uint8_t DP_msg_draw_dabs_mypaint_posterize(const DP_MsgDrawDabsMyPaint *mddmp)
     return mddmp->posterize;
 }
 
-uint8_t
-DP_msg_draw_dabs_mypaint_posterize_num(const DP_MsgDrawDabsMyPaint *mddmp)
+uint8_t DP_msg_draw_dabs_mypaint_mode(const DP_MsgDrawDabsMyPaint *mddmp)
 {
     DP_ASSERT(mddmp);
-    return mddmp->posterize_num;
+    return mddmp->mode;
 }
 
 const DP_MyPaintDab *
@@ -7159,6 +8600,8 @@ bool DP_msg_draw_dabs_mypaint_blend_local_match_matches(
 static const DP_MessageMethods msg_draw_dabs_mypaint_blend_methods = {
     msg_draw_dabs_mypaint_blend_payload_length,
     msg_draw_dabs_mypaint_blend_serialize_payload,
+    msg_draw_dabs_mypaint_blend_payload_length,
+    msg_draw_dabs_mypaint_blend_serialize_payload,
     msg_draw_dabs_mypaint_blend_write_payload_text,
     msg_draw_dabs_mypaint_blend_equals,
 };
@@ -7325,6 +8768,12 @@ static size_t msg_move_rect_payload_length(DP_Message *msg)
     return ((size_t)32) + mmr->mask_size;
 }
 
+static size_t msg_move_rect_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgMoveRect *mmr = DP_message_internal(msg);
+    return ((size_t)28) + mmr->mask_size;
+}
+
 static size_t msg_move_rect_serialize_payload(DP_Message *msg,
                                               unsigned char *data)
 {
@@ -7342,6 +8791,26 @@ static size_t msg_move_rect_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint8(mmr->opacity, data + written);
     written += write_bytes(mmr->mask, mmr->mask_size, data + written);
     DP_ASSERT(written == msg_move_rect_payload_length(msg));
+    return written;
+}
+
+static size_t msg_move_rect_serialize_payload_compat(DP_Message *msg,
+                                                     unsigned char *data)
+{
+    DP_MsgMoveRect *mmr = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mmr->layer),
+                                         data + written);
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mmr->source),
+                                         data + written);
+    written += DP_write_bigendian_int32(mmr->sx, data + written);
+    written += DP_write_bigendian_int32(mmr->sy, data + written);
+    written += DP_write_bigendian_int32(mmr->tx, data + written);
+    written += DP_write_bigendian_int32(mmr->ty, data + written);
+    written += DP_write_bigendian_int32(mmr->w, data + written);
+    written += DP_write_bigendian_int32(mmr->h, data + written);
+    written += write_bytes(mmr->mask, mmr->mask_size, data + written);
+    DP_ASSERT(written == msg_move_rect_payload_length_compat(msg));
     return written;
 }
 
@@ -7416,10 +8885,9 @@ bool DP_msg_move_rect_local_match_matches(const DP_MsgMoveRect *mmr,
 }
 
 static const DP_MessageMethods msg_move_rect_methods = {
-    msg_move_rect_payload_length,
-    msg_move_rect_serialize_payload,
-    msg_move_rect_write_payload_text,
-    msg_move_rect_equals,
+    msg_move_rect_payload_length,        msg_move_rect_serialize_payload,
+    msg_move_rect_payload_length_compat, msg_move_rect_serialize_payload_compat,
+    msg_move_rect_write_payload_text,    msg_move_rect_equals,
 };
 
 DP_Message *
@@ -7477,6 +8945,36 @@ DP_Message *DP_msg_move_rect_deserialize(unsigned int context_id,
     return DP_msg_move_rect_new(context_id, layer, source, sx, sy, tx, ty, w, h,
                                 blend, opacity, read_bytes, mask_size,
                                 mask_user);
+}
+
+DP_Message *DP_msg_move_rect_deserialize_compat(unsigned int context_id,
+                                                const unsigned char *buffer,
+                                                size_t length)
+{
+    if (length < 28 || length > 65535) {
+        DP_error_set("Wrong length for moverect compat message; "
+                     "expected between 28 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t layer = read_uint16(buffer + read, &read);
+    uint16_t source = read_uint16(buffer + read, &read);
+    int32_t sx = read_int32(buffer + read, &read);
+    int32_t sy = read_int32(buffer + read, &read);
+    int32_t tx = read_int32(buffer + read, &read);
+    int32_t ty = read_int32(buffer + read, &read);
+    int32_t w = read_int32(buffer + read, &read);
+    int32_t h = read_int32(buffer + read, &read);
+    size_t mask_bytes = length - read;
+    uint16_t mask_size = DP_size_to_uint16(mask_bytes);
+    void *mask_user = (void *)(buffer + read);
+    DP_Message *msg = DP_msg_move_rect_new(
+        context_id, deserialize_layer_id_compat(layer),
+        deserialize_layer_id_compat(source), sx, sy, tx, ty, w, h,
+        (uint8_t)DP_BLEND_MODE_NORMAL, 255, read_bytes, mask_size, mask_user);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_move_rect_parse(unsigned int context_id,
@@ -7648,6 +9146,8 @@ static bool msg_set_metadata_int_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_set_metadata_int_methods = {
     msg_set_metadata_int_payload_length,
     msg_set_metadata_int_serialize_payload,
+    msg_set_metadata_int_payload_length,
+    msg_set_metadata_int_serialize_payload,
     msg_set_metadata_int_write_payload_text,
     msg_set_metadata_int_equals,
 };
@@ -7678,6 +9178,15 @@ DP_Message *DP_msg_set_metadata_int_deserialize(unsigned int context_id,
     uint8_t field = read_uint8(buffer + read, &read);
     int32_t value = read_int32(buffer + read, &read);
     return DP_msg_set_metadata_int_new(context_id, field, value);
+}
+
+DP_Message *DP_msg_set_metadata_int_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    DP_Message *msg =
+        DP_msg_set_metadata_int_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_set_metadata_int_parse(unsigned int context_id,
@@ -7738,6 +9247,12 @@ static size_t msg_layer_tree_create_payload_length(DP_Message *msg)
     return ((size_t)14) + DP_uint16_to_size(mltc->title_len);
 }
 
+static size_t msg_layer_tree_create_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgLayerTreeCreate *mltc = DP_message_internal(msg);
+    return ((size_t)11) + DP_uint16_to_size(mltc->title_len);
+}
+
 static size_t msg_layer_tree_create_serialize_payload(DP_Message *msg,
                                                       unsigned char *data)
 {
@@ -7750,6 +9265,25 @@ static size_t msg_layer_tree_create_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint8(mltc->flags, data + written);
     written += DP_write_bytes(mltc->title, 1, mltc->title_len, data + written);
     DP_ASSERT(written == msg_layer_tree_create_payload_length(msg));
+    return written;
+}
+
+static size_t
+msg_layer_tree_create_serialize_payload_compat(DP_Message *msg,
+                                               unsigned char *data)
+{
+    DP_MsgLayerTreeCreate *mltc = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mltc->id),
+                                         data + written);
+    written += DP_write_bigendian_uint16(
+        serialize_layer_id_compat(mltc->source), data + written);
+    written += DP_write_bigendian_uint16(
+        serialize_layer_id_compat(mltc->target), data + written);
+    written += DP_write_bigendian_uint32(mltc->fill, data + written);
+    written += DP_write_bigendian_uint8(mltc->flags, data + written);
+    written += DP_write_bytes(mltc->title, 1, mltc->title_len, data + written);
+    DP_ASSERT(written == msg_layer_tree_create_payload_length_compat(msg));
     return written;
 }
 
@@ -7783,6 +9317,8 @@ static bool msg_layer_tree_create_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_layer_tree_create_methods = {
     msg_layer_tree_create_payload_length,
     msg_layer_tree_create_serialize_payload,
+    msg_layer_tree_create_payload_length_compat,
+    msg_layer_tree_create_serialize_payload_compat,
     msg_layer_tree_create_write_payload_text,
     msg_layer_tree_create_equals,
 };
@@ -7828,6 +9364,32 @@ DP_Message *DP_msg_layer_tree_create_deserialize(unsigned int context_id,
     const char *title = (const char *)buffer + read;
     return DP_msg_layer_tree_create_new(context_id, id, source, target, fill,
                                         flags, title, title_len);
+}
+
+DP_Message *DP_msg_layer_tree_create_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length < 11 || length > 65535) {
+        DP_error_set("Wrong length for layertreecreate compat message; "
+                     "expected between 11 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    uint16_t source = read_uint16(buffer + read, &read);
+    uint16_t target = read_uint16(buffer + read, &read);
+    uint32_t fill = read_uint32(buffer + read, &read);
+    uint8_t flags = read_uint8(buffer + read, &read);
+    size_t title_bytes = length - read;
+    uint16_t title_len = DP_size_to_uint16(title_bytes);
+    const char *title = (const char *)buffer + read;
+    DP_Message *msg = DP_msg_layer_tree_create_new(
+        context_id, deserialize_layer_id_compat(id),
+        deserialize_layer_id_compat(source),
+        deserialize_layer_id_compat(target), fill, flags, title, title_len);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_layer_tree_create_parse(unsigned int context_id,
@@ -7914,6 +9476,12 @@ static size_t msg_layer_tree_move_payload_length(DP_UNUSED DP_Message *msg)
     return ((size_t)9);
 }
 
+static size_t
+msg_layer_tree_move_payload_length_compat(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)6);
+}
+
 static size_t msg_layer_tree_move_serialize_payload(DP_Message *msg,
                                                     unsigned char *data)
 {
@@ -7923,6 +9491,21 @@ static size_t msg_layer_tree_move_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint24(mltm->parent, data + written);
     written += DP_write_bigendian_uint24(mltm->sibling, data + written);
     DP_ASSERT(written == msg_layer_tree_move_payload_length(msg));
+    return written;
+}
+
+static size_t msg_layer_tree_move_serialize_payload_compat(DP_Message *msg,
+                                                           unsigned char *data)
+{
+    DP_MsgLayerTreeMove *mltm = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mltm->layer),
+                                         data + written);
+    written += DP_write_bigendian_uint16(
+        serialize_layer_id_compat(mltm->parent), data + written);
+    written += DP_write_bigendian_uint16(
+        serialize_layer_id_compat(mltm->sibling), data + written);
+    DP_ASSERT(written == msg_layer_tree_move_payload_length_compat(msg));
     return written;
 }
 
@@ -7947,6 +9530,8 @@ static bool msg_layer_tree_move_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_layer_tree_move_methods = {
     msg_layer_tree_move_payload_length,
     msg_layer_tree_move_serialize_payload,
+    msg_layer_tree_move_payload_length_compat,
+    msg_layer_tree_move_serialize_payload_compat,
     msg_layer_tree_move_write_payload_text,
     msg_layer_tree_move_equals,
 };
@@ -7979,6 +9564,27 @@ DP_Message *DP_msg_layer_tree_move_deserialize(unsigned int context_id,
     uint32_t parent = read_uint24(buffer + read, &read);
     uint32_t sibling = read_uint24(buffer + read, &read);
     return DP_msg_layer_tree_move_new(context_id, layer, parent, sibling);
+}
+
+DP_Message *DP_msg_layer_tree_move_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length != 6) {
+        DP_error_set("Wrong length for layertreemove compat message; "
+                     "expected 6, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t layer = read_uint16(buffer + read, &read);
+    uint16_t parent = read_uint16(buffer + read, &read);
+    uint16_t sibling = read_uint16(buffer + read, &read);
+    DP_Message *msg = DP_msg_layer_tree_move_new(
+        context_id, deserialize_layer_id_compat(layer),
+        deserialize_layer_id_compat(parent),
+        deserialize_layer_id_compat(sibling));
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_layer_tree_move_parse(unsigned int context_id,
@@ -8029,6 +9635,12 @@ static size_t msg_layer_tree_delete_payload_length(DP_UNUSED DP_Message *msg)
     return ((size_t)6);
 }
 
+static size_t
+msg_layer_tree_delete_payload_length_compat(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)4);
+}
+
 static size_t msg_layer_tree_delete_serialize_payload(DP_Message *msg,
                                                       unsigned char *data)
 {
@@ -8037,6 +9649,20 @@ static size_t msg_layer_tree_delete_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint24(mltd->id, data + written);
     written += DP_write_bigendian_uint24(mltd->merge_to, data + written);
     DP_ASSERT(written == msg_layer_tree_delete_payload_length(msg));
+    return written;
+}
+
+static size_t
+msg_layer_tree_delete_serialize_payload_compat(DP_Message *msg,
+                                               unsigned char *data)
+{
+    DP_MsgLayerTreeDelete *mltd = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mltd->id),
+                                         data + written);
+    written += DP_write_bigendian_uint16(
+        serialize_layer_id_compat(mltd->merge_to), data + written);
+    DP_ASSERT(written == msg_layer_tree_delete_payload_length_compat(msg));
     return written;
 }
 
@@ -8059,6 +9685,8 @@ static bool msg_layer_tree_delete_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_layer_tree_delete_methods = {
     msg_layer_tree_delete_payload_length,
     msg_layer_tree_delete_serialize_payload,
+    msg_layer_tree_delete_payload_length_compat,
+    msg_layer_tree_delete_serialize_payload_compat,
     msg_layer_tree_delete_write_payload_text,
     msg_layer_tree_delete_equals,
 };
@@ -8089,6 +9717,25 @@ DP_Message *DP_msg_layer_tree_delete_deserialize(unsigned int context_id,
     uint32_t id = read_uint24(buffer + read, &read);
     uint32_t merge_to = read_uint24(buffer + read, &read);
     return DP_msg_layer_tree_delete_new(context_id, id, merge_to);
+}
+
+DP_Message *DP_msg_layer_tree_delete_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length != 4) {
+        DP_error_set("Wrong length for layertreedelete compat message; "
+                     "expected 4, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    uint16_t merge_to = read_uint16(buffer + read, &read);
+    DP_Message *msg = DP_msg_layer_tree_delete_new(
+        context_id, deserialize_layer_id_compat(id),
+        deserialize_layer_id_compat(merge_to));
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_layer_tree_delete_parse(unsigned int context_id,
@@ -8161,6 +9808,12 @@ static size_t msg_transform_region_payload_length(DP_Message *msg)
     return ((size_t)57) + mtr->mask_size;
 }
 
+static size_t msg_transform_region_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgTransformRegion *mtr = DP_message_internal(msg);
+    return ((size_t)53) + mtr->mask_size;
+}
+
 static size_t msg_transform_region_serialize_payload(DP_Message *msg,
                                                      unsigned char *data)
 {
@@ -8185,6 +9838,33 @@ static size_t msg_transform_region_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint8(mtr->opacity, data + written);
     written += write_bytes(mtr->mask, mtr->mask_size, data + written);
     DP_ASSERT(written == msg_transform_region_payload_length(msg));
+    return written;
+}
+
+static size_t msg_transform_region_serialize_payload_compat(DP_Message *msg,
+                                                            unsigned char *data)
+{
+    DP_MsgTransformRegion *mtr = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mtr->layer),
+                                         data + written);
+    written += DP_write_bigendian_uint16(serialize_layer_id_compat(mtr->source),
+                                         data + written);
+    written += DP_write_bigendian_int32(mtr->bx, data + written);
+    written += DP_write_bigendian_int32(mtr->by, data + written);
+    written += DP_write_bigendian_int32(mtr->bw, data + written);
+    written += DP_write_bigendian_int32(mtr->bh, data + written);
+    written += DP_write_bigendian_int32(mtr->x1, data + written);
+    written += DP_write_bigendian_int32(mtr->y1, data + written);
+    written += DP_write_bigendian_int32(mtr->x2, data + written);
+    written += DP_write_bigendian_int32(mtr->y2, data + written);
+    written += DP_write_bigendian_int32(mtr->x3, data + written);
+    written += DP_write_bigendian_int32(mtr->y3, data + written);
+    written += DP_write_bigendian_int32(mtr->x4, data + written);
+    written += DP_write_bigendian_int32(mtr->y4, data + written);
+    written += DP_write_bigendian_uint8(mtr->mode, data + written);
+    written += write_bytes(mtr->mask, mtr->mask_size, data + written);
+    DP_ASSERT(written == msg_transform_region_payload_length_compat(msg));
     return written;
 }
 
@@ -8284,6 +9964,8 @@ bool DP_msg_transform_region_local_match_matches(
 static const DP_MessageMethods msg_transform_region_methods = {
     msg_transform_region_payload_length,
     msg_transform_region_serialize_payload,
+    msg_transform_region_payload_length_compat,
+    msg_transform_region_serialize_payload_compat,
     msg_transform_region_write_payload_text,
     msg_transform_region_equals,
 };
@@ -8358,6 +10040,43 @@ DP_Message *DP_msg_transform_region_deserialize(unsigned int context_id,
     return DP_msg_transform_region_new(
         context_id, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4,
         y4, mode, blend, opacity, read_bytes, mask_size, mask_user);
+}
+
+DP_Message *DP_msg_transform_region_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length < 53 || length > 65535) {
+        DP_error_set("Wrong length for transformregion compat message; "
+                     "expected between 53 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t layer = read_uint16(buffer + read, &read);
+    uint16_t source = read_uint16(buffer + read, &read);
+    int32_t bx = read_int32(buffer + read, &read);
+    int32_t by = read_int32(buffer + read, &read);
+    int32_t bw = read_int32(buffer + read, &read);
+    int32_t bh = read_int32(buffer + read, &read);
+    int32_t x1 = read_int32(buffer + read, &read);
+    int32_t y1 = read_int32(buffer + read, &read);
+    int32_t x2 = read_int32(buffer + read, &read);
+    int32_t y2 = read_int32(buffer + read, &read);
+    int32_t x3 = read_int32(buffer + read, &read);
+    int32_t y3 = read_int32(buffer + read, &read);
+    int32_t x4 = read_int32(buffer + read, &read);
+    int32_t y4 = read_int32(buffer + read, &read);
+    uint8_t mode = read_uint8(buffer + read, &read);
+    size_t mask_bytes = length - read;
+    uint16_t mask_size = DP_size_to_uint16(mask_bytes);
+    void *mask_user = (void *)(buffer + read);
+    DP_Message *msg = DP_msg_transform_region_new(
+        context_id, deserialize_layer_id_compat(layer),
+        deserialize_layer_id_compat(source), bx, by, bw, bh, x1, y1, x2, y2, x3,
+        y3, x4, y4, mode, DP_BLEND_MODE_NORMAL, 255, read_bytes, mask_size,
+        mask_user);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_transform_region_parse(unsigned int context_id,
@@ -8543,6 +10262,12 @@ static size_t msg_track_create_payload_length(DP_Message *msg)
     return ((size_t)6) + DP_uint16_to_size(mtc->title_len);
 }
 
+static size_t msg_track_create_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgTrackCreate *mtc = DP_message_internal(msg);
+    return ((size_t)6) + DP_uint16_to_size(mtc->title_len);
+}
+
 static size_t msg_track_create_serialize_payload(DP_Message *msg,
                                                  unsigned char *data)
 {
@@ -8553,6 +10278,22 @@ static size_t msg_track_create_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint16(mtc->source_id, data + written);
     written += DP_write_bytes(mtc->title, 1, mtc->title_len, data + written);
     DP_ASSERT(written == msg_track_create_payload_length(msg));
+    return written;
+}
+
+static size_t msg_track_create_serialize_payload_compat(DP_Message *msg,
+                                                        unsigned char *data)
+{
+    DP_MsgTrackCreate *mtc = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(convert_other_id_compat(mtc->id),
+                                         data + written);
+    written += DP_write_bigendian_uint16(
+        convert_other_id_compat(mtc->insert_id), data + written);
+    written += DP_write_bigendian_uint16(
+        convert_other_id_compat(mtc->source_id), data + written);
+    written += DP_write_bytes(mtc->title, 1, mtc->title_len, data + written);
+    DP_ASSERT(written == msg_track_create_payload_length_compat(msg));
     return written;
 }
 
@@ -8579,6 +10320,8 @@ static bool msg_track_create_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_track_create_methods = {
     msg_track_create_payload_length,
     msg_track_create_serialize_payload,
+    msg_track_create_payload_length_compat,
+    msg_track_create_serialize_payload_compat,
     msg_track_create_write_payload_text,
     msg_track_create_equals,
 };
@@ -8618,6 +10361,31 @@ DP_Message *DP_msg_track_create_deserialize(unsigned int context_id,
     const char *title = (const char *)buffer + read;
     return DP_msg_track_create_new(context_id, id, insert_id, source_id, title,
                                    title_len);
+}
+
+DP_Message *DP_msg_track_create_deserialize_compat(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length)
+{
+    if (length < 6 || length > 65535) {
+        DP_error_set("Wrong length for trackcreate compat message; "
+                     "expected between 6 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    uint16_t insert_id = read_uint16(buffer + read, &read);
+    uint16_t source_id = read_uint16(buffer + read, &read);
+    size_t title_bytes = length - read;
+    uint16_t title_len = DP_size_to_uint16(title_bytes);
+    const char *title = (const char *)buffer + read;
+    DP_Message *msg = DP_msg_track_create_new(
+        context_id, convert_other_id_compat(id),
+        convert_other_id_compat(insert_id), convert_other_id_compat(source_id),
+        title, title_len);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_track_create_parse(unsigned int context_id,
@@ -8687,6 +10455,12 @@ static size_t msg_track_retitle_payload_length(DP_Message *msg)
     return ((size_t)2) + DP_uint16_to_size(mtr->title_len);
 }
 
+static size_t msg_track_retitle_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgTrackRetitle *mtr = DP_message_internal(msg);
+    return ((size_t)2) + DP_uint16_to_size(mtr->title_len);
+}
+
 static size_t msg_track_retitle_serialize_payload(DP_Message *msg,
                                                   unsigned char *data)
 {
@@ -8695,6 +10469,18 @@ static size_t msg_track_retitle_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint16(mtr->id, data + written);
     written += DP_write_bytes(mtr->title, 1, mtr->title_len, data + written);
     DP_ASSERT(written == msg_track_retitle_payload_length(msg));
+    return written;
+}
+
+static size_t msg_track_retitle_serialize_payload_compat(DP_Message *msg,
+                                                         unsigned char *data)
+{
+    DP_MsgTrackRetitle *mtr = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(convert_other_id_compat(mtr->id),
+                                         data + written);
+    written += DP_write_bytes(mtr->title, 1, mtr->title_len, data + written);
+    DP_ASSERT(written == msg_track_retitle_payload_length_compat(msg));
     return written;
 }
 
@@ -8718,6 +10504,8 @@ static bool msg_track_retitle_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_track_retitle_methods = {
     msg_track_retitle_payload_length,
     msg_track_retitle_serialize_payload,
+    msg_track_retitle_payload_length_compat,
+    msg_track_retitle_serialize_payload_compat,
     msg_track_retitle_write_payload_text,
     msg_track_retitle_equals,
 };
@@ -8751,6 +10539,27 @@ DP_Message *DP_msg_track_retitle_deserialize(unsigned int context_id,
     uint16_t title_len = DP_size_to_uint16(title_bytes);
     const char *title = (const char *)buffer + read;
     return DP_msg_track_retitle_new(context_id, id, title, title_len);
+}
+
+DP_Message *DP_msg_track_retitle_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length)
+{
+    if (length < 2 || length > 65535) {
+        DP_error_set("Wrong length for trackretitle compat message; "
+                     "expected between 2 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    size_t title_bytes = length - read;
+    uint16_t title_len = DP_size_to_uint16(title_bytes);
+    const char *title = (const char *)buffer + read;
+    DP_Message *msg = DP_msg_track_retitle_new(
+        context_id, convert_other_id_compat(id), title, title_len);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_track_retitle_parse(unsigned int context_id,
@@ -8800,6 +10609,11 @@ static size_t msg_track_delete_payload_length(DP_UNUSED DP_Message *msg)
     return ((size_t)2);
 }
 
+static size_t msg_track_delete_payload_length_compat(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)2);
+}
+
 static size_t msg_track_delete_serialize_payload(DP_Message *msg,
                                                  unsigned char *data)
 {
@@ -8807,6 +10621,17 @@ static size_t msg_track_delete_serialize_payload(DP_Message *msg,
     size_t written = 0;
     written += DP_write_bigendian_uint16(mtd->id, data + written);
     DP_ASSERT(written == msg_track_delete_payload_length(msg));
+    return written;
+}
+
+static size_t msg_track_delete_serialize_payload_compat(DP_Message *msg,
+                                                        unsigned char *data)
+{
+    DP_MsgTrackDelete *mtd = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(convert_other_id_compat(mtd->id),
+                                         data + written);
+    DP_ASSERT(written == msg_track_delete_payload_length_compat(msg));
     return written;
 }
 
@@ -8828,6 +10653,8 @@ static bool msg_track_delete_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_track_delete_methods = {
     msg_track_delete_payload_length,
     msg_track_delete_serialize_payload,
+    msg_track_delete_payload_length_compat,
+    msg_track_delete_serialize_payload_compat,
     msg_track_delete_write_payload_text,
     msg_track_delete_equals,
 };
@@ -8855,6 +10682,24 @@ DP_Message *DP_msg_track_delete_deserialize(unsigned int context_id,
     size_t read = 0;
     uint16_t id = read_uint16(buffer + read, &read);
     return DP_msg_track_delete_new(context_id, id);
+}
+
+DP_Message *DP_msg_track_delete_deserialize_compat(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length)
+{
+    if (length != 2) {
+        DP_error_set("Wrong length for trackdelete compat message; "
+                     "expected 2, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    DP_Message *msg =
+        DP_msg_track_delete_new(context_id, convert_other_id_compat(id));
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_track_delete_parse(unsigned int context_id,
@@ -8889,6 +10734,12 @@ static size_t msg_track_order_payload_length(DP_Message *msg)
     return DP_int_to_size(mto->tracks_count) * 2;
 }
 
+static size_t msg_track_order_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgTrackOrder *mto = DP_message_internal(msg);
+    return DP_int_to_size(mto->tracks_count) * 2;
+}
+
 static size_t msg_track_order_serialize_payload(DP_Message *msg,
                                                 unsigned char *data)
 {
@@ -8897,6 +10748,17 @@ static size_t msg_track_order_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint16_array(mto->tracks, mto->tracks_count,
                                                data + written);
     DP_ASSERT(written == msg_track_order_payload_length(msg));
+    return written;
+}
+
+static size_t msg_track_order_serialize_payload_compat(DP_Message *msg,
+                                                       unsigned char *data)
+{
+    DP_MsgTrackOrder *mto = DP_message_internal(msg);
+    size_t written = 0;
+    written +=
+        write_track_ids_compat(mto->tracks, mto->tracks_count, data + written);
+    DP_ASSERT(written == msg_track_order_payload_length_compat(msg));
     return written;
 }
 
@@ -8921,6 +10783,8 @@ static bool msg_track_order_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_track_order_methods = {
     msg_track_order_payload_length,
     msg_track_order_serialize_payload,
+    msg_track_order_payload_length_compat,
+    msg_track_order_serialize_payload_compat,
     msg_track_order_write_payload_text,
     msg_track_order_equals,
 };
@@ -8963,6 +10827,32 @@ DP_Message *DP_msg_track_order_deserialize(unsigned int context_id,
     void *tracks_user = (void *)(buffer + read);
     return DP_msg_track_order_new(context_id, read_uint16_array, tracks_count,
                                   tracks_user);
+}
+
+DP_Message *DP_msg_track_order_deserialize_compat(unsigned int context_id,
+                                                  const unsigned char *buffer,
+                                                  size_t length)
+{
+    if (length > 65535) {
+        DP_error_set("Wrong length for trackorder compat message; "
+                     "expected between 0 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    size_t tracks_bytes = length - read;
+    if ((tracks_bytes % 2) != 0) {
+        DP_error_set("Wrong length for tracks field in trackorder message; "
+                     "%zu not divisible by 2",
+                     tracks_bytes);
+        return NULL;
+    }
+    uint16_t tracks_count = DP_size_to_uint16(tracks_bytes / 2);
+    void *tracks_user = (void *)(buffer + read);
+    DP_Message *msg = DP_msg_track_order_new(context_id, read_track_ids_compat,
+                                             tracks_count, tracks_user);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_track_order_parse(unsigned int context_id,
@@ -9023,6 +10913,11 @@ static size_t msg_key_frame_set_payload_length(DP_UNUSED DP_Message *msg)
     return ((size_t)10);
 }
 
+static size_t msg_key_frame_set_payload_length_compat(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)9);
+}
+
 static size_t msg_key_frame_set_serialize_payload(DP_Message *msg,
                                                   unsigned char *data)
 {
@@ -9034,6 +10929,25 @@ static size_t msg_key_frame_set_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint16(mkfs->source_index, data + written);
     written += DP_write_bigendian_uint8(mkfs->source, data + written);
     DP_ASSERT(written == msg_key_frame_set_payload_length(msg));
+    return written;
+}
+
+static size_t msg_key_frame_set_serialize_payload_compat(DP_Message *msg,
+                                                         unsigned char *data)
+{
+    DP_MsgKeyFrameSet *mkfs = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(
+        convert_other_id_compat(mkfs->track_id), data + written);
+    written += DP_write_bigendian_uint16(mkfs->frame_index, data + written);
+    written += DP_write_bigendian_uint16(
+        mkfs->source == DP_MSG_KEY_FRAME_SET_SOURCE_LAYER
+            ? serialize_layer_id_compat(mkfs->source_id)
+            : convert_other_id_compat(mkfs->source_id),
+        data + written);
+    written += DP_write_bigendian_uint16(mkfs->source_index, data + written);
+    written += DP_write_bigendian_uint8(mkfs->source, data + written);
+    DP_ASSERT(written == msg_key_frame_set_payload_length_compat(msg));
     return written;
 }
 
@@ -9061,6 +10975,8 @@ static bool msg_key_frame_set_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_key_frame_set_methods = {
     msg_key_frame_set_payload_length,
     msg_key_frame_set_serialize_payload,
+    msg_key_frame_set_payload_length_compat,
+    msg_key_frame_set_serialize_payload_compat,
     msg_key_frame_set_write_payload_text,
     msg_key_frame_set_equals,
 };
@@ -9099,6 +11015,32 @@ DP_Message *DP_msg_key_frame_set_deserialize(unsigned int context_id,
     uint8_t source = read_uint8(buffer + read, &read);
     return DP_msg_key_frame_set_new(context_id, track_id, frame_index,
                                     source_id, source_index, source);
+}
+
+DP_Message *DP_msg_key_frame_set_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length)
+{
+    if (length != 9) {
+        DP_error_set("Wrong length for keyframeset compat message; "
+                     "expected 9, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t track_id = read_uint16(buffer + read, &read);
+    uint16_t frame_index = read_uint16(buffer + read, &read);
+    uint16_t source_id = read_uint16(buffer + read, &read);
+    uint16_t source_index = read_uint16(buffer + read, &read);
+    uint8_t source = read_uint8(buffer + read, &read);
+    DP_Message *msg = DP_msg_key_frame_set_new(
+        context_id, convert_other_id_compat(track_id), frame_index,
+        source == DP_MSG_KEY_FRAME_SET_SOURCE_LAYER
+            ? deserialize_layer_id_compat(source_id)
+            : convert_other_id_compat(source_id),
+        source_index, source);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_key_frame_set_parse(unsigned int context_id,
@@ -9169,6 +11111,12 @@ static size_t msg_key_frame_retitle_payload_length(DP_Message *msg)
     return ((size_t)4) + DP_uint16_to_size(mkfr->title_len);
 }
 
+static size_t msg_key_frame_retitle_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgKeyFrameRetitle *mkfr = DP_message_internal(msg);
+    return ((size_t)4) + DP_uint16_to_size(mkfr->title_len);
+}
+
 static size_t msg_key_frame_retitle_serialize_payload(DP_Message *msg,
                                                       unsigned char *data)
 {
@@ -9178,6 +11126,20 @@ static size_t msg_key_frame_retitle_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint16(mkfr->frame_index, data + written);
     written += DP_write_bytes(mkfr->title, 1, mkfr->title_len, data + written);
     DP_ASSERT(written == msg_key_frame_retitle_payload_length(msg));
+    return written;
+}
+
+static size_t
+msg_key_frame_retitle_serialize_payload_compat(DP_Message *msg,
+                                               unsigned char *data)
+{
+    DP_MsgKeyFrameRetitle *mkfr = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(
+        convert_other_id_compat(mkfr->track_id), data + written);
+    written += DP_write_bigendian_uint16(mkfr->frame_index, data + written);
+    written += DP_write_bytes(mkfr->title, 1, mkfr->title_len, data + written);
+    DP_ASSERT(written == msg_key_frame_retitle_payload_length_compat(msg));
     return written;
 }
 
@@ -9203,6 +11165,8 @@ static bool msg_key_frame_retitle_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_key_frame_retitle_methods = {
     msg_key_frame_retitle_payload_length,
     msg_key_frame_retitle_serialize_payload,
+    msg_key_frame_retitle_payload_length_compat,
+    msg_key_frame_retitle_serialize_payload_compat,
     msg_key_frame_retitle_write_payload_text,
     msg_key_frame_retitle_equals,
 };
@@ -9242,6 +11206,28 @@ DP_Message *DP_msg_key_frame_retitle_deserialize(unsigned int context_id,
     const char *title = (const char *)buffer + read;
     return DP_msg_key_frame_retitle_new(context_id, track_id, frame_index,
                                         title, title_len);
+}
+
+DP_Message *DP_msg_key_frame_retitle_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length < 4 || length > 65535) {
+        DP_error_set("Wrong length for keyframeretitle compat message; "
+                     "expected between 4 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t track_id = read_uint16(buffer + read, &read);
+    uint16_t frame_index = read_uint16(buffer + read, &read);
+    size_t title_bytes = length - read;
+    uint16_t title_len = DP_size_to_uint16(title_bytes);
+    const char *title = (const char *)buffer + read;
+    DP_Message *msg = DP_msg_key_frame_retitle_new(
+        context_id, convert_other_id_compat(track_id), frame_index, title,
+        title_len);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_key_frame_retitle_parse(unsigned int context_id,
@@ -9306,6 +11292,13 @@ static size_t msg_key_frame_layer_attributes_payload_length(DP_Message *msg)
 }
 
 static size_t
+msg_key_frame_layer_attributes_payload_length_compat(DP_Message *msg)
+{
+    DP_MsgKeyFrameLayerAttributes *mkfla = DP_message_internal(msg);
+    return ((size_t)4) + DP_int_to_size(mkfla->layer_flags_count) * 2;
+}
+
+static size_t
 msg_key_frame_layer_attributes_serialize_payload(DP_Message *msg,
                                                  unsigned char *data)
 {
@@ -9316,6 +11309,21 @@ msg_key_frame_layer_attributes_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_uint32_array(
         mkfla->layer_flags, mkfla->layer_flags_count, data + written);
     DP_ASSERT(written == msg_key_frame_layer_attributes_payload_length(msg));
+    return written;
+}
+
+static size_t
+msg_key_frame_layer_attributes_serialize_payload_compat(DP_Message *msg,
+                                                        unsigned char *data)
+{
+    DP_MsgKeyFrameLayerAttributes *mkfla = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mkfla->track_id, data + written);
+    written += DP_write_bigendian_uint16(mkfla->frame_index, data + written);
+    written += write_key_frame_layer_flags_compat(
+        mkfla->layer_flags, mkfla->layer_flags_count, data + written);
+    DP_ASSERT(written
+              == msg_key_frame_layer_attributes_payload_length_compat(msg));
     return written;
 }
 
@@ -9346,6 +11354,8 @@ static bool msg_key_frame_layer_attributes_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_key_frame_layer_attributes_methods = {
     msg_key_frame_layer_attributes_payload_length,
     msg_key_frame_layer_attributes_serialize_payload,
+    msg_key_frame_layer_attributes_payload_length_compat,
+    msg_key_frame_layer_attributes_serialize_payload_compat,
     msg_key_frame_layer_attributes_write_payload_text,
     msg_key_frame_layer_attributes_equals,
 };
@@ -9396,6 +11406,35 @@ DP_Message *DP_msg_key_frame_layer_attributes_deserialize(
     return DP_msg_key_frame_layer_attributes_new(
         context_id, track_id, frame_index, read_uint32_array, layer_flags_count,
         layer_flags_user);
+}
+
+DP_Message *DP_msg_key_frame_layer_attributes_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length < 4 || length > 65535) {
+        DP_error_set("Wrong length for keyframelayerattributes compat message; "
+                     "expected between 4 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t track_id = read_uint16(buffer + read, &read);
+    uint16_t frame_index = read_uint16(buffer + read, &read);
+    size_t layer_flags_bytes = length - read;
+    if ((layer_flags_bytes % 2) != 0) {
+        DP_error_set("Wrong length for layer_flags field in "
+                     "keyframelayerattributes message; "
+                     "%zu not divisible by 2",
+                     layer_flags_bytes);
+        return NULL;
+    }
+    uint16_t layer_flags_count = DP_size_to_uint16(layer_flags_bytes / 2);
+    void *layer_flags_user = (void *)(buffer + read);
+    DP_Message *msg = DP_msg_key_frame_layer_attributes_new(
+        context_id, track_id, frame_index, read_key_frame_layer_flags_compat,
+        layer_flags_count / 2, layer_flags_user);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_key_frame_layer_attributes_parse(unsigned int context_id,
@@ -9464,6 +11503,12 @@ static size_t msg_key_frame_delete_payload_length(DP_UNUSED DP_Message *msg)
     return ((size_t)8);
 }
 
+static size_t
+msg_key_frame_delete_payload_length_compat(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)8);
+}
+
 static size_t msg_key_frame_delete_serialize_payload(DP_Message *msg,
                                                      unsigned char *data)
 {
@@ -9475,6 +11520,22 @@ static size_t msg_key_frame_delete_serialize_payload(DP_Message *msg,
     written +=
         DP_write_bigendian_uint16(mkfd->move_frame_index, data + written);
     DP_ASSERT(written == msg_key_frame_delete_payload_length(msg));
+    return written;
+}
+
+static size_t msg_key_frame_delete_serialize_payload_compat(DP_Message *msg,
+                                                            unsigned char *data)
+{
+    DP_MsgKeyFrameDelete *mkfd = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(
+        convert_other_id_compat(mkfd->track_id), data + written);
+    written += DP_write_bigendian_uint16(mkfd->frame_index, data + written);
+    written += DP_write_bigendian_uint16(
+        convert_other_id_compat(mkfd->move_track_id), data + written);
+    written +=
+        DP_write_bigendian_uint16(mkfd->move_frame_index, data + written);
+    DP_ASSERT(written == msg_key_frame_delete_payload_length_compat(msg));
     return written;
 }
 
@@ -9503,6 +11564,8 @@ static bool msg_key_frame_delete_equals(DP_Message *DP_RESTRICT msg,
 static const DP_MessageMethods msg_key_frame_delete_methods = {
     msg_key_frame_delete_payload_length,
     msg_key_frame_delete_serialize_payload,
+    msg_key_frame_delete_payload_length_compat,
+    msg_key_frame_delete_serialize_payload_compat,
     msg_key_frame_delete_write_payload_text,
     msg_key_frame_delete_equals,
 };
@@ -9540,6 +11603,27 @@ DP_Message *DP_msg_key_frame_delete_deserialize(unsigned int context_id,
     uint16_t move_frame_index = read_uint16(buffer + read, &read);
     return DP_msg_key_frame_delete_new(context_id, track_id, frame_index,
                                        move_track_id, move_frame_index);
+}
+
+DP_Message *DP_msg_key_frame_delete_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length != 8) {
+        DP_error_set("Wrong length for keyframedelete compat message; "
+                     "expected 8, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t track_id = read_uint16(buffer + read, &read);
+    uint16_t frame_index = read_uint16(buffer + read, &read);
+    uint16_t move_track_id = read_uint16(buffer + read, &read);
+    uint16_t move_frame_index = read_uint16(buffer + read, &read);
+    DP_Message *msg = DP_msg_key_frame_delete_new(
+        context_id, convert_other_id_compat(track_id), frame_index,
+        convert_other_id_compat(move_track_id), move_frame_index);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_key_frame_delete_parse(unsigned int context_id,
@@ -9699,10 +11783,9 @@ bool DP_msg_selection_put_local_match_matches(const DP_MsgSelectionPut *msp,
 }
 
 static const DP_MessageMethods msg_selection_put_methods = {
-    msg_selection_put_payload_length,
-    msg_selection_put_serialize_payload,
-    msg_selection_put_write_payload_text,
-    msg_selection_put_equals,
+    msg_selection_put_payload_length,     msg_selection_put_serialize_payload,
+    msg_selection_put_payload_length,     msg_selection_put_serialize_payload,
+    msg_selection_put_write_payload_text, msg_selection_put_equals,
 };
 
 DP_Message *
@@ -9889,6 +11972,8 @@ bool DP_msg_selection_clear_local_match_matches(const DP_MsgSelectionClear *msc,
 static const DP_MessageMethods msg_selection_clear_methods = {
     msg_selection_clear_payload_length,
     msg_selection_clear_serialize_payload,
+    msg_selection_clear_payload_length,
+    msg_selection_clear_serialize_payload,
     msg_selection_clear_write_payload_text,
     msg_selection_clear_equals,
 };
@@ -9983,10 +12068,9 @@ static bool msg_local_match_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_local_match_methods = {
-    msg_local_match_payload_length,
-    msg_local_match_serialize_payload,
-    msg_local_match_write_payload_text,
-    msg_local_match_equals,
+    msg_local_match_payload_length,     msg_local_match_serialize_payload,
+    msg_local_match_payload_length,     msg_local_match_serialize_payload,
+    msg_local_match_write_payload_text, msg_local_match_equals,
 };
 
 DP_Message *DP_msg_local_match_new(unsigned int context_id, uint8_t type,
@@ -10023,6 +12107,16 @@ DP_Message *DP_msg_local_match_deserialize(unsigned int context_id,
     void *data_user = (void *)(buffer + read);
     return DP_msg_local_match_new(context_id, type, read_bytes, data_size,
                                   data_user);
+}
+
+DP_Message *DP_msg_local_match_deserialize_compat(unsigned int context_id,
+                                                  const unsigned char *buffer,
+                                                  size_t length)
+{
+    DP_Message *msg =
+        DP_msg_local_match_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_local_match_parse(unsigned int context_id,
@@ -10117,6 +12211,8 @@ static bool msg_sync_selection_tile_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_sync_selection_tile_methods = {
+    msg_sync_selection_tile_payload_length,
+    msg_sync_selection_tile_serialize_payload,
     msg_sync_selection_tile_payload_length,
     msg_sync_selection_tile_serialize_payload,
     msg_sync_selection_tile_write_payload_text,
@@ -10689,10 +12785,9 @@ static bool msg_undo_equals(DP_Message *DP_RESTRICT msg,
 }
 
 static const DP_MessageMethods msg_undo_methods = {
-    msg_undo_payload_length,
-    msg_undo_serialize_payload,
-    msg_undo_write_payload_text,
-    msg_undo_equals,
+    msg_undo_payload_length,     msg_undo_serialize_payload,
+    msg_undo_payload_length,     msg_undo_serialize_payload,
+    msg_undo_write_payload_text, msg_undo_equals,
 };
 
 DP_Message *DP_msg_undo_new(unsigned int context_id, uint8_t override_user,
@@ -10719,6 +12814,15 @@ DP_Message *DP_msg_undo_deserialize(unsigned int context_id,
     uint8_t override_user = read_uint8(buffer + read, &read);
     bool redo = read_bool(buffer + read, &read);
     return DP_msg_undo_new(context_id, override_user, redo);
+}
+
+DP_Message *DP_msg_undo_deserialize_compat(unsigned int context_id,
+                                           const unsigned char *buffer,
+                                           size_t length)
+{
+    DP_Message *msg = DP_msg_undo_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
 }
 
 DP_Message *DP_msg_undo_parse(unsigned int context_id, DP_TextReader *reader)

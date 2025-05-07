@@ -14,9 +14,10 @@ void BuiltinReset::appendAclsToPostResetMessages(
 		DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
 }
 
-void BuiltinReset::generateResetImage(const drawdance::CanvasState &canvasState)
+void BuiltinReset::generateResetImage(
+	const drawdance::CanvasState &canvasState, bool compatibilityMode)
 {
-	canvasState.toResetImage(m_resetImage, 0);
+	canvasState.toResetImage(m_resetImage, 0, compatibilityMode);
 	emit resetImageGenerated();
 }
 

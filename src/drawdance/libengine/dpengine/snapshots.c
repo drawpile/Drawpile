@@ -844,9 +844,11 @@ static void canvas_state_to_reset_image(struct DP_ResetImageContext *c,
                           DP_canvas_state_layer_props_noinc(cs));
     DP_PERF_END(layers);
 
-    DP_PERF_BEGIN(selections, "image:selections");
-    selections_to_reset_image(c, cs);
-    DP_PERF_END(selections);
+    if (c->options.include_selections) {
+        DP_PERF_BEGIN(selections, "image:selections");
+        selections_to_reset_image(c, cs);
+        DP_PERF_END(selections);
+    }
 
     DP_PERF_BEGIN(annotations, "image:annotations");
     annotations_to_reset_image(c, DP_canvas_state_annotations_noinc(cs));
@@ -912,6 +914,7 @@ void DP_reset_image_build_with(
 struct DP_ResetImageMessageContext {
     unsigned int context_id;
     int xtiles;
+    bool compatibility_mode;
     DP_Mutex *mutex;
     void (*push_message)(void *, DP_Message *);
     void *push_message_user;
@@ -1012,7 +1015,20 @@ static void reset_entry_tile_to_message(struct DP_ResetImageMessageContext *c,
 {
     int xtiles = c->xtiles;
     if (xtiles > 0) {
-        uint8_t user_id = DP_uint_to_uint8(ret->context_id);
+        uint8_t user_id;
+        DP_Message *(*put_tile_new)(unsigned int, uint8_t, uint32_t, uint8_t,
+                                    uint16_t, uint16_t, uint16_t,
+                                    void (*)(size_t, unsigned char *, void *),
+                                    size_t, void *);
+        if (c->compatibility_mode) {
+            user_id = 0;
+            put_tile_new = DP_msg_put_tile_new;
+        }
+        else {
+            user_id = DP_uint_to_uint8(ret->context_id);
+            put_tile_new = DP_msg_put_tile_zstd_new;
+        }
+
         uint32_t layer_id = DP_layer_id_to_protocol(ret->layer_id);
         uint8_t sublayer_id = DP_int_to_uint8(ret->sublayer_id);
         int tile_index = ret->tile_index;
@@ -1021,10 +1037,10 @@ static void reset_entry_tile_to_message(struct DP_ResetImageMessageContext *c,
         int max = UINT16_MAX;
         for (int tile_run = ret->tile_run; tile_run > 0; tile_run -= max + 1) {
             reset_message_push(
-                c, DP_msg_put_tile_zstd_new(
-                       c->context_id, user_id, layer_id, sublayer_id, col, row,
-                       DP_int_to_uint16(DP_min_int(tile_run - 1, max)),
-                       set_tile_data, ret->size, ret->data));
+                c, put_tile_new(c->context_id, user_id, layer_id, sublayer_id,
+                                col, row,
+                                DP_int_to_uint16(DP_min_int(tile_run - 1, max)),
+                                set_tile_data, ret->size, ret->data));
         }
     }
 }
@@ -1167,13 +1183,17 @@ static void reset_entry_to_message(void *user, const DP_ResetEntry *re)
 }
 
 void DP_reset_image_build(DP_CanvasState *cs, unsigned int context_id,
+                          bool compatibility_mode,
                           void (*push_message)(void *, DP_Message *),
                           void *user)
 {
+    DP_ResetImageCompression compression =
+        compatibility_mode ? DP_RESET_IMAGE_COMPRESSION_GZIP8BE
+                           : DP_RESET_IMAGE_COMPRESSION_ZSTD8LE;
     DP_ResetImageOptions options = {
-        true, false, true, DP_RESET_IMAGE_COMPRESSION_ZSTD8LE, 0, 0, NULL};
-    struct DP_ResetImageMessageContext c = {context_id, 0, DP_mutex_new(),
-                                            push_message, user};
+        true, false, !compatibility_mode, compression, 0, 0, NULL};
+    struct DP_ResetImageMessageContext c = {
+        context_id, 0, compatibility_mode, DP_mutex_new(), push_message, user};
     if (!c.mutex) {
         options.use_worker = false;
         DP_warn("Failed to create reset image mutex: %s", DP_error());

@@ -35,7 +35,13 @@ typedef struct DP_TextWriter DP_TextWriter;
 #define DP_MESSAGE_TYPE_RANGE_START_CLIENT  64
 #define DP_MESSAGE_TYPE_RANGE_START_COMMAND 128
 
-#define DP_MESSAGE_LAYER_ID_MAX (0x7fffff)
+#define DP_MYPAINT_BRUSH_PIGMENT_FLAG     0x1
+#define DP_MYPAINT_BRUSH_MODE_FLAG        0x80
+#define DP_MYPAINT_BRUSH_MODE_INCREMENTAL 0x0
+#define DP_MYPAINT_BRUSH_MODE_NORMAL      0x1
+#define DP_MYPAINT_BRUSH_MODE_RECOLOR     0x2
+#define DP_MYPAINT_BRUSH_MODE_ERASE       0x3
+#define DP_MYPAINT_BRUSH_MODE_MASK        0x3
 
 typedef struct DP_Message DP_Message;
 
@@ -64,6 +70,10 @@ DP_MessageType DP_message_type(DP_Message *msg);
 
 bool DP_message_opaque(DP_Message *msg);
 
+bool DP_message_compat(DP_Message *msg);
+
+void DP_message_compat_set(DP_Message *msg);
+
 const char *DP_message_name(DP_Message *msg);
 
 unsigned int DP_message_context_id(DP_Message *msg);
@@ -83,6 +93,12 @@ size_t DP_message_serialize(DP_Message *msg, bool write_body_length,
                             DP_GetMessageBufferFn get_buffer,
                             void *user) DP_MUST_CHECK;
 
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+size_t DP_message_serialize_compat(DP_Message *msg, bool write_body_length,
+                                   DP_GetMessageBufferFn get_buffer,
+                                   void *user) DP_MUST_CHECK;
+#endif
+
 bool DP_message_write_text(DP_Message *msg,
                            DP_TextWriter *writer) DP_MUST_CHECK;
 
@@ -97,6 +113,16 @@ DP_Message *DP_message_deserialize_length(const unsigned char *buf,
 
 DP_Message *DP_message_deserialize(const unsigned char *buf, size_t bufsize,
                                    bool decode_opaque);
+
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+DP_Message *DP_message_deserialize_length_compat(const unsigned char *buf,
+                                                 size_t bufsize,
+                                                 size_t body_length,
+                                                 bool decode_opaque);
+
+DP_Message *DP_message_deserialize_compat(const unsigned char *buf,
+                                          size_t bufsize, bool decode_opaque);
+#endif
 
 
 int DP_msg_draw_dabs_classic_paint_mode(DP_MsgDrawDabsClassic *mddc);
@@ -115,6 +141,14 @@ int DP_msg_draw_dabs_mypaint_mask_selection_id(DP_MsgDrawDabsMyPaint *mddmp);
 
 int DP_msg_draw_dabs_mypaint_blend_mask_selection_id(
     DP_MsgDrawDabsMyPaintBlend *mddmpb);
+
+
+void DP_msg_draw_dabs_mypaint_mode_extract(DP_MsgDrawDabsMyPaint *mddmp,
+                                           int *out_blend_mode,
+                                           int *out_paint_mode,
+                                           uint8_t *out_posterize_num);
+
+int DP_msg_draw_dabs_mypaint_paint_mode(DP_MsgDrawDabsMyPaint *mddmp);
 
 
 #endif

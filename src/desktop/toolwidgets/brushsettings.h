@@ -40,6 +40,7 @@ public:
 	void setActiveTool(tools::Tool::Type tool) override;
 	void setForeground(const QColor &color) override;
 	void setBackground(const QColor &color) override;
+	void setCompatibilityMode(bool compatibilityMode) override;
 	void quickAdjust1(qreal adjustment) override;
 	void stepAdjust1(bool increase) override;
 

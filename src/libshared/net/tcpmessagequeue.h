@@ -39,6 +39,8 @@ private:
 	int haveWholeMessageToRead();
 
 	void writeData();
+	bool serializeMessage(const net::Message &msg);
+	net::Message deserializeMessage();
 
 	bool messagesInOutbox() const;
 	net::Message dequeueFromOutbox();

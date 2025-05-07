@@ -277,9 +277,11 @@ bool CanvasState::isSizeInBounds() const
 	return DP_canvas_state_dimensions_in_bounds(width(), height());
 }
 
-void CanvasState::toResetImage(net::MessageList &msgs, uint8_t contextId) const
+void CanvasState::toResetImage(
+	net::MessageList &msgs, uint8_t contextId, bool compatibilityMode) const
 {
-	DP_reset_image_build(m_data, contextId, &CanvasState::pushMessage, &msgs);
+	DP_reset_image_build(
+		m_data, contextId, compatibilityMode, &CanvasState::pushMessage, &msgs);
 }
 
 net::Message CanvasState::makeLayerTreeMove(

@@ -34,11 +34,22 @@ typedef void (*DP_MessageLocalMatchSetFn)(size_t, unsigned char *, void *);
 #define DP_PROTOCOL_VERSION_MAJOR     {{ version.major }}
 #define DP_PROTOCOL_VERSION_MINOR     {{ version.minor }}
 #define DP_PROTOCOL_VERSION           "{{ version.string }}"
+{% if compat_version %}
+    #define DP_PROTOCOL_COMPAT_VERSION_NAMESPACE "{{ compat_version.namespace }}"
+    #define DP_PROTOCOL_COMPAT_VERSION_SERVER    {{ compat_version.server }}
+    #define DP_PROTOCOL_COMPAT_VERSION_MAJOR     {{ compat_version.major }}
+    #define DP_PROTOCOL_COMPAT_VERSION_MINOR     {{ compat_version.minor }}
+    #define DP_PROTOCOL_COMPAT_VERSION           "{{ compat_version.string }}"
+{% endif %}
 #define DP_UNDO_DEPTH_DEFAULT         {{ undo_depth }}
 
 typedef struct DP_MessageMethods {
     size_t (*payload_length)(DP_Message *msg);
     size_t (*serialize_payload)(DP_Message *msg, unsigned char *data);
+    {% if compat_version %}
+        size_t (*payload_length_compat)(DP_Message *msg);
+        size_t (*serialize_payload_compat)(DP_Message *msg, unsigned char *data);
+    {% endif %}
     bool (*write_payload_text)(DP_Message *msg, DP_TextWriter *writer);
     bool (*equals)(DP_Message *DP_RESTRICT msg, DP_Message *DP_RESTRICT other);
 } DP_MessageMethods;
@@ -57,6 +68,10 @@ bool DP_message_type_client_meta(DP_MessageType type);
 bool DP_message_type_server_meta(DP_MessageType type);
 
 bool DP_message_type_command(DP_MessageType type);
+{% if compat_version %}
+
+bool DP_message_type_compatible(DP_MessageType type);
+{% endif %}
 
 const char *DP_message_type_name(DP_MessageType type);
 
@@ -66,12 +81,12 @@ const char *DP_message_type_enum_name_unprefixed(DP_MessageType type);
 
 DP_MessageType DP_message_type_from_name(const char *type_name, DP_MessageType not_found_value);
 
-// Returns if the given type's text format has a body of value tuples, rather
-// than a body of multiline fields. This is the case for draw dabs messages.
-bool DP_message_type_parse_multiline_tuples(DP_MessageType type);
-
 
 DP_Message *DP_message_deserialize_body(int type, unsigned int context_id, const unsigned char *buf, size_t length, bool decode_opaque);
+{% if compat_version %}
+
+DP_Message *DP_message_deserialize_body_compat(int type, unsigned int context_id, const unsigned char *buf, size_t length, bool decode_opaque);
+{% endif %}
 
 DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id, DP_TextReader *reader);
 
@@ -85,6 +100,9 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id, 
     {% if not message.reserved %}
 
         #define {{ message.enum_name }}_STATIC_LENGTH {{ message.static_payload_length }}
+        {% if compat_version and not message.incompatible %}
+            #define {{ message.enum_name }}_STATIC_LENGTH_COMPAT {{ message.static_payload_length_compat }}
+        {% endif %}
         {% if message.local_match %}
             #define {{ message.enum_name }}_MATCH_LENGTH {{ message.local_match_length }}
         {% endif %}
@@ -160,6 +178,10 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id, 
         );
 
         DP_Message *DP_{{ message.func_name }}_deserialize(unsigned int context_id, const unsigned char *buffer, size_t length);
+        {% if compat_version and not message.incompatible %}
+
+        DP_Message *DP_{{ message.func_name }}_deserialize_compat(unsigned int context_id, const unsigned char *buffer, size_t length);
+        {% endif %}
 
         DP_Message *DP_{{ message.func_name }}_parse(unsigned int context_id, DP_TextReader *reader);
         {% if message.local_match %}

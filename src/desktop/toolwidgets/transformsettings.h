@@ -44,6 +44,8 @@ public:
 		m_canvasView = canvasView;
 	}
 
+	void setCompatibilityMode(bool compatibilityMode) override;
+
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
@@ -72,7 +74,7 @@ private:
 	void updateHandles(int mode);
 	void showHandles();
 
-	void initBlendModeOptions();
+	void initBlendModeOptions(bool compatibilityMode);
 	void updateAlphaPreserve(bool alphaPreserve);
 	void updateBlendMode(int index);
 	void selectBlendMode(int blendMode);

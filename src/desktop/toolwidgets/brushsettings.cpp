@@ -184,6 +184,7 @@ struct BrushSettings::Private {
 	bool myPaintAllowed = true;
 	bool pigmentAllowed = true;
 	bool automaticAlphaPreserve = true;
+	bool compatibilityMode = false;
 
 	Slot &slotAt(int i)
 	{
@@ -1230,8 +1231,8 @@ void BrushSettings::setAutomaticAlphaPreserve(bool automaticAlphaPreserve)
 			const brushes::ClassicBrush &cb = brush.classic();
 			int blendMode = getBlendMode();
 			QSignalBlocker blocker(d->ui.blendmode);
-			d->ui.blendmode->setModel(
-				getBrushBlendModesFor(cb.erase, automaticAlphaPreserve));
+			d->ui.blendmode->setModel(getBrushBlendModesFor(
+				cb.erase, automaticAlphaPreserve, d->compatibilityMode));
 			int index = searchBlendModeComboIndex(d->ui.blendmode, blendMode);
 			if(index != -1) {
 				d->ui.blendmode->setCurrentIndex(index);
@@ -1240,8 +1241,8 @@ void BrushSettings::setAutomaticAlphaPreserve(bool automaticAlphaPreserve)
 				canvas::blendmode::presentsAsAlphaPreserving(blendMode));
 		} else {
 			QSignalBlocker blocker(d->ui.blendmode);
-			d->ui.blendmode->setModel(
-				getBrushBlendModesFor(false, automaticAlphaPreserve));
+			d->ui.blendmode->setModel(getBrushBlendModesFor(
+				false, automaticAlphaPreserve, d->compatibilityMode));
 		}
 	}
 }
@@ -1353,8 +1354,8 @@ void BrushSettings::updateUi()
 	adjustSettingVisibilities(softmode, mypaintmode);
 
 	// Show correct blending mode
-	d->ui.blendmode->setModel(
-		getBrushBlendModesFor(brush.isEraser(), d->automaticAlphaPreserve));
+	d->ui.blendmode->setModel(getBrushBlendModesFor(
+		brush.isEraser(), d->automaticAlphaPreserve, d->compatibilityMode));
 	d->ui.modeEraser->setChecked(brush.isEraser());
 	d->ui.modeEraser->setEnabled(!isCurrentEraserSlot());
 
@@ -1850,6 +1851,16 @@ void BrushSettings::setBackground(const QColor &color)
 			slot.button->setBackgroundSwatch(color);
 		}
 		pushSettings();
+	}
+}
+
+void BrushSettings::setCompatibilityMode(bool compatibilityMode)
+{
+	if(compatibilityMode != d->compatibilityMode) {
+		d->compatibilityMode = compatibilityMode;
+		d->ui.alphaPreserve->setEnabled(!compatibilityMode);
+		d->paintModeIndirectWashAction->setEnabled(!compatibilityMode);
+		d->paintModeIndirectNormalAction->setEnabled(!compatibilityMode);
 	}
 }
 

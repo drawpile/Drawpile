@@ -31,6 +31,7 @@ public:
 	void setBackgroundColor(const QColor &bgColor);
 	void setPreviewImage(const QImage &image);
 	void setBounds(const QRect &rect, bool clamp);
+	void setCompatibilityMode(bool compatibilityMode);
 	void initialExpand(int expandDirection);
 
 	QSize newSize() const;
@@ -39,7 +40,8 @@ public:
 	ResizeVector resizeVector() const;
 
 	static bool checkDimensions(
-		long long width, long long height, QString *outError = nullptr);
+		long long width, long long height, bool compatibilityMode,
+		QString *outError = nullptr);
 
 public slots:
 	void done(int r) override;
@@ -64,6 +66,7 @@ private:
 	QSize m_oldsize;
 	qreal m_aspectratio = 0.0;
 	int m_lastchanged = 0;
+	bool m_compatibilityMode = false;
 };
 
 }

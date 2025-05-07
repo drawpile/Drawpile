@@ -32,12 +32,13 @@ public:
 		bool isDefault);
 	void setControlsEnabled(bool enabled);
 	void setOpControlsEnabled(bool enabled);
+	void setCompatibilityMode(bool compatibilityMode);
 
 	int layerId() const { return m_item.id; }
 
 	static void updateBlendMode(
 		QComboBox *combo, DP_BlendMode mode, bool group, bool isolated,
-		bool clip, bool automaticAlphaPreserve);
+		bool clip, bool automaticAlphaPreserve, bool compatibilityMode);
 
 signals:
 	void addLayerOrGroupRequested(
@@ -74,6 +75,7 @@ private:
 	bool m_wasDefault = false;
 	bool m_controlsEnabled = true;
 	bool m_automaticAlphaPreserve = true;
+	bool m_compatibilityMode = false;
 	uint8_t m_user;
 };
 

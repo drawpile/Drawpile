@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/tools/tool.h"
+#include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
 
 namespace tools {
@@ -7,6 +8,16 @@ namespace tools {
 bool Tool::isActiveTool() const
 {
 	return m_owner.activeTool() == m_type;
+}
+
+bool Tool::isCompatibilityMode() const
+{
+	return m_owner.client()->isCompatibilityMode();
+}
+
+uint8_t Tool::localUserId() const
+{
+	return m_owner.client()->myId();
 }
 
 void Tool::setCapability(Capability capability, bool enabled)

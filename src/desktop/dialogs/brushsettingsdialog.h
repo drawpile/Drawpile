@@ -95,6 +95,7 @@ public slots:
 	void setForceEraseMode(bool forceEraseMode);
 	void setStabilizerUseBrushSampleCount(bool useBrushSampleCount);
 	void setGlobalSmoothing(int smoothing);
+	void setCompatibilityMode(bool compatibilityMode);
 	void updateUiFromActiveBrush(const brushes::ActiveBrush &brush);
 
 private slots:

@@ -96,6 +96,8 @@ public slots:
 	void setForegroundColor(const QColor &color);
 	void setBackgroundColor(const QColor &color);
 
+	void setCompatibilityMode(bool compatibilityMode);
+
 	//! Pop up a dialog for changing the foreground color
 	void changeForegroundColor();
 

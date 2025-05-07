@@ -148,9 +148,7 @@ void TcpMessageQueue::readData()
 
 			} else {
 				// The rest are normal messages
-				net::Message msg = net::Message::deserialize(
-					reinterpret_cast<unsigned char *>(m_recvbuffer),
-					m_recvbytes, m_decodeOpaque);
+				net::Message msg = deserializeMessage();
 				if(msg.isNull()) {
 					qWarning("Error deserializing message: %s", DP_error());
 					emit badData(
@@ -277,7 +275,7 @@ void TcpMessageQueue::writeData()
 			net::Message msg = dequeueFromOutbox();
 			if(msg.isNull()) {
 				continue;
-			} else if(!msg.serialize(m_sendbuffer)) {
+			} else if(!serializeMessage(msg)) {
 				qWarning("Error serializing message: %s", DP_error());
 				sendMore = messagesInOutbox();
 				continue;
@@ -304,6 +302,28 @@ void TcpMessageQueue::writeData()
 				sendMore = messagesInOutbox();
 			}
 		}
+	}
+}
+
+bool TcpMessageQueue::serializeMessage(const net::Message &msg)
+{
+	if(compatibilityMode()) {
+		return msg.serializeCompat(m_sendbuffer);
+	} else {
+		return msg.serialize(m_sendbuffer);
+	}
+}
+
+net::Message TcpMessageQueue::deserializeMessage()
+{
+	if(compatibilityMode()) {
+		return net::Message::deserializeCompat(
+			reinterpret_cast<unsigned char *>(m_recvbuffer), m_recvbytes,
+			m_decodeOpaque);
+	} else {
+		return net::Message::deserialize(
+			reinterpret_cast<unsigned char *>(m_recvbuffer), m_recvbytes,
+			m_decodeOpaque);
 	}
 }
 

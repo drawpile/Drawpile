@@ -376,7 +376,15 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         int layer_id =
             DP_protocol_to_layer_id(DP_msg_draw_dabs_mypaint_layer(mddmp));
         DP_Rect bounds = mypaint_dabs_bounds(mddmp);
-        return make_pixels(layer_id, bounds);
+        if (aia_or_null
+            && DP_msg_draw_dabs_mypaint_paint_mode(mddmp)
+                   != DP_PAINT_MODE_DIRECT) {
+            return update_indirect_area(aia_or_null, DP_message_context_id(msg),
+                                        layer_id, bounds);
+        }
+        else {
+            return make_pixels(layer_id, bounds);
+        }
     }
     case DP_MSG_DRAW_DABS_MYPAINT_BLEND: {
         DP_MsgDrawDabsMyPaintBlend *mddmpb = DP_message_internal(msg);

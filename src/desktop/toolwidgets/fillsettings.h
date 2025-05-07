@@ -47,6 +47,7 @@ public:
 
 	void setActions(QAction *automaticAlphaPreserve);
 	void setFeatureAccess(bool featureAccess);
+	void setCompatibilityMode(bool compatibilityMode) override;
 
 signals:
 	void pixelSizeChanged(int size);
@@ -69,7 +70,7 @@ private:
 	static bool isSizeUnlimited(int size);
 	int calculatePixelSize(int size) const;
 
-	void initBlendModeOptions();
+	void initBlendModeOptions(bool compatibilityMode);
 	void updateAlphaPreserve();
 	void updateBlendMode(int index);
 	void selectBlendMode(int blendMode);

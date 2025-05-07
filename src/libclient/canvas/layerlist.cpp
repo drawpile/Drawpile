@@ -1208,8 +1208,9 @@ int LayerListModel::searchAvailableLayerId(
 	const QSet<int> &takenIds, const QVector<int> &takenPerUser,
 	unsigned int contextId) const
 {
-	if(takenPerUser[contextId] < m_layerIdLimit) {
-		for(int i = 0; i < m_layerIdLimit; ++i) {
+	int limit = m_compatibilityMode ? 256 : m_layerIdLimit;
+	if(takenPerUser[contextId] < limit) {
+		for(int i = 0; i < limit; ++i) {
 			int id = DP_layer_id_make(contextId, i);
 			if(!takenIds.contains(id)) {
 				return id;

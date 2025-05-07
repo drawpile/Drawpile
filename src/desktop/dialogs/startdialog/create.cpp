@@ -39,8 +39,8 @@ Create::Create(QWidget *parent)
 	const DrawpileApp &app = dpApp();
 	QSize lastSize = app.safeNewCanvasSize();
 	bool lastSizeValid =
-		lastSize.isValid() &&
-		ResizeDialog::checkDimensions(lastSize.width(), lastSize.height());
+		lastSize.isValid() && ResizeDialog::checkDimensions(
+								  lastSize.width(), lastSize.height(), false);
 	m_widthSpinner->setValue(lastSizeValid ? lastSize.width() : 1920);
 	m_heightSpinner->setValue(lastSizeValid ? lastSize.height() : 1080);
 
@@ -96,7 +96,7 @@ void Create::updateCreateButton()
 {
 	QString error;
 	bool ok = ResizeDialog::checkDimensions(
-		m_widthSpinner->value(), m_heightSpinner->value(), &error);
+		m_widthSpinner->value(), m_heightSpinner->value(), false, &error);
 	m_errorLabel->setText(error);
 	m_errorLabel->setVisible(!ok);
 	emit enableCreate(ok);

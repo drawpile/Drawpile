@@ -47,11 +47,13 @@ void BrushEngine::flushDabs()
 
 void BrushEngine::beginStroke(
 	unsigned int contextId, const drawdance::CanvasState &cs,
-	bool pushUndoPoint, bool mirror, bool flip, float zoom, float angle)
+	bool compatibilityMode, bool pushUndoPoint, bool mirror, bool flip,
+	float zoom, float angle)
 {
 	m_messages.clear();
 	DP_brush_engine_stroke_begin(
-		m_data, cs.get(), contextId, pushUndoPoint, mirror, flip, zoom, angle);
+		m_data, cs.get(), contextId, compatibilityMode, pushUndoPoint, mirror,
+		flip, zoom, angle);
 }
 
 void BrushEngine::strokeTo(

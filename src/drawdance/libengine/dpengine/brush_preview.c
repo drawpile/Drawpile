@@ -268,7 +268,8 @@ void render_brush_preview(
                                 height - height / 2);
     DP_BrushEngine *be = bp->be;
     set_brush(user, be, initial_color);
-    DP_brush_engine_stroke_begin(be, cs, 1, false, false, false, 1.0f, 0.0f);
+    DP_brush_engine_stroke_begin(be, cs, 1, false, false, false, false, 1.0f,
+                                 0.0f);
     long long time_msec = 0;
     switch (shape) {
     case DP_BRUSH_PREVIEW_STROKE:
@@ -359,7 +360,8 @@ static void set_preview_pixel_dab(DP_UNUSED int count, DP_PixelDab *pds,
     const DP_ClassicBrush *cb = user;
     DP_pixel_dab_init(
         pds, 0, 0, 0,
-        DP_classic_brush_pixel_dab_size_at(cb, 1.0f, HUGE_VALF, HUGE_VALF),
+        DP_classic_brush_pixel_dab_size_at(cb, 1.0f, HUGE_VALF, HUGE_VALF,
+                                           false),
         DP_classic_brush_dab_opacity_at(cb, 1.0f, HUGE_VALF, HUGE_VALF));
 }
 
@@ -370,7 +372,8 @@ static void set_preview_classic_dab(DP_UNUSED int count, DP_ClassicDab *cds,
     const DP_ClassicBrush *cb = user;
     DP_classic_dab_init(
         cds, 0, 0, 0,
-        DP_classic_brush_soft_dab_size_at(cb, 1.0f, HUGE_VALF, HUGE_VALF),
+        DP_classic_brush_soft_dab_size_at(cb, 1.0f, HUGE_VALF, HUGE_VALF,
+                                          false),
         DP_classic_brush_dab_hardness_at(cb, 1.0f, HUGE_VALF, HUGE_VALF),
         DP_classic_brush_dab_opacity_at(cb, 1.0f, HUGE_VALF, HUGE_VALF));
 }

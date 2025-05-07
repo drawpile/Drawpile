@@ -41,6 +41,11 @@ bool AnnotationSettings::isLocked()
 	return !m_annotationsShown;
 }
 
+void AnnotationSettings::setCompatibilityMode(bool compatibilityMode)
+{
+	m_ui->render->setEnabled(!compatibilityMode);
+}
+
 QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 {
 	m_stack = new QStackedWidget(parent);
@@ -252,6 +257,11 @@ void AnnotationSettings::setUiEnabled(bool enabled)
 		m_ui->content->setText(QString());
 		m_protectedAction->setChecked(false);
 		m_ui->creatorLabel->setText(QString{});
+	}
+
+	canvas::CanvasModel *canvas = controller()->model();
+	if(canvas && canvas->isCompatibilityMode()) {
+		m_ui->render->setEnabled(false);
 	}
 }
 
@@ -601,8 +611,9 @@ void AnnotationSettings::bake()
 		net::makeUndoPointMessage(contextId),
 		net::makeAnnotationDeleteMessage(contextId, selected()),
 	};
-	net::makePutImageZstdMessages(
-		msgs, contextId, layer, DP_BLEND_MODE_NORMAL, rect.x(), rect.y(), img);
+	net::makePutImageMessagesCompat(
+		msgs, contextId, layer, DP_BLEND_MODE_NORMAL, rect.x(), rect.y(), img,
+		client->isCompatibilityMode());
 	client->sendCommands(msgs.count(), msgs.data());
 }
 

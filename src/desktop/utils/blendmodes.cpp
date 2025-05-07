@@ -5,33 +5,44 @@
 #include <QStandardItemModel>
 
 
+namespace {
+static bool isMatchingBlendMode(QAbstractItemModel *model, int i, int mode)
+{
+	QModelIndex idx = model->index(i, 0);
+	return idx.isValid() && model->flags(idx).testFlag(Qt::ItemIsEnabled) &&
+		   model->data(idx, Qt::UserRole).toInt() == mode;
+}
+}
+
 int searchBlendModeComboIndex(QComboBox *combo, int mode)
 {
-	int blendModeCount = combo->count();
-	for(int i = 0; i < blendModeCount; ++i) {
-		if(combo->itemData(i).toInt() == mode) {
-			return i;
-		}
-	}
-
-	int alphaPreservingMode = canvas::blendmode::toAlphaPreserving(mode);
-	if(alphaPreservingMode != mode) {
+	QAbstractItemModel *model = combo->model();
+	if(model) {
+		int blendModeCount = combo->count();
 		for(int i = 0; i < blendModeCount; ++i) {
-			if(combo->itemData(i).toInt() == alphaPreservingMode) {
+			if(isMatchingBlendMode(model, i, mode)) {
 				return i;
 			}
 		}
-	}
 
-	int alphaAffectingMode = canvas::blendmode::toAlphaAffecting(mode);
-	if(alphaAffectingMode != mode) {
-		for(int i = 0; i < blendModeCount; ++i) {
-			if(combo->itemData(i).toInt() == alphaAffectingMode) {
-				return i;
+		int alphaPreservingMode = canvas::blendmode::toAlphaPreserving(mode);
+		if(alphaPreservingMode != mode) {
+			for(int i = 0; i < blendModeCount; ++i) {
+				if(isMatchingBlendMode(model, i, alphaPreservingMode)) {
+					return i;
+				}
+			}
+		}
+
+		int alphaAffectingMode = canvas::blendmode::toAlphaAffecting(mode);
+		if(alphaAffectingMode != mode) {
+			for(int i = 0; i < blendModeCount; ++i) {
+				if(isMatchingBlendMode(model, i, alphaAffectingMode)) {
+					return i;
+				}
 			}
 		}
 	}
-
 	return -1;
 }
 
@@ -53,7 +64,7 @@ static void addSeparator(QStandardItemModel *model)
 }
 
 static void addBlendModesTo(
-	QStandardItemModel *model, int recolor,
+	QStandardItemModel *model, int recolor, bool compatibilityMode,
 	const QVector<canvas::blendmode::Named> &modes)
 {
 	for(int i = 0, count = modes.size(); i < count; ++i) {
@@ -75,24 +86,31 @@ static void addBlendModesTo(
 			model->appendRow(item);
 		}
 
+		if(compatibilityMode && !m.compatible) {
+			item->setEnabled(false);
+		}
+
 		if(m.separatorBelow && i != count - 1) {
 			addSeparator(model);
 		}
 	}
 }
 
-static void addLayerBlendModesTo(QStandardItemModel *model, int recolor)
+static void addLayerBlendModesTo(
+	QStandardItemModel *model, int recolor, bool compatibilityMode)
 {
-	addBlendModesTo(model, recolor, canvas::blendmode::layerModeNames());
+	addBlendModesTo(
+		model, recolor, compatibilityMode, canvas::blendmode::layerModeNames());
 }
 
-static void addGroupBlendModesTo(QStandardItemModel *model, int recolor)
+static void addGroupBlendModesTo(
+	QStandardItemModel *model, int recolor, bool compatibilityMode)
 {
 	QStandardItem *item = new QStandardItem(QCoreApplication::translate(
 		"dialogs::LayerProperties", "Pass Through"));
 	item->setData(-1, Qt::UserRole);
 	model->appendRow(item);
-	addLayerBlendModesTo(model, recolor);
+	addLayerBlendModesTo(model, recolor, compatibilityMode);
 }
 
 static QStandardItemModel *layerBlendModes()
@@ -100,7 +118,7 @@ static QStandardItemModel *layerBlendModes()
 	static QStandardItemModel *model;
 	if(!model) {
 		model = new QStandardItemModel;
-		addLayerBlendModesTo(model, RECOLOR_ENABLED);
+		addLayerBlendModesTo(model, RECOLOR_ENABLED, false);
 	}
 	return model;
 }
@@ -110,7 +128,7 @@ QStandardItemModel *layerBlendModesRecolorDisabled()
 	static QStandardItemModel *model;
 	if(!model) {
 		model = new QStandardItemModel;
-		addLayerBlendModesTo(model, RECOLOR_DISABLED);
+		addLayerBlendModesTo(model, RECOLOR_DISABLED, false);
 	}
 	return model;
 }
@@ -120,7 +138,17 @@ QStandardItemModel *layerBlendModesRecolorOmitted()
 	static QStandardItemModel *model;
 	if(!model) {
 		model = new QStandardItemModel;
-		addLayerBlendModesTo(model, RECOLOR_OMITTED);
+		addLayerBlendModesTo(model, RECOLOR_OMITTED, false);
+	}
+	return model;
+}
+
+QStandardItemModel *layerBlendModesCompat()
+{
+	static QStandardItemModel *model;
+	if(!model) {
+		model = new QStandardItemModel;
+		addLayerBlendModesTo(model, RECOLOR_ENABLED, true);
 	}
 	return model;
 }
@@ -130,7 +158,7 @@ QStandardItemModel *groupBlendModes()
 	static QStandardItemModel *model;
 	if(!model) {
 		model = new QStandardItemModel;
-		addGroupBlendModesTo(model, RECOLOR_ENABLED);
+		addGroupBlendModesTo(model, RECOLOR_ENABLED, false);
 	}
 	return model;
 }
@@ -140,7 +168,7 @@ QStandardItemModel *groupBlendModesRecolorDisabled()
 	static QStandardItemModel *model;
 	if(!model) {
 		model = new QStandardItemModel;
-		addGroupBlendModesTo(model, RECOLOR_DISABLED);
+		addGroupBlendModesTo(model, RECOLOR_DISABLED, false);
 	}
 	return model;
 }
@@ -150,7 +178,17 @@ QStandardItemModel *groupBlendModesRecolorOmitted()
 	static QStandardItemModel *model;
 	if(!model) {
 		model = new QStandardItemModel;
-		addGroupBlendModesTo(model, RECOLOR_OMITTED);
+		addGroupBlendModesTo(model, RECOLOR_OMITTED, false);
+	}
+	return model;
+}
+
+QStandardItemModel *groupBlendModesCompat()
+{
+	static QStandardItemModel *model;
+	if(!model) {
+		model = new QStandardItemModel;
+		addGroupBlendModesTo(model, RECOLOR_ENABLED, true);
 	}
 	return model;
 }
@@ -161,7 +199,7 @@ QStandardItemModel *brushBlendModes()
 	if(!model) {
 		model = new QStandardItemModel;
 		addBlendModesTo(
-			model, RECOLOR_ENABLED, canvas::blendmode::brushModeNames());
+			model, RECOLOR_ENABLED, false, canvas::blendmode::brushModeNames());
 	}
 	return model;
 }
@@ -172,7 +210,7 @@ QStandardItemModel *brushBlendModesRecolorOmitted()
 	if(!model) {
 		model = new QStandardItemModel;
 		addBlendModesTo(
-			model, RECOLOR_OMITTED, canvas::blendmode::brushModeNames());
+			model, RECOLOR_OMITTED, false, canvas::blendmode::brushModeNames());
 	}
 	return model;
 }
@@ -183,7 +221,30 @@ QStandardItemModel *brushBlendModesErase()
 	if(!model) {
 		model = new QStandardItemModel;
 		addBlendModesTo(
-			model, RECOLOR_ENABLED, canvas::blendmode::eraserModeNames());
+			model, RECOLOR_ENABLED, false,
+			canvas::blendmode::eraserModeNames());
+	}
+	return model;
+}
+
+QStandardItemModel *brushBlendModesCompat()
+{
+	static QStandardItemModel *model;
+	if(!model) {
+		model = new QStandardItemModel;
+		addBlendModesTo(
+			model, RECOLOR_ENABLED, true, canvas::blendmode::brushModeNames());
+	}
+	return model;
+}
+
+QStandardItemModel *brushBlendModesEraseCompat()
+{
+	static QStandardItemModel *model;
+	if(!model) {
+		model = new QStandardItemModel;
+		addBlendModesTo(
+			model, RECOLOR_ENABLED, true, canvas::blendmode::eraserModeNames());
 	}
 	return model;
 }
@@ -194,7 +255,7 @@ QStandardItemModel *fillBlendModes()
 	if(!model) {
 		model = new QStandardItemModel;
 		addBlendModesTo(
-			model, RECOLOR_ENABLED, canvas::blendmode::pasteModeNames());
+			model, RECOLOR_ENABLED, false, canvas::blendmode::pasteModeNames());
 	}
 	return model;
 }
@@ -205,17 +266,30 @@ QStandardItemModel *fillBlendModesRecolorOmitted()
 	if(!model) {
 		model = new QStandardItemModel;
 		addBlendModesTo(
-			model, RECOLOR_OMITTED, canvas::blendmode::pasteModeNames());
+			model, RECOLOR_OMITTED, false, canvas::blendmode::pasteModeNames());
+	}
+	return model;
+}
+
+QStandardItemModel *fillBlendModesCompat()
+{
+	static QStandardItemModel *model;
+	if(!model) {
+		model = new QStandardItemModel;
+		addBlendModesTo(
+			model, RECOLOR_ENABLED, true, canvas::blendmode::pasteModeNames());
 	}
 	return model;
 }
 
 }
 
-QStandardItemModel *
-getLayerBlendModesFor(bool group, bool clip, bool automaticAlphaPreserve)
+QStandardItemModel *getLayerBlendModesFor(
+	bool group, bool clip, bool automaticAlphaPreserve, bool compatibilityMode)
 {
-	if(automaticAlphaPreserve) {
+	if(compatibilityMode) {
+		return group ? groupBlendModesCompat() : layerBlendModesCompat();
+	} else if(automaticAlphaPreserve) {
 		if(clip) {
 			return group ? groupBlendModesRecolorDisabled()
 						 : layerBlendModesRecolorDisabled();
@@ -228,16 +302,28 @@ getLayerBlendModesFor(bool group, bool clip, bool automaticAlphaPreserve)
 	}
 }
 
-QStandardItemModel *
-getBrushBlendModesFor(bool erase, bool automaticAlphaPreserve)
+QStandardItemModel *getBrushBlendModesFor(
+	bool erase, bool automaticAlphaPreserve, bool compatibilityMode)
 {
-	return erase					? brushBlendModesErase()
-		   : automaticAlphaPreserve ? brushBlendModes()
-									: brushBlendModesRecolorOmitted();
+	if(compatibilityMode) {
+		return erase ? brushBlendModesEraseCompat() : brushBlendModesCompat();
+	} else if(erase) {
+		return brushBlendModesErase();
+	} else if(automaticAlphaPreserve) {
+		return brushBlendModes();
+	} else {
+		return brushBlendModesRecolorOmitted();
+	}
 }
 
-QStandardItemModel *getFillBlendModesFor(bool automaticAlphaPreserve)
+QStandardItemModel *
+getFillBlendModesFor(bool automaticAlphaPreserve, bool compatibilityMode)
 {
-	return automaticAlphaPreserve ? fillBlendModes()
-								  : fillBlendModesRecolorOmitted();
+	if(compatibilityMode) {
+		return fillBlendModesCompat();
+	} else if(automaticAlphaPreserve) {
+		return fillBlendModes();
+	} else {
+		return fillBlendModesRecolorOmitted();
+	}
 }

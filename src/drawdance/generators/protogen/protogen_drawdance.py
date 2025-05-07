@@ -292,7 +292,24 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
         return f"{self.base_type} {f.name} = {self.deserialize_payload_fn}(buffer + read, &read);"
 
     def deserialize_constructor_arg(self, f):
-        return f.name
+        if not f.convert:
+            return f.name
+        elif f.convert == "layer_id":
+            return f"deserialize_layer_id_compat({f.name})"
+        elif f.convert in ("annotation_id", "track_id"):
+            return f"convert_other_id_compat({f.name})"
+        elif f.convert == "key_frame_set_source_id":
+            return f"source == DP_MSG_KEY_FRAME_SET_SOURCE_LAYER ? deserialize_layer_id_compat({f.name}) : convert_other_id_compat({f.name})"
+        elif f.convert == "u24_to_16":
+            return f"DP_uint16_to_uint32({f.name})"
+        elif f.convert == "u16_to_8":
+            return f"DP_uint8_to_uint16({f.name})"
+        elif f.convert == "mask_u8":
+            return f"{f.name} & (uint8_t){f.convert_args}"
+        elif f.convert == "old_blend_mode":
+            return f"DP_blend_mode_to_compatible({f.name})"
+        else:
+            raise RuntimeError(f"Unknown conversion {f.convert}")
 
     def parse_field(self, f):
         fn = self.parse_field_fn
@@ -328,7 +345,28 @@ class DrawdancePlainFieldType(DrawdanceFieldType):
 
     def serialize_payload(self, f, subject, dst):
         a = self.access(f, subject)
+        if not f.convert:
+            pass
+        elif f.convert == "layer_id":
+            a = f"serialize_layer_id_compat({a})"
+        elif f.convert in ("annotation_id", "track_id"):
+            a = f"convert_other_id_compat({a})"
+        elif f.convert == "key_frame_set_source_id":
+            a = f"mkfs->source == DP_MSG_KEY_FRAME_SET_SOURCE_LAYER ? serialize_layer_id_compat({a}) : convert_other_id_compat({a})"
+        elif f.convert == "u24_to_16":
+            a = f"DP_uint32_to_uint16({a})"
+        elif f.convert == "u16_to_8":
+            a = f"DP_uint16_to_uint8({a})"
+        elif f.convert == "mask_u8":
+            a = f"{a} & (uint8_t){f.convert_args}"
+        elif f.convert == "old_blend_mode":
+            a = f"DP_blend_mode_to_compatible({a})"
+        else:
+            raise RuntimeError(f"Unknown conversion {f.convert}")
         return f"{self.serialize_payload_fn}({a}, {dst})"
+
+    def serialize_payload_compat(self, f, subject, dst):
+        return self.serialize_payload(f, subject, dst)
 
     def serialize_local_match(self, f, subject, dst):
         return self.serialize_payload(f, subject, dst)
@@ -436,7 +474,14 @@ class DrawdanceArrayFieldType(DrawdanceFieldType):
         return f"void *{f.name}_user = (void *)(buffer + read);"
 
     def deserialize_constructor_arg(self, f):
-        return f"{self.deserialize_payload_fn}, {f.name}_{self.array_size_name(f)}, {f.name}_user"
+        if not f.convert:
+            return f"{self.deserialize_payload_fn}, {f.name}_{self.array_size_name(f)}, {f.name}_user"
+        elif f.convert == "track_order_tracks":
+            return f"read_track_ids_compat, {f.name}_{self.array_size_name(f)}, {f.name}_user"
+        elif f.convert == "key_frame_layer_attributes_layer_flags":
+            return f"read_key_frame_layer_flags_compat, {f.name}_{self.array_size_name(f)} / 2, {f.name}_user"
+        else:
+            raise RuntimeError(f"Unknown conversion {f.convert}")
 
     def parse_field_count(self, f):
         return f"{self.size_type} {f.name}_{self.array_size_name(f)};"
@@ -484,7 +529,17 @@ class DrawdanceArrayFieldType(DrawdanceFieldType):
     def serialize_payload(self, f, subject, dst):
         a = self.access(f, subject)
         a_count = f"{subject}->{f.name}_{self.array_size_name(f)}"
-        return f"{self.serialize_payload_fn}({a}, {a_count}, {dst})"
+        if not f.convert:
+            return f"{self.serialize_payload_fn}({a}, {a_count}, {dst})"
+        elif f.convert == "track_order_tracks":
+            return f"write_track_ids_compat({a}, {a_count}, {dst})"
+        elif f.convert == "key_frame_layer_attributes_layer_flags":
+            return f"write_key_frame_layer_flags_compat({a}, {a_count}, {dst})"
+        else:
+            raise RuntimeError(f"Unknown conversion {f.convert}")
+
+    def serialize_payload_compat(self, f, subject, dst):
+        return self.serialize_payload(f, subject, dst)
 
     def serialize_local_match(self, f, subject, dst):
         a_count = f"{subject}->{f.name}_{self.array_size_name(f)}"
@@ -597,6 +652,9 @@ class DrawdanceStringFieldType(DrawdanceFieldType):
         a_len = f"{subject}->{f.name}_len"
         return f"DP_write_bytes({a}, 1, {a_len}, {dst})"
 
+    def serialize_payload_compat(self, f, subject, dst):
+        return self.serialize_payload(f, subject, dst)
+
     def write_payload_text(self, f, subject):
         fmt = f.format
         if fmt:
@@ -647,6 +705,9 @@ class DrawdanceStringWithLengthFieldType(DrawdanceStringFieldType):
         a_len = f"{subject}->{f.name}_len"
         return f"write_string_with_length({a}, {a_len}, {dst})"
 
+    def serialize_payload_compat(self, f, subject, dst):
+        return self.serialize_payload(f, subject, dst)
+
 
 class DrawdanceStructFieldType(DrawdanceFieldType):
     def __init__(self, key):
@@ -683,7 +744,7 @@ class DrawdanceStructFieldType(DrawdanceFieldType):
         return f"void *{f.name}_user = (void *)(buffer + read);"
 
     def deserialize_constructor_arg(self, f):
-        return f"{f.sub.func_name}_deserialize, {f.name}_count, {f.name}_user"
+        return f"{f.sub.func_name}_deserialize{"_compat" if f.message.is_compat else ""}, {f.name}_count, {f.name}_user"
 
     def parse_field_count(self, f):
         return f'int {f.name}_count = DP_text_reader_get_sub_count(reader);'
@@ -722,6 +783,11 @@ class DrawdanceStructFieldType(DrawdanceFieldType):
         a = self.access(f, subject)
         a_count = f"{subject}->{f.name}_count"
         return f"{f.sub.func_name}_serialize_payloads({a}, {a_count}, {dst})"
+
+    def serialize_payload_compat(self, f, subject, dst):
+        a = self.access(f, subject)
+        a_count = f"{subject}->{f.name}_count"
+        return f"{f.sub.func_name}_serialize_payloads_compat({a}, {a_count}, {dst})"
 
     def serialize_local_match(self, f, subject, dst):
         a_count = f"{subject}->{f.name}_{self.array_size_name(f)}"
@@ -1024,6 +1090,48 @@ def param_name(s):
     return "".join(filter(lambda c: c.isupper(), s)).lower()
 
 
+class DrawdanceCompat:
+    def __init__(self, parent, compat):
+        self.parent = parent
+        self.fields = [DrawdanceField(self, f) for f in compat.fields]
+        self.deserialize_fields = compat.deserialize_fields
+        self.min_length = compat.min_len
+        self.max_length = compat.max_len
+        array_fields = [f for f in self.fields if f.type.is_array]
+        if len(array_fields) == 0:
+            self.array_field = None
+        elif len(array_fields) == 1:
+            self.array_field = array_fields[0]
+        else:
+            raise ValueError(f"Unhandled compat array field combination: {array_fields}")
+
+        fields_with_subfields = [f for f in self.fields if f.sub]
+        if len(fields_with_subfields) == 0:
+            self.field_with_subfields = None
+        elif len(fields_with_subfields) == 1:
+            self.field_with_subfields = fields_with_subfields[0]
+        else:
+            raise ValueError(
+                f"Multiple compat fields with subfields: {fields_with_subfields}"
+            )
+
+    @property
+    def is_compat(self):
+        return True
+
+    @property
+    def static_payload_length(self):
+        return sum(f.static_payload_length for f in self.fields)
+
+    @property
+    def dynamic_payload_length(self):
+        return " + ".join(filter(bool, [f.dynamic_payload_length for f in self.fields]))
+
+    @property
+    def param_name(self):
+        return self.parent.param_name
+
+
 class DrawdanceMessage:
     def __init__(self, message):
         self.id = message.id
@@ -1031,6 +1139,7 @@ class DrawdanceMessage:
         self.alias = message.alias
         self.reserved = message.reserved
         self.local_match = message.local_match
+        self.incompatible = message.incompatible
         self.comment = "\n".join(
             f" * {c}".rstrip() for c in message.comment.strip().split("\n")
         )
@@ -1077,6 +1186,8 @@ class DrawdanceMessage:
                     f"Multiple fields with subfields: {fields_with_subfields}"
                 )
 
+            self.compat = DrawdanceCompat(self, message.compat) if message.compat else None
+
     def init_alias(self, messages):
         if self.alias:
             for m in messages:
@@ -1085,6 +1196,7 @@ class DrawdanceMessage:
                     self.struct_name = m.struct_name
                     self.param = self.struct_name + " *" + self.param_name
                     self.effective_fields = m.fields
+                    self.compat = m.compat
                     self.min_length = m.min_length
                     self.max_length = m.max_length
                     self.array_field = m.array_field
@@ -1103,8 +1215,19 @@ class DrawdanceMessage:
         return " || ".join(checks)
 
     @property
+    def is_compat(self):
+        return False
+
+    @property
     def static_payload_length(self):
         return sum(f.static_payload_length for f in self.fields)
+
+    @property
+    def static_payload_length_compat(self):
+       if self.compat:
+           return self.compat.static_payload_length
+       else:
+            return self.static_payload_length
 
     @property
     def local_match_length(self):
@@ -1116,6 +1239,13 @@ class DrawdanceMessage:
     @property
     def dynamic_payload_length(self):
         return " + ".join(filter(bool, [f.dynamic_payload_length for f in self.fields]))
+
+    @property
+    def dynamic_payload_length_compat(self):
+        if self.compat:
+            return self.compat.dynamic_payload_length
+        else:
+            return self.dynamic_payload_length
 
     @property
     def array_declaration(self):
@@ -1138,6 +1268,8 @@ class DrawdanceField:
         self.func_name = self.name
         self.type = DrawdanceFieldType.TYPES[field.field_type]
         self.offset_field = None
+        self.convert = field.convert
+        self.convert_args = field.convert_args
 
         if hasattr(field, "format") and field.format:
             self.format = field.format
@@ -1277,6 +1409,9 @@ class DrawdanceField:
     def serialize_payload(self, subject, dst):
         return self.type.serialize_payload(self, subject, dst)
 
+    def serialize_payload_compat(self, subject, dst):
+        return self.type.serialize_payload_compat(self, subject, dst)
+
     def serialize_local_match(self, subject, dst):
         return self.type.serialize_local_match(self, subject, dst)
 
@@ -1340,10 +1475,22 @@ class DrawdanceSubStruct:
 
 def load_template_file(template_file_name):
     with open(os.path.join(os.path.dirname(__file__), template_file_name)) as fh:
-        return jinja2.Template(fh.read(), trim_blocks=True, lstrip_blocks=True)
+        return jinja2.Template(fh.read(), trim_blocks=True, lstrip_blocks=True, undefined=jinja2.StrictUndefined)
 
 
-def render(path, template_file_name, protocol, messages, version):
+def parse_version(version_string):
+    match = re.search(r"^(\w+):(\d+).(\d+).(\d+)$", version_string)
+    if not match:
+        raise ValueError(f"Invalid version: '{version_string}'")
+    return {
+        "string": version_string,
+        "namespace": match.group(1),
+        "server": int(match.group(2)),
+        "major": int(match.group(3)),
+        "minor": int(match.group(4)),
+    }
+
+def render(path, template_file_name, protocol, messages, version, compat_version):
     template = load_template_file(template_file_name)
     with open(path, "w") as fh:
         fh.write(
@@ -1351,6 +1498,7 @@ def render(path, template_file_name, protocol, messages, version):
                 messages=messages,
                 message_types=protogen.MSG_TYPES,
                 version=version,
+                compat_version=compat_version,
                 undo_depth=protocol["undo_depth"],
             )
         )
@@ -1369,21 +1517,12 @@ if __name__ == "__main__":
         else os.path.join(os.path.dirname(__file__), "protocol.yaml")
     )
 
-    version_string = protocol["version"]
-    match = re.search(r"^(\w+):(\d+).(\d+).(\d+)$", version_string)
-    if not match:
-        raise ValueError(f"Invalid version: '{version_string}'")
-    version = {
-        "string": version_string,
-        "namespace": match.group(1),
-        "server": int(match.group(2)),
-        "major": int(match.group(3)),
-        "minor": int(match.group(4)),
-    }
+    version = parse_version(protocol['version'])
+    compat_version = parse_version(protocol['compat_version']) if 'compat_version' in protocol else None
 
     messages = [DrawdanceMessage(m) for m in protocol["messages"]]
     for m in messages:
         m.init_alias(messages)
 
     for target in ["messages.h", "messages.c"]:
-        render(os.path.join(output_dir, target), f"{target}.jinja", protocol, messages, version)
+        render(os.path.join(output_dir, target), f"{target}.jinja", protocol, messages, version, compat_version)

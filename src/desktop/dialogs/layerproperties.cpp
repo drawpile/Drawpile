@@ -132,7 +132,7 @@ void LayerProperties::setNewLayerItem(
 	m_ui->createdBy->hide();
 	updateBlendMode(
 		m_ui->blendMode, m_item.blend, m_item.group, m_item.isolated,
-		m_item.clip, m_automaticAlphaPreserve);
+		m_item.clip, m_automaticAlphaPreserve, m_compatibilityMode);
 	// Can't apply settings to a layer that doesn't exist yet.
 	QPushButton *applyButton = m_ui->buttonBox->button(QDialogButtonBox::Apply);
 	if(applyButton) {
@@ -183,7 +183,7 @@ void LayerProperties::setLayerItem(
 				QString::number(item.elementId())));
 	updateBlendMode(
 		m_ui->blendMode, item.blend, item.group, item.isolated, item.clip,
-		m_automaticAlphaPreserve);
+		m_automaticAlphaPreserve, m_compatibilityMode);
 
 	desktop::settings::Settings &settings = dpApp().settings();
 	settings.bindAutomaticAlphaPreserve(
@@ -212,11 +212,25 @@ void LayerProperties::setOpControlsEnabled(bool enabled)
 	m_ui->defaultLayer->setEnabled(enabled);
 }
 
+void LayerProperties::setCompatibilityMode(bool compatibilityMode)
+{
+	if(m_compatibilityMode != compatibilityMode) {
+		m_compatibilityMode = compatibilityMode;
+		m_ui->alphaBlend->setEnabled(!compatibilityMode);
+		m_ui->alphaPreserve->setEnabled(!compatibilityMode);
+		m_ui->clip->setEnabled(!compatibilityMode);
+		updateBlendMode(
+			m_ui->blendMode, m_item.blend, m_item.group, m_item.isolated,
+			m_item.clip, m_automaticAlphaPreserve, compatibilityMode);
+	}
+}
+
 void LayerProperties::updateBlendMode(
 	QComboBox *combo, DP_BlendMode mode, bool group, bool isolated, bool clip,
-	bool automaticAlphaPreserve)
+	bool automaticAlphaPreserve, bool compatibilityMode)
 {
-	combo->setModel(getLayerBlendModesFor(group, clip, automaticAlphaPreserve));
+	combo->setModel(getLayerBlendModesFor(
+		group, clip, automaticAlphaPreserve, compatibilityMode));
 	// If this is an unknown blend mode, hide the control to avoid damage.
 	int blendModeIndex = searchBlendModeComboIndex(combo, int(mode));
 	combo->setVisible(blendModeIndex != -1);
@@ -246,7 +260,7 @@ void LayerProperties::updateAlpha(QAbstractButton *button)
 		bool alphaPreserve = button == m_ui->alphaPreserve;
 		int blendMode = m_ui->blendMode->currentData().toInt();
 		m_ui->blendMode->setModel(getLayerBlendModesFor(
-			m_item.group, clip, m_automaticAlphaPreserve));
+			m_item.group, clip, m_automaticAlphaPreserve, m_compatibilityMode));
 
 		if((clip || !alphaPreserve) && blendMode == DP_BLEND_MODE_RECOLOR) {
 			blendMode = DP_BLEND_MODE_NORMAL;
@@ -275,7 +289,7 @@ void LayerProperties::updateAlphaBasedOnBlendMode(int index)
 void LayerProperties::updateAlphaTogglesBasedOnBlendMode(int index)
 {
 	int blendMode = m_ui->blendMode->itemData(index).toInt();
-	bool enabled = blendMode != -1;
+	bool enabled = blendMode != -1 && !m_compatibilityMode;
 	m_ui->alphaBlend->setEnabled(enabled);
 	m_ui->alphaPreserve->setEnabled(enabled);
 	m_ui->clip->setEnabled(enabled);
@@ -378,8 +392,9 @@ void LayerProperties::emitChanges()
 
 	int oldOpacity = qRound(m_item.opacity * 100.0);
 	bool censored = m_ui->censored->isChecked();
-	bool clip = m_ui->clip->isChecked();
-	bool alphaPreserve = m_ui->alphaPreserve->isChecked();
+	bool clip = !m_compatibilityMode && m_ui->clip->isChecked();
+	bool alphaPreserve =
+		!m_compatibilityMode && m_ui->alphaPreserve->isChecked();
 	DP_BlendMode newBlendmode;
 	bool isolated;
 	if(m_ui->blendMode->isEnabled()) {
@@ -396,7 +411,10 @@ void LayerProperties::emitChanges()
 		isolated = m_item.isolated;
 	}
 
-	if(clip) {
+	if(m_compatibilityMode) {
+		newBlendmode =
+			DP_BlendMode(canvas::blendmode::toCompatible(int(newBlendmode)));
+	} else if(clip) {
 		newBlendmode = DP_BlendMode(
 			canvas::blendmode::toAlphaAffecting(int(newBlendmode)));
 	} else if(alphaPreserve) {
@@ -410,7 +428,8 @@ void LayerProperties::emitChanges()
 		uint8_t flags =
 			(censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
 			(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0) |
-			(clip ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP : 0);
+			(clip && !m_compatibilityMode ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP
+										  : 0);
 		uint8_t opacity = qRound(m_ui->opacitySlider->value() / 100.0 * 255);
 		messages.append(net::makeLayerAttributesMessage(
 			m_user, m_item.id, 0, flags, opacity, newBlendmode));

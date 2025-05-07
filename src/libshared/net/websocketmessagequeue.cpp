@@ -46,7 +46,7 @@ void WebSocketMessageQueue::enqueueMessages(int count, const net::Message *msgs)
 	for(int i = 0; i < count; ++i) {
 		const net::Message &msg = msgs[i];
 		if(!msg.isNull()) {
-			if(msg.serializeWs(m_serializationBuffer)) {
+			if(serializeMessage(msg)) {
 				qint64 sent =
 					m_socket->sendBinaryMessage(m_serializationBuffer);
 				if(sent != qint64(m_serializationBuffer.size())) {
@@ -207,6 +207,25 @@ void WebSocketMessageQueue::afterDisconnectSent()
 		QWebSocketProtocol::CloseCodeNormal,
 		QStringLiteral("gracefuldisconnect"));
 #endif
+}
+
+bool WebSocketMessageQueue::serializeMessage(const net::Message &msg)
+{
+	if(compatibilityMode()) {
+		return msg.serializeWsCompat(m_serializationBuffer);
+	} else {
+		return msg.serializeWs(m_serializationBuffer);
+	}
+}
+
+net::Message WebSocketMessageQueue::deserializeMessage(
+	const unsigned char *buf, size_t bufsize)
+{
+	if(compatibilityMode()) {
+		return net::Message::deserializeWsCompat(buf, bufsize, m_decodeOpaque);
+	} else {
+		return net::Message::deserializeWs(buf, bufsize, m_decodeOpaque);
+	}
 }
 
 }

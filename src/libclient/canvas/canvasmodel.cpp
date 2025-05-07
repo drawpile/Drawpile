@@ -26,7 +26,6 @@ CanvasModel::CanvasModel(
 	int canvasImplementation, int fps, int snapshotMaxCount,
 	long long snapshotMinDelayMs, bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
-	, m_localUserId(1)
 {
 	m_paintengine = new PaintEngine(
 		canvasImplementation, settings.checkerColor1(),
@@ -72,6 +71,9 @@ CanvasModel::CanvasModel(
 	});
 	m_timeline->setAclState(m_aclstate);
 
+	connect(
+		this, &CanvasModel::compatibilityModeChanged, m_layerlist,
+		&LayerListModel::setCompatibilityMode);
 	connect(
 		m_layerlist, &LayerListModel::autoSelectRequest, this,
 		&CanvasModel::layerAutoselectRequest);
@@ -135,7 +137,8 @@ void CanvasModel::previewAnnotation(int id, const QRect &shape)
 	emit previewAnnotationRequested(id, shape);
 }
 
-void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
+void CanvasModel::connectedToServer(
+	uint8_t myUserId, bool join, bool compatibilityMode)
 {
 	if(myUserId == 0) {
 		// Zero is a reserved "null" user ID
@@ -143,6 +146,7 @@ void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 	}
 
 	m_localUserId = myUserId;
+	m_compatibilityMode = compatibilityMode;
 	m_layerlist->setAutoselectAny(true);
 
 	m_aclstate->setLocalUserId(myUserId);
@@ -153,14 +157,17 @@ void CanvasModel::connectedToServer(uint8_t myUserId, bool join)
 	}
 
 	m_userlist->reset();
+	emit compatibilityModeChanged(m_compatibilityMode);
 }
 
 void CanvasModel::disconnectedFromServer()
 {
+	m_compatibilityMode = false;
 	m_paintengine->cleanup();
 	m_userlist->allLogout();
 	m_paintengine->resetAcl(m_localUserId);
 	m_paintengine->cleanup();
+	emit compatibilityModeChanged(m_compatibilityMode);
 }
 
 void CanvasModel::handleCommands(int count, const net::Message *msgs)
@@ -321,7 +328,8 @@ net::MessageList CanvasModel::generateSnapshot(
 	int overrideUndoLimit, const QHash<int, int> *overrideTiers) const
 {
 	net::MessageList snapshot;
-	m_paintengine->historyCanvasState().toResetImage(snapshot, 0);
+	m_paintengine->historyCanvasState().toResetImage(
+		snapshot, 0, m_compatibilityMode);
 	amendSnapshotMetadata(
 		snapshot, includePinnedMessage, aclIncludeFlags, overrideUndoLimit,
 		overrideTiers);

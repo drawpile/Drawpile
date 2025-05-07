@@ -194,6 +194,8 @@ DP_INLINE int DP_blend_mode_clip(int blend_mode, bool clip)
     return clip ? DP_blend_mode_to_alpha_preserving(blend_mode) : blend_mode;
 }
 
+uint8_t DP_blend_mode_to_compatible(uint8_t blend_mode);
+
 
 bool DP_paint_mode_exists(int paint_mode);
 
@@ -207,6 +209,8 @@ DP_PaintMode DP_paint_mode_by_setting_name(const char *setting_name,
                                            DP_PaintMode not_found_value);
 
 bool DP_paint_mode_indirect(int paint_mode, int *out_blend_mode);
+
+uint8_t DP_paint_mode_to_compatible(uint8_t paint_mode);
 
 
 #endif

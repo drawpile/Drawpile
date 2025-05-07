@@ -192,21 +192,25 @@ DP_BlendMode DP_classic_brush_blend_mode(const DP_ClassicBrush *cb)
 
 uint32_t DP_classic_brush_soft_dab_size_at(const DP_ClassicBrush *cb,
                                            float pressure, float velocity,
-                                           float distance)
+                                           float distance,
+                                           bool compatibility_mode)
 {
     float value =
         DP_classic_brush_size_at(cb, pressure, velocity, distance) * 256.0f
         + 0.5f;
-    return DP_float_to_uint32(CLAMP(value, 0, DP_BRUSH_SIZE_MAX * 256.0f));
+    return DP_float_to_uint32(
+        CLAMP(value, 0, DP_brush_size_maxf(compatibility_mode) * 256.0f));
 }
 
 uint16_t DP_classic_brush_pixel_dab_size_at(const DP_ClassicBrush *cb,
                                             float pressure, float velocity,
-                                            float distance)
+                                            float distance,
+                                            bool compatibility_mode)
 {
     float value =
         DP_classic_brush_size_at(cb, pressure, velocity, distance) + 0.5f;
-    return DP_float_to_uint16(CLAMP(value, 0, DP_BRUSH_SIZE_MAX));
+    return DP_float_to_uint16(
+        CLAMP(value, 0, DP_brush_size_maxf(compatibility_mode)));
 }
 
 uint8_t DP_classic_brush_dab_opacity_at(const DP_ClassicBrush *cb,

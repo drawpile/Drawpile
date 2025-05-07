@@ -456,10 +456,10 @@ void FloodFill::flushPending()
 			net::Client *client = m_owner.client();
 			uint8_t contextId = client->myId();
 			net::MessageList msgs;
-			net::makePutImageZstdMessages(
+			net::makePutImageMessagesCompat(
 				msgs, contextId, layerId,
 				getEffectiveBlendModeForLayer(layerId), m_pendingPos.x(),
-				m_pendingPos.y(), m_pendingImage);
+				m_pendingPos.y(), m_pendingImage, isCompatibilityMode());
 			disposePending();
 			if(!msgs.isEmpty()) {
 				msgs.prepend(net::makeUndoPointMessage(contextId));
@@ -524,15 +524,22 @@ void FloodFill::emitFloodFillStateChanged()
 int FloodFill::getEffectiveBlendModeForLayer(
 	int layerId, bool canUseOriginal) const
 {
+	int blendMode;
 	if(m_pendingEditable || !canUseOriginal) {
 		canvas::CanvasModel *canvas = m_owner.model();
 		if(canvas && canvas->paintEngine()->isLayerAlphaLocked(layerId)) {
-			return canvas::blendmode::toAlphaPreserving(m_blendMode);
+			blendMode = canvas::blendmode::toAlphaPreserving(m_blendMode);
 		} else {
-			return m_blendMode;
+			blendMode = m_blendMode;
 		}
 	} else {
-		return m_originalBlendMode;
+		blendMode = m_originalBlendMode;
+	}
+
+	if(isCompatibilityMode()) {
+		return canvas::blendmode::toCompatible(blendMode);
+	} else {
+		return blendMode;
 	}
 }
 

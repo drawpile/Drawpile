@@ -27,6 +27,7 @@
 #include <mypaint-brush-settings-gen.h>
 
 #define DP_BRUSH_SIZE_MAX                  1000
+#define DP_BRUSH_SIZE_MAX_COMPAT           255
 #define DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT 256
 #define DP_MYPAINT_CONTROL_POINTS_COUNT    64
 
@@ -107,6 +108,16 @@ typedef struct DP_MyPaintBrush {
 } DP_MyPaintBrush;
 
 
+DP_INLINE float DP_brush_size_maxf(bool compatibility_mode)
+{
+    if (compatibility_mode) {
+        return DP_BRUSH_SIZE_MAX_COMPAT;
+    }
+    else {
+        return DP_BRUSH_SIZE_MAX;
+    }
+}
+
 bool DP_classic_brush_equal_preset(const DP_ClassicBrush *a,
                                    const DP_ClassicBrush *b,
                                    bool in_eraser_slot);
@@ -131,11 +142,13 @@ DP_BlendMode DP_classic_brush_blend_mode(const DP_ClassicBrush *cb);
 
 uint32_t DP_classic_brush_soft_dab_size_at(const DP_ClassicBrush *cb,
                                            float pressure, float velocity,
-                                           float distance);
+                                           float distance,
+                                           bool compatibility_mode);
 
 uint16_t DP_classic_brush_pixel_dab_size_at(const DP_ClassicBrush *cb,
                                             float pressure, float velocity,
-                                            float distance);
+                                            float distance,
+                                            bool compatibility_mode);
 
 uint8_t DP_classic_brush_dab_opacity_at(const DP_ClassicBrush *cb,
                                         float pressure, float velocity,

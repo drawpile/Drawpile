@@ -35,6 +35,8 @@ public:
 	bool affectsLayer() override { return false; }
 	bool isLocked() override;
 
+	void setCompatibilityMode(bool compatibilityMode) override;
+
 	/**
 	 * @brief Get the ID of the currently selected annotation
 	 * @return ID or 0 if none selected

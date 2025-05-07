@@ -1333,6 +1333,100 @@ int DP_blend_mode_to_alpha_preserving(int blend_mode)
     }
 }
 
+uint8_t DP_blend_mode_to_compatible(uint8_t blend_mode)
+{
+    switch (blend_mode) {
+    case DP_BLEND_MODE_COMPARE_DENSITY_SOFT:
+    case DP_BLEND_MODE_COMPARE_DENSITY:
+    case DP_BLEND_MODE_VIVID_LIGHT_ALPHA:
+    case DP_BLEND_MODE_PIN_LIGHT_ALPHA:
+    case DP_BLEND_MODE_DIFFERENCE_ALPHA:
+    case DP_BLEND_MODE_DARKER_COLOR_ALPHA:
+    case DP_BLEND_MODE_LIGHTER_COLOR_ALPHA:
+    case DP_BLEND_MODE_SHADE_SAI_ALPHA:
+    case DP_BLEND_MODE_SHADE_SHINE_SAI_ALPHA:
+    case DP_BLEND_MODE_BURN_SAI_ALPHA:
+    case DP_BLEND_MODE_DODGE_SAI_ALPHA:
+    case DP_BLEND_MODE_BURN_DODGE_SAI_ALPHA:
+    case DP_BLEND_MODE_HARD_MIX_SAI_ALPHA:
+    case DP_BLEND_MODE_DIFFERENCE_SAI_ALPHA:
+    case DP_BLEND_MODE_MARKER_ALPHA:
+    case DP_BLEND_MODE_MARKER_ALPHA_WASH:
+    case DP_BLEND_MODE_GREATER_ALPHA:
+    case DP_BLEND_MODE_GREATER_ALPHA_WASH:
+    case DP_BLEND_MODE_PIGMENT_ALPHA:
+    case DP_BLEND_MODE_PIGMENT_AND_ERASER:
+        return DP_BLEND_MODE_NORMAL;
+    case DP_BLEND_MODE_VIVID_LIGHT:
+    case DP_BLEND_MODE_PIN_LIGHT:
+    case DP_BLEND_MODE_DIFFERENCE:
+    case DP_BLEND_MODE_DARKER_COLOR:
+    case DP_BLEND_MODE_LIGHTER_COLOR:
+    case DP_BLEND_MODE_SHADE_SAI:
+    case DP_BLEND_MODE_SHADE_SHINE_SAI:
+    case DP_BLEND_MODE_BURN_SAI:
+    case DP_BLEND_MODE_DODGE_SAI:
+    case DP_BLEND_MODE_BURN_DODGE_SAI:
+    case DP_BLEND_MODE_HARD_MIX_SAI:
+    case DP_BLEND_MODE_DIFFERENCE_SAI:
+    case DP_BLEND_MODE_MARKER:
+    case DP_BLEND_MODE_MARKER_WASH:
+    case DP_BLEND_MODE_GREATER:
+    case DP_BLEND_MODE_GREATER_WASH:
+    case DP_BLEND_MODE_PIGMENT:
+        return DP_BLEND_MODE_RECOLOR;
+    case DP_BLEND_MODE_ERASE_PRESERVE:
+    case DP_BLEND_MODE_LIGHT_TO_ALPHA:
+    case DP_BLEND_MODE_DARK_TO_ALPHA:
+    case DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE:
+    case DP_BLEND_MODE_DARK_TO_ALPHA_PRESERVE:
+        return DP_BLEND_MODE_ERASE;
+    case DP_BLEND_MODE_BEHIND_PRESERVE:
+        return DP_BLEND_MODE_BEHIND;
+    case DP_BLEND_MODE_COLOR_ERASE_PRESERVE:
+        return DP_BLEND_MODE_COLOR_ERASE;
+    case DP_BLEND_MODE_MULTIPLY_ALPHA:
+        return DP_BLEND_MODE_MULTIPLY;
+    case DP_BLEND_MODE_DIVIDE_ALPHA:
+        return DP_BLEND_MODE_DIVIDE;
+    case DP_BLEND_MODE_BURN_ALPHA:
+        return DP_BLEND_MODE_BURN;
+    case DP_BLEND_MODE_DODGE_ALPHA:
+        return DP_BLEND_MODE_DODGE;
+    case DP_BLEND_MODE_DARKEN_ALPHA:
+        return DP_BLEND_MODE_DARKEN;
+    case DP_BLEND_MODE_LIGHTEN_ALPHA:
+        return DP_BLEND_MODE_LIGHTEN;
+    case DP_BLEND_MODE_SUBTRACT_ALPHA:
+        return DP_BLEND_MODE_SUBTRACT;
+    case DP_BLEND_MODE_ADD_ALPHA:
+        return DP_BLEND_MODE_ADD;
+    case DP_BLEND_MODE_SCREEN_ALPHA:
+        return DP_BLEND_MODE_SCREEN;
+    case DP_BLEND_MODE_LUMINOSITY_SHINE_SAI_ALPHA:
+        return DP_BLEND_MODE_LUMINOSITY_SHINE_SAI;
+    case DP_BLEND_MODE_OVERLAY_ALPHA:
+        return DP_BLEND_MODE_OVERLAY;
+    case DP_BLEND_MODE_HARD_LIGHT_ALPHA:
+        return DP_BLEND_MODE_HARD_LIGHT;
+    case DP_BLEND_MODE_SOFT_LIGHT_ALPHA:
+        return DP_BLEND_MODE_SOFT_LIGHT;
+    case DP_BLEND_MODE_LINEAR_BURN_ALPHA:
+        return DP_BLEND_MODE_LINEAR_BURN;
+    case DP_BLEND_MODE_LINEAR_LIGHT_ALPHA:
+        return DP_BLEND_MODE_LINEAR_LIGHT;
+    case DP_BLEND_MODE_HUE_ALPHA:
+        return DP_BLEND_MODE_HUE;
+    case DP_BLEND_MODE_SATURATION_ALPHA:
+        return DP_BLEND_MODE_SATURATION;
+    case DP_BLEND_MODE_LUMINOSITY_ALPHA:
+        return DP_BLEND_MODE_LUMINOSITY;
+    case DP_BLEND_MODE_COLOR_ALPHA:
+        return DP_BLEND_MODE_COLOR;
+    }
+    return blend_mode;
+}
+
 
 bool DP_paint_mode_exists(int paint_mode)
 {
@@ -1420,4 +1514,10 @@ bool DP_paint_mode_indirect(int paint_mode, int *out_blend_mode)
     default:
         return false;
     }
+}
+
+uint8_t DP_paint_mode_to_compatible(uint8_t paint_mode)
+{
+    return paint_mode == DP_PAINT_MODE_DIRECT ? DP_PAINT_MODE_DIRECT
+                                              : DP_PAINT_MODE_INDIRECT_SOFT;
 }

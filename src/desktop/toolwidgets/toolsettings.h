@@ -67,6 +67,11 @@ public:
 	//! Set the background color
 	virtual void setBackground(const QColor &color) { Q_UNUSED(color); }
 
+	virtual void setCompatibilityMode(bool compatibilityMode)
+	{
+		Q_UNUSED(compatibilityMode);
+	}
+
 	/**
 	 * @brief Quick adjust a tool parameter
 	 *

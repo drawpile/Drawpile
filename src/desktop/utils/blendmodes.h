@@ -9,12 +9,13 @@ class QStandardItemModel;
 
 int searchBlendModeComboIndex(QComboBox *combo, int mode);
 
-QStandardItemModel *
-getLayerBlendModesFor(bool group, bool clip, bool automaticAlphaPreserve);
+QStandardItemModel *getLayerBlendModesFor(
+	bool group, bool clip, bool automaticAlphaPreserve, bool compatibilityMode);
+
+QStandardItemModel *getBrushBlendModesFor(
+	bool erase, bool automaticAlphaPreserve, bool compatibilityMode);
 
 QStandardItemModel *
-getBrushBlendModesFor(bool erase, bool automaticAlphaPreserve);
-
-QStandardItemModel *getFillBlendModesFor(bool automaticAlphaPreserve);
+getFillBlendModesFor(bool automaticAlphaPreserve, bool compatibilityMode);
 
 #endif

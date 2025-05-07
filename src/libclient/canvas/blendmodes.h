@@ -17,6 +17,7 @@ struct Named {
 	QString name;
 	bool separatorAbove;
 	bool separatorBelow;
+	bool compatible;
 };
 
 //! Get the SVG name for the given blend mode
@@ -52,6 +53,7 @@ bool alphaPreservePair(
 	DP_BlendMode *outAlphaPreserving);
 int toAlphaAffecting(int mode);
 int toAlphaPreserving(int mode);
+int toCompatible(int mode);
 
 void adjustAlphaBehavior(int &mode, bool preserveAlpha);
 

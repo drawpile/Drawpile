@@ -271,6 +271,9 @@ struct BrushSettingsDialog::Private {
 	QComboBox *brushTypeCombo;
 	QLabel *paintModeLabel;
 	QComboBox *paintModeCombo;
+	QStandardItemModel *paintModeModel;
+	QStandardItem *paintModeIndirectWash;
+	QStandardItem *paintModeIndirectNormal;
 	QComboBox *brushModeCombo;
 	QCheckBox *eraseModeBox;
 	QCheckBox *colorPickBox;
@@ -312,6 +315,7 @@ struct BrushSettingsDialog::Private {
 	bool useBrushSampleCount;
 	bool automaticAlphaPreserve = true;
 	bool presetAttached = true;
+	bool compatibilityMode = false;
 	bool updating = false;
 };
 
@@ -407,6 +411,16 @@ void BrushSettingsDialog::setGlobalSmoothing(int smoothing)
 	d->smoothingSpinner->setValue(
 		d->smoothingSpinner->value() - d->globalSmoothing + smoothing);
 	d->globalSmoothing = smoothing;
+}
+
+void BrushSettingsDialog::setCompatibilityMode(bool compatibilityMode)
+{
+	if(compatibilityMode != d->compatibilityMode) {
+		d->compatibilityMode = compatibilityMode;
+		d->paintModeIndirectWash->setEnabled(!compatibilityMode);
+		d->paintModeIndirectNormal->setEnabled(!compatibilityMode);
+		updateUiFromActiveBrush(d->brush);
+	}
 }
 
 void BrushSettingsDialog::updateUiFromActiveBrush(
@@ -613,19 +627,38 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	d->paintModeLabel = new QLabel{tr("Paint Mode:"), widget};
 	d->paintModeCombo = new QComboBox{widget};
 	layout->addRow(d->paintModeLabel, d->paintModeCombo);
-	d->paintModeCombo->addItem(
-		QIcon::fromTheme("drawpile_incremental_mode"), tr("Direct Build-Up"),
-		int(DP_PAINT_MODE_DIRECT));
-	d->paintModeCombo->addItem(
-		QIcon::fromTheme("drawpile_wash_mode"), tr("Indirect Wash"),
-		int(DP_PAINT_MODE_INDIRECT_WASH));
-	d->paintModeCombo->addItem(
+
+	d->paintModeModel = new QStandardItemModel(d->paintModeCombo);
+
+	QStandardItem *paintModeDirect = new QStandardItem(
+		QIcon::fromTheme("drawpile_incremental_mode"), tr("Direct Build-Up"));
+	paintModeDirect->setData(int(DP_PAINT_MODE_DIRECT), Qt::UserRole);
+	d->paintModeModel->appendRow(paintModeDirect);
+
+	QStandardItem *paintModeIndirectWash = new QStandardItem(
+		QIcon::fromTheme("drawpile_wash_mode"), tr("Indirect Wash"));
+	paintModeIndirectWash->setData(
+		int(DP_PAINT_MODE_INDIRECT_WASH), Qt::UserRole);
+	d->paintModeModel->appendRow(paintModeIndirectWash);
+
+	QStandardItem *paintModeIndirectSoft = new QStandardItem(
 		QIcon::fromTheme("drawpile_soft_mode"),
-		tr("Indirect Soft (Drawpile 2.2)"), int(DP_PAINT_MODE_INDIRECT_SOFT));
-	d->paintModeCombo->addItem(
+		tr("Indirect Soft (Drawpile 2.2)"));
+	paintModeIndirectSoft->setData(
+		int(DP_PAINT_MODE_INDIRECT_SOFT), Qt::UserRole);
+	d->paintModeModel->appendRow(paintModeIndirectSoft);
+
+	QStandardItem *paintModeIndirectNormal = new QStandardItem(
 		QIcon::fromTheme("drawpile_indirect_mode"),
-		tr("Indirect Build-Up (Drawpile 2.1)"),
-		int(DP_PAINT_MODE_INDIRECT_NORMAL));
+		tr("Indirect Build-Up (Drawpile 2.1)"));
+	paintModeIndirectNormal->setData(
+		int(DP_PAINT_MODE_INDIRECT_NORMAL), Qt::UserRole);
+	d->paintModeModel->appendRow(paintModeIndirectNormal);
+
+	d->paintModeCombo->setModel(d->paintModeModel);
+	d->paintModeIndirectWash = paintModeIndirectWash;
+	d->paintModeIndirectNormal = paintModeIndirectNormal;
+
 	connect(
 		d->paintModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		makeBrushChangeCallbackArg<int>([this](int index) {
@@ -1293,8 +1326,8 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 {
 	const brushes::ClassicBrush &classic = d->brush.classic();
 
-	d->brushModeCombo->setModel(
-		getBrushBlendModesFor(classic.erase, d->automaticAlphaPreserve));
+	d->brushModeCombo->setModel(getBrushBlendModesFor(
+		classic.erase, d->automaticAlphaPreserve, d->compatibilityMode));
 	int brushMode = DP_classic_brush_blend_mode(&classic);
 	int brushModeIndex =
 		searchBlendModeComboIndex(d->brushModeCombo, brushMode);
@@ -1383,8 +1416,8 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 	d->colorPickBox->setVisible(false);
 	d->spacingSpinner->setVisible(false);
 
-	d->brushModeCombo->setModel(
-		getBrushBlendModesFor(brush.erase, d->automaticAlphaPreserve));
+	d->brushModeCombo->setModel(getBrushBlendModesFor(
+		brush.erase, d->automaticAlphaPreserve, d->compatibilityMode));
 	int brushMode = DP_mypaint_brush_blend_mode(&brush);
 	int brushModeIndex =
 		searchBlendModeComboIndex(d->brushModeCombo, brushMode);

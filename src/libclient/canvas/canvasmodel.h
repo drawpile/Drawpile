@@ -77,13 +77,14 @@ public:
 		const QHash<int, int> *overrideTiers = nullptr) const;
 
 	uint8_t localUserId() const { return m_localUserId; }
+	bool isCompatibilityMode() const { return m_compatibilityMode; }
 
 	QImage selectionToImage(int layerId, bool *outFound = nullptr) const;
 
 	QRect getPasteBounds(
 		const QSize &imageSize, const QPoint &defaultPoint, bool forceDefault);
 
-	void connectedToServer(uint8_t myUserId, bool join);
+	void connectedToServer(uint8_t myUserId, bool join, bool compatibilityMode);
 	void disconnectedFromServer();
 
 	AclState *aclState() const { return m_aclstate; }
@@ -164,6 +165,8 @@ signals:
 
 	void recorderStateChanged(bool recording);
 
+	void compatibilityModeChanged(bool compatibilityMode);
+
 	void permissionDenied(int feature);
 
 private slots:
@@ -192,7 +195,8 @@ private:
 	QString m_title;
 	QString m_pinnedMessage;
 
-	uint8_t m_localUserId;
+	uint8_t m_localUserId = 1;
+	bool m_compatibilityMode = false;
 };
 
 }

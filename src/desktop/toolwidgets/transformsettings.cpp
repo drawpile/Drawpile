@@ -64,6 +64,12 @@ void TransformSettings::setActions(
 	connect(stamp, &QAction::triggered, this, &TransformSettings::stamp);
 }
 
+void TransformSettings::setCompatibilityMode(bool compatibilityMode)
+{
+	initBlendModeOptions(compatibilityMode);
+	m_alphaPreserveButton->setEnabled(!compatibilityMode);
+}
+
 ToolProperties TransformSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
@@ -300,7 +306,7 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 		m_blendModeCombo->sizePolicy().hasHeightForWidth());
 	m_blendModeCombo->setSizePolicy(blendModeSizePolicy);
 	m_blendModeCombo->setMinimumSize(QSize(24, 0));
-	initBlendModeOptions();
+	initBlendModeOptions(false);
 	modeLayout->addWidget(m_blendModeCombo);
 	connect(
 		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -500,13 +506,13 @@ void TransformSettings::showHandles()
 	tool()->setMode(TransformTool::Mode::Scale);
 }
 
-void TransformSettings::initBlendModeOptions()
+void TransformSettings::initBlendModeOptions(bool compatibilityMode)
 {
 	int blendMode = getCurrentBlendMode();
 	{
 		QSignalBlocker blocker(m_blendModeCombo);
 		m_blendModeCombo->setModel(
-			getFillBlendModesFor(m_automaticAlphaPreserve));
+			getFillBlendModesFor(m_automaticAlphaPreserve, compatibilityMode));
 	}
 	selectBlendMode(blendMode);
 }
@@ -569,7 +575,8 @@ void TransformSettings::setAutomaticAlphaPerserve(bool automaticAlphaPreserve)
 {
 	if(automaticAlphaPreserve != m_automaticAlphaPreserve) {
 		m_automaticAlphaPreserve = automaticAlphaPreserve;
-		initBlendModeOptions();
+		canvas::CanvasModel *canvas = controller()->model();
+		initBlendModeOptions(canvas && canvas->isCompatibilityMode());
 	}
 }
 

@@ -223,6 +223,9 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 					const auto version = session.protocol.versionName();
 					if(session.protocol.isCurrent()) {
 						return tr("Compatible");
+					} else if(session.protocol.isPastCompatible()) {
+						return tr("Requires compatibility mode (%1)")
+							.arg(version);
 					} else if(session.protocol.isFuture()) {
 						return tr("Requires newer client (%1)").arg(version);
 					} else {
@@ -242,6 +245,8 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 			case Version:
 				if(session.protocol.isCurrent()) {
 					return QIcon::fromTheme("state-ok");
+				} else if(session.protocol.isPastCompatible()) {
+					return QIcon::fromTheme("state-warning");
 				} else {
 					return QIcon::fromTheme("state-error");
 				}

@@ -29,16 +29,23 @@ typedef struct DP_TextWriter DP_TextWriter;
 
 typedef void (*DP_MessageLocalMatchSetFn)(size_t, unsigned char *, void *);
 
-#define DP_PROTOCOL_VERSION_NAMESPACE "dp"
-#define DP_PROTOCOL_VERSION_SERVER    4
-#define DP_PROTOCOL_VERSION_MAJOR     25
-#define DP_PROTOCOL_VERSION_MINOR     0
-#define DP_PROTOCOL_VERSION           "dp:4.25.0"
-#define DP_UNDO_DEPTH_DEFAULT         30
+#define DP_PROTOCOL_VERSION_NAMESPACE        "dp"
+#define DP_PROTOCOL_VERSION_SERVER           4
+#define DP_PROTOCOL_VERSION_MAJOR            25
+#define DP_PROTOCOL_VERSION_MINOR            0
+#define DP_PROTOCOL_VERSION                  "dp:4.25.0"
+#define DP_PROTOCOL_COMPAT_VERSION_NAMESPACE "dp"
+#define DP_PROTOCOL_COMPAT_VERSION_SERVER    4
+#define DP_PROTOCOL_COMPAT_VERSION_MAJOR     24
+#define DP_PROTOCOL_COMPAT_VERSION_MINOR     0
+#define DP_PROTOCOL_COMPAT_VERSION           "dp:4.24.0"
+#define DP_UNDO_DEPTH_DEFAULT                30
 
 typedef struct DP_MessageMethods {
     size_t (*payload_length)(DP_Message *msg);
     size_t (*serialize_payload)(DP_Message *msg, unsigned char *data);
+    size_t (*payload_length_compat)(DP_Message *msg);
+    size_t (*serialize_payload_compat)(DP_Message *msg, unsigned char *data);
     bool (*write_payload_text)(DP_Message *msg, DP_TextWriter *writer);
     bool (*equals)(DP_Message *DP_RESTRICT msg, DP_Message *DP_RESTRICT other);
 } DP_MessageMethods;
@@ -131,6 +138,8 @@ bool DP_message_type_server_meta(DP_MessageType type);
 
 bool DP_message_type_command(DP_MessageType type);
 
+bool DP_message_type_compatible(DP_MessageType type);
+
 const char *DP_message_type_name(DP_MessageType type);
 
 const char *DP_message_type_enum_name(DP_MessageType type);
@@ -140,14 +149,16 @@ const char *DP_message_type_enum_name_unprefixed(DP_MessageType type);
 DP_MessageType DP_message_type_from_name(const char *type_name,
                                          DP_MessageType not_found_value);
 
-// Returns if the given type's text format has a body of value tuples, rather
-// than a body of multiline fields. This is the case for draw dabs messages.
-bool DP_message_type_parse_multiline_tuples(DP_MessageType type);
-
 
 DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
                                         const unsigned char *buf, size_t length,
                                         bool decode_opaque);
+
+DP_Message *DP_message_deserialize_body_compat(int type,
+                                               unsigned int context_id,
+                                               const unsigned char *buf,
+                                               size_t length,
+                                               bool decode_opaque);
 
 DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
                                   DP_TextReader *reader);
@@ -166,7 +177,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
  * - sending administration commands (e.g. kick user)
  */
 
-#define DP_MSG_SERVER_COMMAND_STATIC_LENGTH 0
+#define DP_MSG_SERVER_COMMAND_STATIC_LENGTH        0
+#define DP_MSG_SERVER_COMMAND_STATIC_LENGTH_COMPAT 0
 
 #define DP_MSG_SERVER_COMMAND_MSG_MIN_LEN 0
 #define DP_MSG_SERVER_COMMAND_MSG_MAX_LEN 65535
@@ -179,6 +191,9 @@ DP_Message *DP_msg_server_command_new(unsigned int context_id,
 DP_Message *DP_msg_server_command_deserialize(unsigned int context_id,
                                               const unsigned char *buffer,
                                               size_t length);
+
+DP_Message *DP_msg_server_command_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_server_command_parse(unsigned int context_id,
                                         DP_TextReader *reader);
@@ -200,7 +215,8 @@ size_t DP_msg_server_command_msg_len(const DP_MsgServerCommand *msc);
  * queue will automatically close the socket after sending this message.
  */
 
-#define DP_MSG_DISCONNECT_STATIC_LENGTH 1
+#define DP_MSG_DISCONNECT_STATIC_LENGTH        1
+#define DP_MSG_DISCONNECT_STATIC_LENGTH_COMPAT 1
 
 #define DP_MSG_DISCONNECT_REASON_ERROR    0
 #define DP_MSG_DISCONNECT_REASON_KICK     1
@@ -227,6 +243,10 @@ DP_Message *DP_msg_disconnect_deserialize(unsigned int context_id,
                                           const unsigned char *buffer,
                                           size_t length);
 
+DP_Message *DP_msg_disconnect_deserialize_compat(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length);
+
 DP_Message *DP_msg_disconnect_parse(unsigned int context_id,
                                     DP_TextReader *reader);
 
@@ -251,7 +271,8 @@ size_t DP_msg_disconnect_message_len(const DP_MsgDisconnect *md);
  * The server should return a Ping with the is_pong flag set
  */
 
-#define DP_MSG_PING_STATIC_LENGTH 1
+#define DP_MSG_PING_STATIC_LENGTH        1
+#define DP_MSG_PING_STATIC_LENGTH_COMPAT 1
 
 typedef struct DP_MsgPing DP_MsgPing;
 
@@ -259,6 +280,10 @@ DP_Message *DP_msg_ping_new(unsigned int context_id, bool is_pong);
 
 DP_Message *DP_msg_ping_deserialize(unsigned int context_id,
                                     const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_ping_deserialize_compat(unsigned int context_id,
+                                           const unsigned char *buffer,
+                                           size_t length);
 
 DP_Message *DP_msg_ping_parse(unsigned int context_id, DP_TextReader *reader);
 
@@ -277,13 +302,18 @@ bool DP_msg_ping_is_pong(const DP_MsgPing *mp);
  * actually manage sending out a ping.
  */
 
-#define DP_MSG_KEEP_ALIVE_STATIC_LENGTH 0
+#define DP_MSG_KEEP_ALIVE_STATIC_LENGTH        0
+#define DP_MSG_KEEP_ALIVE_STATIC_LENGTH_COMPAT 0
 
 DP_Message *DP_msg_keep_alive_new(unsigned int context_id);
 
 DP_Message *DP_msg_keep_alive_deserialize(unsigned int context_id,
                                           const unsigned char *buffer,
                                           size_t length);
+
+DP_Message *DP_msg_keep_alive_deserialize_compat(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length);
 
 DP_Message *DP_msg_keep_alive_parse(unsigned int context_id,
                                     DP_TextReader *reader);
@@ -305,7 +335,8 @@ DP_Message *DP_msg_keep_alive_parse(unsigned int context_id,
  * with a context ID.
  */
 
-#define DP_MSG_JOIN_STATIC_LENGTH 2
+#define DP_MSG_JOIN_STATIC_LENGTH        2
+#define DP_MSG_JOIN_STATIC_LENGTH_COMPAT 2
 
 #define DP_MSG_JOIN_FLAGS_AUTH 0x1
 #define DP_MSG_JOIN_FLAGS_MOD  0x2
@@ -333,6 +364,10 @@ DP_Message *DP_msg_join_new(unsigned int context_id, uint8_t flags,
 DP_Message *DP_msg_join_deserialize(unsigned int context_id,
                                     const unsigned char *buffer, size_t length);
 
+DP_Message *DP_msg_join_deserialize_compat(unsigned int context_id,
+                                           const unsigned char *buffer,
+                                           size_t length);
+
 DP_Message *DP_msg_join_parse(unsigned int context_id, DP_TextReader *reader);
 
 DP_MsgJoin *DP_msg_join_cast(DP_Message *msg);
@@ -358,13 +393,18 @@ size_t DP_msg_join_avatar_size(const DP_MsgJoin *mj);
  * is also allowed to release resources associated with this context ID.
  */
 
-#define DP_MSG_LEAVE_STATIC_LENGTH 0
+#define DP_MSG_LEAVE_STATIC_LENGTH        0
+#define DP_MSG_LEAVE_STATIC_LENGTH_COMPAT 0
 
 DP_Message *DP_msg_leave_new(unsigned int context_id);
 
 DP_Message *DP_msg_leave_deserialize(unsigned int context_id,
                                      const unsigned char *buffer,
                                      size_t length);
+
+DP_Message *DP_msg_leave_deserialize_compat(unsigned int context_id,
+                                            const unsigned char *buffer,
+                                            size_t length);
 
 DP_Message *DP_msg_leave_parse(unsigned int context_id, DP_TextReader *reader);
 
@@ -385,7 +425,8 @@ DP_Message *DP_msg_leave_parse(unsigned int context_id, DP_TextReader *reader);
  * without checking the access control list.
  */
 
-#define DP_MSG_SESSION_OWNER_STATIC_LENGTH 0
+#define DP_MSG_SESSION_OWNER_STATIC_LENGTH        0
+#define DP_MSG_SESSION_OWNER_STATIC_LENGTH_COMPAT 0
 
 #define DP_MSG_SESSION_OWNER_USERS_MIN_COUNT 0
 #define DP_MSG_SESSION_OWNER_USERS_MAX_COUNT 255
@@ -399,6 +440,10 @@ DP_Message *DP_msg_session_owner_new(unsigned int context_id,
 DP_Message *DP_msg_session_owner_deserialize(unsigned int context_id,
                                              const unsigned char *buffer,
                                              size_t length);
+
+DP_Message *DP_msg_session_owner_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length);
 
 DP_Message *DP_msg_session_owner_parse(unsigned int context_id,
                                        DP_TextReader *reader);
@@ -422,7 +467,8 @@ int DP_msg_session_owner_users_count(const DP_MsgSessionOwner *mso);
  * history.)
  */
 
-#define DP_MSG_CHAT_STATIC_LENGTH 2
+#define DP_MSG_CHAT_STATIC_LENGTH        2
+#define DP_MSG_CHAT_STATIC_LENGTH_COMPAT 2
 
 #define DP_MSG_CHAT_TFLAGS_BYPASS 0x1
 
@@ -455,6 +501,10 @@ DP_Message *DP_msg_chat_new(unsigned int context_id, uint8_t tflags,
 DP_Message *DP_msg_chat_deserialize(unsigned int context_id,
                                     const unsigned char *buffer, size_t length);
 
+DP_Message *DP_msg_chat_deserialize_compat(unsigned int context_id,
+                                           const unsigned char *buffer,
+                                           size_t length);
+
 DP_Message *DP_msg_chat_parse(unsigned int context_id, DP_TextReader *reader);
 
 DP_MsgChat *DP_msg_chat_cast(DP_Message *msg);
@@ -485,7 +535,8 @@ size_t DP_msg_chat_message_len(const DP_MsgChat *mc);
  * without checking the access control list.
  */
 
-#define DP_MSG_TRUSTED_USERS_STATIC_LENGTH 0
+#define DP_MSG_TRUSTED_USERS_STATIC_LENGTH        0
+#define DP_MSG_TRUSTED_USERS_STATIC_LENGTH_COMPAT 0
 
 #define DP_MSG_TRUSTED_USERS_USERS_MIN_COUNT 0
 #define DP_MSG_TRUSTED_USERS_USERS_MAX_COUNT 255
@@ -499,6 +550,10 @@ DP_Message *DP_msg_trusted_users_new(unsigned int context_id,
 DP_Message *DP_msg_trusted_users_deserialize(unsigned int context_id,
                                              const unsigned char *buffer,
                                              size_t length);
+
+DP_Message *DP_msg_trusted_users_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length);
 
 DP_Message *DP_msg_trusted_users_parse(unsigned int context_id,
                                        DP_TextReader *reader);
@@ -523,13 +578,18 @@ int DP_msg_trusted_users_users_count(const DP_MsgTrustedUsers *mtu);
  * message, since undos cannot cross the reset boundary.
  */
 
-#define DP_MSG_SOFT_RESET_STATIC_LENGTH 0
+#define DP_MSG_SOFT_RESET_STATIC_LENGTH        0
+#define DP_MSG_SOFT_RESET_STATIC_LENGTH_COMPAT 0
 
 DP_Message *DP_msg_soft_reset_new(unsigned int context_id);
 
 DP_Message *DP_msg_soft_reset_deserialize(unsigned int context_id,
                                           const unsigned char *buffer,
                                           size_t length);
+
+DP_Message *DP_msg_soft_reset_deserialize_compat(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length);
 
 DP_Message *DP_msg_soft_reset_parse(unsigned int context_id,
                                     DP_TextReader *reader);
@@ -548,7 +608,8 @@ DP_Message *DP_msg_soft_reset_parse(unsigned int context_id,
  * Private messages always bypass the session history.
  */
 
-#define DP_MSG_PRIVATE_CHAT_STATIC_LENGTH 2
+#define DP_MSG_PRIVATE_CHAT_STATIC_LENGTH        2
+#define DP_MSG_PRIVATE_CHAT_STATIC_LENGTH_COMPAT 2
 
 #define DP_MSG_PRIVATE_CHAT_MESSAGE_MIN_LEN 0
 #define DP_MSG_PRIVATE_CHAT_MESSAGE_MAX_LEN 65533
@@ -562,6 +623,10 @@ DP_Message *DP_msg_private_chat_new(unsigned int context_id, uint8_t target,
 DP_Message *DP_msg_private_chat_deserialize(unsigned int context_id,
                                             const unsigned char *buffer,
                                             size_t length);
+
+DP_Message *DP_msg_private_chat_deserialize_compat(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length);
 
 DP_Message *DP_msg_private_chat_parse(unsigned int context_id,
                                       DP_TextReader *reader);
@@ -585,7 +650,8 @@ size_t DP_msg_private_chat_message_len(const DP_MsgPrivateChat *mpc);
  * will negotiate support and compression algorithm.
  */
 
-#define DP_MSG_RESET_STREAM_STATIC_LENGTH 0
+#define DP_MSG_RESET_STREAM_STATIC_LENGTH        0
+#define DP_MSG_RESET_STREAM_STATIC_LENGTH_COMPAT 0
 
 #define DP_MSG_RESET_STREAM_DATA_MIN_SIZE 0
 #define DP_MSG_RESET_STREAM_DATA_MAX_SIZE 65535
@@ -600,6 +666,10 @@ DP_Message *DP_msg_reset_stream_new(unsigned int context_id,
 DP_Message *DP_msg_reset_stream_deserialize(unsigned int context_id,
                                             const unsigned char *buffer,
                                             size_t length);
+
+DP_Message *DP_msg_reset_stream_deserialize_compat(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length);
 
 DP_Message *DP_msg_reset_stream_parse(unsigned int context_id,
                                       DP_TextReader *reader);
@@ -624,7 +694,8 @@ size_t DP_msg_reset_stream_data_size(const DP_MsgResetStream *mrs);
  * should be enough.
  */
 
-#define DP_MSG_INTERVAL_STATIC_LENGTH 2
+#define DP_MSG_INTERVAL_STATIC_LENGTH        2
+#define DP_MSG_INTERVAL_STATIC_LENGTH_COMPAT 2
 
 typedef struct DP_MsgInterval DP_MsgInterval;
 
@@ -633,6 +704,10 @@ DP_Message *DP_msg_interval_new(unsigned int context_id, uint16_t msecs);
 DP_Message *DP_msg_interval_deserialize(unsigned int context_id,
                                         const unsigned char *buffer,
                                         size_t length);
+
+DP_Message *DP_msg_interval_deserialize_compat(unsigned int context_id,
+                                               const unsigned char *buffer,
+                                               size_t length);
 
 DP_Message *DP_msg_interval_parse(unsigned int context_id,
                                   DP_TextReader *reader);
@@ -653,7 +728,8 @@ uint16_t DP_msg_interval_msecs(const DP_MsgInterval *mi);
  * A nonzero persistence indicates the start of the trail and zero the end.
  */
 
-#define DP_MSG_LASER_TRAIL_STATIC_LENGTH 5
+#define DP_MSG_LASER_TRAIL_STATIC_LENGTH        5
+#define DP_MSG_LASER_TRAIL_STATIC_LENGTH_COMPAT 5
 
 typedef struct DP_MsgLaserTrail DP_MsgLaserTrail;
 
@@ -663,6 +739,10 @@ DP_Message *DP_msg_laser_trail_new(unsigned int context_id, uint32_t color,
 DP_Message *DP_msg_laser_trail_deserialize(unsigned int context_id,
                                            const unsigned char *buffer,
                                            size_t length);
+
+DP_Message *DP_msg_laser_trail_deserialize_compat(unsigned int context_id,
+                                                  const unsigned char *buffer,
+                                                  size_t length);
 
 DP_Message *DP_msg_laser_trail_parse(unsigned int context_id,
                                      DP_TextReader *reader);
@@ -687,7 +767,8 @@ uint8_t DP_msg_laser_trail_persistence(const DP_MsgLaserTrail *mlt);
  * The pointer position is divided by 4, like classic brushes.
  */
 
-#define DP_MSG_MOVE_POINTER_STATIC_LENGTH 8
+#define DP_MSG_MOVE_POINTER_STATIC_LENGTH        8
+#define DP_MSG_MOVE_POINTER_STATIC_LENGTH_COMPAT 8
 
 typedef struct DP_MsgMovePointer DP_MsgMovePointer;
 
@@ -697,6 +778,10 @@ DP_Message *DP_msg_move_pointer_new(unsigned int context_id, int32_t x,
 DP_Message *DP_msg_move_pointer_deserialize(unsigned int context_id,
                                             const unsigned char *buffer,
                                             size_t length);
+
+DP_Message *DP_msg_move_pointer_deserialize_compat(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length);
 
 DP_Message *DP_msg_move_pointer_parse(unsigned int context_id,
                                       DP_TextReader *reader);
@@ -724,7 +809,8 @@ int32_t DP_msg_move_pointer_y(const DP_MsgMovePointer *mmp);
  * It can only be sent by session operators.
  */
 
-#define DP_MSG_USER_ACL_STATIC_LENGTH 0
+#define DP_MSG_USER_ACL_STATIC_LENGTH        0
+#define DP_MSG_USER_ACL_STATIC_LENGTH_COMPAT 0
 
 #define DP_MSG_USER_ACL_USERS_MIN_COUNT 0
 #define DP_MSG_USER_ACL_USERS_MAX_COUNT 255
@@ -738,6 +824,10 @@ DP_Message *DP_msg_user_acl_new(unsigned int context_id,
 DP_Message *DP_msg_user_acl_deserialize(unsigned int context_id,
                                         const unsigned char *buffer,
                                         size_t length);
+
+DP_Message *DP_msg_user_acl_deserialize_compat(unsigned int context_id,
+                                               const unsigned char *buffer,
+                                               size_t length);
 
 DP_Message *DP_msg_user_acl_parse(unsigned int context_id,
                                   DP_TextReader *reader);
@@ -771,7 +861,8 @@ int DP_msg_user_acl_users_count(const DP_MsgUserAcl *mua);
  * lock. The tier and exclusive user list is not used in this case.
  */
 
-#define DP_MSG_LAYER_ACL_STATIC_LENGTH 4
+#define DP_MSG_LAYER_ACL_STATIC_LENGTH        4
+#define DP_MSG_LAYER_ACL_STATIC_LENGTH_COMPAT 3
 
 #define DP_MSG_LAYER_ACL_EXCLUSIVE_MIN_COUNT 0
 #define DP_MSG_LAYER_ACL_EXCLUSIVE_MAX_COUNT 255
@@ -786,6 +877,10 @@ DP_Message *DP_msg_layer_acl_new(unsigned int context_id, uint32_t id,
 DP_Message *DP_msg_layer_acl_deserialize(unsigned int context_id,
                                          const unsigned char *buffer,
                                          size_t length);
+
+DP_Message *DP_msg_layer_acl_deserialize_compat(unsigned int context_id,
+                                                const unsigned char *buffer,
+                                                size_t length);
 
 DP_Message *DP_msg_layer_acl_parse(unsigned int context_id,
                                    DP_TextReader *reader);
@@ -812,7 +907,8 @@ int DP_msg_layer_acl_exclusive_count(const DP_MsgLayerAcl *mla);
  * unknown features will be ignored by the client.
  */
 
-#define DP_MSG_FEATURE_ACCESS_LEVELS_STATIC_LENGTH 0
+#define DP_MSG_FEATURE_ACCESS_LEVELS_STATIC_LENGTH        0
+#define DP_MSG_FEATURE_ACCESS_LEVELS_STATIC_LENGTH_COMPAT 0
 
 #define DP_MSG_FEATURE_ACCESS_LEVELS_FEATURE_TIERS_MIN_COUNT 1
 #define DP_MSG_FEATURE_ACCESS_LEVELS_FEATURE_TIERS_MAX_COUNT 255
@@ -824,6 +920,9 @@ DP_Message *DP_msg_feature_access_levels_new(
     int feature_tiers_count, void *feature_tiers_user);
 
 DP_Message *DP_msg_feature_access_levels_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_feature_access_levels_deserialize_compat(
     unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_feature_access_levels_parse(unsigned int context_id,
@@ -847,7 +946,8 @@ int DP_msg_feature_access_levels_feature_tiers_count(
  * If no default layer is set, the newest layer will be selected by default.
  */
 
-#define DP_MSG_DEFAULT_LAYER_STATIC_LENGTH 3
+#define DP_MSG_DEFAULT_LAYER_STATIC_LENGTH        3
+#define DP_MSG_DEFAULT_LAYER_STATIC_LENGTH_COMPAT 2
 
 typedef struct DP_MsgDefaultLayer DP_MsgDefaultLayer;
 
@@ -856,6 +956,10 @@ DP_Message *DP_msg_default_layer_new(unsigned int context_id, uint32_t id);
 DP_Message *DP_msg_default_layer_deserialize(unsigned int context_id,
                                              const unsigned char *buffer,
                                              size_t length);
+
+DP_Message *DP_msg_default_layer_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length);
 
 DP_Message *DP_msg_default_layer_parse(unsigned int context_id,
                                        DP_TextReader *reader);
@@ -885,7 +989,8 @@ uint32_t DP_msg_default_layer_id(const DP_MsgDefaultLayer *mdl);
  * Set maximum undo depth
  */
 
-#define DP_MSG_UNDO_DEPTH_STATIC_LENGTH 1
+#define DP_MSG_UNDO_DEPTH_STATIC_LENGTH        1
+#define DP_MSG_UNDO_DEPTH_STATIC_LENGTH_COMPAT 1
 
 typedef struct DP_MsgUndoDepth DP_MsgUndoDepth;
 
@@ -894,6 +999,10 @@ DP_Message *DP_msg_undo_depth_new(unsigned int context_id, uint8_t depth);
 DP_Message *DP_msg_undo_depth_deserialize(unsigned int context_id,
                                           const unsigned char *buffer,
                                           size_t length);
+
+DP_Message *DP_msg_undo_depth_deserialize_compat(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length);
 
 DP_Message *DP_msg_undo_depth_parse(unsigned int context_id,
                                     DP_TextReader *reader);
@@ -913,7 +1022,8 @@ uint8_t DP_msg_undo_depth_depth(const DP_MsgUndoDepth *mud);
  * Drawpile 3.0.
  */
 
-#define DP_MSG_DATA_STATIC_LENGTH 2
+#define DP_MSG_DATA_STATIC_LENGTH        2
+#define DP_MSG_DATA_STATIC_LENGTH_COMPAT 2
 
 #define DP_MSG_DATA_TYPE_USER_INFO 0
 
@@ -934,6 +1044,10 @@ DP_Message *DP_msg_data_new(unsigned int context_id, uint8_t type,
 
 DP_Message *DP_msg_data_deserialize(unsigned int context_id,
                                     const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_data_deserialize_compat(unsigned int context_id,
+                                           const unsigned char *buffer,
+                                           size_t length);
 
 DP_Message *DP_msg_data_parse(unsigned int context_id, DP_TextReader *reader);
 
@@ -956,7 +1070,8 @@ size_t DP_msg_data_body_size(const DP_MsgData *md);
  * network, but will be recorded.
  */
 
-#define DP_MSG_LOCAL_CHANGE_STATIC_LENGTH 1
+#define DP_MSG_LOCAL_CHANGE_STATIC_LENGTH        1
+#define DP_MSG_LOCAL_CHANGE_STATIC_LENGTH_COMPAT 1
 
 #define DP_MSG_LOCAL_CHANGE_TYPE_LAYER_VISIBILITY 0
 #define DP_MSG_LOCAL_CHANGE_TYPE_BACKGROUND_TILE  1
@@ -997,6 +1112,10 @@ DP_Message *DP_msg_local_change_new(unsigned int context_id, uint8_t type,
 DP_Message *DP_msg_local_change_deserialize(unsigned int context_id,
                                             const unsigned char *buffer,
                                             size_t length);
+
+DP_Message *DP_msg_local_change_deserialize_compat(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length);
 
 DP_Message *DP_msg_local_change_parse(unsigned int context_id,
                                       DP_TextReader *reader);
@@ -1053,13 +1172,18 @@ int DP_msg_feature_limits_limits_count(const DP_MsgFeatureLimits *mfl);
  * sequence.
  */
 
-#define DP_MSG_UNDO_POINT_STATIC_LENGTH 0
+#define DP_MSG_UNDO_POINT_STATIC_LENGTH        0
+#define DP_MSG_UNDO_POINT_STATIC_LENGTH_COMPAT 0
 
 DP_Message *DP_msg_undo_point_new(unsigned int context_id);
 
 DP_Message *DP_msg_undo_point_deserialize(unsigned int context_id,
                                           const unsigned char *buffer,
                                           size_t length);
+
+DP_Message *DP_msg_undo_point_deserialize_compat(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length);
 
 DP_Message *DP_msg_undo_point_parse(unsigned int context_id,
                                     DP_TextReader *reader);
@@ -1079,7 +1203,8 @@ DP_Message *DP_msg_undo_point_parse(unsigned int context_id,
  * Initial canvas resize should be (0, w, h, 0).
  */
 
-#define DP_MSG_CANVAS_RESIZE_STATIC_LENGTH 16
+#define DP_MSG_CANVAS_RESIZE_STATIC_LENGTH        16
+#define DP_MSG_CANVAS_RESIZE_STATIC_LENGTH_COMPAT 16
 
 typedef struct DP_MsgCanvasResize DP_MsgCanvasResize;
 
@@ -1090,6 +1215,10 @@ DP_Message *DP_msg_canvas_resize_new(unsigned int context_id, int32_t top,
 DP_Message *DP_msg_canvas_resize_deserialize(unsigned int context_id,
                                              const unsigned char *buffer,
                                              size_t length);
+
+DP_Message *DP_msg_canvas_resize_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length);
 
 DP_Message *DP_msg_canvas_resize_parse(unsigned int context_id,
                                        DP_TextReader *reader);
@@ -1127,7 +1256,8 @@ int32_t DP_msg_canvas_resize_left(const DP_MsgCanvasResize *mcr);
  * replaced by the custom timeline feature.
  */
 
-#define DP_MSG_LAYER_ATTRIBUTES_STATIC_LENGTH 7
+#define DP_MSG_LAYER_ATTRIBUTES_STATIC_LENGTH        7
+#define DP_MSG_LAYER_ATTRIBUTES_STATIC_LENGTH_COMPAT 6
 
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR   0x1
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED    0x2
@@ -1152,6 +1282,9 @@ DP_Message *DP_msg_layer_attributes_deserialize(unsigned int context_id,
                                                 const unsigned char *buffer,
                                                 size_t length);
 
+DP_Message *DP_msg_layer_attributes_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
 DP_Message *DP_msg_layer_attributes_parse(unsigned int context_id,
                                           DP_TextReader *reader);
 
@@ -1174,7 +1307,8 @@ uint8_t DP_msg_layer_attributes_blend(const DP_MsgLayerAttributes *mla);
  * Change a layer's title
  */
 
-#define DP_MSG_LAYER_RETITLE_STATIC_LENGTH 3
+#define DP_MSG_LAYER_RETITLE_STATIC_LENGTH        3
+#define DP_MSG_LAYER_RETITLE_STATIC_LENGTH_COMPAT 2
 
 #define DP_MSG_LAYER_RETITLE_TITLE_MIN_LEN 0
 #define DP_MSG_LAYER_RETITLE_TITLE_MAX_LEN 65532
@@ -1187,6 +1321,10 @@ DP_Message *DP_msg_layer_retitle_new(unsigned int context_id, uint32_t id,
 DP_Message *DP_msg_layer_retitle_deserialize(unsigned int context_id,
                                              const unsigned char *buffer,
                                              size_t length);
+
+DP_Message *DP_msg_layer_retitle_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length);
 
 DP_Message *DP_msg_layer_retitle_parse(unsigned int context_id,
                                        DP_TextReader *reader);
@@ -1242,8 +1380,9 @@ size_t DP_msg_layer_retitle_title_len(const DP_MsgLayerRetitle *mlr);
  * The layer id may refer to a selection.
  */
 
-#define DP_MSG_PUT_IMAGE_STATIC_LENGTH 20
-#define DP_MSG_PUT_IMAGE_MATCH_LENGTH  22
+#define DP_MSG_PUT_IMAGE_STATIC_LENGTH        20
+#define DP_MSG_PUT_IMAGE_STATIC_LENGTH_COMPAT 19
+#define DP_MSG_PUT_IMAGE_MATCH_LENGTH         22
 
 #define DP_MSG_PUT_IMAGE_IMAGE_MIN_SIZE 0
 #define DP_MSG_PUT_IMAGE_IMAGE_MAX_SIZE 65515
@@ -1259,6 +1398,10 @@ DP_msg_put_image_new(unsigned int context_id, uint32_t layer, uint8_t mode,
 DP_Message *DP_msg_put_image_deserialize(unsigned int context_id,
                                          const unsigned char *buffer,
                                          size_t length);
+
+DP_Message *DP_msg_put_image_deserialize_compat(unsigned int context_id,
+                                                const unsigned char *buffer,
+                                                size_t length);
 
 DP_Message *DP_msg_put_image_parse(unsigned int context_id,
                                    DP_TextReader *reader);
@@ -1297,8 +1440,9 @@ size_t DP_msg_put_image_image_size(const DP_MsgPutImage *mpi);
  * The layer id may refer to a selection.
  */
 
-#define DP_MSG_FILL_RECT_STATIC_LENGTH 24
-#define DP_MSG_FILL_RECT_MATCH_LENGTH  24
+#define DP_MSG_FILL_RECT_STATIC_LENGTH        24
+#define DP_MSG_FILL_RECT_STATIC_LENGTH_COMPAT 23
+#define DP_MSG_FILL_RECT_MATCH_LENGTH         24
 
 typedef struct DP_MsgFillRect DP_MsgFillRect;
 
@@ -1309,6 +1453,10 @@ DP_Message *DP_msg_fill_rect_new(unsigned int context_id, uint32_t layer,
 DP_Message *DP_msg_fill_rect_deserialize(unsigned int context_id,
                                          const unsigned char *buffer,
                                          size_t length);
+
+DP_Message *DP_msg_fill_rect_deserialize_compat(unsigned int context_id,
+                                                const unsigned char *buffer,
+                                                size_t length);
 
 DP_Message *DP_msg_fill_rect_parse(unsigned int context_id,
                                    DP_TextReader *reader);
@@ -1364,7 +1512,8 @@ uint32_t DP_msg_fill_rect_color(const DP_MsgFillRect *mfr);
  * The layer id may refer to a selection.
  */
 
-#define DP_MSG_PEN_UP_STATIC_LENGTH 3
+#define DP_MSG_PEN_UP_STATIC_LENGTH        3
+#define DP_MSG_PEN_UP_STATIC_LENGTH_COMPAT 0
 
 typedef struct DP_MsgPenUp DP_MsgPenUp;
 
@@ -1373,6 +1522,10 @@ DP_Message *DP_msg_pen_up_new(unsigned int context_id, uint32_t layer);
 DP_Message *DP_msg_pen_up_deserialize(unsigned int context_id,
                                       const unsigned char *buffer,
                                       size_t length);
+
+DP_Message *DP_msg_pen_up_deserialize_compat(unsigned int context_id,
+                                             const unsigned char *buffer,
+                                             size_t length);
 
 DP_Message *DP_msg_pen_up_parse(unsigned int context_id, DP_TextReader *reader);
 
@@ -1393,7 +1546,8 @@ uint32_t DP_msg_pen_up_layer(const DP_MsgPenUp *mpu);
  * transparent background
  */
 
-#define DP_MSG_ANNOTATION_CREATE_STATIC_LENGTH 14
+#define DP_MSG_ANNOTATION_CREATE_STATIC_LENGTH        14
+#define DP_MSG_ANNOTATION_CREATE_STATIC_LENGTH_COMPAT 14
 
 typedef struct DP_MsgAnnotationCreate DP_MsgAnnotationCreate;
 
@@ -1404,6 +1558,9 @@ DP_Message *DP_msg_annotation_create_new(unsigned int context_id, uint16_t id,
 DP_Message *DP_msg_annotation_create_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
                                                  size_t length);
+
+DP_Message *DP_msg_annotation_create_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_annotation_create_parse(unsigned int context_id,
                                            DP_TextReader *reader);
@@ -1427,7 +1584,8 @@ uint16_t DP_msg_annotation_create_h(const DP_MsgAnnotationCreate *mac);
  * Change the position and size of an annotation
  */
 
-#define DP_MSG_ANNOTATION_RESHAPE_STATIC_LENGTH 14
+#define DP_MSG_ANNOTATION_RESHAPE_STATIC_LENGTH        14
+#define DP_MSG_ANNOTATION_RESHAPE_STATIC_LENGTH_COMPAT 14
 
 typedef struct DP_MsgAnnotationReshape DP_MsgAnnotationReshape;
 
@@ -1438,6 +1596,9 @@ DP_Message *DP_msg_annotation_reshape_new(unsigned int context_id, uint16_t id,
 DP_Message *DP_msg_annotation_reshape_deserialize(unsigned int context_id,
                                                   const unsigned char *buffer,
                                                   size_t length);
+
+DP_Message *DP_msg_annotation_reshape_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_annotation_reshape_parse(unsigned int context_id,
                                             DP_TextReader *reader);
@@ -1466,7 +1627,8 @@ uint16_t DP_msg_annotation_reshape_h(const DP_MsgAnnotationReshape *mar);
  * other than the one who created it, or session operators.
  */
 
-#define DP_MSG_ANNOTATION_EDIT_STATIC_LENGTH 8
+#define DP_MSG_ANNOTATION_EDIT_STATIC_LENGTH        8
+#define DP_MSG_ANNOTATION_EDIT_STATIC_LENGTH_COMPAT 8
 
 #define DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT       0x1
 #define DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER 0x2
@@ -1498,6 +1660,9 @@ DP_Message *DP_msg_annotation_edit_deserialize(unsigned int context_id,
                                                const unsigned char *buffer,
                                                size_t length);
 
+DP_Message *DP_msg_annotation_edit_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
 DP_Message *DP_msg_annotation_edit_parse(unsigned int context_id,
                                          DP_TextReader *reader);
 
@@ -1528,7 +1693,8 @@ size_t DP_msg_annotation_edit_text_len(const DP_MsgAnnotationEdit *mae);
  * identical rendering on all clients.
  */
 
-#define DP_MSG_ANNOTATION_DELETE_STATIC_LENGTH 2
+#define DP_MSG_ANNOTATION_DELETE_STATIC_LENGTH        2
+#define DP_MSG_ANNOTATION_DELETE_STATIC_LENGTH_COMPAT 2
 
 typedef struct DP_MsgAnnotationDelete DP_MsgAnnotationDelete;
 
@@ -1537,6 +1703,9 @@ DP_Message *DP_msg_annotation_delete_new(unsigned int context_id, uint16_t id);
 DP_Message *DP_msg_annotation_delete_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
                                                  size_t length);
+
+DP_Message *DP_msg_annotation_delete_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_annotation_delete_parse(unsigned int context_id,
                                            DP_TextReader *reader);
@@ -1567,7 +1736,8 @@ uint16_t DP_msg_annotation_delete_id(const DP_MsgAnnotationDelete *mad);
  * command will merge the sublayer.
  */
 
-#define DP_MSG_PUT_TILE_STATIC_LENGTH 11
+#define DP_MSG_PUT_TILE_STATIC_LENGTH        11
+#define DP_MSG_PUT_TILE_STATIC_LENGTH_COMPAT 9
 
 #define DP_MSG_PUT_TILE_IMAGE_MIN_SIZE 0
 #define DP_MSG_PUT_TILE_IMAGE_MAX_SIZE 65524
@@ -1584,6 +1754,10 @@ DP_Message *DP_msg_put_tile_new(unsigned int context_id, uint8_t user,
 DP_Message *DP_msg_put_tile_deserialize(unsigned int context_id,
                                         const unsigned char *buffer,
                                         size_t length);
+
+DP_Message *DP_msg_put_tile_deserialize_compat(unsigned int context_id,
+                                               const unsigned char *buffer,
+                                               size_t length);
 
 DP_Message *DP_msg_put_tile_parse(unsigned int context_id,
                                   DP_TextReader *reader);
@@ -1617,7 +1791,8 @@ size_t DP_msg_put_tile_image_size(const DP_MsgPutTile *mpt);
  * background color. Otherwise, it is the DEFLATED tile bitmap
  */
 
-#define DP_MSG_CANVAS_BACKGROUND_STATIC_LENGTH 0
+#define DP_MSG_CANVAS_BACKGROUND_STATIC_LENGTH        0
+#define DP_MSG_CANVAS_BACKGROUND_STATIC_LENGTH_COMPAT 0
 
 #define DP_MSG_CANVAS_BACKGROUND_IMAGE_MIN_SIZE 0
 #define DP_MSG_CANVAS_BACKGROUND_IMAGE_MAX_SIZE 65535
@@ -1632,6 +1807,9 @@ DP_msg_canvas_background_new(unsigned int context_id,
 DP_Message *DP_msg_canvas_background_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
                                                  size_t length);
+
+DP_Message *DP_msg_canvas_background_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_canvas_background_parse(unsigned int context_id,
                                            DP_TextReader *reader);
@@ -1658,8 +1836,9 @@ size_t DP_msg_canvas_background_image_size(const DP_MsgCanvasBackground *mcb);
  * The layer id may refer to a selection.
  */
 
-#define DP_MSG_DRAW_DABS_CLASSIC_STATIC_LENGTH 17
-#define DP_MSG_DRAW_DABS_CLASSIC_MATCH_LENGTH  19
+#define DP_MSG_DRAW_DABS_CLASSIC_STATIC_LENGTH        17
+#define DP_MSG_DRAW_DABS_CLASSIC_STATIC_LENGTH_COMPAT 15
+#define DP_MSG_DRAW_DABS_CLASSIC_MATCH_LENGTH         19
 
 #define DP_MSG_DRAW_DABS_CLASSIC_DABS_MIN_COUNT 1
 #define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX_COUNT 9359
@@ -1696,6 +1875,9 @@ DP_Message *DP_msg_draw_dabs_classic_new(unsigned int context_id, uint8_t flags,
 DP_Message *DP_msg_draw_dabs_classic_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
                                                  size_t length);
+
+DP_Message *DP_msg_draw_dabs_classic_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_draw_dabs_classic_parse(unsigned int context_id,
                                            DP_TextReader *reader);
@@ -1738,8 +1920,9 @@ int DP_msg_draw_dabs_classic_dabs_count(const DP_MsgDrawDabsClassic *mddc);
  * The layer id may refer to a selection.
  */
 
-#define DP_MSG_DRAW_DABS_PIXEL_STATIC_LENGTH 17
-#define DP_MSG_DRAW_DABS_PIXEL_MATCH_LENGTH  19
+#define DP_MSG_DRAW_DABS_PIXEL_STATIC_LENGTH        17
+#define DP_MSG_DRAW_DABS_PIXEL_STATIC_LENGTH_COMPAT 15
+#define DP_MSG_DRAW_DABS_PIXEL_MATCH_LENGTH         19
 
 #define DP_MSG_DRAW_DABS_PIXEL_DABS_MIN_COUNT 1
 #define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX_COUNT 13103
@@ -1774,6 +1957,9 @@ DP_Message *DP_msg_draw_dabs_pixel_new(unsigned int context_id, uint8_t flags,
 DP_Message *DP_msg_draw_dabs_pixel_deserialize(unsigned int context_id,
                                                const unsigned char *buffer,
                                                size_t length);
+
+DP_Message *DP_msg_draw_dabs_pixel_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_draw_dabs_pixel_parse(unsigned int context_id,
                                          DP_TextReader *reader);
@@ -1810,8 +1996,9 @@ int DP_msg_draw_dabs_pixel_dabs_count(const DP_MsgDrawDabsPixel *mddp);
  * Draw square pixel brush dabs
  */
 
-#define DP_MSG_DRAW_DABS_PIXEL_SQUARE_STATIC_LENGTH 0
-#define DP_MSG_DRAW_DABS_PIXEL_SQUARE_MATCH_LENGTH  0
+#define DP_MSG_DRAW_DABS_PIXEL_SQUARE_STATIC_LENGTH        0
+#define DP_MSG_DRAW_DABS_PIXEL_SQUARE_STATIC_LENGTH_COMPAT 15
+#define DP_MSG_DRAW_DABS_PIXEL_SQUARE_MATCH_LENGTH         0
 
 DP_Message *
 DP_msg_draw_dabs_pixel_square_new(unsigned int context_id, uint8_t flags,
@@ -1821,6 +2008,9 @@ DP_msg_draw_dabs_pixel_square_new(unsigned int context_id, uint8_t flags,
                                   int dabs_count, void *dabs_user);
 
 DP_Message *DP_msg_draw_dabs_pixel_square_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_draw_dabs_pixel_square_deserialize_compat(
     unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_draw_dabs_pixel_square_parse(unsigned int context_id,
@@ -1839,16 +2029,29 @@ DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg);
 /*
  * DP_MSG_DRAW_DABS_MYPAINT
  *
- * Draw MyPaint brush dabs in "normal and eraser" mode, the regular
- * mode of MyPaint brushes as used in MyPaint itself. Always uses
- * direct painting mode. Other blend and indirect painting modes use
- * the mypaintdabsblend message instead.
+ * Draw MyPaint brush dabs in "normal and eraser" or "pigment and
+ * eraser" mode, the regular modes of MyPaint brushes as used in
+ * MyPaint itself.
+ *
+ * The lowest flag bit indicates that this message uses pigment and
+ * eraser instead of normal and eraser mode. The top 5 bits indicate
+ * the selection ID to use for masking.
+ *
+ * If the highest bit (0x80) of the mode field is not set, it is
+ * treated as the number of posterization colors. If it is set, the
+ * first two bits decide the paint and blend mode of this stroke: 0x0
+ * means direct with Normal and Eraser mode, 0x1 means soft indirect
+ * with Normal mode, 0x2 means soft indirect with Recolor mode and 0x3
+ * means soft indirect with Erase mode. This is for backward
+ * compatibility with the 2.2 protocol, 2.3 uses the mypaintdabsblend
+ * message instead.
  *
  * The layer id may refer to a selection.
  */
 
-#define DP_MSG_DRAW_DABS_MYPAINT_STATIC_LENGTH 20
-#define DP_MSG_DRAW_DABS_MYPAINT_MATCH_LENGTH  22
+#define DP_MSG_DRAW_DABS_MYPAINT_STATIC_LENGTH        20
+#define DP_MSG_DRAW_DABS_MYPAINT_STATIC_LENGTH_COMPAT 18
+#define DP_MSG_DRAW_DABS_MYPAINT_MATCH_LENGTH         22
 
 #define DP_MSG_DRAW_DABS_MYPAINT_DABS_MIN_COUNT 1
 #define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX_COUNT 7279
@@ -1880,16 +2083,20 @@ const DP_MyPaintDab *DP_mypaint_dab_at(const DP_MyPaintDab *mpd, int i);
 
 typedef struct DP_MsgDrawDabsMyPaint DP_MsgDrawDabsMyPaint;
 
-DP_Message *DP_msg_draw_dabs_mypaint_new(
-    unsigned int context_id, uint8_t flags, uint32_t layer, int32_t x,
-    int32_t y, uint32_t color, uint8_t lock_alpha, uint8_t colorize,
-    uint8_t posterize, uint8_t posterize_num,
-    void (*set_dabs)(int, DP_MyPaintDab *, void *), int dabs_count,
-    void *dabs_user);
+DP_Message *
+DP_msg_draw_dabs_mypaint_new(unsigned int context_id, uint8_t flags,
+                             uint32_t layer, int32_t x, int32_t y,
+                             uint32_t color, uint8_t lock_alpha,
+                             uint8_t colorize, uint8_t posterize, uint8_t mode,
+                             void (*set_dabs)(int, DP_MyPaintDab *, void *),
+                             int dabs_count, void *dabs_user);
 
 DP_Message *DP_msg_draw_dabs_mypaint_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
                                                  size_t length);
+
+DP_Message *DP_msg_draw_dabs_mypaint_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_draw_dabs_mypaint_parse(unsigned int context_id,
                                            DP_TextReader *reader);
@@ -1918,8 +2125,7 @@ uint8_t DP_msg_draw_dabs_mypaint_colorize(const DP_MsgDrawDabsMyPaint *mddmp);
 
 uint8_t DP_msg_draw_dabs_mypaint_posterize(const DP_MsgDrawDabsMyPaint *mddmp);
 
-uint8_t
-DP_msg_draw_dabs_mypaint_posterize_num(const DP_MsgDrawDabsMyPaint *mddmp);
+uint8_t DP_msg_draw_dabs_mypaint_mode(const DP_MsgDrawDabsMyPaint *mddmp);
 
 const DP_MyPaintDab *
 DP_msg_draw_dabs_mypaint_dabs(const DP_MsgDrawDabsMyPaint *mddmp,
@@ -2034,8 +2240,9 @@ int DP_msg_draw_dabs_mypaint_blend_dabs_count(
  * The source and layer id may refer to a selection.
  */
 
-#define DP_MSG_MOVE_RECT_STATIC_LENGTH 32
-#define DP_MSG_MOVE_RECT_MATCH_LENGTH  34
+#define DP_MSG_MOVE_RECT_STATIC_LENGTH        32
+#define DP_MSG_MOVE_RECT_STATIC_LENGTH_COMPAT 28
+#define DP_MSG_MOVE_RECT_MATCH_LENGTH         34
 
 #define DP_MSG_MOVE_RECT_MASK_MIN_SIZE 0
 #define DP_MSG_MOVE_RECT_MASK_MAX_SIZE 65503
@@ -2052,6 +2259,10 @@ DP_msg_move_rect_new(unsigned int context_id, uint32_t layer, uint32_t source,
 DP_Message *DP_msg_move_rect_deserialize(unsigned int context_id,
                                          const unsigned char *buffer,
                                          size_t length);
+
+DP_Message *DP_msg_move_rect_deserialize_compat(unsigned int context_id,
+                                                const unsigned char *buffer,
+                                                size_t length);
 
 DP_Message *DP_msg_move_rect_parse(unsigned int context_id,
                                    DP_TextReader *reader);
@@ -2100,7 +2311,8 @@ size_t DP_msg_move_rect_mask_size(const DP_MsgMoveRect *mmr);
  * or the annotations.
  */
 
-#define DP_MSG_SET_METADATA_INT_STATIC_LENGTH 5
+#define DP_MSG_SET_METADATA_INT_STATIC_LENGTH        5
+#define DP_MSG_SET_METADATA_INT_STATIC_LENGTH_COMPAT 5
 
 #define DP_MSG_SET_METADATA_INT_FIELD_DPIX        0
 #define DP_MSG_SET_METADATA_INT_FIELD_DPIY        1
@@ -2123,6 +2335,9 @@ DP_Message *DP_msg_set_metadata_int_new(unsigned int context_id, uint8_t field,
 DP_Message *DP_msg_set_metadata_int_deserialize(unsigned int context_id,
                                                 const unsigned char *buffer,
                                                 size_t length);
+
+DP_Message *DP_msg_set_metadata_int_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_set_metadata_int_parse(unsigned int context_id,
                                           DP_TextReader *reader);
@@ -2165,7 +2380,8 @@ int32_t DP_msg_set_metadata_int_value(const DP_MsgSetMetadataInt *msmi);
  * privileges.
  */
 
-#define DP_MSG_LAYER_TREE_CREATE_STATIC_LENGTH 14
+#define DP_MSG_LAYER_TREE_CREATE_STATIC_LENGTH        14
+#define DP_MSG_LAYER_TREE_CREATE_STATIC_LENGTH_COMPAT 11
 
 #define DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP 0x1
 #define DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO  0x2
@@ -2190,6 +2406,9 @@ DP_Message *DP_msg_layer_tree_create_new(unsigned int context_id, uint32_t id,
 DP_Message *DP_msg_layer_tree_create_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
                                                  size_t length);
+
+DP_Message *DP_msg_layer_tree_create_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_layer_tree_create_parse(unsigned int context_id,
                                            DP_TextReader *reader);
@@ -2229,7 +2448,8 @@ size_t DP_msg_layer_tree_create_title_len(const DP_MsgLayerTreeCreate *mltc);
  * that's currently conflated with being allowed to edit layers.)
  */
 
-#define DP_MSG_LAYER_TREE_MOVE_STATIC_LENGTH 9
+#define DP_MSG_LAYER_TREE_MOVE_STATIC_LENGTH        9
+#define DP_MSG_LAYER_TREE_MOVE_STATIC_LENGTH_COMPAT 6
 
 typedef struct DP_MsgLayerTreeMove DP_MsgLayerTreeMove;
 
@@ -2239,6 +2459,9 @@ DP_Message *DP_msg_layer_tree_move_new(unsigned int context_id, uint32_t layer,
 DP_Message *DP_msg_layer_tree_move_deserialize(unsigned int context_id,
                                                const unsigned char *buffer,
                                                size_t length);
+
+DP_Message *DP_msg_layer_tree_move_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_layer_tree_move_parse(unsigned int context_id,
                                          DP_TextReader *reader);
@@ -2265,7 +2488,8 @@ uint32_t DP_msg_layer_tree_move_sibling(const DP_MsgLayerTreeMove *mltm);
  * requires session operator privileges.
  */
 
-#define DP_MSG_LAYER_TREE_DELETE_STATIC_LENGTH 6
+#define DP_MSG_LAYER_TREE_DELETE_STATIC_LENGTH        6
+#define DP_MSG_LAYER_TREE_DELETE_STATIC_LENGTH_COMPAT 4
 
 typedef struct DP_MsgLayerTreeDelete DP_MsgLayerTreeDelete;
 
@@ -2275,6 +2499,9 @@ DP_Message *DP_msg_layer_tree_delete_new(unsigned int context_id, uint32_t id,
 DP_Message *DP_msg_layer_tree_delete_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
                                                  size_t length);
+
+DP_Message *DP_msg_layer_tree_delete_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_layer_tree_delete_parse(unsigned int context_id,
                                            DP_TextReader *reader);
@@ -2312,8 +2539,9 @@ uint32_t DP_msg_layer_tree_delete_merge_to(const DP_MsgLayerTreeDelete *mltd);
  * The source and layer id may refer to a selection.
  */
 
-#define DP_MSG_TRANSFORM_REGION_STATIC_LENGTH 57
-#define DP_MSG_TRANSFORM_REGION_MATCH_LENGTH  59
+#define DP_MSG_TRANSFORM_REGION_STATIC_LENGTH        57
+#define DP_MSG_TRANSFORM_REGION_STATIC_LENGTH_COMPAT 53
+#define DP_MSG_TRANSFORM_REGION_MATCH_LENGTH         59
 
 #define DP_MSG_TRANSFORM_REGION_MODE_NEAREST  0
 #define DP_MSG_TRANSFORM_REGION_MODE_BILINEAR 1
@@ -2340,6 +2568,9 @@ DP_Message *DP_msg_transform_region_new(
 DP_Message *DP_msg_transform_region_deserialize(unsigned int context_id,
                                                 const unsigned char *buffer,
                                                 size_t length);
+
+DP_Message *DP_msg_transform_region_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_transform_region_parse(unsigned int context_id,
                                           DP_TextReader *reader);
@@ -2402,7 +2633,8 @@ size_t DP_msg_transform_region_mask_size(const DP_MsgTransformRegion *mtr);
  * and annotation ids. Operators are exempt from this restriction.
  */
 
-#define DP_MSG_TRACK_CREATE_STATIC_LENGTH 6
+#define DP_MSG_TRACK_CREATE_STATIC_LENGTH        6
+#define DP_MSG_TRACK_CREATE_STATIC_LENGTH_COMPAT 6
 
 #define DP_MSG_TRACK_CREATE_TITLE_MIN_LEN 0
 #define DP_MSG_TRACK_CREATE_TITLE_MAX_LEN 65529
@@ -2416,6 +2648,10 @@ DP_Message *DP_msg_track_create_new(unsigned int context_id, uint16_t id,
 DP_Message *DP_msg_track_create_deserialize(unsigned int context_id,
                                             const unsigned char *buffer,
                                             size_t length);
+
+DP_Message *DP_msg_track_create_deserialize_compat(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length);
 
 DP_Message *DP_msg_track_create_parse(unsigned int context_id,
                                       DP_TextReader *reader);
@@ -2440,7 +2676,8 @@ size_t DP_msg_track_create_title_len(const DP_MsgTrackCreate *mtc);
  * Rename a timeline track.
  */
 
-#define DP_MSG_TRACK_RETITLE_STATIC_LENGTH 2
+#define DP_MSG_TRACK_RETITLE_STATIC_LENGTH        2
+#define DP_MSG_TRACK_RETITLE_STATIC_LENGTH_COMPAT 2
 
 #define DP_MSG_TRACK_RETITLE_TITLE_MIN_LEN 0
 #define DP_MSG_TRACK_RETITLE_TITLE_MAX_LEN 65533
@@ -2453,6 +2690,10 @@ DP_Message *DP_msg_track_retitle_new(unsigned int context_id, uint16_t id,
 DP_Message *DP_msg_track_retitle_deserialize(unsigned int context_id,
                                              const unsigned char *buffer,
                                              size_t length);
+
+DP_Message *DP_msg_track_retitle_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length);
 
 DP_Message *DP_msg_track_retitle_parse(unsigned int context_id,
                                        DP_TextReader *reader);
@@ -2473,7 +2714,8 @@ size_t DP_msg_track_retitle_title_len(const DP_MsgTrackRetitle *mtr);
  * Delete a timeline track.
  */
 
-#define DP_MSG_TRACK_DELETE_STATIC_LENGTH 2
+#define DP_MSG_TRACK_DELETE_STATIC_LENGTH        2
+#define DP_MSG_TRACK_DELETE_STATIC_LENGTH_COMPAT 2
 
 typedef struct DP_MsgTrackDelete DP_MsgTrackDelete;
 
@@ -2482,6 +2724,10 @@ DP_Message *DP_msg_track_delete_new(unsigned int context_id, uint16_t id);
 DP_Message *DP_msg_track_delete_deserialize(unsigned int context_id,
                                             const unsigned char *buffer,
                                             size_t length);
+
+DP_Message *DP_msg_track_delete_deserialize_compat(unsigned int context_id,
+                                                   const unsigned char *buffer,
+                                                   size_t length);
 
 DP_Message *DP_msg_track_delete_parse(unsigned int context_id,
                                       DP_TextReader *reader);
@@ -2500,7 +2746,8 @@ uint16_t DP_msg_track_delete_id(const DP_MsgTrackDelete *mtd);
  * ignored and missing tracks are appended to the end.
  */
 
-#define DP_MSG_TRACK_ORDER_STATIC_LENGTH 0
+#define DP_MSG_TRACK_ORDER_STATIC_LENGTH        0
+#define DP_MSG_TRACK_ORDER_STATIC_LENGTH_COMPAT 0
 
 #define DP_MSG_TRACK_ORDER_TRACKS_MIN_COUNT 0
 #define DP_MSG_TRACK_ORDER_TRACKS_MAX_COUNT 32767
@@ -2514,6 +2761,10 @@ DP_Message *DP_msg_track_order_new(unsigned int context_id,
 DP_Message *DP_msg_track_order_deserialize(unsigned int context_id,
                                            const unsigned char *buffer,
                                            size_t length);
+
+DP_Message *DP_msg_track_order_deserialize_compat(unsigned int context_id,
+                                                  const unsigned char *buffer,
+                                                  size_t length);
 
 DP_Message *DP_msg_track_order_parse(unsigned int context_id,
                                      DP_TextReader *reader);
@@ -2541,7 +2792,8 @@ int DP_msg_track_order_tracks_count(const DP_MsgTrackOrder *mto);
  * track with id `source_id` and frame index `source_index`.
  */
 
-#define DP_MSG_KEY_FRAME_SET_STATIC_LENGTH 10
+#define DP_MSG_KEY_FRAME_SET_STATIC_LENGTH        10
+#define DP_MSG_KEY_FRAME_SET_STATIC_LENGTH_COMPAT 9
 
 #define DP_MSG_KEY_FRAME_SET_SOURCE_LAYER     0
 #define DP_MSG_KEY_FRAME_SET_SOURCE_KEY_FRAME 1
@@ -2561,6 +2813,10 @@ DP_Message *DP_msg_key_frame_set_new(unsigned int context_id, uint16_t track_id,
 DP_Message *DP_msg_key_frame_set_deserialize(unsigned int context_id,
                                              const unsigned char *buffer,
                                              size_t length);
+
+DP_Message *DP_msg_key_frame_set_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length);
 
 DP_Message *DP_msg_key_frame_set_parse(unsigned int context_id,
                                        DP_TextReader *reader);
@@ -2584,7 +2840,8 @@ uint8_t DP_msg_key_frame_set_source(const DP_MsgKeyFrameSet *mkfs);
  * Rename a key frame.
  */
 
-#define DP_MSG_KEY_FRAME_RETITLE_STATIC_LENGTH 4
+#define DP_MSG_KEY_FRAME_RETITLE_STATIC_LENGTH        4
+#define DP_MSG_KEY_FRAME_RETITLE_STATIC_LENGTH_COMPAT 4
 
 #define DP_MSG_KEY_FRAME_RETITLE_TITLE_MIN_LEN 0
 #define DP_MSG_KEY_FRAME_RETITLE_TITLE_MAX_LEN 65531
@@ -2600,6 +2857,9 @@ DP_Message *DP_msg_key_frame_retitle_new(unsigned int context_id,
 DP_Message *DP_msg_key_frame_retitle_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
                                                  size_t length);
+
+DP_Message *DP_msg_key_frame_retitle_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_key_frame_retitle_parse(unsigned int context_id,
                                            DP_TextReader *reader);
@@ -2638,7 +2898,8 @@ size_t DP_msg_key_frame_retitle_title_len(const DP_MsgKeyFrameRetitle *mkfr);
  *   neither is set.
  */
 
-#define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_STATIC_LENGTH 4
+#define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_STATIC_LENGTH        4
+#define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_STATIC_LENGTH_COMPAT 4
 
 #define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYER_FLAGS_MIN_COUNT 0
 #define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYER_FLAGS_MAX_COUNT 16382
@@ -2651,6 +2912,9 @@ DP_Message *DP_msg_key_frame_layer_attributes_new(
     void *layer_flags_user);
 
 DP_Message *DP_msg_key_frame_layer_attributes_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_key_frame_layer_attributes_deserialize_compat(
     unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_key_frame_layer_attributes_parse(unsigned int context_id,
@@ -2678,7 +2942,8 @@ int DP_msg_key_frame_layer_attributes_layer_flags_count(
  * Delete a key frame, possibly moving it somewhere else.
  */
 
-#define DP_MSG_KEY_FRAME_DELETE_STATIC_LENGTH 8
+#define DP_MSG_KEY_FRAME_DELETE_STATIC_LENGTH        8
+#define DP_MSG_KEY_FRAME_DELETE_STATIC_LENGTH_COMPAT 8
 
 typedef struct DP_MsgKeyFrameDelete DP_MsgKeyFrameDelete;
 
@@ -2690,6 +2955,9 @@ DP_Message *DP_msg_key_frame_delete_new(unsigned int context_id,
 DP_Message *DP_msg_key_frame_delete_deserialize(unsigned int context_id,
                                                 const unsigned char *buffer,
                                                 size_t length);
+
+DP_Message *DP_msg_key_frame_delete_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
 
 DP_Message *DP_msg_key_frame_delete_parse(unsigned int context_id,
                                           DP_TextReader *reader);
@@ -2843,7 +3111,8 @@ uint8_t DP_msg_selection_clear_selection_id(const DP_MsgSelectionClear *msc);
  * with an invalid blend mode is used instead.
  */
 
-#define DP_MSG_LOCAL_MATCH_STATIC_LENGTH 1
+#define DP_MSG_LOCAL_MATCH_STATIC_LENGTH        1
+#define DP_MSG_LOCAL_MATCH_STATIC_LENGTH_COMPAT 1
 
 #define DP_MSG_LOCAL_MATCH_DATA_MIN_SIZE 0
 #define DP_MSG_LOCAL_MATCH_DATA_MAX_SIZE 65534
@@ -2858,6 +3127,10 @@ DP_Message *DP_msg_local_match_new(unsigned int context_id, uint8_t type,
 DP_Message *DP_msg_local_match_deserialize(unsigned int context_id,
                                            const unsigned char *buffer,
                                            size_t length);
+
+DP_Message *DP_msg_local_match_deserialize_compat(unsigned int context_id,
+                                                  const unsigned char *buffer,
+                                                  size_t length);
 
 DP_Message *DP_msg_local_match_parse(unsigned int context_id,
                                      DP_TextReader *reader);
@@ -3053,7 +3326,8 @@ DP_MsgTransformRegion *DP_msg_transform_region_zstd_cast(DP_Message *msg);
  * Undo or redo actions
  */
 
-#define DP_MSG_UNDO_STATIC_LENGTH 2
+#define DP_MSG_UNDO_STATIC_LENGTH        2
+#define DP_MSG_UNDO_STATIC_LENGTH_COMPAT 2
 
 typedef struct DP_MsgUndo DP_MsgUndo;
 
@@ -3062,6 +3336,10 @@ DP_Message *DP_msg_undo_new(unsigned int context_id, uint8_t override_user,
 
 DP_Message *DP_msg_undo_deserialize(unsigned int context_id,
                                     const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_undo_deserialize_compat(unsigned int context_id,
+                                           const unsigned char *buffer,
+                                           size_t length);
 
 DP_Message *DP_msg_undo_parse(unsigned int context_id, DP_TextReader *reader);
 
