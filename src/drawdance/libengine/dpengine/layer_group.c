@@ -461,6 +461,65 @@ DP_TransientTile *DP_layer_group_flatten_tile_to(
     }
 }
 
+void DP_layer_group_flatten_pixel(DP_LayerGroup *lg, DP_LayerProps *lp, int x,
+                                  int y, DP_Pixel15 *pixel,
+                                  uint16_t parent_opacity,
+                                  DP_UPixel8 parent_tint,
+                                  bool pass_through_censored,
+                                  const DP_ViewModeContext *vmc)
+{
+    DP_ASSERT(lg);
+    DP_ASSERT(DP_atomic_get(&lg->refcount) > 0);
+    DP_ASSERT(lp);
+    DP_ASSERT(x >= 0);
+    DP_ASSERT(y >= 0);
+    DP_ASSERT(x < lg->width);
+    DP_ASSERT(y < lg->height);
+    DP_ASSERT(pixel);
+    DP_ASSERT(parent_opacity <= DP_BIT15);
+    DP_ASSERT(vmc);
+
+    DP_ViewModeResult vmr = DP_view_mode_context_apply(vmc, lp, parent_opacity);
+    if (!vmr.visible) {
+        return;
+    }
+
+    DP_LayerPropsList *lpl = DP_layer_props_children_noinc(lp);
+    bool censored = pass_through_censored || DP_layer_props_censored(lp);
+    if (vmr.isolated) {
+        // Flatten the group into a temporary pixel with full opacity, then
+        // merge the result with the group's blend mode and opacity.
+        DP_Pixel15 gp = DP_pixel15_zero();
+        DP_layer_list_flatten_pixel(lg->children, lpl, x, y, &gp, DP_BIT15,
+                                    (DP_UPixel8){.color = 0}, false,
+                                    &vmr.child_vmc);
+        if (gp.a != 0) {
+            if (censored) {
+                DP_Tile *censor_tile = DP_tile_censored_noinc();
+                gp = DP_tile_pixel_at(censor_tile, x % DP_TILE_SIZE,
+                                      y % DP_TILE_SIZE);
+                DP_blend_pixels(pixel, &gp, 1, vmr.opacity, vmr.blend_mode);
+            }
+            else {
+                if (vmr.tint.a != 0) {
+                    DP_tint_pixels(&gp, 1, vmr.tint);
+                }
+                else if (parent_tint.a != 0) {
+                    DP_tint_pixels(&gp, 1, parent_tint);
+                }
+                DP_blend_pixels(pixel, &gp, 1, vmr.opacity, vmr.blend_mode);
+            }
+        }
+    }
+    else {
+        // Flatten the containing layers one by one, disregarding the blend
+        // mode, but taking the opacity into account individually.
+        DP_layer_list_flatten_pixel(lg->children, lpl, x, y, pixel, vmr.opacity,
+                                    vmr.tint.a == 0 ? parent_tint : vmr.tint,
+                                    censored, &vmr.child_vmc);
+    }
+}
+
 
 static DP_TransientLayerGroup *alloc_layer_group(int width, int height)
 {

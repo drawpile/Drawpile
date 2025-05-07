@@ -1946,6 +1946,53 @@ DP_Image *DP_canvas_state_into_flat_image(DP_CanvasState *cs,
                           inout_img_or_null);
 }
 
+DP_Pixel15 DP_canvas_state_to_flat_pixel(DP_CanvasState *cs, int x, int y)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    DP_ASSERT(x >= 0);
+    DP_ASSERT(y >= 0);
+    DP_ASSERT(x < DP_canvas_state_width(cs));
+    DP_ASSERT(y < DP_canvas_state_height(cs));
+
+    DP_Tile *background_tile = cs->background_tile;
+    DP_Pixel15 pixel = background_tile
+                         ? DP_tile_pixel_at(background_tile, x % DP_TILE_SIZE,
+                                            y % DP_TILE_SIZE)
+                         : DP_pixel15_zero();
+
+    DP_ViewModeFilter vmf = DP_view_mode_filter_make_default();
+    DP_ViewModeContextRoot vmcr = DP_view_mode_context_root_init(&vmf, cs);
+
+    for (int i = 0; i < vmcr.count; ++i) {
+        DP_LayerListEntry *lle;
+        DP_LayerProps *lp;
+        const DP_OnionSkin *os;
+        uint16_t parent_opacity;
+        DP_UPixel8 parent_tint;
+        int clip_count;
+        DP_ViewModeContext vmc = DP_view_mode_context_root_at(
+            &vmcr, cs, i, &lle, &lp, &os, &parent_opacity, &parent_tint,
+            &clip_count);
+        if (!DP_view_mode_context_excludes_everything(&vmc)) {
+            DP_ASSERT(!os);
+            if (clip_count == 0) {
+                DP_layer_list_entry_flatten_pixel(lle, lp, x, y, &pixel,
+                                                  parent_opacity, parent_tint,
+                                                  false, &vmc);
+            }
+            else {
+                DP_layer_list_flatten_clipping_pixel(
+                    (void *[]){&vmcr, cs}, get_clip_layer, i, clip_count, x, y,
+                    &pixel, parent_opacity, &vmc);
+                i += clip_count;
+            }
+        }
+    }
+
+    return pixel;
+}
+
 static void *to_flat_separated_urgba8_get_buffer(void *user,
                                                  DP_UNUSED int width,
                                                  DP_UNUSED int height)
