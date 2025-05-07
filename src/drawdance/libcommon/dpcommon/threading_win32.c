@@ -145,11 +145,6 @@ DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
     }
 }
 
-DP_ProcessId DP_process_current_id(void)
-{
-    return GetCurrentProcessId();
-}
-
 DP_ThreadId DP_thread_current_id(void)
 {
     return GetCurrentThreadId();

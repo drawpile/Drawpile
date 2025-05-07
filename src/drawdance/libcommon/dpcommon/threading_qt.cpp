@@ -186,11 +186,6 @@ extern "C" DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
 }
 
 
-extern "C" DP_ProcessId DP_process_current_id(void)
-{
-    return QCoreApplication::applicationPid();
-}
-
 extern "C" unsigned long long DP_thread_current_id(void)
 {
     // Qt doesn't have a way to get a numeric thread id, only a handle.
