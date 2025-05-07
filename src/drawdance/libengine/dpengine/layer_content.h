@@ -161,6 +161,11 @@ DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
                                  int blend_mode, DP_UPixel8 tint, bool censored,
                                  bool include_sublayers);
 
+void DP_layer_content_flatten_pixel(DP_LayerContent *lc, int x, int y,
+                                    DP_Pixel15 *pixel, uint16_t opacity,
+                                    int blend_mode, DP_UPixel8 tint,
+                                    bool censored);
+
 
 DP_TransientLayerContent *DP_transient_layer_content_new(DP_LayerContent *lc);
 

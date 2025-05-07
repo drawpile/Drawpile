@@ -819,7 +819,9 @@ static bool write_index_thumbnail(DP_BuildIndexEntryContext *e)
     }
 
     DP_Image *thumb;
-    if (DP_image_thumbnail(img, e->dc, 256, 256, &thumb)) {
+    if (DP_image_thumbnail(img, e->dc, 256, 256,
+                           DP_IMAGE_SCALE_INTERPOLATION_FAST_BILINEAR,
+                           &thumb)) {
         if (thumb) {
             DP_image_free(img);
         }

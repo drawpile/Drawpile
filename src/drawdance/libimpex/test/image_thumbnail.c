@@ -4,6 +4,7 @@
 #include <dpengine/draw_context.h>
 #include <dpengine/image.h>
 #include <dpimpex/image_impex.h>
+#include <dpmsg/messages.h>
 #include <dptest_impex.h>
 
 
@@ -22,7 +23,8 @@ static bool make_thumbnail(TEST_PARAMS, const char *path, int max_width,
     DP_Image *img = read_image(TEST_ARGS, path);
     DP_DrawContext *dc = DP_draw_context_new();
     DP_Image *thumb;
-    bool ok = DP_image_thumbnail(img, dc, max_width, max_height, &thumb);
+    bool ok = DP_image_thumbnail(img, dc, max_width, max_height,
+                                 DP_MSG_TRANSFORM_REGION_MODE_BILINEAR, &thumb);
     DP_image_free(img);
     DP_draw_context_free(dc);
     *out_thumb = thumb;

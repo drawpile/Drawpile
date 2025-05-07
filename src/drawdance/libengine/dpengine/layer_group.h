@@ -108,6 +108,13 @@ DP_TransientTile *DP_layer_group_flatten_tile_to(
     DP_UPixel8 parent_tint, bool include_sublayers, bool pass_through_censored,
     bool clip, const DP_ViewModeContext *vmc);
 
+void DP_layer_group_flatten_pixel(DP_LayerGroup *lg, DP_LayerProps *lp, int x,
+                                  int y, DP_Pixel15 *pixel,
+                                  uint16_t parent_opacity,
+                                  DP_UPixel8 parent_tint,
+                                  bool pass_through_censored,
+                                  const DP_ViewModeContext *vmc);
+
 DP_TransientLayerGroup *DP_transient_layer_group_new(DP_LayerGroup *lg);
 
 DP_TransientLayerGroup *

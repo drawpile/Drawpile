@@ -432,7 +432,9 @@ static bool ora_store_merged(DP_SaveOraContext *c, DP_CanvasState *cs,
     }
 
     DP_Image *thumb;
-    if (!DP_image_thumbnail(img, dc, 256, 256, &thumb)) {
+    if (!DP_image_thumbnail(img, dc, 256, 256,
+                            DP_IMAGE_SCALE_INTERPOLATION_FAST_BILINEAR,
+                            &thumb)) {
         DP_image_free(img);
         return false;
     }

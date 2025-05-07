@@ -107,6 +107,10 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
                              const DP_Quad *dst_quad, int interpolation,
                              int *out_offset_x, int *out_offset_y);
 
+void DP_image_thumbnail_dimensions(int width, int height, int max_width,
+                                   int max_height, int *out_width,
+                                   int *out_height);
+
 // Creates a scaled-down thumbnail of the given `img` if it doesn't fit into the
 // given maximum dimensions. Return value and the value filled into `out_thumb`
 // will be as follows:
@@ -116,7 +120,8 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
 // | true         | non-NULL   | thumbnail generated successfully |
 // | false        | NULL       | thumbnail generation failed      |
 bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
-                        int max_height, DP_Image **out_thumb) DP_MUST_CHECK;
+                        int max_height, int interpolation,
+                        DP_Image **out_thumb) DP_MUST_CHECK;
 
 DP_Image *DP_image_scale_pixels(int src_width, int src_height,
                                 const DP_Pixel8 *src_pixels, DP_DrawContext *dc,

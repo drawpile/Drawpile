@@ -1306,6 +1306,54 @@ DP_layer_content_flatten_tile_to(DP_LayerContent *lc, int tile_index,
     }
 }
 
+static DP_Pixel15 flatten_pixel(DP_LayerContent *lc, int x, int y,
+                                DP_UPixel8 tint)
+{
+    DP_ASSERT(x >= 0);
+    DP_ASSERT(y >= 0);
+    DP_ASSERT(x < lc->width);
+    DP_ASSERT(y < lc->height);
+    // Currently only used for thumbnails, so don't bother with sublayers.
+    DP_Pixel15 pixel = DP_layer_content_pixel_at(lc, x, y);
+    if (pixel.a != 0 && tint.a != 0) {
+        DP_tint_pixels(&pixel, 1, tint);
+    }
+    return pixel;
+}
+
+static DP_Pixel15 flatten_censored_pixel(DP_LayerContent *lc, int x, int y)
+{
+    DP_ASSERT(x >= 0);
+    DP_ASSERT(y >= 0);
+    DP_ASSERT(x < lc->width);
+    DP_ASSERT(y < lc->height);
+    int xt = x / DP_TILE_SIZE;
+    int yt = y / DP_TILE_SIZE;
+    int wt = DP_tile_count_round(lc->width);
+    if (lc->elements[yt * wt + xt].tile) {
+        DP_Tile *censor_tile = DP_tile_censored_noinc();
+        return DP_tile_pixel_at(censor_tile, x % DP_TILE_SIZE,
+                                y % DP_TILE_SIZE);
+    }
+    else {
+        return DP_pixel15_zero();
+    }
+}
+
+void DP_layer_content_flatten_pixel(DP_LayerContent *lc, int x, int y,
+                                    DP_Pixel15 *pixel, uint16_t opacity,
+                                    int blend_mode, DP_UPixel8 tint,
+                                    bool censored)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_Pixel15 p = censored ? flatten_censored_pixel(lc, x, y)
+                            : flatten_pixel(lc, x, y, tint);
+    if (p.a != 0) {
+        DP_blend_pixels(pixel, &p, 1, opacity, blend_mode);
+    }
+}
+
 
 static DP_TransientLayerContent *alloc_layer_content(int width, int height)
 {

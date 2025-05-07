@@ -660,6 +660,124 @@ DP_TransientTile *DP_layer_list_flatten_tile_to(
     return tt;
 }
 
+void DP_layer_list_entry_flatten_pixel(
+    DP_LayerListEntry *lle, DP_LayerProps *lp, int x, int y, DP_Pixel15 *pixel,
+    uint16_t parent_opacity, DP_UPixel8 parent_tint, bool pass_through_censored,
+    const DP_ViewModeContext *vmc)
+{
+    DP_ASSERT(lle);
+    DP_ASSERT(lp);
+    DP_ASSERT(pixel);
+    DP_ASSERT(vmc);
+    if (lle->is_group) {
+        DP_layer_group_flatten_pixel(lle->group, lp, x, y, pixel,
+                                     parent_opacity, parent_tint,
+                                     pass_through_censored, vmc);
+    }
+    else {
+        DP_ViewModeResult vmr =
+            DP_view_mode_context_apply(vmc, lp, parent_opacity);
+        if (vmr.visible) {
+            bool censored =
+                pass_through_censored || DP_layer_props_censored(lp);
+            DP_layer_content_flatten_pixel(
+                lle->content, x, y, pixel, vmr.opacity, vmr.blend_mode,
+                vmr.tint.a == 0 ? parent_tint : vmr.tint, censored);
+        }
+    }
+}
+
+static DP_Pixel15 flatten_clipping_pixel(
+    void *user,
+    DP_ViewModeContext (*fn)(void *, int, DP_LayerListEntry **,
+                             DP_LayerProps **),
+    int x, int y, const DP_ViewModeContext *vmc, DP_LayerListEntry *lle,
+    DP_LayerProps *lp, int i, int clip_count)
+{
+    DP_Pixel15 clip_pixel = DP_pixel15_zero();
+    DP_TransientLayerProps *clip_tlp = make_clip_properties(lp);
+    DP_layer_list_entry_flatten_pixel(lle, (DP_LayerProps *)clip_tlp, x, y,
+                                      &clip_pixel, DP_BIT15,
+                                      (DP_UPixel8){.color = 0}, false, vmc);
+    DP_transient_layer_props_decref(clip_tlp);
+    if (clip_pixel.a != 0) {
+        for (int j = 0; j < clip_count; ++j) {
+            DP_LayerListEntry *clip_lle;
+            DP_LayerProps *clip_lp;
+            DP_ViewModeContext clip_vmc =
+                fn(user, i + j + 1, &clip_lle, &clip_lp);
+            DP_layer_list_entry_flatten_pixel(
+                clip_lle, clip_lp, x, y, &clip_pixel, DP_BIT15,
+                (DP_UPixel8){.color = 0}, false, &clip_vmc);
+        }
+    }
+    return clip_pixel;
+}
+
+void DP_layer_list_flatten_clipping_pixel(
+    void *user,
+    DP_ViewModeContext (*fn)(void *, int, DP_LayerListEntry **,
+                             DP_LayerProps **),
+    int i, int clip_count, int x, int y, DP_Pixel15 *pixel,
+    uint16_t parent_opacity, const DP_ViewModeContext *vmc)
+{
+    DP_ASSERT(fn);
+    DP_ASSERT(pixel);
+    DP_ASSERT(vmc);
+    DP_LayerListEntry *lle;
+    DP_LayerProps *lp;
+    fn(user, i, &lle, &lp);
+    DP_Pixel15 clip_pixel =
+        flatten_clipping_pixel(user, fn, x, y, vmc, lle, lp, i, clip_count);
+    if (clip_pixel.a != 0) {
+        DP_ViewModeResult vmr =
+            DP_view_mode_context_apply(vmc, lp, parent_opacity);
+        if (vmr.visible) {
+            if (DP_layer_props_censored(lp)) {
+                clip_pixel =
+                    DP_tile_pixel_at(DP_tile_censored_noinc(), x % DP_TILE_SIZE,
+                                     y % DP_TILE_SIZE);
+            }
+            else if (vmr.tint.a != 0) {
+                DP_tint_pixels(&clip_pixel, 1, vmr.tint);
+            }
+            DP_blend_pixels(pixel, &clip_pixel, 1, vmr.opacity, vmr.blend_mode);
+        }
+    }
+}
+
+void DP_layer_list_flatten_pixel(DP_LayerList *ll, DP_LayerPropsList *lpl,
+                                 int x, int y, DP_Pixel15 *pixel,
+                                 uint16_t parent_opacity,
+                                 DP_UPixel8 parent_tint,
+                                 bool pass_through_censored,
+                                 const DP_ViewModeContext *vmc)
+{
+    DP_ASSERT(ll);
+    DP_ASSERT(DP_atomic_get(&ll->refcount) > 0);
+    DP_ASSERT(lpl);
+    DP_ASSERT(DP_layer_props_list_refcount(lpl) > 0);
+    DP_ASSERT(ll->count == DP_layer_props_list_count(lpl));
+    DP_ASSERT(vmc);
+    int count = ll->count;
+    for (int i = 0; i < count; ++i) {
+        DP_LayerListEntry *lle = &ll->elements[i];
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
+        int clip_count = count_clipping_layers(lpl, i, count);
+        if (clip_count == 0) {
+            DP_layer_list_entry_flatten_pixel(lle, lp, x, y, pixel,
+                                              parent_opacity, parent_tint,
+                                              pass_through_censored, vmc);
+        }
+        else {
+            DP_layer_list_flatten_clipping_pixel(
+                (void *[]){ll, lpl, (void *)vmc}, get_clip_layer, i, clip_count,
+                x, y, pixel, parent_opacity, vmc);
+            i += clip_count;
+        }
+    }
+}
+
 
 DP_TransientLayerList *DP_transient_layer_list_new_init(int reserve)
 {
@@ -924,6 +1042,14 @@ void DP_transient_layer_list_insert_group_inc(DP_TransientLayerList *tll,
         (DP_LayerListEntry){true, {.group = DP_layer_group_incref(lg)}});
 }
 
+void DP_transient_layer_list_set_transient_content_noinc(
+    DP_TransientLayerList *tll, DP_TransientLayerContent *tlc, int index)
+{
+    DP_ASSERT(tlc);
+    set_element_at(tll, index,
+                   (DP_LayerListEntry){false, {.transient_content = tlc}});
+}
+
 void DP_transient_layer_list_set_transient_group_noinc(
     DP_TransientLayerList *tll, DP_TransientLayerGroup *tlg, int index)
 {
@@ -976,4 +1102,18 @@ void DP_transient_layer_list_merge_at(DP_TransientLayerList *tll,
     DP_layer_group_decref(lg);
     tll->elements[index] =
         (DP_LayerListEntry){.is_group = false, .transient_content = tlc};
+}
+
+void DP_transient_layer_list_clamp(DP_TransientLayerList *tll, int count)
+{
+    DP_ASSERT(tll);
+    DP_ASSERT(DP_atomic_get(&tll->refcount) > 0);
+    DP_ASSERT(tll->transient);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(count <= tll->count);
+    int old_count = tll->count;
+    for (int i = count; i < old_count; ++i) {
+        layer_list_entry_decref_nullable(&tll->elements[i]);
+    }
+    tll->count = count;
 }
