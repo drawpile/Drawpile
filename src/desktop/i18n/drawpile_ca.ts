@@ -2235,22 +2235,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+40"/>
         <source>Mirror the transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Emmiralla la imatge transformada horitzontalment</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>emmiralla/gira la imatge transformada horitzontalment</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Flip the transformed image upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Gira la imatge transformada cap avall</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>mirror/flip transformed image vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>emmiralla/gira la imatge transformada verticalment</translation>
     </message>
     <message>
         <location line="+119"/>
@@ -2581,47 +2581,47 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+11"/>
         <source>&amp;Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Transforma</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Transform the selection, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Transforma la selecció, torna a l&apos;eina anterior en acabat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Transform Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Transforma la &amp;Mascara de selecció</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Transforma només la màscara de selecció, torna a l&apos;eina anterior en acabat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Mirror Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Emmiralla la transformació</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Flip Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>Capgira la trans&amp;formació</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Rotate Transform Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Gi&amp;ra la transformació en sentit horari</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotate Transform &amp;Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Gira la transforma&amp;ció en sentit antihorari</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Shrink Transform to &amp;Fit View</source>
-        <translation type="unfinished"></translation>
+        <translation>Encongeix la trans&amp;formació per a ajustar-se a la vista</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2857,17 +2857,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Transform Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Eina de &amp;transformació</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Transform selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Transforma la selecció</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplaça</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3635,12 +3635,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>Transforma</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplaça</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3650,7 +3650,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>Inspector</translation>
     </message>
 </context>
 <context>
@@ -3658,12 +3658,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/resetsession.ui" line="+14"/>
         <source>Reset session</source>
-        <translation type="unfinished"></translation>
+        <translation>Reinicia la sessió</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Heu de ser operador per a poder reiniciar la sessió.</translation>
     </message>
 </context>
 <context>
@@ -3671,12 +3671,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/resizedialog.ui" line="+14"/>
         <source>Resize Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Redimensiona el llenç</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Manté la relació d&apos;aspecte</translation>
     </message>
 </context>
 <context>
@@ -3685,7 +3685,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../ui/serverlog.ui" line="+14"/>
         <location line="+10"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Registre d&apos;esdeveniments</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3759,7 +3759,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>No autoreset</source>
-        <translation type="unfinished"></translation>
+        <translation>Sense reinici automàtic</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6958,7 +6958,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/logindialog.cpp" line="+169"/>
         <source>Report...</source>
-        <translation type="unfinished"></translation>
+        <translation>Informa...</translation>
     </message>
     <message>
         <location line="+157"/>
@@ -7047,7 +7047,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>Log in with %1 account</source>
-        <translation type="unfinished"></translation>
+        <translation>Accedeix amb el compte %1</translation>
     </message>
     <message>
         <location line="+72"/>
@@ -9933,7 +9933,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Transform selections:</source>
-        <translation type="unfinished"></translation>
+        <translation>Transforma les seleccions:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -11507,7 +11507,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Preview the transform exactly how will look when applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista prèvia de la transformació exactament com es veurà un cop aplicada</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11553,7 +11553,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Show transform handles instead of just moving</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mostra les anses de transformació en comptes de només moure</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11614,7 +11614,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Apply the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplica la transformació</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11624,7 +11624,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Cancel the transformation</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancel·la la transformació</translation>
     </message>
 </context>
 <context>
@@ -12122,7 +12122,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandeix</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12147,7 +12147,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Expand: </source>
-        <translation type="unfinished"></translation>
+        <translation>Expandeix: </translation>
     </message>
 </context>
 <context>
