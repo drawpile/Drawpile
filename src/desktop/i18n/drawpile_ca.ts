@@ -93,7 +93,7 @@
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation type="unfinished">Bloqueja la transparència (mode de recolorització)</translation>
+        <translation>Bloqueja l&apos;alfa (mode d&apos;acoloriment)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -141,7 +141,7 @@
     <message>
         <location line="-16"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Difuminat: </translation>
     </message>
     <message>
         <location line="+30"/>
@@ -174,7 +174,7 @@
     <message>
         <location filename="../ui/canvasshortcutsdialog.ui" line="+14"/>
         <source>Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Drecera del llenç</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -508,7 +508,7 @@
     <message>
         <location line="-390"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquejos de sessió (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -528,7 +528,7 @@
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix la miniatura predeterminada del pinzell</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -573,12 +573,12 @@
     <message>
         <location line="+10"/>
         <source>Export Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta els rols</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta l&apos;arranjament de sessió</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -624,7 +624,7 @@
         <location filename="../ui/fillsettings.ui" line="+330"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+310"/>
         <source>Feather: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ploma: </translation>
     </message>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+143"/>
@@ -675,19 +675,19 @@
         <location line="+18"/>
         <location line="+3"/>
         <source>Fill continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>Omple l&apos;àrea contínua</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill all similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Omple tots els colors similars</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill entire selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Omple tota la selecció</translation>
     </message>
     <message>
         <location line="+78"/>
@@ -714,13 +714,13 @@
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill source layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Omple la capa d&apos;origen</translation>
     </message>
     <message>
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplica l&apos;emplenat pendent, fent que sigui visible per a tothom</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -731,7 +731,7 @@
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancel·la l&apos;emplenat pendent, sense que ningú més vegi els seus efectes</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -867,12 +867,12 @@
     <message>
         <location line="+32"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Obté l&apos;adreça IP visible externament</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Allow session operators to manage invite codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Permet que els operadors de sessió gestionin codis d&apos;nvitació</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2155,7 +2155,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ajusta a la pantalla</translation>
     </message>
     <message>
         <location line="+116"/>
@@ -2215,17 +2215,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation type="unfinished"></translation>
+        <translation>Mar&amp;ca-ho tot</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Uncheck All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Desmarca-ho tot</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Select &amp;All</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccion&amp;a-ho tot</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2255,22 +2255,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+119"/>
         <source>Create Layers on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea capes en el fotograma clau actual</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea capes en el fotograma clau següent</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea capes en el fotograma clau previ</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Create Layers on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea capes en el fotograma clau</translation>
     </message>
     <message>
         <location line="-697"/>
@@ -2280,12 +2280,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+513"/>
         <source>Fill Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Omple la selecció</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Recolor Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Acoloreix la selecció</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2325,7 +2325,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+516"/>
         <source>&amp;Expand Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Expandeix el llenç</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2335,12 +2335,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+13"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Controlador de la tauleta</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Edit Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Eines d&apos;edició</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2385,12 +2385,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Zoom &amp;In</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Apropa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Allunya</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -2400,12 +2400,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+26"/>
         <source>Show &amp;Annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra les &amp;anotacions</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show User &amp;Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra els &amp;punters dels usuaris</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2425,12 +2425,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Show La&amp;ser Trails</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra les traces Là&amp;ser</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Pixel &amp;Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra la quadrícula de píxels</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -2490,12 +2490,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Layer View Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode de vista de capa</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>User Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>Punters de l&apos;usuari</translation>
     </message>
     <message>
         <location line="+65"/>
@@ -2529,7 +2529,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta la &amp;visibilitat de les capes</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2631,7 +2631,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+48"/>
         <source>Selectio&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Selecció</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -2646,7 +2646,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Change Frame Count...</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia la quantitat de fotogrames...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2802,7 +2802,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+27"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Host...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Allotja...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2822,7 +2822,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+14"/>
         <source>Prevent changes to the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Impedeix els canvis al llenç</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -2837,7 +2837,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Lasso Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecció de &amp;llaç</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2847,7 +2847,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Magic Wand Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecció de vareta &amp;Màgica</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2872,7 +2872,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Pan canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplaça la vista del llenç</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -2882,7 +2882,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+35"/>
         <source>Cause Crash…</source>
-        <translation type="unfinished"></translation>
+        <translation>Causa una fallada…</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3018,7 +3018,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Freehand (alpha lock mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>A ma alçada (mode de bloqueig de l&apos;alfa, Clic per a restablir)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3124,7 +3124,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Become Operator...</source>
-        <translation type="unfinished"></translation>
+        <translation>Convertir-se en operator...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3139,7 +3139,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Lock Everything</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloqueja-ho tot</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -3245,12 +3245,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Laser Pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>Punter &amp;làser</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Point out things on the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Apunta els objectes al llenç</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3290,12 +3290,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+30"/>
         <source>Set Artificial Lag...</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix retard artificial...</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Artifical Disconnect...</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconnexió artificial...</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -3341,17 +3341,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Provador de taules</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Touch Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Provador tàctil</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Fitxer de registre</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3373,7 +3373,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+26"/>
         <source>Missing Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Falta el fitxer de registre</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3384,7 +3384,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+14"/>
         <location line="+5"/>
         <source>Error Saving Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Error desant el fitxer de registre</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -3395,17 +3395,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+31"/>
         <source>Brush slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ranura de pinzell #%1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Swap With Brush Slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercanvia amb la ranura de pinzell #%1</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Color de mostra %1</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -3431,7 +3431,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../utils/widgetutils.cpp" line="-87"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -3537,7 +3537,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+29"/>
         <source>Automatically save a frame at each step</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa automàticament un fotograma en cada pas</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3547,7 +3547,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+13"/>
         <source>Save frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa el fotograma</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3557,7 +3557,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+39"/>
         <source>Export Video...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar vídeo...</translation>
     </message>
 </context>
 <context>
@@ -3565,7 +3565,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../filewrangler.cpp" line="-576"/>
         <source>All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tots els fitxers(*)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+79"/>
@@ -3575,7 +3575,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>Esborrador</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3595,12 +3595,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Bezier Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Corba de Bézier</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Flood Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Emplenat per flux</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3610,12 +3610,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Color Picker</source>
-        <translation type="unfinished"></translation>
+        <translation>Selector de color</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Laser Pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>Punter làser</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3630,7 +3630,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Selection (Magic Wand)</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecció (Vareta Màgica)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3749,12 +3749,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+14"/>
         <source>Autoreset threshold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Llindar de reinici automàtic:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Session history size at which autoreset triggers</source>
-        <translation type="unfinished"></translation>
+        <translation>Mida de l&apos;historial de sessió en què s&apos;activa el reinici automàtic</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3804,7 +3804,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Idle timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Temps d&apos;espera sense activitat:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3814,7 +3814,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Disable idle timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Deshabilita el temps d&apos;espera sense activitat</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3899,7 +3899,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Laser Pointer:</source>
-        <translation>Apuntador làser:</translation>
+        <translation>Punter làser:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3967,7 +3967,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-58"/>
         <source>Remove selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina els seleccionats</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4111,7 +4111,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+51"/>
         <source>Protocol Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Versió del protocol:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4329,7 +4329,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/swatch.cpp" line="+855"/>
         <source>Clear Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Neteja el color</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -4350,12 +4350,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/addserverdialog.cpp" line="+130"/>
         <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Error:&lt;/strong&gt; %1</translation>
     </message>
     <message>
         <location line="+106"/>
         <source>Retrieving %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Recuperant %1...</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -4423,7 +4423,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Loops:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bucles:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4448,7 +4448,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Interval de fotogrames:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4498,7 +4498,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+125"/>
         <source>Output resolution will be %1x%2 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>La resolució de sortida serà de %1x%2 píxels.</translation>
     </message>
 </context>
 <context>
@@ -4506,7 +4506,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/animationimportdialog.cpp" line="+43"/>
         <source>Import Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa una animació</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -4979,12 +4979,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Lock Alpha (Recolor Mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloqueja alfa ( Mode d&apos;acoloriment)</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Espaiat: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5010,7 +5010,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Suavitzat promig</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -5076,7 +5076,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Minimum Hardness: </source>
-        <translation>Duresa minima: </translation>
+        <translation>Duresa mínima: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -5087,7 +5087,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-277"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Difuminat: </translation>
     </message>
     <message>
         <location line="+12"/>
@@ -5097,13 +5097,13 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Minimum Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Difuminat mínim: </translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+241"/>
         <source>Smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>Difuminat</translation>
     </message>
     <message>
         <location line="-217"/>
@@ -5145,7 +5145,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-53"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix la velocitat màxima per a la mida, l&apos;opacitat, la duresa i el difuminat alhora.</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -5155,7 +5155,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix la mida màxima per a la mida, l&apos;opacitat, la duresa i el difuminat alhora.</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -5165,7 +5165,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+23"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix aquesta corba per a la mida, l&apos;opacitat, la duresa i el difuminat alhora.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5205,7 +5205,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Edge hardness, 0% is blurry, 100% is sharp.</source>
-        <translation>Duresa de la vora, 0% és borrosa, 100% és afilada.</translation>
+        <translation>Duresa de la vora, 0% és borrosa, 100% és nítida.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5244,14 +5244,14 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Fine speed</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. &quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Velocitat fina</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Velocitat bruta</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5279,14 +5279,14 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Declination/Tilt</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Declinació/Inclinació</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ascension</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ascensió</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5300,7 +5300,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Direction 360</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to the direction of the stroke</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Direcció 360</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5314,28 +5314,28 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Declination/Tilt X</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Declinació/Inclinació X</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination/Tilt Y</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Declinació/Inclinació Y</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap X</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mapa de graella X</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap Y</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mapa de graella Y</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5432,7 +5432,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>The angle of the stroke, from 0 to 360 degrees.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;angle del traç, de 0 a 360 graus.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5508,7 +5508,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Opacity</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Opacitat</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5529,14 +5529,14 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Radi</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Hardness</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Duresa</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8263,7 +8263,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>What triggered this notification</source>
-        <translation>Que ha disparat aquesta notificació</translation>
+        <translation>Que ha activat aquesta notificació</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8373,12 +8373,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Additional triggers go here, one per line.</source>
-        <translation>Els disparadors addicionals van aquí, un per línia.</translation>
+        <translation>Els activadors addicionals van aquí, un per línia.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</source>
-        <translation type="unfinished">El vostre nom d&apos;usuari sempre compta com una menció. Podeu afegir paraules o frases disparadores addicionals que també voleu contar, com ara altres sobrenoms.</translation>
+        <translation>El vostre nom d&apos;usuari sempre compta com una menció. Podeu afegir paraules o frases activadores addicionals que també voleu contar, com ara altres sobrenoms.</translation>
     </message>
     <message>
         <location line="-83"/>
@@ -9968,7 +9968,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Laser pointer:</source>
-        <translation>Apuntador làser:</translation>
+        <translation>Punter làser:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11419,7 +11419,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/lasersettings.cpp" line="+93"/>
         <source>You don&apos;t have permission to use the laser pointer.</source>
-        <translation type="unfinished"></translation>
+        <translation>No teniu permís per a usar el punter làser.</translation>
     </message>
     <message>
         <location line="+10"/>
