@@ -116,13 +116,13 @@
         <location line="+3"/>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -782,7 +782,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation>Dodawanie</translation>
+        <translation>Dodaj</translation>
     </message>
     <message>
         <location line="+5"/>
