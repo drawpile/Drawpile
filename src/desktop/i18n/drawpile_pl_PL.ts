@@ -6556,7 +6556,7 @@ Wartości ujemne działają odwrotnie</translation>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Siła posteryzacji, redukująca liczbę kolorów na podstawie ustawienia &quot;Poziomy posteryzacji&quot;, przy zachowaniu alfa.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6565,7 +6565,9 @@ Wartości ujemne działają odwrotnie</translation>
 Values above 0.5 may not be noticeable.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Liczba poziomów posteryzacji (podzielona przez 100).
+0,05 = 5 poziomów, 0,2 = 20 poziomów itd.
+Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6584,17 +6586,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/canvasshortcutsdialog.cpp" line="+24"/>
         <source>Key Combination</source>
-        <translation type="unfinished"></translation>
+        <translation>Kombinacja klawiszy</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Przyciski myszy</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Kółko myszy</translation>
     </message>
     <message>
         <location line="+2"/>
