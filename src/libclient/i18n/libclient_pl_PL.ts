@@ -20,7 +20,7 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished">Konflikt</translation>
+        <translation>Konflikt</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -36,7 +36,7 @@
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Skrót</translation>
+        <translation>Skrót</translation>
     </message>
 </context>
 <context>
@@ -83,13 +83,13 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished">Konflikt</translation>
+        <translation>Konflikt</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation>konflikt</translation>
+        <translation>%1 konflikt</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -128,7 +128,7 @@
         <location line="+3"/>
         <source>%1: %2 (%3)</source>
         <extracomment>Example: &quot;Space: Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 (%3)</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -473,7 +473,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+5"/>
         <source>GIF (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -611,10 +611,10 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message numerus="yes">
         <location line="-3"/>
         <source>%1/%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1/%n użytkownik</numerusform>
+            <numerusform>%1/%n użytkownicy</numerusform>
+            <numerusform>%1/%n użytkownicy</numerusform>
         </translation>
     </message>
     <message>
@@ -625,10 +625,10 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n aktywnie rysujący użytkownik</numerusform>
+            <numerusform>%n aktywnie rysujących użytkowników</numerusform>
+            <numerusform>%n aktywnie rysujących użytkowników</numerusform>
         </translation>
     </message>
     <message>
@@ -714,7 +714,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM</translation>
     </message>
 </context>
 <context>
@@ -767,7 +767,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+5"/>
         <source>Darken</source>
-        <translation>Ściemnianie</translation>
+        <translation>Przyciemnianie</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -807,7 +807,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+5"/>
         <source>Linear Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>Wypalenie linii</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1396,12 +1396,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished">Operator</translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">Zaufany</translation>
+        <translation>Zaufany</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1667,7 +1667,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation type="unfinished">(bez tytułu)</translation>
+        <translation>(bez tytułu)</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -1727,16 +1727,16 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n aktywnie rysujący użytkownik</numerusform>
+            <numerusform>%n aktywnie rysujących użytkowników</numerusform>
+            <numerusform>%n aktywnie rysujących użytkowników</numerusform>
         </translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Title</source>
-        <translation type="unfinished">Tytuł</translation>
+        <translation>Tytuł</translation>
     </message>
     <message>
         <location line="+2"/>
