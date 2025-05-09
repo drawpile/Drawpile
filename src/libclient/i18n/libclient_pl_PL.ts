@@ -110,7 +110,7 @@
         <location line="+66"/>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -654,7 +654,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+2"/>
         <source>unknown version</source>
-        <translation>nieznana wersja</translation>
+        <translation>Nieznana wersja</translation>
     </message>
     <message>
         <location line="+113"/>
@@ -777,7 +777,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     <message>
         <location line="+5"/>
         <source>Subtract</source>
-        <translation>Odejmowanie</translation>
+        <translation>Odejmij</translation>
     </message>
     <message>
         <location line="+5"/>
