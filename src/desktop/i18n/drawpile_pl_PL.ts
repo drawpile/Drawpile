@@ -2140,7 +2140,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>odbicie lustrzane/odwrócenie płótna w pionie</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2616,7 +2616,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+4"/>
         <source>&amp;Stamp Transform</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Stamp Transform</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -2626,7 +2626,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+31"/>
         <source>Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Album</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2746,7 +2746,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     <message>
         <location line="+1"/>
         <source>Track Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Utwór poniżej</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5195,17 +5195,17 @@ do 64x64 pikseli.</translation>
     <message>
         <location line="+11"/>
         <source>No brush dynamics.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nie dynamiczny pędzel.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Niedostępne w trybie pośrednim/wycierania.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dynamics not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dynamika niedostępna w trybie Pośrednim/wycierania.</translation>
     </message>
     <message>
         <location line="+59"/>
@@ -5959,7 +5959,7 @@ Zwróć uwagę na „Dabs per basic radius” i „Dabs per actual radius”, kt
         <source>Offsets Multiplier</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mnożnik przesunięć</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6574,7 +6574,9 @@ Values above 0.5 may not be noticeable.</source>
 1.0 only spectral mixing</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. If this string is difficult to translate, feel free to change it to something more descriptive. Just try to be succinct and consistent.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tryb subtraktywnego widmowego mieszania kolorów.
+0.0 brak mieszania widmowego
+1.0 tylko mieszanie widmowe</translation>
     </message>
 </context>
 <context>
@@ -6664,7 +6666,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Narzędzie centrujące</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6684,7 +6686,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Turning the mouse wheel or some input device that acts like one, optionally while also holding down keys. Example: scrolling to zoom the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Obracanie kółkiem myszy lub innym urządzeniem wejściowym, które działa jak kółko, opcjonalnie z jednoczesnym przytrzymaniem klawiszy. Przykład: przewijanie w celu powiększenia obszaru roboczego.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6810,7 +6812,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Really delete curve &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Naprawdę usunąć krzywą &apos;%1&apos;?</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -6825,7 +6827,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>Wygładzenie</translation>
     </message>
     <message>
         <location line="+1"/>
