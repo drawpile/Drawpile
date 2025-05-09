@@ -6834,7 +6834,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
     <message>
         <location line="+1"/>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>Liniowo</translation>
     </message>
     <message>
         <location line="+1"/>
