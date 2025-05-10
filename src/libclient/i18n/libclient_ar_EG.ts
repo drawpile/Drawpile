@@ -20,13 +20,13 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation>تعارض</translation>
+        <translation>تَعَارُضْ</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation>%1 (تعارض)</translation>
+        <translation>%1 (تَعَارُضْ)</translation>
     </message>
     <message>
         <location line="+85"/>
@@ -54,12 +54,12 @@
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation>لم يمكن دمج اللوحة كصورة مسطحة.</translation>
+        <translation>لم نتمكن من دمج اللوحة كصورة مسطحة.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation>لم يمكن فتح الملف للكتابة.</translation>
+        <translation>لم نتمكن من فتح الملف للكتابة.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -83,13 +83,13 @@
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation>تعارض</translation>
+        <translation>تَعَارُضْ</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation>%1 (تعارض)</translation>
+        <translation>%1 (تَعَارُضْ)</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -99,7 +99,7 @@
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation>عمل</translation>
+        <translation>إجراء</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -144,7 +144,7 @@
     <message>
         <location line="+40"/>
         <source>Unset</source>
-        <translation>لا تحدد</translation>
+        <translation>لم يتم ضبطه</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -184,17 +184,17 @@
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation>تكبير اللوحة</translation>
+        <translation>تقريب اللوحة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation>اختر اللون</translation>
+        <translation>التقط لون</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation>اختر الطبقة</translation>
+        <translation>اختر طبقة</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -204,17 +204,17 @@
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation>تقييد الأداة</translation>
+        <translation>أداة التقييد</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation>توسيط الأداة</translation>
+        <translation>أداة التوسيط</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation>تقييد وتوسيط الأداة</translation>
+        <translation>أداة التقييد والتوسيط</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -224,17 +224,17 @@
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
-        <translation>تدوير سقاطة للوحة</translation>
+        <translation>تدوير اللوحة بخطوات ثابتة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Free Rotate Canvas</source>
-        <translation>تدوير اللوحه</translation>
+        <translation>تدوير اللوحة بشكلٍ حر</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation>تغيير لون اللون</translation>
+        <translation>تغيير تدرُّج اللون</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -249,17 +249,17 @@
     <message>
         <location line="+2"/>
         <source>Unknown Action %1</source>
-        <translation>عمل مجهول %1</translation>
+        <translation>إجراء مجهول %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation>مقلوب، تبديل المحاور</translation>
+        <translation>معكوس، تبديل المحاور</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation>مقلوب</translation>
+        <translation>معكوس</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -287,32 +287,32 @@
     <message>
         <location line="+8"/>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
-        <translation>&apos;%1&apos; يحتوي على عدة شهادات أسماء مضيفين صالحة، ذلك غير مدعوم حاليًا.</translation>
+        <translation>&apos;%1&apos; يحتوي على شهادة بأكثر من اسم مضيف، ذلك غير مدعوم حاليًا.</translation>
     </message>
     <message>
         <location line="+140"/>
         <source>Could not read certificate from &apos;%1&apos;.</source>
-        <translation>لم يمكن قراءة الشهادة من &apos;%1&apos;.</translation>
+        <translation>لم نتمكن من قراءة الشهادة من &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Could not open &apos;%1&apos; for writing: %2.</source>
-        <translation>لم يمكن فتح &apos;%1&apos; لكتابة: %2.</translation>
+        <translation>لم نستطع فتح &apos;%1&apos; لكتابة: %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not write &apos;%1&apos;: %2.</source>
-        <translation>لم يمكن كتابة &apos;%1&apos;: %2.</translation>
+        <translation>لم نستطع كتابة &apos;%1&apos;: %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation>لم يمكن تحريك &apos;%1&apos; إلى &apos;%2&apos;: %3.</translation>
+        <translation>لم نستطع تحريك &apos;%1&apos; إلى &apos;%2&apos;: %3.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Could not delete &apos;%1&apos;: %2.</source>
-        <translation>لم يمكن حذف &apos;%1&apos;: %2.</translation>
+        <translation>لم نستطع حذف &apos;%1&apos;: %2.</translation>
     </message>
 </context>
 <context>
@@ -321,18 +321,18 @@
         <location filename="../utils/customshortcutmodel.cpp" line="+57"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation>تعارض</translation>
+        <translation>تَعَارُضْ</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
-        <translation>%1 (تعارض)</translation>
+        <translation>%1 (تَعَارُضْ)</translation>
     </message>
     <message>
         <location line="+126"/>
         <source>Action</source>
-        <translation>عمل</translation>
+        <translation>إجراء</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -355,7 +355,7 @@
     <message>
         <location filename="../document.cpp" line="+1005"/>
         <source>Unknown format.</source>
-        <translation>صيغة مجهولة.</translation>
+        <translation>امتداد مجهول.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -370,7 +370,7 @@
     <message>
         <location line="+3"/>
         <source>Error starting recorder.</source>
-        <translation>حدث خطأ في بدء تشغيل المسجل.</translation>
+        <translation>حدث خطأ في بَدْء تشغيل المسجل.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -393,23 +393,23 @@
     <message>
         <location line="+4"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation>يمكنك تثبيت ffmpeg من خلال Homebrew.</translation>
+        <translation>يمكنك تثبيت ffmpeg بواسطة Homebrew.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation>ربما يمكنك تثبيت ffmpeg من خلال مدير الحزم لديك.</translation>
+        <translation>ربما يمكنك تثبيت ffmpeg بواسطة مدير الحزم لديك.</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
-        <translation>فشل بدء تشغيل ffmpeg باستخدام &apos;%1&apos;. %2</translation>
+        <translation>فشل بَدْء تشغيل ffmpeg باستخدام &apos;%1&apos;. %2</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Ffmpeg crashed!</source>
-        <translation>تعطل برنامج FFmpeg!</translation>
+        <translation>تعطل برنامَج FFmpeg!</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -422,7 +422,7 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+322"/>
         <source>Filling…</source>
-        <translation>يملأ…</translation>
+        <translation>جار الملء…</translation>
     </message>
     <message>
         <location line="+73"/>
@@ -434,7 +434,7 @@
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
         <translation>لا يمكن تعبئة مجموعة الطبقات %1.
-حدد طبقة عادية بدلاً من ذلك.</translation>
+حدد طبقة اعتيادية بدلًا من ذلك.</translation>
     </message>
 </context>
 <context>
@@ -447,7 +447,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation>الرؤية : مكشوفة</translation>
+        <translation>الرؤية: ظاهرة</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -460,7 +460,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+291"/>
         <source>Selecting…</source>
-        <translation>بيتم التحديد…</translation>
+        <translation>جار التحديد…</translation>
     </message>
 </context>
 <context>
@@ -473,7 +473,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>GIF (%1)</source>
-        <translation>صور متحركة (GIF) (%1)</translation>
+        <translation>GIF (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -498,7 +498,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>Debug Dumps (%1)</source>
-        <translation>تفريغ التصحيح (debug) (%1)</translation>
+        <translation type="unfinished">تفريغ التصحيح (debug) (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -508,12 +508,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation>فيديو صيغة (MP4) (%1)</translation>
+        <translation>فيديو بصيغة (MP4) (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation>فيديو صيغة (WebM) (%1)</translation>
+        <translation>فيديو بصيغة (WebM) (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -528,7 +528,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation>محظورين الجلسه(%1)</translation>
+        <translation>محظوري الجَلسة (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -559,22 +559,22 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-139"/>
         <source>Shift</source>
-        <translation>زر Shift</translation>
+        <translation>مفتاح العالي (Shift)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation>زر Alt</translation>
+        <translation>مفتاح التبديل (Alt)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation>زر Ctrl</translation>
+        <translation>مفتاح التحكم (Ctrl)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation>Meta</translation>
+        <translation>مفتاح (Meta)</translation>
     </message>
 </context>
 <context>
@@ -582,17 +582,17 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+76"/>
         <source>%1d%2h%3m</source>
-        <translation>%1 يوم، %2 ساعة، %3 دقيقة</translation>
+        <translation>%1 ي، %2 س، %3 د</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation>%1ساعة، %2دقيقة</translation>
+        <translation>%1س، %2د</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1m</source>
-        <translation>%1 دقيقة</translation>
+        <translation>%1د</translation>
     </message>
     <message>
         <location line="+437"/>
@@ -603,41 +603,41 @@ Select a regular layer instead.</source>
         <location line="-328"/>
         <source>%n users</source>
         <translation>
-            <numerusform>مستخدم%n</numerusform>
-            <numerusform>مستخدم%n</numerusform>
-            <numerusform>مستخدمين%n</numerusform>
-            <numerusform>مستخدمي%n</numerusform>
-            <numerusform>مستخدمي%n</numerusform>
-            <numerusform>مستخدمي%n</numerusform>
+            <numerusform>لا مستخدم</numerusform>
+            <numerusform>مستخدم واحد</numerusform>
+            <numerusform>مستخدمين اثنين</numerusform>
+            <numerusform>%n مستخدمين</numerusform>
+            <numerusform>%n مستخدم</numerusform>
+            <numerusform>%n مستخدم</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-3"/>
         <source>%1/%n users</source>
         <translation>
-            <numerusform>%1%nمستخدمي</numerusform>
-            <numerusform>%1%nمستخدم</numerusform>
-            <numerusform>%1%nمستخدمين</numerusform>
-            <numerusform>%1%nمستخدمي</numerusform>
-            <numerusform>%1%nمستخدمي</numerusform>
-            <numerusform>%1%nمستخدمي</numerusform>
+            <numerusform>%1%n لا مستخدم</numerusform>
+            <numerusform>%1%n مستخدم واحد</numerusform>
+            <numerusform>%1%n مستخدمين اثنين</numerusform>
+            <numerusform>%1%n مستخدمين</numerusform>
+            <numerusform>%1%n مستخدم</numerusform>
+            <numerusform>%1%n مستخدم</numerusform>
         </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Unknown number of actively drawing users</source>
-        <translation>عدد غير معروف من المستخدمين النشطين في الرسم</translation>
+        <translation>عدد المستخدمين الذين يرسمون حاليًا مجهول</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
         <translation>
-            <numerusform>%n المستخدمي نشطاء</numerusform>
-            <numerusform>%n مستخدم نشيط</numerusform>
-            <numerusform>%n مستخدمين نشطاء</numerusform>
-            <numerusform>%n مستخدمين نشطاء</numerusform>
-            <numerusform>%n مستخدمين نشطاء</numerusform>
-            <numerusform>%n مستخدمين نشطاء</numerusform>
+            <numerusform>لا مستخدم يرسم حاليًا</numerusform>
+            <numerusform>مستخدم واحد يرسم حاليًا</numerusform>
+            <numerusform>مستخدمان يرسمان حاليًا</numerusform>
+            <numerusform>%n مستخدمين يرسمون حاليًا</numerusform>
+            <numerusform>%n مستخدم يرسمون حاليًا</numerusform>
+            <numerusform>%n مستخدم يرسمون حاليًا</numerusform>
         </translation>
     </message>
     <message>
@@ -663,7 +663,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>unknown version</source>
-        <translation>نسخة مجهولة</translation>
+        <translation>إصدار مجهول</translation>
     </message>
     <message>
         <location line="+113"/>
@@ -688,7 +688,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation>نشطاء</translation>
+        <translation>نشط</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -708,7 +708,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation>الانضمام من الويب غير مسموح به</translation>
+        <translation>الانضمام من الويب غير مسموح</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -723,7 +723,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation>غير صالح للقاصرين</translation>
+        <translation>ليس صالح لغير البالغين</translation>
     </message>
 </context>
 <context>
@@ -731,77 +731,77 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation>الوضع الاعتيادي</translation>
+        <translation>اعتيادي</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation>وضع إعادة التلوين</translation>
+        <translation>إعادة التلوين</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation>وضع التلوين من الخلف</translation>
+        <translation>من الخلف</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Multiply</source>
-        <translation>وضع المضاعفة</translation>
+        <translation>المضاعفة</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation>وضع الشاشة</translation>
+        <translation>الشاشة</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation>وضع التراكب</translation>
+        <translation>التراكب</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Divide</source>
-        <translation>وضع عكس اللون</translation>
+        <translation>قسمة الألوان</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Burn</source>
-        <translation>وضع الحرق</translation>
+        <translation>الحرق</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dodge</source>
-        <translation>وضع السطوع الشديد</translation>
+        <translation>تفتيح</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Darken</source>
-        <translation>وضع التغميق</translation>
+        <translation>التغميق</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Lighten</source>
-        <translation>وضع التفتيح</translation>
+        <translation>الأفتح</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Subtract</source>
-        <translation>وضع الطرح</translation>
+        <translation>الطرح</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation>وضع الإضافة</translation>
+        <translation>الإضافة</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation>وضع محو</translation>
+        <translation>المحو</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color Erase</source>
-        <translation>وضع محو اللون</translation>
+        <translation>محو اللون</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -811,37 +811,37 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Soft Light</source>
-        <translation>وضع الضوء الهادئ</translation>
+        <translation type="unfinished">وضع الضوء الهادئ</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Linear Burn</source>
-        <translation>وضع الحرق الخطي</translation>
+        <translation type="unfinished">وضع الحرق الخطي</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Linear Light</source>
-        <translation>وضع الضوء الخطي</translation>
+        <translation type="unfinished">وضع الضوء الخطي</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity/Shine (SAI)</source>
-        <translation>الوضع اللمعان (SAI)</translation>
+        <translation type="unfinished">وضع اللمعان (SAI)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hue</source>
-        <translation>وضع درجة اللون</translation>
+        <translation>تدَرُّج اللون</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation>وضع تشبع اللون</translation>
+        <translation>تشبع اللون</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation>وضع اللمعان</translation>
+        <translation>اللمعان</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -851,7 +851,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>Unknown</source>
-        <translation>غير معروف</translation>
+        <translation>مجهول</translation>
     </message>
 </context>
 <context>
@@ -872,17 +872,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation>بدون علامات</translation>
+        <translation>غير مُعَلَّم</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation>إظهار كافة الفرش، بغض النظر عن العلامات.</translation>
+        <translation>إظهار كافة الفُرَش، بغض النظر عن العلامات.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation>إظهار الفرش التي لم يتم تعيينها لأي علامة.</translation>
+        <translation>إظهار الفُرَش التي لم يتم تعيينها لأي علامة.</translation>
     </message>
     <message>
         <location line="+198"/>
@@ -908,7 +908,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="-423"/>
         <source>Invalid brush pack: order.conf not found inside</source>
-        <translation>مجموعة فُرَش غير صالحة: لم يتم العثور على order.conf بالداخل.</translation>
+        <translation>مجموعة فُرَش غير صالحة: لم يتم العثور على order.conf بالداخل</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -943,7 +943,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+15"/>
         <source>Unknown brush format in file &apos;%1&apos;</source>
-        <translation>فرشاة غير معروف في الملف &apos;%1&apos;</translation>
+        <translation>تنسيق فرشاة مجهول في الملف &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -1029,7 +1029,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation>المعامل</translation>
+        <translation>المشغّل</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1054,7 +1054,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+34"/>
         <source>User</source>
-        <translation>المستخدم</translation>
+        <translation>مستخدم</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1089,7 +1089,7 @@ Select a regular layer instead.</source>
         <location line="+19"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation>طبقات%1</translation>
+        <translation>إطارات %1</translation>
     </message>
 </context>
 <context>
@@ -1102,7 +1102,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation>الرئيس</translation>
+        <translation>المشغل</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1117,7 +1117,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation>الادوار</translation>
+        <translation>الأدوار</translation>
     </message>
 </context>
 <context>
@@ -1126,7 +1126,7 @@ Select a regular layer instead.</source>
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation>ID</translation>
+        <translation>رمز التعريف (ID)</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1137,12 +1137,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="-13"/>
         <source>IP address</source>
-        <translation>عنوان الIP</translation>
+        <translation>عنوان IP</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation>معلومات الجهاز</translation>
+        <translation>معلومات العميل</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1166,22 +1166,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+20"/>
         <source>%1 made operator by the server.</source>
-        <translation>تم جعل %1 المشغل بواسطة الخادم.</translation>
+        <translation>أصبح %1 مشغلًا بواسطة الخادم.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation>تم جعل %1 المشغل بواسطة %2.</translation>
+        <translation>أصبح %1 مشغلًا بواسطة %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation>تم إنشاء %1 عامل تشغيل عبر دعوة أنشأها مسؤول الخادم.</translation>
+        <translation>أصبح %1 مشغلًا عبر دعوة أنشأها مسؤول الخادم.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation>قام %1 بإنشاء عامل عبر دعوة تم إنشاؤها بواسطة %2.</translation>
+        <translation>أصبح %1 مشغلًا عبر دعوة تم إنشاؤها بواسطة %2.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1191,32 +1191,32 @@ Select a regular layer instead.</source>
     <message>
         <location line="-511"/>
         <source>You have been kicked.</source>
-        <translation>تم طردك.</translation>
+        <translation>لقد تم طردك.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation>%1 طردك من الجلسه.</translation>
+        <translation>%1 طردك من الجَلسة.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation>حدث خلل في السيرفر.</translation>
+        <translation>حدث خلل في الخادم.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation>حدث خلل في السيرفر:%1</translation>
+        <translation>حدث خلل في الخادم:%1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation>السيرفر بيقفل.</translation>
+        <translation>يتم إغلاق الخادم.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation>وقف السيرفر:%1</translation>
+        <translation>تم إغلاق الجَلسة:%1</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1226,33 +1226,33 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation>انقطع الاتصال:%1</translation>
+        <translation>انقطع الاتصال: %1</translation>
     </message>
     <message>
         <location line="+420"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation>يمكن للمشرفين فقط تصدير عمليات الحظر .</translation>
+        <translation>فقط للمشرفين يمكنهم تصدير الحظر العادي.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation>سيرفر خلل .</translation>
+        <translation>خلل في الخادم.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation>تصدير عمليات الحظر المشفرة التي لم يتم تكوينها على هذا سيرفر.</translation>
+        <translation>تصدير عمليات الحظر المشفرة التي لم يتم تكوينها على هذا الخادم.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation>تصدير عمليات الحظر المشفرة غير المدعومة من قبل هذا سيرفر.</translation>
+        <translation>لا يدعم هذا الخادم تصدير الحظر المشفر.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation>تعذر على سيرفر قراءة بيانات الاستيراد. من المحتمل أن يكون هذا لأنه تم تصديره من سيرفر مختلف. يمكنك فقط استيراد عمليات الحظر إلى نفس سيرفر الذي تم تصديرها منه.</translation>
+        <translation>تعذر على الخادم قراءة بيانات الاستيراد. قد يكون هذا بسبب أنها تم تصديرها من خادم مختلف. يمكنك فقط استيراد عمليات الحظر إلى نفس الخادم الذي تم تصديرها منه.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1267,17 +1267,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation>استيراد عمليات الحظر المشفرة التي لم يتم تكوينها على هذا سيرفر.</translation>
+        <translation>استيراد عمليات الحظر المشفرة التي لم يتم تكوينها على هذا الخادم.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation>استيراد عمليات الحظر المشفرة التي لم يتم تكوينها على هذا سيرفر.</translation>
+        <translation>لا يدعم هذا الخادم استيراد الحظر المشفر.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation>تمت إزالة كلمة مرور الجلسة بواسطة مسؤول الخادم. لا يسمح هذا الخادم بمتصفحات الويب في الجلسات العامة، وسيتم قطع اتصالها.</translation>
+        <translation>أُزيلت كلمة مرور الجَلسة بواسطة مسؤول الخادم. لا يسمح هذا الخادم بمتصفحات الويب في الجلسات العامة، وسيتم قطع اتصالها.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1292,65 +1292,65 @@ Select a regular layer instead.</source>
     <message>
         <location line="-62"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation>%2فسخ دور الرئيس من%1.</translation>
+        <translation>تم إبطال دور المشغل %1 بواسطة %2.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation>الجلسة خارج المساحة! لمواصلة الرسم، يجب على المشغل إعادة ضبطه لتقليص حجمه إلى حجم أصغر. يمكن القيام بذلك عبر الجلسة&gt; &gt;إ ضبط.</translation>
+        <translation>نفدت مساحة الجَلسة! لمواصلة الرسم، يجب على المشغل إعادة ضبطها لتقليص حجمها إلى حجم أصغر. يمكن فعل ذلك عبر الجَلسة &gt; إعادة ضبط.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
-        <translation>تم إلغاء إعادة تعيين الجلسة! يجب على المشغل فتح قفل اللوحة وإعادة تعيين الجلسة يدويًا.</translation>
+        <translation>تم إلغاء إعادة ضبط الجَلسة! يجب على المشغل فتح قُفْل اللوحة وإعادة ضبط الجَلسة يدويًا.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
-        <translation>فشلت إعادة تعيين الجلسة! يجب على المشغل فتح قفل اللوحة وإعادة تعيين الجلسة يدويًا.</translation>
+        <translation>فشلت إعادة ضبط الجَلسة! يجب على المشغل فتح قُفْل اللوحة وإعادة ضبط الجَلسة يدويًا.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
-        <translation>يتم التحضير لإعادة تعيين الجلسة! الرجاء الانتظار، من المفترض أن تكون الجلسة متاحة مرة أخرى قريبًا…</translation>
+        <translation>يتم التحضير لإعادة ضبط الجَلسة! الرجاء الانتظار، من المفترض أن تكون الجَلسة متاحة مرة أخرى قريبًا…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
-        <translation>التحضير لإعادة تعيين الجلسة بواسطة %1! برجاء الانتظار، من المفترض أن تكون الجلسة متاحة مرة أخرى قريبًا…</translation>
+        <translation>التحضير لإعادة ضبط الجَلسة بواسطة %1! برجاء الانتظار، من المفترض أن تكون الجَلسة متاحة مرة أخرى قريبًا…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation>يقوم %1 بضغط اللوحة القماشية! برجاء الانتظار، من المفترض أن تكون الجلسة متاحة مرة أخرى قريبًا…</translation>
+        <translation>يقوم %1 بضغط اللوحة! رجاء الانتظار، من المفترض أن تكون الجَلسة متاحة مرة أخرى قريبًا…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation>%1ستبدل اللوحة القماشية! برجاء الانتظار، من المفترض أن تكون الجلسة متاحة مرة أخرى قريبًا…</translation>
+        <translation>يقوم %1 باستبدال اللوحة! رجاء الانتظار، من المفترض أن تكون الجَلسة متاحة مرة أخرى قريبًا…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation>%1 يعيد اللوحة القماشية إلى حالتها السابقة! برجاء الانتظار، من المفترض أن تكون الجلسة متاحة مرة أخرى قريبًا…</translation>
+        <translation>%1 يعيد اللوحة إلى حالتها السابقة! برجاء الانتظار، من المفترض أن تكون الجَلسة متاحة مرة أخرى قريبًا…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
-        <translation>تم إنهاء الجلسة بواسطة المدير (%1).</translation>
+        <translation>تمت مقاطعة الجَلسة بواسطة المشرف (%1).</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation>تم إنهاء الجلسة من قبل المسؤول: %1</translation>
+        <translation>تمت مقاطعة الجَلسة من قبل المسؤول: %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation>تم إنهاء الجلسة من قبل المسؤول (%1): %2</translation>
+        <translation>تم مقاطعة الجَلسة من قبل المشرف (%1): %2</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1400,12 +1400,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>Operator and Trusted</source>
-        <translation>المشغل وموثوق</translation>
+        <translation>المشغل و الموثوق</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation>الرؤساء</translation>
+        <translation>المشغل</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1421,12 +1421,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+22"/>
         <source>Code</source>
-        <translation>شفرة</translation>
+        <translation>رمز</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation>الخالق</translation>
+        <translation>المُنشِئ</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1465,27 +1465,27 @@ Select a regular layer instead.</source>
     <message>
         <location line="+86"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation>لا يوجد طريقه ان تسجل في هذا الجلسه!</translation>
+        <translation>لا يوفر هذا الخادم طريقة لتسجيل الدخول للانضمام إلى جَلسة!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation>لا يوجد طريقه ان تسجل في هذا سيرفر!</translation>
+        <translation>لا يوفر هذا الخادم طريقة لتسجيل الدخول لاستضافة جَلسة!</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation>يتوقع الخادم STARTTLS على مأخذ توصيل غير مدعوم.</translation>
+        <translation>يتوقع الخادم STARTTLS على منفذ (socket) غير مدعوم.</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Failed to retrieve server info</source>
-        <translation>فشل في استرداد معلومات الخادم</translation>
+        <translation>فشل استرداد معلومات الخادم</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Session lookup failed</source>
-        <translation>فشل البحث عن الجلسة</translation>
+        <translation>فشل البحث عن الجَلسة</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -1495,7 +1495,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation>كلمة المرور مطلوبة لتسجيل الدخول باسم &quot;%1&quot;</translation>
+        <translation>كلمة المرور مطلوبة لتسجيل الدخول كـ &quot;%1&quot;</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -1516,7 +1516,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+86"/>
         <source>Invalid ident intent response.</source>
-        <translation>استجابة هدف التعريف غير صالحة.</translation>
+        <translation type="unfinished">استجابة هدف التعريف غير صالحة.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1531,43 +1531,43 @@ Select a regular layer instead.</source>
     <message>
         <location line="+9"/>
         <source>Server reported two different ext-auth URLs</source>
-        <translation>أبلغ الخادم عن عنوانيext-auth URL مختلفين</translation>
+        <translation>أبلغ الخادم عن عنواني URL مختلفين لـ ext-auth</translation>
     </message>
     <message>
         <location line="+118"/>
         <source>Got multiple sessions when only one was expected</source>
-        <translation>حصلت على جلسات متعددة عندما كان من المتوقع جلسة واحدة فقط</translation>
+        <translation type="unfinished">حصلت على جلسات متعددة عندما كان من المتوقع جَلسة واحدة فقط</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>New version</source>
-        <translation>نسخة جديدة</translation>
+        <translation>إصدار جديد</translation>
     </message>
     <message>
         <location line="-45"/>
         <source>Session not yet started!</source>
-        <translation>الجلسة لم تبدأ بعد!</translation>
+        <translation>الجَلسة لم تبدأ بعد!</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Blocked by parental controls</source>
-        <translation>محظور بواسطة الضوابط الأبوية</translation>
+        <translation>حُظر بواسطة الرقابة الأبوية</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation>توجد جلسة لنسخة Drawpile رقم (%1) سارية حاليًا!</translation>
+        <translation>جَلسة لإصدار Drawpile مختلف (%1) سارية حاليًا!</translation>
     </message>
     <message>
         <location line="+214"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
-        <translation>TLS غير مدعوم عبر هذا النوع من المقابس</translation>
+        <translation>TLS غير مدعوم عبر هذا النوع من المقابس (socket)</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation>غير قادر على تعيين حالة تجاهل خطأ TLS</translation>
+        <translation type="unfinished">غير قادر على تعيين حالة تجاهل خطأ TLS</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -1583,7 +1583,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+558"/>
         <source>Unknown version %1</source>
-        <translation>إصدار غير معروف %1</translation>
+        <translation>إصدار مجهول %1</translation>
     </message>
     <message>
         <location line="+280"/>
@@ -1598,7 +1598,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+14"/>
         <source>Session not found!</source>
-        <translation>لم يتم العثور على الجلسة!</translation>
+        <translation>لم يتم العثور على الجَلسة!</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1608,7 +1608,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>This username has been locked</source>
-        <translation>تم قفل اسم المستخدم هذا</translation>
+        <translation>لقد تم قَفل اسم المستخدم هذا</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1618,7 +1618,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Session is closed!</source>
-        <translation>الجلسة مغلقة!</translation>
+        <translation>الجَلسة مغلقة!</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1633,17 +1633,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation>لقد تم منعك من هذه الجلسة!</translation>
+        <translation>لقد تم حظرك من هذه الجَلسة!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session alias is reserved!</source>
-        <translation>الاسم المستعار للجلسة محجوز!</translation>
+        <translation type="unfinished">الاسم المستعار للجلسة محجوز!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation>هذا يعني عادةً أن إصدار Drawpile قديم جدًا. هل تحتاج إلى التحديث؟</translation>
+        <translation>هذا يعني عادةً أن إصدار Drawpile لديك قديم جدًا. هل تحتاج إلى تحديث؟</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1653,7 +1653,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation>هذا السيرفر فقط بالانضمام إلى الجلسات من خلال رابط مباشر.</translation>
+        <translation>يسمح هذا الخادم بالانضمام إلى الجلسات عبر رابط مباشر فقط.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1663,7 +1663,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation>لا يُسمح لك باستضافة الجلسات العامة هنا ، فقط الجلسات الشخصية مسموح بها. يمكنك التبديل من الجمهور إلى الشخصي في علامة التبويب الجلسة.</translation>
+        <translation>لا يُسمح باستضافة جلسات عامة هنا، يُسمح فقط بالجلسات الشخصية. يمكنك التبديل من عامة إلى شخصية بواسطة تبويب &quot;الجلسة&quot;.</translation>
     </message>
     <message>
         <location line="+33"/>

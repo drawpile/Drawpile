@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="fr_FR">
+<TS version="2.1" language="ca">
 <context>
     <name>AbstractWidgetList</name>
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+52"/>
         <source>Add New</source>
-        <translation>Ajouter un Nouveau</translation>
+        <translation>Afegeix nou</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Move Up</source>
-        <translation>Déplacer vers le haut</translation>
+        <translation>Mou amunt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Down</source>
-        <translation>Déplacer vers le bas</translation>
+        <translation>Mou avall</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation>Retirer</translation>
+        <translation>Elimina</translation>
     </message>
 </context>
 <context>
@@ -29,27 +29,27 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation>Signaler un abus</translation>
+        <translation>Informa d&apos;un abús</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation>Session :</translation>
+        <translation>Sessió:</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Reason:</source>
-        <translation>Raison :</translation>
+        <translation>Motiu:</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Entire session</source>
-        <translation>Toute la session</translation>
+        <translation>Tota la sessió</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation>Fautif&#x202f;:</translation>
+        <translation>Infractor:</translation>
     </message>
 </context>
 <context>
@@ -57,17 +57,17 @@
     <message>
         <location filename="../ui/addserverdialog.ui" line="+14"/>
         <source>Add Server</source>
-        <translation>Ajouter un Serveur</translation>
+        <translation>Afegir un servidor</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation>Saisissez un URL de serveur&#xa0;:</translation>
+        <translation>Introdueix l&apos;URL d&apos;una llista de servidors:</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation>Vous pouvez trouver la liste des serveurs sur &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
+        <translation>Podeu trobar algunes llistes de servidors a &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../ui/avatarimport.ui" line="+14"/>
         <source>Crop Avatar</source>
-        <translation>Recadrer l&apos;avatar</translation>
+        <translation>Retalla la imatge d&apos;usuari</translation>
     </message>
 </context>
 <context>
@@ -83,47 +83,52 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+64"/>
         <source>Brush type</source>
-        <translation>Type de pinceau</translation>
+        <translation>Tipus de pinzell</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Pick initial color from layer</source>
-        <translation>Sélectionner la couleur de départ sur le calque</translation>
+        <translation>Tria el color inicial des de la capa</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation>Verrouiller l&apos;Alpha (mode recoloriage)</translation>
+        <translation>Bloqueja l&apos;alfa (mode d&apos;acoloriment)</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Eraser mode</source>
-        <translation>Mode gomme</translation>
+        <translation>Mode de goma d&apos;esborrar</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Direct drawing mode</source>
-        <translation>Mode dessin direct</translation>
+        <translation>Mode de dibuix directe</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+24"/>
+        <source>px</source>
+        <translation>px</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Size: </source>
-        <translation>Taille&#x202f;: </translation>
+        <translation>Mida: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Radius: </source>
-        <translation>Rayon&#x202f;: </translation>
+        <translation>Radi: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation>Opacité&#xa0;: </translation>
+        <translation>Opacitat: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation>Dureté&#xa0;: </translation>
+        <translation>Duresa: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -131,42 +136,37 @@
         <location line="+14"/>
         <location line="+33"/>
         <source>Pressure sensitivity</source>
-        <translation>Sensibilité à la pression</translation>
+        <translation>Sensibilitat de pressió</translation>
     </message>
     <message>
         <location line="-16"/>
         <source>Smudging: </source>
-        <translation>Étalement&#xa0;: </translation>
+        <translation>Difuminat: </translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Color Pickup: 1/</source>
-        <translation>Pipette&#x202f;à couleurs&#xa0;: 1/</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Spacing: </source>
-        <translation>Espacement&#xa0;: </translation>
+        <translation>Espaiat: </translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation>Grain&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation>Stabilisateur&#xa0;: </translation>
+        <translation>Estabilitzador: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation>Lissage&#xa0;: </translation>
-    </message>
-    <message>
-        <location line="-206"/>
-        <source>px</source>
-        <translation>px</translation>
+        <translation>Suavitzat: </translation>
     </message>
 </context>
 <context>
@@ -174,43 +174,43 @@
     <message>
         <location filename="../ui/canvasshortcutsdialog.ui" line="+14"/>
         <source>Canvas Shortcut</source>
-        <translation>Raccourci de la toile</translation>
+        <translation>Drecera del llenç</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation>Tipus</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Shortcut</source>
-        <translation>Raccourci</translation>
+        <translation>Drecera</translation>
     </message>
     <message>
         <location line="+16"/>
         <location line="+50"/>
         <source>Action</source>
-        <translation>Action</translation>
+        <translation>Acció</translation>
     </message>
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation>Inverse les directions de la saisie. Par exemple, faire défiler vers le haut pour effectuer un zoom arrière au lieu d&apos;effectuer un zoom avant.</translation>
+        <translation>Inverteix les direccions d&apos;entrada. Per exemple, desplaçar-se amunt per allunyar-se en comptes d&apos;apropar-se.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation>Inversée</translation>
+        <translation>Invertit</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation>Change les directions horizontale et verticale. Par exemple, déplacer le curseur de haut en bas pour modifier la taille du pinceau au lieu de le déplacer vers la gauche et la droite.</translation>
+        <translation>Commuta les direccions horitzontal i vertical. Per exemple, moure el cursor amunt i avall per a canviar la mida del pinzell en comptes de moure&apos;l a dreta i esquerra.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation>Inverser les axes</translation>
+        <translation>Intercanviar Eixos</translation>
     </message>
 </context>
 <context>
@@ -218,75 +218,75 @@
     <message>
         <location filename="../ui/certificateview.ui" line="+24"/>
         <source>Info</source>
-        <translation>Informations</translation>
+        <translation>Informació</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+107"/>
         <source>Organization:</source>
-        <translation>Organisation&#x202f;:</translation>
+        <translation>Organizació:</translation>
     </message>
     <message>
         <location line="-100"/>
         <source>SHA1 fingerprint:</source>
-        <translation>Empreinte SHA1&#x202f;:</translation>
+        <translation>Petjada SHA1:</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Issued by</source>
-        <translation>Délivré par</translation>
+        <translation>Emès per</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Expires on:</source>
-        <translation>Expire le&#x202f;:</translation>
+        <translation>Expira a:</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>MD5 fingerprint:</source>
-        <translation>Empreinte MD5&#x202f;:</translation>
+        <translation>Petjada MD5:</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+14"/>
         <source>Organization unit:</source>
-        <translation>Service&#x202f;:</translation>
+        <translation>Unitat d&apos;organització:</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Issued on:</source>
-        <translation>Délivré le&#x202f;:</translation>
+        <translation>Emès a:</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+50"/>
         <source>Common name:</source>
-        <translation>Nom usuel&#x202f;:</translation>
+        <translation>Nom comú:</translation>
     </message>
     <message>
         <location line="-43"/>
         <source>Serial number:</source>
-        <translation>Numéro de série&#x202f;:</translation>
+        <translation>Número de sèrie:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Issued to</source>
-        <translation>Délivré à</translation>
+        <translation>Emès per a</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Validity period</source>
-        <translation>Période de validité</translation>
+        <translation>Període de validesa</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Fingerprints</source>
-        <translation>Empreintes</translation>
+        <translation>Petjades</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Details</source>
-        <translation>Détails</translation>
+        <translation>Detalls</translation>
     </message>
 </context>
 <context>
@@ -294,47 +294,47 @@
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+19"/>
         <source>Select Color</source>
-        <translation>Sélectionner une couleur</translation>
+        <translation>Selecciona color</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Saturation</source>
-        <translation>Saturation</translation>
+        <translation>Saturació</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Hue</source>
-        <translation>Teinte</translation>
+        <translation>Tonalitat</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Hex</source>
-        <translation>Hex</translation>
+        <translation>Hexadecimal</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue</source>
-        <translation>Bleu</translation>
+        <translation>Blau</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Value</source>
-        <translation>Valeur</translation>
+        <translation>Valor</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Green</source>
-        <translation>Vert</translation>
+        <translation>Verd</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Alpha</source>
-        <translation>Alpha</translation>
+        <translation>Alfa</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Red</source>
-        <translation>Rouge</translation>
+        <translation>Vermell</translation>
     </message>
 </context>
 <context>
@@ -342,12 +342,12 @@
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation>Nom&#xa0;:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation>Type&#xa0;:</translation>
+        <translation>Tipus:</translation>
     </message>
 </context>
 <context>
@@ -360,109 +360,109 @@
     <message>
         <location line="+10"/>
         <source>Import</source>
-        <translation>Importer</translation>
+        <translation>Importar</translation>
     </message>
     <message>
         <location line="-135"/>
         <source>Open</source>
-        <translation>Ouvrir</translation>
+        <translation>Obre</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Open Debug Dump</source>
-        <translation>Ouvrir le Cliché de Débogage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Import Session Bans</source>
-        <translation>Importer Exclusions de Sessions</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Import Roles</source>
-        <translation>Importer Rôles</translation>
+        <translation>Importar Rols</translation>
     </message>
     <message>
         <location line="+137"/>
         <location line="+298"/>
         <source>Save Image</source>
-        <translation>Enregistrer l&apos;image</translation>
+        <translation>Desa la Imatge</translation>
     </message>
     <message>
         <location line="-298"/>
         <source>Export Image</source>
-        <translation>Exporter l&apos;image</translation>
+        <translation>Exportar la Imatge</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Save Pre-Reset Image</source>
-        <translation>Enregistrer l&apos;image pré-réinitialisée</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Save Selection</source>
-        <translation>Sauvegarder la sélection</translation>
+        <translation>Desa la Selecció</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Record Session</source>
-        <translation>Enregistrer la session</translation>
+        <translation>Enregistrar la Sessió</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Session Template</source>
-        <translation>Sauvegarder modèle de session</translation>
+        <translation>Desa Plantilla de Sessió</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Export Animated GIF</source>
-        <translation>Exporter un GIF animé</translation>
+        <translation>Exportar un GIF Animat</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Performance Profile</source>
-        <translation>Profil de performances</translation>
+        <translation>Perfil de rendiment</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tablet Event Log</source>
-        <translation>Journal des événements Tablette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+143"/>
         <source>Log File</source>
-        <translation>Journal</translation>
+        <translation>Fitxer de registre</translation>
     </message>
     <message>
         <location line="-171"/>
         <location line="+36"/>
         <source>Export MP4 Video</source>
-        <translation>Exporter une vidéo MP4</translation>
+        <translation>Exportar a Vídeo MP4</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation>Exporter vidéo WebM</translation>
+        <translation>Exportar a Vídeo WebM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Custom FFmpeg Video</source>
-        <translation>Exporter une vidéo FFmpeg personnalisée</translation>
+        <translation>Exportar vídeo FFmpeg personalitzat</translation>
     </message>
     <message>
         <location line="-77"/>
         <source>Save Animation Frames</source>
-        <translation>Enregistrer les images d&apos;animation</translation>
+        <translation>Guardar Fotogrames D&apos;animació</translation>
     </message>
     <message>
         <location line="-271"/>
         <source>Add Avatar</source>
-        <translation>Ajouter un Avatar</translation>
+        <translation>Afegir foto de perfil</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import Animation Frames</source>
-        <translation>Importer des Images d&apos;Animation</translation>
+        <translation>Importar fotogrames d&apos;animació</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -472,150 +472,150 @@
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation>Images d&apos;Animation</translation>
+        <translation>Imatges de fotograma</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation>Importer une animation à partir des calques</translation>
+        <translation>Importar animació des de capes</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation>Images Superposées</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation>Importer des Pinceaux</translation>
+        <translation>Importar pinzells</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation>Importer les Réglages de Session</translation>
+        <translation>Importar preferències de sessió</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation>Tous les fichiers supportés (%1)</translation>
+        <translation>Tots els formats admesos (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+391"/>
         <source>Session Settings (%1)</source>
-        <translation>Paramètres de Session (%1)</translation>
+        <translation>Preferències de sessió (%1)</translation>
     </message>
     <message>
         <location line="-390"/>
         <source>Session Bans (%1)</source>
-        <translation>Bannissements de la Session (%1)</translation>
+        <translation>Bloquejos de sessió (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation>Roles de la Session (%1)</translation>
+        <translation>Rols de sessió (%1</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Error opening temporary file for %1.</source>
-        <translation>Erreur lors de l&apos;ouverture du fichier temporaire de %1.</translation>
+        <translation>Error en obrir el fitxer temporal per a %1.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation>Ouvrir l&apos;image</translation>
+        <translation>Obre una imatge</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation>Définir la Miniature de Préréglage du Pinceau</translation>
+        <translation>Estableix la miniatura predeterminada del pinzell</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Paste File</source>
-        <translation>Coller le fichier</translation>
+        <translation>Enganxar el fitxer</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Reference Image</source>
-        <translation>Image de Référence</translation>
+        <translation>Imatge de referència</translation>
     </message>
     <message>
         <location line="+168"/>
         <source>Export Frames in ZIP</source>
-        <translation>Exporter les Images en ZIP</translation>
+        <translation>Exportar fotogrames en ZIP</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation>Exporter la Vidéo WebM</translation>
+        <translation>Exportar video WEBM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation>Exporter Animation WEBP</translation>
+        <translation>Exportar WEBP animat</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Save Image Series</source>
-        <translation>Enregistrer la série d&apos;images</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+74"/>
         <source>Export Brushes</source>
-        <translation>Exporter les pinceaux</translation>
+        <translation>Exportar pinzells</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Export Session Bans</source>
-        <translation>Exporter les Exclusions de Sessions</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Export Roles</source>
-        <translation>Exporter les rôles</translation>
+        <translation>Exporta els rols</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation>Exporter les Paramètres de Session</translation>
+        <translation>Exporta l&apos;arranjament de sessió</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation>Le format PSD ne prend pas en charge les annotations, la frise chronologique d&apos;animation et certains modes de fusion. Si vous souhaitez que ceux-ci soient conservés correctement, vous devez enregistrer un fichier ORA.</translation>
+        <translation type="unfinished">El format PSD no permet les anotacions, la línia temporal d&apos;animació i alguns modes de mescla. Si voleu que aquests siguin retinguts correctament, heu de desar un fitxer ORA.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation>Le format sélectionné enregistrera une image fusionnée. Si vous souhaitez conserver les calques, les annotations et la frise chronologique d&apos;animation, vous devez enregistrer un fichier ORA.</translation>
+        <translation>El format seleccionat desara una imatge fusionada. Si voleu mantenir les capes, anotacions i la línia de temps d&apos;animació, heu de guardar com a fitxer ORA.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Save as Selected Format</source>
-        <translation>Enregistrer sous le format sélectionné</translation>
+        <translation>Desa en el format seleccionat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as %1</source>
-        <translation>Enregistrer sous %1</translation>
+        <translation>Guardar com a %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save as ORA</source>
-        <translation>Enregistrer au format ORA</translation>
+        <translation>Desa com a ORA</translation>
     </message>
     <message>
         <location line="+70"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation>Sans titre</translation>
+        <translation>Sense títol</translation>
     </message>
     <message>
         <location line="+104"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation>Sans titre %1</translation>
+        <translation>Sense titol%1</translation>
     </message>
 </context>
 <context>
@@ -624,13 +624,18 @@
         <location filename="../ui/fillsettings.ui" line="+330"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+310"/>
         <source>Feather: </source>
-        <translation>Adoucissement&#x202f;: </translation>
+        <translation>Ploma: </translation>
     </message>
     <message>
-        <location line="-298"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+143"/>
+        <source>Size Limit: Unlimited</source>
+        <translation>Límit de mida: Il·limitat</translation>
+    </message>
+    <message>
+        <location filename="../ui/fillsettings.ui" line="-298"/>
         <location line="+279"/>
         <location line="+16"/>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="-49"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="-192"/>
         <location line="+51"/>
         <location line="+12"/>
         <source>px</source>
@@ -640,7 +645,7 @@
         <location line="-26"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+67"/>
         <source>Source:</source>
-        <translation>Source&#x202f;:</translation>
+        <translation>Origen:</translation>
     </message>
     <message>
         <location line="-135"/>
@@ -652,103 +657,98 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation>Opacité&#xa0;: </translation>
+        <translation>Opacitat: </translation>
     </message>
     <message>
-        <location line="-97"/>
+        <location line="+174"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+158"/>
+        <source>Mode:</source>
+        <translation>Mode:</translation>
+    </message>
+    <message>
+        <location line="-289"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="-146"/>
+        <source>Tolerance: </source>
+        <translation>Tolerància: </translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <location line="+3"/>
         <source>Fill continuous area</source>
-        <translation>Remplir la surface continue</translation>
+        <translation>Omple l&apos;àrea contínua</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill all similar colors</source>
-        <translation>Remplir toute les couleurs similaires</translation>
+        <translation>Omple tots els colors similars</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill entire selection</source>
-        <translation>Remplir toute la sélection</translation>
+        <translation>Omple tota la selecció</translation>
     </message>
     <message>
         <location line="+78"/>
         <location line="+3"/>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="+71"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+59"/>
         <source>Merged image</source>
-        <translation>Image fusionnée</translation>
+        <translation>Imatge fusionada</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Merged without background</source>
-        <translation>Fusionner sans arrière-plan</translation>
+        <translation>Fusionar sense el fons</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation>Calque courant</translation>
+        <translation>Capa actual</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill source layer</source>
-        <translation>Remplir le calque source</translation>
+        <translation>Omple la capa d&apos;origen</translation>
     </message>
     <message>
         <location line="+96"/>
         <location line="+3"/>
         <source>Apply the pending fill, making it visible for everyone</source>
-        <translation>Appliquer le remplissage en attente, le rendre visible pour tout le monde</translation>
+        <translation>Aplica l&apos;emplenat pendent, fent que sigui visible per a tothom</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Apply</source>
-        <translation>Appliquer</translation>
+        <translation>Aplica</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+3"/>
         <source>Cancel the pending fill, without anyone else seeing its effects</source>
-        <translation>Annuler le remplissage en cours, sans que personne ne voit ses effets</translation>
+        <translation>Cancel·la l&apos;emplenat pendent, sense que ningú més vegi els seus efectes</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation>Anul·la</translation>
     </message>
     <message>
         <location line="-336"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation>Limite de taille&#xa0;: </translation>
+        <translation>Límit de mida: </translation>
     </message>
     <message>
         <location line="+279"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+62"/>
         <source>Close Gaps: </source>
-        <translation>Combler les trous&#x202f;: </translation>
-    </message>
-    <message>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="+131"/>
-        <source>Size Limit: Unlimited</source>
-        <translation>Limite de taille&#xa0;: Illimitée</translation>
-    </message>
-    <message>
-        <location filename="../ui/fillsettings.ui" line="-260"/>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="-167"/>
-        <source>Tolerance: </source>
-        <translation>Tolérance&#x202f;: </translation>
-    </message>
-    <message>
-        <location line="+289"/>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="+146"/>
-        <source>Mode:</source>
-        <translation>Mode&#x202f;:</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -756,47 +756,47 @@
     <message>
         <location filename="../ui/flipbook.ui" line="+14"/>
         <source>Flipbook</source>
-        <translation>Folioscope</translation>
+        <translation>Llibre animat</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Reset Zoom</source>
-        <translation>Réinitialiser le zoom</translation>
+        <translation>Reiniciar zoom</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Refresh</source>
-        <translation>Rafraîchir</translation>
+        <translation>Refrescar</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Rewind</source>
-        <translation>Rembobiner</translation>
+        <translation>Rebobina</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Play</source>
-        <translation>Lecture</translation>
+        <translation>Reproduir</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Frame:</source>
-        <translation>Image&#x202f;:</translation>
+        <translation>Fotograma:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Range</source>
-        <translation>Plage</translation>
+        <translation>Interval</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Speed: </source>
-        <translation>Vitesse&#x202f;: </translation>
+        <translation>Velocitat: </translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation>Exporter</translation>
+        <translation>Exportar</translation>
     </message>
 </context>
 <context>
@@ -804,12 +804,12 @@
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
         <source>Last edited by:</source>
-        <translation>Dernière édition par :</translation>
+        <translation>Darrera modificació per:</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation>Marquer des carreaux entiers</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -817,67 +817,67 @@
     <message>
         <location filename="../ui/invitedialog.ui" line="+14"/>
         <source>Invite</source>
-        <translation>Inviter</translation>
+        <translation>Convida</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Session</source>
-        <translation>Session</translation>
+        <translation>Sessió</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy Invite Link</source>
-        <translation>Copier le lien d&apos;invitation</translation>
+        <translation>Copiar enllaç d&apos;invitació</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Include password</source>
-        <translation>Inclure un mot de passe</translation>
+        <translation>Inclou contrasenya</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>Vous organisez une session localement. Si d&apos;autres personnes ne peuvent pas rejoindre votre session, jetez un œil à&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;la page d&apos;aide sur l&apos;hébergement&lt;/a&gt;.</translation>
+        <translation>Esteu allotjant la sessió localment. Si altres no poden unir-se a la vostra sessió, feu una ullada a &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;la pàgina d&apos;ajuda sobre allotjament&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Codes</source>
-        <translation>Codes</translation>
+        <translation>Codis</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Create</source>
-        <translation>Créer</translation>
+        <translation>Crea</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Revoke</source>
-        <translation>Révoquer</translation>
+        <translation>Revocar</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Copy</source>
-        <translation>Copier</translation>
+        <translation>Còpia</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>Vous hébergez une session localement, Drawpile doit donc trouver votre adresse IP visible de l&apos;extérieur pour vous donner un lien d&apos;invitation. Pour plus d&apos;informations, consultez &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;la page d&apos;aide sur l&apos;hébergement&lt;/a&gt;.</translation>
+        <translation>Esteu allotjant una sessió localment, així que Drawpile ha de trobar la vostra IP visible externament per a donar-te un enllaç d&apos;invitació. Per a més informació, consulteu &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;la pàgina web sobre allotjament&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Get externally visible IP address</source>
-        <translation>Obtenir l&apos;adresse IP visible extérieurement</translation>
+        <translation>Obté l&apos;adreça IP visible externament</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Allow session operators to manage invite codes</source>
-        <translation>Autoriser les opérateurs de la session à gérer les codes d&apos;invitation</translation>
+        <translation>Permet que els operadors de sessió gestionin codis d&apos;nvitació</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show this dialog when hosting a session</source>
-        <translation>Afficher cette boîte de dialogue lors de l&apos;hébergement d&apos;une session</translation>
+        <translation>Mostra aquest diàleg en allotjar una sessió</translation>
     </message>
 </context>
 <context>
@@ -885,12 +885,12 @@
     <message>
         <location filename="../widgets/kis_curve_widget.cpp" line="+46"/>
         <source>Remove point</source>
-        <translation>Retirer le point</translation>
+        <translation>Eliminar punt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset</source>
-        <translation>Réinitialiser</translation>
+        <translation>Reinicializar</translation>
     </message>
 </context>
 <context>
@@ -900,47 +900,45 @@
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
-        <translation>Bascule entre amplitude complète et partielle
-Amplitude complète&#x202f;: [%1, %2]
-Amplitude Partielle&#x202f;: [%3, %4]</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation>&amp;Sélectionner Tout</translation>
+        <translation>&amp;Seleccionar-ho tot</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&amp;Step up</source>
-        <translation>Monter d&apos;un &amp;cran</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Step &amp;down</source>
-        <translation>&amp; Descendre d&apos;un pas</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>LaserSettings</name>
     <message>
-        <location filename="../ui/lasersettings.ui" line="+111"/>
-        <source>s</source>
-        <translation>s</translation>
-    </message>
-    <message>
-        <location line="-94"/>
+        <location filename="../ui/lasersettings.ui" line="+17"/>
         <source>Color:</source>
-        <translation>Couleur&#xa0;:</translation>
+        <translation>Color:</translation>
     </message>
     <message>
         <location line="+87"/>
         <source>Track hovering pointer</source>
-        <translation>Suivre le pointeur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+7"/>
+        <source>s</source>
+        <translation>s</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Trail: </source>
-        <translation>Trainée&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -948,17 +946,17 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location filename="../ui/layerproperties.ui" line="+17"/>
         <source>Layer Properties</source>
-        <translation>Propriétés du Calque</translation>
+        <translation>Propietats de capa</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation>Nom&#xa0;:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opacity:</source>
-        <translation>Opacité&#xa0;:</translation>
+        <translation>Opacitat:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -969,67 +967,67 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="-45"/>
         <source>Blending Mode:</source>
-        <translation>Mode de Mélange&#xa0;:</translation>
+        <translation>Mode de mescla:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Visibility:</source>
-        <translation>Visibilité&#xa0;:</translation>
+        <translation>Visibilitat:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Visible to you</source>
-        <translation>Visible pour vous</translation>
+        <translation>Visible per tu</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Censor content</source>
-        <translation>Censurer le contenu</translation>
+        <translation>Censura el contingut</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Sketch mode for you</source>
-        <translation>Mode esquisse pour vous</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Sketch Opacity:</source>
-        <translation>Opacité Esquisse&#xa0;:</translation>
+        <translation>Opacitat de l&apos;esbós:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Sketch Tint:</source>
-        <translation>Teinte d&apos;Esquisse&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Collaboration:</source>
-        <translation>Collaboration&#xa0;:</translation>
+        <translation>Col·laboració:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Default for new users</source>
-        <translation>Par défault pour les nouveaux utilisateurs</translation>
+        <translation>Per defecte per a nou usuaris</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Created by:</source>
-        <translation>Crée par&#xa0;:</translation>
+        <translation>Creada per:</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>No tint</source>
-        <translation>Pas de teinte</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue tint</source>
-        <translation>Teinte bleue</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Choose…</source>
-        <translation>Choisir…</translation>
+        <translation>Selecciona…</translation>
     </message>
 </context>
 <context>
@@ -1037,27 +1035,27 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location filename="../ui/layoutsdialog.ui" line="+14"/>
         <source>Layouts</source>
-        <translation>Mise en Page</translation>
+        <translation>Disposicions</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Save</source>
-        <translation>Enregistrer</translation>
+        <translation type="unfinished">Desa</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Rename</source>
-        <translation>Renommer</translation>
+        <translation>Reanomena</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Delete</source>
-        <translation>Supprimer</translation>
+        <translation>Esborra</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation>Les panneaux de Drawpile peuvent être librement réarrangés. Vous pouvez utiliser Affichage &gt; Panneaux &gt; Arranger les Panneaux pour les déplacer plus facilement. Assurez-vous que votre arrangement convient pour votre résolution d&apos;écran, autrement, il pourrait arriver que certains contrôles se retrouvent en dehors de l&apos;écran.</translation>
+        <translation>Els acobladors de Drawpile es poden arranjar lliurement. Podeu utilitzar Vista &gt; Acobladors &gt; Arranjar Acobladors per a poder-los arrossegar més fàcilment. Assegureu-vos que els vostres arranjaments caben en la vostra resolució, d&apos;altra forma alguns controls poden ser empesos fora de pantalla.</translation>
     </message>
 </context>
 <context>
@@ -1065,22 +1063,22 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location filename="../utils/widgetutils.cpp" line="+1129"/>
         <source>Open Link</source>
-        <translation>Ouvrir le lien</translation>
+        <translation>Obre l&apos;enllaç</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation>Ce lien vous amènera sur le site web vers &quot;%1&quot;, qui n&apos;est pas géré par Drawpile. Êtes-vous sur·e de vouloir continuer&#x202f;?</translation>
+        <translation>Aquest enllaç us portarà al lloc web a &quot;%1&quot;, el qual no està operat per Drawpile. Esteu segura que voleu anar-hi?</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Yes, visit website</source>
-        <translation>Oui, visiter le site web</translation>
+        <translation>Sí, visita el lloc web</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, cancel</source>
-        <translation>Non, annuler</translation>
+        <translation>No, cancel·la</translation>
     </message>
 </context>
 <context>
@@ -1089,137 +1087,137 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
         <location filename="../ui/logindialog.ui" line="+103"/>
         <location line="+230"/>
         <source>Incorrect password.</source>
-        <translation>Mot de passe incorrect.</translation>
+        <translation>Contrasenya incorrecta.</translation>
     </message>
     <message>
         <location line="-187"/>
         <source>Password</source>
-        <translation>Mot de passe</translation>
+        <translation>Contrasenya</translation>
     </message>
     <message>
         <location line="-36"/>
         <source>Remember my password</source>
-        <translation>Retenir le mot de passe</translation>
+        <translation>Recorda la meva contrasenya</translation>
     </message>
     <message>
         <location line="-24"/>
         <source>Username</source>
-        <translation>Nom d&apos;utilisateur</translation>
+        <translation>Nom d&apos;usuari</translation>
     </message>
     <message>
         <location line="+158"/>
         <source>Filter</source>
-        <translation>Filtrer</translation>
+        <translation>Filtrar</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>NSFM</source>
-        <translation>NAAM</translation>
+        <translation>+18</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>This session is password-protected.</source>
-        <translation>Cette session est protégée par un mot de passe.</translation>
+        <translation>Aquesta sessió està protegida amb contrasenya.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Password:</source>
-        <translation>Mot de passe&#x202f;:</translation>
+        <translation>Contrassenya:</translation>
     </message>
     <message>
         <location line="+183"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Cette session a du contenu &lt;em&gt;qui n&apos;est pas approprié à un public mineur&lt;/em&gt;(NAAM). &lt;/p&gt;&lt;p&gt;&lt;strong&gt;Vous devez avoir 18 ans ou plus, et être autorisé à consulter du contenu destiné à un public mature. &lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Êtes-vous sûr de vouloir rejoindre cette session&#x202f;?&lt;/p&gt;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Show this warning again next time</source>
-        <translation>Montrer cette avertissement la prochaine fois</translation>
+        <translation>Mostra aquesta advertència un altre cop la pròxima vegada</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Continue without account</source>
-        <translation>Continuer sans compte</translation>
+        <translation>Continuar sense compte</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Log in with server account</source>
-        <translation>Se connecter avec un compte serveur</translation>
+        <translation>Autenticar-se amb compte de servidor</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Continue with this account, but change the avatar, username or password.</source>
-        <translation>Continuer avec ce compte, mais en changeant l&apos;avatar, le nom d&apos;utilisateur ou le mot de passe.</translation>
+        <translation>Continua amb aquest compte, però canvia la foto de perfil, nom d&apos;usuari o contrasenya.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Edit and log in</source>
-        <translation>Modifier et se connecter</translation>
+        <translation>Edita i autentifica</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation>Ne pas utiliser ces comptes.</translation>
+        <translation>No utilitzis cap d&apos;aquests comptes.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in a different way</source>
-        <translation>Se connecter autrement</translation>
+        <translation>Autentificar-se d&apos;una altra forma</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Log in with the selected account.</source>
-        <translation>Se connecter avec le compte selectionné.</translation>
+        <translation>Autentificar-se amb el compte seleccionat.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in with this account</source>
-        <translation>Se connecter avec ce compte</translation>
+        <translation>Autentificar-se amb aquest compte</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation>Oublier ce compte.</translation>
+        <translation>Oblida aquest compte.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Forget this account</source>
-        <translation>Oublier ce compte</translation>
+        <translation>Oblida aquest compte</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation>Ne plus me redemander, sauf modification des règles</translation>
+        <translation>No preguntis un altre cop tret que les normes canviïn</translation>
     </message>
     <message>
         <location line="-574"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation>Montrer les sessions non-adaptées aux mineur·e·s (NAAM)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+86"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation>Entrer le &lt;b&gt;mot de passe de session&lt;/b&gt;, &lt;i&gt;et non&lt;/i&gt; votre mot de passe de compte.</translation>
+        <translation>Introduïu la &lt;b&gt;contrasenya de sessió&lt;/b&gt;, &lt;i&gt;no&lt;/i&gt; la vostra contrasenya de compte.</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+36"/>
+        <source>Catching up...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+50"/>
         <source>View old</source>
-        <translation>Voir ancien</translation>
+        <translation>Veure el previ</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>View new</source>
-        <translation>Voir nouveau</translation>
+        <translation>Veure el nou</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Replace pinned certificate</source>
-        <translation>Remplacer le certificat épinglé</translation>
-    </message>
-    <message>
-        <location line="-64"/>
-        <source>Catching up...</source>
-        <translation>Connexion...</translation>
+        <translation>Substituir el certificat fixat</translation>
     </message>
 </context>
 <context>
@@ -1227,1209 +1225,552 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location filename="../widgets/macmenu.cpp" line="+66"/>
         <source>Minimize</source>
-        <translation>Réduire</translation>
+        <translation>Minimitza</translation>
     </message>
     <message numerus="yes">
         <location line="+129"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
-            <numerusform>Vous avez %n image modifiée. Voulez-vous voir les modifications avant de quitter ?</numerusform>
-            <numerusform>Vous avez %n images modifiées. Voulez-vous voir les modifications avant de quitter ?</numerusform>
+            <numerusform>Teniu %n imatge amb canvis sense guardar. Voleu revisar aquests canvis abans de sortir?</numerusform>
+            <numerusform>Teniu %n imatges amb canvis sense guardar. Voleu revisar aquests canvis abans de sortir?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>If you don&apos;t review your documents, all changes will be lost</source>
-        <translation>Si vous ne vérifiez pas vos documents, toutes les modifications seront perdus</translation>
+        <translation>Si no reviseu els vostres documents, tots els canvis es perdran</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Review changes...</source>
-        <translation>Voir les modifications...</translation>
+        <translation>Revisar els canvis...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard changes</source>
-        <translation>Annuler les modifications</translation>
+        <translation>Descartar els canvis</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+876"/>
-        <location line="+2130"/>
-        <source>Untitled</source>
-        <translation>Sans titre</translation>
+        <location filename="../mainwindow.cpp" line="+330"/>
+        <source>Server out of space</source>
+        <translation>Servidor sense espai</translation>
     </message>
     <message>
-        <location line="-1430"/>
+        <location line="+1"/>
+        <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
+Simplify the canvas and reset manually before space runs out.</source>
+        <translation>El servidor s&apos;està quedant sense espai d&apos;historial i la sessió s&apos;ha tornat massa gran per a la reinicialització automàtica! (El límit és %1 MB)
+Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espai.</translation>
+    </message>
+    <message>
+        <location line="+344"/>
+        <source>🙋 %1 joined!</source>
+        <translation>🙋 %1 s&apos;ha unit!</translation>
+    </message>
+    <message>
+        <location line="+92"/>
+        <source>disconnect you from the session</source>
+        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
+        <translation>desconnectar-te de la sessió</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>lose any unsaved changes</source>
+        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>stop your recording</source>
+        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
+        <translation>parar el teu enregistrament</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>discard your playback</source>
+        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location line="+15"/>
+        <source>Doing so will %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <source>Doing so will %1 and %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Doing so will %1, %2 and %3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Doing so will %1, %2, %3 and %4.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Are you sure you want to continue?</source>
+        <translation>Esteu segur que voleu continuar?</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Yes, continue</source>
+        <translation>Sí, continua</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>No, cancel</source>
+        <translation>No, cancela</translation>
+    </message>
+    <message>
+        <location line="+62"/>
+        <location line="+2130"/>
+        <source>Untitled</source>
+        <translation>Sense titol</translation>
+    </message>
+    <message>
+        <location line="-2081"/>
+        <location line="+3793"/>
+        <source>Export Again</source>
+        <translation>Expotar de nou</translation>
+    </message>
+    <message>
+        <location line="-3789"/>
+        <source>Export Again to %1</source>
+        <translation>Exportar de nou a %1</translation>
+    </message>
+    <message>
+        <location line="+439"/>
+        <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
+        <translation>&lt;p&gt; La drecera &apos;%1&apos; és ambigua, coincideix amb:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Ambiguous Shortcut</source>
+        <translation>Drecera ambigua</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Fix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+200"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
-        <translation>Quitter Drawpile</translation>
+        <translation>Sortir de Drawpile</translation>
     </message>
     <message>
         <location line="-27"/>
         <source>You are still connected to a drawing session.</source>
-        <translation>Vous êtes toujours connecté à une session de dessin.</translation>
+        <translation>Encara esteu connectat a la sessió de dibuix.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Exit anyway</source>
-        <translation>Quitter quand même</translation>
+        <translation>Sortir de totes formes</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+29"/>
         <location line="+788"/>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location line="-797"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation>Il y a des modifications non enregistrées. Les enregistrer avant de quitter ?</translation>
+        <translation>Hi ha canvis sense desar. Els voleu guardar abans de sortir?</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Save</source>
-        <translation>Enregistrer</translation>
+        <translation>Desa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard</source>
-        <translation>Abandonner</translation>
+        <translation>Descartar</translation>
     </message>
     <message>
-        <location line="+604"/>
-        <source>Couldn&apos;t save image</source>
-        <translation>Enregistrement de l&apos;image impossible</translation>
-    </message>
-    <message>
-        <location line="+276"/>
-        <source>Stop Recording</source>
-        <translation>Stopper l&apos;enregistrement</translation>
-    </message>
-    <message>
-        <location line="-301"/>
-        <source>Saving...</source>
-        <translation>Enregistrement...</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>Image saved</source>
-        <translation>Image enregistrée</translation>
-    </message>
-    <message>
-        <location line="+103"/>
-        <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
-        <translation>Cette session est hébergée avec une ancienne version de Drawpile, certaine nouvelles fonctionnalités ne seront pas disponibles. Les autres versions de Drawpile verront des résultats différents, les réinitialisations de la session peuvent causer des changements abruptes.</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Compatibility Mode</source>
-        <translation>Mode de compatibilité</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Session template saved</source>
-        <translation>Modèle de session sauvegardé</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Couldn&apos;t export session template</source>
-        <translation>Le modèle de session n&apos;a pas pu être importé</translation>
-    </message>
-    <message>
-        <location line="+137"/>
-        <source>Pause</source>
-        <translation>Pause</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Play</source>
-        <translation>Lecture</translation>
-    </message>
-    <message>
-        <location line="+50"/>
-        <source>Unsupported format.</source>
-        <translation>Format non pris en charge.</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Couldn&apos;t start recording.</source>
-        <translation>L&apos;enregistrement n&apos;a pas pu être démarré.</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Unknown error.</source>
-        <translation>Erreur inconnue.</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>Error closing profile.</source>
-        <translation>Erreur lors de la fermeture du profil.</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Error opening profile.</source>
-        <translation>Erreurs lors de l&apos;ouverture du profil.</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>Error closing tablet event log.</source>
-        <translation>Erreurs lors de la fermeture de la table des évènements.</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Error opening tablet event log.</source>
-        <translation>Erreurs lors de l&apos;ouverture de la table des évènements.</translation>
-    </message>
-    <message>
-        <location line="+209"/>
-        <source>Invalid address</source>
-        <translation>Adresse non valide</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Host Session</source>
-        <translation>Héberger une session</translation>
-    </message>
-    <message>
-        <location line="+153"/>
-        <source>Really leave the session?</source>
-        <translation>Voulez-vous quitter la session ?</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Leave</source>
-        <translation>Quitter</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Stay</source>
-        <translation>Rester</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>There is still unsent data! Please wait until transmission completes!</source>
-        <translation>Des données n&apos;ont toujours pas été transmises ! Merci d&apos;attendre la fin de la transmission !</translation>
-    </message>
-    <message>
-        <location line="+261"/>
-        <source>Would you like to join the session instead?</source>
-        <translation>Voulez-vous rejoindre la session ?</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Join</source>
-        <translation>Rejoindre</translation>
-    </message>
-    <message>
-        <location line="+710"/>
-        <source>The image could not be loaded</source>
-        <translation>L&apos;image n&apos;a pas pu être chargée</translation>
-    </message>
-    <message>
-        <location line="+455"/>
-        <source>About Drawpile</source>
-        <translation>À propos de Drawpile</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>A collaborative drawing program.</source>
-        <translation>Un logiciel de dessin collaboratif.</translation>
-    </message>
-    <message>
-        <location line="+237"/>
-        <location filename="../widgets/macmenu.cpp" line="-169"/>
-        <source>&amp;New</source>
-        <translation>&amp;Nouveau</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <location filename="../widgets/macmenu.cpp" line="+1"/>
-        <source>&amp;Open...</source>
-        <translation>&amp;Оuvrir...</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Close</source>
-        <translation>Fermer</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>&amp;Save</source>
-        <translation>&amp;Enregistrer</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Save &amp;As...</source>
-        <translation>Enregistrer &amp;sous...</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Autosave</source>
-        <translation>Enregistrement automatique</translation>
-    </message>
-    <message>
-        <location line="-2229"/>
-        <location line="+2256"/>
-        <source>Record...</source>
-        <translation>Enregistrer...</translation>
-    </message>
-    <message>
-        <location line="-4421"/>
-        <source>Server out of space</source>
-        <translation>Espace disque du serveur insuffisant</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
-Simplify the canvas and reset manually before space runs out.</source>
-        <translation>Le serveur n&apos;a plus de place pour l&apos;historique et la session est devenue trop grande pour être réinitialisée automatiquement (Limite : %1 MB)
-Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace libre ne manque.</translation>
-    </message>
-    <message>
-        <location line="+436"/>
-        <source>disconnect you from the session</source>
-        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation>vous déconnecte de la session</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>lose any unsaved changes</source>
-        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation>perte des changements non enregistrés</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>stop your recording</source>
-        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation>arrêt de l&apos;enregistrement</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>discard your playback</source>
-        <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation>rejeter votre enregistrement</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <location line="+15"/>
-        <source>Doing so will %1.</source>
-        <translation>Cette action va %1.</translation>
-    </message>
-    <message>
-        <location line="-11"/>
-        <source>Doing so will %1 and %2.</source>
-        <translation>Cette action va %1 et %2.</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Doing so will %1, %2 and %3.</source>
-        <translation>Cette action va %1, %2 et %3.</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation>Cette action va %1, %2, %3 et %4.</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Are you sure you want to continue?</source>
-        <translation>Êtes-vous sûr de vouloir continuer&#x202f;?</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Yes, continue</source>
-        <translation>Oui, continuer</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>No, cancel</source>
-        <translation>Non, annuler</translation>
-    </message>
-    <message>
-        <location line="+111"/>
-        <location line="+3793"/>
-        <source>Export Again</source>
-        <translation>Exporter à Nouveau</translation>
-    </message>
-    <message>
-        <location line="-3789"/>
-        <source>Export Again to %1</source>
-        <translation>Exporter à Nouveau vers %1</translation>
-    </message>
-    <message>
-        <location line="+814"/>
+        <location line="+131"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
-        <translation>Vous n&apos;avez pas la permission de couper, coller, remplir ou effacer.</translation>
+        <translation>No teniu permís per a retallar, empegar, omplir o eliminar.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to resize the canvas.</source>
-        <translation>Vous n&apos;avez pas la permission de redimensionner le canvas.</translation>
+        <translation>No teniu permís per a modificar la mida del llenç.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to change the session background.</source>
-        <translation>Vous n&apos;avez pas la permission de modifier l&apos;arrière-plan de la session.</translation>
+        <translation>No teniu permis per a canviar el fons de la sessio.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to create annotations.</source>
-        <translation>Vous n&apos;avez pas la permission de créer des annotations.</translation>
+        <translation>No teniu permís per a crear anotacions.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You don&apos;t have permission to undo or redo.</source>
-        <translation>Vous n&apos;avez pas la permission d&apos;annuler ou de rétablir.</translation>
+        <translation>No teniu permís per a desfer o refer.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation>Vous n&apos;avez pas la permission pour faire cette action.</translation>
+        <translation>No teniu permís per a fer això.</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>New</source>
-        <translation>Nouveau</translation>
+        <translation>Nou</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation>Vous êtes sur le point de créer un nouveau canevas et de fermer cette fenêtre.</translation>
+        <translation>Esteu a punt de crear un nou llenç i tancar aquesta finestra.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Open Recent File</source>
-        <translation>Ouvrir un Fichier Récent</translation>
+        <translation>Obrir fitxer recent</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recent file and close this window.</source>
-        <translation>Vous êtes sur le point d&apos;ouvrir un fichier récent et de fermer cette fenêtre.</translation>
+        <translation type="unfinished">Esteu a punt d&apos;obrir un fitxer recent i tancar aquesta finestra.</translation>
     </message>
     <message>
-        <location line="-1152"/>
+        <location line="+102"/>
+        <source>Opening file…</source>
+        <translation>Obrint el fitxer…</translation>
+    </message>
+    <message>
+        <location line="-1254"/>
         <source>Open</source>
-        <translation>Ouvrir</translation>
+        <translation>Obre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a new file and close this window.</source>
-        <translation>Vous êtes sur le point d&apos;ouvrir un nouveau fichier et de fermer cette fenêtre.</translation>
+        <translation>Esteu a punt d&apos;obrir un nou fitxer i tancar aquesta finesta.</translation>
     </message>
     <message>
-        <location line="+2060"/>
+        <location line="+1438"/>
+        <source>Saving...</source>
+        <translation>Desant...</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Image saving failed</source>
+        <translation>S&apos;ha produït un error en desar la imatge</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Couldn&apos;t save image</source>
+        <translation>No s&apos;ha pogut desar la imatge</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Image saved</source>
+        <translation>Imatge desada</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Download Complete</source>
+        <translation>Baixada completa</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Download complete, click on &quot;Save&quot; to save your file.</source>
+        <translation>Baixada completa, premeu &quot;Desa&quot; per a guardar el vostre fitxer.</translation>
+    </message>
+    <message>
+        <location line="+67"/>
+        <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
+        <translation>Aquesta sessió va ser allotjada amb una versió anterior de Drawpile, algunes característiques més noves no estaran disponibles. Altres versions de Drawpile veuran diferents resultats, els reinicis de sessió poden causar canvis abruptes.</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Compatibility Mode</source>
+        <translation>Mode de compatibilitat</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Session template saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Couldn&apos;t export session template</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>Saving animation...</source>
+        <translation>Guardant animació...</translation>
+    </message>
+    <message>
+        <location line="+82"/>
+        <source>Pause</source>
+        <translation>Pausa</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Play</source>
+        <translation>Reprodueix</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Stop Recording</source>
+        <translation>Parar l&apos;enregistrament</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+2256"/>
+        <source>Record...</source>
+        <translation>Enregistra...</translation>
+    </message>
+    <message>
+        <location line="-2214"/>
+        <source>Unsupported format.</source>
+        <translation>Format no suportat.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Couldn&apos;t start recording.</source>
+        <translation>No s&apos;ha pogut començar l&apos;enregistrament.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Unknown error.</source>
+        <translation>Error desconegut.</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Error downloading profile.</source>
+        <translation>Error baixant el perfil.</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Error closing profile.</source>
+        <translation>Error tancant el perfil.</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Error opening profile.</source>
+        <translation>Error obrint el perfil.</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Error downloading tablet event log.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Error closing tablet event log.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Error opening tablet event log.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+183"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
-        <translation>Vous êtes déjà connecté à une session&#x202f;! Déconnectez-vous pour pouvoir en héberger une.</translation>
+        <translation>Ja esteu connectat a una sessió! Desconnecteu-vos primer per poder allotjar-ne una.</translation>
     </message>
     <message>
-        <location line="+170"/>
+        <location line="+6"/>
+        <source>No canvas to host! Create one or open a file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Invalid address</source>
+        <translation>Adreça no valida</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Host Session</source>
+        <translation>Allotjar sessió</translation>
+    </message>
+    <message>
+        <location line="+127"/>
         <source>Reconnect</source>
-        <translation>Reconnexion</translation>
+        <translation>Reconnectar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about reconnect to the session and close this window.</source>
-        <translation>Vous êtes sur le point de vous reconnecter à la session et de fermer cette fenêtre.</translation>
+        <translation>Esteu a punt de reconnectar a la sessió i tancar aquesta finestra.</translation>
     </message>
     <message>
-        <location line="+76"/>
+        <location line="+25"/>
+        <source>Really leave the session?</source>
+        <translation>Segur que voleu marxar de la sessió?</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Leave</source>
+        <translation>Marxar</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Stay</source>
+        <translation>Quedar-se</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>There is still unsent data! Please wait until transmission completes!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+39"/>
         <source>Become Operator</source>
-        <translation>Devenir Opérateur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Enter operator password</source>
-        <translation>Entrer le mot de passe Opérateur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Terminate session</source>
-        <translation>Fermer la session</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+2712"/>
         <source>Terminate</source>
-        <translation>Fermer</translation>
+        <translation>Finalitza</translation>
     </message>
     <message>
         <location line="-2698"/>
         <source>Join Session</source>
-        <translation>Rejoindre la Session</translation>
+        <translation>Unir-se a la sessió</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to connect to a new session and close this window.</source>
-        <translation>Vous êtes sur le point de vous connecter à une nouvelle session et de fermer cette fenêtre.</translation>
+        <translation>Esteu a punt de connectar-vos a la sessió i tancar aquesta finestra.</translation>
     </message>
     <message>
-        <location line="+278"/>
+        <location line="+141"/>
+        <source>Would you like to join the session instead?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Join</source>
+        <translation>Unir-se</translation>
+    </message>
+    <message>
+        <location line="+135"/>
         <source>Session blocked by parental controls</source>
-        <translation>Session bloquée par le contrôle parental</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+559"/>
-        <source>The image could not be loaded: %1.</source>
-        <extracomment>%1 is an error message.</extracomment>
-        <translation>L&apos;image n&apos;a pas pu être chargée&#xa0;: %1.</translation>
-    </message>
-    <message>
-        <location line="+438"/>
-        <source>Open Debug Dump</source>
-        <translation>Ouvrir le Dépôt de Débogage</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>You&apos;re about to open a debug dump and close this window.</source>
-        <translation>Vous êtes sur le point d&apos;ouvrir un dépôt de débogage et de fermer cette fenêtre.</translation>
-    </message>
-    <message>
-        <location line="+233"/>
-        <source>Show Icons on Tabs</source>
-        <translation>Montrer les Icônes sur les Onglets</translation>
-    </message>
-    <message>
-        <location line="+22"/>
-        <source>Hide Docks</source>
-        <translation>Cacher les panneaux</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Arrange Docks</source>
-        <translation>Arranger les Panneaux</translation>
-    </message>
-    <message>
-        <location line="+80"/>
-        <location filename="../widgets/macmenu.cpp" line="+9"/>
-        <source>&amp;Quit</source>
-        <translation>&amp;Quitter</translation>
-    </message>
-    <message>
-        <location line="+82"/>
-        <location filename="../widgets/macmenu.cpp" line="-12"/>
-        <source>&amp;File</source>
-        <translation>&amp;Fichier</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <location filename="../widgets/macmenu.cpp" line="+8"/>
-        <source>Open &amp;Recent</source>
-        <translation>Fichiers &amp;récents</translation>
-    </message>
-    <message>
-        <location line="+32"/>
-        <source>&amp;Export</source>
-        <translation>&amp;Exporter</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>File Tools</source>
-        <translation>Utilitaires de fichiers</translation>
-    </message>
-    <message>
-        <location line="+50"/>
-        <source>&amp;Undo</source>
-        <translation>Ann&amp;uler</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>&amp;Redo</source>
-        <translation>&amp;Refaire</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Copy selected area to the clipboard</source>
-        <translation>Copier la sélection dans le presse-papier</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Copy selected area, excluding the background, to the clipboard</source>
-        <translation>Copier la sélection, sans l&apos;arrière-plan, dans le presse-papier</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Copy selected area of the current layer to the clipboard</source>
-        <translation>Copier la sélection du calque courant dans le presse-papier</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Cut selected area of the current layer to the clipboard</source>
-        <translation>Couper la sélection du calque courant dans le presse-papier</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>&amp;Paste</source>
-        <translation>C&amp;oller</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Pic&amp;k From Screen</source>
-        <translation>Prendre depuis l&apos;écran (&amp;k)</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Paste &amp;From File...</source>
-        <translation>Coller depuis le &amp;fichier...</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Delete Empty Annotations</source>
-        <translation>Effacer les annotations vides</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Resi&amp;ze Canvas...</source>
-        <translation>Re&amp;dimensionner le canevas...</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <location filename="../widgets/macmenu.cpp" line="+8"/>
-        <source>Prefere&amp;nces</source>
-        <translation>Préfére&amp;nces</translation>
-    </message>
-    <message>
-        <location line="+257"/>
-        <source>&amp;Fit Canvas</source>
-        <translation>Adapter la Toile (&amp;f)</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Fit Canvas &amp;Width</source>
-        <translation>Adapter la Largeur de la Toile (&amp;w)</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Fit Canvas &amp;Height</source>
-        <translation>Adapter la &amp;Hauteur de la Toile</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>&amp;Reset Canvas Rotation</source>
-        <translation>&amp;Restaurer la Rotation de la Toile</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Rotate Canvas Counter-Clockwise</source>
-        <translation>Rotation Anti-Horaire de la Toile</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Mirror Canvas</source>
-        <translation>Refléter la toile</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Mirror the canvas horizontally</source>
-        <translation>Refléter la toile horizontalement</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>mirror/flip canvas horizontally</source>
-        <translation>inverser/retourner toile horizontalement</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Flip Canvas</source>
-        <translation>Retourner la Toile</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Flip the canvas upside-down</source>
-        <translation>Retourner la toile à l&apos;envers</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>mirror/flip canvas vertically</source>
-        <translation>refléter/inverser la toile verticalement</translation>
-    </message>
-    <message>
-        <location line="+139"/>
-        <source>Group View</source>
-        <translation>Vue de Groupe</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Show only the current parent layer group</source>
-        <translation>Montrer seulement le groupe de calque parent courant</translation>
-    </message>
-    <message>
-        <location line="+32"/>
-        <source>Stay Time</source>
-        <translation>Temps de Séjour</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>1 Second</source>
-        <comment>user pointer stay time</comment>
-        <translation>1 Seconde</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>10 Seconds</source>
-        <comment>user pointer stay time</comment>
-        <translation>10 Secondes</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>1 Minute</source>
-        <comment>user pointer stay time</comment>
-        <translation>1 Minute</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>1 Hour</source>
-        <comment>user pointer stay time</comment>
-        <translation>1 Heure</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Forever</source>
-        <comment>user pointer stay time</comment>
-        <translation>Indéfiniment</translation>
-    </message>
-    <message>
-        <location line="+57"/>
-        <source>Clear Fill Source</source>
-        <translation>Remplissage Transparent de la Source</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>&amp;Toggle Layer Check State</source>
-        <translation type="unfinished">Activer/Désac&amp;tiver l&apos;État Coché du Calque</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>&amp;Check All</source>
-        <translation>Tout &amp;Cocher</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>&amp;Uncheck All</source>
-        <translation>To&amp;ut Décocher</translation>
-    </message>
-    <message>
-        <location line="+37"/>
-        <source>Select &amp;All</source>
-        <translation>&amp;Tout sélectionner</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>&amp;Deselect</source>
-        <translation>&amp;Désélectionner</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Fill Selection</source>
-        <translation>Remplir la sélection</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Recolor Selection</source>
-        <translation>Recoloriser la sélection</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Color Erase Selection</source>
-        <translation>Effacer la couleur de la sélection</translation>
-    </message>
-    <message>
-        <location line="-434"/>
-        <source>&amp;Edit</source>
-        <translation>&amp;Éditer</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>&amp;Expand Canvas</source>
-        <translation>&amp;Étendre le canevas</translation>
-    </message>
-    <message>
-        <location line="+32"/>
-        <source>Edit Tools</source>
-        <translation>Outils d&apos;édition</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>&amp;Toolbars</source>
-        <translation>&amp;Barres d&apos;outils</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>&amp;Docks</source>
-        <translation>&amp;Panneaux</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Chat</source>
-        <translation>Discussion</translation>
-    </message>
-    <message>
-        <location line="+190"/>
-        <source>Normal View</source>
-        <translation>Vue Normale</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Show all layers normally</source>
-        <translation>Afficher tous les calques normalement</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Layer View</source>
-        <translation type="unfinished">Vue des Calques</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Show only the current layer</source>
-        <translation>Montrer seulement le calque courant</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Frame View</source>
-        <translation type="unfinished">Vue du Cadre</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Show only layers in the current frame</source>
-        <translation>Ne montrer que les calques dans le cadre actuel</translation>
-    </message>
-    <message>
-        <location line="+88"/>
-        <source>New Layer Group</source>
-        <translation>Nouveau Groupe de Calques</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Set as Fill Source</source>
-        <translation>Définir Comme Source de Remplissage</translation>
-    </message>
-    <message>
-        <location line="+193"/>
-        <source>Flipbook</source>
-        <translation>Folioscope</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Show animation preview window</source>
-        <translation>Afficher la prévisualisation d&apos;animation</translation>
-    </message>
-    <message>
-        <location line="-470"/>
-        <source>Zoom &amp;In</source>
-        <translation>Zoom &amp;avant</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Zoom &amp;Out</source>
-        <translation>Zoom arriè&amp;re</translation>
-    </message>
-    <message>
-        <location line="+330"/>
-        <source>&amp;Invert Selection</source>
-        <translation>&amp;Inverser la sélection</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Select Layer &amp;Bounds</source>
-        <translation type="unfinished">Sélectionner &amp;Bordures des Calques</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>&amp;Layer to Selection</source>
-        <translation type="unfinished">Ca&amp;lque sélectionné</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>&amp;Expand/Shrink/Feather Selection</source>
-        <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished">Ét&amp;endre/Réduire/Flouter Sélection</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>&amp;Transform</source>
-        <translation>&amp;Transformer</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Transform the selection, switch back tools afterwards</source>
-        <translation>Transformer la sélection, revenir aux outils ensuite</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Transform Selection &amp;Mask</source>
-        <translation type="unfinished">&amp;Masque de Transformation de Sélection</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation type="unfinished">Ne transformer que le masque de sélection, retourner aux outils ensuite</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>&amp;Mirror Transform</source>
-        <translation>Transformation &amp;Miroir</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Mirror the transformed image horizontally</source>
-        <translation>Inverser l&apos;image transformée horizontalement</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>mirror/flip transformed image horizontally</source>
-        <translation>inverser/retourner l&apos;image transformée horizontalement</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>&amp;Flip Transform</source>
-        <translation type="unfinished">&amp;Inversion</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Flip the transformed image upside-down</source>
-        <translation>Inverser l&apos;image transformée à l&apos;envers</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>mirror/flip transformed image vertically</source>
-        <translation type="unfinished">Inverser/Effet miroir sur l&apos;image transformé verticalement</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>&amp;Rotate Transform Clockwise</source>
-        <translation type="unfinished">Transformation par &amp;Rotation dans le sens horaire</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Rotate Transform &amp;Counter-Clockwise</source>
-        <translation>Transformation par Rotation dans le sens anti-horaire (&amp;c)</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Shrink Transform to &amp;Fit View</source>
-        <translation type="unfinished">Transformation par Réduction pour Adapter à la Vue (&amp;F)</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>&amp;Stamp Transform</source>
-        <translation type="unfinished">Transformation Tampon (&amp;S)</translation>
-    </message>
-    <message>
-        <location line="+48"/>
-        <source>Selectio&amp;n</source>
-        <translation>Sélectio&amp;n</translation>
-    </message>
-    <message>
-        <location line="+49"/>
-        <source>Next Frame</source>
-        <translation>Trame Suivante</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Previous Frame</source>
-        <translation>Trame Précédente</translation>
-    </message>
-    <message>
-        <location line="+133"/>
-        <source>Moderation</source>
-        <translation>Modération</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Freehand</source>
-        <translation>Main levée</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Freehand brush tool</source>
-        <translation>Outil de dessin à main levée</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Eraser</source>
-        <translation>Gomme</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Freehand eraser brush</source>
-        <translation>Gomme à main levée</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>&amp;Select</source>
-        <translation>&amp;Sélectionner</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Select rectangular area</source>
-        <translation>Sélectionner une aire rectangulaire</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Lasso Select</source>
-        <translation>Sélection au &amp;Lasso</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Select a free-form area</source>
-        <translation>Sélectionner une zone à main levée</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Magic Wand Select</source>
-        <translation>Sélection Baguette &amp;Magique</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Select areas with similar colors</source>
-        <translation>Sélectionner les endroits avec des couleurs similaires</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Transform Tool</source>
-        <translation>&amp;Outil Transformation</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Transform selection</source>
-        <translation type="unfinished">Sélection par Transformation</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Pan</source>
-        <translation>Déplacer</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Pan canvas view</source>
-        <translation type="unfinished">Pivoter la vue du canevas par incréments</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>Developer Tools</source>
-        <translation>Outils de Développement</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>System Information…</source>
-        <translation>Information Système…</translation>
-    </message>
-    <message>
-        <location line="+29"/>
-        <source>Set Artificial Lag...</source>
-        <translation>Configurer Latence artificielle...</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Artifical Disconnect...</source>
-        <translation>Déconnexion artificielle...</translation>
-    </message>
-    <message>
-        <location line="-26"/>
-        <source>Open Debug Dump...</source>
-        <translation>Ouvrir Archive de Débogage...</translation>
-    </message>
-    <message>
-        <location line="+44"/>
-        <source>Toggle Eraser Mode</source>
-        <translation>Activer/Désactiver le Mode Gomme</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Toggle Recolor Mode</source>
-        <translation type="unfinished">Activer/Désactiver le Mode Recolorer</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Choose the current foreground color</source>
-        <translation>Choisir la couleur de premier plan</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Choose the current background color</source>
-        <translation type="unfinished">Choisir la couleur d&apos;arrière-plan</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Swap current foreground and background color with each other</source>
-        <translation type="unfinished">Échanger les couleurs de premier plan et d&apos;arrière-plan</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Set foreground color to black and background color to white</source>
-        <translation type="unfinished">Régler la couleur de premier plan sur noir et la couleur d&apos;arrière-plan sur blanc</translation>
-    </message>
-    <message>
-        <location line="+168"/>
-        <source>Could not write log file: %1</source>
-        <translation type="unfinished">Ne peut pas écrire le fichier de journal&#xa0;: %1</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Could not read log file: %1</source>
-        <translation type="unfinished">Ne peut pas lire le fichier de journal&#xa0;: %1</translation>
-    </message>
-    <message>
-        <location line="+88"/>
-        <source>Finish action</source>
-        <translation>Finir l&apos;action</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Cancel action</source>
-        <translation>Annuler l&apos;action</translation>
-    </message>
-    <message>
-        <location line="-4045"/>
-        <source>Image saving failed</source>
-        <translation>Échec de l&apos;enregistrement de l&apos;image</translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Download Complete</source>
-        <translation>Téléchargement terminé</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Download complete, click on &quot;Save&quot; to save your file.</source>
-        <translation>Téléchargement terminé, cliquez sur &quot;Sauvegarder&quot; pour sauvegarder votre fichier.</translation>
-    </message>
-    <message>
-        <location line="+311"/>
-        <source>Error downloading profile.</source>
-        <translation>Erreur lors du téléchargement des fichiers.</translation>
-    </message>
-    <message>
-        <location line="+35"/>
-        <source>Error downloading tablet event log.</source>
-        <translation type="unfinished">Erreur d&apos;enregistrement de la table des évènements.</translation>
-    </message>
-    <message>
-        <location line="+219"/>
-        <source>No canvas to host! Create one or open a file.</source>
-        <translation>Pas de toile à héberger&#x202f;! Créez-en une ou ouvrez un fichier.</translation>
-    </message>
-    <message>
-        <location line="+51"/>
-        <source>Hosting on this computer is not available</source>
-        <translation>L&apos;hébergement sur cet ordinateur n&apos;est pas disponible</translation>
-    </message>
-    <message>
-        <location line="+138"/>
-        <source>Really leave and terminate the session?</source>
-        <translation>Voulez-vous vraiment partir et terminer la session&#x202f;?</translation>
-    </message>
-    <message>
-        <location line="+250"/>
-        <source>Disconnected</source>
-        <translation>Déconnecté·e</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>You&apos;ve been disconnected from the server.</source>
-        <translation>Vous avez été déconnecté du serveur.</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Connection Failed</source>
-        <translation>Connexion échoué</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Could not establish a connection to the server.</source>
-        <translation>Impossible d&apos;établir une connexion avec le serveur.</translation>
-    </message>
-    <message>
-        <location line="+41"/>
-        <source>You&apos;ve been disconnected from the session.</source>
-        <translation>Vous avez été déconnecté de cette session.</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Disconnected: %1</source>
-        <translation>Déconnecté&#xa0;: %1</translation>
-    </message>
-    <message>
-        <location line="+150"/>
+        <location line="+36"/>
         <source>Undo Limit... (%1)</source>
-        <translation>Limite de Retour en Arrière... (%1)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation>Changer la limite de retour en arrière de la session, la limite actuelle est (%1).</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Error</source>
-        <translation type="unfinished">Erreur</translation>
+        <translation>Error</translation>
     </message>
     <message>
-        <location line="+757"/>
+        <location line="+489"/>
+        <source>The image could not be loaded: %1.</source>
+        <extracomment>%1 is an error message.</extracomment>
+        <translation>La imatge no s&apos;ha pogut carregar: %1.</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>The image could not be loaded</source>
+        <translation>La imatge no s&apos;ha pogut carregar</translation>
+    </message>
+    <message>
+        <location line="+252"/>
         <source>User #%1</source>
-        <translation>Utilisateur #%1</translation>
+        <translation>Usuari #%1</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Altering selection…</source>
-        <translation>Altération de la sélection…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Stop Tablet Event Log</source>
-        <translation>Arrêter la Table des Évènements</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1601"/>
         <source>Tablet Event Log...</source>
-        <translation type="unfinished">Table des Évènements...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-1597"/>
         <source>Stop Profile</source>
-        <translation type="unfinished">Arrêter Profil</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+1598"/>
         <source>Profile...</source>
-        <translation>Profil...</translation>
+        <translation>Perfil...</translation>
     </message>
     <message>
         <location line="-1587"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
-        <translation type="unfinished">Régler Latence Artificielle... (Actuellement&#xa0;: %1 ms)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Set Artificial Lag</source>
-        <translation>Régler Latence Artificielle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Artificial lag in milliseconds (0 to disable):</source>
-        <translation>Latence artificielle en millisecondes (0 pour désactiver)&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Artificial Disconnect</source>
-        <translation>Déconnexion Artificielle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Simulate a disconnect after this many seconds:</source>
-        <translation>Simuler une déconnexion après ce nombre de secondes&#xa0;:</translation>
+        <translation>Simular una desconnexió després d&apos;aquests segons:</translation>
     </message>
     <message>
         <location line="+16"/>
         <location line="+1545"/>
         <source>Record Debug Dumps</source>
-        <translation>Enregistrer Archive de Débogage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-1544"/>
@@ -2438,36 +1779,52 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
 
 Are you sure youwant to start recording debug dumps?</source>
-        <translation type="unfinished">Les archives de débogage enregistrent les commandes effectués en local et à distance. Elles peuvent être utilisés pour régler des problèmes de réseaux, et parfois plus dans de rares cas. Si vous souhaitez effectuer un enregistrement classique, veuillez utiliser Fichier &gt; Enregistrer (Vidéo).
-
-L&apos;archive de débogage démarre sur la prochaine réinitialisation du canevas, et les fichiers seront sauvegardés sur %1
-
-Êtes vous sûr·e de vouloir commencer un enregistrement d&apos;archive de débogage&#x202f;?</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+17"/>
+        <source>Open Debug Dump</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;re about to open a debug dump and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Cause Crash</source>
-        <translation>Raison du Crash</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you really want to crash Drawpile? This will terminate the program and you will lose any unsaved data!</source>
-        <translation type="unfinished">Voulez vous faire crasher Drawpile&#x202f;? Ceci va arrêter le programme, et les données non sauvegardées seront perdues&#x202f;!</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+19"/>
+        <source>About Drawpile</source>
+        <translation>Sobre Drawpile</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>A collaborative drawing program.</source>
+        <translation>Un programa de dibuix colaboratiu.</translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Settings File:</source>
-        <translation type="unfinished">Fichier de Configuration&#xa0;:</translation>
+        <translation>Fitxer de preferencies:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet Input:</source>
-        <translation>Entrée Tablette&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Primary screen:</source>
-        <translation>Écran principal&#xa0;:</translation>
+        <translation>Pantalla principal:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2475,380 +1832,615 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <translation>%1x%2px² (%3x%4mm²)</translation>
     </message>
     <message>
-        <location line="+168"/>
+        <location line="+150"/>
+        <source>Toggle Dock %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Lock Docks</source>
-        <translation type="unfinished">Verrouiller Panneaux</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+8"/>
+        <source>Show Icons on Tabs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>Vertical Tabs on Sides</source>
-        <translation>Panneaux Verticaux sur les Côtés</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+11"/>
+        <source>Hide Docks</source>
+        <translation>Amaga els acobladors</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <location filename="../widgets/macmenu.cpp" line="-169"/>
+        <source>&amp;New</source>
+        <translation>&amp;Nou</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location filename="../widgets/macmenu.cpp" line="+1"/>
+        <source>&amp;Open...</source>
+        <translation>&amp;Obrir...</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Close</source>
+        <translation>Tancar</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>&amp;Download Image…</source>
-        <translation>Télécharger l&apos;Image (&amp;D)…</translation>
+        <translation>&amp;Baixar imatge…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Download Selection…</source>
-        <translation>Télécharger Sélection…</translation>
+        <translation>Baixar Selecció…</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+4"/>
+        <source>&amp;Save</source>
+        <translation>&amp;Desa</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Save &amp;As...</source>
+        <translation>Desa &amp;com...</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Autosave</source>
+        <translation>Autodesat</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>Export &amp;Animation…</source>
-        <translation>Exporter l&apos;&amp;Animation…</translation>
+        <translation>Exportar &amp;Animació…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation type="unfinished">Importer les Trames d&apos;Animation…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation type="unfinished">Importer l&apos;Animation depuis les Ca&amp;lques…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Start...</source>
-        <translation type="unfinished">Démarrer...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+2"/>
+        <location filename="../widgets/macmenu.cpp" line="+9"/>
+        <source>&amp;Quit</source>
+        <translation>&amp;Sortir</translation>
+    </message>
+    <message>
+        <location line="+82"/>
+        <location filename="../widgets/macmenu.cpp" line="-12"/>
+        <source>&amp;File</source>
+        <translation>&amp;Fitxer</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location filename="../widgets/macmenu.cpp" line="+8"/>
+        <source>Open &amp;Recent</source>
+        <translation>&amp;Obrir &amp;Recent</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>&amp;Import</source>
-        <translation>&amp;Importer</translation>
+        <translation>&amp;Importar</translation>
     </message>
     <message>
-        <location line="+109"/>
+        <location line="+8"/>
+        <source>&amp;Export</source>
+        <translation>&amp;Exportar</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>File Tools</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+50"/>
+        <source>&amp;Undo</source>
+        <translation>&amp;Desfer</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&amp;Redo</source>
+        <translation>&amp;Refer</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Copy selected area to the clipboard</source>
+        <translation>Copiar l&apos;àrea seleccionada al portaretalls</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Copy selected area, excluding the background, to the clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Copy selected area of the current layer to the clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Cut selected area of the current layer to the clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&amp;Paste</source>
+        <translation>&amp;Enganxar</translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Paste in View Center</source>
-        <translation type="unfinished">Coller dans la Vue Centrée</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+5"/>
+        <source>Pic&amp;k From Screen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Paste &amp;From File...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Delete Empty Annotations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Resi&amp;ze Canvas...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Set Session Background...</source>
-        <translation type="unfinished">Régler Arrière-plan de Session...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set Local Background...</source>
-        <translation type="unfinished">Définir l&apos;Arrière-plan Local...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clear Local Background</source>
-        <translation type="unfinished">Effacer l&apos;Arrière-Plan Local</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Brush Settings</source>
-        <translation type="unfinished">Réglages de pinceau (&amp;B)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+3"/>
+        <location filename="../widgets/macmenu.cpp" line="+8"/>
+        <source>Prefere&amp;nces</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+72"/>
         <source>Expand &amp;Up…</source>
-        <translation type="unfinished">Étendre vers le Ha&amp;ut…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Down…</source>
-        <translation type="unfinished">Éten&amp;dre vers le Bas…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Left…</source>
-        <translation type="unfinished">Étendre vers la Gauche (&amp;L)…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Right…</source>
-        <translation>Étendre vers la D&amp;roite…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+110"/>
-        <source>Canvas Background</source>
-        <translation>Arrière-plan du Canevas</translation>
-    </message>
-    <message>
-        <location line="+40"/>
-        <source>&amp;Layouts...</source>
-        <translation type="unfinished">Dispositions (&amp;L)...</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Move Canvas Left</source>
-        <translation type="unfinished">Déplacer le Canevas vers la Gauche</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Move Canvas Right</source>
-        <translation type="unfinished">Déplacer le Canevas vers la Droite</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Move Canvas Up</source>
-        <translation type="unfinished">Déplacer le Canevas vers le Haut</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Move Canvas Down</source>
-        <translation type="unfinished">Déplacer le Canevas vers le Bas</translation>
-    </message>
-    <message>
-        <location line="+7"/>
+        <location line="+170"/>
         <source>Zoom In On Center</source>
-        <translation type="unfinished">Zoomer vers le Centre</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation type="unfinished">Dézoomer depuis le Centre</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation>&amp;Réinitialiser le Zoom</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation type="unfinished">Réinitialiser le Zoom et Centrer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+43"/>
-        <source>Show Names</source>
-        <translation>Afficher les noms</translation>
+        <location line="+2"/>
+        <source>&amp;Fit Canvas</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Show Layers</source>
-        <translation>Afficher les calques</translation>
+        <location line="+3"/>
+        <source>Fit Canvas &amp;Width</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Show Avatars</source>
-        <translation>Afficher les avatars</translation>
+        <location line="+4"/>
+        <source>Fit Canvas &amp;Height</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
+        <source>&amp;Reset Canvas Rotation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Rotate Canvas Counter-Clockwise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Mirror Canvas</source>
+        <translation>Emmiralla el llenç</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Mirror the canvas horizontally</source>
+        <translation>Emmiralla el llenç horitzontalment</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>mirror/flip canvas horizontally</source>
+        <translation>emmiralla/gira el llenç horitzontalment</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Flip Canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Flip the canvas upside-down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>mirror/flip canvas vertically</source>
+        <translation>emmiralla/gira el llenç verticalment</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>Hide From Cursor</source>
-        <translation type="unfinished">Cacher depuis le Curseur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation>Afficher les &amp;Règles</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show Selection &amp;Mask</source>
-        <translation>Afficher la Sélection de &amp;Masques</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle selection display between a mask and an outline</source>
-        <translation type="unfinished">Alterner la sélection d&apos;affichage entre un masque et un contour</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished">Ajuster à l&apos;Écran (&amp;F)</translation>
+        <translation type="unfinished">Ajusta a la pantalla</translation>
     </message>
     <message>
-        <location line="+128"/>
-        <source>Layer View Mode</source>
-        <translation type="unfinished">Mode de Vue de Calque</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>User Pointers</source>
-        <translation>Pointeurs des utilisateurs</translation>
-    </message>
-    <message>
-        <location filename="../docks/layerlistdock.cpp" line="+486"/>
-        <location filename="../mainwindow.cpp" line="+68"/>
-        <source>Merge Layer</source>
-        <translation>Fusionner les Calques</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="+8"/>
-        <source>Select Above</source>
-        <translation type="unfinished">Sélectionner au dessus</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Select Below</source>
-        <translation type="unfinished">Sélectionner en dessous</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>&amp;Layer</source>
-        <translation type="unfinished">Ca&amp;lque</translation>
-    </message>
-    <message>
-        <location line="+186"/>
-        <source>Increase Key Frame Exposure</source>
-        <translation>Augmenter l&apos;Exposition de la Trame de Référence</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Decrease Key Frame Exposure</source>
-        <translation>Réduire l&apos;Exposition de la Trame de Référence</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Create Group on Current Key Frame</source>
-        <translation>Créer un Groupe sur la Trame de Référence Actuelle</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Create Group on Next Key Frame</source>
-        <translation>Créer un Groupe sur la Trame de Référence Suivante</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Create Group on Previous Key Frame</source>
-        <translation>Créer un Groupe sur la Trame de Référence Précédente</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Duplicate to Next Key Frame</source>
-        <translation>Dupliquer sur la Trame de Référence Suivante</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Duplicate to Previous Key Frame</source>
-        <translation>Dupliquer sur la Trame de Référence Précédente</translation>
-    </message>
-    <message>
-        <location line="+35"/>
-        <source>Create Group on Key Frame</source>
-        <translation>Créer un Groupe sur la Trame de Référence</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Duplicate Key Frame</source>
-        <translation>Dupliquer la Trame de Référence</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>Share your canvas with others</source>
-        <translation>Partager votre canevas avec d&apos;autres</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Invite...</source>
-        <translation>&amp;Inviter...</translation>
+        <location line="+116"/>
+        <source>Group View</source>
+        <translation>Vista de grup</translation>
     </message>
     <message>
         <location line="+0"/>
-        <source>Invite another user to this session</source>
-        <translation>Inviter un·e autre utilisateur·ice à cette session</translation>
+        <source>Show only the current parent layer group</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>&amp;Browse...</source>
-        <translation>Parcourir (&amp;B)...</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Browse session listings</source>
-        <translation type="unfinished">Parcourir listes de session</translation>
+        <location line="+32"/>
+        <source>Stay Time</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
-        <source>Change session settings, permissions, announcements and bans</source>
-        <translation>Modifier les paramètres de sessions, les permissions, les annoncements et les exclusions</translation>
+        <source>1 Second</source>
+        <comment>user pointer stay time</comment>
+        <translation>1 Segon</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Undo Limit…</source>
-        <translation type="unfinished">Annuler la limite…</translation>
+        <source>10 Seconds</source>
+        <comment>user pointer stay time</comment>
+        <translation>10 Segons</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>1 Minute</source>
+        <comment>user pointer stay time</comment>
+        <translation>1 Minut</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>1 Hour</source>
+        <comment>user pointer stay time</comment>
+        <translation>1 Hora</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Forever</source>
+        <comment>user pointer stay time</comment>
+        <translation>Per sempre</translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <source>Clear Fill Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&amp;Toggle Layer Check State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Check All</source>
+        <translation>Mar&amp;ca-ho tot</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Become Operator...</source>
-        <translation>Devenir Opérateur...</translation>
+        <source>&amp;Uncheck All</source>
+        <translation type="unfinished">Desmarca-ho tot</translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>Select &amp;All</source>
+        <translation>Seleccion&amp;a-ho tot</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Deselect</source>
+        <translation>&amp;Desseleccionar</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>Mirror the transformed image horizontally</source>
+        <translation>Emmiralla la imatge transformada horitzontalment</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>mirror/flip transformed image horizontally</source>
+        <translation>emmiralla/gira la imatge transformada horitzontalment</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Flip the transformed image upside-down</source>
+        <translation>Gira la imatge transformada cap avall</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>mirror/flip transformed image vertically</source>
+        <translation>emmiralla/gira la imatge transformada verticalment</translation>
+    </message>
+    <message>
+        <location line="+119"/>
+        <source>Create Layers on Current Key Frame</source>
+        <translation>Crea capes en el fotograma clau actual</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Layers on Next Key Frame</source>
+        <translation>Crea capes en el fotograma clau següent</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Layers on Previous Key Frame</source>
+        <translation>Crea capes en el fotograma clau previ</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Create Layers on Key Frame</source>
+        <translation>Crea capes en el fotograma clau</translation>
+    </message>
+    <message>
+        <location line="-697"/>
+        <source>Delete</source>
+        <translation>Eliminar</translation>
+    </message>
+    <message>
+        <location line="+513"/>
+        <source>Fill Selection</source>
+        <translation>Omple la selecció</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Recolor Selection</source>
+        <translation>Acoloreix la selecció</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Color Erase Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-434"/>
+        <source>&amp;Edit</source>
+        <translation>&amp;Edita</translation>
+    </message>
+    <message>
+        <location line="-1918"/>
+        <source>Disconnected</source>
+        <translation>Desconnectat</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You&apos;ve been disconnected from the server.</source>
+        <translation>T&apos;has desconnectat del servidor.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Connection Failed</source>
+        <translation>La connexio ha fallat</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Could not establish a connection to the server.</source>
+        <translation>No s&apos;ha pogut establir la connexió amb el servidor.</translation>
+    </message>
+    <message>
+        <location line="+1414"/>
+        <source>Arrange Docks</source>
+        <translation>Arranja els acobladors</translation>
+    </message>
+    <message>
+        <location line="+516"/>
+        <source>&amp;Expand Canvas</source>
+        <translation>&amp;Expandeix el llenç</translation>
     </message>
     <message>
         <location line="+5"/>
-        <source>Lock Everything</source>
-        <translation>Tout verrouiller</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Prevent changes to the canvas</source>
-        <translation type="unfinished">Prévenir les changements sur le canevas</translation>
-    </message>
-    <message>
-        <location line="+105"/>
-        <source>Statistics…</source>
-        <translation>Statistiques…</translation>
-    </message>
-    <message>
-        <location line="+259"/>
-        <source>Brush slot #%1</source>
-        <translation>Emplacement de pinceau #%1</translation>
+        <source>Canvas Background</source>
+        <translation>Fons del llenç</translation>
     </message>
     <message>
         <location line="+13"/>
-        <source>Swap With Brush Slot #%1</source>
-        <translation>Échanger avec Emplacement de pinceau #%1</translation>
+        <source>Tablet Driver</source>
+        <translation>Controlador de la tauleta</translation>
     </message>
     <message>
-        <location line="+22"/>
-        <source>Swatch Color %1</source>
-        <translation type="unfinished">Échanger Couleur %1</translation>
+        <location line="+14"/>
+        <source>Edit Tools</source>
+        <translation>Eines d&apos;edició</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <source>Focus canvas</source>
-        <translation type="unfinished">Centrer sur le canevas</translation>
+        <location line="+13"/>
+        <source>&amp;Layouts...</source>
+        <translation>&amp;Disposicions...</translation>
     </message>
     <message>
-        <location line="-961"/>
-        <source>Show &amp;Annotations</source>
-        <translation>Afficher les &amp;annotations</translation>
+        <location line="+2"/>
+        <source>&amp;Toolbars</source>
+        <translation>&amp;Barres d&apos;eines</translation>
     </message>
     <message>
-        <location line="-4628"/>
-        <source>🙋 %1 joined!</source>
-        <translation type="unfinished">🙋 %1 a rejoint&#x202f;!</translation>
+        <location line="+3"/>
+        <source>&amp;Docks</source>
+        <translation>&amp;Acobladors</translation>
     </message>
     <message>
-        <location line="+1727"/>
-        <source>Saving animation...</source>
-        <translation>Sauvegarde de l&apos;animation...</translation>
+        <location line="+3"/>
+        <source>Chat</source>
+        <translation>Xat</translation>
     </message>
     <message>
-        <location line="+2875"/>
+        <location line="+2"/>
+        <source>Move Canvas Left</source>
+        <translation>Moure el llença a l&apos;esquerra</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Move Canvas Right</source>
+        <translation>Moure el llenç a la dreta</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Move Canvas Up</source>
+        <translation>Moure el llenç amunt</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Move Canvas Down</source>
+        <translation>Moure el llenç avall</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Zoom &amp;In</source>
+        <translation type="unfinished">Apropa</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Zoom &amp;Out</source>
+        <translation type="unfinished">Allunya</translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Rotate Canvas Clockwise</source>
-        <translation>Rotation horaire du canevas</translation>
+        <translation>Rotar el llenç en direcció horària</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+26"/>
+        <source>Show &amp;Annotations</source>
+        <translation>Mostra les &amp;anotacions</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Show User &amp;Pointers</source>
-        <translation>Afficher les &amp;pointeurs des utilisateurs</translation>
+        <translation>Mostra els &amp;punters dels usuaris</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+1"/>
+        <source>Show Names</source>
+        <translation>Mostra els Noms</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show Layers</source>
+        <translation>Mostra les capes</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show Avatars</source>
+        <translation>Mostra les fotos de perfil</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Show La&amp;ser Trails</source>
-        <translation>Afficher les trainées la&amp;ser</translation>
+        <translation>Mostra les traces Là&amp;ser</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Pixel &amp;Grid</source>
-        <translation>Afficher le quadrilla&amp;ge</translation>
+        <translation>Mostra la quadrícula de píxels</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>&amp;Full Screen</source>
-        <translation>&amp;Plein écran</translation>
+        <translation>&amp;Pantalla completa</translation>
     </message>
     <message>
         <location line="+75"/>
         <source>&amp;View</source>
-        <translation>&amp;Affichage</translation>
+        <translation>&amp;Vista</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2858,345 +2450,737 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+8"/>
         <source>Rotation</source>
-        <translation>Rotation</translation>
+        <translation>Rotacio</translation>
     </message>
     <message>
-        <location line="+100"/>
+        <location line="+10"/>
+        <source>Normal View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show all layers normally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Layer View</source>
+        <translation>Vista de capes</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show only the current layer</source>
+        <translation>Mostrar només la capa actual</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Frame View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show only layers in the current frame</source>
+        <translation>Mostra només les capes en el fotograma actual</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show Censored Layers</source>
+        <translation>Mostrar les capes censurdes</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Layer View Mode</source>
+        <translation>Mode de vista de capa</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>User Pointers</source>
+        <translation>Punters de l&apos;usuari</translation>
+    </message>
+    <message>
+        <location line="+65"/>
         <source>New Layer</source>
-        <translation>Nouveau calque</translation>
+        <translation>Nova capa</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="-3"/>
-        <location filename="../mainwindow.cpp" line="+2"/>
+        <location line="+1"/>
+        <source>New Layer Group</source>
+        <translation>Nou grup de capes</translation>
+    </message>
+    <message>
+        <location filename="../docks/layerlistdock.cpp" line="+483"/>
+        <location filename="../mainwindow.cpp" line="+1"/>
         <source>Duplicate Layer</source>
-        <translation>Dupliquer le calque</translation>
+        <translation>Duplicar capa</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <location filename="../mainwindow.cpp" line="+3"/>
+        <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+1"/>
+        <source>Merge Layer</source>
+        <translation>Fusionar capa</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <location filename="../mainwindow.cpp" line="+2"/>
         <source>Delete Layer</source>
-        <translation>Effacer le calque</translation>
+        <translation>Eliminar capa</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Visibility</source>
-        <translation type="unfinished">Basculer la &amp;Visibilité du Calque</translation>
+        <translation>Commuta la &amp;visibilitat de les capes</translation>
     </message>
     <message>
         <location line="+4"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Sketch Mode</source>
-        <translation>Basculer la Visibilité du Mode d&apos;E&amp;squisse</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-93"/>
-        <source>Show Censored Layers</source>
-        <translation>Afficher les calques censurés</translation>
-    </message>
-    <message>
-        <location line="-4072"/>
-        <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation type="unfinished">&lt;p&gt;Le raccourci suivant &apos;%1&apos; est ambigu, il correspond à&#xa0;:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Ambiguous Shortcut</source>
-        <translation>Raccourci Ambigu</translation>
+        <location filename="../mainwindow.cpp" line="+1"/>
+        <source>Set as Fill Source</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>Fix</source>
-        <translation>Réparer</translation>
-    </message>
-    <message>
-        <location line="+630"/>
-        <source>Opening file…</source>
-        <translation>Ouverture du fichier…</translation>
-    </message>
-    <message>
-        <location line="+275"/>
-        <source>Joined the session!</source>
-        <translation>A rejoint la session&#x202f;!</translation>
-    </message>
-    <message>
-        <location line="+844"/>
-        <source>Reason:</source>
-        <translation>Raison&#xa0;:</translation>
-    </message>
-    <message>
-        <location line="+257"/>
-        <source>Canvas locked</source>
-        <translation>Canevas verrouillé</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Canvas unlocked</source>
-        <translation>Canevas déverrouillé</translation>
-    </message>
-    <message>
-        <location line="+432"/>
-        <source>Freehand (erase mode, click to reset)</source>
-        <translation type="unfinished">Main libre (mode gomme, cliquer pour réinitialiser)</translation>
+        <source>Select Above</source>
+        <translation>Selecciona per sobre</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Freehand brush tool (erase mode)</source>
-        <translation type="unfinished">Outil pinceau en main libre (mode gomme)</translation>
+        <source>Select Below</source>
+        <translation>Selecciona per sota</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&amp;Layer</source>
+        <translation>&amp;Capa</translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>&amp;Invert Selection</source>
+        <translation>&amp;Invertir selecció</translation>
     </message>
     <message>
         <location line="+4"/>
-        <source>Freehand (alpha lock mode, click to reset)</source>
-        <translation>Main libre (mode alpha verrouillé, cliquer pour réinitialiser)</translation>
+        <source>Select Layer &amp;Bounds</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Freehand brush tool (alpha lock mode)</source>
-        <translation>Outil pinceau en main libre (mode alpha verrouillé)</translation>
-    </message>
-    <message>
-        <location line="+801"/>
-        <source>Toggle Dock %1</source>
-        <translation>Basculer Panneau %1</translation>
-    </message>
-    <message>
-        <location line="+89"/>
-        <source>Export Image…</source>
-        <translation>Exporter l&apos;image…</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Export Selection...</source>
-        <translation>Exporter la sélection...</translation>
-    </message>
-    <message>
-        <location line="+24"/>
-        <source>Import &amp;Brushes...</source>
-        <translation type="unfinished">Importer les Pinceaux (&amp;B)…</translation>
-    </message>
-    <message>
-        <location line="-16"/>
-        <source>Export Session &amp;Template...</source>
-        <translation type="unfinished">Exporter le Modèle de Session (&amp;T)...</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Export &amp;Brushes…</source>
-        <translation type="unfinished">Exporter les Pinceaux (&amp;B)…</translation>
-    </message>
-    <message>
-        <location line="+203"/>
-        <source>&amp;Copy Merged</source>
-        <translation>&amp;Copie Fusionnée</translation>
+        <location line="+4"/>
+        <source>&amp;Layer to Selection</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
-        <source>Copy Without Background</source>
-        <translation>Copie sans l&apos;Arrière-plan</translation>
+        <source>&amp;Expand/Shrink/Feather Selection</source>
+        <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>&amp;Transform</source>
+        <translation>&amp;Transforma</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Transform the selection, switch back tools afterwards</source>
+        <translation type="unfinished">Transforma la selecció, torna a l&apos;eina anterior en acabat</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Transform Selection &amp;Mask</source>
+        <translation>Transforma la &amp;Mascara de selecció</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Transform only the selection mask itself, switch back tools afterwards</source>
+        <translation>Transforma només la màscara de selecció, torna a l&apos;eina anterior en acabat</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Mirror Transform</source>
+        <translation>&amp;Emmiralla la transformació</translation>
     </message>
     <message>
         <location line="+6"/>
-        <source>Copy From &amp;Layer</source>
-        <translation>Copier depuis le Ca&amp;lque</translation>
+        <source>&amp;Flip Transform</source>
+        <translation>Capgira la trans&amp;formació</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>Cu&amp;t From Layer</source>
-        <translation type="unfinished">Couper depuis le Calque (&amp;T)</translation>
+        <location line="+5"/>
+        <source>&amp;Rotate Transform Clockwise</source>
+        <translation>Gi&amp;ra la transformació en sentit horari</translation>
     </message>
     <message>
-        <location line="+243"/>
-        <source>Tablet Driver</source>
-        <translation type="unfinished">Pilotes pour Tablette</translation>
+        <location line="+5"/>
+        <source>Rotate Transform &amp;Counter-Clockwise</source>
+        <translation>Gira la transforma&amp;ció en sentit antihorari</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="-10"/>
-        <location filename="../mainwindow.cpp" line="+319"/>
-        <source>Layer Properties…</source>
-        <translation>Propriétés du calque…</translation>
+        <location line="+4"/>
+        <source>Shrink Transform to &amp;Fit View</source>
+        <translation>Encongeix la trans&amp;formació per a ajustar-se a la vista</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+198"/>
+        <location line="+4"/>
+        <source>&amp;Stamp Transform</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+48"/>
+        <source>Selectio&amp;n</source>
+        <translation type="unfinished">Selecció</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Flipbook</source>
+        <translation>Llibre animat</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show animation preview window</source>
+        <translation>Mostra la finestra de previsualització d&apos;animació</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Change Frame Count...</source>
-        <translation type="unfinished">Changer le Nombre de Trames...</translation>
+        <translation>Canvia la quantitat de fotogrames...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change Frame Rate (FPS)...</source>
-        <translation type="unfinished">Changer la Fréquence d&apos;image pour les Trames (IPS)...</translation>
+        <translation>Canviar taxa de fotogrames (FPS)...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished">Régler la Trame de Référence au Calque Actuel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Blank Key Frame</source>
-        <translation type="unfinished">Régler Trame de Référence Vide</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cut Key Frame</source>
-        <translation>Couper Trame de Référence</translation>
+        <translation>Retalla el fotograma clau</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy Key Frame</source>
-        <translation>Copier Trame de Référence</translation>
+        <translation>Copia el fotograma clau</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Paste Key Frame</source>
-        <translation>Coller Trame de Référence</translation>
+        <translation>Enganxa el fotograma clau</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key Frame Properties...</source>
-        <translation>Propriétés de la Trame de Référence...</translation>
+        <translation>Propietats del fotograma clau...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Key Frame</source>
-        <translation>Supprimer la Trame de Référence</translation>
+        <translation>Elimina el fotograma clau</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
+        <source>Increase Key Frame Exposure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Decrease Key Frame Exposure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>New Track</source>
-        <translation>Nouvelle Piste</translation>
+        <translation>Nova pista</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Visible</source>
-        <translation>Piste Visible</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin</source>
-        <translation type="unfinished">Piste en pelage d&apos;oignon</translation>
+        <translation>Pell de ceba de la pista</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate Track</source>
-        <translation type="unfinished">Dupliquer la Piste</translation>
+        <translation>Duplicar pista</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rename Track</source>
-        <translation type="unfinished">Renommer la Piste</translation>
+        <translation>Reanomenar pista</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation type="unfinished">Supprimer la Piste</translation>
+        <translation>Eliminar pista</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
+        <source>Next Frame</source>
+        <translation>Fotograma següent</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Previous Frame</source>
+        <translation>Fotograma previ</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Next Key Frame</source>
-        <translation>Trame de Référence Suivante</translation>
+        <translation>Fotograma clau següent</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation>Trame de Référence Précédente</translation>
+        <translation>Fotograma clau previ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Above</source>
-        <translation>Piste au Dessus</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Below</source>
-        <translation>Piste en Dessous</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Create Layers on Current Key Frame</source>
-        <translation>Créer des Calques sur la Trame de Référence Actuelle</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Create Layers on Next Key Frame</source>
-        <translation>Créer des Calques sur la Trame de Référence Suivante</translation>
+        <location line="+5"/>
+        <source>Create Group on Current Key Frame</source>
+        <translation>Crear grup en el fotograma clau actual</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Create Layers on Previous Key Frame</source>
-        <translation>Créer des Calques sur la Trame de Référence Précédente</translation>
+        <source>Create Group on Next Key Frame</source>
+        <translation>Crear grup en el fotograma clau següent</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+1"/>
+        <source>Create Group on Previous Key Frame</source>
+        <translation>Crear grup en el fotograma clau previ</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Duplicate to Next Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Duplicate to Previous Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>&amp;Animation</source>
-        <translation>&amp;Animation</translation>
+        <translation>&amp;Animació</translation>
     </message>
     <message>
-        <location line="+18"/>
-        <source>Create Layers on Key Frame</source>
-        <translation>Créer des Calques sur la Trame de Référence</translation>
+        <location line="+23"/>
+        <source>Create Group on Key Frame</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+5"/>
+        <source>Duplicate Key Frame</source>
+        <translation>Duplicar fotograma clau</translation>
+    </message>
+    <message>
+        <location line="+27"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Host...</source>
-        <translation>&amp;Нôte...</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <location filename="../widgets/macmenu.cpp" line="+1"/>
-        <source>&amp;Join...</source>
-        <translation>Re&amp;joindre...</translation>
+        <translation type="unfinished">Allotja...</translation>
     </message>
     <message>
         <location line="+0"/>
-        <source>Join another user&apos;s drawing session</source>
-        <translation>Rejoindre la session d&apos;un autre utilisateur</translation>
+        <source>Share your canvas with others</source>
+        <translation>Comparteix el teu llenç amb altres</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
+        <source>&amp;Invite...</source>
+        <translation>&amp;Invitar...</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Invite another user to this session</source>
+        <translation>Invitar un altre usuari a aquesta sessió</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Prevent changes to the canvas</source>
+        <translation>Impedeix els canvis al llenç</translation>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>&amp;Select</source>
+        <translation>&amp;Seleccionar</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Select rectangular area</source>
+        <translation>Seleccionar área reactangular</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Lasso Select</source>
+        <translation>Selecció de &amp;llaç</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Select a free-form area</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Magic Wand Select</source>
+        <translation>Selecció de vareta &amp;Màgica</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Select areas with similar colors</source>
+        <translation>Seleccionar àrees amb colors similars</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Transform Tool</source>
+        <translation>Eina de &amp;transformació</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Transform selection</source>
+        <translation>Transforma la selecció</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pan</source>
+        <translation>Desplaça</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Pan canvas view</source>
+        <translation>Desplaça la vista del llenç</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>System Information…</source>
+        <translation>Información del sistema…</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Cause Crash…</source>
+        <translation>Causa una fallada…</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Choose the current foreground color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Choose the current background color</source>
+        <translation>Tria el color de fons actual</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Swap current foreground and background color with each other</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Set foreground color to black and background color to white</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Reset Brush</source>
+        <translation>&amp;Reinicialitza el pinzell</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Reset All Brush &amp;Slots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Reset All &amp;Brushes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Next Brush</source>
+        <translation>&amp;Pinzell següent</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Previous Brush</source>
+        <translation>&amp;Pinzell previ</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Next Brush Tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Previous Brush Tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Next Brush Slot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Previous Brush Slot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+143"/>
+        <source>Could not write log file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Could not read log file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-339"/>
+        <location filename="../widgets/macmenu.cpp" line="+1"/>
+        <source>&amp;Join...</source>
+        <translation>&amp;Unir-se</translation>
+    </message>
+    <message>
+        <location line="-3547"/>
+        <source>Joined the session!</source>
+        <translation>Us heu unit a la sessió!</translation>
+    </message>
+    <message>
+        <location line="+589"/>
+        <source>Hosting on this computer is not available</source>
+        <translation>Allotjar en aquest ordinador no està disponible</translation>
+    </message>
+    <message>
+        <location line="+138"/>
+        <source>Really leave and terminate the session?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+117"/>
+        <source>Reason:</source>
+        <translation>Motiu:</translation>
+    </message>
+    <message>
+        <location line="+179"/>
+        <source>You&apos;ve been disconnected from the session.</source>
+        <translation>Us heu desconnectat de la sessió.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Disconnected: %1</source>
+        <translation>Desconectat: %1</translation>
+    </message>
+    <message>
+        <location line="+77"/>
+        <source>Canvas locked</source>
+        <translation>Llenç bloquejat</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Canvas unlocked</source>
+        <translation>Llenç desbloquejat</translation>
+    </message>
+    <message>
+        <location line="+432"/>
+        <source>Freehand (erase mode, click to reset)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Freehand brush tool (erase mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Freehand (alpha lock mode, click to reset)</source>
+        <translation>A ma alçada (mode de bloqueig de l&apos;alfa, Clic per a restablir)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Freehand brush tool (alpha lock mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+890"/>
+        <source>Export Image…</source>
+        <translation>Exportar Imatge…</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Export Selection...</source>
+        <translation>Exportar Selecció...</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Import &amp;Brushes...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-16"/>
+        <source>Export Session &amp;Template...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Export &amp;Brushes…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+203"/>
+        <source>&amp;Copy Merged</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Copy Without Background</source>
+        <translation>Copiar sense el fons</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Copy From &amp;Layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Cu&amp;t From Layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../docks/layerlistdock.cpp" line="-10"/>
+        <location filename="../mainwindow.cpp" line="+562"/>
+        <source>Layer Properties…</source>
+        <translation>Propietats de la capa…</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="+298"/>
+        <source>Join another user&apos;s drawing session</source>
+        <translation>Unir-se a la sessió de dibuix d&apos;un altre usuari</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Browse...</source>
+        <translation>&amp;Navega</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Browse session listings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>&amp;Leave</source>
-        <translation>&amp;Quitter</translation>
+        <translation>&amp;Marxar</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Leave this drawing session</source>
-        <translation>Quitter cette session de dessin</translation>
+        <translation>Marxar d&apos;aquest sessio de dibuix</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Event Log</source>
-        <translation>Journal des évènements</translation>
+        <translation>Registre d&apos;events</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Settings...</source>
-        <translation>Paramètres...</translation>
+        <translation>Configuració...</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+0"/>
+        <source>Change session settings, permissions, announcements and bans</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Undo Limit…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Become Operator...</source>
+        <translation>Convertir-se en operator...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>&amp;Reset...</source>
-        <translation>&amp;Réinitialiser...</translation>
+        <translation>&amp;Reinicia...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Report...</source>
-        <translation>Signaler...</translation>
+        <translation>Informa...</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+2"/>
+        <source>Lock Everything</source>
+        <translation>Bloqueja-ho tot</translation>
+    </message>
+    <message>
+        <location line="+30"/>
         <location filename="../widgets/macmenu.cpp" line="-2"/>
         <source>&amp;Session</source>
-        <translation>&amp;Session</translation>
+        <translation>&amp;Sessió</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+8"/>
+        <source>Moderation</source>
+        <translation>Moderació</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Freehand</source>
+        <translation>A ma alçada</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Freehand brush tool</source>
+        <translation>Eina pinzell a ma alçada</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Eraser</source>
+        <translation>Goma d&apos;esborrar</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Freehand eraser brush</source>
+        <translation>Pinzell goma d&apos;esborrar a ma alçada</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>&amp;Line</source>
-        <translation>&amp;Ligne</translation>
+        <translation>&amp;Linia</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Draw straight lines</source>
-        <translation>Tracer des lignes droites</translation>
+        <translation>Dibuxiar linies rectes</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3206,67 +3190,67 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+0"/>
         <source>Draw unfilled squares and rectangles</source>
-        <translation>Tracer des carrés et rectangles évidés</translation>
+        <translation>Dibuixa quadrats i rectangles sense omplir</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Ellipse</source>
-        <translation>&amp;Ellipse</translation>
+        <translation>&amp;Elipse</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Draw unfilled circles and ellipses</source>
-        <translation>Tracer des cercles et des ellipses évidés</translation>
+        <translation>Dibuixa cercles i el·lipses sense omplir</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Bezier Curve</source>
-        <translation>Courbe de Bézier</translation>
+        <translation>Corba de Bézier</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Draw bezier curves</source>
-        <translation>Tracer des courbes de Bézier</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Flood Fill</source>
-        <translation>&amp;Remplissage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Fill areas</source>
-        <translation>Remplir des zones</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Annotation</source>
-        <translation>&amp;Annotation</translation>
+        <translation>&amp;Anotació</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Add text to the picture</source>
-        <translation>Ajouter du texte à l&apos;image</translation>
+        <translation>Afegir text a la imatge</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Color Picker</source>
-        <translation>&amp;Pipette</translation>
+        <translation>&amp;Selector de color</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Pick colors from the image</source>
-        <translation>Prélever les couleurs de l&apos;image</translation>
+        <translation>Seleccionar colors de la imatge</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Laser Pointer</source>
-        <translation>Pointeur &amp;Laser</translation>
+        <translation>Punter &amp;làser</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Point out things on the canvas</source>
-        <translation>Désigner des éléments du canevas</translation>
+        <translation type="unfinished">Apunta els objectes al llenç</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3276,162 +3260,172 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+0"/>
         <source>Zoom the canvas view</source>
-        <translation>Agrandir/Réduire la vue du canevas</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Inspector</source>
-        <translation>Inspecteur</translation>
+        <translation>Inspector</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Find out who did it</source>
-        <translation>Trouver qui l&apos;a fait</translation>
+        <translation>Trobeu qui ho ha fet</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>&amp;Tools</source>
-        <translation>&amp;Outils</translation>
+        <translation>&amp;Eines</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Shortcuts</source>
-        <translation>&amp;Raccourcis</translation>
+        <translation>&amp;Dreceres</translation>
     </message>
     <message>
-        <location line="+38"/>
-        <source>Cause Crash…</source>
-        <translation type="unfinished">Causer un Crash…</translation>
+        <location line="+2"/>
+        <source>Developer Tools</source>
+        <translation>Eines de desenvolupador</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+30"/>
+        <source>Set Artificial Lag...</source>
+        <translation>Estableix retard artificial...</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Artifical Disconnect...</source>
+        <translation>Desconnexió artificial...</translation>
+    </message>
+    <message>
+        <location line="-26"/>
+        <source>Open Debug Dump...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Statistics…</source>
+        <translation>Estadístiques…</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Toggle Eraser Mode</source>
+        <translation>Commuta el mode goma d&apos;esborrar</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Toggle Recolor Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>&amp;Decrease Brush Size</source>
-        <translation>&amp;Réduire la taille du pinceau</translation>
+        <translation>&amp;Disminueix la mida del pinzell</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Increase Brush Size</source>
-        <translation>&amp;Agrandir la taille du pinceau</translation>
+        <translation>&amp;Augmenta la mida del pinzell</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>&amp;Reset Brush</source>
-        <translation type="unfinished">&amp;Réinitialiser Pinceau</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished">Réinitialiser tous les Emplacements de Pinceau (&amp;S)</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished">Réinitialiser tous les Pinceaux (&amp;B)</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>&amp;Next Brush</source>
-        <translation type="unfinished">Pinceau Suivant (&amp;N)</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Previous Brush</source>
-        <translation>Pinceau &amp;Précédent</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Next Brush Tag</source>
-        <translation>Étiquette de Pinceau Suivant</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Previous Brush Tag</source>
-        <translation>Étiquette de Pinceau Précédent</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Next Brush Slot</source>
-        <translation>Emplacement de Pinceau Suivant</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Previous Brush Slot</source>
-        <translation>Emplacement de Pinceau Précédent</translation>
-    </message>
-    <message>
-        <location line="+42"/>
+        <location line="+65"/>
         <source>Drawing tools</source>
-        <translation>Outils de dessin</translation>
+        <translation>Eines de dibuix</translation>
     </message>
     <message>
         <location line="+52"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Homepage</source>
-        <translation>&amp;Page d&apos;accueil</translation>
+        <translation>&amp;Pàgina principal</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Tablet Tester</source>
-        <translation>Testeur de tablette</translation>
+        <translation>Provador de taules</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Touch Tester</source>
-        <translation>Test Tactile</translation>
+        <translation>Provador tàctil</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log File</source>
-        <translation>Journal</translation>
+        <translation>Fitxer de registre</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;About Drawpile</source>
-        <translation>&amp;À propos de Drawpile</translation>
+        <translation>&amp;Sobre Drawpile</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+2"/>
         <source>About &amp;Qt</source>
-        <translation>À propos de &amp;Qt</translation>
+        <translation>Sobre &amp;Qt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Check For Updates</source>
-        <translation>Vérifier les mises à jour</translation>
+        <translation>Comprova si hi ha actualitzacions</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Missing Log File</source>
-        <translation>Fichier Journal Manquant</translation>
+        <translation>Falta el fitxer de registre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished">Fichier journal non existant, voulez-vous l&apos;activer dans les préférences&#x202f;?</translation>
+        <translation>El fitxer de registre no existeix, voleu activar el registre a l&apos;arranjament?</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+5"/>
         <source>Error Saving Log File</source>
-        <translation>Erreur de Sauvegarde du Fichier Journal</translation>
+        <translation>Error desant el fitxer de registre</translation>
     </message>
     <message>
         <location line="+8"/>
         <location filename="../widgets/macmenu.cpp" line="-5"/>
         <source>&amp;Help</source>
-        <translation>&amp;Aide</translation>
+        <translation>&amp;Ajuda</translation>
     </message>
     <message>
-        <location line="-1082"/>
-        <source>Delete</source>
-        <translation>Effacer</translation>
+        <location line="+31"/>
+        <source>Brush slot #%1</source>
+        <translation>Ranura de pinzell #%1</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Swap With Brush Slot #%1</source>
+        <translation>Intercanvia amb la ranura de pinzell #%1</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Swatch Color %1</source>
+        <translation>Color de mostra %1</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Finish action</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Cancel action</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Focus canvas</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-13"/>
         <source>Window</source>
-        <translation>Fenêtre</translation>
+        <translation>Finestra</translation>
     </message>
     <message>
         <location filename="../utils/widgetutils.cpp" line="-87"/>
@@ -3445,42 +3439,42 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../ui/netstats.ui" line="+14"/>
         <source>Statistics</source>
-        <translation>Statistiques</translation>
+        <translation>Estadístiques</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Latency:</source>
-        <translation>Latence :</translation>
+        <translation>Latència:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Tiles:</source>
-        <translation type="unfinished">Tuiles&#xa0;:</translation>
+        <translation>Titols:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Tile Memory:</source>
-        <translation type="unfinished">Mémoire de la Tuile&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Contexts:</source>
-        <translation>Contextes&#xa0;:</translation>
+        <translation>Context:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Context Memory:</source>
-        <translation>Mémoire Contexte&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-86"/>
         <source>Sent:</source>
-        <translation>Émis :</translation>
+        <translation>Enviat:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Received:</source>
-        <translation>Reçu :</translation>
+        <translation>Rebut:</translation>
     </message>
 </context>
 <context>
@@ -3488,82 +3482,82 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../ui/playback.ui" line="+14"/>
         <source>Playback</source>
-        <translation>Lecture</translation>
+        <translation>Reproducció</translation>
     </message>
     <message>
-        <location line="+55"/>
-        <source>Play</source>
-        <translation>Lecture</translation>
-    </message>
-    <message>
-        <location line="-34"/>
+        <location line="+21"/>
         <source>Rewind to Beginning</source>
-        <translation>Rembobiner au Début</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation>Sauter en Arrière</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+17"/>
+        <source>Play</source>
+        <translation>Reprodueix</translation>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>Next Stroke</source>
-        <translation>Tracé Suivant</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Skip Forward</source>
-        <translation>Avancer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation>Vitesse de Lecture&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+79"/>
         <source>Building an index will let you quickly skip to any part of your recording.</source>
-        <translation>Construire un index vous permettra de sauter rapidement à n&apos;importe quelle partie de votre enregistrement.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Build Index</source>
-        <translation>Construire l&apos;index</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Frame:</source>
-        <translation>Image :</translation>
+        <translation>Fotograma:</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Automatically save a frame at each step</source>
-        <translation>Enregistrer automatiquement une image à chaque pas</translation>
+        <translation>Desa automàticament un fotograma en cada pas</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Autosave</source>
-        <translation>Enregistrement automatique</translation>
+        <translation>Autodesat</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Save frame</source>
-        <translation>Enregistrer l&apos;image</translation>
+        <translation>Desa el fotograma</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Stop</source>
-        <translation>Stop</translation>
+        <translation>Atura</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Export Video...</source>
-        <translation>Exporter la vidéo...</translation>
+        <translation>Exportar vídeo...</translation>
     </message>
 </context>
 <context>
@@ -3571,22 +3565,22 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../filewrangler.cpp" line="-576"/>
         <source>All files (*)</source>
-        <translation>Tous les fichiers (*)</translation>
+        <translation>Tots els fitxers(*)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+79"/>
         <source>Freehand</source>
-        <translation>Main levée</translation>
+        <translation>A ma alçada</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Eraser</source>
-        <translation>Gomme</translation>
+        <translation>Esborrador</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Line</source>
-        <translation>Ligne</translation>
+        <translation>Linia</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3596,57 +3590,57 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+3"/>
         <source>Ellipse</source>
-        <translation>Ellipse</translation>
+        <translation>El·lipse</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bezier Curve</source>
-        <translation>Courbe de Bézier</translation>
+        <translation>Corba de Bézier</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Flood Fill</source>
-        <translation>Remplissage</translation>
+        <translation>Emplenat per flux</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Annotation</source>
-        <translation>Annotation</translation>
+        <translation>Anotació</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color Picker</source>
-        <translation>Pipette</translation>
+        <translation>Selector de color</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Laser Pointer</source>
-        <translation>Pointeur laser</translation>
+        <translation>Punter làser</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Selection (Rectangular)</source>
-        <translation>Sélection rectangulaire</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Selection (Free-Form)</source>
-        <translation>Sélection à main levée</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Selection (Magic Wand)</source>
-        <translation>Sélection (Baguette Magique)</translation>
+        <translation>Selecció (Vareta Màgica)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Transform</source>
-        <translation>Transformer</translation>
+        <translation>Transforma</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation>Se Déplacer</translation>
+        <translation>Desplaça</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3656,7 +3650,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+5"/>
         <source>Inspector</source>
-        <translation>Inspecteur</translation>
+        <translation>Inspector</translation>
     </message>
 </context>
 <context>
@@ -3664,12 +3658,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../ui/resetsession.ui" line="+14"/>
         <source>Reset session</source>
-        <translation>Réinitialiser la session</translation>
+        <translation>Reinicia la sessió</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>You must be an operator to reset the session.</source>
-        <translation>Vous devez être un·e opérateur·ice afin de réinitialiser la session.</translation>
+        <translation>Heu de ser operador per a poder reiniciar la sessió.</translation>
     </message>
 </context>
 <context>
@@ -3677,12 +3671,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../ui/resizedialog.ui" line="+14"/>
         <source>Resize Canvas</source>
-        <translation>Redimensionner le canevas</translation>
+        <translation>Redimensiona el llenç</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Keep aspect ratio</source>
-        <translation>Conserver les proportions</translation>
+        <translation>Manté la relació d&apos;aspecte</translation>
     </message>
 </context>
 <context>
@@ -3691,43 +3685,43 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location filename="../ui/serverlog.ui" line="+14"/>
         <location line="+10"/>
         <source>Event Log</source>
-        <translation>Journal des évènements</translation>
+        <translation>Registre d&apos;esdeveniments</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+29"/>
         <source>Filter</source>
-        <translation>Filtrer</translation>
+        <translation>Filtra</translation>
     </message>
     <message>
         <location line="-8"/>
         <source>Users</source>
-        <translation>Utilisateurs</translation>
+        <translation>Usuaris</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Inspect</source>
-        <translation>Inspecter</translation>
+        <translation>Insperct</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Kick</source>
-        <translation>Exclure</translation>
+        <translation>Expulsa</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Ban</source>
-        <translation>Bannir</translation>
+        <translation>Bloqueja</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Undo</source>
-        <translation>Annuler</translation>
+        <translation>Desfer</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Redo</source>
-        <translation>Refaire</translation>
+        <translation>Refer</translation>
     </message>
 </context>
 <context>
@@ -3735,37 +3729,37 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../ui/sessionsettings.ui" line="+14"/>
         <source>Session Settings</source>
-        <translation>Paramètres de la session</translation>
+        <translation>Arranjament de sessió</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Settings</source>
-        <translation>Paramètres</translation>
+        <translation>Arranjament</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation>Session</translation>
+        <translation>Sessió</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Operator password:</source>
-        <translation>Mot de passe Opérateur :</translation>
+        <translation>Contrasenya d&apos;operador:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Autoreset threshold:</source>
-        <translation>Seuil de réinitialisation automatique :</translation>
+        <translation>Llindar de reinici automàtic:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Session history size at which autoreset triggers</source>
-        <translation>Taille de l&apos;historique à laquelle se déclenche l&apos;auto-réinitialisation</translation>
+        <translation>Mida de l&apos;historial de sessió en què s&apos;activa el reinici automàtic</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No autoreset</source>
-        <translation>Pas de réinitialisation automatique</translation>
+        <translation>Sense reinici automàtic</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3775,230 +3769,230 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+25"/>
         <source>Options:</source>
-        <translation>Options :</translation>
+        <translation>Opcions:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Include chat in session history so new users can see it as well</source>
-        <translation>Inclure la discussion dans l&apos;historique de session pour que les nouveaux utilisateurs puissent la voir</translation>
+        <translation>Incloure el xat en l&apos;historial de la sessió de forma que els nous usuaris també el puguin veure</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation>Conserver l&apos;historique de discussion</translation>
+        <translation>Manté l&apos;historial del xat</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Don&apos;t terminate session when the last user leaves</source>
-        <translation>Ne pas fermer la session au départ du dernier utilisateur</translation>
+        <translation>No finalitzis la sessió quan l&apos;últim usuari marxi</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Persist without users</source>
-        <translation>Persistance même sans utilisateur</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Idle timeout:</source>
-        <translation>Délai d&apos;inactivité&#xa0;:</translation>
+        <translation>Persisteix sense usuaris</translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>X seconds</source>
-        <translation>X secondes</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Disable idle timeout</source>
-        <translation>Désactiver le délai d&apos;inactivité</translation>
-    </message>
-    <message>
-        <location line="+33"/>
-        <source>Login</source>
-        <translation>Connexion</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Password:</source>
-        <translation>Mot de passe :</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Max users:</source>
-        <translation>Utilisateurs maximum :</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>How many users to let in. Does not affect users already logged in</source>
-        <translation>Nombre d&apos;utilisateurs pouvant se connecter. N&apos;affecte pas les utilisateurs déjà connectés</translation>
-    </message>
-    <message>
-        <location line="+46"/>
-        <source>Allow joining from the web browser</source>
-        <translation>Autoriser à rejoindre depuis le navigateur web</translation>
-    </message>
-    <message>
-        <location line="+166"/>
-        <source>Bans</source>
-        <translation>Exclusions</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Only operators can manage bans.</source>
-        <translation>Seul·e·s les opérateur·ice·s peuvent gérer les bannissements.</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <location line="+82"/>
-        <source>Import</source>
-        <translation>Importer</translation>
-    </message>
-    <message>
-        <location line="-71"/>
-        <location line="+82"/>
-        <source>Export</source>
-        <translation>Exporter</translation>
-    </message>
-    <message>
-        <location line="+72"/>
-        <source>Add listing</source>
-        <translation type="unfinished">Ajouter une liste</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Remove selected listing</source>
-        <translation type="unfinished">Retirer la liste sélectionnée</translation>
-    </message>
-    <message>
-        <location line="-466"/>
-        <source>Title:</source>
-        <translation>Titre :</translation>
-    </message>
-    <message>
-        <location line="+104"/>
-        <source>Permissions</source>
-        <translation>Permissions</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Cut, Paste &amp; Fill:</source>
-        <translation>Couper, Coller &amp; Remplir :</translation>
-    </message>
-    <message>
-        <location line="+70"/>
-        <source>Laser Pointer:</source>
-        <translation>Pointeur Laser&#xa0;:</translation>
-    </message>
-    <message>
-        <location line="+61"/>
-        <source>Selection Move &amp; Resize:</source>
-        <translation>Déplacer &amp; Redimensionner la sélection :</translation>
-    </message>
-    <message>
-        <location line="-118"/>
-        <source>New Annotations:</source>
-        <translation>Nouvelles Annotations :</translation>
-    </message>
-    <message>
-        <location line="-160"/>
         <source>This session contains age-restricted content</source>
-        <translation>Cette session contient du contenu soumis à des restrictions d&apos;âge</translation>
+        <translation>Aquesta sessió conte contingut restringit per edat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation>Non adapté aux mineur·e·s (NSFM)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+7"/>
+        <source>Idle timeout:</source>
+        <translation>Temps d&apos;espera sense activitat:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>X seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Disable idle timeout</source>
+        <translation>Deshabilita el temps d&apos;espera sense activitat</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Title:</source>
+        <translation>Títol:</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Login</source>
+        <translation>Accés</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Password:</source>
+        <translation>Contrasenya:</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Max users:</source>
+        <translation>Usuaris màxims:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>How many users to let in. Does not affect users already logged in</source>
+        <translation>Quants usuaris tenen deixar entrar. No afecta els usuaris que ja han accedit</translation>
+    </message>
+    <message>
+        <location line="+32"/>
         <source>Block new joins</source>
-        <translation>Bloquer les nouveaux·elles entrant·e·s</translation>
+        <translation>Bloqueja noves connexions</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Require a registered account to join</source>
-        <translation>Nécessite un compte inscrit pour rejoindre</translation>
+        <translation>Requereix un compte registrat per a unir-se</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+7"/>
+        <source>Allow joining from the web browser</source>
+        <translation>Permet unir-se des del navegador web</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Permissions</source>
+        <translation>Permisos</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Cut, Paste &amp; Fill:</source>
+        <translation>Retallar, Enganxar i Omplir:</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>New Annotations:</source>
+        <translation>Noves anotacions:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>permissions</source>
+        <translation>permisos</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>General Layer Editing:</source>
-        <translation>Édition du calque général :</translation>
+        <translation>Edició de capes generals:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Own Layer Editing:</source>
-        <translation>Édition du calque personnel :</translation>
+        <translation>Edició de capes pròpies:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Canvas Resizing:</source>
-        <translation>Redimensionnement du canevas :</translation>
+        <translation>Redimensió del llenç:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Canvas Background:</source>
-        <translation>Arrière-plan du canevas :</translation>
+        <translation>Fons del llenç:</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+10"/>
+        <source>Laser Pointer:</source>
+        <translation>Punter làser:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Undo &amp; Redo:</source>
-        <translation>Annuler &amp; Refaire :</translation>
+        <translation>Desfer i refer:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Kick &amp; Ban:</source>
-        <translation>Exclure &amp; Bannir :</translation>
+        <translation>Expulsar i bloquejar:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Operators</source>
-        <translation>Opérateurs</translation>
+        <translation>Operadors</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+201"/>
         <source>Trusted</source>
-        <translation>Fiables</translation>
+        <translation>De confiança</translation>
     </message>
     <message>
-        <location line="-281"/>
-        <source>permissions</source>
-        <translation>permissions</translation>
-    </message>
-    <message>
-        <location line="+98"/>
-        <source>Metadata:</source>
-        <translation>Métadonnées&#xa0;:</translation>
-    </message>
-    <message>
-        <location line="-10"/>
+        <location line="-193"/>
         <source>Timeline:</source>
-        <translation>Chronologie&#xa0;:</translation>
+        <translation>Línia de temps:</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+10"/>
+        <source>Metadata:</source>
+        <translation>Metadades:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Selection Move &amp; Resize:</source>
+        <translation>Moure i redimensionar la selecció:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>MyPaint Brushes:</source>
-        <translation>Pinceaux MyPaint&#xa0;:</translation>
+        <translation>Pinzells de MyPaint:</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+11"/>
+        <source>Bans</source>
+        <translation>Bloquejats</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Only operators can manage bans.</source>
+        <translation>Només els operadors poden gestionar els bloquejos.</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <location line="+82"/>
+        <source>Import</source>
+        <translation>Importa</translation>
+    </message>
+    <message>
+        <location line="-71"/>
+        <location line="+82"/>
+        <source>Export</source>
+        <translation>Exporta</translation>
+    </message>
+    <message>
+        <location line="-58"/>
         <source>Remove selected</source>
-        <translation>Effacer la sélection</translation>
+        <translation>Elimina els seleccionats</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Roles</source>
-        <translation>Rôles</translation>
+        <translation>Rols</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Operator</source>
-        <translation>Opérateur·ice</translation>
+        <translation>Operador</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Announcements</source>
-        <translation>Annonces</translation>
+        <translation>Anuncis</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Add listing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Remove selected listing</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4006,7 +4000,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../ui/tablettest.ui" line="+14"/>
         <source>Tablet Tester</source>
-        <translation>Test de tablette</translation>
+        <translation>Provador de tauletes</translation>
     </message>
 </context>
 <context>
@@ -4014,47 +4008,47 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../ui/textsettings.ui" line="+75"/>
         <source>Horizontal alignment</source>
-        <translation>Alignement horizontal</translation>
+        <translation>Alineament horitzontal</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Vertical alignment</source>
-        <translation>Alignement vertical</translation>
+        <translation>Alineament vertical</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Background color</source>
-        <translation>Couleur d&apos;arrière-plan</translation>
+        <translation>Color de fons</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Text color</source>
-        <translation>Couleur du texte</translation>
+        <translation>Color de text</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Bold</source>
-        <translation>Gras</translation>
+        <translation>Negreta</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Italic</source>
-        <translation>Italique</translation>
+        <translation>Cursiva</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Underline</source>
-        <translation>Souligné</translation>
+        <translation>Subratllat</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Strikethrough</source>
-        <translation>Barré</translation>
+        <translation>Barrat</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Annotation content</source>
-        <translation>Contenu de l&apos;annotation</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4062,67 +4056,67 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../ui/userinfodialog.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished">Dialogue</translation>
+        <translation>Dialeg</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Qt Version:</source>
-        <translation>Version de Qt&#xa0;:</translation>
+        <translation>Versió de les Qt:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Application Version:</source>
-        <translation>Version de l&apos;Application&#xa0;:</translation>
+        <translation>Versió de l&apos;aplicació:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Smoothing:</source>
-        <translation>Adoucissement&#xa0;:</translation>
+        <translation>Suavitzat:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Tablet Input:</source>
-        <translation>Entrée Tablette&#xa0;:</translation>
+        <translation>Entrada de tauleta:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Pen Pressure:</source>
-        <translation>Pression Stylet&#xa0;:</translation>
+        <translation>Pressió del llapis:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Id:</source>
-        <translation>Identifiant&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Touch Mode:</source>
-        <translation>Mode de touche&#xa0;:</translation>
+        <translation>Mode tactil:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>dp:x.y.z</source>
-        <translation type="unfinished">dp:x.y.z</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Operating System:</source>
-        <translation>Système d&apos;Exploitation&#xa0;:</translation>
+        <translation>Sistema operatiu:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Name:</source>
-        <translation>Nom&#xa0;:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Protocol Version:</source>
-        <translation>Version du Protocole&#xa0;:</translation>
+        <translation>Versió del protocol:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Global Pressure Curve:</source>
-        <translation>Courbe de Pression Globale&#xa0;:</translation>
+        <translation>Corba de pressió global:</translation>
     </message>
 </context>
 <context>
@@ -4130,67 +4124,67 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../ui/videoexport.ui" line="+14"/>
         <source>Export video</source>
-        <translation>Exportation vidéo</translation>
+        <translation>Exporta video</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Video Options</source>
-        <translation>Options vidéo</translation>
+        <translation>Opcions de video</translation>
     </message>
     <message>
-        <location line="+49"/>
-        <source>Framerate:</source>
-        <translation>Fréquence d&apos;images :</translation>
-    </message>
-    <message>
-        <location line="-35"/>
+        <location line="+14"/>
         <source> FPS</source>
-        <translation> IPS</translation>
+        <translation> FRS</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Size:</source>
-        <translation>Résolution :</translation>
+        <translation>Mida:</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+7"/>
+        <source>Framerate:</source>
+        <translation>Taxa de fotogrames:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Format:</source>
-        <translation>Format&#xa0;:</translation>
+        <translation>Format:</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Export Options</source>
-        <translation>Options d&apos;exportation</translation>
+        <translation>Opcions d&apos;exportació:</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Image format:</source>
-        <translation>Format d&apos;image :</translation>
+        <translation>Format d&apos;imatge:</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>File name pattern:</source>
-        <translation>Règle de nommage :</translation>
+        <translation>Patró de nom de fitxer:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Règles de nommage supportées :&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - numéro d&apos;image&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - extension du fichier&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Path to ffmpeg:</source>
-        <translation type="unfinished">Chemin vers ffmpeg&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Choose</source>
-        <translation type="unfinished">Choisir</translation>
+        <translation>Tria</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Custom Arguments:</source>
-        <translation>Arguments Personnalisés&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4198,7 +4192,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.cpp" line="+63"/>
         <source>Pick</source>
-        <translation>Prendre</translation>
+        <translation>Escull</translation>
     </message>
 </context>
 <context>
@@ -4206,7 +4200,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette.cpp" line="+422"/>
         <source>Unnamed</source>
-        <translation>Sans nom</translation>
+        <translation>Sense nom</translation>
     </message>
 </context>
 <context>
@@ -4214,12 +4208,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_model.cpp" line="+55"/>
         <source>Unnamed</source>
-        <translation>Sans nom</translation>
+        <translation>Sense nom</translation>
     </message>
     <message>
         <location line="+75"/>
         <source>%1 (%2 colors)</source>
-        <translation>%1 (%2 couleurs)</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4227,48 +4221,48 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.ui" line="+64"/>
         <source>Open a new palette from file</source>
-        <translation>Ouvrir une nouvelle palette depuis le fichier</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Create a new palette</source>
-        <translation>Créer une nouvelle palette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Duplicate the current palette</source>
-        <translation>Dupliquer la palette actuelle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+84"/>
         <source>Delete the current palette</source>
-        <translation>Supprimer la palette actuelle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Revert changes to the current palette</source>
-        <translation>Annuler les changements de la palette actuelle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Save changes to the current palette</source>
-        <translation>Sauvegarder les changements de la palette actuelle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Add a color to the palette</source>
-        <translation>Ajouter une couleur à la palette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove the selected color from the palette</source>
-        <translation>Retirer la couleur sélectionnée de la palette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.cpp" line="+181"/>
         <location line="+15"/>
         <source>New Palette</source>
-        <translation>Nouvelle palette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-14"/>
@@ -4279,30 +4273,29 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+26"/>
         <source>GIMP Palettes (*.gpl)</source>
-        <translation>Palettes GIMP (*.gpl)</translation>
+        <translation>Paletes de GIMP (*.gpl)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Palette Image (%1)</source>
-        <translation type="unfinished">Image de palette (%1)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Files (*)</source>
-        <translation type="unfinished">Tous les fichiers (*)</translation>
+        <translation>Tots els fitxers (*)</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+13"/>
         <source>Open Palette</source>
-        <translation>Ouvrir la Palette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to load the palette file
 %1</source>
-        <translation>Échec dans l&apos;ouverture de fichier de palette
-%1</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4310,17 +4303,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_editor.cpp" line="+321"/>
         <source>Add Color</source>
-        <translation type="unfinished">Ajouter une couleur</translation>
+        <translation>Afegeix color</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Remove Color</source>
-        <translation type="unfinished">Supprimer une couleur</translation>
+        <translation>Elimina color</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Edit Color...</source>
-        <translation>Modifier la Couleur...</translation>
+        <translation>Edita color...</translation>
     </message>
 </context>
 <context>
@@ -4328,7 +4321,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_list_model.cpp" line="+215"/>
         <source>%1 (%2 colors)</source>
-        <translation>%1 (%2 couleurs)</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4336,12 +4329,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/swatch.cpp" line="+855"/>
         <source>Clear Color</source>
-        <translation>Effacer la Couleur</translation>
+        <translation>Neteja el color</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1(%2)</translation>
     </message>
 </context>
 <context>
@@ -4349,7 +4342,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
         <source>Report</source>
-        <translation type="unfinished">Signaler</translation>
+        <translation>Informa</translation>
     </message>
 </context>
 <context>
@@ -4357,27 +4350,27 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/addserverdialog.cpp" line="+130"/>
         <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
-        <translation>&lt;strong&gt;Erreur&#xa0;:&lt;/strong&gt; %1</translation>
+        <translation>&lt;strong&gt;Error:&lt;/strong&gt; %1</translation>
     </message>
     <message>
         <location line="+106"/>
         <source>Retrieving %1...</source>
-        <translation type="unfinished">Récupération de %1...</translation>
+        <translation>Recuperant %1...</translation>
     </message>
     <message>
         <location line="+74"/>
         <source>Check</source>
-        <translation>Vérifier</translation>
+        <translation>Comprova</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add</source>
-        <translation type="unfinished">Ajouter</translation>
+        <translation>Afegeix</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Checking %1...</source>
-        <translation type="unfinished">Vérification de %1 en cours...</translation>
+        <translation>Comprovant %1...</translation>
     </message>
 </context>
 <context>
@@ -4385,127 +4378,127 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/animationexportdialog.cpp" line="+29"/>
         <source>Export Animation</source>
-        <translation>Exporter Animation</translation>
+        <translation>Exporta l&apos;animació</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Output</source>
-        <translation>Sortie</translation>
+        <translation>Sortida</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished">Trames en tant que PNG</translation>
+        <translation>Fotogrames com a PNGs</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished">Trames en tant que PNG compressés (ZIP)</translation>
+        <translation>Fotogrames com a PNGs en un zip</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated GIF</source>
-        <translation>GIF Animé</translation>
+        <translation>GIF animat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Animated WEBP</source>
-        <translation>WEBP Animé</translation>
+        <translation>WEBP animat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>MP4 Video</source>
-        <translation>Vidéo MP4</translation>
+        <translation>Vídeo MP4</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>WEBM Video</source>
-        <translation>Vidéo WEBM</translation>
+        <translation>Vídeo WEBM</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Format:</source>
-        <translation>Format&#xa0;:</translation>
+        <translation>Format:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loops:</source>
-        <translation>Boucles&#xa0;:</translation>
+        <translation>Bucles:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished">Lissage Progressif</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Scaling:</source>
-        <translation type="unfinished">Échelle&#xa0;:</translation>
+        <translation>Escalat:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Input</source>
-        <translation type="unfinished">Entrée</translation>
+        <translation>Entrada</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Frame Range:</source>
-        <translation type="unfinished">Intervalle de Trame&#xa0;:</translation>
+        <translation>Interval de fotogrames:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source> FPS</source>
-        <translation type="unfinished"> IPS</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Fréquence d&apos;images :</translation>
+        <translation>Taxa de fotogrames:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Crop X:</source>
-        <translation>Rogner&#xa0;X&#xa0;:</translation>
+        <translation>Escapça en X:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Crop Y:</source>
-        <translation>Rogner&#xa0;Y&#xa0;:</translation>
+        <translation>Escapça en Y:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Reset</source>
-        <translation type="unfinished">Réinitialiser</translation>
+        <translation>Reinicia</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Reset inputs to the whole canvas and timeline</source>
-        <translation type="unfinished">Réinitialiser les entrées de l&apos;entièreté du canevas et de la frise temporelle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Set from Flipbook</source>
-        <translation type="unfinished">Régler depuis le Folioscope</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set inputs to what is being previewed in the flipbook</source>
-        <translation type="unfinished">Régler les entrées par rapport à la prévisualisation du folioscope</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Export</source>
-        <translation type="unfinished">Exporter</translation>
+        <translation>Exporta</translation>
     </message>
     <message>
         <location line="+125"/>
         <source>Output resolution will be %1x%2 pixels.</source>
-        <translation>La résolution de sortie sera de %1x%2 pixels.</translation>
+        <translation>La resolució de sortida serà de %1x%2 píxels.</translation>
     </message>
 </context>
 <context>
@@ -4513,116 +4506,116 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/animationimportdialog.cpp" line="+43"/>
         <source>Import Animation</source>
-        <translation>Importer Animation</translation>
+        <translation>Importa una animació</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Frames</source>
-        <translation type="unfinished">Trames</translation>
+        <translation>Fotogrames</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Import a series of images as timeline frames.</source>
-        <translation>Importer une série d&apos;images en tant que trames de la frise temporelle.</translation>
+        <translation>Importa una sèrie d&apos;imatges com a fotogrames de línia de temps.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Importing animation frames is not supported in the web browser version of Drawpile.</source>
-        <translation type="unfinished">L&apos;import de trames d&apos;animation n&apos;est pas supportée dans la version Web de Drawpile.</translation>
+        <translation>La importació de fotogrames d&apos;animació no està suportada en la versió per a navegador web de Drawpile.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas Background:</source>
-        <translation>Arrière-plan du Canevas&#xa0;:</translation>
+        <translation>Fons del llenç:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Add</source>
-        <translation>Ajouter</translation>
+        <translation>Afegeix</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Remove</source>
-        <translation>Retirer</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Sort</source>
-        <translation type="unfinished">Trier</translation>
+        <translation>Ordena</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Numeric Ascending</source>
-        <translation type="unfinished">Numérique Croissant</translation>
+        <translation>Numèric ascendent</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Numeric Descending</source>
-        <translation>Numérique Décroissant</translation>
+        <translation>Numèric descendent</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Ascending</source>
-        <translation>Alphabétique Croissant</translation>
+        <translation>Alfabètic ascendent</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Descending</source>
-        <translation>Alphabétique Décroissant</translation>
+        <translation>Alfabètic descendent</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Layers</source>
-        <translation type="unfinished">Calques</translation>
+        <translation>Capes</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import the layers of an ORA or PSD file as timeline frames.</source>
-        <translation type="unfinished">Importer les calques d&apos;un fichier ORA ou PSD en tant que trames de la frise temporelle.</translation>
+        <translation>Importa les capes d&apos;un fitxer ORA o PSD com a fotogrames de linia de temps.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>File to Import:</source>
-        <translation>Fichier à Importer&#xa0;:</translation>
+        <translation>Fitxer a importar:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Choose</source>
-        <translation type="unfinished">Choisir</translation>
+        <translation>Tria</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Key frame length:</source>
         <extracomment>How many frames each imported key frame gets in the timeline.</extracomment>
-        <translation type="unfinished">Longueur de la trame de référence&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
         <source> FPS</source>
-        <translation> IPS</translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Fréquence d&apos;images :</translation>
+        <translation>Taxa de fotogrames:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import</source>
-        <translation>Importer</translation>
+        <translation>Importar</translation>
     </message>
     <message numerus="yes">
         <location line="+88"/>
         <source> frame(s)</source>
-        <translation type="unfinished">
-            <numerusform> image</numerusform>
-            <numerusform> images</numerusform>
+        <translation>
+            <numerusform> fotograma</numerusform>
+            <numerusform> fotogrames</numerusform>
         </translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Animation Import Error</source>
-        <translation>Erreur d&apos;Importation de l&apos;Animation</translation>
+        <translation>Error en la importació de l&apos;animació</translation>
     </message>
 </context>
 <context>
@@ -4630,152 +4623,152 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/artisticcolorwheeldialog.cpp" line="+23"/>
         <source>Color Circle Settings</source>
-        <translation>Réglages du Cercle de Couleur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+86"/>
         <source>Continuous hue</source>
-        <translation type="unfinished">Teinte continue</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue steps: </source>
-        <translation type="unfinished">Étapes de teinte&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue angle: </source>
-        <translation type="unfinished">Angle de teinte&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+43"/>
         <source>°</source>
         <extracomment>Degree symbol. Unless your language uses a different one, keep as-is.</extracomment>
-        <translation type="unfinished">°</translation>
+        <translation>º</translation>
     </message>
     <message>
         <location line="-40"/>
         <source>Continuous chroma</source>
-        <translation type="unfinished">Chromatique continue</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Chroma steps: </source>
-        <translation>Étape par chromatique&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continuous luminance</source>
-        <translation type="unfinished">Luminance continue</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance steps: </source>
-        <translation type="unfinished">Étapes par luminance&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous saturation</source>
-        <translation>Saturation continue</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Saturation steps: </source>
-        <translation type="unfinished">Étapes par saturation&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous lightness</source>
-        <translation type="unfinished">Éclaircissement continu</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lightness steps: </source>
-        <translation type="unfinished">Étapes par éclaircissement&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous value</source>
-        <translation type="unfinished">Valeur continue</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Value steps: </source>
-        <translation type="unfinished">Étapes par valeur&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>None</source>
-        <translation>Aucun</translation>
+        <translation>Cap</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Gamut mask:</source>
-        <translation>Masque de gamut&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Mask angle: </source>
-        <translation type="unfinished">Angle de masque&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Mask opacity: </source>
-        <translation>Opacité de masque&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Atmosphere with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Atmosphère accentué</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Atmospheric triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Triade atmosphérique</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Complémentaire</translation>
+        <translation>Complementari</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dominant hue with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Teinte dominante accentué</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Shifted triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Triade décalée</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Divisé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Divisé Complémentaire</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tetradic</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Tétradicale</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4784,18 +4777,18 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
         <location line="+8"/>
         <source>Import Avatar</source>
-        <translation type="unfinished">Importer l&apos;avatar</translation>
+        <translation>Importar imatge de perfil</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Couldn&apos;t read image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation>Ne peut lire l&apos;image&#xa0;: %1.</translation>
+        <translation>No s&apos;ha pogut llegir la imatge:%1.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Picture is too small</source>
-        <translation type="unfinished">L&apos;image est trop petite</translation>
+        <translation>La imatge es massa petita</translation>
     </message>
 </context>
 <context>
@@ -4803,38 +4796,38 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/brushexportdialog.cpp" line="+46"/>
         <source>Export Brushes</source>
-        <translation>Exporter les Pinceaux</translation>
+        <translation>Exportar pinzells</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Export</source>
         <extracomment>This text on a button, so it&apos;s a verb, not a noun.</extracomment>
-        <translation type="unfinished">Exporter</translation>
+        <translation>exportar</translation>
     </message>
     <message>
         <location line="+164"/>
         <source>Brush Export</source>
-        <translation type="unfinished">Exporter Pinceau</translation>
+        <translation>Exportació de pinzell</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>%n brush(es) exported.</source>
         <translation>
-            <numerusform>%n pinceau exporté.</numerusform>
-            <numerusform>%n pinceaux exportés.</numerusform>
+            <numerusform>%n pinzell exportat.</numerusform>
+            <numerusform>%n pinzells exportats.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Brush export failed.</source>
-        <translation>Échec de l&apos;export de pinceau.</translation>
+        <translation>L&apos;exportació del pinzell ha fallat.</translation>
     </message>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
-            <numerusform>%n erreur est survenue.</numerusform>
-            <numerusform>%n erreurs sont survenues.</numerusform>
+        <translation>
+            <numerusform>%n error trobat.</numerusform>
+            <numerusform>%n errors trobats.</numerusform>
         </translation>
     </message>
 </context>
@@ -4843,47 +4836,47 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+70"/>
         <source>Change…</source>
-        <translation>Changer…</translation>
+        <translation>Cambia…</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation>Raccourci&#xa0;:</translation>
+        <translation>Drecera:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Choose File…</source>
-        <translation>Choisir Fichier…</translation>
+        <translation>Treia un fitxer…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation type="unfinished">Sera redimensionné en 64 pixels sur 64.</translation>
+        <translation>Es redimensionarà a 64x64 píxels.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished">Vignette&#x202f;:</translation>
+        <translation>Miniatura:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add Label:</source>
-        <translation type="unfinished">Ajouter Label&#xa0;:</translation>
+        <translation>Afegeix etiqueta:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Name:</source>
-        <translation>Nom&#xa0;:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Description:</source>
-        <translation>Description&#xa0;:</translation>
+        <translation>Descripció:</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>No shortcut assigned</source>
-        <translation>Pas de raccourci assigné</translation>
+        <translation>Cap drecera assignada</translation>
     </message>
 </context>
 <context>
@@ -4891,107 +4884,107 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+133"/>
         <source>Brush Editor</source>
-        <translation>Éditeur de Pinceau</translation>
+        <translation>Editor de pinzell</translation>
     </message>
     <message>
         <location line="+105"/>
         <source>Brush</source>
-        <translation type="unfinished">Pinceau</translation>
+        <translation>Pinzell</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Brush metadata settings.</source>
-        <translation type="unfinished">Réglages de métadonnées du pinceau.</translation>
+        <translation>Opcions de metadades del pinzell.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>General</source>
-        <translation>Général</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Core brush settings.</source>
-        <translation type="unfinished">Réglages principaux du pinceau.</translation>
+        <translation>Paràmetres essencials del pinzell.</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Save as New Brush</source>
-        <translation>Sauvegarder en tant que Nouveau Pinceau</translation>
+        <translation>Desa nou pinzell</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Overwrite Brush</source>
-        <translation>Écraser Pinceau</translation>
+        <translation>Sobreescriure pinzell</translation>
     </message>
     <message>
         <location line="+80"/>
         <source>Brush Type:</source>
-        <translation>Type de Pinceau&#xa0;:</translation>
+        <translation>Tipus de pinzell:</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+425"/>
         <source>Round Pixel Brush</source>
-        <translation type="unfinished">Pinceau Rond Pixellisé</translation>
+        <translation>Pinzell de píxels rodó</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Square Pixel Brush</source>
-        <translation type="unfinished">Pinceau Carré Pixellisé</translation>
+        <translation>Pinzell de píxels quadrat</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Soft Round Brush</source>
-        <translation type="unfinished">Pinceau Rond Doux</translation>
+        <translation>Pinzell rodó suau</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>MyPaint Brush</source>
-        <translation>Pinceau MyPaint</translation>
+        <translation>Pinzell MyPaint</translation>
     </message>
     <message>
         <location line="+23"/>
         <location line="+14"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished">Mode de Mélange&#xa0;:</translation>
+        <translation>Mode de barreja:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Paint Mode:</source>
-        <translation>Mode de Peinture&#xa0;:</translation>
+        <translation>Mode de pintura:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Build-Up/Direct</source>
-        <translation type="unfinished">Construire/Direct</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Wash/Indirect</source>
-        <translation type="unfinished">Lavé/Indirect</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Eraser Mode</source>
-        <translation>Mode Gomme</translation>
+        <translation>Mode goma d&apos;esborrar</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick Initial Color from Layer</source>
-        <translation>Prendre Couleur Initiale depuis le Calque</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Lock Alpha (Recolor Mode)</source>
-        <translation type="unfinished">Verrouiller Alpha (Mode Recolorer)</translation>
+        <translation>Bloqueja alfa ( Mode d&apos;acoloriment)</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Spacing: </source>
-        <translation type="unfinished">Espacement&#x202f;: </translation>
+        <translation>Espaiat: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5002,54 +4995,54 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="+42"/>
         <location line="+29"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="-267"/>
         <source>Stabilization Mode:</source>
-        <translation>Mode de Stabilisation&#xa0;:</translation>
+        <translation>Mode d&apos;estabilització:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Time-Based Stabilizer</source>
-        <translation>Stabilisateur Basé sur la Durée</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished">Lissage Moyen</translation>
+        <translation type="unfinished">Suavitzat promig</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished">Stabilisateur&#x202f;: </translation>
+        <translation>Estabilitzador: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished">Lissage&#x202f;: </translation>
+        <translation>Suavitzat: </translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Size: </source>
-        <translation type="unfinished">Taille&#x202f;: </translation>
+        <translation>Mida: </translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+17"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Minimum Size: </source>
-        <translation>Taille Minimale&#xa0;: </translation>
+        <translation>Mida minima: </translation>
     </message>
     <message>
         <location line="+10"/>
         <location line="+419"/>
         <source>Size</source>
-        <translation>Taille</translation>
+        <translation>Mida</translation>
     </message>
     <message>
         <location line="-419"/>
@@ -5057,389 +5050,389 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="+59"/>
         <location line="+71"/>
         <source>Input</source>
-        <translation>Entrée</translation>
+        <translation>Entrada</translation>
     </message>
     <message>
         <location line="-158"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacité&#x202f;: </translation>
+        <translation>Opacitat: </translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Minimum Opacity: </source>
-        <translation>Opacité Minimale&#xa0;: </translation>
+        <translation>Opacitat minima: </translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+362"/>
         <source>Opacity</source>
-        <translation>Opacité</translation>
+        <translation>Opacitat</translation>
     </message>
     <message>
         <location line="-331"/>
         <source>Hardness: </source>
-        <translation type="unfinished">Dureté&#x202f;: </translation>
+        <translation>Duresa: </translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Minimum Hardness: </source>
-        <translation>Dureté Minimale&#xa0;: </translation>
+        <translation>Duresa mínima: </translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+308"/>
         <source>Hardness</source>
-        <translation>Dureté</translation>
+        <translation>Duresa</translation>
     </message>
     <message>
         <location line="-277"/>
         <source>Smudging: </source>
-        <translation type="unfinished">Étalement&#x202f;: </translation>
+        <translation>Difuminat: </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Pickup: 1/</source>
-        <translation>Pipette&#x202f;à Couleurs&#xa0;: 1/</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Minimum Smudging: </source>
-        <translation type="unfinished">Étalement Minimal&#xa0;: </translation>
+        <translation>Difuminat mínim: </translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+241"/>
         <source>Smudging</source>
-        <translation type="unfinished">Étalement</translation>
+        <translation>Difuminat</translation>
     </message>
     <message>
         <location line="-217"/>
         <source>No dynamics</source>
-        <translation type="unfinished">Pas de dynamique</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished">Dynamique de pression</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished">Dynamique de véolcité</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished">Dynamique de distance</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation>Vélocité Maximale&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation>Distance Maximale&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+19"/>
         <location line="+36"/>
         <source>Apply to All</source>
-        <translation type="unfinished">Appliquer à Tous</translation>
+        <translation>Aplicar a tot</translation>
     </message>
     <message>
         <location line="-53"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished">Régler la vélocité au maximum pour la Taille, l&apos;Opacité, la Dureté et l&apos;Étalement en même temps.</translation>
+        <translation>Estableix la velocitat màxima per a la mida, l&apos;opacitat, la duresa i el difuminat alhora.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation>Vélocité réglée au maximum pour tous les réglages de ce pinceau.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation>Régler la distance au maximum pour la Taille, l&apos;Opacité, la Dureté et l&apos;Étalement en même temps.</translation>
+        <translation>Estableix la mida màxima per a la mida, l&apos;opacitat, la duresa i el difuminat alhora.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation>Distance réglée au maximum pour tous les réglages de ce pinceau.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation>Régler la courbe pour la Taille, l&apos;Opacité, la Dureté et l&apos;Étalement en même temps.</translation>
+        <translation>Estableix aquesta corba per a la mida, l&apos;opacitat, la duresa i el difuminat alhora.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Curve set for all settings in this brush.</source>
-        <translation type="unfinished">Courbe réglée pour tous les réglages de ce pinceau.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Value: </source>
-        <translation>Valeur&#xa0;: </translation>
+        <translation>Valor: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>No brush dynamics.</source>
-        <translation type="unfinished">Pas de dynamique de pinceau.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Not available in Indirect/Wash mode.</source>
-        <translation type="unfinished">Non disponible en mode Lavé/Indirect.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dynamics not available in Indirect/Wash mode.</source>
-        <translation type="unfinished">Dynamiques non disponibles en mode Lavé/Indirect.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+59"/>
         <source>The radius of the brush.</source>
-        <translation>Le rayon du pinceau.</translation>
+        <translation>El radi del pinzell.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Opaqueness of the brush, 0% is transparent, 100% fully opaque.</source>
-        <translation>Opacité du pinceau, 0% pour transparent&#x202f;; 100% pour complètement opaque.</translation>
+        <translation>Opacitat del pinzell, 0% és transparent, 100% és totalment opac.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Edge hardness, 0% is blurry, 100% is sharp.</source>
-        <translation type="unfinished">Dureté de bord de pinceau, 0% pour flou, 100% pour net.</translation>
+        <translation>Duresa de la vora, 0% és borrosa, 100% és nítida.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation type="unfinished">Mélange de couleurs sur le calque actuel de dessin.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+175"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation type="unfinished">Ralentit le tracé pour le stabiliser sur le temps. Une valeur élevée donnera un tracé lisse, mais le dessinera lentement. Lorsque vous cessez de bouger, la ligne rattrapera votre curseur. Le lissage de la tablette dans les préférences d&apos;entrée s&apos;applique également.</translation>
+        <translation>Alenteix el traç per tal d&apos;estabilitzar-lo durant el temps. Els valors alts donen línies molt suaus, però es dibuixaran lentament. Quan deixeu de moure, la línia agafarà el cursor. També s&apos;aplica el suavitzat de tauleta de les preferències d&apos;entrada.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation type="unfinished">Fait simplement une moyenne du nombre d&apos;entrées. Plus rapide que le stabilisateur basé sur le temps, mais pas aussi lisse que ce dernier, et ne rattrapera pas votre curseur si vous êtes à l&apos;arrêt. Ignore le lissage de la tablette dans les préférences d&apos;entrée.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown stabilization mode.</source>
-        <translation>Mode de stabilisation inconnu.</translation>
+        <translation>Mode d&apos;estabilització desconegut.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronizing stabilization settings with brushes is disabled.</source>
-        <translation type="unfinished">Les réglages de stabilisation synchrone avec les pinceaux sont désactivées.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+14"/>
         <source>Pressure</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Pression</translation>
+        <translation>Pressió</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fine speed</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. &quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
-        <translation type="unfinished">Vitesse réglée avec finesse</translation>
+        <translation>Velocitat fina</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
-        <translation type="unfinished">Vitesse réglée plus succinctement</translation>
+        <translation>Velocitat bruta</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Random</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Aléatoire</translation>
+        <translation>Aleatori</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Stroke</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Tracé</translation>
+        <translation>Traç</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Direction</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Direction</translation>
+        <translation>Direcció</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination/Tilt</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Déclinaison/Inclinaison</translation>
+        <translation>Declinació/Inclinació</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ascension</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Ascension</translation>
+        <translation>Ascensió</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Custom</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. the input is the output of the &quot;Custom input&quot; setting</extracomment>
-        <translation type="unfinished">Personnalisé</translation>
+        <translation>Personalitzat</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Direction 360</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to the direction of the stroke</extracomment>
-        <translation type="unfinished">Omnidirectionnel</translation>
+        <translation>Direcció 360</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Attack Angle</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Angle d&apos;Attaque</translation>
+        <translation>Angle d&apos;atac</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination/Tilt X</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Déclinaison/Inclinaison X</translation>
+        <translation>Declinació/Inclinació X</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination/Tilt Y</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Déclinaison/Inclinaison Y</translation>
+        <translation>Declinació/Inclinació Y</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap X</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Grille de Carte X</translation>
+        <translation>Mapa de graella X</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap Y</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Grille de Carte Y</translation>
+        <translation>Mapa de graella Y</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Zoom Level</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to canvas zoom</extracomment>
-        <translation type="unfinished">Niveau de Zoom</translation>
+        <translation>Nivell de zoom</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Barrel Rotation</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Rotation du Barillet</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Base Brush Radius</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Rayon de Base du Pinceau</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Input</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">Entrée Inconnue</translation>
+        <translation>Entrada desconeguda</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">La pression rapportée par la tablette. Comprise généralement entre 0.0 et 1.0, mais peut être plus élevée en cas de gain de pression. Si vous utilisez la souris, elle sera de 0.5 en cas d&apos;appui de bouton, et 0.0 dans les autres cas.</translation>
+        <translation>La pressió informada per la tauleta. Habitualment entre 0,0 i 1,0, però pot ser més gran quan s&apos;utilitza un guany de pressió. Si useu el ratolí, serà 0, 5 quan premeu un botó i d&apos;altra forma, 0,0.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Vitesse actuelle de déplacement. Cela peut changer très rapidement. Essayez «&#xa0;écrire des valeurs d&apos;entrée&#xa0;» depuis le menu «&#xa0;aide&#xa0;» pour ressentir la variation&#x202f;; les valeurs négatives sont rares mais possibles lors de déplacements très lents.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Similaire à Vitesse réglée avec finesse, mais change plus lentement. Voir également le réglage &apos;Vitesse réglée plus succinctement&apos;.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Bruit rapide aléatoire, changeant à chaque évaluation. Distribué de façon équitable entre 0 et 1.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Cette entrée passe lentement de 0 à 1 lorsque vous faites un tracé. Elle peut être configuré pour retourner à 0 périodiquement lorsque vous vous déplacez. Regardez les réglages de &apos;durée de tracé&apos; et &apos;durée de maintien du tracé&apos;.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">L&apos;angle du tracé, en degrés. Cette valeur reste comprise entre 0.0 et 180.0, ignorant les tournants à 180 degrés.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Déclinaison de l&apos;inclinaison du stylet. 0 lorsque le stylet est parallèle à la tablette, et 90.0 lorsqu&apos;il est perpendiculaire à la tablette.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Déclinaison droite de l&apos;inclinaison du stylet. 0 lorsque le bout du stylet pointe vers vous, +90 s&apos;il est tourné de 90 degrés dans le sens horaire, -90 s&apos;il est tourné de 90 degrés dans le sens antihoraire.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Ceci est une entrée définie par l&apos;utlisateur·ice. Regardez le réglage &apos;entrée personnalisé&apos; pour plus d&apos;informations.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The angle of the stroke, from 0 to 360 degrees.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">L&apos;angle du tracé, comprise entre 0 et 360 degrés.</translation>
+        <translation>L&apos;angle del traç, de 0 a 360 graus.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5450,25 +5443,21 @@ The range is +/-180.0.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">La différence, en degrés, entre l&apos;angle vers lequel le stylet pointe et l&apos;angle de mouvement du tracé.
-La portée est de +/-180.0.
-0.0 indique que l&apos;angle du tracé correspond à celui du stylet. 
-90 indique que l&apos;angle du tracé est perpendiculaire à l&apos;angle du stylet. 
-180 indique que l&apos;angle du tracé est directement opposée à l&apos;angle du stylet.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">La déclinaison de l&apos;inclinaison du stylet sur un axe X. 90/-90 lorsqu&apos;il est parallèle à la tablette et 0 lorsqu&apos;il est perpendiculaire à la tablette.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt on Y-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">La déclinaison de l&apos;inclinaison du stylet sur un axe Y. 90/-90 lorsqu&apos;il est parallèle à la tablette et 0 lorsqu&apos;il est perpendiculaire à la tablette.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5476,8 +5465,7 @@ La portée est de +/-180.0.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">La coordonnée X sur une grille de 256 pixels. Elle tourne autour de 0-256 lorsque le curseur se déplace sur l&apos;axe X. Similaire à &quot;Tracé&quot;. Peut être utilisé pour ajouter un effet papier en modifiant l&apos;opacité, etc..
-La taille du pinceau doit être considérablement inférieure à la taille de la grille pour de meilleurs résultats.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5485,8 +5473,7 @@ La taille du pinceau doit être considérablement inférieure à la taille de la
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">La coordonnée Y sur une grille de 256 pixels. Elle tourne autour de 0-256 lorsque le curseur se déplace sur l&apos;axe Y. Similaire à &quot;Tracé&quot;. Peut être utilisé pour ajouter un effet papier en modifiant l&apos;opacité, etc..
-La taille du pinceau doit être considérablement inférieure à la taille de la grille pour de meilleurs résultats.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5495,9 +5482,7 @@ Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Le niveau de zoom actuel de la vue de canevas.
-Logarithmique&#xa0;: 0.0 est 100%, 0.69 est 200%, -1.38 est 25%.
-Pour le réglage du Rayon, utiliser une valeur de -4.15 rend la taille du pinceau relativement constant, relatif du niveau de zoom.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5507,10 +5492,7 @@ Pour le réglage du Rayon, utiliser une valeur de -4.15 rend la taille du pincea
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Rotation du barillet du stylet. 
-0 s&apos;il n&apos;est inchangé. 
-+90 s&apos;il est tourné de 90 degrés dans le sens horaire. 
--90 s&apos;il est tourné de 90 degrés dans le sens antihoraire</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5519,149 +5501,147 @@ You can even cancel out dab size increase and adjust something else to make a br
 Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Le rayon du pinceau de base vous permet de changer le comportement d&apos;un pinceau lorsque vous le rendez plus grand ou plus petit.
-Vous pouvez même annuler l&apos;augmentation de la taille de tapotement de pinceau et ajuster autre choses pour rendre un pinceau plus grand.
-Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements par rayon actuel&quot;, dont les comportements diffèrent grandement.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Opacity</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Opacité</translation>
+        <translation>Opacitat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Opacity multiply</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Opacité par Produit</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Opacity linearize</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Opacité Linéaire</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Rayon</translation>
+        <translation>Radi</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Hardness</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Dureté</translation>
+        <translation>Duresa</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pixel feather</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Plume Pixellisé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Dabs per basic radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Tapotements par rayon de base</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Dabs per actual radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Tapotements par rayon actuel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Dabs per second</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Tapotements par seconde</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Radius by random</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Rayon aléatoire</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fine speed filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Filtre de vitesse réglée avec finesse</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Gross speed filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Filtre de vitesse réglée plus succinctement</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fine speed gamma</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Gamma de vitesse réglée avec finesse</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Gross speed gamma</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Gamma de vitesse réglée plus succinctement</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Jitter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">À-coups</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Offset by speed</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Décalé par la vitesse</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Offset by speed filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Filtre de décalage par la vitesse</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Slow position tracking</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Suivi de position lente</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Slow tracking per dab</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Suivi lent par accoup</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Tracking noise</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Son du suivi</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5669,7 +5649,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Color hue</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Teinte de couleur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-198"/>
@@ -5677,307 +5657,307 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Color saturation</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Saturation de couleur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-198"/>
         <source>Color value</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Valeur de couleur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Sauvegarder la couleur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color hue</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Changer la teinte de la couleur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color lightness (HSL)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Changer la luminosité de la couleur (HSL)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color satur. (HSL)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Changer la saturation de la couleur (HSL)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color value (HSV)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Changer la valeur de la couleur (HSV)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color satur. (HSV)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Changer la saturation de la couleur (HSV)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Étaler</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge length</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Longueur d&apos;étalage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Rayon d&apos;étalage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Eraser</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Gomme</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Stroke threshold</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Seuil de tracé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Stroke duration</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Durée de tracé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Stroke hold time</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Durée de maintien de tracé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Custom input</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Entrée personnalisé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Custom input filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Filtre d&apos;entrée personnalisé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Elliptical dab: ratio</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Tapotement elliptique&#xa0;: ratio</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Elliptical dab: angle</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Tapotement elliptique&#xa0;: angle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Direction filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Filtre directionnel</translation>
+        <translation>Filtre direccional</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Lock alpha</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Verrouillage de l&apos;alpha</translation>
+        <translation>Bloquejar alfa</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Colorize</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Coloriser</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Snap to pixel</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Aligner au pixel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pressure gain</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Gain de pression</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap Scale</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Échelle de Grille de Carte</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap Scale X</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Échelle de Grille de Carte sur X</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap Scale Y</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Échelle de Grille de Carte sur Y</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge length multiplier</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Multiplicateur de longueur d&apos;étalement</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge bucket</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Seau d&apos;étalement</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge transparency</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Transparence d&apos;étalement</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Offset Y</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Décalage Y</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Offset X</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Décalage X</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Angular Offset: Direction</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Décalage angulaire&#xa0;: Direction</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Angular Offset: Ascension</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Décalage angulaire&#xa0;: Ascension</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Angular Offset: View</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Décalage Angulaire&#xa0;: Vue</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Angular Offset Mirrored: Direction</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Décalage angulaire inversé&#xa0;: Direction</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Angular Offset Mirrored: Ascension</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Décalage angulaire inversé&#xa0;: Ascension</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Angular Offset Mirrored: View</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Décalage angulaire inversé&#xa0;: Vue</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Angular Offsets Adjustment</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Ajustement du Décalage Angulaire</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Offsets Multiplier</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Multiplicateur des Décalages</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Posterize</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Postérisation</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Posterization levels</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Niveaux de postérisation</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
-        <translation>Pigment</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Setting</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Réglage Inconnu</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
@@ -5985,8 +5965,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
 (also known as alpha or opacity)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">0 indique que le pinceau est transparent, 1 qu&apos;il est pleinement visible.
-(également considéré comme alpha ou opacité)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5994,8 +5973,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
 This setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to &apos;opaque&apos;.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Ceci s&apos;en retrouve multiplié avec l&apos;opaque. Vous devriez uniquement changer la pression d&apos;entrée de ce réglage. Utilisez à la place &apos;opaque&apos; pour faire à ce que l&apos;opacité dépende de la vitesse.
-Ce réglage est responsable de l&apos;arrêt de la peinture lorsqu&apos;aucune pression est détectée. C&apos;est juste par convention, son comportement est identique à &apos;opaque&apos;.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6004,9 +5982,7 @@ Ce réglage est responsable de l&apos;arrêt de la peinture lorsqu&apos;aucune p
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Corrige la non-linéarité introduite en mélangeant plusieurs tapotements les uns par-dessus les autres. Cette correction devrait vous donner en réponse une pression linéaire (&quot;naturelle&quot;) lorsqu&apos;une pression est mappé sur &apos;Opacité par Produit&apos;, comme normalement. 0.9 est suffisant pour des tracés standard, baissez-le si votre pinceau se disperse trop, ou montez-le si vous utilisez les &apos;tapotements par seconde&apos;.
-La valeur opaque au dessus de 0.0 convient pour les tapotements individuels.
-La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, considérant que chaque pixel aie (tapotements_par_rayon*2) tapotements de pinceau en moyenne sur un tracé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6015,16 +5991,14 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Rayon de pinceau basique (logarithmique)
- 0.7 pour 2 pixels
- 3.0 pour 20 pixels</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Bordure de pinceau-cercle en dur (le régler sur 0 ne dessinera rien). Pour atteindre la dureté maximale, vous devez désactiver la Plume pixellisé.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6034,31 +6008,28 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Ce réglage diminue la dureté lorsque nécessaire afin de prévenir un effet d&apos;escalier (crénelage) sur les pixels en rendant la touche plus floue.
- 0.0 désactivé (pour les effaceurs très durs et les brosses de pixel)
- 1.0 floute un pixel (valeur convenable)
- 5.0 flou notable, les traits les plus fins disparaissent</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Nombre de touches à tracer pendant que le pointeur se déplace d&apos;une fois le rayon de la brosse (plus précisément&#xa0;: La valeur de base du rayon)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Identique à au-dessus, mais le rayon actuellement dessiné est utilisé, ce qui peut changer de façon dynamique</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Tapotements à dessiner chaque seconde, peu importe la distance à laquelle va le pointeur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6067,9 +6038,7 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Altère le rayon aléatoirement à chaque tapotement. Vous pouvez aussi faire ça avec l&apos;entrée &apos;aléatoire&apos; dans le réglage du rayon. Si vous le faites ici, deux différences&#xa0;:
-1) La valeur d&apos;opacité sera corrigé de sorte à ce qu&apos;un tapotement de grand rayon sera plus transparent
-2) Cela ne changera pas le rayon actuel de &apos;tapotements par rayon actuel&apos;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6077,15 +6046,14 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">A quelle lenteur l&apos;entrée de vitesse réglée avec finesse suit la vitesse réelle
-0.0 la change instantanément si votre vitesse change (non recommandé, mais vous pouvez essayer)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Similaire à filtre de vitesse réglée avec finesse, mais prenez en compte que sa portée diffère</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6095,17 +6063,14 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Cela change la réaction d&apos;entrée de la &quot;vitesse fine&quot; à la vitesse physique extrême. La meilleure façon de voir la différence si la &quot;vitesse fine&quot; est assignée au rayon.
--8.0 vitesse très rapide n&apos;augmente pas beaucoup la &quot;vitesse fine&quot;.
-+8.0 vitesse très rapide augmente beaucoup la &quot;vitesse fine&quot;.
-Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as &apos;fine speed gamma&apos; for gross speed</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Identique à &quot;gamma de vitesse fine&quot; pour la vitesse brute</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6115,10 +6080,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Ajoute un décalage aléatoire à la position où chaque point est dessiné.
- 0,0 désactivé.
- 1,0 écart type correspond à un rayon de base.
-&lt; 0,0 les valeurs négatives ne produisent pas de tremblement</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6128,45 +6090,42 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
 &lt; 0 draw where the pointer comes from</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Changer de position en fonction de la vitesse du pointeur
-= 0 désactiver
-&gt; 0 dessiner l&apos;emplacement où se déplace le pointeur
-&lt; 0 dessiner l&apos;emplacement d&apos;origine du pointeur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>La lenteur avec laquelle le décalage revient à zéro lorsque le curseur cesse de bouger</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Ralentit la vitesse de suivi du pointeur. 0 le désactive&#x202f;; des valeurs plus élevées suppriment davantage de tremblements lors des mouvements du curseur. Utile pour dessiner des contours fluides, dignes d&apos;une bande dessinée.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Similar as above but at brushdab level (ignoring how much time has passed if brushdabs do not depend on time)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Similaire à ci-dessus mais au niveau du brushdab (en ignorant le temps écoulé si les brushdabs ne dépendent pas du temps)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Ajoutez un caractère aléatoire au pointeur de la souris&#x202f;; cela génère généralement de nombreuses petites lignes dans des directions aléatoires&#x202f;; essayez peut-être cela avec le «&#xa0;suivi lent&#xa0;»</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Valeur de couleur (luminosité, intensité)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6176,10 +6135,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
  1.0 set the active color to the brush color when selected</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Lors de la sélection d&apos;un pinceau, la couleur peut être restaurée à celle avec laquelle il a été enregistré.
- 0.0 Ne pas modifier la couleur active lors de la sélection de ce pinceau.
- 0.5 Remplacer la couleur active par la couleur du pinceau.
- 1.0 Définir la couleur active sur la couleur du pinceau lors de la sélection</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6189,10 +6145,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
  0.5 counterclockwise hue shift by 180 degrees</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Modifier la teinte de la couleur.
--0,1 petit décalage de teinte dans le sens horaire
- 0,0 désactivé
- 0,5 décalage de teinte dans le sens antihoraire de 180 degrés</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6202,10 +6155,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
  1.0 whiter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Modifiez la luminosité des couleurs à l&apos;aide du modèle colorimétrique HSL.
--1,0 plus noir
- 0,0 désactivé
- 1,0 plus blanc</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6215,10 +6165,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Modifiez la saturation des couleurs à l&apos;aide du modèle colorimétrique HSL.
--1,0 plus grisâtre
- 0,0 désactivé
- 1,0 plus saturé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6228,10 +6175,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Modifiez la valeur de couleur (luminosité, intensité) à l&apos;aide du modèle colorimétrique HSV. Les modifications HSV sont appliquées avant HSL.
--1,0 plus foncé
- 0,0 désactivé
- 1,0 plus clair</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6241,10 +6185,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Modifiez la saturation des couleurs à l&apos;aide du modèle colorimétrique HSV. Les modifications HSV sont appliquées avant HSL.
--1,0 plus grisâtre
- 0,0 désactivé
- 1,0 plus saturé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6254,10 +6195,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
  1.0 use only the smudge color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Peignez avec la couleur d&apos;estompage plutôt qu&apos;avec celle du pinceau. La couleur d&apos;estompage se transforme progressivement en couleur sur laquelle vous peignez.
- 0.0 Ne pas utiliser la couleur d&apos;estompage
- 0.5 Mélanger la couleur d&apos;estompage avec la couleur du pinceau
- 1.0 Utiliser uniquement la couleur d&apos;estompage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6267,10 +6205,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
 1.0 never change the smudge color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Cela contrôle la vitesse à laquelle la couleur de l&apos;estompe devient la couleur sur laquelle vous peignez.
-0.0 Mettre à jour immédiatement la couleur de l&apos;estompe (nécessite plus de cycles CPU en raison des vérifications fréquentes des couleurs)
-0.5 Changer progressivement la couleur de l&apos;estompe pour la rapprocher de la couleur de la toile
-1.0 Ne jamais changer la couleur de l&apos;estompe</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6281,11 +6216,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
 +1.6 five times the brush radius (slow performance)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Cela modifie le rayon du cercle où la couleur est prélevée pour l&apos;estompage.
- 0,0 utilise le rayon du pinceau
--0,7 la moitié du rayon du pinceau (rapide, mais pas toujours intuitif)
-+0,7 le double du rayon du pinceau
-+1,6 le cinq fois le rayon du pinceau (performances lentes)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6295,24 +6226,21 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
  0.5 pixels go towards 50% transparency</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Dans quelle mesure cet outil se comporte comme une gomme
- 0,0 peinture normale
- 1,0 gomme standard
- 0,5 pixel pour atteindre 50 % de transparence</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Pression nécessaire pour commencer un trait. Ceci affecte uniquement la saisie du trait. MyPaint n&apos;exige pas de pression minimale pour commencer à dessiner.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Distance à parcourir pour que la valeur de course atteigne 1,0. Cette valeur est logarithmique (les valeurs négatives n&apos;inversent pas le processus).</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6321,9 +6249,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
 9.9 or higher stands for infinite</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Cela définit la durée pendant laquelle l&apos;entrée de trait reste à 1,0. Ensuite, elle revient à 0,0 et recommence à croître, même si le trait n&apos;est pas encore terminé.
-2,0 signifie deux fois plus de temps pour passer de 0,0 à 1,0.
-9,9 ou plus signifie infini</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6331,8 +6257,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Définissez l&apos;entrée personnalisée sur cette valeur. Si elle est ralentie, déplacez-la vers cette valeur (voir ci-dessous). L&apos;idée est de faire dépendre cette entrée d&apos;un mélange de pression/vitesse/autre, puis d&apos;adapter les autres paramètres à cette «&#xa0;entrée personnalisée&#xa0;» au lieu de répéter cette combinaison partout où vous en avez besoin.
-En la modifiant de manière aléatoire, vous pouvez générer une entrée aléatoire lente (fluide).</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6340,15 +6265,14 @@ En la modifiant de manière aléatoire, vous pouvez générer une entrée aléat
 0.0 no slowdown (changes apply instantly)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Lenteur de la saisie personnalisée par rapport à la valeur souhaitée (celle ci-dessus). Ceci se produit au niveau du pinceau (sans tenir compte du temps écoulé, si les pinceaux ne dépendent pas du temps).
-0,0&#xa0;Aucun ralentissement (les modifications s&apos;appliquent instantanément)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Rapport d&apos;aspect des touches&#x202f;; doit être &gt;= 1,0, où 1,0 signifie une touche parfaitement ronde.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6358,17 +6282,14 @@ En la modifiant de manière aléatoire, vous pouvez générer une entrée aléat
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Angle auquel les touches elliptiques sont inclinées
- 0,0 touches horizontales
- 45,0 45 degrés, tournés dans le sens horaire
- 180,0 de nouveau horizontales</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Une valeur faible adaptera plus rapidement à la direction de l&apos;entrée, une valeur élevée rendra plus fluide</translation>
+        <translation>Un valor baix farà que l&apos;entrada de direcció s&apos;adapti més ràpidament, un valor alt la farà més suau</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6378,31 +6299,28 @@ En la modifiant de manière aléatoire, vous pouvez générer une entrée aléat
  1.0 alpha channel fully locked</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Ne modifie pas le canal alpha pour le calque (ne peint que lorsqu&apos;il y a déjà de la peinture)
-0.0 peindre normalement
-0.5 la moitié de la peinture est appliquée normalement
-1.0 le canal alpha est complètement verrouillé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Colorer le calque cible, en réglant sa valeur et sa saturation en fonction de la couleur de la brosse active, tout en conservant sa valeur et son alpha.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Snap brush dab&apos;s center and its radius to pixels. Set this to 1.0 for a thin pixel brush.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Aligne le centre de la touche de brosse, ainsi que son rayon, aux pixels. Réglez le à 1.0 pour une brosse large d&apos;un pixel.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This changes how hard you have to press. It multiplies tablet pressure by a constant factor.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Cela change la force avec laquelle il faut presser. Il multiplie la pression de la tablette par un facteur constant.</translation>
+        <translation>Això canvia amb quanta força heu de pressionar. Multiplica la pressió de la tauleta per un factor constant.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6411,9 +6329,7 @@ Logarithmic (same scale as brush radius).
 A scale of 0 will make the grid 256x256 pixels.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Modifie l&apos;échelle globale utilisée par le pinceau GridMap.
-Échelle logarithmique (même échelle que le rayon du pinceau).
-Une échelle de 0 donne une grille de 256 x 256 pixels.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6422,9 +6338,7 @@ The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Modifie l&apos;échelle d&apos;entrée du pinceau GridMap&#x202f;; affecte uniquement l&apos;axe X. 
-La plage est de 0 à 5x.
-Cela vous permet d&apos;étirer ou de compresser le motif GridMap.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6433,9 +6347,7 @@ The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Modifie l&apos;échelle d&apos;entrée du pinceau GridMap&#x202f;; affecte uniquement l&apos;axe Y.
-La plage est de 0 à 5x.
-Cela vous permet d&apos;étirer ou de compresser le motif GridMap.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6444,9 +6356,7 @@ Useful to correct for high-definition/large brushes with lots of dabs.
 The longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Multiplicateur logarithmique pour la valeur «&#xa0;Longueur de l&apos;estompage&#xa0;».
-Utile pour corriger les pinceaux haute définition/grands avec de nombreuses touches.
-Plus l&apos;estompage est long, plus la couleur s&apos;étale et améliore considérablement les performances, car la zone de travail est échantillonnée moins souvent</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6455,9 +6365,7 @@ You can control which bucket to use to improve variability and realism of the br
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Il y a 256 compartiments, chacun pouvant contenir une couleur sélectionnée sur la toile. 
-Vous pouvez contrôler le compartiment à utiliser pour améliorer la variabilité et le réalisme du pinceau.
-Particulièrement utile avec le paramètre «&#xa0;Saisie personnalisée&#xa0;» pour corréler les compartiments avec d&apos;autres paramètres, tels que les décalages.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6468,88 +6376,84 @@ Particulièrement utile avec le paramètre «&#xa0;Saisie personnalisée&#xa0;»
 Negative values do the reverse</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Contrôlez le niveau de transparence récupéré et estompé, comme pour le verrouillage alpha.
-1,0 ne modifie aucune transparence.
-0,5 modifie uniquement 50 % de transparence et plus.
-0,0 n&apos;a aucun effet.
-Les valeurs négatives produisent l&apos;effet inverse</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Moves the dabs up or down based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Déplace les touches vers le haut ou vers le bas en fonction des coordonnées de la toile.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Moves the dabs left or right based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Déplace les touches vers la gauche ou vers la droite en fonction des coordonnées de la toile.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the stroke direction to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Suit la direction du trait pour décaler les touches d&apos;un côté.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the tilt direction to offset the dabs to one side. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Suit la direction d&apos;inclinaison pour décaler les touches d&apos;un côté. Nécessite une inclinaison.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the view orientation to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Suit l&apos;orientation de la vue pour décaler les touches d&apos;un côté.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the stroke direction to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Suit la direction du trait pour décaler les touches, mais des deux côtés du trait.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the tilt direction to offset the dabs, but to both sides of the stroke. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Suit l&apos;inclinaison pour décaler les touches, mais de chaque côté du trait. Nécessite une inclinaison.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Follows the view orientation to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Suit l&apos;orientation de la vue pour décaler les touches, mais des deux côtés du trait.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change the Angular Offset angle from the default, which is 90 degrees.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Modifier l&apos;angle de décalage angulaire par défaut, qui est de 90 degrés.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Logarithmic multiplier for X, Y, and Angular Offset settings.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Multiplicateur logarithmique pour les paramètres X, Y et de Décalage Angulaire.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Force de postérisation, réduction du nombre de couleurs en fonction du paramètre « Niveaux de postérisation », tout en conservant l&apos;alpha.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6558,9 +6462,7 @@ Les valeurs négatives produisent l&apos;effet inverse</translation>
 Values above 0.5 may not be noticeable.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Nombre de niveaux de postérisation (divisé par 100).
-0,05 = 5 niveaux, 0,2 = 20 niveaux, etc.
-Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6569,9 +6471,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
 1.0 only spectral mixing</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. If this string is difficult to translate, feel free to change it to something more descriptive. Just try to be succinct and consistent.</extracomment>
-        <translation>Mode de mélange spectral soustractif des couleurs.
-0,0 aucun mélange spectral
-1,0&#xa0;mélange spectral uniquement</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6579,139 +6479,139 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/canvasshortcutsdialog.cpp" line="+24"/>
         <source>Key Combination</source>
-        <translation>Combinaison de Touches</translation>
+        <translation>Combinacio de tecles</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Button</source>
-        <translation>Bouton de la Souris</translation>
+        <translation>Boto del ratoli</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Wheel</source>
-        <translation>Molette de la Souris</translation>
+        <translation>Rodeta del ratoli</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Constraint Key</source>
-        <translation type="unfinished">Touche de Contrainte</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished">Pivoter Canevas par Incréments</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished">Pivoter Canevas</translation>
+        <translation>Rotar llenç</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation type="unfinished">Pivotement Libre du Canevas</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
-        <translation type="unfinished">Pivoter le Canevas par Incréments de 15°</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished">Zoomer sur le Canevas</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pick Color</source>
-        <translation type="unfinished">Sélectionner Couleur</translation>
+        <translation>Escull color</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pick Layer</source>
-        <translation>Sélectionner Calque</translation>
+        <translation>Escull capa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation>Changer la Taille du Pinceau</translation>
+        <translation>Canvia la mida del pinzell</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation>Changer la Teinte de Couleur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation>Changer la Saturation de Couleur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation>Changer la Valeur de Couleur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished">Outil de Contrainte</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished">Outil de Centrage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished">Outil de Centrage et de Contrainte</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+98"/>
         <source>A regular key combination on the canvas without further mouse or pen inputs. Example: holding Space to pan, without having to click as well.</source>
-        <translation type="unfinished">Une combinaison de touches régulière sur le canevas sans entrée de la part de la souris ou du stylet. Exemple&#xa0;: Maintenir Espace pour pivoter, sans avoir à cliquer.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pressing a mouse or pen button, optionally while also holding down keys. Putting the pen down is like a left click. Example: holding space and pressing left click to pan.</source>
-        <translation type="unfinished">Appuyer sur une touche du stylet ou de la souris, optionnellement pendant que d&apos;autres touches sont maintenues. Poser le stylet revient à faire un clic gauche. Exemple&#xa0;: Maintenir Espace et faire un clic gauche pour pivoter.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Turning the mouse wheel or some input device that acts like one, optionally while also holding down keys. Example: scrolling to zoom the canvas.</source>
-        <translation type="unfinished">Tourner la molette de la souris ou tout composant équivalent, optionnellement pendant que d&apos;autres touches sont maintenues. Exemple&#xa0;: tourner la molette pour zoomer sur le canevas.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Keys to hold down to make rectangle, line or selection tools behave differently. Constrain means to e.g. keep the aspect ratio, center means to e.g. center shapes around the origin.</source>
-        <translation type="unfinished">Touches à maintenir pour faire un rectangle, une ligne ou altérer le comportement de certains outils. Contraindre revient par exemple à garder l&apos;aspect visuel actuel, ou centrer revient par exemple à centrer les formes autour du point d&apos;origine.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Unknown type %1.</source>
-        <translation>Type %1 inconnu.</translation>
+        <translation>Tipus desconegut %1.</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
-        <translation>&lt;b&gt;Conflit&#xa0;:&lt;/b&gt; le raccourci existant pour &apos;%1&apos; sera écrasé si vous continuez.</translation>
+        <translation>&lt;b&gt;Conflicte:&lt;/b&gt; la drecera existent per &apos;%1&apos; serà sobreescrita si procediu.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can&apos;t assign a shortcut to a Left Click without any keys since that would interfere with drawing.</source>
-        <translation type="unfinished">Vous ne pouvez assigner de raccourci au clic gauche sans l&apos;appui d&apos;autres touches, car cela interférerait avec le dessin au clic gauche.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You can&apos;t assign just a key combination to this action, change the type to mouse button instead.</source>
-        <translation>Vous ne pouvez assigner cette combinaison de touches à cette action, veuillez utiliser une touche de la souris à la place.</translation>
+        <translation>No podem assignar només una combinació de tecles a aquesta acció, canvieu el tipus a botó del ratolí.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Assign a shortcut to proceed.</source>
-        <translation>Assignez un raccourci pour continuer.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6719,7 +6619,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/certificateview.cpp" line="+25"/>
         <source>SSL Certificate for %1</source>
-        <translation type="unfinished">Certificat SSL pour %1</translation>
+        <translation>Certificat SSL per %1</translation>
     </message>
 </context>
 <context>
@@ -6727,32 +6627,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+426"/>
         <source>Create Invite Code</source>
-        <translation>Créer un Code d&apos;Invitation</translation>
+        <translation>Crear codi d&apos;invitació</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Uses:</source>
-        <translation>Utilisations&#xa0;:</translation>
+        <translation>Usos:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;None</source>
-        <translation type="unfinished">Aucu&amp;n</translation>
+        <translation>&amp;Cap</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished">Fiable (&amp;T)</translation>
+        <translation>&amp;De confiança</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished">&amp;Opérateur</translation>
+        <translation>&amp;Operador</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Role:</source>
-        <translation>Rôle&#xa0;:</translation>
+        <translation>Rol:</translation>
     </message>
 </context>
 <context>
@@ -6760,33 +6660,33 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/curvepresetdialog.cpp" line="+32"/>
         <source>Use</source>
-        <translation>Utiliser</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Cancela</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+71"/>
         <source>Rename</source>
-        <translation type="unfinished">Renommer</translation>
+        <translation>Reanomena</translation>
     </message>
     <message>
         <location line="-68"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Suprimeix</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Save</source>
-        <translation type="unfinished">Enregistrer</translation>
+        <translation>Desa</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Save Curve</source>
-        <translation>Enregistrer la Courbe</translation>
+        <translation>Desa la corba</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6797,42 +6697,42 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Rename Curve</source>
-        <translation>Renommer la Courbe</translation>
+        <translation>Reanomena la corba</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Delete Curve</source>
-        <translation>Supprimer la Courbe</translation>
+        <translation>Elimina la corba</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete curve &apos;%1&apos;?</source>
-        <translation>Voulez-vous vraiment supprimer la courbe &apos;%1&apos;&#x202f;?</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Smooth Out</source>
-        <translation type="unfinished">Lisser en sortie</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth In</source>
-        <translation>Lisser en entrée</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation type="unfinished">Lissage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Linear</source>
-        <translation>Linéaire</translation>
+        <translation>Lineal</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished">Actuelle (non-sauvegardée)</translation>
+        <translation>Actual (sense desar)</translation>
     </message>
 </context>
 <context>
@@ -6840,12 +6740,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+157"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>% (%1 FPS)</source>
-        <translation>% (%1 IPS)</translation>
+        <translation>% (%1 FPS)</translation>
     </message>
 </context>
 <context>
@@ -6854,64 +6754,64 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location filename="../dialogs/invitedialog.cpp" line="-334"/>
         <location line="+260"/>
         <source>What are invite codes?</source>
-        <translation>Qu&apos;est-ce que les codes d&apos;invitation&#x202f;?</translation>
+        <translation>Què són els codis d&apos;invitació?</translation>
     </message>
     <message>
         <location line="-122"/>
         <source>Invite link copied to clipboard.</source>
-        <translation>Lien d&apos;invitation copié dans le presse-papiers.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <location line="+22"/>
         <source>Invite code link(s) copied to clipboard.</source>
         <translation>
-            <numerusform>Lien d&apos;invitation copié dans le presse-papiers.</numerusform>
-            <numerusform>Liens d&apos;invitation copiés dans le presse-papiers.</numerusform>
+            <numerusform>Enllaç de codi d&apos;invitació copiat al porta-retalls.</numerusform>
+            <numerusform>Enllaços de codi d&apos;invitació copiat al porta-retalls.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+34"/>
         <source>This server does not support invite codes.</source>
-        <translation>Ce serveur ne supporte pas les liens d&apos;invitations.</translation>
+        <translation>Aquest servidor no suporta codis d&apos;invitació.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only server administrators can manage invite codes on this session.</source>
-        <translation>Seul·e·s les administrateur·ice·s peuvent gérer les liens d&apos;invitations sur cette session.</translation>
+        <translation>Només els administradors del servidor poden gestionar els codis d&apos;invitació en aquesta sessió.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only operators and server administrators can manage invite codes on this session.</source>
-        <translation>Seul·e·s les opérateur·ice·s et les administrateur·ice·s peuvent gérer les codes d&apos;invitation sur cette session.</translation>
+        <translation>Nomes els operadors i administradors del servidor poden gestionar els codis d&apos;invitació en aquesta sessió.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Revoke Invite Codes</source>
-        <translation>Révoquer les Codes d&apos;Invitation</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really revoke %n selected invite code(s)?</source>
         <translation>
-            <numerusform>Voulez-vous vraiment révoquer %n code d&apos;invitation&#x202f;?</numerusform>
-            <numerusform>Voulez-vous vraiment révoquer %n codes d&apos;invitation&#x202f;?</numerusform>
+            <numerusform>Esteu segur que voleu revocar el codi d&apos;invitació %n seleccionat?</numerusform>
+            <numerusform>Esteu segur que voleu revocar els codis d&apos;invitació %n seleccionats?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Invite codes let someone join the session via a limited-use link. You can revoke the code later to take away their access again.</source>
-        <translation type="unfinished">Les codes d&apos;invitation permettent à un·e utilisateur·ice de rejoindre la session via un lien à usage limité. Vous pouvez révoquer ce code plus tard pour leur retirer cet accès.</translation>
+        <translation>Els codis d&apos;invitació permeten a algú unir-se a la sessió utilitzant un enllaç d&apos;usos limitats. Podeu revocar el codi més tard per a tornar a treure&apos;ls l&apos;accés.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Someone joining via an invite code bypasses normal session restrictions: they don&apos;t need the session password, can join via web browser, don&apos;t need a registered account and aren&apos;t affected by new joins being blocked.</source>
-        <translation type="unfinished">Un·e utilisateur·ice rejoignant via un code d&apos;invitation passe outre les restrictions de session habituelles&#xa0;: iels n&apos;ont pas besoin du mot de passe de la sessions, peuvent rejoindre depuis un navigateur web, n&apos;ont pas besoin d&apos;un compte enregistré et ne sont pas affectés par les blocages d&apos;arrivée de nouveaux·elles utilisateur·ice·s sur le salon.</translation>
+        <translation type="unfinished">Algú que s&apos;uneix a través d&apos;una sessió normal per invitació ignora les restriccions normals de sessió: no necessita la contrasenya de sessió, pot unir-se a través del navegador web, no els cal cap compte registrat i no es veuen afectats per nous pel bloqueig de nous accessos.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>They don&apos;t bypass bans or server-wide restrictions.</source>
         <extracomment>&quot;They&quot; is referring to invite codes.</extracomment>
-        <translation>Iels ne peuvent passer outre les bannissements ou les restrictions à l&apos;échelle du serveur.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6919,27 +6819,27 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/keyframepropertiesdialog.cpp" line="+127"/>
         <source>Key Frame Properties</source>
-        <translation type="unfinished">Propriétés de la Trame de Référence</translation>
+        <translation>Propietats del fotograma clau</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Title:</source>
-        <translation type="unfinished">Titre :</translation>
+        <translation>Titol:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Search…</source>
-        <translation>Rechercher…</translation>
+        <translation>Cerca…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Previous</source>
-        <translation>Précédent</translation>
+        <translation>Previ</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Next</source>
-        <translation>Suivant</translation>
+        <translation>Seguent</translation>
     </message>
 </context>
 <context>
@@ -6947,17 +6847,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/layerproperties.cpp" line="+92"/>
         <source>New Layer Group</source>
-        <translation type="unfinished">Nouveau groupe de calque</translation>
+        <translation>Nou grup de capes</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>New Layer</source>
-        <translation type="unfinished">Nouveau calque</translation>
+        <translation>Nova capa</translation>
     </message>
     <message>
         <location line="+110"/>
         <source>Pass Through</source>
-        <translation type="unfinished">Passer au Travers</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6965,92 +6865,92 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/layoutsdialog.cpp" line="+167"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished">Actuelle (non-sauvegardée)</translation>
+        <translation>Actual (sense desar)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (new)</source>
-        <translation>%1 (nouveau)</translation>
+        <translation>%1 (nou/s)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (deleted)</source>
-        <translation type="unfinished">%1 (supprimée)</translation>
+        <translation>%1 (eliminat/s)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (renamed from %2)</source>
-        <translation type="unfinished">%1 (renommée depuis %2)</translation>
+        <translation>%1 (reanomenat/s de %2)</translation>
     </message>
     <message>
         <location line="+136"/>
         <source>Undelete</source>
-        <translation>Restaurer</translation>
+        <translation>Recuperar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Eliminar</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Layout Name:</source>
-        <translation>Nom de a Mise en Page&#xa0;:</translation>
+        <translation>Nom de la disposició:</translation>
     </message>
     <message>
         <location line="-242"/>
         <source>Default</source>
-        <translation type="unfinished">Défaut</translation>
+        <translation>Per defecte</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Default Animation</source>
-        <translation>Animation par Défaut</translation>
+        <translation>Animació per defecte</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>FireAlpaca-esque</source>
-        <translation type="unfinished">Façon FireAlpaca</translation>
+        <translation>Com FireAlpaca</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Horizontal</source>
-        <translation type="unfinished">Horizontal</translation>
+        <translation>Horitzontal</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hyena</source>
-        <translation type="unfinished">Hyène</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita-esque</source>
-        <translation type="unfinished">Façon Krita</translation>
+        <translation>Com Krita</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>MediBang-esque</source>
-        <translation type="unfinished">Façon MediBang</translation>
+        <translation>Com MediBang</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mink</source>
-        <translation type="unfinished">Vison</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Paint.NET-esque</source>
-        <translation type="unfinished">Façon Paint.NET</translation>
+        <translation>Com Paint.NET</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>SAI-esque</source>
-        <translation type="unfinished">Façon SAI</translation>
+        <translation>Com SAI</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Spider</source>
-        <translation type="unfinished">Araignée</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7058,181 +6958,181 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/logindialog.cpp" line="+169"/>
         <source>Report...</source>
-        <translation type="unfinished">Signaler...</translation>
+        <translation>Informa...</translation>
     </message>
     <message>
         <location line="+157"/>
         <source>Accept</source>
-        <translation>Accepter</translation>
+        <translation>Acceptar</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Log in with server account</source>
-        <translation type="unfinished">Se connecter avec un compte serveur</translation>
+        <translation>Unir-se amb compte de servidor</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation>Entrez un mot de passe de compte. Si vous n&apos;avez pas de compte, vous devez vous enregistrer. Ce serveur ne donne pas d&apos;information sur comment faire cette opération.</translation>
+        <translation>Introduïu la contrasenya del compte. Si no teniu un compte, n&apos;heu de registrar un. Aquest servidor no proveeix informació de com fer-ho.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished">Entrez un mot de passe de compte. Si vous n&apos;avez pas de compte, vous pouvez en enregistrer un sur %1.</translation>
+        <translation>Introduïu la contrasenya del compte. Si no teniu un compte, n&apos;heu de registrar un a %1.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
-        <translation>Ce nom d&apos;utilisateur·ice appartient à un autre compte. Si ce n&apos;est pas votre compte, annulez et recommencez avec un nom différent.</translation>
+        <translation>Aquest nom d&apos;usuari pertany a un compte registrat. Si aquest no és el vostre compte, cancel·leu i proveu un altre cop amb un nom diferent.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Close</source>
-        <translation type="unfinished">Fermer</translation>
+        <translation>Tanca</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Decline</source>
-        <translation>Refuser</translation>
+        <translation>Rebutjar</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+12"/>
         <location line="+12"/>
         <source>Rules</source>
-        <translation>Règles</translation>
+        <translation>Regles</translation>
     </message>
     <message>
         <location line="-16"/>
         <location line="+22"/>
         <source>Back</source>
-        <translation>Retour</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location line="+198"/>
         <source>You can&apos;t join this session because:</source>
-        <translation>Vous ne pouvez rejoindre cette session car&#xa0;:</translation>
+        <translation>No podeu unir-vos a aquesta sessió per què:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown reason.</source>
-        <translation>Raison inconnue.</translation>
+        <translation>Raó desconeguda.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Can&apos;t join session</source>
-        <translation>Vous ne pouvez rejoindre la session</translation>
+        <translation>No es pot unir a la sessió</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>Remove Account</source>
-        <translation>Supprimer le Compte</translation>
+        <translation>Eliminar compte</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really forget this account? This will only remove it from your recent account list, it won&apos;t delete the account.</source>
-        <translation>Voulez-vous vraiment oublier ce compte&#x202f;? Cela le retirera de votre liste de comptes récents, il ne sera pas supprimé.</translation>
+        <translation>Segur que voleu oblidar aquest compte? Això només l&apos;eliminarà de la vostra llista de comptes recents, no eliminarà el compte.</translation>
     </message>
     <message>
         <location line="+48"/>
         <location line="+161"/>
         <source>Enter the name you want to use.</source>
-        <translation>Entrez ici le nom que vous souhaitez utiliser.</translation>
+        <translation>Introduïu el nom que voleu utilitzar.</translation>
     </message>
     <message>
         <location line="-99"/>
         <source>Server Rules for %1</source>
-        <translation>Règles du Serveur pour %1</translation>
+        <translation>Regles del servidor per %1</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Log in with %1 account</source>
-        <translation>Se connecter avec le compte %1</translation>
+        <translation>Accedeix amb el compte %1</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
-        <translation>Entrez ici le nom que vous souhaitez utiliser. Voir %1 pour plus d&apos;informations sur le serveur.</translation>
+        <translation>Introduïu el nom que voleu utilitzar. Vegeu %1 per a més informació sobre aquest servidor.</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation>Ce nom d&apos;utilisateur·ice n&apos;appartient pas à un compte sur ce serveur. Ce n&apos;est pas votre compte Drawpile.net&#x202f;!</translation>
+        <translation>Aques nom d&apos;usuari no pertany a un compte en aquest servidor. Aquest no es el vostre compte de drawpile.net!</translation>
     </message>
     <message>
         <location line="+552"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation>Entrez ici le nom d&apos;utilisateur·ice et votre mot de passe pour votre compte sur ce serveur. Ce n&apos;est pas votre compte Drawpile.net&#x202f;!</translation>
+        <translation>Introduiu el nom d&apos;usuari i contrasenya pel vostre compte en aquest servidor. Aquest no es el vostre compte de drawpile.net!</translation>
     </message>
     <message>
         <location line="-636"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
-        <translation type="unfinished">Vous pouvez continuer sans compte ici. Si vous souhaitez vous enregistrer cependant, vous pouvez le faire sur %1.</translation>
+        <translation>Podeu continuar sense un compte. Si tot i aixi en voleu registrar un, ho podeu fer a %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>An account is required. You can register one on %1.</source>
-        <translation type="unfinished">Un compte est requis ici. Vous pouvez en enregistrer un sur %1.</translation>
+        <translation>Un compte és requerit. Podeu registrar-ne un a %1.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
-        <translation type="unfinished">Vous pouvez continuer sans avoir de compte ici. Cependant, ce serveur ne donne pas d&apos;information sur comment enregistrer de compte.</translation>
+        <translation>Podeu continuar sense un compte. Aquest servidor no proveeix cap informació de com registrar-ne un.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
-        <translation type="unfinished">Un compte est requis ici, mais ce serveur ne donne pas d&apos;information sur comment enregistrer de compte.</translation>
+        <translation>Un compte és requerit, però el servidor no proveeix cap informació de com registrar-ne un.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>See %1 for more information about this server. To register an account, visit %2.</source>
-        <translation type="unfinished">Voir %1 pour plus d&apos;informations sur ce serveur. Pour enregistrer un compte, veuillez visiter %2.</translation>
+        <translation>Veieu %1 per a més informació sobre aquest servidor. Per a registrar un compte, visiteu %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>See %1 for more information about this server.</source>
-        <translation>Voir %1 pour plus d&apos;informations sur ce serveur.</translation>
+        <translation>Veieu %1 per a més informació sobre aquest servidor.</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>This username belongs to an account, pick a different one.</source>
-        <translation>Ce nom d&apos;utilisateur·ice appartient à un compte. Veuillez en utiliser un autre.</translation>
+        <translation>Aquest nom d&apos;usuari pertany a un compte, trieu-ne un de diferent.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>The %1 authentication is not working.</source>
-        <translation>L&apos;authentification %1 ne fonctionne pas.</translation>
+        <translation>L&apos;autenticació %1 no funciona.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
-        <translation>Ce nom d&apos;utilisateur·ice n&apos;appartient à aucun compte sur %1.</translation>
+        <translation>Aquest nom d&apos;usuari no pertany a un compte a %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation>Ce nom d&apos;utilisateur·ice appartient à un compte du serveur, vous ne pouvez l&apos;utiliser pour vous connecter via %1 sur ce serveur.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation>Ce nom d&apos;utilisateur·ice appartient à une autre méthode de connexion, vous ne pouvez l&apos;utiliser pour vous connecter via %1 sur ce serveur.</translation>
+        <translation>Aquest nom d&apos;usuari pertany a un altre mètode d&apos;accés, no el podeu usar per accedir a través de %1 en aquest servidor.</translation>
     </message>
     <message>
         <location line="+540"/>
         <source>Enter the username and password for your %1 account.</source>
-        <translation type="unfinished">Entrez le nom d&apos;utilisateur·ice et le mot de passe pour votre compte %1.</translation>
+        <translation>Introduïu el nom d&apos;usuari i la contrasenya pel vostre compte %1.</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Log in with &apos;%1&apos; credentials</source>
-        <translation type="unfinished">Se connecter avec la combinaison de nom d&apos;utilisateur et de mot de passe de &apos;%1&apos;</translation>
+        <translation>Autenticar-se amb les credencials &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log in with &apos;%1&apos; credentials (INSECURE CONNECTION!)</source>
-        <translation>Se connecter avec la combinaison de nom d&apos;utilisateur et de mot de passe de &apos;%1&apos; (CONNEXION NON-SÉCURISÉE&#x202f;!)</translation>
+        <translation>Autenticar-se amb les credencials &apos;%1&apos; (CONNEXIÓ INSEGURA!)</translation>
     </message>
 </context>
 <context>
@@ -7240,7 +7140,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/netstats.cpp" line="+77"/>
         <source>not connected</source>
-        <translation type="unfinished">non connecté</translation>
+        <translation>no connectat</translation>
     </message>
 </context>
 <context>
@@ -7248,22 +7148,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="+32"/>
         <source>Playback</source>
-        <translation type="unfinished">Lecture</translation>
+        <translation>Reproducció</translation>
     </message>
     <message>
         <location line="+144"/>
         <source>Building index...</source>
-        <translation type="unfinished">Construction de l&apos;index...</translation>
+        <translation>Construint índex...</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Index building failed.</source>
-        <translation type="unfinished">Échec de la construction de l&apos;index.</translation>
+        <translation>La construcció de l&apos;índex ha fallat.</translation>
     </message>
     <message>
         <location line="+165"/>
         <source>Video error</source>
-        <translation type="unfinished">Erreur vidéo</translation>
+        <translation>Error de vídeo</translation>
     </message>
 </context>
 <context>
@@ -7271,32 +7171,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/resetdialog.cpp" line="+132"/>
         <source>Reset Session</source>
-        <translation>Réinitialiser la Session</translation>
+        <translation>Reinicialitzar sessió</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>New</source>
-        <translation type="unfinished">Nouveau</translation>
+        <translation>Nou</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Open...</source>
-        <translation type="unfinished">Ouvrir...</translation>
+        <translation>Obrir...</translation>
     </message>
     <message>
         <location line="+71"/>
         <source>Error opening file: %1</source>
-        <translation>Erreur lors de l&apos;ouverture du fichier&#xa0;: %1</translation>
+        <translation>Error obrint el fitxer: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error opening file: %1 (%2)</source>
-        <translation>Erreur lors de l&apos;ouverture du fichier&#xa0;: %1 (%2)</translation>
+        <translation>Error obrint el fitxer: %1 (%2)</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Reset</source>
-        <translation type="unfinished">Réinitialiser</translation>
+        <translation>Reinicialitza</translation>
     </message>
 </context>
 <context>
@@ -7304,42 +7204,42 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+30"/>
         <source>Expand up</source>
-        <translation>Étendre vers le haut</translation>
+        <translation>Expandir amunt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand left</source>
-        <translation>Étendre vers la gauche</translation>
+        <translation>Expandir a l&apos;esquerra</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand right</source>
-        <translation>Étendre vers la droite</translation>
+        <translation>Expandir a la dreta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand down</source>
-        <translation>Étendre vers le bas</translation>
+        <translation>Expandir avall</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Resize</source>
-        <translation type="unfinished">Redimensionner</translation>
+        <translation>Redimensionar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center</source>
-        <translation>Centrer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+93"/>
         <source>Error</source>
-        <translation type="unfinished">Erreur</translation>
+        <translation>Error</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Size is too large</source>
-        <translation type="unfinished">La taille est trop grande</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7347,25 +7247,25 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/selectionalterdialog.cpp" line="+40"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Feather: </source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished">Adoucissement&#x202f;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Shrink and feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation>Réduire et flouter depuis le bord du canevas</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished">Flouter depuis le bord du canevas</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7373,18 +7273,18 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message numerus="yes">
         <location filename="../dialogs/sessionsettings.cpp" line="+355"/>
         <source>Imported %n session ban(s).</source>
-        <translation>
-            <numerusform>%n Bannissement de session importé.</numerusform>
-            <numerusform>%n Bannissements de session importés.</numerusform>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
-        <translation type="unfinished">
-            <numerusform>%1 %n n&apos;a pas pu être importé car invalide, ou est un duplicata.</numerusform>
-            <numerusform>%1 %n n&apos;ont pas pu être importés car invalides, ou sont des duplicatas.</numerusform>
+        <translation>
+            <numerusform>%1 %n no s&apos;ha importat perquè era invàlid o duplicat.</numerusform>
+            <numerusform>%1 %n no s&apos;han importat perquè eren invàlids o duplicats.</numerusform>
         </translation>
     </message>
     <message>
@@ -7392,96 +7292,96 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+469"/>
         <location line="+12"/>
         <source>Session Ban Import</source>
-        <translation>Importer les Bannissements de Session</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-467"/>
         <source>Session Ban Export</source>
-        <translation>Exporter les Bannissements de Session</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error saving bans: %1</source>
-        <translation>Erreur de sauvegarde des bannissements&#xa0;: %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Session Ban Error</source>
-        <translation>Erreur de Bannissement de Session</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+50"/>
         <source>This list shows only registered users.</source>
-        <translation>Cette liste ne montre que les utilisateur·ice·s enregistré·e·s.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only operators can see this list.</source>
-        <translation>Seul·e·s les opérateur·ice·s peuvent voir cette liste.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+69"/>
         <source>Operators</source>
-        <translation type="unfinished">Opérateurs</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trusted</source>
-        <translation type="unfinished">Fiables</translation>
+        <translation>De confiança</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Registered</source>
-        <translation type="unfinished">Enregistré</translation>
+        <translation>Registrat</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Everyone</source>
-        <translation type="unfinished">Tout le monde</translation>
+        <translation>Tothom</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation type="unfinished">oui</translation>
+        <translation>si</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>no</source>
         <comment>password</comment>
-        <translation type="unfinished">non</translation>
+        <translation>no</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>change</source>
         <comment>password</comment>
-        <translation type="unfinished">modifier</translation>
+        <translation>canvia</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>assign</source>
         <comment>password</comment>
-        <translation type="unfinished">attribuer</translation>
+        <translation>assigna</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>never</source>
         <extracomment>&quot;Idle timeout: never&quot;</extracomment>
-        <translation>jamais</translation>
+        <translation>mai</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>disabled by moderator</source>
         <extracomment>&quot;Idle timeout: disabled by moderator&quot;</extracomment>
-        <translation>désactivé par modérateur·ice</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n hour(s)</source>
         <extracomment>Idle timeout hours. May be joined with minutes and seconds.</extracomment>
         <translation>
-            <numerusform>%n heure</numerusform>
-            <numerusform>%n heures</numerusform>
+            <numerusform>%n hora</numerusform>
+            <numerusform>%n hores</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -7489,8 +7389,8 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <source>%n minute(s)</source>
         <extracomment>Idle timeout minutes. May be joined with hours and seconds.</extracomment>
         <translation>
-            <numerusform>%n minute</numerusform>
-            <numerusform>%n minutes</numerusform>
+            <numerusform>%n minut</numerusform>
+            <numerusform>%n minuts</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -7498,112 +7398,112 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
         <translation>
-            <numerusform>%n seconde</numerusform>
-            <numerusform>%n secondes</numerusform>
+            <numerusform>%n segon</numerusform>
+            <numerusform>%n segons</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>, </source>
         <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
-        <translation>, </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+122"/>
         <location line="+16"/>
         <source>Set a new password or leave blank to remove.</source>
-        <translation type="unfinished">Définir un nouveau mot de passe ou laisser vide pour ne plus protéger.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-14"/>
         <source>Set a password for the session.</source>
-        <translation type="unfinished">Définir un mot de passe pour la session.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session Password</source>
-        <translation type="unfinished">Mot de passe de la session</translation>
+        <translation>Contrasenya de la sessió</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set a password for gaining operator status.</source>
-        <translation type="unfinished">Définir un mot de passe pour obtenir le statut Opérateur.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator Password</source>
-        <translation type="unfinished">Mot de passe Opérateur</translation>
+        <translation>Contrasenya de l&apos;operador</translation>
     </message>
     <message>
         <location line="+31"/>
         <location line="+122"/>
         <source>Error opening &apos;%1&apos;: %2</source>
-        <translation>Erreur lors de l&apos;ouverture de &apos;%1&apos;&#xa0;: %2</translation>
+        <translation>Error obrint &apos;%1&apos;:%2</translation>
     </message>
     <message>
         <location line="-91"/>
         <source>This server does not support importing encrypted bans.</source>
-        <translation>Ce serveur ne supporte pas l&apos;importation de bannissements chiffrés.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>This server does not support importing plain bans.</source>
-        <translation>Ce serveur ne supporte pas l&apos;importation de bannissements en clair.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>File does not appear to contain any ban data.</source>
-        <translation>Le fichier ne semble pas contenir de données de bannissement.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Choose Ban Export Type</source>
-        <translation type="unfinished">Choisir le Type d&apos;Export de Bannissement</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</source>
-        <translation>Étant donné que vous êtes modérateur·ice, vous pouvez exporter les bannissements en clair ou chiffrés. Les bannissements chiffrés ne pourront être importés que sur ce serveur. Quel format souhaitez-vous utiliser pour l&apos;exportation&#x202f;?</translation>
+        <translation type="unfinished">Com que sou un moderador, podeu exportar la llista de bloquejats encriptada o en text pla. La llista de bloquejats encriptada només es pot importar en aquest servidor. En quin format voleu exportar?</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Encrypted</source>
-        <translation>Chiffré</translation>
+        <translation>Encriptat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Plain</source>
-        <translation type="unfinished">Complet</translation>
+        <translation>Pla</translation>
     </message>
     <message>
         <location line="+52"/>
         <location line="+12"/>
         <location line="+98"/>
         <source>Role Import</source>
-        <translation>Importer des Rôles</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-97"/>
         <source>File does not contain a valid role export.</source>
-        <translation>Le fichier ne contient pas un rôle d&apos;export valide.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Error saving roles: %1</source>
-        <translation>Erreur lors de l&apos;enregistrement des rôles&#xa0;: %1</translation>
+        <translation>Error guardant els rols: %1</translation>
     </message>
     <message numerus="yes">
         <location line="+61"/>
         <source>%n role(s) imported.</source>
         <translation>
-            <numerusform>%n rôle importé.</numerusform>
-            <numerusform>%n rôles importés.</numerusform>
+            <numerusform>%n rol importat.</numerusform>
+            <numerusform>%n rols importats.</numerusform>
         </translation>
     </message>
     <message>
         <location line="-61"/>
         <source>Role Export</source>
-        <translation>Export du Rôle</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7611,17 +7511,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/sessionundodepthlimitdialog.cpp" line="+21"/>
         <source>Change Session Undo Depth Limit</source>
-        <translation>Changer la Limite de Retour en Arrière de la Session</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Undo Limit: </source>
-        <translation>Annuler la limite </translation>
+        <translation>Limit de desfer: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Choose a new undo limit for this session, the current limit is %1. Undos are shared between all participants. Changing the limit will start the undo stack anew, you won&apos;t be able to undo before the point where you changed it.</source>
-        <translation>Choisir une nouvelle limite de retour en arrière pour cette session, la limite actuelle est %1. Les retours en arrière sont partagés entre tous les participants. Changer la limite relancera la pile d&apos;annulation, vous ne pourrez pas annuler avant le point où vous l&apos;avez modifiée.</translation>
+        <translation>Escolliu un nou límit de desfer per aquesta sessió, el límit actual és %1. Les accions desfer es comparteixen entre tots els participants. El canvi del límit iniciarà la pila de desfer de nou, no podreu desfer abans del punt a on l&apos;heu canviat.</translation>
     </message>
 </context>
 <context>
@@ -7629,57 +7529,57 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="+34"/>
         <source>Preferences</source>
-        <translation type="unfinished">Préférences</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+55"/>
         <source>General</source>
-        <translation>Général</translation>
+        <translation>General</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User Interface</source>
-        <translation>Interface Utilisateur</translation>
+        <translation>Interfície d&apos;usuari</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet</source>
-        <translation>Tablette</translation>
+        <translation>Tauleta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touch</source>
-        <translation>Toucher</translation>
+        <translation>Tactil</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tools</source>
-        <translation>Outils</translation>
+        <translation>Eines</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network</source>
-        <translation>Réseau</translation>
+        <translation>Xarxa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Notifications</source>
-        <translation>Notifications</translation>
+        <translation>Notificacions</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Servers</source>
-        <translation>Serveurs</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Shortcuts</source>
-        <translation type="unfinished">Raccourcis clavier</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Parental Controls</source>
-        <translation type="unfinished">Contrôle parental</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7687,180 +7587,180 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog.cpp" line="+75"/>
         <source>Start</source>
-        <translation>Commencer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Welcome</source>
-        <translation>Bienvenue</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>News and updates</source>
-        <translation>Nouvelles et mises à jour</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Join Session</source>
-        <translation>Rejoindre une Session</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Connect to a drawing session directly</source>
-        <translation>Se connecter à une session de dessin directement</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Browse Sessions</source>
-        <translation>Naviguer les Sessions</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Browse publicly listed drawing sessions</source>
-        <translation>Naviguer les sessions de dessin affichées publiquement</translation>
+        <translation>Explora les sessions de dibuix llistades públicament</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Host Session</source>
-        <translation>Héberger une Session</translation>
+        <translation>Allotjar sessió</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Share your canvas with others</source>
-        <translation>Partagez votre toile avec les autres</translation>
+        <translation>Compartiu el vostre llenç amb altres</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>New Canvas</source>
-        <translation>Nouvelle Toile</translation>
+        <translation>Nou llenç</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create a new, empty canvas</source>
-        <translation>Créer une nouvelle toile vide</translation>
+        <translation>Crea un nou llenç buit</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Open File</source>
-        <translation>Ouvrir un Fichier</translation>
+        <translation>Obre</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Open an image file</source>
-        <translation>Ouvrir une image</translation>
+        <translation>Obre un fitxer d&apos;imatge</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Recent Files</source>
-        <translation>Fichiers Récents</translation>
+        <translation>Fitxers recents</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reopen a recently used file</source>
-        <translation>Rouvrir un fichier récent</translation>
+        <translation>Reobre un fitxer recentment usat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Layouts</source>
-        <translation>Agencements</translation>
+        <translation>Disposicions</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Choose application layout</source>
-        <translation>Choisir l&apos;agencement de l&apos;application</translation>
+        <translation>Tria la disposició de l&apos;aplicació</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preferences</source>
-        <translation type="unfinished">Préférences</translation>
+        <translation>Preferències</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Change application settings</source>
-        <translation>Changer les paramètres de l&apos;application</translation>
+        <translation>Canvia la configuració de l&apos;aplicació</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Record</source>
-        <translation type="unfinished">Enregistrer</translation>
+        <translation>Enregistra</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Add Server</source>
-        <translation type="unfinished">Ajouter un serveur</translation>
+        <translation>Afegir servidor</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Save/Load</source>
-        <translation>Sauvegarder/Charger</translation>
+        <translation>Desa/Carrega</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Reload defaults…</source>
-        <translation>Recharger les valeurs par défaut…</translation>
+        <translation>Recarrega els valors per omissió…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Load settings…</source>
-        <translation>Charger les paramètres…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save settings…</source>
-        <translation>Enregistrer les paramètres…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import from file…</source>
-        <translation>Importer depuis un fichier…</translation>
+        <translation>Importa des d&apos;un fitxer…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Export to file…</source>
-        <translation>Exporter dans un fichier…</translation>
+        <translation>Exporta al fitxer…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Check for Updates</source>
-        <translation>Vérifier les mises à jour</translation>
+        <translation>Comprova les actualitzacions</translation>
     </message>
     <message>
         <location line="+338"/>
         <source>Checking…</source>
-        <translation>Vérification…</translation>
+        <translation>Comprovant…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Last check: today.</source>
-        <translation>Dernière vérification&#xa0;: aujourd&apos;hui.</translation>
+        <translation>Última comprovació: avui.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
         <translation>
-            <numerusform>Dernière vérification il y a %n jour.</numerusform>
-            <numerusform>Dernière vérification il y a %n jours.</numerusform>
+            <numerusform>Última comprovació: fa %n dia.</numerusform>
+            <numerusform>Última comprovació: fa %n dies.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Last check: never.</source>
-        <translation>Dernière vérification&#xa0;: jamais.</translation>
+        <translation>Última comprovació: mai.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Join</source>
-        <translation type="unfinished">Rejoindre</translation>
+        <translation>Unir-se</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Host</source>
-        <translation type="unfinished">Hôte</translation>
+        <translation>Allotja</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Create</source>
-        <translation type="unfinished">Créer</translation>
+        <translation>Crea</translation>
     </message>
 </context>
 <context>
@@ -7868,12 +7768,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/systeminfodialog.cpp" line="+27"/>
         <source>System Information</source>
-        <translation>Informations sur le système</translation>
+        <translation>Informació del sistema</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Copy</source>
-        <translation>Copier</translation>
+        <translation>Copia</translation>
     </message>
 </context>
 <context>
@@ -7881,22 +7781,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/touchtestdialog.cpp" line="+214"/>
         <source>Enable touch</source>
-        <translation>Activer le toucher</translation>
+        <translation>Habilitat tactil</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enable gestures</source>
-        <translation>Activer les gestes</translation>
+        <translation>Habilitar gestos</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Error Saving Log</source>
-        <translation>Erreur d&apos;Enregistrement du Journal</translation>
+        <translation>Error guardant el registre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Touch test log could not be saved: %1</source>
-        <translation>Le journal des tests tactiles n&apos;a pas pu être enregistré&#xa0;: %1</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7904,7 +7804,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-236"/>
         <source>Touch here.</source>
-        <translation>Touchez ici.</translation>
+        <translation>Toqueu aqui.</translation>
     </message>
 </context>
 <context>
@@ -7912,7 +7812,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/userinfodialog.cpp" line="+31"/>
         <source>Refresh</source>
-        <translation type="unfinished">Rafraîchir</translation>
+        <translation>Refresca</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -7924,32 +7824,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+9"/>
         <location line="+7"/>
         <source>Unknown</source>
-        <translation>Inconnu</translation>
+        <translation>Desconegut</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>Draw</source>
-        <translation>Dessiner</translation>
+        <translation>Dibuixa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pan Canvas</source>
-        <translation>Déplacer la Toile</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Do Nothing</source>
-        <translation>Ne Rien Faire</translation>
+        <translation>No facis re</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Enabled</source>
-        <translation>Activé</translation>
+        <translation>Activat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation>Désactivé</translation>
+        <translation>Desactivat</translation>
     </message>
 </context>
 <context>
@@ -7957,53 +7857,53 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="+31"/>
         <source>Image Series</source>
-        <translation>Série d&apos;images</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>MP4 Video</source>
-        <translation>Vidéo MP4</translation>
+        <translation>Vídeo MP4</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>WebM Video</source>
-        <translation>Vidéo WebM</translation>
+        <translation>Vídeo WebM</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom FFmpeg Command</source>
-        <translation>Commande FFmpeg Customisée</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Original</source>
-        <translation type="unfinished">Originale</translation>
+        <translation>Original</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Custom:</source>
-        <translation type="unfinished">Personnalisée :</translation>
+        <translation>Personalitzat:</translation>
     </message>
     <message>
         <location line="+80"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation>Exécutables</translation>
+        <translation>Executables</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation>Choisir le cheminement ffmpeg</translation>
+        <translation>Tria el camí de ffmpeg</translation>
     </message>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation>Vérification…</translation>
+        <translation>Comprovant…</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation>Introuvable. %1</translation>
+        <translation>No trobat. %1</translation>
     </message>
 </context>
 <context>
@@ -8011,29 +7911,29 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/general.cpp" line="+58"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation>Quand activé, enregistre toutes les %1 minutes</translation>
+        <translation>Quan està habilitat, desa cada %1 minuts</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation>Enregistrement automatique&#xa0;:</translation>
+        <translation>Autodesat:</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+144"/>
         <location line="+15"/>
         <source>System</source>
-        <translation>Système</translation>
+        <translation>Sistema</translation>
     </message>
     <message>
         <location line="-148"/>
         <source>Language:</source>
-        <translation type="unfinished">Langue :</translation>
+        <translation>Idioma:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Language changes apply after you restart Drawpile.</source>
-        <translation>Le changement de langue sera effectif après un redémarrage de Drawpile.</translation>
+        <translation>Els canvis d&apos; idioma s&apos; apliquen després de reiniciar el Drawpile.</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8048,183 +7948,183 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+9"/>
         <source>Write debugging log to file</source>
-        <translation>Enregistrer les journaux de déboguage dans un fichier</translation>
+        <translation>Escriu l&apos;informe de depuració a un fitxer</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished">Connexion :</translation>
+        <translation>Registre:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Qt Graphics View</source>
         <extracomment>One of the canvas renderer options. &quot;Qt&quot; is a software framework.</extracomment>
-        <translation type="unfinished">Vue Graphique Qt</translation>
+        <translation>Vista grafica de Qt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hardware (experimental)</source>
         <extracomment>One of the canvas renderer options. Hardware meaning it uses the GPU.</extracomment>
-        <translation>Matériel (expérimental)</translation>
+        <translation>Maquinari (experimental)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Software (experimental)</source>
         <extracomment>One of the canvas renderer options. Software meaning it uses the CPU.</extracomment>
-        <translation>Logiciel (expérimental)</translation>
+        <translation>Programari (experimental)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Default</source>
         <extracomment>One of the canvas renderer options.</extracomment>
-        <translation type="unfinished">Défaut</translation>
+        <translation>Per omissió</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Renderer:</source>
-        <translation>Moteur de rendu&#xa0;:</translation>
+        <translation>Renderitzador:</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown</source>
         <comment>CanvasImplementation</comment>
         <extracomment>Refers to an unknown canvas renderer, should never happen.</extracomment>
-        <translation>Inconnu</translation>
+        <translation>Desconegut</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Current renderer: %1. Changes apply after you restart Drawpile.</source>
-        <translation>Moteur de rendu actuel&#xa0;: %1. Les changements entrent en action après le redémarrage de Drawpile.</translation>
+        <translation>Renderitzador actual: %1. Els canvis s&apos;apliquen després que reinicieu Drawpile.</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Keep %1 canvas snapshots</source>
-        <translation>Conserver %1 captures de la toile</translation>
+        <translation>Conserva %1 instantànies del llenç</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas snapshots:</source>
-        <translation>Captures de la toile&#xa0;:</translation>
+        <translation>Instantànies del llenç:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Take one snapshot every %1 seconds</source>
-        <translation>Prendre une capture toutes les %1 secondes</translation>
+        <translation>Pren una instantània cada %1 segons</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Blue Apatite</source>
-        <translation>Apatite Bleue</translation>
+        <translation>Apatita blava</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Indigo</source>
-        <translation>Indigo</translation>
+        <translation>Indi</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ocean Deep</source>
-        <translation>Océan Profond</translation>
+        <translation>Fons oceànic</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pool Table</source>
-        <translation>Table de Billard</translation>
+        <translation>Taula de billar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rose Quartz</source>
-        <translation>Quartz Rose</translation>
+        <translation>Quars rosa</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rust</source>
-        <translation>Rouille</translation>
+        <translation>Rovellat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Watermelon</source>
-        <translation>Pastèque</translation>
+        <translation>Síndria</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>%1 offline undo levels by default</source>
-        <translation>%1 niveaux d&apos;annulation hors ligne par défaut</translation>
+        <translation>%1 nivells de desfer fora de línia per omissió</translation>
     </message>
     <message>
         <location line="-196"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation>L&apos;enregistrement automatique peut être activé pour le fichier actuel sous Fichier ▸ Enregistrement automatique.</translation>
+        <translation>L&apos;autodesat es pot activar pel fitxer actual a Fitxer ▸ Autodesat.</translation>
     </message>
     <message>
         <location line="+106"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation>Interpoler lorsque la vue est agrandie ou pivotée</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation>Empêcher les tremblements à certains niveaux de zoom et de rotation</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation>L&apos;activation de ces options peut avoir un impact sur les performances de certains systèmes.</translation>
+        <translation>Activar aquestes opcions pot tenir un impacte sobre el rendiment en alguns sistemes.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
-        <translation>Les captures peuvent être restaurées depuis Session ▸ Réinitialiser...menu.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Style:</source>
-        <translation>Style&#xa0;:</translation>
+        <translation>Estil:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Light</source>
-        <translation>Clair</translation>
+        <translation>Clar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dark</source>
-        <translation>Sombre</translation>
+        <translation>Fosc</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Bright</source>
-        <translation>Krita Lumineux</translation>
+        <translation>Krita Clar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Dark</source>
-        <translation>Krita Sombre</translation>
+        <translation>Krita Fosc</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Darker</source>
-        <translation>Krita Plus Sombre</translation>
+        <translation>Krita Més Fosc</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Qt Fusion</source>
-        <translation>Fusion Qt</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hotdog Stand</source>
-        <translation>Stand de Hot-Dogs</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color scheme:</source>
-        <translation>Modèle de couleurs&#xa0;:</translation>
+        <translation>Esquema de colors:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Session history:</source>
-        <translation type="unfinished">Historique de session :</translation>
+        <translation>Historial de la sessió:</translation>
     </message>
 </context>
 <context>
@@ -8232,124 +8132,124 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+89"/>
         <source>Builtin server:</source>
-        <translation>Serveur intégré&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Host on port %1 if available</source>
-        <translation>Héberger sur le port %1 si disponible</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Automatically check for updates</source>
-        <translation>Vérifier automatiquement pour des mises à jour</translation>
+        <translation>Comprova les actualitzacions automàticament</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Updates:</source>
-        <translation>Mises à jour&#xa0;:</translation>
+        <translation>Actualitzacions:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Allow insecure local storage</source>
-        <translation>Autoriser le stockage local non sécurisé</translation>
+        <translation>Permet l&apos;emmagatzematge local insegur</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Password security:</source>
-        <translation>Sécurité du mot de passe&#xa0;:</translation>
+        <translation>Seguretat de la contrasenya:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>With this enabled, Drawpile may save passwords in an unencrypted format. Disabling it will forget any insecurely stored passwords.</source>
-        <translation>Lorsque cette option est activée, Drawpile peut enregistrer les mots de passe dans un format non chiffré. La désactiver entraînera l&apos;oubli de tout mot de passe non sécurisé.</translation>
+        <translation>Amb això activat, Drawpile pot desar contrasenyes en un format no xifrat. Quan es desactiva oblidarà qualsevol contrasenya emmagatzemada de forma insegura.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Connection quality:</source>
-        <translation>Qualité de connexion&#xa0;:</translation>
+        <translation>Qualitat de la connexió:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Good</source>
-        <translation>Bon</translation>
+        <translation>Bona</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Poor</source>
-        <translation>Mauvais</translation>
+        <translation>Pobre</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Network timeout:</source>
-        <translation>Délai d&apos;expiration du réseau&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>%1 seconds</source>
-        <translation>%1 secondes</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Network proxy:</source>
-        <translation>Proxy réseau&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>System</source>
-        <translation>Système</translation>
+        <translation>Sistema</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disabled</source>
-        <translation>Désactivé</translation>
+        <translation>Desactivat</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Receive delay:</source>
-        <translation>Délai de réception&#xa0;:</translation>
+        <translation type="unfinished">Retard de recepció:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The higher the value, the smoother strokes from other users come in.</source>
-        <translation>Plus la valeur est élevée, plus les traits des autres utilisateurs sont fluides.</translation>
+        <translation>Com més alt el valor, més suaus els traços d&apos;altres usuaris entren</translation>
     </message>
     <message>
         <location line="-98"/>
         <source>Chat avatars:</source>
-        <translation>Avatars de discussion&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Add avatar…</source>
-        <translation>Ajouter un avatar…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Add</source>
-        <translation type="unfinished">Ajouter</translation>
+        <translation>Afegeix</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Delete selected avatars…</source>
-        <translation>Supprimer les avatars sélectionnés…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Remove</source>
-        <translation type="unfinished">Retirer</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete avatars</source>
-        <translation>Supprimer les avatars</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really delete %n avatar(s)?</source>
-        <translation>
-            <numerusform>Voulez-vous vraiment supprimer %n avatar&#x202f;?</numerusform>
-            <numerusform>Voulez-vous vraiment supprimer %n avatars&#x202f;?</numerusform>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
@@ -8358,142 +8258,142 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/notifications.cpp" line="+40"/>
         <source>Event</source>
-        <translation>Événement</translation>
+        <translation>Esdeveniment</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>What triggered this notification</source>
-        <translation>Qu&apos;est-ce qui a déclenché cette notification</translation>
+        <translation>Que ha activat aquesta notificació</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Play sound</source>
-        <translation>Jouer un son</translation>
+        <translation>Reprodueix un so</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Play a sound effect when this event occurs.</source>
-        <translation>Jouer un effet sonore lorsque cet événement se produit.</translation>
+        <translation>Reprodueix un efecte de so quan es dona aquest esdeveniment.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Popup</source>
-        <translation>Popup</translation>
+        <translation>Finestra emergent</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pop up a speech bubble in the corner when this event occurs.</source>
-        <translation>Faire apparaître une bulle de dialogue dans le coin lorsque cet événement se produit.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flash taskbar</source>
-        <translation>Faire clignoter la barre des tâches</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flash the Drawpile window in the taskbar when this event occurs.</source>
-        <translation>Faire clignoter la fenêtre Drawpile dans la barre des tâches lorsque cet événement se produit.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bounce dock</source>
-        <translation>Faire bondir le dock</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Bounce Drawpile&apos;s icon in the dock when this event occurs.</source>
-        <translation>Faites rebondir l&apos;icône de Drawpile dans le dock lorsque cet événement se produit.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Demand attention</source>
-        <translation>Demander l&apos;attention</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark Drawpile&apos;s window as requiring attention. How exactly this looks depends on your system.</source>
-        <translation>Marquer la fenêtre de Drawpile comme nécessitant une attention particulière. Son apparence dépend de votre système.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preview</source>
-        <translation>Aperçu</translation>
+        <translation>Vista Previa</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trigger this event so you can see what happens.</source>
-        <translation>Déclencher cet évènement afin de voir ce qu&apos;il se passe.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Chat message</source>
-        <translation>Message de discussion</translation>
+        <translation>Missatge de xat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Private message</source>
-        <translation>Message privé</translation>
+        <translation>Misatge privat</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>User left</source>
-        <translation>Utilisateur est parti</translation>
+        <translation>L&apos;usuari ha marxat</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Déconnecté</translation>
+        <translation>Desconnectat</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Preview event</source>
-        <translation>Aperçu de l&apos;événement</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+22"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sound volume:</source>
-        <translation>Volume du son&#xa0;:</translation>
+        <translation>Volum del so:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Use private message notification for mentions</source>
-        <translation>Utiliser les notifications de messages privés pour les mentions</translation>
+        <translation>Utilitza la notificació de missatge privat per les mencions</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mentions:</source>
-        <translation>Mentions&#xa0;:</translation>
+        <translation>Mencions:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Additional triggers go here, one per line.</source>
-        <translation>Les déclencheurs additionnels vont ici, un par ligne.</translation>
+        <translation>Els activadors addicionals van aquí, un per línia.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</source>
-        <translation>Votre nom d&apos;utilisateur compte toujours comme une mention. Vous pouvez ajouter des mots ou expressions déclencheurs supplémentaires, comme d&apos;autres pseudonymes, à comptabiliser. Un mot ou une expression par ligne, sans distinction de majuscules ou de minuscules.</translation>
+        <translation>El vostre nom d&apos;usuari sempre compta com una menció. Podeu afegir paraules o frases activadores addicionals que també voleu contar, com ara altres sobrenoms.</translation>
     </message>
     <message>
         <location line="-83"/>
         <source>User joined</source>
-        <translation>Utilisateur a rejoint la session</translation>
+        <translation>L&apos;usuari s&apos;ha unit</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Canvas locked</source>
-        <translation>Toile verrouillée</translation>
+        <translation>Llenç bloquejat</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas unlocked</source>
-        <translation>Toile déverrouillée</translation>
+        <translation>Llenç desbloquejat</translation>
     </message>
 </context>
 <context>
@@ -8501,113 +8401,113 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+56"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
-        <translation>Considérer les sessions dont les titres contiennent des mot-clés NAAM.</translation>
+        <translation type="unfinished">Considera sessions els títols de les quals contenen paraules clau no segures per a menors.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Keywords:</source>
-        <translation>Mots-clés&#xa0;:</translation>
+        <translation>Paraules clau:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Filter mode:</source>
-        <translation>Mode du filtre&#xa0;:</translation>
+        <translation>Mode de filtratge:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation>Non restreint</translation>
+        <translation>Sense restriccions</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove NSFM sessions from listings</source>
-        <translation>Retirer les sessions NAAM des listes</translation>
+        <translation type="unfinished">Elimina les sessions no segures per a menors de les llistes</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prevent joining NSFM sessions</source>
-        <translation>Empêcher de rejoindre les sessions NAAM</translation>
+        <translation type="unfinished">Impedeix unir-se a sessions no segures per a menors</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prevent joining NSFM sessions and disconnect</source>
-        <translation>Empêcher de rejoindre les sessions NSFM et déconnecter</translation>
+        <translation type="unfinished">Impedeix unir-se a sessions no segures per a menors i desconecta</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings, but can still be joined by following a direct link.</source>
-        <translation>Les sessions NAAM seront masquées dans les listes de serveurs, mais pourront toujours être rejointes en suivant un lien direct.</translation>
+        <translation type="unfinished">Les sessions no segures per a menors s&apos;amagaran dels llistats de servidors, però encara és possible unir-s&apos;hi amb un enllaç directe.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined.</source>
-        <translation>Les sessions NAAM seront masquées dans les listes de serveurs et ne peuvent pas être rejointes.</translation>
+        <translation type="unfinished">Les sessions no segures per a menors s&apos;amagaran dels llistats de servidors i no serà possible unir-s&apos;hi.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</source>
-        <translation>Les sessions NAAM seront masquées dans la liste des serveurs et impossibles à rejoindre. Les sessions connectées qui changent de titre ou d&apos;indicateur NAAM seront automatiquement déconnectées.</translation>
+        <translation type="unfinished">Les sessions no segures per a menors s&apos;amagaran dels llistats de servidors i no serà possible unir-s&apos;hi. Les sessions s&apos;estigui connectat que canviïn el seu títol o bandera no segur per a menors es desconnectaran automàticament.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disallow uncensoring of layers</source>
-        <translation>Interdire la décensure des calques</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Warn when joining NSFM sessions</source>
-        <translation>Prévenir lorsque vous rejoignez des sessions NAAM</translation>
+        <translation type="unfinished">Adverteix en unir-se a sessió no segures per a menors</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+28"/>
         <source>Lock</source>
-        <translation type="unfinished">Verrouiller</translation>
+        <translation>Bloqueja</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Hide settings when locked</source>
-        <translation>Cacher les paramètres lorsqu’ils sont verrouillés</translation>
+        <translation>Amaga les opcions quan estigui bloquejat</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Parental controls are currently locked.</source>
-        <translation>Les contrôles parentaux sont actuellement verrouillés.</translation>
+        <translation>Els controls parentals estan acualment bloquejats.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Unlock</source>
-        <translation type="unfinished">Déverrouiller</translation>
+        <translation>Desbloqueja</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</source>
-        <translation>Ces paramètres configurent la gestion des sessions marquées comme non adaptées aux mineur·e·s (NAAM) et des couches qui ont été censurées.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Parental controls are currently managed by the operating system.</source>
-        <translation>Les contrôles parentaux sont actuellement gérés par le système d&apos;exploitation.</translation>
+        <translation>Els controls parentals estan actualment gestionats pel sistema operatiu.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished">Déverrouiller le contrôle parental</translation>
+        <translation>Desbloqueja els controls parentals</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished">Verrouiller le contrôle parental</translation>
+        <translation>Bloqueja els controls parentals</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enter password:</source>
-        <translation>Entrez le mot de passe&#xa0;:</translation>
+        <translation>Introduïu la contrasenya:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished">Mot de passe incorrect.</translation>
+        <translation>Contrasenya incorrecta.</translation>
     </message>
 </context>
 <context>
@@ -8615,119 +8515,119 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/servers.cpp" line="+107"/>
         <source>Known hosts:</source>
-        <translation>Hôtes connus&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Import trusted certificate…</source>
-        <translation>Importer un certificat fiable…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove selected hosts…</source>
-        <translation>Retirer les hôtes sélectionnés…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove known hosts</source>
-        <translation>Retirer les hôtes connus</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+1"/>
+        <source>Really remove %n known host(s)?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
-        <location line="-81"/>
+        <location line="-82"/>
         <source>List servers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidors de llistes:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Add list servers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix servidors de llistes…</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Remove selected list servers…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Remove list servers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
-        <location line="+59"/>
-        <source>Really remove %n known host(s)?</source>
-        <translation>
-            <numerusform>Vraiment retirer %n hôte connu&#x202f;?</numerusform>
-            <numerusform>Vraiment retirer %n hôtes connus&#x202f;?</numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location line="-58"/>
-        <source>Really remove %n list server(s)?</source>
-        <translation>
-            <numerusform>Voulez-vous vraiment retirer %n serveur liste&#x202f;?</numerusform>
-            <numerusform>Voulez-vous vraiment retirer %n serveurs listes&#x202f;?</numerusform>
-        </translation>
-    </message>
-    <message>
-        <location line="-7"/>
+        <location line="+0"/>
         <location line="+57"/>
         <source>Add</source>
-        <translation type="unfinished">Ajouter</translation>
+        <translation>Afegeix</translation>
     </message>
     <message>
         <location line="-53"/>
-        <location line="+58"/>
-        <source>Remove</source>
-        <translation type="unfinished">Retirer</translation>
+        <source>Remove selected list servers…</source>
+        <translation>Elimina els servidors de llistes seleccionats…</translation>
     </message>
     <message>
-        <location line="-54"/>
+        <location line="+0"/>
+        <location line="+58"/>
+        <source>Remove</source>
+        <translation>Elimina</translation>
+    </message>
+    <message>
+        <location line="-56"/>
+        <source>Remove list servers</source>
+        <translation>Elimina els servidors de llistes</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+1"/>
+        <source>Really remove %n list server(s)?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Move up</source>
-        <translation>Monter</translation>
+        <translation>Moure amunt</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Move down</source>
-        <translation>Descendre</translation>
+        <translation>Moure avall</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Pin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation>Épingler</translation>
+        <translation>Fixa</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+82"/>
         <source>Pin selected certificates</source>
-        <translation>Épingler les certificats certifiés</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-65"/>
         <source>Unpin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation>Désépingler</translation>
+        <translation>Desfixa</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+65"/>
         <source>Unpin selected certificates</source>
-        <translation>Désépingler les certificats sélectionnés</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-35"/>
         <source>Continue</source>
-        <translation>Continuer</translation>
+        <translation>Continua</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Import certificates</source>
-        <translation>Importer les certificats</translation>
+        <translation>Importa certificats</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Could not save changes to known hosts: %1</source>
-        <translation>Impossible de sauvegarder les changements de l&apos;hôte&#xa0;: %1</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8735,12 +8635,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/shortcutfilterinput.cpp" line="+18"/>
         <source>Search…</source>
-        <translation>Recherche…</translation>
+        <translation>Cerca…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show conflicts only</source>
-        <translation>Ne montrer que les conflits</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8748,97 +8648,97 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+194"/>
         <source>Restore Shortcut Defaults</source>
-        <translation>Restaurer les Raccourcis par Défaut</translation>
+        <translation>Restaurar dreceres per defecte</translation>
     </message>
     <message>
         <location line="-4"/>
         <location line="+168"/>
         <source>Restore defaults…</source>
-        <translation>Restaurer les défauts…</translation>
+        <translation>Restaurar valors per defecte…</translation>
     </message>
     <message>
         <location line="-163"/>
         <source>Really restore all shortcuts to their default values?</source>
-        <translation>Voulez-vous vraiment restaurer tous les raccourcis à leurs valeurs par défaut&#x202f;?</translation>
+        <translation>Realment voleu restaurar totes les dreceres als seus valors per defecte?</translation>
     </message>
     <message>
         <location line="+123"/>
         <location line="+27"/>
         <source>Edit Canvas Shortcut</source>
-        <translation>Modifier les Raccourcis de la Toile</translation>
+        <translation>Editar dreceres del llenç</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Add canvas shortcut…</source>
-        <translation>Ajouter un raccourci de la toile…</translation>
+        <translation>Afegir drecera del llenç…</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Add</source>
-        <translation type="unfinished">Ajouter</translation>
+        <translation>Afegeix</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>New Canvas Shortcut</source>
-        <translation>Nouveau Raccourci de la Toile</translation>
+        <translation>Nova drecera de llenç</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Edit</source>
-        <translation>Modifier</translation>
+        <translation>Edita</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Edit selected canvas shortcut…</source>
-        <translation>Modifier les raccourcis de la toile sélectionnés…</translation>
+        <translation>Edita la drecera de llenç seleccionada…</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Remove selected canvas shortcut…</source>
-        <translation>Retirer les raccourcis de la toile sélectionnés…</translation>
+        <translation>Elimina la drecera de llenç seleccionada…</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Remove</source>
-        <translation type="unfinished">Retirer</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove canvas shortcut</source>
-        <translation>Retirer les raccourcis de la toile</translation>
+        <translation>Elimina la drecera de llenç</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
-        <translation>
-            <numerusform>Voulez-vous vraiment retirer %n raccourci de la toile&#x202f;?</numerusform>
-            <numerusform>Voulez-vous vraiment retirer %n raccourcis de la toile&#x202f;?</numerusform>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation>Restaurer les Paramètres par Défaut des Raccourcis de la Toile</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really restore all canvas shortcuts to their default values?</source>
-        <translation>Voulez-vous vraiment restaurer tous les raccourcis de la toile à leurs valeurs par défaut&#x202f;?</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+95"/>
         <source>Actions</source>
-        <translation>Actions</translation>
+        <translation>Accions</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Brushes</source>
-        <translation type="unfinished">Brosses</translation>
+        <translation>Pinzells</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Canvas</source>
-        <translation>Toile</translation>
+        <translation>Llenç</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -8852,120 +8752,120 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/tablet.cpp" line="+30"/>
         <source>Tablet Tester</source>
-        <translation>Testeur de Tablette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tablet</source>
-        <translation>Tablette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Output</source>
-        <translation>Sortie</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Global pressure curve:</source>
-        <translation>Courbe de pression globale&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../mainwindow.cpp" line="-75"/>
+        <location filename="../mainwindow.cpp" line="-1247"/>
         <source>Windows Ink</source>
-        <translation>Windows Ink</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Windows Ink Non-Native</source>
-        <translation>Windows Ink non-Natif</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Wintab</source>
-        <translation>Wintab</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Wintab Relative</source>
-        <translation>Wintab Parent</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Qt5</source>
-        <translation>Qt5</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+9"/>
         <source>Qt6 Windows Ink</source>
-        <translation>Qt5 Windows Ink</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Qt6 Wintab</source>
-        <translation>Qt6 Wintab</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Tablet driver:</source>
-        <translation>Driver de tablette&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished">Activer la sensibilité à la pression</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pen pressure:</source>
-        <translation>Pression du stylet&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Global smoothing: </source>
-        <translation>Lissage global&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">Adoucissement :</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Apply global smoothing to mouse</source>
-        <translation>Appliquer le lissage global à la souris</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Compensate jagged curves</source>
-        <translation>Compenser les courbes irrégulières</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Treat as regular pen tip</source>
-        <translation>Traiter comme une pointe de stylo ordinaire</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Switch to eraser slot</source>
-        <translation>Passer à l&apos;emplacement de la gomme</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation>Effacer avec le pinceau actuel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser tip behavior:</source>
         <extracomment>This refers to the eraser end tablet pen, not a tooltip or something.</extracomment>
-        <translation>Comportement du bout de la gomme&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8973,103 +8873,103 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/tools.cpp" line="+146"/>
         <source>Toggle between previous and current tool</source>
-        <translation>Échanger entre l&apos;outil actuel et le précédent</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Keyboard shortcuts:</source>
-        <translation>Raccourcis de clavier&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Double-tap Alt key to focus canvas</source>
-        <translation>Double-tap la touche Alt pour faire la mise au point sur la toile</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Switch tool temporarily by holding primary shortcut for %1</source>
-        <translation>Changer d&apos;outil temporairement en maintenant le raccourci principal enfoncé pendant %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Attach selected brushes</source>
-        <translation>Attacher les pinceaux sélectionnés</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>When enabled, changes in a brush slot will be saved to the brush itself automatically. When disabled, the brush itself only changes when you save it explicitly.</source>
-        <translation>Lorsque cette option est activée, les modifications apportées à un emplacement de pinceau sont automatiquement enregistrées dans le pinceau lui-même. Lorsqu&apos;elle est désactivée, le pinceau lui-même ne change que si vous l&apos;enregistrez explicitement.</translation>
+        <translation type="unfinished">Quan està habilitat, els canvis del pinzell es desaran automàticament al pinzell. Quan està desactivat, el pinzell només canvia quan el deseu explícitament.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Brush slots:</source>
-        <translation>Emplacements de pinceau&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Share one color across all brush slots</source>
-        <translation>Partager une couleur pour tous les emplacements de pinceau</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-108"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show a %1 outline around the brush</source>
-        <translation>Montrer une bordure de %1 autour du pinceau</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+88"/>
         <source>Enable brush outline</source>
-        <translation>Activer la bordure du pinceau</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-71"/>
         <source>Brush outline:</source>
-        <translation>Bordure du pinceau&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Same as brush cursor</source>
-        <translation>Identique au curseur du pinceau</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dot</source>
-        <translation type="unfinished">Point</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Crosshair</source>
-        <translation type="unfinished">Réticule</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Arrow</source>
-        <translation type="unfinished">Flèche</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right-handed triangle</source>
-        <translation>Triangle droitier</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Left-handed triangle</source>
-        <translation>Triangle gaucher</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Show sampling ring</source>
-        <translation>Montrer la bague d&apos;échantillonnage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color picker:</source>
-        <translation>Sélecteur de couleurs&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+19"/>
@@ -9080,25 +8980,25 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message numerus="yes">
         <location line="+31"/>
         <source>Show %1 brush slot(s)</source>
-        <translation>
-            <numerusform>Montrer %1 emplacement de pinceau</numerusform>
-            <numerusform>Montrer %1 emplacements de pinceaux</numerusform>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
         <location line="-136"/>
         <source>Color space:</source>
-        <translation>Espace colorimétrique&#xa0;:</translation>
+        <translation>Espai de color:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>HSV (Hue–Saturation–Value)</source>
-        <translation>TSV (Teinte-Saturation-Valeur)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HSL (Hue–Saturation–Lightness)</source>
-        <translation>TSL (Teinte-Saturation-Luminosité)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9108,17 +9008,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+56"/>
         <source>Eraser</source>
-        <translation type="unfinished">Gomme</translation>
+        <translation>Goma d&apos;esborrar</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Brush cursor:</source>
-        <translation>Curseur du pinceau&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Eraser cursor:</source>
-        <translation>Curseur de la gomme&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9131,22 +9031,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+25"/>
         <source>Touch Tester</source>
-        <translation>Testeur de Toucher</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Touch mode:</source>
-        <translation>Mode de Toucher&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation>Écran tactile</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation>Gestures</translation>
+        <translation>Gestos</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9155,117 +9055,117 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+13"/>
         <location line="+9"/>
         <source>No action</source>
-        <translation>Pas d&apos;actions</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-82"/>
         <source>Undo</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Desfer</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Redo</source>
-        <translation type="unfinished">Refaire</translation>
+        <translation>Refer</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hide docks</source>
-        <translation>Cacher le panneau d&apos;outils</translation>
+        <translation>Amaga els acobladors</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle color picker</source>
-        <translation>Activer/désactiver le sélecteur de couleur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle eraser</source>
-        <translation>Activer/désactiver la gomme</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle erase mode</source>
-        <translation>Activer/désactiver le mode effaçage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle recolor mode</source>
-        <translation>Activer/désactiver le mode recoloration</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+13"/>
         <source>One-finger tap:</source>
-        <translation>Appuyer avec un doigt&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Two-finger tap:</source>
-        <translation>Appuyer avec deux doigts&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Three-finger tap:</source>
-        <translation>Appuyer avec trois doigts&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Four-finger tap:</source>
-        <translation>Appuyer avec quatre doigts&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation>Choisir la couleur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>One-finger tap and hold:</source>
-        <translation>Touché et maintenir à un doigt&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Draw</source>
-        <translation>Dessiner</translation>
+        <translation>Dibuixa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pan canvas</source>
-        <translation>Déplacer la toile</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Guess</source>
-        <translation>Deviner</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>One-finger touch:</source>
-        <translation>Touché à un doigt&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Zoom</source>
-        <translation type="unfinished">Zoom</translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Two-finger pinch:</source>
-        <translation>Pincer à deux doigts&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Rotate canvas</source>
-        <translation>Tourner la toile</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free rotate canvas</source>
-        <translation>Rotation libre de la toile</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet rotate canvas</source>
-        <translation>Rotation à cran de la toile</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9303,13 +9203,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Escriptori</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+161"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Desactivat</translation>
     </message>
     <message>
         <location line="-160"/>
@@ -9334,47 +9234,47 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Kinetic scrolling:</source>
-        <translation>Défilement cinétique&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Threshold: </source>
-        <translation>Seuil&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide scroll bars</source>
-        <translation>Cacher les barres de défilement</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Background color behind the canvas</source>
-        <translation>Couleur de fond derrière la toile</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+71"/>
         <source>Override system scale factor</source>
-        <translation>Remplacer le facteur d&apos;échelle du système</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-126"/>
         <source>Small screen</source>
-        <translation>Petit écran</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+56"/>
         <source>First checker color</source>
-        <translation>Couleur du premier damier</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Second checker color</source>
-        <translation>Couleur du second damier</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Colors behind canvas:</source>
-        <translation>Couleurs derrière la toile&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+33"/>
@@ -9389,57 +9289,57 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Show scroll bars on canvas</source>
-        <translation>Montrer les barres de défilement sur la toile</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Miscellaneous:</source>
-        <translation>Divers&#xa0;:</translation>
+        <translation>Miscel·lània:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Prompt when creating layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Pregunta en crear capes</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Ask before deleting layers</source>
-        <translation>Demander avant de supprimer des calques</translation>
+        <translation>Pregunta abans d&apos;esborrar capes</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Scaling:</source>
-        <translation>Échelle&#xa0;:</translation>
+        <translation>Escalat:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Scale factor: </source>
-        <translation>Facteur d&apos;échelle&#xa0;: </translation>
+        <translation>Factor d&apos;escala: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Font size:</source>
-        <translation>Taille de la police&#xa0;:</translation>
+        <translation>Mida de la lletra:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Vertical sync:</source>
-        <translation>Synchronisation verticale&#xa0;:</translation>
+        <translation>Sincronització Vertical:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enabled</source>
-        <translation>Activé</translation>
+        <translation>Habilitat</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>System</source>
-        <translation>Système</translation>
+        <translation>Sistema</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -9454,7 +9354,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Changes apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation>Les modifications s&apos;appliquent après le redémarrage de Drawpile. Le facteur d&apos;échelle actuel est de %1% et la taille de police est de %2.</translation>
+        <translation>Els canvis s&apos;aplicaran després que reinicieu Drawpile. El factor d&apos;escala actual és %1%, la mida de la lletra és %2.</translation>
     </message>
 </context>
 <context>
@@ -9462,107 +9362,107 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/browse.cpp" line="+61"/>
         <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
-        <translation>Vous n&apos;avez pas encore ajouté de serveurs. Vous pouvez en trouver à &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</translation>
+        <translation>Encara no heu afegit cap servidor. En podeu trobar a &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
-        <translation>Pour ajouter le serveur Drawpile publique, &lt;a href=&quot;#&quot;&gt;cliquez ici&lt;/a&gt;.</translation>
+        <translation>Per afegir un servidor públic de Drawpile, &lt;a href=&quot;#&quot;&gt;premeu aquí&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtrer</translation>
+        <translation>Filtre</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Closed</source>
-        <translation type="unfinished">Fermé</translation>
+        <translation>Tancat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show sessions that don&apos;t let new users join</source>
-        <translation>Afficher les sessions qui ne permettent pas aux nouveaux utilisateurs de rejoindre</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Password</source>
-        <translation type="unfinished">Mot de passe</translation>
+        <translation>Contrasenya</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that require a password to join</source>
-        <translation>Afficher les sessions qui nécessitent un mot de passe pour rejoindre</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished">NAAM</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation>Montrer les sessions non-adaptées aux mineur·e·s (NAAM)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation>Inactif</translation>
+        <translation>Inactiu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <translation>Afficher les sessions qui n&apos;ont aucun utilisateur activement en train de dessiner</translation>
+        <translation>Mostra les sessions que tenen zero usuaris dibuixant activament.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Duplicates</source>
-        <translation>Doublons</translation>
+        <translation>Dupplicats</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that are listed on multiple servers</source>
-        <translation>Montrer les sessions répertoriées dans plusieurs serveurs</translation>
+        <translation>Mostra les sessions llistades en multiples servidors</translation>
     </message>
     <message>
         <location line="+158"/>
         <source>Loading...</source>
-        <translation type="unfinished">Chargement...</translation>
+        <translation>Carregant...</translation>
     </message>
     <message>
         <location line="-95"/>
         <source>Join</source>
-        <translation type="unfinished">Rejoindre</translation>
+        <translation>Unir-se</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy session URL</source>
-        <translation>Copier l&apos;URL de la session</translation>
+        <translation>Copia la direcció de la sessió</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy title</source>
-        <translation>Copier le titre</translation>
+        <translation>Copia el titol</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Copy server</source>
-        <translation>Copier le serveur</translation>
+        <translation>Copia el servidor</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy owner</source>
-        <translation>Copier le propriétaire</translation>
+        <translation>Copia el propietari</translation>
     </message>
     <message>
         <location line="+92"/>
         <source>Nothing here yet!</source>
-        <translation>Rien ici pour l&apos;instant&#x202f;!</translation>
+        <translation>Encara no hi ha res aqui!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Read the message at the top on how to add a server.</source>
-        <translation>Lire le message au dessus sur comment ajouter un serveur.</translation>
+        <translation>Llegiu el missatge a dalt sobre com afegir un servidor.</translation>
     </message>
 </context>
 <context>
@@ -9571,27 +9471,27 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location filename="../dialogs/startdialog/create.cpp" line="+26"/>
         <location line="+7"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Width:</source>
-        <translation type="unfinished">Largeur :</translation>
+        <translation>Amplada:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height:</source>
-        <translation type="unfinished">Hauteur :</translation>
+        <translation>Alçada:</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Canvas background color</source>
-        <translation>Couleur de fond de la toile</translation>
+        <translation>Color de fons del llenç</translation>
     </message>
     <message>
         <location line="-33"/>
         <source>Background:</source>
-        <translation type="unfinished">Arrière-plan :</translation>
+        <translation>Fons:</translation>
     </message>
 </context>
 <context>
@@ -9599,7 +9499,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host.cpp" line="+41"/>
         <source>Session</source>
-        <translation>Session</translation>
+        <translation>Sessió</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9609,50 +9509,50 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Permissions</source>
-        <translation>Permissions</translation>
+        <translation>Permisos</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles</source>
-        <translation>Rôles</translation>
+        <translation>Rols</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Bans</source>
-        <translation type="unfinished">Exclusions</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Host Error</source>
-        <translation>Erreur de l&apos;Hôte</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>Invalid input(s), please correct the following:</source>
         <translation>
-            <numerusform>Entrée non valide, veuillez corriger l&apos;élément suivant&#xa0;:</numerusform>
-            <numerusform>Entrées non valides, veuillez corriger les éléments suivants&#xa0;:</numerusform>
+            <numerusform>Entrada no vàlida, si us plau corregiu el següent:</numerusform>
+            <numerusform>Entrades no vàlides, si us plau corregiu els següents:</numerusform>
         </translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Failed to read file: %1</source>
-        <translation>Échec de lecture du fichier&#xa0;: %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No file or content received.</source>
-        <translation>Aucun fichier ou contenu reçu.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Import Failed</source>
-        <translation>Échec de l&apos;importation</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Could not import session settings.</source>
-        <translation>Impossible d&apos;importer les paramètres de session.</translation>
+        <translation>No s&apos;han pogut importar els paràmetres de sessió.</translation>
     </message>
 </context>
 <context>
@@ -9660,12 +9560,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+26"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt; or &lt;strong&gt;IP address&lt;/strong&gt;:</source>
-        <translation>Entez un &lt;strong&gt;URL de session&lt;/strong&gt;, &lt;strong&gt;nom d&apos;hôte&lt;/strong&gt; ou &lt;strong&gt;adresse IP&lt;/strong&gt;&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Recent:</source>
-        <translation>Récent&#xa0;:</translation>
+        <translation>Recent:</translation>
     </message>
 </context>
 <context>
@@ -9673,32 +9573,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="+28"/>
         <source>Help</source>
-        <translation>Aide</translation>
+        <translation>Ajuda</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s help pages in your browser</source>
-        <translation>Ouvrir les pages d&apos;aide de Drawpile dans votre navigateur</translation>
+        <translation>Obre les pàgines d&apos;ajuda de Drawpile en el vostre navegador</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet Setup</source>
-        <translation>Configuration de la tablette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
-        <translation>Ouvrez la page Drawpile d&apos;aide à la configuration et au dépannage de la tablette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Communities</source>
-        <translation>Communautés</translation>
+        <translation>Comunitats</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s communities page in your browser</source>
-        <translation>Ouvrir la page des communautés Drawpile dans votre navigateur</translation>
+        <translation>Obre la pàgina de comunitats de Drawpile en el vostre navegador.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9708,7 +9608,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Join the Drawpile Discord server</source>
-        <translation>Rejoindre le serveur Discord de Drawpile</translation>
+        <translation>Uniu-vos al servidor de Discord de Drawpile</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9718,7 +9618,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Join the #drawpile chatroom on libera.chat</source>
-        <translation>Rejoindre le salon de discussion #drawpile sur libera.chat</translation>
+        <translation>Uniu-vos a la la sala de xat #drawpile a libera.chat</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9728,7 +9628,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s GitHub page in your browser</source>
-        <translation>Ouvrir la pages Github de Drawpile dans votre navigateur</translation>
+        <translation>Obre la pàgina de Github de Drawpile en el vostre navegador</translation>
     </message>
 </context>
 <context>
@@ -9736,37 +9636,37 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/updatenotice.cpp" line="+60"/>
         <source>Update</source>
-        <translation>Mise à jour</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Dismiss</source>
-        <translation>Rejeter</translation>
+        <translation>Descarta</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hide this notification</source>
-        <translation>Cacher cette notification</translation>
+        <translation>Amaga aquesta notificació</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>A new version of Drawpile is available!</source>
-        <translation>Une nouvelle version de Drawpile est disponible&#x202f;!</translation>
+        <translation>Hi ha disponible una nova versió de Drawpile!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Update to Drawpile version %1</source>
-        <translation>Mise à jour de Drawpile version %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation>La page de téléchargement de Drawpile %1 devrait s&apos;ouvrir dans votre navigateur. Si non, merci de visiter &lt;strong&gt;drawpile.net&lt;/strong&gt; manuellement.</translation>
+        <translation type="unfinished">La pàgina de descàrrega per a Drawpile %1 s&apos;hauria d&apos;haver obert al vostre navegador. Si no visiteu &lt;strong&gt;drawpile.net&lt;/strong&gt; manualment.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation>La page de téléchargement de Drawpile %1 n&apos;a pas pu être ouverte, merci de visiter &lt;strong&gt;drawpile.net&lt;/strong&gt; manuellement.</translation>
+        <translation>La pàgina de descàrrega per a Drawpile %1 no s&apos;ha pogut obrir, si us plau visiteu &lt;strong&gt;drawpile.net&lt;/strong&gt; manualment.</translation>
     </message>
 </context>
 <context>
@@ -9774,37 +9674,37 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/welcome.cpp" line="+50"/>
         <source>Standalone Mode</source>
-        <translation>Mode autonome</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You are running the web browser version of Drawpile in standalone mode. It will &lt;strong&gt;not&lt;/strong&gt; automatically save what you draw, so save often!</source>
-        <translation>Vous utilisez la version navigateur web de Drawpile en mode autonome. Vos dessins ne seront &lt;strong&gt;pas&lt;/strong&gt; automatiquement enregistrés&#x202f;; sauvegardez donc régulièrement&#x202f;!</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Welcome to Drawpile!</source>
-        <translation>Bienvenue sur Drawpile&#x202f;!</translation>
+        <translation>Benvingut a Drawpile!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation>Consultez les &lt;a href=&quot;#preferences&quot;&gt;Préférences&lt;/a&gt; pour configurer les éléments à votre convenance. Vous pouvez également choisir une &lt;a href=&quot;#layouts&quot;&gt;mise en page&lt;/a&gt; différente pour l&apos;application.</translation>
+        <translation>Feu un cop d&apos;ull a les &lt;a href=&quot;#preferences&quot;&gt;Preferències&lt;/a&gt; per configurar les coses al vostre gust. Potser també voleu triar una altra &lt;a href=&quot;#layouts&quot;&gt;Disposició&lt;/a&gt; per a l&apos;aplicació.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation>Si vous disposez d&apos;un lien d&apos;invitation pour une séance de dessin, vous pouvez la &lt;a href=&quot;#join&quot;&gt;Rejoindre&lt;/a&gt; directement. Vous pouvez également &lt;a href=&quot;#browse&quot;&gt;Parcourir&lt;/a&gt; les séances publiques ou simplement créer une &lt;a href=&quot;#create&quot;&gt;Nouvelle Toile&lt;/a&gt; pour dessiner par vous-même.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
-        <translation>Si vous rencontrez des difficultés, consultez les pages d&apos;aide à droite. Si elles ne répondent pas à votre question, vous pouvez rejoindre le serveur Discord et poser vos questions&#x202f;; il y a généralement des personnes disponibles pour vous aider&#x202f;!</translation>
+        <translation>Si teniu problemes, feu un cop d&apos;ull a les pàgines d&apos;ajuda enllaçades a la dreta. Si no responen a la vostra qüestió, podeu unir-vos al servidor Discord i preguntar, normalment hi ha gent per ajudar!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Next time, you&apos;ll see news and updates on this page.</source>
-        <translation>La prochaine fois, vous verrez des nouvelle et des mises à jour sur cette page.</translation>
+        <translation>El pròxim cop, veureu notícies i actualitzacions en aquesta pàgina.</translation>
     </message>
 </context>
 <context>
@@ -9812,12 +9712,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/bans.cpp" line="+24"/>
         <source>No bans imported.</source>
-        <translation>Aucun bannissements importés.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Remove</source>
-        <translation type="unfinished">Retirer</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9825,7 +9725,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/categories.cpp" line="+27"/>
         <source>Session</source>
-        <translation>Session</translation>
+        <translation>Sessió</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9835,32 +9735,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+13"/>
         <source>Replace announcements</source>
-        <translation>Remplacer les annonces</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Permissions</source>
-        <translation>Permissions</translation>
+        <translation>Permisos</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles</source>
-        <translation>Rôles</translation>
+        <translation>Rols</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Replace role list</source>
-        <translation>Remplacer la liste des rôles&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Bans</source>
-        <translation type="unfinished">Exclusions</translation>
+        <translation>Bloquejos</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Replace ban list</source>
-        <translation>Remplacer la liste des bannissements</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9868,22 +9768,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+504"/>
         <source>Export Settings</source>
-        <translation>Exporter les Paramètres</translation>
+        <translation>Exportar la configuració</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pick the sections you want to export:</source>
-        <translation>Choisissez les sélections que vous désirez exporter&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Export Error</source>
-        <translation>Erreur d&apos;exportation</translation>
+        <translation>Error d&apos;exportació</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Could not export session settings.</source>
-        <translation>Impossible d&apos;exporter les paramètres de session.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9891,12 +9791,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-113"/>
         <source>Import Settings</source>
-        <translation>Importer les Réglages</translation>
+        <translation>Importar configuració</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to import:</source>
-        <translation>Sélectionnez les sections que vous souhaitez importer&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9904,42 +9804,42 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/listing.cpp" line="+37"/>
         <source>Set title automatically</source>
-        <translation>Définir le titre automatiquement</translation>
+        <translation>Estableix el títol automàticament</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Enter a publicly visible title</source>
-        <translation>Saisissez un titre visible publiquement</translation>
+        <translation>Introduïu un títol públicament visible</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Title:</source>
-        <translation type="unfinished">Titre :</translation>
+        <translation>Títol:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Publicly visible ID for pretty invite links</source>
-        <translation>ID visible publiquement pour les jolis liens d&apos;invitation</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>ID alias:</source>
-        <translation>Alias d&apos;identification&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Announcements:</source>
-        <translation>Annonces&#xa0;:</translation>
+        <translation>Anuncis:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Add</source>
-        <translation type="unfinished">Ajouter</translation>
+        <translation>Afegeix</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove selected</source>
-        <translation type="unfinished">Effacer la sélection</translation>
+        <translation>Elimina els seleccionats</translation>
     </message>
     <message>
         <location line="+139"/>
@@ -9962,60 +9862,60 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-356"/>
         <source>Load Settings</source>
-        <translation>Charger les Paramètres</translation>
+        <translation>Carrega la configuració</translation>
     </message>
     <message>
         <location line="+37"/>
         <location line="+109"/>
         <source>Rename</source>
-        <translation type="unfinished">Renommer</translation>
+        <translation>Reanomena</translation>
     </message>
     <message>
         <location line="-102"/>
         <location line="+140"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location line="-131"/>
         <source>Pick the sections you want to load:</source>
-        <translation>Sélectionnez les sections que vous souhaitez charger&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+94"/>
         <source>Choose a new name for preset %1.</source>
-        <translation>Choisissez un nouveau nom pour le préréglage %1.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Conflict</source>
-        <translation>Conflit</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation>Le préréglage %1 existe déjà, désirez-vous le remplacer&#x202f;?</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Yes, replace</source>
-        <translation>Oui, remplacer</translation>
+        <translation>Si, substitueix</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+22"/>
         <source>No, keep</source>
-        <translation>Non, garder</translation>
+        <translation>No, mantingue&apos;l</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Are you sure you want to delete preset %1?</source>
-        <translation>Êtes-vous sûr·e de vouloir supprimer ce préréglage %1&#x202f;?</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, delete</source>
-        <translation>Oui, supprimer</translation>
+        <translation>Sí, elimina&apos;l</translation>
     </message>
 </context>
 <context>
@@ -10023,87 +9923,87 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/permissions.cpp" line="+97"/>
         <source>Undo Limit: </source>
-        <translation>Limite de Retour en Arrière&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Cut, paste and fill:</source>
-        <translation>Couper, coller et remplir&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Transform selections:</source>
-        <translation type="unfinished"></translation>
+        <translation>Transforma les seleccions:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Create annotations:</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea anotacions:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Manage own layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Administra les capes pròpies:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Manage all layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Administra totes les capes:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change canvas size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia la mida del llenç:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change background:</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el fons:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>MyPaint brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinzells de MyPaint:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Laser pointer:</source>
-        <translation>Pointeur laser&#xa0;:</translation>
+        <translation>Punter làser:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Animation timeline:</source>
-        <translation>Chronologie d&apos;animation&#xa0;:</translation>
+        <translation>Línia de temps d&apos;animació:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Undo and redo:</source>
-        <translation>Annuler et rétablir&#xa0;:</translation>
+        <translation>Desfer i refer:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Kick and ban:</source>
-        <translation>Éjecter et bannir&#xa0;:</translation>
+        <translation>Expulsa i bloqueja:</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>Everyone</source>
-        <translation type="unfinished">Tout le monde</translation>
+        <translation>Tothom</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Registered</source>
-        <translation type="unfinished">Enregistré</translation>
+        <translation>Registrats</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Trusted</source>
-        <translation type="unfinished">Fiables</translation>
+        <translation>De confiança</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Operators</source>
-        <translation type="unfinished">Opérateurs</translation>
+        <translation>Operadors</translation>
     </message>
 </context>
 <context>
@@ -10111,12 +10011,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-232"/>
         <source>Reset</source>
-        <translation type="unfinished">Réinitialiser</translation>
+        <translation>Reinicialitzar</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to reset to their defaults:</source>
-        <translation>Choisissez les sections que vous voulez restaurer à leurs valeurs par défaut&#xa0;:</translation>
+        <translation>Trieu les seccions que voleu reinicialitzar als seus valors per omissió:</translation>
     </message>
 </context>
 <context>
@@ -10124,27 +10024,27 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/roles.cpp" line="+36"/>
         <source>Define a password to let anyone become operator</source>
-        <translation>Définir un mot de passe pour permettre à n&apos;importe qui de devenir opérateur</translation>
+        <translation>Defineix una contrasenya per deixar a qualsevol ser operador</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Operator password:</source>
-        <translation type="unfinished">Mot de passe Opérateur :</translation>
+        <translation>Contrasenya d&apos;operador:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>No roles imported.</source>
-        <translation>Pas de rôles importés.</translation>
+        <translation>Cap rol importat.</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Operator</source>
-        <translation type="unfinished">Opérateur</translation>
+        <translation>Operador</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Trusted</source>
-        <translation type="unfinished">Fiables</translation>
+        <translation>De confiança</translation>
     </message>
 </context>
 <context>
@@ -10152,37 +10052,37 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+282"/>
         <source>Load Settings</source>
-        <translation>Charger les Paramètres</translation>
+        <translation>Carrega la configuració</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Name:</source>
-        <translation type="unfinished">Nom&#x202f;:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Pick the sections you want to save:</source>
-        <translation>Choisissez les sections que vous voulez sauvegarder&#xa0;:</translation>
+        <translation>Escolliu les seccions que voleu desar:</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Save</source>
-        <translation type="unfinished">Enregistrer</translation>
+        <translation>Desa</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation>Le préréglage %1 existe déjà, souhaitez-vous le remplacer&#x202f;?</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Yes, replace</source>
-        <translation>Oui, remplacer</translation>
+        <translation>Sí, substitueix</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation>Non, garder</translation>
+        <translation>No, manté</translation>
     </message>
 </context>
 <context>
@@ -10190,47 +10090,47 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/session.cpp" line="+38"/>
         <source>Personal session, only people you invite can join</source>
-        <translation>Session personnelle, seules les personnes que vous invitez peuvent rejoindre</translation>
+        <translation>Sessió personal, només la gent que inviteu pot unir-se</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Public session, anyone can freely join</source>
-        <translation>Session publique, tout le monde peut rejoindre librement</translation>
+        <translation>Sessió públic, qualsevol pot unir-se lliurement</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Set a session title in the Listing tab.</source>
-        <translation>Définissez un titre de session dans l’onglet Liste.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Session password:</source>
-        <translation>Mot de passe de la session&#xa0;:</translation>
+        <translation>Contrasenya de la sessió:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter or generate a session password</source>
-        <translation>Entrer ou générer un mot de passe de session</translation>
+        <translation>Introduïu o genereu una contrasenya de sessió</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Generate</source>
-        <translation>Générer</translation>
+        <translation>Generar</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation>Non adapté aux mineur·e·s (NAAM)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation type="unfinished">Conserver l&apos;historique de discussion</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Host or IP address</source>
-        <translation>Nom d&apos;hôte ou adresse IP</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
@@ -10240,32 +10140,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Server:</source>
-        <translation>Serveur&#xa0;:</translation>
+        <translation>Servidor:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Enter a host or IP address</source>
-        <translation>Entrer un nom d&apos;hôte ou une adresse IP</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+130"/>
         <source>Session: a password is required</source>
-        <translation>Session&#xa0;: un mot de passe est nécessaire</translation>
+        <translation>Sessió: Es requereix una contrasenya</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Session: a server is required</source>
-        <translation>Session&#xa0;: un serveur est nécessaire</translation>
+        <translation>Sessió: Es requereix un servidor</translation>
     </message>
     <message>
         <location line="+70"/>
         <source>This will host your session on the public Drawpile server. It&apos;s freely available for anyone. To keep space available, sessions will be stopped when they&apos;re inactive for a while or after everybody leaves.</source>
-        <translation>Ceci hébergera votre session sur le serveur public Drawpile. Il est accessible librement à tous. Pour préserver l&apos;espace disponible, les sessions seront interrompues en cas d&apos;inactivité prolongée ou après le départ de tous les participants.</translation>
+        <translation>Això executarà la vostra sessió en el servidor de Drawpile públic. Està disponible lliurement per a qualsevol. Per a mantenir l&apos;espai disponible, les sessions s&apos;aturaran quan estiguin inactives durant un temps o després que tothom marxi.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Sessions must comply with the rules, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;click here to view them&lt;/a&gt;.</source>
-        <translation>Les sessions doivent obéir aux règles, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;cliquez ici pour les consulter&lt;/a&gt;.</translation>
+        <translation>Les sessions han de complir amb les normes, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;cliqueu aquí per a veure-les&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -10311,27 +10211,27 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/brushpalettedock.cpp" line="+101"/>
         <source>Brushes</source>
-        <translation type="unfinished">Brosses</translation>
+        <translation>Pinzells</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerca</translation>
     </message>
     <message>
         <location line="+553"/>
         <source>New Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Nova etiqueta</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Delete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina l&apos;etiqueta</translation>
     </message>
     <message>
         <location line="-580"/>
         <source>&amp;Edit Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Edita el pinzell</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10346,47 +10246,47 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>&amp;New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nou pinzell</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sobreescriu el pinzell</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Delete Brush</source>
-        <translation>Su&amp;pprimer le Pinceau</translation>
+        <translation>&amp;Elimina el pinzell</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Brush &amp;Tags</source>
-        <translation>É&amp;tiquette des Pinceaux</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Icon Size</source>
-        <translation>Taille de l&apos;&amp;Icône</translation>
+        <translation>&amp;Mida de la icona</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ne&amp;w Tag</source>
-        <translation>Nouvelle Éti&amp;quette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rena&amp;me Tag</source>
-        <translation>Reno&amp;mmer l’Étiquette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>De&amp;lete Tag</source>
-        <translation>Supprimer &amp;l’Étiquette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Im&amp;port Brushes…</source>
-        <translation>Im&amp;porter des Pinceaux…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10396,7 +10296,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+15"/>
         <source>Export Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta el pinzell…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10406,50 +10306,50 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+227"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Sobreescriu el pinzell</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really overwrite brush &apos;%1&apos; with the current one?</source>
-        <translation type="unfinished"></translation>
+        <translation>Esteu segur que voleu sobreescriure el pinzell &apos;%1&apos; amb l&apos;actual?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Overwrite</source>
-        <translation>Écraser</translation>
+        <translation>Sobreescriu</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+312"/>
         <location line="+45"/>
         <source>Keep</source>
-        <translation>Garder</translation>
+        <translation>Manté</translation>
     </message>
     <message>
         <location line="-294"/>
         <source>Brush Import</source>
-        <translation>Import des Pinceaux</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <location line="+12"/>
         <source>%n brush(es) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n pinzell importat.</numerusform>
+            <numerusform>%n pinzells importats.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+13"/>
         <source>%n tag(s) imported: %1</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n etiqueta importada: %1</numerusform>
+            <numerusform>%n etiquetes importades: %1</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>0 tags imported.</source>
-        <translation>0 étiquettes importées.</translation>
+        <translation>0 etiquetes importades.</translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
@@ -10463,45 +10363,45 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+116"/>
         <source>No tags</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but there&apos;s no tags to assign it to.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cap etiqueta</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>No brush selected</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but no brush is actually selected.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cap pinzell seleccionat</translation>
     </message>
     <message>
         <location line="+39"/>
         <location line="+16"/>
         <source>Tag name:</source>
-        <translation>Nom de l&apos;étiquette&#xa0;:</translation>
+        <translation>Nom de l&apos;etiqueta:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Edit Tag</source>
-        <translation>Modifier l’Étiquette</translation>
+        <translation>Editar etiqueta</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Really delete tag &apos;%1&apos;? This will not delete the brushes within.</source>
-        <translation>Voulez-vous vraiment supprimer l’Étiquette «&#xa0;%1&#xa0;»&#x202f;? Cela ne supprimera pas les pinceaux qu&apos;elle contient.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+45"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Delete Brush</source>
-        <translation>Supprimer le Pinceau</translation>
+        <translation>Eliminar el pinzell</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete brush &apos;%1&apos;?</source>
-        <translation>Voulez-vous vraiment supprimer le pinceau «&#xa0;%1&#xa0;»&#x202f;?</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10509,7 +10409,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+25"/>
         <source>Color Circle</source>
-        <translation>Cercle de Couleurs</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
@@ -10519,7 +10419,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+9"/>
         <source>Configure…</source>
-        <translation>Configurer…</translation>
+        <translation>Configura…</translation>
     </message>
 </context>
 <context>
@@ -10527,92 +10427,92 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/colorpalette.cpp" line="+372"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location line="-249"/>
         <source>New palette</source>
-        <translation>Nouvelle palette</translation>
+        <translation>Nova paleta</translation>
     </message>
     <message>
         <location line="-12"/>
         <source>Color Palette</source>
-        <translation>Palette de Couleurs</translation>
+        <translation>Paleta de color</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Palette</source>
-        <translation>Palette</translation>
+        <translation>Paleta</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Duplicate palette</source>
-        <translation>Dupliquer la palette</translation>
+        <translation>Duplica la paleta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete palette</source>
-        <translation>Supprimer la palette</translation>
+        <translation>Elimina la paleta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rename palette</source>
-        <translation>Renommer la palette</translation>
+        <translation>Reanomena la paleta</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import palette…</source>
-        <translation>Importer une palette…</translation>
+        <translation>Importa una paleta…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export palette…</source>
-        <translation>Exporter une palette…</translation>
+        <translation>Exporta la paleta…</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Add column</source>
-        <translation>Ajouter une colonne</translation>
+        <translation>Afegeix una columna</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove column</source>
-        <translation>Supprimer la colonne</translation>
+        <translation>Elimina la columna</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Color history</source>
-        <translation>Historique des couleurs</translation>
+        <translation>Historial de color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra en aquest acoblador</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Show on all color docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra en tots els acobladors de color</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide on all color docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Amaga en tots els acobladors de color</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show only on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra només en aquest acoblador</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide only on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>Amaga només en aquest acoblador</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>New Palette</source>
-        <translation>Nouvelle Palette</translation>
+        <translation>Nova paleta</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -10623,47 +10523,47 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Rename Palette</source>
-        <translation>Renommer la Palette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Import palette</source>
-        <translation type="unfinished">Importer une palette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Palettes (%1)</source>
-        <translation>Palettes (%1)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>All files (*)</source>
-        <translation type="unfinished">Tous les fichiers (*)</translation>
+        <translation>Tots els fitxers (*)</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Export palette</source>
-        <translation type="unfinished">Exporter une palette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>GIMP palette (%1)</source>
-        <translation type="unfinished">Palette GIMP (%1)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error</source>
-        <translation type="unfinished">Erreur</translation>
+        <translation>Error</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Couldn&apos;t save file</source>
-        <translation>Impossible d&apos;enregistrer le fichier</translation>
+        <translation>No s&apos;ha pogut desar el fitxer</translation>
     </message>
     <message>
         <location line="-58"/>
         <source>Delete palette &quot;%1&quot;?</source>
-        <translation type="unfinished">Effacer la palette &quot;%1&quot; ?</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10671,134 +10571,134 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+73"/>
         <source>Color Sliders</source>
-        <translation>Curseur de Couleur</translation>
+        <translation>Barres de color</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Sliders</source>
-        <translation>Curseurs</translation>
+        <translation>Barres</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Color space</source>
-        <translation>Espace colorimétrique</translation>
+        <translation>Espai de color</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+394"/>
         <source>HSV</source>
         <extracomment>Color space HSV (hue, chroma, value)</extracomment>
-        <translation>TSV</translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="-383"/>
         <location line="+359"/>
         <source>HSL</source>
         <extracomment>Color space HSL (hue, saturation, lightness)</extracomment>
-        <translation>TSL</translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="-348"/>
         <location line="+360"/>
         <source>HCL</source>
         <extracomment>Color space HCL (hue, chroma, lightness)</extracomment>
-        <translation>TCL</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-347"/>
         <source>Show all sliders at once</source>
-        <translation>Montrer tous les curseurs en même temps</translation>
+        <translation>Mostra totes les barres alhora</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show hex input</source>
-        <translation>Afficher l&apos;entrée hex</translation>
+        <translation>Mostra l&apos;entrada hexadecimal</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>R</source>
         <extracomment>The &quot;Red&quot; R of RGB.</extracomment>
-        <translation>R</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
         <source>G</source>
         <extracomment>The &quot;Green&quot; G of RGB.</extracomment>
-        <translation>V</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
         <source>B</source>
         <extracomment>The &quot;Blue&quot; B of RGB.</extracomment>
-        <translation>B</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+19"/>
         <source>RGB</source>
-        <translation>RVB</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+203"/>
         <source>H</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
-        <translation>T</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Saturation&quot; S of HSL.</extracomment>
-        <translation>S</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Lightness&quot; L HSL.</extracomment>
-        <translation>L</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>H</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Hue&quot; H of HCL.</extracomment>
-        <translation>T</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>C</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Chroma&quot; C of HCL.</extracomment>
-        <translation>C</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Luma&quot; L of HCL.</extracomment>
-        <translation>L</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>H</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Hue&quot; H of HSV.</extracomment>
-        <translation>T</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Saturation&quot; S of HSV.</extracomment>
-        <translation>S</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>V</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Value&quot; V of HSV.</extracomment>
-        <translation>L</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10806,39 +10706,39 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/colorspinner.cpp" line="+88"/>
         <source>Shape</source>
-        <translation>Forme</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Rotating triangle</source>
-        <translation>Triangle tournant</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rotating square</source>
-        <translation>Carré tournant</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed triangle</source>
-        <translation>Triangle fixe</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed square</source>
-        <translation>Carré fixe</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+6"/>
         <location filename="../docks/colorspinner.cpp" line="+15"/>
         <source>Color space</source>
-        <translation>Espace colorimétrique</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <location filename="../docks/colorspinner.cpp" line="+3"/>
         <source>HSV</source>
-        <translation>TSL</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+12"/>
@@ -10870,22 +10770,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Ascendent</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Descendent</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Alineament</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished">Haut</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10917,42 +10817,42 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="+14"/>
         <source>Lock this layer</source>
-        <translation type="unfinished">Verrouiller ce calque</translation>
+        <translation>Bloqueja aquesta capa</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Censor</source>
-        <translation type="unfinished">Censurer</translation>
+        <translation>Censura</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Access tier:</source>
-        <translation type="unfinished">Autorisation d&apos;accès :</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Operators</source>
-        <translation type="unfinished">Opérateurs</translation>
+        <translation>Operadors</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Trusted</source>
-        <translation type="unfinished">Fiables</translation>
+        <translation>De confiança</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Registered</source>
-        <translation type="unfinished">Enregistré</translation>
+        <translation>Registrats</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Everyone</source>
-        <translation type="unfinished">Tout le monde</translation>
+        <translation>Tothom</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Exclusive access:</source>
-        <translation type="unfinished">Accès exclusif :</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10960,7 +10860,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-369"/>
         <source>Layers</source>
-        <translation type="unfinished">Calques</translation>
+        <translation>Capes</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -10971,12 +10871,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+9"/>
         <location line="+1695"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacité&#x202f;: </translation>
+        <translation>Opacitat: </translation>
     </message>
     <message>
         <location line="-1694"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -10991,7 +10891,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <translation>Fusionner le Groupe de Calques</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11041,12 +10941,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+165"/>
         <source>Layer</source>
-        <translation type="unfinished">Calque</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Grup</translation>
     </message>
     <message>
         <location line="-710"/>
@@ -11064,38 +10964,38 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/navigator.cpp" line="+475"/>
         <source>Navigator</source>
-        <translation type="unfinished">Navigateur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Show Cursors</source>
-        <translation type="unfinished">Montrer les curseurs</translation>
+        <translation>Mostra els cursors</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Realtime Update</source>
-        <translation type="unfinished">Mise à jour en temps réel</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>docks::OnionSkinsDock</name>
     <message>
-        <location filename="../docks/onionskins.cpp" line="+137"/>
-        <source>Frames: </source>
+        <location filename="../docks/onionskins.cpp" line="+117"/>
+        <source>Onion Skins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-10"/>
+        <location line="+10"/>
         <source>Tint Below</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-10"/>
-        <source>Onion Skins</source>
-        <translation type="unfinished">Pelures d&apos;Onion</translation>
+        <location line="+10"/>
+        <source>Frames: </source>
+        <translation>Fotogrames: </translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+7"/>
         <source>Wrap</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11117,7 +11017,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+42"/>
         <source>Opacity: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Opacitat: %1%</translation>
     </message>
 </context>
 <context>
@@ -11125,37 +11025,37 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/reference.cpp" line="+26"/>
         <source>Reference</source>
-        <translation type="unfinished"></translation>
+        <translation>Referencia</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open a file as a reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre el fitxer com a imatge de referència</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Enganxa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Paste a reference image from the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Enganxa una imatge de referència des del porta-retalls</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished">Fermer</translation>
+        <translation>Tanca</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Close the current reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>Tanca la imatge de referencia actual</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -11170,7 +11070,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+31"/>
         <source>Reset zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Reinicialitza el zoom</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -11185,18 +11085,18 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Error</source>
-        <translation type="unfinished">Erreur</translation>
+        <translation>Erro</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Could not open reference image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation>N&apos;a pas pu ouvrir l&apos;image de référence&#xa0;: %1.</translation>
+        <translation>No s&apos;ha pogut obrir la imatge de referencia %1.</translation>
     </message>
 </context>
 <context>
@@ -11204,12 +11104,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/timeline.cpp" line="+19"/>
         <source>Timeline</source>
-        <translation>Chronologie</translation>
+        <translation>Linia de temps</translation>
     </message>
     <message>
         <location line="+181"/>
         <source> FPS</source>
-        <translation type="unfinished"> IPS</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11217,17 +11117,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/titlewidget.cpp" line="+36"/>
         <source>Docked</source>
-        <translation type="unfinished"></translation>
+        <translation>Acoblat</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dockable by Dragging</source>
-        <translation type="unfinished"></translation>
+        <translation>Acoblable arrossegant</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished">Fermer</translation>
+        <translation>Tanca</translation>
     </message>
 </context>
 <context>
@@ -11235,12 +11135,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+12"/>
         <source>Tool</source>
-        <translation>Outil</translation>
+        <translation>Eina</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Tool Settings</source>
-        <translation>Réglages des outils</translation>
+        <translation>Preferencies de l&apos;eina</translation>
     </message>
 </context>
 <context>
@@ -11248,7 +11148,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../scene/canvasscene.cpp" line="+331"/>
         <source>Restoring canvas…</source>
-        <translation>Rétablissement de la toile…</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11256,37 +11156,37 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../tabletinput.cpp" line="+151"/>
         <source>Qt tablet input</source>
-        <translation>Entrée de tablette QT</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink input</source>
-        <translation>Entrée de KisTablet Windows Ink</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink non-native input</source>
-        <translation>Entrée non native de KisTablet Windows Ink</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>KisTablet Wintab input</source>
-        <translation>Entrée de KisTablet Wintab</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input with relative pen mode</source>
-        <translation>Entrée de KisTablet Wintab avec mode stylo relatif</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Qt6 Windows Ink input</source>
-        <translation>Entrée de Qt6 Windows Ink</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Wintab input</source>
-        <translation>Entrée de Qt6 Wintab</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11294,65 +11194,65 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../toolwidgets/annotationsettings.cpp" line="+59"/>
         <source>Protect</source>
-        <translation>Protéger</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Merge</source>
-        <translation type="unfinished">Fusionner</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Left</source>
-        <translation type="unfinished">Gauche</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+20"/>
         <source>Center</source>
-        <translation>Centrer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Justify</source>
-        <translation type="unfinished">Justifié</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right</source>
-        <translation type="unfinished">Droite</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Top</source>
-        <translation type="unfinished">Haut</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Bottom</source>
-        <translation type="unfinished">Bas</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation>Les annotations sont cachées. </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation>Afficher</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+343"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
-        <translation>Vous n&apos;avez pas la permission de coller des annotations groupées.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11360,97 +11260,97 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-106"/>
         <source>&amp;Edit Brush…</source>
-        <translation>Modifi&amp;er le pinceau…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Reset Brush</source>
-        <translation>&amp;Restaurer le Pinceau</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation>Réinitialiser tous le&amp;s Pinceaux et Emplacements</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation>Réinitialiser tous les &amp;Pinceaux</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;New Brush…</source>
-        <translation>&amp;Nouveau Pinceau…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Overwrite Brush</source>
-        <translation>&amp;Écraser le Pinceau</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Delete Brush</source>
-        <translation>Supp&amp;rimer le Pinceau</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>De&amp;tach Brush</source>
-        <translation>Dé&amp;tacher le Pinceau</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+84"/>
         <source>Time-Based Stabilizer</source>
-        <translation>Stabilisateur Basé sur le Temps</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Average Smoothing</source>
-        <translation>Moyenne de Lissage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
-        <translation>Ralentit le mouvement et le stabilise au fil du temps. Peut produire des résultats très fluides, mais peut être lent.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
-        <translation>Moyenne simple des entrées pour obtenir un résultat plus fluide. Plus rapide que le stabilisateur temporel, mais moins fluide.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Finish Strokes</source>
-        <translation>Finir les Traits</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Draws stabilized strokes to the end, rather than cutting them off.</source>
-        <translation>Dessine des traits stabilisés jusqu&apos;au bout, plutôt que de les couper.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronize With Brush</source>
-        <translation>Synchroniser Avec le Pinceau</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Makes the stabilizer a brush setting, like in MyPaint, rather than an independent setting, like in Krita.</source>
-        <translation>Fait du stabilisateur un paramètre de pinceau, comme dans MyPaint, plutôt qu&apos;un paramètre indépendant, comme dans Krita.</translation>
+        <translation>Fa l&apos;estabilitzador un arranjament del pinzell, com MyPaint, en comptes d&apos;un arranjament independent, com a Krita.</translation>
     </message>
     <message>
         <location line="+161"/>
         <source>This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.</source>
-        <translation>Cette session est hébergée avec Drawpile 2.1, les pinceaux MyPaint ne sont pas disponibles.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode with opacity dynamics is unavailable. &lt;a href=&quot;#inc&quot;&gt;Click here to switch to Direct/Build-Up Mode&lt;/a&gt; or &lt;a href=&quot;#opa&quot;&gt;here to disable opacity dynamics&lt;/a&gt;.</source>
-        <translation>Cette session est hébergée avec Drawpile 2.1, le Mode Indirect/Lavage avec opacité dynamique est indisponible. &lt;a href=&quot;#inc&quot;&gt;Cliquez ici pour basculer vers le Mode Direct/Accumulation&lt;/a&gt; ou &lt;a href=&quot;#opa&quot;&gt;ici pour désactiver les dynamiques d&apos;opacité&lt;/a&gt;.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-5"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
-        <translation>Vous n&apos;avez pas la permission d&apos;utiliser les pinceaux MyPaint.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11458,17 +11358,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../toolwidgets/colorpickersettings.cpp" line="+90"/>
         <source>Pick from screen</source>
-        <translation>Choisir à partir de l&apos;écran</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Size: </source>
-        <translation type="unfinished">Taille&#x202f;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Pick from current layer only</source>
-        <translation type="unfinished">Ne prendre que sur le calque courant</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11476,42 +11376,42 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="+74"/>
         <source>Fill tool settings</source>
-        <translation>Paramètres de l&apos;outil de remplissage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Edit pending fills</source>
-        <translation>Modifi&amp;er les remplissages en attente</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply changes in settings, color and layer to fills not yet applied</source>
-        <translation>Appliquer les modifications des paramètres, de la couleur et du calque aux remplissages pas encore appliqués</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Confirm fills with second click</source>
-        <translation>&amp;Confirme les remplissages avec un second clic</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lets you apply fills with a click instead of starting another fill</source>
-        <translation>Vous permet d&apos;appliquer des remplissages en un clic au lieu de démarrer un autre remplissage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+116"/>
         <source>You don&apos;t have permission to use the fill tool.</source>
-        <translation>Vous n&apos;avez pas la permission d&apos;utiliser l&apos;outil de remplissage.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+231"/>
         <source>Size Limit: Selection</source>
-        <translation>Limite de Taille&#xa0;: Sélection</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Size Limit: Unlimited</source>
-        <translation>Limite de taille&#xa0;: Infinie</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11519,72 +11419,72 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../toolwidgets/lasersettings.cpp" line="+93"/>
         <source>You don&apos;t have permission to use the laser pointer.</source>
-        <translation>Vous n&apos;avez pas la permission d&apos;utiliser le pointeur laser.</translation>
+        <translation>No teniu permís per a usar el punter làser.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Laser trails are hidden. </source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation>Les trainées des lasers sont cachées. </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation>Afficher</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>tools::SelectionSettings</name>
     <message>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="-250"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="-140"/>
         <source>Replace selection</source>
-        <translation>Remplacer la sélection</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Add to selection</source>
-        <translation>Ajouter à la sélection</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Intersect with selection</source>
-        <translation>Intersection avec la sélection</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove from selection</source>
-        <translation>Retirer de la sélection</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Anti-aliasing</source>
-        <translation>Anticrénelage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothe out selection edges</source>
-        <translation>Lisser les bords de la sélection</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Drag to move</source>
-        <translation>Faire glisser pour déplacer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Allow dragging the selection for a quick move operation.</source>
-        <translation>Permet de faire glisser la sélection pour une opération de déplacement rapide.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+161"/>
         <source>Select continuous area</source>
-        <translation>Sélectionner une aire continue</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Select similar color</source>
-        <translation>Sélectionner une couleur similaire</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11592,139 +11492,139 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../toolwidgets/transformsettings.cpp" line="+143"/>
         <source>Fast</source>
-        <translation>Rapide</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Quick preview not taking into account layering, opacity or anything else</source>
-        <translation>Aperçu rapide ne prenant pas en compte la superposition, l&apos;opacité ou quoi que ce soit d&apos;autre</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Accurate</source>
-        <translation>Précis</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preview the transform exactly how will look when applied</source>
-        <translation>Prévisualisez la transformation exactement à quoi elle ressemblera une fois appliquée</translation>
+        <translation>Vista prèvia de la transformació exactament com es veurà un cop aplicada</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Too many layers selected for accurate preview, only fast preview is available.</source>
-        <translation>Trop de calques sélectionnés pour un aperçu précis, seul un aperçu rapide est disponible.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Preview:</source>
-        <translation>Aperçu&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Nearest</source>
-        <translation>Le plus proche</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Nearest-neighbor interpolation, no smoothing</source>
-        <translation>Interpolation par le plus proche voisin, sans lissage</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Bilinear</source>
-        <translation>Bilinéaire</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothed interpolation</source>
-        <translation>Interpolation lissée</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Sampling:</source>
         <extracomment>Refers to the transform interpolation, but &quot;interpolation&quot; is uncomfortably long in English, it causes a lot of blank space and the tool settings to get wider. Try to take that into account if possible.</extracomment>
-        <translation>Échantillonnage&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Show</source>
-        <translation>Afficher</translation>
+        <translation>Mostra</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show transform handles instead of just moving</source>
-        <translation>Afficher les poignées de transformation au lieu de simplement les déplacer</translation>
+        <translation type="unfinished">Mostra les anses de transformació en comptes de només moure</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Scale</source>
-        <translation>Échelle</translation>
+        <translation>Escala</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shows scaling handles on corners and edges</source>
-        <translation>Affiche les poignées de mise à l&apos;échelle sur les coins et les bords</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Distort</source>
-        <translation>Déforme</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shows distortion handles on corners and edges</source>
-        <translation>Affiche les poignées de distorsion sur les coins et les bords</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Handles:</source>
         <extracomment>Refers to the handles on the corners and edges of a transform. Which are either arrows to scale the transformation or squares to distort it.</extracomment>
-        <translation>Poignées&#xa0;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Mode:</source>
-        <translation type="unfinished">Mode&#x202f;:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Constrain</source>
-        <translation>Contraindre</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Center</source>
-        <translation>Centrer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacité&#x202f;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished">Appliquer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply the transformation</source>
-        <translation>Appliquer la transformation</translation>
+        <translation>Aplica la transformació</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cancel the transformation</source>
-        <translation>Annuler la transformation</translation>
+        <translation>Cancel·la la transformació</translation>
     </message>
 </context>
 <context>
@@ -11732,12 +11632,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
         <source>Normal Size</source>
-        <translation type="unfinished">Taille d&apos;origine</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fit To Window</source>
-        <translation type="unfinished">Ajuster à l&apos;écran</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11745,7 +11645,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../utils/recents.cpp" line="+432"/>
         <source>More…</source>
-        <translation>Plus…</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11753,17 +11653,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../view/canvasscene.cpp" line="+573"/>
         <source>Restoring canvas…</source>
-        <translation>Restaurer la toile…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Compressing canvas…</source>
-        <translation>Compresser la toile…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Uploading canvas %1%</source>
-        <translation>Déversement de la toile %1%</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11771,7 +11671,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../view/canvasview.cpp" line="+134"/>
         <source>Save As…</source>
-        <translation>Enregistrer Sous…</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11779,47 +11679,47 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../view/lock.cpp" line="+29"/>
         <source>Out of space, use Session &gt; Reset to fix this</source>
-        <translation>Manque d&apos;espace, utilisez Session &gt; Réinitialiser pour résoudre ce problème</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Reset in progress</source>
-        <translation>Réinitialisation en cours</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation>La toile est verrouillée</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>User is locked</source>
-        <translation>L&apos;utilisateur est verrouillé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer is a group</source>
-        <translation>Le calque est un groupe</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is locked</source>
-        <translation>Le calque est verrouillé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is censored</source>
-        <translation>Le calque est censuré</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation>Le calque est caché</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is not visible in this frame</source>
-        <translation>Le calque n&apos;est pas visible dans cette image</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11845,7 +11745,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../widgets/canvasshortcutedit.cpp" line="+269"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11865,12 +11765,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>Turn the mouse wheel or click into in the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gireu la rodeta del ratolí i cliqueu al camp superior, opcionalment mentre manteniu premudes tecles. Premeu Esc per cancel·lar.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Hold down the desired key combination and click into the field above. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Manteniu premuda la combinació de tecles desitjada i cliqueu al camp de dalt. Premeu Esc per cancel·lar.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -11889,19 +11789,19 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location filename="../scene/canvasview.cpp" line="+332"/>
         <location filename="../view/canvasview.cpp" line="-30"/>
         <source>Reconnect</source>
-        <translation type="unfinished">Reconnexion</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+21"/>
         <location filename="../view/canvasview.cpp" line="+21"/>
         <source>Do you want to save the canvas as it was before the reset? Since this is a Drawpile 2.1 session, it may have desynchronized!</source>
-        <translation type="unfinished"></translation>
+        <translation>Voleu guardar el llenç com era abans del reinici? Com aquesta és una sessió de Drawpile 2.1, pot haver-se dessincronitzat!</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../view/canvasview.cpp" line="+5"/>
         <source>Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished"></translation>
+        <translation>Voleu desar el llenç com era abans de reiniciar-lo?</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11924,13 +11824,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+18"/>
         <location filename="../view/canvascontroller.cpp" line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Emmirallament horitzontal: Activat</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../view/canvascontroller.cpp" line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Emmirallament horitzontal: Desactivat</translation>
     </message>
     <message>
         <location line="+1825"/>
@@ -11962,17 +11862,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../chat/chatbox.cpp" line="+45"/>
         <source>Invite</source>
-        <translation type="unfinished">Inviter</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation>Session</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Chat</source>
-        <translation type="unfinished">Discussion</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11985,7 +11885,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../chat/chatwidget.cpp" line="+164"/>
         <source>Public</source>
-        <translation type="unfinished">Publique</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+71"/>
@@ -12000,22 +11900,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+44"/>
         <source>Chat (recorded)...</source>
-        <translation type="unfinished">Discussion (enregistrée)...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Chat...</source>
-        <translation type="unfinished">Discussion...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+310"/>
         <source>%1 joined the session</source>
-        <translation type="unfinished">%1 a rejoint la session</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+19"/>
         <source>%1 left the session</source>
-        <translation type="unfinished">%1 a quitté la session</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+166"/>
@@ -12089,32 +11989,40 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
 /me &lt;text&gt; - send action-type message
 /roll &lt;dice&gt; - roll dice, e.g. 1d6 for a six-sided die</source>
         <extracomment>Don&apos;t translate the commands, only their descriptions!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ordres disponibles del client:
+/help - mostra aquest missatge
+/clear - neteja la finestra del xat
+/! &lt;text&gt; fa un anunci (Només operadors)
+/alert &lt;text&gt; envia una alerta d&apos;alta prioritat (Només operadors)
+/pin &lt;text&gt; fixa un missatge a la part superior de la caixa de xat (Només operadors)
+/unpin - elimina el missatge fixat (Només operadors)
+/me &lt;text&gt; - envia un missatge de tipus acció
+/roll &lt;dau&gt; - tira el dau, p.e. 1d6 per un dau de 6 costats</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Unknown command: %1</source>
-        <translation>Commande inconnue&#xa0;: %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-711"/>
         <source>Clear</source>
-        <translation>Nettoyer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Compact mode</source>
-        <translation>Mode compact</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Detach</source>
-        <translation>Détacher</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Attach</source>
-        <translation>Attacher</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12122,7 +12030,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../chat/chatwindow.cpp" line="+12"/>
         <source>Chat</source>
-        <translation>Discussion</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12130,7 +12038,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../widgets/colorbutton.cpp" line="+42"/>
         <source>Select a color</source>
-        <translation>Choisir une couleur</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12138,47 +12046,47 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../widgets/curvewidget.cpp" line="+109"/>
         <source>Copy</source>
-        <translation>Copier</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Copies this curve to the clipboard. You can paste it into another setting or into the chat to share it with other users.</source>
-        <translation>Copie la courbe dans le presse-papier. Vous pouvez la coller dans d&apos;autres paramètres ou dans la discussion pour la partager avec d&apos;autres utilisateurs.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Paste</source>
-        <translation>Coller</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pastes a copied curve from the clipboard, overwriting what is there currently.</source>
-        <translation>Colle une courbe copiée depuis le presse-papier, écrasant ce qui y est actuellement.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Presets…</source>
-        <translation>Préréglages…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save and load curve presets.</source>
-        <translation>Sauvegarder et charger les préréglages.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Curve copied to clipboard.</source>
-        <translation>Courbe copiée dans le presse-papier.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Curve pasted from clipboard.</source>
-        <translation>Courbe collée à partir du presse-papiers.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clipboard does not appear to contain a curve.</source>
-        <translation>Le presse-papier ne semble pas contenir de courbe.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12186,22 +12094,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../widgets/dualcolorbutton.cpp" line="+31"/>
         <source>Set foreground color…</source>
-        <translation>Définir la couleur du premier plan…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Set background color…</source>
-        <translation>Définir la couleur de l&apos;arrière plan…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Reset colors to black and white</source>
-        <translation>Réinitialiser les couleurs en blanc et noir</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Swap foreground and background color</source>
-        <translation>Échanger les couleurs du premier plan et de l&apos;arrière plan</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12209,22 +12117,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../widgets/expandshrinkspinner.cpp" line="+27"/>
         <source>px</source>
-        <translation>px</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Expand</source>
-        <translation>Agrandir</translation>
+        <translation>Expandeix</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shrink</source>
-        <translation>Réduire</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Round expansion shape</source>
-        <translation type="unfinished">Forme d&apos;agrandissement ronde</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12234,12 +12142,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+93"/>
         <source>Shrink: </source>
-        <translation>Réduction&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Expand: </source>
-        <translation type="unfinished">Étendre&#x202f;: </translation>
+        <translation>Expandeix: </translation>
     </message>
 </context>
 <context>
@@ -12247,17 +12155,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../widgets/mypaintinput.cpp" line="+137"/>
         <source>Output Range: </source>
-        <translation>Plage de Sortie&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Input Minimum: </source>
-        <translation>Entrée Minimale&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Input Maximum: </source>
-        <translation>Entrée Maximale&#xa0;: </translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12265,102 +12173,102 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../widgets/netstatus.cpp" line="+58"/>
         <source>Copy address to clipboard</source>
-        <translation>Copier l&apos;adresse dans le presse-papier</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy session URL to clipboard</source>
-        <translation>Copier l&apos;URL de la session dans le presse-papier</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Get externally visible IP address</source>
-        <translation>Obtenir l&apos;adresse IP externe</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Hide address</source>
-        <translation>Cacher l&apos;adresse</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Statistics</source>
-        <translation>Statistiques</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Show certificate</source>
-        <translation>Afficher le certificat</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Self-signed certificate</source>
-        <translation>Certificat auto-signé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Known self-signed certificate</source>
-        <translation>Certificat auto-signé connu</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Pinned self-signed certificate</source>
-        <translation>Certificat auto-signé épinglé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Valid certificate</source>
-        <translation>Certificat valide</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Pinned valid certificate</source>
-        <translation>Certificat valide épinglé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+169"/>
         <source>not connected</source>
-        <translation>non connecté</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Connecting...</source>
-        <translation>Connexion...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Connecting to %1...</source>
-        <translation>Connexion à %1...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Connected</source>
-        <translation>Connecté</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Host: %1</source>
-        <translation>Hôte&#xa0;: %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Logging out...</source>
-        <translation>Déconnexion...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Notice</source>
-        <translation>Notice</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
-        <translation>Votre fournisseur d&apos;accès utilise un Carrier Grade NAT (NAT444). Ceci rend impossible la connexion directe avec vous. Consulter la documentation de Drawpile pour trouver un moyen de contourner ce problème.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Don&apos;t show this again</source>
-        <translation>Ne plus afficher</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12368,12 +12276,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../widgets/notifbar.cpp" line="+123"/>
         <source>Dismiss (%1)</source>
-        <translation type="unfinished">Passer (%1)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dismiss</source>
-        <translation>Ignorer</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12381,22 +12289,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="+41"/>
         <source>Add</source>
-        <translation>Ajouter</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Modify</source>
-        <translation>Modifier</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation>Retirer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set palette color</source>
-        <translation>Choisir couleur palette</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+203"/>
@@ -12404,10 +12312,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
 Green: %2
 Blue: %3
 Hex: %4</source>
-        <translation>Rouge&#xa0;: %1
-Vert&#xa0;: %2
-Bleu&#xa0;: %3
-Hex&#xa0;: %4</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12415,22 +12320,22 @@ Hex&#xa0;: %4</translation>
     <message>
         <location filename="../widgets/presetselector.cpp" line="+28"/>
         <source>Presets</source>
-        <translation>Préréglages</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Load</source>
-        <translation>Charger</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished">Enregistrer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Delete</source>
-        <translation>Supprimer</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12438,17 +12343,17 @@ Hex&#xa0;: %4</translation>
     <message>
         <location filename="../widgets/recentscroll.cpp" line="+28"/>
         <source>No recent files.</source>
-        <translation>Aucun fichier récent.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+28"/>
         <source>No recent hosts.</source>
-        <translation>Pas d&apos;hôtes récents.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+59"/>
         <source>Remove</source>
-        <translation>Retirer</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12456,106 +12361,104 @@ Hex&#xa0;: %4</translation>
     <message>
         <location filename="../widgets/timelinewidget.cpp" line="+607"/>
         <source>Blank key frame (duplicate)</source>
-        <translation>Image clé vierge (dupliquée)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blank key frame %1 (duplicate)</source>
-        <translation>Image clé vierge %1 (dupliquée)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blank key frame</source>
-        <translation>Image clé vierge</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blank key frame %1</source>
-        <translation>Image clé vierge %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Key frame on %1 (duplicate)</source>
-        <translation>Image clé sur %1 (dupliquer)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2 (duplicate)</source>
-        <translation>Image clé %1 sur %2 (dupliquer)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Key frame on %1</source>
-        <translation>Image clé sur %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2</source>
-        <translation>Image clé %1 à %2</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Toggle visibility</source>
-        <translation>Changer la visibilité</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle onion skin</source>
-        <translation type="unfinished">Basculer le pelage d&apos;oignon</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+129"/>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation>Pas de pistes pour l&apos;instant.
-Pour en ajouter, appuyez sur le bouton + au-dessus
-Ou par Animation ▸ Nouvelle Piste.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+565"/>
         <source>Track</source>
-        <translation>Piste</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Rename Track</source>
-        <translation>Renommer la Piste</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Track Name</source>
-        <translation>Nom de la Piste</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Change Frame Count</source>
-        <translation>Changer le Nombre d&apos;Images</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frame Count (key frames beyond this point will be deleted)</source>
-        <translation>Nombre d&apos;images (les images clé au delà de ce point seront effacées)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Change Framerate</source>
-        <translation>Changer la Fréquence d&apos;Images</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Frames Per Second (FPS)</source>
-        <translation>Images Par Seconde (FPS)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+330"/>
         <source>Set Key Frame to %1</source>
-        <translation>Régler Trame de Référence à %1</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation>Régler Trame de Référence au Calque Actuel</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12563,82 +12466,82 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location filename="../chat/useritemdelegate.cpp" line="+167"/>
         <source>Operator</source>
-        <translation>Opérateur·ice</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished">Fiables</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-138"/>
         <source>&amp;Operator</source>
-        <translation>&amp;Opérateur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation>Fiable (&amp;T)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation>Verrouiller (&amp;L)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation>Rendre &amp;Muet</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation>Ann&amp;uler</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">&amp;Refaire</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation>Renvoyer (&amp;K)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation>Renvoyer &amp;&amp; Exclure</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation>Message &amp;Privé</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show User &amp;Information</source>
-        <translation>Montrer les &amp;Infos Utilisateur</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Take Current &amp;Brush</source>
-        <translation>Prendre le Pinceau Actuel (&amp;B)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+107"/>
         <source>Moderator</source>
-        <translation>Modérateur·ice</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Bot</source>
-        <translation>Bot</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Registered</source>
-        <translation>Enregistré</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12646,12 +12549,12 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location filename="../widgets/viewstatus.cpp" line="+77"/>
         <source>Canvas Rotation</source>
-        <translation>Rotation de la Toile</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Zoom</source>
-        <translation type="unfinished">Zoom</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
