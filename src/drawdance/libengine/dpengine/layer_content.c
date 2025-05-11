@@ -560,6 +560,16 @@ bool DP_layer_content_has_content(DP_LayerContent *lc)
             return true;
         }
     }
+
+    DP_LayerList *sub_ll = lc->sub.contents;
+    int sub_count = DP_layer_list_count(lc->sub.contents);
+    for (int i = 0; i < sub_count; ++i) {
+        DP_LayerContent *sub_lc = DP_layer_list_content_at_noinc(sub_ll, i);
+        if (DP_layer_content_has_content(sub_lc)) {
+            return true;
+        }
+    }
+
     return false;
 }
 
