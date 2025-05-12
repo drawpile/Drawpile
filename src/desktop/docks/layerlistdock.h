@@ -73,6 +73,13 @@ public:
 		QAction *layerClip = nullptr;
 		QAction *layerAutomaticAlphaPreserve = nullptr;
 		QMenu *layerColorMenu = nullptr;
+		QMenu *layerLockMenu = nullptr;
+		QAction *layerAlphaLock = nullptr;
+		QAction *layerLockAll = nullptr;
+		QAction *layerLockContent = nullptr;
+		QAction *layerLockProps = nullptr;
+		QAction *layerLockMove = nullptr;
+		QAction *layerCensor = nullptr;
 	};
 
 	LayerList(QWidget *parent = nullptr);
@@ -252,7 +259,7 @@ private:
 	bool m_automaticAlphaPreserve = true;
 
 	QMenu *m_contextMenu;
-	LayerAclMenu *m_aclmenu;
+	LayerAclMenu *m_aclmenu = nullptr;
 
 	QTimer *m_debounceTimer;
 	int m_updateClip = -1;

@@ -8,46 +8,44 @@
 
 namespace docks {
 
-LayerAclMenu::LayerAclMenu(QWidget *parent)
+LayerAclMenu::LayerAclMenu(const LayerList::Actions &actions, QWidget *parent)
 	: QMenu(parent)
 	, m_userlist(nullptr)
 {
-	m_alphaLock = addAction(tr("Alpha lock layer for you"));
-	m_alphaLock->setCheckable(true);
+	m_alphaLock = actions.layerAlphaLock;
+	addAction(m_alphaLock);
 	connect(
 		m_alphaLock, &QAction::triggered, this,
 		&LayerAclMenu::layerAlphaLockChange);
 
-	m_censored = addAction(tr("Censor layer"));
-	m_censored->setCheckable(true);
+	m_censored = actions.layerCensor;
+	addAction(m_censored);
 	connect(
 		m_censored, &QAction::triggered, this,
 		&LayerAclMenu::layerCensoredChange);
 
 	addSection(tr("Locks:"));
 
-	m_lockAll = addAction(tr("Lock layer entirely"));
-	m_lockAll->setCheckable(true);
+	m_lockAll = actions.layerLockAll;
+	addAction(m_lockAll);
 	connect(
 		m_lockAll, &QAction::triggered, this,
 		&LayerAclMenu::layerLockAllChange);
 
-	addSeparator();
-
-	m_contentLock = addAction(tr("Lock layer content"));
-	m_contentLock->setCheckable(true);
+	m_contentLock = actions.layerLockContent;
+	addAction(m_contentLock);
 	connect(
 		m_contentLock, &QAction::triggered, this,
 		&LayerAclMenu::layerContentLockChange);
 
-	m_propsLock = addAction(tr("Lock layer properties"));
-	m_propsLock->setCheckable(true);
+	m_propsLock = actions.layerLockProps;
+	addAction(m_propsLock);
 	connect(
 		m_propsLock, &QAction::triggered, this,
 		&LayerAclMenu::layerPropsLockChange);
 
-	m_moveLock = addAction(tr("Lock layer position"));
-	m_moveLock->setCheckable(true);
+	m_moveLock = actions.layerLockMove;
+	addAction(m_moveLock);
 	connect(
 		m_moveLock, &QAction::triggered, this,
 		&LayerAclMenu::layerMoveLockChange);

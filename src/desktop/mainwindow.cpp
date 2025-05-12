@@ -5751,6 +5751,30 @@ void MainWindow::setupActions()
 			.statusTip(tr("Inherit and preserve alpha based on blend mode"))
 			.checkable()
 			.noDefaultShortcut();
+
+	QAction *layerAlphaLock =
+		makeAction("layeralphalock", tr("Alpha lock layer for you"))
+			.checkable()
+			.noDefaultShortcut();
+	QAction *layerCensor = makeAction("layercensor", tr("Censor layer"))
+							   .checkable()
+							   .noDefaultShortcut();
+	QAction *layerLockAll =
+		makeAction("layerlockall", tr("Lock layer entirely"))
+			.checkable()
+			.noDefaultShortcut();
+	QAction *layerLockContent =
+		makeAction("layerlockcontent", tr("Lock layer content"))
+			.checkable()
+			.noDefaultShortcut();
+	QAction *layerLockProps =
+		makeAction("layerlockprops", tr("Lock layer properties"))
+			.checkable()
+			.noDefaultShortcut();
+	QAction *layerLockMove =
+		makeAction("layerlockmove", tr("Lock layer position"))
+			.checkable()
+			.noDefaultShortcut();
 	// clang-format off
 
 	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X").autoRepeat();
@@ -5790,6 +5814,16 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerAlphaPreserve);
 	layerMenu->addAction(layerClip);
 	layerMenu->addAction(layerAutomaticAlphaPreserve);
+
+	layerMenu->addSeparator();
+	QMenu *layerLockMenu = layerMenu->addMenu(tr("&Locks"));
+	layerLockMenu->addAction(layerAlphaLock);
+	layerLockMenu->addSeparator();
+	layerLockMenu->addAction(layerLockAll);
+	layerLockMenu->addAction(layerLockContent);
+	layerLockMenu->addAction(layerLockProps);
+	layerLockMenu->addAction(layerLockMove);
+	layerMenu->addAction(layerCensor);
 
 	layerMenu->addSeparator();
 	layerMenu->addAction(layerUpAct);
@@ -6136,6 +6170,13 @@ void MainWindow::setupActions()
 		layerClip,
 		layerAutomaticAlphaPreserve,
 		layerColorMenu,
+		layerLockMenu,
+		layerAlphaLock,
+		layerLockAll,
+		layerLockContent,
+		layerLockProps,
+		layerLockMove,
+		layerCensor,
 	});
 	m_dockTimeline->setActions(
 		{

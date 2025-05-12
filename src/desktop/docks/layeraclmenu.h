@@ -1,22 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef LAYERACLMENU_H
 #define LAYERACLMENU_H
-
-extern "C" {
-#include <dpmsg/acl.h>
-}
-
+#include "desktop/docks/layerlistdock.h"
 #include <QMenu>
 
 class QAbstractItemModel;
+class QAction;
+class QActionGroup;
+class QWidget;
 
 namespace docks {
 
 class LayerAclMenu final : public QMenu {
 	Q_OBJECT
 public:
-	explicit LayerAclMenu(QWidget *parent = nullptr);
+	explicit LayerAclMenu(
+		const LayerList::Actions &actions, QWidget *parent = nullptr);
 
 	void setUserList(QAbstractItemModel *model);
 	void setAcl(

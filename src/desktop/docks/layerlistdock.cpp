@@ -271,35 +271,6 @@ LayerList::LayerList(QWidget *parent)
 		m_view, &QTreeView::customContextMenuRequested, this,
 		&LayerList::showContextMenu);
 
-	// Layer ACL menu
-	m_aclmenu = new LayerAclMenu(this);
-	m_lockButton->setMenu(m_aclmenu);
-
-	connect(
-		m_aclmenu, &LayerAclMenu::layerAlphaLockChange, this,
-		&LayerList::changeLayersAlphaLock);
-	connect(
-		m_aclmenu, &LayerAclMenu::layerContentLockChange, this,
-		&LayerList::changeLayersContentLock);
-	connect(
-		m_aclmenu, &LayerAclMenu::layerPropsLockChange, this,
-		&LayerList::changeLayersPropsLock);
-	connect(
-		m_aclmenu, &LayerAclMenu::layerMoveLockChange, this,
-		&LayerList::changeLayersMoveLock);
-	connect(
-		m_aclmenu, &LayerAclMenu::layerLockAllChange, this,
-		&LayerList::changeLayersLockAll);
-	connect(
-		m_aclmenu, &LayerAclMenu::layerAccessTierChange, this,
-		&LayerList::changeLayersAccessTier);
-	connect(
-		m_aclmenu, &LayerAclMenu::layerUserAccessChanged, this,
-		&LayerList::changeLayersUserAccess);
-	connect(
-		m_aclmenu, &LayerAclMenu::layerCensoredChange, this,
-		&LayerList::changeLayersCensor);
-
 	updateCurrent(QModelIndex());
 
 	connect(
@@ -436,9 +407,15 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	m_contextMenu->addAction(m_actions.layerClip);
 	m_contextMenu->addAction(m_actions.layerAutomaticAlphaPreserve);
 	m_contextMenu->addSeparator();
+	m_contextMenu->addMenu(m_actions.layerLockMenu);
+	m_contextMenu->addAction(m_actions.layerCensor);
+	m_contextMenu->addSeparator();
 	m_contextMenu->addAction(m_actions.setFillSource);
 	m_contextMenu->addAction(m_actions.clearFillSource);
 	m_contextMenu->addAction(m_actions.keyFrameSetLayer);
+
+	m_aclmenu = new LayerAclMenu(m_actions, this);
+	m_lockButton->setMenu(m_aclmenu);
 
 	// Action functionality
 	connect(
@@ -517,6 +494,30 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	connect(
 		actions.layerColorMenu, &QMenu::triggered, this,
 		&LayerList::setLayerColor);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerAlphaLockChange, this,
+		&LayerList::changeLayersAlphaLock);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerContentLockChange, this,
+		&LayerList::changeLayersContentLock);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerPropsLockChange, this,
+		&LayerList::changeLayersPropsLock);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerMoveLockChange, this,
+		&LayerList::changeLayersMoveLock);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerLockAllChange, this,
+		&LayerList::changeLayersLockAll);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerAccessTierChange, this,
+		&LayerList::changeLayersAccessTier);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerUserAccessChanged, this,
+		&LayerList::changeLayersUserAccess);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerCensoredChange, this,
+		&LayerList::changeLayersCensor);
 
 	updateActionLabels();
 	updateLockedControls();
@@ -539,7 +540,7 @@ void LayerList::onFeatureAccessChange(DP_Feature feature, bool canUse)
 void LayerList::updateActionLabels()
 {
 	QModelIndex idx = currentSelection();
-	bool group, check;
+	bool group, check, alphaLockEnabled;
 	if(idx.isValid()) {
 		group = idx.data(canvas::LayerListModel::IsGroupRole).toBool();
 		int checkState =
@@ -547,11 +548,15 @@ void LayerList::updateActionLabels()
 		check = checkState == int(canvas::LayerListModel::Unchecked) ||
 				checkState == int(canvas::LayerListModel::NotApplicable) ||
 				checkState == int(canvas::LayerListModel::NotCheckable);
-		m_aclmenu->setAlphaLockEnabled(!group);
+		alphaLockEnabled = !group;
 	} else {
 		group = false;
 		check = true;
-		m_aclmenu->setAlphaLockEnabled(false);
+		alphaLockEnabled = false;
+	}
+
+	if(m_aclmenu) {
+		m_aclmenu->setAlphaLockEnabled(alphaLockEnabled);
 	}
 
 	if(group) {
@@ -634,7 +639,6 @@ void LayerList::updateLockedControls()
 						   (canEdit || (ownLayers && ownsAll(topLevelIds)));
 	bool compatibilityMode = m_canvas && m_canvas->isCompatibilityMode();
 
-	m_aclmenu->setCanEdit(canAclEditCurrent, compatibilityMode);
 	m_lockButton->setEnabled(haveAnySelected);
 	m_alphaPreserveButton->setEnabled(
 		canEditCurrent && haveAnySelected && canEditSelected &&
@@ -652,6 +656,7 @@ void LayerList::updateLockedControls()
 	m_sketchTintButton->setEnabled(haveCurrent && haveAnySelected);
 
 	if(hasEditActions) {
+		m_aclmenu->setCanEdit(canAclEditCurrent, compatibilityMode);
 		m_actions.duplicate->setEnabled(
 			canEditCurrent && !haveMultipleSelected);
 		m_actions.del->setEnabled(canEditSelected);
@@ -2083,8 +2088,11 @@ void LayerList::updateUiFromCurrent()
 			utils::makeColorIconFor(this, layer.sketchTint));
 	}
 
-	m_aclmenu->setCensored(layer.actuallyCensored());
-	m_aclmenu->setAlphaLock(layer.alphaLock);
+	if(m_aclmenu) {
+		m_aclmenu->setCensored(layer.actuallyCensored());
+		m_aclmenu->setAlphaLock(layer.alphaLock);
+	}
+
 	bool compatibilityMode = m_canvas && m_canvas->isCompatibilityMode();
 	dialogs::LayerProperties::updateBlendMode(
 		m_blendModeCombo, layer.blend, layer.group, layer.isolated, layer.clip,
