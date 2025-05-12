@@ -156,7 +156,7 @@
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation type="unfinished"></translation>
+        <translation>Guany: </translation>
     </message>
     <message>
         <location line="+22"/>
@@ -370,7 +370,7 @@
     <message>
         <location line="+30"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre el bolcat de depuració</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -482,7 +482,7 @@
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Imatges per capes</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -558,7 +558,7 @@
     <message>
         <location line="+43"/>
         <source>Save Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Desa sèrie d&apos;imatges</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -938,7 +938,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+3"/>
         <source>Trail: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Traç: </translation>
     </message>
 </context>
 <context>
@@ -1022,7 +1022,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Blue tint</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tint blau</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1360,7 +1360,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>Corregeix</translation>
     </message>
     <message>
         <location line="+200"/>
