@@ -6349,7 +6349,11 @@ void MainWindow::setupActions()
 	// clang-format off
 
 	QAction *currentEraseMode = makeAction("currenterasemode", tr("Toggle Eraser Mode")).shortcut("Ctrl+E");
-	QAction *currentRecolorMode = makeAction("currentrecolormode", tr("Toggle Recolor Mode")).shortcut("Shift+E");
+	QAction *currentRecolorMode =
+		makeAction("currentrecolormode", tr("Toggle Alpha Preserve"))
+			.shortcutWithSearchText(
+				tr("toggle recolor mode/alpha preserve"),
+				QKeySequence("Shift+E"));
 	QAction *changeForegroundColor = makeAction("chnageforegroundcolor", widgets::DualColorButton::foregroundText()).statusTip(tr("Choose the current foreground color")).noDefaultShortcut();
 	QAction *changeBackgroundColor = makeAction("changebackgroundcolor", widgets::DualColorButton::backgroundText()).statusTip(tr("Choose the current background color")).noDefaultShortcut();
 	QAction *swapcolors = makeAction("swapcolors", widgets::DualColorButton::swapText()).statusTip(tr("Swap current foreground and background color with each other")).shortcut("X");
@@ -6384,7 +6388,7 @@ void MainWindow::setupActions()
 	// clang-format off
 
 	connect(currentEraseMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleEraserMode);
-	connect(currentRecolorMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleRecolorMode);
+	connect(currentRecolorMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleAlphaPreserve);
 	connect(changeForegroundColor, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::changeForegroundColor);
 	connect(changeBackgroundColor, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::changeBackgroundColor);
 	connect(swapcolors, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::swapColors);

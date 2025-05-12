@@ -428,9 +428,9 @@ void ToolSettings::toggleEraserMode()
 	d->currentSettings()->toggleEraserMode();
 }
 
-void ToolSettings::toggleRecolorMode()
+void ToolSettings::toggleAlphaPreserve()
 {
-	d->currentSettings()->toggleRecolorMode();
+	d->currentSettings()->toggleAlphaPreserve();
 }
 
 void ToolSettings::switchToEraserSlot(bool near)

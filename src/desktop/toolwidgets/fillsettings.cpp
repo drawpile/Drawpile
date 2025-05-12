@@ -317,12 +317,13 @@ void FillSettings::toggleEraserMode()
 	}
 }
 
-void FillSettings::toggleRecolorMode()
+void FillSettings::toggleAlphaPreserve()
 {
 	int blendMode = getCurrentBlendMode();
 	selectBlendMode(
-		blendMode == DP_BLEND_MODE_RECOLOR ? DP_BLEND_MODE_NORMAL
-										   : DP_BLEND_MODE_RECOLOR);
+		canvas::blendmode::presentsAsAlphaPreserving(blendMode)
+			? canvas::blendmode::toAlphaAffecting(blendMode)
+			: canvas::blendmode::toAlphaPreserving(blendMode));
 }
 
 void FillSettings::updateSelection()

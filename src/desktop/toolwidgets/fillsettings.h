@@ -49,15 +49,14 @@ public:
 	void setFeatureAccess(bool featureAccess);
 	void setCompatibilityMode(bool compatibilityMode) override;
 
-signals:
-	void pixelSizeChanged(int size);
-
-public slots:
 	void pushSettings() override;
 	void toggleEraserMode() override;
-	void toggleRecolorMode() override;
+	void toggleAlphaPreserve() override;
 	void updateSelection();
 	void updateFillSourceLayerId(int layerId);
+
+signals:
+	void pixelSizeChanged(int size);
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;

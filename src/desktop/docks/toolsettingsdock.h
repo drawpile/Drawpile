@@ -81,8 +81,8 @@ public slots:
 	//! Toggle current tool's eraser mode (if it has one)
 	void toggleEraserMode();
 
-	//! Toggle current tool's recolor mode (if it has one)
-	void toggleRecolorMode();
+	//! Toggle current tool's alpha preserve mode (if it has one)
+	void toggleAlphaPreserve();
 
 	//! Quick adjust the parameter specified by the type.
 	void quickAdjust(int type, qreal adjustment);

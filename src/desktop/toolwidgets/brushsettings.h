@@ -89,7 +89,6 @@ public:
 	void setPigmentAllowed(bool pigmentAllowed);
 	void setBrushSizeLimit(int brushSizeLimit);
 
-public slots:
 	void selectBrushSlot(int i);
 	void selectEraserSlot(bool eraser);
 	void selectNextSlot();
@@ -97,7 +96,7 @@ public slots:
 	void swapWithSlot(int i);
 	void setGlobalSmoothing(int smoothing);
 	void toggleEraserMode() override;
-	void toggleRecolorMode() override;
+	void toggleAlphaPreserve() override;
 	void setEraserMode(bool erase);
 	void resetPreset();
 	void resetPresetsInAllSlots();
@@ -123,7 +122,10 @@ signals:
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
-private slots:
+private:
+	enum class BrushType { PixelRound, PixelSquare, SoftRound, MyPaint };
+	enum class Lock { None, MyPaintPermission, PigmentPermission };
+
 	void changeBrushType(const QAction *action);
 	void changePaintMode(const QAction *action);
 	void changeSizeSetting(int size);
@@ -137,10 +139,6 @@ private slots:
 		const QPixmap &thumbnail, const brushes::ActiveBrush &brush);
 	void handlePresetRemoved(int presetId);
 	void detachCurrentSlot();
-
-private:
-	enum class BrushType { PixelRound, PixelSquare, SoftRound, MyPaint };
-	enum class Lock { None, MyPaintPermission, PigmentPermission };
 
 	void changePresetBrush(const brushes::ActiveBrush &brush);
 	void updateChangesInCurrentBrushPreset();

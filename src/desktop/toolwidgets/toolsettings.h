@@ -153,11 +153,10 @@ public:
 	virtual bool affectsLayer() = 0;
 	virtual bool isLocked() { return false; }
 
-public slots:
 	//! Toggle tool eraser mode (if it has one)
 	virtual void toggleEraserMode() {}
 	//! Toggle tool recolor mode (if it has one)
-	virtual void toggleRecolorMode() {}
+	virtual void toggleAlphaPreserve() {}
 
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent) = 0;

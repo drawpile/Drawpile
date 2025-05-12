@@ -945,32 +945,16 @@ void BrushSettings::toggleEraserMode()
 	}
 }
 
-void BrushSettings::toggleRecolorMode()
+void BrushSettings::toggleAlphaPreserve()
 {
 	if(!isCurrentEraserSlot()) {
 		brushes::ActiveBrush &brush = d->currentBrush();
-		switch(brush.activeType()) {
-		case brushes::ActiveBrush::CLASSIC: {
-			brushes::ClassicBrush &cb = brush.classic();
-			if(cb.brush_mode == DP_BLEND_MODE_RECOLOR) {
-				cb.brush_mode = DP_BLEND_MODE_NORMAL;
-			} else {
-				cb.brush_mode = DP_BLEND_MODE_RECOLOR;
-			}
-			break;
-		}
-		case brushes::ActiveBrush::MYPAINT: {
-			DP_MyPaintBrush &mpb = brush.myPaint().brush();
-			if(mpb.brush_mode == DP_BLEND_MODE_RECOLOR) {
-				mpb.brush_mode = DP_BLEND_MODE_NORMAL;
-			} else {
-				mpb.brush_mode = DP_BLEND_MODE_RECOLOR;
-			}
-			break;
-		}
-		default:
-			break;
-		}
+		int blendMode = int(brush.blendMode());
+		brush.setBlendMode(
+			canvas::blendmode::presentsAsAlphaPreserving(blendMode)
+				? canvas::blendmode::toAlphaAffecting(blendMode)
+				: canvas::blendmode::toAlphaPreserving(blendMode),
+			false);
 		updateUi();
 	}
 }
