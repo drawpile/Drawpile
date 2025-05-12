@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/curvepresetdialog.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_curve_widget.h"
 #include <QGridLayout>

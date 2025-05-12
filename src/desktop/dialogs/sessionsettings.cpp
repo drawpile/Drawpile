@@ -2,6 +2,7 @@
 #include "desktop/dialogs/sessionsettings.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"

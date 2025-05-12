@@ -4,6 +4,7 @@ extern "C" {
 }
 #include "desktop/dialogs/flipbook.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/animationrenderer.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"

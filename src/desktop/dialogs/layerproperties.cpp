@@ -2,6 +2,7 @@
 #include "desktop/dialogs/layerproperties.h"
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/blendmodes.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/net/message.h"

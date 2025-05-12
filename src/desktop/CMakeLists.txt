@@ -342,6 +342,7 @@ target_sources(drawpile PRIVATE
 	utils/listserverdelegate.h
 	utils/mandatoryfields.cpp
 	utils/mandatoryfields.h
+	utils/qtguicompat.cpp
 	utils/qtguicompat.h
 	utils/recents.cpp
 	utils/recents.h

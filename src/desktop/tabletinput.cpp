@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "desktop/main.h"
 #include "desktop/tabletinput.h"
-
+#include "desktop/main.h"
 #include <QCoreApplication>
-
 #ifdef Q_OS_WIN
+#	include "desktop/settings.h"
 #	include "bundled/kis_tablet/kis_tablet_support_win.h"
 #	include "bundled/kis_tablet/kis_tablet_support_win8.h"
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)

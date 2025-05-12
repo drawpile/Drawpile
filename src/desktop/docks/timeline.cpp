@@ -2,6 +2,7 @@
 #include "desktop/docks/timeline.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/widgets/timelinewidget.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"

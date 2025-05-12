@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/host/roles.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/net/authlistmodel.h"
 #include <QCheckBox>

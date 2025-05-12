@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/join.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/widgets/recentscroll.h"
 #include "libclient/net/server.h"
-#include "libclient/utils/listservermodel.h"
-#include "libshared/listings/announcementapi.h"
 #include <QLabel>
 #include <QLineEdit>
 #include <QSignalBlocker>

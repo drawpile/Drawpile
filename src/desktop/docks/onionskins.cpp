@@ -3,6 +3,7 @@
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/qtguicompat.h"
 #include <QCheckBox>
 #include <QFrame>

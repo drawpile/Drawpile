@@ -1,21 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DRAWPILEAPP_H
 #define DRAWPILEAPP_H
-#include "desktop/notifications.h"
-#include "desktop/settings.h"
 #include <QApplication>
-#include <QMap>
-#ifdef Q_OS_WIN
-#	include "desktop/utils/wineventfilter.h"
-#endif
+#include <QPalette>
 
 class MainWindow;
-class QSoundEffect;
 class QCommandLineOption;
 class QCommandLineParser;
+class WinEventFilter;
 
 namespace brushes {
 class BrushPresetTagModel;
+}
+
+namespace desktop {
+namespace settings {
+class Settings;
+}
+}
+
+namespace notification {
+class Notifications;
 }
 
 namespace utils {
@@ -32,7 +37,7 @@ public:
 	void initState();
 
 	void setThemeStyle(const QString &themeStyle);
-	void setThemePalette(desktop::settings::ThemePalette themePalette);
+	void setThemePalette(int themePalette);
 	void initTheme();
 	void initCanvasImplementation(const QString &arg);
 	void initInterface();
@@ -49,8 +54,8 @@ public:
 
 	void deleteAllMainWindowsExcept(MainWindow *win);
 
-	const desktop::settings::Settings &settings() const { return m_settings; }
-	desktop::settings::Settings &settings() { return m_settings; }
+	const desktop::settings::Settings &settings() const { return *m_settings; }
+	desktop::settings::Settings &settings() { return *m_settings; }
 
 	notification::Notifications *notifications() { return m_notifications; }
 
@@ -100,7 +105,7 @@ protected:
 	bool event(QEvent *e) override;
 
 private:
-	desktop::settings::Settings m_settings;
+	desktop::settings::Settings *m_settings;
 	notification::Notifications *m_notifications;
 	int m_canvasImplementation;
 	bool m_canvasImplementationFromSettings = false;
@@ -110,7 +115,7 @@ private:
 	QString m_originalSystemStyle;
 	QPalette m_originalSystemPalette;
 #ifdef Q_OS_WIN
-	WinEventFilter winEventFilter;
+	WinEventFilter *m_winEventFilter;
 #endif
 	bool m_wasEraserNear = false;
 #ifdef HAVE_RUN_IN_NEW_PROCESS
@@ -130,7 +135,7 @@ private:
 
 inline DrawpileApp &dpApp()
 {
-	auto app = static_cast<DrawpileApp *>(QCoreApplication::instance());
+	DrawpileApp *app = static_cast<DrawpileApp *>(QCoreApplication::instance());
 	Q_ASSERT(app);
 	return *app;
 }

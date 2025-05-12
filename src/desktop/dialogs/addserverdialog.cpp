@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/addserverdialog.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/imageresourcetextbrowser.h"
 #include "libclient/utils/listservermodel.h"

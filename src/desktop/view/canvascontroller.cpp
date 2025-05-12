@@ -2,6 +2,7 @@
 #include "desktop/view/canvascontroller.h"
 #include "desktop/main.h"
 #include "desktop/scene/toggleitem.h"
+#include "desktop/settings.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/touchhandler.h"
 #include "desktop/view/canvasinterface.h"

@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/widgets/recentscroll.h"
 #include "cmake-config/config.h"
 #include "desktop/main.h"
@@ -10,6 +9,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMouseEvent>
 #include <QPixmap>
 #include <QRegularExpression>
 #include <QStyle>

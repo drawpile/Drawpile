@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include <QtColorWidgets/ColorDialog>
 #include <QtColorWidgets/ColorPreview>
 

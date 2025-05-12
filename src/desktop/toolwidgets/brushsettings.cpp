@@ -4,6 +4,7 @@ extern "C" {
 #include <dpmsg/blend_mode.h>
 }
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/utils/blendmodes.h"
 #include "desktop/utils/widgetutils.h"

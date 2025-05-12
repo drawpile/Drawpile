@@ -7,6 +7,7 @@ extern "C" {
 #include "desktop/dialogs/startdialog/create.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/import/animationimporter.h"
 #include <QAction>

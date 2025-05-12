@@ -41,6 +41,7 @@
 #elif defined(Q_OS_WIN)
 #	include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #	include "desktop/bundled/kis_tablet/kis_tablet_support_win8.h"
+#	include "desktop/utils/wineventfilter.h"
 #elif defined(Q_OS_ANDROID)
 #	include "libshared/util/androidutils.h"
 #elif defined(__EMSCRIPTEN__)
@@ -55,9 +56,13 @@
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
+	, m_settings(new desktop::settings::Settings(this))
 	, m_notifications(new notification::Notifications(this))
 	, m_originalSystemStyle{compat::styleName(*style())}
 	, m_originalSystemPalette{style()->standardPalette()}
+#ifdef Q_OS_WIN
+	, m_winEventFilter(new WinEventFilter)
+#endif
 {
 	setOrganizationName("drawpile");
 	setOrganizationDomain("drawpile.net");
@@ -71,7 +76,7 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	desktop::settings::initializeTypes();
 	// QSettings will use the wrong settings when it is opened before all
 	// the app and organisation names are set.
-	m_settings.reset();
+	m_settings->reset();
 
 	drawdance::initLogging();
 	drawdance::initCpuSupport();
@@ -86,13 +91,16 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 		filter, &GlobalKeyEventFilter::focusCanvas, this,
 		&DrawpileApp::focusCanvas);
 #ifdef Q_OS_WIN
-	installNativeEventFilter(&winEventFilter);
+	installNativeEventFilter(m_winEventFilter);
 #endif
 }
 
 DrawpileApp::~DrawpileApp()
 {
 	drawdance::DrawContextPool::deinit();
+#ifdef Q_OS_WIN
+	delete m_winEventFilter;
+#endif
 }
 
 void DrawpileApp::initState()
@@ -214,19 +222,19 @@ void DrawpileApp::setThemeStyle(const QString &themeStyle)
 	QCoreApplication::sendEvent(this, &event);
 }
 
-void DrawpileApp::setThemePalette(desktop::settings::ThemePalette themePalette)
+void DrawpileApp::setThemePalette(int themePalette)
 {
 	using desktop::settings::ThemePalette;
 	QPalette newPalette;
 
 	switch(themePalette) {
-	case ThemePalette::System:
+	case int(ThemePalette::System):
 #ifdef Q_OS_MACOS
 		macui::setNativeAppearance(macui::Appearance::System);
 #endif
 		setPalette(m_originalSystemPalette);
 		return;
-	case ThemePalette::Dark:
+	case int(ThemePalette::Dark):
 #ifdef Q_OS_MACOS
 		if(macui::setNativeAppearance(macui::Appearance::Dark)) {
 			setPalette(QPalette());
@@ -235,7 +243,7 @@ void DrawpileApp::setThemePalette(desktop::settings::ThemePalette themePalette)
 #endif
 		newPalette = loadPalette(QStringLiteral("nightmode.colors"));
 		break;
-	case ThemePalette::Light:
+	case int(ThemePalette::Light):
 #ifdef Q_OS_MACOS
 		if(macui::setNativeAppearance(macui::Appearance::Light)) {
 			setPalette(QPalette());
@@ -243,16 +251,16 @@ void DrawpileApp::setThemePalette(desktop::settings::ThemePalette themePalette)
 		}
 #endif
 		[[fallthrough]];
-	case ThemePalette::KritaBright:
+	case int(ThemePalette::KritaBright):
 		newPalette = loadPalette(QStringLiteral("kritabright.colors"));
 		break;
-	case ThemePalette::KritaDark:
+	case int(ThemePalette::KritaDark):
 		newPalette = loadPalette(QStringLiteral("kritadark.colors"));
 		break;
-	case ThemePalette::KritaDarker:
+	case int(ThemePalette::KritaDarker):
 		newPalette = loadPalette(QStringLiteral("kritadarker.colors"));
 		break;
-	case ThemePalette::Fusion: {
+	case int(ThemePalette::Fusion): {
 #ifdef Q_OS_MACOS
 		// Fusion palette will adapt itself to whether the system appearance is
 		// light or dark, so we need to reset that or else it will incorrectly
@@ -268,28 +276,28 @@ void DrawpileApp::setThemePalette(desktop::settings::ThemePalette themePalette)
 		}
 		break;
 	}
-	case ThemePalette::HotdogStand:
+	case int(ThemePalette::HotdogStand):
 		newPalette = loadPalette(QStringLiteral("hotdogstand.colors"));
 		break;
-	case ThemePalette::Indigo:
+	case int(ThemePalette::Indigo):
 		newPalette = loadPalette(QStringLiteral("indigo.colors"));
 		break;
-	case ThemePalette::PoolTable:
+	case int(ThemePalette::PoolTable):
 		newPalette = loadPalette(QStringLiteral("pooltable.colors"));
 		break;
-	case ThemePalette::Rust:
+	case int(ThemePalette::Rust):
 		newPalette = loadPalette(QStringLiteral("rust.colors"));
 		break;
-	case ThemePalette::BlueApatite:
+	case int(ThemePalette::BlueApatite):
 		newPalette = loadPalette(QStringLiteral("blueapatite.colors"));
 		break;
-	case ThemePalette::OceanDeep:
+	case int(ThemePalette::OceanDeep):
 		newPalette = loadPalette(QStringLiteral("oceandeep.colors"));
 		break;
-	case ThemePalette::RoseQuartz:
+	case int(ThemePalette::RoseQuartz):
 		newPalette = loadPalette(QStringLiteral("rosequartz.colors"));
 		break;
-	case ThemePalette::Watermelon:
+	case int(ThemePalette::Watermelon):
 		newPalette = loadPalette(QStringLiteral("watermelon.colors"));
 		break;
 	}
@@ -344,8 +352,11 @@ void DrawpileApp::initTheme()
 	themePaths.append(defaultThemePaths);
 	QIcon::setThemeSearchPaths(themePaths);
 
-	m_settings.bindThemeStyle(this, &DrawpileApp::setThemeStyle);
-	m_settings.bindThemePalette(this, &DrawpileApp::setThemePalette);
+	m_settings->bindThemeStyle(this, &DrawpileApp::setThemeStyle);
+	m_settings->bindThemePalette(
+		this, [this](desktop::settings::ThemePalette themePalette) {
+			setThemePalette(int(themePalette));
+		});
 	// If the theme is set to the default theme then the palette will not change
 	// and icon initialisation will be incomplete if it is not updated once here
 	updateThemeIcons();
@@ -370,7 +381,7 @@ void DrawpileApp::initCanvasImplementation(const QString &arg)
 		if(QStringLiteral("none").compare(arg, Qt::CaseInsensitive) != 0) {
 			qWarning("Unknown --renderer '%s'", qUtf8Printable(arg));
 		}
-		canvasImplementation = m_settings.renderCanvas();
+		canvasImplementation = m_settings->renderCanvas();
 		m_canvasImplementationFromSettings = true;
 	}
 	m_canvasImplementation = getCanvasImplementationFor(canvasImplementation);
@@ -379,7 +390,7 @@ void DrawpileApp::initCanvasImplementation(const QString &arg)
 void DrawpileApp::initInterface()
 {
 	QFont font = QApplication::font();
-	int fontSize = m_settings.fontSize();
+	int fontSize = m_settings->fontSize();
 	if(fontSize <= 0) {
 		// We require a point size. Android uses a pixel size, which causes the
 		// point size to be reported as -1 and breaks several UI elements. But
@@ -392,10 +403,10 @@ void DrawpileApp::initInterface()
 		int pointSize = font.pointSize();
 		fontSize = pointSize <= 0 ? 9 : pointSize;
 #endif
-		m_settings.setFontSize(fontSize);
+		m_settings->setFontSize(fontSize);
 	}
 
-	if(m_settings.overrideFontSize()) {
+	if(m_settings->overrideFontSize()) {
 		font.setPointSize(fontSize);
 		QApplication::setFont(font);
 	}
@@ -425,7 +436,7 @@ QSize DrawpileApp::safeNewCanvasSize() const
 	// We don't load extremely small or extremely large sizes by default, since
 	// they have a high chance of causing confusion, being slow or even crashing
 	// weaker devices.
-	QSize size = m_settings.newCanvasSize();
+	QSize size = m_settings->newCanvasSize();
 	return QSize(
 		qBound(400, size.width(), 10000), qBound(400, size.height(), 10000));
 }
@@ -581,7 +592,7 @@ void DrawpileApp::openBlank(
 		}
 	}
 	if(!backgroundColor.isValid()) {
-		backgroundColor = m_settings.newCanvasBackColor();
+		backgroundColor = m_settings->newCanvasBackColor();
 	}
 	acquireWindow(restoreWindowPosition, false)
 		->newDocument(QSize(width, height), backgroundColor);
@@ -609,7 +620,7 @@ dialogs::StartDialog::Entry getStartDialogEntry(const QString &page)
 void DrawpileApp::openStart(const QString &page, bool restoreWindowPosition)
 {
 	MainWindow *win = new MainWindow(restoreWindowPosition);
-	win->newDocument(safeNewCanvasSize(), m_settings.newCanvasBackColor());
+	win->newDocument(safeNewCanvasSize(), m_settings->newCanvasBackColor());
 	// Importing an animation is not actually a start dialog page, it's just
 	// here as an internal option to let us start a new process if the user
 	// requests an animation import on a dirty canvas.

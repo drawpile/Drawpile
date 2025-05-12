@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/layeraclmenu.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include <QActionGroup>

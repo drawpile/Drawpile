@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/artisticcolorwheeldialog.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/artisticcolorwheel.h"
 #include "desktop/widgets/kis_slider_spin_box.h"

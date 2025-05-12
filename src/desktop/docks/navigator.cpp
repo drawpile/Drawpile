@@ -2,6 +2,7 @@
 
 #include "desktop/docks/navigator.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/zoomslider.h"
 #include "libclient/canvas/canvasmodel.h"

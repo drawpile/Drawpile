@@ -2,6 +2,7 @@
 #include "desktop/dialogs/startdialog/browse.h"
 #include "desktop/dialogs/logindialog.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/spanawaretreeview.h"
 #include "libclient/net/sessionlistingmodel.h"

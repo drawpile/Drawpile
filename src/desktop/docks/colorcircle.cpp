@@ -5,6 +5,7 @@
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/artisticcolorwheel.h"
 #include "desktop/widgets/groupedtoolbutton.h"

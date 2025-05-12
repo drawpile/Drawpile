@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/view/softwarecanvas.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/view/canvascontroller.h"
 #include "desktop/view/canvasscene.h"
 #include "libclient/canvas/canvasmodel.h"

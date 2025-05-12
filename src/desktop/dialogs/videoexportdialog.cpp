@@ -2,6 +2,7 @@
 #include "desktop/dialogs/videoexportdialog.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "libclient/export/ffmpegexporter.h"
 #include "libclient/export/imageseriesexporter.h"
 #include "libshared/util/qtcompat.h"

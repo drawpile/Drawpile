@@ -4,6 +4,7 @@
 #include "desktop/dialogs/certificateview.h"
 #include "desktop/dialogs/netstats.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/widgets/popupmessage.h"
 #include "libshared/util/whatismyip.h"
 

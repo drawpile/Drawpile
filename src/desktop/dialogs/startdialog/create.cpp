@@ -3,6 +3,7 @@
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/dialogs/resizedialog.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "libclient/utils/images.h"
 #include <QFormLayout>
 #include <QLabel>

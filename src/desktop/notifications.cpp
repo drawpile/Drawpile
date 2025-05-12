@@ -2,6 +2,7 @@
 #include "desktop/notifications.h"
 #include "desktop/main.h"
 #include "desktop/mainwindow.h"
+#include "desktop/settings.h"
 #include "libshared/util/paths.h"
 #include <QDateTime>
 #include <QDebug>

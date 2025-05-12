@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/utils/recents.h"
 #include "cmake-config/config.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "libclient/utils/statedatabase.h"
 #include "libclient/utils/wasmpersistence.h"
 #include "libshared/util/paths.h"
 #include <QFileInfo>
 #include <QMenu>
 #include <QPair>
+#include <QRegularExpression>
 #include <QStringList>
 
 namespace utils {

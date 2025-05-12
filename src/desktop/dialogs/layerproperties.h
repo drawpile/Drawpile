@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QIcon>
 
+class QAbstractButton;
 class QButtonGroup;
 class QComboBox;
 class QStandardItemModel;

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/startdialog/host/bans.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QJsonDocument>

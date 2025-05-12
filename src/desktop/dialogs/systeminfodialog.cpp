@@ -2,6 +2,7 @@
 #include "desktop/dialogs/systeminfodialog.h"
 #include "cmake-config/config.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/tabletinput.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/view/glcanvas.h"

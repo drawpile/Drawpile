@@ -7,6 +7,7 @@
 #include "desktop/mainwindow.h"
 #include "desktop/scene/canvasscene.h"
 #include "desktop/scene/canvasview.h"
+#include "desktop/settings.h"
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
@@ -17,6 +18,7 @@
 #include "desktop/widgets/viewstatusbar.h"
 #include "libclient/document.h"
 #include "libclient/tools/toolcontroller.h"
+#include <QAction>
 #include <functional>
 
 using std::placeholders::_6;

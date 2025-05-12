@@ -12,6 +12,7 @@
 #include <QPainter>
 #include <QRubberBand>
 #include <QScrollBar>
+#include <QStyle>
 #include <QToolTip>
 #include <desktop/utils/qtguicompat.h>
 

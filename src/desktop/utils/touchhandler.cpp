@@ -3,6 +3,7 @@ extern "C" {
 #include <dpcommon/event_log.h>
 }
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/touchhandler.h"
 #include "libshared/util/qtcompat.h"

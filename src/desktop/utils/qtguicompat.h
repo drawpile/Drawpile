@@ -1,313 +1,104 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef DP_DESKTOP_UTILS_QTGUICOMPAT_H
-#define DP_DESKTOP_UTILS_QTGUICOMPAT_H
-#include <QApplication>
-#include <QCheckBox>
-#include <QDragMoveEvent>
-#include <QDropEvent>
-#include <QKeyEvent>
-#include <QMouseEvent>
-#include <QStyle>
+#ifndef DESKTOP_UTILS_QTGUICOMPAT_H
+#define DESKTOP_UTILS_QTGUICOMPAT_H
+#include <QList>
+#include <QPointF>
+#include <QString>
 #include <QTabletEvent>
-#include <QTextCharFormat>
 #include <QTouchEvent>
-#include <QWheelEvent>
-#include <QWidget>
 #include <QtGlobal>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #	include <QEventPoint>
-#	include <QImageReader>
 #	include <QInputDevice>
+#	include <QEnterEvent>
 #else
+#	include <QEvent>
 #	include <QTouchDevice>
 #endif
 
+class QDragMoveEvent;
+class QDropEvent;
+class QMouseEvent;
+class QScreen;
+class QStyle;
+class QTextCharFormat;
+class QWheelEvent;
+class QWidget;
+
 namespace compat {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
-inline auto fontFamily(const QTextCharFormat &format)
-{
-	return format.fontFamilies().toStringList().value(0, QString{});
-}
-
-inline void setFontFamily(QTextCharFormat &format, const QString &family)
-{
-	format.setFontFamilies({family});
-}
-#else
-inline auto fontFamily(const QTextCharFormat &format)
-{
-	return format.fontFamily();
-}
-
-inline void setFontFamily(QTextCharFormat &format, const QString &family)
-{
-	format.setFontFamily(family);
-}
-#endif
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-inline auto widgetScreen(const QWidget &widget)
-{
-	return widget.screen();
-}
-
-inline auto wheelPosition(const QWheelEvent &event)
-{
-	return event.position();
-}
-#else
-inline auto widgetScreen(const QWidget &)
-{
-	return qApp->primaryScreen();
-}
-
-inline auto wheelPosition(const QWheelEvent &event)
-{
-	return event.posF();
-}
-#endif
-
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-inline auto tabDevice(const QTabletEvent &event)
-{
-	return event.deviceType();
-}
-#else
-inline auto tabDevice(const QTabletEvent &event)
-{
-	return event.device();
-}
-#endif
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+
 #	define HAVE_QT_COMPAT_DEFAULT_HIGHDPI_PIXMAPS
 #	define HAVE_QT_COMPAT_DEFAULT_HIGHDPI_SCALING
 #	define HAVE_QT_COMPAT_DEFAULT_DISABLE_WINDOW_CONTEXT_HELP_BUTTON
 
 using DeviceType = QInputDevice::DeviceType;
 using EnterEvent = QEnterEvent;
+using KeyCombination = QKeyCombination;
 using PointerType = QPointingDevice::PointerType;
 using TouchPoint = QEventPoint;
-constexpr auto UnknownPointer = PointerType::Unknown;
-constexpr auto NoDevice = DeviceType::Unknown;
-constexpr auto FourDMouseDevice = DeviceType::Mouse;
-constexpr auto RotationStylusDevice = DeviceType::Stylus;
 
-inline auto makeTabletEvent(
-	QEvent::Type type, const QPointF &pos, const QPointF &globalPos,
-	compat::DeviceType device, compat::PointerType pointerType, qreal pressure,
-	int xTilt, int yTilt, qreal tangentialPressure, qreal rotation, int z,
-	Qt::KeyboardModifiers keyState, qint64 uniqueID, Qt::MouseButton button,
-	Qt::MouseButtons buttons)
-{
-	const QPointingDevice *sysDevice = nullptr;
-	for(const auto *candidate : QInputDevice::devices()) {
-		if(candidate && candidate->type() == device &&
-		   candidate->systemId() == uniqueID) {
-			const auto *pd = static_cast<const QPointingDevice *>(candidate);
-			if(pd->pointerType() == pointerType) {
-				sysDevice = pd;
-				break;
-			}
-		}
-	}
+constexpr PointerType UnknownPointer = PointerType::Unknown;
+constexpr DeviceType NoDevice = DeviceType::Unknown;
+constexpr DeviceType FourDMouseDevice = DeviceType::Mouse;
+constexpr DeviceType RotationStylusDevice = DeviceType::Stylus;
 
-	// Happens with KisTablet. Falling back to the primary device seems to work
-	// fine without any negative repercussions, leaving it null causes a crash.
-	if(!sysDevice) {
-		qDebug("Could not find device matching event ID %lld", uniqueID);
-		sysDevice = QPointingDevice::primaryPointingDevice();
-	}
-
-	return ::QTabletEvent(
-		type, sysDevice, pos, globalPos, pressure, xTilt, yTilt,
-		tangentialPressure, rotation, z, keyState, button, buttons);
-}
-
-inline auto keyPressed(const QKeyEvent &event)
-{
-	return event.keyCombination();
-}
-
-inline auto globalPos(const QMouseEvent &event)
-{
-	return event.globalPosition().toPoint();
-}
-
-inline auto mousePos(const QMouseEvent &event)
-{
-	return event.position().toPoint();
-}
-
-inline auto mousePosition(const QMouseEvent &event)
-{
-	return event.position();
-}
-
-inline auto styleName(const QStyle &style)
-{
-	return style.name();
-}
-
-inline auto tabPosF(const QTabletEvent &event)
-{
-	return event.position();
-}
-
-inline const QList<TouchPoint> &touchPoints(const QTouchEvent &event)
-{
-	return event.points();
-}
-
-inline auto touchId(const QEventPoint &event)
-{
-	return event.id();
-}
-
-inline auto touchStartPos(const QEventPoint &event)
-{
-	return event.pressPosition();
-}
-
-inline auto touchPos(const QEventPoint &event)
-{
-	return event.position();
-}
-
-inline auto dragMovePos(const QDragMoveEvent &event)
-{
-	return event.position().toPoint();
-}
-
-inline auto dropPos(const QDropEvent &event)
-{
-	return event.position().toPoint();
-}
-
-inline auto keyCombination(Qt::KeyboardModifiers modifiers, Qt::Key key)
-{
-	return QKeyCombination{modifiers, key};
-}
-
-inline QString touchDeviceName(const QTouchEvent *event)
-{
-	const QInputDevice *device = event->device();
-	return device ? device->name() : QString();
-}
-
-inline int touchDeviceType(const QTouchEvent *event)
-{
-	return int(event->deviceType());
-}
-
-inline bool isTouchPad(const QTouchEvent *event)
-{
-	return event->deviceType() == QInputDevice::DeviceType::TouchPad;
-}
 #else
+
 using DeviceType = QTabletEvent::TabletDevice;
 using EnterEvent = QEvent;
+using KeyCombination = int;
 using PointerType = QTabletEvent::PointerType;
 using TouchPoint = QTouchEvent::TouchPoint;
-constexpr auto UnknownPointer = PointerType::UnknownPointer;
-constexpr auto NoDevice = DeviceType::NoDevice;
-constexpr auto FourDMouseDevice = DeviceType::FourDMouse;
-constexpr auto RotationStylusDevice = DeviceType::RotationStylus;
 
-inline auto makeTabletEvent(
+constexpr PointerType UnknownPointer = PointerType::UnknownPointer;
+constexpr DeviceType NoDevice = DeviceType::NoDevice;
+constexpr DeviceType FourDMouseDevice = DeviceType::FourDMouse;
+constexpr DeviceType RotationStylusDevice = DeviceType::RotationStylus;
+
+#endif
+
+QString fontFamily(const QTextCharFormat &format);
+void setFontFamily(QTextCharFormat &format, const QString &family);
+
+QScreen *widgetScreen(const QWidget &widget);
+
+QPointF wheelPosition(const QWheelEvent &event);
+
+QTabletEvent makeTabletEvent(
 	QEvent::Type type, const QPointF &pos, const QPointF &globalPos,
 	compat::DeviceType device, compat::PointerType pointerType, qreal pressure,
 	int xTilt, int yTilt, qreal tangentialPressure, qreal rotation, int z,
 	Qt::KeyboardModifiers keyState, qint64 uniqueID, Qt::MouseButton button,
-	Qt::MouseButtons buttons)
-{
-	return ::QTabletEvent(
-		type, pos, globalPos, device, pointerType, pressure, xTilt, yTilt,
-		tangentialPressure, rotation, z, keyState, uniqueID, button, buttons);
-}
+	Qt::MouseButtons buttons);
 
-inline auto keyPressed(const QKeyEvent &event)
-{
-	return event.key();
-}
+KeyCombination keyPressed(const QKeyEvent &event);
 
-inline auto globalPos(const QMouseEvent &event)
-{
-	return event.globalPos();
-}
+QPoint globalPos(const QMouseEvent &event);
+QPoint mousePos(const QMouseEvent &event);
+QPointF mousePosition(const QMouseEvent &event);
 
-inline auto mousePos(const QMouseEvent &event)
-{
-	return event.pos();
-}
+QString styleName(const QStyle &style);
 
-inline auto mousePosition(const QMouseEvent &event)
-{
-	return ::QPointF(event.pos());
-}
+QPointF tabPosF(const QTabletEvent &event);
 
-inline auto tabPosF(const QTabletEvent &event)
-{
-	return event.posF();
-}
+const QList<TouchPoint> &touchPoints(const QTouchEvent &event);
 
-inline auto styleName(const QStyle &style)
-{
-	return style.objectName();
-}
+int touchId(const TouchPoint &event);
+QPointF touchStartPos(const TouchPoint &event);
+QPointF touchPos(const TouchPoint &event);
 
-inline const QList<TouchPoint> &touchPoints(const QTouchEvent &event)
-{
-	return event.touchPoints();
-}
+QPoint dragMovePos(const QDragMoveEvent &event);
+QPoint dropPos(const QDropEvent &event);
 
-inline auto touchId(const QTouchEvent::TouchPoint &event)
-{
-	return event.id();
-}
+KeyCombination keyCombination(Qt::KeyboardModifiers modifiers, Qt::Key key);
 
-inline auto touchStartPos(const QTouchEvent::TouchPoint &event)
-{
-	return event.startPos();
-}
+QString touchDeviceName(const QTouchEvent *event);
+int touchDeviceType(const QTouchEvent *event);
+bool isTouchPad(const QTouchEvent *event);
 
-inline auto touchPos(const QTouchEvent::TouchPoint &event)
-{
-	return event.pos();
-}
-
-inline auto dragMovePos(const QDragMoveEvent &event)
-{
-	return event.pos();
-}
-
-inline auto dropPos(const QDropEvent &event)
-{
-	return event.pos();
-}
-
-inline auto keyCombination(Qt::KeyboardModifiers modifiers, Qt::Key key)
-{
-	return int(modifiers) | int(key);
-}
-
-inline QString touchDeviceName(const QTouchEvent *event)
-{
-	QTouchDevice *device = event->device();
-	return device ? device->name() : QString();
-}
-
-inline int touchDeviceType(const QTouchEvent *event)
-{
-	QTouchDevice *device = event->device();
-	return device ? int(device->type()) : -1;
-}
-
-inline bool isTouchPad(const QTouchEvent *event)
-{
-	return touchDeviceType(event) == int(QTouchDevice::TouchPad);
-}
-#endif
+DeviceType tabDevice(const QTabletEvent &event);
 
 // Do not attempt to replace these #defines with something more C++ish.
 // That gets miscompiled on MSVC and your signals will not connect.
@@ -318,6 +109,7 @@ using CheckBoxState = Qt::CheckState;
 using CheckBoxState = int;
 #	define COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(CLS) &CLS::stateChanged
 #endif
+
 }
 
 #endif

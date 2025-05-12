@@ -2,6 +2,7 @@
 #include "desktop/chat/chatwidget.h"
 #include "desktop/chat/chatwidgetpinnedarea.h"
 #include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/userlist.h"
