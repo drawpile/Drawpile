@@ -492,7 +492,7 @@
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation>Importar preferències de sessió</translation>
+        <translation>Importar configuració de sessió</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -503,7 +503,7 @@
         <location line="+2"/>
         <location line="+391"/>
         <source>Session Settings (%1)</source>
-        <translation>Preferències de sessió (%1)</translation>
+        <translation>Configuració de sessió (%1)</translation>
     </message>
     <message>
         <location line="-390"/>
@@ -578,7 +578,7 @@
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation>Exporta l&apos;arranjament de sessió</translation>
+        <translation>Exporta la configuració de sessió</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -1050,7 +1050,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Delete</source>
-        <translation>Esborra</translation>
+        <translation>Suprimeix</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1814,7 +1814,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+18"/>
         <source>Settings File:</source>
-        <translation>Fitxer de preferencies:</translation>
+        <translation>Fitxer de configuració:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2029,7 +2029,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>&amp;Brush Settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Configuració del pinzell</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2275,7 +2275,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-697"/>
         <source>Delete</source>
-        <translation>Eliminar</translation>
+        <translation>Suprimeix</translation>
     </message>
     <message>
         <location line="+513"/>
@@ -3089,7 +3089,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Browse session listings</source>
-        <translation type="unfinished"></translation>
+        <translation>Explora els llistats de sessions</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3114,7 +3114,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Change session settings, permissions, announcements and bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia la configuració de la sessió, els permisos, els anuncis i els bloquejos</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3729,12 +3729,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/sessionsettings.ui" line="+14"/>
         <source>Session Settings</source>
-        <translation>Arranjament de sessió</translation>
+        <translation>Configuració de sessió</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Settings</source>
-        <translation>Arranjament</translation>
+        <translation>Configuració</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4894,7 +4894,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Brush metadata settings.</source>
-        <translation>Opcions de metadades del pinzell.</translation>
+        <translation>Configuració de metadades del pinzell.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4904,7 +4904,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Core brush settings.</source>
-        <translation>Paràmetres essencials del pinzell.</translation>
+        <translation>Configuració essencial del pinzell.</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -5578,35 +5578,35 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Fine speed filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Filtre de velocitat fina</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Gross speed filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Filtre de velocitat bruta</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fine speed gamma</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Gamma de velocitat fina</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Gross speed gamma</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Gamma de velocitat bruta</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Jitter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dispersió</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5649,7 +5649,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Color hue</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>To de color</translation>
     </message>
     <message>
         <location line="-198"/>
@@ -5657,77 +5657,77 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Color saturation</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Saturació del color</translation>
     </message>
     <message>
         <location line="-198"/>
         <source>Color value</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Valor del color</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Desa el color</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color hue</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el to del color</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color lightness (HSL)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Canvia la claredat del color (HSL)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color satur. (HSL)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Canvia la saturació del color (HSL)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color value (HSV)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el valor del color (HSV)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color satur. (HSV)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Canvia la saturació del color (HSV)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Esborronat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge length</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Durada de l&apos;esborronat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Radi de l&apos;esborronat</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5846,21 +5846,21 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Smudge length multiplier</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Multiplicador de la durada de l&apos;esborronat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge bucket</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cubell d&apos;esborronat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge transparency</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Transparència d&apos;esborronat</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6053,7 +6053,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Igual que &apos;filtre de velocitat fina&apos;, però noteu que l&apos;interval és diferent</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6070,7 +6070,7 @@ For very slow speed the opposite happens.</source>
         <source>Same as &apos;fine speed gamma&apos; for gross speed</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Igual que &apos;gamma de velocitat fina&apos; per a la velocitat bruta</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6499,7 +6499,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplaça el llenç</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6890,7 +6890,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation>Eliminar</translation>
+        <translation>Suprimeix</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -6900,7 +6900,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-242"/>
         <source>Default</source>
-        <translation>Per defecte</translation>
+        <translation>Per omissió</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7702,12 +7702,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Load settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Carrega la configuració…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa la configuració…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7834,7 +7834,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplaça el llenç</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8467,7 +8467,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-23"/>
         <source>Hide settings when locked</source>
-        <translation>Amaga les opcions quan estigui bloquejat</translation>
+        <translation>Amaga la configuració quan estigui bloquejat</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -9115,7 +9115,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>Escull color</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9130,7 +9130,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Pan canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplaça el llenç</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9552,7 +9552,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Could not import session settings.</source>
-        <translation>No s&apos;han pogut importar els paràmetres de sessió.</translation>
+        <translation>No s&apos;ha pogut importar la configuració de sessió.</translation>
     </message>
 </context>
 <context>
@@ -9717,7 +9717,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+30"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina</translation>
     </message>
 </context>
 <context>
@@ -9768,7 +9768,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+504"/>
         <source>Export Settings</source>
-        <translation>Exportar la configuració</translation>
+        <translation>Exporta la configuració</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9783,7 +9783,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Could not export session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;ha pogut exportar la configuració de sessió.</translation>
     </message>
 </context>
 <context>
@@ -9791,7 +9791,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-113"/>
         <source>Import Settings</source>
-        <translation>Importar configuració</translation>
+        <translation>Importa la configuració</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9874,7 +9874,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-102"/>
         <location line="+140"/>
         <source>Delete</source>
-        <translation>Elimina</translation>
+        <translation>Suprimeix</translation>
     </message>
     <message>
         <location line="-131"/>
@@ -10183,12 +10183,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/files.cpp" line="+52"/>
         <source>This file doesn&apos;t contain any valid session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aquest fitxer no conté cap configuració de sessió vàlida.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Invalid session settings format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Format de configuració de sessió no vàlid.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10391,17 +10391,17 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <location line="+45"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Suprimeix</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Delete Brush</source>
-        <translation>Eliminar el pinzell</translation>
+        <translation>Suprimeix el pinzell</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete brush &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Realment voleu suprimir el pinzell &apos;%1&apos;?</translation>
     </message>
 </context>
 <context>
@@ -10427,7 +10427,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorpalette.cpp" line="+372"/>
         <source>Delete</source>
-        <translation>Elimina</translation>
+        <translation>Suprimeix</translation>
     </message>
     <message>
         <location line="-249"/>
@@ -11060,7 +11060,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>Escull color</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11140,7 +11140,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Tool Settings</source>
-        <translation>Preferencies de l&apos;eina</translation>
+        <translation>Configuració de l&apos;eina</translation>
     </message>
 </context>
 <context>
@@ -11204,7 +11204,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Suprimeix</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -12299,7 +12299,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -12335,7 +12335,7 @@ Hex: %4</source>
     <message>
         <location line="+3"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Suprimeix</translation>
     </message>
 </context>
 <context>
@@ -12343,17 +12343,17 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/recentscroll.cpp" line="+28"/>
         <source>No recent files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cap fitxer recent.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>No recent hosts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cap amfitrió recent.</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina</translation>
     </message>
 </context>
 <context>
