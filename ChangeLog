@@ -20,6 +20,7 @@ Unreleased Version 2.2.3-pre
  * Fix: Properly reset layer visibility when creating a layer with the same ID as a previously hidden layer when you have a high-ish ping. Thanks MachKerman for reporting.
  * Fix: Don't start a kinetic scroll of the surrounding view when trying to adjust curve or slider. Thanks 3rd_EFNO for reporting.
  * Fix: Make MyPaint brushes not pick up transparency from outside of the canvas. Thanks Meiren and yvantot for reporting.
+ * Fix: Properly render sketch mode layers when the actual layer opacity is zero.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.

@@ -208,7 +208,7 @@ bool DP_layer_props_visible(DP_LayerProps *lp)
 {
     DP_ASSERT(lp);
     DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
-    return lp->opacity > 0 && !lp->hidden;
+    return (lp->sketch_opacity > 0 || lp->opacity > 0) && !lp->hidden;
 }
 
 const char *DP_layer_props_title(DP_LayerProps *lp, size_t *out_length)
