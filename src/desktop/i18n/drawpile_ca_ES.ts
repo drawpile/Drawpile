@@ -9183,22 +9183,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Font size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Mida de la lletra: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>pt</source>
-        <translation type="unfinished"></translation>
+        <translation>pt</translation>
     </message>
     <message>
         <location line="-170"/>
         <source>Interface mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode d&apos;interfície:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinàmic</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9239,27 +9239,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Threshold: </source>
-        <translation type="unfinished"></translation>
+        <translation>Llindar: </translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide scroll bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Amaga les barres de desplaçament</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Background color behind the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Color de fons darrere el llenç</translation>
     </message>
     <message>
         <location line="+71"/>
         <source>Override system scale factor</source>
-        <translation type="unfinished"></translation>
+        <translation>Sobreescriu el factor d&apos;escala del sistema</translation>
     </message>
     <message>
         <location line="-126"/>
         <source>Small screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Pantalla petita</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -9274,7 +9274,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Colors behind canvas:</source>
-        <translation type="unfinished"></translation>
+        <translation>Color darrere el llenç:</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -9289,7 +9289,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Show scroll bars on canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra les barres de desplaçament en el llenç</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9382,7 +9382,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Show sessions that don&apos;t let new users join</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra les sessions que no permeten que els nous usuaris s&apos;uneixin</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9392,7 +9392,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Show sessions that require a password to join</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra les sessions que requereixen una contrasenya per unir-se</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9519,7 +9519,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquejos</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -9547,7 +9547,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+82"/>
         <source>Import Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Error en la importació</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -9583,7 +9583,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Tablet Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuració de la tauleta</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9636,7 +9636,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/updatenotice.cpp" line="+60"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualitza</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9656,7 +9656,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Update to Drawpile version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualitza a la versió %1 de Drawpile</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -9773,7 +9773,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Pick the sections you want to export:</source>
-        <translation type="unfinished"></translation>
+        <translation>Trieu les seccions que voleu exportar:</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -9796,7 +9796,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to import:</source>
-        <translation type="unfinished"></translation>
+        <translation>Trieu les seccions que voleu importar:</translation>
     </message>
 </context>
 <context>
