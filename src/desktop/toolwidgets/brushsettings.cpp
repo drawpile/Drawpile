@@ -1211,24 +1211,17 @@ void BrushSettings::setAutomaticAlphaPreserve(bool automaticAlphaPreserve)
 {
 	if(automaticAlphaPreserve != d->automaticAlphaPreserve) {
 		d->automaticAlphaPreserve = automaticAlphaPreserve;
-		const brushes::ActiveBrush &brush = d->currentBrush();
-		if(brush.activeType() == brushes::ActiveBrush::CLASSIC) {
-			const brushes::ClassicBrush &cb = brush.classic();
-			int blendMode = getBlendMode();
-			QSignalBlocker blocker(d->ui.blendmode);
-			d->ui.blendmode->setModel(getBrushBlendModesFor(
-				cb.erase, automaticAlphaPreserve, d->compatibilityMode));
-			int index = searchBlendModeComboIndex(d->ui.blendmode, blendMode);
-			if(index != -1) {
-				d->ui.blendmode->setCurrentIndex(index);
-			}
-			d->ui.alphaPreserve->setChecked(
-				canvas::blendmode::presentsAsAlphaPreserving(blendMode));
-		} else {
-			QSignalBlocker blocker(d->ui.blendmode);
-			d->ui.blendmode->setModel(getBrushBlendModesFor(
-				false, automaticAlphaPreserve, d->compatibilityMode));
+		int blendMode = getBlendMode();
+		QSignalBlocker blocker(d->ui.blendmode);
+		d->ui.blendmode->setModel(getBrushBlendModesFor(
+			d->currentBrush().isEraser(), automaticAlphaPreserve,
+			d->compatibilityMode, d->currentIsMyPaint()));
+		int index = searchBlendModeComboIndex(d->ui.blendmode, blendMode);
+		if(index != -1) {
+			d->ui.blendmode->setCurrentIndex(index);
 		}
+		d->ui.alphaPreserve->setChecked(
+			canvas::blendmode::presentsAsAlphaPreserving(blendMode));
 	}
 }
 
@@ -1340,7 +1333,8 @@ void BrushSettings::updateUi()
 
 	// Show correct blending mode
 	d->ui.blendmode->setModel(getBrushBlendModesFor(
-		brush.isEraser(), d->automaticAlphaPreserve, d->compatibilityMode));
+		brush.isEraser(), d->automaticAlphaPreserve, d->compatibilityMode,
+		mypaintmode));
 	d->ui.modeEraser->setChecked(brush.isEraser());
 	d->ui.modeEraser->setEnabled(!isCurrentEraserSlot());
 

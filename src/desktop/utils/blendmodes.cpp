@@ -65,7 +65,7 @@ static void addSeparator(QStandardItemModel *model)
 
 static void addBlendModesTo(
 	QStandardItemModel *model, int recolor, bool compatibilityMode,
-	const QVector<canvas::blendmode::Named> &modes)
+	bool myPaint, const QVector<canvas::blendmode::Named> &modes)
 {
 	for(int i = 0, count = modes.size(); i < count; ++i) {
 		const canvas::blendmode::Named &m = modes[i];
@@ -86,7 +86,8 @@ static void addBlendModesTo(
 			model->appendRow(item);
 		}
 
-		if(compatibilityMode && !m.compatible) {
+		if(compatibilityMode &&
+		   !(myPaint ? m.myPaintCompatible : m.compatible)) {
 			item->setEnabled(false);
 		}
 
@@ -100,7 +101,8 @@ static void addLayerBlendModesTo(
 	QStandardItemModel *model, int recolor, bool compatibilityMode)
 {
 	addBlendModesTo(
-		model, recolor, compatibilityMode, canvas::blendmode::layerModeNames());
+		model, recolor, compatibilityMode, false,
+		canvas::blendmode::layerModeNames());
 }
 
 static void addGroupBlendModesTo(
@@ -199,7 +201,8 @@ QStandardItemModel *brushBlendModes()
 	if(!model) {
 		model = new QStandardItemModel;
 		addBlendModesTo(
-			model, RECOLOR_ENABLED, false, canvas::blendmode::brushModeNames());
+			model, RECOLOR_ENABLED, false, false,
+			canvas::blendmode::brushModeNames());
 	}
 	return model;
 }
@@ -210,7 +213,8 @@ QStandardItemModel *brushBlendModesRecolorOmitted()
 	if(!model) {
 		model = new QStandardItemModel;
 		addBlendModesTo(
-			model, RECOLOR_OMITTED, false, canvas::blendmode::brushModeNames());
+			model, RECOLOR_OMITTED, false, false,
+			canvas::blendmode::brushModeNames());
 	}
 	return model;
 }
@@ -221,7 +225,7 @@ QStandardItemModel *brushBlendModesErase()
 	if(!model) {
 		model = new QStandardItemModel;
 		addBlendModesTo(
-			model, RECOLOR_ENABLED, false,
+			model, RECOLOR_ENABLED, false, false,
 			canvas::blendmode::eraserModeNames());
 	}
 	return model;
@@ -233,7 +237,8 @@ QStandardItemModel *brushBlendModesCompat()
 	if(!model) {
 		model = new QStandardItemModel;
 		addBlendModesTo(
-			model, RECOLOR_ENABLED, true, canvas::blendmode::brushModeNames());
+			model, RECOLOR_ENABLED, true, false,
+			canvas::blendmode::brushModeNames());
 	}
 	return model;
 }
@@ -244,7 +249,32 @@ QStandardItemModel *brushBlendModesEraseCompat()
 	if(!model) {
 		model = new QStandardItemModel;
 		addBlendModesTo(
-			model, RECOLOR_ENABLED, true, canvas::blendmode::eraserModeNames());
+			model, RECOLOR_ENABLED, true, false,
+			canvas::blendmode::eraserModeNames());
+	}
+	return model;
+}
+
+QStandardItemModel *brushBlendModesMyPaintCompat()
+{
+	static QStandardItemModel *model;
+	if(!model) {
+		model = new QStandardItemModel;
+		addBlendModesTo(
+			model, RECOLOR_ENABLED, true, true,
+			canvas::blendmode::brushModeNames());
+	}
+	return model;
+}
+
+QStandardItemModel *brushBlendModesEraseMyPaintCompat()
+{
+	static QStandardItemModel *model;
+	if(!model) {
+		model = new QStandardItemModel;
+		addBlendModesTo(
+			model, RECOLOR_ENABLED, true, true,
+			canvas::blendmode::eraserModeNames());
 	}
 	return model;
 }
@@ -255,7 +285,8 @@ QStandardItemModel *fillBlendModes()
 	if(!model) {
 		model = new QStandardItemModel;
 		addBlendModesTo(
-			model, RECOLOR_ENABLED, false, canvas::blendmode::pasteModeNames());
+			model, RECOLOR_ENABLED, false, false,
+			canvas::blendmode::pasteModeNames());
 	}
 	return model;
 }
@@ -266,7 +297,8 @@ QStandardItemModel *fillBlendModesRecolorOmitted()
 	if(!model) {
 		model = new QStandardItemModel;
 		addBlendModesTo(
-			model, RECOLOR_OMITTED, false, canvas::blendmode::pasteModeNames());
+			model, RECOLOR_OMITTED, false, false,
+			canvas::blendmode::pasteModeNames());
 	}
 	return model;
 }
@@ -277,7 +309,8 @@ QStandardItemModel *fillBlendModesCompat()
 	if(!model) {
 		model = new QStandardItemModel;
 		addBlendModesTo(
-			model, RECOLOR_ENABLED, true, canvas::blendmode::pasteModeNames());
+			model, RECOLOR_ENABLED, true, false,
+			canvas::blendmode::pasteModeNames());
 	}
 	return model;
 }
@@ -303,10 +336,17 @@ QStandardItemModel *getLayerBlendModesFor(
 }
 
 QStandardItemModel *getBrushBlendModesFor(
-	bool erase, bool automaticAlphaPreserve, bool compatibilityMode)
+	bool erase, bool automaticAlphaPreserve, bool compatibilityMode,
+	bool myPaint)
 {
 	if(compatibilityMode) {
-		return erase ? brushBlendModesEraseCompat() : brushBlendModesCompat();
+		if(myPaint) {
+			return erase ? brushBlendModesEraseMyPaintCompat()
+						 : brushBlendModesMyPaintCompat();
+		} else {
+			return erase ? brushBlendModesEraseCompat()
+						 : brushBlendModesCompat();
+		}
 	} else if(erase) {
 		return brushBlendModesErase();
 	} else if(automaticAlphaPreserve) {

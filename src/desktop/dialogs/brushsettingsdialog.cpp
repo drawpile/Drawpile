@@ -1327,7 +1327,7 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	const brushes::ClassicBrush &classic = d->brush.classic();
 
 	d->brushModeCombo->setModel(getBrushBlendModesFor(
-		classic.erase, d->automaticAlphaPreserve, d->compatibilityMode));
+		classic.erase, d->automaticAlphaPreserve, d->compatibilityMode, false));
 	int brushMode = DP_classic_brush_blend_mode(&classic);
 	int brushModeIndex =
 		searchBlendModeComboIndex(d->brushModeCombo, brushMode);
@@ -1417,7 +1417,7 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 	d->spacingSpinner->setVisible(false);
 
 	d->brushModeCombo->setModel(getBrushBlendModesFor(
-		brush.erase, d->automaticAlphaPreserve, d->compatibilityMode));
+		brush.erase, d->automaticAlphaPreserve, d->compatibilityMode, true));
 	int brushMode = DP_mypaint_brush_blend_mode(&brush);
 	int brushModeIndex =
 		searchBlendModeComboIndex(d->brushModeCombo, brushMode);

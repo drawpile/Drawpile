@@ -882,6 +882,7 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
             dab_flags = 0;
             switch (blend_mode) {
             case DP_BLEND_MODE_ERASE:
+            case DP_BLEND_MODE_ERASE_PRESERVE:
                 dab_color = 0;
                 dab_lock_alpha = 0;
                 dab_colorize = 0;
@@ -893,6 +894,15 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
                                                   alpha_eraser);
                 dab_lock_alpha = 255;
                 dab_colorize = 0;
+                dab_posterize = 0;
+                dab_mode = 0;
+                break;
+            case DP_BLEND_MODE_COLOR:
+            case DP_BLEND_MODE_COLOR_ALPHA:
+                dab_color = get_mypaint_dab_color(color_r, color_g, color_b,
+                                                  alpha_eraser);
+                dab_lock_alpha = 0;
+                dab_colorize = 255;
                 dab_posterize = 0;
                 dab_mode = 0;
                 break;

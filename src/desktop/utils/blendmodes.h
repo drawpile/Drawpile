@@ -13,7 +13,8 @@ QStandardItemModel *getLayerBlendModesFor(
 	bool group, bool clip, bool automaticAlphaPreserve, bool compatibilityMode);
 
 QStandardItemModel *getBrushBlendModesFor(
-	bool erase, bool automaticAlphaPreserve, bool compatibilityMode);
+	bool erase, bool automaticAlphaPreserve, bool compatibilityMode,
+	bool myPaint);
 
 QStandardItemModel *
 getFillBlendModesFor(bool automaticAlphaPreserve, bool compatibilityMode);

@@ -22,6 +22,7 @@ static constexpr uint8_t SeparatorAbove = 0x08;
 static constexpr uint8_t SeparatorBelow = 0x10;
 
 static constexpr uint8_t CompatibleMode = 0x20;
+static constexpr uint8_t MyPaintCompatibleMode = 0x40;
 
 struct BlendModeInfo {
 	//! The blend mode's translatable name
@@ -43,13 +44,13 @@ static const BlendModeInfo BLEND_MODE[] = {
 		QT_TRANSLATE_NOOP("blendmode", "Normal"),
 		DP_BLEND_MODE_NORMAL,
 		DP_BLEND_MODE_RECOLOR,
-		UniversalMode | CompatibleMode,
+		UniversalMode | CompatibleMode | MyPaintCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Recolor"),
 		DP_BLEND_MODE_RECOLOR,
 		DP_BLEND_MODE_NORMAL,
-		UniversalMode | CompatibleMode,
+		UniversalMode | CompatibleMode | MyPaintCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Behind"),
@@ -79,7 +80,7 @@ static const BlendModeInfo BLEND_MODE[] = {
 		QT_TRANSLATE_NOOP("blendmode", "Erase"),
 		DP_BLEND_MODE_ERASE,
 		DP_BLEND_MODE_ERASE_PRESERVE,
-		LayerMode | EraserMode | CompatibleMode,
+		LayerMode | EraserMode | CompatibleMode | MyPaintCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Color Erase"),
@@ -223,7 +224,7 @@ static const BlendModeInfo BLEND_MODE[] = {
 		QT_TRANSLATE_NOOP("blendmode", "Color"),
 		DP_BLEND_MODE_COLOR,
 		DP_BLEND_MODE_COLOR_ALPHA,
-		UniversalMode | SeparatorBelow | CompatibleMode,
+		UniversalMode | SeparatorBelow | CompatibleMode | MyPaintCompatibleMode,
 	},
 	{
 		QT_TRANSLATE_NOOP("blendmode", "Shade (SAI)"),
@@ -300,6 +301,7 @@ static QVector<Named> modeNames(uint8_t flag)
 				(flags & SeparatorAbove) != 0,
 				(flags & SeparatorBelow) != 0,
 				(flags & CompatibleMode) != 0,
+				(flags & MyPaintCompatibleMode) != 0,
 			});
 		}
 	}

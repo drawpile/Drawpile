@@ -18,6 +18,7 @@ struct Named {
 	bool separatorAbove;
 	bool separatorBelow;
 	bool compatible;
+	bool myPaintCompatible;
 };
 
 //! Get the SVG name for the given blend mode
