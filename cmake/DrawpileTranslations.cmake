@@ -4,6 +4,7 @@
 # translated strings so that we shouldn't ship them yet.
 set(SUPPORTED_LANGS
     ar_EG # Standard Arabic (Egypt used as a stand-in)
+    ca_ES # Catalan
     cs_CZ # Czech
     de_DE # German
     # el_GR # Greek
