@@ -21,6 +21,7 @@
  */
 #ifndef DPMSG_BINARY_READER_H
 #define DPMSG_BINARY_READER_H
+#include "messages.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_Input DP_Input;
@@ -60,6 +61,12 @@ double DP_binary_reader_progress(DP_BinaryReader *reader);
 DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,
                                                     bool decode_opaque,
                                                     DP_Message **out_msg);
+
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+DP_BinaryReaderResult
+DP_binary_reader_read_message_compat(DP_BinaryReader *reader,
+                                     bool decode_opaque, DP_Message **out_msg);
+#endif
 
 // Returns the message length (including header) or -1 on error.
 int DP_binary_reader_skip_message(DP_BinaryReader *reader, uint8_t *out_type,

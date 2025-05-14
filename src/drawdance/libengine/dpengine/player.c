@@ -56,6 +56,9 @@ struct DP_Player {
     JSON_Value *text_reader_header_value;
     long long position;
     DP_ProtocolVersion *protover;
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+    bool compatibility_mode;
+#endif
     bool acl_override;
     unsigned char pass;
     bool input_error;
@@ -150,19 +153,24 @@ static DP_Player *make_player(DP_PlayerType type, char *recording_path,
     DP_ProtocolVersion *protover = DP_protocol_version_parse(version);
     DP_free(version);
     DP_Player *player = DP_malloc(sizeof(*player));
-    *player = (DP_Player){recording_path,
-                          index_path,
-                          type,
-                          reader,
-                          DP_acl_state_new_playback(),
-                          header_value,
-                          0,
-                          protover,
-                          false,
-                          DP_PLAYER_PASS_CLIENT_PLAYBACK,
-                          false,
-                          false,
-                          {DP_BUFFERED_INPUT_NULL, 0, NULL, 0}};
+    *player =
+        (DP_Player){recording_path,
+                    index_path,
+                    type,
+                    reader,
+                    DP_acl_state_new_playback(),
+                    header_value,
+                    0,
+                    protover,
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+                    type == DP_PLAYER_TYPE_BINARY
+                        && DP_protocol_version_is_past_compatible(protover),
+#endif
+                    false,
+                    DP_PLAYER_PASS_CLIENT_PLAYBACK,
+                    false,
+                    false,
+                    {DP_BUFFERED_INPUT_NULL, 0, NULL, 0}};
     return player;
 }
 
@@ -242,6 +250,9 @@ static DP_Player *new_debug_dump_player(DP_Input *input)
                           NULL,
                           0,
                           NULL,
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+                          false,
+#endif
                           false,
                           DP_PLAYER_PASS_CLIENT_PLAYBACK,
                           false,
@@ -363,6 +374,12 @@ DP_PlayerCompatibility DP_player_compatibility(DP_Player *player)
         return DP_PLAYER_COMPATIBLE;
     case DP_PROTOCOL_COMPATIBILITY_MINOR_INCOMPATIBILITY:
         return DP_PLAYER_MINOR_INCOMPATIBILITY;
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+    case DP_PROTOCOL_COMPATIBILITY_BACKWARD_COMPATIBLE:
+        return player->type == DP_PLAYER_TYPE_BINARY
+                 ? DP_PLAYER_BACKWARD_COMPATIBLE
+                 : DP_PLAYER_INCOMPATIBLE;
+#endif
     default:
         return DP_PLAYER_INCOMPATIBLE;
     }
@@ -374,6 +391,9 @@ bool DP_player_compatible(DP_Player *player)
     switch (DP_player_compatibility(player)) {
     case DP_PLAYER_COMPATIBLE:
     case DP_PLAYER_MINOR_INCOMPATIBILITY:
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+    case DP_PLAYER_BACKWARD_COMPATIBLE:
+#endif
         return true;
     default:
         return false;
@@ -462,9 +482,15 @@ long long DP_player_position(DP_Player *player)
 
 static DP_PlayerResult step_binary(DP_Player *player, DP_Message **out_msg)
 {
-    DP_BinaryReaderResult result =
-        DP_binary_reader_read_message(player->reader.binary, true, out_msg);
-    switch (result) {
+    DP_BinaryReaderResult (*read_fn)(DP_BinaryReader *reader,
+                                     bool decode_opaque, DP_Message **out_msg);
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+    read_fn = player->compatibility_mode ? DP_binary_reader_read_message_compat
+                                         : DP_binary_reader_read_message;
+#else
+    read_fn = DP_binary_reader_read_message;
+#endif
+    switch (read_fn(player->reader.binary, true, out_msg)) {
     case DP_BINARY_READER_SUCCESS:
         return DP_PLAYER_SUCCESS;
     case DP_BINARY_READER_INPUT_END:

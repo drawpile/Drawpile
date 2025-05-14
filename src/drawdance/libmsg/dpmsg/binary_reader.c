@@ -282,13 +282,12 @@ static DP_BinaryReaderResult read_message_header(DP_BinaryReader *reader,
     }
 }
 
-DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,
-                                                    bool decode_opaque,
-                                                    DP_Message **out_msg)
+static DP_BinaryReaderResult
+read_message(DP_BinaryReader *reader, bool decode_opaque,
+             DP_Message *(*deserialize_fn)(const unsigned char *buf,
+                                           size_t bufsize, bool decode_opaque),
+             DP_Message **out_msg)
 {
-    DP_ASSERT(reader);
-    DP_ASSERT(out_msg);
-
     size_t body_length;
     DP_BinaryReaderResult result = read_message_header(reader, &body_length);
     if (result != DP_BINARY_READER_SUCCESS) {
@@ -307,7 +306,7 @@ DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,
         return DP_BINARY_READER_ERROR_INPUT;
     }
 
-    DP_Message *msg = DP_message_deserialize(
+    DP_Message *msg = deserialize_fn(
         reader->buffer, DP_MESSAGE_HEADER_LENGTH + body_length, decode_opaque);
     if (msg) {
         *out_msg = msg;
@@ -317,6 +316,27 @@ DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,
         return DP_BINARY_READER_ERROR_PARSE;
     }
 }
+
+DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,
+                                                    bool decode_opaque,
+                                                    DP_Message **out_msg)
+{
+    DP_ASSERT(reader);
+    DP_ASSERT(out_msg);
+    return read_message(reader, decode_opaque, DP_message_deserialize, out_msg);
+}
+
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+DP_BinaryReaderResult
+DP_binary_reader_read_message_compat(DP_BinaryReader *reader,
+                                     bool decode_opaque, DP_Message **out_msg)
+{
+    DP_ASSERT(reader);
+    DP_ASSERT(out_msg);
+    return read_message(reader, decode_opaque, DP_message_deserialize_compat,
+                        out_msg);
+}
+#endif
 
 int DP_binary_reader_skip_message(DP_BinaryReader *reader, uint8_t *out_type,
                                   uint8_t *out_context_id)

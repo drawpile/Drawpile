@@ -308,6 +308,12 @@ DP_protocol_version_client_compatibility(const DP_ProtocolVersion *protover)
                 return DP_PROTOCOL_COMPATIBILITY_MINOR_INCOMPATIBILITY;
             }
         }
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+        if (protover->major == DP_PROTOCOL_COMPAT_VERSION_MAJOR
+            && protover->minor == DP_PROTOCOL_COMPAT_VERSION_MINOR) {
+            return DP_PROTOCOL_COMPATIBILITY_BACKWARD_COMPATIBLE;
+        }
+#endif
     }
     return DP_PROTOCOL_COMPATIBILITY_INCOMPATIBLE;
 }
