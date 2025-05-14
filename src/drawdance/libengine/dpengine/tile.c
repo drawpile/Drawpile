@@ -576,7 +576,7 @@ size_t DP_tile_compress_split_delta_zstd8le(
     DP_ASSERT(split_buffer);
     DP_Pixel15 pixel;
     if (DP_tile_same_pixel(t, &pixel)) {
-        return DP_tile_compress_pixel8be(pixel, get_output_buffer, user);
+        return DP_tile_compress_pixel8le(pixel, get_output_buffer, user);
     }
     else {
         DP_pixels15_to_split_tile8_delta(split_buffer, t->pixels);
