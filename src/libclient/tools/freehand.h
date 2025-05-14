@@ -23,6 +23,8 @@ public:
 
 	void setBrushSizeLimit(int limit) override;
 
+	void setSelectionMaskingEnabled(bool selectionMaskingEnabled) override;
+
 private:
 	void pollControl(bool enable);
 	void poll();

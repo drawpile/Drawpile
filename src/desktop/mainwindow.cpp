@@ -3448,11 +3448,17 @@ void MainWindow::onServerDisconnected(
 #endif
 }
 
+// clang-format on
 void MainWindow::onCompatibilityModeChanged(bool compatibilityMode)
 {
 	getAction("lightnesstoalphaarea")->setEnabled(!compatibilityMode);
 	getAction("darknesstoalphaarea")->setEnabled(!compatibilityMode);
+	QAction *maskselection = getAction("maskselection");
+	maskselection->setEnabled(!compatibilityMode);
+	maskselection->setChecked(
+		!compatibilityMode && m_doc->toolCtrl()->isSelectionMaskingEnabled());
 }
+// clang-format off
 
 /**
  * Server connection established and login successfull
@@ -5924,6 +5930,12 @@ void MainWindow::setupActions()
 		makeAction("editselection", tr("Dra&w on Selection"))
 			.checkable()
 			.noDefaultShortcut();
+	QAction *maskselection =
+		makeAction("maskselection", tr("Mas&k Brush Strokes With Selection"))
+			.statusTip(tr("Keep brush strokes inside the selection mask"))
+			.checkable()
+			.checked()
+			.noDefaultShortcut();
 
 	m_currentdoctools->addAction(selectall);
 	m_currentdoctools->addAction(selectnone);
@@ -5995,6 +6007,9 @@ void MainWindow::setupActions()
 	connect(
 		m_doc->toolCtrl(), &tools::ToolController::selectionEditActiveChanged,
 		this, &MainWindow::updateSelectionMaskVisibility);
+	connect(
+		maskselection, &QAction::triggered, m_doc->toolCtrl(),
+		&tools::ToolController::setSelectionMaskingEnabled);
 
 	QMenu *selectMenu = menuBar()->addMenu(tr("Selectio&n"));
 	selectMenu->addAction(selectall);
@@ -6023,6 +6038,7 @@ void MainWindow::setupActions()
 	selectMenu->addAction(editselection);
 	selectMenu->addAction(showselectionmask);
 	selectMenu->addAction(setselectionmaskcolor);
+	selectMenu->addAction(maskselection);
 
 	m_dockToolSettings->selectionSettings()->setAction(starttransform);
 	m_dockToolSettings->transformSettings()->setActions(
@@ -6502,7 +6518,7 @@ void MainWindow::setupActions()
 	// clang-format on
 	m_dockToolSettings->brushSettings()->setActions(
 		reloadPreset, reloadPresetSlots, reloadAllPresets, nextSlot,
-		previousSlot, layerAutomaticAlphaPreserve);
+		previousSlot, layerAutomaticAlphaPreserve, maskselection);
 	m_dockBrushPalette->setActions(
 		nextPreset, previousPreset, nextTag, previousTag);
 	// clang-format off

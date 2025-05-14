@@ -95,6 +95,11 @@ void ShapeTool::setBrushSizeLimit(int limit)
 	m_brushEngine.setSizeLimit(limit);
 }
 
+void ShapeTool::setSelectionMaskingEnabled(bool selectionMaskingEnabled)
+{
+	setCapability(Capability::IgnoresSelections, !selectionMaskingEnabled);
+}
+
 void ShapeTool::end(const EndParams &params)
 {
 	if(m_drawing) {

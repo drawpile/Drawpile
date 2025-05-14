@@ -146,6 +146,11 @@ void BezierTool::setBrushSizeLimit(int limit)
 	m_brushEngine.setSizeLimit(limit);
 }
 
+void BezierTool::setSelectionMaskingEnabled(bool selectionMaskingEnabled)
+{
+	setCapability(Capability::IgnoresSelections, !selectionMaskingEnabled);
+}
+
 PointVector BezierTool::calculateBezierCurve() const
 {
 	long long timeMsec = 0;

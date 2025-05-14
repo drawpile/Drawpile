@@ -90,6 +90,9 @@ public:
 	void setSelectionEditActive(bool selectionEditActive);
 	bool isSelectionEditActive() const { return m_selectionEditActive; }
 
+	void setSelectionMaskingEnabled(bool selectionMaskingEnabled);
+	bool isSelectionMaskingEnabled() const { return m_selectionMaskingEnabled; }
+
 	void setSelectionMaskColor(const QColor &selectionMaskColor);
 	const QColor &selectionMaskColor() const { return m_selectionMaskColor; }
 
@@ -282,6 +285,7 @@ private:
 	void registerTool(Tool *tool);
 	void updateSmoothing();
 	void startDrawingFromHotSwapParams();
+	void updateSelectionMaskingEnabled(bool compatibilityMode);
 
 	Tool *m_toolbox[Tool::_LASTTOOL];
 	net::Client *m_client;
@@ -296,6 +300,7 @@ private:
 	QColor m_foregroundColor;
 	QColor m_selectionMaskColor = QColor(0, 170, 255);
 	bool m_selectionEditActive = false;
+	bool m_selectionMaskingEnabled = true;
 	bool m_drawing;
 	bool m_applyGlobalSmoothing;
 	bool m_mouseSmoothing;

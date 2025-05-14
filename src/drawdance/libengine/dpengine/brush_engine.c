@@ -132,7 +132,8 @@ struct DP_BrushEngine {
     struct {
         bool active;
         bool preview;
-        int selection_id;
+        int next_selection_id;
+        int current_selection_id;
         DP_LayerContent *lc;
         size_t capacity;
         bool *map;
@@ -498,14 +499,17 @@ static void set_mask(size_t size, unsigned char *out, void *user)
 static void push_selection_sync(DP_BrushEngine *be, int col, int row,
                                 size_t mask_size, unsigned char *mask)
 {
-    unsigned int context_id = be->stroke.context_id;
-    be->push_message(be->user,
-                     DP_msg_sync_selection_tile_new(
-                         context_id, DP_uint_to_uint8(context_id),
-                         DP_int_to_uint8(be->mask.selection_id - 1
-                                         + DP_SELECTION_ID_FIRST_REMOTE),
-                         DP_int_to_uint16(col), DP_int_to_uint16(row), set_mask,
-                         mask_size, mask));
+    int selection_id = be->mask.current_selection_id;
+    if (selection_id > 0) {
+        unsigned int context_id = be->stroke.context_id;
+        be->push_message(be->user,
+                         DP_msg_sync_selection_tile_new(
+                             context_id, DP_uint_to_uint8(context_id),
+                             DP_int_to_uint8(selection_id - 1
+                                             + DP_SELECTION_ID_FIRST_REMOTE),
+                             DP_int_to_uint16(col), DP_int_to_uint16(row),
+                             set_mask, mask_size, mask));
+    }
 }
 
 static bool sync_mask_state(DP_BrushEngine *be, DP_LayerContent *mask_lc,
@@ -549,7 +553,7 @@ static bool handle_selection_mask(DP_BrushEngine *be, DP_PaintMode paint_mode,
 {
     if (be->mask.active) {
         if (be->mask.preview) {
-            *out_mask_flags = DP_int_to_uint8(be->mask.selection_id << 3);
+            *out_mask_flags = DP_int_to_uint8(be->mask.next_selection_id << 3);
             return true;
         }
         else {
@@ -566,7 +570,8 @@ static bool handle_selection_mask(DP_BrushEngine *be, DP_PaintMode paint_mode,
             else if (mask_state == MASK_MIXED
                      && sync_mask_state(be, mask_lc, width, height,
                                         dab_bounds)) {
-                *out_mask_flags = DP_int_to_uint8(be->mask.selection_id << 3);
+                *out_mask_flags =
+                    DP_int_to_uint8(be->mask.current_selection_id << 3);
                 return true;
             }
             else {
@@ -1148,7 +1153,7 @@ DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
          DP_QUEUE_NULL,
          DP_VECTOR_NULL,
          {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0}},
-        {false, false, 0, NULL, 0, NULL, NULL},
+        {false, false, 0, 0, NULL, 0, NULL, NULL},
         {0},
         {0, 0, 0, 0, NULL},
         push_message,
@@ -1202,7 +1207,7 @@ static void set_common_stroke_params(DP_BrushEngine *be,
     }
 
     DP_ASSERT(stroke->selection_id < 32); // Only have 5 bits for the id.
-    be->mask.selection_id = stroke->selection_id;
+    be->mask.next_selection_id = stroke->selection_id;
 }
 
 static void apply_layer_alpha_lock(DP_BlendMode *in_out_blend_mode,
@@ -1606,13 +1611,15 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
     be->smoother.offset = 0;
     set_poll_control_enabled(be, true);
 
+    int next_selection_id = be->mask.next_selection_id;
     DP_LayerContent *mask_lc =
-        search_sel_lc(cs_or_null, context_id, be->mask.selection_id);
+        search_sel_lc(cs_or_null, context_id, next_selection_id);
     if (!compatibility_mode && mask_lc) {
         be->mask.active = true;
         be->mask.preview = !push_undo_point;
         if (push_undo_point && mask_lc != be->mask.lc) {
             push_selection_sync_clear(be);
+            be->mask.current_selection_id = next_selection_id;
             DP_layer_content_decref_nullable(be->mask.lc);
             be->mask.lc = DP_layer_content_incref(mask_lc);
             size_t required_capacity = DP_int_to_size(DP_tile_total_round(
@@ -1633,6 +1640,7 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
         be->mask.active = false;
         if (push_undo_point && be->mask.lc) {
             push_selection_sync_clear(be);
+            be->mask.current_selection_id = 0;
             DP_layer_content_decref(be->mask.lc);
             be->mask.lc = NULL;
         }

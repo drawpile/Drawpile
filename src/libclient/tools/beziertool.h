@@ -23,6 +23,7 @@ public:
 	bool isMultipart() const override { return !m_points.isEmpty(); }
 	bool usesBrushColor() const override { return true; }
 	void setBrushSizeLimit(int limit) override;
+	void setSelectionMaskingEnabled(bool selectionMaskingEnabled) override;
 
 private:
 	void updatePreview();

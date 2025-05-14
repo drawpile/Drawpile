@@ -29,7 +29,7 @@ public:
 	void setActions(
 		QAction *reloadPreset, QAction *reloadPresetSlots,
 		QAction *reloadAllPresets, QAction *nextSlot, QAction *previousSlot,
-		QAction *automaticAlphaPreserve);
+		QAction *automaticAlphaPreserve, QAction *maskSelection);
 	void connectBrushPresets(brushes::BrushPresetModel *brushPresets);
 
 	QString toolType() const override { return QStringLiteral("brush"); }

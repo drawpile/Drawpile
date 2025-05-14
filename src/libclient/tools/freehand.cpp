@@ -102,6 +102,11 @@ void Freehand::setBrushSizeLimit(int limit)
 	m_brushEngine.setSizeLimit(limit);
 }
 
+void Freehand::setSelectionMaskingEnabled(bool selectionMaskingEnabled)
+{
+	setCapability(Capability::IgnoresSelections, !selectionMaskingEnabled);
+}
+
 void Freehand::pollControl(bool enable)
 {
 	if(enable) {

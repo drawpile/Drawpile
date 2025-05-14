@@ -166,6 +166,15 @@ void ToolController::setSelectionEditActive(bool selectionEditActive)
 	}
 }
 
+void ToolController::setSelectionMaskingEnabled(bool selectionMaskingEnabled)
+{
+	if(selectionMaskingEnabled != m_selectionMaskingEnabled) {
+		m_selectionMaskingEnabled = selectionMaskingEnabled;
+		updateSelectionMaskingEnabled(
+			m_model && m_model->isCompatibilityMode());
+	}
+}
+
 void ToolController::setSelectionMaskColor(const QColor &selectionMaskColor)
 {
 	m_selectionMaskColor = selectionMaskColor;
@@ -299,6 +308,9 @@ void ToolController::setModel(canvas::CanvasModel *model)
 {
 	m_model = model;
 	connect(
+		m_model, &canvas::CanvasModel::compatibilityModeChanged, this,
+		&ToolController::updateSelectionMaskingEnabled);
+	connect(
 		m_model->layerlist(), &canvas::LayerListModel::layerAlphaLockChanged,
 		this, &ToolController::updateLayerAlphaLock);
 	connect(
@@ -312,6 +324,7 @@ void ToolController::setModel(canvas::CanvasModel *model)
 		this, &ToolController::clearTransformCutPreview);
 	m_model->setTransformInterpolation(m_transformInterpolation);
 	m_model->transform()->setPreviewAccurate(m_transformPreviewAccurate);
+	updateSelectionMaskingEnabled(m_model->isCompatibilityMode());
 	emit modelChanged(model);
 }
 
@@ -594,7 +607,9 @@ void ToolController::setBrushEngineBrush(
 	const brushes::ActiveBrush &brush = activeBrush();
 	DP_StrokeParams stroke = {
 		activeLayerOrSelection(),
-		m_selectionEditActive ? 0 : DP_SELECTION_ID_MAIN,
+		m_selectionEditActive || !m_selectionMaskingEnabled
+			? 0
+			: DP_SELECTION_ID_MAIN,
 		0,
 		0,
 		activeLayerAlphaLock(),
@@ -702,6 +717,14 @@ void ToolController::startDrawingFromHotSwapParams()
 		m_hotSwapParams.zoom, m_hotSwapParams.mirror, m_hotSwapParams.flip,
 		m_hotSwapParams.constrain, m_hotSwapParams.center,
 		m_hotSwapParams.viewPos, int(m_hotSwapParams.deviceType), false);
+}
+
+void ToolController::updateSelectionMaskingEnabled(bool compatibilityMode)
+{
+	bool enabled = m_selectionMaskingEnabled && !compatibilityMode;
+	for(Tool *t : m_toolbox) {
+		t->setSelectionMaskingEnabled(enabled);
+	}
 }
 
 }

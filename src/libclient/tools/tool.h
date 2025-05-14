@@ -152,6 +152,11 @@ public:
 
 	virtual void setBrushSizeLimit(int limit) { Q_UNUSED(limit); }
 
+	virtual void setSelectionMaskingEnabled(bool selectionMaskingEnabled)
+	{
+		Q_UNUSED(selectionMaskingEnabled);
+	}
+
 protected:
 	bool isActiveTool() const;
 	bool isCompatibilityMode() const;

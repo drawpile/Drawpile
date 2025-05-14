@@ -256,11 +256,12 @@ BrushSettings::~BrushSettings()
 void BrushSettings::setActions(
 	QAction *reloadPreset, QAction *reloadPresetSlots,
 	QAction *reloadAllPresets, QAction *nextSlot, QAction *previousSlot,
-	QAction *automaticAlphaPreserve)
+	QAction *automaticAlphaPreserve, QAction *maskSelection)
 {
 	d->ui.reloadButton->setDefaultAction(reloadPreset);
 	d->menu->addSeparator();
 	d->menu->addAction(automaticAlphaPreserve);
+	d->menu->addAction(maskSelection);
 	connect(
 		d->resetBrushAction, &QAction::triggered, reloadPreset,
 		&QAction::trigger);
