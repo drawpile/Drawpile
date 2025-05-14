@@ -10,6 +10,7 @@ set(SUPPORTED_LANGS
     # el_GR # Greek
     en_US # English
     es_CO # American Spanish (Colombia used as a stand-in)
+    eo_XZ # Esparanto
     # fa_IR # Farsi (Iran)
     fi_FI # Finnish
     # fil_PH # Filipono
