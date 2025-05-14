@@ -973,9 +973,10 @@ static void
 reset_entry_background_to_message(struct DP_ResetImageMessageContext *c,
                                   const DP_ResetEntryBackground *reb)
 {
-    reset_message_push(c, DP_msg_canvas_background_new(c->context_id,
-                                                       set_tile_data, reb->size,
-                                                       reb->data));
+    reset_message_push(
+        c, (c->compatibility_mode ? DP_msg_canvas_background_new
+                                  : DP_msg_canvas_background_zstd_new)(
+               c->context_id, set_tile_data, reb->size, reb->data));
 }
 
 static void reset_entry_layer_to_message(struct DP_ResetImageMessageContext *c,
