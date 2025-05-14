@@ -1233,13 +1233,15 @@ void BrushSettings::setPaintModeInUi(int paintMode)
 		action = d->paintModeDirectAction;
 		break;
 	case DP_PAINT_MODE_INDIRECT_WASH:
-		action = d->paintModeIndirectWashAction;
+		action = d->compatibilityMode ? d->paintModeIndirectSoftAction
+									  : d->paintModeIndirectWashAction;
 		break;
 	case DP_PAINT_MODE_INDIRECT_SOFT:
 		action = d->paintModeIndirectSoftAction;
 		break;
 	case DP_PAINT_MODE_INDIRECT_NORMAL:
-		action = d->paintModeIndirectNormalAction;
+		action = d->compatibilityMode ? d->paintModeIndirectSoftAction
+									  : d->paintModeIndirectNormalAction;
 		break;
 	default:
 		qWarning("Unknown paint mode %d", paintMode);
