@@ -210,10 +210,9 @@ DP_Tile *DP_tile_new_from_deflate(DP_DrawContext *dc, unsigned int context_id,
     }
 }
 
-DP_Tile *DP_tile_new_from_split_delta_zstd8le(DP_DrawContext *dc,
-                                              unsigned int context_id,
-                                              const unsigned char *image,
-                                              size_t image_size)
+DP_Tile *DP_tile_new_from_split_delta_zstd8le_with(
+    ZSTD_DCtx **in_out_ctx_or_null, DP_SplitTile8 *split_tile8_buffer,
+    unsigned int context_id, const unsigned char *image, size_t image_size)
 {
     if (image_size == 4) {
         uint32_t bgra = DP_read_littleendian_uint32(image);
@@ -221,11 +220,11 @@ DP_Tile *DP_tile_new_from_split_delta_zstd8le(DP_DrawContext *dc,
     }
     else {
         struct DP_TileInflateArgs args = {
-            DP_draw_context_split_tile8_buffer(dc),
+            split_tile8_buffer,
             context_id,
             NULL,
         };
-        if (DP_decompress_zstd(DP_draw_context_zstd_dctx(dc), image, image_size,
+        if (DP_decompress_zstd(in_out_ctx_or_null, image, image_size,
                                get_inflate_output_buffer, &args)) {
             DP_split_tile8_delta_to_pixels15_checked(args.tt->pixels,
                                                      args.buffer);
@@ -236,6 +235,16 @@ DP_Tile *DP_tile_new_from_split_delta_zstd8le(DP_DrawContext *dc,
             return NULL;
         }
     }
+}
+
+DP_Tile *DP_tile_new_from_split_delta_zstd8le(DP_DrawContext *dc,
+                                              unsigned int context_id,
+                                              const unsigned char *image,
+                                              size_t image_size)
+{
+    return DP_tile_new_from_split_delta_zstd8le_with(
+        DP_draw_context_zstd_dctx(dc), DP_draw_context_split_tile8_buffer(dc),
+        context_id, image, image_size);
 }
 
 static unsigned char *get_inflate_mask_output_buffer(size_t out_size,

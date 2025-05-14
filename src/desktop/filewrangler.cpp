@@ -213,18 +213,9 @@ QString FileWrangler::saveImageAs(Document *doc, bool exported) const
 	QString selectedFilter;
 	QStringList filters =
 		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages);
-	QString extension;
-	if(exported) {
-		extension = QStringLiteral(".png");
-		for(const QString &filter : filters) {
-			if(filter.contains(QStringLiteral("*.png"))) {
-				selectedFilter = filter;
-				break;
-			}
-		}
-	} else {
-		extension = QStringLiteral(".ora");
-	}
+	QString extension =
+		exported ? preferredExportExtension() : preferredSaveExtension();
+	updateSelectedFilter(selectedFilter, filters, extension);
 
 	QString lastPath = getCurrentPathOrUntitled(doc, extension);
 	if(exported && !lastPath.isEmpty()) {
@@ -410,7 +401,8 @@ void FileWrangler::downloadImage(Document *doc) const
 		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages), doc,
 		[doc](const QString &name, const QString &type) {
 			doc->setDownloadName(name);
-			QString selectedExt = guessExtension(type, QStringLiteral(".ora"));
+			QString selectedExt =
+				guessExtension(type, preferredSaveExtension());
 			QString filename = name;
 			replaceExtension(filename, selectedExt);
 
@@ -427,7 +419,8 @@ bool FileWrangler::downloadPreResetImage(
 		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages), doc,
 		[doc, canvasState](const QString &name, const QString &type) {
 			doc->setDownloadName(name);
-			QString selectedExt = guessExtension(type, QStringLiteral(".ora"));
+			QString selectedExt =
+				guessExtension(type, preferredSaveExtension());
 			QString filename = name;
 			replaceExtension(filename, selectedExt);
 
@@ -447,7 +440,8 @@ void FileWrangler::downloadSelection(Document *doc)
 			utils::FileFormatOption::QtImagesOnly),
 		doc, [doc](const QString &name, const QString &type) {
 			doc->setDownloadName(name);
-			QString selectedExt = guessExtension(type, QStringLiteral(".png"));
+			QString selectedExt =
+				guessExtension(type, preferredExportExtension());
 			QString filename = name;
 			replaceExtension(filename, selectedExt);
 			doc->downloadSelection(filename);
@@ -524,9 +518,10 @@ bool FileWrangler::confirmFlatten(
 #else
 	// If the image can be flattened without losing any information, we don't
 	// need to confirm anything.
-	bool needsOra = type != DP_SAVE_IMAGE_ORA &&
-					doc->canvas()->paintEngine()->needsOpenRaster();
-	if(!needsOra) {
+	bool needsBetterFormat = type != DP_SAVE_IMAGE_ORA &&
+							 type != DP_SAVE_IMAGE_PROJECT_CANVAS &&
+							 !doc->canvas()->paintEngine()->isFlatImage();
+	if(!needsBetterFormat) {
 		return true;
 	}
 
@@ -535,16 +530,17 @@ bool FileWrangler::confirmFlatten(
 		type == DP_SAVE_IMAGE_PSD
 			? tr("The PSD format lacks support for annotations, the animation "
 				 "timeline and some blend modes. If you want those to be "
-				 "retained properly, you must save an ORA file.")
+				 "retained properly, you must save a different format.")
 			: tr("The selected format will save a merged image. If you want to "
 				 "retain layers, annotations and the animation timeline, you "
-				 "must save an ORA file."),
+				 "must save a different format."),
 		QMessageBox::Cancel, parentWidget());
 
 	QString format;
 	switch(type) {
 	case DP_SAVE_IMAGE_UNKNOWN:
 	case DP_SAVE_IMAGE_ORA:
+	case DP_SAVE_IMAGE_PROJECT_CANVAS:
 		break;
 	case DP_SAVE_IMAGE_PSD:
 		format = QStringLiteral("PSD");
@@ -564,17 +560,19 @@ bool FileWrangler::confirmFlatten(
 						 : tr("Save as %1").arg(format),
 		QMessageBox::AcceptRole);
 
-	QPushButton *saveOraButton =
-		box.addButton(tr("Save as ORA"), QMessageBox::ActionRole);
+	DP_SaveImageType replacementType = preferredSaveType();
+	QString replacementExtension = preferredSaveExtensionFor(replacementType);
+	QPushButton *saveReplacementButton = box.addButton(
+		tr("Save as %1").arg(replacementExtension.mid(1).toUpper()),
+		QMessageBox::ActionRole);
 
 	if(box.exec() == QMessageBox::Cancel) {
 		// Cancel saving altogether.
 		return false;
-	} else if(box.clickedButton() == saveOraButton) {
-		// Change to saving as an ORA file.
-		replaceExtension(path, ".ora");
+	} else if(box.clickedButton() == saveReplacementButton) {
+		replaceExtension(path, replacementExtension);
 		setLastPath(LastPath::IMAGE, path);
-		type = DP_SAVE_IMAGE_ORA;
+		type = replacementType;
 		return true;
 	} else {
 		// Save the file as-is.
@@ -615,6 +613,22 @@ void FileWrangler::replaceExtension(QString &filename, const QString &ext)
 	}
 }
 
+void FileWrangler::updateSelectedFilter(
+	QString &selectedFilter, const QStringList &filters,
+	const QString &extension)
+{
+	QRegularExpression re(
+		QStringLiteral("\\*%1\\b").arg(QRegularExpression::escape(extension)));
+	for(const QString &filter : filters) {
+		if(re.match(filter).hasMatch()) {
+			selectedFilter = filter;
+			return;
+		}
+	}
+	qWarning() << "updateSelectedFilter: no match for extension" << extension
+			   << "in" << filters;
+}
+
 DP_SaveImageType FileWrangler::guessType(const QString &intendedName)
 {
 	DP_SaveImageType type =
@@ -623,6 +637,84 @@ DP_SaveImageType FileWrangler::guessType(const QString &intendedName)
 		lcDpFileWrangler, "Guessed type %d for '%s'", int(type),
 		qUtf8Printable(intendedName));
 	return type;
+}
+
+DP_SaveImageType FileWrangler::preferredSaveType()
+{
+	QString format = dpApp().settings().preferredSaveFormat();
+	if(format.isEmpty() || format == QStringLiteral("ora")) {
+		return DP_SAVE_IMAGE_ORA;
+	} else if(format == QStringLiteral("dpcs")) {
+		return DP_SAVE_IMAGE_PROJECT_CANVAS;
+	} else {
+		DP_warn("Unknown preferred save format '%s'", qUtf8Printable(format));
+		return DP_SAVE_IMAGE_ORA;
+	}
+}
+
+DP_SaveImageType FileWrangler::preferredExportType()
+{
+	QString format = dpApp().settings().preferredExportFormat();
+	if(format.isEmpty() || format == QStringLiteral("png")) {
+		return DP_SAVE_IMAGE_PNG;
+	} else if(format == QStringLiteral("jpg")) {
+		return DP_SAVE_IMAGE_JPEG;
+	} else if(format == QStringLiteral("webp")) {
+		return DP_SAVE_IMAGE_WEBP;
+	} else if(format == QStringLiteral("ora")) {
+		return DP_SAVE_IMAGE_ORA;
+	} else if(format == QStringLiteral("dpcs")) {
+		return DP_SAVE_IMAGE_PROJECT_CANVAS;
+	} else if(format == QStringLiteral("psd")) {
+		return DP_SAVE_IMAGE_PSD;
+	} else {
+		DP_warn("Unknown preferred export format '%s'", qUtf8Printable(format));
+		return DP_SAVE_IMAGE_PNG;
+	}
+}
+
+QString FileWrangler::preferredSaveExtension()
+{
+	return preferredSaveExtensionFor(preferredSaveType());
+}
+
+QString FileWrangler::preferredSaveExtensionFor(DP_SaveImageType type)
+{
+	switch(type) {
+	case DP_SAVE_IMAGE_ORA:
+		return QStringLiteral(".ora");
+	case DP_SAVE_IMAGE_PROJECT_CANVAS:
+		return QStringLiteral(".dpcs");
+	default:
+		DP_warn("Unhandled preferred save format '%d'", int(type));
+		return QStringLiteral(".ora");
+	}
+}
+
+QString FileWrangler::preferredExportExtension()
+{
+	return preferredExportExtensionFor(preferredExportType());
+}
+
+QString FileWrangler::preferredExportExtensionFor(DP_SaveImageType type)
+{
+	switch(type) {
+	case DP_SAVE_IMAGE_ORA:
+		return QStringLiteral(".ora");
+	case DP_SAVE_IMAGE_PNG:
+		return QStringLiteral(".png");
+	case DP_SAVE_IMAGE_JPEG:
+		return QStringLiteral(".jpg");
+	case DP_SAVE_IMAGE_WEBP:
+		return QStringLiteral(".webp");
+	case DP_SAVE_IMAGE_PSD:
+		return QStringLiteral(".psd");
+	case DP_SAVE_IMAGE_PROJECT_CANVAS:
+		return QStringLiteral(".dpcs");
+	default:
+		DP_warn("Unhandled preferred export format '%d'", int(type));
+		return QStringLiteral(".png");
+	}
 }
 
 QString FileWrangler::getCurrentPathOrUntitled(
@@ -648,11 +740,6 @@ QString FileWrangler::getCurrentPathOrUntitled(
 		lcDpFileWrangler, "Using document current path '%s'",
 		qUtf8Printable(path));
 	return path;
-}
-
-bool FileWrangler::needsOra(Document *doc)
-{
-	return doc->canvas()->paintEngine()->needsOpenRaster();
 }
 
 QString FileWrangler::getLastPath(LastPath type, const QString &ext)

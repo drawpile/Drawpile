@@ -136,7 +136,7 @@ public:
 	drawdance::Annotation getAnnotationAt(int x, int y, int expand) const;
 
 	//! Is OpenRaster file format needed to save the canvas losslessly?
-	bool needsOpenRaster() const;
+	bool isFlatImage() const;
 
 	/*
 	 * @brief Set the "local user is currently drawing!" hint

@@ -311,11 +311,13 @@ PaintEngine::getAnnotationAt(int x, int y, int expand) const
 							  : annotations.at(closestIndex);
 }
 
-bool PaintEngine::needsOpenRaster() const
+bool PaintEngine::isFlatImage() const
 {
 	drawdance::CanvasState cs = viewCanvasState();
-	return !cs.backgroundTile().isNull() || cs.layers().count() > 1 ||
-		   cs.annotations().count() != 0;
+	int layerCount = cs.layers().count();
+	return (layerCount == 0 ||
+			(cs.backgroundTile().isNull() && layerCount == 1)) &&
+		   cs.annotations().count() == 0 && cs.timeline().trackCount() == 0;
 }
 
 void PaintEngine::setLocalDrawingInProgress(bool localDrawingInProgress)

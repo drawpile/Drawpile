@@ -39,6 +39,10 @@ DP_CanvasState *DP_load_ora(DP_DrawContext *dc, const char *path,
 DP_CanvasState *DP_load_psd(DP_DrawContext *dc, DP_Input *input,
                             DP_LoadResult *out_result);
 
+DP_CanvasState *DP_load_project_canvas(DP_DrawContext *dc, const char *path,
+                                       unsigned int flags,
+                                       DP_LoadResult *out_result);
+
 DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result);
 
 DP_Player *DP_load_debug_dump(const char *path, DP_LoadResult *out_result);

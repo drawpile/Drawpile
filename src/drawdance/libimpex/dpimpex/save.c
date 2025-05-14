@@ -25,11 +25,13 @@
 #include <dpengine/layer_list.h>
 #include <dpengine/layer_props.h>
 #include <dpengine/layer_props_list.h>
+#include <dpengine/project.h>
 #include <dpengine/tile.h>
 #include <dpengine/timeline.h>
 #include <dpengine/track.h>
 #include <dpengine/view_mode.h>
 #include <dpmsg/blend_mode.h>
+#include <dpmsg/messages.h>
 #include <uthash_inc.h>
 
 #define DP_PERF_CONTEXT "save"
@@ -37,12 +39,14 @@
 
 const DP_SaveFormat *DP_save_supported_formats(void)
 {
+    static const char *dpcs_ext[] = {"dpcs", NULL};
     static const char *ora_ext[] = {"ora", NULL};
     static const char *png_ext[] = {"png", NULL};
     static const char *jpeg_ext[] = {"jpg", "jpeg", NULL};
     static const char *webp_ext[] = {"webp", NULL};
     static const char *psd_ext[] = {"psd", NULL};
     static const DP_SaveFormat formats[] = {
+        {"Drawpile Canvas", dpcs_ext},
         {"OpenRaster", ora_ext},
         {"PNG", png_ext},
         {"JPEG", jpeg_ext},
@@ -68,7 +72,10 @@ DP_SaveImageType DP_save_image_type_guess(const char *path)
     }
 
     const char *ext = dot + 1;
-    if (DP_str_equal_lowercase(ext, "ora")) {
+    if (DP_str_equal_lowercase(ext, "dpcs")) {
+        return DP_SAVE_IMAGE_PROJECT_CANVAS;
+    }
+    else if (DP_str_equal_lowercase(ext, "ora")) {
         return DP_SAVE_IMAGE_ORA;
     }
     else if (DP_str_equal_lowercase(ext, "png")) {
@@ -103,6 +110,8 @@ const char *DP_save_image_type_name(DP_SaveImageType type)
         return "JPEG";
     case DP_SAVE_IMAGE_WEBP:
         return "WEBP";
+    case DP_SAVE_IMAGE_PROJECT_CANVAS:
+        return "DPCS";
     case DP_SAVE_IMAGE_UNKNOWN:
         break;
     }
@@ -119,6 +128,7 @@ int DP_save_image_type_max_dimension(DP_SaveImageType type)
     switch (type) {
     case DP_SAVE_IMAGE_ORA:
     case DP_SAVE_IMAGE_PNG:
+    case DP_SAVE_IMAGE_PROJECT_CANVAS:
         return 2147483647;
     case DP_SAVE_IMAGE_PSD:
         return 30000;
@@ -171,6 +181,7 @@ bool DP_save_image_type_is_flat_image(DP_SaveImageType type)
     switch (type) {
     case DP_SAVE_IMAGE_ORA:
     case DP_SAVE_IMAGE_PSD:
+    case DP_SAVE_IMAGE_PROJECT_CANVAS:
         return false;
     case DP_SAVE_IMAGE_PNG:
     case DP_SAVE_IMAGE_JPEG:
@@ -998,6 +1009,33 @@ save_flat_image(DP_CanvasState *cs, DP_DrawContext *dc, DP_Rect *crop,
 }
 
 
+static bool write_project_thumbnail(DP_Image *img, DP_Output *output)
+{
+    return DP_image_write_jpeg_quality(img, output, 80);
+}
+
+static DP_SaveResult save_project_canvas(DP_CanvasState *cs, const char *path)
+{
+    int result = DP_project_canvas_save(cs, path, write_project_thumbnail);
+    switch (result) {
+    case 0:
+        return DP_SAVE_RESULT_SUCCESS;
+    case DP_PROJECT_CANVAS_SAVE_ERROR_OPEN_SNAPSHOT:
+        return DP_SAVE_RESULT_OPEN_ERROR;
+    case DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH:
+    case DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_READY:
+        return DP_SAVE_RESULT_INTERNAL_ERROR;
+    default:
+        if (DP_PROJECT_ERROR_IN(result, DP_PROJECT_OPEN_ERROR)) {
+            return DP_SAVE_RESULT_OPEN_ERROR;
+        }
+        else {
+            return DP_SAVE_RESULT_WRITE_ERROR;
+        }
+    }
+}
+
+
 static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
                           DP_SaveImageType type, const char *path,
                           const DP_ViewModeFilter *vmf_or_null,
@@ -1017,6 +1055,8 @@ static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
                                bake_annotation, user);
     case DP_SAVE_IMAGE_PSD:
         return DP_save_psd(cs, path, dc);
+    case DP_SAVE_IMAGE_PROJECT_CANVAS:
+        return save_project_canvas(cs, path);
     default:
         DP_error_set("Unknown save format");
         return DP_SAVE_RESULT_UNKNOWN_FORMAT;

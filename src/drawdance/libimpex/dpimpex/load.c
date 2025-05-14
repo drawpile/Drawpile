@@ -7,6 +7,7 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/input.h>
+#include <dpcommon/output.h>
 #include <dpcommon/perf.h>
 #include <dpcommon/threading.h>
 #include <dpcommon/vector.h>
@@ -25,6 +26,7 @@
 #include <dpengine/layer_props_list.h>
 #include <dpengine/ops.h>
 #include <dpengine/player.h>
+#include <dpengine/project.h>
 #include <dpengine/text.h>
 #include <dpengine/tile.h>
 #include <dpengine/timeline.h>
@@ -43,12 +45,14 @@
 
 const DP_LoadFormat *DP_load_supported_formats(void)
 {
+    static const char *dpcs_ext[] = {"dpcs", NULL};
     static const char *ora_ext[] = {"ora", NULL};
     static const char *png_ext[] = {"png", NULL};
     static const char *jpeg_ext[] = {"jpg", "jpeg", NULL};
     static const char *webp_ext[] = {"webp", NULL};
     static const char *psd_ext[] = {"psd", NULL};
     static const DP_LoadFormat formats[] = {
+        {"Drawpile Canvas", dpcs_ext},
         {"OpenRaster", ora_ext},
         {"PNG", png_ext},
         {"JPEG", jpeg_ext},
@@ -1372,6 +1376,10 @@ DP_SaveImageType DP_load_guess(const unsigned char *buf, size_t size)
         return DP_SAVE_IMAGE_PSD;
     }
 
+    if (DP_project_check(buf, size).result == DP_PROJECT_CHECK_CANVAS) {
+        return DP_SAVE_IMAGE_PROJECT_CANVAS;
+    }
+
     switch (DP_image_guess(buf, size)) {
     case DP_IMAGE_FILE_TYPE_PNG:
         return DP_SAVE_IMAGE_PNG;
@@ -1448,7 +1456,7 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
         return NULL;
     }
 
-    unsigned char buf[12];
+    unsigned char buf[72];
     bool error;
     size_t read = DP_input_read(input, buf, sizeof(buf), &error);
     if (error) {
@@ -1469,6 +1477,10 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
     if (type == DP_SAVE_IMAGE_ORA) {
         DP_input_free(input);
         return load_ora(dc, path, flags, NULL, NULL, out_result);
+    }
+    else if (type == DP_SAVE_IMAGE_PROJECT_CANVAS) {
+        DP_input_free(input);
+        return DP_load_project_canvas(dc, path, flags, out_result);
     }
 
     if (!DP_input_rewind(input)) {
@@ -1521,6 +1533,40 @@ DP_CanvasState *DP_load_ora(DP_DrawContext *dc, const char *path,
                             DP_LoadResult *out_result)
 {
     return load_ora(dc, path, flags, on_fixed_layer, user, out_result);
+}
+
+
+DP_CanvasState *DP_load_project_canvas(DP_DrawContext *dc, const char *path,
+                                       DP_UNUSED unsigned int flags,
+                                       DP_LoadResult *out_result)
+{
+    if (!path) {
+        DP_error_set("Path is null");
+        assign_load_result(out_result, DP_LOAD_RESULT_BAD_ARGUMENTS);
+        return NULL;
+    }
+
+    DP_CanvasState *cs;
+    int result = DP_project_canvas_load(dc, path, &cs);
+    switch (result) {
+    case 0:
+        assign_load_result(out_result, DP_LOAD_RESULT_SUCCESS);
+        return cs;
+    case DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH:
+        assign_load_result(out_result, DP_LOAD_RESULT_BAD_MIMETYPE);
+        return NULL;
+    default:
+        if (DP_PROJECT_ERROR_IN(result, DP_PROJECT_OPEN_ERROR)) {
+            assign_load_result(out_result, DP_LOAD_RESULT_OPEN_ERROR);
+        }
+        else if (DP_PROJECT_ERROR_IN(result, DP_PROJECT_CANVAS_LOAD_ERROR)) {
+            assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
+        }
+        else {
+            assign_load_result(out_result, DP_LOAD_RESULT_INTERNAL_ERROR);
+        }
+        return NULL;
+    }
 }
 
 

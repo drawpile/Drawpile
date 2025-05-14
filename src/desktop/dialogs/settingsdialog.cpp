@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog.h"
+#include "desktop/dialogs/settingsdialog/files.h"
 #include "desktop/dialogs/settingsdialog/general.h"
 #include "desktop/dialogs/settingsdialog/network.h"
 #include "desktop/dialogs/settingsdialog/notifications.h"
@@ -96,6 +97,8 @@ SettingsDialog::SettingsDialog(
 			 (touchPage = new settingsdialog::Touch(m_settings, this)), true},
 			{"tools", tr("Tools"), new settingsdialog::Tools(m_settings, this),
 			 true},
+			{"document-open", tr("Files"),
+			 new settingsdialog::Files(m_settings, this), true},
 			{"network-modem", tr("Network"),
 			 new settingsdialog::Network(m_settings, this), true},
 			{"dialog-information", tr("Notifications"),

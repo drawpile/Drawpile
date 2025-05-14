@@ -37,12 +37,11 @@ void DP_worker_free_join(DP_Worker *worker);
 
 int DP_worker_thread_count(DP_Worker *worker);
 
-void DP_worker_push(DP_Worker *worker, void *element);
+void DP_worker_push_with(DP_Worker *worker,
+                         void (*insert_element)(void *user, void *element),
+                         void *user);
 
-// Convenience functions to use the worker mutex for other purposes. Not needed
-// to call any worker functions, they lock on their own.
-void DP_worker_lock(DP_Worker *worker);
-void DP_worker_unlock(DP_Worker *worker);
+void DP_worker_push(DP_Worker *worker, void *element);
 
 
 #endif

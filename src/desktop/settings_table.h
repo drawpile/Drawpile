@@ -253,6 +253,8 @@ SETTING(onionSkinsTintAbove       , OnionSkinsTintAbove       , "onionskins/tint
 SETTING(onionSkinsTintBelow       , OnionSkinsTintBelow       , "onionskins/tintbelow"                  , (QColor::fromRgb(0xff, 0x33, 0x33, 0x80)))
 SETTING(onionSkinsWrap            , OnionSkinsWrap            , "onionskins/wrap"                       , true)
 SETTING(promptLayerCreate         , PromptLayerCreate         , "settings/promptlayercreate"            , false)
+SETTING(preferredExportFormat     , PreferredExportFormat     , "settings/preferredexportformat"        , QString())
+SETTING(preferredSaveFormat       , PreferredSaveFormat       , "settings/preferredsaveformat"          , QString())
 SETTING(recentFiles               , RecentFiles               , "history/recentfiles"                   , QStringList())
 SETTING(recentHosts               , RecentHosts               , "history/recenthosts"                   , QStringList())
 SETTING(recentRemoteHosts         , RecentRemoteHosts         , "history/recentremotehosts"             , QStringList())

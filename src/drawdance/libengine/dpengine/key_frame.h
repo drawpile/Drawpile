@@ -55,6 +55,9 @@ DP_TransientKeyFrame *DP_transient_key_frame_new_with_layers(
 DP_TransientKeyFrame *DP_transient_key_frame_new_init(int layer_id,
                                                       int reserve);
 
+DP_TransientKeyFrame *DP_transient_key_frame_reserve(DP_TransientKeyFrame *tkf,
+                                                     int reserve);
+
 DP_TransientKeyFrame *DP_transient_key_frame_incref(DP_TransientKeyFrame *tkf);
 
 void DP_transient_key_frame_decref(DP_TransientKeyFrame *tkf);
@@ -74,6 +77,8 @@ void DP_transient_key_frame_layer_set(DP_TransientKeyFrame *tkf,
 
 void DP_transient_key_frame_layer_delete_at(DP_TransientKeyFrame *tkf,
                                             int index);
+
+void DP_transient_key_frame_clamp(DP_TransientKeyFrame *tkf, int count);
 
 
 #endif

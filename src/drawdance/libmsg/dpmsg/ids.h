@@ -11,7 +11,6 @@
 #define DP_LAYER_ID_MAX_NORMAL       (0x7fffff)
 #define DP_ANNOTATION_ID_MAX         UINT16_MAX
 #define DP_ANNOTATION_ELEMENT_ID_MAX UINT8_MAX
-#define DP_TRACK_ID_MIN              (int)
 #define DP_TRACK_ID_MAX              UINT16_MAX
 #define DP_TRACK_ELEMENT_ID_MAX      UINT8_MAX
 

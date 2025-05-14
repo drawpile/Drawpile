@@ -1,0 +1,19 @@
+begin project dump
+
+--- pragma application_id
+application_id
+'520585024'
+
+--- pragma user_version
+user_version
+'1'
+
+--- select migration_id from migrations order by migration_id
+migration_id
+'1'
+
+--- select session_id, source_type, source_param, protocol, printf('0x%x', flags) as flags, case when closed_at is null then 'open' else 'closed' end as status from sessions order by session_id
+session_id,source_type,source_param,protocol,flags,status
+'1','1','','dp:4.24.0','0x0','open'
+
+end project dump

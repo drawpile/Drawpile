@@ -504,3 +504,17 @@ void DP_transient_track_delete_at(DP_TransientTrack *tt, int index)
     memmove(&tt->elements[index], &tt->elements[index + 1],
             DP_int_to_size(new_count - index) * sizeof(tt->elements[0]));
 }
+
+void DP_transient_track_clamp(DP_TransientTrack *tt, int count)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    DP_ASSERT(count >= 0);
+    DP_ASSERT(count <= tt->count);
+    int old_count = tt->count;
+    for (int i = count; i < old_count; ++i) {
+        DP_key_frame_decref_nullable(tt->elements[i].key_frame);
+    }
+    tt->count = count;
+}

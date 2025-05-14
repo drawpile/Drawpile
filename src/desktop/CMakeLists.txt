@@ -142,6 +142,8 @@ target_sources(drawpile PRIVATE
 	dialogs/sessionsettings.h
 	dialogs/settingsdialog.cpp
 	dialogs/settingsdialog.h
+	dialogs/settingsdialog/files.cpp
+	dialogs/settingsdialog/files.h
 	dialogs/settingsdialog/general.cpp
 	dialogs/settingsdialog/general.h
 	dialogs/settingsdialog/helpers.h

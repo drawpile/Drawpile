@@ -118,5 +118,7 @@ void DP_transient_layer_props_list_delete_at(DP_TransientLayerPropsList *tlpl,
 void DP_transient_layer_props_list_merge_at(DP_TransientLayerPropsList *tlpl,
                                             int index);
 
+void DP_transient_layer_props_list_clamp(DP_TransientLayerPropsList *tlpl,
+                                         int count);
 
 #endif

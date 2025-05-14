@@ -28,6 +28,7 @@
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
 typedef struct ZSTD_CCtx_s ZSTD_CCtx;
+typedef struct ZSTD_DCtx_s ZSTD_DCtx;
 
 #define DP_TILE_BYTES            (DP_TILE_LENGTH * sizeof(DP_Pixel15))
 #define DP_TILE_COMPRESSED_BYTES (DP_TILE_LENGTH * sizeof(DP_Pixel8))
@@ -99,6 +100,10 @@ DP_Tile *DP_tile_new_from_bgra(unsigned int context_id, uint32_t bgra);
 DP_Tile *DP_tile_new_from_deflate(DP_DrawContext *dc, unsigned int context_id,
                                   const unsigned char *image,
                                   size_t image_size);
+
+DP_Tile *DP_tile_new_from_split_delta_zstd8le_with(
+    ZSTD_DCtx **in_out_ctx_or_null, DP_SplitTile8 *split_tile8_buffer,
+    unsigned int context_id, const unsigned char *image, size_t image_size);
 
 DP_Tile *DP_tile_new_from_split_delta_zstd8le(DP_DrawContext *dc,
                                               unsigned int context_id,

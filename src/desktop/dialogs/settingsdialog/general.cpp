@@ -37,34 +37,12 @@ void General::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 	initLogging(settings, canvasSection);
 	utils::addFormSpacer(canvasSection);
 	initUndo(settings, canvasSection);
-#ifndef __EMSCRIPTEN__
-	utils::addFormSpacer(canvasSection);
-	initAutosave(settings, canvasSection);
-#endif
 	utils::addFormSpacer(canvasSection);
 	initSnapshots(settings, canvasSection);
 
 	utils::addFormSeparator(layout);
 
 	initPerformance(settings, utils::addFormSection(layout));
-}
-
-void General::initAutosave(
-	desktop::settings::Settings &settings, QFormLayout *form)
-{
-	auto *autosaveInterval = new QSpinBox;
-	autosaveInterval->setRange(1, 999);
-	settings.bindAutoSaveIntervalMinutes(autosaveInterval);
-
-	auto *snapshotCountLayout = utils::encapsulate(
-		tr("When enabled, save every %1 minutes"), autosaveInterval);
-	snapshotCountLayout->setControlTypes(QSizePolicy::CheckBox);
-	form->addRow(tr("Autosave:"), snapshotCountLayout);
-
-	form->addRow(
-		nullptr,
-		utils::formNote(tr("Autosave can be enabled for the current file under "
-						   "File ▸ Autosave.")));
 }
 
 void General::initLanguage(

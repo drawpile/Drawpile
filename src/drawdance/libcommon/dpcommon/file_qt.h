@@ -4,5 +4,6 @@
 #include "common.h"
 
 bool DP_qfile_exists(const char *path);
+bool DP_qfile_remove(const char *path);
 
 #endif

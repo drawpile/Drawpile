@@ -25,8 +25,6 @@ protected:
 	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
 
 private:
-	void initAutosave(desktop::settings::Settings &settings, QFormLayout *form);
-
 	void initLanguage(desktop::settings::Settings &settings, QFormLayout *form);
 
 	static QString formatLanguage(const QLocale &locale);

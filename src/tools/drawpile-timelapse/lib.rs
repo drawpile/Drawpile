@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use anyhow::{anyhow, Result};
 use drawdance::{
+    common::Perf,
     dp_cmake_config_version,
     engine::{Image, PaintEngine, Player},
     DP_UPixel8, Interpolation, DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION,
@@ -279,6 +280,7 @@ impl FromStr for LogoLocation {
 #[no_mangle]
 pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c_int {
     drawdance::init();
+    let _perf = Perf::new_from_env();
 
     let flags = xflags::parse_or_exit! {
         /// Displays version information and exits.
