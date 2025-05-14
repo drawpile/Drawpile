@@ -490,6 +490,7 @@ private:
 	QActionGroup *m_putimagetools; // Cut&Paste related tools
 	QActionGroup *m_undotools;	   // undo&redo related tools
 	QActionGroup *m_drawingtools;  // drawing tool selection
+	QActionGroup *m_deselecttools; // shortcuts that switch tools and deselect
 	QActionGroup *m_brushSlots;	   // tool slot shortcuts
 	QActionGroup *m_dockToggles;   // dock visibility toggles
 	QActionGroup *m_desktopModeActions;

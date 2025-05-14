@@ -956,6 +956,7 @@ void MainWindow::setDrawingToolsEnabled(bool enable)
 {
 	bool actuallyEnabled = enable && m_doc->canvas();
 	m_drawingtools->setEnabled(actuallyEnabled);
+	m_deselecttools->setEnabled(actuallyEnabled);
 	m_freehandButton->setEnabled(actuallyEnabled);
 }
 
@@ -6333,6 +6334,7 @@ void MainWindow::setupActions()
 	QAction *zoomtool = makeAction("toolzoom", tr("Zoom")).icon("edit-find").statusTip(tr("Zoom the canvas view")).shortcut("Z").checkable();
 	QAction *inspectortool = makeAction("toolinspector", tr("Inspector")).icon("help-whatsthis").statusTip(tr("Find out who did it")).shortcut("Ctrl+I").checkable();
 
+	// clang-format on
 	m_drawingtools->addAction(m_freehandAction);
 	m_drawingtools->addAction(erasertool);
 	m_drawingtools->addAction(linetool);
@@ -6351,12 +6353,36 @@ void MainWindow::setupActions()
 	m_drawingtools->addAction(zoomtool);
 	m_drawingtools->addAction(inspectortool);
 
+	m_deselecttools = new QActionGroup(this);
+	for(QAction *toolAction : m_drawingtools->actions()) {
+		QString name =
+			QStringLiteral("%1deselect").arg(toolAction->objectName());
+		//: This is the text for keyboard shortcuts that switch tools and
+		//: remove the selection in a single action. %1 is the name of a tool,
+		//: like "Freehand", "Eraser" or "Line".
+		QString text = tr("%1 and Deselect").arg(toolAction->text());
+		QAction *deselectAction =
+			makeAction(qUtf8Printable(name), text)
+				.icon(toolAction->icon())
+				.statusTip(tr("Switch tool to %1 and deselect at once")
+							   .arg(toolAction->text()))
+				.noDefaultShortcut();
+		connect(
+			deselectAction, &QAction::triggered, toolAction, &QAction::trigger);
+		connect(
+			deselectAction, &QAction::triggered, selectnone, &QAction::trigger);
+		m_deselecttools->addAction(deselectAction);
+	}
+
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addActions(m_drawingtools->actions());
 
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
+	QMenu *deselectshortcuts = toolsmenu->addMenu(tr("Deselect Shortcuts"));
+	deselectshortcuts->addActions(m_deselecttools->actions());
 
 	QMenu *devtoolsmenu = toolsmenu->addMenu(tr("Developer Tools"));
+	// clang-format off
 	QAction *systeminfo = makeAction("systeminfo", tr("System Information…")).noDefaultShortcut();
 	QAction *tableteventlog = makeAction("tableteventlog", tr("Tablet Event Log...")).noDefaultShortcut();
 	QAction *profile = makeAction("profile", tr("Profile...")).noDefaultShortcut();
