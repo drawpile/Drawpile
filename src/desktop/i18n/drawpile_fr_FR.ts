@@ -10406,12 +10406,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+227"/>
         <source>Overwrite Brush</source>
-        <translation>Remplacer la brosse</translation>
+        <translation>Écraser le Pinceau</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really overwrite brush &apos;%1&apos; with the current one?</source>
-        <translation type="unfinished"></translation>
+        <translation>Voulez-vous vraiment écraser le pinceau &apos;%1&apos; avec le pinceau actuel&#x202f;?</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10433,17 +10433,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message numerus="yes">
         <location line="+12"/>
         <source>%n brush(es) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n pinceau importé.</numerusform>
+            <numerusform>%n pinceaux importés.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+13"/>
         <source>%n tag(s) imported: %1</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n étiquette importée&#xa0;: %1</numerusform>
+            <numerusform>%n étiquettes importées&#xa0;: %1</numerusform>
         </translation>
     </message>
     <message>
@@ -10454,9 +10454,9 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message numerus="yes">
         <location line="+4"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n erreur rencontrée.</numerusform>
+            <numerusform>%n erreurs rencontrées.</numerusform>
         </translation>
     </message>
     <message>
