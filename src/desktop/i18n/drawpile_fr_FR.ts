@@ -10063,7 +10063,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>MyPaint brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinceau MyPaint</translation>
     </message>
     <message>
         <location line="+3"/>
