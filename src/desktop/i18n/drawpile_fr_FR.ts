@@ -9293,17 +9293,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-170"/>
         <source>Interface mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode de l&apos;interface&#xa0;:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>Dynamique</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Bureau</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -9399,7 +9399,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Prompt when creating layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Message lors de la création de calques</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10033,27 +10033,27 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Transform selections:</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformer les sélections&#xa0;:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Create annotations:</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer les annotations&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Manage own layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gérer vos calques&#xa0;:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Manage all layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gérer tous les calques&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change canvas size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer la taille de la toile&#xa0;:</translation>
     </message>
     <message>
         <location line="+4"/>
