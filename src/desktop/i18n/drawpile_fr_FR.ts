@@ -10996,7 +10996,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>Propriétés du calque…</translation>
     </message>
     <message>
         <location line="+1"/>
