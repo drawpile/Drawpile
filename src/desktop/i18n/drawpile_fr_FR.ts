@@ -10855,7 +10855,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/colorspinner.cpp" line="-99"/>
         <source>Color Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Cercle chromatique</translation>
     </message>
     <message>
         <location line="+0"/>
