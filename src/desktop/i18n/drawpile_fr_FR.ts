@@ -10346,7 +10346,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>&amp;New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle brosse</translation>
     </message>
     <message>
         <location line="+2"/>
