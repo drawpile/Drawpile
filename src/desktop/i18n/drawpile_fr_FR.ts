@@ -9283,12 +9283,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+6"/>
         <source>Font size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Taille de police&#xa0;: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>pt</source>
-        <translation type="unfinished"></translation>
+        <translation>pt</translation>
     </message>
     <message>
         <location line="-170"/>
@@ -9309,7 +9309,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+14"/>
         <location line="+161"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Désactivé</translation>
     </message>
     <message>
         <location line="-160"/>
@@ -10058,7 +10058,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Change background:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier fond d&apos;écran</translation>
     </message>
     <message>
         <location line="+3"/>
