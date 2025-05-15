@@ -10351,7 +10351,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>&amp;Overwrite Brush</source>
-        <translation>Remplacer la brosse</translation>
+        <translation>Rem&amp;placer le Pinceau</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10391,7 +10391,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>E&amp;xport Tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;xporter l’Étiquette…</translation>
     </message>
     <message>
         <location line="+15"/>
