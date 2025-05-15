@@ -62,7 +62,7 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation>Saisissez un URL de serveur&#xa0;:</translation>
+        <translation>Saisissez un URL de serveur&#xa0;de liste&#xa0;:</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -10996,47 +10996,47 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation>Propriétés du calque…</translation>
+        <translation>Propriétés du Groupe de Calques…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer le Groupe de Calques</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer/Désactiver la &amp;Visibilité du Groupe de Calques</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer/désactiver le Mode d&apos;E&amp;squisse du Groupe de Calques</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Check Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Cocher le Groupe de Calques</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Décocher le Groupe de Calques</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Check Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Cocher le Calque</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Décocher le Calque</translation>
     </message>
     <message>
         <location line="+1366"/>
         <source>Sketch: </source>
-        <translation type="unfinished"></translation>
+        <translation>Esquisse&#xa0;: </translation>
     </message>
     <message>
         <location line="+165"/>
@@ -11056,7 +11056,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Really delete the layer &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Souhaitez-vous vraiment supprimer le calque &apos;%1&apos;&#x202f;?</translation>
     </message>
 </context>
 <context>
