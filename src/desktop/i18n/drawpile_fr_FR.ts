@@ -10053,12 +10053,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Change canvas size:</source>
-        <translation>Changer la taille de la toile&#xa0;:</translation>
+        <translation>Modifier la taille de la toile&#xa0;:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change background:</source>
-        <translation>Modifier fond d&apos;écran</translation>
+        <translation>Modifier le fond d&apos;écran&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
