@@ -10396,7 +10396,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+15"/>
         <source>Export Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter les pinceaux</translation>
     </message>
     <message>
         <location line="+4"/>
