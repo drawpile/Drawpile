@@ -10321,17 +10321,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+553"/>
         <source>New Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle étiquette</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Delete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer l&apos;étiquette</translation>
     </message>
     <message>
         <location line="-580"/>
         <source>&amp;Edit Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifi&amp;er le pinceau…</translation>
     </message>
     <message>
         <location line="+2"/>
