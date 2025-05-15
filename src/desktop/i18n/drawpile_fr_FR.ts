@@ -10396,12 +10396,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+15"/>
         <source>Export Brush…</source>
-        <translation>Exporter les pinceaux</translation>
+        <translation>Exporter les Pinceaux…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%1</translation>
     </message>
     <message>
         <location line="+227"/>
