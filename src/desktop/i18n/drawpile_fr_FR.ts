@@ -10469,7 +10469,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+23"/>
         <source>No brush selected</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but no brush is actually selected.</extracomment>
-        <translation>Pas de brosse sélectionnée</translation>
+        <translation>Pas de pinceau sélectionné</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -10587,27 +10587,27 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Show on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer sur ce panneau</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Show on all color docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer sur tous les panneaux de couleur</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide on all color docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Cacher sur tous les panneaux de couleur</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show only on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>N&apos;afficher que sur ce panneau</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hide only on this dock</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne cacher que sur ce panneau</translation>
     </message>
     <message>
         <location line="+65"/>
