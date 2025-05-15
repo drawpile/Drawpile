@@ -10331,7 +10331,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-580"/>
         <source>&amp;Edit Brush</source>
-        <translation>Modifi&amp;er le pinceau…</translation>
+        <translation>Modifi&amp;er le Pinceu</translation>
     </message>
     <message>
         <location line="+2"/>
