@@ -10463,7 +10463,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+116"/>
         <source>No tags</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but there&apos;s no tags to assign it to.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Aucune étiquette</translation>
     </message>
     <message>
         <location line="+23"/>
