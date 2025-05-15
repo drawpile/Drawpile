@@ -234,22 +234,22 @@
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el to de color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia la saturació de color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Cania el valor de color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Action %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Acció desconeguda %1</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -282,7 +282,7 @@
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; conté un certificat no vàlid.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -302,12 +302,12 @@
     <message>
         <location line="+8"/>
         <source>Could not write &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;ha pogut escriure &apos;%1&apos;:%2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;ha pogut moure &apos;%1&apos; a &apos;%2&apos;:%3.</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -398,7 +398,7 @@
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>És probable que pugueu instal·lar ffmpeg mitjançant el vostre gestor de paquets.</translation>
     </message>
     <message>
         <location line="+98"/>
@@ -427,7 +427,7 @@
     <message>
         <location line="+73"/>
         <source>No layer selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cap capa seleccionada.</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -441,7 +441,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Visibilitat: Amagat</translation>
     </message>
     <message>
         <location line="+2"/>
