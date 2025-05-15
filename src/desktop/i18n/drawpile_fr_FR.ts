@@ -10986,7 +10986,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+284"/>
         <source>Duplicate Layer Group</source>
-        <translation>Dupliquer le calque</translation>
+        <translation>Dupliquer le Groupe de Calques</translation>
     </message>
     <message>
         <location line="+1"/>
