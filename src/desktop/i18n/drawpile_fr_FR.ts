@@ -11046,12 +11046,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Groupe</translation>
     </message>
     <message>
         <location line="-710"/>
         <source>Delete Layer?</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer le calque&#x202f;?</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11082,7 +11082,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/onionskins.cpp" line="+137"/>
         <source>Frames: </source>
-        <translation type="unfinished"></translation>
+        <translation>Images&#xa0;: </translation>
     </message>
     <message>
         <location line="-10"/>
