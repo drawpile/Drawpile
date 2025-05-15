@@ -10341,7 +10341,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation>Réinitialiser tous les &amp;Pinceaux</translation>
+        <translation>Restaurer tous les &amp;Pinceaux</translation>
     </message>
     <message>
         <location line="+3"/>
