@@ -10406,7 +10406,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+227"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplacer la brosse</translation>
     </message>
     <message>
         <location line="+1"/>
