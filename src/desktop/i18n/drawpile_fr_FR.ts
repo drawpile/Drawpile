@@ -10890,13 +10890,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+9"/>
         <source>Center</source>
-        <translation>Centré</translation>
+        <translation>Centrer</translation>
     </message>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>Preview selected color</source>
-        <translation type="unfinished"></translation>
+        <translation>Aperçu de la couleur sélectionnée</translation>
     </message>
 </context>
 <context>
@@ -10904,12 +10904,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/dockbase.cpp" line="+73"/>
         <source>Drag here to arrange</source>
-        <translation type="unfinished"></translation>
+        <translation>Glisser ici pour arranger</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Finish arranging</source>
-        <translation type="unfinished"></translation>
+        <translation>Finir d&apos;arranger</translation>
     </message>
 </context>
 <context>
@@ -10965,7 +10965,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+45"/>
         <source>Toggle sketch mode (only visible to you)</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer/désactiver le mode esquisse (visible uniquement par vous)</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10981,7 +10981,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+10"/>
         <source>Change sketch tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer la tinte d&apos;esquisse</translation>
     </message>
     <message>
         <location line="+284"/>
