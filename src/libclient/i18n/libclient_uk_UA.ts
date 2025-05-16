@@ -722,7 +722,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation>нормальний</translation>
+        <translation>Нормальний</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -732,7 +732,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation>позаду</translation>
+        <translation>Позаду</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -757,7 +757,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Burn</source>
-        <translation>спалити</translation>
+        <translation>Спалити</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -827,12 +827,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation>насиченість</translation>
+        <translation>Насиченість</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation>світність</translation>
+        <translation>Світність</translation>
     </message>
     <message>
         <location line="+5"/>
