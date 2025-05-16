@@ -337,7 +337,7 @@
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation>Скорочення</translation>
+        <translation>Скороченням</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -564,7 +564,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation>все</translation>
+        <translation>Все</translation>
     </message>
     <message>
         <location line="+3"/>
