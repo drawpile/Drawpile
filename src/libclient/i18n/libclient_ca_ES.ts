@@ -925,27 +925,27 @@ Select a regular layer instead.</source>
     <message>
         <location line="+19"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>No es pot llegir el fitxer de pinzell &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Unknown brush format in file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Format de pinzell desconegut en el fitxer &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>El fitxer de pinzell &apos;%1&apos; no conte un JSON vàlid: %1</translation>
     </message>
     <message>
         <location line="-55"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>No es pot carregar el pinzell des del fitxer de pinzell &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
-        <translation type="unfinished"></translation>
+        <translation>El fitxer de pinzell &apos;%1&apos; no conté un objecte JSON</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -965,22 +965,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+129"/>
         <source>No brushes exported</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;han exportat pinzells</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Can&apos;t export order.conf</source>
-        <translation type="unfinished"></translation>
+        <translation>No es pot exportar order.conf</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error escrivint &apos;%1&apos;:%2</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>No es pot exportar l&apos;etiqueta &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+18"/>
