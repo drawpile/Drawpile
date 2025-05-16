@@ -79,7 +79,7 @@ public:
 	void finished() override { m_tool->floodFillFinished(this); }
 
 	DP_FloodFillResult result() const { return m_result; }
-	const QImage &takeImage() const { return std::move(m_img); }
+	QImage &&takeImage() { return std::move(m_img); }
 	QPoint pos() const { return QPoint(m_x, m_y); }
 	Area area() const { return m_area; }
 	QColor color() const { return m_fillColor; }
