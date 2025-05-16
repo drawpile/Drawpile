@@ -21,7 +21,7 @@
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
 </context>
 <context>
@@ -1773,7 +1773,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-494"/>
         <source>Delete</source>
-        <translation>Вилучити</translation>
+        <translation>Видалити</translation>
     </message>
     <message>
         <location line="+513"/>
@@ -3572,7 +3572,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../filewrangler.cpp" line="-576"/>
         <source>All files (*)</source>
-        <translation>усі файли (*)</translation>
+        <translation>Усі файли (*)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+79"/>
@@ -4373,7 +4373,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Add</source>
-        <translation>додати</translation>
+        <translation>Додати</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4544,7 +4544,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучати</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6780,7 +6780,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-68"/>
         <source>Delete</source>
-        <translation>Вилучити</translation>
+        <translation>Видалити,</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -7132,7 +7132,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+63"/>
         <source>Remove Account</source>
-        <translation>Видалити обліковий запис</translation>
+        <translation>Вилучити обліковий запис</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9722,7 +9722,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Discord</source>
-        <translation>Розбрат</translation>
+        <translation>Дискорд</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -11326,7 +11326,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Delete</source>
-        <translation>Вилучити</translation>
+        <translation>Видалити&apos;</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -12421,7 +12421,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -12460,7 +12460,7 @@ Hex: %4</source>
     <message>
         <location line="+3"/>
         <source>Delete</source>
-        <translation>Вилучити</translation>
+        <translation>Видалити &apos;&apos;</translation>
     </message>
 </context>
 <context>
@@ -12478,7 +12478,7 @@ Hex: %4</source>
     <message>
         <location line="+59"/>
         <source>Remove</source>
-        <translation>Видалити</translation>
+        <translation>Вилучити</translation>
     </message>
 </context>
 <context>
