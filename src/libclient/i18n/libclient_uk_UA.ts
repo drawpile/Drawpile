@@ -564,7 +564,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation>Все</translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
