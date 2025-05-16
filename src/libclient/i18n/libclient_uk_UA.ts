@@ -569,12 +569,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation>Ctrl</translation>
+        <translation>Сtrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation>Мета</translation>
+        <translation>Meta</translation>
     </message>
 </context>
 <context>
