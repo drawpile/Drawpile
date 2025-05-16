@@ -8,6 +8,7 @@
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/toolwidgets/colorpickersettings.h"
 #include "desktop/toolwidgets/fillsettings.h"
+#include "desktop/toolwidgets/gradientsettings.h"
 #include "desktop/toolwidgets/inspectorsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
 #include "desktop/toolwidgets/pansettings.h"
@@ -97,6 +98,11 @@ struct ToolSettings::Private {
 			QSharedPointer<tools::ToolSettings>(new tools::FillSettings(ctrl)),
 			"fill", QIcon::fromTheme("fill-color"),
 			QApplication::tr("Flood Fill")};
+		pages[tools::Tool::GRADIENT] = {
+			QSharedPointer<tools::ToolSettings>(
+				new tools::GradientSettings(ctrl)),
+			"gradient", QIcon::fromTheme("drawpile_gradient"),
+			QApplication::tr("Gradient")};
 		pages[tools::Tool::ANNOTATION] = {
 			QSharedPointer<tools::ToolSettings>(
 				new tools::AnnotationSettings(ctrl)),
@@ -298,6 +304,11 @@ bool ToolSettings::currentToolAffectsLayer() const
 	return d->pages[d->currentTool].settings->affectsLayer();
 }
 
+bool ToolSettings::currentToolRequiresSelection() const
+{
+	return d->pages[d->currentTool].settings->requiresSelection();
+}
+
 bool ToolSettings::isCurrentToolLocked() const
 {
 	return d->pages[d->currentTool].settings->isLocked();
@@ -346,6 +357,12 @@ tools::FillSettings *ToolSettings::fillSettings()
 {
 	return static_cast<tools::FillSettings *>(
 		getToolSettingsPage(tools::Tool::FLOODFILL));
+}
+
+tools::GradientSettings *ToolSettings::gradientSettings()
+{
+	return static_cast<tools::GradientSettings *>(
+		getToolSettingsPage(tools::Tool::GRADIENT));
 }
 
 tools::InspectorSettings *ToolSettings::inspectorSettings()
@@ -620,6 +637,7 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 	emit toolChanged(d->currentTool);
 
 	ts->setForeground(d->foregroundColor);
+	ts->setBackground(d->backgroundColor);
 	emit foregroundColorChanged(d->foregroundColor);
 	ts->pushSettings();
 
@@ -693,6 +711,7 @@ void ToolSettings::setBackgroundColor(const QColor &color)
 			d->backgroundColorDialog->setColor(color);
 		}
 
+		d->ctrl->setBackgroundColor(color);
 		emit backgroundColorChanged(color);
 	}
 }

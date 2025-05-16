@@ -2,6 +2,7 @@
 extern "C" {
 #include <dpengine/user_cursors.h>
 }
+#include "desktop/scene/anchorlineitem.h"
 #include "desktop/scene/annotationitem.h"
 #include "desktop/scene/catchupitem.h"
 #include "desktop/scene/colorpickitem.h"
@@ -122,6 +123,9 @@ void CanvasScene::setZoom(qreal zoom)
 			if(ai) {
 				ai->setZoom(zoom);
 			}
+		}
+		if(m_anchorLine) {
+			m_anchorLine->setZoom(zoom);
 		}
 		if(m_pathPreview) {
 			m_pathPreview->setZoom(zoom);
@@ -291,6 +295,27 @@ void CanvasScene::setUserMarkerPersistence(int userMarkerPersistence)
 		for(UserMarkerItem *item : std::as_const(m_userMarkers)) {
 			item->setPersistence(userMarkerPersistence);
 		}
+	}
+}
+
+void CanvasScene::setAnchorLine(const QVector<QPointF> &points, int activeIndex)
+{
+	if(points.isEmpty()) {
+		delete m_anchorLine;
+		m_anchorLine = nullptr;
+	} else if(m_anchorLine) {
+		m_anchorLine->setPoints(points, activeIndex);
+	} else {
+		m_anchorLine =
+			new AnchorLineItem(points, activeIndex, m_zoom, m_canvasGroup);
+		m_anchorLine->setUpdateSceneOnRefresh(true);
+	}
+}
+
+void CanvasScene::setAnchorLineActiveIndex(int activeIndex)
+{
+	if(m_anchorLine) {
+		m_anchorLine->setActiveIndex(activeIndex);
 	}
 }
 

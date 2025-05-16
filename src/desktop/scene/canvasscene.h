@@ -17,7 +17,7 @@ class AnnotationList;
 
 //! Drawing board related classes
 namespace drawingboard {
-
+class AnchorLineItem;
 class AnnotationItem;
 class CanvasItem;
 class CatchupItem;
@@ -98,6 +98,8 @@ public:
 
 	bool hasCatchup() const { return m_catchup != nullptr; }
 
+	void setAnchorLine(const QVector<QPointF> &points, int activeIndex);
+	void setAnchorLineActiveIndex(int activeIndex);
 	void setMaskPreview(const QPoint &pos, const QImage &mask);
 	void setPathPreview(const QPainterPath &path);
 
@@ -208,6 +210,7 @@ private:
 	//! User cursor items
 	QHash<uint8_t, UserMarkerItem *> m_usermarkers;
 
+	AnchorLineItem *m_anchorLine;
 	MaskPreviewItem *m_maskPreview;
 	PathPreviewItem *m_pathPreview;
 	SelectionItem *m_selection;

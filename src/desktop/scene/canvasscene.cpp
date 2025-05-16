@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/scene/canvasscene.h"
+#include "desktop/scene/anchorlineitem.h"
 #include "desktop/scene/annotationitem.h"
 #include "desktop/scene/canvasitem.h"
 #include "desktop/scene/catchupitem.h"
@@ -33,6 +34,7 @@ namespace drawingboard {
 CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent)
 	, m_model(nullptr)
+	, m_anchorLine(nullptr)
 	, m_maskPreview(nullptr)
 	, m_pathPreview(nullptr)
 	, m_selection(nullptr)
@@ -155,6 +157,9 @@ void CanvasScene::setZoom(qreal zoom)
 			if(ai) {
 				ai->setZoom(zoom);
 			}
+		}
+		if(m_anchorLine) {
+			m_anchorLine->setZoom(zoom);
 		}
 		if(m_pathPreview) {
 			m_pathPreview->setZoom(zoom);
@@ -836,6 +841,25 @@ void CanvasScene::setUserMarkerPersistence(int userMarkerPersistence)
 		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
 			item->setPersistence(userMarkerPersistence);
 		}
+	}
+}
+
+void CanvasScene::setAnchorLine(const QVector<QPointF> &points, int activeIndex)
+{
+	if(points.isEmpty()) {
+		delete m_anchorLine;
+		m_anchorLine = nullptr;
+	} else if(m_anchorLine) {
+		m_anchorLine->setPoints(points, activeIndex);
+	} else {
+		m_anchorLine = new AnchorLineItem(points, activeIndex, m_zoom, m_group);
+	}
+}
+
+void CanvasScene::setAnchorLineActiveIndex(int activeIndex)
+{
+	if(m_anchorLine) {
+		m_anchorLine->setActiveIndex(activeIndex);
 	}
 }
 

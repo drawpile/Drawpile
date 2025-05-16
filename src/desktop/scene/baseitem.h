@@ -30,6 +30,7 @@ public:
 		TransformType = QGraphicsItem::UserType + 21,
 		MaskPreviewType = QGraphicsItem::UserType + 22,
 		ColorPickType = QGraphicsItem::UserType + 23,
+		AnchorLineItemType = QGraphicsItem::UserType + 24,
 	};
 
 	static constexpr qreal Z_USER_MARKER = 999.0;

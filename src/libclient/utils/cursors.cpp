@@ -18,6 +18,8 @@ Cursors::Cursors()
 	, m_dot(generateDotCursor())
 	, m_ellipse(QPixmap(":cursors/ellipse.png"), 2, 2)
 	, m_eraser(QCursor(QPixmap(QStringLiteral(":/cursors/eraser.png")), 2, 2))
+	, m_gradient(
+		  QCursor(QPixmap(QStringLiteral(":/cursors/gradient.png")), 2, 2))
 	, m_layerPick(
 		  QCursor(QPixmap(QStringLiteral(":/cursors/layerpicker.png")), 2, 29))
 	, m_line(QPixmap(":cursors/line.png"), 2, 2)
@@ -33,7 +35,8 @@ Cursors::Cursors()
 		  QPixmap(QStringLiteral(":/cursors/rotate-discrete.png")), 16, 16))
 	, m_selectLasso(QPixmap(":cursors/select-lasso.png"), 2, 29)
 	, m_selectLassoExclude(QPixmap(":cursors/select-lasso-exclude.png"), 2, 29)
-	, m_selectLassoIntersect(QPixmap(":cursors/select-lasso-intersect.png"), 2, 29)
+	, m_selectLassoIntersect(
+		  QPixmap(":cursors/select-lasso-intersect.png"), 2, 29)
 	, m_selectLassoUnite(QPixmap(":cursors/select-lasso-unite.png"), 2, 29)
 	, m_selectRectangle(QPixmap(":cursors/select-rectangle.png"), 2, 2)
 	, m_selectRectangleExclude(

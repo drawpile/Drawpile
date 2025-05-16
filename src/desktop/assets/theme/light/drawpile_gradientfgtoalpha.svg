@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 22 22"
+   version="1.1"
+   id="svg2"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <pattern
+       xlink:href="#Checkerboard"
+       preserveAspectRatio="xMidYMid"
+       id="pattern7"
+       patternTransform="scale(3.25)"
+       x="-0.61500001"
+       y="-0.61500001" />
+    <pattern
+       style="fill:#eff0f1"
+       patternUnits="userSpaceOnUse"
+       width="2"
+       height="2"
+       patternTransform="translate(0,0) scale(10,10)"
+       id="Checkerboard"
+       preserveAspectRatio="xMidYMid">
+      <rect
+         style="stroke:none"
+         x="0"
+         y="0"
+         width="1"
+         height="1"
+         id="rect209" />
+      <rect
+         style="stroke:none"
+         x="1"
+         y="1"
+         width="1"
+         height="1"
+         id="rect211" />
+    </pattern>
+    <linearGradient
+       id="linearGradient3">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop4" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient3"
+       id="linearGradient4"
+       x1="4.5"
+       y1="11"
+       x2="17.5"
+       y2="11"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <style
+     type="text/css"
+     id="current-color-scheme">.ColorScheme-Text{color:#232629;}</style>
+  <g
+     style="fill:#232629;fill-opacity:1;stroke:none"
+     class="ColorScheme-Text"
+     id="g2"
+     transform="translate(0,-1)">
+    <path
+       d="M 3,4 V 20 H 19 V 4 Z M 4,5 H 18 V 19 H 4 Z"
+       id="path1"
+       style="fill:#232629;fill-opacity:1" />
+  </g>
+  <g
+     id="g1"
+     style="fill:#232629;fill-opacity:1">
+    <path
+       id="rect1"
+       style="fill:#232629;fill-opacity:1;stroke-width:3.28792"
+       d="M 4.5 4.5 L 4.5 7.75 L 7.75 7.75 L 7.75 4.5 L 4.5 4.5 z M 7.75 7.75 L 7.75 11 L 11 11 L 11 7.75 L 7.75 7.75 z M 11 7.75 L 14.25 7.75 L 14.25 4.5 L 11 4.5 L 11 7.75 z M 14.25 7.75 L 14.25 11 L 17.5 11 L 17.5 7.75 L 14.25 7.75 z M 14.25 11 L 11 11 L 11 14.25 L 14.25 14.25 L 14.25 11 z M 14.25 14.25 L 14.25 17.5 L 17.5 17.5 L 17.5 14.25 L 14.25 14.25 z M 11 14.25 L 7.75 14.25 L 7.75 17.5 L 11 17.5 L 11 14.25 z M 7.75 14.25 L 7.75 11 L 4.5 11 L 4.5 14.25 L 7.75 14.25 z " />
+  </g>
+  <rect
+     style="fill:url(#linearGradient4);stroke-width:4.70985"
+     id="rect3"
+     width="13"
+     height="13"
+     x="4.5"
+     y="4.5" />
+</svg>

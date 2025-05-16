@@ -108,6 +108,9 @@ public:
 	void setForegroundColor(const QColor &color);
 	const QColor &foregroundColor() const { return m_foregroundColor; }
 
+	void setBackgroundColor(const QColor &color);
+	const QColor &backgroundColor() const { return m_backgroundColor; }
+
 	bool isDrawing() const { return m_drawing; }
 
 	void setInterpolateInputs(bool interpolateInputs);
@@ -256,6 +259,8 @@ signals:
 	void hideColorPickRequested();
 	void panRequested(int x, int y);
 	void zoomRequested(const QRect &rect, int steps);
+	void anchorLineRequested(const QVector<QPointF> &points, int activeIndex);
+	void anchorLineActiveIndexRequested(int activeIndex);
 	void maskPreviewRequested(const QPoint &pos, const QImage &mask);
 	void pathPreviewRequested(const QPainterPath &path);
 	void selectRequested(int type);
@@ -267,6 +272,7 @@ signals:
 
 	void floodFillStateChanged(bool running, bool pending);
 	void floodFillDragChanged(bool dragging, int tolerance);
+	void gradientStateChanged(bool pending);
 	void magicWandDragChanged(bool dragging, int tolerance);
 	void toolStateChanged(int state);
 
@@ -274,6 +280,7 @@ signals:
 
 private slots:
 	void updateLayerAlphaLock(int layerId, bool alphaLock);
+	void updateSelection();
 	void updateTransformPreview();
 	void setTransformCutPreview(
 		const QSet<int> &layerIds, const QRect &maskBounds, const QImage &mask);
@@ -297,7 +304,8 @@ private:
 	int m_activeLayer;
 	int m_activeAnnotation;
 	QSet<int> m_selectedLayers;
-	QColor m_foregroundColor;
+	QColor m_foregroundColor = Qt::black;
+	QColor m_backgroundColor = Qt::white;
 	QColor m_selectionMaskColor = QColor(0, 170, 255);
 	bool m_selectionEditActive = false;
 	bool m_selectionMaskingEnabled = true;

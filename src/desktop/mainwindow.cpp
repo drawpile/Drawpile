@@ -46,6 +46,7 @@
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/toolwidgets/colorpickersettings.h"
 #include "desktop/toolwidgets/fillsettings.h"
+#include "desktop/toolwidgets/gradientsettings.h"
 #include "desktop/toolwidgets/inspectorsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
@@ -704,6 +705,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(
 		canvas->selection(), &canvas::SelectionModel::selectionChanged, this,
 		&MainWindow::updateSelectTransformActions);
+	connect(
+		canvas->selection(), &canvas::SelectionModel::selectionChanged, this,
+		&MainWindow::updateLockWidgetOnSelectionChange);
 	connect(
 		canvas->transform(), &canvas::TransformModel::transformChanged, this,
 		&MainWindow::updateSelectTransformActions);
@@ -3494,6 +3498,7 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 	}
 }
 
+// clang-format on
 void MainWindow::updateLockWidget()
 {
 	using Reason = view::Lock::Reason;
@@ -3538,14 +3543,28 @@ void MainWindow::updateLockWidget()
 		reasons |= m_dockLayers->currentLayerLock();
 	}
 
+	if(m_dockToolSettings->currentToolRequiresSelection() &&
+	   (!canvas || !canvas->selection()->isValid())) {
+		reasons.setFlag(Reason::NoSelection);
+	}
+
 	if(m_dockToolSettings->isCurrentToolLocked()) {
 		reasons.setFlag(Reason::Tool);
 	}
 
 	m_viewLock->setReasons(reasons);
 	m_lockstatus->setToolTip(m_viewLock->description());
-	m_lockstatus->setPixmap(reasons ? QIcon::fromTheme("object-locked").pixmap(16, 16) : QPixmap{});
+	m_lockstatus->setPixmap(
+		reasons ? QIcon::fromTheme("object-locked").pixmap(16, 16) : QPixmap());
 }
+
+void MainWindow::updateLockWidgetOnSelectionChange()
+{
+	if(m_dockToolSettings->currentToolRequiresSelection()) {
+		updateLockWidget();
+	}
+}
+// clang-format off
 
 void MainWindow::onNsfmChanged(bool nsfm)
 {
@@ -4058,6 +4077,7 @@ void MainWindow::updateSelectTransformActions()
 	getAction("transformshrinktoview")->setEnabled(haveTransform);
 	getAction("showselectionmask")->setEnabled(!selectionEditActive);
 	m_dockToolSettings->selectionSettings()->setActionEnabled(haveSelection);
+	m_dockToolSettings->gradientSettings()->setSelectionValid(haveSelection);
 
 	if(!haveSelection || haveTransform) {
 		dialogs::SelectionAlterDialog *dlg =
@@ -6041,6 +6061,8 @@ void MainWindow::setupActions()
 	selectMenu->addAction(setselectionmaskcolor);
 	selectMenu->addAction(maskselection);
 
+	m_dockToolSettings->gradientSettings()->setActions(
+		selectall, selectlayerbounds);
 	m_dockToolSettings->selectionSettings()->setAction(starttransform);
 	m_dockToolSettings->transformSettings()->setActions(
 		transformmirror, transformflip, transformrotatecw, transformrotateccw,
@@ -6322,6 +6344,7 @@ void MainWindow::setupActions()
 	QAction *ellipsetool = makeAction("toolellipse", tr("&Ellipse")).icon("draw-ellipse").statusTip(tr("Draw unfilled circles and ellipses")).shortcut("O").checkable();
 	QAction *beziertool = makeAction("toolbezier", tr("Bezier Curve")).icon("draw-bezier-curves").statusTip(tr("Draw bezier curves")).shortcut("Ctrl+B").checkable();
 	QAction *filltool = makeAction("toolfill", tr("&Flood Fill")).icon("fill-color").statusTip(tr("Fill areas")).shortcut("F").checkable();
+	QAction *gradienttool = makeAction("toolgradient", tr("&Gradient")).icon("drawpile_gradient").statusTip(tr("Create a gradient inside selected areas")).shortcut("G").checkable();
 	QAction *annotationtool = makeAction("tooltext", tr("&Annotation")).icon("draw-text").statusTip(tr("Add text to the picture")).shortcut("A").checked();
 
 	QAction *pickertool = makeAction("toolpicker", tr("&Color Picker")).icon("color-picker").statusTip(tr("Pick colors from the image")).shortcut("I").checkable();
@@ -6342,6 +6365,7 @@ void MainWindow::setupActions()
 	m_drawingtools->addAction(ellipsetool);
 	m_drawingtools->addAction(beziertool);
 	m_drawingtools->addAction(filltool);
+	m_drawingtools->addAction(gradienttool);
 	m_drawingtools->addAction(annotationtool);
 	m_drawingtools->addAction(pickertool);
 	m_drawingtools->addAction(lasertool);

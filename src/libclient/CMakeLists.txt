@@ -142,6 +142,8 @@ target_sources(dpclient PRIVATE
 	tools/enums.h
 	tools/floodfill.cpp
 	tools/floodfill.h
+	tools/gradient.cpp
+	tools/gradient.h
 	tools/freehand.cpp
 	tools/freehand.h
 	tools/inspector.cpp

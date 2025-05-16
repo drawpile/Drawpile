@@ -313,6 +313,12 @@ void ViewWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::hideColorPickRequested, m_scene,
 		&CanvasScene::hideColorPick);
 	connect(
+		toolCtrl, &tools::ToolController::anchorLineRequested, m_scene,
+		&CanvasScene::setAnchorLine);
+	connect(
+		toolCtrl, &tools::ToolController::anchorLineActiveIndexRequested,
+		m_scene, &CanvasScene::setAnchorLineActiveIndex);
+	connect(
 		toolCtrl, &tools::ToolController::maskPreviewRequested, m_scene,
 		&CanvasScene::setMaskPreview);
 	connect(

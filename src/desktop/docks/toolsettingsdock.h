@@ -11,6 +11,7 @@ class AnnotationSettings;
 class BrushSettings;
 class ColorPickerSettings;
 class FillSettings;
+class GradientSettings;
 class InspectorSettings;
 class LaserPointerSettings;
 class PanSettings;
@@ -52,6 +53,7 @@ public:
 	tools::BrushSettings *brushSettings();
 	tools::ColorPickerSettings *colorPickerSettings();
 	tools::FillSettings *fillSettings();
+	tools::GradientSettings *gradientSettings();
 	tools::InspectorSettings *inspectorSettings();
 	tools::LaserPointerSettings *laserPointerSettings();
 	tools::PanSettings *panSettings();
@@ -64,6 +66,7 @@ public:
 
 	bool currentToolAffectsCanvas() const;
 	bool currentToolAffectsLayer() const;
+	bool currentToolRequiresSelection() const;
 	bool isCurrentToolLocked() const;
 
 	void triggerUpdate();

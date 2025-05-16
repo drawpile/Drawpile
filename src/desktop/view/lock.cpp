@@ -59,6 +59,10 @@ QString Lock::buildDescription() const
 		lines.append(tr("Tool is locked"));
 	}
 
+	if(hasReason(Reason::NoSelection)) {
+		lines.append(tr("Tool requires a selection"));
+	}
+
 	return lines.join(QStringLiteral("\n"));
 }
 

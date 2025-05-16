@@ -23,6 +23,7 @@ public:
 	static const QCursor &dot() { return get()->m_dot; }
 	static const QCursor &ellipse() { return get()->m_ellipse; }
 	static const QCursor &eraser() { return get()->m_eraser; }
+	static const QCursor &gradient() { return get()->m_gradient; }
 	static const QCursor &layerPick() { return get()->m_layerPick; }
 	static const QCursor &line() { return get()->m_line; }
 	static const QCursor &magicWand() { return get()->m_magicWand; }
@@ -96,6 +97,7 @@ private:
 	const QCursor m_dot;
 	const QCursor m_ellipse;
 	const QCursor m_eraser;
+	const QCursor m_gradient;
 	const QCursor m_layerPick;
 	const QCursor m_line;
 	const QCursor m_magicWand;

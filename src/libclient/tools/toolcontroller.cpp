@@ -7,6 +7,7 @@ extern "C" {
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/point.h"
+#include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/net/client.h"
 #include "libclient/settings.h"
@@ -15,6 +16,7 @@ extern "C" {
 #include "libclient/tools/colorpicker.h"
 #include "libclient/tools/floodfill.h"
 #include "libclient/tools/freehand.h"
+#include "libclient/tools/gradient.h"
 #include "libclient/tools/inspector.h"
 #include "libclient/tools/laser.h"
 #include "libclient/tools/magicwand.h"
@@ -62,6 +64,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new Ellipse(*this));
 	registerTool(new BezierTool(*this));
 	registerTool(new FloodFill(*this));
+	registerTool(new GradientTool(*this));
 	registerTool(new Annotation(*this));
 	registerTool(new LaserPointer(*this));
 	registerTool(new RectangleSelection(*this));
@@ -266,6 +269,16 @@ void ToolController::setForegroundColor(const QColor &color)
 	}
 }
 
+void ToolController::setBackgroundColor(const QColor &color)
+{
+	if(color != m_backgroundColor) {
+		m_backgroundColor = color;
+		if(m_activeTool) {
+			m_activeTool->setBackgroundColor(color);
+		}
+	}
+}
+
 void ToolController::setInterpolateInputs(bool interpolateInputs)
 {
 	m_interpolateInputs = interpolateInputs;
@@ -314,6 +327,9 @@ void ToolController::setModel(canvas::CanvasModel *model)
 		m_model->layerlist(), &canvas::LayerListModel::layerAlphaLockChanged,
 		this, &ToolController::updateLayerAlphaLock);
 	connect(
+		m_model->selection(), &canvas::SelectionModel::selectionChanged, this,
+		&ToolController::updateSelection);
+	connect(
 		m_model->transform(), &canvas::TransformModel::transformChanged, this,
 		&ToolController::updateTransformPreview);
 	connect(
@@ -324,6 +340,7 @@ void ToolController::setModel(canvas::CanvasModel *model)
 		this, &ToolController::clearTransformCutPreview);
 	m_model->setTransformInterpolation(m_transformInterpolation);
 	m_model->transform()->setPreviewAccurate(m_transformPreviewAccurate);
+	updateSelection();
 	updateSelectionMaskingEnabled(m_model->isCompatibilityMode());
 	emit modelChanged(model);
 }
@@ -333,6 +350,13 @@ void ToolController::updateLayerAlphaLock(int layerId, bool alphaLock)
 	if(m_activeLayer == layerId) {
 		m_activeTool->setLayerAlphaLock(alphaLock);
 		updateTransformPreview();
+	}
+}
+
+void ToolController::updateSelection()
+{
+	if(m_model && m_activeTool) {
+		m_activeTool->setSelectionValid(m_model->selection()->isValid());
 	}
 }
 

@@ -225,6 +225,7 @@ private slots:
 	void onNsfmChanged(bool nsfm);
 
 	void updateLockWidget();
+	void updateLockWidgetOnSelectionChange();
 	void setRecorderStatus(bool on);
 
 	void loadShortcuts(const QVariantMap &shortcuts);

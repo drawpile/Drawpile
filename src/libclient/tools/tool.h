@@ -31,6 +31,7 @@ public:
 		ELLIPSE,
 		BEZIER,
 		FLOODFILL,
+		GRADIENT,
 		ANNOTATION,
 		PICKER,
 		LASERPOINTER,
@@ -150,7 +151,15 @@ public:
 	//! Current foreground color changed
 	virtual void setForegroundColor(const QColor &color) { Q_UNUSED(color); }
 
+	//! Current background color changed
+	virtual void setBackgroundColor(const QColor &color) { Q_UNUSED(color); }
+
 	virtual void setBrushSizeLimit(int limit) { Q_UNUSED(limit); }
+
+	virtual void setSelectionValid(bool selectionValid)
+	{
+		Q_UNUSED(selectionValid);
+	}
 
 	virtual void setSelectionMaskingEnabled(bool selectionMaskingEnabled)
 	{

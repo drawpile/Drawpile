@@ -247,6 +247,8 @@ target_sources(drawpile PRIVATE
 	icons/censored.svg
 	icons/drawpile.png
 	icons/drawpile.svg
+	scene/anchorlineitem.cpp
+	scene/anchorlineitem.h
 	scene/annotationitem.cpp
 	scene/annotationitem.h
 	scene/arrows_data.h
@@ -290,6 +292,8 @@ target_sources(drawpile PRIVATE
 	toolwidgets/colorpickersettings.h
 	toolwidgets/fillsettings.cpp
 	toolwidgets/fillsettings.h
+	toolwidgets/gradientsettings.cpp
+	toolwidgets/gradientsettings.h
 	toolwidgets/inspectorsettings.cpp
 	toolwidgets/inspectorsettings.h
 	toolwidgets/lasersettings.cpp

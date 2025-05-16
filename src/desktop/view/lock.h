@@ -21,6 +21,7 @@ public:
 		NoLayer = 1u << 8u,
 		Tool = 1u << 9u,
 		OutOfSpace = 1u << 10u,
+		NoSelection = 1u << 11u,
 	};
 	Q_ENUM(Reason)
 
