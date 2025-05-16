@@ -184,7 +184,7 @@
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom del llenç</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -272,12 +272,12 @@
     <message>
         <location filename="../utils/certificatestoremodel.cpp" line="+25"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; no conté cap certificat d&apos;amfitrió vàlid.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; conte múltiples certificats d&apos;amfitrió, els quals no estan actualment suportats.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -287,7 +287,7 @@
     <message>
         <location line="+8"/>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; conte un certificat amb múltiples noms d&apos;amfitrió, cosa que no està actualment suportada.</translation>
     </message>
     <message>
         <location line="+140"/>
@@ -355,32 +355,32 @@
     <message>
         <location filename="../document.cpp" line="+1005"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Format desconegut.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Header error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de capçalera.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error obrint el fitxer.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error starting recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error en iniciar l&apos;enregistrador.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error desconegut.</translation>
     </message>
     <message>
         <location line="+664"/>
         <source>Error saving image</source>
-        <translation type="unfinished"></translation>
+        <translation>Error desant la imatge</translation>
     </message>
 </context>
 <context>
@@ -467,12 +467,12 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/images.cpp" line="+84"/>
         <source>Images (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Imatges (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>GIF (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -487,12 +487,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistraments (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Performance Profile (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Perfil de rendiment (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -507,12 +507,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vídeo MP4 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vídeo WebM (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -522,7 +522,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Paquet de pinzells (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -532,17 +532,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Rols (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tots els fitxers suportats (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tots els fitxers (*)</translation>
     </message>
 </context>
 <context>
@@ -550,7 +550,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+48"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Capa %1</translation>
     </message>
 </context>
 <context>
@@ -563,17 +563,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation>Meta</translation>
     </message>
 </context>
 <context>
@@ -581,7 +581,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+76"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1d%2h%3m</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -596,116 +596,116 @@ Select a regular layer instead.</source>
     <message>
         <location line="+437"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation>(sense títol)</translation>
     </message>
     <message numerus="yes">
         <location line="-328"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n usuari</numerusform>
+            <numerusform>%n usuaris</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-3"/>
         <source>%1/%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1/%n usuari</numerusform>
+            <numerusform>%1/%n usuaris</numerusform>
         </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre desconegut d&apos;usuaris dibuixant activament</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n usuari dibuixant activament</numerusform>
+            <numerusform>%n usuaris dibuixant activament</numerusform>
         </translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Compatible</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Requires compatibility mode (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Requereix el mode de compatibilitat (%1)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Requires newer client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Requereix un client més nou (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Incompatible (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>versió desconeguda</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Compatibilitat</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Titol</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuaris</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Actius</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Propietari</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation>edat</translation>
     </message>
     <message>
         <location line="+169"/>
         <source>incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation>incompatible</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>unir-se des de la web no està permès</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation>tancat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>protegit amb contrasenya</translation>
     </message>
     <message>
         <location line="+3"/>
