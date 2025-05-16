@@ -451,6 +451,9 @@ void ViewWrapper::connectToolSettings(docks::ToolSettings *toolSettings)
 		toolSettings, &docks::ToolSettings::subpixelModeChanged, m_controller,
 		&CanvasController::setOutlineMode);
 	connect(
+		toolSettings, &docks::ToolSettings::offsetChanged, m_controller,
+		&CanvasController::setOutlineOffset);
+	connect(
 		m_view, &CanvasView::colorDropped, toolSettings,
 		&docks::ToolSettings::setForegroundColor);
 	connect(

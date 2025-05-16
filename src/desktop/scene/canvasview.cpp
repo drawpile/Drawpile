@@ -953,6 +953,14 @@ void CanvasView::setOutlineMode(bool subpixel, bool square, bool force)
 	}
 }
 
+void CanvasView::setOutlineOffset(const QPointF &outlineOffset)
+{
+	if(outlineOffset != m_outlineOffset) {
+		m_outlineOffset = outlineOffset;
+		updateOutline();
+	}
+}
+
 bool CanvasView::activatePendingToggleAction()
 {
 	if(int action = m_hudActionToActivate;
@@ -2140,7 +2148,7 @@ void CanvasView::updateOutline()
 
 QPointF CanvasView::getOutlinePos() const
 {
-	QPointF pos = mapFromCanvas(m_prevoutlinepoint);
+	QPointF pos = mapFromCanvas(m_prevoutlinepoint + m_outlineOffset);
 	if(!m_subpixeloutline && m_outlineSize % 2 == 0) {
 		qreal offset = actualZoom() * 0.5;
 		pos -= QPointF(offset, offset);

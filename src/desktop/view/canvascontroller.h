@@ -136,6 +136,7 @@ public:
 
 	void setOutlineSize(int outlineSize);
 	void setOutlineMode(bool subpixel, bool square, bool force);
+	void setOutlineOffset(const QPointF &outlineOffset);
 	void setPixelGrid(bool pixelGrid);
 	void setPointerTracking(bool pointerTracking);
 	void setToolCapabilities(unsigned int toolCapabilities);
@@ -390,6 +391,7 @@ private:
 	bool m_outlineVisibleInMode = true;
 	int m_outlineSize = 0;
 	qreal m_outlineWidth = 1.0;
+	QPointF m_outlineOffset;
 	QPointF m_outlinePos;
 
 	QCursor m_toolCursor;

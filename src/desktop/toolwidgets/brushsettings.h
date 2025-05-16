@@ -47,6 +47,7 @@ public:
 	int getSize() const override;
 	bool getSubpixelMode() const override;
 	bool isSquare() const override;
+	QPointF getOffset() const override;
 	int getBlendMode() const;
 
 	BrushMode getBrushMode() const;
@@ -114,6 +115,7 @@ signals:
 	void blendModeChanged(int blendMode);
 	void brushModeChanged(int brushMode); // See enum BrushMode above.
 	void pixelSizeChanged(int size);
+	void offsetChanged(const QPointF &offset);
 	void newBrushRequested();
 	void editBrushRequested();
 	void overwriteBrushRequested();
@@ -158,6 +160,7 @@ private:
 	static QString getLockDescription(Lock lock);
 
 	void adjustSettingVisibilities(bool softmode, bool mypaintmode);
+	void emitOffsetChanged();
 	void emitBlendModeChanged();
 	void emitBrushModeChanged();
 

@@ -168,6 +168,8 @@ public slots:
 	//! Set subpixel precision mode and shape for brush preview outline
 	void setOutlineMode(bool subpixel, bool square, bool force);
 
+	void setOutlineOffset(const QPointF &outlineOffset);
+
 	//! Enable or disable pixel grid (shown only at high zoom levels)
 	void setPixelGrid(bool enable);
 
@@ -434,6 +436,7 @@ private:
 	qreal m_pointerdistance;
 	qreal m_pointervelocity;
 
+	QPointF m_outlineOffset;
 	int m_outlineSize;
 	bool m_showoutline, m_subpixeloutline, m_forceoutline;
 	QCursor m_toolcursor;

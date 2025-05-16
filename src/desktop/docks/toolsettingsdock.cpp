@@ -194,6 +194,13 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 			}
 		});
 	connect(
+		bs, &tools::BrushSettings::offsetChanged, this,
+		[this](const QPointF &offset) {
+			if(hasBrushCursor(d->currentTool)) {
+				emit offsetChanged(offset);
+			}
+		});
+	connect(
 		bs, &tools::BrushSettings::eraseModeChanged, this, [this](bool erase) {
 			if(!erase && d->currentTool == tools::Tool::ERASER) {
 				setTool(tools::Tool::FREEHAND);
@@ -652,6 +659,7 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 	emit sizeChanged(ts->getSize());
 	emit subpixelModeChanged(
 		ts->getSubpixelMode(), ts->isSquare(), ts->requiresOutline());
+	emit offsetChanged(ts->getOffset());
 	brushSettings()->triggerUpdate();
 }
 
@@ -665,6 +673,7 @@ void ToolSettings::triggerUpdate()
 		emit sizeChanged(ts->getSize());
 		emit subpixelModeChanged(
 			ts->getSubpixelMode(), ts->isSquare(), ts->requiresOutline());
+		emit offsetChanged(ts->getOffset());
 	}
 	brushSettings()->triggerUpdate();
 }

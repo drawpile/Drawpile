@@ -32,6 +32,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Add shortcuts that switch tools and deselect in a single action. Thanks Bonbli for suggesting.
  * Feature: New .dpcs canvas file format that's much faster and in most cases also leads to smaller sizes. Thanks Bonbli for suggesting an optimization to this.
  * Feature: A gradient tool, which works inside of selections. Thanks ChristianJohnsten, lambda20x and Maffi for suggesting.
+ * Feature: Preview brushes with fixed X and Y offsets with an offset outline. Thanks Phoneme for suggesting.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

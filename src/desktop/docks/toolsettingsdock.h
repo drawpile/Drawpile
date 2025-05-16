@@ -136,6 +136,9 @@ signals:
 	//! This signal is emitted when tool subpixel drawing mode is changed
 	void subpixelModeChanged(bool subpixel, bool square, bool force);
 
+	//! Fixed brush offset changed
+	void offsetChanged(const QPointF &offset);
+
 	//! Current foreground color selection changed
 	void foregroundColorChanged(const QColor &color);
 

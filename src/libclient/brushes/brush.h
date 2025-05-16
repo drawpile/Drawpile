@@ -254,6 +254,8 @@ public:
 	void setQColor(const QColor &c);
 	QColor qColor() const;
 
+	QPointF getOffset() const;
+
 	QJsonObject toJson() const;
 	void exportToJson(QJsonObject &json) const;
 	static MyPaintBrush fromJson(const QJsonObject &json);
@@ -328,6 +330,8 @@ public:
 	DP_UPixelFloat color() const;
 	QColor qColor() const;
 	void setQColor(const QColor &c);
+
+	QPointF getOffset() const;
 
 	StabilizationMode stabilizationMode() const;
 	void setStabilizationMode(StabilizationMode stabilizationMode);

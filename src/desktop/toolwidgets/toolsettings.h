@@ -113,6 +113,8 @@ public:
 	 */
 	virtual bool isSquare() const { return false; }
 
+	virtual QPointF getOffset() const { return QPointF(0.0, 0.0); }
+
 	//! If this tool requires an outline (fill tool does, brushes do not)
 	virtual bool requiresOutline() const { return false; }
 

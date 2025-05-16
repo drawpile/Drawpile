@@ -169,6 +169,7 @@ struct BrushSettings::Private {
 
 	QMenu *menu;
 
+	QPointF previousOffset;
 	qreal quickAdjust1 = 0.0;
 	int brushSlotCount = BRUSH_SLOT_COUNT;
 	int current = 0;
@@ -1413,6 +1414,7 @@ void BrushSettings::updateUi()
 	changeRadiusLogarithmicSetting(d->ui.radiusLogarithmicBox->value());
 	updateStabilizationSettingVisibility();
 	updateRadiusLogarithmicLimit();
+	emitOffsetChanged();
 	emitBlendModeChanged();
 	emitBrushModeChanged();
 
@@ -1542,6 +1544,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	adjustSettingVisibilities(
 		mypaintmode || classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND,
 		mypaintmode);
+	emitOffsetChanged();
 	emitBlendModeChanged();
 	emitBrushModeChanged();
 }
@@ -1628,6 +1631,15 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		if(pair.second) {
 			pair.first->show();
 		}
+	}
+}
+
+void BrushSettings::emitOffsetChanged()
+{
+	QPointF currentOffset = getOffset();
+	if(d->previousOffset != currentOffset) {
+		d->previousOffset = currentOffset;
+		emit offsetChanged(currentOffset);
 	}
 }
 
@@ -1966,6 +1978,11 @@ bool BrushSettings::isSquare() const
 	const brushes::ActiveBrush &brush = d->currentBrush();
 	return brush.activeType() == brushes::ActiveBrush::CLASSIC &&
 		   brush.classic().shape == DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE;
+}
+
+QPointF BrushSettings::getOffset() const
+{
+	return d->currentBrush().getOffset();
 }
 
 int BrushSettings::getBlendMode() const

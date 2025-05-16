@@ -165,6 +165,9 @@ float DP_mypaint_settings_max_size_for(const DP_MyPaintSettings *settings,
 float DP_mypaint_settings_base_value_for_max_size(
     const DP_MyPaintSettings *settings, float max_size);
 
+bool DP_mypaint_settings_fixed_offset(const DP_MyPaintSettings *settings,
+                                      double *out_x, double *out_y);
+
 bool DP_mypaint_settings_equal_preset(const DP_MyPaintSettings *a,
                                       const DP_MyPaintSettings *b);
 

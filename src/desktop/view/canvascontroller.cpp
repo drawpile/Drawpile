@@ -1253,6 +1253,15 @@ void CanvasController::setOutlineMode(bool subpixel, bool square, bool force)
 	}
 }
 
+void CanvasController::setOutlineOffset(const QPointF &outlineOffset)
+{
+	if(outlineOffset != m_outlineOffset) {
+		changeOutline([&] {
+			m_outlineOffset = outlineOffset;
+		});
+	}
+}
+
 void CanvasController::setPixelGrid(bool pixelGrid)
 {
 	if(pixelGrid != m_pixelGrid) {
@@ -1303,11 +1312,12 @@ bool CanvasController::isOutlineVisible() const
 
 QPointF CanvasController::outlinePos() const
 {
+	QPointF outlinePos = m_outlinePos + m_outlineOffset;
 	if(m_subpixelOutline) {
-		return m_outlinePos;
+		return outlinePos;
 	} else {
 		QPointF pixelPos(
-			std::floor(m_outlinePos.x()), std::floor(m_outlinePos.y()));
+			std::floor(outlinePos.x()), std::floor(outlinePos.y()));
 		if(m_outlineSize % 2 == 0) {
 			return pixelPos;
 		} else {

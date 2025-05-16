@@ -655,6 +655,16 @@ QColor MyPaintBrush::qColor() const
 	return drawdanceColorToQColor(m_brush.color);
 }
 
+QPointF MyPaintBrush::getOffset() const
+{
+	double x, y;
+	if(DP_mypaint_settings_fixed_offset(&constSettings(), &x, &y)) {
+		return QPointF(x, y);
+	} else {
+		return QPointF(0.0, 0.0);
+	}
+}
+
 QJsonObject MyPaintBrush::toJson() const
 {
 	return QJsonObject{
@@ -1199,6 +1209,15 @@ void ActiveBrush::setQColor(const QColor &c)
 {
 	m_classic.setQColor(c);
 	m_myPaint.setQColor(c);
+}
+
+QPointF ActiveBrush::getOffset() const
+{
+	if(m_activeType == MYPAINT) {
+		return m_myPaint.getOffset();
+	} else {
+		return QPointF(0.0, 0.0);
+	}
 }
 
 StabilizationMode ActiveBrush::stabilizationMode() const

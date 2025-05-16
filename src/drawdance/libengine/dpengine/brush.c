@@ -22,6 +22,7 @@
 #include "brush.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <math.h>
 #include <mypaint-brush-settings.h>
 #include <helpers.h> // CLAMP
 
@@ -282,6 +283,81 @@ float DP_mypaint_settings_base_value_for_max_size(
         }
     }
     return base_value;
+}
+
+static bool is_mypaint_setting_static(const DP_MyPaintSettings *settings,
+                                      int setting)
+{
+    const DP_MyPaintMapping *mapping = &settings->mappings[setting];
+    for (int i = 0; i < MYPAINT_BRUSH_INPUTS_COUNT; ++i) {
+        if (mapping->inputs[i].n > 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool DP_mypaint_settings_fixed_offset(const DP_MyPaintSettings *settings,
+                                      double *out_x, double *out_y)
+{
+    if (settings
+        && is_mypaint_setting_static(settings, MYPAINT_BRUSH_SETTING_OFFSET_X)
+        && is_mypaint_setting_static(settings, MYPAINT_BRUSH_SETTING_OFFSET_Y)
+        && is_mypaint_setting_static(settings,
+                                     MYPAINT_BRUSH_SETTING_OFFSET_ANGLE)
+        && is_mypaint_setting_static(settings,
+                                     MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_ASC)
+        && is_mypaint_setting_static(settings,
+                                     MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_VIEW)
+        && is_mypaint_setting_static(settings,
+                                     MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_2)
+        && is_mypaint_setting_static(settings,
+                                     MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_2_ASC)
+        && is_mypaint_setting_static(settings,
+                                     MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_2_VIEW)
+        && is_mypaint_setting_static(settings,
+                                     MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_ADJ)
+        && is_mypaint_setting_static(settings,
+                                     MYPAINT_BRUSH_SETTING_OFFSET_MULTIPLIER)
+        && settings->mappings[MYPAINT_BRUSH_SETTING_OFFSET_ANGLE].base_value
+               == 0.0f
+        && settings->mappings[MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_ASC].base_value
+               == 0.0f
+        && settings->mappings[MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_VIEW]
+                   .base_value
+               == 0.0f
+        && settings->mappings[MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_2].base_value
+               == 0.0f
+        && settings->mappings[MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_2_ASC]
+                   .base_value
+               == 0.0f
+        && settings->mappings[MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_2_VIEW]
+                   .base_value
+               == 0.0f
+        && settings->mappings[MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_ADJ].base_value
+               == 0.0f) {
+
+        float offset_mult =
+            expf(settings->mappings[MYPAINT_BRUSH_SETTING_OFFSET_MULTIPLIER]
+                     .base_value);
+        if (isfinite(offset_mult)) {
+            float base_radius = expf(
+                settings->mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC]
+                    .base_value);
+            if (out_x) {
+                *out_x = settings->mappings[MYPAINT_BRUSH_SETTING_OFFSET_X]
+                             .base_value
+                       * base_radius * offset_mult;
+            }
+            if (out_y) {
+                *out_y = settings->mappings[MYPAINT_BRUSH_SETTING_OFFSET_Y]
+                             .base_value
+                       * base_radius * offset_mult;
+            }
+            return true;
+        }
+    }
+    return false;
 }
 
 static bool preset_equal_mypaint_inputs(const DP_MyPaintControlPoints *a,
