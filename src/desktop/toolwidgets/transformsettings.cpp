@@ -161,6 +161,8 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 
 	QWidget *widget = new QWidget(parent);
 	QFormLayout *layout = new QFormLayout(widget);
+	layout->setContentsMargins(3, 3, 3, 3);
+	layout->setSpacing(3);
 
 	m_fastButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
