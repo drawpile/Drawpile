@@ -36,6 +36,8 @@ static const ToolProperties::RangedValue<int> interpolation{
 
 TransformSettings::TransformSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent)
+	, m_previousMode(DP_BLEND_MODE_NORMAL)
+	, m_previousEraseMode(DP_BLEND_MODE_ERASE)
 {
 	connect(
 		ctrl, &ToolController::modelChanged, this,
@@ -43,6 +45,9 @@ TransformSettings::TransformSettings(ToolController *ctrl, QObject *parent)
 	connect(
 		ctrl, &ToolController::transformToolStateChanged, this,
 		&TransformSettings::updateHandles);
+	connect(
+		this, &TransformSettings::blendModeChanged, this,
+		&TransformSettings::pushSettings);
 }
 
 void TransformSettings::setActions(
@@ -102,6 +107,26 @@ void TransformSettings::pushSettings()
 	if(tt->mode() != tools::TransformTool::Mode::Move) {
 		tt->setMode(tools::TransformTool::Mode(m_handlesGroup->checkedId()));
 	}
+
+	int blendMode = getCurrentBlendMode();
+	if(canvas::blendmode::presentsAsEraser(blendMode)) {
+		m_previousEraseMode = blendMode;
+	} else {
+		m_previousMode = blendMode;
+	}
+}
+
+void TransformSettings::toggleEraserMode()
+{
+	selectBlendMode(
+		canvas::blendmode::presentsAsEraser(getCurrentBlendMode())
+			? m_previousMode
+			: m_previousEraseMode);
+}
+
+void TransformSettings::toggleAlphaPreserve()
+{
+	m_alphaPreserveButton->click();
 }
 
 QWidget *TransformSettings::createUiWidget(QWidget *parent)

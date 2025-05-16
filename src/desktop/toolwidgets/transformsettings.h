@@ -50,6 +50,8 @@ public:
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
 	void pushSettings() override;
+	void toggleEraserMode() override;
+	void toggleAlphaPreserve() override;
 
 	QWidget *getHeaderWidget() override { return m_headerWidget; }
 
@@ -112,6 +114,8 @@ private:
 	QPushButton *m_applyButton = nullptr;
 	QPushButton *m_cancelButton = nullptr;
 	view::CanvasWrapper *m_canvasView = nullptr;
+	int m_previousMode;
+	int m_previousEraseMode;
 	bool m_handleButtonsVisible = true;
 	bool m_automaticAlphaPreserve = true;
 };
