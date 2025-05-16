@@ -44,6 +44,7 @@ TouchHandler::TouchHandler(QObject *parent)
 	settings.bindFourFingerTap(this, &TouchHandler::setFourFingerTapAction);
 	settings.bindOneFingerTapAndHold(
 		this, &TouchHandler::setOneFingerTapAndHoldAction);
+	settings.bindTouchSmoothing(this, &TouchHandler::setSmoothing);
 }
 
 bool TouchHandler::isTouchDrawEnabled() const
@@ -281,6 +282,7 @@ void TouchHandler::handleTouchUpdate(
 			m_touchStartRotate = rotation;
 			m_touchStartsValid = true;
 			m_touchRotating = false;
+			startZoomRotate(zoom, rotation);
 		}
 
 		// We want to pan with one finger if one-finger pan is enabled and
@@ -298,7 +300,7 @@ void TouchHandler::handleTouchUpdate(
 		   havePan && !spotsChanged &&
 		   !(delta = m_touchState.previousCenter() - center).isNull()) {
 			m_touching = true;
-			emit touchScrolledBy(delta.x(), delta.y());
+			scrollBy(delta.x(), delta.y());
 		}
 
 		// Scaling and rotation with two fingers
@@ -341,7 +343,7 @@ void TouchHandler::handleTouchUpdate(
 				}
 			}
 
-			emit touchZoomedRotated(touchZoom, touchRotation);
+			zoomRotate(touchZoom, touchRotation);
 		}
 	}
 }
@@ -435,13 +437,14 @@ void TouchHandler::handleGesture(
 		case Qt::GestureStarted:
 			m_gestureStartZoom = zoom;
 			m_gestureStartRotation = rotation;
+			startZoomRotate(zoom, rotation);
 			Q_FALLTHROUGH();
 		case Qt::GestureUpdated:
 		case Qt::GestureFinished: {
 			if(isTouchDrawOrPanEnabled() &&
 			   cf.testFlag(QPinchGesture::CenterPointChanged)) {
 				QPointF d = pinch->centerPoint() - pinch->lastCenterPoint();
-				emit touchScrolledBy(-d.x(), -d.y());
+				scrollBy(-d.x(), -d.y());
 			}
 
 			bool haveZoom = isTouchPinchEnabled() &&
@@ -458,7 +461,7 @@ void TouchHandler::handleGesture(
 												  m_gestureStartRotation +
 												  pinch->totalRotationAngle())
 											: m_gestureStartRotation;
-				emit touchZoomedRotated(gestureZoom, gestureRotation);
+				zoomRotate(gestureZoom, gestureRotation);
 			}
 
 			hadPinchUpdate = true;
@@ -485,11 +488,12 @@ void TouchHandler::handleGesture(
 		case Qt::GestureStarted:
 			m_gestureStartZoom = zoom;
 			m_gestureStartRotation = rotation;
+			startZoomRotate(zoom, rotation);
 			Q_FALLTHROUGH();
 		case Qt::GestureUpdated:
 		case Qt::GestureFinished:
 			if(!hadPinchUpdate && isTouchDrawOrPanEnabled()) {
-				emit touchScrolledBy(delta.x() / -2.0, delta.y() / -2.0);
+				scrollBy(delta.x() / -2.0, delta.y() / -2.0);
 			}
 			Q_FALLTHROUGH();
 		case Qt::GestureCanceled:
@@ -673,6 +677,119 @@ void TouchHandler::setFourFingerTapAction(int fourFingerTapAction)
 void TouchHandler::setOneFingerTapAndHoldAction(int oneFingerTapAndHoldAction)
 {
 	m_oneFingerTapAndHoldAction = oneFingerTapAndHoldAction;
+}
+
+void TouchHandler::setSmoothing(int smoothing)
+{
+	if(smoothing > 0) {
+		m_smoothMultiplier = 1.0 - qMin(smoothing, 100) / 100.0 * 0.9;
+		if(!m_smoothTimer) {
+			m_smoothTimer = new QTimer(this);
+			m_smoothTimer->setInterval(1000 / 60);
+			connect(
+				m_smoothTimer, &QTimer::timeout, this,
+				&TouchHandler::updateSmoothedMotion);
+		}
+	} else if(smoothing <= 0 && m_smoothTimer) {
+		delete m_smoothTimer;
+		m_smoothTimer = nullptr;
+		m_smoothDx = 0.0;
+		m_smoothDy = 0.0;
+	}
+}
+
+void TouchHandler::scrollBy(qreal dx, qreal dy)
+{
+	if(m_smoothTimer) {
+		m_smoothDx += dx;
+		m_smoothDy += dy;
+		if(!m_smoothTimer->isActive()) {
+			m_smoothTimer->start();
+		}
+	} else {
+		emit touchScrolledBy(dx, dy);
+	}
+}
+
+void TouchHandler::startZoomRotate(qreal zoom, qreal rotation)
+{
+	m_smoothZoomCurrent = zoom;
+	m_smoothZoomTarget = zoom;
+	m_smoothRotationCurrent = std::fmod(rotation, 360.0);
+	m_smoothRotationTarget = m_smoothRotationCurrent;
+}
+
+void TouchHandler::zoomRotate(qreal zoom, qreal rotation)
+{
+	if(m_smoothTimer) {
+		m_smoothZoomTarget = zoom;
+		m_smoothRotationTarget = rotation;
+		if(!m_smoothTimer->isActive()) {
+			m_smoothTimer->start();
+		}
+	} else {
+		emit touchZoomedRotated(zoom, rotation);
+	}
+}
+
+void TouchHandler::updateSmoothedMotion()
+{
+	qreal eps = 0.001;
+
+	if(m_smoothDx != 0.0 || m_smoothDy != 0.0) {
+		qreal dx;
+		if(qAbs(m_smoothDx) > eps) {
+			dx = m_smoothDx * m_smoothMultiplier;
+			m_smoothDx -= dx;
+		} else {
+			dx = m_smoothDx;
+			m_smoothDx = 0.0;
+		}
+
+		qreal dy;
+		if(qAbs(m_smoothDy) > eps) {
+			dy = m_smoothDy * m_smoothMultiplier;
+			m_smoothDy -= dy;
+		} else {
+			dy = m_smoothDy;
+			m_smoothDy = 0.0;
+		}
+
+		emit touchScrolledBy(dx, dy);
+	}
+
+	if(m_smoothZoomCurrent != m_smoothZoomTarget ||
+	   m_smoothRotationCurrent != m_smoothRotationTarget) {
+		qreal zoomDelta = m_smoothZoomTarget - m_smoothZoomCurrent;
+		if(qAbs(zoomDelta) > eps) {
+			m_smoothZoomCurrent += zoomDelta * m_smoothMultiplier;
+		} else {
+			m_smoothZoomCurrent = m_smoothZoomTarget;
+		}
+
+		qreal rotationDelta = m_smoothRotationTarget - m_smoothRotationCurrent;
+		if(rotationDelta > 180.0) {
+			rotationDelta = 360.0 - rotationDelta;
+		} else if(rotationDelta < -180.0) {
+			rotationDelta = 360.0 + rotationDelta;
+		}
+
+		if(qAbs(rotationDelta) > eps) {
+			m_smoothRotationCurrent = std::fmod(
+				m_smoothRotationCurrent + rotationDelta * m_smoothMultiplier,
+				360.0);
+		} else {
+			m_smoothRotationCurrent = m_smoothRotationTarget;
+		}
+
+		emit touchZoomedRotated(m_smoothZoomCurrent, m_smoothRotationCurrent);
+	}
+
+	if(m_smoothTimer && m_smoothDx == 0.0 && m_smoothDy == 0.0 &&
+	   m_smoothZoomCurrent == m_smoothZoomTarget &&
+	   m_smoothRotationCurrent == m_smoothRotationTarget) {
+		m_smoothTimer->stop();
+	}
 }
 
 void TouchHandler::triggerTapAndHold()

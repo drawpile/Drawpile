@@ -21,6 +21,7 @@ Unreleased Version 2.2.3-pre
  * Fix: Don't start a kinetic scroll of the surrounding view when trying to adjust curve or slider. Thanks 3rd_EFNO for reporting.
  * Fix: Make MyPaint brushes not pick up transparency from outside of the canvas. Thanks Meiren and yvantot for reporting.
  * Fix: Properly render sketch mode layers when the actual layer opacity is zero.
+ * Feature: Smoothing for touch panning, zooming and rotation. Can be configured and disabled in the touch preferences. Thanks Jay-Man for suggesting.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.
