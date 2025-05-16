@@ -2,6 +2,7 @@
 #include "desktop/dialogs/settingsdialog/touch.h"
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include <QButtonGroup>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -164,6 +165,15 @@ void Touch::initTouchActions(
 		int(desktop::settings::TwoFingerTwistAction::RotateDiscrete));
 	settings.bindTwoFingerTwist(twoFingerTwist, Qt::UserRole);
 	form->addRow(tr("Two-finger twist:"), twoFingerTwist);
+
+	KisSliderSpinBox *touchSmoothing = new KisSliderSpinBox;
+	touchSmoothing->setRange(0, 100);
+	touchSmoothing->setPrefix(tr("Smoothing:"));
+	touchSmoothing->setSuffix(tr("%"));
+	touchSmoothing->setBlockUpdateSignalOnDrag(true);
+	disableKineticScrollingOnWidget(touchSmoothing);
+	settings.bindTouchSmoothing(touchSmoothing);
+	form->addRow(nullptr, touchSmoothing);
 }
 
 } // namespace settingsdialog

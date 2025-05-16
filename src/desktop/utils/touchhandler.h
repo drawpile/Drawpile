@@ -122,6 +122,11 @@ private:
 	void setThreeFingerTapAction(int threeFingerTapAction);
 	void setFourFingerTapAction(int fourFingerTapAction);
 	void setOneFingerTapAndHoldAction(int oneFingerTapAndHoldAction);
+	void setSmoothing(int smoothing);
+	void scrollBy(qreal dx, qreal dy);
+	void startZoomRotate(qreal zoom, qreal rotation);
+	void zoomRotate(qreal zoom, qreal rotation);
+	void updateSmoothedMotion();
 
 	void triggerTapAndHold();
 
@@ -153,8 +158,16 @@ private:
 	QPointF m_gestureStartPos;
 	qreal m_gestureStartZoom = 0.0;
 	qreal m_gestureStartRotation = 0.0;
+	qreal m_smoothDx = 0.0;
+	qreal m_smoothDy = 0.0;
+	qreal m_smoothZoomCurrent = 0.0;
+	qreal m_smoothZoomTarget = 0.0;
+	qreal m_smoothRotationCurrent = 0.0;
+	qreal m_smoothRotationTarget = 0.0;
+	qreal m_smoothMultiplier = 0.5;
 	QDeadlineTimer m_tapTimer;
 	QTimer *m_tapAndHoldTimer;
+	QTimer *m_smoothTimer = nullptr;
 };
 
 #endif
