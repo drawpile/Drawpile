@@ -245,6 +245,7 @@ SETTING(fourFingerTap             , FourFingerTap             , "settings/input/
 SETTING(oneFingerTapAndHold       , OneFingerTapAndHold       , "settings/input/onefingertapandhold"    , int(TouchTapAndHoldAction::ColorPickMode))
 SETTING(tabletPressTimerDelay     , TabletPressTimerDelay     , "settings/input/tabletpresstimerdelay"  , 500)
 SETTING(touchGestures             , TouchGestures             , "settings/input/touchgestures"          , false)
+SETTING(touchSmoothing            , TouchSmoothing            , "settings/input/touchsmoothing"         , 75)
 SETTING(onionSkinsFrameCount      , OnionSkinsFrameCount      , "onionskins/framecount"                 , 8)
 SETTING_GETSET_V(
 	V1, onionSkinsFrames          , OnionSkinsFrames          , "onionskins/frames"                     , (QMap<int, int>()),

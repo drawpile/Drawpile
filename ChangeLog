@@ -32,6 +32,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Add shortcuts that switch tools and deselect in a single action. Thanks Bonbli for suggesting.
  * Feature: New .dpcs canvas file format that's much faster and in most cases also leads to smaller sizes. Thanks Bonbli for suggesting an optimization to this.
  * Feature: A gradient tool, which works inside of selections. Thanks ChristianJohnsten, lambda20x and Maffi for suggesting.
+ * Feature: Smoothing for touch panning, zooming and rotation. Can be configured and disabled in the touch preferences. Thanks Jay-Man for suggesting.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.
