@@ -412,7 +412,7 @@ static DP_UPixelFloat sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp,
     float blue = 0.0;
     float alpha = 0.0;
 
-    int sample_interval = diameter <= 4 ? 1 : (diameter * 7) / 2;
+    int sample_interval = diameter <= 20 ? 1 : (diameter * 7) / 2;
     float sample_rate = 1.0f / (14.0f * DP_int_to_float(diameter));
 
     // collect weighted color sums
