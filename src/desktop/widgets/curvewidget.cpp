@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/widgets/curvewidget.h"
 #include "desktop/dialogs/curvepresetdialog.h"
 #include "desktop/utils/widgetutils.h"
@@ -133,14 +132,26 @@ CurveWidget::CurveWidget(
 
 	grid->setContentsMargins(0, 0, 0, 0);
 	grid->setSpacing(3);
-	grid->addWidget(m_yMaxLabel, YMaxLabelRow, YLabelCol, Qt::AlignRight | Qt::AlignTop);
-	grid->addWidget(m_yTitleLabel, YTitleLabelRow, YLabelCol, Qt::AlignRight | Qt::AlignVCenter);
-	grid->addWidget(m_yMinLabel, YMinLabelRow, YLabelCol, Qt::AlignRight | Qt::AlignBottom);
-	grid->addWidget(m_curve, CurveFirstRow, CurveFirstCol, CurveLastRow - CurveFirstRow + 1, CurveLastCol - CurveFirstCol + 1);
-	grid->addWidget(m_xMinLabel, XLabelRow, XMinLabelCol, Qt::AlignLeft | Qt::AlignTop);
-	grid->addWidget(m_xTitleLabel, XLabelRow, XTitleLabelCol, Qt::AlignCenter | Qt::AlignTop);
-	grid->addWidget(m_xMaxLabel, XLabelRow, XMaxLabelCol, Qt::AlignRight | Qt::AlignTop);
-	grid->addLayout(m_buttonLayout, ButtonFirstRow, ButtonCol, ButtonLastRow - ButtonFirstRow + 1, 1, Qt::AlignLeading);
+	grid->addWidget(
+		m_yMaxLabel, YMaxLabelRow, YLabelCol, Qt::AlignRight | Qt::AlignTop);
+	grid->addWidget(
+		m_yTitleLabel, YTitleLabelRow, YLabelCol,
+		Qt::AlignRight | Qt::AlignVCenter);
+	grid->addWidget(
+		m_yMinLabel, YMinLabelRow, YLabelCol, Qt::AlignRight | Qt::AlignBottom);
+	grid->addWidget(
+		m_curve, CurveFirstRow, CurveFirstCol, CurveLastRow - CurveFirstRow + 1,
+		CurveLastCol - CurveFirstCol + 1);
+	grid->addWidget(
+		m_xMinLabel, XLabelRow, XMinLabelCol, Qt::AlignLeft | Qt::AlignTop);
+	grid->addWidget(
+		m_xTitleLabel, XLabelRow, XTitleLabelCol,
+		Qt::AlignCenter | Qt::AlignTop);
+	grid->addWidget(
+		m_xMaxLabel, XLabelRow, XMaxLabelCol, Qt::AlignRight | Qt::AlignTop);
+	grid->addLayout(
+		m_buttonLayout, ButtonFirstRow, ButtonCol,
+		ButtonLastRow - ButtonFirstRow + 1, 1, Qt::AlignLeading);
 	grid->setRowStretch(YTitleLabelRow, 1);
 	grid->setColumnMinimumWidth(ButtonSpaceCol, 6);
 	grid->setColumnStretch(LastCol + 1, 1);
@@ -228,8 +239,6 @@ void CurveWidget::pasteCurve()
 			tr("Clipboard does not appear to contain a curve."));
 	}
 }
-
-void CurveWidget::saveCurve() {}
 
 void CurveWidget::loadCurve()
 {

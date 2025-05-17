@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef CURVEWIDGET_H
-#define CURVEWIDGET_H
-
+#ifndef DESKTOP_WIDGETS_CURVEWIDGET_H
+#define DESKTOP_WIDGETS_CURVEWIDGET_H
 #include "libclient/utils/kis_cubic_curve.h"
 #include <QWidget>
 
@@ -51,14 +49,12 @@ public:
 signals:
 	void curveChanged(const KisCubicCurve &curve);
 
-private slots:
-	void copyCurve();
-	void pasteCurve();
-	void saveCurve();
-	void loadCurve();
-
 private:
 	class SideLabel;
+
+	void copyCurve();
+	void pasteCurve();
+	void loadCurve();
 
 	KisCurveWidget *m_curve;
 	QLabel *m_yMaxLabel;
