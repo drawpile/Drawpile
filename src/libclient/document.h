@@ -42,54 +42,7 @@ namespace tools {
 class ToolController;
 }
 
-/**
- * @brief An active document and its associated data, including the network
- * connection
- *
- * This is an UI agnostic class that should be usable from both a widget
- * based application or a pure QML app.
- *
- */
 class Document final : public QObject, public net::Client::CommandHandler {
-	Q_PROPERTY(canvas::CanvasModel *canvas READ canvas() NOTIFY canvasChanged)
-	Q_PROPERTY(net::BanlistModel *banlist READ banlist() CONSTANT)
-	Q_PROPERTY(net::AuthListModel *authList READ authList() CONSTANT)
-	Q_PROPERTY(net::AnnouncementListModel *announcementList READ
-				   announcementList() CONSTANT)
-	Q_PROPERTY(QStringListModel *serverLog READ serverLog() CONSTANT)
-	Q_PROPERTY(bool dirty READ isDirty NOTIFY dirtyCanvas)
-	Q_PROPERTY(
-		bool autosave READ isAutosave WRITE setAutosave NOTIFY autosaveChanged)
-	Q_PROPERTY(bool canAutosave READ canAutosave NOTIFY canAutosaveChanged)
-	Q_PROPERTY(
-		QString sessionTitle READ sessionTitle NOTIFY sessionTitleChanged)
-	Q_PROPERTY(QString currentPath READ currentPath() NOTIFY currentPathChanged)
-	Q_PROPERTY(bool recording READ isRecording() NOTIFY recorderStateChanged)
-
-	Q_PROPERTY(bool sessionPersistent READ isSessionPersistent NOTIFY
-				   sessionPersistentChanged)
-	Q_PROPERTY(
-		bool sessionClosed READ isSessionClosed NOTIFY sessionClosedChanged)
-	Q_PROPERTY(bool sessionAuthOnly READ isSessionAuthOnly NOTIFY
-				   sessionAuthOnlyChanged)
-	Q_PROPERTY(bool sessionPreserveChat READ isSessionPreserveChat NOTIFY
-				   sessionPreserveChatChanged)
-	Q_PROPERTY(bool sessionPasswordProtected READ isSessionPasswordProtected
-				   NOTIFY sessionPasswordChanged)
-	Q_PROPERTY(
-		bool sessionHasOpword READ isSessionOpword NOTIFY sessionOpwordChanged)
-	Q_PROPERTY(bool sessionNsfm READ isSessionNsfm NOTIFY sessionNsfmChanged)
-	Q_PROPERTY(bool sessionForceNsfm READ isSessionForceNsfm NOTIFY
-				   sessionForceNsfmChanged)
-	Q_PROPERTY(bool sessionDeputies READ isSessionDeputies NOTIFY
-				   sessionDeputiesChanged)
-	Q_PROPERTY(int sessionMaxUserCount READ sessionMaxUserCount NOTIFY
-				   sessionMaxUserCountChanged)
-	Q_PROPERTY(double sessionResetThreshold READ sessionResetThreshold NOTIFY
-				   sessionResetThresholdChanged)
-	Q_PROPERTY(double baseResetThreshold READ baseResetThreshold NOTIFY
-				   baseResetThresholdChanged)
-
 	Q_OBJECT
 public:
 	enum class StreamResetState { None, Generating, Streaming };
