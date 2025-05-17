@@ -1734,3 +1734,10 @@ mypaint_brush_from_defaults(MyPaintBrush *self) {
     mypaint_brush_set_mapping_point(self, MYPAINT_BRUSH_SETTING_OPAQUE_MULTIPLY, MYPAINT_BRUSH_INPUT_PRESSURE, 0, 0.0, 0.0);
     mypaint_brush_set_mapping_point(self, MYPAINT_BRUSH_SETTING_OPAQUE_MULTIPLY, MYPAINT_BRUSH_INPUT_PRESSURE, 1, 1.0, 1.0);
 }
+
+// Drawpile patch
+RngDouble *
+mypaint_brush_rng(MyPaintBrush *self)
+{
+    return self->rng;
+}

@@ -52,6 +52,9 @@ public:
 	const KisCubicCurve &smudgeCurve() const { return m_smudgeCurve; }
 	void setSmudgeCurve(const KisCubicCurve &smudgeCurve);
 
+	const KisCubicCurve &jitterCurve() const { return m_jitterCurve; }
+	void setJitterCurve(const KisCubicCurve &jitterCurve);
+
 	DP_ClassicBrushDynamicType lastSizeDynamicType() const
 	{
 		return m_lastSizeDynamicType;
@@ -132,6 +135,26 @@ public:
 		smudge_dynamic.max_distance = maxDistance;
 	}
 
+	DP_ClassicBrushDynamicType lastJitterDynamicType() const
+	{
+		return m_lastJitterDynamicType;
+	}
+
+	void setJitterDynamicType(DP_ClassicBrushDynamicType type)
+	{
+		setDynamicType(type, jitter_dynamic.type, m_lastJitterDynamicType);
+	}
+
+	void setJitterMaxVelocity(float maxVelocity)
+	{
+		jitter_dynamic.max_velocity = maxVelocity;
+	}
+
+	void setJitterMaxDistance(float maxDistance)
+	{
+		jitter_dynamic.max_distance = maxDistance;
+	}
+
 	void setQColor(const QColor &c);
 	QColor qColor() const;
 
@@ -171,6 +194,7 @@ private:
 	KisCubicCurve m_opacityCurve;
 	KisCubicCurve m_hardnessCurve;
 	KisCubicCurve m_smudgeCurve;
+	KisCubicCurve m_jitterCurve;
 	DP_ClassicBrushDynamicType m_lastSizeDynamicType =
 		DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE;
 	DP_ClassicBrushDynamicType m_lastOpacityDynamicType =
@@ -178,6 +202,8 @@ private:
 	DP_ClassicBrushDynamicType m_lastHardnessDynamicType =
 		DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE;
 	DP_ClassicBrushDynamicType m_lastSmudgeDynamicType =
+		DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE;
+	DP_ClassicBrushDynamicType m_lastJitterDynamicType =
 		DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE;
 };
 

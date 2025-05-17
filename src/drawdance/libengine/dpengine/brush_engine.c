@@ -22,6 +22,7 @@
 #include <math.h>
 #include <mypaint-brush.h>
 #include <mypaint.h>
+#include <rng-double.h>
 #include <helpers.h> // RGB <-> HSV conversion, CLAMP, mod_arith
 
 #define DP_PERF_CONTEXT "brush_engine"
@@ -250,6 +251,14 @@ static void set_poll_control_enabled(DP_BrushEngine *be, bool enabled)
     if (poll_control) {
         poll_control(be->user, enabled);
     }
+}
+
+
+static float brush_engine_randf(DP_BrushEngine *be)
+{
+    return fabsf(fmodf(DP_double_to_float(rng_double_next(
+                           mypaint_brush_rng(be->mypaint_brush))),
+                       1.0f));
 }
 
 
@@ -600,6 +609,16 @@ static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
         cb, pressure, velocity, distance, be->stroke.compatibility_mode);
     uint8_t dab_opacity =
         DP_classic_brush_dab_opacity_at(cb, pressure, velocity, distance);
+
+    float jitter = DP_classic_brush_jitter_at(cb, pressure, velocity, distance);
+    if (jitter > 0.0f) {
+        float length = brush_engine_randf(be) * DP_uint16_to_float(dab_size)
+                     * 2.0f * jitter;
+        float angle = brush_engine_randf(be) * (float)M_PI * 2.0f;
+        x += DP_float_to_int(roundf(length * cosf(angle)));
+        y += DP_float_to_int(roundf(length * sinf(angle)));
+    }
+
     uint8_t mask_flags;
     DP_PaintMode paint_mode = get_classic_brush_paint_mode(be, cb);
     if (dab_size > 0 && dab_opacity > 0
@@ -653,6 +672,15 @@ static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
     uint8_t dab_opacity =
         DP_classic_brush_dab_opacity_at(cb, pressure, velocity, distance);
     float diameter = DP_uint32_to_float(dab_size) / 256.0f;
+
+    float jitter = DP_classic_brush_jitter_at(cb, pressure, velocity, distance);
+    if (jitter > 0.0f) {
+        float length = brush_engine_randf(be) * diameter * jitter;
+        float angle = brush_engine_randf(be) * (float)M_PI * 2.0f;
+        x += length * cosf(angle);
+        y += length * sinf(angle);
+    }
+
     uint8_t mask_flags;
     DP_PaintMode paint_mode = get_classic_brush_paint_mode(be, cb);
     // Disregard infinitesimal or fully transparent dabs. 26 is a radius of 0.1.

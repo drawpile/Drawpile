@@ -127,6 +127,7 @@ private:
 	QWidget *buildClassicOpacityPageUi();
 	QWidget *buildClassicHardnessPageUi();
 	QWidget *buildClassicSmudgingPageUi();
+	QWidget *buildClassicJitterPageUi();
 	Dynamics buildClassicDynamics(
 		QVBoxLayout *layout,
 		void (brushes::ClassicBrush::*setType)(DP_ClassicBrushDynamicType),

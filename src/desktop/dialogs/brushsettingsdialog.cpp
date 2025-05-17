@@ -300,6 +300,10 @@ struct BrushSettingsDialog::Private {
 	Dynamics classicSmudgeDynamics;
 	KisSliderSpinBox *classicSmudgingMinSpinner;
 	widgets::CurveWidget *classicSmudgingCurve;
+	KisSliderSpinBox *classicJitterSpinner;
+	Dynamics classicJitterDynamics;
+	KisSliderSpinBox *classicJitterMinSpinner;
+	widgets::CurveWidget *classicJitterCurve;
 	MyPaintPage myPaintPages[MYPAINT_BRUSH_SETTINGS_COUNT];
 	int presetPageIndex;
 	int generalPageIndex;
@@ -307,6 +311,7 @@ struct BrushSettingsDialog::Private {
 	int classicOpacityPageIndex;
 	int classicHardnessPageIndex;
 	int classicSmudgePageIndex;
+	int classicJitterPageIndex;
 	int mypaintPageIndexes[MYPAINT_BRUSH_SETTINGS_COUNT];
 	DP_BrushShape lastShape;
 	brushes::ActiveBrush brush;
@@ -546,6 +551,8 @@ void BrushSettingsDialog::buildDialogUi()
 		d->stackedWidget->addWidget(buildClassicHardnessPageUi());
 	d->classicSmudgePageIndex =
 		d->stackedWidget->addWidget(buildClassicSmudgingPageUi());
+	d->classicJitterPageIndex =
+		d->stackedWidget->addWidget(buildClassicJitterPageUi());
 	for(int setting = 0; setting < MYPAINT_BRUSH_SETTINGS_COUNT; ++setting) {
 		d->mypaintPageIndexes[setting] =
 			shouldIncludeMyPaintSetting(setting)
@@ -1053,6 +1060,70 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	return scroll;
 }
 
+QWidget *BrushSettingsDialog::buildClassicJitterPageUi()
+{
+	QScrollArea *scroll = new QScrollArea{this};
+	QWidget *widget = new QWidget{scroll};
+	scroll->setWidget(widget);
+	scroll->setWidgetResizable(true);
+	utils::KineticScroller *kineticScroller =
+		utils::bindKineticScrolling(scroll);
+
+	QVBoxLayout *layout = new QVBoxLayout;
+	widget->setLayout(layout);
+
+	d->classicJitterSpinner = new KisSliderSpinBox{widget};
+	layout->addWidget(d->classicJitterSpinner);
+	d->classicJitterSpinner->setRange(0, 1000);
+	d->classicJitterSpinner->setPrefix(tr("Jitter: "));
+	d->classicJitterSpinner->setSuffix(tr("%"));
+	kineticScroller->disableKineticScrollingOnWidget(d->classicJitterSpinner);
+	connect(
+		d->classicJitterSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		makeBrushChangeCallbackArg<int>([this](int value) {
+			d->brush.classic().jitter.max = value / 100.0;
+			emitChange();
+		}));
+
+	d->classicJitterDynamics = buildClassicDynamics(
+		layout, &brushes::ClassicBrush::setJitterDynamicType,
+		&brushes::ClassicBrush::setJitterMaxVelocity,
+		&brushes::ClassicBrush::setJitterMaxDistance);
+
+	d->classicJitterMinSpinner = new KisSliderSpinBox{widget};
+	layout->addWidget(d->classicJitterMinSpinner);
+	d->classicJitterMinSpinner->setRange(0, 100);
+	d->classicJitterMinSpinner->setPrefix(tr("Minimum Jitter: "));
+	d->classicJitterMinSpinner->setSuffix(tr("%"));
+	kineticScroller->disableKineticScrollingOnWidget(
+		d->classicJitterMinSpinner);
+	connect(
+		d->classicJitterMinSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		makeBrushChangeCallbackArg<int>([this](int value) {
+			d->brush.classic().jitter.min = value / 100.0;
+			emitChange();
+		}));
+
+	d->classicJitterCurve =
+		new widgets::CurveWidget{tr("Input"), tr("Jitter"), false, widget};
+	layout->addWidget(d->classicJitterCurve);
+	buildClassicApplyToAllButton(d->classicJitterCurve);
+	kineticScroller->disableKineticScrollingOnWidget(
+		d->classicJitterCurve->curveWidget());
+	connect(
+		d->classicJitterCurve, &widgets::CurveWidget::curveChanged,
+		makeBrushChangeCallbackArg<const KisCubicCurve &>(
+			[this](const KisCubicCurve &curve) {
+				d->brush.classic().setJitterCurve(curve);
+				emitChange();
+			}));
+
+	layout->addSpacerItem(
+		new QSpacerItem{0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding});
+
+	return scroll;
+}
+
 BrushSettingsDialog::Dynamics BrushSettingsDialog ::buildClassicDynamics(
 	QVBoxLayout *layout,
 	void (brushes::ClassicBrush::*setType)(DP_ClassicBrushDynamicType),
@@ -1099,8 +1170,8 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog ::buildClassicDynamics(
 	QPushButton *applyVelocityToAllButton =
 		new QPushButton(QIcon::fromTheme("fill-color"), tr("Apply to All"));
 	applyVelocityToAllButton->setToolTip(
-		tr("Set the maximum velocity for Size, Opacity, Hardness and Smudging "
-		   "at once."));
+		tr("Set the maximum velocity for Size, Opacity, Hardness, Smudging and "
+		   "Jitter at once."));
 	connect(
 		applyVelocityToAllButton, &QPushButton::clicked,
 		makeBrushChangeCallback([=]() {
@@ -1110,6 +1181,7 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog ::buildClassicDynamics(
 			b.setOpacityMaxVelocity(maxVelocity);
 			b.setHardnessMaxVelocity(maxVelocity);
 			b.setSmudgeMaxVelocity(maxVelocity);
+			b.setJitterMaxVelocity(maxVelocity);
 			emitChange();
 			ToolMessage::showText(
 				tr("Maximum velocity set for all settings in this brush."));
@@ -1118,8 +1190,8 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog ::buildClassicDynamics(
 	QPushButton *applyDistanceToAllButton =
 		new QPushButton(QIcon::fromTheme("fill-color"), tr("Apply to All"));
 	applyDistanceToAllButton->setToolTip(
-		tr("Set the maximum distance for Size, Opacity, Hardness and Smudging "
-		   "at once."));
+		tr("Set the maximum distance for Size, Opacity, Hardness, Smudging and "
+		   "Jitter at once."));
 	connect(
 		applyDistanceToAllButton, &QPushButton::clicked,
 		makeBrushChangeCallback([=]() {
@@ -1129,6 +1201,7 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog ::buildClassicDynamics(
 			b.setOpacityMaxDistance(maxDistance);
 			b.setHardnessMaxDistance(maxDistance);
 			b.setSmudgeMaxDistance(maxDistance);
+			b.setJitterMaxDistance(maxDistance);
 			emitChange();
 			ToolMessage::showText(
 				tr("Maximum distance set for all settings in this brush."));
@@ -1277,6 +1350,7 @@ void BrushSettingsDialog::applyCurveToAllClassicSettings(
 	d->brush.classic().setOpacityCurve(curve);
 	d->brush.classic().setHardnessCurve(curve);
 	d->brush.classic().setSmudgeCurve(curve);
+	d->brush.classic().setJitterCurve(curve);
 	emitChange();
 }
 
@@ -1307,6 +1381,9 @@ void BrushSettingsDialog::addClassicCategories(bool withHardness)
 	addCategory(
 		tr("Smudging"), tr("Blending of colors on the layer being drawn on."),
 		d->classicSmudgePageIndex);
+	addCategory(
+		tr("Jitter"), tr("Randomized offsets in the stroke center."),
+		d->classicJitterPageIndex);
 }
 
 void BrushSettingsDialog::addMyPaintCategories()
@@ -1385,6 +1462,14 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->classicSmudgingMinSpinner->setEnabled(haveSmudgeDynamics);
 	d->classicSmudgingCurve->setCurve(classic.smudgeCurve());
 	d->classicSmudgingCurve->setEnabled(haveSmudgeDynamics);
+
+	d->classicJitterSpinner->setValue(classic.jitter.max * 100.0 + 0.5);
+	bool haveJitterDynamics = updateClassicBrushDynamics(
+		d->classicJitterDynamics, classic.jitter_dynamic);
+	d->classicJitterMinSpinner->setValue(classic.jitter.min * 100.0 + 0.5);
+	d->classicJitterMinSpinner->setEnabled(haveJitterDynamics);
+	d->classicJitterCurve->setCurve(classic.jitterCurve());
+	d->classicJitterCurve->setEnabled(haveJitterDynamics);
 }
 
 bool BrushSettingsDialog::updateClassicBrushDynamics(

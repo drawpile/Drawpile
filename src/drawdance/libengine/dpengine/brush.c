@@ -184,6 +184,16 @@ float DP_classic_brush_smudge_at(const DP_ClassicBrush *cb, float pressure,
                               &cb->smudge_dynamic);
 }
 
+float DP_classic_brush_jitter_at(const DP_ClassicBrush *cb, float pressure,
+                                 float velocity, float distance)
+{
+    DP_ASSERT(cb);
+    DP_ASSERT(pressure >= 0.0f);
+    DP_ASSERT(pressure <= 1.0f);
+    return lerp_range_dynamic(&cb->jitter, pressure, velocity, distance,
+                              &cb->jitter_dynamic);
+}
+
 DP_BlendMode DP_classic_brush_blend_mode(const DP_ClassicBrush *cb)
 {
     DP_ASSERT(cb);

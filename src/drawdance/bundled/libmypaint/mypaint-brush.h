@@ -260,6 +260,11 @@ mypaint_brush_from_defaults(MyPaintBrush *self);
 gboolean
 mypaint_brush_from_string(MyPaintBrush *self, const char *string);
 
+// Drawpile patch: grab the RNG so we don't need to instantiate another one.
+typedef struct RngDouble RngDouble;
+RngDouble *
+mypaint_brush_rng(MyPaintBrush *self);
+
 
 G_END_DECLS
 
