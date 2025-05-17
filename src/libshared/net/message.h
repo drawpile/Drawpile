@@ -56,6 +56,7 @@ public:
 	bool isServerMeta() const;
 	bool isInCommandRange() const;
 	bool isAllowedInResetImage() const;
+	bool dirtiesCanvas() const;
 
 	// Returns user joins without the avatar; leaves and session owners as-is.
 	// Any other message type results in a null message, since they're not
@@ -137,6 +138,8 @@ Message makeSoftResetMessage(uint8_t contextId);
 
 Message
 makeTrustedUsersMessage(uint8_t contextId, const QVector<uint8_t> &users);
+
+bool anyMessageDirtiesCanvas(int count, const net::Message *msgs);
 
 }
 

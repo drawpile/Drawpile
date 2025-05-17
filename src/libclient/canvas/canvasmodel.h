@@ -63,6 +63,9 @@ public:
 		}
 	}
 
+	bool isDirty() const { return m_dirty; }
+	void setDirty(bool dirty) { m_dirty = dirty; }
+
 	QString pinnedMessage() const { return m_pinnedMessage; }
 
 	net::MessageList generateSnapshot(
@@ -196,6 +199,7 @@ private:
 	QString m_pinnedMessage;
 
 	uint8_t m_localUserId = 1;
+	bool m_dirty = false;
 	bool m_compatibilityMode = false;
 };
 

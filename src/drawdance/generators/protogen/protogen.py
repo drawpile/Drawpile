@@ -64,6 +64,7 @@ class Message:
         self.local_match = desc.get('local_match')
         self.compat = None
         self.incompatible = desc.get('incompatible')
+        self.dirties_canvas = desc.get('dirties_canvas', False)
 
         if 'alias' in desc:
             self.alias = desc['alias']

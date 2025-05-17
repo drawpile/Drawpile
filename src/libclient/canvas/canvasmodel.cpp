@@ -173,7 +173,8 @@ void CanvasModel::disconnectedFromServer()
 void CanvasModel::handleCommands(int count, const net::Message *msgs)
 {
 	handleMetaMessages(count, msgs);
-	if(m_paintengine->receiveMessages(false, count, msgs) != 0) {
+	if(m_paintengine->receiveMessages(false, count, msgs) != 0 && !m_dirty &&
+	   net::anyMessageDirtiesCanvas(count, msgs)) {
 		emit canvasModified();
 	}
 }

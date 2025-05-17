@@ -150,6 +150,8 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
                                          DP_MessageType not_found_value);
 
 
+bool DP_message_dirties_canvas(DP_Message *msg);
+
 DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
                                         const unsigned char *buf, size_t length,
                                         bool decode_opaque);

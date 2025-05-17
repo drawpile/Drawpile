@@ -147,6 +147,34 @@ DP_MessageType DP_message_type_from_name(const char *type_name, DP_MessageType n
 }
 
 
+bool DP_message_dirties_canvas(DP_Message *msg)
+{
+    DP_ASSERT(msg);
+    switch (DP_message_type(msg)) {
+    {% set dirty_chain = namespace(n=0) %}
+    {% for message in messages %}
+        {% if message.dirties_canvas %}
+            {% if message.dirties_canvas is string %}
+                {% if dirty_chain.n != 0 %}
+                    {% set dirty_chain.n = 0 %}
+                    return true;
+                {% endif %}
+                case {{ message.enum_name }}:
+                {{- message.dirties_canvas -}}
+            {% else %}
+                case {{ message.enum_name }}:
+                {% set dirty_chain.n = dirty_chain.n + 1 %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    {% if dirty_chain.n != 0 %}
+        return true;
+    {% endif %}
+    default:
+        return false;
+    }
+}
+
 DP_Message *DP_message_deserialize_body(int type, unsigned int context_id, const unsigned char *buf, size_t length, bool decode_opaque)
 {
     if (type < DP_MESSAGE_TYPE_RANGE_START_CLIENT || decode_opaque) {

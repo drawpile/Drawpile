@@ -147,6 +147,11 @@ bool Message::isAllowedInResetImage() const
 	return int(t) >= 64 || t == DP_MSG_CHAT;
 }
 
+bool Message::dirtiesCanvas() const
+{
+	return m_data && DP_message_dirties_canvas(m_data);
+}
+
 Message Message::asEmergencyMessage() const
 {
 	switch(type()) {
@@ -475,6 +480,16 @@ makeTrustedUsersMessage(uint8_t contextId, const QVector<uint8_t> &users)
 	return Message::noinc(DP_msg_trusted_users_new(
 		contextId, Message::setUint8s, users.count(),
 		const_cast<uint8_t *>(users.constData())));
+}
+
+bool anyMessageDirtiesCanvas(int count, const net::Message *msgs)
+{
+	for(int i = 0; i < count; ++i) {
+		if(msgs[i].dirtiesCanvas()) {
+			return true;
+		}
+	}
+	return false;
 }
 
 }

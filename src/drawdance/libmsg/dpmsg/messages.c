@@ -747,6 +747,62 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
 }
 
 
+bool DP_message_dirties_canvas(DP_Message *msg)
+{
+    DP_ASSERT(msg);
+    switch (DP_message_type(msg)) {
+    case DP_MSG_LOCAL_CHANGE:
+        switch (DP_msg_local_change_type(DP_message_internal(msg))) {
+        case DP_MSG_LOCAL_CHANGE_TYPE_VIEW_MODE:
+        case DP_MSG_LOCAL_CHANGE_TYPE_ACTIVE_LAYER:
+        case DP_MSG_LOCAL_CHANGE_TYPE_ACTIVE_FRAME:
+        case DP_MSG_LOCAL_CHANGE_TYPE_ONION_SKINS:
+            return false;
+        default:
+            return true;
+        }
+    case DP_MSG_CANVAS_RESIZE:
+    case DP_MSG_LAYER_ATTRIBUTES:
+    case DP_MSG_LAYER_RETITLE:
+    case DP_MSG_PUT_IMAGE:
+    case DP_MSG_FILL_RECT:
+    case DP_MSG_ANNOTATION_CREATE:
+    case DP_MSG_ANNOTATION_RESHAPE:
+    case DP_MSG_ANNOTATION_EDIT:
+    case DP_MSG_ANNOTATION_DELETE:
+    case DP_MSG_PUT_TILE:
+    case DP_MSG_CANVAS_BACKGROUND:
+    case DP_MSG_DRAW_DABS_CLASSIC:
+    case DP_MSG_DRAW_DABS_PIXEL:
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+    case DP_MSG_DRAW_DABS_MYPAINT:
+    case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
+    case DP_MSG_MOVE_RECT:
+    case DP_MSG_SET_METADATA_INT:
+    case DP_MSG_LAYER_TREE_CREATE:
+    case DP_MSG_LAYER_TREE_MOVE:
+    case DP_MSG_LAYER_TREE_DELETE:
+    case DP_MSG_TRANSFORM_REGION:
+    case DP_MSG_TRACK_CREATE:
+    case DP_MSG_TRACK_RETITLE:
+    case DP_MSG_TRACK_DELETE:
+    case DP_MSG_TRACK_ORDER:
+    case DP_MSG_KEY_FRAME_SET:
+    case DP_MSG_KEY_FRAME_RETITLE:
+    case DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES:
+    case DP_MSG_KEY_FRAME_DELETE:
+    case DP_MSG_PUT_IMAGE_ZSTD:
+    case DP_MSG_PUT_TILE_ZSTD:
+    case DP_MSG_CANVAS_BACKGROUND_ZSTD:
+    case DP_MSG_MOVE_RECT_ZSTD:
+    case DP_MSG_TRANSFORM_REGION_ZSTD:
+    case DP_MSG_UNDO:
+        return true;
+    default:
+        return false;
+    }
+}
+
 DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
                                         const unsigned char *buf, size_t length,
                                         bool decode_opaque)

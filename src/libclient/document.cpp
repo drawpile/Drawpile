@@ -47,7 +47,6 @@ Document::Document(
 	, m_messageBuffer()
 	, m_canvas(nullptr)
 	, m_settings(settings)
-	, m_dirty(false)
 	, m_autosave(false)
 	, m_canAutosave(false)
 	, m_saveInProgress(false)
@@ -862,20 +861,25 @@ void Document::setExportPath(const QString &path, DP_SaveImageType type)
 
 void Document::markDirty()
 {
-	bool wasDirty = m_dirty;
-	m_dirty = true;
-	if(m_autosave)
-		autosave();
+	if(m_canvas) {
+		bool wasDirty = m_canvas->isDirty();
+		m_canvas->setDirty(true);
 
-	if(!wasDirty)
-		emit dirtyCanvas(m_dirty);
+		if(m_autosave) {
+			autosave();
+		}
+
+		if(!wasDirty) {
+			emit dirtyCanvas(true);
+		}
+	}
 }
 
 void Document::unmarkDirty()
 {
-	if(m_dirty) {
-		m_dirty = false;
-		emit dirtyCanvas(m_dirty);
+	if(m_canvas) {
+		m_canvas->setDirty(false);
+		emit dirtyCanvas(false);
 	}
 }
 
@@ -1048,14 +1052,19 @@ drawdance::RecordStartResult Document::startRecording(const QString &filename)
 	return m_canvas->startRecording(m_originalRecordingFilename);
 }
 
-bool Document::stopRecording()
-{
-	return m_canvas->stopRecording();
-}
-
 bool Document::isRecording() const
 {
 	return m_canvas && m_canvas->isRecording();
+}
+
+bool Document::stopRecording()
+{
+	return m_canvas && m_canvas->stopRecording();
+}
+
+bool Document::isDirty() const
+{
+	return m_canvas && m_canvas->isDirty();
 }
 
 void Document::sendPointerMove(const QPointF &point)

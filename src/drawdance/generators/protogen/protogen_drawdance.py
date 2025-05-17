@@ -1140,6 +1140,7 @@ class DrawdanceMessage:
         self.reserved = message.reserved
         self.local_match = message.local_match
         self.incompatible = message.incompatible
+        self.dirties_canvas = message.dirties_canvas
         self.comment = "\n".join(
             f" * {c}".rstrip() for c in message.comment.strip().split("\n")
         )

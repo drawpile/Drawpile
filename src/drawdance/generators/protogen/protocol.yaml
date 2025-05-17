@@ -333,6 +333,16 @@ Data:
 
 LocalChange:
     id: 76
+    dirties_canvas: |
+        switch (DP_msg_local_change_type(DP_message_internal(msg))) {
+        case DP_MSG_LOCAL_CHANGE_TYPE_VIEW_MODE:
+        case DP_MSG_LOCAL_CHANGE_TYPE_ACTIVE_LAYER:
+        case DP_MSG_LOCAL_CHANGE_TYPE_ACTIVE_FRAME:
+        case DP_MSG_LOCAL_CHANGE_TYPE_ONION_SKINS:
+            return false;
+        default:
+            return true;
+        }
     comment: |
              A local-only modification, such as toggling layer visibility or
              setting a local canvas background. Shouldn't be sent over the
@@ -375,6 +385,7 @@ UndoPoint:
 CanvasResize:
     id: 129
     name: resize
+    dirties_canvas: true
     comment: |
              Adjust canvas size
 
@@ -399,6 +410,7 @@ RemovedLayerCreate:
 LayerAttributes:
     id: 131
     name: layerattr
+    dirties_canvas: true
     comment: |
              Change layer attributes
 
@@ -429,6 +441,7 @@ LayerAttributes:
 LayerRetitle:
     id: 132
     name: retitlelayer
+    dirties_canvas: true
     comment: Change a layer's title
     fields:
         - id u24
@@ -456,6 +469,7 @@ RemovedLayerVisibility:
 
 PutImage:
     id: 136
+    dirties_canvas: true
     comment: |
              Draw a bitmap onto a layer or selection.
 
@@ -496,6 +510,7 @@ PutImage:
 
 FillRect:
     id: 137
+    dirties_canvas: true
     comment: |
         Fill a rectangle with solid color
 
@@ -554,6 +569,7 @@ PenUp:
 AnnotationCreate:
     id: 141
     name: newannotation
+    dirties_canvas: true
     comment: |
              Create a new annotation
 
@@ -579,6 +595,7 @@ AnnotationCreate:
 AnnotationReshape:
     id: 142
     name: reshapeannotation
+    dirties_canvas: true
     comment: Change the position and size of an annotation
     fields:
         - id u16
@@ -598,6 +615,7 @@ AnnotationReshape:
 AnnotationEdit:
     id: 143
     name: editannotation
+    dirties_canvas: true
     comment: |
              Change annotation content
 
@@ -625,6 +643,7 @@ AnnotationEdit:
 AnnotationDelete:
     id: 144
     name: deleteannotation
+    dirties_canvas: true
     comment: |
              Delete an annotation
 
@@ -646,6 +665,7 @@ RemovedMoveRegion:
 
 PutTile:
     id: 146
+    dirties_canvas: true
     comment: |
              Set the content of a tile.
 
@@ -685,6 +705,7 @@ PutTile:
 CanvasBackground:
     id: 147
     name: background
+    dirties_canvas: true
     comment: |
              Set the canvas background tile
 
@@ -696,6 +717,7 @@ CanvasBackground:
 DrawDabsClassic:
     id: 148
     name: classicdabs
+    dirties_canvas: true
     comment: |
              Draw classic brush dabs
 
@@ -752,6 +774,7 @@ DrawDabsClassic:
 DrawDabsPixel:
     id: 149
     name: pixeldabs
+    dirties_canvas: true
     comment: |
              Draw round pixel brush dabs
 
@@ -804,6 +827,7 @@ DrawDabsPixel:
 DrawDabsPixelSquare:
     id: 150
     name: squarepixeldabs
+    dirties_canvas: true
     comment: Draw square pixel brush dabs
     local_match:
         layer_ids: [layer]
@@ -812,6 +836,7 @@ DrawDabsPixelSquare:
 DrawDabsMyPaint:
     id: 151
     name: mypaintdabs
+    dirties_canvas: true
     comment: |
              Draw MyPaint brush dabs in "normal and eraser" or "pigment and
              eraser" mode, the regular modes of MyPaint brushes as used in
@@ -890,6 +915,7 @@ DrawDabsMyPaint:
 DrawDabsMyPaintBlend:
     id: 152
     name: mypaintdabsblend
+    dirties_canvas: true
     comment: |
              Draw MyPaint brush dabs with single blend mode. Used for cases
              where the regular MyPaint blending with "normal and eraser" mode is
@@ -919,6 +945,7 @@ DrawDabsMyPaintBlend:
 
 MoveRect:
     id: 160
+    dirties_canvas: true
     comment: |
              Move a rectangular area on a layer or a selection.
 
@@ -970,6 +997,7 @@ MoveRect:
 
 SetMetadataInt:
     id: 161
+    dirties_canvas: true
     comment: |
              Set a document metadata field (integer type)
 
@@ -988,6 +1016,7 @@ SetMetadataInt:
 
 LayerTreeCreate:
     id: 162
+    dirties_canvas: true
     comment: |
              Create a new layer
 
@@ -1034,6 +1063,7 @@ LayerTreeCreate:
 
 LayerTreeMove:
     id: 163
+    dirties_canvas: true
     comment: |
              Reorder a layer
 
@@ -1062,6 +1092,7 @@ LayerTreeMove:
 
 LayerTreeDelete:
     id: 164
+    dirties_canvas: true
     comment: |
              Delete a layer
 
@@ -1083,6 +1114,7 @@ LayerTreeDelete:
 
 TransformRegion:
     id: 165
+    dirties_canvas: true
     comment: |
              Transform an area, optionally moving it between two layers.
 
@@ -1172,6 +1204,7 @@ TransformRegion:
 
 TrackCreate:
     id: 166
+    dirties_canvas: true
     comment: |
              Create a timeline track.
 
@@ -1194,6 +1227,7 @@ TrackCreate:
 
 TrackRetitle:
     id: 167
+    dirties_canvas: true
     comment: Rename a timeline track.
     fields:
         - id u16
@@ -1206,6 +1240,7 @@ TrackRetitle:
 
 TrackDelete:
     id: 168
+    dirties_canvas: true
     comment: Delete a timeline track.
     fields:
         - id u16
@@ -1216,6 +1251,7 @@ TrackDelete:
 
 TrackOrder:
     id: 169
+    dirties_canvas: true
     comment: |
              Reorder timeline tracks.
 
@@ -1230,6 +1266,7 @@ TrackOrder:
 
 KeyFrameSet:
     id: 170
+    dirties_canvas: true
     comment: |
              Create or modify a key frame.
 
@@ -1263,6 +1300,7 @@ KeyFrameSet:
 
 KeyFrameRetitle:
     id: 171
+    dirties_canvas: true
     comment: Rename a key frame.
     fields:
         - track_id u16
@@ -1277,6 +1315,7 @@ KeyFrameRetitle:
 
 KeyFrameLayerAttributes:
     id: 172
+    dirties_canvas: true
     comment: |
              Set (clobber) flags for layers inside of a key frame.
 
@@ -1307,6 +1346,7 @@ KeyFrameLayerAttributes:
 
 KeyFrameDelete:
     id: 173
+    dirties_canvas: true
     comment: Delete a key frame, possibly moving it somewhere else.
     fields:
         - track_id u16
@@ -1415,6 +1455,7 @@ SyncSelectionTile:
 
 PutImageZstd:
     id: 178
+    dirties_canvas: true
     comment: |
         Like PutImage, but the image is split channel delta-encoded
         zstd-compressed 8 bit pixel data instead, prefixed by four bytes of
@@ -1425,6 +1466,7 @@ PutImageZstd:
 
 PutTileZstd:
     id: 179
+    dirties_canvas: true
     comment: |
         Analogous to PutImageZstd but for PutTile.
     alias: PutTile
@@ -1432,6 +1474,7 @@ PutTileZstd:
 
 CanvasBackgroundZstd:
     id: 180
+    dirties_canvas: true
     comment: |
         Analogous to PutImageZstd but for CanvasBackground.
     alias: CanvasBackground
@@ -1439,6 +1482,7 @@ CanvasBackgroundZstd:
 
 MoveRectZstd:
     id: 181
+    dirties_canvas: true
     comment: |
         Like MoveRect, but the mask is delta-encoded zstd-compressed 8 bit pixel
         data instead, prefixed by four bytes of length in little-endian.
@@ -1447,6 +1491,7 @@ MoveRectZstd:
 
 TransformRegionZstd:
     id: 182
+    dirties_canvas: true
     comment: |
         Analogous to MoveRectZstd but for TransformRegion.
     alias: TransformRegion
@@ -1454,6 +1499,7 @@ TransformRegionZstd:
 
 Undo:
     id: 255
+    dirties_canvas: true
     comment: Undo or redo actions
     fields:
         - override_user u8

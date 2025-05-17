@@ -120,7 +120,7 @@ public:
 	drawdance::RecordStartResult startRecording(const QString &filename);
 	bool stopRecording();
 
-	bool isDirty() const { return m_dirty; }
+	bool isDirty() const;
 
 	bool isSessionPersistent() const { return m_sessionPersistent; }
 	bool isSessionClosed() const { return m_sessionClosed; }
@@ -394,7 +394,6 @@ private:
 	QString m_recordOnConnect;
 	QString m_autoResetCorrelator;
 
-	bool m_dirty;
 	bool m_autosave;
 	bool m_canAutosave;
 	bool m_saveInProgress;
