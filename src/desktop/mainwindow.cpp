@@ -3114,8 +3114,7 @@ void MainWindow::reconnect()
 {
 	questionWindowReplacement(
 		tr("Reconnect"),
-		// FIXME: Missing word, correct it when regenerating translations.
-		tr("You're about reconnect to the session and close this window."),
+		tr("You're about to reconnect to the session and close this window."),
 		[this](bool ok) {
 			if(ok) {
 				connectToSession(m_doc->client()->sessionUrl(true), QString());
