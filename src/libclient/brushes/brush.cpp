@@ -386,7 +386,7 @@ QJsonObject ClassicBrush::settingsToJson() const
 	if(smudge.max > 0)
 		o["smudge"] = smudge.max;
 	if(smudge.min > 0)
-		o["smudgeratio"] = smudge.min;
+		o["smudge2"] = smudge.min;
 	o["smudgecurve"] = m_smudgeCurve.toString();
 
 	o["spacing"] = spacing;

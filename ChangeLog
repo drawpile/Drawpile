@@ -35,6 +35,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Preview brushes with fixed X and Y offsets with an offset outline. Thanks Phoneme for suggesting.
  * Fix: Don't mark the canvas as having unsaved changes from just making a selection on it. Thanks MachKerman for reporting.
  * Fix: Don't include credentials in the URL when opening a new window on reconnect, they're only for use in the same window. Thanks MachKerman for reporting.
+ * Fix: Save and restore smudge minimum value properly instead of resetting it to zero.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.
