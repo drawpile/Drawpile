@@ -3117,7 +3117,8 @@ void MainWindow::reconnect()
 		tr("You're about to reconnect to the session and close this window."),
 		[this](bool ok) {
 			if(ok) {
-				connectToSession(m_doc->client()->sessionUrl(true), QString());
+				connectToSession(
+					m_doc->client()->sessionUrl(canReplace()), QString());
 			}
 		});
 }
