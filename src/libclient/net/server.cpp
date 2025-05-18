@@ -374,7 +374,7 @@ void Server::handleBadData(int len, int type, int contextId)
 	qWarning() << "Received" << len
 			   << "bytes of unknown or invalid message type" << type
 			   << "from context ID" << contextId;
-	if(type < 64 || contextId == 0) {
+	if(type < 64) {
 		// If message type is Transparent, the bad data came from the server.
 		// Something is wrong for sure.
 		m_error = tr("Received invalid data");
