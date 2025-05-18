@@ -180,7 +180,12 @@ void ToolController::setSelectionMaskingEnabled(bool selectionMaskingEnabled)
 
 void ToolController::setSelectionMaskColor(const QColor &selectionMaskColor)
 {
-	m_selectionMaskColor = selectionMaskColor;
+	if(selectionMaskColor.isValid() && selectionMaskColor.alpha() > 0) {
+		m_selectionMaskColor = selectionMaskColor;
+		m_selectionMaskColor.setAlpha(255);
+	} else {
+		m_selectionMaskColor = SELECTION_COLOR_DEFAULT;
+	}
 }
 
 int ToolController::activeLayerOrSelection() const

@@ -1464,6 +1464,7 @@ void MainWindow::showSelectionMaskColorPicker()
 		dlg = dialogs::newDeleteOnCloseColorDialog(
 			dpApp().settings().selectionColor(), this);
 		dlg->setPreviewDisplayMode(color_widgets::ColorPreview::SplitColor);
+		dlg->setAlphaEnabled(false);
 		dlg->setObjectName(objectName);
 
 		color_widgets::ColorPreview *preview =
