@@ -6,6 +6,7 @@
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
+#include "libclient/tools/utils.h"
 #include "libclient/utils/cursors.h"
 #include <QAtomicInteger>
 #include <QCursor>
@@ -19,7 +20,7 @@ namespace tools {
 GradientTool::GradientTool(ToolController &owner)
 	: Tool(
 		  owner, GRADIENT, utils::Cursors::gradient(),
-		  Capability::AllowColorPick | Capability::AllowToolAdjust)
+		  Capability::AllowColorPick)
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
 {
 }
@@ -63,11 +64,28 @@ void GradientTool::motion(const MotionParams &params)
 		QPointF delta = params.point - m_dragStartPoint;
 		if(m_dragIndex >= 0 && m_dragIndex < pointCount) {
 			if(m_dragIndex == 0 || m_dragIndex == pointCount - 1) {
-				m_points[m_dragIndex] = m_originalPoints[m_dragIndex] + delta;
+				QPointF &point = m_points[m_dragIndex];
+				const QPointF &originalPoint = m_originalPoints[m_dragIndex];
+				if(params.constrain) {
+					const QPointF &otherPoint = m_dragIndex == 0
+													? m_points.constLast()
+													: m_points.constFirst();
+					point =
+						constraints::angle(otherPoint, originalPoint + delta);
+				} else {
+					point = originalPoint + delta;
+				}
 			} else {
 				// Can't happen, we currently only allow two points.
 			}
 		} else {
+			if(params.constrain) {
+				if(qAbs(delta.x()) < qAbs(delta.y())) {
+					delta.setX(0.0);
+				} else {
+					delta.setY(0.0);
+				}
+			}
 			for(int i = 0; i < pointCount; ++i) {
 				m_points[i] = m_originalPoints[i] + delta;
 			}
