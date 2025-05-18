@@ -8,7 +8,7 @@ typedef struct DP_Message DP_Message;
 
 typedef struct DP_ResetStreamProducer DP_ResetStreamProducer;
 
-DP_ResetStreamProducer *DP_reset_stream_producer_new(void);
+DP_ResetStreamProducer *DP_reset_stream_producer_new(bool compatibility_mode);
 
 void DP_reset_stream_producer_free_discard(DP_ResetStreamProducer *rsp);
 

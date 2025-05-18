@@ -1317,7 +1317,9 @@ net::MessageList Document::generateStreamSnapshot(
 	const drawdance::CanvasState &canvasState, const net::MessageList &metadata,
 	int prepended, int &outMessageCount) const
 {
-	DP_ResetStreamProducer *rsp = DP_reset_stream_producer_new();
+	bool compatibilityMode = isCompatibilityMode();
+	DP_ResetStreamProducer *rsp =
+		DP_reset_stream_producer_new(compatibilityMode);
 	if(!rsp) {
 		qWarning("Error initializing reset stream producer: %s", DP_error());
 		return {};
@@ -1333,7 +1335,7 @@ net::MessageList Document::generateStreamSnapshot(
 
 	ResetStreamImageContext ctx = {rsp, 0, true};
 	DP_reset_image_build(
-		canvasState.get(), m_client->myId(), isCompatibilityMode(),
+		canvasState.get(), m_client->myId(), compatibilityMode,
 		ResetStreamImageContext::push, &ctx);
 	if(!ctx.ok) {
 		DP_reset_stream_producer_free_discard(rsp);

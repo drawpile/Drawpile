@@ -1134,7 +1134,7 @@ static void reset_stream_roundtrip(TEST_PARAMS)
         DP_message_vector_push_noinc(&in_msgs, msg);
     }
 
-    DP_ResetStreamProducer *rsp = DP_reset_stream_producer_new();
+    DP_ResetStreamProducer *rsp = DP_reset_stream_producer_new(false);
     if (!NOT_NULL_OK(rsp, "producer created")) {
         DP_message_vector_dispose(&in_msgs);
         return;

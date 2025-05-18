@@ -11,6 +11,7 @@
 
 struct DP_ResetStreamProducer {
     z_stream stream;
+    bool compatibility_mode;
     size_t image_size;
     DP_Vector msgs;
     struct {
@@ -46,11 +47,12 @@ static const char *reset_stream_producer_z_error(DP_ResetStreamProducer *rsp)
     return get_z_error(&rsp->stream);
 }
 
-DP_ResetStreamProducer *DP_reset_stream_producer_new(void)
+DP_ResetStreamProducer *DP_reset_stream_producer_new(bool compatibility_mode)
 {
     DP_ResetStreamProducer *rsp = DP_malloc(sizeof(*rsp));
     *rsp = (DP_ResetStreamProducer){{Z_NULL, 0, 0, Z_NULL, 0, 0, Z_NULL, Z_NULL,
                                      malloc_z, free_z, rsp, Z_BINARY, 0, 0},
+                                    compatibility_mode,
                                     0,
                                     DP_VECTOR_NULL,
                                     {0, 0, NULL},
@@ -155,13 +157,13 @@ size_t DP_reset_stream_producer_image_size(DP_ResetStreamProducer *rsp)
     return rsp->image_size;
 }
 
-bool DP_reset_stream_producer_push(DP_ResetStreamProducer *rsp, DP_Message *msg)
+static bool push_message(
+    DP_ResetStreamProducer *rsp, DP_Message *msg,
+    size_t (*serialize_fn)(DP_Message *msg, bool write_body_length,
+                           DP_GetMessageBufferFn get_buffer, void *user))
 {
-    DP_ASSERT(rsp);
-    DP_ASSERT(msg);
-
-    size_t size = DP_message_serialize(
-        msg, true, stream_producer_get_serialize_buffer, rsp);
+    size_t size =
+        serialize_fn(msg, true, stream_producer_get_serialize_buffer, rsp);
     if (size == 0) {
         return false;
     }
@@ -205,6 +207,18 @@ bool DP_reset_stream_producer_push(DP_ResetStreamProducer *rsp, DP_Message *msg)
         memmove(rsp->in.buffer, rsp->in.buffer + used - remaining, remaining);
     }
     return true;
+}
+
+bool DP_reset_stream_producer_push(DP_ResetStreamProducer *rsp, DP_Message *msg)
+{
+    DP_ASSERT(rsp);
+    DP_ASSERT(msg);
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+    if (rsp->compatibility_mode) {
+        return push_message(rsp, msg, DP_message_serialize_compat);
+    }
+#endif
+    return push_message(rsp, msg, DP_message_serialize);
 }
 
 
