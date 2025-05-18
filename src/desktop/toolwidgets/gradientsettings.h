@@ -32,6 +32,7 @@ public:
 
 	void setForeground(const QColor &) override { updateColor(); }
 	void setBackground(const QColor &) override { updateColor(); }
+	void setCompatibilityMode(bool compatibilityMode) override;
 
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;

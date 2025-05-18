@@ -44,6 +44,12 @@ GradientSettings::GradientSettings(ToolController *ctrl, QObject *parent)
 {
 }
 
+void GradientSettings::setCompatibilityMode(bool compatibilityMode)
+{
+	initBlendModeOptions(compatibilityMode);
+	m_alphaPreserveButton->setEnabled(!compatibilityMode);
+}
+
 ToolProperties GradientSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
