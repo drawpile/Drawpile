@@ -933,7 +933,8 @@ void FileWrangler::loadCanvasState(
 	loader->setAutoDelete(false);
 	parent->connect(
 		loader, &CanvasLoaderRunnable::loadComplete, parent,
-		[=](const QString &error, const QString &detail) {
+		[=](const QString &error, const QString &detail, qint64 elapsedMsec) {
+			Q_UNUSED(elapsedMsec);
 			delete temporaryFileOrNull;
 			const drawdance::CanvasState &canvasState = loader->canvasState();
 			if(canvasState.isNull()) {

@@ -223,10 +223,11 @@ signals:
 	void streamResetProgress(int percent);
 
 	void canvasSaveStarted();
-	void canvasSaved(const QString &errorMessage);
+	void canvasSaved(const QString &errorMessage, qint64 elapsedMs);
 	void canvasDownloadStarted();
-	void
-	canvasDownloadReady(const QString &defaultName, const QByteArray &bytes);
+	void canvasDownloadReady(
+		const QString &defaultName, const QByteArray &bytes,
+		qint64 elapsedMsec);
 	void canvasDownloadError(const QString &error);
 	void templateExported(const QString &errorMessage);
 
@@ -313,7 +314,7 @@ private slots:
 	void unmarkDirty();
 
 	void autosaveNow();
-	void onCanvasSaved(const QString &errorMessage);
+	void onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec);
 
 private:
 	void saveCanvasState(

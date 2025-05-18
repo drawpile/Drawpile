@@ -1030,14 +1030,15 @@ void Document::exportTemplate(const QString &path)
 	emit templateExported(errorMessage);
 }
 
-void Document::onCanvasSaved(const QString &errorMessage)
+void Document::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
 {
 	m_saveInProgress = false;
 
-	if(!errorMessage.isEmpty())
+	if(!errorMessage.isEmpty()) {
 		markDirty();
+	}
 
-	emit canvasSaved(errorMessage);
+	emit canvasSaved(errorMessage, elapsedMsec);
 }
 
 drawdance::RecordStartResult Document::startRecording(const QString &filename)
@@ -1677,11 +1678,12 @@ void Document::downloadCanvasState(
 	saver->setAutoDelete(false);
 	connect(
 		saver, &CanvasSaverRunnable::saveComplete, this,
-		[this, saver, fileName, path](const QString &error) {
+		[this, saver, fileName,
+		 path](const QString &error, qint64 elapsedMsec) {
 			if(error.isEmpty()) {
 				QFile file(path);
 				file.open(QIODevice::ReadOnly);
-				emit canvasDownloadReady(fileName, file.readAll());
+				emit canvasDownloadReady(fileName, file.readAll(), elapsedMsec);
 			} else {
 				emit canvasDownloadError(error);
 			}
@@ -1702,7 +1704,7 @@ void Document::downloadSelection(const QString &fileName)
 		&buffer, qUtf8Printable(fileInfo.completeSuffix()));
 	buffer.close();
 	if(ok) {
-		emit canvasDownloadReady(fileName, bytes);
+		emit canvasDownloadReady(fileName, bytes, 0);
 	} else {
 		emit canvasDownloadError(tr("Error saving image"));
 	}

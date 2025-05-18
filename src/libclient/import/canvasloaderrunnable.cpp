@@ -2,6 +2,7 @@
 #include "libclient/import/canvasloaderrunnable.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/drawdance/global.h"
+#include <QElapsedTimer>
 
 CanvasLoaderRunnable::CanvasLoaderRunnable(const QString &path, QObject *parent)
 	: QObject(parent)
@@ -11,6 +12,8 @@ CanvasLoaderRunnable::CanvasLoaderRunnable(const QString &path, QObject *parent)
 
 void CanvasLoaderRunnable::run()
 {
+	QElapsedTimer timer;
+	timer.start();
 	m_canvasState = drawdance::CanvasState::load(m_path, &m_result, &m_type);
 	QString error, detail;
 	if(m_result != DP_LOAD_RESULT_SUCCESS) {
@@ -19,5 +22,5 @@ void CanvasLoaderRunnable::run()
 			detail = QString::fromUtf8(DP_error());
 		}
 	}
-	emit loadComplete(error, detail);
+	emit loadComplete(error, detail, timer.elapsed());
 }

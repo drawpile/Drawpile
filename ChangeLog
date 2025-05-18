@@ -37,6 +37,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Don't include credentials in the URL when opening a new window on reconnect, they're only for use in the same window. Thanks MachKerman for reporting.
  * Fix: Save and restore smudge minimum value properly instead of resetting it to zero.
  * Feature: Add jitter setting for classic brushes, available in the brush settings. This setting offsets the dabs from the center of the stroke, useful for pencil, charcoal or spraycan brushes.
+ * Feature: Show the time it took to open, save and export files in the status bar.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

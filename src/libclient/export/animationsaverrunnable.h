@@ -30,7 +30,7 @@ public slots:
 
 signals:
 	void progress(int progress);
-	void saveComplete(const QString &error);
+	void saveComplete(const QString &error, qint64 elapsedMsec);
 #ifdef __EMSCRIPTEN__
 	void downloadReady(const QString &defaultName, const QByteArray &bytes);
 #endif

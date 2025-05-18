@@ -42,8 +42,9 @@ signals:
 	/**
 	 * @brief Emitted once the file has been saved
 	 * @param error the error message (blank string if no error occurred)
+	 * @param elapsedMsec milliseconds that the save took
 	 */
-	void saveComplete(const QString &error);
+	void saveComplete(const QString &error, qint64 elapsedMsec);
 
 private:
 	static bool

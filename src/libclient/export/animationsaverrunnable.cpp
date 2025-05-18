@@ -10,6 +10,7 @@ extern "C" {
 #include "libclient/export/animationformat.h"
 #include "libclient/export/animationsaverrunnable.h"
 #include "libclient/export/canvassaverrunnable.h"
+#include <QElapsedTimer>
 #ifdef __EMSCRIPTEN__
 #	include <QDateTime>
 #	include <QFile>
@@ -42,6 +43,9 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 
 void AnimationSaverRunnable::run()
 {
+	QElapsedTimer timer;
+	timer.start();
+
 #ifdef __EMSCRIPTEN__
 	QString extension = getFormatExtension();
 	QString path = QStringLiteral("/anim%1.%2")
@@ -153,7 +157,7 @@ void AnimationSaverRunnable::run()
 	}
 	QFile::remove(path);
 #else
-	emit saveComplete(saveResultToErrorString(result));
+	emit saveComplete(saveResultToErrorString(result), timer.elapsed());
 #endif
 }
 

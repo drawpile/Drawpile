@@ -7,6 +7,7 @@ extern "C" {
 #include "libclient/drawdance/global.h"
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/utils/annotations.h"
+#include <QElapsedTimer>
 #include <QPainter>
 #include <QRandomGenerator>
 #include <QTemporaryDir>
@@ -40,6 +41,9 @@ CanvasSaverRunnable::~CanvasSaverRunnable()
 
 void CanvasSaverRunnable::run()
 {
+	QElapsedTimer timer;
+	timer.start();
+
 #ifdef Q_OS_ANDROID
 	// Android doesn't support QSaveFile and KArchive doesn't support the
 	// Truncate mode required on Android to not leave potential garbage at the
@@ -71,7 +75,7 @@ void CanvasSaverRunnable::run()
 	}
 #endif
 
-	emit saveComplete(saveResultToErrorString(result, m_type));
+	emit saveComplete(saveResultToErrorString(result, m_type), timer.elapsed());
 }
 
 QString CanvasSaverRunnable::saveResultToErrorString(

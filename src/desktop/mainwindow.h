@@ -288,11 +288,13 @@ private slots:
 
 	void onCanvasChanged(canvas::CanvasModel *canvas);
 	void onCanvasSaveStarted();
-	void onCanvasSaved(const QString &errorMessage);
+	void onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec);
+	void onAnimationExported(const QString &errorMessage, qint64 elapsedMsec);
 #ifdef __EMSCRIPTEN__
 	void onCanvasDownloadStarted();
-	void
-	onCanvasDownloadReady(const QString &defaultName, const QByteArray &bytes);
+	void onCanvasDownloadReady(
+		const QString &defaultName, const QByteArray &bytes,
+		qint64 elapsedMsec);
 	void onCanvasDownloadError(const QString &errorMessage);
 	void offerDownload(const QString &defaultName, const QByteArray &bytes);
 #endif
@@ -368,6 +370,7 @@ private:
 	void showErrorMessage(const QString &message);
 	void
 	showErrorMessageWithDetails(const QString &message, const QString &details);
+	void showElapsedStatusMessage(const QString &message, qint64 elapsedMsec);
 	void showLoadResultMessage(DP_LoadResult result);
 	void handleAmbiguousShortcut(QShortcutEvent *shortcutEvent);
 

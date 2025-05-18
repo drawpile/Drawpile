@@ -15,13 +15,14 @@ public:
 
 	void run() override;
 
-    const QString &path() const { return m_path; }
+	const QString &path() const { return m_path; }
 	DP_LoadResult result() const { return m_result; }
 	DP_SaveImageType type() const { return m_type; }
 	const drawdance::CanvasState &canvasState() const { return m_canvasState; }
 
 signals:
-	void loadComplete(const QString &error, const QString &detail);
+	void loadComplete(
+		const QString &error, const QString &detail, qint64 elapsedMsec);
 
 private:
 	const QString m_path;

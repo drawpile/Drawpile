@@ -2114,7 +2114,8 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 		loader->setAutoDelete(false);
 		connect(
 			loader, &CanvasLoaderRunnable::loadComplete, this,
-			[=](const QString &error, const QString &detail) {
+			[=](const QString &error, const QString &detail,
+				qint64 elapsedMsec) {
 				delete tempFile;
 				setEnabled(true);
 				delete progressDialog;
@@ -2125,6 +2126,9 @@ void MainWindow::openPath(const QString &path, QTemporaryFile *tempFile)
 				if(canvasState.isNull()) {
 					showErrorMessageWithDetails(error, detail);
 				} else {
+					showElapsedStatusMessage(
+						//: %1 is minutes, %2 is seconds, %3 is milliseconds.
+						tr("Canvas loaded in %1:%2.%3"), elapsedMsec);
 					m_doc->loadState(
 						canvasState, loader->path(), loader->type(), false);
 				}
@@ -2296,7 +2300,7 @@ void MainWindow::onCanvasSaveStarted()
 	m_canvasView->setSaveInProgress(true);
 }
 
-void MainWindow::onCanvasSaved(const QString &errorMessage)
+void MainWindow::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
 {
 	QApplication::restoreOverrideCursor();
 #ifdef __EMSCRIPTEN__
@@ -2318,8 +2322,12 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 	if(!errorMessage.isEmpty()) {
 		m_viewStatusBar->showMessage(tr("Image saving failed"), 1000);
 		showErrorMessageWithDetails(tr("Couldn't save image"), errorMessage);
-	} else {
+	} else if(elapsedMsec <= 0LL) {
 		m_viewStatusBar->showMessage(tr("Image saved"), 1000);
+	} else {
+		showElapsedStatusMessage(
+			//: %1 is minutes, %2 is seconds, %3 is milliseconds.
+			tr("Image saved in %1:%2.%3"), elapsedMsec);
 	}
 
 #ifndef __EMSCRIPTEN__
@@ -2332,6 +2340,22 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 #endif
 }
 
+void MainWindow::onAnimationExported(
+	const QString &errorMessage, qint64 elapsedMsec)
+{
+	if(!errorMessage.isEmpty()) {
+		m_viewStatusBar->showMessage(tr("Animation export failed"), 1000);
+		showErrorMessageWithDetails(
+			tr("Couldn't export animation"), errorMessage);
+	} else if(elapsedMsec <= 0LL) {
+		m_viewStatusBar->showMessage(tr("Animation exported"), 1000);
+	} else {
+		showElapsedStatusMessage(
+			//: %1 is minutes, %2 is seconds, %3 is milliseconds.
+			tr("Animation exported in %1:%2.%3"), elapsedMsec);
+	}
+}
+
 #ifdef __EMSCRIPTEN__
 void MainWindow::onCanvasDownloadStarted()
 {
@@ -2339,15 +2363,15 @@ void MainWindow::onCanvasDownloadStarted()
 }
 
 void MainWindow::onCanvasDownloadReady(
-	const QString &defaultName, const QByteArray &bytes)
+	const QString &defaultName, const QByteArray &bytes, qint64 elapsedMsec)
 {
-	onCanvasSaved(QString());
+	onCanvasSaved(QString(), elapsedMsec);
 	offerDownload(defaultName, bytes);
 }
 
 void MainWindow::onCanvasDownloadError(const QString &errorMessage)
 {
-	onCanvasSaved(errorMessage);
+	onCanvasSaved(errorMessage, 0);
 }
 
 void MainWindow::offerDownload(
@@ -2534,7 +2558,7 @@ void MainWindow::exportAnimation(
 		&QProgressDialog::deleteLater);
 	connect(
 		saver, &AnimationSaverRunnable::saveComplete, this,
-		&MainWindow::showErrorMessage);
+		&MainWindow::onAnimationExported);
 	connect(
 		progressDialog, &QProgressDialog::canceled, saver,
 		&AnimationSaverRunnable::cancelExport);
@@ -3661,6 +3685,20 @@ void MainWindow::showErrorMessageWithDetails(const QString &message, const QStri
 	}
 }
 
+// clang-format on
+void MainWindow::showElapsedStatusMessage(
+	const QString &message, qint64 elapsedMsec)
+{
+	qint64 minutes = elapsedMsec / 60000LL;
+	qint64 seconds = elapsedMsec / 1000LL - minutes * 60LL;
+	qint64 milliseconds = elapsedMsec % 1000LL;
+	m_viewStatusBar->showMessage(
+		message.arg(minutes, 2, 10, QChar('0'))
+			.arg(seconds, 2, 10, QChar('0'))
+			.arg(milliseconds, 3, 10, QChar('0')),
+		4000);
+}
+
 void MainWindow::showLoadResultMessage(DP_LoadResult result)
 {
 	if(result != DP_LOAD_RESULT_SUCCESS) {
@@ -3686,6 +3724,7 @@ void MainWindow::setShowLaserTrails(bool show)
 	m_dockToolSettings->laserPointerSettings()->setLaserTrailsShown(show);
 	updateLockWidget();
 }
+// clang-format off
 
 /**
  * @brief Enter/leave fullscreen mode
