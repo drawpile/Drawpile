@@ -23,11 +23,14 @@ void DebounceTimer::setInt(int value)
 	restartTimer();
 }
 
-void DebounceTimer::stopTimer()
+bool DebounceTimer::stopTimer()
 {
 	if(m_timerId != 0) {
 		killTimer(m_timerId);
 		m_timerId = 0;
+		return true;
+	} else {
+		return false;
 	}
 }
 

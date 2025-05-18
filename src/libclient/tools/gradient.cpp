@@ -22,7 +22,12 @@ GradientTool::GradientTool(ToolController &owner)
 		  owner, GRADIENT, utils::Cursors::gradient(),
 		  Capability::AllowColorPick)
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
+	, m_previewDebounce(200)
 {
+	QObject::connect(
+		&m_previewDebounce, &DebounceTimer::noneChanged, &owner, [this] {
+			updatePending();
+		});
 }
 
 void GradientTool::begin(const BeginParams &params)
@@ -91,6 +96,7 @@ void GradientTool::motion(const MotionParams &params)
 			}
 		}
 		updateAnchorLine();
+		m_previewDebounce.setNone();
 	} else {
 		if(hoverIndexChanged && m_dragIndex == -1) {
 			emit m_owner.anchorLineActiveIndexRequested(m_hoverIndex);
@@ -111,7 +117,10 @@ void GradientTool::hover(const HoverParams &params)
 void GradientTool::end(const EndParams &params)
 {
 	Q_UNUSED(params);
-	updatePending();
+	if(m_previewDebounce.stopTimer()) {
+		updatePending();
+	}
+
 	if(m_dragging) {
 		if(m_hoverIndex != m_dragIndex) {
 			emit m_owner.anchorLineActiveIndexRequested(m_hoverIndex);
@@ -130,6 +139,7 @@ void GradientTool::end(const EndParams &params)
 			pushPoints();
 		}
 	}
+
 	updateCursor();
 }
 
@@ -319,6 +329,7 @@ void GradientTool::updateCursor()
 
 void GradientTool::updatePending()
 {
+	m_previewDebounce.stopTimer();
 	QPoint pos;
 	QImage img;
 

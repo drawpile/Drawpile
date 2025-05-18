@@ -3,6 +3,7 @@
 #define LIBCLIENT_TOOLS_GRADIENT_H
 #include "libclient/tools/clickdetector.h"
 #include "libclient/tools/tool.h"
+#include "libclient/utils/debouncetimer.h"
 #include <QAtomicInteger>
 #include <QColor>
 #include <QImage>
@@ -73,6 +74,7 @@ private:
 	bool m_hoverOutside = false;
 	QPoint m_pendingPos;
 	QImage m_pendingImage;
+	DebounceTimer m_previewDebounce;
 	ClickDetector m_clickDetector;
 };
 
