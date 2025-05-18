@@ -219,11 +219,12 @@ StreamResetStartResult SessionHistory::startStreamedReset(
 bool SessionHistory::receiveResetStreamMessageCallback(
 	void *user, DP_Message *msg)
 {
+	net::Message message = net::Message::noinc(msg);
 	return static_cast<SessionHistory *>(user)->receiveResetStreamMessage(
-		net::Message::noinc(msg));
+		message);
 }
 
-bool SessionHistory::receiveResetStreamMessage(const net::Message &msg)
+bool SessionHistory::receiveResetStreamMessage(net::Message &msg)
 {
 	if(msg.isControl() || (msg.isServerMeta() && msg.type() != DP_MSG_CHAT)) {
 		m_resetStreamAddError = StreamResetAddResult::DisallowedType;
@@ -236,6 +237,10 @@ bool SessionHistory::receiveResetStreamMessage(const net::Message &msg)
 		return false;
 	}
 	m_resetStreamSize = newSize;
+
+	if(msg.contextId() != m_resetStreamCtxId) {
+		msg.setContextId(m_resetStreamCtxId);
+	}
 
 	StreamResetAddResult result = addResetStreamMessage(msg);
 	if(result == StreamResetAddResult::Ok) {

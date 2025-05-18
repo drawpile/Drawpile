@@ -553,7 +553,7 @@ private:
 
 	void abortActiveStreamedReset();
 	static bool receiveResetStreamMessageCallback(void *user, DP_Message *msg);
-	bool receiveResetStreamMessage(const net::Message &msg);
+	bool receiveResetStreamMessage(net::Message &msg);
 
 	QString generateInviteSecret() const;
 	static Invite &resetInvite(

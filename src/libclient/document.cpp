@@ -1333,7 +1333,7 @@ net::MessageList Document::generateStreamSnapshot(
 
 	ResetStreamImageContext ctx = {rsp, 0, true};
 	DP_reset_image_build(
-		canvasState.get(), 0, isCompatibilityMode(),
+		canvasState.get(), m_client->myId(), isCompatibilityMode(),
 		ResetStreamImageContext::push, &ctx);
 	if(!ctx.ok) {
 		DP_reset_stream_producer_free_discard(rsp);
