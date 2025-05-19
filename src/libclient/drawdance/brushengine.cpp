@@ -11,11 +11,10 @@ extern "C" {
 namespace drawdance {
 
 BrushEngine::BrushEngine(PollControlFn pollControl)
-	: m_messages{}
-	, m_pollControl{pollControl}
-	, m_data{DP_brush_engine_new(
+	: m_pollControl(pollControl)
+	, m_data(DP_brush_engine_new(
 		  &BrushEngine::pushMessage,
-		  pollControl ? &BrushEngine::pollControl : nullptr, this)}
+		  pollControl ? &BrushEngine::pollControl : nullptr, this))
 {
 }
 
@@ -25,19 +24,19 @@ BrushEngine::~BrushEngine()
 }
 
 void BrushEngine::setClassicBrush(
-	const DP_ClassicBrush &brush, const DP_StrokeParams &stroke,
+	const DP_ClassicBrush &brush, const DP_BrushEngineStrokeParams &besp,
 	bool eraserOverride)
 {
 	DP_brush_engine_classic_brush_set(
-		m_data, &brush, &stroke, nullptr, eraserOverride);
+		m_data, &brush, &besp, nullptr, eraserOverride);
 }
 
 void BrushEngine::setMyPaintBrush(
 	const DP_MyPaintBrush &brush, const DP_MyPaintSettings &settings,
-	const DP_StrokeParams &stroke, bool eraserOverride)
+	const DP_BrushEngineStrokeParams &besp, bool eraserOverride)
 {
 	DP_brush_engine_mypaint_brush_set(
-		m_data, &brush, &settings, &stroke, nullptr, eraserOverride);
+		m_data, &brush, &settings, &besp, nullptr, eraserOverride);
 }
 
 void BrushEngine::flushDabs()

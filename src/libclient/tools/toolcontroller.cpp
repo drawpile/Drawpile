@@ -634,30 +634,33 @@ void ToolController::setBrushEngineBrush(
 	drawdance::BrushEngine &be, bool freehand)
 {
 	const brushes::ActiveBrush &brush = activeBrush();
-	DP_StrokeParams stroke = {
+	DP_BrushEngineStrokeParams stroke = {
+		{
+			0,
+			0,
+			false,
+			m_stabilizationMode != brushes::Smoothing || m_finishStrokes,
+			m_finishStrokes,
+		},
 		activeLayerOrSelection(),
 		m_selectionEditActive || !m_selectionMaskingEnabled
 			? 0
 			: DP_SELECTION_ID_MAIN,
-		0,
-		0,
 		activeLayerAlphaLock(),
-		false,
-		m_stabilizationMode != brushes::Smoothing || m_finishStrokes,
-		m_finishStrokes,
 	};
 	if(freehand) {
-		stroke.interpolate = m_interpolateInputs;
-		stroke.smoothing =
+		stroke.se.interpolate = m_interpolateInputs;
+		stroke.se.smoothing =
 			m_applyGlobalSmoothing || m_stabilizationMode == brushes::Smoothing
 				? m_effectiveSmoothing
 				: m_smoothing;
 		if(m_stabilizerUseBrushSampleCount) {
 			if(brush.stabilizationMode() == brushes::Stabilizer) {
-				stroke.stabilizer_sample_count = brush.stabilizerSampleCount();
+				stroke.se.stabilizer_sample_count =
+					brush.stabilizerSampleCount();
 			}
 		} else if(m_stabilizationMode == brushes::Stabilizer) {
-			stroke.stabilizer_sample_count = m_stabilizerSampleCount;
+			stroke.se.stabilizer_sample_count = m_stabilizerSampleCount;
 		}
 	}
 	brush.setInBrushEngine(be, stroke);

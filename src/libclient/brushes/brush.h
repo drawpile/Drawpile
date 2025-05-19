@@ -15,7 +15,7 @@ extern "C" {
 #include <QPixmap>
 #include <limits>
 
-struct DP_StrokeParams;
+struct DP_BrushEngineStrokeParams;
 struct MyPaintBrush;
 
 namespace drawdance {
@@ -380,7 +380,8 @@ public:
 	QPixmap presetThumbnail() const;
 
 	void setInBrushEngine(
-		drawdance::BrushEngine &be, const DP_StrokeParams &stroke) const;
+		drawdance::BrushEngine &be,
+		const DP_BrushEngineStrokeParams &besp) const;
 
 	void renderPreview(
 		drawdance::BrushPreview &bp, DP_BrushPreviewShape shape) const;

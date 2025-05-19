@@ -1407,13 +1407,13 @@ QPixmap ActiveBrush::presetThumbnail() const
 }
 
 void ActiveBrush::setInBrushEngine(
-	drawdance::BrushEngine &be, const DP_StrokeParams &stroke) const
+	drawdance::BrushEngine &be, const DP_BrushEngineStrokeParams &besp) const
 {
 	if(m_activeType == CLASSIC) {
-		be.setClassicBrush(m_classic, stroke, isEraserOverride());
+		be.setClassicBrush(m_classic, besp, isEraserOverride());
 	} else {
 		be.setMyPaintBrush(
-			m_myPaint.constBrush(), m_myPaint.constSettings(), stroke,
+			m_myPaint.constBrush(), m_myPaint.constSettings(), besp,
 			isEraserOverride());
 	}
 }

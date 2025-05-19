@@ -38,22 +38,53 @@ typedef struct DP_BrushPoint {
     long long time_msec;
 } DP_BrushPoint;
 
-typedef struct DP_StrokeParams {
-    int layer_id;
-    int selection_id;
+typedef struct DP_StrokeEngineStrokeParams {
     int smoothing;
     int stabilizer_sample_count;
-    bool layer_alpha_lock;
     bool interpolate;
     bool smoothing_finish_strokes;
     bool stabilizer_finish_strokes;
-} DP_StrokeParams;
+} DP_StrokeEngineStrokeParams;
+
+typedef struct DP_BrushEngineStrokeParams {
+    DP_StrokeEngineStrokeParams se;
+    int layer_id;
+    int selection_id;
+    bool layer_alpha_lock;
+} DP_BrushEngineStrokeParams;
 
 
+typedef void (*DP_StrokeEnginePushPointFn)(void *user, DP_BrushPoint bp,
+                                           DP_CanvasState *cs_or_null);
+typedef void (*DP_StrokeEnginePollControlFn)(void *user, bool enable);
 typedef void (*DP_BrushEnginePushMessageFn)(void *user, DP_Message *msg);
 typedef void (*DP_BrushEnginePollControlFn)(void *user, bool enable);
 
+typedef struct DP_StrokeEngine DP_StrokeEngine;
 typedef struct DP_BrushEngine DP_BrushEngine;
+
+
+DP_StrokeEngine *
+DP_stroke_engine_new(DP_StrokeEnginePushPointFn push_point,
+                     DP_StrokeEnginePollControlFn poll_control_or_null,
+                     void *user);
+
+void DP_stroke_engine_free(DP_StrokeEngine *se);
+
+void DP_stroke_engine_params_set(DP_StrokeEngine *se,
+                                 const DP_StrokeEngineStrokeParams *sesp);
+
+void DP_stroke_engine_stroke_begin(DP_StrokeEngine *se);
+
+void DP_stroke_engine_stroke_to(DP_StrokeEngine *se, DP_BrushPoint bp,
+                                DP_CanvasState *cs_or_null);
+
+void DP_stroke_engine_poll(DP_StrokeEngine *se, long long time_msec,
+                           DP_CanvasState *cs_or_null);
+
+void DP_stroke_engine_stroke_end(DP_StrokeEngine *se, long long time_msec,
+                                 DP_CanvasState *cs_or_null);
+
 
 DP_BrushEngine *
 DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
@@ -66,14 +97,14 @@ void DP_brush_engine_size_limit_set(DP_BrushEngine *be, int size_limit);
 
 void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
                                        const DP_ClassicBrush *brush,
-                                       const DP_StrokeParams *stroke,
+                                       const DP_BrushEngineStrokeParams *besp,
                                        const DP_UPixelFloat *color_override,
                                        bool eraser_override);
 
 void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
                                        const DP_MyPaintBrush *brush,
                                        const DP_MyPaintSettings *settings,
-                                       const DP_StrokeParams *stroke,
+                                       const DP_BrushEngineStrokeParams *besp,
                                        const DP_UPixelFloat *color_override,
                                        bool eraser_override);
 

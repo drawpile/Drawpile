@@ -36,12 +36,12 @@ public:
 	BrushEngine &operator=(BrushEngine &&) = delete;
 
 	void setClassicBrush(
-		const DP_ClassicBrush &brush, const DP_StrokeParams &stroke,
+		const DP_ClassicBrush &brush, const DP_BrushEngineStrokeParams &besp,
 		bool eraserOverride);
 
 	void setMyPaintBrush(
 		const DP_MyPaintBrush &brush, const DP_MyPaintSettings &settings,
-		const DP_StrokeParams &stroke, bool eraserOverride);
+		const DP_BrushEngineStrokeParams &besp, bool eraserOverride);
 
 	void flushDabs();
 
