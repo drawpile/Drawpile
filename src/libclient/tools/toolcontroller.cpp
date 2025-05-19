@@ -666,6 +666,14 @@ void ToolController::setBrushEngineBrush(
 	brush.setInBrushEngine(be, stroke);
 }
 
+void ToolController::setStrokeEngineParams(drawdance::StrokeEngine &se)
+{
+	DP_StrokeEngineStrokeParams sesp = {
+		m_globalSmoothing, 0, m_interpolateInputs, true, true,
+	};
+	se.setParams(sesp);
+}
+
 void ToolController::executeAsync(Task *task)
 {
 	task->setParent(this);

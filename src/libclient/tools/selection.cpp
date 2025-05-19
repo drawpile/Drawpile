@@ -4,9 +4,12 @@
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/net/client.h"
 #include "libclient/utils/cursors.h"
+#include <QDateTime>
 #include <QPainter>
 #include <QPainterPath>
+#include <functional>
 
+using std::placeholders::_1;
 using utils::Cursors;
 
 namespace tools {
@@ -60,7 +63,6 @@ void SelectionTool::modify(const ModifyParams &params)
 {
 	if(m_op != -1) {
 		m_op = resolveOp(params.constrain, params.center, defaultOp());
-		continueSelection(m_lastPoint);
 	}
 	updateCursor(m_lastPoint, params.constrain, params.center);
 }
@@ -68,7 +70,8 @@ void SelectionTool::modify(const ModifyParams &params)
 void SelectionTool::hover(const HoverParams &params)
 {
 	m_zoom = params.zoom;
-	m_lastPoint = params.point;
+	m_lastPoint.setX(params.point.x());
+	m_lastPoint.setY(params.point.y());
 	updateCursor(params.point, params.constrain, params.center);
 }
 
@@ -279,13 +282,13 @@ const QCursor &RectangleSelection::getCursor(int effectiveOp) const
 	}
 }
 
-void RectangleSelection::beginSelection(const QPointF &point)
+void RectangleSelection::beginSelection(const canvas::Point &point)
 {
 	m_end = point;
 	updateRectangleSelectionPreview();
 }
 
-void RectangleSelection::continueSelection(const QPointF &point)
+void RectangleSelection::continueSelection(const canvas::Point &point)
 {
 	m_end = point;
 	updateRectangleSelectionPreview();
@@ -375,7 +378,18 @@ QRectF RectangleSelection::getRectF() const
 
 PolygonSelection::PolygonSelection(ToolController &owner)
 	: SelectionTool(owner, POLYGONSELECTION, Cursors::selectLasso())
+	, m_strokeEngine(
+		  [this](DP_BrushPoint bp, const drawdance::CanvasState &) {
+			  addPoint(QPointF(bp.x, bp.y));
+		  },
+		  std::bind(&PolygonSelection::pollControl, this, _1))
 {
+	m_pollTimer.setSingleShot(false);
+	m_pollTimer.setTimerType(Qt::PreciseTimer);
+	m_pollTimer.setInterval(15);
+	QObject::connect(&m_pollTimer, &QTimer::timeout, [this]() {
+		poll();
+	});
 }
 
 const QCursor &PolygonSelection::getCursor(int effectiveOp) const
@@ -392,32 +406,20 @@ const QCursor &PolygonSelection::getCursor(int effectiveOp) const
 	}
 }
 
-void PolygonSelection::beginSelection(const QPointF &point)
+void PolygonSelection::beginSelection(const canvas::Point &point)
 {
-	if(antiAlias()) {
-		m_polygonF.clear();
-		m_polygonF.append(point);
-	} else {
-		m_polygon.clear();
-		m_polygon.append(point.toPoint());
-	}
-	updatePolygonSelectionPreview();
+	m_polygon.clear();
+	m_polygonF.clear();
+	m_lastTimeMsec = point.timeMsec();
+	m_owner.setStrokeEngineParams(m_strokeEngine);
+	m_strokeEngine.beginStroke();
+	m_strokeEngine.strokeTo(point, drawdance::CanvasState::null());
 }
 
-void PolygonSelection::continueSelection(const QPointF &point)
+void PolygonSelection::continueSelection(const canvas::Point &point)
 {
-	if(antiAlias()) {
-		if(!canvas::Point::intSame(point, m_polygonF.last())) {
-			m_polygonF.append(point);
-			updatePolygonSelectionPreview();
-		}
-	} else {
-		QPoint p = point.toPoint();
-		if(p != m_polygon.last()) {
-			m_polygon.append(p);
-			updatePolygonSelectionPreview();
-		}
-	}
+	m_lastTimeMsec = point.timeMsec();
+	m_strokeEngine.strokeTo(point, drawdance::CanvasState::null());
 }
 
 void PolygonSelection::offsetSelection(const QPoint &offset)
@@ -432,22 +434,32 @@ void PolygonSelection::offsetSelection(const QPoint &offset)
 
 void PolygonSelection::cancelSelection()
 {
+	m_strokeEngine.endStroke(m_lastTimeMsec, drawdance::CanvasState::null());
 	removeSelectionPreview();
 }
 
 net::MessageList PolygonSelection::endSelection(uint8_t contextId)
 {
+	int pointCount = antiAlias() ? m_polygonF.size() : m_polygon.size();
+	if(pointCount != 0) {
+		m_strokeEngine.strokeTo(
+			canvas::Point(
+				m_lastTimeMsec,
+				antiAlias() ? m_polygonF.first() : QPointF(m_polygon.first()),
+				1.0),
+			drawdance::CanvasState::null());
+	}
+
+	m_strokeEngine.endStroke(m_lastTimeMsec, drawdance::CanvasState::null());
 	removeSelectionPreview();
 
 	QRect area;
-	if(antiAlias()) {
-		if(m_polygonF.size() >= 2) {
+	if(pointCount >= 2) {
+		if(antiAlias()) {
 			QRectF bounds = m_polygonF.boundingRect();
 			area = bounds.toAlignedRect();
 			m_polygonF.translate(-QPointF(area.topLeft()));
-		}
-	} else {
-		if(m_polygon.size() >= 2) {
+		} else {
 			area = m_polygon.boundingRect();
 			m_polygon.translate(-area.topLeft());
 		}
@@ -474,6 +486,38 @@ net::MessageList PolygonSelection::endSelection(uint8_t contextId)
 			area.x(), area.y(), area.width(), area.height(), mask);
 		return msgs;
 	}
+}
+
+void PolygonSelection::addPoint(const QPointF &point)
+{
+	if(antiAlias()) {
+		if(m_polygonF.isEmpty() ||
+		   !canvas::Point::intSame(point, m_polygonF.last())) {
+			m_polygonF.append(point);
+			updatePolygonSelectionPreview();
+		}
+	} else {
+		QPoint p = point.toPoint();
+		if(m_polygon.isEmpty() || p != m_polygon.last()) {
+			m_polygon.append(p);
+			updatePolygonSelectionPreview();
+		}
+	}
+}
+
+void PolygonSelection::pollControl(bool enable)
+{
+	if(enable) {
+		m_pollTimer.start();
+	} else {
+		m_pollTimer.stop();
+	}
+}
+
+void PolygonSelection::poll()
+{
+	m_strokeEngine.poll(
+		QDateTime::currentMSecsSinceEpoch(), drawdance::CanvasState::null());
 }
 
 void PolygonSelection::updatePolygonSelectionPreview()

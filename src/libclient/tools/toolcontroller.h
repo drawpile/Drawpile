@@ -18,6 +18,7 @@ class CanvasModel;
 
 namespace drawdance {
 class BrushEngine;
+class StrokeEngine;
 }
 
 namespace net {
@@ -175,6 +176,7 @@ public:
 	 * interference when drawing previews, shapes, lines and curves.
 	 */
 	void setBrushEngineBrush(drawdance::BrushEngine &be, bool freehand);
+	void setStrokeEngineParams(drawdance::StrokeEngine &se);
 
 	/**
 	 * Runs the given task in the background. Takes over the task using

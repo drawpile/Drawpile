@@ -10,6 +10,73 @@ extern "C" {
 
 namespace drawdance {
 
+namespace {
+static DP_BrushPoint canvasPointToBrushPoint(const canvas::Point &point)
+{
+	DP_BrushPoint bp = {float(point.x()),		 float(point.y()),
+						float(point.pressure()), float(point.xtilt()),
+						float(point.ytilt()),	 float(point.rotation()),
+						point.timeMsec()};
+	return bp;
+}
+}
+
+StrokeEngine::StrokeEngine(PushPointFn pushPoint, PollControlFn pollControl)
+	: m_pushPoint(pushPoint)
+	, m_pollControl(pollControl)
+	, m_data(DP_stroke_engine_new(
+		  &StrokeEngine::pushPoint,
+		  pollControl ? &StrokeEngine::pollControl : nullptr, this))
+{
+}
+
+StrokeEngine::~StrokeEngine()
+{
+	DP_stroke_engine_free(m_data);
+}
+
+void StrokeEngine::setParams(const DP_StrokeEngineStrokeParams &sesp)
+{
+	DP_stroke_engine_params_set(m_data, &sesp);
+}
+
+void StrokeEngine::beginStroke()
+{
+	DP_stroke_engine_stroke_begin(m_data);
+}
+
+void StrokeEngine::strokeTo(
+	const canvas::Point &point, const drawdance::CanvasState &cs)
+{
+	DP_stroke_engine_stroke_to(
+		m_data, canvasPointToBrushPoint(point), cs.get());
+}
+
+void StrokeEngine::poll(long long timeMsec, const drawdance::CanvasState &cs)
+{
+	DP_stroke_engine_poll(m_data, timeMsec, cs.get());
+}
+
+void StrokeEngine::endStroke(
+	long long timeMsec, const drawdance::CanvasState &cs)
+{
+	DP_stroke_engine_stroke_end(m_data, timeMsec, cs.get());
+}
+
+void StrokeEngine::pushPoint(
+	void *user, DP_BrushPoint bp, DP_CanvasState *cs_or_null)
+{
+	StrokeEngine *strokeEngine = static_cast<StrokeEngine *>(user);
+	strokeEngine->m_pushPoint(bp, drawdance::CanvasState::inc(cs_or_null));
+}
+
+void StrokeEngine::pollControl(void *user, bool enable)
+{
+	StrokeEngine *strokeEngine = static_cast<StrokeEngine *>(user);
+	strokeEngine->m_pollControl(enable);
+}
+
+
 BrushEngine::BrushEngine(PollControlFn pollControl)
 	: m_pollControl(pollControl)
 	, m_data(DP_brush_engine_new(
@@ -58,11 +125,7 @@ void BrushEngine::beginStroke(
 void BrushEngine::strokeTo(
 	const canvas::Point &point, const drawdance::CanvasState &cs)
 {
-	DP_BrushPoint bp = {float(point.x()),		 float(point.y()),
-						float(point.pressure()), float(point.xtilt()),
-						float(point.ytilt()),	 float(point.rotation()),
-						point.timeMsec()};
-	DP_brush_engine_stroke_to(m_data, bp, cs.get());
+	DP_brush_engine_stroke_to(m_data, canvasPointToBrushPoint(point), cs.get());
 }
 
 void BrushEngine::poll(long long timeMsec, const drawdance::CanvasState &cs)

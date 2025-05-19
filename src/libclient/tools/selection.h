@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_TOOLS_SELECTION_H
 #define LIBCLIENT_TOOLS_SELECTION_H
+#include "libclient/drawdance/brushengine.h"
 #include "libclient/net/message.h"
 #include "libclient/tools/clickdetector.h"
 #include "libclient/tools/tool.h"
@@ -9,6 +10,7 @@
 #include <QPolygonF>
 #include <QRect>
 #include <QRectF>
+#include <QTimer>
 
 class QPainterPath;
 
@@ -41,7 +43,7 @@ public:
 
 protected:
 	int op() const { return m_op; }
-	bool antiAlias() const { return  m_owner.selectionParams().antiAlias; }
+	bool antiAlias() const { return m_owner.selectionParams().antiAlias; }
 	bool quickDrag() const;
 	int defaultOp() const { return m_owner.selectionParams().defaultOp; }
 	const QPointF &startPoint() const { return m_startPoint; }
@@ -50,8 +52,8 @@ protected:
 	void removeSelectionPreview() const;
 
 	virtual const QCursor &getCursor(int effectiveOp) const = 0;
-	virtual void beginSelection(const QPointF &point) = 0;
-	virtual void continueSelection(const QPointF &point) = 0;
+	virtual void beginSelection(const canvas::Point &point) = 0;
+	virtual void continueSelection(const canvas::Point &point) = 0;
 	virtual void offsetSelection(const QPoint &offset) = 0;
 	virtual void cancelSelection() = 0;
 	virtual net::MessageList endSelection(uint8_t contextId) = 0;
@@ -79,8 +81,8 @@ public:
 
 protected:
 	virtual const QCursor &getCursor(int effectiveOp) const override;
-	void beginSelection(const QPointF &point) override;
-	void continueSelection(const QPointF &point) override;
+	void beginSelection(const canvas::Point &point) override;
+	void continueSelection(const canvas::Point &point) override;
 	void offsetSelection(const QPoint &offset) override;
 	void cancelSelection() override;
 	net::MessageList endSelection(uint8_t contextId) override;
@@ -99,15 +101,21 @@ public:
 
 protected:
 	virtual const QCursor &getCursor(int effectiveOp) const override;
-	void beginSelection(const QPointF &point) override;
-	void continueSelection(const QPointF &point) override;
+	void beginSelection(const canvas::Point &point) override;
+	void continueSelection(const canvas::Point &point) override;
 	void offsetSelection(const QPoint &offset) override;
 	void cancelSelection() override;
 	net::MessageList endSelection(uint8_t contextId) override;
 
 private:
+	void addPoint(const QPointF &point);
+	void pollControl(bool enable);
+	void poll();
 	void updatePolygonSelectionPreview();
 
+	QTimer m_pollTimer;
+	drawdance::StrokeEngine m_strokeEngine;
+	long long m_lastTimeMsec = 0LL;
 	QPolygon m_polygon;
 	QPolygonF m_polygonF;
 };

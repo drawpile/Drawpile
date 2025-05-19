@@ -23,6 +23,40 @@ namespace drawdance {
 
 class CanvasState;
 
+class StrokeEngine final {
+public:
+	using PushPointFn = std::function<void(
+		const DP_BrushPoint &, const drawdance::CanvasState &)>;
+	using PollControlFn = std::function<void(bool)>;
+
+	StrokeEngine(PushPointFn pushPoint, PollControlFn pollControl = nullptr);
+	~StrokeEngine();
+
+	StrokeEngine(const StrokeEngine &) = delete;
+	StrokeEngine(StrokeEngine &&) = delete;
+	StrokeEngine &operator=(const StrokeEngine &) = delete;
+	StrokeEngine &operator=(StrokeEngine &&) = delete;
+
+	void setParams(const DP_StrokeEngineStrokeParams &sesp);
+
+	void beginStroke();
+
+	void strokeTo(const canvas::Point &point, const drawdance::CanvasState &cs);
+
+	void poll(long long timeMsec, const drawdance::CanvasState &cs);
+
+	void endStroke(long long timeMsec, const drawdance::CanvasState &cs);
+
+private:
+	static void
+	pushPoint(void *user, DP_BrushPoint bp, DP_CanvasState *cs_or_null);
+	static void pollControl(void *user, bool enable);
+
+	PushPointFn m_pushPoint;
+	PollControlFn m_pollControl;
+	DP_StrokeEngine *m_data;
+};
+
 class BrushEngine final {
 public:
 	using PollControlFn = std::function<void(bool)>;
