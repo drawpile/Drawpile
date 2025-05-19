@@ -67,7 +67,7 @@
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation>Vous pouvez trouver la liste des serveurs sur &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
+        <translation>Vous pouvez trouver quelques serveurs de liste sur &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -174,7 +174,7 @@
     <message>
         <location filename="../ui/canvasshortcutsdialog.ui" line="+14"/>
         <source>Canvas Shortcut</source>
-        <translation>Raccourci de la toile</translation>
+        <translation>Raccourci de la Toile</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -210,7 +210,7 @@
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation>Inverser les axes</translation>
+        <translation>Inverser les Axes</translation>
     </message>
 </context>
 <context>
@@ -218,7 +218,7 @@
     <message>
         <location filename="../ui/certificateview.ui" line="+24"/>
         <source>Info</source>
-        <translation>Informations</translation>
+        <translation>Infos</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -250,7 +250,7 @@
         <location line="+14"/>
         <location line="+14"/>
         <source>Organization unit:</source>
-        <translation>Service&#x202f;:</translation>
+        <translation>Unité d’organisation&#xa0;:</translation>
     </message>
     <message>
         <location line="-7"/>
@@ -375,12 +375,12 @@
     <message>
         <location line="+16"/>
         <source>Import Session Bans</source>
-        <translation>Importer Exclusions de Sessions</translation>
+        <translation>Importer les Exclusions de Sessions</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Import Roles</source>
-        <translation>Importer Rôles</translation>
+        <translation>Importer les Rôles</translation>
     </message>
     <message>
         <location line="+137"/>
@@ -396,63 +396,63 @@
     <message>
         <location line="+24"/>
         <source>Save Pre-Reset Image</source>
-        <translation>Enregistrer l&apos;image pré-réinitialisée</translation>
+        <translation>Enregistrer l&apos;Image d&apos;Avant Redémarrage</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Save Selection</source>
-        <translation>Sauvegarder la sélection</translation>
+        <translation>Sauvegarder la Sélection</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Record Session</source>
-        <translation>Enregistrer la session</translation>
+        <translation>Enregistrer la Session</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Session Template</source>
-        <translation>Sauvegarder modèle de session</translation>
+        <translation>Sauvegarder le Modèle de Session</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Export Animated GIF</source>
-        <translation>Exporter un GIF animé</translation>
+        <translation>Exporter un GIF Animé</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Performance Profile</source>
-        <translation>Profil de performances</translation>
+        <translation>Profil de Performances</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tablet Event Log</source>
-        <translation>Journal des événements Tablette</translation>
+        <translation>Tablette du Journal des Événements</translation>
     </message>
     <message>
         <location line="+143"/>
         <source>Log File</source>
-        <translation>Journal</translation>
+        <translation>Journal des Événements</translation>
     </message>
     <message>
         <location line="-171"/>
         <location line="+36"/>
         <source>Export MP4 Video</source>
-        <translation>Exporter une vidéo MP4</translation>
+        <translation>Exporter une Vidéo MP4</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation>Exporter vidéo WebM</translation>
+        <translation>Exporter Vidéo WebM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Custom FFmpeg Video</source>
-        <translation>Exporter une vidéo FFmpeg personnalisée</translation>
+        <translation>Exporter une Vidéo FFmpeg Personnalisée</translation>
     </message>
     <message>
         <location line="-77"/>
         <source>Save Animation Frames</source>
-        <translation>Enregistrer les images d&apos;animation</translation>
+        <translation>Enregistrer les Images d&apos;Animation</translation>
     </message>
     <message>
         <location line="-271"/>
@@ -477,7 +477,7 @@
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation>Importer une animation à partir des calques</translation>
+        <translation>Importer une Animation à Partir des Calques</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -518,7 +518,7 @@
     <message>
         <location line="+22"/>
         <source>Error opening temporary file for %1.</source>
-        <translation>Erreur lors de l&apos;ouverture du fichier temporaire de %1.</translation>
+        <translation>Erreur lors de l&apos;ouverture du fichier temporaire pour %1.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -553,7 +553,7 @@
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation>Exporter Animation WEBP</translation>
+        <translation>Exporter un WEBP Animé</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -563,7 +563,7 @@
     <message>
         <location line="+74"/>
         <source>Export Brushes</source>
-        <translation>Exporter les pinceaux</translation>
+        <translation>Exporter les Pinceaux</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -593,7 +593,7 @@
     <message>
         <location line="+24"/>
         <source>Save as Selected Format</source>
-        <translation>Enregistrer sous le format sélectionné</translation>
+        <translation>Enregistrer sous le Format Sélectionné</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -684,7 +684,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Merged without background</source>
-        <translation>Fusionner sans arrière-plan</translation>
+        <translation>Fusionné sans arrière-plan</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -731,7 +731,7 @@
         <location line="+279"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+62"/>
         <source>Close Gaps: </source>
-        <translation>Combler les trous&#x202f;: </translation>
+        <translation>Combler les Espaces&#xa0;: </translation>
     </message>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+131"/>
@@ -907,7 +907,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation>&amp;Sélectionner Tout</translation>
+        <translation>Tout &amp;Sélectionner</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -917,7 +917,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+2"/>
         <source>Step &amp;down</source>
-        <translation>&amp; Descendre d&apos;un pas</translation>
+        <translation>&amp;Descendre d&apos;un cran</translation>
     </message>
 </context>
 <context>
@@ -1109,7 +1109,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+158"/>
         <source>Filter</source>
-        <translation>Filtrer</translation>
+        <translation>Filtre</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1189,7 +1189,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation>Ne plus me redemander, sauf modification des règles</translation>
+        <translation>Ne plus me demander, sauf en cas de modification des règles</translation>
     </message>
     <message>
         <location line="-574"/>
@@ -1233,8 +1233,8 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
         <location line="+129"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
-            <numerusform>Vous avez %n image modifiée. Voulez-vous voir les modifications avant de quitter ?</numerusform>
-            <numerusform>Vous avez %n images modifiées. Voulez-vous voir les modifications avant de quitter ?</numerusform>
+            <numerusform>Vous avez %n image avec des modifications non enregistrées. Voulez-vous voir les modifications avant de quitter&#x202f;?</numerusform>
+            <numerusform>Vous avez %n images avec des modifications non enregistrées. Voulez-vous voir les modifications avant de quitter&#x202f;?</numerusform>
         </translation>
     </message>
     <message>
@@ -1307,12 +1307,12 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+276"/>
         <source>Stop Recording</source>
-        <translation>Stopper l&apos;enregistrement</translation>
+        <translation>Arrêter d’Enregistrer</translation>
     </message>
     <message>
         <location line="-301"/>
         <source>Saving...</source>
-        <translation>Enregistrement...</translation>
+        <translation>Sauvegarde...</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -1327,7 +1327,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+5"/>
         <source>Compatibility Mode</source>
-        <translation>Mode de compatibilité</translation>
+        <translation>Mode de Compatibilité</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1337,7 +1337,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export session template</source>
-        <translation>Le modèle de session n&apos;a pas pu être importé</translation>
+        <translation>Le modèle de session n&apos;a pas pu être exporté</translation>
     </message>
     <message>
         <location line="+137"/>
@@ -1357,7 +1357,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+3"/>
         <source>Couldn&apos;t start recording.</source>
-        <translation>L&apos;enregistrement n&apos;a pas pu être démarré.</translation>
+        <translation>L&apos;enregistrement n&apos;a pas pu démarrer.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1417,7 +1417,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+261"/>
         <source>Would you like to join the session instead?</source>
-        <translation>Voulez-vous rejoindre la session ?</translation>
+        <translation>Souhaitez-vous plutôt rejoindre la session&#x202f;?</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1464,7 +1464,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+3"/>
         <source>Save &amp;As...</source>
-        <translation>Enregistrer &amp;sous...</translation>
+        <translation>Enregistrer &amp;Sous...</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1475,12 +1475,12 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
         <location line="-2229"/>
         <location line="+2256"/>
         <source>Record...</source>
-        <translation>Enregistrer...</translation>
+        <translation>Capture vidéo...</translation>
     </message>
     <message>
         <location line="-4421"/>
         <source>Server out of space</source>
-        <translation>Espace disque du serveur insuffisant</translation>
+        <translation>Serveur à court d&apos;espace</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1505,7 +1505,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+5"/>
         <source>stop your recording</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation>arrêt de l&apos;enregistrement</translation>
+        <translation>arrêt de la capture vidéo</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1589,7 +1589,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+4"/>
         <source>You don&apos;t have permission to do that.</source>
-        <translation>Vous n&apos;avez pas la permission pour faire cette action.</translation>
+        <translation>Vous n&apos;avez pas la permission pour faire cela.</translation>
     </message>
     <message>
         <location line="+112"/>
