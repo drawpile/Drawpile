@@ -50,6 +50,14 @@ void GradientSettings::setCompatibilityMode(bool compatibilityMode)
 	m_alphaPreserveButton->setEnabled(!compatibilityMode);
 }
 
+void GradientSettings::setFeatureAccess(bool featureAccess)
+{
+	if(!featureAccess && m_featureAccess) {
+		controller()->getTool(Tool::GRADIENT)->cancelMultipart();
+	}
+	m_featureAccess = featureAccess;
+}
+
 ToolProperties GradientSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());

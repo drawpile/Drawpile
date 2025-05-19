@@ -3612,6 +3612,7 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 	switch(feature) {
 	case DP_FEATURE_PUT_IMAGE:
 		m_dockToolSettings->fillSettings()->setFeatureAccess(canUse);
+		m_dockToolSettings->gradientSettings()->setFeatureAccess(canUse);
 		break;
 	case DP_FEATURE_LASER:
 		m_dockToolSettings->laserPointerSettings()->setFeatureAccess(canUse);

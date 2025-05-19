@@ -28,11 +28,13 @@ public:
 
 	bool affectsCanvas() override { return true; }
 	bool affectsLayer() override { return true; }
+	bool isLocked() override { return !m_featureAccess; }
 	bool requiresSelection() override { return true; }
 
 	void setForeground(const QColor &) override { updateColor(); }
 	void setBackground(const QColor &) override { updateColor(); }
 	void setCompatibilityMode(bool compatibilityMode) override;
+	void setFeatureAccess(bool featureAccess);
 
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
@@ -89,6 +91,7 @@ private:
 	int m_previousMode;
 	int m_previousEraseMode;
 	bool m_automaticAlphaPreserve = true;
+	bool m_featureAccess = true;
 };
 
 }
