@@ -1,6 +1,6 @@
 black==24.10.0
 click==8.1.8
-Jinja2==3.1.5
+Jinja2==3.1.6
 MarkupSafe==3.0.2
 mypy-extensions==1.0.0
 packaging==24.2
