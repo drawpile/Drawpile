@@ -274,6 +274,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 		bool moveSelection = alterSelection && !m_deselectOnApply;
 		bool needsMask = moveContents && !m_mask.isNull();
 		bool sizeOutOfBounds = isDstQuadBoundingRectAreaSizeOutOfBounds();
+		bool compatibilityMode = m_canvas->isCompatibilityMode();
 		QVector<net::Message> msgs;
 		msgs.reserve(1 + (moveContents ? 1 : 0) + (alterSelection ? 1 : 0));
 
@@ -290,7 +291,7 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 					contextId, selectionId, selectionId, srcX, srcY,
 					dstTopLeftX, dstTopLeftY, srcW, srcH, 255,
 					uint8_t(DP_BLEND_MODE_NORMAL), QImage(),
-					m_canvas->isCompatibilityMode()));
+					compatibilityMode));
 			}
 			if(moveContents) {
 				if(singleLayerSourceId > 0) {
@@ -298,7 +299,8 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 						applyMoveRect(
 							msgs, contextId, layerId, singleLayerSourceId, srcX,
 							srcY, dstTopLeftX, dstTopLeftY, srcW, srcH,
-							needsMask ? m_mask : QImage(), false);
+							needsMask ? m_mask : QImage(),
+							compatibilityMode && adjustsImage);
 					}
 				} else {
 					for(int layerIdToMove : m_layerIds) {
@@ -306,7 +308,8 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 							applyMoveRect(
 								msgs, contextId, layerIdToMove, layerIdToMove,
 								srcX, srcY, dstTopLeftX, dstTopLeftY, srcW,
-								srcH, needsMask ? m_mask : QImage(), false);
+								srcH, needsMask ? m_mask : QImage(),
+								compatibilityMode && adjustsImage);
 						}
 					}
 				}
@@ -334,7 +337,9 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 							dstTopRightX, dstTopRightY, dstBottomRightX,
 							dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
 							getEffectiveInterpolation(interpolation),
-							needsMask ? m_mask : QImage(), sizeOutOfBounds);
+							needsMask ? m_mask : QImage(),
+							sizeOutOfBounds ||
+								(compatibilityMode && adjustsImage));
 					}
 				} else {
 					for(int layerIdToMove : m_layerIds) {
@@ -346,7 +351,9 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 								dstBottomRightX, dstBottomRightY,
 								dstBottomLeftX, dstBottomLeftY,
 								getEffectiveInterpolation(interpolation),
-								needsMask ? m_mask : QImage(), sizeOutOfBounds);
+								needsMask ? m_mask : QImage(),
+								sizeOutOfBounds ||
+									(compatibilityMode && adjustsImage));
 						}
 					}
 				}
