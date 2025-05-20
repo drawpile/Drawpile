@@ -20,6 +20,7 @@ extern "C" {
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QKeyEvent>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
@@ -360,6 +361,7 @@ TimelineWidget::TimelineWidget(QWidget *parent)
 {
 	setAcceptDrops(true);
 	setMouseTracking(true);
+	setFocusPolicy(Qt::StrongFocus);
 	d->visibleIcon = QIcon::fromTheme("view-visible");
 	d->hiddenIcon = QIcon::fromTheme("view-hidden");
 	d->onionSkinOnIcon = QIcon::fromTheme("onion-on");
@@ -897,6 +899,31 @@ void TimelineWidget::resizeEvent(QResizeEvent *event)
 	d->verticalScroll->setPageStep(height());
 
 	updateScrollbars();
+}
+
+void TimelineWidget::keyPressEvent(QKeyEvent *event)
+{
+	switch(event->key()) {
+	case Qt::Key_Left:
+		event->accept();
+		prevFrame();
+		break;
+	case Qt::Key_Up:
+		event->accept();
+		trackAbove();
+		break;
+	case Qt::Key_Right:
+		event->accept();
+		nextFrame();
+		break;
+	case Qt::Key_Down:
+		event->accept();
+		trackBelow();
+		break;
+	default:
+		QWidget::keyPressEvent(event);
+		break;
+	}
 }
 
 void TimelineWidget::mouseMoveEvent(QMouseEvent *event)

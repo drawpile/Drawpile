@@ -40,6 +40,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Show the time it took to open, save and export files in the status bar.
  * Fix: Don't disconnect when receiving an unknown message from user 0. Thanks Blozzom and unsername for reporting.
  * Fix: Compensate jagged curves in when using the lasso select tool. Thanks Blozzom for reporting.
+ * Feature: Make arrow keys navigate the animation timeline when it has focus. Thanks MorrowShore for suggesting.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.
