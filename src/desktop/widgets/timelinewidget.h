@@ -66,12 +66,12 @@ public:
 
 	void setActions(const Actions &actions);
 
-	void setCurrentFrame(int frame);
-	void setCurrentTrack(int trackId);
+	void setCurrentFrameIndex(int frame);
+	void setCurrentTrackId(int trackId);
+	void setCurrentTrackIndex(int trackIndex);
 	void setCurrentLayer(int layerId);
 
-	void
-	updateControlsEnabled(bool access, bool locked);
+	void updateControlsEnabled(bool access, bool locked);
 	void updateKeyFrameColorMenuIcon();
 
 	canvas::CanvasModel *canvas() const;
@@ -147,9 +147,12 @@ private:
 	static constexpr int ICON_SIZE = 16;
 
 	enum class Drag { None, Track, KeyFrame };
+	enum class SelectAction { Set, Toggle, Range, Refresh };
 
-	void
-	setCurrent(int trackId, int frame, bool triggerUpdate, bool selectLayer);
+	void setCurrent(int trackId, int frame, bool selectLayer, SelectAction sa);
+
+	void stashSelection();
+	void unstashSelection();
 
 	void setKeyFrame(int layerId);
 	void setKeyFrameProperties(
@@ -163,6 +166,7 @@ private:
 	struct Target;
 	Target getMouseTarget(const QPoint &pos) const;
 	void applyMouseTarget(QMouseEvent *event, const Target &target, bool press);
+	SelectAction getApplyMouseTargetAction(const QMouseEvent *event) const;
 	void executeTargetAction(const Target &target);
 
 	void emitCommand(std::function<net::Message(uint8_t)> getMessage);

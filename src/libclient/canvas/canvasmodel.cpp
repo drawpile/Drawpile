@@ -35,8 +35,8 @@ CanvasModel::CanvasModel(
 	m_aclstate = new AclState(this);
 	m_layerlist = new LayerListModel(this);
 	m_userlist = new UserListModel(this);
-	m_timeline = new TimelineModel(this);
 	m_metadata = new DocumentMetadata(m_paintengine, this);
+	m_timeline = new TimelineModel(this);
 	m_selection = new SelectionModel(this);
 	m_transform = new TransformModel(this);
 

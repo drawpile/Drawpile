@@ -5,6 +5,7 @@ extern "C" {
 }
 #include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/drawdance/timeline.h"
 #include <QRegularExpression>
@@ -23,10 +24,13 @@ TimelineKeyFrame::makeTitleWithColor(const QString &title, const QColor &color)
 }
 
 TimelineModel::TimelineModel(CanvasModel *canvas)
-	: QObject{canvas}
-	, m_tracks{}
-	, m_aclState{nullptr}
+	: QAbstractItemModel(canvas)
 {
+	DocumentMetadata *metadata = canvas->metadata();
+	connect(
+		metadata, &DocumentMetadata::frameCountChanged, this,
+		&TimelineModel::setFrameCount);
+	m_frameCount = metadata->frameCount();
 }
 
 const TimelineTrack *TimelineModel::getTrackById(int trackId) const
@@ -93,13 +97,89 @@ QString TimelineModel::getAvailableTrackName(QString basename) const
 
 void TimelineModel::setTimeline(const drawdance::Timeline &tl)
 {
+	beginResetModel();
 	m_tracks.clear();
 	int trackCount = tl.trackCount();
 	m_tracks.reserve(trackCount);
 	for(int i = 0; i < trackCount; ++i) {
 		m_tracks.append(trackToModel(tl.trackAt(i)));
 	}
+	endResetModel();
 	emit tracksChanged();
+}
+
+
+QModelIndex
+TimelineModel::index(int row, int column, const QModelIndex &parent) const
+{
+	return parent.isValid() ? QModelIndex() : createIndex(row, column);
+}
+
+QModelIndex TimelineModel::parent(const QModelIndex &child) const
+{
+	Q_UNUSED(child);
+	return QModelIndex();
+}
+
+int TimelineModel::rowCount(const QModelIndex &parent) const
+{
+	return parent.isValid() ? 0 : m_tracks.size();
+}
+
+int TimelineModel::columnCount(const QModelIndex &parent) const
+{
+	return parent.isValid() ? 0 : m_frameCount;
+}
+
+QVariant TimelineModel::data(const QModelIndex &index, int role) const
+{
+	if(index.parent().isValid()) {
+		return QVariant();
+	}
+
+	int row = index.row();
+	if(row < 0 || row >= m_tracks.size()) {
+		return QVariant();
+	}
+
+	int column = index.column();
+	if(column < 0 || column >= m_frameCount) {
+		return QVariant();
+	}
+
+	switch(role) {
+	case TrackIdRole:
+		return m_tracks[row].id;
+	case TrackRole:
+		return QVariant::fromValue(&m_tracks[row]);
+	case KeyFrameRole:
+		for(const TimelineKeyFrame &tkf : m_tracks[row].keyFrames) {
+			if(tkf.frameIndex == column) {
+				return QVariant::fromValue(&tkf);
+			}
+		}
+		return QVariant();
+	default:
+		return QVariant();
+	}
+}
+
+Qt::ItemFlags TimelineModel::flags(const QModelIndex &index) const
+{
+	return QAbstractItemModel::flags(index) | Qt::ItemNeverHasChildren;
+}
+
+void TimelineModel::setFrameCount(int frameCount)
+{
+	if(frameCount < m_frameCount) {
+		beginRemoveColumns(QModelIndex(), frameCount, m_frameCount - 1);
+		m_frameCount = frameCount;
+		endRemoveColumns();
+	} else if(frameCount > m_frameCount) {
+		beginInsertColumns(QModelIndex(), m_frameCount, frameCount - 1);
+		m_frameCount = frameCount;
+		endInsertColumns();
+	}
 }
 
 int TimelineModel::searchAvailableTrackId(

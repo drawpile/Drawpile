@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_CANVAS_TIMELINEMODEL_H
 #define LIBCLIENT_CANVAS_TIMELINEMODEL_H
+#include <QAbstractItemModel>
 #include <QColor>
 #include <QHash>
-#include <QObject>
 #include <QVector>
 
 namespace drawdance {
@@ -45,9 +45,15 @@ struct TimelineTrack final {
 	QVector<TimelineKeyFrame> keyFrames;
 };
 
-class TimelineModel final : public QObject {
+class TimelineModel final : public QAbstractItemModel {
 	Q_OBJECT
 public:
+	enum TimelineModelRole {
+		TrackIdRole = Qt::UserRole + 1,
+		TrackRole,
+		KeyFrameRole,
+	};
+
 	explicit TimelineModel(CanvasModel *canvas);
 
 	void setAclState(AclState *aclState) { m_aclState = aclState; }
@@ -59,15 +65,32 @@ public:
 	int getAvailableTrackId() const;
 	QString getAvailableTrackName(QString basename) const;
 
-public slots:
 	void setTimeline(const drawdance::Timeline &tl);
+
+	QModelIndex index(
+		int row, int column,
+		const QModelIndex &parent = QModelIndex()) const override;
+
+	QModelIndex parent(const QModelIndex &child) const override;
+
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
+	QVariant
+	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 signals:
 	void tracksChanged();
 
 private:
-	static int searchAvailableTrackId(
-		const QSet<int> &takenIds, unsigned int contextId);
+	void setFrameCount(int frameCount);
+
+	const TimelineTrack &getTrackData(const QModelIndex &index) const;
+
+	static int
+	searchAvailableTrackId(const QSet<int> &takenIds, unsigned int contextId);
 
 	static TimelineTrack trackToModel(const drawdance::Track &t);
 
@@ -75,7 +98,8 @@ private:
 	keyFrameToModel(const drawdance::KeyFrame &kf, int frameIndex);
 
 	QVector<TimelineTrack> m_tracks;
-	AclState *m_aclState;
+	AclState *m_aclState = nullptr;
+	int m_frameCount;
 };
 
 }

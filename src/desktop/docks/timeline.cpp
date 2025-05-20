@@ -152,7 +152,7 @@ void Timeline::setUpTitleWidget(
 	connect(
 		m_frameSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		[this](int value) {
-			m_widget->setCurrentFrame(value - 1);
+			m_widget->setCurrentFrameIndex(value - 1);
 		});
 
 	addTitleButton(

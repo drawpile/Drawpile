@@ -17,6 +17,7 @@ extern "C" {
 #include <QDrag>
 #include <QHash>
 #include <QIcon>
+#include <QItemSelectionModel>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -30,14 +31,13 @@ extern "C" {
 
 namespace widgets {
 
-enum class TrackAction { None, ToggleVisible, ToggleOnionSkin };
+namespace {
 
-struct TimelineWidget::Target {
-	int uiTrackIndex;
-	int trackId;
-	int frameIndex;
-	bool onHeader;
-	TrackAction action;
+enum class Action {
+	None,
+	ToggleVisible,
+	ToggleOnionSkin,
+	ToggleMultiSelect,
 };
 
 struct Exposure {
@@ -48,8 +48,26 @@ struct Exposure {
 	bool isValid() const { return start != -1 && length != -1; }
 };
 
+struct SelectionStash {
+	bool valid = false;
+	int currentTrackId = 0;
+	int currentFrameIndex = -1;
+};
+
+}
+
+struct TimelineWidget::Target {
+	int uiTrackIndex;
+	int trackId;
+	int frameIndex;
+	bool onHeader;
+	Action action;
+};
+
 struct TimelineWidget::Private {
 	canvas::CanvasModel *canvas = nullptr;
+	QItemSelectionModel *selectionModel = nullptr;
+	SelectionStash selectionStash;
 
 	bool haveActions = false;
 	Actions actions;
@@ -61,17 +79,18 @@ struct TimelineWidget::Private {
 	QIcon onionSkinOnIcon;
 	QIcon onionSkinOffIcon;
 	QIcon uselessIcon;
+	QIcon multiSelectOnIcon;
+	QIcon multiSelectOffIcon;
 	int headerWidth = 64;
 	int rowHeight = 10;
 	int columnWidth = 10;
 	int xScroll = 0;
 	int yScroll = 0;
-	int currentTrackId = 0;
-	int currentFrame = 0;
 	int nextTrackId = 0;
-	Target hoverTarget = {-1, 0, -1, false, TrackAction::None};
+	Target hoverTarget = {-1, 0, -1, false, Action::None};
 	bool pressedOnHeader = false;
 	bool editable = false;
+	bool multiSelect = false;
 	Drag drag = Drag::None;
 	Drag dragHover = Drag::None;
 	Qt::DropAction dropAction;
@@ -83,6 +102,23 @@ struct TimelineWidget::Private {
 
 	QScrollBar *verticalScroll;
 	QScrollBar *horizontalScroll;
+
+	QModelIndex currentIndex() const
+	{
+		return selectionModel ? selectionModel->currentIndex() : QModelIndex();
+	}
+
+	int currentTrackIndex() const
+	{
+		QModelIndex idx = currentIndex();
+		return idx.isValid() ? idx.row() : -1;
+	}
+
+	int currentFrameIndex() const
+	{
+		QModelIndex idx = currentIndex();
+		return idx.isValid() ? idx.column() : -1;
+	}
 
 	const QVector<canvas::TimelineTrack> &getTracks() const
 	{
@@ -137,10 +173,34 @@ struct TimelineWidget::Private {
 		return i == -1 ? nullptr : &getTracks()[i];
 	}
 
+	const canvas::TimelineTrack *trackByIndex(const QModelIndex &idx) const
+	{
+		if(canvas && idx.isValid()) {
+			return canvas->timeline()
+				->data(idx, canvas::TimelineModel::TrackRole)
+				.value<const canvas::TimelineTrack *>();
+		} else {
+			return nullptr;
+		}
+	}
+
+	int trackIdByIndex(const QModelIndex &idx) const
+	{
+		if(canvas && idx.isValid()) {
+			return canvas->timeline()
+				->data(idx, canvas::TimelineModel::TrackIdRole)
+				.toInt();
+		} else {
+			return 0;
+		}
+	}
+
 	const canvas::TimelineTrack *currentTrack() const
 	{
-		return trackById(currentTrackId);
+		return trackByIndex(currentIndex());
 	}
+
+	int currentTrackId() const { return trackIdByIndex(currentIndex()); }
 
 	const canvas::TimelineTrack *hoverTrack() const
 	{
@@ -164,19 +224,33 @@ struct TimelineWidget::Private {
 		return nullptr;
 	}
 
+	const canvas::TimelineKeyFrame *
+	keyFrameByIndex(const QModelIndex &idx) const
+	{
+		if(canvas && idx.isValid()) {
+			return canvas->timeline()
+				->data(idx, canvas::TimelineModel::KeyFrameRole)
+				.value<const canvas::TimelineKeyFrame *>();
+		} else {
+			return nullptr;
+		}
+	}
+
 	const canvas::TimelineKeyFrame *currentKeyFrame() const
 	{
-		return keyFrameBy(currentTrackId, currentFrame);
+		return keyFrameByIndex(currentIndex());
 	}
 
 	const canvas::TimelineKeyFrame *nextKeyFrame() const
 	{
-		return keyFrameBy(currentTrackId, currentFrame + 1);
+		QModelIndex idx = currentIndex();
+		return keyFrameByIndex(idx.siblingAtColumn(idx.column() + 1));
 	}
 
 	const canvas::TimelineKeyFrame *previousKeyFrame() const
 	{
-		return keyFrameBy(currentTrackId, currentFrame - 1);
+		QModelIndex idx = currentIndex();
+		return keyFrameByIndex(idx.siblingAtColumn(idx.column() - 1));
 	}
 
 	const canvas::TimelineKeyFrame *hoverKeyFrame() const
@@ -193,11 +267,12 @@ struct TimelineWidget::Private {
 
 	const canvas::TimelineKeyFrame *currentVisibleKeyFrame() const
 	{
-		const canvas::TimelineTrack *track = trackById(currentTrackId);
+		const canvas::TimelineTrack *track = currentTrack();
 		if(track) {
 			const QVector<canvas::TimelineKeyFrame> &keyFrames =
 				track->keyFrames;
 			int keyFrameCount = keyFrames.size();
+			int currentFrame = currentFrameIndex();
 			int bestFrameIndex = -1;
 			const canvas::TimelineKeyFrame *bestKeyFrame = nullptr;
 			for(int i = 0; i < keyFrameCount; ++i) {
@@ -215,7 +290,7 @@ struct TimelineWidget::Private {
 
 	Exposure currentExposure()
 	{
-		const canvas::TimelineTrack *track = trackById(currentTrackId);
+		const canvas::TimelineTrack *track = currentTrack();
 		if(!track) {
 			return {-1, -1, false};
 		}
@@ -227,6 +302,7 @@ struct TimelineWidget::Private {
 		}
 
 		int start = 0;
+		int currentFrame = currentFrameIndex();
 		for(int i = 0; i < keyFrameCount; ++i) {
 			int frameIndex = keyFrames[i].frameIndex;
 			if(frameIndex <= currentFrame && frameIndex > start) {
@@ -247,14 +323,13 @@ struct TimelineWidget::Private {
 		}
 
 		int length = lastIndex - start;
-		bool hasFrameAtEnd =
-			keyFrameBy(currentTrackId, invalidIndex - 1) != nullptr;
+		bool hasFrameAtEnd = keyFrameBy(track->id, invalidIndex - 1) != nullptr;
 		return {start, length, hasFrameAtEnd};
 	}
 
 	QVector<int> gatherCurrentExposureFrames(int start)
 	{
-		const canvas::TimelineTrack *track = trackById(currentTrackId);
+		const canvas::TimelineTrack *track = currentTrack();
 		QVector<int> frameIndexes;
 		if(track) {
 			const QVector<canvas::TimelineKeyFrame> &keyFrames =
@@ -293,24 +368,25 @@ struct TimelineWidget::Private {
 
 	bool isLayerVisibleInCurrentTrack(int layerId)
 	{
-		return canvas &&
-			   canvas->paintEngine()
-				   ->viewCanvasState()
-				   .getLayersVisibleInTrackFrame(currentTrackId, currentFrame)
-				   .contains(layerId);
+		return canvas && canvas->paintEngine()
+							 ->viewCanvasState()
+							 .getLayersVisibleInTrackFrame(
+								 currentTrackId(), currentFrameIndex())
+							 .contains(layerId);
 	}
 
 	void setSelectedLayerId(int layerId)
 	{
 		selectedLayerId = layerId;
 		if(isLayerVisibleInCurrentTrack(layerId)) {
-			layerIdByKeyFrame.insert({currentTrackId, currentFrame}, layerId);
+			layerIdByKeyFrame.insert(
+				{currentTrackId(), currentFrameIndex()}, layerId);
 		}
 	}
 
 	int guessLayerIdToSelect()
 	{
-		QPair<int, int> key = {currentTrackId, currentFrame};
+		QPair<int, int> key = {currentTrackId(), currentFrameIndex()};
 		if(isLayerVisibleInCurrentTrack(selectedLayerId)) {
 			layerIdByKeyFrame.insert(key, selectedLayerId);
 			return 0;
@@ -353,6 +429,11 @@ struct TimelineWidget::Private {
 	{
 		return track.onionSkin ? onionSkinOnIcon : onionSkinOffIcon;
 	}
+
+	const QIcon &getMultiSelectIcon()
+	{
+		return multiSelect ? multiSelectOnIcon : multiSelectOffIcon;
+	}
 };
 
 TimelineWidget::TimelineWidget(QWidget *parent)
@@ -367,6 +448,8 @@ TimelineWidget::TimelineWidget(QWidget *parent)
 	d->onionSkinOnIcon = QIcon::fromTheme("onion-on");
 	d->onionSkinOffIcon = QIcon::fromTheme("onion-off");
 	d->uselessIcon = QIcon::fromTheme("edit-delete");
+	d->multiSelectOnIcon = QIcon::fromTheme("timeline-use-zone-on");
+	d->multiSelectOffIcon = QIcon::fromTheme("timeline-use-zone-off");
 	d->verticalScroll = new QScrollBar(Qt::Vertical, this);
 	d->horizontalScroll = new QScrollBar(Qt::Horizontal, this);
 	connect(
@@ -389,12 +472,32 @@ TimelineWidget::~TimelineWidget()
 void TimelineWidget::setCanvas(canvas::CanvasModel *canvas)
 {
 	d->canvas = canvas;
+	canvas::TimelineModel *timeline = canvas->timeline();
+	delete d->selectionModel;
+	d->selectionModel = new QItemSelectionModel(timeline, this);
 	connect(
-		canvas->timeline(), &canvas::TimelineModel::tracksChanged, this,
+		d->selectionModel, &QItemSelectionModel::currentChanged, this,
+		[](const QModelIndex &current, const QModelIndex &previous) {
+			qDebug() << "currentChanged from" << previous << "to" << current;
+		});
+	connect(
+		d->selectionModel, &QItemSelectionModel::selectionChanged, this,
+		[](const QItemSelection &selected, const QItemSelection &deselected) {
+			qDebug() << "selectionChanged selected" << selected << "deselected"
+					 << deselected;
+		});
+	connect(
+		timeline, &canvas::TimelineModel::tracksChanged, this,
 		&TimelineWidget::updateTracks);
 	connect(
 		canvas->metadata(), &canvas::DocumentMetadata::frameCountChanged, this,
 		&TimelineWidget::updateFrameCount);
+	connect(
+		timeline, &canvas::TimelineModel::modelAboutToBeReset, this,
+		&TimelineWidget::stashSelection);
+	connect(
+		timeline, &canvas::TimelineModel::modelReset, this,
+		&TimelineWidget::unstashSelection);
 	updateTracks();
 	updateFrameCount();
 }
@@ -538,14 +641,63 @@ void TimelineWidget::setActions(const Actions &actions)
 	updateActions();
 }
 
-void TimelineWidget::setCurrentFrame(int frame)
+void TimelineWidget::setCurrentFrameIndex(int frame)
 {
-	setCurrent(d->currentTrackId, frame, true, true);
+	int actualFrame = qBound(0, frame, qMax(0, d->frameCount() - 1));
+	if(actualFrame != d->currentFrameIndex()) {
+		const canvas::TimelineKeyFrame *prevKeyFrame =
+			d->currentVisibleKeyFrame();
+
+		QModelIndex idx = d->currentIndex();
+		if(idx.isValid()) {
+			idx = idx.sibling(idx.row(), actualFrame);
+		} else {
+			idx = d->canvas->timeline()->index(0, actualFrame);
+		}
+		d->selectionModel->setCurrentIndex(
+			idx, QItemSelectionModel::SelectCurrent);
+
+		emit frameSelected(actualFrame);
+		if(d->currentVisibleKeyFrame() == prevKeyFrame) {
+			int layerIdToSelect = d->guessLayerIdToSelect();
+			if(layerIdToSelect != 0) {
+				emit layerSelected(layerIdToSelect);
+			}
+		}
+
+		updateActions();
+		update();
+	}
 }
 
-void TimelineWidget::setCurrentTrack(int trackId)
+void TimelineWidget::setCurrentTrackId(int trackId)
 {
-	setCurrent(trackId, d->currentFrame, true, true);
+	setCurrentTrackIndex(d->trackIndexById(trackId));
+}
+
+void TimelineWidget::setCurrentTrackIndex(int trackIndex)
+{
+	if(trackIndex >= 0 && trackIndex < d->trackCount() &&
+	   trackIndex != d->currentTrackIndex()) {
+		QModelIndex idx = d->currentIndex();
+		if(idx.isValid()) {
+			idx = idx.sibling(trackIndex, idx.column());
+		} else {
+			idx = d->canvas->timeline()->index(trackIndex, 0);
+		}
+		d->selectionModel->setCurrentIndex(
+			idx, QItemSelectionModel::SelectCurrent);
+
+		emit trackSelected(d->currentTrackId());
+
+		int layerIdToSelect = d->guessLayerIdToSelect();
+		if(layerIdToSelect != 0) {
+			emit layerSelected(layerIdToSelect);
+		}
+
+		updateActions();
+		update();
+	}
 }
 
 void TimelineWidget::setCurrentLayer(int layerId)
@@ -584,12 +736,12 @@ int TimelineWidget::frameCount() const
 
 int TimelineWidget::currentTrackId() const
 {
-	return d->currentTrackId;
+	return d->currentTrackId();
 }
 
 int TimelineWidget::currentFrame() const
 {
-	return d->currentFrame;
+	return d->currentFrameIndex();
 }
 
 void TimelineWidget::changeFramerate(int framerate)
@@ -648,10 +800,12 @@ bool TimelineWidget::event(QEvent *event)
 									.arg(layerTitle);
 				}
 			}
-		} else if(d->hoverTarget.action == TrackAction::ToggleVisible) {
+		} else if(d->hoverTarget.action == Action::ToggleVisible) {
 			tip = tr("Toggle visibility");
-		} else if(d->hoverTarget.action == TrackAction::ToggleOnionSkin) {
+		} else if(d->hoverTarget.action == Action::ToggleOnionSkin) {
 			tip = tr("Toggle onion skin");
+		} else if(d->hoverTarget.action == Action::ToggleMultiSelect) {
+			tip = tr("Toggle multi-select");
 		}
 		setToolTip(tip);
 	}
@@ -667,8 +821,9 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	const QVector<canvas::TimelineTrack> tracks = d->getTracks();
 	int trackCount = tracks.size();
 	int frameCount = d->frameCount();
-	int currentTrackIndex = d->trackIndexById(d->currentTrackId);
-	int currentFrame = d->currentFrame;
+	int currentTrackId = d->currentTrackId();
+	int currentTrackIndex = d->currentTrackIndex();
+	int currentFrame = d->currentFrameIndex();
 
 	int w = width() - d->verticalScroll->width();
 	int h = height() - d->horizontalScroll->height();
@@ -701,9 +856,9 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	painter.drawRect(bodyRect);
 
 	// Selected row and column.
+	QColor selectedColor = pal.highlight().color();
+	selectedColor.setAlphaF(0.5f);
 	if(trackCount != 0) {
-		QColor selectedColor = pal.highlight().color();
-		selectedColor.setAlphaF(0.5f);
 		painter.setBrush(selectedColor);
 		if(currentFrame != -1) {
 			int x = headerWidth + currentFrame * columnWidth - xScroll;
@@ -731,7 +886,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 
 			int x = headerWidth + frame * columnWidth - xScroll;
 			bool isSelected =
-				currentFrame == frame && d->currentTrackId == track.id;
+				track.id == currentTrackId && frame == currentFrame;
 			QBrush brush;
 			if(keyFrame.color.isValid()) {
 				brush = isSelected ? keyFrame.color.lighter() : keyFrame.color;
@@ -815,7 +970,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	painter.setClipRect(d->frameHeaderRect());
 	for(int i = 0; i < frameCount; ++i) {
 		int x = headerWidth + i * columnWidth - xScroll;
-		bool isSelected = d->currentFrame == i;
+		bool isSelected = currentFrame == i;
 		if(isSelected) {
 			painter.setPen(Qt::NoPen);
 			painter.setBrush(pal.highlight());
@@ -834,7 +989,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	for(int i = 0; i < trackCount; ++i) {
 		int y = rowHeight + i * rowHeight - yScroll;
 		const canvas::TimelineTrack &track = tracks[trackCount - i - 1];
-		bool isSelected = track.id == d->currentTrackId;
+		bool isSelected = track.id == currentTrackId;
 		if(isSelected) {
 			painter.setPen(Qt::NoPen);
 			painter.setBrush(pal.highlight());
@@ -865,11 +1020,40 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		painter.setPen(outlineColor);
 		painter.drawLine(0, y + rowHeight, headerWidth, y + rowHeight);
 	}
-	painter.setOpacity(1.0);
-	painter.setClipRect(QRect{}, Qt::NoClip);
+	painter.setClipRect(QRect(), Qt::NoClip);
+
+	// Multiselect button.
+	int multiSelectX = TRACK_PADDING;
+	int multiSelectY = (rowHeight - ICON_SIZE) / 2;
+	if(d->multiSelect) {
+		painter.setOpacity(1.0);
+		d->multiSelectOnIcon.paint(
+			&painter, multiSelectX, multiSelectY, ICON_SIZE, ICON_SIZE);
+	} else {
+		painter.setOpacity(0.3);
+		d->multiSelectOffIcon.paint(
+			&painter, multiSelectX, multiSelectY, ICON_SIZE, ICON_SIZE);
+		painter.setOpacity(1.0);
+	}
+
+	// Selection indicator
+	painter.setPen(highlightedTextColor);
+	painter.setBrush(selectedColor);
+	for(const QModelIndex &idx : d->selectionModel->selectedIndexes()) {
+		int trackIndex = idx.row();
+		int frameIndex = idx.column();
+		if(trackIndex >= 0 && trackIndex < trackCount && frameIndex >= 0 &&
+		   frameIndex < frameCount) {
+			int x = headerWidth + frameIndex * columnWidth - xScroll;
+			int y =
+				rowHeight + (trackCount - trackIndex - 1) * rowHeight - yScroll;
+			painter.drawRect(x, y, columnWidth, rowHeight);
+		}
+	}
 
 	if(d->dragHover == Drag::Track) {
 		painter.setPen(textColor);
+		painter.setBrush(Qt::NoBrush);
 		int y = d->trackDropIndex(d->dragPos.y()) * rowHeight + rowHeight -
 				d->yScroll;
 		painter.drawLine(0, y, headerWidth, y);
@@ -878,6 +1062,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		QBrush brush = pal.highlightedText();
 		brush.setStyle(Qt::Dense5Pattern);
 		painter.setBrush(brush);
+		painter.setPen(Qt::NoPen);
 		int x = headerWidth + target.frameIndex * columnWidth - xScroll;
 		int y = rowHeight + target.uiTrackIndex * rowHeight - yScroll;
 		painter.drawRect(x, y, columnWidth, rowHeight);
@@ -972,7 +1157,7 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 
 			mimeData = new QMimeData;
 			mimeData->setProperty("dragType", int(Drag::KeyFrame));
-			mimeData->setProperty("trackId", d->currentTrackId);
+			mimeData->setProperty("trackId", d->currentTrackId());
 			mimeData->setProperty("frameIndex", keyFrame->frameIndex);
 		} else {
 			qWarning("Unknown drag type %d", int(dragType));
@@ -991,7 +1176,7 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 		drag->exec(d->dropAction); // Qt takes ownership of the QDrag.
 #endif
 	} else if(d->pressedOnHeader && target.frameIndex != -1) {
-		setCurrent(0, target.frameIndex, true, true);
+		setCurrentFrameIndex(target.frameIndex);
 	}
 }
 
@@ -1005,7 +1190,7 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 	Qt::DropAction dropAction = Qt::MoveAction;
 	if(button == Qt::LeftButton) {
 		d->pressedOnHeader = target.onHeader;
-		if(target.action != TrackAction::None) {
+		if(target.action != Action::None) {
 			executeTargetAction(target);
 			event->accept();
 		} else if(target.trackId != 0 && target.frameIndex == -1) {
@@ -1039,7 +1224,7 @@ void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 	applyMouseTarget(event, target, true);
 
 	if(event->button() == Qt::LeftButton) {
-		if(target.action != TrackAction::None) {
+		if(target.action != Action::None) {
 			executeTargetAction(target);
 		} else if(target.frameIndex == -1 && target.trackId != 0) {
 			retitleTrack();
@@ -1241,8 +1426,8 @@ void TimelineWidget::pasteKeyFrame()
 		return;
 	}
 
-	int trackId = d->currentTrackId;
-	int frame = d->currentFrame;
+	int trackId = d->currentTrackId();
+	int frame = d->currentFrameIndex();
 	if(trackId == 0 || frame == -1) {
 		return;
 	}
@@ -1288,8 +1473,8 @@ void TimelineWidget::setKeyFrameColor(QAction *action)
 	QColor color = action->property("markercolor").value<QColor>();
 	if(color != keyFrame->color) {
 		setKeyFrameProperties(
-			d->currentTrackId, keyFrame->frameIndex, keyFrame->titleWithColor(),
-			keyFrame->layerVisibility,
+			d->currentTrackId(), keyFrame->frameIndex,
+			keyFrame->titleWithColor(), keyFrame->layerVisibility,
 			canvas::TimelineKeyFrame::makeTitleWithColor(
 				keyFrame->title, color),
 			keyFrame->layerVisibility);
@@ -1307,8 +1492,8 @@ void TimelineWidget::showKeyFrameProperties()
 		return;
 	}
 
-	int trackId = d->currentTrackId;
-	int frame = d->currentFrame;
+	int trackId = d->currentTrackId();
+	int frame = d->currentFrameIndex();
 	dialogs::KeyFramePropertiesDialog *dlg = nullptr;
 	for(QObject *child : children()) {
 		dialogs::KeyFramePropertiesDialog *c =
@@ -1365,7 +1550,7 @@ void TimelineWidget::deleteKeyFrame()
 	if(keyFrame) {
 		emitCommand([&](uint8_t contextId) {
 			return net::makeKeyFrameDeleteMessage(
-				contextId, d->currentTrackId, keyFrame->frameIndex, 0, 0);
+				contextId, d->currentTrackId(), keyFrame->frameIndex, 0, 0);
 		});
 	}
 }
@@ -1404,15 +1589,17 @@ void TimelineWidget::addTrack()
 
 void TimelineWidget::toggleTrackVisible(bool visible)
 {
-	if(d->currentTrackId != 0) {
-		emit trackHidden(d->currentTrackId, !visible);
+	int trackId = currentTrackId();
+	if(trackId != 0) {
+		emit trackHidden(trackId, !visible);
 	}
 }
 
 void TimelineWidget::toggleTrackOnionSkin(bool onionSkin)
 {
-	if(d->currentTrackId != 0) {
-		emit trackOnionSkinEnabled(d->currentTrackId, onionSkin);
+	int trackId = currentTrackId();
+	if(trackId != 0) {
+		emit trackOnionSkinEnabled(trackId, onionSkin);
 	}
 }
 
@@ -1457,11 +1644,14 @@ void TimelineWidget::retitleTrack()
 		this, tr("Rename Track"), tr("Track Name"), source->title,
 		[this](const QString &text) {
 			QString title = text.trimmed();
-			if(!title.isEmpty() && d->currentTrack()) {
-				emitCommand([&](uint8_t contextId) {
-					return net::makeTrackRetitleMessage(
-						contextId, d->currentTrackId, title);
-				});
+			if(!title.isEmpty()) {
+				int trackId = currentTrackId();
+				if(trackId != 0) {
+					emitCommand([&](uint8_t contextId) {
+						return net::makeTrackRetitleMessage(
+							contextId, trackId, title);
+					});
+				}
 			}
 		});
 }
@@ -1509,33 +1699,34 @@ void TimelineWidget::setFramerate()
 
 void TimelineWidget::nextFrame()
 {
-	int targetFrame = d->currentFrame + 1;
-	setCurrentFrame(targetFrame < d->frameCount() ? targetFrame : 0);
+	int targetFrame = currentFrame() + 1;
+	setCurrentFrameIndex(targetFrame < d->frameCount() ? targetFrame : 0);
 }
 
 void TimelineWidget::prevFrame()
 {
-	int targetFrame = d->currentFrame - 1;
-	setCurrentFrame(targetFrame >= 0 ? targetFrame : d->frameCount() - 1);
+	int targetFrame = currentFrame() - 1;
+	setCurrentFrameIndex(targetFrame >= 0 ? targetFrame : d->frameCount() - 1);
 }
 
 void TimelineWidget::nextKeyFrame()
 {
-	const canvas::TimelineTrack *track = d->trackById(d->currentTrackId);
+	const canvas::TimelineTrack *track = d->currentTrack();
 	if(track) {
 		const QVector<canvas::TimelineKeyFrame> &keyFrames = track->keyFrames;
 		int keyFrameCount = keyFrames.size();
 		if(keyFrameCount != 0) {
+			int currentFrame = d->currentFrameIndex();
 			int bestFrameIndex = -1;
 			for(int i = 0; i < keyFrameCount; ++i) {
 				const canvas::TimelineKeyFrame &keyFrame = keyFrames[i];
 				int f = keyFrame.frameIndex;
-				if(f > d->currentFrame &&
+				if(f > currentFrame &&
 				   (bestFrameIndex == -1 || f < bestFrameIndex)) {
 					bestFrameIndex = f;
 				}
 			}
-			setCurrentFrame(
+			setCurrentFrameIndex(
 				bestFrameIndex == -1 ? keyFrames[0].frameIndex
 									 : bestFrameIndex);
 		}
@@ -1544,20 +1735,21 @@ void TimelineWidget::nextKeyFrame()
 
 void TimelineWidget::prevKeyFrame()
 {
-	const canvas::TimelineTrack *track = d->trackById(d->currentTrackId);
+	const canvas::TimelineTrack *track = d->currentTrack();
 	if(track) {
 		const QVector<canvas::TimelineKeyFrame> &keyFrames = track->keyFrames;
+		int currentFrame = d->currentFrameIndex();
 		int keyFrameCount = keyFrames.size();
 		if(keyFrameCount != 0) {
 			int bestFrameIndex = -1;
 			for(int i = 0; i < keyFrameCount; ++i) {
 				const canvas::TimelineKeyFrame &keyFrame = keyFrames[i];
 				int f = keyFrame.frameIndex;
-				if(f < d->currentFrame && f > bestFrameIndex) {
+				if(f < currentFrame && f > bestFrameIndex) {
 					bestFrameIndex = f;
 				}
 			}
-			setCurrentFrame(
+			setCurrentFrameIndex(
 				bestFrameIndex == -1 ? keyFrames[keyFrameCount - 1].frameIndex
 									 : bestFrameIndex);
 		}
@@ -1566,16 +1758,14 @@ void TimelineWidget::prevKeyFrame()
 
 void TimelineWidget::trackAbove()
 {
-	int targetTrack = d->trackIndexById(d->currentTrackId) + 1;
-	setCurrentTrack(
-		d->trackIdByIndex(targetTrack < d->trackCount() ? targetTrack : 0));
+	int targetTrack = d->currentTrackIndex() + 1;
+	setCurrentTrackIndex(targetTrack < d->trackCount() ? targetTrack : 0);
 }
 
 void TimelineWidget::trackBelow()
 {
-	int targetTrack = d->trackIndexById(d->currentTrackId) - 1;
-	setCurrentTrack(d->trackIdByIndex(
-		targetTrack >= 0 ? targetTrack : d->trackCount() - 1));
+	int targetTrack = d->currentTrackIndex() - 1;
+	setCurrentTrackIndex(targetTrack >= 0 ? targetTrack : d->trackCount() - 1);
 }
 
 void TimelineWidget::updateTracks()
@@ -1595,6 +1785,7 @@ void TimelineWidget::updateTracks()
 	int nextTrackId = 0;
 	int currentTrackId = 0;
 	int anyTrackId = 0;
+	int prevCurrentTrackId = d->currentTrackId();
 	for(const canvas::TimelineTrack &track : d->getTracks()) {
 		int trackAdvance = fm.horizontalAdvance(track.title);
 		if(trackAdvance > maxTrackAdvance) {
@@ -1605,8 +1796,8 @@ void TimelineWidget::updateTracks()
 			nextTrackId = d->nextTrackId;
 			d->nextTrackId = 0;
 		}
-		if(d->currentTrackId == track.id) {
-			currentTrackId = d->currentTrackId;
+		if(prevCurrentTrackId == track.id) {
+			currentTrackId = prevCurrentTrackId;
 		}
 		if(anyTrackId == 0) {
 			anyTrackId = track.id;
@@ -1618,7 +1809,8 @@ void TimelineWidget::updateTracks()
 												 : anyTrackId;
 	setMinimumHeight(
 		d->rowHeight * 3 + d->horizontalScroll->sizeHint().height());
-	setCurrent(effectiveTrackId, d->currentFrame, false, false);
+	setCurrent(
+		effectiveTrackId, d->currentFrameIndex(), false, SelectAction::Refresh);
 	updateActions();
 	updateScrollbars();
 	update();
@@ -1626,7 +1818,9 @@ void TimelineWidget::updateTracks()
 
 void TimelineWidget::updateFrameCount()
 {
-	setCurrent(d->currentTrackId, d->currentFrame, false, false);
+	setCurrent(
+		d->currentTrackId(), d->currentFrameIndex(), false,
+		SelectAction::Refresh);
 	updateActions();
 	updateScrollbars();
 	update();
@@ -1650,43 +1844,85 @@ void TimelineWidget::updatePasteAction()
 		const QMimeData *mimeData = QApplication::clipboard()->mimeData();
 		d->actions.keyFramePaste->setEnabled(
 			d->editable && d->frameCount() > 0 && d->currentTrack() &&
-			d->currentFrame != -1 && mimeData &&
+			d->currentFrameIndex() != -1 && mimeData &&
 			mimeData->hasFormat(KEY_FRAME_MIME_TYPE));
 	}
 }
 
 void TimelineWidget::setCurrent(
-	int trackId, int frame, bool triggerUpdate, bool selectLayer)
+	int trackId, int frame, bool selectLayer, SelectAction sa)
 {
-	bool needsUpdate = false;
-
-	if(d->trackIndexById(trackId) != -1) {
-		d->currentTrackId = trackId;
-		emit trackSelected(trackId);
-		needsUpdate = true;
-	}
-
+	int trackIndex = d->trackIndexById(trackId);
 	int actualFrame = qBound(0, frame, qMax(0, d->frameCount() - 1));
-	if(actualFrame != d->currentFrame) {
-		const canvas::TimelineKeyFrame *prevKeyFrame =
-			d->currentVisibleKeyFrame();
-		d->currentFrame = actualFrame;
-		emit frameSelected(frame);
-		needsUpdate = true;
-		if(d->currentVisibleKeyFrame() == prevKeyFrame) {
-			selectLayer = false;
-		}
+	bool updateTrack = trackIndex >= 0 && trackIndex < d->trackCount();
+	bool updateFrame = actualFrame != d->currentFrameIndex();
+
+	QModelIndex idx = d->currentIndex();
+	if(idx.isValid()) {
+		idx = idx.sibling(
+			updateTrack ? trackIndex : idx.row(),
+			updateFrame ? actualFrame : idx.column());
+	} else {
+		idx = d->canvas->timeline()->index(
+			updateTrack ? trackIndex : 0, updateFrame ? actualFrame : 0);
 	}
 
-	if(needsUpdate && triggerUpdate) {
+	bool toggled = false;
+	if(sa == SelectAction::Toggle) {
+		toggled = true;
+		d->selectionModel->select(idx, QItemSelectionModel::Toggle);
+	}
+
+	if(updateTrack || updateFrame) {
+		const canvas::TimelineKeyFrame *prevKeyFrame =
+			updateFrame ? d->currentVisibleKeyFrame() : nullptr;
+		d->selectionModel->setCurrentIndex(
+			idx, sa == SelectAction::Toggle
+					 ? QItemSelectionModel::NoUpdate
+					 : (QItemSelectionModel::SelectCurrent |
+						QItemSelectionModel::Clear));
+
+		if(updateTrack) {
+			emit trackSelected(trackId);
+		}
+
+		if(updateFrame) {
+			emit frameSelected(actualFrame);
+			if(selectLayer && d->currentVisibleKeyFrame() == prevKeyFrame) {
+				selectLayer = false;
+			}
+		}
+
 		if(selectLayer) {
 			int layerIdToSelect = d->guessLayerIdToSelect();
 			if(layerIdToSelect != 0) {
 				emit layerSelected(layerIdToSelect);
 			}
 		}
+	}
+
+	if(toggled || updateTrack || updateFrame) {
 		updateActions();
 		update();
+	}
+}
+
+void TimelineWidget::stashSelection()
+{
+	SelectionStash &ss = d->selectionStash;
+	ss.valid = true;
+	ss.currentTrackId = d->currentTrackId();
+	ss.currentFrameIndex = d->currentFrameIndex();
+}
+
+void TimelineWidget::unstashSelection()
+{
+	SelectionStash &ss = d->selectionStash;
+	if(ss.valid) {
+		ss.valid = false;
+		setCurrent(
+			ss.currentTrackId, ss.currentFrameIndex, false,
+			SelectAction::Refresh);
 	}
 }
 
@@ -1694,7 +1930,7 @@ void TimelineWidget::setKeyFrame(int layerId)
 {
 	emitCommand([&](uint8_t contextId) {
 		return net::makeKeyFrameSetMessage(
-			contextId, d->currentTrackId, d->currentFrame, layerId, 0,
+			contextId, d->currentTrackId(), d->currentFrameIndex(), layerId, 0,
 			DP_MSG_KEY_FRAME_SET_SOURCE_LAYER);
 	});
 }
@@ -1768,10 +2004,10 @@ void TimelineWidget::changeFrameExposure(int direction)
 	QVector<net::Message> messages;
 	messages.reserve(frameIndexes.size() + 1);
 	messages.append(net::makeUndoPointMessage(contextId));
+	int trackId = d->currentTrackId();
 	for(int frameIndex : frameIndexes) {
 		messages.append(net::makeKeyFrameDeleteMessage(
-			contextId, d->currentTrackId, frameIndex, d->currentTrackId,
-			frameIndex + direction));
+			contextId, trackId, frameIndex, trackId, frameIndex + direction));
 	}
 	emit timelineEditCommands(messages.size(), messages.constData());
 }
@@ -1802,9 +2038,10 @@ void TimelineWidget::updateActions()
 	d->actions.frameNext->setEnabled(haveMultipleFrames);
 	d->actions.framePrev->setEnabled(haveMultipleFrames);
 	int keyFrameCount = track ? track->keyFrames.size() : 0;
+	int currentFrame = d->currentFrameIndex();
 	bool trackHasAnyKeyFrames = keyFrameCount != 0;
 	bool isOnOnlyKeyFrame =
-		keyFrameCount == 1 && track->keyFrames[0].frameIndex == d->currentFrame;
+		keyFrameCount == 1 && track->keyFrames[0].frameIndex == currentFrame;
 	bool nextPrevKeyFrame =
 		haveMultipleFrames && trackHasAnyKeyFrames && !isOnOnlyKeyFrame;
 	d->actions.keyFrameNext->setEnabled(nextPrevKeyFrame);
@@ -1852,13 +2089,13 @@ void TimelineWidget::updateActions()
 	d->actions.keyFrameCreateGroup->setEnabled(keyFrameCreatable);
 
 	bool nextKeyFrameCreatable = keyFrameSettable &&
-								 d->currentFrame < d->frameCount() - 1 &&
+								 currentFrame < d->frameCount() - 1 &&
 								 !d->nextKeyFrame();
 	d->actions.keyFrameCreateLayerNext->setEnabled(nextKeyFrameCreatable);
 	d->actions.keyFrameCreateGroupNext->setEnabled(nextKeyFrameCreatable);
 
 	bool prevKeyFrameCreatable =
-		keyFrameSettable && d->currentFrame > 0 && !d->previousKeyFrame();
+		keyFrameSettable && currentFrame > 0 && !d->previousKeyFrame();
 	d->actions.keyFrameCreateLayerPrev->setEnabled(prevKeyFrameCreatable);
 	d->actions.keyFrameCreateGroupPrev->setEnabled(prevKeyFrameCreatable);
 
@@ -1913,7 +2150,7 @@ void TimelineWidget::updateScrollbars()
 
 TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 {
-	Target target{-1, 0, -1, false, TrackAction::None};
+	Target target{-1, 0, -1, false, Action::None};
 	if(d->canvas) {
 		int x = pos.x();
 		int headerWidth = d->headerWidth;
@@ -1933,12 +2170,17 @@ TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 			int tph = TRACK_PADDING / 2;
 			int mid = tph + ICON_SIZE + tp;
 			if(x >= tph && x < mid) {
-				target.action = TrackAction::ToggleVisible;
+				target.action = Action::ToggleVisible;
 			} else if(x >= mid && x < tp * 3 + ICON_SIZE * 2) {
-				target.action = TrackAction::ToggleOnionSkin;
+				target.action = Action::ToggleOnionSkin;
 			}
 		} else {
 			target.onHeader = true;
+			int tp = TRACK_PADDING;
+			int tph = TRACK_PADDING / 2;
+			if(x >= tph && x < tph + ICON_SIZE + tp) {
+				target.action = Action::ToggleMultiSelect;
+			}
 		}
 	}
 	return target;
@@ -1947,31 +2189,52 @@ TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 void TimelineWidget::applyMouseTarget(
 	QMouseEvent *event, const Target &target, bool press)
 {
-	bool action = press && target.action != TrackAction::None;
+	bool action = press && target.action != Action::None;
 	if(event && ((target.trackId != 0 && target.frameIndex != -1) || action)) {
 		event->accept();
 	}
 
 	bool right = event && event->button() == Qt::RightButton;
 	if(!action || right) {
-		int trackId = target.trackId == 0 ? d->currentTrackId : target.trackId;
-		int frame =
-			target.frameIndex == -1 ? d->currentFrame : target.frameIndex;
-		setCurrent(trackId, frame, true, event && !right);
+		int trackId =
+			target.trackId == 0 ? d->currentTrackId() : target.trackId;
+		int frame = target.frameIndex == -1 ? d->currentFrameIndex()
+											: target.frameIndex;
+		setCurrent(
+			trackId, frame, event && !right, getApplyMouseTargetAction(event));
 	}
+}
+
+TimelineWidget::SelectAction
+TimelineWidget::getApplyMouseTargetAction(const QMouseEvent *event) const
+{
+	if(event) {
+		Qt::KeyboardModifiers modifiers = event->modifiers();
+		if(modifiers.testFlag(Qt::ShiftModifier)) {
+			return SelectAction::Range;
+		} else if(modifiers.testFlag(Qt::ControlModifier)) {
+			return SelectAction::Toggle;
+		}
+	}
+	return SelectAction::Set;
 }
 
 void TimelineWidget::executeTargetAction(const Target &target)
 {
 	const canvas::TimelineTrack *track = d->trackById(target.trackId);
-	if(track) {
-		if(target.action == TrackAction::ToggleVisible) {
+	if(target.action == Action::ToggleVisible) {
+		if(track) {
 			emit trackHidden(track->id, !track->hidden);
-		} else if(target.action == TrackAction::ToggleOnionSkin) {
-			emit trackOnionSkinEnabled(track->id, !track->onionSkin);
-		} else {
-			qWarning("Unknown track action %d", int(target.action));
 		}
+	} else if(target.action == Action::ToggleOnionSkin) {
+		if(track) {
+			emit trackOnionSkinEnabled(track->id, !track->onionSkin);
+		}
+	} else if(target.action == Action::ToggleMultiSelect) {
+		d->multiSelect = !d->multiSelect;
+		update();
+	} else {
+		qWarning("Unknown track action %d", int(target.action));
 	}
 }
 
