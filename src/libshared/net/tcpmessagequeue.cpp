@@ -187,9 +187,16 @@ void TcpMessageQueue::readData()
 		// All whole messages extracted from the work buffer.
 		// There can still be more bytes in the socket buffer.
 		totalread += read;
+
+		// Only read up to 1000 or 10 MiB worth of messages in one go to not
+		// delay other processes too much.
+		if(gotmessages >= 1000 || totalread >= 10 * 1024 * 1024) {
+			QTimer::singleShot(0, this, &TcpMessageQueue::readData);
+			break;
+		}
 	} while(read > 0);
 
-	if(totalread) {
+	if(totalread != 0) {
 		resetLastRecvTimer();
 		emit bytesReceived(totalread);
 	}
