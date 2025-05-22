@@ -1013,12 +1013,12 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+81"/>
         <source>No tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin tinte</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Tinte Azul</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1057,7 +1057,7 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Los muelles de Drawpile se pueden organizar libremente. Puedes usar Ver &gt; Docks&gt; Organizar Docks para arrastrarlos con mayor facilidad. Asegúrate de que la disposición se ajuste a tu resolución; de lo contrario, algunos controles podrían quedar fuera de la pantalla.</translation>
     </message>
 </context>
 <context>
@@ -1276,46 +1276,46 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+92"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>desconectarte de la sesión</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>lose any unsaved changes</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>perder cualquier cambio no guardado</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>stop your recording</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>detener tu grabación</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>discard your playback</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>descartar tu reproducción</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+15"/>
         <source>Doing so will %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Al hacerlo, %1.</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Doing so will %1 and %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Al hacerlo, %1 y %2.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Doing so will %1, %2 and %3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Al hacerlo, %1, %2 y %3.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Al hacerlo, se ejecutarán %1, %2, %3 y %4.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1342,12 +1342,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="-2081"/>
         <location line="+3793"/>
         <source>Export Again</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar de nuevo</translation>
     </message>
     <message>
         <location line="-3789"/>
         <source>Export Again to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar de nuevo al %1</translation>
     </message>
     <message>
         <location line="+439"/>
@@ -1441,17 +1441,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estás a punto de crear un nuevo lienzo y cerrar este lienzo.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Open Recent File</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir Archivo Reciente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recent file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estas a punto de abrir un Archivo Reciente y cerrar este lienzo.</translation>
     </message>
     <message>
         <location line="-1152"/>
@@ -1461,7 +1461,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a new file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estas por abrir un nuevo lienzo y cerrar este lienzo.</translation>
     </message>
     <message>
         <location line="+1438"/>
@@ -1527,7 +1527,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estás a punto de volver a conectarte a la sesión y cerrar este lienzo.</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -1578,7 +1578,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to connect to a new session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estás a punto de conectarte a una nueva sesión y cerrar este lienzo.</translation>
     </message>
     <message>
         <location line="+141"/>
@@ -1599,7 +1599,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+559"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo cargar la imagen: %1.</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1619,7 +1619,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+12"/>
         <source>Cause Crash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Causa del Crasheo</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1759,7 +1759,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+9"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar desde la pantalla</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1805,27 +1805,27 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+176"/>
         <source>&amp;Fit Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ajustar Lienzo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fit Canvas &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustar Lienzo &amp; Ancho</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fit Canvas &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustar Lienzo &amp; Altura</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Restaurar rotación del Lienzo</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotar lienzo en dirección opuesta a las agujas del reloj</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1835,12 +1835,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflejar el Lienzo Horizontalmente</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflejar/Voltear el Lienzo Horizontalmente</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1850,12 +1850,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Flip the canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Dar la Vuelta al Lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflejar/Voltear el Lienzo Verticalmente</translation>
     </message>
     <message>
         <location line="+139"/>
@@ -1865,12 +1865,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+0"/>
         <source>Show only the current parent layer group</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar solo el grupo principal de capas actual</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Stay Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiempo de estancia</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1905,22 +1905,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+57"/>
         <source>Clear Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar fuente de relleno</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Toggle Layer Check State</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Alternar estado de comprobación de capa</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Marcar todo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Uncheck All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;desmarcar todo</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2035,7 +2035,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+88"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuevo Grupo de Capas</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2045,83 +2045,83 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+55"/>
         <source>&amp;Invert Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Invertir Selección</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select Layer &amp;Bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar capa &amp; límites</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Layer to Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Capa a selección</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Expand/Shrink/Feather Selection</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Expandir/Encoger/Difuminar Selección</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>&amp;Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Transformar</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Transform the selection, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar la selección y volver a cambiar de herramienta después</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Transform Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar selección &amp;máscara</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar únicamente la máscara de selección en sí, luego volver a cambiar las herramientas</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Mirror Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Transformación de espejo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflejar la imagen transformada horizontalmente</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>reflejar/voltear la imagen transformada horizontalmente</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Flip Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Voltear Transformación</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the transformed image upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Darle la vuelta a la imagen transformada</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>mirror/flip transformed image vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>reflejar/voltear la imagen transformada verticalmente</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Rotate Transform Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rotar e sentido de las agujas de reloj</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotate Transform &amp;Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotar Transformar &amp;En Contra las agujas del reloj</translation>
     </message>
     <message>
         <location line="+4"/>
