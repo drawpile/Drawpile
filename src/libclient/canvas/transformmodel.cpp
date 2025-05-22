@@ -289,8 +289,8 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 					contextId, canvas::CanvasModel::MAIN_SELECTION_ID);
 				msgs.append(net::makeMoveRectMessageCompat(
 					contextId, selectionId, selectionId, srcX, srcY,
-					dstTopLeftX, dstTopLeftY, srcW, srcH, 255,
-					uint8_t(DP_BLEND_MODE_NORMAL), QImage(),
+					dstTopLeftX, dstTopLeftY, srcW, srcH,
+					uint8_t(DP_BLEND_MODE_NORMAL), 255, QImage(),
 					compatibilityMode));
 			}
 			if(moveContents) {
