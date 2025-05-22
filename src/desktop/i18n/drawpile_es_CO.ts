@@ -10127,7 +10127,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Confiable</translation>
     </message>
 </context>
 <context>
