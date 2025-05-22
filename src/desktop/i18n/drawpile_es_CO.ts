@@ -1023,7 +1023,7 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+13"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar…</translation>
     </message>
     <message>
         <location line="-190"/>
@@ -1065,22 +1065,22 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location filename="../utils/widgetutils.cpp" line="+1129"/>
         <source>Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir enlace</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Este enlace no está un parte de Drawpile o la gente que hacen Drawpile. ¿Estás seguro que quieres navegar a &quot;%1&quot;?</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Yes, visit website</source>
-        <translation type="unfinished"></translation>
+        <translation>Sí, visitar sitio web</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>No, cancelar</translation>
     </message>
 </context>
 <context>
@@ -1320,17 +1320,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+14"/>
         <source>Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Estás seguro que quieres continuar?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Sí, continuar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>No, cancelar</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -1502,7 +1502,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-1938"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
-        <translation type="unfinished"></translation>
+        <translation>¡Ya estás conectada a un sesión! Desconéctate para ser anfitrión de una sesión.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1593,7 +1593,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+135"/>
         <source>Session blocked by parental controls</source>
-        <translation>Sesion bloqueada por controles parentales</translation>
+        <translation>Sesión bloqueada por controles parentales</translation>
     </message>
     <message>
         <location line="+559"/>
@@ -1644,7 +1644,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+26"/>
         <source>Show Icons on Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar iconos en barras de herramienta</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1830,7 +1830,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflejar Lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2136,7 +2136,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+48"/>
         <source>Selectio&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>Selección</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -2280,7 +2280,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+38"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Descarga completa</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3297,7 +3297,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+73"/>
         <source>&amp;Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Seleccionar</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3840,7 +3840,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+46"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Permitir usadores de web</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4578,7 +4578,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+4"/>
         <source>Import the layers of an ORA or PSD file as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importar las capas de un archivo ORA o PSD como fotogramas de la línea de tiempo.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4790,7 +4790,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="-6"/>
         <source>Couldn&apos;t read image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>No podía leer imagen: %1</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4843,7 +4843,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+70"/>
         <source>Change…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar…</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4853,7 +4853,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+17"/>
         <source>Choose File…</source>
-        <translation type="unfinished"></translation>
+        <translation>Escoger archivo…</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6593,7 +6593,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Girar lienzo libremente</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6710,12 +6710,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+426"/>
         <source>Create Invite Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear código de invitar</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Uses:</source>
-        <translation type="unfinished"></translation>
+        <translation>Usos:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6735,7 +6735,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Role:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rol:</translation>
     </message>
 </context>
 <context>
@@ -10107,7 +10107,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/roles.cpp" line="+36"/>
         <source>Define a password to let anyone become operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Definir una contraseña; cualquier persona pueden usar eso para convertirse a un operador</translation>
     </message>
     <message>
         <location line="+1"/>
