@@ -10544,12 +10544,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Export palette</source>
-        <translation>Exporta la paleta…</translation>
+        <translation>Exporta la paleta</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>GIMP palette (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta de GIMP (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -10564,7 +10564,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-58"/>
         <source>Delete palette &quot;%1&quot;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina la paleta &quot;%1&quot;?</translation>
     </message>
 </context>
 <context>
