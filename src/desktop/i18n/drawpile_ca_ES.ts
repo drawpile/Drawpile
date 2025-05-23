@@ -4262,7 +4262,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.cpp" line="+181"/>
         <location line="+15"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Nova paleta</translation>
     </message>
     <message>
         <location line="-14"/>
