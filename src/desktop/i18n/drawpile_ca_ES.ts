@@ -1640,7 +1640,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     <message>
         <location line="+39"/>
         <source>Become Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Convertir-se en operator...</translation>
     </message>
     <message>
         <location line="+0"/>
