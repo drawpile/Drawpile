@@ -43,6 +43,9 @@ struct TimelineTrack final {
 	bool hidden;
 	bool onionSkin;
 	QVector<TimelineKeyFrame> keyFrames;
+	QHash<int, int> keyFrameIndexesByFrameIndex;
+
+	const TimelineKeyFrame *searchKeyFrameByFrameIndex(int frameIndex) const;
 };
 
 class TimelineModel final : public QAbstractItemModel {
@@ -52,6 +55,7 @@ public:
 		TrackIdRole = Qt::UserRole + 1,
 		TrackRole,
 		KeyFrameRole,
+		IsKeyFrameRole,
 	};
 
 	explicit TimelineModel(CanvasModel *canvas);
@@ -79,10 +83,7 @@ public:
 	QVariant
 	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
-
-signals:
-	void tracksChanged();
+	Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 private:
 	void setFrameCount(int frameCount);

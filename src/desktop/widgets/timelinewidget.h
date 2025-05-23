@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef TIMELINEWIDGET_H
-#define TIMELINEWIDGET_H
+#ifndef DESKTOP_WIDGETS_TIMELINEWIDGET_H
+#define DESKTOP_WIDGETS_TIMELINEWIDGET_H
 #include <QColor>
-#include <QWidget>
+#include <QTableView>
 #include <functional>
 
 class QAction;
@@ -18,7 +18,7 @@ class Message;
 
 namespace widgets {
 
-class TimelineWidget final : public QWidget {
+class TimelineWidget final : public QTableView {
 	Q_OBJECT
 public:
 	struct Actions {
@@ -62,6 +62,7 @@ public:
 	explicit TimelineWidget(QWidget *parent = nullptr);
 	~TimelineWidget() override;
 
+	canvas::CanvasModel *canvas() const;
 	void setCanvas(canvas::CanvasModel *canvas);
 
 	void setActions(const Actions &actions);
@@ -74,13 +75,10 @@ public:
 	void updateControlsEnabled(bool access, bool locked);
 	void updateKeyFrameColorMenuIcon();
 
-	canvas::CanvasModel *canvas() const;
-
 	int frameCount() const;
 	int currentTrackId() const;
 	int currentFrame() const;
 
-public slots:
 	void changeFramerate(int framerate);
 	void changeFrameCount(int frameCount);
 
@@ -92,86 +90,14 @@ signals:
 	void trackHidden(int trackId, bool hidden);
 	void trackOnionSkinEnabled(int trackId, bool onionSkin);
 
-protected:
-	bool event(QEvent *event) override;
-	void paintEvent(QPaintEvent *) override;
-	void resizeEvent(QResizeEvent *event) override;
-	void keyPressEvent(QKeyEvent *event) override;
-	void mouseMoveEvent(QMouseEvent *event) override;
-	void mousePressEvent(QMouseEvent *event) override;
-	void mouseDoubleClickEvent(QMouseEvent *event) override;
-	void mouseReleaseEvent(QMouseEvent *event) override;
-	void wheelEvent(QWheelEvent *event) override;
-	void dragEnterEvent(QDragEnterEvent *event) override;
-	void dragMoveEvent(QDragMoveEvent *event) override;
-	void dragLeaveEvent(QDragLeaveEvent *event) override;
-	void dropEvent(QDropEvent *event) override;
-
-private slots:
-	void setKeyFrameLayer();
-	void setKeyFrameEmpty();
-	void cutKeyFrame();
-	void copyKeyFrame();
-	void pasteKeyFrame();
-	void setKeyFrameColor(QAction *action);
-	void showKeyFrameProperties();
-	void keyFramePropertiesChanged(
-		int trackId, int frame, const QColor &color, const QString &title,
-		const QHash<int, bool> &layerVisibility);
-	void deleteKeyFrame();
-	void increaseKeyFrameExposure();
-	void decreaseKeyFrameExposure();
-	void addTrack();
-	void toggleTrackVisible(bool visible);
-	void toggleTrackOnionSkin(bool onionSkin);
-	void duplicateTrack();
-	void retitleTrack();
-	void deleteTrack();
-	void setFrameCount();
-	void setFramerate();
-	void nextFrame();
-	void prevFrame();
-	void nextKeyFrame();
-	void prevKeyFrame();
-	void trackAbove();
-	void trackBelow();
-	void updateTracks();
-	void updateFrameCount();
-	void setHorizontalScroll(int pos);
-	void setVerticalScroll(int pos);
-	void updatePasteAction();
-
 private:
 	static constexpr char KEY_FRAME_MIME_TYPE[] = "x-drawpile/keyframe";
 	static constexpr int TRACK_PADDING = 4;
 	static constexpr int ICON_SIZE = 16;
 
-	enum class Drag { None, Track, KeyFrame };
-	enum class SelectAction { Set, Toggle, Range, Refresh };
-
-	void setCurrent(int trackId, int frame, bool selectLayer, SelectAction sa);
-
-	void stashSelection();
-	void unstashSelection();
-
-	void setKeyFrame(int layerId);
-	void setKeyFrameProperties(
-		int trackId, int frame, const QString &prevTitle,
-		const QHash<int, bool> prevLayerVisibility, const QString &title,
-		const QHash<int, bool> layerVisibility);
-	void changeFrameExposure(int direction);
-	void updateActions();
-	void updateScrollbars();
-
-	struct Target;
-	Target getMouseTarget(const QPoint &pos) const;
-	void applyMouseTarget(QMouseEvent *event, const Target &target, bool press);
-	SelectAction getApplyMouseTargetAction(const QMouseEvent *event) const;
-	void executeTargetAction(const Target &target);
+	void addTrack();
 
 	void emitCommand(std::function<net::Message(uint8_t)> getMessage);
-
-	static void setCheckedSignalBlocked(QAction *action, bool checked);
 
 	struct Private;
 	Private *d;

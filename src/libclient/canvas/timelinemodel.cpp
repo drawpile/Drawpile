@@ -23,6 +23,16 @@ TimelineKeyFrame::makeTitleWithColor(const QString &title, const QColor &color)
 	}
 }
 
+const TimelineKeyFrame *
+TimelineTrack::searchKeyFrameByFrameIndex(int frameIndex) const
+{
+	QHash<int, int>::const_iterator it =
+		keyFrameIndexesByFrameIndex.constFind(frameIndex);
+	return it == keyFrameIndexesByFrameIndex.constEnd()
+			   ? nullptr
+			   : &keyFrames[it.value()];
+}
+
 TimelineModel::TimelineModel(CanvasModel *canvas)
 	: QAbstractItemModel(canvas)
 {
@@ -105,7 +115,6 @@ void TimelineModel::setTimeline(const drawdance::Timeline &tl)
 		m_tracks.append(trackToModel(tl.trackAt(i)));
 	}
 	endResetModel();
-	emit tracksChanged();
 }
 
 
@@ -148,17 +157,21 @@ QVariant TimelineModel::data(const QModelIndex &index, int role) const
 	}
 
 	switch(role) {
+	case Qt::DisplayRole:
+		return QStringLiteral("%1:%2").arg(row).arg(column);
 	case TrackIdRole:
 		return m_tracks[row].id;
 	case TrackRole:
 		return QVariant::fromValue(&m_tracks[row]);
 	case KeyFrameRole:
-		for(const TimelineKeyFrame &tkf : m_tracks[row].keyFrames) {
-			if(tkf.frameIndex == column) {
-				return QVariant::fromValue(&tkf);
-			}
+		if(const TimelineKeyFrame *tkf =
+			   m_tracks[row].searchKeyFrameByFrameIndex(column)) {
+			return QVariant::fromValue(&tkf);
+		} else {
+			return QVariant();
 		}
-		return QVariant();
+	case IsKeyFrameRole:
+		return m_tracks[row].searchKeyFrameByFrameIndex(column) != nullptr;
 	default:
 		return QVariant();
 	}
@@ -166,7 +179,14 @@ QVariant TimelineModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags TimelineModel::flags(const QModelIndex &index) const
 {
-	return QAbstractItemModel::flags(index) | Qt::ItemNeverHasChildren;
+	Qt::ItemFlags itemFlags = QAbstractItemModel::flags(index);
+	if(index.isValid()) {
+		itemFlags.setFlag(Qt::ItemNeverHasChildren);
+		bool keyFrame = index.data(IsKeyFrameRole).toBool();
+		itemFlags.setFlag(Qt::ItemIsDragEnabled, keyFrame);
+		itemFlags.setFlag(Qt::ItemIsDropEnabled, keyFrame);
+	}
+	return itemFlags;
 }
 
 void TimelineModel::setFrameCount(int frameCount)
@@ -198,11 +218,18 @@ TimelineTrack TimelineModel::trackToModel(const drawdance::Track &t)
 {
 	int keyFrameCount = t.keyFrameCount();
 	QVector<TimelineKeyFrame> keyFrames;
+	QHash<int, int> keyFrameIndexesByFrameIndex;
 	keyFrames.reserve(keyFrameCount);
+	keyFrameIndexesByFrameIndex.reserve(keyFrameCount);
 	for(int i = 0; i < keyFrameCount; ++i) {
-		keyFrames.append(keyFrameToModel(t.keyFrameAt(i), t.frameIndexAt(i)));
+		int frameIndex = t.frameIndexAt(i);
+		keyFrames.append(keyFrameToModel(t.keyFrameAt(i), frameIndex));
+		keyFrameIndexesByFrameIndex.insert(frameIndex, i);
 	}
-	return {t.id(), t.title(), t.hidden(), t.onionSkin(), keyFrames};
+	return {
+		t.id(),		   t.title(), t.hidden(),
+		t.onionSkin(), keyFrames, keyFrameIndexesByFrameIndex,
+	};
 }
 
 TimelineKeyFrame
