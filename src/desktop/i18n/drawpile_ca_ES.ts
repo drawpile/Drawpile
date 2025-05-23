@@ -10524,12 +10524,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Rename Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Reanomena la paleta</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Import palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa una paleta…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10544,7 +10544,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Export palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta la paleta…</translation>
     </message>
     <message>
         <location line="+1"/>
