@@ -1509,12 +1509,12 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     <message>
         <location line="+19"/>
         <source>Session template saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Plantilla de sessió desada</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export session template</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;ha pogut exportar la plantilla de sessió</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -1640,7 +1640,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     <message>
         <location line="+39"/>
         <source>Become Operator</source>
-        <translation>Convertir-se en operator...</translation>
+        <translation>Convertir-se en operador</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -1650,7 +1650,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     <message>
         <location line="+64"/>
         <source>Terminate session</source>
-        <translation type="unfinished"></translation>
+        <translation>Finalitza la sessió</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1681,7 +1681,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     <message>
         <location line="+135"/>
         <source>Session blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessió bloquejada pels controls parentals</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -2912,7 +2912,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Reinicialitza totes les ranures de pinzell (&amp;S)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2942,12 +2942,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Next Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Ranura de pinzell següent</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Ranura de pinzell prèvia</translation>
     </message>
     <message>
         <location line="+143"/>
@@ -3043,7 +3043,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-16"/>
         <source>Export Session &amp;Template...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta la plan&amp;tilla de Sessió...</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -3620,12 +3620,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Selection (Rectangular)</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecció (Rectangular)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Selection (Free-Form)</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecció (Forma lliure)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3809,7 +3809,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>X seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>X segons</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4213,7 +4213,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+75"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 colors)</translation>
     </message>
 </context>
 <context>
@@ -4221,22 +4221,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.ui" line="+64"/>
         <source>Open a new palette from file</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre una nova paleta des d&apos;un fitxer</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Create a new palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea una paleta nova</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Duplicate the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplica la paleta actual</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>Delete the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina la paleta actual</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4246,17 +4246,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+11"/>
         <source>Save changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa els canvis a la paleta actual</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Add a color to the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix un color a la paleta</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove the selected color from the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina el color seleccionat de la paleta</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.cpp" line="+181"/>
@@ -4289,13 +4289,14 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+1"/>
         <location line="+13"/>
         <source>Open Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre la paleta</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to load the palette file
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;ha pogut carregar el fitxer de paleta
+%1</translation>
     </message>
 </context>
 <context>
@@ -8854,7 +8855,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia a la ranura d&apos;esborrador</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8903,12 +8904,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Brush slots:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ranures de pinzell:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Share one color across all brush slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Comparteix un color per totes les ranures de pinzells</translation>
     </message>
     <message>
         <location line="-108"/>
@@ -8980,9 +8981,9 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+31"/>
         <source>Show %1 brush slot(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Mostra %1 ranura de pinzell</numerusform>
+            <numerusform>Mostra %1 ranures de pinzell</numerusform>
         </translation>
     </message>
     <message>
@@ -10533,7 +10534,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Palettes (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Paletes (%1)</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -11270,7 +11271,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Reinicialitza totes les ranures de pinzell (&amp;S)</translation>
     </message>
     <message>
         <location line="+1"/>
