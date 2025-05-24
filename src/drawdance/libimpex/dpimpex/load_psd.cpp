@@ -367,7 +367,7 @@ static DP_PsdLayerPair extract_layer_group(psd::Document *document,
 {
     int group_id = DP_layer_id_make(1u, element_id++);
     std::vector<DP_PsdLayerPair> layers = extract_layers_recursive(
-        document, file, allocator, section, i, group_id);
+        document, file, allocator, section, i, element_id);
 
     auto [tlpl, tll] = build_layer_lists(layers);
 
@@ -483,7 +483,7 @@ extern "C" DP_CanvasState *DP_load_psd(DP_DrawContext *dc, DP_Input *input,
 
     unsigned int width = document->width;
     unsigned int height = document->height;
-    if (DP_canvas_state_dimensions_in_bounds(width, height)) {
+    if (!DP_canvas_state_dimensions_in_bounds(width, height)) {
         DP_error_set("Canvas dimensions out of bounds");
         assign_load_result(out_result, DP_LOAD_RESULT_BAD_DIMENSIONS);
         psd::DestroyDocument(document, &allocator);

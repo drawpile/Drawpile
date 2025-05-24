@@ -27,7 +27,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Allow alpha locking layers. This basically works the same as enabling alpha lock on the tool you're using, it's just there for people that are used to doing it this way from other programs.
  * Feature: Allow locking layer properties to avoid accidentally changing e.g. the blend mode.
  * Feature: Allow locking layer positions to avoid accidentally moving them. Thanks Athena for suggesting.
- * Feature: Increase canvas size limit to up to 1 million pixels as long as the total canvas size doesn't exceed 1073676289 pixels (32767 squared). Previously each dimension was limited to 32767 instead. Thanks johannesCmayer and yvantot for suggesting.
+ * Feature: Increase canvas size limit to up to 1 million pixels as long as the total canvas size doesn't exceed 1073676289 pixels (32767 squared). Previously each dimension was limited to 32767 instead. Thanks johannesCmayer and yvantot for suggesting and MajorCooke for testing.
  * Feature: A Drawpile 2.2 compatibility mode, allowing you to join sessions hosted with the previous version.
  * Feature: Add shortcuts that switch tools and deselect in a single action. Thanks Bonbli for suggesting.
  * Feature: New .dpcs canvas file format that's much faster and in most cases also leads to smaller sizes. Thanks Bonbli for suggesting an optimization to this.
