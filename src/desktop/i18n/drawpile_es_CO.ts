@@ -1614,7 +1614,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a debug dump and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Está a punto de abrir un archivo de diagnóstico y se cerrará esta ventana.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1654,7 +1654,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+5"/>
         <source>Arrange Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Organizar Paneles</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2244,7 +2244,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar capa &amp;Visibilidad</translation>
     </message>
     <message>
         <location line="+4"/>
