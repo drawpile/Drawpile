@@ -2866,7 +2866,7 @@ static void blend_mask_pigment_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
         opacity = 150;
     }
 
-    FOR_MASK_PIXEL(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
+    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
         BGRA15 cb = to_bgra(*dst);
         Fix15 opa_a = fix15_mul(as, opacity);
         Fix15 opa_b = BIT15_FIX - opa_a;
