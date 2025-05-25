@@ -1752,7 +1752,9 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
 
     // We don't support partial pigment mode for performance and usability
     // reasons, you either enable the pigment blend mode or you don't.
-    disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_PAINT_MODE);
+    mypaint_brush_set_base_value(mb, MYPAINT_BRUSH_SETTING_PAINT_MODE,
+                                 is_pigment_mode(blend_mode) ? 1.0f : 0.0f);
+    disable_mypaint_dynamics(mb, MYPAINT_BRUSH_SETTING_PAINT_MODE);
 
     // We have our own, better stabilizer, so turn the MyPaint one off.
     disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SLOW_TRACKING);
