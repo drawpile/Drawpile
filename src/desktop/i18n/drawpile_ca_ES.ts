@@ -3053,7 +3053,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+203"/>
         <source>&amp;Copy Merged</source>
-        <translation>Copiar Fusionat</translation>
+        <translation>&amp;Copia Fusionat</translation>
     </message>
     <message>
         <location line="+5"/>
