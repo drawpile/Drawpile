@@ -3048,7 +3048,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+19"/>
         <source>Export &amp;Brushes…</source>
-        <translation>Exportar pinzells</translation>
+        <translation>Exporta pinzells (&amp;B)…</translation>
     </message>
     <message>
         <location line="+203"/>
