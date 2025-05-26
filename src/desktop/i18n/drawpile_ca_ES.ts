@@ -1749,7 +1749,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     <message>
         <location line="+16"/>
         <source>Set Artificial Lag</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix retard artificial...</translation>
     </message>
     <message>
         <location line="+1"/>
