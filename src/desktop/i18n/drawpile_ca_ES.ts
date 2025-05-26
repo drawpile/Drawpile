@@ -12244,7 +12244,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Connected</source>
-        <translation type="unfinished"></translation>
+        <translation>Connectat</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12259,7 +12259,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+39"/>
         <source>Notice</source>
-        <translation type="unfinished"></translation>
+        <translation>Avís</translation>
     </message>
     <message>
         <location line="+1"/>
