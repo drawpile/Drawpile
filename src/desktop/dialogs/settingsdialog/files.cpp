@@ -65,6 +65,7 @@ void Files::initFormats(
 		defaultTemplate.arg(QStringLiteral(".png")), QString());
 	preferredExportFormat->addItem(tr("PNG (.png)"), QStringLiteral("png"));
 	preferredExportFormat->addItem(tr("JPEG (.jpg)"), QStringLiteral("jpg"));
+	preferredExportFormat->addItem(tr("QOI (.qoi)"), QStringLiteral("qoi"));
 	preferredExportFormat->addItem(tr("WEBP (.webp)"), QStringLiteral("webp"));
 	preferredExportFormat->addItem(
 		tr("OpenRaster (.ora)"), QStringLiteral("ora"));

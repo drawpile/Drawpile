@@ -6,6 +6,8 @@ dp_target_sources(dpimpex
     dpimpex/image_impex.h
     dpimpex/image_jpeg.h
     dpimpex/image_png.h
+    dpimpex/image_qoi.c
+    dpimpex/image_qoi.h
     dpimpex/image_webp.c
     dpimpex/image_webp.h
     dpimpex/load.c

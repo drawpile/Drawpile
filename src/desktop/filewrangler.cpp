@@ -554,6 +554,9 @@ bool FileWrangler::confirmFlatten(
 	case DP_SAVE_IMAGE_JPEG:
 		format = QStringLiteral("JPEG");
 		break;
+	case DP_SAVE_IMAGE_QOI:
+		format = QStringLiteral("QOI");
+		break;
 	}
 	box.addButton(
 		format.isEmpty() ? tr("Save as Selected Format")
@@ -659,6 +662,8 @@ DP_SaveImageType FileWrangler::preferredExportType()
 		return DP_SAVE_IMAGE_PNG;
 	} else if(format == QStringLiteral("jpg")) {
 		return DP_SAVE_IMAGE_JPEG;
+	} else if(format == QStringLiteral("qoi")) {
+		return DP_SAVE_IMAGE_QOI;
 	} else if(format == QStringLiteral("webp")) {
 		return DP_SAVE_IMAGE_WEBP;
 	} else if(format == QStringLiteral("ora")) {
@@ -705,6 +710,8 @@ QString FileWrangler::preferredExportExtensionFor(DP_SaveImageType type)
 		return QStringLiteral(".png");
 	case DP_SAVE_IMAGE_JPEG:
 		return QStringLiteral(".jpg");
+	case DP_SAVE_IMAGE_QOI:
+		return QStringLiteral(".qoi");
 	case DP_SAVE_IMAGE_WEBP:
 		return QStringLiteral(".webp");
 	case DP_SAVE_IMAGE_PSD:

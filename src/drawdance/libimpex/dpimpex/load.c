@@ -1387,6 +1387,8 @@ DP_SaveImageType DP_load_guess(const unsigned char *buf, size_t size)
         return DP_SAVE_IMAGE_JPEG;
     case DP_IMAGE_FILE_TYPE_WEBP:
         return DP_SAVE_IMAGE_WEBP;
+    case DP_IMAGE_FILE_TYPE_QOI:
+        return DP_SAVE_IMAGE_QOI;
     default:
         return DP_SAVE_IMAGE_UNKNOWN;
     }
@@ -1500,6 +1502,9 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
                                flat_image_layer_title, out_result);
     case DP_SAVE_IMAGE_WEBP:
         return load_flat_image(dc, input, DP_IMAGE_FILE_TYPE_WEBP,
+                               flat_image_layer_title, out_result);
+    case DP_SAVE_IMAGE_QOI:
+        return load_flat_image(dc, input, DP_IMAGE_FILE_TYPE_QOI,
                                flat_image_layer_title, out_result);
     default:
         assign_load_result(out_result, DP_LOAD_RESULT_INTERNAL_ERROR);

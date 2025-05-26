@@ -2,6 +2,7 @@
 #include "image_impex.h"
 #include "image_jpeg.h"
 #include "image_png.h"
+#include "image_qoi.h"
 #include "image_webp.h"
 #include <dpcommon/common.h>
 #include <dpcommon/input.h>
@@ -39,6 +40,9 @@ static DP_Image *read_image_guess(DP_Input *input, DP_ImageFileType *out_type)
     case DP_IMAGE_FILE_TYPE_WEBP:
         read_fn = DP_image_webp_read;
         break;
+    case DP_IMAGE_FILE_TYPE_QOI:
+        read_fn = DP_image_qoi_read;
+        break;
     default:
         DP_error_set("Could not guess image format");
         return NULL;
@@ -67,6 +71,9 @@ DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type,
     case DP_IMAGE_FILE_TYPE_WEBP:
         assign_type(out_type, DP_IMAGE_FILE_TYPE_WEBP);
         return DP_image_webp_read(input);
+    case DP_IMAGE_FILE_TYPE_QOI:
+        assign_type(out_type, DP_IMAGE_FILE_TYPE_QOI);
+        return DP_image_qoi_read(input);
     default:
         assign_type(out_type, DP_IMAGE_FILE_TYPE_UNKNOWN);
         DP_error_set("Unknown image file type %d", (int)type);
@@ -112,6 +119,14 @@ bool DP_image_write_jpeg(DP_Image *img, DP_Output *output)
     DP_ASSERT(img);
     DP_ASSERT(output);
     return DP_image_write_jpeg_quality(img, output, 100);
+}
+
+bool DP_image_write_qoi(DP_Image *img, DP_Output *output)
+{
+    DP_ASSERT(img);
+    DP_ASSERT(output);
+    return DP_image_qoi_write(output, DP_image_width(img), DP_image_height(img),
+                              DP_image_pixels(img));
 }
 
 bool DP_image_write_webp(DP_Image *img, DP_Output *output)

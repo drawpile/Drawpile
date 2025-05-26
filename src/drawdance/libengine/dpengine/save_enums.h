@@ -10,6 +10,7 @@ typedef enum DP_SaveImageType {
     DP_SAVE_IMAGE_PSD,
     DP_SAVE_IMAGE_WEBP,
     DP_SAVE_IMAGE_PROJECT_CANVAS,
+    DP_SAVE_IMAGE_QOI,
 } DP_SaveImageType;
 
 typedef enum DP_SaveResult {

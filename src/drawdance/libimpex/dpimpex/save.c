@@ -43,6 +43,7 @@ const DP_SaveFormat *DP_save_supported_formats(void)
     static const char *ora_ext[] = {"ora", NULL};
     static const char *png_ext[] = {"png", NULL};
     static const char *jpeg_ext[] = {"jpg", "jpeg", NULL};
+    static const char *qoi_ext[] = {"qoi", NULL};
     static const char *webp_ext[] = {"webp", NULL};
     static const char *psd_ext[] = {"psd", NULL};
     static const DP_SaveFormat formats[] = {
@@ -50,6 +51,7 @@ const DP_SaveFormat *DP_save_supported_formats(void)
         {"OpenRaster", ora_ext},
         {"PNG", png_ext},
         {"JPEG", jpeg_ext},
+        {"QOI", qoi_ext},
         {"WEBP", webp_ext},
         {"Photoshop Document", psd_ext},
         {NULL, NULL},
@@ -91,6 +93,9 @@ DP_SaveImageType DP_save_image_type_guess(const char *path)
     else if (DP_str_equal_lowercase(ext, "webp")) {
         return DP_SAVE_IMAGE_WEBP;
     }
+    else if (DP_str_equal_lowercase(ext, "qoi")) {
+        return DP_SAVE_IMAGE_QOI;
+    }
     else {
         DP_error_set("Unknown image format in '%s'", path);
         return DP_SAVE_IMAGE_UNKNOWN;
@@ -112,6 +117,8 @@ const char *DP_save_image_type_name(DP_SaveImageType type)
         return "WEBP";
     case DP_SAVE_IMAGE_PROJECT_CANVAS:
         return "DPCS";
+    case DP_SAVE_IMAGE_QOI:
+        return "QOI";
     case DP_SAVE_IMAGE_UNKNOWN:
         break;
     }
@@ -129,6 +136,7 @@ int DP_save_image_type_max_dimension(DP_SaveImageType type)
     case DP_SAVE_IMAGE_ORA:
     case DP_SAVE_IMAGE_PNG:
     case DP_SAVE_IMAGE_PROJECT_CANVAS:
+    case DP_SAVE_IMAGE_QOI:
         return 2147483647;
     case DP_SAVE_IMAGE_PSD:
         return 30000;
@@ -186,6 +194,7 @@ bool DP_save_image_type_is_flat_image(DP_SaveImageType type)
     case DP_SAVE_IMAGE_PNG:
     case DP_SAVE_IMAGE_JPEG:
     case DP_SAVE_IMAGE_WEBP:
+    case DP_SAVE_IMAGE_QOI:
         return true;
     case DP_SAVE_IMAGE_UNKNOWN:
         break;
@@ -930,6 +939,18 @@ static DP_SaveResult save_webp(DP_Image *img, DP_Output *output)
     }
 }
 
+static DP_SaveResult save_qoi(DP_Image *img, DP_Output *output)
+{
+    bool ok = DP_image_write_qoi(img, output);
+    if (ok) {
+        return DP_SAVE_RESULT_SUCCESS;
+    }
+    else {
+        DP_warn("Save QOI: %s", DP_error());
+        return DP_SAVE_RESULT_WRITE_ERROR;
+    }
+}
+
 static void blend_annotation(DP_Pixel8 *restrict dst, DP_Rect dst_rect,
                              const DP_Pixel8 *restrict src, DP_Rect src_rect)
 {
@@ -1052,6 +1073,9 @@ static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
                                bake_annotation, user);
     case DP_SAVE_IMAGE_WEBP:
         return save_flat_image(cs, dc, NULL, type, path, save_webp, vmf_or_null,
+                               bake_annotation, user);
+    case DP_SAVE_IMAGE_QOI:
+        return save_flat_image(cs, dc, NULL, type, path, save_qoi, vmf_or_null,
                                bake_annotation, user);
     case DP_SAVE_IMAGE_PSD:
         return DP_save_psd(cs, path, dc);

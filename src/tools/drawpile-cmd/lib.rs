@@ -48,6 +48,7 @@ pub enum OutputFormat {
     Jpg,
     Jpeg,
     Webp,
+    Qoi,
 }
 
 impl OutputFormat {
@@ -59,6 +60,7 @@ impl OutputFormat {
             Self::Png => "png",
             Self::Jpg => "jpg",
             Self::Webp => "webp",
+            Self::Qoi => "qoi",
             Self::Guess | Self::Jpeg => "jpeg",
         }
     }
@@ -81,9 +83,10 @@ impl FromStr for OutputFormat {
             "jpg" => Ok(Self::Jpg),
             "jpeg" => Ok(Self::Jpeg),
             "webp" => Ok(Self::Webp),
+            "qoi" => Ok(Self::Qoi),
             _ => Err(format!(
                 "invalid output format '{s}', should be one of 'guess', \
-                'dpcs', 'ora', 'psd', 'png', 'jpg', 'jpeg' or 'webp'"
+                'dpcs', 'ora', 'psd', 'png', 'jpg', 'jpeg', 'qoi' or 'webp'"
             )),
         }
     }
@@ -107,9 +110,10 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         /// Print extra debugging information.
         optional -V,--verbose
         /// Output file format. One of 'guess' (the default), 'dpcs', 'ora',
-        /// 'psd', 'png', 'webp', 'jpg' ,'jpeg'. The last two are the same
-        /// format, just with a different extension. Guessing will either use
-        /// the extension from the value given by -o/--out or default to jpeg.
+        /// 'psd', 'png', 'qoi', 'webp', 'jpg' ,'jpeg'. The last two are the
+        /// same format, just with a different extension. Guessing will either
+        /// use the extension from the value given by -o/--out or default to
+        /// jpeg.
         optional -f,--format output_format: OutputFormat
         /// Output file pattern. Use '-' for stdout. The default is to use the
         /// input file name with a different file extension.
@@ -258,6 +262,7 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
                 "jpg" => OutputFormat::Jpg,
                 "jpeg" => OutputFormat::Jpeg,
                 "webp" => OutputFormat::Webp,
+                "qoi" => OutputFormat::Qoi,
                 _ => {
                     eprintln!("Can't guess output format for extension '.{}'", ext);
                     return 2;
@@ -349,7 +354,11 @@ fn dump_image(
         OutputFormat::Dpcs => cs.save(&mut dc, DP_SAVE_IMAGE_PROJECT_CANVAS, out_path)?,
         OutputFormat::Ora => cs.save(&mut dc, DP_SAVE_IMAGE_ORA, out_path)?,
         OutputFormat::Psd => cs.save(&mut dc, DP_SAVE_IMAGE_PSD, out_path)?,
-        OutputFormat::Png | OutputFormat::Jpg | OutputFormat::Jpeg | OutputFormat::Webp => {
+        OutputFormat::Png
+        | OutputFormat::Jpg
+        | OutputFormat::Jpeg
+        | OutputFormat::Webp
+        | OutputFormat::Qoi => {
             save_flat_image(
                 &cs,
                 &mut dc,
@@ -462,7 +471,11 @@ fn dump_recording(
             OutputFormat::Dpcs => pe.save(&path, DP_SAVE_IMAGE_PROJECT_CANVAS)?,
             OutputFormat::Ora => pe.save(&path, DP_SAVE_IMAGE_ORA)?,
             OutputFormat::Psd => pe.save(&path, DP_SAVE_IMAGE_PSD)?,
-            OutputFormat::Png | OutputFormat::Jpg | OutputFormat::Jpeg | OutputFormat::Webp => {
+            OutputFormat::Png
+            | OutputFormat::Jpg
+            | OutputFormat::Jpeg
+            | OutputFormat::Webp
+            | OutputFormat::Qoi => {
                 save_recording_flat_image(
                     &mut pe,
                     max_size,
@@ -529,6 +542,7 @@ fn write_image(img: &Image, format: OutputFormat, path: &str) -> Result<()> {
         OutputFormat::Png => img.write_png(path)?,
         OutputFormat::Jpg | OutputFormat::Jpeg => img.write_jpeg(path)?,
         OutputFormat::Webp => img.write_webp(path)?,
+        OutputFormat::Qoi => img.write_qoi(path)?,
         _ => panic!("Unhandled output format"),
     }
     Ok(())

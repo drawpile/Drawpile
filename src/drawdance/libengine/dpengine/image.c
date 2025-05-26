@@ -73,6 +73,12 @@ static bool guess_webp(const unsigned char *buf, size_t size)
         && memcmp(buf + 8, webp_sig, sizeof(webp_sig)) == 0;
 }
 
+static bool guess_qoi(const unsigned char *buf, size_t size)
+{
+    return size >= 4 && buf[0] == 0x71 && buf[1] == 0x6f && buf[2] == 0x69
+        && buf[3] == 0x66;
+}
+
 DP_ImageFileType DP_image_guess(const unsigned char *buf, size_t size)
 {
     if (guess_png(buf, size)) {
@@ -83,6 +89,9 @@ DP_ImageFileType DP_image_guess(const unsigned char *buf, size_t size)
     }
     else if (guess_webp(buf, size)) {
         return DP_IMAGE_FILE_TYPE_WEBP;
+    }
+    else if (guess_qoi(buf, size)){
+        return DP_IMAGE_FILE_TYPE_QOI;
     }
     else {
         return DP_IMAGE_FILE_TYPE_UNKNOWN;

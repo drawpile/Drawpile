@@ -2522,6 +2522,7 @@ pub const DP_IMAGE_FILE_TYPE_GUESS: DP_ImageFileType = 0;
 pub const DP_IMAGE_FILE_TYPE_PNG: DP_ImageFileType = 1;
 pub const DP_IMAGE_FILE_TYPE_JPEG: DP_ImageFileType = 2;
 pub const DP_IMAGE_FILE_TYPE_WEBP: DP_ImageFileType = 3;
+pub const DP_IMAGE_FILE_TYPE_QOI: DP_ImageFileType = 4;
 pub const DP_IMAGE_FILE_TYPE_UNKNOWN: DP_ImageFileType = 0;
 pub type DP_ImageFileType = ::std::os::raw::c_uint;
 pub const DP_IMAGE_SCALE_INTERPOLATION_FAST_BILINEAR: DP_ImageScaleInterpolation = -1;
@@ -3895,6 +3896,13 @@ extern "C" {
     pub fn DP_transient_layer_list_insert_group_inc(
         tll: *mut DP_TransientLayerList,
         lg: *mut DP_LayerGroup,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_layer_list_set_transient_content_noinc(
+        tll: *mut DP_TransientLayerList,
+        tlc: *mut DP_TransientLayerContent,
         index: ::std::os::raw::c_int,
     );
 }
@@ -6607,7 +6615,8 @@ pub const DP_PLAYER_ERROR_OPERATION: DP_PlayerResult = 4;
 pub type DP_PlayerResult = ::std::os::raw::c_uint;
 pub const DP_PLAYER_COMPATIBLE: DP_PlayerCompatibility = 0;
 pub const DP_PLAYER_MINOR_INCOMPATIBILITY: DP_PlayerCompatibility = 1;
-pub const DP_PLAYER_INCOMPATIBLE: DP_PlayerCompatibility = 2;
+pub const DP_PLAYER_BACKWARD_COMPATIBLE: DP_PlayerCompatibility = 2;
+pub const DP_PLAYER_INCOMPATIBLE: DP_PlayerCompatibility = 3;
 pub type DP_PlayerCompatibility = ::std::os::raw::c_uint;
 pub const DP_PLAYER_PASS_CLIENT_PLAYBACK: DP_PlayerPass = 0;
 pub const DP_PLAYER_PASS_FEATURE_ACCESS: DP_PlayerPass = 1;
@@ -7797,6 +7806,15 @@ extern "C" {
     ) -> *mut DP_Tile;
 }
 extern "C" {
+    pub fn DP_tile_new_from_split_delta_zstd8le_with(
+        in_out_ctx_or_null: *mut *mut ZSTD_DCtx,
+        split_tile8_buffer: *mut DP_SplitTile8,
+        context_id: ::std::os::raw::c_uint,
+        image: *const ::std::os::raw::c_uchar,
+        image_size: usize,
+    ) -> *mut DP_Tile;
+}
+extern "C" {
     pub fn DP_tile_new_from_split_delta_zstd8le(
         dc: *mut DP_DrawContext,
         context_id: ::std::os::raw::c_uint,
@@ -8526,6 +8544,9 @@ extern "C" {
     pub fn DP_image_write_jpeg(img: *mut DP_Image, output: *mut DP_Output) -> bool;
 }
 extern "C" {
+    pub fn DP_image_write_qoi(img: *mut DP_Image, output: *mut DP_Output) -> bool;
+}
+extern "C" {
     pub fn DP_image_write_webp(img: *mut DP_Image, output: *mut DP_Output) -> bool;
 }
 pub const DP_SAVE_IMAGE_UNKNOWN: DP_SaveImageType = 0;
@@ -8535,6 +8556,7 @@ pub const DP_SAVE_IMAGE_JPEG: DP_SaveImageType = 3;
 pub const DP_SAVE_IMAGE_PSD: DP_SaveImageType = 4;
 pub const DP_SAVE_IMAGE_WEBP: DP_SaveImageType = 5;
 pub const DP_SAVE_IMAGE_PROJECT_CANVAS: DP_SaveImageType = 6;
+pub const DP_SAVE_IMAGE_QOI: DP_SaveImageType = 7;
 pub type DP_SaveImageType = ::std::os::raw::c_uint;
 pub const DP_SAVE_RESULT_SUCCESS: DP_SaveResult = 0;
 pub const DP_SAVE_RESULT_BAD_ARGUMENTS: DP_SaveResult = 1;
@@ -9766,6 +9788,9 @@ extern "C" {
         type_name: *const ::std::os::raw::c_char,
         not_found_value: DP_MessageType,
     ) -> DP_MessageType;
+}
+extern "C" {
+    pub fn DP_message_dirties_canvas(msg: *mut DP_Message) -> bool;
 }
 extern "C" {
     pub fn DP_message_deserialize_body(
@@ -13571,6 +13596,13 @@ extern "C" {
     pub fn DP_message_serialize_compat(
         msg: *mut DP_Message,
         write_body_length: bool,
+        get_buffer: DP_GetMessageBufferFn,
+        user: *mut ::std::os::raw::c_void,
+    ) -> usize;
+}
+extern "C" {
+    pub fn DP_message_serialize_body(
+        msg: *mut DP_Message,
         get_buffer: DP_GetMessageBufferFn,
         user: *mut ::std::os::raw::c_void,
     ) -> usize;

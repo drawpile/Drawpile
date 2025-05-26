@@ -41,6 +41,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Don't disconnect when receiving an unknown message from user 0. Thanks Blozzom and unsername for reporting.
  * Fix: Compensate jagged curves in when using the lasso select tool. Thanks Blozzom for reporting.
  * Feature: Make arrow keys navigate the animation timeline when it has focus. Thanks MorrowShore for suggesting.
+ * Feature: Add support for opening and exporting images in Quite Okay Image Format (QOI).
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

@@ -59,6 +59,13 @@ set(SUPPORTED_FILE_TYPES
 		EXT jpg jpeg
 
 	TYPE
+		NAME QOI image
+		GROUP FLAT_IMAGE
+		MIME image/qoi
+		UTI public.qoi
+		EXT qoi
+
+	TYPE
 		NAME WEBP image
 		GROUP FLAT_IMAGE
 		MIME image/webp
