@@ -2040,7 +2040,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+72"/>
         <source>Expand &amp;Up…</source>
-        <translation>Expandir amunt</translation>
+        <translation>Expandir amunt (&amp;U)…</translation>
     </message>
     <message>
         <location line="+3"/>
