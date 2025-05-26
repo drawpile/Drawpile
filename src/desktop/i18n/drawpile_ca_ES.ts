@@ -5391,14 +5391,14 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Soroll aleatori ràpid, canviant a cada avaluació. Igualment distribuït entre 0 i 1.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Aquesta entrada va lentament des de zero fins a un mentre dibuixeu un traç. També es pot configurar per retornar a zero periòdicament mentre us moveu. Mireu els paràmetres «Duració de traç» i «Temps d&apos;espera del traç».</translation>
     </message>
     <message>
         <location line="+3"/>
