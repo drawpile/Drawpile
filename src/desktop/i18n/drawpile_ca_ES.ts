@@ -2050,7 +2050,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Left…</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir a l&apos;esquerra</translation>
     </message>
     <message>
         <location line="+3"/>
