@@ -4769,7 +4769,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+5"/>
         <source>Tetradic</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tetràdic</translation>
     </message>
 </context>
 <context>
@@ -4975,7 +4975,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+12"/>
         <source>Pick Initial Color from Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Tria el color inicial des de la capa</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -5134,7 +5134,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Distància màxima </translation>
     </message>
     <message>
         <location line="+9"/>
@@ -5357,7 +5357,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Base Brush Radius</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Radi del pinzell base</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5377,7 +5377,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>La rapidesa amb la qual us moveu. Això pot variar molt ràpida. Proveu «imprimeix valors d&apos;entrada» des d&apos;el menú «ajuda» per tenir una impressió del rang; els valors negatius són rars però possibles per molt baixes velocitats.</translation>
     </message>
     <message>
         <location line="+3"/>
