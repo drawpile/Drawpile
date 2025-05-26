@@ -1916,7 +1916,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+13"/>
         <source>Start...</source>
-        <translation>Inicia</translation>
+        <translation>Inicia...</translation>
     </message>
     <message>
         <location line="+2"/>
