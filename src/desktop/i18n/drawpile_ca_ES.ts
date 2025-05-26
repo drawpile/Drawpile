@@ -3038,7 +3038,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+24"/>
         <source>Import &amp;Brushes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar pinzells</translation>
     </message>
     <message>
         <location line="-16"/>
