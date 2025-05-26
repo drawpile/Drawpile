@@ -5377,7 +5377,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>La rapidesa amb la qual us moveu. Això pot variar molt ràpida. Proveu «imprimeix valors d&apos;entrada» des d&apos;el menú «ajuda» per tenir una impressió del rang; els valors negatius són rars però possibles per molt baixes velocitats.</translation>
+        <translation>La rapidesa amb la qual us moveu. Això pot canviar molt ràpidament. Proveu «imprimeix valors d&apos;entrada» des del menú «ajuda» per tenir una impressió del rang; els valors negatius són rars però possibles per velocitats molt baixes.</translation>
     </message>
     <message>
         <location line="+3"/>
