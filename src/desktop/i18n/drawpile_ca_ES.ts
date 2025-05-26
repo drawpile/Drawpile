@@ -4184,7 +4184,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+16"/>
         <source>Custom Arguments:</source>
-        <translation>Arguments personalitzats</translation>
+        <translation>Arguments personalitzats:</translation>
     </message>
 </context>
 <context>
