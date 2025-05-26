@@ -1794,7 +1794,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+12"/>
         <source>Cause Crash</source>
-        <translation type="unfinished"></translation>
+        <translation>Causa una fallada…</translation>
     </message>
     <message>
         <location line="+1"/>
