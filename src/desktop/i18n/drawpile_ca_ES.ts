@@ -2045,7 +2045,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Down…</source>
-        <translation>Expandir avall</translation>
+        <translation>Expandir avall (&amp;D)…</translation>
     </message>
     <message>
         <location line="+3"/>
