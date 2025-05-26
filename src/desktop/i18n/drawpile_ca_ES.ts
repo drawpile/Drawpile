@@ -3260,7 +3260,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Zoom the canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>Amplia la visualització del llenç</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3512,7 +3512,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Velocitat de reproducció </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4086,7 +4086,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Id:</source>
-        <translation type="unfinished"></translation>
+        <translation>Id:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4184,7 +4184,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+16"/>
         <source>Custom Arguments:</source>
-        <translation type="unfinished"></translation>
+        <translation>Arguments personalitzats</translation>
     </message>
 </context>
 <context>
