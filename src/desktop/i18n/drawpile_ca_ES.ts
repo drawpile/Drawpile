@@ -3492,7 +3492,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation type="unfinished"></translation>
+        <translation>Anar enrere</translation>
     </message>
     <message>
         <location line="+17"/>
