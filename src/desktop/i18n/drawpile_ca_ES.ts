@@ -4629,17 +4629,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+86"/>
         <source>Continuous hue</source>
-        <translation type="unfinished"></translation>
+        <translation>To continu</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Passos del to: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>Angle del to: </translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4651,52 +4651,52 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-40"/>
         <source>Continuous chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>Croma continu</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Chroma steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Passos del croma: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continuous luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>Luminància continua</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Passos de luminància: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Saturació continua</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Saturation steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Passos de saturació </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>Claredat continua</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lightness steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Passos de claredat: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous value</source>
-        <translation type="unfinished"></translation>
+        <translation>Valor continu</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Value steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Passos de valor: </translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4706,17 +4706,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+11"/>
         <source>Gamut mask:</source>
-        <translation type="unfinished"></translation>
+        <translation>Màscara de gamma:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Mask angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>Angle de màscara: </translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Mask opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Opacitat de màscara: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5558,14 +5558,14 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Dabs per actual radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tocs per radi actual</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Dabs per second</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tocs per segon</translation>
     </message>
     <message>
         <location line="+3"/>
