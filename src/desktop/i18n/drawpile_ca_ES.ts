@@ -5642,7 +5642,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Tracking noise</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Seguiment amb soroll</translation>
+        <translation>Seguiment del soroll</translation>
     </message>
     <message>
         <location line="+3"/>
