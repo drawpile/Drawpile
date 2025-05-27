@@ -3300,7 +3300,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-26"/>
         <source>Open Debug Dump...</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre el bolcat de depuració</translation>
     </message>
     <message>
         <location line="+1"/>
