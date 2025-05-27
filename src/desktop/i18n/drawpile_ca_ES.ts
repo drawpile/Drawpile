@@ -4454,7 +4454,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+12"/>
         <source> FPS</source>
-        <translation type="unfinished"></translation>
+        <translation> FRS</translation>
     </message>
     <message>
         <location line="+1"/>
