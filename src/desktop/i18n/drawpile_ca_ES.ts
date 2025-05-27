@@ -3492,7 +3492,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation>Anar enrere</translation>
+        <translation>Saltar enrere</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4733,7 +4733,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+5"/>
         <source>Atmospheric triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tríada atmosfèrica</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4751,19 +4751,19 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+5"/>
         <source>Shifted triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tríada desplaçada</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Divisió</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Divisió complementària</translation>
     </message>
     <message>
         <location line="+5"/>
