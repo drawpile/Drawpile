@@ -5823,7 +5823,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Pressure gain</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Guany de pressió</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10359,9 +10359,9 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+4"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n error trobat.</numerusform>
         </translation>
     </message>
     <message>
