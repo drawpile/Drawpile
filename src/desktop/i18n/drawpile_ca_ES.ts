@@ -1770,7 +1770,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
         <location line="+16"/>
         <location line="+1545"/>
         <source>Record Debug Dumps</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistra bolcats de depuració</translation>
     </message>
     <message>
         <location line="-1544"/>
@@ -1779,7 +1779,11 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
 
 Are you sure youwant to start recording debug dumps?</source>
-        <translation type="unfinished"></translation>
+        <translation>Els bolcats de depuració enregistraran ordres locals i remotes de dibuix. Poden utilitzar-se per arreglar problemes de xarxa, però no gaire més. En comptes d&apos;això, si voleu fer una gravació normal, useu Fitxer &gt; Enregistra...
+
+L&apos;enregistrament del bolcat de depuració comença en següent reinici del llenç i els fitxers es desaran a %1
+
+Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -1789,7 +1793,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a debug dump and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esteu a punt d&apos;obrir un bolcat de depuració i tancar aquesta finestra.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -5812,7 +5816,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Snap to pixel</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Ajusta els píxels</translation>
+        <translation>Ajusta als píxels</translation>
     </message>
     <message>
         <location line="+3"/>
