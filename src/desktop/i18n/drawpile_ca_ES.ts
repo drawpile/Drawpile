@@ -1784,7 +1784,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Obre el bolcat de depuració</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1819,7 +1819,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada de tauleta:</translation>
     </message>
     <message>
         <location line="+2"/>
