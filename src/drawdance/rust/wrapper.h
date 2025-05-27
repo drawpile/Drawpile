@@ -1,3 +1,4 @@
+#include <dpcommon/binary.h>
 #include <dpcommon/endianness.h>
 #include <dpcommon/input.h>
 #include <dpcommon/output.h>

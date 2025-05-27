@@ -315,9 +315,9 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
         optional -D,--logo-distance logo_distance: Dimensions
         /// Relative scale of the logo, in percent. Default is 100.
         optional -S, --logo-scale logo_scale: i32
-        /// The color of the flash when the timelapse is finished, in argb
-        /// hexadecimal format. Default is 'ffffffff' for a solid white flash.
-        /// Use 'none' for no flash.
+        /// The color of the flash when the timelapse is finished, in rgb or
+        /// argb hexadecimal format. Default is 'ffffffff' for a solid white
+        /// flash. Use 'none' for no flash.
         optional -F,--flash flash: String
         /// How many seconds to linger on the final result. Default is 5.0.
         optional -t,--linger-time linger_time: f64
@@ -346,6 +346,8 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
         /// default), 'bilinear', 'bicubic', 'experimental', 'nearest', 'area',
         /// 'bicublin', 'gauss', 'sinc', 'lanczos' or 'spline'.
         optional -I,--interpolation interpolation: Interpolation
+        /// Override background color, in rgb or argb hexadecimal format.
+        optional -B,--background background: String
         /// Input recording file(s).
         repeated input: String
     };
@@ -465,6 +467,18 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
         return 2;
     };
 
+    let background_str = flags.background.unwrap_or_else(|| "".to_owned());
+    let background = if background_str == "" {
+        None
+    } else if rgb_re.is_match(&background_str) {
+        Some(0xff000000_u32 | u32::from_str_radix(&background_str, 16).unwrap())
+    } else if argb_re.is_match(&background_str) {
+        Some(u32::from_str_radix(&background_str, 16).unwrap())
+    } else {
+        eprintln!("Invalid background '{}'", background_str);
+        return 2;
+    };
+
     let linger_time = flags.linger_time.unwrap_or(5.0_f64);
     if linger_time < 0.0 {
         eprintln!("Invalid linger time {}", linger_time);
@@ -496,6 +510,9 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
         eprintln!("reveal censored layers:\n    {}", reveal_censored);
         if let Some(crop) = flags.crop {
             eprintln!("crop:\n    {}", crop.to_arg());
+        }
+        if let Some(background_color) = background {
+            eprintln!("background override:\n    {:x}", background_color);
         }
         if let Some(command) = opt_command {
             eprintln!(
@@ -534,6 +551,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
             linger_time,
             &flags.crop,
             interpolation,
+            background,
         )
     } else if flags.out == "-" {
         timelapse(
@@ -549,6 +567,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
             linger_time,
             &flags.crop,
             interpolation,
+            background,
         )
     } else {
         make_timelapse_raw(
@@ -564,6 +583,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
             linger_time,
             &flags.crop,
             interpolation,
+            background,
         )
     };
 
@@ -589,6 +609,7 @@ fn make_timelapse_command(
     linger_time: f64,
     crop: &Option<Crop>,
     interpolation: Interpolation,
+    background: Option<u32>,
 ) -> Result<()> {
     let mut child = match command.spawn() {
         Ok(c) => c,
@@ -617,6 +638,7 @@ fn make_timelapse_command(
         linger_time,
         crop,
         interpolation,
+        background,
     )?;
     drop(pipe);
     let status = child.wait()?;
@@ -640,6 +662,7 @@ fn make_timelapse_raw(
     linger_time: f64,
     crop: &Option<Crop>,
     interpolation: Interpolation,
+    background: Option<u32>,
 ) -> Result<()> {
     let mut f = File::create(path)?;
     timelapse(
@@ -655,6 +678,7 @@ fn make_timelapse_raw(
         linger_time,
         crop,
         interpolation,
+        background,
     )?;
     Ok(())
 }
@@ -691,6 +715,7 @@ fn timelapse(
     linger_time: f64,
     crop: &Option<Crop>,
     interpolation: Interpolation,
+    background: Option<u32>,
 ) -> Result<()> {
     let mut ctx = TimelapseContext {
         writer,
@@ -708,6 +733,7 @@ fn timelapse(
             height,
             crop,
             interpolation,
+            background,
         )?;
     }
 
@@ -738,12 +764,16 @@ fn timelapse_recording(
     height: usize,
     crop: &Option<Crop>,
     interpolation: Interpolation,
+    background: Option<u32>,
 ) -> Result<()> {
     let mut player = make_player(input_path).and_then(Player::check_compatible)?;
     player.set_acl_override(acl_override);
 
     let mut pe = PaintEngine::new(Some(player));
     pe.set_reveal_censored(reveal_censored);
+    if let Some(background_color) = background {
+        pe.set_local_background_color(background_color);
+    }
     pe.begin_playback()?;
 
     let mut initial = true;

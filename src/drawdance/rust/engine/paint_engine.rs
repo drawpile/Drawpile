@@ -3,18 +3,19 @@ use crate::{
     dp_error_anyhow, msg::Message, DP_AnnotationList, DP_CanvasState, DP_DocumentMetadata,
     DP_ImageScaleInterpolation, DP_LayerPropsList, DP_Message, DP_PaintEngine, DP_Pixel8,
     DP_PlayerResult, DP_Rect, DP_SaveImageType, DP_SelectionSet, DP_Timeline,
-    DP_affected_area_in_bounds, DP_affected_area_make, DP_canvas_state_decref, DP_message_type,
-    DP_paint_engine_free_join, DP_paint_engine_handle_inc, DP_paint_engine_new_inc,
-    DP_paint_engine_playback_begin, DP_paint_engine_playback_play,
-    DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
+    DP_affected_area_in_bounds, DP_affected_area_make, DP_canvas_state_decref, DP_message_decref,
+    DP_message_type, DP_msg_local_change_new, DP_paint_engine_free_join,
+    DP_paint_engine_handle_inc, DP_paint_engine_new_inc, DP_paint_engine_playback_begin,
+    DP_paint_engine_playback_play, DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
     DP_paint_engine_render_everything, DP_paint_engine_reveal_censored_set, DP_paint_engine_tick,
-    DP_paint_engine_view_canvas_state_inc, DP_save, DP_MSG_INTERVAL, DP_MSG_UNDO,
+    DP_paint_engine_view_canvas_state_inc, DP_save, DP_write_bigendian_uint32, DP_MSG_INTERVAL,
+    DP_MSG_LOCAL_CHANGE_TYPE_BACKGROUND_TILE, DP_MSG_UNDO,
     DP_PAINT_ENGINE_FILTER_MESSAGE_FLAG_NO_TIME, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS,
     DP_SAVE_RESULT_SUCCESS, DP_TILE_SIZE,
 };
 use anyhow::Result;
 use std::{
-    ffi::{c_int, c_longlong, c_uint, c_void, CString},
+    ffi::{c_int, c_longlong, c_uchar, c_uint, c_void, CString},
     ptr::{self, null_mut},
     sync::{
         mpsc::{sync_channel, Receiver, SyncSender},
@@ -107,6 +108,38 @@ impl PaintEngine {
 
     pub fn set_reveal_censored(&self, reveal_censored: bool) {
         unsafe { DP_paint_engine_reveal_censored_set(self.paint_engine, reveal_censored) }
+    }
+
+    pub fn set_local_background_color(&self, background_color: u32) {
+        let mut bg = background_color;
+        unsafe {
+            let mut msg = DP_msg_local_change_new(
+                0,
+                DP_MSG_LOCAL_CHANGE_TYPE_BACKGROUND_TILE as u8,
+                Some(Self::set_background_color),
+                4,
+                (&mut bg as *mut u32).cast(),
+            );
+            DP_paint_engine_handle_inc(
+                self.paint_engine,
+                false,
+                false,
+                1,
+                &mut msg,
+                None,
+                None,
+                None,
+                null_mut(),
+            );
+            DP_message_decref(msg);
+        }
+    }
+
+    extern "C" fn set_background_color(size: usize, out: *mut c_uchar, user: *mut c_void) {
+        assert!(size == 4);
+        unsafe {
+            DP_write_bigendian_uint32(*user.cast(), out);
+        }
     }
 
     extern "C" fn on_renderer_tile(
