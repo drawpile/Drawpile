@@ -5742,28 +5742,28 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Stroke threshold</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Llindar del traç</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Stroke duration</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Duració del traç</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Stroke hold time</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Temps d&apos;espera del traç</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Custom input</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Entrada personalitzada</translation>
     </message>
     <message>
         <location line="+3"/>
