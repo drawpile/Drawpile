@@ -10956,7 +10956,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-710"/>
         <source>Delete Layer?</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina la capa</translation>
     </message>
     <message>
         <location line="+1"/>
