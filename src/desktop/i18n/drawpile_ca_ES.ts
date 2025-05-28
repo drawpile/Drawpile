@@ -12299,7 +12299,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Modify</source>
-        <translation>Modificar</translation>
+        <translation>Modifica</translation>
     </message>
     <message>
         <location line="+1"/>
