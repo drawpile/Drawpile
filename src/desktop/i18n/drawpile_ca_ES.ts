@@ -12428,7 +12428,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+56"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Reanomenar pista</translation>
     </message>
     <message>
         <location line="+0"/>
