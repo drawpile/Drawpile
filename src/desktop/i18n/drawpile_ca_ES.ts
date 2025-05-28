@@ -11729,7 +11729,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>No layer selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Cap capa seleccionada.</translation>
     </message>
     <message>
         <location line="+4"/>
