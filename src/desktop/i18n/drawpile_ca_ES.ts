@@ -12147,7 +12147,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+93"/>
         <source>Shrink: </source>
-        <translation>Contreure </translation>
+        <translation>Contreure: </translation>
     </message>
     <message>
         <location line="+0"/>
@@ -12188,7 +12188,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Obté l&apos;adreça IP visible externament</translation>
     </message>
     <message>
         <location line="+10"/>
