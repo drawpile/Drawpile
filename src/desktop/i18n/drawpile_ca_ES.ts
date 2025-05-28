@@ -12406,7 +12406,7 @@ Hex: %4</source>
     <message>
         <location line="+6"/>
         <source>Toggle visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Commutar la visibilitat</translation>
     </message>
     <message>
         <location line="+2"/>
