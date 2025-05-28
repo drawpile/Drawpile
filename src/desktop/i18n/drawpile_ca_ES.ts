@@ -11624,7 +11624,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation>Cancel·lar</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11676,7 +11676,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../view/canvasview.cpp" line="+134"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa com a…</translation>
     </message>
 </context>
 <context>
