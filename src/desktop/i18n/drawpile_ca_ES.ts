@@ -11265,7 +11265,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-106"/>
         <source>&amp;Edit Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Edita el pinzell</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -11285,7 +11285,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>&amp;New Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nou pinzell</translation>
     </message>
     <message>
         <location line="+6"/>
