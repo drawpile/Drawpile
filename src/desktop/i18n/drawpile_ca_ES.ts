@@ -12496,7 +12496,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Silencia</translation>
     </message>
     <message>
         <location line="+4"/>
