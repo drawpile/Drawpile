@@ -11290,7 +11290,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>&amp;Overwrite Brush</source>
-        <translation>&amp;Sobreescriu el pinzell</translation>
+        <translation>S&amp;obreescriu el pinzell</translation>
     </message>
     <message>
         <location line="+6"/>
