@@ -11910,7 +11910,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Chat...</source>
-        <translation>Xat</translation>
+        <translation>Xat...</translation>
     </message>
     <message>
         <location line="+310"/>
@@ -12027,7 +12027,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-2"/>
         <source>Attach</source>
-        <translation type="unfinished"></translation>
+        <translation>Enganxa</translation>
     </message>
 </context>
 <context>
