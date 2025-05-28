@@ -10360,8 +10360,8 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>%n error(s) encountered.</source>
         <translation>
-            <numerusform></numerusform>
             <numerusform>%n error trobat.</numerusform>
+            <numerusform>%n errors trobats.</numerusform>
         </translation>
     </message>
     <message>
@@ -10623,19 +10623,19 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+84"/>
         <source>R</source>
         <extracomment>The &quot;Red&quot; R of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>R</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>G</source>
         <extracomment>The &quot;Green&quot; G of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>V</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>B</source>
         <extracomment>The &quot;Blue&quot; B of RGB.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <location line="+19"/>
