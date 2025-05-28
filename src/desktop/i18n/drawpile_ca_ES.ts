@@ -5430,7 +5430,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Aquesta és una entrada definida per l&apos;usuari. Mireu el paràmetre «Entrada personalitzada» per més detalls.</translation>
     </message>
     <message>
         <location line="+3"/>
