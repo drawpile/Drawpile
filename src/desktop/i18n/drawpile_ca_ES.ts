@@ -11750,7 +11750,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/canvasshortcutedit.cpp" line="+269"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancel·lar</translation>
     </message>
     <message>
         <location line="+2"/>
