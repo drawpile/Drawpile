@@ -10941,7 +10941,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1366"/>
         <source>Sketch: </source>
-        <translation>Esbós </translation>
+        <translation>Esbós: </translation>
     </message>
     <message>
         <location line="+165"/>
