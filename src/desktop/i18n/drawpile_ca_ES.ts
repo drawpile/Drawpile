@@ -12506,7 +12506,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+2"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Refés</translation>
     </message>
     <message>
         <location line="+4"/>
