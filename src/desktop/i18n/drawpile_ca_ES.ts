@@ -10857,7 +10857,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Exclusive access:</source>
-        <translation>Accés exclusiu</translation>
+        <translation>Accés exclusiu:</translation>
     </message>
 </context>
 <context>
