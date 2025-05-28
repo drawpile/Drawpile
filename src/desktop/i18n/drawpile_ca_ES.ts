@@ -12536,7 +12536,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+107"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation>Moderador</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -12546,7 +12546,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+5"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>Registrat</translation>
     </message>
 </context>
 <context>
