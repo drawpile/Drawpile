@@ -12501,7 +12501,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation>&amp;Desfés</translation>
+        <translation>Desfés (&amp;U)</translation>
     </message>
     <message>
         <location line="+2"/>
