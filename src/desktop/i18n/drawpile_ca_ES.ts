@@ -12335,7 +12335,7 @@ Hex: %4</source>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa</translation>
     </message>
     <message>
         <location line="+3"/>
