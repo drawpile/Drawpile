@@ -12491,7 +12491,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation>&amp;Bloquejar</translation>
+        <translation>B&amp;loqueja</translation>
     </message>
     <message>
         <location line="+1"/>
