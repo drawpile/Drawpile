@@ -11548,7 +11548,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+13"/>
         <source>Sampling:</source>
         <extracomment>Refers to the transform interpolation, but &quot;interpolation&quot; is uncomfortably long in English, it causes a lot of blank space and the tool settings to get wider. Try to take that into account if possible.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mostreig</translation>
     </message>
     <message>
         <location line="+16"/>
