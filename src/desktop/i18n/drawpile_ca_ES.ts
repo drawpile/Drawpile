@@ -2074,7 +2074,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiniciar zoom</translation>
     </message>
     <message>
         <location line="+1"/>
