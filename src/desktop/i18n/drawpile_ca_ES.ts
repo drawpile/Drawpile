@@ -11270,7 +11270,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reinicialitza el pinzell</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11290,7 +11290,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sobreescriu el pinzell</translation>
     </message>
     <message>
         <location line="+6"/>
