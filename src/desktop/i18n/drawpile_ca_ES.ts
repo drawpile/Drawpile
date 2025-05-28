@@ -11650,7 +11650,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../utils/recents.cpp" line="+432"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>Més…</translation>
     </message>
 </context>
 <context>
