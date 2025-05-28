@@ -10765,7 +10765,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Roda</translation>
     </message>
     <message>
         <location line="+110"/>
@@ -10857,7 +10857,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Exclusive access:</source>
-        <translation type="unfinished"></translation>
+        <translation>Accés exclusiu</translation>
     </message>
 </context>
 <context>
