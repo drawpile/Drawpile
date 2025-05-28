@@ -12027,7 +12027,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-2"/>
         <source>Attach</source>
-        <translation>Enganxa</translation>
+        <translation>Adjunta</translation>
     </message>
 </context>
 <context>
@@ -12035,7 +12035,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwindow.cpp" line="+12"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Xat</translation>
     </message>
 </context>
 <context>
@@ -12051,7 +12051,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/curvewidget.cpp" line="+109"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12061,7 +12061,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Enganxa</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12104,7 +12104,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Set background color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix color de &amp;fons…</translation>
     </message>
     <message>
         <location line="+5"/>
