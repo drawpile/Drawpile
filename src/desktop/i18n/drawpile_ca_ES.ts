@@ -10760,7 +10760,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorspinner.cpp" line="-99"/>
         <source>Color Wheel</source>
-        <translation>Roda de colors</translation>
+        <translation>Roda de color</translation>
     </message>
     <message>
         <location line="+0"/>
