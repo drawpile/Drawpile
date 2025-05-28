@@ -513,7 +513,7 @@
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation>Rols de sessió (%1</translation>
+        <translation>Rols de sessió (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1610,7 +1610,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     <message>
         <location line="+127"/>
         <source>Reconnect</source>
-        <translation>Reconnectar</translation>
+        <translation>Reconnecta</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11750,7 +11750,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/canvasshortcutedit.cpp" line="+269"/>
         <source>Cancel</source>
-        <translation>Cancel·lar</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11794,7 +11794,7 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../scene/canvasview.cpp" line="+332"/>
         <location filename="../view/canvasview.cpp" line="-30"/>
         <source>Reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Reconnecta</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -11811,7 +11811,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation>Desa com a…</translation>
     </message>
     <message>
         <location line="+375"/>
@@ -11853,13 +11853,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+30"/>
         <location filename="../view/canvascontroller.cpp" line="+34"/>
         <source>Downloading…</source>
-        <translation type="unfinished"></translation>
+        <translation>Baixant…</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../view/canvascontroller.cpp" line="+3"/>
         <source>Saving…</source>
-        <translation type="unfinished"></translation>
+        <translation>Desant…</translation>
     </message>
 </context>
 <context>
@@ -11867,17 +11867,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatbox.cpp" line="+45"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>Convida</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessió</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Xat</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11890,12 +11890,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwidget.cpp" line="+164"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>Públic</translation>
     </message>
     <message>
         <location line="+71"/>
         <source>Mute notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Silencia les notificacions</translation>
     </message>
     <message>
         <location line="+1"/>
