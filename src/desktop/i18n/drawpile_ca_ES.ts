@@ -905,7 +905,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation>&amp;Seleccionar-ho tot</translation>
+        <translation>&amp;Selecciona-ho tot</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1880,7 +1880,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+3"/>
         <source>&amp;Download Image…</source>
-        <translation>&amp;Baixar imatge…</translation>
+        <translation>Baixar imatge (&amp;D)…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1890,12 +1890,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+4"/>
         <source>&amp;Save</source>
-        <translation>&amp;Desa</translation>
+        <translation>De$sa</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save &amp;As...</source>
-        <translation>Desa &amp;com...</translation>
+        <translation>Desa com &amp;a...</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1926,7 +1926,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="+2"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
-        <translation>&amp;Sortir</translation>
+        <translation>Sortir ($Q)</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -1938,7 +1938,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="+5"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Open &amp;Recent</source>
-        <translation>&amp;Obrir &amp;Recent</translation>
+        <translation>Obrir &amp;Recent</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1958,7 +1958,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+50"/>
         <source>&amp;Undo</source>
-        <translation>&amp;Desfer</translation>
+        <translation>Desfer (&amp;U)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1988,7 +1988,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+2"/>
         <source>&amp;Paste</source>
-        <translation>&amp;Enganxar</translation>
+        <translation>Enganxar (&amp;P)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2144,7 +2144,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation>Mostra els regles</translation>
+        <translation>Mostra els &amp;regles</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2219,7 +2219,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation>Mar&amp;ca-ho tot</translation>
+        <translation>Marca-ho tot (&amp;C)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2229,7 +2229,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+37"/>
         <source>Select &amp;All</source>
-        <translation>Seleccion&amp;a-ho tot</translation>
+        <translation>Selecciona-ho tot (&amp;A)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2349,12 +2349,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+13"/>
         <source>&amp;Layouts...</source>
-        <translation>&amp;Disposicions...</translation>
+        <translation>Disposicions (&amp;L)...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Toolbars</source>
-        <translation>&amp;Barres d&apos;eines</translation>
+        <translation>Barres d&apos;eines (&amp;T)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5354,7 +5354,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <source>Barrel Rotation</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Gir</translation>
     </message>
     <message>
         <location line="+3"/>
