@@ -10770,7 +10770,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+110"/>
         <source>Direction</source>
-        <translation type="unfinished"></translation>
+        <translation>Direcció</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10795,7 +10795,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Centre</translation>
     </message>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+12"/>
