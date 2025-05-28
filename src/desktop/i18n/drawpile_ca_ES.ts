@@ -10737,7 +10737,7 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../docks/colorcircle.cpp" line="+6"/>
         <location filename="../docks/colorspinner.cpp" line="+15"/>
         <source>Color space</source>
-        <translation>Espai de colors</translation>
+        <translation>Espai de color</translation>
     </message>
     <message>
         <location line="+4"/>
