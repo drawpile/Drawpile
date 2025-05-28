@@ -12022,7 +12022,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Detach</source>
-        <translation type="unfinished"></translation>
+        <translation>Desenganxa</translation>
     </message>
     <message>
         <location line="-2"/>
