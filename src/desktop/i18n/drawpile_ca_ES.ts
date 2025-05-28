@@ -12511,7 +12511,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation>Expulsa</translation>
+        <translation>Expulsa (&amp;K)</translation>
     </message>
     <message>
         <location line="+2"/>
