@@ -1507,18 +1507,22 @@ bool DP_acl_state_reset_image_build(
         return false;
     }
 
-    int limits[(int)DP_FEATURE_LIMIT_COUNT * (int)DP_ACCESS_TIER_COUNT];
-    for (int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
-        for (int j = 0; j < DP_ACCESS_TIER_COUNT; ++j) {
-            limits[i * (int)DP_ACCESS_TIER_COUNT + j] =
-                acls->feature.limits[i][j];
+    bool compatibility_mode =
+        include_flags & DP_ACL_STATE_RESET_IMAGE_COMPATIBILITY_MODE;
+    if (!compatibility_mode) {
+        int limits[(int)DP_FEATURE_LIMIT_COUNT * (int)DP_ACCESS_TIER_COUNT];
+        for (int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
+            for (int j = 0; j < DP_ACCESS_TIER_COUNT; ++j) {
+                limits[i * (int)DP_ACCESS_TIER_COUNT + j] =
+                    acls->feature.limits[i][j];
+            }
         }
-    }
-    DP_Message *feature_limit_msg = DP_msg_feature_limits_new(
-        context_id, set_feature_limits,
-        (int)DP_FEATURE_LIMIT_COUNT * (int)DP_ACCESS_TIER_COUNT, limits);
-    if (!push_message(user, feature_limit_msg)) {
-        return false;
+        DP_Message *feature_limit_msg = DP_msg_feature_limits_new(
+            context_id, set_feature_limits,
+            (int)DP_FEATURE_LIMIT_COUNT * (int)DP_ACCESS_TIER_COUNT, limits);
+        if (!push_message(user, feature_limit_msg)) {
+            return false;
+        }
     }
 
     bool include_session_owner =

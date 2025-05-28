@@ -49,11 +49,15 @@ typedef struct DP_Message DP_Message;
 #define DP_ACL_STATE_RESET_IMAGE_INCLUDE_TRUSTED_USERS       (1 << 1)
 #define DP_ACL_STATE_RESET_IMAGE_INCLUDE_USER_ACL            (1 << 2)
 #define DP_ACL_STATE_RESET_IMAGE_INCLUDE_LAYER_ACL_EXCLUSIVE (1 << 3)
+#define DP_ACL_STATE_RESET_IMAGE_COMPATIBILITY_MODE          (1 << 4)
 // Session resets include user and layer locks, but the operator and trusted
 // states are retained server-side. It also includes a reset lock message.
 #define DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS \
     (DP_ACL_STATE_RESET_IMAGE_INCLUDE_USER_ACL       \
      | DP_ACL_STATE_RESET_IMAGE_INCLUDE_LAYER_ACL_EXCLUSIVE)
+#define DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_COMPAT_FLAGS \
+    (DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS           \
+     | DP_ACL_STATE_RESET_IMAGE_COMPATIBILITY_MODE)
 // Recordings include all user permissions.
 #define DP_ACL_STATE_RESET_IMAGE_RECORDING_FLAGS      \
     (DP_ACL_STATE_RESET_IMAGE_INCLUDE_SESSION_OWNER   \

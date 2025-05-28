@@ -3257,7 +3257,9 @@ void MainWindow::resetSession()
 					dlg->getResetImage(m_doc->isCompatibilityMode());
 				canvas->amendSnapshotMetadata(
 					snapshot, true,
-					DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
+					m_doc->isCompatibilityMode()
+						? DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_COMPAT_FLAGS
+						: DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
 				m_doc->sendResetSession(snapshot, dlg->getResetImageType());
 			}
 			dlg->deleteLater();

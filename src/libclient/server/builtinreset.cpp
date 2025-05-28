@@ -7,11 +7,13 @@ namespace server {
 
 
 void BuiltinReset::appendAclsToPostResetMessages(
-	const drawdance::AclState &acls, uint8_t localUserId)
+	const drawdance::AclState &acls, uint8_t localUserId,
+	bool compatibilityMode)
 {
 	acls.toResetImage(
 		m_postResetMessages, localUserId,
-		DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
+		compatibilityMode ? DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_COMPAT_FLAGS
+						  : DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
 }
 
 void BuiltinReset::generateResetImage(

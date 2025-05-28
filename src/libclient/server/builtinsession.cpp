@@ -241,12 +241,12 @@ void BuiltinSession::startInternalReset(
 			net::makeDefaultLayerMessage(0, m_defaultLayer));
 	}
 
-	m_reset->appendAclsToPostResetMessages(m_acls, localUserId);
+	bool compatibilityMode = history()->protocolVersion().isPastCompatible();
+	m_reset->appendAclsToPostResetMessages(
+		m_acls, localUserId, compatibilityMode);
 
 	utils::FunctionRunnable *runnable = new utils::FunctionRunnable(
-		[reset = m_reset,
-		 compatibilityMode = history()->protocolVersion().isPastCompatible(),
-		 canvasState]() {
+		[reset = m_reset, compatibilityMode, canvasState]() {
 			reset->generateResetImage(canvasState, compatibilityMode);
 		});
 	connect(

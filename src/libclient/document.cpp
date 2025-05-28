@@ -609,7 +609,10 @@ void Document::buildStreamResetImage(
 		qDebug("Building stream reset image");
 		net::MessageList metadata;
 		int prepended = m_canvas->amendSnapshotMetadata(
-			metadata, true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
+			metadata, true,
+			isCompatibilityMode()
+				? DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_COMPAT_FLAGS
+				: DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
 		utils::FunctionRunnable *runnable = new utils::FunctionRunnable(
 			[this, canvasState, correlator, metadata, prepended]() {
 				int messageCount;

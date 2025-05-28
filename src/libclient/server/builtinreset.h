@@ -35,7 +35,8 @@ public:
 	}
 
 	void appendAclsToPostResetMessages(
-		const drawdance::AclState &acls, uint8_t localUserId);
+		const drawdance::AclState &acls, uint8_t localUserId,
+		bool compatibilityMode);
 
 	void generateResetImage(
 		const drawdance::CanvasState &canvasState, bool compatibilityMode);
