@@ -11252,7 +11252,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation>Mostrar</translation>
+        <translation>Mostra</translation>
     </message>
     <message>
         <location line="+343"/>
