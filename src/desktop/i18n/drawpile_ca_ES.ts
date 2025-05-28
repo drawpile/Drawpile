@@ -12406,7 +12406,7 @@ Hex: %4</source>
     <message>
         <location line="+6"/>
         <source>Toggle visibility</source>
-        <translation>Commutar la visibilitat</translation>
+        <translation>Commuta la visibilitat</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12423,7 +12423,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+565"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Pista</translation>
     </message>
     <message>
         <location line="+56"/>
