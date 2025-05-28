@@ -12243,7 +12243,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Connecting to %1...</source>
-        <translation>S&apos;està connectant a %1</translation>
+        <translation>S&apos;està connectant a %1...</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12258,7 +12258,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Logging out...</source>
-        <translation type="unfinished"></translation>
+        <translation>Tancant la sessió...</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -12273,7 +12273,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished"></translation>
+        <translation>No ho tornis a mostrar</translation>
     </message>
 </context>
 <context>
