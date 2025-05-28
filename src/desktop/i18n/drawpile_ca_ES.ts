@@ -10946,7 +10946,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+165"/>
         <source>Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Capa</translation>
     </message>
     <message>
         <location line="+0"/>
