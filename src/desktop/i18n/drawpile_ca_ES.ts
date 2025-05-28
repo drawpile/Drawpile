@@ -12178,7 +12178,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/netstatus.cpp" line="+58"/>
         <source>Copy address to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia l&apos;adreça al porta-retalls</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -12198,7 +12198,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>Estadístiques</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -12233,12 +12233,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+169"/>
         <source>not connected</source>
-        <translation type="unfinished"></translation>
+        <translation>no connectat</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Connecting...</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;està connectant...</translation>
     </message>
     <message>
         <location line="+2"/>
