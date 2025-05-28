@@ -12043,7 +12043,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/colorbutton.cpp" line="+42"/>
         <source>Select a color</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecciona un color</translation>
     </message>
 </context>
 <context>
