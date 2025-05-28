@@ -12428,12 +12428,12 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+56"/>
         <source>Rename Track</source>
-        <translation>Reanomenar pista</translation>
+        <translation>Reanomena la pista</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Track Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de la pista</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -12453,7 +12453,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+0"/>
         <source>Frames Per Second (FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotogrames per segon (FPS)</translation>
     </message>
     <message>
         <location line="+330"/>
