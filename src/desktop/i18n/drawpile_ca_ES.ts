@@ -11368,7 +11368,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Mida: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -11416,7 +11416,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>Límit de mida: Il·limitat</translation>
     </message>
 </context>
 <context>
@@ -11436,7 +11436,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar</translation>
     </message>
 </context>
 <context>
