@@ -12486,7 +12486,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation>&amp;De confiança</translation>
+        <translation>De confiança (&amp;T)</translation>
     </message>
     <message>
         <location line="+3"/>
