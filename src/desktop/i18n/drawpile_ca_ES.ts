@@ -11449,7 +11449,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Add to selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix-ho a la selecció</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11459,7 +11459,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Remove from selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Treu de la selecció</translation>
     </message>
     <message>
         <location line="+24"/>
