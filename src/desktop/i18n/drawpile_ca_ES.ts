@@ -10969,7 +10969,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/navigator.cpp" line="+475"/>
         <source>Navigator</source>
-        <translation type="unfinished"></translation>
+        <translation>Navegador</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -11114,7 +11114,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+181"/>
         <source> FPS</source>
-        <translation type="unfinished"></translation>
+        <translation> FRS</translation>
     </message>
 </context>
 <context>
@@ -11199,12 +11199,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/annotationsettings.cpp" line="+59"/>
         <source>Protect</source>
-        <translation type="unfinished"></translation>
+        <translation>Protegeix</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Merge</source>
-        <translation type="unfinished"></translation>
+        <translation>Fusiona</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -11214,23 +11214,23 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+16"/>
         <source>Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Esquerra</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+20"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Centre</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Justify</source>
-        <translation type="unfinished"></translation>
+        <translation>Justifica</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Dreta</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -11252,7 +11252,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar</translation>
     </message>
     <message>
         <location line="+343"/>
