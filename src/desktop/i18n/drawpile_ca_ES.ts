@@ -12330,7 +12330,7 @@ Hex: %4</source>
     <message>
         <location line="+8"/>
         <source>Load</source>
-        <translation>Carregar</translation>
+        <translation>Carrega</translation>
     </message>
     <message>
         <location line="+3"/>
