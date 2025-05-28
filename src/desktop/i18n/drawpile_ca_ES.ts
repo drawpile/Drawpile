@@ -12521,7 +12521,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Missatge Privat</translation>
     </message>
     <message>
         <location line="+2"/>
