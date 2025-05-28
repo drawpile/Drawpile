@@ -12104,7 +12104,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Set background color…</source>
-        <translation>Estableix color de &amp;fons…</translation>
+        <translation>Estableix el color de fons…</translation>
     </message>
     <message>
         <location line="+5"/>
