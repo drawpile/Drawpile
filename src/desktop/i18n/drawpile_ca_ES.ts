@@ -2144,7 +2144,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra els regles</translation>
     </message>
     <message>
         <location line="+3"/>
