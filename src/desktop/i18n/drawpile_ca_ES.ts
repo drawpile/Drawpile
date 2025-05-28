@@ -10629,7 +10629,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+10"/>
         <source>G</source>
         <extracomment>The &quot;Green&quot; G of RGB.</extracomment>
-        <translation>V</translation>
+        <translation>G</translation>
     </message>
     <message>
         <location line="+10"/>
