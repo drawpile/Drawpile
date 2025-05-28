@@ -11522,12 +11522,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>Preview:</source>
-        <translation type="unfinished"></translation>
+        <translation>Previsualitza:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Nearest</source>
-        <translation type="unfinished"></translation>
+        <translation>Més proper</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11537,7 +11537,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Bilinear</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilineal</translation>
     </message>
     <message>
         <location line="+1"/>
