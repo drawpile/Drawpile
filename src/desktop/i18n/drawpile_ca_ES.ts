@@ -11295,7 +11295,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>&amp;Delete Brush</source>
-        <translation>&amp;Elimina el pinzell</translation>
+        <translation>Elimina el pinzell (&amp;D)</translation>
     </message>
     <message>
         <location line="+8"/>
