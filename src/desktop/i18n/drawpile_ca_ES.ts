@@ -11719,7 +11719,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation>La capa &quot;{}&quot; està oculta</translation>
+        <translation>La capa està oculta</translation>
     </message>
     <message>
         <location line="+2"/>
