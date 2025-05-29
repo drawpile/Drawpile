@@ -7579,12 +7579,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Dreceres</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Control parental</translation>
     </message>
 </context>
 <context>
@@ -7597,7 +7597,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+66"/>
         <source>Welcome</source>
-        <translation type="unfinished"></translation>
+        <translation>Benvingut</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7607,7 +7607,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Join Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Unir-se a la sessió</translation>
     </message>
     <message>
         <location line="+1"/>
