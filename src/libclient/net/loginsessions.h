@@ -45,6 +45,8 @@ struct LoginSession {
 	}
 
 	bool isIncompatible() const { return !version.compatible; }
+	bool isCompatibilityMode() const { return version.compatibilityMode; }
+
 	bool isClosed() const
 	{
 		return newLoginsBlocked || guestLoginBlocked || webLoginBlocked;
