@@ -1595,7 +1595,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     <message>
         <location line="+6"/>
         <source>No canvas to host! Create one or open a file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cap llenç per allotjar! Creeu-ne un o obriu un fitxer.</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -2074,7 +2074,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation>Reiniciar zoom</translation>
+        <translation>&amp;Reinicia el zoom</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2099,12 +2099,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+3"/>
         <source>&amp;Reset Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reinicia la rotació del llenç</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Gira el llenç en sentit antihorari</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2119,22 +2119,22 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation>emmiralla/gira el llenç horitzontalment</translation>
+        <translation>emmiralla/inverteix el llenç horitzontalment</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Inverteix el llenç</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Inverteix el llenç cap per avall</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas vertically</source>
-        <translation>emmiralla/gira el llenç verticalment</translation>
+        <translation>emmiralla/inverteix el llenç verticalment</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2244,17 +2244,17 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+2"/>
         <source>mirror/flip transformed image horizontally</source>
-        <translation>emmiralla/gira la imatge transformada horitzontalment</translation>
+        <translation>emmiralla/inverteix la imatge transformada horitzontalment</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Flip the transformed image upside-down</source>
-        <translation>Gira la imatge transformada cap avall</translation>
+        <translation>Inverteix la imatge transformada cap avall</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>mirror/flip transformed image vertically</source>
-        <translation>emmiralla/gira la imatge transformada verticalment</translation>
+        <translation>emmiralla/inverteix la imatge transformada verticalment</translation>
     </message>
     <message>
         <location line="+119"/>
@@ -2610,7 +2610,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+6"/>
         <source>&amp;Flip Transform</source>
-        <translation>Capgira la trans&amp;formació</translation>
+        <translation>Inverteix la trans&amp;formació</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6816,7 +6816,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+6"/>
         <source>They don&apos;t bypass bans or server-wide restrictions.</source>
         <extracomment>&quot;They&quot; is referring to invite codes.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>No ometen els bloquejos o les restriccions globals del servidor.</translation>
     </message>
 </context>
 <context>
@@ -7278,9 +7278,9 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location filename="../dialogs/sessionsettings.cpp" line="+355"/>
         <source>Imported %n session ban(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Importat %n bloqueig de sessió.</numerusform>
+            <numerusform>Importats %n bloquejos de sessió.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -7307,7 +7307,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Error saving bans: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error desant els bloquejos: %1</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7448,17 +7448,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-91"/>
         <source>This server does not support importing encrypted bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aquest servidor no suporta importar bloquejos encriptats.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>This server does not support importing plain bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aquest servidor no suporta importar bloquejats simples.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>File does not appear to contain any ban data.</source>
-        <translation type="unfinished"></translation>
+        <translation>El fitxer no sembla contenir cap dada de bloquejos.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -7468,7 +7468,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</source>
-        <translation type="unfinished">Com que sou un moderador, podeu exportar la llista de bloquejats encriptada o en text pla. La llista de bloquejats encriptada només es pot importar en aquest servidor. En quin format voleu exportar?</translation>
+        <translation>Com que sou un moderador, podeu exportar la llista de bloquejats encriptats o simples. La llista de bloquejats encriptats només es pot importar en aquest servidor. En quin format voleu exportar?</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7534,7 +7534,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="+34"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>Preferències</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -8142,7 +8142,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Host on port %1 if available</source>
-        <translation type="unfinished"></translation>
+        <translation>Allotja en el port %1 si està disponible</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8288,7 +8288,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Pop up a speech bubble in the corner when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra una bafarada de parla a la cantonada quan es produeix aquest esdeveniment.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8313,12 +8313,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Demand attention</source>
-        <translation type="unfinished"></translation>
+        <translation>Demana atenció</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark Drawpile&apos;s window as requiring attention. How exactly this looks depends on your system.</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca la finestra de Drawpile com que requereix atenció. La forma com es veurà això depèn del vostre sistema.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8328,7 +8328,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Trigger this event so you can see what happens.</source>
-        <translation type="unfinished"></translation>
+        <translation>Activa aquest esdeveniment per veure què passa.</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8456,7 +8456,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Disallow uncensoring of layers</source>
-        <translation type="unfinished"></translation>
+        <translation>No permetre treure la censura de les capes</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8520,7 +8520,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/servers.cpp" line="+107"/>
         <source>Known hosts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Amfitrions coneguts:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8530,19 +8530,19 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Remove selected hosts…</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina els amfitrions seleccionats…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove known hosts</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina els amfitrions coneguts</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n known host(s)?</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+            <numerusform>Realment voleu eliminar l&apos;amfitrió conegut %n?</numerusform>
+            <numerusform>Realment voleu eliminar els amfitrions coneguts %n?</numerusform>
         </translation>
     </message>
     <message>
@@ -8632,7 +8632,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+25"/>
         <source>Could not save changes to known hosts: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No s&apos;han pogut guardar els canvis als amfitrions coneguts: %1</translation>
     </message>
 </context>
 <context>
@@ -9529,7 +9529,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+50"/>
         <source>Host Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error d&apos;amfitrió</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
@@ -9565,7 +9565,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+26"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt; or &lt;strong&gt;IP address&lt;/strong&gt;:</source>
-        <translation type="unfinished"></translation>
+        <translation>Introduïu una &lt;strong&gt;URL de sessió&lt;/strong&gt;, &lt;strong&gt;nom d&apos;amfitrió&lt;/strong&gt; o &lt;strong&gt;adreça IP&lt;/strong&gt;:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9717,7 +9717,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/bans.cpp" line="+24"/>
         <source>No bans imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;ha importat cap bloqueig.</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -9765,7 +9765,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Replace ban list</source>
-        <translation type="unfinished"></translation>
+        <translation>Substitueix la llista de bloquejos</translation>
     </message>
 </context>
 <context>
@@ -10135,7 +10135,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>Host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Amfitrió o adreça IP</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -10150,7 +10150,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Enter a host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Introduïu un amfitrió o adreça IP</translation>
     </message>
     <message>
         <location line="+130"/>
@@ -10175,12 +10175,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+28"/>
         <source>Hosting on your own computer requires additional setup!</source>
-        <translation type="unfinished"></translation>
+        <translation>Allotjar en el vostre ordinador requereix configuració addicional!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;Cliqueu aquí per instruccions.&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -11345,7 +11345,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+161"/>
         <source>This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aquesta sessió està allotjada amb Drawpile 2.1, els pinzells de MyPaint no estan disponibles.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11817,13 +11817,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+375"/>
         <location filename="../view/canvascontroller.cpp" line="+465"/>
         <source>Vertical flip: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Inversió vertical: Activada</translation>
     </message>
     <message>
         <location line="+0"/>
         <location filename="../view/canvascontroller.cpp" line="+2"/>
         <source>Vertical flip: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Inversió vertical: Desactivada</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -12253,7 +12253,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Host: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Amfitrió: %1</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12516,7 +12516,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>Expulsa i bloqueja (&amp;N)</translation>
     </message>
     <message>
         <location line="+4"/>
