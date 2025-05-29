@@ -75,7 +75,7 @@
     <message>
         <location filename="../ui/avatarimport.ui" line="+14"/>
         <source>Crop Avatar</source>
-        <translation>Retalla la imatge d&apos;usuari</translation>
+        <translation>Retalla l&apos;avatar</translation>
     </message>
 </context>
 <context>
@@ -457,7 +457,7 @@
     <message>
         <location line="-271"/>
         <source>Add Avatar</source>
-        <translation>Afegir foto de perfil</translation>
+        <translation>Afegeix un avatar</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1147,7 +1147,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+90"/>
         <source>Continue with this account, but change the avatar, username or password.</source>
-        <translation>Continua amb aquest compte, però canvia la foto de perfil, nom d&apos;usuari o contrasenya.</translation>
+        <translation>Continua amb aquest compte, però canvia l&apos;avatar, nom d&apos;usuari o contrasenya.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2424,7 +2424,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Show Avatars</source>
-        <translation>Mostra les fotos de perfil</translation>
+        <translation>Mostra els avatars</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4782,7 +4782,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
         <location line="+8"/>
         <source>Import Avatar</source>
-        <translation>Importar imatge de perfil</translation>
+        <translation>Importar un avatar</translation>
     </message>
     <message>
         <location line="-6"/>
@@ -5520,14 +5520,14 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Opacity multiply</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Multiplica l&apos;opacitat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Opacity linearize</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Linealitza l&apos;opacitat</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7574,7 +7574,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Servers</source>
-        <translation>Seguidors</translation>
+        <translation>Servidors</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7602,7 +7602,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>News and updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Notícies i actualitzacions</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7617,7 +7617,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Browse Sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Explora les sessions</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7862,7 +7862,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="+31"/>
         <source>Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation>Sèrie d&apos;imatges</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8064,7 +8064,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+106"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpola quan la vista és ampliada o girada</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8137,7 +8137,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+89"/>
         <source>Builtin server:</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor integrat:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8187,17 +8187,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Network timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Temps d&apos;espera de la xarxa:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>%1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 segons</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Network proxy:</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor intermediari de xarxa:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8222,12 +8222,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-98"/>
         <source>Chat avatars:</source>
-        <translation type="unfinished"></translation>
+        <translation>Avatars del xat:</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix un avatar…</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8237,7 +8237,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Delete selected avatars…</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina els avatars seleccionats…</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8247,14 +8247,14 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Delete avatars</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina els avatars</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really delete %n avatar(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Realment voleu eliminar %n avatar?</numerusform>
+            <numerusform>Realment voleu eliminar %n avatars?</numerusform>
         </translation>
     </message>
 </context>
