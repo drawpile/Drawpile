@@ -1025,7 +1025,7 @@ void LayerList::addLayerOrGroupFromPrompt(
 		}
 
 		if(opacityPercent != 100 || blendMode != DP_BLEND_MODE_NORMAL ||
-		   (group && !isolated) || censored) {
+		   (group && !isolated) || censored || (!compatibilityMode && clip)) {
 			uint8_t flags =
 				(group && isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED
 								   : 0) |
