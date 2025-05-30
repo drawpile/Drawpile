@@ -572,7 +572,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	settings.bindTemporaryToolSwitchMs(
 		this, &MainWindow::updateTemporaryToolSwitch);
 	settings.bindAutomaticAlphaPreserve(
-		getAction("layerautomaticalphapreserve"), &QAction::setChecked);
+		getAction("layerautomaticalphapreserve"));
 	settings.trySubmit();
 
 	m_updatingInterfaceMode = false;
