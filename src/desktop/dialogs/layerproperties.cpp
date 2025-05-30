@@ -349,12 +349,13 @@ void LayerProperties::apply()
 			blendMode = DP_BLEND_MODE_NORMAL;
 		}
 
-		bool clip = m_ui->clip->isChecked();
 		bool alphaPreserve = m_ui->alphaPreserve->isChecked();
-		if(clip) {
-			blendMode = canvas::blendmode::toAlphaAffecting(blendMode);
+		if(m_compatibilityMode) {
+			blendMode = canvas::blendmode::toCompatible(blendMode);
 		} else if(alphaPreserve) {
 			blendMode = canvas::blendmode::toAlphaPreserving(blendMode);
+		} else {
+			blendMode = canvas::blendmode::toAlphaAffecting(blendMode);
 		}
 
 		int sketchOpacity = m_ui->sketchMode->isChecked()
@@ -366,8 +367,10 @@ void LayerProperties::apply()
 		emit addLayerOrGroupRequested(
 			m_selectedId, m_item.group, getTitleWithColor(),
 			m_ui->opacitySlider->value(), blendMode, isolated,
-			m_ui->censored->isChecked(), clip, m_ui->defaultLayer->isChecked(),
-			m_ui->visible->isChecked(), sketchOpacity, sketchTint);
+			m_ui->censored->isChecked(),
+			!m_compatibilityMode && m_ui->clip->isChecked(),
+			m_ui->defaultLayer->isChecked(), m_ui->visible->isChecked(),
+			sketchOpacity, sketchTint);
 	} else {
 		emitChanges();
 	}
@@ -415,12 +418,12 @@ void LayerProperties::emitChanges()
 	if(m_compatibilityMode) {
 		newBlendmode =
 			DP_BlendMode(canvas::blendmode::toCompatible(int(newBlendmode)));
-	} else if(clip) {
-		newBlendmode = DP_BlendMode(
-			canvas::blendmode::toAlphaAffecting(int(newBlendmode)));
 	} else if(alphaPreserve) {
 		newBlendmode = DP_BlendMode(
 			canvas::blendmode::toAlphaPreserving(int(newBlendmode)));
+	} else {
+		newBlendmode = DP_BlendMode(
+			canvas::blendmode::toAlphaAffecting(int(newBlendmode)));
 	}
 
 	if(m_ui->opacitySlider->value() != oldOpacity ||
