@@ -344,6 +344,7 @@ void LayerProperties::apply()
 {
 	if(m_item.id == 0) {
 		int blendMode = m_ui->blendMode->currentData().toInt();
+		bool isolated = m_item.group && blendMode != -1;
 		if(blendMode == -1) {
 			blendMode = DP_BLEND_MODE_NORMAL;
 		}
@@ -364,10 +365,9 @@ void LayerProperties::apply()
 		saveSketchParametersToSettings(sketchOpacity, sketchTint);
 		emit addLayerOrGroupRequested(
 			m_selectedId, m_item.group, getTitleWithColor(),
-			m_ui->opacitySlider->value(), blendMode,
-			m_item.group && blendMode != -1, m_ui->censored->isChecked(), clip,
-			m_ui->defaultLayer->isChecked(), m_ui->visible->isChecked(),
-			sketchOpacity, sketchTint);
+			m_ui->opacitySlider->value(), blendMode, isolated,
+			m_ui->censored->isChecked(), clip, m_ui->defaultLayer->isChecked(),
+			m_ui->visible->isChecked(), sketchOpacity, sketchTint);
 	} else {
 		emitChanges();
 	}
