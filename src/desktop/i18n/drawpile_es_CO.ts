@@ -2126,7 +2126,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+4"/>
         <source>Shrink Transform to &amp;Fit View</source>
-        <translation type="unfinished"></translation>
+        <translation>Escalar transformación al t&amp;amaño de vista</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2476,7 +2476,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+171"/>
         <source>Lock Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear Paneles</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -2486,12 +2486,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+38"/>
         <source>&amp;Download Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Descargar Imagen…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Download Selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargar Selección…</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -3669,7 +3669,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+50"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Necesitas ser un operador para reiniciar la sesión.</translation>
     </message>
 </context>
 <context>
@@ -4790,7 +4790,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="-6"/>
         <source>Couldn&apos;t read image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation>No podía leer imagen: %1</translation>
+        <translation>No se puede leer la imagen: %1</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7018,7 +7018,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Mink</source>
-        <translation>Mink</translation>
+        <translation>Mink/Visón</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8892,7 +8892,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished">Qt6 Wintab</translation>
+        <translation>Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -11615,7 +11615,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Bilinear</source>
-        <translation type="unfinished">Bilinear</translation>
+        <translation>Bilinear</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12604,17 +12604,17 @@ O por medio de Animación ▸ Nueva Pista.</translation>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation>&amp;Mensaje Privado</translation>
+        <translation>M&amp;ensaje Privado</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show User &amp;Information</source>
-        <translation>Mostrar &amp;Informacion de Usuario</translation>
+        <translation>Mostrar I&amp;nformacion de Usuario</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Take Current &amp;Brush</source>
-        <translation>Tomar &amp;Pincel Actual</translation>
+        <translation type="unfinished">Tomar P&amp;incel Actual</translation>
     </message>
     <message>
         <location line="+107"/>
@@ -12637,7 +12637,7 @@ O por medio de Animación ▸ Nueva Pista.</translation>
     <message>
         <location filename="../widgets/viewstatus.cpp" line="+77"/>
         <source>Canvas Rotation</source>
-        <translation>Rotar Canvas</translation>
+        <translation>Rotación del Lienzo</translation>
     </message>
     <message>
         <location line="+46"/>
