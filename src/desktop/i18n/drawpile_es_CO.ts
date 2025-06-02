@@ -12604,17 +12604,17 @@ O por medio de Animación ▸ Nueva Pista.</translation>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation>M&amp;ensaje Privado</translation>
+        <translation>Mensaje Pri&amp;vado</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show User &amp;Information</source>
-        <translation>Mostrar I&amp;nformacion de Usuario</translation>
+        <translation>Mostrar &amp;Informacion de Usuario</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Take Current &amp;Brush</source>
-        <translation type="unfinished">Tomar P&amp;incel Actual</translation>
+        <translation>Tomar P&amp;incel Actual</translation>
     </message>
     <message>
         <location line="+107"/>
