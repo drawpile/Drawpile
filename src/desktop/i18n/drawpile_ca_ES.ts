@@ -8883,7 +8883,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Keyboard shortcuts:</source>
-        <translation>Dreceres de teclat</translation>
+        <translation>Dreceres de teclat:</translation>
     </message>
     <message>
         <location line="+2"/>
