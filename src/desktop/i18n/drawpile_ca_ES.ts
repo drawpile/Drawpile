@@ -1127,7 +1127,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+183"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;p&gt; Aquesta sessió ha indicat que els seus continguts són &lt;em&gt;no aptes per menors&lt;/em&gt;. &lt;/p&gt;&lt;p&gt;&lt;strong&gt;Heu de tenir 18 anys o més i tenir permès el consum de contingut per a adults per a continuar.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Esteu segur que voleu unir-vos a aquesta sessió?&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1192,7 +1192,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-574"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mostra les sessions no adequades per a menors</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -3803,7 +3803,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+3"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">No adequada per a menors</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8406,7 +8406,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+56"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
-        <translation type="unfinished">Considera sessions els títols de les quals contenen paraules clau no segures per a menors.</translation>
+        <translation type="unfinished">Considera sessions els títols de les quals contenen paraules clau no adequades per a menors.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9140,7 +9140,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Guess</source>
-        <translation>Endevinar</translation>
+        <translation type="unfinished">Endevina</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9165,7 +9165,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Free rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rota el llenç lliurement</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9183,7 +9183,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+206"/>
         <source>Override system font size</source>
-        <translation type="unfinished"></translation>
+        <translation>Sobreescriu la mida de la font del sistema</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9239,7 +9239,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Kinetic scrolling:</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplaçament cinètic:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9269,12 +9269,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+56"/>
         <source>First checker color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Primer color de l&apos;escaquer</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Second checker color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Segon color de l&apos;escaquer</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -9289,7 +9289,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>On-canvas notices:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Avisos en el llenç:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9849,12 +9849,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+139"/>
         <source>Listing: a title is required for public sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Llistat: es requereix un títol per les sessions públiques</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Listing: the title is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>Llistat: el títol és inapropiat.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9884,7 +9884,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-131"/>
         <source>Pick the sections you want to load:</source>
-        <translation type="unfinished"></translation>
+        <translation>Trieu les seccions que voleu carregar:</translation>
     </message>
     <message>
         <location line="+94"/>
@@ -9928,7 +9928,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/permissions.cpp" line="+97"/>
         <source>Undo Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>Limit de desfer: </translation>
     </message>
     <message>
         <location line="+26"/>
@@ -10130,7 +10130,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation type="unfinished"></translation>
+        <translation>Manté l&apos;historial del xat</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10203,7 +10203,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Invalid role format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Format de rol no vàlid.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -10414,7 +10414,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+25"/>
         <source>Color Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Cercle de color</translation>
     </message>
     <message>
         <location line="+0"/>
