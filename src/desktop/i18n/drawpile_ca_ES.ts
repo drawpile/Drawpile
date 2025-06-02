@@ -9160,7 +9160,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotar llenç</translation>
     </message>
     <message>
         <location line="+3"/>
