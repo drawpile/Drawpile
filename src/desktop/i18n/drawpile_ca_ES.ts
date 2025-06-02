@@ -9894,7 +9894,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>Conflicte</translation>
     </message>
     <message>
         <location line="+1"/>
