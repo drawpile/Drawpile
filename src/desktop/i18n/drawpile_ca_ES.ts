@@ -8308,7 +8308,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Bounce Drawpile&apos;s icon in the dock when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rebota la icona de Drawpile en l&apos;acoblador quan es produeix aquest esdeveniment.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8525,7 +8525,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Import trusted certificate…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar certificat de confiança…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8580,9 +8580,9 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n list server(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Realment voleu eliminar %n servidor de llistes?</numerusform>
+            <numerusform>Realment voleu eliminar %n servidors de llistes?</numerusform>
         </translation>
     </message>
     <message>
@@ -8605,7 +8605,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <location line="+82"/>
         <source>Pin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Fixa els certificats seleccionats</translation>
     </message>
     <message>
         <location line="-65"/>
@@ -8617,7 +8617,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <location line="+65"/>
         <source>Unpin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Deixa de fixar els servidors seleccionats</translation>
     </message>
     <message>
         <location line="-35"/>
@@ -8645,7 +8645,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Show conflicts only</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra només els conflictes</translation>
     </message>
 </context>
 <context>
@@ -8715,20 +8715,20 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Realment voleu eliminar %n drecera del llenç?</numerusform>
+            <numerusform>Realment voleu eliminar %n dreceres del llenç?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaura les dreceres del llenç per defecte</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really restore all canvas shortcuts to their default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>Realment voleu restaurar totes les dreceres del llenç als seus valors per defecte?</translation>
     </message>
     <message>
         <location line="+95"/>
@@ -8757,17 +8757,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/tablet.cpp" line="+30"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Provador de tauletes</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>Tauleta</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Sortida</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -8778,19 +8778,19 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+9"/>
         <location filename="../mainwindow.cpp" line="-1247"/>
         <source>Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Windows Ink Non-Native</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows Ink no natiu</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Wintab</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8802,24 +8802,24 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Qt5</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt5</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+9"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Tablet driver:</source>
-        <translation type="unfinished"></translation>
+        <translation>Controlador de la tauleta:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8829,12 +8829,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Pen pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pressió del llapis:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Global smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Suavitzat global: </translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8844,12 +8844,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Apply global smoothing to mouse</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplica el suavitzat global al ratolí</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Compensate jagged curves</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Compensa les corbes dentades</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8864,7 +8864,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Esborra amb el pinzell actual</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8878,7 +8878,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/tools.cpp" line="+146"/>
         <source>Toggle between previous and current tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta entre l&apos;eina anterior i actual</translation>
     </message>
     <message>
         <location line="+2"/>
