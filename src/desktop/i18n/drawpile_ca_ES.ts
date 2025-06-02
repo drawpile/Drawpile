@@ -8839,7 +8839,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Smoothing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Suavitzat:</translation>
     </message>
     <message>
         <location line="+2"/>
