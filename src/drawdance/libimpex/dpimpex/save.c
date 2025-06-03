@@ -884,7 +884,7 @@ DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc,
 #if defined(_WIN32)
 #    define PREFERRED_PATH_SEPARATOR "\\"
 #    define POSSIBLE_PATH_SEPARATORS "\\/"
-#elif defined(__EMSCRIPTEN__) || defined(__APPLE__) || defined(__linux__)
+#elif defined(__EMSCRIPTEN__) || defined(__APPLE__) || defined(__linux__) || defined(__Haiku__)
 #    define PREFERRED_PATH_SEPARATOR "/"
 #    define POSSIBLE_PATH_SEPARATORS "/"
 #else
