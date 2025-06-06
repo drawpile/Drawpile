@@ -60,6 +60,7 @@ static bool preset_equal_classic_brush(const DP_ClassicBrush *a,
         && preset_equal_classic_brush_range(&a->hardness, &b->hardness)
         && preset_equal_classic_brush_range(&a->opacity, &b->opacity)
         && preset_equal_classic_brush_range(&a->smudge, &b->smudge)
+        && preset_equal_classic_brush_range(&a->jitter, &b->jitter)
         && a->spacing == b->spacing && a->resmudge == b->resmudge
         && a->shape == b->shape && a->paint_mode == b->paint_mode
         && a->brush_mode == b->brush_mode && a->erase_mode == b->erase_mode
@@ -72,7 +73,9 @@ static bool preset_equal_classic_brush(const DP_ClassicBrush *a,
         && preset_equal_classic_brush_dynamic(&a->opacity_dynamic,
                                               &b->opacity_dynamic)
         && preset_equal_classic_brush_dynamic(&a->smudge_dynamic,
-                                              &b->smudge_dynamic);
+                                              &b->smudge_dynamic)
+        && preset_equal_classic_brush_dynamic(&a->jitter_dynamic,
+                                              &b->jitter_dynamic);
 }
 
 bool DP_classic_brush_equal_preset(const DP_ClassicBrush *a,
