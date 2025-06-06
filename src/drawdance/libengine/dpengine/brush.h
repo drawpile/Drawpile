@@ -69,6 +69,7 @@ typedef struct DP_ClassicBrush {
     DP_ClassicBrushRange opacity;
     DP_ClassicBrushRange smudge;
     DP_ClassicBrushRange jitter;
+    DP_ClassicBrushRange blending;
     float spacing;
     int resmudge;
     DP_UPixelFloat color;
@@ -83,6 +84,7 @@ typedef struct DP_ClassicBrush {
     DP_ClassicBrushDynamic opacity_dynamic;
     DP_ClassicBrushDynamic smudge_dynamic;
     DP_ClassicBrushDynamic jitter_dynamic;
+    DP_ClassicBrushDynamic blending_dynamic;
 } DP_ClassicBrush;
 
 
@@ -141,6 +143,9 @@ float DP_classic_brush_smudge_at(const DP_ClassicBrush *cb, float pressure,
 
 float DP_classic_brush_jitter_at(const DP_ClassicBrush *cb, float pressure,
                                  float velocity, float distance);
+
+float DP_classic_brush_blending_at(const DP_ClassicBrush *cb, float pressure,
+                                   float velocity, float distance);
 
 DP_BlendMode DP_classic_brush_blend_mode(const DP_ClassicBrush *cb);
 

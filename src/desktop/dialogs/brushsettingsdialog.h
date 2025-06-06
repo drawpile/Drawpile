@@ -128,6 +128,7 @@ private:
 	QWidget *buildClassicOpacityPageUi();
 	QWidget *buildClassicHardnessPageUi();
 	QWidget *buildClassicSmudgingPageUi();
+	QWidget *buildClassicBlendingPageUi();
 	QWidget *buildClassicJitterPageUi();
 	Dynamics buildClassicDynamics(
 		QVBoxLayout *layout,
@@ -150,7 +151,8 @@ private:
 
 	void updateUiFromClassicBrush();
 	bool updateClassicBrushDynamics(
-		Dynamics &dynamics, const DP_ClassicBrushDynamic &brush);
+		Dynamics &dynamics, const DP_ClassicBrushDynamic &brush,
+		bool visible = true);
 	void updateUiFromMyPaintBrush();
 	void updateMyPaintSettingPage(int setting);
 	void updateStabilizerExplanationText();

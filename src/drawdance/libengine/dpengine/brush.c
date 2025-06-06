@@ -61,6 +61,7 @@ static bool preset_equal_classic_brush(const DP_ClassicBrush *a,
         && preset_equal_classic_brush_range(&a->opacity, &b->opacity)
         && preset_equal_classic_brush_range(&a->smudge, &b->smudge)
         && preset_equal_classic_brush_range(&a->jitter, &b->jitter)
+        && preset_equal_classic_brush_range(&a->blending, &b->blending)
         && a->spacing == b->spacing && a->resmudge == b->resmudge
         && a->shape == b->shape && a->paint_mode == b->paint_mode
         && a->brush_mode == b->brush_mode && a->erase_mode == b->erase_mode
@@ -75,7 +76,9 @@ static bool preset_equal_classic_brush(const DP_ClassicBrush *a,
         && preset_equal_classic_brush_dynamic(&a->smudge_dynamic,
                                               &b->smudge_dynamic)
         && preset_equal_classic_brush_dynamic(&a->jitter_dynamic,
-                                              &b->jitter_dynamic);
+                                              &b->jitter_dynamic)
+        && preset_equal_classic_brush_dynamic(&a->blending_dynamic,
+                                              &b->blending_dynamic);
 }
 
 bool DP_classic_brush_equal_preset(const DP_ClassicBrush *a,
@@ -195,6 +198,16 @@ float DP_classic_brush_jitter_at(const DP_ClassicBrush *cb, float pressure,
     DP_ASSERT(pressure <= 1.0f);
     return lerp_range_dynamic(&cb->jitter, pressure, velocity, distance,
                               &cb->jitter_dynamic);
+}
+
+float DP_classic_brush_blending_at(const DP_ClassicBrush *cb, float pressure,
+                                   float velocity, float distance)
+{
+    DP_ASSERT(cb);
+    DP_ASSERT(pressure >= 0.0f);
+    DP_ASSERT(pressure <= 1.0f);
+    return lerp_range_dynamic(&cb->blending, pressure, velocity, distance,
+                              &cb->blending_dynamic);
 }
 
 DP_BlendMode DP_classic_brush_blend_mode(const DP_ClassicBrush *cb)

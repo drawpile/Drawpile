@@ -35,6 +35,7 @@ ClassicBrush::ClassicBrush()
 		  {0.0f, 1.0f, {}},
 		  {0.0f, 0.0f, {}},
 		  {0.0f, 0.0f, {}},
+		  {0.0f, 1.0f, {}},
 		  0.1f,
 		  0,
 		  {0.0f, 0.0f, 0.0f, 1.0f},
@@ -49,6 +50,7 @@ ClassicBrush::ClassicBrush()
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
+		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 	  })
 {
 	updateCurve(m_sizeCurve, size.curve);
@@ -56,6 +58,7 @@ ClassicBrush::ClassicBrush()
 	updateCurve(m_hardnessCurve, hardness.curve);
 	updateCurve(m_smudgeCurve, smudge.curve);
 	updateCurve(m_jitterCurve, jitter.curve);
+	updateCurve(m_blendingCurve, blending.curve);
 }
 
 bool ClassicBrush::equalPreset(
@@ -121,6 +124,12 @@ void ClassicBrush::setJitterCurve(const KisCubicCurve &jitterCurve)
 {
 	m_jitterCurve = jitterCurve;
 	updateCurve(m_jitterCurve, jitter.curve);
+}
+
+void ClassicBrush::setBlendingCurve(const KisCubicCurve &blendingCurve)
+{
+	m_blendingCurve = blendingCurve;
+	updateCurve(m_blendingCurve, blending.curve);
 }
 
 void ClassicBrush::setQColor(const QColor &c)
@@ -194,6 +203,11 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.jitter.min = o["jitter2"].toDouble();
 	b.m_jitterCurve.fromString(o["jittercurve"].toString());
 	b.updateCurve(b.m_jitterCurve, b.jitter.curve);
+
+	b.blending.max = o["blending"].toDouble(1.0);
+	b.blending.min = o["blending2"].toDouble();
+	b.m_blendingCurve.fromString(o["blendingcurve"].toString());
+	b.updateCurve(b.m_blendingCurve, b.blending.curve);
 
 	b.spacing = o["spacing"].toDouble();
 	b.resmudge = o["resmudge"].toInt();
@@ -329,6 +343,11 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 	m_jitterCurve.fromString(settings["jittercurve"].toString());
 	updateCurve(m_jitterCurve, jitter.curve);
 
+	blending.max = settings["blending"].toDouble(1.0);
+	blending.min = settings["blending2"].toDouble();
+	m_blendingCurve.fromString(settings["blendingcurve"].toString());
+	updateCurve(m_blendingCurve, blending.curve);
+
 	spacing = settings["spacing"].toDouble();
 	resmudge = settings["resmudge"].toInt();
 
@@ -353,6 +372,9 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 	jitter_dynamic = dynamicFromJson(settings, QStringLiteral("jitter"));
 	m_lastJitterDynamicType =
 		lastDynamicTypeFromJson(settings, QStringLiteral("jitter"));
+	blending_dynamic = dynamicFromJson(settings, QStringLiteral("blending"));
+	m_lastBlendingDynamicType =
+		lastDynamicTypeFromJson(settings, QStringLiteral("blending"));
 
 	int brushBlendMode = canvas::blendmode::fromOraName(
 		settings.value(QStringLiteral("blend")).toString());
@@ -424,6 +446,14 @@ QJsonObject ClassicBrush::settingsToJson() const
 		o["jitter2"] = jitter.min;
 	o["jittercurve"] = m_jitterCurve.toString();
 
+	if(jitter.max < 1.0) {
+		o["blending"] = blending.max;
+	}
+	if(jitter.min > 0) {
+		o["blending2"] = blending.min;
+	}
+	o["blendingcurve"] = m_blendingCurve.toString();
+
 	o["spacing"] = spacing;
 	if(resmudge > 0)
 		o["resmudge"] = resmudge;
@@ -444,6 +474,9 @@ QJsonObject ClassicBrush::settingsToJson() const
 		smudge_dynamic, m_lastSmudgeDynamicType, QStringLiteral("smudge"), o);
 	dynamicToJson(
 		jitter_dynamic, m_lastJitterDynamicType, QStringLiteral("jitter"), o);
+	dynamicToJson(
+		blending_dynamic, m_lastBlendingDynamicType, QStringLiteral("blending"),
+		o);
 
 	o[QStringLiteral("blendalpha")] =
 		canvas::blendmode::presentsAsAlphaPreserving(brush_mode);
