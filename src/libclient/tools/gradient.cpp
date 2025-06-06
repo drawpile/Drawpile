@@ -65,6 +65,7 @@ void GradientTool::motion(const MotionParams &params)
 {
 	bool hoverIndexChanged = updateHoverIndex(params.point);
 	if(m_dragging) {
+		m_clickDetector.motion(params.viewPos);
 		int pointCount = m_points.size();
 		QPointF delta = params.point - m_dragStartPoint;
 		if(m_dragIndex >= 0 && m_dragIndex < pointCount) {
