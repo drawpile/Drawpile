@@ -30,25 +30,29 @@ typedef enum DP_StrokeWorkerJobType {
     DP_STROKE_WORKER_JOB_CANCEL,
 } DP_StrokeWorkerJobType;
 
+typedef struct DP_StrokeWorkerJobClassic {
+    DP_ClassicBrush brush;
+    DP_BrushEngineStrokeParams besp;
+    DP_UPixelFloat color_override;
+    bool have_color_override;
+    bool eraser_override;
+} DP_StrokeWorkerJobClassic;
+
+typedef struct DP_StrokeWorkerJobMyPaint {
+    DP_MyPaintBrush brush;
+    DP_MyPaintSettings settings;
+    DP_BrushEngineStrokeParams besp;
+    DP_UPixelFloat color_override;
+    bool have_color_override;
+    bool eraser_override;
+} DP_StrokeWorkerJobMyPaint;
+
 typedef struct DP_StrokeWorkerJob {
     DP_StrokeWorkerJobType type;
     union {
         int size_limit;
-        struct {
-            DP_ClassicBrush brush;
-            DP_BrushEngineStrokeParams besp;
-            DP_UPixelFloat color_override;
-            bool have_color_override;
-            bool eraser_override;
-        } classic;
-        struct {
-            DP_MyPaintBrush brush;
-            DP_MyPaintSettings settings;
-            DP_BrushEngineStrokeParams besp;
-            DP_UPixelFloat color_override;
-            bool have_color_override;
-            bool eraser_override;
-        } mypaint;
+        DP_StrokeWorkerJobClassic *classic;
+        DP_StrokeWorkerJobMyPaint *mypaint;
         DP_Message *msg;
         struct {
             unsigned int context_id;
@@ -114,21 +118,23 @@ static void run_stroke_worker_thread(void *data)
             case DP_STROKE_WORKER_JOB_CLASSIC_BRUSH_SET:
                 DP_ASSERT(!stroking);
                 DP_brush_engine_classic_brush_set(
-                    sw->be, &job.classic.brush, &job.classic.besp,
-                    job.classic.have_color_override
-                        ? &job.classic.color_override
+                    sw->be, &job.classic->brush, &job.classic->besp,
+                    job.classic->have_color_override
+                        ? &job.classic->color_override
                         : NULL,
-                    job.classic.eraser_override);
+                    job.classic->eraser_override);
+                DP_free(job.classic);
                 continue;
             case DP_STROKE_WORKER_JOB_MYPAINT_BRUSH_SET:
                 DP_ASSERT(!stroking);
                 DP_brush_engine_mypaint_brush_set(
-                    sw->be, &job.mypaint.brush, &job.mypaint.settings,
-                    &job.mypaint.besp,
-                    job.mypaint.have_color_override
-                        ? &job.mypaint.color_override
+                    sw->be, &job.mypaint->brush, &job.mypaint->settings,
+                    &job.mypaint->besp,
+                    job.mypaint->have_color_override
+                        ? &job.mypaint->color_override
                         : NULL,
-                    job.mypaint.eraser_override);
+                    job.mypaint->eraser_override);
+                DP_free(job.mypaint);
                 continue;
             case DP_STROKE_WORKER_JOB_DABS_FLUSH:
                 DP_brush_engine_dabs_flush(sw->be);
@@ -316,12 +322,17 @@ void DP_stroke_worker_classic_brush_set(DP_StrokeWorker *sw,
     start_or_stop_thread(sw, besp->sync_samples);
 
     if (sw->thread) {
-        push_job(sw, (DP_StrokeWorkerJob){
-                         DP_STROKE_WORKER_JOB_CLASSIC_BRUSH_SET,
-                         .classic = {*brush, *besp,
-                                     color_override ? *color_override
-                                                    : DP_upixel_float_zero(),
-                                     color_override, eraser_override}});
+        DP_StrokeWorkerJobClassic *classic = DP_malloc(sizeof(*classic));
+        *classic = (DP_StrokeWorkerJobClassic){
+            *brush,
+            *besp,
+            color_override ? *color_override : DP_upixel_float_zero(),
+            color_override,
+            eraser_override,
+        };
+        push_job(sw,
+                 (DP_StrokeWorkerJob){DP_STROKE_WORKER_JOB_CLASSIC_BRUSH_SET,
+                                      .classic = classic});
     }
     else {
         DP_brush_engine_classic_brush_set(sw->be, brush, besp, color_override,
@@ -344,12 +355,18 @@ void DP_stroke_worker_mypaint_brush_set(DP_StrokeWorker *sw,
     start_or_stop_thread(sw, besp->sync_samples);
 
     if (sw->thread) {
-        push_job(sw, (DP_StrokeWorkerJob){
-                         DP_STROKE_WORKER_JOB_MYPAINT_BRUSH_SET,
-                         .mypaint = {*brush, *settings, *besp,
-                                     color_override ? *color_override
-                                                    : DP_upixel_float_zero(),
-                                     color_override, eraser_override}});
+        DP_StrokeWorkerJobMyPaint *mypaint = DP_malloc(sizeof(*mypaint));
+        *mypaint = (DP_StrokeWorkerJobMyPaint){
+            *brush,
+            *settings,
+            *besp,
+            color_override ? *color_override : DP_upixel_float_zero(),
+            color_override,
+            eraser_override,
+        };
+        push_job(sw,
+                 (DP_StrokeWorkerJob){DP_STROKE_WORKER_JOB_MYPAINT_BRUSH_SET,
+                                      .mypaint = mypaint});
     }
     else {
         DP_brush_engine_mypaint_brush_set(sw->be, brush, settings, besp,
@@ -450,11 +467,17 @@ static void cancel_job(void *element, DP_UNUSED void *user)
     DP_StrokeWorkerJob *job = element;
     switch (job->type) {
     case DP_STROKE_WORKER_JOB_MESSAGE_PUSH:
+        return; // Keep this message.
+    case DP_STROKE_WORKER_JOB_CLASSIC_BRUSH_SET:
+        DP_free(job->classic);
+        break;
+    case DP_STROKE_WORKER_JOB_MYPAINT_BRUSH_SET:
+        DP_free(job->mypaint);
         break;
     default:
-        job->type = DP_STROKE_WORKER_JOB_NONE;
         break;
     }
+    job->type = DP_STROKE_WORKER_JOB_NONE;
 }
 
 void DP_stroke_worker_stroke_cancel(DP_StrokeWorker *sw, long long time_msec,
