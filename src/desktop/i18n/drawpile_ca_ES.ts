@@ -9142,7 +9142,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Guess</source>
-        <translation type="unfinished">Endevina</translation>
+        <translation>Estima</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9291,7 +9291,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>On-canvas notices:</source>
-        <translation type="unfinished">Avisos en el llenç:</translation>
+        <translation>Avisos en el llenç:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9668,7 +9668,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished">La pàgina de descàrrega per a Drawpile %1 s&apos;hauria d&apos;haver obert al vostre navegador. Si no visiteu &lt;strong&gt;drawpile.net&lt;/strong&gt; manualment.</translation>
+        <translation>La pàgina de descàrrega per a Drawpile %1 s&apos;hauria d&apos;haver obert al vostre navegador. Si no ho ha fet, visiteu &lt;strong&gt;drawpile.net&lt;/strong&gt; manualment.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -10811,12 +10811,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/dockbase.cpp" line="+73"/>
         <source>Drag here to arrange</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arrossegueu aquí per organitzar</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Finish arranging</source>
-        <translation type="unfinished"></translation>
+        <translation>Finalitza l&apos;organització</translation>
     </message>
 </context>
 <context>
