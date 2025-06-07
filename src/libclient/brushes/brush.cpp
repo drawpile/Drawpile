@@ -44,6 +44,7 @@ ClassicBrush::ClassicBrush()
 		  DP_BLEND_MODE_ERASE,
 		  false,
 		  true,
+		  true,
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
@@ -197,6 +198,8 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 
 	b.spacing = o["spacing"].toDouble();
 	b.resmudge = o["resmudge"].toInt();
+	b.smudge_alpha =
+		o.value(QStringLiteral("smudgealpha")).toBool(b.smudge.max <= 0.0f);
 
 	b.paint_mode = canvas::paintmode::fromSettingName(
 		o.value(QStringLiteral("paintmode")).toString(),
@@ -331,6 +334,8 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 
 	spacing = settings["spacing"].toDouble();
 	resmudge = settings["resmudge"].toInt();
+	smudge_alpha = settings.value(QStringLiteral("smudgealpha"))
+					   .toBool(smudge.max <= 0.0f);
 
 	paint_mode = canvas::paintmode::fromSettingName(
 		settings.value(QStringLiteral("paintmode")).toString(),
@@ -427,6 +432,7 @@ QJsonObject ClassicBrush::settingsToJson() const
 	o["spacing"] = spacing;
 	if(resmudge > 0)
 		o["resmudge"] = resmudge;
+	o[QStringLiteral("smudgealpha")] = smudge_alpha;
 
 	o[QStringLiteral("paintmode")] = canvas::paintmode::settingName(paint_mode);
 	o[QStringLiteral("indirect")] = paint_mode != DP_PAINT_MODE_DIRECT;

@@ -160,6 +160,7 @@ struct BrushSettings::Private {
 	QAction *paintModeIndirectWashAction;
 	QAction *paintModeIndirectSoftAction;
 	QAction *paintModeIndirectNormalAction;
+	QAction *smudgeAlphaAction;
 	QAction *syncSamplesAction;
 
 	QActionGroup *stabilizationModeGroup;
@@ -471,6 +472,9 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->paintModeGroup->addAction(d->paintModeIndirectSoftAction);
 	d->paintModeGroup->addAction(d->paintModeIndirectNormalAction);
 	paintModeMenu->addSeparator();
+	d->smudgeAlphaAction = paintModeMenu->addAction(QCoreApplication::translate(
+		"dialogs::BrushSettingsDialog", "Smudge with transparency"));
+	d->smudgeAlphaAction->setCheckable(true);
 	d->syncSamplesAction = paintModeMenu->addAction(QCoreApplication::translate(
 		"dialogs::BrushSettingsDialog", "Synchronize smudging"));
 	d->syncSamplesAction->setCheckable(true);
@@ -1312,6 +1316,8 @@ void BrushSettings::updateUi()
 	if(mypaintmode) {
 		d->brushType = BrushType::MyPaint;
 		d->ui.brushTypeButton->setIcon(d->brushTypeMyPaintAction->icon());
+		d->smudgeAlphaAction->setChecked(true);
+		d->smudgeAlphaAction->setEnabled(false);
 	} else {
 		switch(classic.shape) {
 		case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
@@ -1329,6 +1335,8 @@ void BrushSettings::updateUi()
 			d->ui.brushTypeButton->setIcon(d->brushTypeSoftRoundAction->icon());
 			break;
 		}
+		d->smudgeAlphaAction->setChecked(classic.smudge_alpha);
+		d->smudgeAlphaAction->setEnabled(!d->compatibilityMode);
 	}
 
 	emit subpixelModeChanged(getSubpixelMode(), isSquare());
@@ -1361,6 +1369,9 @@ void BrushSettings::updateUi()
 	d->ui.pressureOpacity->setChecked(
 		classic.opacity_dynamic.type != DP_CLASSIC_BRUSH_DYNAMIC_NONE);
 	d->ui.smudgingBox->setValue(qRound(classic.smudge.max * 100.0));
+	d->ui.smudgingBox->setPrefix(
+		classic.smudge_alpha && !d->compatibilityMode ? tr("Smudging: ")
+													  : tr("Blending: "));
 	d->ui.pressureSmudging->setChecked(
 		classic.smudge_dynamic.type != DP_CLASSIC_BRUSH_DYNAMIC_NONE);
 	d->ui.colorpickupBox->setValue(classic.resmudge);
@@ -1527,6 +1538,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 						? classic.lastHardnessDynamicType()
 						: DP_CLASSIC_BRUSH_DYNAMIC_NONE;
 			}
+			classic.smudge_alpha = d->smudgeAlphaAction->isChecked();
 			// Smudging only works right in incremental mode
 			if(classic.smudge.max != 0.0) {
 				canChangePaintMode = false;

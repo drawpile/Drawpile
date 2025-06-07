@@ -161,6 +161,7 @@ struct DP_BrushEngine {
             int smudge_distance;
             DP_UPixelFloat brush_color;
             DP_UPixelFloat smudge_color;
+            float indirect_alpha;
             float last_x;
             float last_y;
             float last_pressure;
@@ -872,6 +873,40 @@ static uint8_t get_uint8(float input)
     return DP_float_to_uint8(CLAMP(value, 0, UINT8_MAX));
 }
 
+static DP_UPixelFloat blend_classic_color(DP_BrushEngine *be,
+                                          DP_ClassicBrush *cb, float pressure,
+                                          float velocity, float distance)
+{
+    if (be->classic.indirect_alpha == 0.0f) {
+        float a =
+            cb->smudge_alpha && !be->stroke.compatibility_mode
+                ? DP_classic_brush_smudge_at(cb, pressure, velocity, distance)
+                : 1.0f;
+        if (a <= 0.0f) {
+            return be->classic.brush_color;
+        }
+        else if (a >= 1.0f) {
+            return be->classic.smudge_color;
+        }
+        else {
+            float a1 = 1.0f - a;
+            return (DP_UPixelFloat){
+                be->classic.smudge_color.b * a + be->classic.brush_color.b * a1,
+                be->classic.smudge_color.g * a + be->classic.brush_color.g * a1,
+                be->classic.smudge_color.r * a + be->classic.brush_color.r * a1,
+                be->classic.smudge_color.a * a + a1,
+            };
+        }
+    }
+    else {
+        return (DP_UPixelFloat){
+            be->classic.smudge_color.b,
+            be->classic.smudge_color.g,
+            be->classic.smudge_color.r,
+            be->classic.indirect_alpha,
+        };
+    }
+}
 
 #define MASK_ALL_BLANK  0
 #define MASK_ALL_OPAQUE 1
@@ -1061,7 +1096,8 @@ static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
         uint8_t dab_flags = (uint8_t)paint_mode | mask_flags;
         int32_t dab_x = DP_int_to_int32(x);
         int32_t dab_y = DP_int_to_int32(y);
-        uint32_t dab_color = combine_upixel_float(be->classic.smudge_color);
+        uint32_t dab_color = combine_upixel_float(
+            blend_classic_color(be, cb, pressure, velocity, distance));
 
         int used = be->dabs.used;
         int8_t dx, dy;
@@ -1152,7 +1188,8 @@ static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
         uint8_t dab_flags = (uint8_t)paint_mode | mask_flags;
         int32_t dab_x = DP_float_to_int32((x + fudge_x) * 4.0f) + (int32_t)3;
         int32_t dab_y = DP_float_to_int32((y + fudge_y) * 4.0f) + (int32_t)2;
-        uint32_t dab_color = combine_upixel_float(be->classic.smudge_color);
+        uint32_t dab_color = combine_upixel_float(
+            blend_classic_color(be, cb, pressure, velocity, distance));
 
         int used = be->dabs.used;
         int8_t dx, dy;
@@ -1719,15 +1756,16 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
         // Incremental mode must be used when smudging, because color is not
         // picked up from sublayers
         cb->paint_mode = DP_PAINT_MODE_DIRECT;
-        color.a = 0.0f;
+        be->classic.indirect_alpha = 0.0f;
     }
     else {
         // For indirect drawing modes, the alpha is used as the overall opacity
         // of the entire stroke.
-        color.a = cb->opacity.max;
+        float opacity = cb->opacity.max;
+        be->classic.indirect_alpha = opacity;
         cb->opacity.max = 1.0f;
         if (cb->opacity_dynamic.type != DP_CLASSIC_BRUSH_DYNAMIC_NONE) {
-            cb->opacity.min = cb->opacity.min / color.a;
+            cb->opacity.min = opacity > 0.0f ? cb->opacity.min / color.a : 1.0f;
         }
     }
     be->classic.brush_color = color;
@@ -1858,6 +1896,57 @@ static uint8_t get_dab_blend_mode(DP_PaintMode paint_mode,
     return (uint8_t)blend_mode;
 }
 
+static uint8_t get_effective_classic_blend_mode(DP_BrushEngine *be,
+                                                DP_BlendMode opaque_mode,
+                                                DP_BlendMode alpha_mode)
+{
+    unsigned int alpha = (be->classic.dab_color & 0xff000000u) >> 24u;
+    if (alpha == 0) {
+        return (uint8_t)DP_BLEND_MODE_ERASE;
+    }
+    else if (alpha < 255) {
+        return (uint8_t)alpha_mode;
+    }
+    else {
+        return (uint8_t)opaque_mode;
+    }
+}
+
+static uint8_t get_classic_dab_blend_mode(DP_BrushEngine *be)
+{
+    DP_PaintMode paint_mode = get_classic_paint_mode(be);
+    DP_BlendMode blend_mode = get_classic_blend_mode(be);
+    if (paint_mode == DP_PAINT_MODE_DIRECT) {
+        switch (blend_mode) {
+        case DP_BLEND_MODE_NORMAL:
+            return get_effective_classic_blend_mode(
+                be, DP_BLEND_MODE_NORMAL, DP_BLEND_MODE_NORMAL_AND_ERASER);
+        case DP_BLEND_MODE_PIGMENT_ALPHA:
+            return get_effective_classic_blend_mode(
+                be, DP_BLEND_MODE_PIGMENT_ALPHA,
+                DP_BLEND_MODE_PIGMENT_AND_ERASER);
+        default:
+            break;
+        }
+    }
+    return get_dab_blend_mode(paint_mode, blend_mode);
+}
+
+static uint32_t get_classic_dab_color(DP_BrushEngine *be,
+                                      uint8_t dab_blend_mode)
+{
+    uint32_t color = be->classic.dab_color;
+    // In direct mode, alpha on the color is meaningless unless it's an "and
+    // eraser" blend mode that actually makes use of it, so we clamp off the
+    // alpha in the cases where it doesn't matter.
+    if (be->classic.indirect_alpha == 0.0f
+        && dab_blend_mode != DP_BLEND_MODE_NORMAL_AND_ERASER
+        && dab_blend_mode != DP_BLEND_MODE_PIGMENT_AND_ERASER) {
+        color &= (uint32_t)0xffffff;
+    }
+    return color;
+}
+
 static void set_pixel_dabs(int count, DP_PixelDab *out, void *user)
 {
     DP_BrushEngine *be = user;
@@ -1889,13 +1978,13 @@ static void flush_pixel_dabs(DP_BrushEngine *be, int used)
     else {
         new_fn = DP_msg_draw_dabs_pixel_square_new;
     }
+    uint8_t dab_blend_mode = get_classic_dab_blend_mode(be);
     be->push_message(
-        be->user, new_fn(be->stroke.context_id, (uint8_t)be->classic.dab_flags,
-                         DP_int_to_uint32(be->layer_id), be->classic.dab_x,
-                         be->classic.dab_y, be->classic.dab_color,
-                         get_dab_blend_mode(get_classic_paint_mode(be),
-                                            get_classic_blend_mode(be)),
-                         set_pixel_dabs, used, be));
+        be->user,
+        new_fn(be->stroke.context_id, (uint8_t)be->classic.dab_flags,
+               DP_int_to_uint32(be->layer_id), be->classic.dab_x,
+               be->classic.dab_y, get_classic_dab_color(be, dab_blend_mode),
+               dab_blend_mode, set_pixel_dabs, used, be));
 }
 
 static uint32_t get_subpixel_max_size(DP_BrushEngine *be)
@@ -1925,14 +2014,13 @@ static void set_soft_dabs(int count, DP_ClassicDab *out, void *user)
 
 static void flush_soft_dabs(DP_BrushEngine *be, int used)
 {
-    be->push_message(be->user,
-                     DP_msg_draw_dabs_classic_new(
-                         be->stroke.context_id, be->classic.dab_flags,
-                         DP_int_to_uint32(be->layer_id), be->classic.dab_x,
-                         be->classic.dab_y, be->classic.dab_color,
-                         get_dab_blend_mode(get_classic_paint_mode(be),
-                                            get_classic_blend_mode(be)),
-                         set_soft_dabs, used, be));
+    uint8_t dab_blend_mode = get_classic_dab_blend_mode(be);
+    be->push_message(be->user, DP_msg_draw_dabs_classic_new(
+                                   be->stroke.context_id, be->classic.dab_flags,
+                                   DP_int_to_uint32(be->layer_id),
+                                   be->classic.dab_x, be->classic.dab_y,
+                                   get_classic_dab_color(be, dab_blend_mode),
+                                   dab_blend_mode, set_soft_dabs, used, be));
 }
 
 static void set_mypaint_dabs(int count, DP_MyPaintDab *out, void *user)
@@ -2132,7 +2220,8 @@ static DP_UPixelFloat sample_classic_smudge(DP_BrushEngine *be,
         get_classic_smudge_diameter(cb, pressure, velocity, distance);
     return DP_layer_content_sample_color_at(
         lc, get_stamp_buffer(be), DP_float_to_int(x), DP_float_to_int(y),
-        diameter, true, is_pigment_mode(get_classic_brush_blend_mode(be, cb)),
+        diameter, !cb->smudge_alpha || be->stroke.compatibility_mode,
+        is_pigment_mode(get_classic_brush_blend_mode(be, cb)),
         &be->last_diameter, NULL);
 }
 
@@ -2147,12 +2236,21 @@ static void update_classic_smudge(DP_BrushEngine *be, DP_ClassicBrush *cb,
         if (lc) {
             DP_UPixelFloat sample = sample_classic_smudge(
                 be, cb, lc, x, y, pressure, velocity, distance);
-            if (sample.a > 0.0f) {
-                float a = sample.a * smudge;
-                DP_UPixelFloat *sp = &be->classic.smudge_color;
-                sp->r = sp->r * (1.0f - a) + sample.r * a;
-                sp->g = sp->g * (1.0f - a) + sample.g * a;
-                sp->b = sp->b * (1.0f - a) + sample.b * a;
+            DP_UPixelFloat *sp = &be->classic.smudge_color;
+            if (cb->smudge_alpha && !be->stroke.compatibility_mode) {
+                if (sample.a > 0.0f) {
+                    *sp = sample;
+                }
+                else {
+                    sp->a = sample.a;
+                }
+            }
+            else {
+                float a = sp->a > 0.0f ? sample.a * smudge : 1.0f;
+                float a1 = (1.0f - a);
+                sp->r = sp->r * a1 + sample.r * a;
+                sp->g = sp->g * a1 + sample.g * a;
+                sp->b = sp->b * a1 + sample.b * a;
             }
             be->classic.smudge_distance = 0;
         }
@@ -2364,17 +2462,35 @@ static void stroke_to_classic(
         be->classic.last_up = false;
         be->stroke.in_progress = true;
         DP_LayerContent *lc;
-        bool colorpick = cb->colorpick
+        bool smudge_alpha = cb->smudge_alpha && !be->stroke.compatibility_mode;
+        bool colorpick = (cb->colorpick || smudge_alpha)
                       && get_classic_blend_mode(be) != DP_BLEND_MODE_ERASE
                       && (lc = update_sample_layer_content(be));
         if (colorpick) {
             be->classic.smudge_color =
                 sample_classic_smudge(be, cb, lc, x, y, pressure, 0.0f, 0.0f);
-            be->classic.smudge_color.a = be->classic.brush_color.a;
+            if (smudge_alpha) {
+                if (be->classic.smudge_color.a > 0.0f) {
+                    if (cb->colorpick) {
+                        be->classic.brush_color.b = be->classic.smudge_color.b;
+                        be->classic.brush_color.g = be->classic.smudge_color.g;
+                        be->classic.brush_color.r = be->classic.smudge_color.r;
+                    }
+                }
+                else {
+                    be->classic.smudge_color.b = be->classic.brush_color.b;
+                    be->classic.smudge_color.g = be->classic.brush_color.g;
+                    be->classic.smudge_color.r = be->classic.brush_color.r;
+                }
+            }
+            else {
+                be->classic.smudge_color.a = 1.0f;
+            }
             be->classic.smudge_distance = -1;
         }
         else {
             be->classic.smudge_color = be->classic.brush_color;
+            be->classic.smudge_color.a = 1.0f;
             be->classic.smudge_distance = 0;
         }
         first_dab(be, cb, x, y, pressure);

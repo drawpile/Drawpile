@@ -298,6 +298,7 @@ struct BrushSettingsDialog::Private {
 	widgets::CurveWidget *classicHardnessCurve;
 	KisSliderSpinBox *classicSmudgingSpinner;
 	KisSliderSpinBox *classicColorPickupSpinner;
+	QCheckBox *classicSmudgeAlphaBox;
 	QCheckBox *classicSyncSamplesBox;
 	Dynamics classicSmudgeDynamics;
 	KisSliderSpinBox *classicSmudgingMinSpinner;
@@ -995,6 +996,19 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
 
+	d->classicSmudgeAlphaBox = new QCheckBox(tr("Smudge with transparency"));
+	d->classicSmudgeAlphaBox->setToolTip(
+		tr("Enabling this will make smudging take the alpha channel into "
+		   "account.\nDisabling it reverts the behavior to how it was before "
+		   "Drawpile 2.3."));
+	layout->addWidget(d->classicSmudgeAlphaBox);
+	connect(
+		d->classicSmudgeAlphaBox, &QCheckBox::clicked, this,
+		[this](bool checked) {
+			d->brush.classic().smudge_alpha = checked;
+			emitChange();
+		});
+
 	d->classicSyncSamplesBox = buildSyncSamplesBox();
 	layout->addWidget(d->classicSyncSamplesBox);
 	connect(
@@ -1007,7 +1021,6 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	d->classicSmudgingSpinner = new KisSliderSpinBox{widget};
 	layout->addWidget(d->classicSmudgingSpinner);
 	d->classicSmudgingSpinner->setRange(0, 100);
-	d->classicSmudgingSpinner->setPrefix(tr("Smudging: "));
 	d->classicSmudgingSpinner->setSuffix(tr("%"));
 	kineticScroller->disableKineticScrollingOnWidget(d->classicSmudgingSpinner);
 	connect(
@@ -1039,7 +1052,6 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	d->classicSmudgingMinSpinner = new KisSliderSpinBox{widget};
 	layout->addWidget(d->classicSmudgingMinSpinner);
 	d->classicSmudgingMinSpinner->setRange(0, 100);
-	d->classicSmudgingMinSpinner->setPrefix(tr("Minimum Smudging: "));
 	d->classicSmudgingMinSpinner->setSuffix(tr("%"));
 	kineticScroller->disableKineticScrollingOnWidget(
 		d->classicSmudgingMinSpinner);
@@ -1052,7 +1064,7 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 		}));
 
 	d->classicSmudgingCurve =
-		new widgets::CurveWidget{tr("Input"), tr("Smudging"), false, widget};
+		new widgets::CurveWidget{tr("Input"), QString(), false, widget};
 	layout->addWidget(d->classicSmudgingCurve);
 	buildClassicApplyToAllButton(d->classicSmudgingCurve);
 	kineticScroller->disableKineticScrollingOnWidget(
@@ -1488,15 +1500,23 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->classicHardnessCurve->setCurve(classic.hardnessCurve());
 	d->classicHardnessCurve->setEnabled(haveHardnessDynamics);
 
+	bool smudgeAlpha = classic.smudge_alpha && !d->compatibilityMode;
 	d->classicSmudgingSpinner->setValue(classic.smudge.max * 100.0 + 0.5);
+	d->classicSmudgingSpinner->setPrefix(
+		smudgeAlpha ? tr("Smudging: ") : tr("Blending: "));
 	d->classicColorPickupSpinner->setValue(classic.resmudge);
+	d->classicSmudgeAlphaBox->setChecked(classic.smudge_alpha);
 	d->classicSyncSamplesBox->setChecked(classic.syncSamples);
 	bool haveSmudgeDynamics = updateClassicBrushDynamics(
 		d->classicSmudgeDynamics, classic.smudge_dynamic);
 	d->classicSmudgingMinSpinner->setValue(classic.smudge.min * 100.0 + 0.5);
 	d->classicSmudgingMinSpinner->setEnabled(haveSmudgeDynamics);
+	d->classicSmudgingMinSpinner->setPrefix(
+		smudgeAlpha ? tr("Minimum Smudging: ") : tr("Minimum Blending: "));
 	d->classicSmudgingCurve->setCurve(classic.smudgeCurve());
 	d->classicSmudgingCurve->setEnabled(haveSmudgeDynamics);
+	d->classicSmudgingCurve->setAxisTitleLabelY(
+		smudgeAlpha ? tr("Smudging") : tr("Blending"));
 
 	d->classicJitterSpinner->setValue(classic.jitter.max * 100.0 + 0.5);
 	bool haveJitterDynamics = updateClassicBrushDynamics(

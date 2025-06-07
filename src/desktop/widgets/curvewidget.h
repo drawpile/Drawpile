@@ -41,6 +41,7 @@ public:
 	void addButton(QAbstractButton *button);
 
 	void setAxisTitleLabels(const QString &xTitle, const QString &yTitle);
+	void setAxisTitleLabelY(const QString &yTitle);
 
 	void setAxisValueLabels(
 		const QString &xMin, const QString &xMax, const QString &yMin,

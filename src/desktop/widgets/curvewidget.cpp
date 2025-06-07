@@ -204,6 +204,11 @@ void CurveWidget::setAxisTitleLabels(
 	m_yTitleLabel->setText(yTitle);
 }
 
+void CurveWidget::setAxisTitleLabelY(const QString &yTitle)
+{
+	m_yTitleLabel->setText(yTitle);
+}
+
 void CurveWidget::setAxisValueLabels(
 	const QString &xMin, const QString &xMax, const QString &yMin,
 	const QString &yMax)
