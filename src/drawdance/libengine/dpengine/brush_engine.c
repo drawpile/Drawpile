@@ -872,28 +872,6 @@ static uint8_t get_uint8(float input)
     return DP_float_to_uint8(CLAMP(value, 0, UINT8_MAX));
 }
 
-static DP_UPixelFloat blend_classic_color(DP_BrushEngine *be,
-                                          DP_ClassicBrush *cb, float pressure,
-                                          float velocity, float distance)
-{
-    float a = DP_classic_brush_blending_at(cb, pressure, velocity, distance);
-    if (a <= 0.0f) {
-        return be->classic.brush_color;
-    }
-    else if (a >= 1.0f) {
-        return be->classic.smudge_color;
-    }
-    else {
-        float a1 = 1.0f - a;
-        return (DP_UPixelFloat){
-            be->classic.smudge_color.b * a + be->classic.brush_color.b * a1,
-            be->classic.smudge_color.g * a + be->classic.brush_color.g * a1,
-            be->classic.smudge_color.r * a + be->classic.brush_color.r * a1,
-            be->classic.smudge_color.a,
-        };
-    }
-}
-
 
 #define MASK_ALL_BLANK  0
 #define MASK_ALL_OPAQUE 1
@@ -1083,8 +1061,7 @@ static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
         uint8_t dab_flags = (uint8_t)paint_mode | mask_flags;
         int32_t dab_x = DP_int_to_int32(x);
         int32_t dab_y = DP_int_to_int32(y);
-        uint32_t dab_color = combine_upixel_float(
-            blend_classic_color(be, cb, pressure, velocity, distance));
+        uint32_t dab_color = combine_upixel_float(be->classic.smudge_color);
 
         int used = be->dabs.used;
         int8_t dx, dy;
@@ -1175,8 +1152,7 @@ static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
         uint8_t dab_flags = (uint8_t)paint_mode | mask_flags;
         int32_t dab_x = DP_float_to_int32((x + fudge_x) * 4.0f) + (int32_t)3;
         int32_t dab_y = DP_float_to_int32((y + fudge_y) * 4.0f) + (int32_t)2;
-        uint32_t dab_color = combine_upixel_float(
-            blend_classic_color(be, cb, pressure, velocity, distance));
+        uint32_t dab_color = combine_upixel_float(be->classic.smudge_color);
 
         int used = be->dabs.used;
         int8_t dx, dy;
