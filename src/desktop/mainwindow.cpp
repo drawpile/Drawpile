@@ -5913,19 +5913,13 @@ void MainWindow::setupActions()
 	//
 	// Select menu
 	//
-	// Deselect is not defined on most systems.
-#ifndef Q_OS_LINUX
-#	define DESELECT_SHORTCUT "Ctrl+Shift+A"
-#else
-#	define DESELECT_SHORTCUT QKeySequence::Deselect
-#endif
-
 	QAction *selectall = makeAction("selectall", tr("Select &All"))
 							 .shortcut(QKeySequence::SelectAll)
 							 .icon("edit-select-all");
-	QAction *selectnone = makeAction("selectnone", tr("&Deselect"))
-							  .shortcut(DESELECT_SHORTCUT)
-							  .icon("edit-select-none");
+	QAction *selectnone =
+		makeAction("selectnone", tr("&Deselect"))
+			.shortcut(QKeySequence("Ctrl+Shift+A"), QKeySequence("Ctrl+D"))
+			.icon("edit-select-none");
 	QAction *selectinvert = makeAction("selectinvert", tr("&Invert Selection"))
 								.noDefaultShortcut()
 								.icon("edit-select-invert");
