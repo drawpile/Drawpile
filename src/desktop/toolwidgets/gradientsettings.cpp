@@ -475,8 +475,8 @@ void GradientSettings::initBlendModeOptions(bool compatibilityMode)
 	int blendMode = getCurrentBlendMode();
 	{
 		QSignalBlocker blocker(m_blendModeCombo);
-		m_blendModeCombo->setModel(getFillBlendModesFor(
-			m_alphaPreserveButton->isChecked(), compatibilityMode));
+		m_blendModeCombo->setModel(
+			getFillBlendModesFor(m_automaticAlphaPreserve, compatibilityMode));
 	}
 	selectBlendMode(blendMode);
 }
