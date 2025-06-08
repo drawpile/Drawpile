@@ -2162,6 +2162,18 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
     }
     DP_stroke_engine_stroke_begin(&be->se);
 
+    // If we're supposed to synchronize smudging, grab a fresh canvas state here
+    // if we haven't been given one to use yet, cf. DP_StrokeWorker not passing
+    // canvas states when it's running with a worker thread.
+    DP_CanvasState *sync_cs;
+    if (!cs_or_null && be->stroke.sync_samples) {
+        sync_cs = be->sync(be->user);
+        cs_or_null = sync_cs;
+    }
+    else {
+        sync_cs = NULL;
+    }
+
     int next_selection_id = be->mask.next_selection_id;
     DP_LayerContent *mask_lc =
         search_sel_lc(cs_or_null, context_id, next_selection_id);
@@ -2197,6 +2209,7 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
         }
     }
 
+    DP_canvas_state_decref_nullable(sync_cs);
     DP_PERF_END(fn);
 }
 
