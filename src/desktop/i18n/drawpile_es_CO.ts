@@ -2131,7 +2131,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Stamp Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;stampar Transformación</translation>
     </message>
     <message>
         <location line="+48"/>
