@@ -298,6 +298,8 @@ target_sources(drawpile PRIVATE
 	toolwidgets/inspectorsettings.h
 	toolwidgets/lasersettings.cpp
 	toolwidgets/lasersettings.h
+	toolwidgets/lassofillsettings.cpp
+	toolwidgets/lassofillsettings.h
 	toolwidgets/pansettings.cpp
 	toolwidgets/pansettings.h
 	toolwidgets/selectionsettings.cpp

@@ -11,6 +11,7 @@
 #include "desktop/toolwidgets/gradientsettings.h"
 #include "desktop/toolwidgets/inspectorsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
+#include "desktop/toolwidgets/lassofillsettings.h"
 #include "desktop/toolwidgets/pansettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/toolwidgets/transformsettings.h"
@@ -98,6 +99,11 @@ struct ToolSettings::Private {
 			QSharedPointer<tools::ToolSettings>(new tools::FillSettings(ctrl)),
 			"fill", QIcon::fromTheme("fill-color"),
 			QApplication::tr("Flood Fill")};
+		pages[tools::Tool::LASSOFILL] = {
+			QSharedPointer<tools::ToolSettings>(
+				new tools::LassoFillSettings(ctrl)),
+			"lassofill", QIcon::fromTheme("drawpile_lassofill"),
+			QApplication::tr("Lasso Fill")};
 		pages[tools::Tool::GRADIENT] = {
 			QSharedPointer<tools::ToolSettings>(
 				new tools::GradientSettings(ctrl)),
@@ -382,6 +388,12 @@ tools::LaserPointerSettings *ToolSettings::laserPointerSettings()
 {
 	return static_cast<tools::LaserPointerSettings *>(
 		getToolSettingsPage(tools::Tool::LASERPOINTER));
+}
+
+tools::LassoFillSettings *ToolSettings::lassoFillSettings()
+{
+	return static_cast<tools::LassoFillSettings *>(
+		getToolSettingsPage(tools::Tool::LASSOFILL));
 }
 
 tools::PanSettings *ToolSettings::panSettings()

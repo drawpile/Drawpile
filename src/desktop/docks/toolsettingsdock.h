@@ -14,6 +14,7 @@ class FillSettings;
 class GradientSettings;
 class InspectorSettings;
 class LaserPointerSettings;
+class LassoFillSettings;
 class PanSettings;
 class SelectionSettings;
 class ToolController;
@@ -56,6 +57,7 @@ public:
 	tools::GradientSettings *gradientSettings();
 	tools::InspectorSettings *inspectorSettings();
 	tools::LaserPointerSettings *laserPointerSettings();
+	tools::LassoFillSettings *lassoFillSettings();
 	tools::PanSettings *panSettings();
 	tools::SelectionSettings *selectionSettings();
 	tools::TransformSettings *transformSettings();

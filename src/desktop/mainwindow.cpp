@@ -49,6 +49,7 @@
 #include "desktop/toolwidgets/gradientsettings.h"
 #include "desktop/toolwidgets/inspectorsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
+#include "desktop/toolwidgets/lassofillsettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/toolwidgets/transformsettings.h"
 #include "desktop/utils/actionbuilder.h"
@@ -3614,6 +3615,7 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 	switch(feature) {
 	case DP_FEATURE_PUT_IMAGE:
 		m_dockToolSettings->fillSettings()->setFeatureAccess(canUse);
+		m_dockToolSettings->lassoFillSettings()->setFeatureAccess(canUse);
 		m_dockToolSettings->gradientSettings()->setFeatureAccess(canUse);
 		break;
 	case DP_FEATURE_LASER:
@@ -6387,6 +6389,7 @@ void MainWindow::setupActions()
 	QAction *ellipsetool = makeAction("toolellipse", tr("&Ellipse")).icon("draw-ellipse").statusTip(tr("Draw unfilled circles and ellipses")).shortcut("O").checkable();
 	QAction *beziertool = makeAction("toolbezier", tr("Bezier Curve")).icon("draw-bezier-curves").statusTip(tr("Draw bezier curves")).shortcut("Ctrl+B").checkable();
 	QAction *filltool = makeAction("toolfill", tr("&Flood Fill")).icon("fill-color").statusTip(tr("Fill areas")).shortcut("F").checkable();
+	QAction *lassofilltool = makeAction("toollassofill", tr("Lass&o Fill")).icon("drawpile_lassofill").statusTip(tr("Fill enclosed areas")).shortcut("Shift+F").checkable();
 	QAction *gradienttool = makeAction("toolgradient", tr("&Gradient")).icon("drawpile_gradient").statusTip(tr("Create a gradient inside selected areas")).shortcut("G").checkable();
 	QAction *annotationtool = makeAction("tooltext", tr("&Annotation")).icon("draw-text").statusTip(tr("Add text to the picture")).shortcut("A").checked();
 
@@ -6408,6 +6411,7 @@ void MainWindow::setupActions()
 	m_drawingtools->addAction(ellipsetool);
 	m_drawingtools->addAction(beziertool);
 	m_drawingtools->addAction(filltool);
+	m_drawingtools->addAction(lassofilltool);
 	m_drawingtools->addAction(gradienttool);
 	m_drawingtools->addAction(annotationtool);
 	m_drawingtools->addAction(pickertool);

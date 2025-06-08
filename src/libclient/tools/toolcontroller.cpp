@@ -19,6 +19,7 @@ extern "C" {
 #include "libclient/tools/gradient.h"
 #include "libclient/tools/inspector.h"
 #include "libclient/tools/laser.h"
+#include "libclient/tools/lassofill.h"
 #include "libclient/tools/magicwand.h"
 #include "libclient/tools/pan.h"
 #include "libclient/tools/selection.h"
@@ -64,6 +65,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new Ellipse(*this));
 	registerTool(new BezierTool(*this));
 	registerTool(new FloodFill(*this));
+	registerTool(new LassoFillTool(*this));
 	registerTool(new GradientTool(*this));
 	registerTool(new Annotation(*this));
 	registerTool(new LaserPointer(*this));
@@ -650,10 +652,15 @@ void ToolController::setStrokeWorkerBrush(
 	brush.setInStrokeWorker(sw, stroke);
 }
 
-void ToolController::setStrokeEngineParams(drawdance::StrokeEngine &se)
+void ToolController::setStrokeEngineParams(
+	drawdance::StrokeEngine &se, int stabilizerSampleCount)
 {
 	DP_StrokeEngineStrokeParams sesp = {
-		m_globalSmoothing, 0, m_interpolateInputs, true, true,
+		m_globalSmoothing,
+		stabilizerSampleCount,
+		m_interpolateInputs,
+		true,
+		true,
 	};
 	se.setParams(sesp);
 }

@@ -22,6 +22,8 @@ Cursors::Cursors()
 		  QCursor(QPixmap(QStringLiteral(":/cursors/gradient.png")), 2, 2))
 	, m_layerPick(
 		  QCursor(QPixmap(QStringLiteral(":/cursors/layerpicker.png")), 2, 29))
+	, m_lassoFill(QPixmap(":cursors/lassofill.png"), 2, 29)
+	, m_lassoFillCheck(QPixmap(":cursors/lassofillcheck.png"), 2, 29)
 	, m_line(QPixmap(":cursors/line.png"), 2, 2)
 	, m_magicWand(QPixmap(":cursors/magicwand.png"), 2, 2)
 	, m_magicWandExclude(QPixmap(":cursors/magicwand-exclude.png"), 2, 2)

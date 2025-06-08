@@ -45,6 +45,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Add -B/--background-color option to drawpile-timelapse command to set an override background color. Thanks Bluestrings for suggesting.
  * Feature: Add a "synchronize smudging" brush setting. This will make the brush stroke wait for itself before smudging, which is slower, but required for some smudge brushes to work properly when making fast strokes. Thanks Donatello and xxxx for reporting.
  * Feature: Allow classic brushes to smudge with transparency. This can be toggled in the brush settings. The old mode now calls itself "blending" instead to be able to tell it apart. Thanks xxxx for suggesting.
+ * Feature: A lasso fill tool, bound to Shift+F by default. Thanks EvilKitty3, Fallen, Geese, MorrowShore and Juzeror for suggesting.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

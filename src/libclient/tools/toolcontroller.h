@@ -179,7 +179,8 @@ public:
 	 */
 	void setBrushEngineBrush(drawdance::BrushEngine &be, bool freehand);
 	void setStrokeWorkerBrush(drawdance::StrokeWorker &sw, bool freehand);
-	void setStrokeEngineParams(drawdance::StrokeEngine &se);
+	void setStrokeEngineParams(
+		drawdance::StrokeEngine &se, int stabilizerSampleCount = 0);
 
 	/**
 	 * Runs the given task in the background. Takes over the task using
@@ -280,6 +281,8 @@ signals:
 	void freehandMessagesAvailable();
 	void floodFillStateChanged(bool running, bool pending);
 	void floodFillDragChanged(bool dragging, int tolerance);
+	void lassoFillUpdateRequested();
+	void lassoFillStateChanged(bool pending);
 	void gradientStateChanged(bool pending);
 	void magicWandDragChanged(bool dragging, int tolerance);
 	void toolStateChanged(int state);
