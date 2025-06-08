@@ -5,6 +5,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/view/cursor.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "libclient/utils/customshortcutmodel.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDoubleSpinBox>
@@ -163,6 +164,43 @@ void Tools::initKeyboardShortcuts(
 		tr("Enable brush outline"), temporarySwitchLayout, temporarySwitchMs);
 	settings.bindTemporaryToolSwitch(temporarySwitch);
 	form->addRow(nullptr, temporarySwitchLayout);
+
+	QCheckBox *cancelDeselects = new QCheckBox();
+	settings.bindCancelDeselects(cancelDeselects);
+	form->addRow(nullptr, cancelDeselects);
+	settings.bindShortcuts(this, [cancelDeselects](const QVariantMap &cfg) {
+		QString shortcut;
+		QString name = QStringLiteral("cancelaction");
+		if(cfg.contains(name)) {
+			QVariant v = cfg.value(name);
+			if(v.canConvert<QKeySequence>()) {
+				shortcut =
+					v.value<QKeySequence>().toString(QKeySequence::NativeText);
+			} else {
+				for(const QVariant &vv : v.toList()) {
+					if(vv.canConvert<QKeySequence>()) {
+						shortcut = vv.value<QKeySequence>().toString(
+							QKeySequence::NativeText);
+						if(!shortcut.isEmpty()) {
+							break;
+						}
+					}
+				}
+			}
+		} else {
+			for(const QKeySequence &ks :
+				CustomShortcutModel::getDefaultShortcuts(name)) {
+				shortcut = ks.toString(QKeySequence::NativeText);
+				if(!shortcut.isEmpty()) {
+					break;
+				}
+			}
+		}
+
+		cancelDeselects->setText(
+			shortcut.isEmpty() ? tr("Cancel action to deselect")
+							   : tr("Press %1 to deselect").arg(shortcut));
+	});
 }
 
 void Tools::initSlots(desktop::settings::Settings &settings, QFormLayout *form)

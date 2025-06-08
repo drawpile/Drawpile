@@ -143,6 +143,7 @@ public:
 	int globalSmoothing() const { return m_globalSmoothing; }
 
 	void setMouseSmoothing(bool mouseSmoothing);
+	void setCancelDeselects(bool cancelDeselects);
 
 	void setTransformParams(bool accurate, int interpolation);
 	int transformInterpolation() const { return m_transformInterpolation; }
@@ -260,6 +261,7 @@ signals:
 	void globalSmoothingChanged(int smoothing);
 	void stabilizerUseBrushSampleCountChanged(bool useBrushSampleCount);
 	void actionCancelled();
+	void deselectRequested();
 
 	void foregroundColorChanged(const QColor &color);
 	void colorUsed(const QColor &color);
@@ -322,6 +324,7 @@ private:
 	QColor m_selectionMaskColor = QColor(0, 170, 255);
 	bool m_selectionEditActive = false;
 	bool m_selectionMaskingEnabled = true;
+	bool m_cancelDeselects = true;
 	bool m_drawing;
 	bool m_applyGlobalSmoothing;
 	bool m_mouseSmoothing;

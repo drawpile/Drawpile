@@ -465,6 +465,11 @@ void ToolController::setMouseSmoothing(bool mouseSmoothing)
 	m_mouseSmoothing = mouseSmoothing;
 }
 
+void ToolController::setCancelDeselects(bool cancelDeselects)
+{
+	m_cancelDeselects = cancelDeselects;
+}
+
 void ToolController::updateSmoothing()
 {
 	int strength = m_globalSmoothing;
@@ -624,8 +629,12 @@ void ToolController::cancelMultipartDrawing()
 		return;
 	}
 
-	m_activeTool->cancelMultipart();
-	emit actionCancelled();
+	if(!m_cancelDeselects || m_activeTool->isMultipart()) {
+		m_activeTool->cancelMultipart();
+		emit actionCancelled();
+	} else if(m_cancelDeselects) {
+		emit deselectRequested();
+	}
 }
 
 void ToolController::offsetActiveTool(int xOffset, int yOffset)

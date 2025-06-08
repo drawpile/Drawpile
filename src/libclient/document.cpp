@@ -33,6 +33,7 @@ extern "C" {
 #include <QTimer>
 #include <QtEndian>
 #include <dpcommon/platform_qt.h>
+#include <functional>
 #include <parson.h>
 #ifndef HAVE_CLIPBOARD_EMULATION
 #	include <QClipboard>
@@ -82,6 +83,8 @@ Document::Document(
 		m_toolctrl, &tools::ToolController::setInterpolateInputs);
 	m_settings.bindMouseSmoothing(
 		m_toolctrl, &tools::ToolController::setMouseSmoothing);
+	m_settings.bindCancelDeselects(
+		m_toolctrl, &tools::ToolController::setCancelDeselects);
 	m_settings.bindSelectionColor(
 		m_toolctrl, &tools::ToolController::setSelectionMaskColor);
 	m_banlist = new net::BanlistModel(this);
@@ -150,6 +153,9 @@ Document::Document(
 		this, &Document::buildStreamResetImageFinished, this,
 		&Document::startSendingStreamResetSnapshot, Qt::QueuedConnection);
 
+	connect(
+		m_toolctrl, &tools::ToolController::deselectRequested, this,
+		std::bind(&Document::selectNone, this, true));
 	connect(
 		m_toolctrl, &tools::ToolController::deleteAnnotationRequested, this,
 		&Document::deleteAnnotation);
