@@ -1855,7 +1855,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+11"/>
         <source>Vertical Tabs on Sides</source>
-        <translation type="unfinished"></translation>
+        <translation>Pestanyes verticals als costats</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2156,7 +2156,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+2"/>
         <source>Toggle selection display between a mask and an outline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Commuta la visualització de la selecció entre una màscara i un contorn</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2211,7 +2211,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+57"/>
         <source>Clear Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Neteja la font d&apos;emplenament</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2461,7 +2461,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+10"/>
         <source>Normal View</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista normal</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2546,7 +2546,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Set as Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix com a font d&apos;emplenament</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2571,12 +2571,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+4"/>
         <source>Select Layer &amp;Bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecciona els límits de la capa</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Layer to Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Capa a selecció</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2667,7 +2667,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Set Blank Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix un fotograma clau buit</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2757,12 +2757,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Track Above</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pista per sobre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Pista per sota</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2797,7 +2797,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+23"/>
         <source>Create Group on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea un grup en el fotograma clau</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2848,7 +2848,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+0"/>
         <source>Select a free-form area</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Selecciona una àrea de forma lliure</translation>
     </message>
     <message>
         <location line="+1"/>
