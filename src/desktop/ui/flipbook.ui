@@ -18,7 +18,7 @@
     <widget class="FlipbookView" name="view" native="true"/>
    </item>
    <item>
-    <layout class="QHBoxLayout" stretch="0,0,1,0,0,0,0,0,0,0,0,1,1,1,0,0">
+    <layout class="QHBoxLayout" stretch="0,0,1,0,0,0,0,0,0,0,1,1,1,0,0">
      <item>
       <widget class="QToolButton" name="refreshButton">
        <property name="toolTip">
@@ -39,7 +39,7 @@
      <item>
       <widget class="QToolButton" name="zoomButton">
        <property name="toolTip">
-        <string>Reset Zoom</string>
+        <string>Zoom</string>
        </property>
        <property name="icon">
         <iconset theme="zoom-out">
@@ -50,6 +50,9 @@
          <width>22</width>
          <height>22</height>
         </size>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
        </property>
       </widget>
      </item>
@@ -109,13 +112,6 @@
          <width>22</width>
          <height>22</height>
         </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel">
-       <property name="text">
-        <string>Frame:</string>
        </property>
       </widget>
      </item>

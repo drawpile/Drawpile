@@ -147,6 +147,7 @@ SETTING(filterDuplicates          , FilterDuplicates          , "history/filterd
 SETTING(filterInactive            , FilterInactive            , "history/filterinactive"                , true)
 SETTING(filterLocked              , FilterLocked              , "history/filterlocked"                  , false)
 SETTING(filterNsfm                , FilterNsfm                , "history/filternsfw"                    , false)
+SETTING(flipbookUpscaling         , FlipbookUpscaling         , "flipbook/upscaling"                    , true)
 SETTING(flipbookWindow            , FlipbookWindow            , "flipbook/window"                       , QRect())
 SETTING(overrideFontSize          , OverrideFontSize          , "settings/overridefontsize"             , OVERRIDE_FONT_SIZE_DEFAULT)
 SETTING(fontSize                  , FontSize                  , "settings/fontSize"                     , -1)

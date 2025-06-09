@@ -60,20 +60,22 @@ void FlipbookView::paintEvent(QPaintEvent *event)
 	painter.fillRect(QRect(0, 0, w, h), QColor(35, 38, 41));
 
 	if(!m_pixmap.isNull()) {
-		QSize targetSize = m_pixmap.size();
-		if(m_pixmap.width() > w || m_pixmap.height() > h) {
+		int pw = m_pixmap.width();
+		int ph = m_pixmap.height();
+		QSize targetSize = QSize(pw, ph);
+		if(pw > w || ph > h) {
 			// Downscale
 			targetSize = m_pixmap.size().scaled(w, h, Qt::KeepAspectRatio);
 			painter.setRenderHint(QPainter::SmoothPixmapTransform);
 
-		} else if(m_upscale) {
+		} else if(m_upscale && pw > 0 && pw < w && ph > 0 && ph < h) {
 			// Image is smaller than the view: upscale (if requested)
-			const int availableSize =
-				qMin(w - m_pixmap.width(), h - m_pixmap.height());
-			const int minDim = qMin(m_pixmap.width(), m_pixmap.height());
-			const int multiplier = (availableSize + availableSize / 2) / minDim;
-			if(multiplier > 1)
-				targetSize *= multiplier;
+			int ratio = qMin(w / pw, h / ph);
+			if(ratio > 1) {
+				targetSize.setWidth(pw * ratio);
+				targetSize.setHeight(ph * ratio);
+				painter.setRenderHint(QPainter::SmoothPixmapTransform, false);
+			}
 		}
 
 		m_targetRect = {

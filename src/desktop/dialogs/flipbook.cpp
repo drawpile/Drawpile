@@ -14,6 +14,7 @@ extern "C" {
 #include <QAction>
 #include <QEvent>
 #include <QHash>
+#include <QMenu>
 #include <QPixmap>
 #include <QRect>
 #include <QScreen>
@@ -26,6 +27,8 @@ struct Flipbook::Private {
 	State &state;
 	Ui_Flipbook ui;
 	QAction *refreshAction;
+	QAction *resetCropAction;
+	QAction *upscaleAction;
 	canvas::PaintEngine *paintengine = nullptr;
 	drawdance::CanvasState canvasState;
 	drawdance::ViewModeBuffer vmb;
@@ -59,6 +62,19 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 		d->ui.refreshButton->animateClick();
 	});
 
+	QMenu *zoomMenu = new QMenu(this);
+	d->ui.zoomButton->setMenu(zoomMenu);
+
+	d->resetCropAction = zoomMenu->addAction(tr("Reset crop"));
+	connect(
+		d->resetCropAction, &QAction::triggered, this, &Flipbook::resetCrop);
+
+	d->upscaleAction = zoomMenu->addAction(tr("Upscale to fit view"));
+	d->upscaleAction->setCheckable(true);
+	desktop::settings::Settings &settings = dpApp().settings();
+	settings.bindFlipbookUpscaling(d->upscaleAction);
+	settings.bindFlipbookUpscaling(d->ui.view, &FlipbookView::setUpscaling);
+
 	connect(d->ui.rewindButton, &QToolButton::clicked, this, &Flipbook::rewind);
 	connect(
 		d->ui.playButton, &QToolButton::clicked, this, &Flipbook::playPause);
@@ -77,8 +93,6 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 	connect(&d->timer, &QTimer::timeout, this, &Flipbook::nextFrame);
 	connect(d->ui.view, &FlipbookView::cropped, this, &Flipbook::setCrop);
 	connect(
-		d->ui.zoomButton, &QToolButton::clicked, this, &Flipbook::resetCrop);
-	connect(
 		d->ui.refreshButton, &QToolButton::clicked, this,
 		&Flipbook::refreshCanvas);
 	connect(
@@ -90,7 +104,7 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 	d->ui.speedSpinner->setExponentRatio(3.0);
 	d->ui.playButton->setFocus();
 
-	utils::setGeometryIfOnScreen(this, dpApp().settings().flipbookWindow());
+	utils::setGeometryIfOnScreen(this, settings.flipbookWindow());
 }
 
 Flipbook::~Flipbook()
@@ -188,15 +202,13 @@ void Flipbook::setCrop(const QRectF &rect)
 
 	if(rect.width() * w <= 5 || rect.height() * h <= 5) {
 		d->crop = canvasRect;
-		d->ui.zoomButton->setEnabled(false);
-		d->ui.zoomButton->setVisible(false);
+		d->resetCropAction->setEnabled(false);
 	} else {
 		d->crop = QRect(
 					  d->crop.x() + rect.x() * w, d->crop.y() + rect.y() * h,
 					  rect.width() * w, rect.height() * h)
 					  .intersected(canvasRect);
-		d->ui.zoomButton->setEnabled(true);
-		d->ui.zoomButton->setVisible(true);
+		d->resetCropAction->setEnabled(true);
 	}
 
 	d->state.crop =
