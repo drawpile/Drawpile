@@ -662,10 +662,12 @@ void ToolController::setStrokeWorkerBrush(
 }
 
 void ToolController::setStrokeEngineParams(
-	drawdance::StrokeEngine &se, int stabilizerSampleCount)
+	drawdance::StrokeEngine &se, int stabilizerSampleCount, int smoothing)
 {
 	DP_StrokeEngineStrokeParams sesp = {
-		m_globalSmoothing,
+		qBound(
+			0, m_globalSmoothing + smoothing,
+			libclient::settings::maxSmoothing),
 		stabilizerSampleCount,
 		m_interpolateInputs,
 		true,

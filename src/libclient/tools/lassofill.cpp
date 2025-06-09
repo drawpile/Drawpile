@@ -48,7 +48,9 @@ void LassoFillTool::begin(const BeginParams &params)
 		color.setAlphaF(m_opacity);
 		m_shape.begin(m_antiAlias, m_owner.activeLayer(), m_blendMode, color);
 		m_lastTimeMsec = params.point.timeMsec();
-		m_owner.setStrokeEngineParams(m_strokeEngine, m_stabilizerSampleCount);
+		m_owner.setStrokeEngineParams(
+			m_strokeEngine, getEffectiveStabilizerSampleCount(),
+			getEffectiveSmoothing());
 		m_strokeEngine.beginStroke();
 		m_strokeEngine.strokeTo(params.point, drawdance::CanvasState::null());
 	}
@@ -126,10 +128,13 @@ bool LassoFillTool::isMultipart() const
 }
 
 void LassoFillTool::setParams(
-	float opacity, int stabilizerSampleCount, int blendMode, bool antiAlias)
+	float opacity, int stabilizationMode, int stabilizerSampleCount,
+	int smoothing, int blendMode, bool antiAlias)
 {
 	m_opacity = opacity;
+	m_stabilizationMode = stabilizationMode;
 	m_stabilizerSampleCount = stabilizerSampleCount;
+	m_smoothing = smoothing;
 	m_blendMode = blendMode;
 	m_antiAlias = antiAlias;
 }
@@ -216,6 +221,18 @@ void LassoFillTool::Shape::updateImage()
 			}
 		}
 	}
+}
+
+int LassoFillTool::getEffectiveStabilizerSampleCount() const
+{
+	return m_stabilizationMode == int(brushes::Stabilizer)
+			   ? m_stabilizerSampleCount
+			   : 0;
+}
+
+int LassoFillTool::getEffectiveSmoothing() const
+{
+	return m_stabilizationMode == int(brushes::Smoothing) ? m_smoothing : 0;
 }
 
 void LassoFillTool::addPoint(const QPointF &point)

@@ -24,8 +24,8 @@ public:
 	bool isMultipart() const override;
 
 	void setParams(
-		float opacity, int stabilizerSampleCount, int blendMode,
-		bool antiAlias);
+		float opacity, int stabilizationMode, int stabilizerSampleCount,
+		int smoothing, int blendMode, bool antiAlias);
 
 private:
 	class Shape {
@@ -59,6 +59,9 @@ private:
 		QImage m_image;
 	};
 
+	int getEffectiveStabilizerSampleCount() const;
+	int getEffectiveSmoothing() const;
+
 	void addPoint(const QPointF &point);
 	void pollControl(bool enable);
 	void poll();
@@ -70,7 +73,9 @@ private:
 	drawdance::StrokeEngine m_strokeEngine;
 	long long m_lastTimeMsec = 0LL;
 	float m_opacity = 1.0f;
+	int m_stabilizationMode = 0;
 	int m_stabilizerSampleCount = 0;
+	int m_smoothing = 0;
 	int m_blendMode;
 	bool m_antiAlias = false;
 	bool m_drawing = false;

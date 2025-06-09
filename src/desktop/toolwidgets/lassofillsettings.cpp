@@ -8,11 +8,14 @@
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/tools/lassofill.h"
 #include "libclient/tools/toolcontroller.h"
+#include <QAction>
+#include <QActionGroup>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCoreApplication>
 #include <QFormLayout>
 #include <QHBoxLayout>
+#include <QMenu>
 #include <QPushButton>
 #include <QStandardItemModel>
 #include <QStyle>
@@ -25,6 +28,10 @@ static const ToolProperties::Value<bool> antialias{
 static const ToolProperties::RangedValue<int> opacity{
 	QStringLiteral("opacity"), 100, 1, 100},
 	stabilizer{QStringLiteral("stabilizer"), 0, 0, 1000},
+	smoothing{QStringLiteral("smoothing"), 0, 0, 20},
+	stabilizationMode{
+		QStringLiteral("stabilizationMode"), 0, 0,
+		int(brushes::LastStabilizationMode)},
 	blendMode{
 		QStringLiteral("blendMode"), DP_BLEND_MODE_NORMAL, 0,
 		DP_BLEND_MODE_MAX};
@@ -51,6 +58,8 @@ ToolProperties LassoFillSettings::saveToolSettings()
 	cfg.setValue(props::antialias, m_antiAliasCheckBox->isChecked());
 	cfg.setValue(props::opacity, m_opacitySpinner->value());
 	cfg.setValue(props::stabilizer, m_stabilizerSpinner->value());
+	cfg.setValue(props::smoothing, m_smoothingSpinner->value());
+	cfg.setValue(props::stabilizationMode, getCurrentStabilizationMode());
 	cfg.setValue(props::blendMode, m_blendModeCombo->currentData().toInt());
 	return cfg;
 }
@@ -60,6 +69,16 @@ void LassoFillSettings::restoreToolSettings(const ToolProperties &cfg)
 	m_antiAliasCheckBox->setChecked(cfg.value(props::antialias));
 	m_opacitySpinner->setValue(cfg.value(props::opacity));
 	m_stabilizerSpinner->setValue(cfg.value(props::stabilizer));
+	m_smoothingSpinner->setValue(cfg.value(props::smoothing));
+	if(cfg.value(props::stabilizationMode) == int(brushes::Smoothing)) {
+		m_smoothingAction->setChecked(true);
+		m_stabilizerSpinner->hide();
+		m_smoothingSpinner->show();
+	} else {
+		m_stabilizerAction->setChecked(true);
+		m_smoothingSpinner->hide();
+		m_stabilizerSpinner->show();
+	}
 	selectBlendMode(cfg.value(props::blendMode));
 }
 
@@ -82,7 +101,8 @@ void LassoFillSettings::pushSettings()
 	LassoFillTool *tool =
 		static_cast<LassoFillTool *>(ctrl->getTool(Tool::LASSOFILL));
 	tool->setParams(
-		m_opacitySpinner->value() / 100.0f, m_stabilizerSpinner->value(),
+		m_opacitySpinner->value() / 100.0f, getCurrentStabilizationMode(),
+		m_stabilizerSpinner->value(), m_smoothingSpinner->value(),
 		getCurrentBlendMode(), m_antiAliasCheckBox->isChecked());
 }
 
@@ -96,8 +116,10 @@ QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 	m_opacitySpinner = new KisSliderSpinBox;
 	m_opacitySpinner->setRange(1, 100);
 	m_opacitySpinner->setBlockUpdateSignalOnDrag(true);
-	m_opacitySpinner->setPrefix(tr("Opacity: "));
-	m_opacitySpinner->setSuffix(tr("%"));
+	m_opacitySpinner->setPrefix(
+		QCoreApplication::translate("BrushDock", "Opacity: ", nullptr));
+	m_opacitySpinner->setSuffix(
+		QCoreApplication::translate("BrushDock", "%", nullptr));
 	layout->addRow(m_opacitySpinner);
 	connect(
 		m_opacitySpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
@@ -107,12 +129,66 @@ QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 	m_stabilizerSpinner->setRange(0, 1000);
 	m_stabilizerSpinner->setExponentRatio(3.0);
 	m_stabilizerSpinner->setBlockUpdateSignalOnDrag(true);
-	m_stabilizerSpinner->setPrefix(tr("Stabilizer: "));
-	layout->addRow(m_stabilizerSpinner);
+	m_stabilizerSpinner->setPrefix(
+		QCoreApplication::translate("BrushDock", "Stabilizer: ", nullptr));
+	m_stabilizerSpinner->setSizePolicy(
+		QSizePolicy::Expanding, QSizePolicy::Preferred);
 	connect(
 		m_stabilizerSpinner,
 		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&LassoFillSettings::pushSettings);
+
+	m_smoothingSpinner = new KisSliderSpinBox;
+	m_smoothingSpinner->setRange(0, 20);
+	m_smoothingSpinner->setBlockUpdateSignalOnDrag(true);
+	m_smoothingSpinner->setPrefix(
+		QCoreApplication::translate("BrushDock", "Smoothing: ", nullptr));
+	m_smoothingSpinner->setSizePolicy(
+		QSizePolicy::Expanding, QSizePolicy::Preferred);
+	m_smoothingSpinner->hide();
+	connect(
+		m_smoothingSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &LassoFillSettings::pushSettings);
+
+	m_stabilizerButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
+	m_stabilizerButton->setIcon(QIcon::fromTheme("application-menu"));
+	m_stabilizerButton->setPopupMode(QToolButton::InstantPopup);
+	m_stabilizerButton->setStatusTip(tr("Stabilization mode"));
+	m_stabilizerButton->setToolTip(m_stabilizerButton->statusTip());
+
+	QMenu *stabilizerMenu = new QMenu(m_stabilizerButton);
+	m_stabilizerButton->setMenu(stabilizerMenu);
+
+	m_stabilizationModeGroup = new QActionGroup(stabilizerMenu);
+	m_stabilizerAction = stabilizerMenu->addAction(QCoreApplication::translate(
+		"tools::BrushSettings", "Time-Based Stabilizer", nullptr));
+	m_smoothingAction = stabilizerMenu->addAction(QCoreApplication::translate(
+		"tools::BrushSettings", "Average Smoothing", nullptr));
+	m_stabilizerAction->setStatusTip(QCoreApplication::translate(
+		"tools::BrushSettings",
+		"Slows down the stroke and stabilizes it over time. Can produce very "
+		"smooth results, but may feel sluggish.",
+		nullptr));
+	m_smoothingAction->setStatusTip(QCoreApplication::translate(
+		"tools::BrushSettings",
+		"Simply averages inputs to get a smoother result. Faster than the "
+		"time-based stabilizer, but not as smooth.",
+		nullptr));
+	m_stabilizerAction->setCheckable(true);
+	m_smoothingAction->setCheckable(true);
+	m_stabilizationModeGroup->addAction(m_stabilizerAction);
+	m_stabilizationModeGroup->addAction(m_smoothingAction);
+	m_stabilizerAction->setChecked(true);
+	connect(
+		m_stabilizationModeGroup, &QActionGroup::triggered, this,
+		&LassoFillSettings::updateStabilizationMode);
+
+	QHBoxLayout *stabilizerLayout = new QHBoxLayout;
+	stabilizerLayout->addWidget(m_stabilizerSpinner, 1);
+	stabilizerLayout->addWidget(m_smoothingSpinner, 1);
+	stabilizerLayout->addWidget(m_stabilizerButton);
+	layout->addRow(stabilizerLayout);
 
 	m_alphaPreserveButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
@@ -256,6 +332,27 @@ int LassoFillSettings::getCurrentBlendMode() const
 	canvas::blendmode::adjustAlphaBehavior(
 		blendMode, m_alphaPreserveButton->isChecked());
 	return blendMode;
+}
+
+void LassoFillSettings::updateStabilizationMode(QAction *action)
+{
+	if(action == m_smoothingAction) {
+		m_stabilizerSpinner->hide();
+		m_smoothingSpinner->show();
+	} else {
+		m_smoothingSpinner->hide();
+		m_stabilizerSpinner->show();
+	}
+	pushSettings();
+}
+
+int LassoFillSettings::getCurrentStabilizationMode() const
+{
+	if(m_smoothingAction->isChecked()) {
+		return int(brushes::Smoothing);
+	} else {
+		return int(brushes::Stabilizer);
+	}
 }
 
 void LassoFillSettings::setAutomaticAlphaPerserve(bool automaticAlphaPreserve)

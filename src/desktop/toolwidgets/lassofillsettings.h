@@ -4,6 +4,8 @@
 #include "desktop/toolwidgets/toolsettings.h"
 
 class KisSliderSpinBox;
+class QActionGroup;
+class QAction;
 class QCheckBox;
 class QComboBox;
 class QPushButton;
@@ -45,12 +47,20 @@ private:
 	void selectBlendMode(int blendMode);
 	int getCurrentBlendMode() const;
 
+	void updateStabilizationMode(QAction *action);
+	int getCurrentStabilizationMode() const;
+
 	void setAutomaticAlphaPerserve(bool automaticAlphaPreserve);
 
 	void setButtonState(bool pending);
 
 	KisSliderSpinBox *m_opacitySpinner = nullptr;
 	KisSliderSpinBox *m_stabilizerSpinner = nullptr;
+	KisSliderSpinBox *m_smoothingSpinner = nullptr;
+	widgets::GroupedToolButton *m_stabilizerButton = nullptr;
+	QActionGroup *m_stabilizationModeGroup = nullptr;
+	QAction *m_stabilizerAction = nullptr;
+	QAction *m_smoothingAction = nullptr;
 	widgets::GroupedToolButton *m_alphaPreserveButton = nullptr;
 	QComboBox *m_blendModeCombo = nullptr;
 	QCheckBox *m_antiAliasCheckBox;

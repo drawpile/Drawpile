@@ -181,7 +181,8 @@ public:
 	void setBrushEngineBrush(drawdance::BrushEngine &be, bool freehand);
 	void setStrokeWorkerBrush(drawdance::StrokeWorker &sw, bool freehand);
 	void setStrokeEngineParams(
-		drawdance::StrokeEngine &se, int stabilizerSampleCount = 0);
+		drawdance::StrokeEngine &se, int stabilizerSampleCount = 0,
+		int smoothing = 0);
 
 	/**
 	 * Runs the given task in the background. Takes over the task using
