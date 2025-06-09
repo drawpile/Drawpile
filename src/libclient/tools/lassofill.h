@@ -23,6 +23,8 @@ public:
 	void undoMultipart() override;
 	bool isMultipart() const override;
 
+	void setSelectionMaskingEnabled(bool selectionMaskingEnabled) override;
+
 	void setParams(
 		float opacity, int stabilizationMode, int stabilizerSampleCount,
 		int smoothing, int blendMode, bool antiAlias);
@@ -30,8 +32,9 @@ public:
 private:
 	class Shape {
 	public:
-		void
-		begin(bool antiAlias, int layerId, int blendMode, const QColor &color);
+		void begin(
+			bool antiAlias, int layerId, int blendMode, const QColor &color,
+			const QRect &selBounds, const QImage &selImage);
 		void clear();
 
 		bool isPending() const { return m_pending; }
@@ -56,6 +59,8 @@ private:
 		QPolygon m_polygon;
 		QPolygonF m_polygonF;
 		QPoint m_pos;
+		QRect m_selBounds;
+		QImage m_selImage;
 		QImage m_image;
 	};
 

@@ -2,6 +2,7 @@
 #include "libclient/tools/lassofill.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/selectionmodel.h"
 #include "libclient/drawdance/canvasstate.h"
 #include "libclient/net/client.h"
 #include "libclient/net/message.h"
@@ -44,9 +45,23 @@ void LassoFillTool::begin(const BeginParams &params)
 		m_drawing = true;
 		finishMultipart();
 		m_clickDetector.begin(params.viewPos, params.deviceType);
+
 		QColor color = m_owner.foregroundColor();
 		color.setAlphaF(m_opacity);
-		m_shape.begin(m_antiAlias, m_owner.activeLayer(), m_blendMode, color);
+
+		QRect selBounds;
+		QImage selImage;
+		if(m_owner.isSelectionMaskingEnabled()) {
+			canvas::SelectionModel *sel = m_owner.model()->selection();
+			if(sel->isValid()) {
+				selBounds = sel->bounds();
+				selImage = sel->image();
+			}
+		}
+
+		m_shape.begin(
+			m_antiAlias, m_owner.activeLayer(), m_blendMode, color, selBounds,
+			selImage);
 		m_lastTimeMsec = params.point.timeMsec();
 		m_owner.setStrokeEngineParams(
 			m_strokeEngine, getEffectiveStabilizerSampleCount(),
@@ -127,6 +142,11 @@ bool LassoFillTool::isMultipart() const
 	return m_shape.isPending();
 }
 
+void LassoFillTool::setSelectionMaskingEnabled(bool selectionMaskingEnabled)
+{
+	setCapability(Capability::IgnoresSelections, !selectionMaskingEnabled);
+}
+
 void LassoFillTool::setParams(
 	float opacity, int stabilizationMode, int stabilizerSampleCount,
 	int smoothing, int blendMode, bool antiAlias)
@@ -140,7 +160,8 @@ void LassoFillTool::setParams(
 }
 
 void LassoFillTool::Shape::begin(
-	bool antiAlias, int layerId, int blendMode, const QColor &color)
+	bool antiAlias, int layerId, int blendMode, const QColor &color,
+	const QRect &selBounds, const QImage &selImage)
 {
 	clear();
 	m_pending = true;
@@ -148,6 +169,8 @@ void LassoFillTool::Shape::begin(
 	m_layerId = layerId;
 	m_blendMode = blendMode;
 	m_color = color;
+	m_selBounds = selBounds;
+	m_selImage = selImage;
 }
 
 void LassoFillTool::Shape::clear()
@@ -156,6 +179,8 @@ void LassoFillTool::Shape::clear()
 	m_imageValid = false;
 	m_polygon.clear();
 	m_polygonF.clear();
+	m_selBounds = QRect();
+	m_selImage = QImage();
 	m_image = QImage();
 }
 
@@ -202,6 +227,12 @@ void LassoFillTool::Shape::updateImage()
 	if(m_pending && !m_imageValid && pointCount() > 1) {
 		QRect bounds = m_antiAlias ? m_polygonF.boundingRect().toAlignedRect()
 								   : m_polygon.boundingRect();
+
+		bool haveSel = !m_selBounds.isEmpty();
+		if(haveSel) {
+			bounds &= m_selBounds;
+		}
+
 		if(!bounds.isEmpty()) {
 			m_imageValid = true;
 			m_pos = bounds.topLeft();
@@ -218,6 +249,13 @@ void LassoFillTool::Shape::updateImage()
 				painter.drawPolygon(m_polygonF);
 			} else {
 				painter.drawPolygon(m_polygon);
+			}
+
+			if(haveSel) {
+				painter.resetTransform();
+				painter.setCompositionMode(
+					QPainter::CompositionMode_DestinationIn);
+				painter.drawImage(m_selBounds.topLeft() - m_pos, m_selImage);
 			}
 		}
 	}
