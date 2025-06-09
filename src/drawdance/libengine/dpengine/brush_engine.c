@@ -2476,9 +2476,10 @@ static void stroke_to_classic(
         be->stroke.in_progress = true;
         DP_LayerContent *lc;
         bool smudge_alpha = cb->smudge_alpha && !be->stroke.compatibility_mode;
-        bool colorpick = (cb->colorpick || smudge_alpha)
-                      && get_classic_blend_mode(be) != DP_BLEND_MODE_ERASE
-                      && (lc = update_sample_layer_content(be));
+        bool colorpick =
+            (cb->colorpick || (smudge_alpha && cb->smudge.max > 0.0f))
+            && get_classic_blend_mode(be) != DP_BLEND_MODE_ERASE
+            && (lc = update_sample_layer_content(be));
         if (colorpick) {
             be->classic.smudge_color =
                 sample_classic_smudge(be, cb, lc, x, y, pressure, 0.0f, 0.0f);
