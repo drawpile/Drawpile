@@ -234,6 +234,8 @@ public slots:
 	 */
 	void sendResetMessages(int count, const net::Message *msgs);
 
+	void sendLocalMessages(int count, const net::Message *msgs);
+
 	void handleMessages(int count, net::Message *msgs);
 
 	void setSmoothDrainRate(int smoothDrainRate);

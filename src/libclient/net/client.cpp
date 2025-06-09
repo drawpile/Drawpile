@@ -235,6 +235,13 @@ void Client::sendResetMessages(int count, const net::Message *msgs)
 	}
 }
 
+void Client::sendLocalMessages(int count, const net::Message *msgs)
+{
+	if(count > 0) {
+		m_commandHandler->handleLocalCommands(count, msgs);
+	}
+}
+
 void Client::sendRemoteMessages(int count, const net::Message *msgs)
 {
 	Q_ASSERT(count > 0);

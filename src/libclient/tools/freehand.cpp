@@ -169,7 +169,31 @@ void Freehand::flushMessages()
 	DP_MUTEX_MUST_LOCK(m_mutex);
 	int count = m_messages.size();
 	if(count != 0) {
-		m_owner.client()->sendCommands(count, m_messages.constData());
+		net::Client *client = m_owner.client();
+		const net::Message *msgs = m_messages.constData();
+		// The message list is a mixture of drawing commands and internal sync
+		// messages, the latter of which must only be sent locally.
+		int start = 0;
+		do {
+			int chunk = 1;
+			bool firstInternal = msgs[start].type() == DP_MSG_INTERNAL;
+			for(int i = start + 1; i < count; ++i) {
+				bool internal = msgs[i].type() == DP_MSG_INTERNAL;
+				if(internal == firstInternal) {
+					++chunk;
+				} else {
+					break;
+				}
+			}
+
+			if(firstInternal) {
+				client->sendLocalMessages(chunk, msgs + start);
+			} else {
+				client->sendCommands(chunk, msgs + start);
+			}
+
+			start += chunk;
+		} while(start < count);
 		m_messages.clear();
 	}
 	DP_MUTEX_MUST_UNLOCK(m_mutex);
