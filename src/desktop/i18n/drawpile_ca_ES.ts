@@ -6957,7 +6957,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Spider</source>
-        <translation type="unfinished"></translation>
+        <translation>aranya</translation>
     </message>
 </context>
 <context>
@@ -9062,7 +9062,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+13"/>
         <location line="+9"/>
         <source>No action</source>
-        <translation>CAp ac</translation>
+        <translation>Sense acció</translation>
     </message>
     <message>
         <location line="-82"/>
