@@ -234,17 +234,17 @@
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation>Canvia el to de color</translation>
+        <translation>Canvia el to del color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation>Canvia la saturació de color</translation>
+        <translation>Canvia la saturacio del color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation>Cania el valor de color</translation>
+        <translation>Canvia el valor del color</translation>
     </message>
     <message>
         <location line="+2"/>
