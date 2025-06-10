@@ -3221,7 +3221,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>&amp;Flood Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Pot de pintura</translation>
     </message>
     <message>
         <location line="+0"/>
