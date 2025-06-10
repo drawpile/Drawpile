@@ -8951,7 +8951,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Crosshair</source>
-        <translation type="unfinished"></translation>
+        <translation>Punt de mira</translation>
     </message>
     <message>
         <location line="+1"/>
