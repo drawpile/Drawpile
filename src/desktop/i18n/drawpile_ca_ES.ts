@@ -1673,7 +1673,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     <message>
         <location line="+141"/>
         <source>Would you like to join the session instead?</source>
-        <translation type="unfinished"></translation>
+        <translation>Voleu unir-vos a la sessió en comptes d&apos;això?</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2171,7 +2171,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+0"/>
         <source>Show only the current parent layer group</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra només el grup de la capa pare actual</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -5187,17 +5187,17 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+11"/>
         <source>No brush dynamics.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sense dinàmiques de pinzell.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>No disponible en mode indirecte/rentatge.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dynamics not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les dinàmiques no estan disponibles en mode indirecte/rentatge.</translation>
     </message>
     <message>
         <location line="+59"/>
@@ -5217,7 +5217,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+4"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Barreja de colors en la capa on s&apos;està dibuixant.</translation>
     </message>
     <message>
         <location line="+175"/>
@@ -5227,7 +5227,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>Simplement, fa la mitjana d&apos;un nombre d&apos;entrades. Es nota més ràpid que l&apos;estabilitzador basat en el temps, però no tan suau i no agafarà el cursor quan us pareu de moure. Sobreescriu el suavitzat de la tauleta de les preferències d&apos;entrada.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5237,7 +5237,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+4"/>
         <source>Synchronizing stabilization settings with brushes is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>La sincronització de la configuració d&apos;estabilització amb els pinzells està desactivada.</translation>
     </message>
     <message>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+14"/>
@@ -6942,7 +6942,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Mink</source>
-        <translation type="unfinished"></translation>
+        <translation>Visó</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6957,7 +6957,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Spider</source>
-        <translation>aranya</translation>
+        <translation>Aranya</translation>
     </message>
 </context>
 <context>
@@ -7119,7 +7119,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aquest nom d&apos;usuari pertany a un compte del servidor, no el podeu usar per accedir a %1 en aquest servidor.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7246,7 +7246,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Size is too large</source>
-        <translation type="unfinished"></translation>
+        <translation>La mida és massa gran</translation>
     </message>
 </context>
 <context>
@@ -7319,17 +7319,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+50"/>
         <source>This list shows only registered users.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aquesta llista mostra només usuaris registrats.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only operators can see this list.</source>
-        <translation type="unfinished"></translation>
+        <translation>Només els operadors poden veure aquesta llista.</translation>
     </message>
     <message>
         <location line="+69"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>Operadors</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7380,7 +7380,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>disabled by moderator</source>
         <extracomment>&quot;Idle timeout: disabled by moderator&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>desactivat pel moderador</translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
@@ -7413,18 +7413,18 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>, </source>
         <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>, </translation>
     </message>
     <message>
         <location line="+122"/>
         <location line="+16"/>
         <source>Set a new password or leave blank to remove.</source>
-        <translation type="unfinished"></translation>
+        <translation>Establiu una nova contrasenya o deixeu-ho en blanc per eliminar-la.</translation>
     </message>
     <message>
         <location line="-14"/>
         <source>Set a password for the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix una contrasenya per la sessió.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7434,7 +7434,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Set a password for gaining operator status.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix una contrasenya per convertir-se en operador.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7487,7 +7487,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+12"/>
         <location line="+98"/>
         <source>Role Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa rols</translation>
     </message>
     <message>
         <location line="-97"/>
@@ -7510,7 +7510,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-61"/>
         <source>Role Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta els rols</translation>
     </message>
 </context>
 <context>
@@ -7594,7 +7594,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog.cpp" line="+75"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Inici</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -7614,7 +7614,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Connect to a drawing session directly</source>
-        <translation type="unfinished"></translation>
+        <translation>Connecta a una sessió de dibuix directament</translation>
     </message>
     <message>
         <location line="+2"/>
