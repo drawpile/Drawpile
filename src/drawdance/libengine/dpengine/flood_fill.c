@@ -59,6 +59,7 @@
 
 typedef enum DP_FloodFillContextType {
     DP_FLOOD_FILL_SOURCE_BLANK,
+    DP_FLOOD_FILL_SOURCE_BLANK_WITH_SELECTION,
     DP_FLOOD_FILL_SOURCE_LAYER_CONTENT,
     DP_FLOOD_FILL_SOURCE_LAYER_CONTENT_WITH_SUBLAYERS,
     DP_FLOOD_FILL_SOURCE_LAYER_GROUP,
@@ -191,6 +192,8 @@ static DP_Tile *source_merge_tile(DP_FloodFillContext *c, int tile_index)
     switch (c->type) {
     case DP_FLOOD_FILL_SOURCE_BLANK:
         break;
+    case DP_FLOOD_FILL_SOURCE_BLANK_WITH_SELECTION:
+        return NULL;
     case DP_FLOOD_FILL_SOURCE_LAYER_CONTENT:
         return DP_tile_incref_nullable(
             DP_layer_content_tile_at_index_noinc(c->lc, tile_index));
@@ -277,6 +280,31 @@ static void source_flood_dec(DP_FloodFillContext *c, int xt, int yt, DP_Tile *t)
     DP_tile_decref(t);
 }
 
+static void source_flood_sel_dec(DP_FloodFillContext *c, int xt, int yt,
+                                 DP_Tile *t, DP_Tile *sel_t)
+{
+    DP_ASSERT(c->type != DP_FLOOD_FILL_SOURCE_BLANK);
+    int canvas_left, canvas_top, buffer_left, buffer_top, buffer_right,
+        buffer_bottom;
+    source_tile_bounds(c, xt, yt, &canvas_left, &canvas_top, &buffer_left,
+                       &buffer_top, &buffer_right, &buffer_bottom);
+    DP_UPixelFloat reference_color = c->reference_color;
+    float tolerance_squared = c->tolerance_squared;
+    for (int y = buffer_top; y <= buffer_bottom; ++y) {
+        for (int x = buffer_left; x <= buffer_right; ++x) {
+            int x_in_tile = x - canvas_left;
+            int y_in_tile = y - canvas_top;
+            if (DP_tile_pixel_at(sel_t, x_in_tile, y_in_tile).a != 0
+                && source_should_flood(
+                    DP_tile_pixel_at(t, x_in_tile, y_in_tile), reference_color,
+                    tolerance_squared)) {
+                buffer_set(c->flood_map, c->parent.area, x, y, 1);
+            }
+        }
+    }
+    DP_tile_decref(t);
+}
+
 static void source_flood_null(DP_FloodFillContext *c, int xt, int yt)
 {
     DP_ASSERT(c->type != DP_FLOOD_FILL_SOURCE_BLANK);
@@ -295,11 +323,52 @@ static void source_flood_null(DP_FloodFillContext *c, int xt, int yt)
     }
 }
 
+static void source_flood_null_sel(DP_FloodFillContext *c, int xt, int yt,
+                                  DP_Tile *sel_t)
+{
+    DP_ASSERT(c->type != DP_FLOOD_FILL_SOURCE_BLANK);
+    DP_UPixelFloat reference_color = c->reference_color;
+    float tolerance_squared = c->tolerance_squared;
+    if (source_should_flood(DP_pixel15_zero(), reference_color,
+                            tolerance_squared)) {
+        int canvas_left, canvas_top, buffer_left, buffer_top, buffer_right,
+            buffer_bottom;
+        source_tile_bounds(c, xt, yt, &canvas_left, &canvas_top, &buffer_left,
+                           &buffer_top, &buffer_right, &buffer_bottom);
+        for (int y = buffer_top; y <= buffer_bottom; ++y) {
+            for (int x = buffer_left; x <= buffer_right; ++x) {
+                int x_in_tile = x - canvas_left;
+                int y_in_tile = y - canvas_top;
+                if (DP_tile_pixel_at(sel_t, x_in_tile, y_in_tile).a != 0) {
+                    buffer_set(c->flood_map, c->parent.area, x, y, 1);
+                }
+            }
+        }
+    }
+}
+
 static void source_flood_nullable_dec(DP_FloodFillContext *c, int xt, int yt,
                                       DP_Tile *t_or_null)
 {
     DP_ASSERT(c->type != DP_FLOOD_FILL_SOURCE_BLANK);
-    if (t_or_null) {
+
+    DP_Selection *sel = c->parent.sel;
+    if (sel) {
+        DP_LayerContent *sel_lc = DP_selection_content_noinc(sel);
+        DP_Tile *sel_t = DP_layer_content_tile_at_noinc(sel_lc, xt, yt);
+        if (sel_t) {
+            if (t_or_null) {
+                source_flood_sel_dec(c, xt, yt, t_or_null, sel_t);
+            }
+            else {
+                source_flood_null_sel(c, xt, yt, sel_t);
+            }
+        }
+        else {
+            // Selection is blank here, don't flood into this tile.
+        }
+    }
+    else if (t_or_null) {
         source_flood_dec(c, xt, yt, t_or_null);
     }
     else {
@@ -444,8 +513,13 @@ static bool source_init(DP_FloodFillContext *c, DP_CanvasState *cs,
     if (layer_id <= 0) {
         if (source_canvas_looks_blank(c, include_sublayers, canvas_width,
                                       canvas_height, tc, cs)) {
-            c->type = DP_FLOOD_FILL_SOURCE_BLANK;
-            return true;
+            if (c->parent.sel) {
+                c->type = DP_FLOOD_FILL_SOURCE_BLANK_WITH_SELECTION;
+            }
+            else {
+                c->type = DP_FLOOD_FILL_SOURCE_BLANK;
+                return true;
+            }
         }
         else {
             c->type = DP_FLOOD_FILL_SOURCE_MERGED;
@@ -479,8 +553,13 @@ static bool source_init(DP_FloodFillContext *c, DP_CanvasState *cs,
             }
             else if (source_layers_blank(c, canvas_width, canvas_height, tc,
                                          &lc, 1)) {
-                c->type = DP_FLOOD_FILL_SOURCE_BLANK;
-                return true;
+                if (c->parent.sel) {
+                    c->type = DP_FLOOD_FILL_SOURCE_BLANK_WITH_SELECTION;
+                }
+                else {
+                    c->type = DP_FLOOD_FILL_SOURCE_BLANK;
+                    return true;
+                }
             }
             else {
                 c->type = DP_FLOOD_FILL_SOURCE_LAYER_CONTENT;
@@ -518,6 +597,7 @@ static void source_dispose(DP_FloodFillContext *c)
     case DP_FLOOD_FILL_SOURCE_MERGED:
         DP_view_mode_buffer_dispose(&c->vmb);
         DP_FALLTHROUGH();
+    case DP_FLOOD_FILL_SOURCE_BLANK_WITH_SELECTION:
     case DP_FLOOD_FILL_SOURCE_LAYER_CONTENT_WITH_SUBLAYERS:
     case DP_FLOOD_FILL_SOURCE_LAYER_GROUP:
     case DP_FLOOD_FILL_SOURCE_LAYER_GROUP_WITH_SUBLAYERS:
