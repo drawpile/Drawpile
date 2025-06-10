@@ -8116,12 +8116,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Qt Fusion</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt Fusion</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hotdog Stand</source>
-        <translation type="unfinished"></translation>
+        <translation>Lloc de venda de frànkfurts</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8295,17 +8295,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Flash taskbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Flaix de la barra de tasques</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flash the Drawpile window in the taskbar when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Flaix de la finestra de Drawpile en la barra de tasques quan aquest esdeveniment succeeix.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bounce dock</source>
-        <translation type="unfinished"></translation>
+        <translation>Rebot de l&apos;acoblador</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8355,7 +8355,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+27"/>
         <source>Preview event</source>
-        <translation type="unfinished"></translation>
+        <translation>Previsualitza l&apos;esdeveniment</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -8489,7 +8489,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+20"/>
         <source>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aquestes opcions configuren la gestió de les sessions que estan marcades com no aptes per a menors (NSFM) i de les capes que han estat censurades.</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8826,7 +8826,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilita la sensitivitat de pressió</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8856,7 +8856,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Treat as regular pen tip</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tracta-ho com una punta de llapis regular</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8872,7 +8872,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>Eraser tip behavior:</source>
         <extracomment>This refers to the eraser end tablet pen, not a tooltip or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Comportament de la punta esborradora:</translation>
     </message>
 </context>
 <context>
@@ -8890,17 +8890,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Double-tap Alt key to focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Doble toca a la tecla Alt per a enfocar el llenç</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Switch tool temporarily by holding primary shortcut for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta temporalment l&apos;eina mantenint premuda la drecera primària per %1</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Attach selected brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Adjunta els pinzells seleccionats</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8920,33 +8920,33 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-108"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show a %1 outline around the brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra un contorn %1 al voltant del pinzell</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+88"/>
         <source>Enable brush outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilita el contorn del pinzell</translation>
     </message>
     <message>
         <location line="-71"/>
         <source>Brush outline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Contorn del pinzell:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Same as brush cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Igual que el cursor del pinzell</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dot</source>
-        <translation type="unfinished"></translation>
+        <translation>Punt</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9038,17 +9038,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+25"/>
         <source>Touch Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Provador tàctil</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Touch mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode tactic:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>Pantalla tàctil</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9062,7 +9062,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+13"/>
         <location line="+9"/>
         <source>No action</source>
-        <translation type="unfinished"></translation>
+        <translation>CAp ac</translation>
     </message>
     <message>
         <location line="-82"/>
