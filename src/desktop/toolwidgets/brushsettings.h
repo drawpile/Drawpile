@@ -98,6 +98,7 @@ public:
 	void setGlobalSmoothing(int smoothing);
 	void toggleEraserMode() override;
 	void toggleAlphaPreserve() override;
+	void toggleBlendMode(int blendMode) override;
 	void setEraserMode(bool erase);
 	void resetPreset();
 	void resetPresetsInAllSlots();
@@ -132,6 +133,7 @@ private:
 	void changePaintMode(const QAction *action);
 	void changeSizeSetting(int size);
 	void changeRadiusLogarithmicSetting(int radiusLogarithmic);
+	void updateBlendMode(int blendMode, bool eraseMode);
 	void updateFromUi();
 	void updateFromUiWith(bool updateShared);
 	void updateStabilizationSettingVisibility();
@@ -150,10 +152,7 @@ private:
 	brushes::ActiveBrush changeBrushInSlot(brushes::ActiveBrush brush, int i);
 
 	void updateMenuActions();
-	void setAutomaticAlphaPreserve(bool automaticAlphaPreserve);
 	void setPaintModeInUi(int paintMode);
-	void updateAlphaPreserve(bool alphaPreserve);
-	void updateBlendMode(int index);
 	void updateUi();
 
 	Lock getLock();

@@ -4,6 +4,7 @@
 #include "desktop/toolwidgets/toolsettings.h"
 #include "libclient/utils/debouncetimer.h"
 
+class BlendModeManager;
 class KisDoubleSliderSpinBox;
 class KisSliderSpinBox;
 class QAction;
@@ -42,6 +43,7 @@ public:
 	void pushSettings() override;
 	void toggleEraserMode() override;
 	void toggleAlphaPreserve() override;
+	void toggleBlendMode(int blendMode) override;
 
 	QWidget *getHeaderWidget() override { return m_headerWidget; }
 
@@ -63,14 +65,6 @@ private:
 
 	void updateColor();
 
-	void initBlendModeOptions(bool compatibilityMode);
-	void updateAlphaPreserve(bool alphaPreserve);
-	void updateBlendMode(int index);
-	void selectBlendMode(int blendMode);
-	int getCurrentBlendMode() const;
-
-	void setAutomaticAlphaPerserve(bool automaticAlphaPreserve);
-
 	void setButtonState(bool pending);
 
 	QWidget *m_headerWidget = nullptr;
@@ -87,10 +81,8 @@ private:
 	QPushButton *m_cancelButton = nullptr;
 	QPushButton *m_selectAllButton = nullptr;
 	QPushButton *m_selectLayerBoundsButton = nullptr;
+	BlendModeManager *m_blendModeManager = nullptr;
 	DebounceTimer m_colorDebounce;
-	int m_previousMode;
-	int m_previousEraseMode;
-	bool m_automaticAlphaPreserve = true;
 	bool m_featureAccess = true;
 };
 

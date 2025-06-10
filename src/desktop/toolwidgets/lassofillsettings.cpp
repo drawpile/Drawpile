@@ -5,7 +5,6 @@
 #include "desktop/utils/blendmodes.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
-#include "libclient/canvas/canvasmodel.h"
 #include "libclient/tools/lassofill.h"
 #include "libclient/tools/toolcontroller.h"
 #include <QAction>
@@ -39,8 +38,6 @@ static const ToolProperties::RangedValue<int> opacity{
 
 LassoFillSettings::LassoFillSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent)
-	, m_previousMode(DP_BLEND_MODE_NORMAL)
-	, m_previousEraseMode(DP_BLEND_MODE_ERASE)
 {
 }
 
@@ -52,6 +49,11 @@ void LassoFillSettings::setFeatureAccess(bool featureAccess)
 	m_featureAccess = featureAccess;
 }
 
+void LassoFillSettings::setCompatibilityMode(bool compatibilityMode)
+{
+	m_blendModeManager->setCompatibilityMode(compatibilityMode);
+}
+
 ToolProperties LassoFillSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
@@ -60,7 +62,7 @@ ToolProperties LassoFillSettings::saveToolSettings()
 	cfg.setValue(props::stabilizer, m_stabilizerSpinner->value());
 	cfg.setValue(props::smoothing, m_smoothingSpinner->value());
 	cfg.setValue(props::stabilizationMode, getCurrentStabilizationMode());
-	cfg.setValue(props::blendMode, m_blendModeCombo->currentData().toInt());
+	cfg.setValue(props::blendMode, m_blendModeManager->getCurrentBlendMode());
 	return cfg;
 }
 
@@ -79,20 +81,22 @@ void LassoFillSettings::restoreToolSettings(const ToolProperties &cfg)
 		m_smoothingSpinner->hide();
 		m_stabilizerSpinner->show();
 	}
-	selectBlendMode(cfg.value(props::blendMode));
+	m_blendModeManager->selectBlendMode(cfg.value(props::blendMode));
 }
 
 void LassoFillSettings::toggleEraserMode()
 {
-	selectBlendMode(
-		canvas::blendmode::presentsAsEraser(getCurrentBlendMode())
-			? m_previousMode
-			: m_previousEraseMode);
+	m_blendModeManager->toggleEraserMode();
 }
 
 void LassoFillSettings::toggleAlphaPreserve()
 {
-	m_alphaPreserveButton->click();
+	m_blendModeManager->toggleAlphaPreserve();
+}
+
+void LassoFillSettings::toggleBlendMode(int blendMode)
+{
+	m_blendModeManager->toggleBlendMode(blendMode);
 }
 
 void LassoFillSettings::pushSettings()
@@ -103,7 +107,8 @@ void LassoFillSettings::pushSettings()
 	tool->setParams(
 		m_opacitySpinner->value() / 100.0f, getCurrentStabilizationMode(),
 		m_stabilizerSpinner->value(), m_smoothingSpinner->value(),
-		getCurrentBlendMode(), m_antiAliasCheckBox->isChecked());
+		m_blendModeManager->getCurrentBlendMode(),
+		m_antiAliasCheckBox->isChecked());
 }
 
 QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
@@ -204,9 +209,6 @@ QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 		QCoreApplication::translate("BrushDock", "Preserve alpha"));
 	m_alphaPreserveButton->setStatusTip(m_alphaPreserveButton->toolTip());
 	m_alphaPreserveButton->setCheckable(true);
-	connect(
-		m_alphaPreserveButton, &widgets::GroupedToolButton::clicked, this,
-		&LassoFillSettings::updateAlphaPreserve);
 
 	m_blendModeCombo = new QComboBox;
 	QSizePolicy blendModeSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -216,10 +218,6 @@ QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 		m_blendModeCombo->sizePolicy().hasHeightForWidth());
 	m_blendModeCombo->setSizePolicy(blendModeSizePolicy);
 	m_blendModeCombo->setMinimumSize(QSize(24, 0));
-	initBlendModeOptions(false);
-	connect(
-		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, &LassoFillSettings::updateBlendMode);
 
 	QHBoxLayout *modeLayout = new QHBoxLayout;
 	modeLayout->setContentsMargins(0, 0, 0, 0);
@@ -267,71 +265,15 @@ QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 		&LassoFillSettings::setButtonState);
 	setButtonState(false);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindAutomaticAlphaPreserve(
-		this, &LassoFillSettings::setAutomaticAlphaPerserve);
+	m_blendModeManager = BlendModeManager::initFill(
+		m_blendModeCombo, m_alphaPreserveButton, this);
+	dpApp().settings().bindAutomaticAlphaPreserve(
+		m_blendModeManager, &BlendModeManager::setAutomaticAlphaPerserve);
+	connect(
+		m_blendModeManager, &BlendModeManager::blendModeChanged, this,
+		&LassoFillSettings::pushSettings);
 
 	return widget;
-}
-
-void LassoFillSettings::initBlendModeOptions(bool compatibilityMode)
-{
-	int blendMode = getCurrentBlendMode();
-	{
-		QSignalBlocker blocker(m_blendModeCombo);
-		m_blendModeCombo->setModel(
-			getFillBlendModesFor(m_automaticAlphaPreserve, compatibilityMode));
-	}
-	selectBlendMode(blendMode);
-}
-
-void LassoFillSettings::updateAlphaPreserve(bool alphaPreserve)
-{
-	int blendMode = m_blendModeCombo->currentData().toInt();
-	canvas::blendmode::adjustAlphaBehavior(blendMode, alphaPreserve);
-
-	int index = searchBlendModeComboIndex(m_blendModeCombo, blendMode);
-	if(index != -1) {
-		QSignalBlocker blocker(m_blendModeCombo);
-		m_blendModeCombo->setCurrentIndex(index);
-	}
-
-	pushSettings();
-}
-
-void LassoFillSettings::updateBlendMode(int index)
-{
-	int blendMode = m_blendModeCombo->itemData(index).toInt();
-	if(m_automaticAlphaPreserve) {
-		QSignalBlocker blocker(m_alphaPreserveButton);
-		m_alphaPreserveButton->setChecked(
-			canvas::blendmode::presentsAsAlphaPreserving(blendMode));
-	} else {
-		canvas::blendmode::adjustAlphaBehavior(
-			blendMode, m_alphaPreserveButton->isChecked());
-	}
-	pushSettings();
-}
-
-void LassoFillSettings::selectBlendMode(int blendMode)
-{
-	int count = m_blendModeCombo->count();
-	for(int i = 0; i < count; ++i) {
-		if(m_blendModeCombo->itemData(i).toInt() == blendMode) {
-			m_blendModeCombo->setCurrentIndex(i);
-			break;
-		}
-	}
-}
-
-int LassoFillSettings::getCurrentBlendMode() const
-{
-	int blendMode = m_blendModeCombo->count() == 0
-						? DP_BLEND_MODE_NORMAL
-						: m_blendModeCombo->currentData().toInt();
-	canvas::blendmode::adjustAlphaBehavior(
-		blendMode, m_alphaPreserveButton->isChecked());
-	return blendMode;
 }
 
 void LassoFillSettings::updateStabilizationMode(QAction *action)
@@ -352,15 +294,6 @@ int LassoFillSettings::getCurrentStabilizationMode() const
 		return int(brushes::Smoothing);
 	} else {
 		return int(brushes::Stabilizer);
-	}
-}
-
-void LassoFillSettings::setAutomaticAlphaPerserve(bool automaticAlphaPreserve)
-{
-	if(automaticAlphaPreserve != m_automaticAlphaPreserve) {
-		m_automaticAlphaPreserve = automaticAlphaPreserve;
-		canvas::CanvasModel *canvas = controller()->model();
-		initBlendModeOptions(canvas && canvas->isCompatibilityMode());
 	}
 }
 

@@ -1333,6 +1333,57 @@ int DP_blend_mode_to_alpha_preserving(int blend_mode)
     }
 }
 
+bool DP_blend_mode_compatible(int blend_mode, bool mypaint)
+{
+    if (mypaint) {
+        switch (blend_mode) {
+        case DP_BLEND_MODE_ERASE:
+        case DP_BLEND_MODE_NORMAL:
+        case DP_BLEND_MODE_RECOLOR:
+        case DP_BLEND_MODE_COLOR:
+        case DP_BLEND_MODE_NORMAL_AND_ERASER:
+        case DP_BLEND_MODE_ERASE_PRESERVE:
+            return true;
+        default:
+            return false;
+        }
+    }
+    else {
+        switch (blend_mode) {
+        case DP_BLEND_MODE_ERASE:
+        case DP_BLEND_MODE_NORMAL:
+        case DP_BLEND_MODE_MULTIPLY:
+        case DP_BLEND_MODE_DIVIDE:
+        case DP_BLEND_MODE_BURN:
+        case DP_BLEND_MODE_DODGE:
+        case DP_BLEND_MODE_DARKEN:
+        case DP_BLEND_MODE_LIGHTEN:
+        case DP_BLEND_MODE_SUBTRACT:
+        case DP_BLEND_MODE_ADD:
+        case DP_BLEND_MODE_RECOLOR:
+        case DP_BLEND_MODE_BEHIND:
+        case DP_BLEND_MODE_COLOR_ERASE:
+        case DP_BLEND_MODE_SCREEN:
+        case DP_BLEND_MODE_LUMINOSITY_SHINE_SAI:
+        case DP_BLEND_MODE_OVERLAY:
+        case DP_BLEND_MODE_HARD_LIGHT:
+        case DP_BLEND_MODE_SOFT_LIGHT:
+        case DP_BLEND_MODE_LINEAR_BURN:
+        case DP_BLEND_MODE_LINEAR_LIGHT:
+        case DP_BLEND_MODE_HUE:
+        case DP_BLEND_MODE_SATURATION:
+        case DP_BLEND_MODE_LUMINOSITY:
+        case DP_BLEND_MODE_COLOR:
+        case DP_BLEND_MODE_ERASE_PRESERVE:
+        case DP_BLEND_MODE_BEHIND_PRESERVE:
+        case DP_BLEND_MODE_COLOR_ERASE_PRESERVE:
+            return true;
+        default:
+            return false;
+        }
+    }
+}
+
 uint8_t DP_blend_mode_to_compatible(uint8_t blend_mode)
 {
     switch (blend_mode) {

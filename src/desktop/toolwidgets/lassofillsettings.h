@@ -3,6 +3,7 @@
 #define DESKTOP_TOOLWIDGETS_LASSOFILLSETTINGS_H
 #include "desktop/toolwidgets/toolsettings.h"
 
+class BlendModeManager;
 class KisSliderSpinBox;
 class QActionGroup;
 class QAction;
@@ -28,12 +29,14 @@ public:
 	bool isLocked() override { return !m_featureAccess; }
 
 	void setFeatureAccess(bool featureAccess);
+	void setCompatibilityMode(bool compatibilityMode) override;
 
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
 	void toggleEraserMode() override;
 	void toggleAlphaPreserve() override;
+	void toggleBlendMode(int blendMode) override;
 
 	void pushSettings() override;
 
@@ -41,16 +44,8 @@ protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
-	void initBlendModeOptions(bool compatibilityMode);
-	void updateAlphaPreserve(bool alphaPreserve);
-	void updateBlendMode(int index);
-	void selectBlendMode(int blendMode);
-	int getCurrentBlendMode() const;
-
 	void updateStabilizationMode(QAction *action);
 	int getCurrentStabilizationMode() const;
-
-	void setAutomaticAlphaPerserve(bool automaticAlphaPreserve);
 
 	void setButtonState(bool pending);
 
@@ -66,9 +61,7 @@ private:
 	QCheckBox *m_antiAliasCheckBox;
 	QPushButton *m_applyButton = nullptr;
 	QPushButton *m_cancelButton = nullptr;
-	int m_previousMode;
-	int m_previousEraseMode;
-	bool m_automaticAlphaPreserve = true;
+	BlendModeManager *m_blendModeManager = nullptr;
 	bool m_featureAccess = true;
 };
 

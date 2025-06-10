@@ -89,6 +89,9 @@ public slots:
 	//! Toggle current tool's alpha preserve mode (if it has one)
 	void toggleAlphaPreserve();
 
+	//! Toggle current tool to given blend mode (or away from it)
+	void toggleBlendMode(int blendMode);
+
 	//! Quick adjust the parameter specified by the type.
 	void quickAdjust(int type, qreal adjustment);
 

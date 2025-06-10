@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/brushsettingsdialog.h"
 #include "desktop/filewrangler.h"
+#include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/blendmodes.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/curvewidget.h"
@@ -276,6 +278,7 @@ struct BrushSettingsDialog::Private {
 	QStandardItem *paintModeIndirectWash;
 	QStandardItem *paintModeIndirectNormal;
 	QComboBox *brushModeCombo;
+	QComboBox *eraseModeCombo;
 	QCheckBox *eraseModeBox;
 	QCheckBox *colorPickBox;
 	QCheckBox *preserveAlphaBox;
@@ -308,6 +311,7 @@ struct BrushSettingsDialog::Private {
 	KisSliderSpinBox *classicJitterMinSpinner;
 	widgets::CurveWidget *classicJitterCurve;
 	MyPaintPage myPaintPages[MYPAINT_BRUSH_SETTINGS_COUNT];
+	BlendModeManager *blendModeManager;
 	int presetPageIndex;
 	int generalPageIndex;
 	int classicSizePageIndex;
@@ -321,7 +325,6 @@ struct BrushSettingsDialog::Private {
 	int globalSmoothing;
 	int presetId = 0;
 	bool useBrushSampleCount;
-	bool automaticAlphaPreserve = true;
 	bool presetAttached = true;
 	bool compatibilityMode = false;
 	bool updating = false;
@@ -401,6 +404,10 @@ void BrushSettingsDialog::setPresetShortcut(const QKeySequence &presetShortcut)
 void BrushSettingsDialog::setForceEraseMode(bool forceEraseMode)
 {
 	d->eraseModeBox->setEnabled(!forceEraseMode);
+	if(forceEraseMode) {
+		QScopedValueRollback<bool> rollback(d->updating, true);
+		d->blendModeManager->setEraseMode(true);
+	}
 }
 
 void BrushSettingsDialog::setStabilizerUseBrushSampleCount(
@@ -438,6 +445,7 @@ void BrushSettingsDialog::updateUiFromActiveBrush(
 	QScopedValueRollback<bool> rollback(d->updating, true);
 	QSignalBlocker blocker{this};
 	d->brush = brush;
+	d->blendModeManager->setCompatibilityMode(d->compatibilityMode);
 
 	DP_BrushShape shape = brush.shape();
 	bool shapeChanged = shape != d->lastShape;
@@ -676,42 +684,24 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 			emitChange();
 		}));
 
-	d->brushModeCombo = new QComboBox{widget};
-	layout->addRow(tr("Blend Mode:"), d->brushModeCombo);
-	connect(
-		d->brushModeCombo, QOverload<int>::of(&QComboBox::activated),
-		makeBrushChangeCallbackArg<int>([this](int index) {
-			int blendMode = d->brushModeCombo->itemData(index).toInt();
-			if(!d->automaticAlphaPreserve) {
-				canvas::blendmode::adjustAlphaBehavior(
-					blendMode, d->preserveAlphaBox->isChecked());
-			}
-			d->brush.setBlendMode(blendMode, d->eraseModeBox->isChecked());
-			emitChange();
-		}));
+	d->brushModeCombo = new QComboBox;
+	d->eraseModeCombo = new QComboBox;
+	d->eraseModeCombo->hide();
+
+	QHBoxLayout *modeLayout = new QHBoxLayout;
+	modeLayout->setContentsMargins(0, 0, 0, 0);
+	modeLayout->setSpacing(0);
+	modeLayout->addWidget(d->brushModeCombo);
+	modeLayout->addWidget(d->eraseModeCombo);
+	layout->addRow(tr("Blend Mode:"), modeLayout);
 
 	d->preserveAlphaBox = new QCheckBox{tr("Preserve alpha"), widget};
 	d->preserveAlphaBox->setIcon(QIcon::fromTheme("drawpile_alpha_locked"));
 	layout->addRow(d->preserveAlphaBox);
-	connect(
-		d->preserveAlphaBox, &QCheckBox::clicked,
-		makeBrushChangeCallbackArg<bool>([this](bool checked) {
-			int blendMode = d->brushModeCombo->currentData().toInt();
-			canvas::blendmode::adjustAlphaBehavior(blendMode, checked);
-			d->brush.setBlendMode(blendMode, d->eraseModeBox->isChecked());
-			emitChange();
-		}));
 
 	d->eraseModeBox = new QCheckBox{tr("Eraser Mode"), widget};
 	d->eraseModeBox->setIcon(QIcon::fromTheme("draw-eraser"));
 	layout->addRow(d->eraseModeBox);
-	connect(
-		d->eraseModeBox, &QCheckBox::clicked,
-		makeBrushChangeCallbackArg<bool>([this](bool checked) {
-			d->brush.classic().erase = checked;
-			d->brush.myPaint().brush().erase = checked;
-			emitChange();
-		}));
 
 	d->colorPickBox =
 		new QCheckBox{tr("Pick Initial Color from Layer"), widget};
@@ -785,6 +775,22 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	layout->addRow(d->stabilizerExplanationLabel);
 	d->stabilizerExplanationLabel->setWordWrap(true);
 	d->stabilizerExplanationLabel->setTextFormat(Qt::RichText);
+
+	d->blendModeManager = BlendModeManager::initBrush(
+		d->brushModeCombo, d->eraseModeCombo, d->preserveAlphaBox,
+		d->eraseModeBox, this);
+	dpApp().settings().bindAutomaticAlphaPreserve(
+		d->blendModeManager, &BlendModeManager::setAutomaticAlphaPerserve);
+	connect(
+		d->blendModeManager, &BlendModeManager::blendModeChanged,
+		[this](int blendMode, bool eraseMode) {
+			if(!isUpdating()) {
+				d->brush.classic().erase = eraseMode;
+				d->brush.myPaint().brush().erase = eraseMode;
+				d->brush.setBlendMode(blendMode, eraseMode);
+				emitChange();
+			}
+		});
 
 	return scroll;
 }
@@ -1449,21 +1455,14 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 {
 	const brushes::ClassicBrush &classic = d->brush.classic();
 
-	d->brushModeCombo->setModel(getBrushBlendModesFor(
-		classic.erase, d->automaticAlphaPreserve, d->compatibilityMode, false));
 	int brushMode = DP_classic_brush_blend_mode(&classic);
-	int brushModeIndex =
-		searchBlendModeComboIndex(d->brushModeCombo, brushMode);
-	if(brushModeIndex != -1) {
-		d->brushModeCombo->setCurrentIndex(brushModeIndex);
-	}
-	d->preserveAlphaBox->setChecked(
-		canvas::blendmode::presentsAsAlphaPreserving(brushMode));
-
-	d->eraseModeBox->setChecked(classic.erase);
+	d->blendModeManager->setMyPaint(false);
+	d->blendModeManager->selectBlendMode(brushMode);
 
 	d->colorPickBox->setChecked(classic.colorpick);
-	d->colorPickBox->setEnabled(brushMode != DP_BLEND_MODE_ERASE);
+	d->colorPickBox->setEnabled(
+		brushMode != DP_BLEND_MODE_ERASE &&
+		brushMode != DP_BLEND_MODE_ERASE_PRESERVE);
 	d->colorPickBox->setVisible(true);
 
 	bool forceDirectMode =
@@ -1556,14 +1555,9 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 	d->colorPickBox->setVisible(false);
 	d->spacingSpinner->setVisible(false);
 
-	d->brushModeCombo->setModel(getBrushBlendModesFor(
-		brush.erase, d->automaticAlphaPreserve, d->compatibilityMode, true));
 	int brushMode = DP_mypaint_brush_blend_mode(&brush);
-	int brushModeIndex =
-		searchBlendModeComboIndex(d->brushModeCombo, brushMode);
-	if(brushModeIndex != -1) {
-		d->brushModeCombo->setCurrentIndex(brushModeIndex);
-	}
+	d->blendModeManager->setMyPaint(true);
+	d->blendModeManager->selectBlendMode(brushMode);
 
 	bool forceDirectMode = canvas::blendmode::directOnly(brushMode);
 	setComboBoxIndexByData(

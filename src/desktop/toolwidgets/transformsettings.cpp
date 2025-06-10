@@ -36,8 +36,6 @@ static const ToolProperties::RangedValue<int> interpolation{
 
 TransformSettings::TransformSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent)
-	, m_previousMode(DP_BLEND_MODE_NORMAL)
-	, m_previousEraseMode(DP_BLEND_MODE_ERASE)
 {
 	connect(
 		ctrl, &ToolController::modelChanged, this,
@@ -72,8 +70,7 @@ void TransformSettings::setActions(
 
 void TransformSettings::setCompatibilityMode(bool compatibilityMode)
 {
-	initBlendModeOptions(compatibilityMode);
-	m_alphaPreserveButton->setEnabled(!compatibilityMode);
+	m_blendModeManager->setCompatibilityMode(compatibilityMode);
 }
 
 ToolProperties TransformSettings::saveToolSettings()
@@ -107,26 +104,27 @@ void TransformSettings::pushSettings()
 	if(tt->mode() != tools::TransformTool::Mode::Move) {
 		tt->setMode(tools::TransformTool::Mode(m_handlesGroup->checkedId()));
 	}
-
-	int blendMode = getCurrentBlendMode();
-	if(canvas::blendmode::presentsAsEraser(blendMode)) {
-		m_previousEraseMode = blendMode;
-	} else {
-		m_previousMode = blendMode;
-	}
 }
 
 void TransformSettings::toggleEraserMode()
 {
-	selectBlendMode(
-		canvas::blendmode::presentsAsEraser(getCurrentBlendMode())
-			? m_previousMode
-			: m_previousEraseMode);
+	if(m_blendModeCombo->isEnabled()) {
+		m_blendModeManager->toggleEraserMode();
+	}
 }
 
 void TransformSettings::toggleAlphaPreserve()
 {
-	m_alphaPreserveButton->click();
+	if(m_blendModeCombo->isEnabled()) {
+		m_blendModeManager->toggleAlphaPreserve();
+	}
+}
+
+void TransformSettings::toggleBlendMode(int blendMode)
+{
+	if(m_blendModeCombo->isEnabled()) {
+		m_blendModeManager->toggleBlendMode(blendMode);
+	}
 }
 
 QWidget *TransformSettings::createUiWidget(QWidget *parent)
@@ -322,9 +320,6 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 	m_alphaPreserveButton->setStatusTip(m_alphaPreserveButton->toolTip());
 	m_alphaPreserveButton->setCheckable(true);
 	modeLayout->addWidget(m_alphaPreserveButton);
-	connect(
-		m_alphaPreserveButton, &widgets::GroupedToolButton::clicked, this,
-		&TransformSettings::updateAlphaPreserve);
 
 	m_blendModeCombo = new QComboBox;
 	QSizePolicy blendModeSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -334,11 +329,7 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 		m_blendModeCombo->sizePolicy().hasHeightForWidth());
 	m_blendModeCombo->setSizePolicy(blendModeSizePolicy);
 	m_blendModeCombo->setMinimumSize(QSize(24, 0));
-	initBlendModeOptions(false);
 	modeLayout->addWidget(m_blendModeCombo);
-	connect(
-		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, &TransformSettings::updateBlendMode);
 
 	QSpacerItem *modeSpacer = new QSpacerItem(
 		6, 0, QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
@@ -404,9 +395,13 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 	applyCancelLayout->addWidget(m_cancelButton);
 	layout->addRow(applyCancelLayout);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindAutomaticAlphaPreserve(
-		this, &TransformSettings::setAutomaticAlphaPerserve);
+	m_blendModeManager = BlendModeManager::initFill(
+		m_blendModeCombo, m_alphaPreserveButton, this);
+	dpApp().settings().bindAutomaticAlphaPreserve(
+		m_blendModeManager, &BlendModeManager::setAutomaticAlphaPerserve);
+	connect(
+		m_blendModeManager, &BlendModeManager::blendModeChanged, this,
+		&TransformSettings::blendModeChanged);
 
 	return widget;
 }
@@ -499,7 +494,7 @@ void TransformSettings::updateEnabledFrom(canvas::CanvasModel *canvas)
 		}
 
 		if(transform) {
-			selectBlendMode(transform->blendMode());
+			m_blendModeManager->selectBlendMode(transform->blendMode());
 			setOpacity(transform->opacity());
 		}
 
@@ -532,80 +527,6 @@ void TransformSettings::updateHandles(int mode)
 void TransformSettings::showHandles()
 {
 	tool()->setMode(TransformTool::Mode::Scale);
-}
-
-void TransformSettings::initBlendModeOptions(bool compatibilityMode)
-{
-	int blendMode = getCurrentBlendMode();
-	{
-		QSignalBlocker blocker(m_blendModeCombo);
-		m_blendModeCombo->setModel(
-			getFillBlendModesFor(m_automaticAlphaPreserve, compatibilityMode));
-	}
-	selectBlendMode(blendMode);
-}
-
-void TransformSettings::updateAlphaPreserve(bool alphaPreserve)
-{
-	int blendMode = m_blendModeCombo->currentData().toInt();
-	canvas::blendmode::adjustAlphaBehavior(blendMode, alphaPreserve);
-
-	int index = searchBlendModeComboIndex(m_blendModeCombo, blendMode);
-	if(index != -1) {
-		QSignalBlocker blocker(m_blendModeCombo);
-		m_blendModeCombo->setCurrentIndex(index);
-	}
-	emit blendModeChanged(blendMode);
-}
-
-void TransformSettings::updateBlendMode(int index)
-{
-	int blendMode = m_blendModeCombo->itemData(index).toInt();
-	if(m_automaticAlphaPreserve) {
-		QSignalBlocker blocker(m_alphaPreserveButton);
-		m_alphaPreserveButton->setChecked(
-			canvas::blendmode::presentsAsAlphaPreserving(blendMode));
-	} else {
-		canvas::blendmode::adjustAlphaBehavior(
-			blendMode, m_alphaPreserveButton->isChecked());
-	}
-	emit blendModeChanged(blendMode);
-}
-
-void TransformSettings::selectBlendMode(int blendMode)
-{
-	int index = searchBlendModeComboIndex(m_blendModeCombo, blendMode);
-	if(index != -1) {
-		{
-			QSignalBlocker blocker(m_blendModeCombo);
-			m_blendModeCombo->setCurrentIndex(index);
-		}
-		if(m_automaticAlphaPreserve) {
-			QSignalBlocker blocker(m_alphaPreserveButton);
-			m_alphaPreserveButton->setChecked(
-				canvas::blendmode::presentsAsAlphaPreserving(blendMode));
-		}
-		emit blendModeChanged(blendMode);
-	}
-}
-
-int TransformSettings::getCurrentBlendMode() const
-{
-	int blendMode = m_blendModeCombo->count() == 0
-						? DP_BLEND_MODE_NORMAL
-						: m_blendModeCombo->currentData().toInt();
-	canvas::blendmode::adjustAlphaBehavior(
-		blendMode, m_alphaPreserveButton->isChecked());
-	return blendMode;
-}
-
-void TransformSettings::setAutomaticAlphaPerserve(bool automaticAlphaPreserve)
-{
-	if(automaticAlphaPreserve != m_automaticAlphaPreserve) {
-		m_automaticAlphaPreserve = automaticAlphaPreserve;
-		canvas::CanvasModel *canvas = controller()->model();
-		initBlendModeOptions(canvas && canvas->isCompatibilityMode());
-	}
 }
 
 void TransformSettings::updateConstrain(bool constrain)

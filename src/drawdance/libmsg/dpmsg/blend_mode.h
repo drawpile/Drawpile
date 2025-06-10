@@ -194,6 +194,8 @@ DP_INLINE int DP_blend_mode_clip(int blend_mode, bool clip)
     return clip ? DP_blend_mode_to_alpha_preserving(blend_mode) : blend_mode;
 }
 
+bool DP_blend_mode_compatible(int blend_mode, bool mypaint);
+
 uint8_t DP_blend_mode_to_compatible(uint8_t blend_mode);
 
 

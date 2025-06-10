@@ -3,6 +3,7 @@
 #define DESKTOP_TOOLWIDGETS_FILL_H
 #include "desktop/toolwidgets/toolsettings.h"
 
+class BlendModeManager;
 class QAction;
 class QButtonGroup;
 class QLabel;
@@ -52,6 +53,7 @@ public:
 	void pushSettings() override;
 	void toggleEraserMode() override;
 	void toggleAlphaPreserve() override;
+	void toggleBlendMode(int blendMode) override;
 	void updateSelection();
 	void updateFillSourceLayerId(int layerId);
 
@@ -69,17 +71,9 @@ private:
 	static bool isSizeUnlimited(int size);
 	int calculatePixelSize(int size) const;
 
-	void initBlendModeOptions(bool compatibilityMode);
-	void updateAlphaPreserve();
-	void updateBlendMode(int index);
-	void selectBlendMode(int blendMode);
-	int getCurrentBlendMode() const;
-
 	void setButtonState(bool running, bool pending);
 	void setDragState(bool dragging, int tolerance);
 	void updateWidgets();
-
-	void setAutomaticAlphaPerserve(bool automaticAlphaPreserve);
 
 	QWidget *m_headerWidget = nullptr;
 	QStackedWidget *m_stack;
@@ -90,13 +84,11 @@ private:
 	QAction *m_confirmAction = nullptr;
 	QButtonGroup *m_sourceGroup = nullptr;
 	QButtonGroup *m_areaGroup = nullptr;
-	int m_previousMode;
-	int m_previousEraseMode;
+	BlendModeManager *m_blendModeManager = nullptr;
 	int m_toleranceBeforeDrag = -1;
 	qreal m_quickAdjust1 = 0.0;
 	bool m_featureAccess = true;
 	bool m_haveSelection = false;
-	bool m_automaticAlphaPreserve = true;
 	bool m_updating = false;
 };
 

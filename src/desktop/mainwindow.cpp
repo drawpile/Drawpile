@@ -62,6 +62,7 @@
 #include "desktop/widgets/netstatus.h"
 #include "desktop/widgets/viewstatus.h"
 #include "desktop/widgets/viewstatusbar.h"
+#include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/layerlist.h"
@@ -6608,6 +6609,19 @@ void MainWindow::setupActions()
 	}
 
 	// clang-format on
+	for(const canvas::blendmode::Named &named :
+		canvas::blendmode::shortcutModeNames()) {
+		QString name = QStringLiteral("toggletoolblend%1").arg(int(named.mode));
+		QString text = tr("Tool blend mode: %1").arg(named.name);
+		QAction *action =
+			makeAction(qUtf8Printable(name), text).noDefaultShortcut();
+		connect(
+			action, &QAction::triggered, m_dockToolSettings,
+			std::bind(
+				&docks::ToolSettings::toggleBlendMode, m_dockToolSettings,
+				int(named.mode)));
+	}
+
 	m_dockToolSettings->brushSettings()->setActions(
 		reloadPreset, reloadPresetSlots, reloadAllPresets, nextSlot,
 		previousSlot, layerAutomaticAlphaPreserve, maskselection);

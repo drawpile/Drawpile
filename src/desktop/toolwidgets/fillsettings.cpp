@@ -4,7 +4,6 @@
 #include "desktop/settings.h"
 #include "desktop/utils/blendmodes.h"
 #include "desktop/utils/widgetutils.h"
-#include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/selectionmodel.h"
@@ -48,8 +47,6 @@ static const ToolProperties::RangedValue<double> tolerance{
 
 FillSettings::FillSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent)
-	, m_previousMode(DP_BLEND_MODE_NORMAL)
-	, m_previousEraseMode(DP_BLEND_MODE_ERASE)
 {
 }
 
@@ -139,8 +136,6 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		QCoreApplication::translate("BrushDock", "Preserve alpha"));
 	m_ui->alphaPreserve->setStatusTip(m_ui->alphaPreserve->toolTip());
 
-	initBlendModeOptions(false);
-
 	connect(
 		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&FillSettings::updateSize);
@@ -180,13 +175,6 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		m_areaGroup,
 		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
 		&FillSettings::updateSize);
-	connect(
-		m_ui->alphaPreserve, &widgets::GroupedToolButton::clicked, this,
-		&FillSettings::updateAlphaPreserve);
-	connect(
-		m_ui->blendModeCombo,
-		QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-		&FillSettings::updateBlendMode);
 	updateSize();
 
 	m_ui->applyButton->setIcon(
@@ -224,9 +212,13 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 
 	updateWidgets();
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindAutomaticAlphaPreserve(
-		this, &FillSettings::setAutomaticAlphaPerserve);
+	m_blendModeManager = BlendModeManager::initFill(
+		m_ui->blendModeCombo, m_ui->alphaPreserve, this);
+	dpApp().settings().bindAutomaticAlphaPreserve(
+		m_blendModeManager, &BlendModeManager::setAutomaticAlphaPerserve);
+	connect(
+		m_blendModeManager, &BlendModeManager::blendModeChanged, this,
+		&FillSettings::pushSettings);
 
 	return m_stack;
 }
@@ -248,8 +240,7 @@ void FillSettings::setFeatureAccess(bool featureAccess)
 
 void FillSettings::setCompatibilityMode(bool compatibilityMode)
 {
-	initBlendModeOptions(compatibilityMode);
-	m_ui->alphaPreserve->setEnabled(!compatibilityMode);
+	m_blendModeManager->setCompatibilityMode(compatibilityMode);
 }
 
 void FillSettings::pushSettings()
@@ -271,13 +262,6 @@ void FillSettings::pushSettings()
 	m_ui->sourceFillSource->setEnabled(floodOptionsEnabled && haveFillSource);
 	m_ui->sourceFillSource->setVisible(haveFillSource);
 
-	int blendMode = getCurrentBlendMode();
-	if(canvas::blendmode::presentsAsEraser(blendMode)) {
-		m_previousEraseMode = blendMode;
-	} else {
-		m_previousMode = blendMode;
-	}
-
 	FloodFill *tool =
 		static_cast<FloodFill *>(controller()->getTool(Tool::FLOODFILL));
 	int size = m_ui->size->value();
@@ -287,9 +271,9 @@ void FillSettings::pushSettings()
 		m_ui->expandShrink->effectiveValue(), m_ui->expandShrink->kernel(),
 		m_ui->feather->value(), isSizeUnlimited(size) ? -1 : size,
 		m_ui->opacity->value() / 100.0, m_ui->gap->value(),
-		FloodFill::Source(m_sourceGroup->checkedId()), blendMode,
-		FloodFill::Area(area), m_editableAction->isChecked(),
-		m_confirmAction->isChecked());
+		FloodFill::Source(m_sourceGroup->checkedId()),
+		m_blendModeManager->getCurrentBlendMode(), FloodFill::Area(area),
+		m_editableAction->isChecked(), m_confirmAction->isChecked());
 
 	if(!m_ui->sourceFillSource->isEnabled() &&
 	   m_ui->sourceFillSource->isChecked()) {
@@ -299,32 +283,17 @@ void FillSettings::pushSettings()
 
 void FillSettings::toggleEraserMode()
 {
-	int blendMode = canvas::blendmode::presentsAsEraser(getCurrentBlendMode())
-						? m_previousMode
-						: m_previousEraseMode;
-	int index = searchBlendModeComboIndex(m_ui->blendModeCombo, blendMode);
-	if(index != -1) {
-		{
-			QSignalBlocker blocker(m_ui->blendModeCombo);
-			m_ui->blendModeCombo->setCurrentIndex(index);
-		}
-		if(m_automaticAlphaPreserve) {
-			QSignalBlocker blocker(m_ui->alphaPreserve);
-			m_ui->alphaPreserve->setChecked(
-				canvas::blendmode::presentsAsAlphaPreserving(
-					m_ui->blendModeCombo->currentData().toInt()));
-		}
-		pushSettings();
-	}
+	m_blendModeManager->toggleEraserMode();
 }
 
 void FillSettings::toggleAlphaPreserve()
 {
-	int blendMode = getCurrentBlendMode();
-	selectBlendMode(
-		canvas::blendmode::presentsAsAlphaPreserving(blendMode)
-			? canvas::blendmode::toAlphaAffecting(blendMode)
-			: canvas::blendmode::toAlphaPreserving(blendMode));
+	m_blendModeManager->toggleAlphaPreserve();
+}
+
+void FillSettings::toggleBlendMode(int blendMode)
+{
+	m_blendModeManager->toggleBlendMode(blendMode);
 }
 
 void FillSettings::updateSelection()
@@ -369,7 +338,7 @@ ToolProperties FillSettings::saveToolSettings()
 	cfg.setValue(props::size, m_ui->size->value());
 	cfg.setValue(props::opacity, m_ui->opacity->value());
 	cfg.setValue(props::gap, m_ui->gap->value());
-	cfg.setValue(props::blendMode, getCurrentBlendMode());
+	cfg.setValue(props::blendMode, m_blendModeManager->getCurrentBlendMode());
 	int source = m_sourceGroup->checkedId();
 	cfg.setValue(
 		props::source, source == int(FloodFill::Source::FillSourceLayer)
@@ -408,17 +377,7 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 	m_ui->opacity->setValue(cfg.value(props::opacity));
 	m_ui->gap->setValue(cfg.value(props::gap));
 
-	int blendMode = cfg.value(props::blendMode);
-	selectBlendMode(blendMode);
-	m_ui->alphaPreserve->setChecked(
-		canvas::blendmode::presentsAsAlphaPreserving(blendMode));
-	if(canvas::blendmode::presentsAsEraser(blendMode)) {
-		m_previousMode = DP_BLEND_MODE_NORMAL;
-		m_previousEraseMode = blendMode;
-	} else {
-		m_previousMode = blendMode;
-		m_previousEraseMode = DP_BLEND_MODE_ERASE;
-	}
+	m_blendModeManager->selectBlendMode(cfg.value(props::blendMode));
 
 	checkGroupButton(m_sourceGroup, cfg.value(props::source));
 	checkGroupButton(m_areaGroup, cfg.value(props::area));
@@ -487,71 +446,6 @@ int FillSettings::calculatePixelSize(int size) const
 	return unlimited ? 0 : size * 2 + 1;
 }
 
-void FillSettings::initBlendModeOptions(bool compatibilityMode)
-{
-	int selectedBlendMode = getCurrentBlendMode();
-	{
-		QSignalBlocker blockerc(m_ui->blendModeCombo);
-		m_ui->blendModeCombo->setModel(
-			getFillBlendModesFor(m_automaticAlphaPreserve, compatibilityMode));
-	}
-	selectBlendMode(selectedBlendMode);
-}
-
-void FillSettings::updateAlphaPreserve()
-{
-	if(!m_updating) {
-		QScopedValueRollback<bool> rollback(m_updating, true);
-		int index = searchBlendModeComboIndex(
-			m_ui->blendModeCombo, getCurrentBlendMode());
-		if(index != -1) {
-			QSignalBlocker blocker(m_ui->blendModeCombo);
-			m_ui->blendModeCombo->setCurrentIndex(index);
-		}
-		pushSettings();
-	}
-}
-
-void FillSettings::updateBlendMode(int index)
-{
-	if(!m_updating) {
-		if(m_automaticAlphaPreserve) {
-			QScopedValueRollback<bool> rollback(m_updating, true);
-			m_ui->alphaPreserve->setChecked(
-				canvas::blendmode::presentsAsAlphaPreserving(
-					m_ui->blendModeCombo->itemData(index).toInt()));
-		}
-		pushSettings();
-	}
-}
-
-void FillSettings::selectBlendMode(int blendMode)
-{
-	int index = searchBlendModeComboIndex(m_ui->blendModeCombo, blendMode);
-	if(index != -1) {
-		{
-			QSignalBlocker blocker(m_ui->blendModeCombo);
-			m_ui->blendModeCombo->setCurrentIndex(index);
-		}
-		{
-			QSignalBlocker blocker(m_ui->alphaPreserve);
-			m_ui->alphaPreserve->setChecked(
-				canvas::blendmode::presentsAsAlphaPreserving(blendMode));
-		}
-		pushSettings();
-	}
-}
-
-int FillSettings::getCurrentBlendMode() const
-{
-	int blendMode = m_ui->blendModeCombo->count() == 0
-						? DP_BLEND_MODE_NORMAL
-						: m_ui->blendModeCombo->currentData().toInt();
-	canvas::blendmode::adjustAlphaBehavior(
-		blendMode, m_ui->alphaPreserve->isChecked());
-	return blendMode;
-}
-
 void FillSettings::setButtonState(bool running, bool pending)
 {
 	m_ui->applyButton->setEnabled(pending);
@@ -577,15 +471,6 @@ void FillSettings::updateWidgets()
 		utils::ScopedUpdateDisabler disabler(m_stack);
 		m_stack->setCurrentIndex(m_featureAccess ? 0 : 1);
 		m_permissionDeniedLabel->setVisible(!m_featureAccess);
-	}
-}
-
-void FillSettings::setAutomaticAlphaPerserve(bool automaticAlphaPreserve)
-{
-	if(automaticAlphaPreserve != m_automaticAlphaPreserve) {
-		m_automaticAlphaPreserve = automaticAlphaPreserve;
-		canvas::CanvasModel *canvas = controller()->model();
-		initBlendModeOptions(canvas && canvas->isCompatibilityMode());
 	}
 }
 

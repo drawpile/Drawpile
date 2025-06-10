@@ -3,6 +3,7 @@
 #define DESKTOP_TOOLWIDGETS_TRANSFORMSETTINGS_H
 #include "desktop/toolwidgets/toolsettings.h"
 
+class BlendModeManager;
 class KisSliderSpinBox;
 class QAction;
 class QButtonGroup;
@@ -52,6 +53,7 @@ public:
 	void pushSettings() override;
 	void toggleEraserMode() override;
 	void toggleAlphaPreserve() override;
+	void toggleBlendMode(int blendMode) override;
 
 	QWidget *getHeaderWidget() override { return m_headerWidget; }
 
@@ -75,13 +77,6 @@ private:
 	void updateEnabledFrom(canvas::CanvasModel *canvas);
 	void updateHandles(int mode);
 	void showHandles();
-
-	void initBlendModeOptions(bool compatibilityMode);
-	void updateAlphaPreserve(bool alphaPreserve);
-	void updateBlendMode(int index);
-	void selectBlendMode(int blendMode);
-	int getCurrentBlendMode() const;
-	void setAutomaticAlphaPerserve(bool automaticAlphaPreserve);
 
 	void updateConstrain(bool constrain);
 	void updateCenter(bool center);
@@ -113,11 +108,9 @@ private:
 	KisSliderSpinBox *m_opacitySlider = nullptr;
 	QPushButton *m_applyButton = nullptr;
 	QPushButton *m_cancelButton = nullptr;
+	BlendModeManager *m_blendModeManager = nullptr;
 	view::CanvasWrapper *m_canvasView = nullptr;
-	int m_previousMode;
-	int m_previousEraseMode;
 	bool m_handleButtonsVisible = true;
-	bool m_automaticAlphaPreserve = true;
 };
 
 }

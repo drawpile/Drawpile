@@ -160,6 +160,8 @@ public:
 	virtual void toggleEraserMode() {}
 	//! Toggle tool recolor mode (if it has one)
 	virtual void toggleAlphaPreserve() {}
+	//! Toggle tool to given blend mode (if it can)
+	virtual void toggleBlendMode(int blendMode) { Q_UNUSED(blendMode); }
 
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent) = 0;

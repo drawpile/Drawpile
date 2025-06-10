@@ -5,7 +5,6 @@
 #include "desktop/utils/blendmodes.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
-#include "libclient/canvas/canvasmodel.h"
 #include "libclient/tools/gradient.h"
 #include "libclient/tools/toolcontroller.h"
 #include <QButtonGroup>
@@ -39,15 +38,12 @@ static const ToolProperties::RangedValue<int> gradient{
 GradientSettings::GradientSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent)
 	, m_colorDebounce(100)
-	, m_previousMode(DP_BLEND_MODE_NORMAL)
-	, m_previousEraseMode(DP_BLEND_MODE_ERASE)
 {
 }
 
 void GradientSettings::setCompatibilityMode(bool compatibilityMode)
 {
-	initBlendModeOptions(compatibilityMode);
-	m_alphaPreserveButton->setEnabled(!compatibilityMode);
+	m_blendModeManager->setCompatibilityMode(compatibilityMode);
 }
 
 void GradientSettings::setFeatureAccess(bool featureAccess)
@@ -67,7 +63,7 @@ ToolProperties GradientSettings::saveToolSettings()
 	cfg.setValue(props::shape, m_shapeGroup->checkedId());
 	cfg.setValue(props::focus, qRound(m_focusSpinner->value() * 100.0));
 	cfg.setValue(props::spread, m_spreadGroup->checkedId());
-	cfg.setValue(props::blendMode, m_blendModeCombo->currentData().toInt());
+	cfg.setValue(props::blendMode, m_blendModeManager->getCurrentBlendMode());
 	return cfg;
 }
 
@@ -79,7 +75,7 @@ void GradientSettings::restoreToolSettings(const ToolProperties &cfg)
 	checkGroupButton(m_shapeGroup, cfg.value(props::shape));
 	m_focusSpinner->setValue(cfg.value(props::focus) / 100.0);
 	checkGroupButton(m_spreadGroup, cfg.value(props::spread));
-	selectBlendMode(cfg.value(props::blendMode));
+	m_blendModeManager->selectBlendMode(cfg.value(props::blendMode));
 }
 
 void GradientSettings::pushSettings()
@@ -125,17 +121,11 @@ void GradientSettings::pushSettings()
 		return;
 	}
 
-	int blendMode = getCurrentBlendMode();
-	if(canvas::blendmode::presentsAsEraser(blendMode)) {
-		m_previousEraseMode = blendMode;
-	} else {
-		m_previousMode = blendMode;
-	}
-
 	GradientTool::Shape shape = GradientTool::Shape(m_shapeGroup->checkedId());
 	tool->setParameters(
 		color1, color2, shape, GradientTool::Spread(m_spreadGroup->checkedId()),
-		m_focusSpinner->value() / 100.0, blendMode);
+		m_focusSpinner->value() / 100.0,
+		m_blendModeManager->getCurrentBlendMode());
 
 	m_fgOpacitySpinner->setPrefix(
 		haveBackground ? tr("Foreground: ") : tr("Opacity: "));
@@ -147,15 +137,17 @@ void GradientSettings::pushSettings()
 
 void GradientSettings::toggleEraserMode()
 {
-	selectBlendMode(
-		canvas::blendmode::presentsAsEraser(getCurrentBlendMode())
-			? m_previousMode
-			: m_previousEraseMode);
+	m_blendModeManager->toggleEraserMode();
 }
 
 void GradientSettings::toggleAlphaPreserve()
 {
-	m_alphaPreserveButton->click();
+	m_blendModeManager->toggleAlphaPreserve();
+}
+
+void GradientSettings::toggleBlendMode(int blendMode)
+{
+	m_blendModeManager->toggleBlendMode(blendMode);
 }
 
 void GradientSettings::setActions(
@@ -368,9 +360,6 @@ QWidget *GradientSettings::createUiWidget(QWidget *parent)
 		QCoreApplication::translate("BrushDock", "Preserve alpha"));
 	m_alphaPreserveButton->setStatusTip(m_alphaPreserveButton->toolTip());
 	m_alphaPreserveButton->setCheckable(true);
-	connect(
-		m_alphaPreserveButton, &widgets::GroupedToolButton::clicked, this,
-		&GradientSettings::updateAlphaPreserve);
 
 	m_blendModeCombo = new QComboBox;
 	QSizePolicy blendModeSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -380,10 +369,6 @@ QWidget *GradientSettings::createUiWidget(QWidget *parent)
 		m_blendModeCombo->sizePolicy().hasHeightForWidth());
 	m_blendModeCombo->setSizePolicy(blendModeSizePolicy);
 	m_blendModeCombo->setMinimumSize(QSize(24, 0));
-	initBlendModeOptions(false);
-	connect(
-		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, &GradientSettings::updateBlendMode);
 
 	QHBoxLayout *modeLayout = new QHBoxLayout;
 	modeLayout->setContentsMargins(0, 0, 0, 0);
@@ -427,9 +412,13 @@ QWidget *GradientSettings::createUiWidget(QWidget *parent)
 		&m_colorDebounce, &DebounceTimer::noneChanged, this,
 		&GradientSettings::pushSettings);
 
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindAutomaticAlphaPreserve(
-		this, &GradientSettings::setAutomaticAlphaPerserve);
+	m_blendModeManager = BlendModeManager::initFill(
+		m_blendModeCombo, m_alphaPreserveButton, this);
+	dpApp().settings().bindAutomaticAlphaPreserve(
+		m_blendModeManager, &BlendModeManager::setAutomaticAlphaPerserve);
+	connect(
+		m_blendModeManager, &BlendModeManager::blendModeChanged, this,
+		&GradientSettings::pushSettings);
 
 	QWidget *selWidget = new QWidget;
 	QVBoxLayout *selLayout = new QVBoxLayout(selWidget);
@@ -468,75 +457,6 @@ void GradientSettings::checkGroupButton(QButtonGroup *group, int id)
 void GradientSettings::updateColor()
 {
 	m_colorDebounce.setNone();
-}
-
-void GradientSettings::initBlendModeOptions(bool compatibilityMode)
-{
-	int blendMode = getCurrentBlendMode();
-	{
-		QSignalBlocker blocker(m_blendModeCombo);
-		m_blendModeCombo->setModel(
-			getFillBlendModesFor(m_automaticAlphaPreserve, compatibilityMode));
-	}
-	selectBlendMode(blendMode);
-}
-
-void GradientSettings::updateAlphaPreserve(bool alphaPreserve)
-{
-	int blendMode = m_blendModeCombo->currentData().toInt();
-	canvas::blendmode::adjustAlphaBehavior(blendMode, alphaPreserve);
-
-	int index = searchBlendModeComboIndex(m_blendModeCombo, blendMode);
-	if(index != -1) {
-		QSignalBlocker blocker(m_blendModeCombo);
-		m_blendModeCombo->setCurrentIndex(index);
-	}
-
-	pushSettings();
-}
-
-void GradientSettings::updateBlendMode(int index)
-{
-	int blendMode = m_blendModeCombo->itemData(index).toInt();
-	if(m_automaticAlphaPreserve) {
-		QSignalBlocker blocker(m_alphaPreserveButton);
-		m_alphaPreserveButton->setChecked(
-			canvas::blendmode::presentsAsAlphaPreserving(blendMode));
-	} else {
-		canvas::blendmode::adjustAlphaBehavior(
-			blendMode, m_alphaPreserveButton->isChecked());
-	}
-	pushSettings();
-}
-
-void GradientSettings::selectBlendMode(int blendMode)
-{
-	int count = m_blendModeCombo->count();
-	for(int i = 0; i < count; ++i) {
-		if(m_blendModeCombo->itemData(i).toInt() == blendMode) {
-			m_blendModeCombo->setCurrentIndex(i);
-			break;
-		}
-	}
-}
-
-int GradientSettings::getCurrentBlendMode() const
-{
-	int blendMode = m_blendModeCombo->count() == 0
-						? DP_BLEND_MODE_NORMAL
-						: m_blendModeCombo->currentData().toInt();
-	canvas::blendmode::adjustAlphaBehavior(
-		blendMode, m_alphaPreserveButton->isChecked());
-	return blendMode;
-}
-
-void GradientSettings::setAutomaticAlphaPerserve(bool automaticAlphaPreserve)
-{
-	if(automaticAlphaPreserve != m_automaticAlphaPreserve) {
-		m_automaticAlphaPreserve = automaticAlphaPreserve;
-		canvas::CanvasModel *canvas = controller()->model();
-		initBlendModeOptions(canvas && canvas->isCompatibilityMode());
-	}
 }
 
 void GradientSettings::setButtonState(bool pending)

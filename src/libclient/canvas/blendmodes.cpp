@@ -328,6 +328,11 @@ QVector<Named> pasteModeNames()
 	return modeNames(0xff); // Fill tool supports all modes.
 }
 
+QVector<Named> shortcutModeNames()
+{
+	return pasteModeNames();
+}
+
 static bool hasFlag(int mode, uint8_t flag)
 {
 	for(const BlendModeInfo &info : BLEND_MODE) {
@@ -412,6 +417,12 @@ void adjustAlphaBehavior(int &mode, bool preserveAlpha)
 	} else {
 		mode = toAlphaAffecting(mode);
 	}
+}
+
+bool isCompatible(int mode, bool myPaint)
+{
+	return mode >= 0 && mode < DP_BLEND_MODE_COUNT &&
+		   DP_blend_mode_compatible(mode, myPaint);
 }
 
 }

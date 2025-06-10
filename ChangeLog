@@ -50,6 +50,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Allow pressing Escape (or whatever you bound "cancel action" to) to deselect. Can be disabled in the tool preferences. Thanks RannyBergamotte for suggesting.
  * Feature: Upscale small animations by whole numbers to fill the flipbook view. Can be toggled using the zoom button at the bottom. Thanks Ian700ng for suggesting.
  * Fix: Properly stop flood fills at selection boundaries. Thanks Bluestrings for reporting.
+ * Feature: Allow assigning keyboard shirtcuts to tool blend modes. Thanks Izzy and Meru for suggesting.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

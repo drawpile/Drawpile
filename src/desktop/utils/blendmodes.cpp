@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/utils/blendmodes.h"
+#include <QAbstractButton>
 #include <QComboBox>
 #include <QCoreApplication>
+#include <QSignalBlocker>
 #include <QStandardItemModel>
 
 
@@ -16,7 +18,7 @@ static bool isMatchingBlendMode(QAbstractItemModel *model, int i, int mode)
 
 int searchBlendModeComboIndex(QComboBox *combo, int mode)
 {
-	QAbstractItemModel *model = combo->model();
+	QAbstractItemModel *model = combo ? combo->model() : nullptr;
 	if(model) {
 		int blendModeCount = combo->count();
 		for(int i = 0; i < blendModeCount; ++i) {
@@ -365,5 +367,390 @@ getFillBlendModesFor(bool automaticAlphaPreserve, bool compatibilityMode)
 		return fillBlendModes();
 	} else {
 		return fillBlendModesRecolorOmitted();
+	}
+}
+
+
+BlendModeManager *BlendModeManager::initBrush(
+	QComboBox *blendModeCombo, QComboBox *eraseModeCombo,
+	QAbstractButton *alphaPreserveButton, QAbstractButton *eraseModeButton,
+	QObject *parent)
+{
+	return new BlendModeManager(
+		Type::Brush, blendModeCombo, eraseModeCombo, alphaPreserveButton,
+		eraseModeButton, parent);
+}
+
+BlendModeManager *BlendModeManager::initFill(
+	QComboBox *blendModeCombo, QAbstractButton *alphaPreserveButton,
+	QObject *parent)
+{
+	return new BlendModeManager(
+		Type::Fill, blendModeCombo, nullptr, alphaPreserveButton, nullptr,
+		parent);
+}
+
+BlendModeManager::SignalBlocker::SignalBlocker(BlendModeManager *bmm)
+	: m_blendModeManager(block(bmm))
+	, m_blendModeCombo(block(bmm->m_blendModeCombo))
+	, m_eraseModeCombo(block(bmm->m_eraseModeCombo))
+	, m_alphaPreserveButton(block(bmm->m_alphaPreserveButton))
+	, m_eraseModeButton(block(bmm->m_eraseModeButton))
+{
+}
+
+BlendModeManager::SignalBlocker::~SignalBlocker()
+{
+	unblock(m_eraseModeButton);
+	unblock(m_alphaPreserveButton);
+	unblock(m_eraseModeCombo);
+	unblock(m_blendModeCombo);
+	unblock(m_blendModeManager);
+}
+
+QObject *BlendModeManager::SignalBlocker::block(QObject *object)
+{
+	if(object && !object->signalsBlocked()) {
+		object->blockSignals(true);
+		return object;
+	} else {
+		return nullptr;
+	}
+}
+
+void BlendModeManager::SignalBlocker::unblock(QObject *object)
+{
+	if(object) {
+		object->blockSignals(false);
+	}
+}
+
+BlendModeManager::BlendModeManager(
+	Type type, QComboBox *blendModeCombo, QComboBox *eraseModeCombo,
+	QAbstractButton *alphaPreserveButton, QAbstractButton *eraseModeButton,
+	QObject *parent)
+	: QObject(parent)
+	, m_type(type)
+	, m_blendModeCombo(blendModeCombo)
+	, m_eraseModeCombo(eraseModeCombo)
+	, m_alphaPreserveButton(alphaPreserveButton)
+	, m_eraseModeButton(eraseModeButton)
+{
+	initBlendModeOptions();
+	connect(
+		this, &BlendModeManager::blendModeChanged, this,
+		&BlendModeManager::addToHistory);
+	connect(
+		m_blendModeCombo, QOverload<int>::of(&QComboBox::activated), this,
+		&BlendModeManager::updateBlendModeIndex);
+	connect(
+		m_alphaPreserveButton, &QAbstractButton::clicked, this,
+		&BlendModeManager::updateAlphaPreserve);
+	if(m_eraseModeCombo) {
+		connect(
+			m_eraseModeCombo, QOverload<int>::of(&QComboBox::activated), this,
+			&BlendModeManager::updateEraseModeIndex);
+	}
+	if(m_eraseModeButton) {
+		connect(
+			m_eraseModeButton, &QAbstractButton::clicked, this,
+			&BlendModeManager::setEraseMode);
+	}
+}
+
+void BlendModeManager::setAutomaticAlphaPerserve(bool automaticAlphaPreserve)
+{
+	if(automaticAlphaPreserve != m_automaticAlphaPreserve) {
+		m_automaticAlphaPreserve = automaticAlphaPreserve;
+		reinitBlendModeOptions();
+	}
+}
+
+void BlendModeManager::setCompatibilityMode(bool compatibilityMode)
+{
+	if(compatibilityMode != m_compatibilityMode) {
+		m_compatibilityMode = compatibilityMode;
+		reinitBlendModeOptions();
+	}
+}
+
+void BlendModeManager::setMyPaint(bool myPaint)
+{
+	if(myPaint != m_myPaint) {
+		m_myPaint = myPaint;
+		reinitBlendModeOptions();
+	}
+}
+
+int BlendModeManager::getCurrentBlendMode() const
+{
+	QComboBox *combo = m_eraseMode ? m_eraseModeCombo : m_blendModeCombo;
+	int blendMode = combo && combo->count() != 0 ? combo->currentData().toInt()
+					: m_eraseMode				 ? int(DP_BLEND_MODE_ERASE)
+												 : int(DP_BLEND_MODE_NORMAL);
+	canvas::blendmode::adjustAlphaBehavior(
+		blendMode, m_alphaPreserveButton->isChecked());
+	return blendMode;
+}
+
+bool BlendModeManager::selectBlendMode(int blendMode)
+{
+	if(m_compatibilityMode &&
+	   !canvas::blendmode::isCompatible(blendMode, m_myPaint)) {
+		int fallbackMode =
+			int(canvas::blendmode::presentsAsEraser(blendMode)
+					? DP_BLEND_MODE_NORMAL
+					: DP_BLEND_MODE_ERASE);
+		DP_BlendMode alphaAffectingMode, alphaPreservingMode;
+		if(canvas::blendmode::alphaPreservePair(
+			   blendMode, &alphaAffectingMode, &alphaPreservingMode)) {
+			if(blendMode != int(alphaAffectingMode) &&
+			   canvas::blendmode::isCompatible(
+				   int(alphaAffectingMode), m_myPaint)) {
+				fallbackMode = int(alphaAffectingMode);
+			} else if(
+				blendMode != int(alphaPreservingMode) &&
+				canvas::blendmode::isCompatible(
+					int(alphaPreservingMode), m_myPaint)) {
+				fallbackMode = int(alphaPreservingMode);
+			}
+		}
+		blendMode = fallbackMode;
+	}
+
+	int blendModeIndex = searchBlendModeComboIndex(m_blendModeCombo, blendMode);
+	if(blendModeIndex != -1) {
+		if(m_eraseMode) {
+			m_eraseMode = false;
+			m_eraseModeCombo->hide();
+			m_blendModeCombo->show();
+		}
+		setComboIndexBlocked(m_blendModeCombo, blendModeIndex);
+		setButtonCheckedBlocked(
+			m_alphaPreserveButton,
+			canvas::blendmode::presentsAsAlphaPreserving(blendMode));
+		setButtonCheckedBlocked(m_eraseModeButton, false);
+		emit blendModeChanged(blendMode, false);
+		return true;
+	}
+
+	int eraseModeIndex = searchBlendModeComboIndex(m_eraseModeCombo, blendMode);
+	if(eraseModeIndex != -1) {
+		if(!m_eraseMode) {
+			m_eraseMode = true;
+			m_eraseModeCombo->hide();
+			m_blendModeCombo->show();
+		}
+		setComboIndexBlocked(m_blendModeCombo, eraseModeIndex);
+		setButtonCheckedBlocked(
+			m_alphaPreserveButton,
+			canvas::blendmode::presentsAsAlphaPreserving(blendMode));
+		setButtonCheckedBlocked(m_eraseModeButton, true);
+		emit blendModeChanged(blendMode, true);
+		return true;
+	}
+
+	switch(blendMode) {
+	case DP_BLEND_MODE_NORMAL:
+	case DP_BLEND_MODE_RECOLOR:
+	case DP_BLEND_MODE_ERASE:
+		return false;
+	default:
+		return selectBlendMode(int(
+			canvas::blendmode::presentsAsEraser(blendMode) ? DP_BLEND_MODE_ERASE
+			: canvas::blendmode::preservesAlpha(blendMode)
+				? DP_BLEND_MODE_RECOLOR
+				: DP_BLEND_MODE_NORMAL));
+	}
+}
+
+void BlendModeManager::setEraseMode(bool eraseMode)
+{
+	if(eraseMode && !m_eraseMode) {
+		m_eraseMode = true;
+		m_blendModeCombo->hide();
+		m_eraseModeCombo->show();
+		emit blendModeChanged(getCurrentBlendMode(), true);
+	} else if(!eraseMode && m_eraseMode) {
+		m_eraseMode = false;
+		m_eraseModeCombo->hide();
+		m_blendModeCombo->show();
+		emit blendModeChanged(getCurrentBlendMode(), false);
+	}
+}
+
+void BlendModeManager::toggleAlphaPreserve()
+{
+	qDebug("Toggle alpha preserve");
+	int blendMode = getCurrentBlendMode();
+	DP_BlendMode alphaAffectingMode, alphaPreservingMode;
+	if(canvas::blendmode::alphaPreservePair(
+		   blendMode, &alphaAffectingMode, &alphaPreservingMode)) {
+		if(blendMode != int(alphaAffectingMode)) {
+			if(m_compatibilityMode && !canvas::blendmode::isCompatible(
+										  int(alphaAffectingMode), m_myPaint)) {
+				selectBlendMode(int(DP_BLEND_MODE_NORMAL));
+			} else {
+				selectBlendMode(int(alphaAffectingMode));
+			}
+		} else if(blendMode != int(alphaPreservingMode)) {
+			if(m_compatibilityMode &&
+			   !canvas::blendmode::isCompatible(
+				   int(alphaPreservingMode), m_myPaint)) {
+				selectBlendMode(int(DP_BLEND_MODE_RECOLOR));
+			} else {
+				selectBlendMode(int(alphaPreservingMode));
+			}
+		}
+	} else {
+		qWarning("toggleAlphaPreserve: no pair for mode %d", blendMode);
+	}
+}
+
+void BlendModeManager::toggleEraserMode()
+{
+	bool eraser =
+		m_eraseModeCombo
+			? m_eraseMode
+			: canvas::blendmode::presentsAsEraser(getCurrentBlendMode());
+	int blendMode = searchHistory(
+		[eraser](int mode) {
+			return canvas::blendmode::presentsAsEraser(mode) != eraser;
+		},
+		int(eraser ? DP_BLEND_MODE_NORMAL : DP_BLEND_MODE_ERASE));
+	if(!isAutomaticAlphaPreserve()) {
+		canvas::blendmode::adjustAlphaBehavior(
+			blendMode, m_alphaPreserveButton->isChecked());
+	}
+	selectBlendMode(blendMode);
+}
+
+void BlendModeManager::toggleBlendMode(int blendMode)
+{
+	bool keepAlphaPreserve = blendMode != int(DP_BLEND_MODE_RECOLOR);
+	if(isModeSelected(blendMode)) {
+		if(m_eraseMode) {
+			blendMode = int(DP_BLEND_MODE_ERASE);
+		} else {
+			blendMode = int(DP_BLEND_MODE_NORMAL);
+		}
+	}
+
+	if(keepAlphaPreserve && !isAutomaticAlphaPreserve()) {
+		canvas::blendmode::adjustAlphaBehavior(
+			blendMode, m_alphaPreserveButton->isChecked());
+	}
+	selectBlendMode(blendMode);
+}
+
+void BlendModeManager::initBlendModeOptions()
+{
+	SignalBlocker blocker(this);
+	switch(m_type) {
+	case Type::Brush:
+		m_blendModeCombo->setModel(getBrushBlendModesFor(
+			false, m_automaticAlphaPreserve, m_compatibilityMode, m_myPaint));
+		m_eraseModeCombo->setModel(getBrushBlendModesFor(
+			true, m_automaticAlphaPreserve, m_compatibilityMode, m_myPaint));
+		break;
+	case Type::Fill:
+		m_blendModeCombo->setModel(getFillBlendModesFor(
+			m_automaticAlphaPreserve, m_compatibilityMode));
+		break;
+	}
+}
+
+void BlendModeManager::reinitBlendModeOptions()
+{
+	int prevMode = getCurrentBlendMode();
+	initBlendModeOptions();
+	selectBlendMode(prevMode);
+}
+
+void BlendModeManager::updateBlendModeIndex(int index)
+{
+	int blendMode = m_blendModeCombo->itemData(index).toInt();
+	if(!isAutomaticAlphaPreserve()) {
+		canvas::blendmode::adjustAlphaBehavior(
+			blendMode, m_alphaPreserveButton->isChecked());
+	}
+	selectBlendMode(blendMode);
+}
+
+void BlendModeManager::updateAlphaPreserve(bool alphaPreserve)
+{
+	int blendMode = getCurrentBlendMode();
+	canvas::blendmode::adjustAlphaBehavior(blendMode, alphaPreserve);
+	if(!alphaPreserve && m_compatibilityMode &&
+	   !canvas::blendmode::isCompatible(blendMode, m_myPaint)) {
+		blendMode =
+			int(m_eraseMode ? DP_BLEND_MODE_ERASE : DP_BLEND_MODE_NORMAL);
+	}
+	selectBlendMode(blendMode);
+}
+
+void BlendModeManager::updateEraseModeIndex(int index)
+{
+	int blendMode = m_eraseModeCombo->itemData(index).toInt();
+	if(!isAutomaticAlphaPreserve()) {
+		canvas::blendmode::adjustAlphaBehavior(
+			blendMode, m_alphaPreserveButton->isChecked());
+	}
+	selectBlendMode(blendMode);
+}
+
+void BlendModeManager::addToHistory(int blendMode)
+{
+	m_history.removeOne(blendMode);
+	m_history.append(blendMode);
+}
+
+int BlendModeManager::searchHistory(
+	const std::function<bool(int)> &predicate, int fallback) const
+{
+	for(QVector<int>::const_reverse_iterator it = m_history.crbegin(),
+											 end = m_history.crend();
+		it != end; ++it) {
+		int blendMode = *it;
+		if(predicate(blendMode)) {
+			return blendMode;
+		}
+	}
+	return fallback;
+}
+
+bool BlendModeManager::isModeSelected(int blendMode) const
+{
+	int currentMode = getCurrentBlendMode();
+	if(blendMode == currentMode) {
+		return true;
+	}
+
+	DP_BlendMode alphaAffectingMode, alphaPreservingMode;
+	if(blendMode != int(DP_BLEND_MODE_NORMAL) &&
+	   blendMode != int(DP_BLEND_MODE_RECOLOR) &&
+	   canvas::blendmode::alphaPreservePair(
+		   currentMode, &alphaAffectingMode, &alphaPreservingMode)) {
+		return blendMode == int(alphaAffectingMode) ||
+			   blendMode == int(alphaPreservingMode);
+	}
+
+	return false;
+}
+
+void BlendModeManager::setComboIndexBlocked(QComboBox *combo, int i)
+{
+	if(combo) {
+		QSignalBlocker blocker(combo);
+		combo->setCurrentIndex(i);
+	}
+}
+
+void BlendModeManager::setButtonCheckedBlocked(
+	QAbstractButton *button, bool checked)
+{
+	if(button) {
+		QSignalBlocker blocker(button);
+		button->setChecked(checked);
 	}
 }

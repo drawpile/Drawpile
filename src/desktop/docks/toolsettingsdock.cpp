@@ -470,6 +470,11 @@ void ToolSettings::toggleAlphaPreserve()
 	d->currentSettings()->toggleAlphaPreserve();
 }
 
+void ToolSettings::toggleBlendMode(int blendMode)
+{
+	d->currentSettings()->toggleBlendMode(blendMode);
+}
+
 void ToolSettings::switchToEraserSlot(bool near)
 {
 	// Only switch if currently using a brush, other tools don't have an eraser.

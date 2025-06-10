@@ -40,6 +40,9 @@ QVector<Named> layerModeNames();
 //! Get a list of paste/fill blend modes and their translated names
 QVector<Named> pasteModeNames();
 
+//! Get a list of blend modes and translated names assignable to shortcuts.
+QVector<Named> shortcutModeNames();
+
 bool isValidBrushMode(int mode);
 bool isValidEraseMode(int mode);
 
@@ -57,6 +60,8 @@ int toAlphaPreserving(int mode);
 int toCompatible(int mode);
 
 void adjustAlphaBehavior(int &mode, bool preserveAlpha);
+
+bool isCompatible(int mode, bool myPaint);
 
 }
 
