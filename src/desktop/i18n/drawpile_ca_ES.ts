@@ -6132,7 +6132,7 @@ For very slow speed the opposite happens.</source>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Valor del color (brillantor, intensitat)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6240,14 +6240,14 @@ For very slow speed the opposite happens.</source>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Quanta pressió cal per iniciar traç. Això afecta només l&apos;entrada del traç. MyPaint no necessita una pressió mínima per començar a dibuixar.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fins on heu de moure-us fins que l&apos;entrada de traç arribi a 1.0. Aquest valor és logarítmic (els valors negatius no invertiran el procés).</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6313,7 +6313,7 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Acoloreix la capa objectiva, establint el seu to i saturació des del color del pinzell actiu mentre manté el seu valor i alfa.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6517,7 +6517,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Rotació lliure del llenç</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6548,32 +6548,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el to del color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia la saturacio del color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el valor del color</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;imita l&apos;eina</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Centra l&apos;eina</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Limita i centra l&apos;eina</translation>
     </message>
     <message>
         <location line="+98"/>
@@ -6588,7 +6588,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Turning the mouse wheel or some input device that acts like one, optionally while also holding down keys. Example: scrolling to zoom the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Girar la rodeta del ratolí o algun dispositiu d&apos;entrada que actuï com una, opcionalment mentre també es mantenen premudes tecles. Exemple: desplaçar per a fer zoom al llenç.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6608,7 +6608,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>You can&apos;t assign a shortcut to a Left Click without any keys since that would interfere with drawing.</source>
-        <translation type="unfinished"></translation>
+        <translation>No podeu assignar una drecera al clic dret sense cap tecla, ja que això interferiria en dibuixar.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6618,7 +6618,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Assign a shortcut to proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Assigneu una drecera per continuar.</translation>
     </message>
 </context>
 <context>
@@ -6766,7 +6766,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-122"/>
         <source>Invite link copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enllaç d&apos;invitació copiat al porta-retalls.</translation>
     </message>
     <message numerus="yes">
         <location line="+22"/>
@@ -6794,7 +6794,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>Revoke Invite Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Revoca els codis d&apos;invitació</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
@@ -8956,7 +8956,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Arrow</source>
-        <translation type="unfinished"></translation>
+        <translation>Fletxa</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8976,7 +8976,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Color picker:</source>
-        <translation type="unfinished"></translation>
+        <translation>Selector de color:</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -9087,12 +9087,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Toggle eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta l&apos;esborrador</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle erase mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta el mode esborrador</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9102,22 +9102,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>One-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Toc d&apos;un dit:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Two-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Toc de dos dits:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Three-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Toc de tres dits:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Four-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>toc de quatre dits:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -9157,7 +9157,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Two-finger pinch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pessic amb dos dits:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -9221,17 +9221,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-160"/>
         <source>On left-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrossega amb clic esquerre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On middle-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrossega amb clic del mig</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On right-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrossega amb clic dret</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9286,7 +9286,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+33"/>
         <source>Zoom, rotate, mirror and flip notices</source>
-        <translation type="unfinished"></translation>
+        <translation>Fer zoom, rotar, emmirallar i invertir els avisos</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9681,12 +9681,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/welcome.cpp" line="+50"/>
         <source>Standalone Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode autònom</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You are running the web browser version of Drawpile in standalone mode. It will &lt;strong&gt;not&lt;/strong&gt; automatically save what you draw, so save often!</source>
-        <translation type="unfinished"></translation>
+        <translation>Esteu corrent la versió per a navegador web de Drawpile en mode autònom. &lt;strong&gt;No&lt;/strong&gt; desarà automàticament el que dibuixeu, així que deseu sovint!</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -9737,12 +9737,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Llistat</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Replace announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>Substitueix les notificacions</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -9757,7 +9757,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Replace role list</source>
-        <translation type="unfinished"></translation>
+        <translation>Substitueix la llista de rols</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -9891,7 +9891,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+94"/>
         <source>Choose a new name for preset %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Trieu un nou nom pel predefinit %1.</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -9901,7 +9901,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>El predefinit %1 ja existeix, esteu segur que voleu reemplaçar-lo?</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9917,7 +9917,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-2"/>
         <source>Are you sure you want to delete preset %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>Esteu segurs que voleu eliminar el predefinit %1?</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9935,7 +9935,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+26"/>
         <source>Cut, paste and fill:</source>
-        <translation type="unfinished"></translation>
+        <translation>Retalla, enganxa i omple:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10079,7 +10079,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>El predefinit %1 ja existeix, esteu segur que voleu reemplaçar-lo?</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10107,7 +10107,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Set a session title in the Listing tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix un títol de sessió en la pestanya de llistat.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10142,7 +10142,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Builtin server on this computer</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor integrat en aquest ordinador</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10200,7 +10200,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>File contains session settings to import.</source>
-        <translation type="unfinished"></translation>
+        <translation>El fitxer conté paràmetres de sessió per a importar.</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -10210,7 +10210,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+22"/>
         <source>File contains no roles to import.</source>
-        <translation type="unfinished"></translation>
+        <translation>El fitxer no conté rols a importar.</translation>
     </message>
 </context>
 <context>
@@ -10278,27 +10278,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Ne&amp;w Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>No&amp;va Etiqueta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rena&amp;me Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Reano&amp;mena l&apos;etiqueta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>De&amp;lete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Suprimei&amp;x l&apos;etiqueta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Im&amp;port Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Im&amp;porta pinzells…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>E&amp;xport Tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;xporta l&apos;etiqueta…</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -10308,7 +10308,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>%1x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%1</translation>
     </message>
     <message>
         <location line="+227"/>
@@ -10335,7 +10335,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-294"/>
         <source>Brush Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Importació de pinzells</translation>
     </message>
     <message numerus="yes">
         <location line="+12"/>
@@ -10392,7 +10392,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>Really delete tag &apos;%1&apos;? This will not delete the brushes within.</source>
-        <translation type="unfinished"></translation>
+        <translation>Realment voleu eliminar l&apos;etiqueta &apos;%1&apos;? Això no eliminarà els pinzells que conté.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10888,32 +10888,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Change sketch tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Canvia el tint de l&apos;esbós</translation>
     </message>
     <message>
         <location line="+284"/>
         <source>Duplicate Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplica el grup de capes</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Fusiona el grup de capes</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>Propietats del grup de capes…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Suprimeix el grup de capes</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta la &amp;Visibilitat del grup de capes</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10923,22 +10923,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Check Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca el grup de capes</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Desmarca el grup de capes</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Check Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca la capa</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Desmarca la capa</translation>
     </message>
     <message>
         <location line="+1366"/>
@@ -10963,7 +10963,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Really delete the layer &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>Realment voleu eliminar la capa &apos;%1&apos;?</translation>
     </message>
 </context>
 <context>
@@ -10981,7 +10981,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Realtime Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualització en temps real</translation>
     </message>
 </context>
 <context>
@@ -11087,7 +11087,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Zoom: </source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11446,7 +11446,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-140"/>
         <source>Replace selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Reemplaça la selecció</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11486,12 +11486,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+161"/>
         <source>Select continuous area</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecciona una àrea contínua</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Select similar color</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecciona per color similar</translation>
     </message>
 </context>
 <context>
@@ -11499,7 +11499,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/transformsettings.cpp" line="+143"/>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Ràpid</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11586,7 +11586,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+12"/>
         <source>Handles:</source>
         <extracomment>Refers to the handles on the corners and edges of a transform. Which are either arrows to scale the transformation or squares to distort it.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nanses:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -11660,17 +11660,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../view/canvasscene.cpp" line="+573"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaurant el llenç…</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Compressing canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Comprimint el llenç…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Uploading canvas %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Pujant el llenç %1%</translation>
     </message>
 </context>
 <context>
@@ -11686,37 +11686,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../view/lock.cpp" line="+29"/>
         <source>Out of space, use Session &gt; Reset to fix this</source>
-        <translation type="unfinished"></translation>
+        <translation>Sense espai, useu Sessió &gt; Reinicialitza per a solucionar-ho</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Reset in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Reinicialització en procés</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>El llenç està bloquejat</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>User is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;usuari està bloquejat</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer is a group</source>
-        <translation type="unfinished"></translation>
+        <translation>La capa és un grup</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>La capa està bloquejada</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is censored</source>
-        <translation type="unfinished"></translation>
+        <translation>La capa està censurada</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11736,7 +11736,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Tool is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;eina està bloquejada</translation>
     </message>
 </context>
 <context>
@@ -11744,7 +11744,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/brushpreview.cpp" line="+18"/>
         <source>Click to edit brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliqueu per editar el pinzell</translation>
     </message>
 </context>
 <context>
@@ -11762,12 +11762,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+28"/>
         <source>Press a key combination. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Premeu una combinació de tecles. Premeu Esc per cancel·lar.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Click the desired mouse button into the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliqueu el botó del ratolí desitjat en la casella a sobre, opcionalment mentre manteniu premudes tecles. Premeu Esc per cancel·lar.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -11782,7 +11782,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Unknown shortcut type %1. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipus de drecera %1 desconeguda. Premeu Esc per cancel·lar.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -11843,13 +11843,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1825"/>
         <location filename="../view/canvascontroller.cpp" line="+1964"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom: %1%</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../view/canvascontroller.cpp" line="+6"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotació: %1º</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -11884,7 +11884,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Show chat options</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra les opcions del xat</translation>
     </message>
 </context>
 <context>
@@ -11902,12 +11902,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Toggle notifications for this window</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta les notificacions per aquesta finestra</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Chat (recorded)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Xat (enregistrat)...</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11917,72 +11917,72 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+310"/>
         <source>%1 joined the session</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 s&apos;ha unit a la sessió</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>%1 left the session</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 ha sortit de la sessió</translation>
     </message>
     <message>
         <location line="+166"/>
         <source>/!: only operators are allowed to send shouts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!: només els operadors tenen permès enviar crits.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/!: can only shout in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!: només es pot enviar un crit en un xat públic.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/!: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!: no s&apos;ha proporcionat cap text.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>/alert: only operators are allowed to send alerts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/alert: només els operadors tenen permès enviar alertes.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/alert: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/alert: no s&apos;ha proporcionat cap text.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>/me: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/me: no s&apos;ha proporcionat cap text.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>/pin: only operators are allowed to pin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: només els operadors tenen permès fixar missatges.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/pin: can only pin in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: només es poden fixar missatges en un xat públic.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/pin: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: no s&apos;ha proporcionat cap text.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>/unpin: only operators are allowed to unpin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/unpin: només els operadors tenen permès deixar de fixar missatges.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/unpin: can only unpin in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: només es poden deixar de fixar missatges en un xat públic.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>/roll: invalid dice roll description.</source>
-        <translation type="unfinished"></translation>
+        <translation>/roll: descripció de tir de daus no valida.</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -12019,7 +12019,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Compact mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode compacte</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -12073,7 +12073,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Presets…</source>
-        <translation type="unfinished"></translation>
+        <translation>Predefinits…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12101,7 +12101,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/dualcolorbutton.cpp" line="+31"/>
         <source>Set foreground color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix el color de primer pla…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12111,12 +12111,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Reset colors to black and white</source>
-        <translation type="unfinished"></translation>
+        <translation>Reinicia els colors a negre i blanc</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Swap foreground and background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercanvia els colors de primer pla i fons</translation>
     </message>
 </context>
 <context>
@@ -12205,7 +12205,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Show certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra el certificat</translation>
     </message>
     <message>
         <location line="+88"/>
@@ -12225,7 +12225,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Certificat valid</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12283,7 +12283,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/notifbar.cpp" line="+123"/>
         <source>Dismiss (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Descarta (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12319,7 +12319,10 @@ Values above 0.5 may not be noticeable.</source>
 Green: %2
 Blue: %3
 Hex: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Vermell: %1
+Verd: %2
+Blau: %3
+Hexadecimal: %4</translation>
     </message>
 </context>
 <context>
@@ -12398,12 +12401,12 @@ Hex: %4</source>
     <message>
         <location line="+5"/>
         <source>Key frame on %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotograma clau a %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fotograma clau %1 a %2</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -12413,7 +12416,7 @@ Hex: %4</source>
     <message>
         <location line="+2"/>
         <source>Toggle onion skin</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta la pell de ceba</translation>
     </message>
     <message>
         <location line="+129"/>
@@ -12543,7 +12546,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+11"/>
         <source>Bot</source>
-        <translation type="unfinished"></translation>
+        <translation>Bot</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12556,12 +12559,12 @@ or via Animation ▸ New Track.</source>
     <message>
         <location filename="../widgets/viewstatus.cpp" line="+77"/>
         <source>Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotació del llenç</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom</translation>
     </message>
 </context>
 </TS>
