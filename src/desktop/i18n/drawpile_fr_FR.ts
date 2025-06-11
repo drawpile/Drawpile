@@ -1980,7 +1980,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>Layer View</source>
-        <translation type="unfinished">Vue des Calques</translation>
+        <translation>Vue des Calques</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -1990,7 +1990,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+2"/>
         <source>Frame View</source>
-        <translation type="unfinished">Vue du Cadre</translation>
+        <translation>Vue du Cadre</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2035,7 +2035,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+4"/>
         <source>Select Layer &amp;Bounds</source>
-        <translation type="unfinished">Sélectionner &amp;Bordures des Calques</translation>
+        <translation>Sélectionner les &amp;Bordures des Calques</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2046,7 +2046,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+5"/>
         <source>&amp;Expand/Shrink/Feather Selection</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished">Ét&amp;endre/Réduire/Flouter Sélection</translation>
+        <translation>Ét&amp;endre/Réduire/Adoucir la Sélection</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2061,12 +2061,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+2"/>
         <source>Transform Selection &amp;Mask</source>
-        <translation type="unfinished">&amp;Masque de Transformation de Sélection</translation>
+        <translation>Transformer le &amp;Masque de Sélection</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation type="unfinished">Ne transformer que le masque de sélection, retourner aux outils ensuite</translation>
+        <translation>Transformer uniquement le masque de sélection lui-même, puis revenir aux outils précédents</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2086,7 +2086,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+2"/>
         <source>&amp;Flip Transform</source>
-        <translation type="unfinished">&amp;Inversion</translation>
+        <translation>Transformation d&apos;&amp;Inversion</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2096,12 +2096,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>mirror/flip transformed image vertically</source>
-        <translation type="unfinished">Inverser/Effet miroir sur l&apos;image transformé verticalement</translation>
+        <translation>miroir/retourner l&apos;image transformée verticalement</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Rotate Transform Clockwise</source>
-        <translation type="unfinished">Transformation par &amp;Rotation dans le sens horaire</translation>
+        <translation>Transformation par &amp;Rotation dans le sens horaire</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2111,12 +2111,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+4"/>
         <source>Shrink Transform to &amp;Fit View</source>
-        <translation type="unfinished">Transformation par Réduction pour Adapter à la Vue (&amp;F)</translation>
+        <translation>Réduire la Trans&amp;formation pour Ajuster la Vue</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Stamp Transform</source>
-        <translation type="unfinished">Transformation Tampon (&amp;S)</translation>
+        <translation>Tran&amp;sformation Tampon</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -2196,7 +2196,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+0"/>
         <source>Transform selection</source>
-        <translation type="unfinished">Sélection par Transformation</translation>
+        <translation>Transformer la Sélection</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2206,7 +2206,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+0"/>
         <source>Pan canvas view</source>
-        <translation type="unfinished">Pivoter la vue du canevas par incréments</translation>
+        <translation>Déplacer la vue due la toile</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -2241,7 +2241,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>Toggle Recolor Mode</source>
-        <translation type="unfinished">Activer/Désactiver le Mode Recolorer</translation>
+        <translation>Activer/Désactiver le Mode de Recoloration</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2251,27 +2251,27 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>Choose the current background color</source>
-        <translation type="unfinished">Choisir la couleur d&apos;arrière-plan</translation>
+        <translation>Choisir la couleur d&apos;arrière-plan actuelle</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Swap current foreground and background color with each other</source>
-        <translation type="unfinished">Échanger les couleurs de premier plan et d&apos;arrière-plan</translation>
+        <translation>Échanger les couleurs de premier plan avec celles de l&apos;arrière-plan</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set foreground color to black and background color to white</source>
-        <translation type="unfinished">Régler la couleur de premier plan sur noir et la couleur d&apos;arrière-plan sur blanc</translation>
+        <translation>Définir la couleur de premier plan sur noir et la couleur d&apos;arrière-plan sur blanc</translation>
     </message>
     <message>
         <location line="+168"/>
         <source>Could not write log file: %1</source>
-        <translation type="unfinished">Ne peut pas écrire le fichier de journal&#xa0;: %1</translation>
+        <translation>Impossible d&apos;écrire le fichier journal&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Could not read log file: %1</source>
-        <translation type="unfinished">Ne peut pas lire le fichier de journal&#xa0;: %1</translation>
+        <translation>Impossible de lire le fichier journal&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+88"/>
@@ -2306,7 +2306,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+35"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished">Erreur d&apos;enregistrement de la table des évènements.</translation>
+        <translation>Erreur d&apos;enregistrement de la table des évènements.</translation>
     </message>
     <message>
         <location line="+219"/>
@@ -2366,7 +2366,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+33"/>
         <source>Error</source>
-        <translation type="unfinished">Erreur</translation>
+        <translation>Erreur</translation>
     </message>
     <message>
         <location line="+757"/>
@@ -2387,12 +2387,12 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
         <location line="+1"/>
         <location line="+1601"/>
         <source>Tablet Event Log...</source>
-        <translation type="unfinished">Table des Évènements...</translation>
+        <translation>Table des Évènements...</translation>
     </message>
     <message>
         <location line="-1597"/>
         <source>Stop Profile</source>
-        <translation type="unfinished">Arrêter Profil</translation>
+        <translation>Arrêter le Profil</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2403,7 +2403,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="-1587"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
-        <translation type="unfinished">Régler Latence Artificielle... (Actuellement&#xa0;: %1 ms)</translation>
+        <translation>Régler Latence Artificielle... (Actuellement %1 ms)</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -2438,7 +2438,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
 
 Are you sure youwant to start recording debug dumps?</source>
-        <translation type="unfinished">Les archives de débogage enregistrent les commandes effectués en local et à distance. Elles peuvent être utilisés pour régler des problèmes de réseaux, et parfois plus dans de rares cas. Si vous souhaitez effectuer un enregistrement classique, veuillez utiliser Fichier &gt; Enregistrer (Vidéo).
+        <translation>Les archives de débogage enregistrent les commandes effectués en local et à distance. Elles peuvent être utilisés pour régler des problèmes de réseaux, et parfois plus dans de rares cas. Si vous souhaitez effectuer un enregistrement classique, veuillez utiliser Fichier &gt; Enregistrer (Vidéo).
 
 L&apos;archive de débogage démarre sur la prochaine réinitialisation du canevas, et les fichiers seront sauvegardés sur %1
 
@@ -2452,12 +2452,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Do you really want to crash Drawpile? This will terminate the program and you will lose any unsaved data!</source>
-        <translation type="unfinished">Voulez vous faire crasher Drawpile&#x202f;? Ceci va arrêter le programme, et les données non sauvegardées seront perdues&#x202f;!</translation>
+        <translation>Voulez vous faire crasher Drawpile&#x202f;? Ceci va arrêter le programme, et les données non sauvegardées seront perdues&#x202f;!</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Settings File:</source>
-        <translation type="unfinished">Fichier de Configuration&#xa0;:</translation>
+        <translation>Fichier de Paramètres&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2477,7 +2477,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+168"/>
         <source>Lock Docks</source>
-        <translation type="unfinished">Verrouiller Panneaux</translation>
+        <translation>Verrouiller Panneaux</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -2502,17 +2502,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+5"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation type="unfinished">Importer les Trames d&apos;Animation…</translation>
+        <translation>Importer les &amp;Images d&apos;Animation…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation type="unfinished">Importer l&apos;Animation depuis les Ca&amp;lques…</translation>
+        <translation>Importer l&apos;Animation depuis les Ca&amp;lques…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Start...</source>
-        <translation type="unfinished">Démarrer...</translation>
+        <translation>Démarrer...</translation>
     </message>
     <message>
         <location line="+113"/>
@@ -2522,37 +2522,37 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+109"/>
         <source>Paste in View Center</source>
-        <translation type="unfinished">Coller dans la Vue Centrée</translation>
+        <translation>Coller dans le Centre d&apos;Affichage</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Set Session Background...</source>
-        <translation type="unfinished">Régler Arrière-plan de Session...</translation>
+        <translation>Définir l&apos;Arrière-Plan de Session...</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set Local Background...</source>
-        <translation type="unfinished">Définir l&apos;Arrière-plan Local...</translation>
+        <translation>Définir l&apos;Arrière-Plan Local...</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clear Local Background</source>
-        <translation type="unfinished">Effacer l&apos;Arrière-Plan Local</translation>
+        <translation>Effacer l&apos;Arrière-Plan Local</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Brush Settings</source>
-        <translation type="unfinished">Réglages de pinceau (&amp;B)</translation>
+        <translation>Réglages de &amp;Pinceau</translation>
     </message>
     <message>
         <location line="+75"/>
         <source>Expand &amp;Up…</source>
-        <translation type="unfinished">Étendre vers le Ha&amp;ut…</translation>
+        <translation>Étendre vers le Ha&amp;ut…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand &amp;Down…</source>
-        <translation type="unfinished">Éten&amp;dre vers le Bas…</translation>
+        <translation>Éten&amp;dre vers le Bas…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3018,22 +3018,22 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../mainwindow.cpp" line="+198"/>
         <source>Change Frame Count...</source>
-        <translation type="unfinished">Changer le Nombre de Trames...</translation>
+        <translation>Changer le Nombre d&apos;Images...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change Frame Rate (FPS)...</source>
-        <translation type="unfinished">Changer la Fréquence d&apos;image pour les Trames (IPS)...</translation>
+        <translation>Changer la Fréquence d&apos;Images (IPS)...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished">Régler la Trame de Référence au Calque Actuel</translation>
+        <translation>Régler l&apos;image de Référence au Calque Actuel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Blank Key Frame</source>
-        <translation type="unfinished">Régler Trame de Référence Vide</translation>
+        <translation>Définir une Trame de Référence Vide</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3073,22 +3073,22 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Track Onion Skin</source>
-        <translation type="unfinished">Piste en pelage d&apos;oignon</translation>
+        <translation>Piste en Pelage d&apos;Oignon</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate Track</source>
-        <translation type="unfinished">Dupliquer la Piste</translation>
+        <translation>Dupliquer la Piste</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rename Track</source>
-        <translation type="unfinished">Renommer la Piste</translation>
+        <translation>Renommer la Piste</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation type="unfinished">Supprimer la Piste</translation>
+        <translation>Supprimer la Piste</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3301,7 +3301,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+38"/>
         <source>Cause Crash…</source>
-        <translation type="unfinished">Causer un Crash…</translation>
+        <translation>Causer un Crash…</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -3316,12 +3316,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished">&amp;Réinitialiser Pinceau</translation>
+        <translation>&amp;Réinitialiser Pinceau</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished">Réinitialiser tous les Emplacements de Pinceau (&amp;S)</translation>
+        <translation>Réinitialiser tous les Emplacement&amp;s de Pinceau</translation>
     </message>
     <message>
         <location line="+3"/>
