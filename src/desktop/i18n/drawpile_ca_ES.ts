@@ -2481,7 +2481,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+2"/>
         <source>Frame View</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista de fotogrames</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2491,7 +2491,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Show Censored Layers</source>
-        <translation>Mostrar les capes censurdes</translation>
+        <translation>Mostrar les capes censurades</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2541,7 +2541,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="+4"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta el mode d&apos;esbós de la capa</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+1"/>
@@ -2662,7 +2662,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix un fotograma a la capa actual</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3321,7 +3321,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Toggle Recolor Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta el mode d&apos;acoloriment</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3426,7 +3426,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+4"/>
         <source>Focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Focus en el llenç</translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-13"/>
@@ -3455,12 +3455,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+17"/>
         <source>Tiles:</source>
-        <translation>Titols:</translation>
+        <translation>Mosaics:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Tile Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Memòria de mosaic:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3470,7 +3470,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+7"/>
         <source>Context Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Memòria de context:</translation>
     </message>
     <message>
         <location line="-86"/>
@@ -3493,7 +3493,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+21"/>
         <source>Rewind to Beginning</source>
-        <translation type="unfinished"></translation>
+        <translation>Rebobina fins al principi</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3508,7 +3508,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+20"/>
         <source>Next Stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>Traç següent</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3528,12 +3528,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+79"/>
         <source>Building an index will let you quickly skip to any part of your recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Construir un índex us permetrà saltar ràpidament a qualsevol part del vostre enregistrament.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Build Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Construeix l&apos;índex</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -3993,12 +3993,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+31"/>
         <source>Add listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix llistat</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove selected listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Suprimeix el llistat seleccionat</translation>
     </message>
 </context>
 <context>
@@ -4054,7 +4054,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+19"/>
         <source>Annotation content</source>
-        <translation type="unfinished"></translation>
+        <translation>Contingut de l&apos;anotació</translation>
     </message>
 </context>
 <context>
@@ -4102,7 +4102,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+7"/>
         <source>dp:x.y.z</source>
-        <translation type="unfinished"></translation>
+        <translation>dp:x.y.z</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -4180,7 +4180,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+14"/>
         <source>Path to ffmpeg:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cami a ffmpeg:</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -4247,7 +4247,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+11"/>
         <source>Revert changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Reverteix els canvis a la paleta actual</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4485,17 +4485,17 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+2"/>
         <source>Reset inputs to the whole canvas and timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>Reinicialitza les entrades en tot el llenç i línia de temps</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Set from Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix des del llibre animat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set inputs to what is being previewed in the flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix les entrades al que es previsualitza en el llibre animat</translation>
     </message>
     <message>
         <location line="+6"/>
