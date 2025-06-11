@@ -1900,7 +1900,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+6"/>
         <source>&amp;Toggle Layer Check State</source>
-        <translation type="unfinished">Activer/Désac&amp;tiver l&apos;État Coché du Calque</translation>
+        <translation>Activer/Désac&amp;tiver l&apos;État Coché du Calque</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2040,7 +2040,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+4"/>
         <source>&amp;Layer to Selection</source>
-        <translation type="unfinished">Ca&amp;lque sélectionné</translation>
+        <translation>Ca&amp;lque sélectionné</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2557,7 +2557,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+3"/>
         <source>Expand &amp;Left…</source>
-        <translation type="unfinished">Étendre vers la Gauche (&amp;L)…</translation>
+        <translation>Étendre vers &amp;la Gauche…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3326,12 +3326,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+3"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished">Réinitialiser tous les Pinceaux (&amp;B)</translation>
+        <translation>&amp;Réinitialiser tous les Pinceaux</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Next Brush</source>
-        <translation type="unfinished">Pinceau Suivant (&amp;N)</translation>
+        <translation>Pinceau Suiva&amp;nt</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3409,7 +3409,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished">Fichier journal non existant, voulez-vous l&apos;activer dans les préférences&#x202f;?</translation>
+        <translation>Le fichier journal n&apos;existe pas, devez-vous activer la journalisation dans les préférences&#x202f;?</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3455,12 +3455,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+17"/>
         <source>Tiles:</source>
-        <translation type="unfinished">Tuiles&#xa0;:</translation>
+        <translation>Carrelage&#xa0;:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Tile Memory:</source>
-        <translation type="unfinished">Mémoire de la Tuile&#xa0;:</translation>
+        <translation>Mémoire du Carrelage&#xa0;:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3523,7 +3523,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+3"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+79"/>
@@ -3862,12 +3862,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+72"/>
         <source>Add listing</source>
-        <translation type="unfinished">Ajouter une liste</translation>
+        <translation>Ajouter un listing</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove selected listing</source>
-        <translation type="unfinished">Retirer la liste sélectionnée</translation>
+        <translation>Retirer le listing sélectionnée</translation>
     </message>
     <message>
         <location line="-466"/>
@@ -4062,7 +4062,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../ui/userinfodialog.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished">Dialogue</translation>
+        <translation>Dialogue</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4102,7 +4102,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+7"/>
         <source>dp:x.y.z</source>
-        <translation type="unfinished">dp:x.y.z</translation>
+        <translation>dp:x.y.z</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -4180,12 +4180,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+14"/>
         <source>Path to ffmpeg:</source>
-        <translation type="unfinished">Chemin vers ffmpeg&#xa0;:</translation>
+        <translation>Chemin vers ffmpeg&#xa0;:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Choose</source>
-        <translation type="unfinished">Choisir</translation>
+        <translation>Choisir</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -4284,12 +4284,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Palette Image (%1)</source>
-        <translation type="unfinished">Image de palette (%1)</translation>
+        <translation>Image de Palette (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Files (*)</source>
-        <translation type="unfinished">Tous les fichiers (*)</translation>
+        <translation>Tous les Fichiers (*)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4310,12 +4310,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_editor.cpp" line="+321"/>
         <source>Add Color</source>
-        <translation type="unfinished">Ajouter une couleur</translation>
+        <translation>Ajouter une Couleur</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Remove Color</source>
-        <translation type="unfinished">Supprimer une couleur</translation>
+        <translation>Supprimer une Couleur</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4341,7 +4341,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+9"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -4349,7 +4349,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
         <source>Report</source>
-        <translation type="unfinished">Signaler</translation>
+        <translation>Signaler</translation>
     </message>
 </context>
 <context>
@@ -4362,7 +4362,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+106"/>
         <source>Retrieving %1...</source>
-        <translation type="unfinished">Récupération de %1...</translation>
+        <translation>Récupération de %1...</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -4372,12 +4372,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+7"/>
         <source>Add</source>
-        <translation type="unfinished">Ajouter</translation>
+        <translation>Ajouter</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Checking %1...</source>
-        <translation type="unfinished">Vérification de %1 en cours...</translation>
+        <translation>Vérification de %1...</translation>
     </message>
 </context>
 <context>
@@ -4395,12 +4395,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+4"/>
         <source>Frames as PNGs</source>
-        <translation type="unfinished">Trames en tant que PNG</translation>
+        <translation>Trames en tant que PNG</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frames as PNGs in ZIP</source>
-        <translation type="unfinished">Trames en tant que PNG compressés (ZIP)</translation>
+        <translation>Trames en tant que PNG compressés (ZIP)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4435,37 +4435,37 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+8"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished">Lissage Progressif</translation>
+        <translation>Lissage</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Scaling:</source>
-        <translation type="unfinished">Échelle&#xa0;:</translation>
+        <translation>Échelle&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Input</source>
-        <translation type="unfinished">Entrée</translation>
+        <translation>Entrée</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Frame Range:</source>
-        <translation type="unfinished">Intervalle de Trame&#xa0;:</translation>
+        <translation>Intervalle d&apos;Image&#xa0;:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source> FPS</source>
-        <translation type="unfinished"> IPS</translation>
+        <translation> IPS</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Fréquence d&apos;images :</translation>
+        <translation>Fréquence d&apos;images&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4480,27 +4480,27 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+14"/>
         <source>Reset</source>
-        <translation type="unfinished">Réinitialiser</translation>
+        <translation>Réinitialiser</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Reset inputs to the whole canvas and timeline</source>
-        <translation type="unfinished">Réinitialiser les entrées de l&apos;entièreté du canevas et de la frise temporelle</translation>
+        <translation>Réinitialiser les entrées sur l&apos;ensemble du canevas et de la chronologie</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Set from Flipbook</source>
-        <translation type="unfinished">Régler depuis le Folioscope</translation>
+        <translation>Régler depuis le Flipbook</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set inputs to what is being previewed in the flipbook</source>
-        <translation type="unfinished">Régler les entrées par rapport à la prévisualisation du folioscope</translation>
+        <translation>Définissez les entrées sur ce qui est prévisualisé dans le flipbook</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Export</source>
-        <translation type="unfinished">Exporter</translation>
+        <translation>Exporter</translation>
     </message>
     <message>
         <location line="+125"/>
@@ -4518,7 +4518,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+18"/>
         <source>Frames</source>
-        <translation type="unfinished">Trames</translation>
+        <translation>Images</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4528,7 +4528,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+6"/>
         <source>Importing animation frames is not supported in the web browser version of Drawpile.</source>
-        <translation type="unfinished">L&apos;import de trames d&apos;animation n&apos;est pas supportée dans la version Web de Drawpile.</translation>
+        <translation>L&apos;import d&apos;images d&apos;animation n&apos;est pas supportée dans la version Web de Drawpile.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4548,12 +4548,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+6"/>
         <source>Sort</source>
-        <translation type="unfinished">Trier</translation>
+        <translation>Trier</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Numeric Ascending</source>
-        <translation type="unfinished">Numérique Croissant</translation>
+        <translation>Numérique Croissant</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4573,12 +4573,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+7"/>
         <source>Layers</source>
-        <translation type="unfinished">Calques</translation>
+        <translation>Calques</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import the layers of an ORA or PSD file as timeline frames.</source>
-        <translation type="unfinished">Importer les calques d&apos;un fichier ORA ou PSD en tant que trames de la frise temporelle.</translation>
+        <translation>Importer les calques d&apos;un fichier ORA ou PSD en tant qu&apos;images de la frise temporelle.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4588,13 +4588,13 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+6"/>
         <source>Choose</source>
-        <translation type="unfinished">Choisir</translation>
+        <translation>Choisir</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Key frame length:</source>
         <extracomment>How many frames each imported key frame gets in the timeline.</extracomment>
-        <translation type="unfinished">Longueur de la trame de référence&#xa0;:</translation>
+        <translation>Longueur de l&apos;image de référence&#xa0;:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -4604,7 +4604,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Fréquence d&apos;images :</translation>
+        <translation>Fréquence d&apos;images&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4614,7 +4614,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message numerus="yes">
         <location line="+88"/>
         <source> frame(s)</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform> image</numerusform>
             <numerusform> images</numerusform>
         </translation>
@@ -4635,29 +4635,29 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+86"/>
         <source>Continuous hue</source>
-        <translation type="unfinished">Teinte continue</translation>
+        <translation>Teinte continue</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue steps: </source>
-        <translation type="unfinished">Étapes de teinte&#xa0;: </translation>
+        <translation>Marches de teinte&#xa0;: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue angle: </source>
-        <translation type="unfinished">Angle de teinte&#xa0;: </translation>
+        <translation>Angle de teinte&#xa0;: </translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+43"/>
         <source>°</source>
         <extracomment>Degree symbol. Unless your language uses a different one, keep as-is.</extracomment>
-        <translation type="unfinished">°</translation>
+        <translation>°</translation>
     </message>
     <message>
         <location line="-40"/>
         <source>Continuous chroma</source>
-        <translation type="unfinished">Chromatique continue</translation>
+        <translation>Chromatique continue</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4667,12 +4667,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Continuous luminance</source>
-        <translation type="unfinished">Luminance continue</translation>
+        <translation>Luminance continue</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance steps: </source>
-        <translation type="unfinished">Étapes par luminance&#xa0;: </translation>
+        <translation>Marches de luminance&#xa0;: </translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4682,27 +4682,27 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Saturation steps: </source>
-        <translation type="unfinished">Étapes par saturation&#xa0;: </translation>
+        <translation>Marches de saturation&#xa0;: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous lightness</source>
-        <translation type="unfinished">Éclaircissement continu</translation>
+        <translation>Éclaircissement continu</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lightness steps: </source>
-        <translation type="unfinished">Étapes par éclaircissement&#xa0;: </translation>
+        <translation>Marches d&apos;éclaircissement&#xa0;: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous value</source>
-        <translation type="unfinished">Valeur continue</translation>
+        <translation>Valeur continue</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Value steps: </source>
-        <translation type="unfinished">Étapes par valeur&#xa0;: </translation>
+        <translation>Marches de valeur&#xa0;: </translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4717,7 +4717,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+7"/>
         <source>Mask angle: </source>
-        <translation type="unfinished">Angle de masque&#xa0;: </translation>
+        <translation>Angle de masque&#xa0;: </translation>
     </message>
     <message>
         <location line="+15"/>
@@ -4727,55 +4727,55 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Atmosphere with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Atmosphère accentué</translation>
+        <translation>Atmosphère avec accent</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Atmospheric triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Triade atmosphérique</translation>
+        <translation>Triade atmosphérique</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Complémentaire</translation>
+        <translation>Complémentaire</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dominant hue with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Teinte dominante accentué</translation>
+        <translation>Teinte dominante accentué</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Shifted triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Triade décalée</translation>
+        <translation>Triade décalée</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Divisé</translation>
+        <translation>Divisé</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Divisé Complémentaire</translation>
+        <translation>Divisé Complémentaire</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tetradic</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished">Tétradicale</translation>
+        <translation>Tétradicale</translation>
     </message>
 </context>
 <context>
@@ -4784,7 +4784,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
         <location line="+8"/>
         <source>Import Avatar</source>
-        <translation type="unfinished">Importer l&apos;avatar</translation>
+        <translation>Importer l&apos;Avatar</translation>
     </message>
     <message>
         <location line="-6"/>
@@ -4795,7 +4795,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+6"/>
         <source>Picture is too small</source>
-        <translation type="unfinished">L&apos;image est trop petite</translation>
+        <translation>L&apos;image est trop petite</translation>
     </message>
 </context>
 <context>
@@ -4809,12 +4809,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="+17"/>
         <source>Export</source>
         <extracomment>This text on a button, so it&apos;s a verb, not a noun.</extracomment>
-        <translation type="unfinished">Exporter</translation>
+        <translation>Exporter</translation>
     </message>
     <message>
         <location line="+164"/>
         <source>Brush Export</source>
-        <translation type="unfinished">Exporter Pinceau</translation>
+        <translation>Exporter le Pinceau</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
@@ -4832,7 +4832,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message numerus="yes">
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%n erreur est survenue.</numerusform>
             <numerusform>%n erreurs sont survenues.</numerusform>
         </translation>
@@ -4858,17 +4858,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation type="unfinished">Sera redimensionné en 64 pixels sur 64.</translation>
+        <translation>Sera redimensionné en 64 pixels sur 64.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished">Vignette&#x202f;:</translation>
+        <translation>Miniature&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add Label:</source>
-        <translation type="unfinished">Ajouter Label&#xa0;:</translation>
+        <translation>Ajouter un Label&#xa0;:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4896,12 +4896,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+105"/>
         <source>Brush</source>
-        <translation type="unfinished">Pinceau</translation>
+        <translation>Pinceau</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Brush metadata settings.</source>
-        <translation type="unfinished">Réglages de métadonnées du pinceau.</translation>
+        <translation>Réglages de métadonnées du pinceau.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4911,7 +4911,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+0"/>
         <source>Core brush settings.</source>
-        <translation type="unfinished">Réglages principaux du pinceau.</translation>
+        <translation>Réglages principaux du pinceau.</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -4932,19 +4932,19 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="+2"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+425"/>
         <source>Round Pixel Brush</source>
-        <translation type="unfinished">Pinceau Rond Pixellisé</translation>
+        <translation>Pinceau Rond Pixellisé</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Square Pixel Brush</source>
-        <translation type="unfinished">Pinceau Carré Pixellisé</translation>
+        <translation>Pinceau Carré Pixellisé</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Soft Round Brush</source>
-        <translation type="unfinished">Pinceau Rond Doux</translation>
+        <translation>Pinceau Rond Doux</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4956,7 +4956,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="+23"/>
         <location line="+14"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished">Mode de Mélange&#xa0;:</translation>
+        <translation>Mode de Mélange&#xa0;:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4966,12 +4966,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+3"/>
         <source>Build-Up/Direct</source>
-        <translation type="unfinished">Construire/Direct</translation>
+        <translation>Constructif/Direct</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Wash/Indirect</source>
-        <translation type="unfinished">Lavé/Indirect</translation>
+        <translation>Lavé/Indirect</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4986,12 +4986,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+10"/>
         <source>Lock Alpha (Recolor Mode)</source>
-        <translation type="unfinished">Verrouiller Alpha (Mode Recolorer)</translation>
+        <translation>Verrouiller Alpha (Mode Recolorer)</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Spacing: </source>
-        <translation type="unfinished">Espacement&#x202f;: </translation>
+        <translation>Espacement&#xa0;: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5002,7 +5002,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="+42"/>
         <location line="+29"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="-267"/>
@@ -5017,28 +5017,28 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+2"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished">Lissage Moyen</translation>
+        <translation>Lissage Moyen</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished">Stabilisateur&#x202f;: </translation>
+        <translation>Stabilisateur&#xa0;: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished">Lissage&#x202f;: </translation>
+        <translation>Lissage&#xa0;: </translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Size: </source>
-        <translation type="unfinished">Taille&#x202f;: </translation>
+        <translation>Taille&#xa0;: </translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+17"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-1"/>
@@ -5062,7 +5062,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="-158"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacité&#x202f;: </translation>
+        <translation>Opacité&#xa0;: </translation>
     </message>
     <message>
         <location line="+17"/>
@@ -5078,7 +5078,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="-331"/>
         <source>Hardness: </source>
-        <translation type="unfinished">Dureté&#x202f;: </translation>
+        <translation>Dureté&#xa0;: </translation>
     </message>
     <message>
         <location line="+17"/>
@@ -5094,7 +5094,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="-277"/>
         <source>Smudging: </source>
-        <translation type="unfinished">Étalement&#x202f;: </translation>
+        <translation>Étalement&#xa0;: </translation>
     </message>
     <message>
         <location line="+12"/>
@@ -5104,33 +5104,33 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+17"/>
         <source>Minimum Smudging: </source>
-        <translation type="unfinished">Étalement Minimal&#xa0;: </translation>
+        <translation>Étalement Minimal&#xa0;: </translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+241"/>
         <source>Smudging</source>
-        <translation type="unfinished">Étalement</translation>
+        <translation>Étalement</translation>
     </message>
     <message>
         <location line="-217"/>
         <source>No dynamics</source>
-        <translation type="unfinished">Pas de dynamique</translation>
+        <translation>Pas de dynamiques</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished">Dynamique de pression</translation>
+        <translation>Dynamiques de pression</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished">Dynamique de véolcité</translation>
+        <translation>Dynamiques de vélocité</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished">Dynamique de distance</translation>
+        <translation>Dynamiques de distance</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -5147,7 +5147,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="+19"/>
         <location line="+36"/>
         <source>Apply to All</source>
-        <translation type="unfinished">Appliquer à Tous</translation>
+        <translation>Appliquer à Tous</translation>
     </message>
     <message>
         <location line="-53"/>
