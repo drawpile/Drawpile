@@ -5,10 +5,11 @@
 
 class BlendModeManager;
 class KisSliderSpinBox;
-class QActionGroup;
 class QAction;
+class QActionGroup;
 class QCheckBox;
 class QComboBox;
+class QMenu;
 class QPushButton;
 
 namespace widgets {
@@ -21,6 +22,8 @@ class LassoFillSettings final : public ToolSettings {
 	Q_OBJECT
 public:
 	LassoFillSettings(ToolController *ctrl, QObject *parent = nullptr);
+
+	void setActions(QAction *automaticAlphaPreserve, QAction *maskSelection);
 
 	QString toolType() const override { return QStringLiteral("lassofill"); }
 
@@ -40,6 +43,8 @@ public:
 
 	void pushSettings() override;
 
+	QWidget *getHeaderWidget() override { return m_headerWidget; }
+
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
@@ -49,6 +54,8 @@ private:
 
 	void setButtonState(bool pending);
 
+	QWidget *m_headerWidget = nullptr;
+	QMenu *m_headerMenu = nullptr;
 	KisSliderSpinBox *m_opacitySpinner = nullptr;
 	KisSliderSpinBox *m_stabilizerSpinner = nullptr;
 	KisSliderSpinBox *m_smoothingSpinner = nullptr;

@@ -41,6 +41,13 @@ LassoFillSettings::LassoFillSettings(ToolController *ctrl, QObject *parent)
 {
 }
 
+void LassoFillSettings::setActions(
+	QAction *automaticAlphaPreserve, QAction *maskSelection)
+{
+	m_headerMenu->addAction(automaticAlphaPreserve);
+	m_headerMenu->addAction(maskSelection);
+}
+
 void LassoFillSettings::setFeatureAccess(bool featureAccess)
 {
 	if(!featureAccess && m_featureAccess) {
@@ -113,6 +120,22 @@ void LassoFillSettings::pushSettings()
 
 QWidget *LassoFillSettings::createUiWidget(QWidget *parent)
 {
+	m_headerWidget = new QWidget(parent);
+	QHBoxLayout *headerLayout = new QHBoxLayout(m_headerWidget);
+	headerLayout->setContentsMargins(0, 0, 0, 0);
+	headerLayout->setSpacing(0);
+
+	widgets::GroupedToolButton *headerMenuButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
+	headerLayout->addWidget(headerMenuButton);
+	headerMenuButton->setIcon(QIcon::fromTheme("application-menu"));
+	headerMenuButton->setPopupMode(QToolButton::InstantPopup);
+
+	m_headerMenu = new QMenu(headerMenuButton);
+	headerMenuButton->setMenu(m_headerMenu);
+
+	headerLayout->addStretch(1);
+
 	QWidget *widget = new QWidget(parent);
 	QFormLayout *layout = new QFormLayout(widget);
 	layout->setContentsMargins(3, 3, 3, 3);

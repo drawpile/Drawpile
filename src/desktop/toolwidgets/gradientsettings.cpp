@@ -7,12 +7,14 @@
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/tools/gradient.h"
 #include "libclient/tools/toolcontroller.h"
+#include <QAction>
 #include <QButtonGroup>
 #include <QComboBox>
 #include <QCoreApplication>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMenu>
 #include <QPushButton>
 #include <QSignalBlocker>
 #include <QStackedWidget>
@@ -39,6 +41,11 @@ GradientSettings::GradientSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent)
 	, m_colorDebounce(100)
 {
+}
+
+void GradientSettings::setActions(QAction *automaticAlphaPreserve)
+{
+	m_headerMenu->addAction(automaticAlphaPreserve);
 }
 
 void GradientSettings::setCompatibilityMode(bool compatibilityMode)
@@ -185,6 +192,16 @@ QWidget *GradientSettings::createUiWidget(QWidget *parent)
 	QHBoxLayout *headerLayout = new QHBoxLayout(m_headerWidget);
 	headerLayout->setContentsMargins(0, 0, 0, 0);
 	headerLayout->setSpacing(0);
+
+	widgets::GroupedToolButton *headerMenuButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
+	headerLayout->addWidget(headerMenuButton);
+	headerMenuButton->setIcon(QIcon::fromTheme("application-menu"));
+	headerMenuButton->setPopupMode(QToolButton::InstantPopup);
+
+	m_headerMenu = new QMenu(headerMenuButton);
+	headerMenuButton->setMenu(m_headerMenu);
+
 	headerLayout->addStretch(1);
 
 	widgets::GroupedToolButton *fgToTransparentButton =

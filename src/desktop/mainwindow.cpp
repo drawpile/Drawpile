@@ -6625,6 +6625,10 @@ void MainWindow::setupActions()
 	m_dockToolSettings->brushSettings()->setActions(
 		reloadPreset, reloadPresetSlots, reloadAllPresets, nextSlot,
 		previousSlot, layerAutomaticAlphaPreserve, maskselection);
+	m_dockToolSettings->lassoFillSettings()->setActions(
+		layerAutomaticAlphaPreserve, maskselection);
+	m_dockToolSettings->gradientSettings()->setActions(
+		layerAutomaticAlphaPreserve);
 	m_dockBrushPalette->setActions(
 		nextPreset, previousPreset, nextTag, previousTag);
 	// clang-format off

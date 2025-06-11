@@ -11,6 +11,7 @@ class QAction;
 class QButtonGroup;
 class QComboBox;
 class QLabel;
+class QMenu;
 class QPushButton;
 class QStackedWidget;
 
@@ -24,6 +25,8 @@ class GradientSettings final : public ToolSettings {
 	Q_OBJECT
 public:
 	GradientSettings(ToolController *ctrl, QObject *parent = nullptr);
+
+	void setActions(QAction *automaticAlphaPreserve);
 
 	QString toolType() const override { return QStringLiteral("gradient"); }
 
@@ -68,6 +71,7 @@ private:
 	void setButtonState(bool pending);
 
 	QWidget *m_headerWidget = nullptr;
+	QMenu *m_headerMenu = nullptr;
 	QStackedWidget *m_stack = nullptr;
 	QButtonGroup *m_gradientGroup = nullptr;
 	KisSliderSpinBox *m_fgOpacitySpinner = nullptr;
