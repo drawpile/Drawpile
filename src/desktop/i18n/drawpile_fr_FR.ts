@@ -2040,7 +2040,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+4"/>
         <source>&amp;Layer to Selection</source>
-        <translation>Ca&amp;lque sélectionné</translation>
+        <translation>Ca&amp;lque à sélectionner</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2572,37 +2572,37 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+40"/>
         <source>&amp;Layouts...</source>
-        <translation type="unfinished">Dispositions (&amp;L)...</translation>
+        <translation>&amp;Agencements...</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Move Canvas Left</source>
-        <translation type="unfinished">Déplacer le Canevas vers la Gauche</translation>
+        <translation>Déplacer la Toile à Gauche</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Right</source>
-        <translation type="unfinished">Déplacer le Canevas vers la Droite</translation>
+        <translation>Déplacer la Toile à Droite</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Up</source>
-        <translation type="unfinished">Déplacer le Canevas vers le Haut</translation>
+        <translation>Déplacer la Toile vers le Haut</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Down</source>
-        <translation type="unfinished">Déplacer le Canevas vers le Bas</translation>
+        <translation>Déplacer la Toile vers le Bas</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Zoom In On Center</source>
-        <translation type="unfinished">Zoomer vers le Centre</translation>
+        <translation>Zoomer vers le Centre</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation type="unfinished">Dézoomer depuis le Centre</translation>
+        <translation>Dézoomer depuis le Centre</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2612,7 +2612,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation type="unfinished">Réinitialiser le Zoom et Centrer</translation>
+        <translation>Réinitialiser le Zoom et Centrer</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -2632,7 +2632,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Hide From Cursor</source>
-        <translation type="unfinished">Cacher depuis le Curseur</translation>
+        <translation>Cacher du Curseur</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2647,7 +2647,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+2"/>
         <source>Toggle selection display between a mask and an outline</source>
-        <translation type="unfinished">Alterner la sélection d&apos;affichage entre un masque et un contour</translation>
+        <translation>Alterner la sélection d&apos;affichage entre un masque et un contour</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2657,7 +2657,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+128"/>
         <source>Layer View Mode</source>
-        <translation type="unfinished">Mode de Vue de Calque</translation>
+        <translation>Mode de Vue de Calque</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2673,17 +2673,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Select Above</source>
-        <translation type="unfinished">Sélectionner au dessus</translation>
+        <translation>Sélectionner au Dessus</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Select Below</source>
-        <translation type="unfinished">Sélectionner en dessous</translation>
+        <translation>Sélectionner en Dessous</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>&amp;Layer</source>
-        <translation type="unfinished">Ca&amp;lque</translation>
+        <translation>Ca&amp;lque</translation>
     </message>
     <message>
         <location line="+186"/>
@@ -2778,7 +2778,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+0"/>
         <source>Prevent changes to the canvas</source>
-        <translation type="unfinished">Prévenir les changements sur le canevas</translation>
+        <translation>Empêcher les changements sur la toile</translation>
     </message>
     <message>
         <location line="+105"/>
@@ -2798,12 +2798,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+22"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished">Échanger Couleur %1</translation>
+        <translation>Couleur de l&apos;échantillon %1</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Focus canvas</source>
-        <translation type="unfinished">Centrer sur le canevas</translation>
+        <translation>Centrer sur la toile</translation>
     </message>
     <message>
         <location line="-961"/>
@@ -2813,7 +2813,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="-4628"/>
         <source>🙋 %1 joined!</source>
-        <translation type="unfinished">🙋 %1 a rejoint&#x202f;!</translation>
+        <translation>🙋 %1 a rejoint&#x202f;!</translation>
     </message>
     <message>
         <location line="+1727"/>
@@ -2881,7 +2881,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Visibility</source>
-        <translation type="unfinished">Basculer la &amp;Visibilité du Calque</translation>
+        <translation>Activer/Désactiver la Visibilité des Calques</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2897,7 +2897,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="-4072"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation type="unfinished">&lt;p&gt;Le raccourci suivant &apos;%1&apos; est ambigu, il correspond à&#xa0;:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
+        <translation>&lt;p&gt;Le raccourci &apos;%1&apos; est ambigu, il correspond à&#xa0;:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
