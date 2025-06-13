@@ -488,8 +488,7 @@ int BlendModeManager::getCurrentBlendMode() const
 	int blendMode = combo && combo->count() != 0 ? combo->currentData().toInt()
 					: m_eraseMode				 ? int(DP_BLEND_MODE_ERASE)
 												 : int(DP_BLEND_MODE_NORMAL);
-	canvas::blendmode::adjustAlphaBehavior(
-		blendMode, m_alphaPreserveButton->isChecked());
+	canvas::blendmode::adjustAlphaBehavior(blendMode, m_alphaPreserve);
 	return blendMode;
 }
 
@@ -520,15 +519,15 @@ bool BlendModeManager::selectBlendMode(int blendMode)
 
 	int blendModeIndex = searchBlendModeComboIndex(m_blendModeCombo, blendMode);
 	if(blendModeIndex != -1) {
+		m_alphaPreserve =
+			canvas::blendmode::presentsAsAlphaPreserving(blendMode);
 		if(m_eraseMode) {
 			m_eraseMode = false;
 			m_eraseModeCombo->hide();
 			m_blendModeCombo->show();
 		}
 		setComboIndexBlocked(m_blendModeCombo, blendModeIndex);
-		setButtonCheckedBlocked(
-			m_alphaPreserveButton,
-			canvas::blendmode::presentsAsAlphaPreserving(blendMode));
+		setButtonCheckedBlocked(m_alphaPreserveButton, m_alphaPreserve);
 		setButtonCheckedBlocked(m_eraseModeButton, false);
 		emit blendModeChanged(blendMode, false);
 		return true;
@@ -536,15 +535,15 @@ bool BlendModeManager::selectBlendMode(int blendMode)
 
 	int eraseModeIndex = searchBlendModeComboIndex(m_eraseModeCombo, blendMode);
 	if(eraseModeIndex != -1) {
+		m_alphaPreserve =
+			canvas::blendmode::presentsAsAlphaPreserving(blendMode);
 		if(!m_eraseMode) {
 			m_eraseMode = true;
 			m_eraseModeCombo->hide();
 			m_blendModeCombo->show();
 		}
 		setComboIndexBlocked(m_blendModeCombo, eraseModeIndex);
-		setButtonCheckedBlocked(
-			m_alphaPreserveButton,
-			canvas::blendmode::presentsAsAlphaPreserving(blendMode));
+		setButtonCheckedBlocked(m_alphaPreserveButton, m_alphaPreserve);
 		setButtonCheckedBlocked(m_eraseModeButton, true);
 		emit blendModeChanged(blendMode, true);
 		return true;
@@ -581,30 +580,9 @@ void BlendModeManager::setEraseMode(bool eraseMode)
 
 void BlendModeManager::toggleAlphaPreserve()
 {
-	qDebug("Toggle alpha preserve");
 	int blendMode = getCurrentBlendMode();
-	DP_BlendMode alphaAffectingMode, alphaPreservingMode;
-	if(canvas::blendmode::alphaPreservePair(
-		   blendMode, &alphaAffectingMode, &alphaPreservingMode)) {
-		if(blendMode != int(alphaAffectingMode)) {
-			if(m_compatibilityMode && !canvas::blendmode::isCompatible(
-										  int(alphaAffectingMode), m_myPaint)) {
-				selectBlendMode(int(DP_BLEND_MODE_NORMAL));
-			} else {
-				selectBlendMode(int(alphaAffectingMode));
-			}
-		} else if(blendMode != int(alphaPreservingMode)) {
-			if(m_compatibilityMode &&
-			   !canvas::blendmode::isCompatible(
-				   int(alphaPreservingMode), m_myPaint)) {
-				selectBlendMode(int(DP_BLEND_MODE_RECOLOR));
-			} else {
-				selectBlendMode(int(alphaPreservingMode));
-			}
-		}
-	} else {
-		qWarning("toggleAlphaPreserve: no pair for mode %d", blendMode);
-	}
+	return updateAlphaPreserveFromBlendMode(
+		blendMode, !canvas::blendmode::presentsAsAlphaPreserving(blendMode));
 }
 
 void BlendModeManager::toggleEraserMode()
@@ -619,8 +597,7 @@ void BlendModeManager::toggleEraserMode()
 		},
 		int(eraser ? DP_BLEND_MODE_NORMAL : DP_BLEND_MODE_ERASE));
 	if(!isAutomaticAlphaPreserve()) {
-		canvas::blendmode::adjustAlphaBehavior(
-			blendMode, m_alphaPreserveButton->isChecked());
+		canvas::blendmode::adjustAlphaBehavior(blendMode, m_alphaPreserve);
 	}
 	selectBlendMode(blendMode);
 }
@@ -637,8 +614,7 @@ void BlendModeManager::toggleBlendMode(int blendMode)
 	}
 
 	if(keepAlphaPreserve && !isAutomaticAlphaPreserve()) {
-		canvas::blendmode::adjustAlphaBehavior(
-			blendMode, m_alphaPreserveButton->isChecked());
+		canvas::blendmode::adjustAlphaBehavior(blendMode, m_alphaPreserve);
 	}
 	selectBlendMode(blendMode);
 }
@@ -671,30 +647,75 @@ void BlendModeManager::updateBlendModeIndex(int index)
 {
 	int blendMode = m_blendModeCombo->itemData(index).toInt();
 	if(!isAutomaticAlphaPreserve()) {
-		canvas::blendmode::adjustAlphaBehavior(
-			blendMode, m_alphaPreserveButton->isChecked());
+		canvas::blendmode::adjustAlphaBehavior(blendMode, m_alphaPreserve);
 	}
 	selectBlendMode(blendMode);
 }
 
 void BlendModeManager::updateAlphaPreserve(bool alphaPreserve)
 {
-	int blendMode = getCurrentBlendMode();
-	canvas::blendmode::adjustAlphaBehavior(blendMode, alphaPreserve);
-	if(!alphaPreserve && m_compatibilityMode &&
-	   !canvas::blendmode::isCompatible(blendMode, m_myPaint)) {
-		blendMode =
-			int(m_eraseMode ? DP_BLEND_MODE_ERASE : DP_BLEND_MODE_NORMAL);
+	updateAlphaPreserveFromBlendMode(getCurrentBlendMode(), alphaPreserve);
+}
+
+void BlendModeManager::updateAlphaPreserveFromBlendMode(
+	int blendMode, bool alphaPreserve)
+{
+	selectBlendMode(
+		getAlphaPreserveAdjustedBlendMode(blendMode, alphaPreserve));
+}
+
+int BlendModeManager::getAlphaPreserveAdjustedBlendMode(
+	int blendMode, bool alphaPreserve) const
+{
+	// Automatic mode tries harder to do something useful in response to user
+	// input, since some kinds of alpha preserve toggling are useless.
+	if(m_automaticAlphaPreserve) {
+		switch(blendMode) {
+		case DP_BLEND_MODE_ERASE:
+		case DP_BLEND_MODE_ERASE_PRESERVE:
+		case DP_BLEND_MODE_COLOR_ERASE:
+		case DP_BLEND_MODE_COLOR_ERASE_PRESERVE:
+		case DP_BLEND_MODE_BEHIND:
+		case DP_BLEND_MODE_BEHIND_PRESERVE:
+			if(alphaPreserve) {
+				// These modes can't preserve alpha, since that contradicts
+				// their functionality. Switch to Recolor instead then.
+				return DP_BLEND_MODE_RECOLOR;
+			}
+			break;
+		case DP_BLEND_MODE_RECOLOR:
+			if(!alphaPreserve) {
+				// Return to Behind mode if that's the mode that we just came
+				// from, so that the user can toggle between Behind and Recolor
+				// sensibly without getting reverted to Normal. The erase modes
+				// above can already be toggled to by enabling erase mode.
+				return searchHistoryLimit(
+					[](int mode) {
+						return mode == DP_BLEND_MODE_BEHIND;
+					},
+					2, int(DP_BLEND_MODE_NORMAL));
+			}
+		}
 	}
-	selectBlendMode(blendMode);
+
+	canvas::blendmode::adjustAlphaBehavior(blendMode, alphaPreserve);
+
+	if(m_compatibilityMode &&
+	   !canvas::blendmode::isCompatible(blendMode, m_myPaint)) {
+		return int(
+			m_eraseMode		? DP_BLEND_MODE_ERASE
+			: alphaPreserve ? DP_BLEND_MODE_RECOLOR
+							: DP_BLEND_MODE_NORMAL);
+	}
+
+	return blendMode;
 }
 
 void BlendModeManager::updateEraseModeIndex(int index)
 {
 	int blendMode = m_eraseModeCombo->itemData(index).toInt();
 	if(!isAutomaticAlphaPreserve()) {
-		canvas::blendmode::adjustAlphaBehavior(
-			blendMode, m_alphaPreserveButton->isChecked());
+		canvas::blendmode::adjustAlphaBehavior(blendMode, m_alphaPreserve);
 	}
 	selectBlendMode(blendMode);
 }
@@ -708,10 +729,16 @@ void BlendModeManager::addToHistory(int blendMode)
 int BlendModeManager::searchHistory(
 	const std::function<bool(int)> &predicate, int fallback) const
 {
-	for(QVector<int>::const_reverse_iterator it = m_history.crbegin(),
-											 end = m_history.crend();
-		it != end; ++it) {
-		int blendMode = *it;
+	return searchHistoryLimit(predicate, int(m_history.size()), fallback);
+}
+
+int BlendModeManager::searchHistoryLimit(
+	const std::function<bool(int)> &predicate, int limit, int fallback) const
+{
+	int count = int(m_history.size());
+	int effectiveCount = qMin(count, limit);
+	for(int i = 0; i < effectiveCount; ++i) {
+		int blendMode = m_history[count - i - 1];
 		if(predicate(blendMode)) {
 			return blendMode;
 		}

@@ -86,11 +86,16 @@ private:
 
 	void updateBlendModeIndex(int index);
 	void updateAlphaPreserve(bool alphaPreserve);
+	void updateAlphaPreserveFromBlendMode(int blendMode, bool alphaPreserve);
+	int getAlphaPreserveAdjustedBlendMode(int blendMode, bool alphaPreserve) const;
 	void updateEraseModeIndex(int index);
 
 	void addToHistory(int blendMode);
 	int searchHistory(
 		const std::function<bool(int)> &predicate, int fallback) const;
+	int searchHistoryLimit(
+		const std::function<bool(int)> &predicate, int limit,
+		int fallback) const;
 
 	void selectBlendModeFromAlphaPreserve(int blendMode);
 
@@ -113,6 +118,7 @@ private:
 	bool m_automaticAlphaPreserve = true;
 	bool m_compatibilityMode = false;
 	bool m_myPaint = false;
+	bool m_alphaPreserve = false;
 	bool m_eraseMode = false;
 };
 
