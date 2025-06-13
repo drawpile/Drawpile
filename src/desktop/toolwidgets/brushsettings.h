@@ -70,6 +70,7 @@ public:
 	const QString &currentPresetDescription() const;
 	const QPixmap &currentPresetThumbnail() const;
 	bool isCurrentPresetAttached() const;
+	bool isCurrentSlotUpdateInProgress() const;
 	void clearCurrentDetachedPresetChanges() const;
 
 	int currentBrushSlot() const;

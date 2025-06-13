@@ -22,6 +22,7 @@ extern "C" {
 #include <QMimeData>
 #include <QPainter>
 #include <QPointer>
+#include <QScopedValueRollback>
 #include <QSignalBlocker>
 #include <QStandardItemModel>
 #include <mypaint-brush-settings.h>
@@ -187,6 +188,7 @@ struct BrushSettings::Private {
 	bool shareBrushSlotColor = false;
 	bool presetsAttach = true;
 	bool updateInProgress = false;
+	bool updateSlotInProgress = false;
 	bool myPaintAllowed = true;
 	bool pigmentAllowed = true;
 	bool compatibilityMode = false;
@@ -891,6 +893,11 @@ bool BrushSettings::isCurrentPresetAttached() const
 	return d->currentPreset().attached;
 }
 
+bool BrushSettings::isCurrentSlotUpdateInProgress() const
+{
+	return d->updateSlotInProgress;
+}
+
 void BrushSettings::clearCurrentDetachedPresetChanges() const
 {
 	Preset &preset = d->currentPreset();
@@ -942,7 +949,10 @@ void BrushSettings::selectBrushSlot(int i)
 
 	const Preset &preset = d->currentPreset();
 	updateMenuActions();
-	emit presetIdChanged(preset.id, preset.attached);
+	{
+		QScopedValueRollback rollback(d->updateSlotInProgress, true);
+		emit presetIdChanged(preset.id, preset.attached);
+	}
 	updateChangesInCurrentBrushPreset();
 }
 

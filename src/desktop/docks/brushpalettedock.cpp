@@ -806,8 +806,9 @@ void BrushPalette::applyToBrushSettings(const QModelIndex &proxyIndex)
 	brushes::Preset preset =
 		sourceIndex.data(brushes::BrushPresetModel::PresetRole)
 			.value<brushes::Preset>();
-	if(preset.id > 0 && (!d->brushSettings->isCurrentPresetAttached() ||
-						 preset.id != d->brushSettings->currentPresetId())) {
+	if(preset.id > 0 && !d->brushSettings->isCurrentSlotUpdateInProgress() &&
+	   (!d->brushSettings->isCurrentPresetAttached() ||
+		preset.id != d->brushSettings->currentPresetId())) {
 		d->brushSettings->setCurrentBrushPreset(preset);
 	}
 }
