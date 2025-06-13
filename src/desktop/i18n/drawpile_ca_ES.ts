@@ -5450,7 +5450,11 @@ The range is +/-180.0.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>La diferència, en graus, entre l&apos;angle en què el llapis apunta i l&apos;angle del moviment del traç.
+L&apos;interval és +/- 180.0.
+0.0 vol dir que l&apos;angle del traç correspon a l&apos;angle del llapis.
+90 vol dir que l&apos;angle del traç és perpendicular a l&apos;angle del llapis.
+180 vol dir que l&apos;angle del traç és directament oposat a l&apos;angle del llapis.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5989,7 +5993,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Corregeix la no-linealitat introduïda en barrejar múltiples tocs un damunt de l&apos;altre. Aquesta correcció us hauria d&apos;aconseguir una resposta lineal (&quot;natural&quot;) quan la pressió es mapeja a opac_multiplica, com es fa normalment. 0.9 és bo per als traços estàndard, reduïu-lo si el vostre pinzell es dispersa molt, o augmenteu-lo si utilitzeu tocs_per_segon.
+0, 0 el valor opac més amunt és per als tocs individuals
+1. 0 el valor opac més amunt és per al traç final del pinzell, assumint que cada píxel obté (tocs_per_radi * 2) tocs de pinzell de mitjana durant un traç</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6264,7 +6270,8 @@ For very slow speed the opposite happens.</source>
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Estableix l&apos;entrada personalitzada a aquest valor. Si s&apos;alenteix, moveu-lo cap a aquest valor (vegeu a sota). La idea és que feu que aquesta entrada depengui d&apos;una barreja de pressió/velocitat/el que sigui, i després feu que altres paràmetres depenguin d&apos;aquesta entrada &apos;personalitzada&apos; en comptes de repetir aquesta combinació a tot arreu on ho necessiteu.
+Si ho feu canviar &apos;a l&apos;atzar&apos; podeu generar una entrada aleatòria lenta (suau).</translation>
     </message>
     <message>
         <location line="+3"/>
