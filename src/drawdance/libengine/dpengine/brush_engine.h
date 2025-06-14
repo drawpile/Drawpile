@@ -50,6 +50,7 @@ typedef struct DP_BrushEngineStrokeParams {
     DP_StrokeEngineStrokeParams se;
     int layer_id;
     int selection_id;
+    int flood_layer_id;
     bool layer_alpha_lock;
     bool sync_samples;
 } DP_BrushEngineStrokeParams;
@@ -64,6 +65,10 @@ typedef DP_CanvasState *(*DP_BrushEngineSyncFn)(void *user);
 
 typedef struct DP_StrokeEngine DP_StrokeEngine;
 typedef struct DP_BrushEngine DP_BrushEngine;
+
+
+typedef struct DP_Image DP_Image;
+extern void (*DP_brush_engine_dump_image)(DP_Image *);
 
 
 DP_StrokeEngine *

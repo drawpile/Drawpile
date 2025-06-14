@@ -27,6 +27,8 @@
 
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_Image DP_Image;
+typedef struct DP_LayerContent DP_LayerContent;
+typedef struct DP_Tile DP_Tile;
 
 typedef enum DP_FloodFillKernel {
     DP_FLOOD_FILL_KERNEL_ROUND,
@@ -60,5 +62,23 @@ DP_selection_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
                   bool from_edge, DP_Image **out_img, int *out_x, int *out_y,
                   DP_FloodFillShouldCancelFn should_cancel, void *user);
 
+
+typedef struct DP_FloodFillStrokeContext DP_FloodFillStrokeContext;
+
+typedef void (*DP_FloodFillStrokeTileFn)(void *user, int col, int row,
+                                         DP_Tile *t);
+
+DP_FloodFillStrokeContext *DP_flood_fill_stroke_context_new(void);
+
+void DP_flood_fill_stroke_context_free(DP_FloodFillStrokeContext *ffsc);
+
+bool DP_flood_fill_stroke_begin(DP_FloodFillStrokeContext *ffsc,
+                                DP_LayerContent *lc);
+
+bool DP_flood_fill_stroke_at(DP_FloodFillStrokeContext *ffsc, int x, int y,
+                             int left, int top, int right, int bottom,
+                             DP_FloodFillStrokeTileFn fn, void *user);
+
+DP_Image *DP_flood_fill_stroke_dump(DP_FloodFillStrokeContext *ffsc);
 
 #endif

@@ -41,6 +41,7 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
 #include <dpcommon/queue.h>
+#include <dpcommon/vector.h>
 #include <math.h>
 #include <helpers.h> // M_PI
 
@@ -1597,4 +1598,459 @@ DP_selection_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
 
     return finish_fill(&c, mask, img_x, img_y, img_width, img_height,
                        fill_color, out_img, out_x, out_y);
+}
+
+
+#define FLOODED      (1 << 0)
+#define SHOULD_FLOOD (1 << 1)
+#define OUTSIDE      (1 << 2)
+#define FILLED       (1 << 3)
+#define CHANGED      (1 << 4)
+
+struct DP_FloodFillStrokeContext {
+    DP_LayerContent *lc;
+    DP_TransientLayerContent *tlc;
+    DP_Queue queue;
+    DP_Vector outside;
+    float tolerance_squared;
+    DP_UPixelFloat reference_color;
+    uint16_t fill_sequence;
+    bool needs_new_sequence;
+};
+
+static uint16_t pixel_sequence(DP_Pixel15 *p)
+{
+    return p->b;
+}
+
+static void pixel_sequence_set(DP_Pixel15 *p, uint16_t sequence)
+{
+    p->b = sequence;
+}
+
+static void pixel_flags_clear(DP_Pixel15 *p)
+{
+    p->g = 0;
+}
+
+static void pixel_sequence_apply(DP_FloodFillStrokeContext *ffsc, DP_Pixel15 *p)
+{
+    uint16_t sequence = ffsc->fill_sequence;
+    if (pixel_sequence(p) != sequence) {
+        pixel_sequence_set(p, sequence);
+        pixel_flags_clear(p);
+    }
+}
+
+static bool pixel_outside(const DP_Pixel15 *p)
+{
+    return p->g & (uint16_t)OUTSIDE;
+}
+
+static void pixel_outside_set(DP_Pixel15 *p)
+{
+    p->g |= (uint16_t)OUTSIDE;
+}
+
+static void pixel_outside_reset(DP_Pixel15 *p)
+{
+    p->g &= (uint16_t)~OUTSIDE;
+}
+
+static bool pixel_should_flood(DP_FloodFillStrokeContext *ffsc, int x, int y,
+                               DP_Pixel15 *p)
+{
+    if (p->g & (uint16_t)FLOODED) {
+        return p->g & (uint16_t)SHOULD_FLOOD;
+    }
+    else {
+        if (source_should_flood(DP_layer_content_pixel_at(ffsc->lc, x, y),
+                                ffsc->reference_color,
+                                ffsc->tolerance_squared)) {
+            p->g |= (uint16_t)(FLOODED | SHOULD_FLOOD);
+            return true;
+        }
+        else {
+            p->g |= (uint16_t)FLOODED;
+            return false;
+        }
+    }
+}
+
+static bool pixel_filled(const DP_Pixel15 *p)
+{
+    return p->g & (uint16_t)FILLED;
+}
+
+static bool pixel_changed(const DP_Pixel15 *p)
+{
+    return p->g & (uint16_t)CHANGED;
+}
+
+DP_FloodFillStrokeContext *DP_flood_fill_stroke_context_new(void)
+{
+    DP_FloodFillStrokeContext *ffsc = DP_malloc(sizeof(*ffsc));
+    *ffsc = (DP_FloodFillStrokeContext){
+        NULL, NULL, DP_QUEUE_NULL, DP_VECTOR_NULL, 0, DP_upixel_float_zero(),
+        0,    false};
+    DP_queue_init(&ffsc->queue, 1024, sizeof(DP_FillSeed));
+    DP_vector_init(&ffsc->outside, 1024, sizeof(DP_FillSeed));
+    return ffsc;
+}
+
+void DP_flood_fill_stroke_context_free(DP_FloodFillStrokeContext *ffsc)
+{
+    if (ffsc) {
+        DP_vector_dispose(&ffsc->outside);
+        DP_queue_dispose(&ffsc->queue);
+        DP_transient_layer_content_decref_nullable(ffsc->tlc);
+        DP_layer_content_decref_nullable(ffsc->lc);
+        DP_free(ffsc);
+    }
+}
+
+static bool flood_fill_stroke_should_flood(DP_FloodFillStrokeContext *ffsc,
+                                           int x, int y)
+{
+    DP_ASSERT(ffsc);
+    DP_ASSERT(ffsc->lc);
+    return source_should_flood(DP_layer_content_pixel_at(ffsc->lc, x, y),
+                               ffsc->reference_color, ffsc->tolerance_squared);
+}
+
+static int flood_fill_stroke_expand_side2(int value, int total)
+{
+    int mod = (value + 1) % DP_TILE_SIZE;
+    return DP_min_int(mod == 0 ? value : value + (DP_TILE_SIZE - mod), total);
+}
+
+static DP_Rect
+flood_fill_stroke_expand_area_to_tile_bounds(DP_FloodFillStrokeContext *ffsc,
+                                             DP_Rect area)
+{
+    return (DP_Rect){
+        area.x1 - area.x1 % DP_TILE_SIZE,
+        area.y1 - area.y1 % DP_TILE_SIZE,
+        flood_fill_stroke_expand_side2(
+            area.x2, DP_transient_layer_content_width(ffsc->tlc) - 1),
+        flood_fill_stroke_expand_side2(
+            area.y2, DP_transient_layer_content_height(ffsc->tlc) - 1),
+    };
+}
+
+static DP_TransientTile *
+flood_fill_stroke_transient_tile_at(DP_FloodFillStrokeContext *ffsc, int xt,
+                                    int yt)
+{
+    DP_TransientTile *tt =
+        (DP_TransientTile *)DP_transient_layer_content_tile_at_noinc(ffsc->tlc,
+                                                                     xt, yt);
+    if (!tt) {
+        tt = DP_transient_tile_new_blank(0);
+        DP_transient_layer_content_transient_tile_at_set_noinc(ffsc->tlc, xt,
+                                                               yt, tt);
+    }
+    return tt;
+}
+
+static DP_Pixel15 *
+flood_fill_stroke_transient_pixel_at(DP_FloodFillStrokeContext *ffsc, int x,
+                                     int y)
+{
+    int xt = x / DP_TILE_SIZE;
+    int yt = y / DP_TILE_SIZE;
+    DP_TransientTile *tt = flood_fill_stroke_transient_tile_at(ffsc, xt, yt);
+    int i = (y - yt * DP_TILE_SIZE) * DP_TILE_SIZE + x - xt * DP_TILE_SIZE;
+    return &DP_transient_tile_pixels(tt)[i];
+}
+
+static DP_Pixel15 flood_fill_stroke_pixel_at(DP_FloodFillStrokeContext *ffsc,
+                                             int x, int y)
+{
+    return DP_transient_layer_content_pixel_at(ffsc->tlc, x, y);
+}
+
+bool DP_flood_fill_stroke_begin(DP_FloodFillStrokeContext *ffsc,
+                                DP_LayerContent *lc)
+{
+    DP_ASSERT(ffsc);
+    ffsc->fill_sequence = 1;
+    if (lc == ffsc->lc) {
+        if (lc) {
+            DP_transient_layer_content_tiles_clear(ffsc->tlc);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        DP_layer_content_decref_nullable(ffsc->lc);
+        int width = lc ? DP_layer_content_width(lc) : 0;
+        int height = lc ? DP_layer_content_height(lc) : 0;
+        if (lc && width > 0 && height > 0) {
+            ffsc->lc = DP_layer_content_incref_nullable(lc);
+            if (ffsc->tlc
+                && DP_transient_layer_content_width(ffsc->tlc) == width
+                && DP_transient_layer_content_height(ffsc->tlc) == height) {
+                DP_transient_layer_content_tiles_clear(ffsc->tlc);
+            }
+            else {
+                DP_transient_layer_content_decref_nullable(ffsc->tlc);
+                ffsc->tlc =
+                    DP_transient_layer_content_new_init(width, height, NULL);
+            }
+            return true;
+        }
+        else {
+            ffsc->lc = NULL;
+            return false;
+        }
+    }
+}
+
+static bool flood_fill_stroke_in_canvas(DP_FloodFillStrokeContext *ffsc, int x,
+                                        int y)
+{
+    return x >= 0 && y >= 0 && x < DP_transient_layer_content_width(ffsc->tlc)
+        && y < DP_transient_layer_content_height(ffsc->tlc);
+}
+
+static void flood_fill_stroke_push_outside(DP_FloodFillStrokeContext *ffsc,
+                                           int x, int y)
+{
+    *(DP_FillSeed *)DP_vector_push(&ffsc->outside, sizeof(DP_FillSeed)) =
+        (DP_FillSeed){x, y};
+}
+
+static bool flood_fill_stroke_inside(DP_FloodFillStrokeContext *ffsc,
+                                     DP_Rect area, int x, int y)
+{
+    if (flood_fill_stroke_in_canvas(ffsc, x, y)) {
+        DP_Pixel15 *p = flood_fill_stroke_transient_pixel_at(ffsc, x, y);
+        pixel_sequence_apply(ffsc, p);
+        if (!pixel_outside(p) && !pixel_filled(p)) {
+            if (DP_rect_contains(area, x, y)) {
+                if (pixel_should_flood(ffsc, x, y, p)) {
+                    return true;
+                }
+            }
+            else {
+                pixel_outside_set(p);
+                flood_fill_stroke_push_outside(ffsc, x, y);
+            }
+        }
+    }
+    return false;
+}
+
+static void flood_fill_stroke_scan(DP_FloodFillStrokeContext *ffsc, DP_Queue *s,
+                                   DP_Rect area, int lx, int rx, int y)
+{
+    bool added = false;
+    for (int x = lx; x <= rx; ++x) {
+        if (!flood_fill_stroke_inside(ffsc, area, x, y)) {
+            added = false;
+        }
+        else if (!added) {
+            add_seed(s, x, y);
+            added = true;
+        }
+    }
+}
+
+static void flood_fill_stroke_set_pixel(DP_FloodFillStrokeContext *ffsc, int x,
+                                        int y)
+{
+    int xt = x / DP_TILE_SIZE;
+    int yt = y / DP_TILE_SIZE;
+    DP_TransientTile *tt = flood_fill_stroke_transient_tile_at(ffsc, xt, yt);
+    DP_Pixel15 *pixels = DP_transient_tile_pixels(tt);
+    pixels->g |= (uint16_t)CHANGED;
+    int i = (y - yt * DP_TILE_SIZE) * DP_TILE_SIZE + x - xt * DP_TILE_SIZE;
+    pixels[i].g |= (uint16_t)FILLED;
+}
+
+static void flood_fill_stroke_fill(DP_FloodFillStrokeContext *ffsc,
+                                   DP_Rect area)
+{
+    DP_Queue *s = &ffsc->queue;
+    while (s->used != 0) {
+        int x, y;
+        shift_seed(s, &x, &y);
+
+        int lx = x;
+        while (flood_fill_stroke_inside(ffsc, area, lx - 1, y)) {
+            flood_fill_stroke_set_pixel(ffsc, lx - 1, y);
+            --lx;
+        }
+
+        while (flood_fill_stroke_inside(ffsc, area, x, y)) {
+            flood_fill_stroke_set_pixel(ffsc, x, y);
+            ++x;
+        }
+
+        flood_fill_stroke_scan(ffsc, s, area, lx, x - 1, y + 1);
+        flood_fill_stroke_scan(ffsc, s, area, lx, x - 1, y - 1);
+    }
+}
+
+static void flood_fill_stroke_fill_continue(DP_FloodFillStrokeContext *ffsc,
+                                            DP_Rect area)
+{
+    size_t i = 0;
+    while (i < ffsc->outside.used) {
+        DP_FillSeed fs = *(DP_FillSeed *)DP_vector_at(&ffsc->outside,
+                                                      sizeof(DP_FillSeed), i);
+        if (DP_rect_contains(area, fs.x, fs.y)) {
+            DP_vector_remove(&ffsc->outside, sizeof(DP_FillSeed), i);
+            add_seed(&ffsc->queue, fs.x, fs.y);
+            DP_Pixel15 *p =
+                flood_fill_stroke_transient_pixel_at(ffsc, fs.x, fs.y);
+            pixel_outside_reset(p);
+        }
+        else {
+            ++i;
+        }
+    }
+    flood_fill_stroke_fill(ffsc, area);
+}
+
+static int flood_fill_stroke_sync_tile(DP_FloodFillStrokeContext *ffsc,
+                                       DP_TransientTile *tt)
+{
+    int sequence = ffsc->fill_sequence;
+    DP_Pixel15 *pixels = DP_transient_tile_pixels(tt);
+    int opaque = 0;
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        DP_Pixel15 *p = &pixels[i];
+        if (pixel_sequence(p) == sequence && pixel_filled(p)) {
+            ++opaque;
+            p->a = DP_BIT15;
+        }
+        else {
+            p->a = 0;
+        }
+    }
+    return opaque;
+}
+
+static bool flood_fill_stroke_at(DP_FloodFillStrokeContext *ffsc, int x, int y,
+                                 DP_Rect area, DP_FloodFillStrokeTileFn fn,
+                                 void *user)
+{
+    if (flood_fill_stroke_should_flood(ffsc, x, y)) {
+        DP_Rect tile_expanded_area =
+            flood_fill_stroke_expand_area_to_tile_bounds(ffsc, area);
+        DP_Pixel15 p = flood_fill_stroke_pixel_at(ffsc, x, y);
+        if (!ffsc->needs_new_sequence
+            && pixel_sequence(&p) == ffsc->fill_sequence && pixel_filled(&p)) {
+            flood_fill_stroke_fill_continue(ffsc, tile_expanded_area);
+        }
+        else {
+            fn(user, -1, -1, NULL);
+            if (++ffsc->fill_sequence == 0) {
+                ffsc->fill_sequence = 1;
+            }
+            ffsc->needs_new_sequence = false;
+            ffsc->queue.head = 0;
+            ffsc->queue.used = 0;
+            ffsc->outside.used = 0;
+            add_seed(&ffsc->queue, x, y);
+            flood_fill_stroke_fill(ffsc, tile_expanded_area);
+        }
+
+        DP_TileIterator ti = DP_tile_iterator_make(
+            DP_transient_layer_content_width(ffsc->tlc),
+            DP_transient_layer_content_height(ffsc->tlc), area);
+        while (DP_tile_iterator_next(&ti)) {
+            DP_Tile *t = DP_transient_layer_content_tile_at_noinc(
+                ffsc->tlc, ti.col, ti.row);
+            if (t && pixel_changed(DP_tile_pixels(t))) {
+                int opaque =
+                    flood_fill_stroke_sync_tile(ffsc, (DP_TransientTile *)t);
+                fn(user, ti.col, ti.row,
+                   opaque == 0                ? NULL
+                   : opaque == DP_TILE_LENGTH ? DP_tile_opaque_noinc()
+                                              : t);
+            }
+        }
+
+        return true;
+    }
+    else {
+        ffsc->needs_new_sequence = true;
+        return false;
+    }
+}
+
+bool DP_flood_fill_stroke_at(DP_FloodFillStrokeContext *ffsc, int x, int y,
+                             int left, int top, int right, int bottom,
+                             DP_FloodFillStrokeTileFn fn, void *user)
+{
+    DP_ASSERT(ffsc);
+    DP_ASSERT(ffsc->lc);
+    DP_ASSERT(ffsc->tlc);
+    DP_ASSERT(x >= left);
+    DP_ASSERT(x <= right);
+    DP_ASSERT(y >= top);
+    DP_ASSERT(y <= bottom);
+    DP_ASSERT(fn);
+    int canvas_right = DP_layer_content_width(ffsc->lc) - 1;
+    int canvas_bottom = DP_layer_content_height(ffsc->lc) - 1;
+    DP_Rect rect = {DP_max_int(left, 0), DP_max_int(top, 0),
+                    DP_min_int(right, canvas_right),
+                    DP_min_int(bottom, canvas_bottom)};
+    if (DP_rect_valid(rect)) {
+        return flood_fill_stroke_at(ffsc, DP_clamp_int(x, 0, canvas_right),
+                                    DP_clamp_int(y, 0, canvas_bottom), rect, fn,
+                                    user);
+    }
+    else {
+        ffsc->needs_new_sequence = true;
+        return false;
+    }
+}
+
+DP_Image *DP_flood_fill_stroke_dump(DP_FloodFillStrokeContext *ffsc)
+{
+    DP_ASSERT(ffsc);
+    DP_LayerContent *lc = (DP_LayerContent *)ffsc->tlc;
+    if (lc) {
+        int width = DP_layer_content_width(lc);
+        int height = DP_layer_content_height(lc);
+        DP_Image *img = DP_image_new(width, height);
+        if (img) {
+            uint16_t fill_sequence = ffsc->fill_sequence;
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; ++x) {
+                    DP_Pixel15 p = DP_layer_content_pixel_at(lc, x, y);
+                    DP_Pixel8 q = {.b = 0, .g = 0, .r = 0, .a = 0};
+                    if (pixel_sequence(&p) == fill_sequence) {
+                        q.b = 255;
+                        if (p.g & FLOODED) {
+                            if (p.r & SHOULD_FLOOD) {
+                                q.g = 255;
+                            }
+                            else {
+                                q.r = 255;
+                            }
+                        }
+                        if (p.g & OUTSIDE) {
+                            // q.r = 255;
+                        }
+                        if (p.g & FILLED) {
+                            q.a = 255;
+                        }
+                        else {
+                            q.a = 100;
+                        }
+                    }
+                    DP_image_pixel_at_set(img, x, y, q);
+                }
+            }
+            return img;
+        }
+    }
+    return NULL;
 }

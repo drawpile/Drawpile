@@ -185,6 +185,9 @@ DP_transient_layer_content_incref(DP_TransientLayerContent *tlc);
 
 void DP_transient_layer_content_decref(DP_TransientLayerContent *tlc);
 
+void DP_transient_layer_content_decref_nullable(
+    DP_TransientLayerContent *tlc_or_null);
+
 int DP_transient_layer_content_refcount(DP_TransientLayerContent *tlc);
 
 DP_LayerContent *
@@ -204,8 +207,13 @@ DP_transient_layer_content_tile_at_index_noinc(DP_TransientLayerContent *tlc,
 DP_Tile *DP_transient_layer_content_tile_at_noinc(DP_TransientLayerContent *tlc,
                                                   int x, int y);
 
+DP_Pixel15 DP_transient_layer_content_pixel_at(DP_TransientLayerContent *tlc,
+                                               int x, int y);
+
 void DP_transient_layer_content_transient_tile_at_set_noinc(
     DP_TransientLayerContent *tlc, int x, int y, DP_TransientTile *tt);
+
+void DP_transient_layer_content_tiles_clear(DP_TransientLayerContent *tlc);
 
 DP_LayerContent *
 DP_transient_layer_content_mask_noinc_nullable(DP_TransientLayerContent *tlc);

@@ -17,6 +17,7 @@
 #define DP_LAYER_ID_SELECTION_FLAG (1 << 23)
 
 #define DP_SELECTION_ID_MAIN         1
+#define DP_SELECTION_ID_FLOOD        2
 #define DP_SELECTION_ID_FIRST_REMOTE 128
 
 

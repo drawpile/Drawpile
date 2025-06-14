@@ -1717,6 +1717,14 @@ void DP_transient_layer_content_decref(DP_TransientLayerContent *tlc)
     DP_layer_content_decref((DP_LayerContent *)tlc);
 }
 
+void DP_transient_layer_content_decref_nullable(
+    DP_TransientLayerContent *tlc_or_null)
+{
+    if (tlc_or_null) {
+        DP_transient_layer_content_decref(tlc_or_null);
+    }
+}
+
 int DP_transient_layer_content_refcount(DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(tlc);
@@ -1811,6 +1819,15 @@ DP_Tile *DP_transient_layer_content_tile_at_noinc(DP_TransientLayerContent *tlc,
     return DP_layer_content_tile_at_noinc((DP_LayerContent *)tlc, x, y);
 }
 
+DP_Pixel15 DP_transient_layer_content_pixel_at(DP_TransientLayerContent *tlc,
+                                               int x, int y)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    return DP_layer_content_pixel_at((DP_LayerContent *)tlc, x, y);
+}
+
 void DP_transient_layer_content_transient_tile_at_set_noinc(
     DP_TransientLayerContent *tlc, int x, int y, DP_TransientTile *tt)
 {
@@ -1820,6 +1837,19 @@ void DP_transient_layer_content_transient_tile_at_set_noinc(
     int i = y * DP_tile_count_round(tlc->width) + x;
     DP_tile_decref_nullable(tlc->elements[i].tile);
     tlc->elements[i].transient_tile = tt;
+}
+
+void DP_transient_layer_content_tiles_clear(DP_TransientLayerContent *tlc)
+{
+    DP_ASSERT(tlc);
+    DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
+    DP_ASSERT(tlc->transient);
+    int count = DP_tile_total_round(tlc->width, tlc->height);
+    for (int i = 0; i < count; ++i) {
+        DP_Tile **pp = &tlc->elements[i].tile;
+        DP_tile_decref_nullable(*pp);
+        *pp = NULL;
+    }
 }
 
 DP_LayerContent *

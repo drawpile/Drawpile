@@ -2,10 +2,12 @@
 extern "C" {
 #include "image_jpeg.h"
 #include "image_png.h"
+#include "image_impex.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/input.h>
 #include <dpcommon/output.h>
+#include <dpengine/brush_engine.h>
 #include <dpengine/image.h>
 #include <dpengine/pixels.h>
 }
@@ -15,11 +17,19 @@ extern "C" {
 #include <QImageReader>
 
 
+static void dump_image(DP_Image *img)
+{
+    DP_Output *output = DP_file_output_new_from_path("t.png");
+    DP_image_write_png(img, output);
+    DP_output_free(output);
+}
+
 extern "C" void DP_image_impex_init(void)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	QImageReader::setAllocationLimit(0);
+    QImageReader::setAllocationLimit(0);
 #endif
+    DP_brush_engine_dump_image = dump_image;
 }
 
 
