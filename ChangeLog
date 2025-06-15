@@ -52,6 +52,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Properly stop flood fills at selection boundaries. Thanks Bluestrings for reporting.
  * Feature: Allow assigning keyboard shirtcuts to tool blend modes. Thanks Izzy and Meru for suggesting.
  * Fix: Don't reattach detached brushes when switching slots. Thanks MachKerman for reporting.
+ * Feature: Show tooltips of tool buttons immediately, so that you can tell better what they do without having to wait for them.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

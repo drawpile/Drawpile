@@ -101,6 +101,18 @@ public:
 		return QProxyStyle::drawControl(element, option, painter, widget);
 	}
 
+	int styleHint(
+		StyleHint hint, const QStyleOption *option = nullptr,
+		const QWidget *widget = nullptr,
+		QStyleHintReturn *returnData = nullptr) const override
+	{
+		if(hint == SH_ToolTip_WakeUpDelay) {
+			return 0;
+		} else {
+			return QProxyStyle::styleHint(hint, option, widget, returnData);
+		}
+	}
+
 private:
 	class Listener final : public QObject {
 	public:
