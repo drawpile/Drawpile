@@ -272,6 +272,7 @@ void Document::loadState(
 	switch(type) {
 	case DP_SAVE_IMAGE_UNKNOWN:
 	case DP_SAVE_IMAGE_ORA:
+	case DP_SAVE_IMAGE_PROJECT_CANVAS:
 		setExportPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
 		break;
 	default:
