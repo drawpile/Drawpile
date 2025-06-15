@@ -662,8 +662,10 @@ void BrushPalette::presetCurrentIndexChanged(
 	if(selected) {
 		d->selectedPresetId = presetId;
 		d->lastSelectedPresetId = presetId;
-		if(d->brushSettings && (d->navigationInProgress ||
-								d->brushSettings->brushPresetsAttach())) {
+		if(d->brushSettings &&
+		   (d->navigationInProgress ||
+			(d->brushSettings->brushPresetsAttach() &&
+			 d->brushSettings->isCurrentPresetAttached()))) {
 			applyToBrushSettings(current);
 		}
 	}
@@ -790,7 +792,8 @@ void BrushPalette::showPresetContextMenu(const QPoint &pos)
 
 void BrushPalette::applyToDetachedBrushSettings(const QModelIndex &proxyIndex)
 {
-	if(d->brushSettings && !d->brushSettings->brushPresetsAttach()) {
+	if(d->brushSettings && (!d->brushSettings->brushPresetsAttach() ||
+							!d->brushSettings->isCurrentPresetAttached())) {
 		applyToBrushSettings(proxyIndex);
 	}
 }
