@@ -110,10 +110,14 @@ CmdResult readyToAutoReset(
 	Q_UNUSED(args);
 
 	Session::ResetCapabilities capabilities;
+	// Older clients report the "net" parameter the wrong way round.
+	bool shouldTrustNetQuality = false;
 	for(const QJsonValue &capability :
 		kwargs[QStringLiteral("capabilities")].toArray()) {
 		if(capability == QStringLiteral("gzip1")) {
 			capabilities.setFlag(Session::ResetCapability::GzipStream);
+		} else if(capability == QStringLiteral("net")) {
+			shouldTrustNetQuality = true;
 		}
 	}
 
@@ -131,6 +135,18 @@ CmdResult readyToAutoReset(
 		}
 		if(pingCount > 0.0) {
 			averagePing = totalPing / pingCount;
+		}
+	}
+
+	double netQuality = 0.0;
+	if(kwargs.contains(QStringLiteral("net"))) {
+		netQuality = kwargs.value(QStringLiteral("net")).toDouble();
+		if(!shouldTrustNetQuality) {
+			if(netQuality < 50.0) {
+				netQuality = 100.0;
+			} else {
+				netQuality = 0.0;
+			}
 		}
 	}
 
