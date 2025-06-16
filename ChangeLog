@@ -24,6 +24,7 @@ Unreleased Version 2.2.3-pre
  * Feature: Smoothing for touch panning, zooming and rotation. Can be configured and disabled in the touch preferences. Thanks Jay-Man for suggesting.
  * Fix: Remove warning about Firefox on Android not supporting pressure sensitivity, since it does now. Thanks tiar for reporting.
  * Feature: Make Drawpile build on the Haiku operating system again. Thanks Begasus for contributing.
+ * Server Fix: Interpret the connection quality setting sent by clients correctly when choosing who to pick for autoresets. Thanks Blozzom and grimsley for reporting.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.

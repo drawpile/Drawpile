@@ -510,9 +510,15 @@ void Document::onAutoresetQueried(int maxSize, const QString &payload)
 			QJsonObject kwargs = {
 				{QStringLiteral("payload"), payload},
 				{QStringLiteral("capabilities"),
-				 QJsonArray({QStringLiteral("gzip1")})},
+				 QJsonArray({
+					 // Supports GZIP compressed streamed resets.
+					 QStringLiteral("gzip1"),
+					 // Reports the "net" setting correctly, earlier clients had
+					 // the logic swapped the wrong way round.
+					 QStringLiteral("net"),
+				 })},
 				{QStringLiteral("os"), net::ServerCommand::autoresetOs()},
-				{QStringLiteral("net"), serverAutoReset ? 0.0 : 100.0},
+				{QStringLiteral("net"), serverAutoReset ? 100.0 : 0.0},
 				{QStringLiteral("pings"), pings},
 			};
 			m_client->sendMessage(net::ServerCommand::make(
