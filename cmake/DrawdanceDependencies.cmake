@@ -7,11 +7,26 @@ if(NOT WIN32)
 endif()
 
 if(CLIENT OR TOOLS)
-    dp_find_package(zstd REQUIRED CONFIG)
-
-    if(NOT EMSCRIPTEN)
+    if(EMSCRIPTEN)
+        dp_find_package(zstd CONFIG)
+    else()
+        # zstd is supposed to provide a cmake config, but at least Fedora can't
+        # manage to actually ship it, so there's a fallback for PkgConfig.
+        dp_find_package(zstd REQUIRED CONFIG)
         find_package(PkgConfig QUIET)
         if(PKGCONFIG_FOUND)
+            if(NOT TARGET zstd::libzstd)
+                pkg_check_modules(LIBZSTD IMPORTED_TARGET GLOBAL libzstd)
+                if(TARGET PkgConfig::LIBZSTD)
+                    message(STATUS "libzstd found via PkgConfig")
+                    add_library(zstd::libzstd ALIAS PkgConfig::LIBZSTD)
+                else()
+                    message(SEND_ERROR
+                        "libzstd NOT FOUND (tried CMake config and PkgConfig)"
+                    )
+                endif()
+            endif()
+
             pkg_check_modules(LIBSWSCALE IMPORTED_TARGET GLOBAL
                 libswscale
             )
@@ -59,6 +74,12 @@ if(CLIENT OR TOOLS)
             endif()
         else()
             message(WARNING "PkgConfig NOT FOUND")
+            if(NOT TARGET zstd::libzstd)
+                message(SEND_ERROR
+                    "libzstd NOT FOUND via CMake config and can't fall back to "
+                    "PkgConfig because that wasn't found either"
+                )
+            endif()
         endif()
         add_feature_info("Image scaling via libav" "TARGET LIBAV::LIBSWSCALE" "")
         add_feature_info("Video export via libav" "TARGET LIBAV::LIBAV" "")
