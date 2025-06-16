@@ -5476,7 +5476,8 @@ L&apos;interval és +/- 180.0.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>La coordenada X en una graella de 256 píxels. Això ajustarà al voltant de 0-256 quan es mogui el cursor en l&apos;eix X. És semblant a &quot;Traç.&quot; Es pot usar per afegir textura de paper modificant l&apos;opacitat, etc.
+La mida del pinzell ha de ser considerablement més petita que l&apos;escala de la graella pels millors resultats.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5484,7 +5485,8 @@ The brush size should be considerably smaller than the grid scale for best resul
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>La coordenada Y en una graella de 256 píxels. Això ajustarà al voltant de 0-256 quan es mogui el cursor en l&apos;eix Y. És semblant a &quot;Traç.&quot; Es pot usar per afegir textura de paper modificant l&apos;opacitat, etc.
+La mida del pinzell ha de ser considerablement més petita que l&apos;escala de la graella pels millors resultats.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5512,7 +5514,9 @@ You can even cancel out dab size increase and adjust something else to make a br
 Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>El radi del pinzell base us permet canviar el comportament d&apos;un pinzell mentre el feu més gran o més petit.
+Fins i tot podeu cancel·lar l&apos;augment de la mida dels tocs i ajustar una altra cosa per fer un pinzell més gran.
+Fixeu-vos en &quot;Tocs per radi bàsic&quot; i &quot;Tocs per radi real&quot;, que es comporten molt diferent.</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -5984,7 +5988,8 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
 This setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to &apos;opaque&apos;.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Això és multiplicat amb opac. Només hauríeu de canviar l&apos;entrada de pressió d&apos;aquest paràmetre. Useu &apos;opac&apos; enlloc per fer l&apos;opacitat depengui de la velocitat.
+Aquesta opció és la responsable de deixar de pintar quan hi ha una pressió zero. Això només és una convenció, el comportament és idèntic a opac.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6051,7 +6056,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Altera el radi aleatòriament en cada toc. També podeu fer-ho amb l&apos;entrada per_aleatori, en la configuració de radi. Si ho feu aquí hi ha dues diferències:
+1) el valor opac serà corregit, de manera que un toc de radi gran serà més transparent.
+2) no canviarà el radi actual vist per tocs_per_radi_actual</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6148,7 +6155,10 @@ For very slow speed the opposite happens.</source>
  1.0 set the active color to the brush color when selected</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>En seleccionar un pinzell, es pot restaurar el color amb el qual es va desar el pinzell.
+0.0 no modifica el color actiu quan seleccioneu aquest pinzell
+0.5 canvia el color actiu cap al color del pinzell
+1.0 estableix el color actiu del pinzell en seleccionar-lo</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6262,7 +6272,9 @@ For very slow speed the opposite happens.</source>
 9.9 or higher stands for infinite</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Això defineix quant de temps l&apos;entrada es quedarà a 1.0. Després d&apos;això es reiniciarà a 0.0 i tornarà a créixer, fins i tot encara que no s&apos;hagi acabat el traç.
+2.0 vol dir que passarà el doble de temps perquè vagi de 0.0 a 1.0
+9.9 o més elevat vol dir infinit</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6379,7 +6391,9 @@ You can control which bucket to use to improve variability and realism of the br
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Hi ha 256 cubells, cada un pot contenir un color seleccionat del llenç.
+Podeu controlar quin cubell fer servir per millorar la variabilitat i el realisme del pinzell.
+Especialment útil amb l&apos;arranjament &quot;entrada personalitzada&quot; per a correlacionar cubells amb altres arranjaments com els desplaçaments.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9708,7 +9722,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation type="unfinished"></translation>
+        <translation>Si teniu un enllaç d&apos;invitació a una sessió de dibuix, podeu &lt;a href=&quot;#join&quot;&gt;unir-vos-hi&lt;/a&gt; directament. Alternativament, podeu &lt;a href=&quot;#browse&quot;&gt;navegar&lt;/a&gt; per les sessions públiques o simplement crear un &lt;a href=&quot;#create&quot;&gt;nou llenç&lt;/a&gt; per a dibuixar pel vostre compte.</translation>
     </message>
     <message>
         <location line="+5"/>
