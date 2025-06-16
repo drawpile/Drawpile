@@ -8,11 +8,11 @@ endif()
 
 if(CLIENT OR TOOLS)
     if(EMSCRIPTEN)
-        dp_find_package(zstd CONFIG)
+        dp_find_package(zstd REQUIRED CONFIG)
     else()
         # zstd is supposed to provide a cmake config, but at least Fedora can't
         # manage to actually ship it, so there's a fallback for PkgConfig.
-        dp_find_package(zstd REQUIRED CONFIG)
+        dp_find_package(zstd CONFIG)
         find_package(PkgConfig QUIET)
         if(PKGCONFIG_FOUND)
             if(NOT TARGET zstd::libzstd)
