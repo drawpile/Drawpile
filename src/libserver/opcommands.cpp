@@ -155,7 +155,7 @@ CmdResult readyToAutoReset(
 			client->id(), capabilities,
 			net::ServerCommand::rateAutoresetOs(
 				kwargs[QStringLiteral("os")].toString()),
-			kwargs[QStringLiteral("net")].toDouble(), averagePing},
+			netQuality, averagePing},
 		kwargs[QStringLiteral("payload")].toString());
 	return CmdResult::ok();
 }
