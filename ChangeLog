@@ -83,12 +83,9 @@ Unreleased Version 2.2.3-pre
  * Fix: Work around a crash on Windows when toggling kinetic scroll settings.
  * Fix: Properly show current layout on first layouts dialog run. Thanks Dib for reporting.
  * Fix: Disable image reader limit in command-line tools under Qt6.
-<<<<<<< HEAD
  * Fix: Deduplicate brush and tag names when exporting brushes. Thanks Blozzom for reporting.
  * Fix: Don't crash under Windows 7 when attempting to play two sounds once. Thanks pachuco for reporting.
-=======
  * Server Feature: Allow configuring filter regular expressions for usernames and session titles. One expression to remove allow-listed parts and one to block disallowed ones.
->>>>>>> e3d60448c (Add session title and username filter regexes)
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.
