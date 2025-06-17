@@ -148,6 +148,9 @@ Permissions::Permissions(QWidget *parent)
 		grid, row, lastPermissions, m_permMypaint, int(DP_FEATURE_MYPAINT),
 		QIcon::fromTheme("drawpile_mypaint"), tr("MyPaint brushes:"));
 	addPerm(
+		grid, row, lastPermissions, m_permPigment, int(DP_FEATURE_PIGMENT),
+		QIcon::fromTheme("draw-brush"), tr("Pigment brushes:"));
+	addPerm(
 		grid, row, lastPermissions, m_permLaser, int(DP_FEATURE_LASER),
 		QIcon::fromTheme("cursor-arrow"), tr("Laser pointer:"));
 	addPerm(

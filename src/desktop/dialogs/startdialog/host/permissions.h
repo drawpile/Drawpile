@@ -63,6 +63,7 @@ private:
 	Perm m_permCreateAnnotation;
 	Perm m_permLaser;
 	Perm m_permUndo;
+	Perm m_permPigment;
 	Perm m_permTimeline;
 	Perm m_permMypaint;
 	Perm m_permKickBan;
