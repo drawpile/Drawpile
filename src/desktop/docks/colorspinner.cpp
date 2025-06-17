@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/colorspinner.h"
+#include "desktop/dialogs/shadeselectordialog.h"
 #include "desktop/docks/colorpalette.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
@@ -7,6 +8,7 @@
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/shadeselector.h"
 #include <QAction>
 #include <QActionGroup>
 #include <QMenu>
@@ -65,14 +67,19 @@ struct ColorSpinnerDock::Private {
 	QAction *alignTopAction = nullptr;
 	QAction *alignCenterAction = nullptr;
 	QAction *previewAction = nullptr;
+	QAction *showColorShadesAction = nullptr;
+	QAction *configureColorShadesAction = nullptr;
 	color_widgets::Swatch *lastUsedSwatch = nullptr;
 	QColor lastUsedColor;
 	PopupColorWheel *colorwheel = nullptr;
+	widgets::ShadeSelector *shadeSelector = nullptr;
+	QMenu *shadeSelectorMenu = nullptr;
 #ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
 	widgets::ColorPopup *popup = nullptr;
 	bool popupEnabled = false;
 #endif
 	bool updating = false;
+	bool settingColorFromShades = false;
 };
 
 ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
@@ -245,6 +252,21 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 #endif
 
 	menu->addSeparator();
+
+	d->showColorShadesAction = menu->addAction(tr("Show color harmonies"));
+	d->showColorShadesAction->setStatusTip(
+		tr("Toggle the harmony swatches below the color wheel"));
+	d->showColorShadesAction->setCheckable(true);
+
+	d->configureColorShadesAction =
+		menu->addAction(tr("Configure color harmonies…"));
+	d->configureColorShadesAction->setStatusTip(
+		tr("Change the color harmonies and how they are displayed"));
+	connect(
+		d->configureColorShadesAction, &QAction::triggered, this,
+		&ColorSpinnerDock::showColorShadesDialog);
+
+	menu->addSeparator();
 	ColorPaletteDock::addSwatchOptionsToMenu(menu, COLOR_SWATCH_NO_SPINNER);
 
 	d->menuButton = new widgets::GroupedToolButton(this);
@@ -279,7 +301,8 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 
 	d->colorwheel = new PopupColorWheel(this);
 	d->colorwheel->setMinimumSize(64, 64);
-	layout->addWidget(d->colorwheel);
+	d->colorwheel->setContextMenuPolicy(Qt::CustomContextMenu);
+	layout->addWidget(d->colorwheel, 1);
 
 	setWidget(widget);
 
@@ -291,6 +314,9 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 		d->colorwheel, &color_widgets::ColorWheel::editingFinished, this,
 		&ColorSpinnerDock::hidePreviewPopup);
 #endif
+	connect(
+		d->colorwheel, &color_widgets::ColorWheel::customContextMenuRequested,
+		this, &ColorSpinnerDock::showContextMenu);
 
 	desktop::settings::Settings &settings = dpApp().settings();
 	settings.bindColorWheelShape(this, &ColorSpinnerDock::setShape);
@@ -302,6 +328,8 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	settings.bindColorWheelPreview(this, &ColorSpinnerDock::setPreview);
 #endif
 	settings.bindColorSwatchFlags(this, &ColorSpinnerDock::setSwatchFlags);
+	settings.bindColorShadesEnabled(d->showColorShadesAction);
+	settings.bindColorShadesEnabled(this, &ColorSpinnerDock::setShadesEnabled);
 }
 
 ColorSpinnerDock::~ColorSpinnerDock()
@@ -339,6 +367,11 @@ void ColorSpinnerDock::setColor(const QColor &color)
 	d->lastUsedSwatch->setSelected(
 		findPaletteColor(d->lastUsedSwatch->palette(), color));
 
+	if(d->shadeSelector && !d->settingColorFromShades &&
+	   d->colorwheel->color().rgb() != color.rgb()) {
+		d->shadeSelector->setColor(color);
+	}
+
 	if(d->colorwheel->color() != color) {
 		d->colorwheel->setColor(color);
 		d->lastUsedColor = color;
@@ -350,6 +383,15 @@ void ColorSpinnerDock::setColor(const QColor &color)
 		d->popup->setSelectedColor(color);
 	}
 #endif
+}
+
+void ColorSpinnerDock::setColorFromShades(const QColor &color)
+{
+	if(!d->settingColorFromShades) {
+		QScopedValueRollback<bool> rollback(d->settingColorFromShades, true);
+		setColor(color);
+		emit colorSelected(color);
+	}
 }
 
 void ColorSpinnerDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
@@ -433,6 +475,47 @@ void ColorSpinnerDock::setPreview(int preview)
 }
 #endif
 
+void ColorSpinnerDock::setShadesEnabled(bool shadesEnabled)
+{
+	if(shadesEnabled && !d->shadeSelector) {
+		d->shadeSelector = new widgets::ShadeSelector;
+		d->shadeSelector->setColor(d->colorwheel->color());
+		d->shadeSelector->setContextMenuPolicy(Qt::CustomContextMenu);
+
+		desktop::settings::Settings &settings = dpApp().settings();
+		settings.bindColorShadesConfig(
+			d->shadeSelector, &widgets::ShadeSelector::setConfig);
+		settings.bindColorShadesRowHeight(
+			d->shadeSelector, &widgets::ShadeSelector::setRowHeight);
+		settings.bindColorShadesColumnCount(
+			d->shadeSelector, &widgets::ShadeSelector::setColumnCount);
+		settings.bindColorShadesBorderThickness(
+			d->shadeSelector, &widgets::ShadeSelector::setBorderThickness);
+
+		widget()->layout()->addWidget(d->shadeSelector);
+
+		connect(
+			d->colorwheel, &color_widgets::ColorWheel::colorSelected,
+			d->shadeSelector, &widgets::ShadeSelector::setColor);
+		connect(
+			d->shadeSelector, &widgets::ShadeSelector::colorSelected, this,
+			&ColorSpinnerDock::setColorFromShades);
+		connect(
+			d->shadeSelector, &widgets::ShadeSelector::colorDoubleClicked,
+			d->shadeSelector, &widgets::ShadeSelector::setColor);
+		connect(
+			d->shadeSelector, &widgets::ShadeSelector::colorDoubleClicked, this,
+			&ColorSpinnerDock::setColorFromShades);
+		connect(
+			d->shadeSelector,
+			&widgets::ShadeSelector::customContextMenuRequested, this,
+			&ColorSpinnerDock::showShadesContextMenu);
+	} else if(!shadesEnabled && d->shadeSelector) {
+		d->shadeSelector->deleteLater();
+		d->shadeSelector = nullptr;
+	}
+}
+
 void ColorSpinnerDock::updateShapeAction()
 {
 	QAction *action;
@@ -454,6 +537,40 @@ void ColorSpinnerDock::setSwatchFlags(int flags)
 {
 	bool hideSwatch = flags & COLOR_SWATCH_NO_SPINNER;
 	d->lastUsedSwatch->setVisible(!hideSwatch);
+}
+
+void ColorSpinnerDock::showContextMenu(const QPoint &pos)
+{
+	d->menuButton->menu()->popup(d->colorwheel->mapToGlobal(pos));
+}
+
+void ColorSpinnerDock::showShadesContextMenu(const QPoint &pos)
+{
+	if(d->shadeSelector) {
+		if(!d->shadeSelectorMenu) {
+			d->shadeSelectorMenu = new QMenu(this);
+			d->shadeSelectorMenu->addAction(d->showColorShadesAction);
+			d->shadeSelectorMenu->addAction(d->configureColorShadesAction);
+		}
+		d->shadeSelectorMenu->popup(d->shadeSelector->mapToGlobal(pos));
+	}
+}
+
+void ColorSpinnerDock::showColorShadesDialog()
+{
+	QString name = QStringLiteral("colorshadesdialog");
+	dialogs::ShadeSelectorDialog *dlg =
+		findChild<dialogs::ShadeSelectorDialog *>(
+			name, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		dlg = new dialogs::ShadeSelectorDialog(d->colorwheel->color(), this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setObjectName(name);
+		utils::showWindow(dlg);
+	}
 }
 
 }

@@ -171,6 +171,8 @@ target_sources(drawpile PRIVATE
 	dialogs/settingsdialog/touch.h
 	dialogs/settingsdialog/tools.cpp
 	dialogs/settingsdialog/tools.h
+	dialogs/shadeselectordialog.cpp
+	dialogs/shadeselectordialog.h
 	dialogs/startdialog.cpp
 	dialogs/startdialog.h
 	dialogs/startdialog/browse.cpp
@@ -425,6 +427,7 @@ target_sources(drawpile PRIVATE
 	widgets/mypaintinput.h
 	widgets/netstatus.cpp
 	widgets/netstatus.h
+	widgets/noscroll.h
 	widgets/notifbar.cpp
 	widgets/notifbar.h
 	widgets/palettewidget.cpp
@@ -443,6 +446,8 @@ target_sources(drawpile PRIVATE
 	widgets/rulerwidget.h
 	widgets/serverlogview.cpp
 	widgets/serverlogview.h
+	widgets/shadeselector.cpp
+	widgets/shadeselector.h
 	widgets/spanawaretreeview.cpp
 	widgets/spanawaretreeview.h
 	widgets/spinner.cpp

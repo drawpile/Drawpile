@@ -5,6 +5,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "desktop/widgets/noscroll.h"
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -23,32 +24,16 @@ namespace host {
 
 namespace {
 
-// Ignores wheel events so that scrolling over combo boxes doesn't end up
-// changing their contents, but instead scrolls the scroll area around them.
-class PermissionWidget : public QWidget {
-public:
-	explicit PermissionWidget(QWidget *parent = nullptr)
-		: QWidget(parent)
-	{
-	}
-
-protected:
-	void wheelEvent(QWheelEvent *event) override { event->ignore(); }
-};
-
-// Ignores wheel events in collusion with the above. Also doesn't show icons on
-// the combo box itself, since those are already on the buttons next to it, so
-// having them in the combo box adds too much visual noise.
-class PermissionComboBox : public QComboBox {
+// Doesn't show icons on the combo box itself, since those are already on the
+// buttons next to it, so having them in the combo box adds too much noise.
+class PermissionComboBox : public widgets::NoScrollComboBox {
 public:
 	explicit PermissionComboBox(QWidget *parent = nullptr)
-		: QComboBox(parent)
+		: widgets::NoScrollComboBox(parent)
 	{
 	}
 
 protected:
-	void wheelEvent(QWheelEvent *event) override { event->ignore(); }
-
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	// SPDX-SnippetBegin
 	// SPDX-License-Identifier: GPL-3.0-only
@@ -112,7 +97,7 @@ Permissions::Permissions(QWidget *parent)
 	utils::bindKineticScrolling(permissionScroll);
 	layout->addWidget(permissionScroll, 1);
 
-	QWidget *permissionsWidget = new PermissionWidget;
+	QWidget *permissionsWidget = new widgets::NoScrollWidget;
 	permissionScroll->setWidgetResizable(true);
 	permissionScroll->setWidget(permissionsWidget);
 

@@ -35,6 +35,7 @@ public:
 
 public slots:
 	void setColor(const QColor &color);
+	void setColorFromShades(const QColor &color);
 	void setLastUsedColors(const color_widgets::ColorPalette &pal);
 	void setShape(color_widgets::ColorWheel::ShapeEnum shape);
 	void setAngle(color_widgets::ColorWheel::AngleEnum angle);
@@ -44,6 +45,7 @@ public slots:
 #ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
 	void setPreview(int preview);
 #endif
+	void setShadesEnabled(bool shadesEnabled);
 
 signals:
 	void colorSelected(const QColor &color);
@@ -51,6 +53,9 @@ signals:
 private:
 	void updateShapeAction();
 	void setSwatchFlags(int flags);
+	void showContextMenu(const QPoint &pos);
+	void showShadesContextMenu(const QPoint &pos);
+	void showColorShadesDialog();
 
 	struct Private;
 	Private *d;
