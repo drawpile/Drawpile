@@ -3035,7 +3035,8 @@ void MainWindow::hostSession(const HostParams &params)
 		utils::ScopedOverrideCursor waitCursor;
 		login->setInitialState(m_doc->canvas()->generateSnapshot(
 			true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS,
-			params.undoLimit, &params.featurePermissions));
+			params.undoLimit, &params.featurePermissions,
+			&params.featureLimits));
 	} else {
 		QVector<uint8_t> features;
 		features.reserve(DP_FEATURE_COUNT);
@@ -3056,8 +3057,18 @@ void MainWindow::hostSession(const HostParams &params)
 		QVector<int32_t> limits;
 		limits.reserve(int(DP_FEATURE_LIMIT_COUNT) * int(DP_ACCESS_TIER_COUNT));
 		for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
+			QHash<int, QHash<int, int>>::const_iterator tiersFound =
+				params.featureLimits.constFind(i);
 			for(int j = 0; j < DP_ACCESS_TIER_COUNT; ++j) {
-				limits.append(DP_feature_limit_default(i, j, -1));
+				int effectiveLimit = DP_feature_limit_default(i, j, -1);
+				if(tiersFound != params.featureLimits.constEnd()) {
+					QHash<int, int>::const_iterator limitFound =
+						tiersFound->constFind(j);
+					if(limitFound != tiersFound->constEnd()) {
+						effectiveLimit = limitFound.value();
+					}
+				}
+				limits.append(effectiveLimit);
 			}
 		}
 

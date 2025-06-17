@@ -43,12 +43,14 @@ public:
 
 	void toResetImage(
 		net::MessageList &msgs, uint8_t userId, unsigned int includeFlags,
-		const QHash<int, int> *overrideTiers = nullptr) const;
+		const QHash<int, int> *overrideTiers = nullptr,
+		const QHash<int, QHash<int, int>> *overrideLimits = nullptr) const;
 
 private:
 	struct ResetImageParams {
 		net::MessageList &msgs;
 		const QHash<int, int> *overrideTiers;
+		const QHash<int, QHash<int, int>> *overrideLimits;
 	};
 
 	AclState(DP_AclState *data);
@@ -58,6 +60,10 @@ private:
 
 	static DP_AccessTier overrideFeatureTier(
 		void *user, DP_Feature feature, DP_AccessTier originalTier);
+
+	static int overrideFeatureLimit(
+		void *user, DP_FeatureLimit limit, DP_AccessTier tier,
+		int originalLimit);
 
 	static bool pushMessage(void *user, DP_Message *msg);
 

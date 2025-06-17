@@ -91,7 +91,8 @@ void Host::accept()
 		m_sessionPage->isNsfmAllowed(), errors, params.title, params.alias,
 		params.announcementUrls);
 	m_permissionsPage->host(
-		params.undoLimit, params.featurePermissions, params.deputies);
+		params.undoLimit, params.featurePermissions, params.deputies,
+		params.featureLimits);
 	m_rolesPage->host(params.operatorPassword, params.auth);
 	m_bansPage->host(params.bans);
 	int errorCount = errors.size();

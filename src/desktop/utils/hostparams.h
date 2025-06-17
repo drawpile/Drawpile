@@ -20,6 +20,7 @@ struct HostParams {
 	bool deputies;
 	int undoLimit;
 	QHash<int, int> featurePermissions;
+	QHash<int, QHash<int, int>> featureLimits;
 	QJsonArray auth;
 	QStringList bans;
 };

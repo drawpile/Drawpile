@@ -60,12 +60,14 @@ uint8_t AclState::handle(const net::Message &msg, bool overrideAcls)
 
 void AclState::toResetImage(
 	net::MessageList &msgs, uint8_t userId, unsigned int includeFlags,
-	const QHash<int, int> *overrideTiers) const
+	const QHash<int, int> *overrideTiers,
+	const QHash<int, QHash<int, int>> *overrideLimits) const
 {
-	ResetImageParams params = {msgs, overrideTiers};
+	ResetImageParams params = {msgs, overrideTiers, overrideLimits};
 	DP_acl_state_reset_image_build(
 		m_data, userId, includeFlags,
-		overrideTiers ? overrideFeatureTier : nullptr, pushMessage, &params);
+		overrideTiers ? overrideFeatureTier : nullptr,
+		overrideLimits ? overrideFeatureLimit : nullptr, pushMessage, &params);
 }
 
 AclState::AclState(DP_AclState *data)
@@ -92,6 +94,23 @@ DP_AccessTier AclState::overrideFeatureTier(
 		}
 	}
 	return originalTier;
+}
+
+int AclState::overrideFeatureLimit(
+	void *user, DP_FeatureLimit limit, DP_AccessTier tier, int originalLimit)
+{
+	const QHash<int, QHash<int, int>> &overrideLimits =
+		*static_cast<ResetImageParams *>(user)->overrideLimits;
+	QHash<int, QHash<int, int>>::const_iterator tiersFound =
+		overrideLimits.constFind(int(limit));
+	if(tiersFound != overrideLimits.constEnd()) {
+		QHash<int, int>::const_iterator limitFound =
+			tiersFound->constFind(int(tier));
+		if(limitFound != tiersFound->constEnd()) {
+			return *limitFound;
+		}
+	}
+	return originalLimit;
 }
 
 bool AclState::pushMessage(void *user, DP_Message *msg)

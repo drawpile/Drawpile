@@ -1467,6 +1467,7 @@ static bool reset_image_push_users(
 bool DP_acl_state_reset_image_build(
     DP_AclState *acls, unsigned int context_id, unsigned int include_flags,
     DP_AccessTier (*override_feature_tier)(void *, DP_Feature, DP_AccessTier),
+    int (*override_feature_limit)(void *, DP_FeatureLimit, DP_AccessTier, int),
     bool (*push_message)(void *, DP_Message *), void *user)
 {
     DP_ASSERT(acls);
@@ -1513,8 +1514,12 @@ bool DP_acl_state_reset_image_build(
         int limits[(int)DP_FEATURE_LIMIT_COUNT * (int)DP_ACCESS_TIER_COUNT];
         for (int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
             for (int j = 0; j < DP_ACCESS_TIER_COUNT; ++j) {
+                int limit = acls->feature.limits[i][j];
                 limits[i * (int)DP_ACCESS_TIER_COUNT + j] =
-                    acls->feature.limits[i][j];
+                    override_feature_limit
+                        ? override_feature_limit(user, (DP_FeatureLimit)i,
+                                                 (DP_AccessTier)j, limit)
+                        : limit;
             }
         }
         DP_Message *feature_limit_msg = DP_msg_feature_limits_new(

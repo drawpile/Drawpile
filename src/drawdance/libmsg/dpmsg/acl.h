@@ -213,6 +213,7 @@ DP_Message *DP_acl_state_msg_feature_limits_none_new(unsigned int context_id);
 bool DP_acl_state_reset_image_build(
     DP_AclState *acls, unsigned int context_id, unsigned int include_flags,
     DP_AccessTier (*override_feature_tier)(void *, DP_Feature, DP_AccessTier),
+    int (*override_feature_limit)(void *, DP_FeatureLimit, DP_AccessTier, int),
     bool (*push_message)(void *, DP_Message *), void *user);
 
 

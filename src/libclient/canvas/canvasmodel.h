@@ -71,13 +71,15 @@ public:
 	net::MessageList generateSnapshot(
 		bool includePinnedMessage, unsigned int aclIncludeFlags,
 		int overrideUndoLimit = -1,
-		const QHash<int, int> *overrideTiers = nullptr) const;
+		const QHash<int, int> *overrideTiers = nullptr,
+		const QHash<int, QHash<int, int>> *overrideLimits = nullptr) const;
 
 	// Returns the number of messages prepended, the rest are appended.
 	int amendSnapshotMetadata(
 		net::MessageList &snapshot, bool includePinnedMessage,
 		unsigned int aclIncludeFlags, int overrideUndoLimit = -1,
-		const QHash<int, int> *overrideTiers = nullptr) const;
+		const QHash<int, int> *overrideTiers = nullptr,
+		const QHash<int, QHash<int, int>> *overrideLimits = nullptr) const;
 
 	uint8_t localUserId() const { return m_localUserId; }
 	bool isCompatibilityMode() const { return m_compatibilityMode; }

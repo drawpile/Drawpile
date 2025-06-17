@@ -9515,6 +9515,14 @@ extern "C" {
                 arg3: DP_AccessTier,
             ) -> DP_AccessTier,
         >,
+        override_feature_limit: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: *mut ::std::os::raw::c_void,
+                arg2: DP_FeatureLimit,
+                arg3: DP_AccessTier,
+                arg4: ::std::os::raw::c_int,
+            ) -> ::std::os::raw::c_int,
+        >,
         push_message: ::std::option::Option<
             unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void, arg2: *mut DP_Message) -> bool,
         >,
@@ -9704,6 +9712,9 @@ extern "C" {
     pub fn DP_blend_mode_to_alpha_preserving(
         blend_mode: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_blend_mode_compatible(blend_mode: ::std::os::raw::c_int, mypaint: bool) -> bool;
 }
 extern "C" {
     pub fn DP_blend_mode_to_compatible(blend_mode: u8) -> u8;
