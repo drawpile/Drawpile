@@ -2340,7 +2340,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+22"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al descargar el registro de eventos de la tableta.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2395,7 +2395,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+50"/>
         <source>Altering selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Alterando la selección…</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -2496,17 +2496,17 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+30"/>
         <source>Export &amp;Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar &amp;Animación…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar &amp;Frames de Animación…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar Animación desde &amp;LCapas…</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -2536,7 +2536,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+2"/>
         <source>&amp;Brush Settings</source>
-        <translation>&amp;Ajustes de</translation>
+        <translation>Ajustes de &amp;BPincel</translation>
     </message>
     <message>
         <location line="+194"/>
@@ -2551,7 +2551,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+20"/>
         <source>Zoom In On Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Acercar al centro</translation>
     </message>
     <message>
         <location line="+2"/>
