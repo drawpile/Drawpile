@@ -5411,14 +5411,14 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;angle del traç en graus. El valor romandrà entre 0.0 i 180.0, ignorant eficaçment els girs de 180 graus.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Declinació de la inclinació del llapis. 0 quan el llapis és paral·lel a la tauleta i 90.0 quan és perpendicular a la tauleta.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6033,7 +6033,7 @@ Aquesta opció és la responsable de deixar de pintar quan hi ha una pressió ze
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Quants tocs dibuixar mentre el punter mou una distància d&apos;un radi de pinzell (més precís: el valor base del radi)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6138,7 +6138,7 @@ For very slow speed the opposite happens.</source>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix aleatorietat al punter del ratolí; això normalment genera moltes línies petites en direccions a l&apos;atzar; potser proveu-ho juntament amb &apos;seguiment lent&apos;</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6599,7 +6599,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+98"/>
         <source>A regular key combination on the canvas without further mouse or pen inputs. Example: holding Space to pan, without having to click as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Una combinació de tecles normal al llenç sense cap altra entrada de ratolí de llapis. Exemple: mantenir pressionat espai per a desplaçar-se sense haver de clicar també.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -11338,12 +11338,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alenteix el traç i l&apos;estabilitza al llarg del temps. Pot produir resultats molt suaus, però pot notar-se lent.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
-        <translation type="unfinished"></translation>
+        <translation>Simplement, fa la mitjana de les entrades per obtenir un resultat més suau. Més ràpid que el basat en el temps, però no tan suau.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -12079,7 +12079,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Copies this curve to the clipboard. You can paste it into another setting or into the chat to share it with other users.</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia aquesta corba al porta-retalls. Podeu enganxar-la en un altre arranjament o al xat per compartir-la amb altres usuaris.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12444,7 +12444,9 @@ Hexadecimal: %4</translation>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Encara no hi ha pistes.
+Afegiu-ne una utilitzant el botó + superior
+o mitjançant Animació ▸ Nova pista.</translation>
     </message>
     <message>
         <location line="+565"/>
