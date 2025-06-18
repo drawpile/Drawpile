@@ -14,6 +14,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QScopedValueRollback>
+#include <QTimer>
 #include <QVBoxLayout>
 #include <QtColorWidgets/swatch.hpp>
 #ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
@@ -514,6 +515,26 @@ void ColorSpinnerDock::setShadesEnabled(bool shadesEnabled)
 		d->shadeSelector->deleteLater();
 		d->shadeSelector = nullptr;
 	}
+}
+
+void ColorSpinnerDock::showEvent(QShowEvent *event)
+{
+	DockBase::showEvent(event);
+	// Bug workaround: on Linux under Qt5, the color wheel image doesn't show up
+	// until the widget is resized significantly. This looks like a bug in Qt.
+#if defined(Q_OS_LINUX) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	QTimer::singleShot(0, this, [this] {
+		d->colorwheel->setMinimumSize(0, 0);
+		QCoreApplication::processEvents();
+		QWidget *w = new QWidget();
+		w->setFixedSize(32, 32);
+		widget()->layout()->addWidget(w);
+		QCoreApplication::processEvents();
+		delete w;
+		QCoreApplication::processEvents();
+		d->colorwheel->setMinimumSize(64, 64);
+	});
+#endif
 }
 
 void ColorSpinnerDock::updateShapeAction()
