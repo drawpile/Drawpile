@@ -6899,6 +6899,12 @@ void MainWindow::updateInterfaceModeActions()
 		}
 		m_smallScreenEditActions.clear();
 	}
+
+	QList<QToolBar *> toolbars =
+		findChildren<QToolBar *>(QString(), Qt::FindDirectChildrenOnly);
+	for(QToolBar *toolbar : toolbars) {
+		toolbar->toggleViewAction()->setEnabled(!m_smallScreenMode);
+	}
 }
 // clang-format off
 
