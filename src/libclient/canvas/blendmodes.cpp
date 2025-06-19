@@ -71,6 +71,12 @@ static const BlendModeInfo BLEND_MODE[] = {
 		UniversalMode,
 	},
 	{
+		QT_TRANSLATE_NOOP("blendmode", "OKLAB"),
+		DP_BLEND_MODE_OKLAB_NORMAL,
+		DP_BLEND_MODE_OKLAB_RECOLOR,
+		UniversalMode,
+	},
+	{
 		QT_TRANSLATE_NOOP("blendmode", "Pigment"),
 		DP_BLEND_MODE_PIGMENT_ALPHA,
 		DP_BLEND_MODE_PIGMENT,

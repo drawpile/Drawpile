@@ -1242,7 +1242,8 @@ static DP_BrushEngine *get_mypaint_surface_brush_engine(MyPaintSurface2 *self)
 static bool is_normal_mypaint_mode(DP_BlendMode blend_mode)
 {
     return blend_mode == DP_BLEND_MODE_NORMAL
-        || blend_mode == DP_BLEND_MODE_PIGMENT_ALPHA;
+        || blend_mode == DP_BLEND_MODE_PIGMENT_ALPHA
+        || blend_mode == DP_BLEND_MODE_OKLAB_NORMAL;
 }
 
 static bool should_ignore_full_alpha_mypaint_dab(DP_PaintMode paint_mode,
@@ -1251,6 +1252,7 @@ static bool should_ignore_full_alpha_mypaint_dab(DP_PaintMode paint_mode,
     switch (blend_mode) {
     case DP_BLEND_MODE_NORMAL:
     case DP_BLEND_MODE_PIGMENT_ALPHA:
+    case DP_BLEND_MODE_OKLAB_NORMAL:
         return paint_mode != DP_PAINT_MODE_DIRECT;
     case DP_BLEND_MODE_ERASE:
     case DP_BLEND_MODE_ERASE_PRESERVE:
@@ -1260,12 +1262,14 @@ static bool should_ignore_full_alpha_mypaint_dab(DP_PaintMode paint_mode,
     }
 }
 
-static uint8_t get_mypaint_dab_pigment_flag(DP_BlendMode blend_mode)
+static uint8_t get_mypaint_dab_blend_mode_flag(DP_BlendMode blend_mode)
 {
-    if (blend_mode == DP_BLEND_MODE_PIGMENT_ALPHA) {
+    switch (blend_mode) {
+    case DP_BLEND_MODE_PIGMENT_ALPHA:
         return DP_MYPAINT_BRUSH_PIGMENT_FLAG;
-    }
-    else {
+    case DP_BLEND_MODE_OKLAB_NORMAL:
+        return DP_MYPAINT_BRUSH_OKLAB_FLAG;
+    default:
         return 0;
     }
 }
@@ -1435,7 +1439,7 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
              && is_normal_mypaint_mode(blend_mode)) {
         dab_color =
             get_mypaint_dab_color(color_r, color_g, color_b, alpha_eraser);
-        dab_flags = get_mypaint_dab_pigment_flag(blend_mode) | mask_flags;
+        dab_flags = get_mypaint_dab_blend_mode_flag(blend_mode) | mask_flags;
         dab_lock_alpha = get_mypaint_dab_lock_alpha(lock_alpha);
         dab_colorize = get_mypaint_dab_colorize(colorize);
         dab_posterize = get_mypaint_dab_posterize(posterize);
@@ -1925,6 +1929,10 @@ static uint8_t get_classic_dab_blend_mode(DP_BrushEngine *be)
             return get_effective_classic_blend_mode(
                 be, DP_BLEND_MODE_PIGMENT_ALPHA,
                 DP_BLEND_MODE_PIGMENT_AND_ERASER);
+        case DP_BLEND_MODE_OKLAB_NORMAL:
+            return get_effective_classic_blend_mode(
+                be, DP_BLEND_MODE_OKLAB_NORMAL,
+                DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER);
         default:
             break;
         }
@@ -1941,7 +1949,8 @@ static uint32_t get_classic_dab_color(DP_BrushEngine *be,
     // alpha in the cases where it doesn't matter.
     if (be->classic.indirect_alpha == 0.0f
         && dab_blend_mode != DP_BLEND_MODE_NORMAL_AND_ERASER
-        && dab_blend_mode != DP_BLEND_MODE_PIGMENT_AND_ERASER) {
+        && dab_blend_mode != DP_BLEND_MODE_PIGMENT_AND_ERASER
+        && dab_blend_mode != DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER) {
         color &= (uint32_t)0xffffff;
     }
     return color;

@@ -59,6 +59,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Add View → Always Show Side/Bottom Toolbar actions to let you choose whether to always show those toolbars in small screen mode or only when something is folded out using the tabs on the side. Thanks CosmosX007 for suggesting.
  * Fix: Add some space to the sides of the bottom toolbar in small-screen mode so that the undo and record buttons don't get eaten by rounded corners. Thanks March for reporting.
  * Feature: Allow reordering and toggling which drawing tools are visible in the toolbar, via e.g. Tools → Configure drawing toolbar. Thanks MorrowShore for suggesting.
+ * Feature: Add OKLAB blend mode for layers and brushes. Thanks Bonbli for contributing.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

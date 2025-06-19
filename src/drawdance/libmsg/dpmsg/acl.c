@@ -91,8 +91,8 @@ static DP_FeatureAttributes feature_attributes[] = {
                                       DP_ACCESS_TIER_GUEST},
     [DP_FEATURE_LASER] = {"DP_FEATURE_LASER", "laser", DP_ACCESS_TIER_GUEST},
     [DP_FEATURE_UNDO] = {"DP_FEATURE_UNDO", "undo", DP_ACCESS_TIER_GUEST},
-    [DP_FEATURE_PIGMENT] = {"DP_FEATURE_PIGMENT", "pigment",
-                            DP_ACCESS_TIER_OPERATOR},
+    [DP_FEATURE_SLOW_BRUSH] = {"DP_FEATURE_SLOW_BRUSH", "slow_brush",
+                               DP_ACCESS_TIER_OPERATOR},
     [DP_FEATURE_TIMELINE] = {"DP_FEATURE_TIMELINE", "timeline",
                              DP_ACCESS_TIER_GUEST},
     [DP_FEATURE_MYPAINT] = {"DP_FEATURE_MYPAINT", "mypaint",
@@ -1113,7 +1113,8 @@ static bool handle_draw_dabs(DP_AclState *acls, DP_Message *msg,
 {
     void *internal = DP_message_internal(msg);
     if (is_pigment(internal)
-        && !DP_acl_state_can_use_feature(acls, DP_FEATURE_PIGMENT, user_id)) {
+        && !DP_acl_state_can_use_feature(acls, DP_FEATURE_SLOW_BRUSH,
+                                         user_id)) {
         return false;
     }
 

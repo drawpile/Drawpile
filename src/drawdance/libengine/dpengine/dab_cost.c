@@ -101,6 +101,7 @@ double DP_dab_cost_pixel(bool indirect, int blend_mode)
         case DP_BLEND_MODE_GREATER_WASH:
             return 1.12436830449827;
         case DP_BLEND_MODE_PIGMENT:
+        case DP_BLEND_MODE_OKLAB_RECOLOR:
             return 1.8239112725874662;
         case DP_BLEND_MODE_LIGHT_TO_ALPHA:
         case DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE:
@@ -179,8 +180,10 @@ double DP_dab_cost_pixel(bool indirect, int blend_mode)
         case DP_BLEND_MODE_GREATER_ALPHA_WASH:
             return 0.9867413071895424;
         case DP_BLEND_MODE_PIGMENT_ALPHA:
+        case DP_BLEND_MODE_OKLAB_NORMAL:
             return 1.4677974471357171;
         case DP_BLEND_MODE_PIGMENT_AND_ERASER:
+        case DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER:
             return 52.66137976931949;
         case DP_BLEND_MODE_REPLACE:
             return 1.0819777162629758;
@@ -288,6 +291,7 @@ double DP_dab_cost_pixel_square(bool indirect, int blend_mode)
         case DP_BLEND_MODE_GREATER_WASH:
             return 0.956686674356017;
         case DP_BLEND_MODE_PIGMENT:
+        case DP_BLEND_MODE_OKLAB_RECOLOR:
             return 1.8408407766243753;
         case DP_BLEND_MODE_LIGHT_TO_ALPHA:
         case DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE:
@@ -366,8 +370,10 @@ double DP_dab_cost_pixel_square(bool indirect, int blend_mode)
         case DP_BLEND_MODE_GREATER_ALPHA_WASH:
             return 0.8380466820453671;
         case DP_BLEND_MODE_PIGMENT_ALPHA:
+        case DP_BLEND_MODE_OKLAB_NORMAL:
             return 1.4359405690119185;
         case DP_BLEND_MODE_PIGMENT_AND_ERASER:
+        case DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER:
             return 5.6664507497116485;
         case DP_BLEND_MODE_REPLACE:
             return 0.9043035601691657;
@@ -475,6 +481,7 @@ double DP_dab_cost_classic(bool indirect, int blend_mode)
         case DP_BLEND_MODE_GREATER_WASH:
             return 4.1648832371949177e-05;
         case DP_BLEND_MODE_PIGMENT:
+        case DP_BLEND_MODE_OKLAB_RECOLOR:
             return 0.002791007707983091;
         case DP_BLEND_MODE_LIGHT_TO_ALPHA:
         case DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE:
@@ -553,8 +560,10 @@ double DP_dab_cost_classic(bool indirect, int blend_mode)
         case DP_BLEND_MODE_GREATER_ALPHA_WASH:
             return 3.991356143038958e-05;
         case DP_BLEND_MODE_PIGMENT_ALPHA:
+        case DP_BLEND_MODE_OKLAB_NORMAL:
             return 0.0028111838592867417;
         case DP_BLEND_MODE_PIGMENT_AND_ERASER:
+        case DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER:
             return 0.000946904545003925;
         case DP_BLEND_MODE_REPLACE:
             return 4.137086309967501e-05;
@@ -687,6 +696,7 @@ double DP_dab_cost_mypaint_blend(bool indirect, int blend_mode)
         case DP_BLEND_MODE_GREATER_WASH:
             return 3.4585253597184605e-08;
         case DP_BLEND_MODE_PIGMENT:
+        case DP_BLEND_MODE_OKLAB_RECOLOR:
             return 4.498751288240333e-08;
         case DP_BLEND_MODE_LIGHT_TO_ALPHA:
         case DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE:
@@ -765,8 +775,10 @@ double DP_dab_cost_mypaint_blend(bool indirect, int blend_mode)
         case DP_BLEND_MODE_GREATER_ALPHA_WASH:
             return 3.47694282568365e-08;
         case DP_BLEND_MODE_PIGMENT_ALPHA:
+        case DP_BLEND_MODE_OKLAB_NORMAL:
             return 4.558392677709149e-08;
         case DP_BLEND_MODE_PIGMENT_AND_ERASER:
+        case DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER:
             return 2.075977879692025e-07;
         case DP_BLEND_MODE_REPLACE:
             return 3.678813154278078e-08;

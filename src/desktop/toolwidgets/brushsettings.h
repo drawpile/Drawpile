@@ -88,7 +88,7 @@ public:
 
 	bool isLocked() override;
 	void setMyPaintAllowed(bool myPaintAllowed);
-	void setPigmentAllowed(bool pigmentAllowed);
+	void setSlowModesAllowed(bool slowModesAllowed);
 	void setBrushSizeLimit(int brushSizeLimit);
 
 	void selectBrushSlot(int i);
@@ -128,7 +128,7 @@ protected:
 
 private:
 	enum class BrushType { PixelRound, PixelSquare, SoftRound, MyPaint };
-	enum class Lock { None, MyPaintPermission, PigmentPermission };
+	enum class Lock { None, MyPaintPermission, SlowModesPermission };
 
 	void changeBrushType(const QAction *action);
 	void changePaintMode(const QAction *action);

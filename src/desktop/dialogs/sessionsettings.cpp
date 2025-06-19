@@ -467,7 +467,7 @@ QComboBox *SessionSettingsDialog::featureBox(DP_Feature f)
 		return m_ui->permLaser;
 	case DP_FEATURE_UNDO:
 		return m_ui->permUndo;
-	case DP_FEATURE_PIGMENT:
+	case DP_FEATURE_SLOW_BRUSH:
 		return m_ui->permPigment;
 	case DP_FEATURE_TIMELINE:
 		return m_ui->permTimeline;
@@ -534,7 +534,7 @@ void SessionSettingsDialog::onFeatureTiersChanged(
 		int(features.tiers[DP_FEATURE_CREATE_ANNOTATION]));
 	m_ui->permLaser->setCurrentIndex(int(features.tiers[DP_FEATURE_LASER]));
 	m_ui->permUndo->setCurrentIndex(int(features.tiers[DP_FEATURE_UNDO]));
-	m_ui->permPigment->setCurrentIndex(int(features.tiers[DP_FEATURE_PIGMENT]));
+	m_ui->permPigment->setCurrentIndex(int(features.tiers[DP_FEATURE_SLOW_BRUSH]));
 	m_ui->permTimeline->setCurrentIndex(
 		int(features.tiers[DP_FEATURE_TIMELINE]));
 	m_ui->permMyPaint->setCurrentIndex(int(features.tiers[DP_FEATURE_MYPAINT]));

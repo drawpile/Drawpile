@@ -3709,8 +3709,8 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 	case DP_FEATURE_LASER:
 		m_dockToolSettings->laserPointerSettings()->setFeatureAccess(canUse);
 		break;
-	case DP_FEATURE_PIGMENT:
-		m_dockToolSettings->brushSettings()->setPigmentAllowed(canUse);
+	case DP_FEATURE_SLOW_BRUSH:
+		m_dockToolSettings->brushSettings()->setSlowModesAllowed(canUse);
 		break;
 	case DP_FEATURE_TIMELINE:
 		m_dockTimeline->setFeatureAccess(canUse);

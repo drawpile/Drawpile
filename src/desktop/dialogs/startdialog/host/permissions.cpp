@@ -150,8 +150,8 @@ Permissions::Permissions(QWidget *parent)
 		tr("MyPaint brushes:"));
 	addPerm(
 		featureGrid, row, lastPermissions, m_permPigment,
-		int(DP_FEATURE_PIGMENT), QIcon::fromTheme("draw-brush"),
-		tr("Pigment brushes:"));
+		int(DP_FEATURE_SLOW_BRUSH), QIcon::fromTheme("draw-brush"),
+		tr("Pigment and OKLAB brushes:"));
 	addPerm(
 		featureGrid, row, lastPermissions, m_permLaser, int(DP_FEATURE_LASER),
 		QIcon::fromTheme("cursor-arrow"), tr("Laser pointer:"));

@@ -382,7 +382,7 @@
        <item row="12" column="0">
         <widget class="QLabel" name="labelPigment">
          <property name="text">
-          <string>Pigment Brushes:</string>
+          <string>Pigment and OKLAB Brushes:</string>
          </property>
         </widget>
        </item>

@@ -190,7 +190,7 @@ struct BrushSettings::Private {
 	bool updateInProgress = false;
 	bool updateSlotInProgress = false;
 	bool myPaintAllowed = true;
-	bool pigmentAllowed = true;
+	bool slowModesAllowed = true;
 	bool compatibilityMode = false;
 
 	Slot &slotAt(int i)
@@ -221,12 +221,15 @@ struct BrushSettings::Private {
 		return currentBrush().activeType() == brushes::ActiveBrush::MYPAINT;
 	}
 
-	bool currentIsPigment()
+	bool currentIsSlowMode()
 	{
 		switch(currentBrush().blendMode()) {
 		case DP_BLEND_MODE_PIGMENT:
 		case DP_BLEND_MODE_PIGMENT_ALPHA:
 		case DP_BLEND_MODE_PIGMENT_AND_ERASER:
+		case DP_BLEND_MODE_OKLAB_NORMAL:
+		case DP_BLEND_MODE_OKLAB_RECOLOR:
+		case DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER:
 			return true;
 		default:
 			return false;
@@ -638,8 +641,8 @@ BrushSettings::Lock BrushSettings::getLock()
 	if(!d->myPaintAllowed && d->currentIsMyPaint()) {
 		return Lock::MyPaintPermission;
 	}
-	if(!d->pigmentAllowed && d->currentIsPigment()) {
-		return Lock::PigmentPermission;
+	if(!d->slowModesAllowed && d->currentIsSlowMode()) {
+		return Lock::SlowModesPermission;
 	}
 	return Lock::None;
 }
@@ -649,8 +652,10 @@ QString BrushSettings::getLockDescription(Lock lock)
 	switch(lock) {
 	case Lock::MyPaintPermission:
 		return tr("You don't have permission to use MyPaint brushes.");
-	case Lock::PigmentPermission:
-		return tr("You don't have permission to use brushes in Pigment mode.");
+	case Lock::SlowModesPermission:
+		return tr(
+			"You don't have permission to use brushes in OKLAB or Pigment "
+			"mode.");
 	default:
 		return QString{};
 	}
@@ -662,9 +667,9 @@ void BrushSettings::setMyPaintAllowed(bool myPaintAllowed)
 	updateUi();
 }
 
-void BrushSettings::setPigmentAllowed(bool pigmentAllowed)
+void BrushSettings::setSlowModesAllowed(bool slowModesAllowed)
 {
-	d->pigmentAllowed = pigmentAllowed;
+	d->slowModesAllowed = slowModesAllowed;
 	updateUi();
 }
 
@@ -1584,13 +1589,13 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 	bool eraseMode = d->blendModeManager->isEraseMode();
 	QPair<QWidget *, bool> widgetVisibilities[] = {
 		{d->ui.modeColorpick, !locked && !mypaintmode},
-		{d->ui.alphaPreserve, !locked || lock == Lock::PigmentPermission},
-		{d->ui.modeEraser, !locked || lock == Lock::PigmentPermission},
+		{d->ui.alphaPreserve, !locked || lock == Lock::SlowModesPermission},
+		{d->ui.modeEraser, !locked || lock == Lock::SlowModesPermission},
 		{d->ui.paintMode, !locked},
 		{d->ui.blendmode,
-		 (!locked || lock == Lock::PigmentPermission) && !eraseMode},
+		 (!locked || lock == Lock::SlowModesPermission) && !eraseMode},
 		{d->ui.erasemode,
-		 (!locked || lock == Lock::PigmentPermission) && eraseMode},
+		 (!locked || lock == Lock::SlowModesPermission) && eraseMode},
 		{d->ui.pressureHardness, !locked && softmode && !mypaintmode},
 		{d->ui.hardnessBox, !locked && softmode},
 		{d->ui.brushsizeBox, !locked && !mypaintmode},

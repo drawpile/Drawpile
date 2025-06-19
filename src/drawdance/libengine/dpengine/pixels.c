@@ -308,6 +308,51 @@ static BGR15 set_sat(BGR15 bgr, Fix15 s)
     return bgr;
 }
 
+// SPDX-SnippetBegin
+// SPDX-License-Identifier: MIT
+// SPDX-SnippetCopyrightText: Copyright (c) 2020 Björn Ottosson
+// SDPX—SnippetName: OKLAB from https://bottosson.github.io/posts/oklab/
+typedef struct Lab {
+    float L;
+    float a;
+    float b;
+} Lab;
+
+static Lab linear_srgb_to_oklab(BGRf c)
+{
+    float l = 0.4122214708f * c.r + 0.5363325363f * c.g + 0.0514459929f * c.b;
+    float m = 0.2119034982f * c.r + 0.6806995451f * c.g + 0.1073969566f * c.b;
+    float s = 0.0883024619f * c.r + 0.2817188376f * c.g + 0.6299787005f * c.b;
+
+    float l_ = cbrtf(l);
+    float m_ = cbrtf(m);
+    float s_ = cbrtf(s);
+
+    return (Lab){
+        .L = 0.2104542553f * l_ + 0.7936177850f * m_ - 0.0040720468f * s_,
+        .a = 1.9779984951f * l_ - 2.4285922050f * m_ + 0.4505937099f * s_,
+        .b = 0.0259040371f * l_ + 0.7827717662f * m_ - 0.8086757660f * s_,
+    };
+}
+
+static BGRf oklab_to_linear_srgb(Lab c)
+{
+    float l_ = c.L + 0.3963377774f * c.a + 0.2158037573f * c.b;
+    float m_ = c.L - 0.1055613458f * c.a - 0.0638541728f * c.b;
+    float s_ = c.L - 0.0894841775f * c.a - 1.2914855480f * c.b;
+
+    float l = l_ * l_ * l_;
+    float m = m_ * m_ * m_;
+    float s = s_ * s_ * s_;
+
+    return (BGRf){
+        .r = +4.0767416621f * l - 3.3077115913f * m + 0.2309699292f * s,
+        .g = -1.2684380046f * l + 2.6097574011f * m - 0.3413193965f * s,
+        .b = -0.0041960863f * l - 0.7034186147f * m + 1.7076147010f * s,
+    };
+}
+// SPDX-SnippetEnd
+
 // Adapted from MyPaint, see license above.
 // Composites an unpremultiplied source over a premultiplied destination.
 static DP_Pixel15 source_over_premultiplied(DP_Pixel15 b, BGRA15 s)
@@ -2371,7 +2416,7 @@ static BGRf blend_pigment_mask(DP_Pixel15 dp, const float *spectral_b_channels,
     return spectral_to_rgb(spectral.channels);
 }
 
-static void assign_pigment(DP_Pixel15 *dst, uint16_t ab, BGRf cr_f)
+static void assign_from_float_preserve(DP_Pixel15 *dst, uint16_t ab, BGRf cr_f)
 {
     float ar_roundf = 0.5f + (float)ab;
     dst->b = (uint16_t)(cr_f.b * ar_roundf);
@@ -2379,8 +2424,8 @@ static void assign_pigment(DP_Pixel15 *dst, uint16_t ab, BGRf cr_f)
     dst->r = (uint16_t)(cr_f.r * ar_roundf);
 }
 
-static void assign_pigment_alpha(DP_Pixel15 *dst, Fix15 ab, Fix15 aso,
-                                 BGRf cr_f)
+static void assign_from_float_alpha(DP_Pixel15 *dst, Fix15 ab, Fix15 aso,
+                                    BGRf cr_f)
 {
     float ar_f = (float)fix15_clamp(aso + fix15_mul(ab, (DP_BIT15 - aso)));
     float ar_roundf = 0.5f + ar_f;
@@ -2389,6 +2434,25 @@ static void assign_pigment_alpha(DP_Pixel15 *dst, Fix15 ab, Fix15 aso,
     dst->r = (uint16_t)(cr_f.r * ar_roundf);
     dst->a = (uint16_t)ar_f;
 }
+
+#define BLEND_MASK_SPACE_FLOAT_PRESERVE(FN, ARG)             \
+    do {                                                     \
+        DP_Pixel15 dp = *dst;                                \
+        if (dp.a != 0 && as != 0) {                          \
+            if (as == BIT15_FIX && opacity == BIT15_FIX) {   \
+                Fix15 ab = to_fix(dp.a);                     \
+                dst->b = from_fix(fix15_mul(cs.b, ab));      \
+                dst->g = from_fix(fix15_mul(cs.g, ab));      \
+                dst->r = from_fix(fix15_mul(cs.r, ab));      \
+            }                                                \
+            else {                                           \
+                Fix15 ab = from_fix(dp.a);                   \
+                Fix15 aso = fix15_mul(as, opacity);          \
+                BGRf cr_f = FN(dp, ARG, ab, aso);            \
+                assign_from_float_preserve(dst, dp.a, cr_f); \
+            }                                                \
+        }                                                    \
+    } while (0)
 
 static void blend_mask_pigment(DP_Pixel15 *dst, DP_UPixel15 src,
                                const uint16_t *mask, Fix15 opacity, int w,
@@ -2399,24 +2463,40 @@ static void blend_mask_pigment(DP_Pixel15 *dst, DP_UPixel15 src,
         (BGRf){(float)src.b / BIT15_FLOAT, (float)src.g / BIT15_FLOAT,
                (float)src.r / BIT15_FLOAT});
     FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
-        DP_Pixel15 dp = *dst;
-        if (dp.a != 0 && as != 0) {
-            if (as == BIT15_FIX && opacity == BIT15_FIX) {
-                Fix15 ab = to_fix(dp.a);
-                dst->b = from_fix(fix15_mul(cs.b, ab));
-                dst->g = from_fix(fix15_mul(cs.g, ab));
-                dst->r = from_fix(fix15_mul(cs.r, ab));
-            }
-            else {
-                Fix15 ab = from_fix(dp.a);
-                Fix15 aso = fix15_mul(as, opacity);
-                BGRf cr_f =
-                    blend_pigment_mask(dp, spectral_b.channels, ab, aso);
-                assign_pigment(dst, dp.a, cr_f);
-            }
-        }
+        BLEND_MASK_SPACE_FLOAT_PRESERVE(blend_pigment_mask,
+                                        spectral_b.channels);
     });
 }
+
+#define BLEND_MASK_SPACE_FLOAT_ALPHA(FN, ARG)                   \
+    do {                                                        \
+        if (as != 0) {                                          \
+            DP_Pixel15 dp = *dst;                               \
+            if (dp.a == 0) {                                    \
+                Fix15 aso = fix15_mul(as, opacity);             \
+                *dst = ((DP_Pixel15){                           \
+                    .b = from_fix(fix15_mul(cs.b, aso)),        \
+                    .g = from_fix(fix15_mul(cs.g, aso)),        \
+                    .r = from_fix(fix15_mul(cs.r, aso)),        \
+                    .a = from_fix(aso),                         \
+                });                                             \
+            }                                                   \
+            else if (as == BIT15_FIX && opacity == BIT15_FIX) { \
+                *dst = ((DP_Pixel15){                           \
+                    .b = src.b,                                 \
+                    .g = src.g,                                 \
+                    .r = src.r,                                 \
+                    .a = DP_BIT15,                              \
+                });                                             \
+            }                                                   \
+            else {                                              \
+                Fix15 ab = from_fix(dp.a);                      \
+                Fix15 aso = fix15_mul(as, opacity);             \
+                BGRf cr_f = FN(dp, ARG, ab, aso);               \
+                assign_from_float_alpha(dst, ab, aso, cr_f);    \
+            }                                                   \
+        }                                                       \
+    } while (0)
 
 static void blend_mask_pigment_alpha(DP_Pixel15 *dst, DP_UPixel15 src,
                                      const uint16_t *mask, Fix15 opacity, int w,
@@ -2427,36 +2507,87 @@ static void blend_mask_pigment_alpha(DP_Pixel15 *dst, DP_UPixel15 src,
         (BGRf){(float)src.b / BIT15_FLOAT, (float)src.g / BIT15_FLOAT,
                (float)src.r / BIT15_FLOAT});
     FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
-        if (as != 0) {
-            DP_Pixel15 dp = *dst;
-            if (dp.a == 0) {
-                Fix15 aso = fix15_mul(as, opacity);
-                *dst = ((DP_Pixel15){
-                    .b = from_fix(fix15_mul(cs.b, aso)),
-                    .g = from_fix(fix15_mul(cs.g, aso)),
-                    .r = from_fix(fix15_mul(cs.r, aso)),
-                    .a = from_fix(aso),
-                });
-            }
-            else if (as == BIT15_FIX && opacity == BIT15_FIX) {
-                *dst = ((DP_Pixel15){
-                    .b = src.b,
-                    .g = src.g,
-                    .r = src.r,
-                    .a = DP_BIT15,
-                });
-            }
-            else {
-                Fix15 ab = from_fix(dp.a);
-                Fix15 aso = fix15_mul(as, opacity);
-                BGRf cr_f =
-                    blend_pigment_mask(dp, spectral_b.channels, ab, aso);
-                assign_pigment_alpha(dst, ab, aso, cr_f);
-            }
-        }
+        BLEND_MASK_SPACE_FLOAT_ALPHA(blend_pigment_mask, spectral_b.channels);
     });
 }
 // SPDX-SnippetEnd
+
+static float channel_unpremultiply_to_linear(Fix15 c, Fix15 a)
+{
+    return srgb_to_linear((float)(c * BIT15_FIX / a) / BIT15_FLOAT);
+}
+
+static BGRf pixel_unpremultiply_to_linear(DP_Pixel15 p, Fix15 a)
+{
+    return (BGRf){
+        channel_unpremultiply_to_linear(to_fix(p.b), a),
+        channel_unpremultiply_to_linear(to_fix(p.g), a),
+        channel_unpremultiply_to_linear(to_fix(p.r), a),
+    };
+}
+
+static BGRf bgra_unpremultiply_to_linear(BGRA15 bgra)
+{
+    return (BGRf){
+        channel_unpremultiply_to_linear(bgra.b, bgra.a),
+        channel_unpremultiply_to_linear(bgra.g, bgra.a),
+        channel_unpremultiply_to_linear(bgra.r, bgra.a),
+    };
+}
+
+static BGRf mix_oklab(Lab dst_okl, Lab src_okl, Fix15 ab, Fix15 aso)
+{
+    float dst_a = (float)ab / BIT15_FLOAT;
+    float alpha = (float)aso / BIT15_FLOAT;
+    float mix_a = alpha + dst_a * (1.0f - alpha);
+    float blend = alpha / mix_a;
+
+    Lab mix_okl = (Lab){
+        src_okl.L * blend + dst_okl.L * (1.0f - blend),
+        src_okl.a * blend + dst_okl.a * (1.0f - blend),
+        src_okl.b * blend + dst_okl.b * (1.0f - blend),
+    };
+
+    BGRf mix_rgb = oklab_to_linear_srgb(mix_okl);
+    return (BGRf){linear_to_srgb(clampf(mix_rgb.b)),
+                  linear_to_srgb(clampf(mix_rgb.g)),
+                  linear_to_srgb(clampf(mix_rgb.r))};
+}
+
+static BGRf blend_oklab_mask(DP_Pixel15 dp, Lab src_okl, Fix15 ab, Fix15 aso)
+{
+    BGRf dst_lrgb = pixel_unpremultiply_to_linear(dp, ab);
+    Lab dst_okl = linear_srgb_to_oklab(dst_lrgb);
+    return mix_oklab(dst_okl, src_okl, ab, aso);
+}
+
+static void blend_mask_oklab_normal(DP_Pixel15 *dst, DP_UPixel15 src,
+                                    const uint16_t *mask, Fix15 opacity, int w,
+                                    int h, int mask_skip, int base_skip)
+{
+    BGR15 cs = to_ubgr(src);
+    Lab src_okl = linear_srgb_to_oklab(
+        (BGRf){srgb_to_linear((float)src.b / BIT15_FLOAT),
+               srgb_to_linear((float)src.g / BIT15_FLOAT),
+               srgb_to_linear((float)src.r / BIT15_FLOAT)});
+    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
+        BLEND_MASK_SPACE_FLOAT_ALPHA(blend_oklab_mask, src_okl);
+    });
+}
+
+static void blend_mask_oklab_recolor(DP_Pixel15 *dst, DP_UPixel15 src,
+                                     const uint16_t *mask, Fix15 opacity, int w,
+                                     int h, int mask_skip, int base_skip)
+{
+    BGR15 cs = to_ubgr(src);
+    Lab src_okl = linear_srgb_to_oklab(
+        (BGRf){srgb_to_linear((float)src.b / BIT15_FLOAT),
+               srgb_to_linear((float)src.g / BIT15_FLOAT),
+               srgb_to_linear((float)src.r / BIT15_FLOAT)});
+    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
+        BLEND_MASK_SPACE_FLOAT_PRESERVE(blend_oklab_mask, src_okl);
+    });
+}
 
 static void blend_mask_composite_separable(DP_Pixel15 *dst, DP_UPixel15 src,
                                            const uint16_t *mask, Fix15 opacity,
@@ -2930,6 +3061,51 @@ static void blend_mask_pigment_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
 }
 // SPDX-SnippetEnd
 
+static void blend_mask_oklab_normal_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
+                                               const uint16_t *mask,
+                                               Fix15 opacity, int w, int h,
+                                               int mask_skip, int base_skip)
+{
+    Fix15 erase_alpha = from_fix(src.a);
+    BGR15 cs = to_ubgr(src);
+    Lab src_okl = linear_srgb_to_oklab(
+        (BGRf){srgb_to_linear((float)src.b / BIT15_FLOAT),
+               srgb_to_linear((float)src.g / BIT15_FLOAT),
+               srgb_to_linear((float)src.r / BIT15_FLOAT)});
+
+    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
+        BGRA15 cb = to_bgra(*dst);
+        Fix15 opa_a = fix15_mul(as, opacity);
+        Fix15 opa_b = BIT15_FIX - opa_a;
+        Fix15 opa_a2 = fix15_mul(opa_a, erase_alpha);
+        Fix15 opa_out = opa_a2 + fix15_mul(opa_b, cb.a);
+
+        BGR15 cr;
+        if (cb.a == 0) {
+            cr.b = fix15_mul(opa_a2, cs.b);
+            cr.g = fix15_mul(opa_a2, cs.g);
+            cr.r = fix15_mul(opa_a2, cs.r);
+        }
+        else {
+            BGRf dst_lrgb = bgra_unpremultiply_to_linear(cb);
+            Lab dst_okl = linear_srgb_to_oklab(dst_lrgb);
+            BGRf s = mix_oklab(dst_okl, src_okl, cb.a, opa_a2);
+            float opa_out_f = (float)opa_out;
+            cr.b = (Fix15)(s.b * opa_out_f);
+            cr.g = (Fix15)(s.g * opa_out_f);
+            cr.r = (Fix15)(s.r * opa_out_f);
+        }
+
+        *dst = ((DP_Pixel15){
+            .b = from_fix(cr.b),
+            .g = from_fix(cr.g),
+            .r = from_fix(cr.r),
+            .a = from_fix(opa_out),
+        });
+    });
+}
+
+
 static void blend_mask_compare_density_soft(DP_Pixel15 *dst, DP_UPixel15 src,
                                             const uint16_t *mask, Fix15 opacity,
                                             int w, int h, int mask_skip,
@@ -3329,6 +3505,14 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
         blend_mask_to_alpha_op(dst, mask, to_fix(opacity), w, h, mask_skip,
                                base_skip, blend_erase_dark);
         break;
+    case DP_BLEND_MODE_OKLAB_NORMAL:
+        blend_mask_oklab_normal(dst, src, mask, to_fix(opacity), w, h,
+                                mask_skip, base_skip);
+        break;
+    case DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER:
+        blend_mask_oklab_normal_and_eraser(dst, src, mask, to_fix(opacity), w,
+                                           h, mask_skip, base_skip);
+        break;
     // Alpha-preserving separable blend modes (each channel handled separately)
     case DP_BLEND_MODE_MULTIPLY:
         blend_mask_composite_separable(dst, src, mask, opacity, w, h, mask_skip,
@@ -3483,6 +3667,10 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
     case DP_BLEND_MODE_PIGMENT:
         blend_mask_pigment(dst, src, mask, to_fix(opacity), w, h, mask_skip,
                            base_skip);
+        break;
+    case DP_BLEND_MODE_OKLAB_RECOLOR:
+        blend_mask_oklab_recolor(dst, src, mask, to_fix(opacity), w, h,
+                                 mask_skip, base_skip);
         break;
     // Alpha-affecting separable blend modes (each channel handled separately)
     case DP_BLEND_MODE_MULTIPLY_ALPHA:
@@ -3835,49 +4023,12 @@ static void blend_pixels_color_erase(DP_Pixel15 *DP_RESTRICT dst,
 // SPDX-SnippetBegin
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SDPX—SnippetName: Spectral blending based on MyPaint's blending.hpp
-static BGRf blend_pigment_pixel(DP_Pixel15 dp, DP_Pixel15 sp, Fix15 ab,
-                                Fix15 aso)
-{
-    DP_Spectral spectral_a = pixel15_to_spectral(sp);
-    DP_Spectral spectral_b = mix_spectral(dp, spectral_a.channels, ab, aso);
-    return spectral_to_rgb(spectral_b.channels);
-}
 
-static void blend_pixels_pigment(DP_Pixel15 *DP_RESTRICT dst,
-                                 const DP_Pixel15 *DP_RESTRICT src,
-                                 int pixel_count, Fix15 opacity)
-{
-    for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
-        DP_Pixel15 dp = *dst;
-        DP_Pixel15 sp = *src;
-        if (dp.a != 0 && sp.a != 0) {
-            if (sp.a == DP_BIT15 && opacity == BIT15_FIX) {
-                if (dp.a == DP_BIT15) {
-                    dst->b = sp.b;
-                    dst->g = sp.g;
-                    dst->r = sp.r;
-                }
-                else {
-                    BGR15 cs = to_bgr(sp);
-                    Fix15 ab = to_fix(dp.a);
-                    dst->b = from_fix(fix15_mul(cs.b, ab));
-                    dst->g = from_fix(fix15_mul(cs.g, ab));
-                    dst->r = from_fix(fix15_mul(cs.r, ab));
-                }
-            }
-            else {
-                Fix15 ab = from_fix(dp.a);
-                Fix15 aso = fix15_mul(from_fix(sp.a), opacity);
-                BGRf cr_f = blend_pigment_pixel(dp, sp, ab, aso);
-                assign_pigment(dst, dp.a, cr_f);
-            }
-        }
-    }
-}
-
-static void blend_pixels_pigment_alpha(DP_Pixel15 *DP_RESTRICT dst,
-                                       const DP_Pixel15 *DP_RESTRICT src,
-                                       int pixel_count, Fix15 opacity)
+static void blend_pixels_float_space_alpha(DP_Pixel15 *DP_RESTRICT dst,
+                                           const DP_Pixel15 *DP_RESTRICT src,
+                                           int pixel_count, Fix15 opacity,
+                                           BGRf (*blend)(DP_Pixel15, DP_Pixel15,
+                                                         Fix15, Fix15, Fix15))
 {
     for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
         DP_Pixel15 sp = *src;
@@ -3902,14 +4053,67 @@ static void blend_pixels_pigment_alpha(DP_Pixel15 *DP_RESTRICT dst,
             }
             else {
                 Fix15 ab = from_fix(dp.a);
-                Fix15 aso = fix15_mul(from_fix(sp.a), opacity);
-                BGRf cr_f = blend_pigment_pixel(dp, sp, ab, aso);
-                assign_pigment_alpha(dst, ab, aso, cr_f);
+                Fix15 as = from_fix(sp.a);
+                Fix15 aso = fix15_mul(as, opacity);
+                BGRf cr_f = blend(dp, sp, ab, as, aso);
+                assign_from_float_alpha(dst, ab, aso, cr_f);
             }
         }
     }
 }
+
+static void blend_pixels_float_space_preserve(
+    DP_Pixel15 *DP_RESTRICT dst, const DP_Pixel15 *DP_RESTRICT src,
+    int pixel_count, Fix15 opacity,
+    BGRf (*blend)(DP_Pixel15, DP_Pixel15, Fix15, Fix15, Fix15))
+{
+    for (int i = 0; i < pixel_count; ++i, ++dst, ++src) {
+        DP_Pixel15 dp = *dst;
+        DP_Pixel15 sp = *src;
+        if (dp.a != 0 && sp.a != 0) {
+            if (sp.a == DP_BIT15 && opacity == BIT15_FIX) {
+                if (dp.a == DP_BIT15) {
+                    dst->b = sp.b;
+                    dst->g = sp.g;
+                    dst->r = sp.r;
+                }
+                else {
+                    BGR15 cs = to_bgr(sp);
+                    Fix15 ab = to_fix(dp.a);
+                    dst->b = from_fix(fix15_mul(cs.b, ab));
+                    dst->g = from_fix(fix15_mul(cs.g, ab));
+                    dst->r = from_fix(fix15_mul(cs.r, ab));
+                }
+            }
+            else {
+                Fix15 ab = from_fix(dp.a);
+                Fix15 as = from_fix(sp.a);
+                Fix15 aso = fix15_mul(as, opacity);
+                BGRf cr_f = blend(dp, sp, ab, as, aso);
+                assign_from_float_preserve(dst, dp.a, cr_f);
+            }
+        }
+    }
+}
+
+static BGRf blend_pigment_pixel(DP_Pixel15 dp, DP_Pixel15 sp, Fix15 ab,
+                                DP_UNUSED Fix15 as, Fix15 aso)
+{
+    DP_Spectral spectral_a = pixel15_to_spectral(sp);
+    DP_Spectral spectral_b = mix_spectral(dp, spectral_a.channels, ab, aso);
+    return spectral_to_rgb(spectral_b.channels);
+}
 // SPDX-SnippetEnd
+
+static BGRf blend_oklab_pixel(DP_Pixel15 dp, DP_Pixel15 sp, Fix15 ab, Fix15 as,
+                              Fix15 aso)
+{
+    BGRf dst_lrgb = pixel_unpremultiply_to_linear(dp, ab);
+    BGRf src_lrgb = pixel_unpremultiply_to_linear(sp, as);
+    Lab dst_okl = linear_srgb_to_oklab(dst_lrgb);
+    Lab src_okl = linear_srgb_to_oklab(src_lrgb);
+    return mix_oklab(dst_okl, src_okl, ab, aso);
+}
 
 static void blend_pixels_composite_separable(DP_Pixel15 *DP_RESTRICT dst,
                                              const DP_Pixel15 *DP_RESTRICT src,
@@ -4137,7 +4341,12 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
         blend_pixels_color_erase(dst, src, pixel_count, opacity);
         break;
     case DP_BLEND_MODE_PIGMENT_ALPHA:
-        blend_pixels_pigment_alpha(dst, src, pixel_count, to_fix(opacity));
+        blend_pixels_float_space_alpha(dst, src, pixel_count, to_fix(opacity),
+                                       blend_pigment_pixel);
+        break;
+    case DP_BLEND_MODE_OKLAB_NORMAL:
+        blend_pixels_float_space_alpha(dst, src, pixel_count, to_fix(opacity),
+                                       blend_oklab_pixel);
         break;
     // Alpha-preserving separable blend modes (each channel handled separately)
     case DP_BLEND_MODE_MULTIPLY:
@@ -4279,7 +4488,12 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
             dst, src, pixel_count, to_fix(opacity), comp_lighter_color);
         break;
     case DP_BLEND_MODE_PIGMENT:
-        blend_pixels_pigment(dst, src, pixel_count, to_fix(opacity));
+        blend_pixels_float_space_preserve(dst, src, pixel_count,
+                                          to_fix(opacity), blend_pigment_pixel);
+        break;
+    case DP_BLEND_MODE_OKLAB_RECOLOR:
+        blend_pixels_float_space_preserve(dst, src, pixel_count,
+                                          to_fix(opacity), blend_oklab_pixel);
         break;
     // Alpha-affecting separable blend modes (each channel handled separately)
     case DP_BLEND_MODE_MULTIPLY_ALPHA:

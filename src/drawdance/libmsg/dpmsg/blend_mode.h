@@ -117,6 +117,9 @@ typedef enum DP_BlendMode {
     DP_BLEND_MODE_COLOR_ERASE_PRESERVE,
     DP_BLEND_MODE_LIGHT_TO_ALPHA_PRESERVE,
     DP_BLEND_MODE_DARK_TO_ALPHA_PRESERVE,
+    DP_BLEND_MODE_OKLAB_NORMAL,
+    DP_BLEND_MODE_OKLAB_RECOLOR,
+    DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER,
     DP_BLEND_MODE_LAST_EXCEPT_REPLACE, // Put new blend modes before this value.
     // Compatibility hack, not actual blend modes. Selections need new commands,
     // which are not accepted on the thick/builtin server. So we disguise them

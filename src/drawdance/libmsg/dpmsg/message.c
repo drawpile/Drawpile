@@ -561,9 +561,17 @@ void DP_msg_draw_dabs_mypaint_mode_extract(DP_MsgDrawDabsMyPaint *mddmp,
         }
     }
     else {
-        blend_mode = flags & DP_MYPAINT_BRUSH_PIGMENT_FLAG
-                       ? DP_BLEND_MODE_PIGMENT_AND_ERASER
-                       : DP_BLEND_MODE_NORMAL_AND_ERASER;
+        switch (flags & DP_MYPAINT_BRUSH_SPACE_MASK) {
+        case DP_MYPAINT_BRUSH_PIGMENT_FLAG:
+            blend_mode = DP_BLEND_MODE_PIGMENT_AND_ERASER;
+            break;
+        case DP_MYPAINT_BRUSH_OKLAB_FLAG:
+            blend_mode = DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER;
+            break;
+        default:
+            blend_mode = DP_BLEND_MODE_NORMAL_AND_ERASER;
+            break;
+        }
         paint_mode = DP_PAINT_MODE_DIRECT;
         posterize_num = mode;
     }

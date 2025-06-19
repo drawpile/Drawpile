@@ -278,7 +278,12 @@ const char *DP_protocol_version_name(const DP_ProtocolVersion *protover)
     if (protover && DP_str_equal(protover->ns, DP_PROTOCOL_VERSION_NAMESPACE)
         && protover->server == 4) {
         if (protover->major == 25) {
-            return "2.3.x";
+            if (protover->minor == 0) {
+                return "2.3.0 alpha";
+            }
+            else {
+                return "2.3.x";
+            }
         }
         else if (protover->major == 24) {
             return "2.2.x";

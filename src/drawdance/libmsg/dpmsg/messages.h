@@ -32,8 +32,8 @@ typedef void (*DP_MessageLocalMatchSetFn)(size_t, unsigned char *, void *);
 #define DP_PROTOCOL_VERSION_NAMESPACE        "dp"
 #define DP_PROTOCOL_VERSION_SERVER           4
 #define DP_PROTOCOL_VERSION_MAJOR            25
-#define DP_PROTOCOL_VERSION_MINOR            0
-#define DP_PROTOCOL_VERSION                  "dp:4.25.0"
+#define DP_PROTOCOL_VERSION_MINOR            1
+#define DP_PROTOCOL_VERSION                  "dp:4.25.1"
 #define DP_PROTOCOL_COMPAT_VERSION_NAMESPACE "dp"
 #define DP_PROTOCOL_COMPAT_VERSION_SERVER    4
 #define DP_PROTOCOL_COMPAT_VERSION_MAJOR     24

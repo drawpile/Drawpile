@@ -760,6 +760,30 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
             "-dp-dark-to-alpha-preserve",
             "Darkness to Alpha Preserve",
         },
+    [DP_BLEND_MODE_OKLAB_NORMAL] =
+        {
+            LAYER | BRUSH | INCREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_OKLAB_NORMAL",
+            "-dp-oklab-normal",
+            "-dp-oklab-normal",
+            "OKLAB Normal",
+        },
+    [DP_BLEND_MODE_OKLAB_RECOLOR] =
+        {
+            LAYER | BRUSH | PRESERVES_ALPHA | PRESENTS_AS_ALPHA_PRESERVING,
+            "DP_BLEND_MODE_OKLAB_RECOLOR",
+            "-dp-oklab-recolor",
+            "-dp-oklab-recolor",
+            "OKLAB Recolor",
+        },
+    [DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER] =
+        {
+            BRUSH | INCREASE_OPACITY | DECREASE_OPACITY | BLEND_BLANK,
+            "DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER",
+            "-dp-oklab-normal-and-eraser",
+            "-dp-oklab-normal-and-eraser",
+            "OKLAB Normal and Eraser",
+        },
     [DP_BLEND_MODE_REPLACE] =
         {
             BRUSH | INCREASE_OPACITY | DECREASE_OPACITY | BLEND_BLANK,
@@ -1136,6 +1160,11 @@ bool DP_blend_mode_alpha_preserve_pair(int blend_mode,
         alpha_affecting = DP_BLEND_MODE_DARK_TO_ALPHA;
         alpha_preserving = DP_BLEND_MODE_DARK_TO_ALPHA_PRESERVE;
         break;
+    case DP_BLEND_MODE_OKLAB_NORMAL:
+    case DP_BLEND_MODE_OKLAB_RECOLOR:
+        alpha_affecting = DP_BLEND_MODE_OKLAB_NORMAL;
+        alpha_preserving = DP_BLEND_MODE_OKLAB_RECOLOR;
+        break;
     default:
         return false;
     }
@@ -1236,6 +1265,8 @@ int DP_blend_mode_to_alpha_affecting(int blend_mode)
         return DP_BLEND_MODE_LIGHT_TO_ALPHA;
     case DP_BLEND_MODE_DARK_TO_ALPHA_PRESERVE:
         return DP_BLEND_MODE_DARK_TO_ALPHA;
+    case DP_BLEND_MODE_OKLAB_RECOLOR:
+        return DP_BLEND_MODE_OKLAB_NORMAL;
     default:
         return blend_mode;
     }
@@ -1328,6 +1359,8 @@ int DP_blend_mode_to_alpha_preserving(int blend_mode)
         return DP_BLEND_MODE_GREATER_WASH;
     case DP_BLEND_MODE_PIGMENT_ALPHA:
         return DP_BLEND_MODE_PIGMENT;
+    case DP_BLEND_MODE_OKLAB_NORMAL:
+        return DP_BLEND_MODE_OKLAB_RECOLOR;
     default:
         return blend_mode;
     }
@@ -1407,6 +1440,8 @@ uint8_t DP_blend_mode_to_compatible(uint8_t blend_mode)
     case DP_BLEND_MODE_GREATER_ALPHA_WASH:
     case DP_BLEND_MODE_PIGMENT_ALPHA:
     case DP_BLEND_MODE_PIGMENT_AND_ERASER:
+    case DP_BLEND_MODE_OKLAB_NORMAL:
+    case DP_BLEND_MODE_OKLAB_NORMAL_AND_ERASER:
         return DP_BLEND_MODE_NORMAL;
     case DP_BLEND_MODE_VIVID_LIGHT:
     case DP_BLEND_MODE_PIN_LIGHT:
@@ -1425,6 +1460,7 @@ uint8_t DP_blend_mode_to_compatible(uint8_t blend_mode)
     case DP_BLEND_MODE_GREATER:
     case DP_BLEND_MODE_GREATER_WASH:
     case DP_BLEND_MODE_PIGMENT:
+    case DP_BLEND_MODE_OKLAB_RECOLOR:
         return DP_BLEND_MODE_RECOLOR;
     case DP_BLEND_MODE_ERASE_PRESERVE:
     case DP_BLEND_MODE_LIGHT_TO_ALPHA:
