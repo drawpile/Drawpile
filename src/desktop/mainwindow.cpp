@@ -3919,6 +3919,7 @@ void MainWindow::handleToggleAction(int action)
 			setDefaultDockSizes();
 		}
 
+		updateSmallScreenToolBarVisibility();
 		refitWindow();
 	});
 }
@@ -5491,11 +5492,24 @@ void MainWindow::setupActions()
 	//
 	QAction *layoutsAction = makeAction("layouts", tr("&Layouts...")).icon("window_").shortcut("F9");
 
+	// clang-format on
 	QAction *toolbartoggles = new QAction(tr("&Toolbars"), this);
 	toolbartoggles->setMenu(toggletoolbarmenu);
 
 	QAction *docktoggles = new QAction(tr("&Docks"), this);
 	docktoggles->setMenu(toggledockmenu);
+
+	QAction *smallScreenSideToolbar =
+		makeAction("smallscreensidetoolbar", tr("Always show side toolbar"))
+			.noDefaultShortcut()
+			.checkable()
+			.checked();
+	QAction *smallScreenBottomToolbar =
+		makeAction("smallscreenbottomtoolbar", tr("Always show bottom toolbar"))
+			.noDefaultShortcut()
+			.checkable()
+			.checked();
+	// clang-format off
 
 	QAction *toggleChat = makeAction("togglechat", tr("Chat")).shortcut("Alt+C").checked();
 
@@ -5633,6 +5647,12 @@ void MainWindow::setupActions()
 
 	// clang-format on
 	connect(
+		smallScreenSideToolbar, &QAction::triggered, this,
+		&MainWindow::updateSmallScreenToolBarVisibility);
+	connect(
+		smallScreenBottomToolbar, &QAction::triggered, this,
+		&MainWindow::updateSmallScreenToolBarVisibility);
+	connect(
 		showrulers, &QAction::toggled, m_canvasFrame,
 		&widgets::CanvasFrame::setShowRulers);
 	connect(
@@ -5673,7 +5693,11 @@ void MainWindow::setupActions()
 	m_desktopModeActions->addAction(docktoggles);
 	viewmenu->addAction(toggleChat);
 	m_desktopModeActions->addAction(toggleChat);
-	m_desktopModeActions->addAction(viewmenu->addSeparator());
+	viewmenu->addAction(smallScreenSideToolbar);
+	m_smallScreenModeActions->addAction(smallScreenSideToolbar);
+	viewmenu->addAction(smallScreenBottomToolbar);
+	m_smallScreenModeActions->addAction(smallScreenBottomToolbar);
+	viewmenu->addSeparator();
 
 	QMenu *zoommenu = viewmenu->addMenu(tr("&Zoom"));
 	zoommenu->addAction(zoomin);
@@ -6848,6 +6872,7 @@ void MainWindow::setupActions()
 		singleGroup->addAction(browse);
 	}
 
+	updateSmallScreenToolBarVisibility();
 	updateInterfaceModeActions();
 }
 
@@ -7195,10 +7220,41 @@ void MainWindow::switchInterfaceMode(bool smallScreenMode)
 	}
 
 	m_canvasView->setShowToggleItems(smallScreenMode);
+	updateSmallScreenToolBarVisibility();
 	updateInterfaceModeActions();
 	reenableUpdates();
 
 	emit smallScreenModeChanged(smallScreenMode);
+}
+
+void MainWindow::updateSmallScreenToolBarVisibility()
+{
+	if(m_smallScreenMode) {
+		bool sideAlwaysVisible =
+			getAction("smallscreensidetoolbar")->isChecked();
+		bool bottomAlwaysVisible =
+			getAction("smallscreenbottomtoolbar")->isChecked();
+
+		bool anyWidgetVisible = false;
+		if(!sideAlwaysVisible || !bottomAlwaysVisible) {
+			QWidget *widgets[] = {
+				m_dockToolSettings, m_dockBrushPalette, m_dockTimeline,
+				m_dockOnionSkins,	m_dockNavigator,	m_dockColorSpinner,
+				m_dockColorSliders, m_dockColorPalette, m_dockColorCircle,
+				m_dockReference,	m_dockLayers,		m_chatbox,
+			};
+			for(QWidget *widget : widgets) {
+				if(widget->isVisible()) {
+					anyWidgetVisible = true;
+					break;
+				}
+			}
+		}
+
+		m_toolBarFile->setVisible(bottomAlwaysVisible || anyWidgetVisible);
+		m_toolBarEdit->setVisible(bottomAlwaysVisible || anyWidgetVisible);
+		m_toolBarDraw->setVisible(sideAlwaysVisible || anyWidgetVisible);
+	}
 }
 
 bool MainWindow::shouldShowDialogMaximized() const
