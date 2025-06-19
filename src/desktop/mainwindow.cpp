@@ -5590,12 +5590,14 @@ void MainWindow::setupActions()
 		makeAction("smallscreensidetoolbar", tr("Always show side toolbar"))
 			.noDefaultShortcut()
 			.checkable()
-			.checked();
+			.checked()
+			.remembered();
 	QAction *smallScreenBottomToolbar =
 		makeAction("smallscreenbottomtoolbar", tr("Always show bottom toolbar"))
 			.noDefaultShortcut()
 			.checkable()
-			.checked();
+			.checked()
+			.remembered();
 	// clang-format off
 
 	QAction *toggleChat = makeAction("togglechat", tr("Chat")).shortcut("Alt+C").checked();
