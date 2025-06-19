@@ -461,9 +461,8 @@ private:
 	QToolBar *m_toolBarFile;
 	QToolBar *m_toolBarEdit;
 	QToolBar *m_toolBarDraw;
-	QWidget *m_smallScreenLeftSpacer;
-	QWidget *m_smallScreenMiddleStretch;
-	QWidget *m_smallScreenRightSpacer;
+	QWidget *m_smallScreenLeftSpacer = nullptr;
+	QWidget *m_smallScreenRightSpacer = nullptr;
 	QAction *m_freehandAction;
 	QToolButton *m_freehandButton = nullptr;
 	QByteArray m_intendedDockState;

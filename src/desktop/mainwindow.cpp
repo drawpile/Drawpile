@@ -5229,10 +5229,6 @@ void MainWindow::setupActions()
 	toggletoolbarmenu->addAction(m_toolBarFile->toggleViewAction());
 
 	// clang-format on
-	m_smallScreenMiddleStretch = new QWidget;
-	m_smallScreenMiddleStretch->setSizePolicy(
-		QSizePolicy::Expanding, QSizePolicy::Preferred);
-	m_toolBarFile->addWidget(m_smallScreenMiddleStretch);
 
 	if(!m_singleSession) {
 		m_toolBarFile->addAction(newdocument);
@@ -5244,11 +5240,6 @@ void MainWindow::setupActions()
 	m_toolBarFile->addAction(save);
 	m_toolBarFile->addAction(record);
 #endif
-
-	m_smallScreenRightSpacer = new QWidget;
-	m_smallScreenRightSpacer->setFixedWidth(16);
-	m_smallScreenRightSpacer->setVisible(m_smallScreenMode);
-	m_toolBarFile->addWidget(m_smallScreenRightSpacer);
 
 #ifndef __EMSCRIPTEN__
 	if(!m_singleSession) {
@@ -5572,9 +5563,6 @@ void MainWindow::setupActions()
 	m_toolBarEdit = new QToolBar(tr("Edit Tools"));
 	m_toolBarEdit->setObjectName("edittoolsbar");
 	toggletoolbarmenu->addAction(m_toolBarEdit->toggleViewAction());
-	m_smallScreenLeftSpacer = new QWidget;
-	m_smallScreenLeftSpacer->setFixedWidth(16);
-	m_toolBarEdit->addWidget(m_smallScreenLeftSpacer);
 	m_toolBarEdit->addAction(undo);
 	m_toolBarEdit->addAction(redo);
 	m_toolBarEdit->addAction(cutlayer);
@@ -7141,17 +7129,29 @@ void MainWindow::resetDefaultDocks()
 
 void MainWindow::resetDefaultToolbars()
 {
-	m_smallScreenLeftSpacer->setVisible(m_smallScreenMode);
-	m_smallScreenMiddleStretch->setVisible(m_smallScreenMode);
-	m_smallScreenRightSpacer->setVisible(m_smallScreenMode);
 	if(m_smallScreenMode) {
 		addToolBar(Qt::BottomToolBarArea, m_toolBarEdit);
 		addToolBar(Qt::BottomToolBarArea, m_toolBarFile);
 		addToolBar(Qt::LeftToolBarArea, m_toolBarDraw);
+		if(!m_smallScreenLeftSpacer) {
+			m_smallScreenLeftSpacer = new QWidget;
+			m_smallScreenLeftSpacer->setFixedWidth(16);
+			m_toolBarEdit->insertWidget(
+				m_toolBarEdit->actions().constFirst(), m_smallScreenLeftSpacer);
+		}
+		if(!m_smallScreenRightSpacer) {
+			m_smallScreenRightSpacer = new QWidget;
+			m_smallScreenRightSpacer->setFixedWidth(16);
+			m_toolBarEdit->addWidget(m_smallScreenRightSpacer);
+		}
 	} else {
 		addToolBar(Qt::TopToolBarArea, m_toolBarFile);
 		addToolBar(Qt::TopToolBarArea, m_toolBarEdit);
 		addToolBar(Qt::TopToolBarArea, m_toolBarDraw);
+		delete m_smallScreenLeftSpacer;
+		m_smallScreenLeftSpacer = nullptr;
+		delete m_smallScreenRightSpacer;
+		m_smallScreenRightSpacer = nullptr;
 	}
 	m_toolBarFile->show();
 	m_toolBarEdit->show();
