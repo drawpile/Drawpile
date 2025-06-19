@@ -456,7 +456,9 @@ private:
 	QToolBar *m_toolBarFile;
 	QToolBar *m_toolBarEdit;
 	QToolBar *m_toolBarDraw;
-	QWidget *m_smallScreenSpacer;
+	QWidget *m_smallScreenLeftSpacer;
+	QWidget *m_smallScreenMiddleStretch;
+	QWidget *m_smallScreenRightSpacer;
 	QAction *m_freehandAction;
 	QToolButton *m_freehandButton;
 	QByteArray m_intendedDockState;

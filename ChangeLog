@@ -57,6 +57,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Harmony swatches, showing color harmonies for the current color to make palettes or shade with. Can be enabled and configured through the hamburger by right-click menu on the color wheel. Thanks tiar for suggesting.
  * Fix: Don't allow toggling toolbars in small screen mode, since they will just reappear again. Thanks CosmosX007 for reporting.
  * Feature: Add View → Always Show Side/Bottom Toolbar actions to let you choose whether to always show those toolbars in small screen mode or only when something is folded out using the tabs on the side. Thanks CosmosX007 for suggesting.
+ * Fix: Add some space to the sides of the bottom toolbar in small-screen mode so that the undo and record buttons don't get eaten by rounded corners. Thanks March for reporting.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

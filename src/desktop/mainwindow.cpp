@@ -5148,6 +5148,13 @@ void MainWindow::setupActions()
 	m_toolBarFile = new QToolBar(tr("File Tools"));
 	m_toolBarFile->setObjectName("filetoolsbar");
 	toggletoolbarmenu->addAction(m_toolBarFile->toggleViewAction());
+
+	// clang-format on
+	m_smallScreenMiddleStretch = new QWidget;
+	m_smallScreenMiddleStretch->setSizePolicy(
+		QSizePolicy::Expanding, QSizePolicy::Preferred);
+	m_toolBarFile->addWidget(m_smallScreenMiddleStretch);
+
 	if(!m_singleSession) {
 		m_toolBarFile->addAction(newdocument);
 		m_toolBarFile->addAction(open);
@@ -5158,6 +5165,10 @@ void MainWindow::setupActions()
 	m_toolBarFile->addAction(save);
 	m_toolBarFile->addAction(record);
 #endif
+
+	m_smallScreenRightSpacer = new QWidget;
+	m_smallScreenRightSpacer->setFixedWidth(16);
+	m_toolBarFile->addWidget(m_smallScreenRightSpacer);
 
 #ifndef __EMSCRIPTEN__
 	if(!m_singleSession) {
@@ -5172,6 +5183,7 @@ void MainWindow::setupActions()
 		});
 	}
 #endif
+	// clang-format off
 
 	//
 	// Edit menu
@@ -5480,6 +5492,9 @@ void MainWindow::setupActions()
 	m_toolBarEdit = new QToolBar(tr("Edit Tools"));
 	m_toolBarEdit->setObjectName("edittoolsbar");
 	toggletoolbarmenu->addAction(m_toolBarEdit->toggleViewAction());
+	m_smallScreenLeftSpacer = new QWidget;
+	m_smallScreenLeftSpacer->setFixedWidth(16);
+	m_toolBarEdit->addWidget(m_smallScreenLeftSpacer);
 	m_toolBarEdit->addAction(undo);
 	m_toolBarEdit->addAction(redo);
 	m_toolBarEdit->addAction(cutlayer);
@@ -6668,9 +6683,6 @@ void MainWindow::setupActions()
 		nextPreset, previousPreset, nextTag, previousTag);
 	// clang-format off
 
-	m_smallScreenSpacer = new QWidget;
-	m_smallScreenSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-	m_toolBarFile->insertWidget(m_toolBarFile->actions()[0], m_smallScreenSpacer);
 	resetDefaultToolbars();
 
 	//
@@ -7064,7 +7076,9 @@ void MainWindow::resetDefaultDocks()
 
 void MainWindow::resetDefaultToolbars()
 {
-	m_smallScreenSpacer->setVisible(m_smallScreenMode);
+	m_smallScreenLeftSpacer->setVisible(m_smallScreenMode);
+	m_smallScreenMiddleStretch->setVisible(m_smallScreenMode);
+	m_smallScreenRightSpacer->setVisible(m_smallScreenMode);
 	if(m_smallScreenMode) {
 		addToolBar(Qt::BottomToolBarArea, m_toolBarEdit);
 		addToolBar(Qt::BottomToolBarArea, m_toolBarFile);
