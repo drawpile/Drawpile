@@ -106,11 +106,8 @@ public:
 		const QWidget *widget = nullptr,
 		QStyleHintReturn *returnData = nullptr) const override
 	{
-		if(hint == SH_ToolTip_WakeUpDelay) {
-			return 0;
-		} else {
-			return QProxyStyle::styleHint(hint, option, widget, returnData);
-		}
+		int value = QProxyStyle::styleHint(hint, option, widget, returnData);
+		return hint == SH_ToolTip_WakeUpDelay ? qMin(value, 200) : value;
 	}
 
 private:
