@@ -275,6 +275,7 @@ void getInputInt(
 bool openOrQuestionUrl(QWidget *parent, const QUrl &url);
 
 QString makeActionShortcutText(QString text, const QKeySequence &shortcut);
+QString scrubAccelerators(const QString &text);
 
 QIcon makeColorIcon(int size, const QColor &color);
 QIcon makeColorIconFor(const QWidget *parent, const QColor &color);

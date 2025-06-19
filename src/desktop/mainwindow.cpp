@@ -22,6 +22,7 @@
 #include "desktop/dialogs/startdialog.h"
 #include "desktop/dialogs/systeminfodialog.h"
 #include "desktop/dialogs/tablettester.h"
+#include "desktop/dialogs/toolbarconfigdialog.h"
 #include "desktop/dialogs/touchtestdialog.h"
 #include "desktop/dialogs/userinfodialog.h"
 #include "desktop/docks/brushpalettedock.h"
@@ -569,6 +570,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	settings.bindInterfaceMode(this, [this](bool) {
 		updateInterfaceMode();
 	});
+	settings.bindToolBarConfig(this, &MainWindow::setToolBarConfig);
 	settings.bindTemporaryToolSwitch(
 		this, &MainWindow::updateTemporaryToolSwitch);
 	settings.bindTemporaryToolSwitchMs(
@@ -627,6 +629,18 @@ MainWindow::~MainWindow()
 }
 
 // clang-format on
+QMenu *MainWindow::createPopupMenu()
+{
+	QMenu *menu = QMainWindow::createPopupMenu();
+	menu->addSeparator();
+	menu->addAction(getAction("toolbarconfig"));
+	if(m_smallScreenMode) {
+		menu->addAction(getAction("smallscreensidetoolbar"));
+		menu->addAction(getAction("smallscreenbottomtoolbar"));
+	}
+	return menu;
+}
+
 void MainWindow::autoJoin(const QUrl &url, const QString &autoRecordPath)
 {
 	if(m_singleSession) {
@@ -963,7 +977,9 @@ void MainWindow::setDrawingToolsEnabled(bool enable)
 	bool actuallyEnabled = enable && m_doc->canvas();
 	m_drawingtools->setEnabled(actuallyEnabled);
 	m_deselecttools->setEnabled(actuallyEnabled);
-	m_freehandButton->setEnabled(actuallyEnabled);
+	if(m_freehandButton) {
+		m_freehandButton->setEnabled(actuallyEnabled);
+	}
 }
 
 void MainWindow::aboutToShowMenu()
@@ -1651,6 +1667,66 @@ void MainWindow::reactToResize()
 	updateInterfaceMode();
 	restoreIntendedDockState();
 	m_restoreIntendedDockStateDebounce.start();
+}
+
+void MainWindow::setToolBarConfig(const QVariantHash &cfg)
+{
+	delete m_freehandButton;
+	m_freehandButton = nullptr;
+
+	m_toolBarDraw->clear();
+
+	dialogs::ToolBarConfigDialog::readConfig(
+		cfg, QStringLiteral("draw"), m_drawingtools->actions(),
+		[this](QAction *action, bool hidden) {
+			if(!hidden) {
+				if(action == m_freehandAction) {
+					m_freehandButton = new QToolButton(this);
+					m_freehandButton->setCheckable(true);
+					m_freehandButton->setChecked(m_freehandAction->isChecked());
+					updateFreehandToolButton(
+						m_dockToolSettings->brushSettings()->getBrushMode());
+					connect(
+						m_freehandAction, &QAction::toggled, m_freehandButton,
+						&QAbstractButton::setChecked);
+					connect(
+						m_freehandButton, &QAbstractButton::clicked, this,
+						&MainWindow::handleFreehandToolButtonClicked);
+					connect(
+						m_dockToolSettings->brushSettings(),
+						&tools::BrushSettings::brushModeChanged, this,
+						&MainWindow::updateFreehandToolButton);
+					m_toolBarDraw->addWidget(m_freehandButton);
+				} else {
+					m_toolBarDraw->addAction(action);
+				}
+			}
+		});
+}
+
+void MainWindow::showToolBarConfigDialog()
+{
+	QString name = QStringLiteral("toolbarconfigdialog");
+	dialogs::ToolBarConfigDialog *dlg =
+		findChild<dialogs::ToolBarConfigDialog *>(
+			name, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->activateWindow();
+		dlg->raise();
+	} else {
+		dlg = new dialogs::ToolBarConfigDialog(
+			dpApp().settings().toolBarConfig(), m_drawingtools->actions(),
+			this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setObjectName(name);
+		connect(dlg, &dialogs::ToolBarConfigDialog::accepted, this, [dlg] {
+			desktop::settings::Settings &settings = dpApp().settings();
+			QVariantHash cfg = settings.toolBarConfig();
+			dlg->updateConfig(cfg);
+			settings.setToolBarConfig(cfg);
+		});
+		utils::showWindow(dlg);
+	}
 }
 // clang-format off
 
@@ -4035,53 +4111,56 @@ void MainWindow::toolChanged(tools::Tool::Type tool)
 	updateLockWidget();
 }
 
+// clang-format on
 void MainWindow::updateFreehandToolButton(int brushMode)
 {
-	QString iconName;
-	QString toolTip;
-	QString statusTip;
-	switch(brushMode) {
-	case tools::BrushSettings::EraseMode:
-		iconName = QStringLiteral("drawpile_brusherase");
-		toolTip = tr("Freehand (erase mode, click to reset)");
-		statusTip = tr("Freehand brush tool (erase mode)");
-		break;
-	case tools::BrushSettings::AlphaLockMode:
-		iconName = QStringLiteral("drawpile_brushlock");
-		toolTip = tr("Freehand (alpha lock mode, click to reset)");
-		statusTip = tr("Freehand brush tool (alpha lock mode)");
-		break;
-	case tools::BrushSettings::NormalMode:
-		iconName = QStringLiteral("draw-brush");
-		toolTip = m_freehandAction->toolTip();
-		statusTip = m_freehandAction->statusTip();
-		break;
-	default:
-		return; // Eraser slot active, don't mess with the icon.
+	if(m_freehandButton) {
+		QString iconName;
+		QString toolTip;
+		QString statusTip;
+		switch(brushMode) {
+		case tools::BrushSettings::EraseMode:
+			iconName = QStringLiteral("drawpile_brusherase");
+			toolTip = tr("Freehand (erase mode, click to reset)");
+			statusTip = tr("Freehand brush tool (erase mode)");
+			break;
+		case tools::BrushSettings::AlphaLockMode:
+			iconName = QStringLiteral("drawpile_brushlock");
+			toolTip = tr("Freehand (alpha lock mode, click to reset)");
+			statusTip = tr("Freehand brush tool (alpha lock mode)");
+			break;
+		case tools::BrushSettings::NormalMode:
+			iconName = QStringLiteral("draw-brush");
+			toolTip = m_freehandAction->toolTip();
+			statusTip = m_freehandAction->statusTip();
+			break;
+		default:
+			return; // Eraser slot active, don't mess with the icon.
+		}
+		m_freehandButton->setIcon(QIcon::fromTheme(iconName));
+		m_freehandButton->setToolTip(toolTip);
+		m_freehandButton->setStatusTip(statusTip);
 	}
-	m_freehandButton->setIcon(QIcon::fromTheme(iconName));
-	m_freehandButton->setToolTip(toolTip);
-	m_freehandButton->setStatusTip(statusTip);
 }
 
 void MainWindow::handleFreehandToolButtonClicked()
 {
-	QSignalBlocker blocker(m_freehandButton);
-	if(m_dockToolSettings->currentTool() == tools::Tool::FREEHAND) {
-		switch(m_dockToolSettings->brushSettings()->getBrushMode()) {
-		case tools::BrushSettings::EraseMode:
-		case tools::BrushSettings::AlphaLockMode:
-			m_dockToolSettings->brushSettings()->resetBrushMode();
-			m_freehandButton->setChecked(m_freehandAction->isChecked());
-			return;
-		default:
-			break;
+	if(m_freehandButton) {
+		QSignalBlocker blocker(m_freehandButton);
+		if(m_dockToolSettings->currentTool() == tools::Tool::FREEHAND) {
+			switch(m_dockToolSettings->brushSettings()->getBrushMode()) {
+			case tools::BrushSettings::EraseMode:
+			case tools::BrushSettings::AlphaLockMode:
+				m_dockToolSettings->brushSettings()->resetBrushMode();
+				m_freehandButton->setChecked(m_freehandAction->isChecked());
+				return;
+			default:
+				break;
+			}
 		}
 	}
 	m_freehandAction->trigger();
 }
-
-// clang-format on
 
 void MainWindow::updateSelectTransformActions()
 {
@@ -5168,6 +5247,7 @@ void MainWindow::setupActions()
 
 	m_smallScreenRightSpacer = new QWidget;
 	m_smallScreenRightSpacer->setFixedWidth(16);
+	m_smallScreenRightSpacer->setVisible(m_smallScreenMode);
 	m_toolBarFile->addWidget(m_smallScreenRightSpacer);
 
 #ifndef __EMSCRIPTEN__
@@ -5511,6 +5591,10 @@ void MainWindow::setupActions()
 	QAction *toolbartoggles = new QAction(tr("&Toolbars"), this);
 	toolbartoggles->setMenu(toggletoolbarmenu);
 
+	QAction *toolbarconfig =
+		makeAction("toolbarconfig", tr("Configure drawing toolbar…"))
+			.noDefaultShortcut();
+
 	QAction *docktoggles = new QAction(tr("&Docks"), this);
 	docktoggles->setMenu(toggledockmenu);
 
@@ -5621,11 +5705,17 @@ void MainWindow::setupActions()
 							  .shortcut(FULLSCREEN_SHORTCUT)
 							  .checkable();
 #endif
+
+	connect(
+		layoutsAction, &QAction::triggered, this,
+		&MainWindow::showLayoutsDialog);
+	connect(
+		toolbarconfig, &QAction::triggered, this,
+		&MainWindow::showToolBarConfigDialog);
+	connect(
+		m_statusChatButton, &QToolButton::clicked, toggleChat,
+		&QAction::trigger);
 	// clang-format off
-
-	connect(layoutsAction, &QAction::triggered, this, &MainWindow::showLayoutsDialog);
-
-	connect(m_statusChatButton, &QToolButton::clicked, toggleChat, &QAction::trigger);
 
 	connect(m_chatbox, &widgets::ChatBox::requestUserInfo, this, &MainWindow::showUserInfoDialog);
 	connect(m_chatbox, &widgets::ChatBox::requestCurrentBrush, this, &MainWindow::requestCurrentBrush);
@@ -5703,7 +5793,6 @@ void MainWindow::setupActions()
 	viewmenu->addAction(layoutsAction);
 	m_desktopModeActions->addAction(layoutsAction);
 	viewmenu->addAction(toolbartoggles);
-	m_desktopModeActions->addAction(toolbartoggles);
 	viewmenu->addAction(docktoggles);
 	m_desktopModeActions->addAction(docktoggles);
 	viewmenu->addAction(toggleChat);
@@ -6493,6 +6582,8 @@ void MainWindow::setupActions()
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addActions(m_drawingtools->actions());
+	toolsmenu->addAction(toolbarconfig);
+	toolsmenu->addSeparator();
 
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 	QMenu *deselectshortcuts = toolsmenu->addMenu(tr("Deselect Shortcuts"));
@@ -6629,34 +6720,8 @@ void MainWindow::setupActions()
 	m_toolBarDraw = new QToolBar(tr("Drawing tools"));
 	m_toolBarDraw->setObjectName("drawtoolsbar");
 	toggletoolbarmenu->addAction(m_toolBarDraw->toggleViewAction());
-
-	m_freehandButton = new QToolButton(this);
-	m_freehandButton->setCheckable(true);
-	m_freehandButton->setChecked(m_freehandAction->isChecked());
-	updateFreehandToolButton(tools::BrushSettings::NormalMode);
-	connect(
-		m_freehandAction, &QAction::toggled, m_freehandButton,
-		&QAbstractButton::setChecked);
-	connect(
-		m_freehandButton, &QAbstractButton::clicked, this,
-		&MainWindow::handleFreehandToolButtonClicked);
-	connect(
-		m_dockToolSettings->brushSettings(),
-		&tools::BrushSettings::brushModeChanged, this,
-		&MainWindow::updateFreehandToolButton);
-
-	for(QAction *dt : m_drawingtools->actions()) {
-		// Add a separator before color picker to separate brushes from non-destructive tools
-		if(dt == pickertool) {
-			m_toolBarDraw->addSeparator();
-		}
-		// Special button for the freehand tool to show erase and lock state.
-		if(dt == m_freehandAction) {
-			m_toolBarDraw->addWidget(m_freehandButton);
-		} else {
-			m_toolBarDraw->addAction(dt);
-		}
-	}
+	toggletoolbarmenu->addSeparator();
+	toggletoolbarmenu->addAction(toolbarconfig);
 
 	// clang-format on
 	for(const canvas::blendmode::Named &named :

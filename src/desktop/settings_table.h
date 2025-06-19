@@ -288,6 +288,7 @@ SETTING_GETSET_V(V3, themePalette , ThemePalette              , "settings/theme/
 	, &any::get	      , &themePalette::set)
 SETTING_FULL(V2, themeStyle       , ThemeStyle                , "settings/theme/style"                  , THEME_STYLE_DEFAULT
 	, &any::get       , &any::set, &themeStyle::notify)
+SETTING(toolBarConfig             , ToolBarConfig             , "settings/toolbarconfig"                , QVariantHash())
 SETTING(toolToggle                , ToolToggle                , "settings/tooltoggle"                   , true)
 SETTING(toolset                   , Toolset                   , "tools/toolset"                         , (QMap<QString, QVariantHash>()))
 SETTING(touchDrawPressure         , TouchDrawPressure         , "settings/input/touchdrawpressure"      , false)

@@ -209,6 +209,8 @@ target_sources(drawpile PRIVATE
 	dialogs/systeminfodialog.h
 	dialogs/tablettester.cpp
 	dialogs/tablettester.h
+	dialogs/toolbarconfigdialog.cpp
+	dialogs/toolbarconfigdialog.h
 	dialogs/touchtestdialog.cpp
 	dialogs/touchtestdialog.h
 	dialogs/userinfodialog.cpp

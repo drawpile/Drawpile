@@ -1114,6 +1114,11 @@ QString makeActionShortcutText(QString text, const QKeySequence &shortcut)
 	}
 }
 
+QString scrubAccelerators(const QString &text)
+{
+	return makeActionShortcutText(text, QKeySequence());
+}
+
 namespace {
 static void getInputTextWith(
 	QWidget *parent, const QString &title, const QString &label,

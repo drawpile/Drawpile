@@ -97,6 +97,8 @@ public:
 	MainWindow(bool restoreWindowPosition = true, bool singleSession = false);
 	~MainWindow() override;
 
+	QMenu *createPopupMenu() override;
+
 	void openRecent(const QString &path, QTemporaryFile *tempFile = nullptr);
 	void openPath(const QString &path, QTemporaryFile *tempFile = nullptr);
 	void autoJoin(const QUrl &url, const QString &autoRecordPath);
@@ -403,6 +405,9 @@ private:
 	void keepCanvasPosition(const std::function<void()> &block);
 	void reactToResize();
 
+	void setToolBarConfig(const QVariantHash &cfg);
+	void showToolBarConfigDialog();
+
 	static bool isInitialSmallScreenMode();
 	void updateInterfaceMode();
 	bool shouldUseSmallScreenMode(const desktop::settings::Settings &settings);
@@ -460,7 +465,7 @@ private:
 	QWidget *m_smallScreenMiddleStretch;
 	QWidget *m_smallScreenRightSpacer;
 	QAction *m_freehandAction;
-	QToolButton *m_freehandButton;
+	QToolButton *m_freehandButton = nullptr;
 	QByteArray m_intendedDockState;
 	QByteArray m_hiddenDockState;
 	widgets::ChatBox *m_chatbox;
