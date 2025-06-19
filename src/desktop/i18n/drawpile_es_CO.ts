@@ -2250,7 +2250,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+4"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar capa &amp;Modo Sketch</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="-93"/>
@@ -2556,17 +2556,17 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Alejar Desde El Centro</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reiniciar Zoom</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiniciar Zoom Al Centro</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -2576,22 +2576,22 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar &amp;Reglas</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar Selección &amp;Mascara</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle selection display between a mask and an outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar la visualización de selección entre una máscara y un contorno</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ajustar a la Pantalla</translation>
     </message>
     <message>
         <location line="+128"/>
@@ -2838,12 +2838,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Siguiente Fotograma Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Anterior Fotograma Clave</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3096,7 +3096,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>System Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>Información del Sistema…</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -3131,7 +3131,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Choose the current foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Elige el color de primer plano actual</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3141,57 +3141,57 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Swap current foreground and background color with each other</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercambiar el color actual de primer plano y del fondo entre sí</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set foreground color to black and background color to white</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurar el color de primer plano en negro y el color del fondo en blanco</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reiniciar pincel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Restablecer todos los pinceles &amp;Ranuras</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiniciar todos los &amp;Pinceles</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Next Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Siguiente Pincel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Previous Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pincel Anterior</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Siguiente Etiqueta de Pincel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiqueta de Pincel Anterior</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Siguiente Ranura de Pincel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Ranura de Pincel Anterior</translation>
     </message>
     <message>
         <location line="+96"/>
