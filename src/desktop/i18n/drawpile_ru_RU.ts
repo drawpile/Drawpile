@@ -598,7 +598,7 @@
     <message>
         <location line="+1"/>
         <source>Save as %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить как %1</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -624,7 +624,7 @@
         <location filename="../ui/fillsettings.ui" line="+330"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+310"/>
         <source>Feather: </source>
-        <translation type="unfinished"></translation>
+        <translation>Перо: </translation>
     </message>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+143"/>
