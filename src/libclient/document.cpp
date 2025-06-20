@@ -1699,14 +1699,19 @@ void Document::downloadCanvasState(
 		[this, saver, fileName,
 		 path](const QString &error, qint64 elapsedMsec) {
 			if(error.isEmpty()) {
-				QFile file(path);
-				file.open(QIODevice::ReadOnly);
-				emit canvasDownloadReady(fileName, file.readAll(), elapsedMsec);
+				QByteArray bytes;
+				{
+					QFile file(path);
+					file.open(QIODevice::ReadOnly);
+					bytes = file.readAll();
+				}
+				emit canvasDownloadReady(fileName, bytes, elapsedMsec);
 			} else {
 				emit canvasDownloadError(error);
 			}
 			saver->deleteLater();
-		});
+		},
+		Qt::QueuedConnection);
 	emit canvasDownloadStarted();
 	QThreadPool::globalInstance()->start(saver);
 }

@@ -2444,8 +2444,12 @@ void MainWindow::onCanvasDownloadStarted()
 void MainWindow::onCanvasDownloadReady(
 	const QString &defaultName, const QByteArray &bytes, qint64 elapsedMsec)
 {
-	onCanvasSaved(QString(), elapsedMsec);
-	offerDownload(defaultName, bytes);
+	if(bytes.isEmpty()) {
+		onCanvasSaved(tr("File is empty."), 0);
+	} else {
+		onCanvasSaved(QString(), elapsedMsec);
+		offerDownload(defaultName, bytes);
+	}
 }
 
 void MainWindow::onCanvasDownloadError(const QString &errorMessage)
@@ -2456,15 +2460,25 @@ void MainWindow::onCanvasDownloadError(const QString &errorMessage)
 void MainWindow::offerDownload(
 	const QString &defaultName, const QByteArray &bytes)
 {
-	QMessageBox *msgbox = utils::makeInformationWithSaveButton(
-		this, tr("Download Complete"),
-		tr("Download complete, click on \"Save\" to save your file."));
-	connect(
-		msgbox->button(QMessageBox::Save), &QAbstractButton::clicked, this,
-		[this, defaultName, bytes]() {
-			FileWrangler(this).saveFileContent(defaultName, bytes);
-		});
-	msgbox->show();
+	if(bytes.isEmpty()) {
+		showErrorMessageWithDetails(
+			tr("Error setting up download."), tr("File is empty."));
+	} else {
+		QMessageBox *msgbox = utils::makeInformationWithSaveButton(
+			this, tr("Download Complete"),
+			tr("Download complete, click on \"Save\" to save your file."));
+		connect(
+			msgbox->button(QMessageBox::Save), &QAbstractButton::clicked, this,
+			[this, defaultName, bytes]() {
+				if(bytes.isEmpty()) {
+					showErrorMessageWithDetails(
+						tr("Error performing download."), tr("File is empty."));
+				} else {
+					FileWrangler(this).saveFileContent(defaultName, bytes);
+				}
+			});
+		msgbox->show();
+	}
 }
 #endif
 
