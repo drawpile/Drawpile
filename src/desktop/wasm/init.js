@@ -717,19 +717,6 @@ import { UAParser } from "ua-parser-js";
     }
   }
 
-  function getBustedSafari(ua) {
-    const browser = ua.getBrowser();
-    const browserName = browser?.name || "";
-    if (/^safari$/i.test(browserName)) {
-      const browserVersion = browser?.version || "";
-      const match = /^([0-9]+)\./.exec(browserVersion);
-      if (match && Number.parseInt(match[1], 10) >= 18) {
-        return `${browserName} ${browserVersion}`;
-      }
-    }
-    return null;
-  }
-
   function getIDevice(ua) {
     const device = ua.getDevice()?.model || "";
     return device.indexOf("iPad") !== -1
@@ -794,31 +781,6 @@ import { UAParser } from "ua-parser-js";
             `using the ${iDevice} system browser (Safari) directly instead.`,
         ]);
       }
-    }
-
-    if (getBustedSafari(ua)) {
-      return tag("p", [
-        tag("strong", ["ℹ️ Browser workaround:"]),
-        " your web browser is affected by ",
-        tag(
-          "a",
-          {
-            href: "https://bugs.webkit.org/show_bug.cgi?id=284752",
-            target: "_blank",
-          },
-          "this bug that Apple introduced in Safari version 18",
-        ),
-        ". Drawpile will try to make it work anyway. If it doesn't run or ",
-        "crashes for you, ",
-        tag(
-          "a",
-          {
-            href: "https://drawpile.net/help/",
-            target: "_blank",
-          },
-          "please let us know!",
-        ),
-      ]);
     }
 
     return null;
