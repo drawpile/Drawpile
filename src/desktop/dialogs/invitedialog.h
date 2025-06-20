@@ -25,7 +25,7 @@ public:
 		widgets::NetStatus *netStatus, net::InviteListModel *inviteListModel,
 		bool webSupported, bool allowWeb, bool preferWebSockets, bool nsfm,
 		bool op, bool moderator, bool supportsCodes, bool codesEnabled,
-		QWidget *parent);
+		bool compatibilityMode, QWidget *parent);
 
 	~InviteDialog() override;
 
@@ -44,6 +44,9 @@ signals:
 	void setInviteCodesEnabled(bool enabled);
 
 private:
+	static constexpr int URL_PAGE_INDEX = 0;
+	static constexpr int IP_PAGE_INDEX = 1;
+
 	QString buildWebInviteLink(
 		bool includePassword, bool web, const QString &secret) const;
 	static QString buildPath(QString path, const QString &secret);
@@ -62,8 +65,7 @@ private:
 	void emitCreateInviteCode(int maxUses, bool op, bool trust);
 	void showInviteCodeContextMenu(const QPoint &pos);
 
-	static constexpr int URL_PAGE_INDEX = 0;
-	static constexpr int IP_PAGE_INDEX = 1;
+	static int getInviteVersion(bool compatibilityMode);
 
 	struct Private;
 	Private *d;

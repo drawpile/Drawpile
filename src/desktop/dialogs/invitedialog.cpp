@@ -36,13 +36,15 @@ struct InviteDialog::Private {
 	bool moderator;
 	bool supportsCodes;
 	bool codesEnabled;
+	bool compatibilityMode;
 	bool expectSelectInviteCode = false;
 };
 
 InviteDialog::InviteDialog(
 	widgets::NetStatus *netStatus, net::InviteListModel *inviteListModel,
 	bool webSupported, bool allowWeb, bool preferWebSockets, bool nsfm, bool op,
-	bool moderator, bool supportsCodes, bool codesEnabled, QWidget *parent)
+	bool moderator, bool supportsCodes, bool codesEnabled,
+	bool compatibilityMode, QWidget *parent)
 	: QDialog{parent}
 	, d{new Private}
 {
@@ -57,6 +59,7 @@ InviteDialog::InviteDialog(
 	d->moderator = moderator;
 	d->supportsCodes = supportsCodes;
 	d->codesEnabled = codesEnabled;
+	d->compatibilityMode = compatibilityMode;
 	d->ui.setupUi(this);
 	d->ui.urlEdit->setWordWrapMode(QTextOption::WrapAnywhere);
 	d->ui.ipProgressBar->setVisible(false);
@@ -222,6 +225,8 @@ QString InviteDialog::buildWebInviteLink(
 							 : QString{};
 
 	QStringList queryParams;
+	queryParams.append(
+		QStringLiteral("v%1").arg(getInviteVersion(d->compatibilityMode)));
 	if(d->preferWebSockets) {
 		queryParams.append(QStringLiteral("w"));
 	}
@@ -433,6 +438,36 @@ void InviteDialog::showInviteCodeContextMenu(const QPoint &pos)
 	d->inviteCodeCreate->setEnabled(d->ui.createCodeButton->isEnabled());
 	d->inviteCodeRemove->setEnabled(d->ui.removeCodeButton->isEnabled());
 	d->inviteCodeMenu->popup(d->ui.codesView->mapToGlobal(pos));
+}
+
+int InviteDialog::getInviteVersion(bool compatibilityMode)
+{
+	// We indicate which version the user is going to be joining. If there's a
+	// beta going on or similar, we can show them information about that on the
+	// invite page, rather than them finding out about it after trying to join
+	// and only then being told that the version is outdated and figuring things
+	// out from there themselves.
+	// 0 => dp:4.24.0 (Drawpile 2.2)
+	// 1 => dp:4.25.1 (Drawpile 2.3)
+
+#ifdef DP_PROTOCOL_COMPAT_VERSION
+	static_assert(
+		DP_PROTOCOL_COMPAT_VERSION_SERVER == 4 &&
+			DP_PROTOCOL_COMPAT_VERSION_MAJOR == 24 &&
+			DP_PROTOCOL_COMPAT_VERSION_MINOR == 0,
+		"Update invite link compat version");
+	constexpr int COMPAT_VERSION = 0;
+	if(compatibilityMode) {
+		return COMPAT_VERSION;
+	}
+#endif
+
+	static_assert(
+		DP_PROTOCOL_VERSION_SERVER == 4 && DP_PROTOCOL_VERSION_MAJOR == 25 &&
+			DP_PROTOCOL_VERSION_MINOR == 1,
+		"Update invite link version");
+	constexpr int CURRENT_VERSION = 1;
+	return CURRENT_VERSION;
 }
 
 

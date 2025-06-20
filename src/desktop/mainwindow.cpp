@@ -3189,7 +3189,8 @@ void MainWindow::invite()
 			m_doc->isSessionAllowWeb(), m_doc->isSessionPreferWebSockets(),
 			m_doc->isSessionNsfm(), acls->amOperator(), client->isModerator(),
 			m_doc->serverSupportsInviteCodes(),
-			m_doc->isSessionInviteCodesEnabled(), this);
+			m_doc->isSessionInviteCodesEnabled(), m_doc->isCompatibilityMode(),
+			this);
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 		connect(
 			m_doc, &Document::sessionWebSupportedChanged, dlg,
