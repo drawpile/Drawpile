@@ -99,38 +99,50 @@ sub check_args {
 }
 
 sub parse_args {
-    my ($help, $maximum_size, $maximum_age, $by, $dry_run);
+    my ($help, $maximum_size, $maximum_age, $maximum_count, $by, $dry_run);
     my $ok = GetOptions(
         'h|help|?' => \$help,
         's|maximum-size=s' => \$maximum_size,
         'a|maximum-age=s' => \$maximum_age,
+        'c|maximum-count=s' => \$maximum_count,
         'b|by=s' => \$by,
         'n|dry-run' => \$dry_run,
     );
     pod2usage(-exitval => 0, -verbose => 2) if $help;
     pod2usage(-exitval => 2, -verbose => 0) unless $ok;
 
-    my ($mode, $maximum);
-    if (length $maximum_size) {
-        if (length $maximum_age) {
-            pod2usage(
-                -message => "Can't give both --maximum-size and --maximum-age",
-                -exitval => 2,
-                -verbose => 0,
-            );
-        } else {
-            $mode = 'size';
-            $maximum = parse_size($maximum_size);
-        }
-    } elsif (length $maximum_age) {
-        $mode = 'age';
-        $maximum = parse_age($maximum_age);
-    } else {
+    my $have_maximum_size = length($maximum_size) ? 1 : 0;
+    my $have_maximum_age = length($maximum_age) ? 1 : 0;
+    my $have_maximum_count = length($maximum_count) ? 1 : 0;
+    my $modes_given = $have_maximum_age + $have_maximum_count + $have_maximum_size;
+    if ($modes_given != 1) {
         pod2usage(
-            -message => 'Either --maximum-size or --maximum-age must be given',
+            -message => "Must give exactly one of --maximum-size, --maximum-age or --maximum-count",
             -exitval => 2,
             -verbose => 0,
         );
+    }
+
+    my ($mode, $maximum);
+    if ($have_maximum_size) {
+        $mode = 'size';
+        $maximum = parse_size($maximum_size);
+    } elsif ($have_maximum_age) {
+        $mode = 'age';
+        $maximum = parse_age($maximum_age);
+    } elsif ($have_maximum_count) {
+        $mode = 'count';
+        {
+            use warnings FATAL => 'numeric';
+            $maximum = int $maximum_count;
+        }
+        if ($maximum < 0) {
+            die "Invalid --maximum-count '$maximum_count'\n";
+        } elsif (defined $by) {
+            die "Can't pass --by together with --maximum-count\n";
+        }
+    } else {
+        die "Unknown mode (shouldn't happen)";
     }
 
     my $by_session;
@@ -350,6 +362,23 @@ sub delete_recordings_by_age {
 }
 
 
+sub delete_by_count {
+    my ($maximum_count, $dry_run, @sessions) = @_;
+    for my $session (@sessions) {
+        if ($session->{archived}) {
+            say_debug("Not pruning $session->{id} because it's archived")
+                if DEBUG;
+        } else {
+            my @target_files = grep { is_archived_path($_->{path}) } @{$session->{files}};
+            my $last = $#target_files - $maximum_count;
+            for my $file (@target_files[0 .. $last]) {
+                delete_archived_path($file->{path}, $dry_run);
+            }
+        }
+    }
+}
+
+
 my ($mode, $maximum, $by_session, $dry_run, @dirs) = parse_args();
 my @sessions = gather_sessions(@dirs);
 
@@ -377,6 +406,8 @@ if ($mode eq 'size') {
     } else {
         delete_recordings_by_age($maximum, $dry_run, @sessions);
     }
+} elsif ($mode eq 'count') {
+    delete_by_count($maximum, $dry_run, @sessions);
 } else {
     die "Unknown mode '$mode'\n";
 }
@@ -389,6 +420,12 @@ __END__
 purge-sessions - delete archived drawpile-srv sessions by size or age
 
 =head1 SYNOPSIS
+
+To delete recordings of active sessions beyond a certain count (good idea to run
+this first to clamp down very busy sessions to a reasonable amount to not end up
+with a bajillion backups for the same super busy session):
+
+    purge-sessions --maximum-count=20 /path/to/sessions/directory
 
 To delete archived files by size:
 
@@ -474,6 +511,19 @@ B<AGE>.
 
 Note that in session mode, long-running sessions will keep accumulating files
 until they terminate!
+
+=item B<--maximum-count=COUNT>, B<-c COUNT>
+
+Delete archived recording files of active sessions until they have at most
+C<COUNT> left. 0 means that all archives except the currently running file will
+be purged. This will not delete archives of archived sessions.
+
+This is intended to clamp down very busy sessions to a reasonable amount of
+recordings, since they can clog up backups with their large amounts of
+recordings and "punish" other sessions by evicting their files too early just to
+keep dozens of recordings of the same sessions laying around.
+
+You can't use this together with C<--by>.
 
 =item B<--dry-run>, B<-n>
 
