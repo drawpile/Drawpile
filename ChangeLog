@@ -25,6 +25,7 @@ Unreleased Version 2.2.3-pre
  * Fix: Remove warning about Firefox on Android not supporting pressure sensitivity, since it does now. Thanks tiar for reporting.
  * Feature: Make Drawpile build on the Haiku operating system again. Thanks Begasus for contributing.
  * Server Fix: Interpret the connection quality setting sent by clients correctly when choosing who to pick for autoresets. Thanks Blozzom and grimsley for reporting.
+ * Fix: Correct warning about Firefox on Linux not supporting pressure sensitivity, since it does work on some systems. Thanks Kuuuube for reporting.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.

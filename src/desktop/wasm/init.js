@@ -756,9 +756,10 @@ import { UAParser } from "ua-parser-js";
     const browser = ua.getBrowser()?.name || "";
     if (os.indexOf("Linux") !== -1 && browser.indexOf("Firefox") !== -1) {
       return tag("p", [
-        tag("strong", ["❌ Incompatible browser:"]),
-        " Firefox on Linux does not support pressure-sensitive pens. " +
-          "Consider using a different browser or ",
+        tag("strong", ["⚠️ Possibly incompatible browser:"]),
+        " Firefox on Linux doesn't have support for pressure-sensitive pens " +
+          "on all systems. If you don't get pressure, consider using a " +
+          "different browser or ",
         tag(
           "a",
           { href: "https://drawpile.net/download/" },
