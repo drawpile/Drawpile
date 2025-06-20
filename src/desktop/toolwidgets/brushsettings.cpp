@@ -486,7 +486,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 		"dialogs::BrushSettingsDialog", "Synchronize smudging"));
 	d->syncSamplesAction->setCheckable(true);
 	d->ui.paintMode->setMenu(paintModeMenu);
-	setPaintModeInUi(int(DP_PAINT_MODE_DIRECT));
+	setPaintModeInUi(int(DP_PAINT_MODE_DIRECT), false);
 
 	QMenu *stabilizerMenu = new QMenu{d->ui.stabilizerButton};
 	d->stabilizationModeGroup = new QActionGroup{stabilizerMenu};
@@ -1234,7 +1234,7 @@ static void setMyPaintSettingFromSlider(
 	myPaintSettings.mappings[setting].base_value = value;
 }
 
-void BrushSettings::setPaintModeInUi(int paintMode)
+void BrushSettings::setPaintModeInUi(int paintMode, bool directOnly)
 {
 	QAction *action;
 	switch(paintMode) {
@@ -1257,6 +1257,10 @@ void BrushSettings::setPaintModeInUi(int paintMode)
 		return;
 	}
 	d->paintMode = DP_PaintMode(paintMode);
+
+	if(directOnly) {
+		action = d->paintModeDirectAction;
+	}
 	d->ui.paintMode->setIcon(action->icon());
 	d->ui.paintMode->setStatusTip(action->text());
 	d->ui.paintMode->setToolTip(action->text());
@@ -1319,7 +1323,8 @@ void BrushSettings::updateUi()
 	d->ui.modeColorpick->setEnabled(
 		blendMode != DP_BLEND_MODE_ERASE &&
 		blendMode != DP_BLEND_MODE_ERASE_PRESERVE);
-	setPaintModeInUi(int(brush.paintMode()));
+	bool blendModeDirectOnly = canvas::blendmode::directOnly(blendMode);
+	setPaintModeInUi(int(brush.paintMode()), blendModeDirectOnly);
 
 	// Set UI elements that are distinct between classic and MyPaint brushes
 	// unconditionally, the ones that are shared only for the active type.
@@ -1352,8 +1357,7 @@ void BrushSettings::updateUi()
 		d->ui.gainBox, myPaintSettings,
 		MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG);
 
-	bool canChangePaintMode =
-		!isLocked() && !canvas::blendmode::directOnly(blendMode);
+	bool canChangePaintMode = !isLocked() && !blendModeDirectOnly;
 	if(mypaintmode) {
 		setSliderFromMyPaintSetting(
 			d->ui.opacityBox, myPaintSettings, MYPAINT_BRUSH_SETTING_OPAQUE);

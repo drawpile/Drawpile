@@ -153,7 +153,7 @@ private:
 	brushes::ActiveBrush changeBrushInSlot(brushes::ActiveBrush brush, int i);
 
 	void updateMenuActions();
-	void setPaintModeInUi(int paintMode);
+	void setPaintModeInUi(int paintMode, bool directOnly);
 	void updateUi();
 
 	Lock getLock();
