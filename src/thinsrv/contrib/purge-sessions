@@ -99,11 +99,12 @@ sub check_args {
 }
 
 sub parse_args {
-    my ($help, $maximum_size, $maximum_age, $dry_run);
+    my ($help, $maximum_size, $maximum_age, $by, $dry_run);
     my $ok = GetOptions(
         'h|help|?' => \$help,
         's|maximum-size=s' => \$maximum_size,
         'a|maximum-age=s' => \$maximum_age,
+        'b|by=s' => \$by,
         'n|dry-run' => \$dry_run,
     );
     pod2usage(-exitval => 0, -verbose => 2) if $help;
@@ -132,10 +133,23 @@ sub parse_args {
         );
     }
 
-    say_debug("mode=$mode, maximum=$maximum, dry_run=$dry_run")
+    my $by_session;
+    if (!defined $by || $by =~ /\Asessions?\z/i) {
+        $by_session = 1;
+    } elsif ($by =~ /\Afiles?\z/i) {
+        $by_session = 0;
+    } else {
+        pod2usage(
+            -message => "Invalid --by/-b '$by', must be either 'session' or 'file'",
+            -exitval => 2,
+            -verbose => 0,
+        );
+    }
+
+    say_debug("mode=$mode, maximum=$maximum, by_session=$by_session, dry_run=$dry_run")
         if DEBUG;
 
-    return ($mode, $maximum, $dry_run, check_args(@ARGV));
+    return ($mode, $maximum, $by_session, $dry_run, check_args(@ARGV));
 }
 
 
@@ -165,12 +179,27 @@ sub gather_sessions {
     find({wanted => $wanted}, @_);
 
     for my $session (values %sessions) {
+        my $session_mtime = 1 + max map { $_->{mtime} } @{$session->{files}};
+        # Make sure the session files sort after any dprec files to not orphan
+        # recordings without any attached metadata.
+        for my $file (@{$session->{files}}) {
+            if ($file->{path} =~ /\.session(?:\.archived)?\z/) {
+                $file->{mtime} = $session_mtime;
+            }
+        }
         $session->{total_size} = sum0 map { $_->{size} } @{$session->{files}};
-        $session->{newest_mtime} = max map { $_->{mtime} } @{$session->{files}};
+        $session->{newest_mtime} = $session_mtime;
         $session->{archived} = all { is_archived_path($_->{path}) } @{$session->{files}};
     }
 
     return sort { $a->{newest_mtime} <=> $b->{newest_mtime} } values %sessions;
+}
+
+sub collect_archived_files {
+    return sort { $a->{mtime} <=> $b->{mtime} }
+           grep { is_archived_path($_->{path}) }
+           map { @{$_->{files}} }
+           @_;
 }
 
 
@@ -247,44 +276,44 @@ sub delete_session_files {
 }
 
 sub delete_by_size {
-    my ($maximum_size, $dry_run, @sessions) = @_;
-    my $total_size = sum0 map { $_->{total_size} } @sessions;
-    if ($total_size <= $maximum_size) {
-        say_debug("Total size $total_size < $maximum_size, nothing to do")
-            if DEBUG;
-    } else {
-        printf(
-            "Total size %s exceeds maximum %s\n",
-            format_size($total_size), format_size($maximum_size));
-        for my $session (@sessions) {
-            if ($session->{archived}) {
-                $total_size -= $session->{total_size};
-                delete_session_files($session, $dry_run);
-                return if $total_size <= $maximum_size;
-            } else {
-                say_debug("Not pruning $session->{id} because it's not archived")
-                    if DEBUG;
-            }
-        }
-
-        printf(
-            "Total size %s exceeds maximum %s, deleting archived files of running sessions\n",
-            format_size($total_size), format_size($maximum_size));
-        my @archived_files =
-            sort { $a->{mtime} <=> $b->{mtime} }
-            grep { is_archived_path($_->{path}) }
-            map { @{$_->{files}} }
-            @sessions;
-        for my $file (@archived_files) {
-            delete_archived_path($file->{path}, $dry_run);
-            $total_size -= $file->{size};
+    my ($maximum_size, $total_size, $dry_run, @sessions) = @_;
+    for my $session (@sessions) {
+        if ($session->{archived}) {
+            $total_size -= $session->{total_size};
+            delete_session_files($session, $dry_run);
             return if $total_size <= $maximum_size;
+        } else {
+            say_debug("Not pruning $session->{id} because it's not archived")
+                if DEBUG;
         }
-
-        die sprintf(
-            "Total size %s still exceeds maximum %s, but nothing left to delete!\n",
-            format_size($total_size), format_size($maximum_size));
     }
+
+    printf(
+        "Total size %s exceeds maximum %s, deleting archived files of running sessions\n",
+        format_size($total_size), format_size($maximum_size));
+    for my $file (collect_archived_files(@sessions)) {
+        delete_archived_path($file->{path}, $dry_run);
+        $total_size -= $file->{size};
+        return if $total_size <= $maximum_size;
+    }
+
+    die sprintf(
+        "Total size %s still exceeds maximum %s, but nothing left to delete!\n",
+        format_size($total_size), format_size($maximum_size));
+}
+
+sub delete_recordings_by_size {
+    my ($maximum_size, $total_size, $dry_run, @sessions) = @_;
+
+    for my $file (collect_archived_files(@sessions)) {
+        delete_archived_path($file->{path}, $dry_run);
+        $total_size -= $file->{size};
+        return if $total_size <= $maximum_size;
+    }
+
+    die sprintf(
+        "Total size %s still exceeds maximum %s, but nothing left to delete!\n",
+        format_size($total_size), format_size($maximum_size));
 }
 
 sub delete_by_age {
@@ -298,24 +327,56 @@ sub delete_by_age {
             last; # Sessions are sorted oldest to newest, no need to keep going.
         } else {
             printf(
-                "Deleting archived session $session->{id} because its age %s exceeds the maximum %s\n",
-                format_age($age), format_age($maximum_age));
+                "Deleting archived session %s because its age %s exceeds the maximum %s\n",
+                $session->{id}, format_age($age), format_age($maximum_age));
             delete_session_files($session, $dry_run);
         }
     }
 }
 
+sub delete_recordings_by_age {
+    my ($maximum_age, $dry_run, @sessions) = @_;
+    my $now = time;
+    for my $file (collect_archived_files(@sessions)) {
+        my $age = $now - $file->{mtime};
+        if ($age < $maximum_age) {
+            say_debug("File $file->{path} not old enough")
+                if DEBUG;
+            last; # Files are sorted oldest to newest, no need to keep going.
+        } else {
+            delete_archived_path($file->{path}, $dry_run);
+        }
+    }
+}
 
-my ($mode, $maximum, $dry_run, @dirs) = parse_args();
+
+my ($mode, $maximum, $by_session, $dry_run, @dirs) = parse_args();
 my @sessions = gather_sessions(@dirs);
 
 say_debug("sessions = ", JSON::PP->new->utf8->pretty->canonical->encode(\@sessions))
     if DEBUG;
 
 if ($mode eq 'size') {
-    delete_by_size($maximum, $dry_run, @sessions);
+    my $total_size = sum0 map { $_->{total_size} } @sessions;
+    if ($total_size <= $maximum) {
+        say_debug("Total size $total_size < $maximum, nothing to do")
+            if DEBUG;
+    } else {
+        printf(
+            "Total size %s exceeds maximum %s\n",
+            format_size($total_size), format_size($maximum));
+        if ($by_session)  {
+            delete_by_size($maximum, $total_size, $dry_run, @sessions);
+        } else {
+            delete_recordings_by_size($maximum, $total_size, $dry_run, @sessions);
+        }
+    }
 } elsif ($mode eq 'age') {
-    delete_by_age($maximum, $dry_run, @sessions);
+    if ($by_session)  {
+        delete_by_age($maximum, $dry_run, @sessions);
+    } else {
+        delete_recordings_by_age($maximum, $dry_run, @sessions);
+    }
 } else {
     die "Unknown mode '$mode'\n";
 }
@@ -331,11 +392,19 @@ purge-sessions - delete archived drawpile-srv sessions by size or age
 
 To delete archived files by size:
 
-    purge-sessions --maximum-size=10GB /path/to/sessions/directory
+    purge-sessions --by=file --maximum-size=10GB /path/to/sessions/directory
 
-To delete by age:
+To delete archived files by age:
 
-    purge-sessions --maximum-age=30days /path/to/sessions/directory
+    purge-sessions --by=file --maximum-age=30days /path/to/sessions/directory
+
+To delete entire archived sessions by size:
+
+    purge-sessions --by=session --maximum-size=10GB /path/to/sessions/directory
+
+To delete entire archived sessions by age:
+
+    purge-sessions --by=session --maximum-age=30days /path/to/sessions/directory
 
 Pass C<--dry-run> if you want to just do a test run, but not actually delete
 anything.
@@ -344,6 +413,16 @@ anything.
 
 =over 4
 
+=item B<--by=session|file>, B<-b session|file>
+
+Whether to delete sessions as a whole (the default) or the oldest archived files
+regardless of the age of the session they belong to. The the descriptions below
+for details on how that works.
+
+Note that deleting whole sessions will mean that long-running sessions will keep
+accumulating files! File mode is likely the better option if you don't otherwise
+take care of rehosting long-running sessions periodically.
+
 =item B<--maximum-size=SIZE>, B<-s SIZE>
 
 Delete archived session files until the maximum given B<SIZE> is reached.
@@ -351,6 +430,13 @@ Delete archived session files until the maximum given B<SIZE> is reached.
 B<SIZE> is a number and a unit, which can be one of TiB, GiB, MiB, KiB or B.
 Only the first letter of the unit matters, so "10GiB", "10G" or "10 gigabytes"
 all mean the same thing.
+
+If B<--by=file> is passed, this will just delete the oldest archived session and
+recording files until the size limit is met. If it can't be met even after
+deleting all archived files, the script will exit with an error.
+
+If B<--by=session> is passed (or not given), whole sessions will be deleted.
+That works as follows:
 
 If the total size of session files exceeds B<SIZE>, the oldest, fully archived
 sessions will be deleted until enough space is freed. The newest file in a set
@@ -363,6 +449,9 @@ sessions are deleted as well, oldest first. Active files of running sessions
 are never touched though, so if deleting all archived files still doesn't make
 enough room, the script just exits with an error.
 
+Note that in session mode, long-running sessions may take away archive space
+from shorter-running sessions!
+
 =item B<--maximum-age=AGE>, B<-a AGE>
 
 Delete archived session files where the session is older than B<AGE>.
@@ -371,11 +460,20 @@ B<AGE> is a number and a unit, which can be one of days, hours, minutes or secon
 Only the first letter of the unit matters, so "10 days", "10DAY" or "10d" all
 mean the same thing.
 
+If B<--by=file> is passed, this will just delete all session and recording files
+that are older than the given age.
+
+If B<--by=session> is passed (or not given), whole sessions will be deleted.
+That works as follows:
+
 The newest file in the set of session files determines the age of a session, so
 if it has a recording from last year and one from 2 seconds ago, the session is
 considered to be 2 seconds old overall. Sessions that are still running are not
 touched, even if they have individual recording files that are older than
 B<AGE>.
+
+Note that in session mode, long-running sessions will keep accumulating files
+until they terminate!
 
 =item B<--dry-run>, B<-n>
 
