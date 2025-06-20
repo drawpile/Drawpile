@@ -869,6 +869,33 @@ import { UAParser } from "ua-parser-js";
   async function showStartup() {
     const startup = document.querySelector("#startup");
 
+const testerContainer = tag("div", {
+  style:
+    "border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; font-family: sans-serif; max-width: 300px;",
+});
+
+testerContainer.appendChild(
+  tag("p", "Test your pen pressure here:")
+);
+
+const pressureBox = tag("div", {
+  style:
+    "width: 200px; height: 200px; border: 1px dashed #999; margin-bottom: 10px;",
+});
+testerContainer.appendChild(pressureBox);
+
+const pressureValue = tag("p", "Waiting for pen input...");
+testerContainer.appendChild(pressureValue);
+
+pressureBox.addEventListener("pointermove", (e) => {
+  if (e.pointerType === "pen") {
+    pressureValue.textContent = `Pressure: ${e.pressure.toFixed(2)}`;
+  }
+});
+
+startup.appendChild(testerContainer);
+
+
     let browserTrouble = false;
     try {
       const browserSupportMessage = checkBrowserSupport();
