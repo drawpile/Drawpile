@@ -66,7 +66,7 @@ impl OutputFormat {
     }
 
     fn supports_scaling(self) -> bool {
-        matches!(self, Self::Dpcs | Self::Ora | Self::Psd)
+        !matches!(self, Self::Dpcs | Self::Ora | Self::Psd)
     }
 }
 
