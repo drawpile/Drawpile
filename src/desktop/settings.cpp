@@ -300,7 +300,7 @@ QVariant get(const SettingMeta &meta, QSettings &settings)
 
 	switch(action) {
 	case int(EraserAction::Ignore):
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 	case int(EraserAction::Switch):
 #endif
 	case int(EraserAction::Override):
