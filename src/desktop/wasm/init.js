@@ -875,93 +875,42 @@ const testerContainer = tag("div", {
     "border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; font-family: sans-serif; user-select: none;",
 });
 
-const pressureBox = tag(
-  "div",
-  {
-    style:
-      "height: 200px; border: 1px dashed #999; margin-bottom: 10px; background: white; touch-action: none; display: flex; justify-content: center; align-items: center; position: relative;",
-  },
-  "Test your pen pressure here"
-);
+const pressureBox = tag("div", {
+  id: "pressureBox",
+  style:
+    "height: 200px; border: 1px dashed #999; display: flex; justify-content: center; align-items: center; text-align: center; font-size: 1.1rem;",
+}, "Test your pen pressure here");
 testerContainer.appendChild(pressureBox);
 
-const pressureCanvas = document.createElement("canvas");
-pressureCanvas.width = 300;
-pressureCanvas.height = 200;
-pressureCanvas.style.position = "absolute";
-pressureCanvas.style.pointerEvents = "none";
-pressureCanvas.style.top = "0";
-pressureCanvas.style.left = "0";
-pressureBox.appendChild(pressureCanvas);
-const ctx = pressureCanvas.getContext("2d");
-
-let isDrawing = false;
 let pressureValues = new Set();
 let eventTypes = new Set();
+let pressureDetected = false;
 
-pressureBox.addEventListener("pointerdown", (e) => {
+pressureBox.addEventListener("pointerdown", handlePointer);
+pressureBox.addEventListener("pointermove", handlePointer);
+
+function handlePointer(e) {
   eventTypes.add(e.pointerType);
-  if (e.pointerType === "pen") {
-    isDrawing = true;
-    handlePressure(e);
-    drawDot(e);
-    e.preventDefault();
-  } else {
-    updateFeedback(`Detected ${e.pointerType}, but no pressure support`);
-  }
-});
-pressureBox.addEventListener("pointerup", () => {
-  isDrawing = false;
-});
-pressureBox.addEventListener("pointerleave", () => {
-  isDrawing = false;
-});
-pressureBox.addEventListener("pointermove", (e) => {
-  if (e.pointerType === "pen") {
-    handlePressure(e);
-    if (isDrawing) {
-      drawDot(e);
-    }
-  }
-});
 
-function handlePressure(e) {
+  if (e.pointerType !== "pen") {
+    pressureBox.textContent = "Detected input, but not a pen";
+    return;
+  }
+
+  if (pressureDetected) return;
+
   if (e.pressure > 0) {
     pressureValues.add(e.pressure.toFixed(2));
     if (pressureValues.size >= 2) {
-      updateFeedback("Pen pressure detected!");
+      pressureBox.textContent = "Pen pressure detected!";
+      pressureDetected = true;
     } else {
-      updateFeedback(`Pressure: ${e.pressure.toFixed(2)}`);
+      pressureBox.textContent = `Pressure: ${e.pressure.toFixed(2)}`;
     }
   } else {
-    updateFeedback("Detected pen input, but no pressure");
+    pressureBox.textContent = "Detected pen input, but no pressure";
   }
 }
-
-function updateFeedback(text) {
-  pressureBox.textContent = text;
-  pressureBox.appendChild(pressureCanvas); 
-}
-
-function drawDot(e) {
-  const rect = pressureCanvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  const radius = Math.max(e.pressure * 10, 1);
-  ctx.beginPath();
-  ctx.arc(x, y, radius, 0, 2 * Math.PI);
-  ctx.fillStyle = "#000";
-  ctx.fill();
-}
-
-const clearBtn = tag("button", { type: "button" }, "Clear");
-clearBtn.addEventListener("click", () => {
-  ctx.clearRect(0, 0, pressureCanvas.width, pressureCanvas.height);
-  pressureValues.clear();
-  eventTypes.clear();
-  updateFeedback("Test your pen pressure here");
-});
-testerContainer.appendChild(clearBtn);
 
 startup.appendChild(testerContainer);
 
