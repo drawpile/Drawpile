@@ -832,6 +832,52 @@ import { UAParser } from "ua-parser-js";
   async function showStartup() {
     const startup = document.querySelector("#startup");
 
+const testerContainer = tag("div", {
+  id: "pen-pressure-tester",
+  style:
+    "border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; font-family: sans-serif; user-select: none;",
+});
+
+const pressureBox = tag("div", {
+  id: "pressureBox",
+  style:
+    "height: 200px; border: 1px dashed #999; display: flex; justify-content: center; align-items: center; text-align: center; font-size: 1.1rem;",
+}, "Test your pen pressure here");
+testerContainer.appendChild(pressureBox);
+
+let pressureValues = new Set();
+let eventTypes = new Set();
+let pressureDetected = false;
+
+pressureBox.addEventListener("pointerdown", handlePointer);
+pressureBox.addEventListener("pointermove", handlePointer);
+
+function handlePointer(e) {
+  eventTypes.add(e.pointerType);
+
+  if (e.pointerType !== "pen") {
+    pressureBox.textContent = "Detected input, but not a pen";
+    return;
+  }
+
+  if (pressureDetected) return;
+
+  if (e.pressure > 0) {
+    pressureValues.add(e.pressure.toFixed(2));
+    if (pressureValues.size >= 2) {
+      pressureBox.textContent = "Pen pressure detected!";
+      pressureDetected = true;
+    } else {
+      pressureBox.textContent = `Pressure: ${e.pressure.toFixed(2)}`;
+    }
+  } else {
+    pressureBox.textContent = "Detected pen input, but no pressure";
+  }
+}
+
+startup.appendChild(testerContainer);
+
+
     let browserTrouble = false;
     try {
       const browserSupportMessage = checkBrowserSupport();
