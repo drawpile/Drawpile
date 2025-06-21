@@ -29,7 +29,7 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation>Сообщение о нарушении</translation>
+        <translation>Сообщить о нарушении</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -370,7 +370,7 @@
     <message>
         <location line="+30"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть Дамп Отладки</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -447,7 +447,7 @@
     <message>
         <location line="+7"/>
         <source>Export Custom FFmpeg Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт Пользовательского видео в формате FFmpeg</translation>
     </message>
     <message>
         <location line="-77"/>
@@ -457,7 +457,7 @@
     <message>
         <location line="-271"/>
         <source>Add Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить Аватар</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -497,28 +497,28 @@
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Все Поддерживаемые Файлы (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+391"/>
         <source>Session Settings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки Сессии (%1)</translation>
     </message>
     <message>
         <location line="-390"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Баны Сессии (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Роли Сессии (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Error opening temporary file for %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка открытия временного файла для %1.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -538,22 +538,22 @@
     <message>
         <location line="+5"/>
         <source>Reference Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Референсное Изображение</translation>
     </message>
     <message>
         <location line="+168"/>
         <source>Export Frames in ZIP</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать Кадры в ZIP</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать WEBM Видео</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated WEBP</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать Анимированный WEBP</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -568,12 +568,12 @@
     <message>
         <location line="+10"/>
         <source>Export Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать Запреты Сессии</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Export Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать Роли</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -588,22 +588,22 @@
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранный формат сохранит изображение в объединённом виде. Если вы хотите сохранить слои, аннотации и временную шкалу анимации, необходимо сохранить файл в формате ORA.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Save as Selected Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить в выбранном формате</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить как %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save as ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить как ORA</translation>
     </message>
     <message>
         <location line="+70"/>
@@ -624,7 +624,7 @@
         <location filename="../ui/fillsettings.ui" line="+330"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+310"/>
         <source>Feather: </source>
-        <translation type="unfinished"></translation>
+        <translation>Перо: </translation>
     </message>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+143"/>

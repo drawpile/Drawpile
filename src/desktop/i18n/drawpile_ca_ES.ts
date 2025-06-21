@@ -2481,7 +2481,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+2"/>
         <source>Frame View</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista de fotogrames</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2491,7 +2491,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Show Censored Layers</source>
-        <translation>Mostrar les capes censurdes</translation>
+        <translation>Mostrar les capes censurades</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2541,7 +2541,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="+4"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta el mode d&apos;esbós de la capa</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+1"/>
@@ -2662,7 +2662,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix un fotograma a la capa actual</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3321,7 +3321,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Toggle Recolor Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta el mode d&apos;acoloriment</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3426,7 +3426,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+4"/>
         <source>Focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Focus en el llenç</translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-13"/>
@@ -3455,12 +3455,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+17"/>
         <source>Tiles:</source>
-        <translation>Titols:</translation>
+        <translation>Mosaics:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Tile Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Memòria de mosaic:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3470,7 +3470,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+7"/>
         <source>Context Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Memòria de context:</translation>
     </message>
     <message>
         <location line="-86"/>
@@ -3493,7 +3493,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+21"/>
         <source>Rewind to Beginning</source>
-        <translation type="unfinished"></translation>
+        <translation>Rebobina fins al principi</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3508,7 +3508,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+20"/>
         <source>Next Stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>Traç següent</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3528,12 +3528,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+79"/>
         <source>Building an index will let you quickly skip to any part of your recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Construir un índex us permetrà saltar ràpidament a qualsevol part del vostre enregistrament.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Build Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Construeix l&apos;índex</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -3993,12 +3993,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+31"/>
         <source>Add listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix llistat</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove selected listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Suprimeix el llistat seleccionat</translation>
     </message>
 </context>
 <context>
@@ -4054,7 +4054,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+19"/>
         <source>Annotation content</source>
-        <translation type="unfinished"></translation>
+        <translation>Contingut de l&apos;anotació</translation>
     </message>
 </context>
 <context>
@@ -4102,7 +4102,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+7"/>
         <source>dp:x.y.z</source>
-        <translation type="unfinished"></translation>
+        <translation>dp:x.y.z</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -4180,7 +4180,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+14"/>
         <source>Path to ffmpeg:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cami a ffmpeg:</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -4247,7 +4247,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+11"/>
         <source>Revert changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Reverteix els canvis a la paleta actual</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4485,17 +4485,17 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+2"/>
         <source>Reset inputs to the whole canvas and timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>Reinicialitza les entrades en tot el llenç i línia de temps</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Set from Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix des del llibre animat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set inputs to what is being previewed in the flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix les entrades al que es previsualitza en el llibre animat</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5411,14 +5411,14 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;angle del traç en graus. El valor romandrà entre 0.0 i 180.0, ignorant eficaçment els girs de 180 graus.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Declinació de la inclinació del llapis. 0 quan el llapis és paral·lel a la tauleta i 90.0 quan és perpendicular a la tauleta.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5450,7 +5450,11 @@ The range is +/-180.0.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>La diferència, en graus, entre l&apos;angle en què el llapis apunta i l&apos;angle del moviment del traç.
+L&apos;interval és +/- 180.0.
+0.0 vol dir que l&apos;angle del traç correspon a l&apos;angle del llapis.
+90 vol dir que l&apos;angle del traç és perpendicular a l&apos;angle del llapis.
+180 vol dir que l&apos;angle del traç és directament oposat a l&apos;angle del llapis.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5472,7 +5476,8 @@ The range is +/-180.0.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>La coordenada X en una graella de 256 píxels. Això ajustarà al voltant de 0-256 quan es mogui el cursor en l&apos;eix X. És semblant a &quot;Traç.&quot; Es pot usar per afegir textura de paper modificant l&apos;opacitat, etc.
+La mida del pinzell ha de ser considerablement més petita que l&apos;escala de la graella pels millors resultats.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5480,7 +5485,8 @@ The brush size should be considerably smaller than the grid scale for best resul
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>La coordenada Y en una graella de 256 píxels. Això ajustarà al voltant de 0-256 quan es mogui el cursor en l&apos;eix Y. És semblant a &quot;Traç.&quot; Es pot usar per afegir textura de paper modificant l&apos;opacitat, etc.
+La mida del pinzell ha de ser considerablement més petita que l&apos;escala de la graella pels millors resultats.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5508,7 +5514,9 @@ You can even cancel out dab size increase and adjust something else to make a br
 Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>El radi del pinzell base us permet canviar el comportament d&apos;un pinzell mentre el feu més gran o més petit.
+Fins i tot podeu cancel·lar l&apos;augment de la mida dels tocs i ajustar una altra cosa per fer un pinzell més gran.
+Fixeu-vos en &quot;Tocs per radi bàsic&quot; i &quot;Tocs per radi real&quot;, que es comporten molt diferent.</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -5980,7 +5988,8 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
 This setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to &apos;opaque&apos;.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Això és multiplicat amb opac. Només hauríeu de canviar l&apos;entrada de pressió d&apos;aquest paràmetre. Useu &apos;opac&apos; enlloc per fer l&apos;opacitat depengui de la velocitat.
+Aquesta opció és la responsable de deixar de pintar quan hi ha una pressió zero. Això només és una convenció, el comportament és idèntic a opac.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5989,7 +5998,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Corregeix la no-linealitat introduïda en barrejar múltiples tocs un damunt de l&apos;altre. Aquesta correcció us hauria d&apos;aconseguir una resposta lineal (&quot;natural&quot;) quan la pressió es mapeja a opac_multiplica, com es fa normalment. 0.9 és bo per als traços estàndard, reduïu-lo si el vostre pinzell es dispersa molt, o augmenteu-lo si utilitzeu tocs_per_segon.
+0, 0 el valor opac més amunt és per als tocs individuals
+1. 0 el valor opac més amunt és per al traç final del pinzell, assumint que cada píxel obté (tocs_per_radi * 2) tocs de pinzell de mitjana durant un traç</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6022,7 +6033,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Quants tocs dibuixar mentre el punter mou una distància d&apos;un radi de pinzell (més precís: el valor base del radi)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6045,7 +6056,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Altera el radi aleatòriament en cada toc. També podeu fer-ho amb l&apos;entrada per_aleatori, en la configuració de radi. Si ho feu aquí hi ha dues diferències:
+1) el valor opac serà corregit, de manera que un toc de radi gran serà més transparent.
+2) no canviarà el radi actual vist per tocs_per_radi_actual</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6125,7 +6138,7 @@ For very slow speed the opposite happens.</source>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Afegeix aleatorietat al punter del ratolí; això normalment genera moltes línies petites en direccions a l&apos;atzar; potser proveu-ho juntament amb &apos;seguiment lent&apos;</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6142,7 +6155,10 @@ For very slow speed the opposite happens.</source>
  1.0 set the active color to the brush color when selected</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>En seleccionar un pinzell, es pot restaurar el color amb el qual es va desar el pinzell.
+0.0 no modifica el color actiu quan seleccioneu aquest pinzell
+0.5 canvia el color actiu cap al color del pinzell
+1.0 estableix el color actiu del pinzell en seleccionar-lo</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6256,7 +6272,9 @@ For very slow speed the opposite happens.</source>
 9.9 or higher stands for infinite</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Això defineix quant de temps l&apos;entrada es quedarà a 1.0. Després d&apos;això es reiniciarà a 0.0 i tornarà a créixer, fins i tot encara que no s&apos;hagi acabat el traç.
+2.0 vol dir que passarà el doble de temps perquè vagi de 0.0 a 1.0
+9.9 o més elevat vol dir infinit</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6264,7 +6282,8 @@ For very slow speed the opposite happens.</source>
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Estableix l&apos;entrada personalitzada a aquest valor. Si s&apos;alenteix, moveu-lo cap a aquest valor (vegeu a sota). La idea és que feu que aquesta entrada depengui d&apos;una barreja de pressió/velocitat/el que sigui, i després feu que altres paràmetres depenguin d&apos;aquesta entrada &apos;personalitzada&apos; en comptes de repetir aquesta combinació a tot arreu on ho necessiteu.
+Si ho feu canviar &apos;a l&apos;atzar&apos; podeu generar una entrada aleatòria lenta (suau).</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6372,7 +6391,9 @@ You can control which bucket to use to improve variability and realism of the br
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Hi ha 256 cubells, cada un pot contenir un color seleccionat del llenç.
+Podeu controlar quin cubell fer servir per millorar la variabilitat i el realisme del pinzell.
+Especialment útil amb l&apos;arranjament &quot;entrada personalitzada&quot; per a correlacionar cubells amb altres arranjaments com els desplaçaments.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6578,7 +6599,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+98"/>
         <source>A regular key combination on the canvas without further mouse or pen inputs. Example: holding Space to pan, without having to click as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Una combinació de tecles normal al llenç sense cap altra entrada de ratolí de llapis. Exemple: mantenir pressionat espai per a desplaçar-se sense haver de clicar també.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9701,7 +9722,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation type="unfinished"></translation>
+        <translation>Si teniu un enllaç d&apos;invitació a una sessió de dibuix, podeu &lt;a href=&quot;#join&quot;&gt;unir-vos-hi&lt;/a&gt; directament. Alternativament, podeu &lt;a href=&quot;#browse&quot;&gt;navegar&lt;/a&gt; per les sessions públiques o simplement crear un &lt;a href=&quot;#create&quot;&gt;nou llenç&lt;/a&gt; per a dibuixar pel vostre compte.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -11317,12 +11338,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alenteix el traç i l&apos;estabilitza al llarg del temps. Pot produir resultats molt suaus, però pot notar-se lent.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
-        <translation type="unfinished"></translation>
+        <translation>Simplement, fa la mitjana de les entrades per obtenir un resultat més suau. Més ràpid que el basat en el temps, però no tan suau.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -12058,7 +12079,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Copies this curve to the clipboard. You can paste it into another setting or into the chat to share it with other users.</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia aquesta corba al porta-retalls. Podeu enganxar-la en un altre arranjament o al xat per compartir-la amb altres usuaris.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12423,7 +12444,9 @@ Hexadecimal: %4</translation>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Encara no hi ha pistes.
+Afegiu-ne una utilitzant el botó + superior
+o mitjançant Animació ▸ Nova pista.</translation>
     </message>
     <message>
         <location line="+565"/>
