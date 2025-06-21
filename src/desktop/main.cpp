@@ -122,7 +122,7 @@ void DrawpileApp::initState()
 bool DrawpileApp::event(QEvent *e)
 {
 	switch(e->type()) {
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 	case QEvent::TabletEnterProximity: {
 		QTabletEvent *te = static_cast<QTabletEvent *>(e);
 		bool eraser = te->pointerType() == compat::PointerType::Eraser;
@@ -171,7 +171,7 @@ bool DrawpileApp::event(QEvent *e)
 	return QApplication::event(e);
 }
 
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 void DrawpileApp::updateEraserNear(bool near)
 {
 	if(near != m_wasEraserNear) {

@@ -1196,7 +1196,7 @@ void MainWindow::readSettings(bool windowpos)
 	auto &settings = dpApp().settings();
 
 	settings.bindTabletEraserAction(this, [=](int action) {
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
 		m_canvasView->setEnableEraserOverride(
 			action == int(tabletinput::EraserAction::Override));
 #else

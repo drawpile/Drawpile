@@ -115,7 +115,7 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 	}
 
 	const auto posF = compat::tabPosF(*e);
-	msg += QString(" X=%1 Y=%2 B=%3 P=%4% XT=%5° YT=%6° R=%7° %8")
+	msg += QString(" X=%1 Y=%2 B=%3 P=%4% XT=%5° YT=%6° R=%7° T=%8 %9")
 			   .arg(posF.x(), 0, 'f', 2)
 			   .arg(posF.y(), 0, 'f', 2)
 			   .arg(e->buttons())
@@ -123,6 +123,7 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 			   .arg(e->xTilt())
 			   .arg(e->yTilt())
 			   .arg(e->rotation())
+			   .arg(compat::pointerType(*e))
 			   .arg(e->spontaneous() ? "SYS" : "APP");
 
 	if(e->type() == QEvent::TabletMove) {

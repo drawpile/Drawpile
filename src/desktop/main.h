@@ -93,7 +93,7 @@ public:
 	static bool isEnvTrue(const char *key);
 
 signals:
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 	void tabletProximityChanged(bool enter, bool eraser);
 	void eraserNear(bool near);
 #endif
@@ -128,7 +128,7 @@ private:
 
 	MainWindow *acquireWindow(bool restoreWindowPosition, bool singleSession);
 
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 	void updateEraserNear(bool near);
 #endif
 };

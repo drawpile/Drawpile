@@ -99,7 +99,7 @@ public:
 
 	virtual void clearKeys() = 0;
 
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
 	virtual void setEnableEraserOverride(bool enableEraserOverride) = 0;
 #endif
 

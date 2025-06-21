@@ -122,7 +122,7 @@ void Tablet::initTablet(
 	auto *eraserAction = new QComboBox;
 	eraserAction->addItem(
 		tr("Treat as regular pen tip"), int(tabletinput::EraserAction::Ignore));
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 	eraserAction->addItem(
 		tr("Switch to eraser slot"), int(tabletinput::EraserAction::Switch));
 #endif

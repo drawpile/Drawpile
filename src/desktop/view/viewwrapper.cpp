@@ -108,7 +108,7 @@ void ViewWrapper::clearKeys()
 	m_controller->clearKeys();
 }
 
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
 void ViewWrapper::setEnableEraserOverride(bool enableEraserOverride)
 {
 	m_controller->setEnableEraserOverride(enableEraserOverride);

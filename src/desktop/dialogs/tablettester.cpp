@@ -23,7 +23,7 @@ TabletTestDialog::TabletTestDialog(QWidget *parent)
 		m_ui->buttons->button(QDialogButtonBox::Reset),
 		&QAbstractButton::clicked, m_ui->logView, &QPlainTextEdit::clear);
 	connect(m_ui->buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 	connect(
 		&dpApp(), &DrawpileApp::tabletProximityChanged, this,
 		[this](bool enter, bool eraser) {

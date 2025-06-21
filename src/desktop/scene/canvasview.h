@@ -240,7 +240,7 @@ public slots:
 	void setTabletEventTimerDelay(int tabletEventTimerDelay);
 
 	void setShowTransformNotices(bool showTransformNotices);
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
 	void setEnableEraserOverride(bool enableEraserOverride);
 #endif
 
@@ -478,7 +478,7 @@ private:
 	bool m_showTransformNotices;
 	bool m_hoveringOverHud;
 	bool m_renderSmooth;
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
 	bool m_enableEraserOverride = false;
 #endif
 #ifdef Q_OS_LINUX

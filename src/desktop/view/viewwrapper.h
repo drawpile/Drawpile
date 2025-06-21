@@ -35,7 +35,7 @@ public:
 
 	void clearKeys() override;
 
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
 	void setEnableEraserOverride(bool enableEraserOverride) override;
 #endif
 

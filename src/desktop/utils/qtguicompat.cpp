@@ -140,6 +140,26 @@ QPointF tabPosF(const QTabletEvent &event)
 #endif
 }
 
+int pointerType(const QTabletEvent &event)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	const QPointingDevice *dev = event.pointingDevice();
+	return dev ? int(dev->pointerType()) : -1;
+#else
+	return int(event.pointerType());
+#endif
+}
+
+bool isEraser(const QTabletEvent &event)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	const QPointingDevice *dev = event.pointingDevice();
+	return dev && dev->pointerType() & QPointingDevice::PointerType::Eraser;
+#else
+	return event.pointerType() == QTabletEvent::Eraser;
+#endif
+}
+
 const QList<TouchPoint> &touchPoints(const QTouchEvent &event)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)

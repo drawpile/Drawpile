@@ -666,11 +666,11 @@ void CanvasController::handleTabletMove(QTabletEvent *event)
 		DP_EVENT_LOG(
 			"tablet_move spontaneous=%d x=%f y=%f pressure=%f xtilt=%f "
 			"ytilt=%f rotation=%f buttons=0x%x modifiers=0x%x penstate=%d "
-			"touching=%d effectivemodifiers=0x%u ignore=%d",
+			"touching=%d effectivemodifiers=0x%u ignore=%d pointertype=%d",
 			int(event->spontaneous()), posf.x(), posf.y(), pressure, xTilt,
 			yTilt, rotation, unsigned(buttons), unsigned(event->modifiers()),
 			int(m_penState), int(m_touch->isTouching()), unsigned(modifiers),
-			int(ignore));
+			int(ignore), compat::pointerType(*event));
 		if(ignore) {
 			return;
 		}
@@ -707,30 +707,31 @@ void CanvasController::handleTabletPress(QTabletEvent *event)
 		DP_EVENT_LOG(
 			"tablet_press spontaneous=%d x=%f y=%f pressure=%f xtilt=%f "
 			"ytilt=%f rotation=%f buttons=0x%x modifiers=0x%x penstate=%d "
-			"touching=%d effectivemodifiers=0x%u ignore=%d",
+			"touching=%d effectivemodifiers=0x%u ignore=%d pointertype=%d",
 			int(event->spontaneous()), posf.x(), posf.y(), pressure, xTilt,
 			yTilt, rotation, unsigned(buttons), unsigned(event->modifiers()),
 			int(m_penState), int(m_touch->isTouching()), unsigned(modifiers),
-			int(ignore));
+			int(ignore), compat::pointerType(*event));
 		if(ignore) {
 			return;
 		}
 
-		Qt::MouseButton button;
-		bool eraserOverride;
-#ifdef __EMSCRIPTEN__
+		Qt::MouseButton button = event->button();
+		bool eraserOverride = false;
+#if defined(__EMSCRIPTEN__)
 		// In the browser, we don't get eraser proximity events, instead an
 		// eraser pressed down is reported as button flag 0x20 (Qt::TaskButton).
 		if(buttons.testFlag(Qt::TaskButton)) {
 			button = Qt::LeftButton;
 			eraserOverride = m_enableEraserOverride;
-		} else {
-			button = event->button();
-			eraserOverride = false;
 		}
-#else
-		button = event->button();
-		eraserOverride = false;
+#elif defined(Q_OS_ANDROID)
+		// On Android, there's also no proximity events, but we can check the
+		// pointing device whether it's an eraser or not.
+		if(compat::isEraser(*event)) {
+			button = Qt::LeftButton;
+			eraserOverride = m_enableEraserOverride;
+		}
 #endif
 
 		penPressEvent(
@@ -751,10 +752,11 @@ void CanvasController::handleTabletRelease(QTabletEvent *event)
 		bool ignore = m_tabletFilter.shouldIgnore(event);
 		DP_EVENT_LOG(
 			"tablet_release spontaneous=%d x=%f y=%f buttons=0x%x penstate=%d "
-			"touching=%d effectivemodifiers=0x%u ignore=%d",
+			"touching=%d effectivemodifiers=0x%u ignore=%d pointertype=%d",
 			int(event->spontaneous()), posf.x(), posf.y(),
 			unsigned(event->buttons()), int(m_penState),
-			int(m_touch->isTouching()), unsigned(modifiers), int(ignore));
+			int(m_touch->isTouching()), unsigned(modifiers), int(ignore),
+			compat::pointerType(*event));
 		if(ignore) {
 			return;
 		}
@@ -1297,7 +1299,7 @@ void CanvasController::setBrushBlendMode(int brushBlendMode)
 	}
 }
 
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
 void CanvasController::setEnableEraserOverride(bool enableEraserOverride)
 {
 	m_enableEraserOverride = enableEraserOverride;

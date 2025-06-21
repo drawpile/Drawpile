@@ -143,7 +143,7 @@ public:
 	void setToolCursor(const QCursor &toolCursor);
 	void setBrushBlendMode(int brushBlendMode);
 
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
 	void setEnableEraserOverride(bool enableEraserOverride);
 #endif
 
@@ -404,7 +404,7 @@ private:
 
 	tools::Capabilities m_toolCapabilities;
 
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
 	bool m_enableEraserOverride = false;
 #endif
 

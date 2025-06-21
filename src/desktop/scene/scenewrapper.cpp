@@ -107,7 +107,7 @@ void SceneWrapper::clearKeys()
 	m_view->clearKeys();
 }
 
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
 void SceneWrapper::setEnableEraserOverride(bool enableEraserOverride)
 {
 	m_view->setEnableEraserOverride(enableEraserOverride);

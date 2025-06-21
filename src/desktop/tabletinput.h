@@ -34,11 +34,11 @@ Q_ENUM_NS(Mode)
 
 enum class EraserAction {
 	Ignore,
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 	Switch,
 #endif
 	Override,
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
 	Default = Override,
 #else
 	Default = Switch,

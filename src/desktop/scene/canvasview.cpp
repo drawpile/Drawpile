@@ -808,7 +808,7 @@ void CanvasView::setShowTransformNotices(bool showTransformNotices)
 	m_showTransformNotices = showTransformNotices;
 }
 
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(Q_OS_ANDROID)
 void CanvasView::setEnableEraserOverride(bool enableEraserOverride)
 {
 	m_enableEraserOverride = enableEraserOverride;
@@ -2003,32 +2003,33 @@ bool CanvasView::viewportEvent(QEvent *event)
 		DP_EVENT_LOG(
 			"tablet_press spontaneous=%d x=%f y=%f pressure=%f xtilt=%d "
 			"ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d "
-			"touching=%d effectivemodifiers=0x%u ignore=%d",
+			"touching=%d effectivemodifiers=0x%u ignore=%d pointertype=%d",
 			int(tabev->spontaneous()), tabPos.x(), tabPos.y(),
 			tabev->pressure(), compat::cast_6<int>(tabev->xTilt()),
 			compat::cast_6<int>(tabev->yTilt()),
 			qDegreesToRadians(tabev->rotation()), unsigned(tabev->buttons()),
 			unsigned(tabev->modifiers()), m_pendown, m_touch->isTouching(),
-			unsigned(modifiers), int(ignore));
+			unsigned(modifiers), int(ignore), compat::pointerType(*tabev));
 		if(ignore) {
 			return true;
 		}
 
-		Qt::MouseButton button;
-		bool eraserOverride;
-#ifdef __EMSCRIPTEN__
+		Qt::MouseButton button = tabev->button();
+		bool eraserOverride = false;
+#if defined(__EMSCRIPTEN__)
 		// In the browser, we don't get eraser proximity events, instead an
 		// eraser pressed down is reported as button flag 0x20 (Qt::TaskButton).
 		if(tabev->buttons().testFlag(Qt::TaskButton)) {
 			button = Qt::LeftButton;
 			eraserOverride = m_enableEraserOverride;
-		} else {
-			button = tabev->button();
-			eraserOverride = false;
 		}
-#else
-		button = tabev->button();
-		eraserOverride = false;
+#elif defined(Q_OS_ANDROID)
+		// On Android, there's also no proximity events, but we can check the
+		// pointing device whether it's an eraser or not.
+		if(compat::isEraser(*tabev)) {
+			button = Qt::LeftButton;
+			eraserOverride = m_enableEraserOverride;
+		}
 #endif
 
 		updateCursorPos(tabPos.toPoint());
@@ -2058,13 +2059,13 @@ bool CanvasView::viewportEvent(QEvent *event)
 		DP_EVENT_LOG(
 			"tablet_move spontaneous=%d x=%f y=%f pressure=%f xtilt=%d "
 			"ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d "
-			"touching=%d effectivemodifiers=0x%u ignore=%d",
+			"touching=%d effectivemodifiers=0x%u ignore=%d pointertype=%d",
 			int(tabev->spontaneous()), tabPos.x(), tabPos.y(),
 			tabev->pressure(), compat::cast_6<int>(tabev->xTilt()),
 			compat::cast_6<int>(tabev->yTilt()),
 			qDegreesToRadians(tabev->rotation()), unsigned(buttons),
 			unsigned(tabev->modifiers()), m_pendown, m_touch->isTouching(),
-			unsigned(modifiers), int(ignore));
+			unsigned(modifiers), int(ignore), compat::pointerType(*tabev));
 		if(ignore) {
 			return true;
 		}
@@ -2095,10 +2096,10 @@ bool CanvasView::viewportEvent(QEvent *event)
 		bool ignore = m_tabletFilter.shouldIgnore(tabev);
 		DP_EVENT_LOG(
 			"tablet_release spontaneous=%d x=%f y=%f buttons=0x%x pendown=%d "
-			"touching=%d effectivemodifiers=0x%u ignore=%d",
+			"touching=%d effectivemodifiers=0x%u ignore=%d pointertype=%d",
 			int(tabev->spontaneous()), tabPos.x(), tabPos.y(),
 			unsigned(tabev->buttons()), m_pendown, m_touch->isTouching(),
-			unsigned(modifiers), int(ignore));
+			unsigned(modifiers), int(ignore), compat::pointerType(*tabev));
 		if(ignore) {
 			return true;
 		}
