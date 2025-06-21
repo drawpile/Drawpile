@@ -1487,9 +1487,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	// since they work so differently from each other. So this will be false
 	// when switching types as to not overwrite the values with each other.
 	if(updateShared) {
-		int blendMode = d->ui.blendmode->currentData(Qt::UserRole).toInt();
-		canvas::blendmode::adjustAlphaBehavior(
-			blendMode, d->ui.alphaPreserve->isChecked());
+		int blendMode = d->blendModeManager->getCurrentBlendMode();
 		brush.setBlendMode(blendMode, brush.isEraser());
 		brush.setPaintMode(int(d->paintMode));
 		brush.setSyncSamples(d->syncSamplesAction->isChecked());
