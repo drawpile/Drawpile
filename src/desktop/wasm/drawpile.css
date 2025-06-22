@@ -235,3 +235,14 @@ progress {
   border: none;
   flex-grow: 1;
 }
+
+#pressure-tester {
+  align-items: center;
+  border: 1px dashed #999;
+  display: flex;
+  height: 6em;
+  justify-content: center;
+  margin-bottom: 1em;
+  text-align: center;
+  user-select: none;
+}
