@@ -356,26 +356,31 @@ static Lab linear_srgb_to_oklab(BGRf c)
     float m = 0.2119034982f * c.r + 0.6806995451f * c.g + 0.1073969566f * c.b;
     float s = 0.0883024619f * c.r + 0.2817188376f * c.g + 0.6299787005f * c.b;
 
-    float l_ = fastcbrt(l);
-    float m_ = fastcbrt(m);
-    float s_ = fastcbrt(s);
+    // Non standard oklab transfer function to approximate cielabs perceptual lightness in
+    // the darker values; The blogpost by bjorn on okhsv and okhsl introduce
+    // a different function, but it contains another square root which is computanionally not feasable
+    // these 2 biases also make white and black mix the same on normal and oklab
+    // the argument is that we know we're dealing with srgb values, therefore we can set a reference
+    float l_ = fastcbrt(l + 0.0037930732552754493f) - 0.15595420054924858f;
+    float m_ = fastcbrt(m + 0.0037930732552754493f) - 0.15595420054924858f;
+    float s_ = fastcbrt(s + 0.0037930732552754493f) - 0.15595420054924858f;
 
     return (Lab){
-        .L = 0.2104542553f * l_ + 0.7936177850f * m_ - 0.0040720468f * s_,
-        .a = 1.9779984951f * l_ - 2.4285922050f * m_ + 0.4505937099f * s_,
-        .b = 0.0259040371f * l_ + 0.7827717662f * m_ - 0.8086757660f * s_,
+        .L = 0.2104542553f * l_ + 0.7936177850f * m_ - 0.0040720468f * s_ ,
+        .a = 1.9779984951f * l_ - 2.4285922050f * m_ + 0.4505937099f * s_ ,
+        .b = 0.0259040371f * l_ + 0.7827717662f * m_ - 0.8086757660f * s_ ,
     };
 }
 
 static BGRf oklab_to_linear_srgb(Lab c)
 {
-    float l_ = c.L + 0.3963377774f * c.a + 0.2158037573f * c.b;
-    float m_ = c.L - 0.1055613458f * c.a - 0.0638541728f * c.b;
-    float s_ = c.L - 0.0894841775f * c.a - 1.2914855480f * c.b;
+    float l_ = c.L + 0.3963377774f * c.a + 0.2158037573f * c.b + 0.15595420054924858f;
+    float m_ = c.L - 0.1055613458f * c.a - 0.0638541728f * c.b + 0.15595420054924858f;
+    float s_ = c.L - 0.0894841775f * c.a - 1.2914855480f * c.b + 0.15595420054924858f;
 
-    float l = l_ * l_ * l_;
-    float m = m_ * m_ * m_;
-    float s = s_ * s_ * s_;
+    float l = l_ * l_ * l_ - 0.0037930732552754493f;
+    float m = m_ * m_ * m_ - 0.0037930732552754493f;
+    float s = s_ * s_ * s_ - 0.0037930732552754493f;
 
     return (BGRf){
         .r = +4.0767416621f * l - 3.3077115913f * m + 0.2309699292f * s,
@@ -451,10 +456,12 @@ static void linear_srgb_to_oklab_sse42(__m128 source_b, __m128 source_g, __m128 
 
     __m128 s = _mm_add_ps(term_r, term_g);
     s = _mm_add_ps(s, term_b);
-    
-    __m128 l_ = fastcbrt_sse42(l);   
-    __m128 m_ = fastcbrt_sse42(m);
-    __m128 s_ = fastcbrt_sse42(s);    
+
+    const __m128 jbias = _mm_set1_ps(0.0037930732552754493f);    
+    const __m128 kbias = _mm_set1_ps(-0.15595420054924858f);
+    __m128 l_ =  _mm_add_ps(fastcbrt_sse42(_mm_add_ps(l, jbias)), kbias);   
+    __m128 m_ =  _mm_add_ps(fastcbrt_sse42(_mm_add_ps(m, jbias)), kbias);
+    __m128 s_ =  _mm_add_ps(fastcbrt_sse42(_mm_add_ps(s, jbias)), kbias);    
 
     // return (Lab){
     //     .L = 0.2104542553f * l_ + 0.7936177850f * m_ - 0.0040720468f * s_,
@@ -527,12 +534,23 @@ static void oklab_to_linear_srgb_sse42(__m128 source_l, __m128 source_a, __m128 
     __m128 s_ = _mm_add_ps(source_l, term_a);
     s_ = _mm_add_ps(s_, term_b);
 
+    const __m128 jbias = _mm_set1_ps(-0.0037930732552754493f);    
+    const __m128 kbias = _mm_set1_ps(0.15595420054924858f);
+
+    l_ = _mm_add_ps(l_, kbias);
+    m_ = _mm_add_ps(m_,  kbias);
+    s_ = _mm_add_ps(s_, kbias);
+
     // float l = l_ * l_ * l_;
     // float m = m_ * m_ * m_;
     // float s = s_ * s_ * s_;
     __m128 l = _mm_mul_ps(l_, _mm_mul_ps(l_, l_));
     __m128 m = _mm_mul_ps(m_,  _mm_mul_ps(m_, m_));
     __m128 s = _mm_mul_ps(s_, _mm_mul_ps(s_, s_));
+    
+    l = _mm_add_ps(l, jbias);
+    m = _mm_add_ps(m,  jbias);
+    s = _mm_add_ps(s, jbias);
 
     // .r = +4.0767416621f * l - 3.3077115913f * m + 0.2309699292f * s,
     const __m128 R_L_COEFF = _mm_set1_ps(+4.0767416621f);
@@ -628,9 +646,19 @@ static void linear_srgb_to_oklab_avx2(__m256 source_b, __m256 source_g, __m256 s
     s = _mm256_fmadd_ps(source_g, S_G_COEFF, s);
     s = _mm256_fmadd_ps(source_r, S_R_COEFF, s);
 
+    const __m256 jbias = _mm256_set1_ps(0.0037930732552754493f);    
+    const __m256 kbias = _mm256_set1_ps(-0.15595420054924858f);
+    l = _mm256_add_ps(l, jbias);
+    m = _mm256_add_ps(m, jbias);
+    s = _mm256_add_ps(s, jbias);
+
     __m256 l_ = fastcbrt_avx2(l);   
     __m256 m_ = fastcbrt_avx2(m);
     __m256 s_ = fastcbrt_avx2(s);    
+
+    l_ = _mm256_add_ps(l_, kbias);
+    m_ = _mm256_add_ps(m_, kbias);
+    s_ = _mm256_add_ps(s_, kbias);
 
     // .L = 0.2104542553f * l_ + 0.7936177850f * m_ - 0.0040720468f * s_,
     const __m256 L_L_COEFF = _mm256_set1_ps(0.2104542553f);
@@ -687,12 +715,25 @@ static void oklab_to_linear_srgb_avx2(__m256 source_l, __m256 source_a, __m256 s
     s_ = _mm256_fmadd_ps(source_a, S_A_COEFF, s_);
     s_ = _mm256_add_ps(s_, source_l);
 
+
+
+    const __m256 jbias = _mm256_set1_ps(-0.0037930732552754493f);    
+    const __m256 kbias = _mm256_set1_ps(0.15595420054924858f);
+    l_ = _mm256_add_ps(l_, kbias);
+    m_ = _mm256_add_ps(m_, kbias);
+    s_ = _mm256_add_ps(s_, kbias);
+
     // float l = l_ * l_ * l_;
     __m256 l = _mm256_mul_ps(l_, _mm256_mul_ps(l_, l_));
     // float m = m_ * m_ * m_;
     __m256 m = _mm256_mul_ps(m_, _mm256_mul_ps(m_, m_));
     // float s = s_ * s_ * s_;
     __m256 s = _mm256_mul_ps(s_, _mm256_mul_ps(s_, s_));
+
+    l = _mm256_add_ps(l, jbias);
+    m = _mm256_add_ps(m, jbias);
+    s = _mm256_add_ps(s, jbias);
+
 
     // .r = +4.0767416621f * l - 3.3077115913f * m + 0.2309699292f * s,
     const __m256 R_L_COEFF = _mm256_set1_ps(+4.0767416621f);
