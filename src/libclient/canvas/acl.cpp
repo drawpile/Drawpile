@@ -225,10 +225,14 @@ void AclState::emitFeatureChanges(int before, int now, bool reset)
 void AclState::emitLimitChanges(
 	const int *hadLimits, DP_AccessTier tier, bool reset)
 {
+	DP_AccessTier ownTier = DP_user_acls_tier(&d->users, d->localUser);
 	for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
 		int limit = d->features.limits[i][tier];
 		if(reset || limit != hadLimits[i]) {
-			emit featureLimitChanged(DP_FeatureLimit(i), limit);
+			emit featureLimitForTierChanged(DP_FeatureLimit(i), tier, limit);
+			if(tier == ownTier) {
+				emit ownFeatureLimitChanged(DP_FeatureLimit(i), limit);
+			}
 		}
 	}
 }

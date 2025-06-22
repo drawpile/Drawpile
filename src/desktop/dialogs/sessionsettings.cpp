@@ -24,6 +24,9 @@
 #include <QTemporaryFile>
 #include <QTimer>
 #include <dpcommon/platform_qt.h>
+#include <functional>
+
+using std::placeholders::_1;
 
 namespace dialogs {
 
@@ -175,16 +178,6 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		});
 
 	// Set up permissions tab
-	m_ui->permBrushSize->setExponentRatio(3.0);
-	m_ui->permLayerCount->setExponentRatio(3.0);
-	connect(
-		m_ui->permBrushSize,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
-		&SessionSettingsDialog::updateBrushSizeLimitText);
-	connect(
-		m_ui->permLayerCount,
-		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
-		&SessionSettingsDialog::updateLayerCountLimitText);
 	connect(
 		m_ui->permissionPresets, &widgets::PresetSelector::saveRequested, this,
 		&SessionSettingsDialog::permissionPresetSaving);
@@ -317,6 +310,27 @@ void SessionSettingsDialog::reloadSettings()
 	m_ui->addAnnouncement->setEnabled(!addAnnouncementMenu->isEmpty());
 }
 
+void SessionSettingsDialog::setCompatibilityMode(bool compatibilityMode)
+{
+	QWidget *widgets[] = {
+		m_ui->labelPigment,
+		m_ui->permPigment,
+		m_ui->labelBrushSize,
+		m_ui->permBrushSizeGuest,
+		m_ui->permBrushSizeRegistered,
+		m_ui->permBrushSizeTrusted,
+		m_ui->permBrushSizeOperator,
+		m_ui->labelLayerCount,
+		m_ui->permLayerCountGuest,
+		m_ui->permLayerCountRegistered,
+		m_ui->permLayerCountTrusted,
+		m_ui->permLayerCountOperator,
+	};
+	for(QWidget *widget : widgets) {
+		widget->setEnabled(!compatibilityMode);
+	}
+}
+
 void SessionSettingsDialog::setPersistenceEnabled(bool enable)
 {
 	m_ui->persistent->setEnabled(m_op && enable);
@@ -396,20 +410,22 @@ void SessionSettingsDialog::bansImpExError(const QString &message)
 
 void SessionSettingsDialog::onCanvasChanged(canvas::CanvasModel *canvas)
 {
-	if(!canvas)
-		return;
+	if(canvas) {
+		connect(
+			canvas, &canvas::CanvasModel::compatibilityModeChanged, this,
+			&SessionSettingsDialog::setCompatibilityMode);
+		setCompatibilityMode(canvas->isCompatibilityMode());
 
-	canvas::AclState *acl = canvas->aclState();
-
-	connect(
-		acl, &canvas::AclState::localOpChanged, this,
-		&SessionSettingsDialog::onOperatorModeChanged);
-	connect(
-		acl, &canvas::AclState::featureTiersChanged, this,
-		&SessionSettingsDialog::onFeatureTiersChanged);
-
-	onOperatorModeChanged(acl->amOperator());
-	onFeatureTiersChanged(acl->featureTiers());
+		canvas::AclState *acl = canvas->aclState();
+		connect(
+			acl, &canvas::AclState::localOpChanged, this,
+			&SessionSettingsDialog::onOperatorModeChanged);
+		connect(
+			acl, &canvas::AclState::featureTiersChanged, this,
+			&SessionSettingsDialog::onFeatureTiersChanged);
+		onOperatorModeChanged(acl->amOperator());
+		onFeatureTiersChanged(acl->featureTiers());
+	}
 }
 
 void SessionSettingsDialog::onOperatorModeChanged(bool op)
@@ -479,41 +495,58 @@ QComboBox *SessionSettingsDialog::featureBox(DP_Feature f)
 	}
 }
 
-KisSliderSpinBox *SessionSettingsDialog::limitSlider(DP_FeatureLimit fl)
+KisSliderSpinBox *
+SessionSettingsDialog::limitSlider(DP_FeatureLimit fl, DP_AccessTier tier)
 {
 	switch(fl) {
 	case DP_FEATURE_LIMIT_BRUSH_SIZE:
-		return m_ui->permBrushSize;
+		switch(tier) {
+		case DP_ACCESS_TIER_OPERATOR:
+			return m_ui->permBrushSizeOperator;
+		case DP_ACCESS_TIER_TRUSTED:
+			return m_ui->permBrushSizeTrusted;
+		case DP_ACCESS_TIER_AUTHENTICATED:
+			return m_ui->permBrushSizeRegistered;
+		default:
+			return m_ui->permBrushSizeGuest;
+		}
 	case DP_FEATURE_LIMIT_LAYER_COUNT:
-		return m_ui->permLayerCount;
+		switch(tier) {
+		case DP_ACCESS_TIER_OPERATOR:
+			return m_ui->permLayerCountOperator;
+		case DP_ACCESS_TIER_TRUSTED:
+			return m_ui->permLayerCountTrusted;
+		case DP_ACCESS_TIER_AUTHENTICATED:
+			return m_ui->permLayerCountRegistered;
+		default:
+			return m_ui->permLayerCountGuest;
+		}
 	default:
 		Q_ASSERT_X(false, "limitSlider", "unhandled case");
 		return nullptr;
 	}
 }
 
-int SessionSettingsDialog::limitSliderValue(DP_FeatureLimit fl)
+int SessionSettingsDialog::limitSliderValue(
+	DP_FeatureLimit fl, DP_AccessTier tier)
 {
-	switch(fl) {
-	case DP_FEATURE_LIMIT_BRUSH_SIZE: {
-		int value = m_ui->permBrushSize->value();
-		return value < m_ui->permBrushSize->maximum() ? value : -1;
-	}
-	case DP_FEATURE_LIMIT_LAYER_COUNT: {
-		int value = m_ui->permLayerCount->value();
-		return value < m_ui->permLayerCount->maximum() ? value : -1;
-	}
-	default:
-		Q_ASSERT_X(false, "limitSliderValue", "unhandled case");
+	KisSliderSpinBox *slider = limitSlider(fl, tier);
+	if(slider) {
+		int value = slider->value();
+		return value < slider->maximum() ? value : -1;
+	} else {
 		return -1;
 	}
 }
 
-void SessionSettingsDialog::setLimitSliderValue(DP_FeatureLimit fl, int value)
+void SessionSettingsDialog::setLimitSliderValue(
+	DP_FeatureLimit fl, DP_AccessTier tier, int value)
 {
-	KisSliderSpinBox *slider = limitSlider(fl);
-	QSignalBlocker blocker(slider);
-	slider->setValue(value < 0 ? slider->maximum() : value);
+	KisSliderSpinBox *slider = limitSlider(fl, tier);
+	if(slider) {
+		QSignalBlocker blocker(slider);
+		slider->setValue(value < 0 ? slider->maximum() : value);
+	}
 }
 
 void SessionSettingsDialog::onFeatureTiersChanged(
@@ -534,16 +567,17 @@ void SessionSettingsDialog::onFeatureTiersChanged(
 		int(features.tiers[DP_FEATURE_CREATE_ANNOTATION]));
 	m_ui->permLaser->setCurrentIndex(int(features.tiers[DP_FEATURE_LASER]));
 	m_ui->permUndo->setCurrentIndex(int(features.tiers[DP_FEATURE_UNDO]));
-	m_ui->permPigment->setCurrentIndex(int(features.tiers[DP_FEATURE_SLOW_BRUSH]));
+	m_ui->permPigment->setCurrentIndex(
+		int(features.tiers[DP_FEATURE_SLOW_BRUSH]));
 	m_ui->permTimeline->setCurrentIndex(
 		int(features.tiers[DP_FEATURE_TIMELINE]));
 	m_ui->permMyPaint->setCurrentIndex(int(features.tiers[DP_FEATURE_MYPAINT]));
-	setLimitSliderValue(
-		DP_FEATURE_LIMIT_BRUSH_SIZE,
-		features.limits[DP_FEATURE_LIMIT_BRUSH_SIZE][DP_ACCESS_TIER_GUEST]);
-	setLimitSliderValue(
-		DP_FEATURE_LIMIT_BRUSH_SIZE,
-		features.limits[DP_FEATURE_LIMIT_BRUSH_SIZE][DP_ACCESS_TIER_GUEST]);
+	for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
+		for(int j = 0; j < DP_ACCESS_TIER_COUNT; ++j) {
+			setLimitSliderValue(
+				DP_FeatureLimit(i), DP_AccessTier(j), features.limits[i][j]);
+		}
+	}
 }
 
 const QByteArray SessionSettingsDialog::authExportPrefix =
@@ -570,10 +604,18 @@ void SessionSettingsDialog::initPermissionComboBoxes()
 void SessionSettingsDialog::initPermissionLimitSliders()
 {
 	for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
-		KisSliderSpinBox *slider = limitSlider(DP_FeatureLimit(i));
-		connect(
-			slider, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
-			&SessionSettingsDialog::limitChanged);
+		for(int j = 0; j < DP_ACCESS_TIER_COUNT; ++j) {
+			KisSliderSpinBox *slider =
+				limitSlider(DP_FeatureLimit(i), DP_AccessTier(j));
+			slider->setExponentRatio(3.0);
+			slider->setBlockUpdateSignalOnDrag(true);
+			connect(
+				slider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+				this,
+				std::bind(
+					&SessionSettingsDialog::updateLimit, this,
+					DP_FeatureLimit(i), DP_AccessTier(j), _1));
+		}
 	}
 }
 
@@ -583,22 +625,27 @@ void SessionSettingsDialog::permissionChanged()
 	m_saveTimer->start();
 }
 
-void SessionSettingsDialog::limitChanged()
+void SessionSettingsDialog::updateLimit(
+	DP_FeatureLimit fl, DP_AccessTier tier, int value)
 {
+	for(int i = tier + 1; i < DP_ACCESS_TIER_COUNT; ++i) {
+		KisSliderSpinBox *slider = limitSlider(fl, DP_AccessTier(i));
+		if(slider && slider->value() > value) {
+			QSignalBlocker blocker(slider);
+			slider->setValue(value);
+		}
+	}
+
+	for(int i = tier - 1; i >= 0; --i) {
+		KisSliderSpinBox *slider = limitSlider(fl, DP_AccessTier(i));
+		if(slider && slider->value() < value) {
+			QSignalBlocker blocker(slider);
+			slider->setValue(value);
+		}
+	}
+
 	m_featureLimitsChanged = true;
 	m_saveTimer->start();
-}
-
-void SessionSettingsDialog::updateBrushSizeLimitText(int value)
-{
-	m_ui->permBrushSize->setOverrideText(
-		value < m_ui->permBrushSize->maximum() ? QString() : tr("Unlimited"));
-}
-
-void SessionSettingsDialog::updateLayerCountLimitText(int value)
-{
-	m_ui->permLayerCount->setOverrideText(
-		value < m_ui->permLayerCount->maximum() ? QString() : tr("Unlimited"));
 }
 
 void SessionSettingsDialog::permissionPresetSelected(const QString &presetFile)
@@ -611,40 +658,57 @@ void SessionSettingsDialog::permissionPresetSelected(const QString &presetFile)
 
 	QJsonObject cfg = QJsonDocument::fromJson(f.readAll()).object();
 
-	// Normal features
 	for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
-		auto *box = featureBox(DP_Feature(i));
-		box->setCurrentIndex(
-			cfg.value(box->objectName()).toInt(box->currentIndex()));
+		QComboBox *box = featureBox(DP_Feature(i));
+		if(box) {
+			box->setCurrentIndex(
+				cfg.value(box->objectName()).toInt(box->currentIndex()));
+		}
 	}
-	permissionChanged();
 
-	// Deputies
-	{
-		auto *box = m_ui->deputies;
-		box->setCurrentIndex(
-			cfg.value(box->objectName()).toInt(box->currentIndex()));
-		deputiesChanged(box->currentIndex());
+	m_ui->deputies->setCurrentIndex(cfg.value(m_ui->deputies->objectName())
+										.toInt(m_ui->deputies->currentIndex()));
+
+	for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
+		for(int j = 0; j < DP_ACCESS_TIER_COUNT; ++j) {
+			KisSliderSpinBox *slider =
+				limitSlider(DP_FeatureLimit(i), DP_AccessTier(j));
+			if(slider) {
+				int value = cfg.value(slider->objectName()).toInt(-1);
+				setLimitSliderValue(
+					DP_FeatureLimit(i), DP_AccessTier(j), value);
+			}
+		}
 	}
+
+	m_featureTiersChanged = true;
+	m_featureLimitsChanged = true;
+	deputiesChanged(m_ui->deputies->currentIndex());
 }
 
 void SessionSettingsDialog::permissionPresetSaving(const QString &presetFile)
 {
 	QJsonObject cfg;
 
-	// Normal features
 	for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
-		auto *box = featureBox(DP_Feature(i));
+		QComboBox *box = featureBox(DP_Feature(i));
 		cfg[box->objectName()] = box->currentIndex();
 	}
 
-	// Deputies
-	{
-		auto *box = m_ui->deputies;
-		cfg[box->objectName()] = box->currentIndex();
+	cfg[m_ui->deputies->objectName()] = m_ui->deputies->currentIndex();
+
+	for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
+		for(int j = 0; j < DP_ACCESS_TIER_COUNT; ++j) {
+			KisSliderSpinBox *slider =
+				limitSlider(DP_FeatureLimit(i), DP_AccessTier(j));
+			if(slider) {
+				int value =
+					limitSliderValue(DP_FeatureLimit(i), DP_AccessTier(j));
+				cfg.insert(slider->objectName(), value);
+			}
+		}
 	}
 
-	// Save
 	QFile f(presetFile);
 	if(!f.open(DP_QT_WRITE_FLAGS)) {
 		qWarning("%s: could not open file", qPrintable(presetFile));
@@ -781,10 +845,10 @@ void SessionSettingsDialog::sendSessionConf()
 		QVector<int32_t> limits;
 		limits.reserve(int(DP_FEATURE_LIMIT_COUNT) * int(DP_ACCESS_TIER_COUNT));
 		for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
-			int value = limitSliderValue(DP_FeatureLimit(i));
 			for(int j = 0; j < DP_ACCESS_TIER_COUNT; ++j) {
-				limits.append(
-					int32_t(j == DP_ACCESS_TIER_OPERATOR ? -1 : value));
+				int value =
+					limitSliderValue(DP_FeatureLimit(i), DP_AccessTier(j));
+				limits.append(value);
 			}
 		}
 

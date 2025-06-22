@@ -107,7 +107,10 @@ signals:
 	//! Feature access tiers have changed
 	void featureTiersChanged(const DP_FeatureTiers &);
 
-	void featureLimitChanged(DP_FeatureLimit featureLimit, int value);
+	void ownFeatureLimitChanged(DP_FeatureLimit featureLimit, int value);
+
+	void featureLimitForTierChanged(
+		DP_FeatureLimit featureLimit, DP_AccessTier tier, int value);
 
 	void resetLockChanged(bool locked);
 
