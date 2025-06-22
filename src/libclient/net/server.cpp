@@ -48,6 +48,15 @@ QString Server::addSchemeToUserSuppliedAddress(const QString &remoteAddress)
 	if(haveValidScheme) {
 		return remoteAddress;
 	} else {
+		QUrl url = QUrl::fromUserInput(remoteAddress);
+		if(url.isValid()) {
+			if(QString host = url.host(); !host.isEmpty()) {
+				QUrl outUrl;
+				outUrl.setScheme(QStringLiteral("drawpile"));
+				outUrl.setHost(host);
+				return outUrl.toString();
+			}
+		}
 		return QStringLiteral("drawpile://") + remoteAddress;
 	}
 }
