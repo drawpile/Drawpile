@@ -670,7 +670,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		aclState, &canvas::AclState::featureAccessChanged, this,
 		&MainWindow::onFeatureAccessChange);
 	connect(
-		aclState, &canvas::AclState::featureLimitChanged, this,
+		aclState, &canvas::AclState::ownFeatureLimitChanged, this,
 		&MainWindow::onFeatureLimitChanged);
 
 	canvas::PaintEngine *paintEngine = canvas->paintEngine();

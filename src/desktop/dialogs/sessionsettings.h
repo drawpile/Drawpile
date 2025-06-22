@@ -68,9 +68,7 @@ private slots:
 	void allowWebChanged(bool allowWeb);
 
 	void permissionChanged();
-	void limitChanged();
-	void updateBrushSizeLimitText(int value);
-	void updateLayerCountLimitText(int value);
+	void updateLimit(DP_FeatureLimit fl, DP_AccessTier tier, int value);
 
 	void autoresetThresholdChanged();
 	void keepChatChanged(bool);
@@ -113,10 +111,11 @@ private:
 	void initPermissionLimitSliders();
 	void updateBanImportExportState();
 	void reloadSettings();
+	void setCompatibilityMode(bool compatibilityMode);
 	QComboBox *featureBox(DP_Feature f);
-	KisSliderSpinBox *limitSlider(DP_FeatureLimit fl);
-	int limitSliderValue(DP_FeatureLimit fl);
-	void setLimitSliderValue(DP_FeatureLimit fl, int value);
+	KisSliderSpinBox *limitSlider(DP_FeatureLimit fl, DP_AccessTier tier);
+	int limitSliderValue(DP_FeatureLimit fl, DP_AccessTier tier);
+	void setLimitSliderValue(DP_FeatureLimit fl, DP_AccessTier tier, int value);
 	bool checkBanImport(const QString &bans, QString &outErrorMessage) const;
 	bool
 	readAuthListImport(const QByteArray &content, QJsonArray &outList) const;

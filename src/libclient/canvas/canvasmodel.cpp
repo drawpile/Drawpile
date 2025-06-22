@@ -44,7 +44,7 @@ CanvasModel::CanvasModel(
 		m_aclstate, &AclState::userBitsChanged, m_userlist,
 		&UserListModel::updateAclState);
 	connect(
-		m_aclstate, &AclState::featureLimitChanged, m_layerlist,
+		m_aclstate, &AclState::ownFeatureLimitChanged, m_layerlist,
 		&LayerListModel::updateFeatureLimit);
 	connect(
 		m_paintengine, &PaintEngine::aclsChanged, m_aclstate,
