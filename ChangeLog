@@ -27,6 +27,7 @@ Unreleased Version 2.2.3-pre
  * Server Fix: Interpret the connection quality setting sent by clients correctly when choosing who to pick for autoresets. Thanks Blozzom and grimsley for reporting.
  * Fix: Correct warning about Firefox on Linux not supporting pressure sensitivity, since it does work on some systems. Thanks Kuuuube for reporting.
  * Feature: Add pressure tester to browser startup page. Thanks Shivani for contributing.
+ * Feature: Add language selector to browser startup page.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.

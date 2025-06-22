@@ -483,8 +483,6 @@ import { UAParser } from "ua-parser-js";
       }
     }
 
-    window.drawpileLocale = params.get("locale")?.trim();
-
     config.qt.onLoaded = () => {
       showScreen();
       registerEventHandlers(
@@ -829,12 +827,78 @@ import { UAParser } from "ua-parser-js";
     }
   }
 
-  function makeLanguageSelector() {
+  function getLanguages(params) {
+    // Some languages are broken becuase the browser version of Qt doesn't have
+    // the necessary glyphs in its font.
+    const languages = [
+      { title: "English", locale: "en_US" },
+      { title: "اَلْعَرَبِيَّةُ / Arabic", locale: "ar_EG" },
+      { title: "Català / Catalan", locale: "ca_ES" },
+      { title: "Čeština / Czech", locale: "cs_CZ" },
+      { title: "Deutsch / German", locale: "de_DE" },
+      { title: "Español / Spanish", locale: "es_CO" },
+      { title: "Esperanto", locale: "eo_XZ" },
+      { title: "Suomi / Finnish", locale: "fi_FI" },
+      { title: "Français / French", locale: "fr_FR" },
+      { title: "Indonesia / Indoneisan", locale: "id_ID" },
+      { title: "Italiano / Italian", locale: "it_IT" },
+      { title: "日本語 / Japanese", locale: "ja_JP", broken: true },
+      { title: "조선어 / Korean", locale: "ko_KR", broken: true },
+      { title: "Polski / Polish", locale: "pl_PL" },
+      { title: "Português (Brasilia) / Portuguese (Brazil)", locale: "pt_BR" },
+      {
+        title: "Português (Portugal) / Portuguese (Portugal)",
+        locale: "pt_PT",
+      },
+      { title: "русский / Russian", locale: "ru_RU" },
+      { title: "ไทย / Thai", locale: "th_TH", broken: true },
+      { title: "Türkçe / Turkish", locale: "tr_TR" },
+      { title: "українська / Ukranian", locale: "uk_UA" },
+      { title: "Tiếng Việt / Vietnamese", locale: "vi_VN" },
+      { title: "简体中文 / Simplified Chinese", locale: "zh_CN", broken: true },
+    ];
+    if (isTrueParam(params.get("showbrokenlangs"))) {
+      return languages;
+    } else {
+      return languages.filter((l) => !l.broken);
+    }
+  }
 
+  function getSelectedLocale(params, languages) {
+    const selectedLocale =
+      params.get("locale")?.trim() ||
+      localStorage.getItem("drawpile_last_locale")?.trim();
+    if (selectedLocale) {
+      for (const l of languages) {
+        if (l.locale === selectedLocale) {
+          return l.locale;
+        }
+      }
+    }
+    return languages[0].locale;
+  }
 
-    return tag("label", {id: "language-selector"}, [
+  function makeLanguageSelector(params) {
+    const languages = getLanguages(params);
+    const options = languages.map((l) =>
+      tag("option", { value: l.locale }, l.title)
+    );
+
+    const selectedLocale = getSelectedLocale(params, languages);
+    options
+      .find((elem) => elem.value === selectedLocale)
+      ?.setAttribute("selected", "");
+
+    return tag("label", { id: "language-selector" }, [
       "Language:",
+      tag("select", options),
     ]);
+  }
+
+  function setLanguage(select) {
+    const locale = select.options[select.selectedIndex].value;
+    window.drawpileLocale = locale;
+    localStorage.setItem("drawpile_last_locale", locale);
   }
 
   function makePressureTester() {
@@ -1017,10 +1081,16 @@ import { UAParser } from "ua-parser-js";
     } finally {
       updateLoading.remove();
       const doStart = () => {
+        try {
+          setLanguage(startup.querySelector("#language-selector > select"));
+        } catch (e) {
+          console.error("Error setting language", e);
+        }
         startup.remove();
         start();
       };
 
+      startup.appendChild(makeLanguageSelector(params));
       startup.appendChild(makePressureTester());
       const button = tag(
         "button",
