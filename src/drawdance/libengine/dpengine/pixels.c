@@ -308,6 +308,35 @@ static BGR15 set_sat(BGR15 bgr, Fix15 s)
     return bgr;
 }
 
+
+float fastcbrt(float x) {
+    union FloatInt {
+        float f;
+        uint32_t i;
+    };
+
+    if (x == 0.0f) {
+        return 0.0f;
+    }
+
+    const uint32_t sign_mask = 0x80000000;
+    const uint32_t magic_number = 0x2a51067f;
+    
+    union FloatInt u = {.f = x};
+    uint32_t sign = u.i & sign_mask;
+    u.i &= ~sign_mask;
+    float abs_x = u.f;
+    
+    // u.i = u.i / 3 + magic_number; float division to match the SIMD variants
+    u.i = (uint32_t)((float)u.i * (1.0f / 3.0f)) + magic_number;
+
+    float y_cubed = u.f * u.f * u.f;
+    u.f = u.f * (y_cubed + 2.0f * abs_x) / (2.0f * y_cubed + abs_x);
+    u.i |= sign;
+    
+    return u.f;
+}
+
 // SPDX-SnippetBegin
 // SPDX-License-Identifier: MIT
 // SPDX-SnippetCopyrightText: Copyright (c) 2020 Björn Ottosson
@@ -318,15 +347,16 @@ typedef struct Lab {
     float b;
 } Lab;
 
+
 static Lab linear_srgb_to_oklab(BGRf c)
 {
     float l = 0.4122214708f * c.r + 0.5363325363f * c.g + 0.0514459929f * c.b;
     float m = 0.2119034982f * c.r + 0.6806995451f * c.g + 0.1073969566f * c.b;
     float s = 0.0883024619f * c.r + 0.2817188376f * c.g + 0.6299787005f * c.b;
 
-    float l_ = cbrtf(l);
-    float m_ = cbrtf(m);
-    float s_ = cbrtf(s);
+    float l_ = fastcbrt(l);
+    float m_ = fastcbrt(m);
+    float s_ = fastcbrt(s);
 
     return (Lab){
         .L = 0.2104542553f * l_ + 0.7936177850f * m_ - 0.0040720468f * s_,
@@ -352,6 +382,347 @@ static BGRf oklab_to_linear_srgb(Lab c)
     };
 }
 // SPDX-SnippetEnd
+
+#ifdef DP_CPU_X64
+DP_TARGET_BEGIN("sse4.2")
+
+__m128 fastcbrt_sse42(__m128 x) {
+    const __m128 two   = _mm_set1_ps(2.0f);
+    const __m128 sign_mask = _mm_set1_ps(-0.0f);
+    const __m128i magic_number = _mm_set1_epi32(0x2a51067f);
+    
+    __m128 signs = _mm_and_ps(x, sign_mask);
+    __m128 abs_x = _mm_andnot_ps(sign_mask, x);
+
+    __m128i i = _mm_castps_si128(abs_x);
+    i = _mm_add_epi32(_mm_cvtps_epi32(_mm_mul_ps(_mm_cvtepi32_ps(i), _mm_set1_ps(1.0f / 3.0f))), magic_number);
+    __m128 y = _mm_castsi128_ps(i);
+
+    __m128 y3 = _mm_mul_ps(y, _mm_mul_ps(y, y));
+    __m128 halley_num = _mm_add_ps(_mm_mul_ps(abs_x, two), y3);
+    __m128 halley_den = _mm_add_ps(_mm_mul_ps(y3, two), abs_x);
+    __m128 result = _mm_mul_ps(y, _mm_div_ps(halley_num, halley_den));
+
+    result = _mm_or_ps(result, signs);
+    __m128 is_zero_mask = _mm_cmpeq_ps(x, _mm_setzero_ps());
+    return _mm_andnot_ps(is_zero_mask, result);
+}
+
+static void linear_srgb_to_oklab_sse42(__m128 source_r, __m128 source_g, __m128 source_b,
+                                      __m128* out_l, __m128* out_a, __m128* out_b
+                                      )
+{
+    // float l = 0.4122214708f * c.r + 0.5363325363f * c.g + 0.0514459929f * c.b;
+    const __m128 L_R_COEFF = _mm_set1_ps(0.4122214708f);
+    const __m128 L_G_COEFF = _mm_set1_ps(0.5363325363f);
+    const __m128 L_B_COEFF = _mm_set1_ps(0.0514459929f);
+    
+
+    __m128 term_r = _mm_mul_ps(source_r, L_R_COEFF);
+    __m128 term_g = _mm_mul_ps(source_g, L_G_COEFF);
+    __m128 term_b = _mm_mul_ps(source_b, L_B_COEFF);
+
+    __m128 l = _mm_add_ps(term_r, term_g);
+    l = _mm_add_ps(l, term_b);
+        
+    // float m = 0.2119034982f * c.r + 0.6806995451f * c.g + 0.1073969566f * c.b;
+    const __m128 M_R_COEFF = _mm_set1_ps( 0.2119034982f);
+    const __m128 M_G_COEFF = _mm_set1_ps( 0.6806995451f);
+    const __m128 M_B_COEFF = _mm_set1_ps( 0.1073969566f);
+
+    term_r = _mm_mul_ps(source_r, M_R_COEFF);
+    term_g = _mm_mul_ps(source_g, M_G_COEFF);
+    term_b = _mm_mul_ps(source_b, M_B_COEFF);
+
+    __m128 m = _mm_add_ps(term_r, term_g);
+    m = _mm_add_ps(m, term_b);
+
+
+    // float s = 0.0883024619f * c.r + 0.2817188376f * c.g + 0.6299787005f * c.b;
+    const __m128 S_R_COEFF = _mm_set1_ps( 0.0883024619f);
+    const __m128 S_G_COEFF = _mm_set1_ps( 0.2817188376f);
+    const __m128 S_B_COEFF = _mm_set1_ps( 0.6299787005f);
+
+    term_r = _mm_mul_ps(source_r, S_R_COEFF);
+    term_g = _mm_mul_ps(source_g, S_G_COEFF);
+    term_b = _mm_mul_ps(source_b, S_B_COEFF);
+
+    __m128 s = _mm_add_ps(term_r, term_g);
+    s = _mm_add_ps(s, term_b);
+    
+    __m128 l_ = fastcbrt_sse42(l);   
+    __m128 m_ = fastcbrt_sse42(m);
+    __m128 s_ = fastcbrt_sse42(s);    
+
+    // return (Lab){
+    //     .L = 0.2104542553f * l_ + 0.7936177850f * m_ - 0.0040720468f * s_,
+    const __m128 L_L_COEFF = _mm_set1_ps( 0.2104542553f );
+    const __m128 L_M_COEFF = _mm_set1_ps( 0.7936177850f );
+    const __m128 L_S_COEFF = _mm_set1_ps( -0.0040720468f );
+
+    __m128 term_l = _mm_mul_ps(l_, L_L_COEFF);
+    __m128 term_m = _mm_mul_ps(m_, L_M_COEFF);
+    __m128 term_s = _mm_mul_ps(s_, L_S_COEFF);
+
+    __m128 ok_l = _mm_add_ps(term_l, term_m);
+    *out_l = _mm_add_ps(ok_l, term_s);
+
+    //     .a = 1.9779984951f * l_ - 2.4285922050f * m_ + 0.4505937099f * s_,
+    const __m128 A_L_COEFF = _mm_set1_ps( 1.9779984951f);
+    const __m128 A_M_COEFF = _mm_set1_ps( -2.4285922050f);
+    const __m128 A_S_COEFF = _mm_set1_ps( 0.4505937099f);
+
+    term_l = _mm_mul_ps(l_, A_L_COEFF);
+    term_m = _mm_mul_ps(m_, A_M_COEFF);
+    term_s = _mm_mul_ps(s_, A_S_COEFF);
+
+    __m128 ok_a = _mm_add_ps(term_l, term_m);
+    *out_a = _mm_add_ps(ok_a, term_s);
+    
+    //     .b = 0.0259040371f * l_ + 0.7827717662f * m_ - 0.8086757660f * s_,
+    const __m128 B_L_COEFF = _mm_set1_ps( 0.0259040371f );
+    const __m128 B_M_COEFF = _mm_set1_ps(  0.7827717662f );
+    const __m128 B_S_COEFF = _mm_set1_ps( -0.8086757660f );
+
+    term_l = _mm_mul_ps(l_, B_L_COEFF);
+    term_m = _mm_mul_ps(m_, B_M_COEFF);
+    term_s = _mm_mul_ps(s_, B_S_COEFF);
+
+    __m128 ok_b = _mm_add_ps(term_l, term_m);
+    *out_b = _mm_add_ps(ok_b, term_s);
+}
+
+static void oklab_to_linear_srgb_sse42(__m128 source_l, __m128 source_a, __m128 source_b,
+                                     __m128* out_r, __m128* out_g, __m128* out_b)
+{
+    // float l_ = c.L + 0.3963377774f * c.a + 0.2158037573f * c.b;
+    const __m128 L_A_COEFF = _mm_set1_ps(0.3963377774f);
+    const __m128 L_B_COEFF = _mm_set1_ps(0.2158037573f);
+    
+    __m128 term_a = _mm_mul_ps(source_a, L_A_COEFF);
+    __m128 term_b = _mm_mul_ps(source_b, L_B_COEFF);
+    
+    __m128 l_ = _mm_add_ps(source_l, term_a);
+    l_ = _mm_add_ps(l_, term_b);
+
+    // float m_ = c.L - 0.1055613458f * c.a - 0.0638541728f * c.b;
+    const __m128 M_A_COEFF = _mm_set1_ps(-0.1055613458f);
+    const __m128 M_B_COEFF = _mm_set1_ps(-0.0638541728f);
+    
+    term_a = _mm_mul_ps(source_a, M_A_COEFF);
+    term_b = _mm_mul_ps(source_b, M_B_COEFF);
+    
+    __m128 m_ = _mm_add_ps(source_l, term_a);
+    m_ = _mm_add_ps(m_, term_b);
+
+    // float s_ = c.L - 0.0894841775f * c.a - 1.2914855480f * c.b;
+    const __m128 S_A_COEFF = _mm_set1_ps(-0.0894841775f);
+    const __m128 S_B_COEFF = _mm_set1_ps(-1.2914855480f);
+    
+    term_a = _mm_mul_ps(source_a, S_A_COEFF);
+    term_b = _mm_mul_ps(source_b, S_B_COEFF);
+    
+    __m128 s_ = _mm_add_ps(source_l, term_a);
+    s_ = _mm_add_ps(s_, term_b);
+
+    // float l = l_ * l_ * l_;
+    // float m = m_ * m_ * m_;
+    // float s = s_ * s_ * s_;
+    __m128 l = _mm_mul_ps(l_, _mm_mul_ps(l_, l_));
+    __m128 m = _mm_mul_ps(m_,  _mm_mul_ps(m_, m_));
+    __m128 s = _mm_mul_ps(s_, _mm_mul_ps(s_, s_));
+
+    // .r = +4.0767416621f * l - 3.3077115913f * m + 0.2309699292f * s,
+    const __m128 R_L_COEFF = _mm_set1_ps(+4.0767416621f);
+    const __m128 R_M_COEFF = _mm_set1_ps(-3.3077115913f);
+    const __m128 R_S_COEFF = _mm_set1_ps(+0.2309699292f);
+    
+    __m128 term_l = _mm_mul_ps(l, R_L_COEFF);
+    __m128 term_m = _mm_mul_ps(m, R_M_COEFF);
+    __m128 term_s = _mm_mul_ps(s, R_S_COEFF);
+    
+    __m128 r = _mm_add_ps(term_l, term_m);
+    *out_r = _mm_add_ps(r, term_s);
+
+    // .g = -1.2684380046f * l + 2.6097574011f * m - 0.3413193965f * s,
+    const __m128 G_L_COEFF = _mm_set1_ps(-1.2684380046f);
+    const __m128 G_M_COEFF = _mm_set1_ps(+2.6097574011f);
+    const __m128 G_S_COEFF = _mm_set1_ps(-0.3413193965f);
+    
+    term_l = _mm_mul_ps(l, G_L_COEFF);
+    term_m = _mm_mul_ps(m, G_M_COEFF);
+    term_s = _mm_mul_ps(s, G_S_COEFF);
+    
+    __m128 g = _mm_add_ps(term_l, term_m);
+    *out_g = _mm_add_ps(g, term_s);
+
+    // .b = -0.0041960863f * l - 0.7034186147f * m + 1.7076147010f * s,
+    const __m128 B_L_COEFF = _mm_set1_ps(-0.0041960863f);
+    const __m128 B_M_COEFF = _mm_set1_ps(-0.7034186147f);
+    const __m128 B_S_COEFF = _mm_set1_ps(+1.7076147010f);
+    
+    term_l = _mm_mul_ps(l, B_L_COEFF);
+    term_m = _mm_mul_ps(m, B_M_COEFF);
+    term_s = _mm_mul_ps(s, B_S_COEFF);
+    
+    __m128 b = _mm_add_ps(term_l, term_m);
+    *out_b = _mm_add_ps(b, term_s);
+}
+
+DP_TARGET_END
+
+
+DP_TARGET_BEGIN("avx2,fma")
+
+__m256 fastcbrt_avx2(__m256 x) {
+    const __m256 two   = _mm256_set1_ps(2.0f);
+    const __m256 sign_mask = _mm256_set1_ps(-0.0f);
+    const __m256i magic_number = _mm256_set1_epi32(0x2a51067f);
+
+    __m256 signs = _mm256_and_ps(x, sign_mask);
+    __m256 abs_x = _mm256_andnot_ps(sign_mask, x);
+
+    __m256i i = _mm256_castps_si256(abs_x);
+    i = _mm256_add_epi32(_mm256_cvtps_epi32(_mm256_mul_ps(_mm256_cvtepi32_ps(i), _mm256_set1_ps(1.0f / 3.0f))), magic_number);
+    __m256 y = _mm256_castsi256_ps(i);
+
+    __m256 y3 = _mm256_mul_ps(y, _mm256_mul_ps(y, y));
+    __m256 halley_num = _mm256_fmadd_ps(abs_x, two, y3);
+    __m256 halley_den = _mm256_fmadd_ps(y3, two, abs_x);
+    __m256 result = _mm256_mul_ps(y, _mm256_div_ps(halley_num, halley_den));
+    
+    result = _mm256_or_ps(result, signs);
+    __m256 is_zero_mask = _mm256_cmp_ps(x, _mm256_setzero_ps(), _CMP_EQ_OQ);
+    return _mm256_andnot_ps(is_zero_mask, result);
+}
+
+static void linear_srgb_to_oklab_avx2(__m256 source_r, __m256 source_g, __m256 source_b,
+                                     __m256* out_l, __m256* out_a, __m256* out_b)
+{
+    // float l = 0.4122214708f * c.r + 0.5363325363f * c.g + 0.0514459929f * c.b;
+    const __m256 L_R_COEFF = _mm256_set1_ps(0.4122214708f);
+    const __m256 L_G_COEFF = _mm256_set1_ps(0.5363325363f);
+    const __m256 L_B_COEFF = _mm256_set1_ps(0.0514459929f);
+    
+    __m256 l = _mm256_mul_ps(source_b, L_B_COEFF);
+    l = _mm256_fmadd_ps(source_g, L_G_COEFF, l);
+    l = _mm256_fmadd_ps(source_r, L_R_COEFF, l);
+
+    // float m = 0.2119034982f * c.r + 0.6806995451f * c.g + 0.1073969566f * c.b;
+    const __m256 M_R_COEFF = _mm256_set1_ps(0.2119034982f);
+    const __m256 M_G_COEFF = _mm256_set1_ps(0.6806995451f);
+    const __m256 M_B_COEFF = _mm256_set1_ps(0.1073969566f);
+    
+    __m256 m = _mm256_mul_ps(source_b, M_B_COEFF);
+    m = _mm256_fmadd_ps(source_g, M_G_COEFF, m);
+    m = _mm256_fmadd_ps(source_r, M_R_COEFF, m);
+
+    // float s = 0.0883024619f * c.r + 0.2817188376f * c.g + 0.6299787005f * c.b;
+    const __m256 S_R_COEFF = _mm256_set1_ps(0.0883024619f);
+    const __m256 S_G_COEFF = _mm256_set1_ps(0.2817188376f);
+    const __m256 S_B_COEFF = _mm256_set1_ps(0.6299787005f);
+    
+    __m256 s = _mm256_mul_ps(source_b, S_B_COEFF);
+    s = _mm256_fmadd_ps(source_g, S_G_COEFF, s);
+    s = _mm256_fmadd_ps(source_r, S_R_COEFF, s);
+
+    __m256 l_ = fastcbrt_avx2(l);   
+    __m256 m_ = fastcbrt_avx2(m);
+    __m256 s_ = fastcbrt_avx2(s);    
+
+    // .L = 0.2104542553f * l_ + 0.7936177850f * m_ - 0.0040720468f * s_,
+    const __m256 L_L_COEFF = _mm256_set1_ps(0.2104542553f);
+    const __m256 L_M_COEFF = _mm256_set1_ps(0.7936177850f);
+    const __m256 L_S_COEFF = _mm256_set1_ps(-0.0040720468f);
+    
+    __m256 ok_l = _mm256_mul_ps(s_, L_S_COEFF);
+    ok_l = _mm256_fmadd_ps(m_, L_M_COEFF, ok_l);
+    *out_l = _mm256_fmadd_ps(l_, L_L_COEFF, ok_l);
+
+    // .a = 1.9779984951f * l_ - 2.4285922050f * m_ + 0.4505937099f * s_,
+    const __m256 A_L_COEFF = _mm256_set1_ps(1.9779984951f);
+    const __m256 A_M_COEFF = _mm256_set1_ps(-2.4285922050f);
+    const __m256 A_S_COEFF = _mm256_set1_ps(0.4505937099f);
+    
+    __m256 ok_a = _mm256_mul_ps(s_, A_S_COEFF);
+    ok_a = _mm256_fmadd_ps(m_, A_M_COEFF, ok_a);
+    *out_a = _mm256_fmadd_ps(l_, A_L_COEFF, ok_a);
+
+    // .b = 0.0259040371f * l_ + 0.7827717662f * m_ - 0.8086757660f * s_,
+    const __m256 B_L_COEFF = _mm256_set1_ps(0.0259040371f);
+    const __m256 B_M_COEFF = _mm256_set1_ps(0.7827717662f);
+    const __m256 B_S_COEFF = _mm256_set1_ps(-0.8086757660f);
+    
+    __m256 ok_b = _mm256_mul_ps(s_, B_S_COEFF);
+    ok_b = _mm256_fmadd_ps(m_, B_M_COEFF, ok_b);
+    *out_b = _mm256_fmadd_ps(l_, B_L_COEFF, ok_b);
+}
+
+static void oklab_to_linear_srgb_avx2(__m256 source_l, __m256 source_a, __m256 source_b,
+                                    __m256* out_r, __m256* out_g, __m256* out_b)
+{
+    // float l_ = c.L + 0.3963377774f * c.a + 0.2158037573f * c.b;
+    const __m256 L_A_COEFF = _mm256_set1_ps(0.3963377774f);
+    const __m256 L_B_COEFF = _mm256_set1_ps(0.2158037573f);
+    
+    __m256 l_ = _mm256_mul_ps(source_b, L_B_COEFF);
+    l_ = _mm256_fmadd_ps(source_a, L_A_COEFF, l_);
+    l_ = _mm256_add_ps(l_, source_l);
+
+    // float m_ = c.L - 0.1055613458f * c.a - 0.0638541728f * c.b;
+    const __m256 M_A_COEFF = _mm256_set1_ps(-0.1055613458f);
+    const __m256 M_B_COEFF = _mm256_set1_ps(-0.0638541728f);
+    
+    __m256 m_ = _mm256_mul_ps(source_b, M_B_COEFF);
+    m_ = _mm256_fmadd_ps(source_a, M_A_COEFF, m_);
+    m_ = _mm256_add_ps(m_, source_l);
+
+    // float s_ = c.L - 0.0894841775f * c.a - 1.2914855480f * c.b;
+    const __m256 S_A_COEFF = _mm256_set1_ps(-0.0894841775f);
+    const __m256 S_B_COEFF = _mm256_set1_ps(-1.2914855480f);
+    
+    __m256 s_ = _mm256_mul_ps(source_b, S_B_COEFF);
+    s_ = _mm256_fmadd_ps(source_a, S_A_COEFF, s_);
+    s_ = _mm256_add_ps(s_, source_l);
+
+    // float l = l_ * l_ * l_;
+    __m256 l = _mm256_mul_ps(l_, _mm256_mul_ps(l_, l_));
+    // float m = m_ * m_ * m_;
+    __m256 m = _mm256_mul_ps(m_, _mm256_mul_ps(m_, m_));
+    // float s = s_ * s_ * s_;
+    __m256 s = _mm256_mul_ps(s_, _mm256_mul_ps(s_, s_));
+
+    // .r = +4.0767416621f * l - 3.3077115913f * m + 0.2309699292f * s,
+    const __m256 R_L_COEFF = _mm256_set1_ps(+4.0767416621f);
+    const __m256 R_M_COEFF = _mm256_set1_ps(-3.3077115913f);
+    const __m256 R_S_COEFF = _mm256_set1_ps(+0.2309699292f);
+    
+    __m256 r = _mm256_mul_ps(s, R_S_COEFF);
+    r = _mm256_fmadd_ps(m, R_M_COEFF, r);
+    *out_r = _mm256_fmadd_ps(l, R_L_COEFF, r);
+
+    // .g = -1.2684380046f * l + 2.6097574011f * m - 0.3413193965f * s,
+    const __m256 G_L_COEFF = _mm256_set1_ps(-1.2684380046f);
+    const __m256 G_M_COEFF = _mm256_set1_ps(+2.6097574011f);
+    const __m256 G_S_COEFF = _mm256_set1_ps(-0.3413193965f);
+    
+    __m256 g = _mm256_mul_ps(s, G_S_COEFF);
+    g = _mm256_fmadd_ps(m, G_M_COEFF, g);
+    *out_g = _mm256_fmadd_ps(l, G_L_COEFF, g);
+
+    // .b = -0.0041960863f * l - 0.7034186147f * m + 1.7076147010f * s,
+    const __m256 B_L_COEFF = _mm256_set1_ps(-0.0041960863f);
+    const __m256 B_M_COEFF = _mm256_set1_ps(-0.7034186147f);
+    const __m256 B_S_COEFF = _mm256_set1_ps(+1.7076147010f);
+
+    __m256 b = _mm256_mul_ps(s, B_S_COEFF);
+    b = _mm256_fmadd_ps(m, B_M_COEFF, b);
+    *out_b = _mm256_fmadd_ps(l, B_L_COEFF, b);
+}
+
+DP_TARGET_END
+
+#endif
 
 // Adapted from MyPaint, see license above.
 // Composites an unpremultiplied source over a premultiplied destination.
@@ -1660,6 +2031,7 @@ static void blend_mask_pixels_normal_and_eraser_avx2(DP_Pixel15 *dst,
         dstA = _mm256_add_epi32(
             opa_a, _mm256_srli_epi32(_mm256_mullo_epi32(opa_b, dstA), 15));
 
+
         store_unaligned_avx2(dstB, dstG, dstR, dstA, dst);
     }
     _mm256_zeroupper();
@@ -1706,6 +2078,8 @@ static void blend_mask_pixels_recolor_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
     _mm256_zeroupper();
     // clang-format on
 }
+
+
 DP_TARGET_END
 #endif
 
@@ -2543,9 +2917,9 @@ static BGRf mix_oklab(Lab dst_okl, Lab src_okl, Fix15 ab, Fix15 aso)
     float blend = alpha / mix_a;
 
     Lab mix_okl = (Lab){
-        src_okl.L * blend + dst_okl.L * (1.0f - blend),
-        src_okl.a * blend + dst_okl.a * (1.0f - blend),
-        src_okl.b * blend + dst_okl.b * (1.0f - blend),
+        dst_okl.L + (src_okl.L - dst_okl.L) * blend,
+        dst_okl.a + (src_okl.a - dst_okl.a) * blend,
+        dst_okl.b + (src_okl.b - dst_okl.b) * blend,
     };
 
     BGRf mix_rgb = oklab_to_linear_srgb(mix_okl);
@@ -2561,32 +2935,742 @@ static BGRf blend_oklab_mask(DP_Pixel15 dp, Lab src_okl, Fix15 ab, Fix15 aso)
     return mix_oklab(dst_okl, src_okl, ab, aso);
 }
 
-static void blend_mask_oklab_normal(DP_Pixel15 *dst, DP_UPixel15 src,
-                                    const uint16_t *mask, Fix15 opacity, int w,
-                                    int h, int mask_skip, int base_skip)
+static void blend_mask_pixels_oklab(DP_Pixel15 *dst, DP_UPixel15 src,
+                                     const uint16_t *mask, Fix15 opacity,
+                                     int count)
 {
     BGR15 cs = to_ubgr(src);
     Lab src_okl = linear_srgb_to_oklab(
-        (BGRf){srgb_to_linear((float)src.b / BIT15_FLOAT),
-               srgb_to_linear((float)src.g / BIT15_FLOAT),
-               srgb_to_linear((float)src.r / BIT15_FLOAT)});
-    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
-        BLEND_MASK_SPACE_FLOAT_ALPHA(blend_oklab_mask, src_okl);
-    });
+        (BGRf){srgb_to_linear((float)cs.b / BIT15_FLOAT),
+               srgb_to_linear((float)cs.g / BIT15_FLOAT),
+               srgb_to_linear((float)cs.r / BIT15_FLOAT)});
+
+    
+    for (int x = 0; x < count; ++x, ++dst, ++mask) {
+        Fix15 as = *mask;
+        BLEND_MASK_SPACE_FLOAT_ALPHA(blend_oklab_mask, src_okl);        
+    }
 }
 
-static void blend_mask_oklab_recolor(DP_Pixel15 *dst, DP_UPixel15 src,
-                                     const uint16_t *mask, Fix15 opacity, int w,
-                                     int h, int mask_skip, int base_skip)
+static void blend_mask_pixels_oklab_recolor(DP_Pixel15 *dst, DP_UPixel15 src,
+                                     const uint16_t *mask, Fix15 opacity,
+                                     int count)
 {
+
+    BGR15 cs = to_ubgr(src);
+    Lab src_okl = linear_srgb_to_oklab(
+        (BGRf){srgb_to_linear((float)cs.b / BIT15_FLOAT),
+               srgb_to_linear((float)cs.g / BIT15_FLOAT),
+               srgb_to_linear((float)cs.r / BIT15_FLOAT)});
+
+    
+    for (int x = 0; x < count; ++x, ++dst, ++mask) {
+        Fix15 as = *mask;
+        BLEND_MASK_SPACE_FLOAT_PRESERVE(blend_oklab_mask, src_okl);        
+    }
+}
+
+
+static void blend_mask_pixels_oklab_normal_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
+                                     const uint16_t *mask, Fix15 opacity,
+                                     int count)
+{
+    Fix15 erase_alpha = from_fix(src.a);
     BGR15 cs = to_ubgr(src);
     Lab src_okl = linear_srgb_to_oklab(
         (BGRf){srgb_to_linear((float)src.b / BIT15_FLOAT),
                srgb_to_linear((float)src.g / BIT15_FLOAT),
                srgb_to_linear((float)src.r / BIT15_FLOAT)});
-    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
-        BLEND_MASK_SPACE_FLOAT_PRESERVE(blend_oklab_mask, src_okl);
-    });
+
+    for (int x = 0; x < count; ++x, ++dst, ++mask) {
+    // FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
+        Fix15 as = *mask;
+        BGRA15 cb = to_bgra(*dst);
+        Fix15 opa_a = fix15_mul(as, opacity);
+        Fix15 opa_b = BIT15_FIX - opa_a;
+        Fix15 opa_a2 = fix15_mul(opa_a, erase_alpha);
+        Fix15 opa_out = opa_a2 + fix15_mul(opa_b, cb.a);
+
+        BGR15 cr;
+        if (cb.a == 0) {
+            cr.b = fix15_mul(opa_a2, cs.b);
+            cr.g = fix15_mul(opa_a2, cs.g);
+            cr.r = fix15_mul(opa_a2, cs.r);
+        }
+        else {
+            BGRf dst_lrgb = bgra_unpremultiply_to_linear(cb);
+            Lab dst_okl = linear_srgb_to_oklab(dst_lrgb);
+            BGRf s = mix_oklab(dst_okl, src_okl, cb.a, opa_a2);
+            float opa_out_f = (float)opa_out;
+            cr.b = (Fix15)(s.b * opa_out_f);
+            cr.g = (Fix15)(s.g * opa_out_f);
+            cr.r = (Fix15)(s.r * opa_out_f);
+        }
+
+        *dst = ((DP_Pixel15){
+            .b = from_fix(cr.b),
+            .g = from_fix(cr.g),
+            .r = from_fix(cr.r),
+            .a = from_fix(opa_out),
+        });
+    }
+}
+
+
+#ifdef DP_CPU_X64
+DP_TARGET_BEGIN("sse4.2")
+
+
+static __m128 channel_unpremultiply_to_linear_sse42(__m128 ch, __m128 alpha) {
+    const __m128 threshold = _mm_set_ps1(0.04045f);
+    const __m128 h = _mm_set_ps1(1.0f / 12.92f);
+    
+    const __m128 pow_add = _mm_set_ps1(0.055f);
+    const __m128 pow_mul = _mm_set_ps1(1.0f / 1.055f);
+    const __m128 gamma = _mm_set_ps1(2.4f);
+    // return x < 0.04045f ? x / 12.92f : fastpow((x + 0.055f) / 1.055f, 2.4f);
+
+    __m128 unprem = _mm_div_ps(ch, alpha);
+    
+    __m128 powed = vfastpow( _mm_mul_ps(_mm_add_ps(unprem, pow_add), pow_mul), gamma);
+    __m128 small = _mm_mul_ps(unprem, h);
+
+    __m128 branch = _mm_cmplt_ps(unprem, threshold);
+    __m128 linear = _mm_blendv_ps(powed, small, branch);
+
+    return linear;
+}
+
+static __m128 channel_linear_premultiply_to_srgb_sse42(__m128 ch, __m128 alpha) {
+    const __m128 threshold = _mm_set_ps1(0.0031308f);
+    const __m128 h = _mm_set_ps1(12.92f);
+
+    const __m128 pow_sub = _mm_set_ps1(0.055f);
+    const __m128 pow_mul = _mm_set_ps1(1.055f);
+    const __m128 inv_gamma = _mm_set_ps1(1.0f / 2.4f);
+    // return x < 0.0031308f ? x * 12.92f : fastpow(x, 1.0f / 2.4f) * 1.055f - 0.055f;
+
+    __m128 powed = _mm_sub_ps(_mm_mul_ps(pow_mul, vfastpow(ch, inv_gamma)), pow_sub);
+    __m128 small = _mm_mul_ps(ch, h);
+
+    __m128 branch = _mm_cmple_ps(ch, threshold);
+
+    __m128 srgb = _mm_blendv_ps(powed, small, branch);
+    __m128 srgb_prem = _mm_mul_ps(srgb, alpha);
+    return srgb_prem;
+}
+
+
+static void pixels_to_oklaba_sse42(
+    __m128i src_b, __m128i src_g, __m128i src_r, __m128i src_a,
+    __m128* out_okl, __m128* out_oka, __m128* out_okb, __m128* out_a
+){
+    const __m128 bit15_from = _mm_set1_ps(1.0f / BIT15_FLOAT);
+    
+    __m128 src_rf, src_gf, src_bf, src_af;
+    
+    src_rf = _mm_cvtepi32_ps(src_r);
+    src_gf = _mm_cvtepi32_ps(src_g);
+    src_bf = _mm_cvtepi32_ps(src_b);
+    src_af = _mm_cvtepi32_ps(src_a);
+    
+    src_rf = _mm_mul_ps(src_rf, bit15_from);
+    src_gf = _mm_mul_ps(src_gf, bit15_from);
+    src_bf = _mm_mul_ps(src_bf, bit15_from);
+    src_af = _mm_mul_ps(src_af, bit15_from);
+    
+    __m128 src_rl = channel_unpremultiply_to_linear_sse42(src_rf, src_af);
+    __m128 src_gl = channel_unpremultiply_to_linear_sse42(src_gf, src_af);
+    __m128 src_bl = channel_unpremultiply_to_linear_sse42(src_bf, src_af);
+ 
+    linear_srgb_to_oklab_sse42(src_rl, src_gl, src_bl, out_okl, out_oka, out_okb);
+    *out_a = src_af;
+}
+static void mix_oklab_sse42(
+    __m128 dst_okl, __m128 dst_oka, __m128 dst_okb, __m128 dst_a,
+    __m128 src_okl, __m128 src_oka, __m128 src_okb, __m128 src_a,
+    __m128 op,
+    __m128* out_b, __m128* out_g, __m128* out_r, __m128* out_a
+) {
+    const __m128 one = _mm_set1_ps(1.0f); 
+    const __m128 zero = _mm_set1_ps(0.0f);
+
+    __m128 alpha = _mm_mul_ps(op, src_a);
+    __m128 mix_a = _mm_add_ps(alpha, _mm_mul_ps(dst_a, _mm_sub_ps(one, alpha)));
+    __m128 blend = _mm_div_ps(alpha, mix_a);
+    
+    // lerp rewritten in the form: b + (a - b) * t
+    __m128 mix_okl = _mm_add_ps(dst_okl,_mm_mul_ps(_mm_sub_ps(src_okl, dst_okl), blend));
+    __m128 mix_oka = _mm_add_ps(dst_oka,_mm_mul_ps(_mm_sub_ps(src_oka, dst_oka), blend));
+    __m128 mix_okb = _mm_add_ps(dst_okb,_mm_mul_ps(_mm_sub_ps(src_okb, dst_okb), blend));
+
+    __m128 mix_rl, mix_gl, mix_bl;
+    oklab_to_linear_srgb_sse42(mix_okl, mix_oka, mix_okb, &mix_rl, &mix_gl, &mix_bl);
+    
+    *out_r = _mm_max_ps(_mm_min_ps(mix_rl, one), zero);
+    *out_g = _mm_max_ps(_mm_min_ps(mix_gl, one), zero);
+    *out_b = _mm_max_ps(_mm_min_ps(mix_bl, one), zero);
+    *out_a = mix_a;
+}
+
+static void blend_mask_pixels_oklab_sse42(DP_Pixel15 *dst, DP_UPixel15 src,
+                                          const uint16_t *mask_int,
+                                          Fix15 opacity_int, int count)
+{
+    // clang-format off
+    DP_ASSERT(count % 4 == 0);
+    const __m128 bit15_to = _mm_set1_ps( BIT15_FLOAT);
+
+    // Do in parent function ?
+    __m128i srcB = _mm_set1_epi32(src.b);
+    __m128i srcG = _mm_set1_epi32(src.g);
+    __m128i srcR = _mm_set1_epi32(src.r);
+    __m128i srcA = _mm_set1_epi32(DP_BIT15);
+
+    __m128 src_okl, src_oka, src_okb, src_a;
+    pixels_to_oklaba_sse42(
+        srcB, srcG, srcR, srcA,
+        &src_okl, &src_oka, &src_okb, &src_a
+    );
+    
+    __m128i opacity = _mm_set1_epi32((int)opacity_int);
+
+    for (int x = 0; x < count; x += 4, dst += 4, mask_int += 4) {
+        // load mask
+        __m128i mask = _mm_cvtepu16_epi32(_mm_loadl_epi64((void *)mask_int));
+        
+        __m128i oi = mul_sse42(mask, opacity);
+        __m128 o = _mm_div_ps(_mm_cvtepi32_ps(oi), bit15_to);
+
+        // Load dst
+        __m128i dstB, dstG, dstR, dstA;
+        __m128 dst_okl, dst_oka, dst_okb, dst_a;
+        load_unaligned_sse42(dst, &dstB, &dstG, &dstR, &dstA);
+        pixels_to_oklaba_sse42(
+            dstB, dstG, dstR, dstA,
+            &dst_okl, &dst_oka, &dst_okb, &dst_a
+        );
+        
+        __m128 mix_rf, mix_gf, mix_bf, mix_af;
+        mix_oklab_sse42(dst_okl, dst_oka, dst_okb, dst_a,
+                        src_okl, src_oka, src_okb, src_a,
+                        o,
+                        &mix_bf, &mix_gf, &mix_rf, &mix_af
+                        );
+
+        
+        __m128i mix_r, mix_g, mix_b, mix_a;
+        mix_r = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_rf, mix_af), bit15_to));
+        mix_g = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_gf, mix_af), bit15_to));
+        mix_b = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_bf, mix_af), bit15_to));
+        mix_a = _mm_cvtps_epi32(_mm_mul_ps(mix_af, bit15_to));
+        
+        store_unaligned_sse42(mix_b, mix_g, mix_r, mix_a, dst);
+    }
+    // clang-format on
+}
+
+
+static void blend_mask_pixels_oklab_recolor_sse42(DP_Pixel15 *dst, DP_UPixel15 src,
+                                          const uint16_t *mask_int,
+                                          Fix15 opacity_int, int count)
+{
+    // clang-format off
+    DP_ASSERT(count % 4 == 0);
+    const __m128 bit15_to = _mm_set1_ps( BIT15_FLOAT);
+
+    // Do in parent function ?
+    __m128i srcB = _mm_set1_epi32(src.b);
+    __m128i srcG = _mm_set1_epi32(src.g);
+    __m128i srcR = _mm_set1_epi32(src.r);
+    __m128i srcA = _mm_set1_epi32(DP_BIT15);
+
+    __m128 src_okl, src_oka, src_okb, src_a;
+    pixels_to_oklaba_sse42(
+        srcB, srcG, srcR, srcA,
+        &src_okl, &src_oka, &src_okb, &src_a
+    );
+    
+    __m128i opacity = _mm_set1_epi32((int)opacity_int);
+
+    for (int x = 0; x < count; x += 4, dst += 4, mask_int += 4) {
+        // load mask
+        __m128i mask = _mm_cvtepu16_epi32(_mm_loadl_epi64((void *)mask_int));
+        
+        __m128i oi = mul_sse42(mask, opacity);
+        __m128 o = _mm_div_ps(_mm_cvtepi32_ps(oi), bit15_to);
+
+        // Load dst
+        __m128i dstB, dstG, dstR, dstA;
+        __m128 dst_okl, dst_oka, dst_okb, dst_a;
+        load_unaligned_sse42(dst, &dstB, &dstG, &dstR, &dstA);
+        pixels_to_oklaba_sse42(
+            dstB, dstG, dstR, dstA,
+            &dst_okl, &dst_oka, &dst_okb, &dst_a
+        );
+        
+        __m128 mix_rf, mix_gf, mix_bf, mix_af;
+        mix_oklab_sse42(dst_okl, dst_oka, dst_okb, dst_a,
+                        src_okl, src_oka, src_okb, src_a,
+                        o,
+                        &mix_bf, &mix_gf, &mix_rf, &mix_af
+                        );
+
+        
+        __m128i mix_r, mix_g, mix_b, mix_a;
+        mix_r = _mm_cvtps_epi32(_mm_mul_ps( channel_linear_premultiply_to_srgb_sse42(mix_rf, dst_a), bit15_to));
+        mix_g = _mm_cvtps_epi32(_mm_mul_ps( channel_linear_premultiply_to_srgb_sse42(mix_gf, dst_a), bit15_to));
+        mix_b = _mm_cvtps_epi32(_mm_mul_ps( channel_linear_premultiply_to_srgb_sse42(mix_bf, dst_a), bit15_to));
+        mix_a = dstA;
+        
+        store_unaligned_sse42(mix_b, mix_g, mix_r, mix_a, dst);
+    }
+    // clang-format on
+}
+
+static void blend_mask_pixels_oklab_normal_and_eraser_sse42(DP_Pixel15 *dst, DP_UPixel15 src,
+                                                            const uint16_t *mask_int, Fix15 opacity_int,
+                                                            int count)
+{
+    DP_ASSERT(count % 4 == 0);
+    const __m128 bit15_to = _mm_set1_ps(BIT15_FLOAT);
+
+    __m128i srcB = _mm_set1_epi32(src.b);
+    __m128i srcG = _mm_set1_epi32(src.g);
+    __m128i srcR = _mm_set1_epi32(src.r);
+    __m128i srcA = _mm_set1_epi32(DP_BIT15);
+
+    __m128 src_okl, src_oka, src_okb, src_a;
+    pixels_to_oklaba_sse42(
+        srcB, srcG, srcR, srcA,
+        &src_okl, &src_oka, &src_okb, &src_a);
+
+    __m128i erase_alpha = _mm_set1_epi32(src.a);
+    __m128i opacity = _mm_set1_epi32((int)opacity_int);
+
+    __m128i bit15 = _mm_set1_epi32(DP_BIT15);
+
+    for (int x = 0; x < count; x += 4, dst += 4, mask_int += 4) {
+        __m128i mask = _mm_cvtepu16_epi32(_mm_loadl_epi64((void *)mask_int));
+
+        __m128i dstB, dstG, dstR, dstA;
+        load_unaligned_sse42(dst, &dstB, &dstG, &dstR, &dstA);
+
+        __m128i opa_a = mul_sse42(mask, opacity);
+        __m128i opa_b = _mm_sub_epi32(bit15, opa_a);
+        __m128i opa_a2 = mul_sse42(opa_a, erase_alpha);
+        __m128i opa_out = _mm_add_epi32(opa_a2, mul_sse42(opa_b, dstA));
+
+        __m128 o = _mm_div_ps(_mm_cvtepi32_ps(opa_a2), bit15_to);
+        __m128 opa_out_f = _mm_div_ps(_mm_cvtepi32_ps(opa_out), bit15_to);
+
+        __m128 dst_okl, dst_oka, dst_okb, dst_a;
+        pixels_to_oklaba_sse42(
+            dstB, dstG, dstR, dstA,
+            &dst_okl, &dst_oka, &dst_okb, &dst_a);
+
+        __m128 mix_rf, mix_gf, mix_bf, mix_af;
+        mix_oklab_sse42(dst_okl, dst_oka, dst_okb, dst_a,
+                        src_okl, src_oka, src_okb, src_a,
+                        o,
+                        &mix_bf, &mix_gf, &mix_rf, &mix_af);
+
+        __m128i mix_r = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_rf, opa_out_f), bit15_to));
+        __m128i mix_g = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_gf, opa_out_f), bit15_to));
+        __m128i mix_b = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_bf, opa_out_f), bit15_to));
+
+        store_unaligned_sse42(mix_b, mix_g, mix_r, opa_out, dst);
+    }
+}
+
+DP_TARGET_END //sse42
+
+
+DP_TARGET_BEGIN("avx2,fma")
+
+static __m256 vfastpow_avx2(__m256 base, __m256 exponent) {
+    // todo: this is a little silly but there was no fastpow for 8 wide
+    __m128 base_lo = _mm256_castps256_ps128(base);
+    __m128 base_hi = _mm256_extractf128_ps(base, 1);
+
+    __m128 exponent_lo = _mm256_castps256_ps128(exponent);
+    __m128 exponent_hi = _mm256_extractf128_ps(exponent, 1);
+
+    __m128 res_lo = vfastpow(base_lo, exponent_lo);
+    __m128 res_hi = vfastpow(base_hi, exponent_hi);
+
+    return _mm256_set_m128(res_hi, res_lo);
+}
+
+static __m256 channel_unpremultiply_to_linear_avx2(__m256 ch, __m256 alpha) {
+    const __m256 threshold = _mm256_set1_ps(0.04045f);
+    const __m256 h = _mm256_set1_ps(1.0f / 12.92f);
+    
+    const __m256 pow_add = _mm256_set1_ps(0.055f);
+    const __m256 pow_mul = _mm256_set1_ps(1.0f / 1.055f);
+    const __m256 gamma = _mm256_set1_ps(2.4f);
+
+    __m256 unprem = _mm256_div_ps(ch, alpha);
+    
+    __m256 powed = vfastpow_avx2(_mm256_mul_ps(_mm256_add_ps(unprem, pow_add), pow_mul), gamma);
+    __m256 small = _mm256_mul_ps(unprem, h);
+
+    __m256 branch = _mm256_cmp_ps(unprem, threshold, _CMP_LT_OS);
+    __m256 linear = _mm256_blendv_ps(powed, small, branch);
+
+    return linear;
+}
+
+static __m256 channel_linear_premultiply_to_srgb_avx2(__m256 ch, __m256 alpha) {
+    const __m256 threshold = _mm256_set1_ps(0.0031308f);
+    const __m256 h = _mm256_set1_ps(12.92f);
+
+    const __m256 pow_sub = _mm256_set1_ps(0.055f);
+    const __m256 pow_mul = _mm256_set1_ps(1.055f);
+    const __m256 inv_gamma = _mm256_set1_ps(1.0f / 2.4f);
+
+    __m256 powed = _mm256_sub_ps(_mm256_mul_ps(pow_mul, vfastpow_avx2(ch, inv_gamma)), pow_sub);
+    __m256 small = _mm256_mul_ps(ch, h);
+
+    __m256 branch = _mm256_cmp_ps(ch, threshold, _CMP_LE_OS);
+
+    __m256 srgb = _mm256_blendv_ps(powed, small, branch);
+    __m256 srgb_prem = _mm256_mul_ps(srgb, alpha);
+    return srgb_prem;
+}
+
+
+static void pixels_to_oklaba_avx2(
+    __m256i src_b, __m256i src_g, __m256i src_r, __m256i src_a,
+    __m256* out_okl, __m256* out_oka, __m256* out_okb, __m256* out_a
+){
+    const __m256 bit15_from = _mm256_set1_ps(1.0f / BIT15_FLOAT);
+    
+    __m256 src_rf, src_gf, src_bf, src_af;
+    
+    src_rf = _mm256_cvtepi32_ps(src_r);
+    src_gf = _mm256_cvtepi32_ps(src_g);
+    src_bf = _mm256_cvtepi32_ps(src_b);
+    src_af = _mm256_cvtepi32_ps(src_a);
+    
+    src_rf = _mm256_mul_ps(src_rf, bit15_from);
+    src_gf = _mm256_mul_ps(src_gf, bit15_from);
+    src_bf = _mm256_mul_ps(src_bf, bit15_from);
+    src_af = _mm256_mul_ps(src_af, bit15_from);
+    
+
+    __m256 src_rl = channel_unpremultiply_to_linear_avx2(src_rf, src_af);
+    __m256 src_gl = channel_unpremultiply_to_linear_avx2(src_gf, src_af);
+    __m256 src_bl = channel_unpremultiply_to_linear_avx2(src_bf, src_af);
+ 
+    linear_srgb_to_oklab_avx2(src_rl, src_gl, src_bl, out_okl, out_oka, out_okb);
+    *out_a = src_af;
+}
+
+static void mix_oklab_avx2(
+    __m256 dst_okl, __m256 dst_oka, __m256 dst_okb, __m256 dst_a,
+    __m256 src_okl, __m256 src_oka, __m256 src_okb, __m256 src_a,
+    __m256 op,
+    __m256* out_b, __m256* out_g, __m256* out_r, __m256* out_a
+) {
+        const __m256 one = _mm256_set1_ps(1.0f);
+        const __m256 zero = _mm256_set1_ps(0.0f);
+        
+        __m256 alpha = _mm256_mul_ps(op, src_a);
+
+        __m256 mix_a = _mm256_fmadd_ps(dst_a, _mm256_sub_ps(one, alpha), alpha);
+        __m256 blend = _mm256_div_ps(alpha, mix_a);
+
+        __m256 mix_okl = _mm256_fmadd_ps(_mm256_sub_ps(src_okl, dst_okl), blend, dst_okl);
+        __m256 mix_oka = _mm256_fmadd_ps(_mm256_sub_ps(src_oka, dst_oka), blend, dst_oka);
+        __m256 mix_okb = _mm256_fmadd_ps(_mm256_sub_ps(src_okb, dst_okb), blend, dst_okb);
+        
+        __m256 mix_rl, mix_gl, mix_bl;
+        oklab_to_linear_srgb_avx2(mix_okl, mix_oka, mix_okb, &mix_rl, &mix_gl, &mix_bl);
+
+        *out_r = _mm256_max_ps(_mm256_min_ps(mix_rl, one), zero);
+        *out_g = _mm256_max_ps(_mm256_min_ps(mix_gl, one), zero);
+        *out_b = _mm256_max_ps(_mm256_min_ps(mix_bl, one), zero);
+        *out_a = mix_a;
+}
+
+
+static void blend_mask_pixels_oklab_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
+                                          const uint16_t *mask_int,
+                                          Fix15 opacity_int, int count)
+{
+    // clang-format off
+    DP_ASSERT(count % 8 == 0);
+    const __m256 bit15_to = _mm256_set1_ps( BIT15_FLOAT);
+
+    // Do in parent function ?
+    __m256i srcB = _mm256_set1_epi32(src.b);
+    __m256i srcG = _mm256_set1_epi32(src.g);
+    __m256i srcR = _mm256_set1_epi32(src.r);
+    __m256i srcA = _mm256_set1_epi32(DP_BIT15);
+
+    __m256 src_okl, src_oka, src_okb, src_a;
+    pixels_to_oklaba_avx2(
+        srcB, srcG, srcR, srcA,
+        &src_okl, &src_oka, &src_okb, &src_a
+    );
+    
+    __m256i opacity = _mm256_set1_epi32((int)opacity_int);
+
+    for (int x = 0; x < count; x += 8, dst += 8, mask_int += 8) {
+        // load mask
+        __m256i mask = _mm256_cvtepu16_epi32(_mm_loadu_si128((void *)mask_int));
+        // Permute mask to fit pixel load order (15263748)
+        mask = _mm256_permutevar8x32_epi32(mask, _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7));
+        
+        __m256i oi = mul_avx2(mask, opacity);
+        __m256 o = _mm256_div_ps(_mm256_cvtepi32_ps(oi), bit15_to);
+        
+        // Load dst
+        __m256i dstB, dstG, dstR, dstA;
+        load_unaligned_avx2(dst, &dstB, &dstG, &dstR, &dstA);
+    
+        __m256 dst_okl, dst_oka, dst_okb, dst_a;
+        pixels_to_oklaba_avx2(
+            dstB, dstG, dstR, dstA,
+            &dst_okl, &dst_oka, &dst_okb, &dst_a
+        );
+        
+        __m256 mix_rf, mix_gf, mix_bf, mix_af;
+        mix_oklab_avx2(dst_okl, dst_oka, dst_okb, dst_a,
+                        src_okl, src_oka, src_okb, src_a,
+                        o,
+                        &mix_bf, &mix_gf, &mix_rf, &mix_af
+                        );
+        
+        __m256i mix_r, mix_g, mix_b, mix_a;
+        mix_r = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_rf, mix_af), bit15_to));
+        mix_g = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_gf, mix_af), bit15_to));
+        mix_b = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_bf, mix_af), bit15_to));
+        mix_a = _mm256_cvtps_epi32(_mm256_mul_ps(mix_af, bit15_to));
+
+        
+        store_unaligned_avx2(mix_b, mix_g, mix_r, mix_a, dst);
+    }
+    _mm256_zeroupper();
+    // clang-format on
+}
+
+static void blend_mask_pixels_oklab_recolor_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
+                                          const uint16_t *mask_int,
+                                          Fix15 opacity_int, int count)
+{
+    // clang-format off
+    DP_ASSERT(count % 8 == 0);
+    const __m256 bit15_to = _mm256_set1_ps( BIT15_FLOAT);
+
+    // Do in parent function ?
+    __m256i srcB = _mm256_set1_epi32(src.b);
+    __m256i srcG = _mm256_set1_epi32(src.g);
+    __m256i srcR = _mm256_set1_epi32(src.r);
+    __m256i srcA = _mm256_set1_epi32(DP_BIT15);
+
+    __m256 src_okl, src_oka, src_okb, src_a;
+    pixels_to_oklaba_avx2(
+        srcB, srcG, srcR, srcA,
+        &src_okl, &src_oka, &src_okb, &src_a
+    );
+    
+    __m256i opacity = _mm256_set1_epi32((int)opacity_int);
+
+    for (int x = 0; x < count; x += 8, dst += 8, mask_int += 8) {
+        // load mask
+        __m256i mask = _mm256_cvtepu16_epi32(_mm_loadu_si128((void *)mask_int));
+        // Permute mask to fit pixel load order (15263748)
+        mask = _mm256_permutevar8x32_epi32(mask, _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7));
+        
+        __m256i oi = mul_avx2(mask, opacity);
+        __m256 o = _mm256_div_ps(_mm256_cvtepi32_ps(oi), bit15_to);
+
+        // Load dst
+        __m256i dstB, dstG, dstR, dstA;
+        __m256 dst_okl, dst_oka, dst_okb, dst_a;
+        load_unaligned_avx2(dst, &dstB, &dstG, &dstR, &dstA);
+        pixels_to_oklaba_avx2(
+            dstB, dstG, dstR, dstA,
+            &dst_okl, &dst_oka, &dst_okb, &dst_a
+        );
+        
+        __m256 mix_rf, mix_gf, mix_bf, mix_af;
+        mix_oklab_avx2(dst_okl, dst_oka, dst_okb, dst_a,
+                        src_okl, src_oka, src_okb, src_a,
+                        o,
+                        &mix_bf, &mix_gf, &mix_rf, &mix_af
+                        );
+        
+        __m256i mix_r, mix_g, mix_b, mix_a;
+        mix_a = dstA;
+        mix_r = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_rf, dst_a), bit15_to));
+        mix_g = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_gf, dst_a), bit15_to));
+        mix_b = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_bf, dst_a), bit15_to));
+        
+        store_unaligned_avx2(mix_b, mix_g, mix_r, mix_a, dst);
+    }
+    _mm256_zeroupper();
+    // clang-format on
+}
+
+static void blend_mask_pixels_oklab_normal_and_eraser_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
+                                                            const uint16_t *mask_int, Fix15 opacity_int,
+                                                            int count)
+{
+    DP_ASSERT(count % 8 == 0);
+    const __m256 bit15_to = _mm256_set1_ps(BIT15_FLOAT);
+
+    __m256i srcB = _mm256_set1_epi32(src.b);
+    __m256i srcG = _mm256_set1_epi32(src.g);
+    __m256i srcR = _mm256_set1_epi32(src.r);
+    __m256i srcA = _mm256_set1_epi32(DP_BIT15);
+
+    __m256 src_okl, src_oka, src_okb, src_a;
+    pixels_to_oklaba_avx2(
+        srcB, srcG, srcR, srcA,
+        &src_okl, &src_oka, &src_okb, &src_a);
+
+    __m256i erase_alpha = _mm256_set1_epi32(src.a);
+    __m256i opacity = _mm256_set1_epi32((int)opacity_int);
+
+    const __m256i bit15 = _mm256_set1_epi32(DP_BIT15);
+
+    for (int x = 0; x < count; x += 8, dst += 8, mask_int += 8) {
+        __m256i mask = _mm256_cvtepu16_epi32(_mm_loadu_si128((void *)mask_int));
+        // Permute mask to fit pixel load order (15263748)
+        mask = _mm256_permutevar8x32_epi32(mask, _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7));
+
+        __m256i dstB, dstG, dstR, dstA;
+        load_unaligned_avx2(dst, &dstB, &dstG, &dstR, &dstA);
+
+        __m256i opa_a = mul_avx2(mask, opacity);
+        __m256i opa_b = _mm256_sub_epi32(bit15, opa_a);
+        __m256i opa_a2 = mul_avx2(opa_a, erase_alpha);
+        __m256i opa_out = _mm256_add_epi32(opa_a2, mul_avx2(opa_b, dstA));
+
+        __m256 o = _mm256_div_ps(_mm256_cvtepi32_ps(opa_a2), bit15_to);
+        __m256 opa_out_f = _mm256_div_ps(_mm256_cvtepi32_ps(opa_out), bit15_to);
+
+        __m256 dst_okl, dst_oka, dst_okb, dst_a;
+        pixels_to_oklaba_avx2(
+            dstB, dstG, dstR, dstA,
+            &dst_okl, &dst_oka, &dst_okb, &dst_a);
+
+        __m256 mix_rf, mix_gf, mix_bf, mix_af;
+        mix_oklab_avx2(dst_okl, dst_oka, dst_okb, dst_a,
+                        src_okl, src_oka, src_okb, src_a,
+                        o,
+                        &mix_bf, &mix_gf, &mix_rf, &mix_af);
+
+
+        __m256i mix_r = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_rf, opa_out_f), bit15_to));
+        __m256i mix_g = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_gf, opa_out_f), bit15_to));
+        __m256i mix_b = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_bf, opa_out_f), bit15_to));
+
+        store_unaligned_avx2(mix_b, mix_g, mix_r, opa_out, dst);
+    }
+}
+
+
+DP_TARGET_END
+#endif
+
+
+static void blend_mask_oklab_normal(DP_Pixel15 *dst, DP_UPixel15 src,
+                              const uint16_t *mask, Fix15 opacity, int w, int h,
+                              int mask_skip, int base_skip)
+{
+#ifdef DP_CPU_X64
+    for (int y = 0; y < h; ++y) {
+        int remaining = w;
+
+        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2) {
+            int remaining_after_avx_width = remaining % 8;
+            int avx_width = remaining - remaining_after_avx_width;
+
+            blend_mask_pixels_oklab_avx2(dst, src, mask, opacity, avx_width);
+
+            remaining -= avx_width;
+            dst += avx_width;
+            mask += avx_width;
+        }
+
+        if (DP_cpu_support >= DP_CPU_SUPPORT_SSE42) {
+            int remaining_after_sse_width = remaining % 4;
+            int sse_width = remaining - remaining_after_sse_width;
+
+            blend_mask_pixels_oklab_sse42(dst, src, mask, opacity, sse_width);
+
+            remaining -= sse_width;
+            dst += sse_width;
+            mask += sse_width;
+        }
+
+        blend_mask_pixels_oklab(dst, src, mask, opacity, remaining);
+        dst += remaining;
+        mask += remaining;
+
+        dst += base_skip;
+        mask += mask_skip;
+    }
+#else
+    for (int y = 0; y < h; ++y) {
+        blend_mask_pixels_oklab(dst, src, mask, opacity, w);
+
+        dst += w + base_skip;
+        mask += w + mask_skip;
+    }
+#endif
+}
+
+
+static void blend_mask_oklab_recolor(DP_Pixel15 *dst, DP_UPixel15 src,
+                              const uint16_t *mask, Fix15 opacity, int w, int h,
+                              int mask_skip, int base_skip)
+{
+#ifdef DP_CPU_X64
+    for (int y = 0; y < h; ++y) {
+        int remaining = w;
+
+        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2) {
+            int remaining_after_avx_width = remaining % 8;
+            int avx_width = remaining - remaining_after_avx_width;
+
+            blend_mask_pixels_oklab_recolor_avx2(dst, src, mask, opacity, avx_width);
+
+            remaining -= avx_width;
+            dst += avx_width;
+            mask += avx_width;
+        }
+
+        if (DP_cpu_support >= DP_CPU_SUPPORT_SSE42) {
+            int remaining_after_sse_width = remaining % 4;
+            int sse_width = remaining - remaining_after_sse_width;
+
+            blend_mask_pixels_oklab_recolor_sse42(dst, src, mask, opacity, sse_width);
+
+            remaining -= sse_width;
+            dst += sse_width;
+            mask += sse_width;
+        }
+
+        blend_mask_pixels_oklab_recolor(dst, src, mask, opacity, remaining);
+        dst += remaining;
+        mask += remaining;
+
+        dst += base_skip;
+        mask += mask_skip;
+    }
+#else
+    for (int y = 0; y < h; ++y) {
+        blend_mask_pixels_oklab_recolor(dst, src, mask, opacity, w);
+
+        dst += w + base_skip;
+        mask += w + mask_skip;
+    }
+#endif
 }
 
 static void blend_mask_composite_separable(DP_Pixel15 *dst, DP_UPixel15 src,
@@ -3061,48 +4145,56 @@ static void blend_mask_pigment_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
 }
 // SPDX-SnippetEnd
 
+
+
 static void blend_mask_oklab_normal_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
-                                               const uint16_t *mask,
-                                               Fix15 opacity, int w, int h,
-                                               int mask_skip, int base_skip)
+                                         const uint16_t *mask, Fix15 opacity,
+                                         int w, int h, int mask_skip,
+                                         int base_skip)
 {
-    Fix15 erase_alpha = from_fix(src.a);
-    BGR15 cs = to_ubgr(src);
-    Lab src_okl = linear_srgb_to_oklab(
-        (BGRf){srgb_to_linear((float)src.b / BIT15_FLOAT),
-               srgb_to_linear((float)src.g / BIT15_FLOAT),
-               srgb_to_linear((float)src.r / BIT15_FLOAT)});
+#ifdef DP_CPU_X64
+    for (int y = 0; y < h; ++y) {
+        int remaining = w;
 
-    FOR_MASK_PIXEL_M(dst, mask, opacity, w, h, mask_skip, base_skip, x, y, as, {
-        BGRA15 cb = to_bgra(*dst);
-        Fix15 opa_a = fix15_mul(as, opacity);
-        Fix15 opa_b = BIT15_FIX - opa_a;
-        Fix15 opa_a2 = fix15_mul(opa_a, erase_alpha);
-        Fix15 opa_out = opa_a2 + fix15_mul(opa_b, cb.a);
+        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2 && false) {
+            int remaining_after_avx_width = remaining % 8;
+            int avx_width = remaining - remaining_after_avx_width;
 
-        BGR15 cr;
-        if (cb.a == 0) {
-            cr.b = fix15_mul(opa_a2, cs.b);
-            cr.g = fix15_mul(opa_a2, cs.g);
-            cr.r = fix15_mul(opa_a2, cs.r);
-        }
-        else {
-            BGRf dst_lrgb = bgra_unpremultiply_to_linear(cb);
-            Lab dst_okl = linear_srgb_to_oklab(dst_lrgb);
-            BGRf s = mix_oklab(dst_okl, src_okl, cb.a, opa_a2);
-            float opa_out_f = (float)opa_out;
-            cr.b = (Fix15)(s.b * opa_out_f);
-            cr.g = (Fix15)(s.g * opa_out_f);
-            cr.r = (Fix15)(s.r * opa_out_f);
+            blend_mask_pixels_oklab_normal_and_eraser_avx2(dst, src, mask, opacity,
+                                                     avx_width);
+
+            remaining -= avx_width;
+            dst += avx_width;
+            mask += avx_width;
         }
 
-        *dst = ((DP_Pixel15){
-            .b = from_fix(cr.b),
-            .g = from_fix(cr.g),
-            .r = from_fix(cr.r),
-            .a = from_fix(opa_out),
-        });
-    });
+        if (DP_cpu_support >= DP_CPU_SUPPORT_SSE42) {
+            int remaining_after_sse_width = remaining % 4;
+            int sse_width = remaining - remaining_after_sse_width;
+
+            blend_mask_pixels_oklab_normal_and_eraser_sse42(dst, src, mask, opacity,
+                                                      sse_width);
+
+            remaining -= sse_width;
+            dst += sse_width;
+            mask += sse_width;
+        }
+
+        blend_mask_pixels_oklab_normal_and_eraser(dst, src, mask, opacity, remaining);
+        dst += remaining;
+        mask += remaining;
+
+        dst += base_skip;
+        mask += mask_skip;
+    }
+#else
+    for (int y = 0; y < h; ++y) {
+        blend_mask_pixels_oklab_normal_and_eraser(dst, src, mask, opacity, w);
+
+        dst += w + base_skip;
+        mask += w + mask_skip;
+    }
+#endif
 }
 
 
@@ -4023,7 +5115,6 @@ static void blend_pixels_color_erase(DP_Pixel15 *DP_RESTRICT dst,
 // SPDX-SnippetBegin
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SDPX—SnippetName: Spectral blending based on MyPaint's blending.hpp
-
 static void blend_pixels_float_space_alpha(DP_Pixel15 *DP_RESTRICT dst,
                                            const DP_Pixel15 *DP_RESTRICT src,
                                            int pixel_count, Fix15 opacity,
@@ -4061,6 +5152,8 @@ static void blend_pixels_float_space_alpha(DP_Pixel15 *DP_RESTRICT dst,
         }
     }
 }
+
+
 
 static void blend_pixels_float_space_preserve(
     DP_Pixel15 *DP_RESTRICT dst, const DP_Pixel15 *DP_RESTRICT src,
@@ -4114,6 +5207,228 @@ static BGRf blend_oklab_pixel(DP_Pixel15 dp, DP_Pixel15 sp, Fix15 ab, Fix15 as,
     Lab src_okl = linear_srgb_to_oklab(src_lrgb);
     return mix_oklab(dst_okl, src_okl, ab, aso);
 }
+
+
+
+#ifdef DP_CPU_X64
+DP_TARGET_BEGIN("sse4.2")
+
+static void blend_oklab_pixel_sse42(
+    __m128i dst_b, __m128i dst_g, __m128i dst_r, __m128i dst_a,
+    __m128i src_b, __m128i src_g, __m128i src_r, __m128i src_a,
+    __m128 op,
+    __m128i* out_b, __m128i* out_g, __m128i* out_r, __m128i* out_a
+) {
+    
+    const __m128 bit15_to = _mm_set1_ps( BIT15_FLOAT);
+    
+    
+    __m128 src_okl, src_oka, src_okb, src_af;
+    __m128 dst_okl, dst_oka, dst_okb, dst_af;
+
+    pixels_to_oklaba_sse42(src_r, src_g, src_b, src_a, &src_okl, &src_oka, &src_okb, &src_af);
+    pixels_to_oklaba_sse42(dst_r, dst_g, dst_b, dst_a, &dst_okl, &dst_oka, &dst_okb, &dst_af);
+
+    __m128 mix_r, mix_g, mix_b, mix_a;
+    mix_oklab_sse42(dst_okl, dst_oka, dst_okb, dst_af,
+                    src_okl, src_oka, src_okb, src_af,
+                    op,
+                    &mix_b, &mix_g, &mix_r, &mix_a);
+
+    *out_r = _mm_cvtps_epi32(_mm_mul_ps( channel_linear_premultiply_to_srgb_sse42(mix_r, mix_a), bit15_to));
+    *out_g = _mm_cvtps_epi32(_mm_mul_ps( channel_linear_premultiply_to_srgb_sse42(mix_g, mix_a), bit15_to));
+    *out_b = _mm_cvtps_epi32(_mm_mul_ps( channel_linear_premultiply_to_srgb_sse42(mix_b, mix_a), bit15_to));
+    *out_a = _mm_cvtps_epi32(_mm_mul_ps(mix_a, bit15_to));    
+}
+
+static void blend_pixels_oklab_alpha_sse42(DP_Pixel15 *DP_RESTRICT dst,
+                                           const DP_Pixel15 *DP_RESTRICT src,
+                                           int pixel_count, Fix15 opacity)
+{   
+    
+    const __m128 op = _mm_set1_ps((float)opacity / BIT15_FLOAT);
+
+    const int step = 4;
+    int steps = pixel_count / step;
+    for (int i = 0; i < steps; ++i, src += step, dst += step) {
+        __m128i src_r, src_g, src_b, src_a;
+        __m128i dst_r, dst_g, dst_b, dst_a;
+        load_unaligned_sse42(src, &src_b, &src_g, &src_r, &src_a);
+        load_unaligned_sse42(dst, &dst_b, &dst_g, &dst_r, &dst_a);
+        
+        // const __m128i bit15i = _mm_set1_epi32(BIT15_FIX);
+        // const __m128i zeroi = _mm_set1_epi32(0);
+        // const __m128i opi = _mm_set1_epi32((int32_t)opacity);
+        // 
+        // __m128i src_a_is_zero = _mm_cmpeq_epi32(src_a, zeroi);
+        // if (_mm_testc_si128(src_a_is_zero, _mm_set1_epi32(-1))) {
+        //     continue;
+        // }
+
+        // __m128i dst_r, dst_g, dst_b, dst_a;
+        // load_unaligned_sse42(dst, &dst_b, &dst_g, &dst_r, &dst_a);
+        // __m128i dst_a_is_zero = _mm_cmpeq_epi32(dst_a, zeroi);
+        // if (_mm_testc_si128(dst_a_is_zero, _mm_set1_epi32(-1))) {
+        //     if (opacity == BIT15_FIX) {
+        //         memcpy(dst, src, step * sizeof(DP_Pixel15));
+        //     } else {
+        //         src_r = mul_sse42(src_r, opi);
+        //         src_g = mul_sse42(src_g, opi);
+        //         src_b = mul_sse42(src_b, opi);
+        //         src_a = mul_sse42(src_a, opi);
+
+        //         store_unaligned_sse42( src_b, src_g, src_r, src_a, dst);
+        //     }
+        //     continue;
+        // }
+
+        // if (opacity == BIT15_FIX) {
+        //     __m128i src_a_is_full = _mm_cmpeq_epi32(src_a, bit15i);
+        //     if (_mm_testc_si128(src_a_is_full, _mm_set1_epi32(-1))) {
+        //         memcpy(dst, src, step * sizeof(DP_Pixel15));
+        //         continue;
+        //     }
+        // }
+
+        __m128i mix_r, mix_g, mix_b, mix_a;
+        blend_oklab_pixel_sse42(
+            dst_b, dst_g, dst_r, dst_a,
+            src_b, src_g, src_r, src_a,
+            op,
+            &mix_b, &mix_g, &mix_r, &mix_a
+        );
+        store_unaligned_sse42(mix_b, mix_g, mix_r, mix_a, dst);
+    }
+}
+
+DP_TARGET_END
+
+DP_TARGET_BEGIN("avx2,fma")
+
+
+
+static void blend_oklab_pixel_avx2(
+    __m256i dst_b, __m256i dst_g, __m256i dst_r, __m256i dst_a,
+    __m256i src_b, __m256i src_g, __m256i src_r, __m256i src_a,
+    __m256 op,
+    __m256i* out_b, __m256i* out_g, __m256i* out_r, __m256i* out_a
+) {
+    
+    const __m256 bit15_to = _mm256_set1_ps(BIT15_FLOAT);
+    
+    __m256 src_okl, src_oka, src_okb, src_af;
+    __m256 dst_okl, dst_oka, dst_okb, dst_af;
+
+
+    pixels_to_oklaba_avx2(
+        src_b, src_g, src_r, src_a,
+        &src_okl, &src_oka, &src_okb, &src_af
+    );
+    pixels_to_oklaba_avx2(
+        dst_b, dst_g, dst_r, dst_a,
+        &dst_okl, &dst_oka, &dst_okb, &dst_af
+    );
+
+    __m256 mix_r, mix_g, mix_b, mix_a;
+    mix_oklab_avx2(dst_okl, dst_oka, dst_okb, dst_af,
+                    src_okl, src_oka, src_okb, src_af,
+                    op,
+                    &mix_b, &mix_g, &mix_r, &mix_a);
+
+    *out_r = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_r,mix_a), bit15_to));
+    *out_g = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_g,mix_a), bit15_to));
+    *out_b = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_b,mix_a), bit15_to));
+    *out_a = _mm256_cvtps_epi32(_mm256_mul_ps(mix_a, bit15_to));
+}
+static void blend_pixels_oklab_alpha_avx2(DP_Pixel15 *DP_RESTRICT dst,
+                                          const DP_Pixel15 *DP_RESTRICT src,
+                                          int pixel_count, Fix15 opacity)
+{
+    const int step = 8;
+    int steps = pixel_count / step;
+
+
+    const __m256 op  = _mm256_set1_ps((float)opacity / BIT15_FLOAT);
+
+    for (int i = 0; i < steps; ++i, src += step, dst += step) {
+        __m256i src_r, src_g, src_b, src_a;
+        __m256i dst_r, dst_g, dst_b, dst_a;
+        load_unaligned_avx2(src, &src_b, &src_g, &src_r, &src_a);
+        load_unaligned_avx2(dst, &dst_b, &dst_g, &dst_r, &dst_a);
+        
+        // Doing the early exits turns out to be slower? it might improve things on newer cpus
+        // 
+        // const __m256i opi = _mm256_set1_epi32(opacity);
+        // const __m256i bit15i = _mm256_set1_epi32(BIT15_FIX);
+        // const __m256i zeroi = _mm256_set1_epi32(0);
+        
+        // __m256i src_a_is_zero = _mm256_cmpeq_epi32(src_a, zeroi);
+        // if (_mm256_testc_si256(src_a_is_zero, _mm256_set1_epi32(-1))) {
+        //     continue;
+        // }
+        
+        // if (opacity == BIT15_FIX) {
+        //      __m256i src_a_is_full = _mm256_cmpeq_epi32(src_a, bit15i);
+        //     if (_mm256_testc_si256(src_a_is_full, _mm256_set1_epi32(-1))) {
+        //         memcpy(dst, src, step * sizeof(DP_Pixel15)); 
+        //         continue;
+        //     }
+        // }
+
+        // __m256i dst_r, dst_g, dst_b, dst_a;
+        // load_unaligned_avx2(dst, &dst_b, &dst_g, &dst_r, &dst_a);
+        // __m256i dst_a_is_zero = _mm256_cmpeq_epi32(dst_a, zeroi);
+        // if (_mm256_testc_si256(dst_a_is_zero, _mm256_set1_epi32(-1))) {
+        //     if (opacity == BIT15_FIX) {
+        //         memcpy(dst, src, step * sizeof(DP_Pixel15));
+        //     } else {
+        //         src_r = mul_avx2(src_r, opi);
+        //         src_g = mul_avx2(src_g, opi);
+        //         src_b = mul_avx2(src_b, opi);
+        //         src_a = mul_avx2(src_a, opi);
+
+        //         store_unaligned_avx2( src_b, src_g, src_r, src_a, dst);
+        //     }
+        //     continue;
+        // }
+
+
+        __m256i mix_r, mix_g, mix_b, mix_a;
+        blend_oklab_pixel_avx2(
+            dst_b, dst_g, dst_r, dst_a,
+            src_b, src_g, src_r, src_a,
+            op,
+            &mix_b, &mix_g, &mix_r, &mix_a
+        );
+
+        store_unaligned_avx2(mix_b, mix_g, mix_r, mix_a, dst);
+
+    }
+}
+DP_TARGET_END
+
+#endif
+
+static void blend_pixels_oklab_alpha(DP_Pixel15 *DP_RESTRICT dst,
+                                           const DP_Pixel15 *DP_RESTRICT src,
+                                           int pixel_count, Fix15 opacity)
+{
+#ifdef DP_CPU_X64
+    switch (DP_cpu_support) {
+    case DP_CPU_SUPPORT_AVX2:
+        blend_pixels_oklab_alpha_avx2(dst, src, pixel_count, opacity);
+        return;
+    case DP_CPU_SUPPORT_SSE42:
+        blend_pixels_oklab_alpha_sse42(dst, src, pixel_count, opacity);
+        return;
+    default:
+        break;
+    }
+#endif
+
+    blend_pixels_float_space_alpha(dst, src, pixel_count, opacity, blend_oklab_pixel);
+}
+
 
 static void blend_pixels_composite_separable(DP_Pixel15 *DP_RESTRICT dst,
                                              const DP_Pixel15 *DP_RESTRICT src,
@@ -4345,8 +5660,7 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
                                        blend_pigment_pixel);
         break;
     case DP_BLEND_MODE_OKLAB_NORMAL:
-        blend_pixels_float_space_alpha(dst, src, pixel_count, to_fix(opacity),
-                                       blend_oklab_pixel);
+        blend_pixels_oklab_alpha(dst, src, pixel_count, to_fix(opacity));
         break;
     // Alpha-preserving separable blend modes (each channel handled separately)
     case DP_BLEND_MODE_MULTIPLY:
