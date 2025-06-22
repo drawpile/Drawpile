@@ -3072,7 +3072,7 @@ static void pixels_to_oklaba_sse42(
     __m128i src_b, __m128i src_g, __m128i src_r, __m128i src_a,
     __m128* out_okl, __m128* out_oka, __m128* out_okb, __m128* out_a
 ){
-    const __m128 bit15 = _mm_set1_ps(BIT15_FLOAT);
+    const __m128 bit15 = _mm_set1_ps(1.0f / BIT15_FLOAT);
     
     __m128 src_rf, src_gf, src_bf, src_af;
     
@@ -3081,10 +3081,10 @@ static void pixels_to_oklaba_sse42(
     src_bf = _mm_cvtepi32_ps(src_b);
     src_af = _mm_cvtepi32_ps(src_a);
     
-    src_rf = _mm_div_ps(src_rf, bit15);
-    src_gf = _mm_div_ps(src_gf, bit15);
-    src_bf = _mm_div_ps(src_bf, bit15);
-    src_af = _mm_div_ps(src_af, bit15);
+    src_rf = _mm_mul_ps(src_rf, bit15);
+    src_gf = _mm_mul_ps(src_gf, bit15);
+    src_bf = _mm_mul_ps(src_bf, bit15);
+    src_af = _mm_mul_ps(src_af, bit15);
     
     __m128 src_rl = channel_unpremultiply_to_linear_sse42(src_rf, src_af);
     __m128 src_gl = channel_unpremultiply_to_linear_sse42(src_gf, src_af);
@@ -3358,7 +3358,7 @@ static void pixels_to_oklaba_avx2(
     __m256i src_b, __m256i src_g, __m256i src_r, __m256i src_a,
     __m256* out_okl, __m256* out_oka, __m256* out_okb, __m256* out_a
 ){
-    const __m256 bit15 = _mm256_set1_ps(BIT15_FLOAT);
+    const __m256 bit15 = _mm256_set1_ps(1.0f/BIT15_FLOAT);
     
     __m256 src_rf, src_gf, src_bf, src_af;
     
@@ -3367,10 +3367,10 @@ static void pixels_to_oklaba_avx2(
     src_bf = _mm256_cvtepi32_ps(src_b);
     src_af = _mm256_cvtepi32_ps(src_a);
     
-    src_rf = _mm256_div_ps(src_rf, bit15);
-    src_gf = _mm256_div_ps(src_gf, bit15);
-    src_bf = _mm256_div_ps(src_bf, bit15);
-    src_af = _mm256_div_ps(src_af, bit15);
+    src_rf = _mm256_mul_ps(src_rf, bit15);
+    src_gf = _mm256_mul_ps(src_gf, bit15);
+    src_bf = _mm256_mul_ps(src_bf, bit15);
+    src_af = _mm256_mul_ps(src_af, bit15);
     
 
     __m256 src_rl = channel_unpremultiply_to_linear_avx2(src_rf, src_af);
