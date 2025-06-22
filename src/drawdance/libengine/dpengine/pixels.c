@@ -54,7 +54,6 @@
 #include <dpcommon/cpu.h>
 #include <dpmsg/blend_mode.h>
 #include <fastapprox/fastpow.h>
-#include <immintrin.h>
 #include <math.h>
 
 static_assert(sizeof(DP_Pixel8) == sizeof(uint32_t), "DP_Pixel8 is 32 bits");
@@ -3300,10 +3299,10 @@ DP_TARGET_BEGIN("avx2,fma")
 
 static __m256 vfastpow_avx2(__m256 base, __m256 exponent) {
     // todo: this is a little silly but there was no fastpow for 8 wide
-    __m128 base_lo = _mm256_castps256_ps128(base);
+    __m128 base_lo = _mm256_extractf128_ps(base, 0);
     __m128 base_hi = _mm256_extractf128_ps(base, 1);
 
-    __m128 exponent_lo = _mm256_castps256_ps128(exponent);
+    __m128 exponent_lo = _mm256_extractf128_ps(exponent, 0);
     __m128 exponent_hi = _mm256_extractf128_ps(exponent, 1);
 
     __m128 res_lo = vfastpow(base_lo, exponent_lo);
