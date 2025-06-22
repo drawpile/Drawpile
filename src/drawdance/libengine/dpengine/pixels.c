@@ -54,6 +54,7 @@
 #include <dpcommon/cpu.h>
 #include <dpmsg/blend_mode.h>
 #include <fastapprox/fastpow.h>
+#include <immintrin.h>
 #include <math.h>
 
 static_assert(sizeof(DP_Pixel8) == sizeof(uint32_t), "DP_Pixel8 is 32 bits");
@@ -330,8 +331,10 @@ float fastcbrt(float x) {
     // u.i = u.i / 3 + magic_number; float division to match the SIMD variants
     u.i = (uint32_t)((float)u.i * (1.0f / 3.0f)) + magic_number;
 
-    float y_cubed = u.f * u.f * u.f;
-    u.f = u.f * (y_cubed + 2.0f * abs_x) / (2.0f * y_cubed + abs_x);
+    
+    float y3 = u.f * u.f * u.f;
+    // halley iteration
+    u.f = u.f * (y3 + 2.0f * abs_x) / (2.0f * y3 + abs_x);
     u.i |= sign;
     
     return u.f;
@@ -408,7 +411,7 @@ __m128 fastcbrt_sse42(__m128 x) {
     return _mm_andnot_ps(is_zero_mask, result);
 }
 
-static void linear_srgb_to_oklab_sse42(__m128 source_r, __m128 source_g, __m128 source_b,
+static void linear_srgb_to_oklab_sse42(__m128 source_b, __m128 source_g, __m128 source_r,
                                       __m128* out_l, __m128* out_a, __m128* out_b
                                       )
 {
@@ -493,7 +496,7 @@ static void linear_srgb_to_oklab_sse42(__m128 source_r, __m128 source_g, __m128 
 }
 
 static void oklab_to_linear_srgb_sse42(__m128 source_l, __m128 source_a, __m128 source_b,
-                                     __m128* out_r, __m128* out_g, __m128* out_b)
+                                     __m128* out_b, __m128* out_g, __m128* out_r)
 {
     // float l_ = c.L + 0.3963377774f * c.a + 0.2158037573f * c.b;
     const __m128 L_A_COEFF = _mm_set1_ps(0.3963377774f);
@@ -596,7 +599,7 @@ __m256 fastcbrt_avx2(__m256 x) {
     return _mm256_andnot_ps(is_zero_mask, result);
 }
 
-static void linear_srgb_to_oklab_avx2(__m256 source_r, __m256 source_g, __m256 source_b,
+static void linear_srgb_to_oklab_avx2(__m256 source_b, __m256 source_g, __m256 source_r,
                                      __m256* out_l, __m256* out_a, __m256* out_b)
 {
     // float l = 0.4122214708f * c.r + 0.5363325363f * c.g + 0.0514459929f * c.b;
@@ -659,7 +662,7 @@ static void linear_srgb_to_oklab_avx2(__m256 source_r, __m256 source_g, __m256 s
 }
 
 static void oklab_to_linear_srgb_avx2(__m256 source_l, __m256 source_a, __m256 source_b,
-                                    __m256* out_r, __m256* out_g, __m256* out_b)
+                                    __m256* out_b, __m256* out_g, __m256* out_r)
 {
     // float l_ = c.L + 0.3963377774f * c.a + 0.2158037573f * c.b;
     const __m256 L_A_COEFF = _mm256_set1_ps(0.3963377774f);
@@ -1591,7 +1594,7 @@ static void store_unaligned_sse42(__m128i blue, __m128i green, __m128i red,
 {
     __m128i out1, out2;
     shuffle_store_sse42(blue, green, red, alpha, &out1, &out2);
-
+    
     __m128i *dest128 = (void *)dest;
     _mm_storeu_si128(dest128, out1);
     _mm_storeu_si128(dest128 + 1, out2);
@@ -1870,7 +1873,7 @@ static void store_unaligned_avx2(__m256i blue, __m256i green, __m256i red,
 {
     __m256i out1, out2;
     shuffle_store_avx2(blue, green, red, alpha, &out1, &out2);
-
+    
     __m256i *dest256 = (void *)dest;
     _mm256_storeu_si256(dest256, out1);
     _mm256_storeu_si256(dest256 + 1, out2);
@@ -3031,7 +3034,9 @@ static __m128 channel_unpremultiply_to_linear_sse42(__m128 ch, __m128 alpha) {
     // return x < 0.04045f ? x / 12.92f : fastpow((x + 0.055f) / 1.055f, 2.4f);
 
     __m128 unprem = _mm_div_ps(ch, alpha);
-    
+    __m128 is_alpha_eq_zero = _mm_cmpeq_ps(alpha, _mm_setzero_ps());
+    unprem = _mm_blendv_ps(unprem, _mm_setzero_ps(), is_alpha_eq_zero);
+        
     __m128 powed = vfastpow( _mm_mul_ps(_mm_add_ps(unprem, pow_add), pow_mul), gamma);
     __m128 small = _mm_mul_ps(unprem, h);
 
@@ -3042,6 +3047,7 @@ static __m128 channel_unpremultiply_to_linear_sse42(__m128 ch, __m128 alpha) {
 }
 
 static __m128 channel_linear_premultiply_to_srgb_sse42(__m128 ch, __m128 alpha) {
+    const __m128 one = _mm_set_ps1(1.0f);
     const __m128 threshold = _mm_set_ps1(0.0031308f);
     const __m128 h = _mm_set_ps1(12.92f);
 
@@ -3050,13 +3056,14 @@ static __m128 channel_linear_premultiply_to_srgb_sse42(__m128 ch, __m128 alpha) 
     const __m128 inv_gamma = _mm_set_ps1(1.0f / 2.4f);
     // return x < 0.0031308f ? x * 12.92f : fastpow(x, 1.0f / 2.4f) * 1.055f - 0.055f;
 
+    ch = _mm_min_ps(ch, one);
     __m128 powed = _mm_sub_ps(_mm_mul_ps(pow_mul, vfastpow(ch, inv_gamma)), pow_sub);
     __m128 small = _mm_mul_ps(ch, h);
 
     __m128 branch = _mm_cmple_ps(ch, threshold);
 
     __m128 srgb = _mm_blendv_ps(powed, small, branch);
-    __m128 srgb_prem = _mm_mul_ps(srgb, alpha);
+    __m128 srgb_prem = _mm_min_ps(_mm_mul_ps(srgb, alpha), one);
     return srgb_prem;
 }
 
@@ -3065,7 +3072,7 @@ static void pixels_to_oklaba_sse42(
     __m128i src_b, __m128i src_g, __m128i src_r, __m128i src_a,
     __m128* out_okl, __m128* out_oka, __m128* out_okb, __m128* out_a
 ){
-    const __m128 bit15_from = _mm_set1_ps(1.0f / BIT15_FLOAT);
+    const __m128 bit15 = _mm_set1_ps(BIT15_FLOAT);
     
     __m128 src_rf, src_gf, src_bf, src_af;
     
@@ -3074,16 +3081,16 @@ static void pixels_to_oklaba_sse42(
     src_bf = _mm_cvtepi32_ps(src_b);
     src_af = _mm_cvtepi32_ps(src_a);
     
-    src_rf = _mm_mul_ps(src_rf, bit15_from);
-    src_gf = _mm_mul_ps(src_gf, bit15_from);
-    src_bf = _mm_mul_ps(src_bf, bit15_from);
-    src_af = _mm_mul_ps(src_af, bit15_from);
+    src_rf = _mm_div_ps(src_rf, bit15);
+    src_gf = _mm_div_ps(src_gf, bit15);
+    src_bf = _mm_div_ps(src_bf, bit15);
+    src_af = _mm_div_ps(src_af, bit15);
     
     __m128 src_rl = channel_unpremultiply_to_linear_sse42(src_rf, src_af);
     __m128 src_gl = channel_unpremultiply_to_linear_sse42(src_gf, src_af);
     __m128 src_bl = channel_unpremultiply_to_linear_sse42(src_bf, src_af);
  
-    linear_srgb_to_oklab_sse42(src_rl, src_gl, src_bl, out_okl, out_oka, out_okb);
+    linear_srgb_to_oklab_sse42(src_bl, src_gl, src_rl, out_okl, out_oka, out_okb);
     *out_a = src_af;
 }
 static void mix_oklab_sse42(
@@ -3098,6 +3105,9 @@ static void mix_oklab_sse42(
     __m128 alpha = _mm_mul_ps(op, src_a);
     __m128 mix_a = _mm_add_ps(alpha, _mm_mul_ps(dst_a, _mm_sub_ps(one, alpha)));
     __m128 blend = _mm_div_ps(alpha, mix_a);
+
+    __m128 is_mix_a_eq_zero = _mm_cmpeq_ps(mix_a, zero);
+    blend = _mm_blendv_ps(blend, zero, is_mix_a_eq_zero);
     
     // lerp rewritten in the form: b + (a - b) * t
     __m128 mix_okl = _mm_add_ps(dst_okl,_mm_mul_ps(_mm_sub_ps(src_okl, dst_okl), blend));
@@ -3105,12 +3115,12 @@ static void mix_oklab_sse42(
     __m128 mix_okb = _mm_add_ps(dst_okb,_mm_mul_ps(_mm_sub_ps(src_okb, dst_okb), blend));
 
     __m128 mix_rl, mix_gl, mix_bl;
-    oklab_to_linear_srgb_sse42(mix_okl, mix_oka, mix_okb, &mix_rl, &mix_gl, &mix_bl);
-    
+    oklab_to_linear_srgb_sse42(mix_okl, mix_oka, mix_okb, &mix_bl, &mix_gl, &mix_rl);
+
     *out_r = _mm_max_ps(_mm_min_ps(mix_rl, one), zero);
     *out_g = _mm_max_ps(_mm_min_ps(mix_gl, one), zero);
     *out_b = _mm_max_ps(_mm_min_ps(mix_bl, one), zero);
-    *out_a = mix_a;
+    *out_a = _mm_max_ps(_mm_min_ps(mix_a, one), zero);
 }
 
 static void blend_mask_pixels_oklab_sse42(DP_Pixel15 *dst, DP_UPixel15 src,
@@ -3119,7 +3129,7 @@ static void blend_mask_pixels_oklab_sse42(DP_Pixel15 *dst, DP_UPixel15 src,
 {
     // clang-format off
     DP_ASSERT(count % 4 == 0);
-    const __m128 bit15_to = _mm_set1_ps( BIT15_FLOAT);
+    const __m128 bit15 = _mm_set1_ps( BIT15_FLOAT);
 
     // Do in parent function ?
     __m128i srcB = _mm_set1_epi32(src.b);
@@ -3140,7 +3150,7 @@ static void blend_mask_pixels_oklab_sse42(DP_Pixel15 *dst, DP_UPixel15 src,
         __m128i mask = _mm_cvtepu16_epi32(_mm_loadl_epi64((void *)mask_int));
         
         __m128i oi = mul_sse42(mask, opacity);
-        __m128 o = _mm_div_ps(_mm_cvtepi32_ps(oi), bit15_to);
+        __m128 o = _mm_div_ps(_mm_cvtepi32_ps(oi), bit15);
 
         // Load dst
         __m128i dstB, dstG, dstR, dstA;
@@ -3160,10 +3170,10 @@ static void blend_mask_pixels_oklab_sse42(DP_Pixel15 *dst, DP_UPixel15 src,
 
         
         __m128i mix_r, mix_g, mix_b, mix_a;
-        mix_r = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_rf, mix_af), bit15_to));
-        mix_g = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_gf, mix_af), bit15_to));
-        mix_b = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_bf, mix_af), bit15_to));
-        mix_a = _mm_cvtps_epi32(_mm_mul_ps(mix_af, bit15_to));
+        mix_r = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_rf, mix_af), bit15));
+        mix_g = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_gf, mix_af), bit15));
+        mix_b = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_bf, mix_af), bit15));
+        mix_a = _mm_cvtps_epi32(_mm_mul_ps(mix_af, bit15));
         
         store_unaligned_sse42(mix_b, mix_g, mix_r, mix_a, dst);
     }
@@ -3177,7 +3187,7 @@ static void blend_mask_pixels_oklab_recolor_sse42(DP_Pixel15 *dst, DP_UPixel15 s
 {
     // clang-format off
     DP_ASSERT(count % 4 == 0);
-    const __m128 bit15_to = _mm_set1_ps( BIT15_FLOAT);
+    const __m128 bit15 = _mm_set1_ps( BIT15_FLOAT);
 
     // Do in parent function ?
     __m128i srcB = _mm_set1_epi32(src.b);
@@ -3198,7 +3208,7 @@ static void blend_mask_pixels_oklab_recolor_sse42(DP_Pixel15 *dst, DP_UPixel15 s
         __m128i mask = _mm_cvtepu16_epi32(_mm_loadl_epi64((void *)mask_int));
         
         __m128i oi = mul_sse42(mask, opacity);
-        __m128 o = _mm_div_ps(_mm_cvtepi32_ps(oi), bit15_to);
+        __m128 o = _mm_div_ps(_mm_cvtepi32_ps(oi), bit15);
 
         // Load dst
         __m128i dstB, dstG, dstR, dstA;
@@ -3218,9 +3228,9 @@ static void blend_mask_pixels_oklab_recolor_sse42(DP_Pixel15 *dst, DP_UPixel15 s
 
         
         __m128i mix_r, mix_g, mix_b, mix_a;
-        mix_r = _mm_cvtps_epi32(_mm_mul_ps( channel_linear_premultiply_to_srgb_sse42(mix_rf, dst_a), bit15_to));
-        mix_g = _mm_cvtps_epi32(_mm_mul_ps( channel_linear_premultiply_to_srgb_sse42(mix_gf, dst_a), bit15_to));
-        mix_b = _mm_cvtps_epi32(_mm_mul_ps( channel_linear_premultiply_to_srgb_sse42(mix_bf, dst_a), bit15_to));
+        mix_r = _mm_cvtps_epi32(_mm_mul_ps( channel_linear_premultiply_to_srgb_sse42(mix_rf, dst_a), bit15));
+        mix_g = _mm_cvtps_epi32(_mm_mul_ps( channel_linear_premultiply_to_srgb_sse42(mix_gf, dst_a), bit15));
+        mix_b = _mm_cvtps_epi32(_mm_mul_ps( channel_linear_premultiply_to_srgb_sse42(mix_bf, dst_a), bit15));
         mix_a = dstA;
         
         store_unaligned_sse42(mix_b, mix_g, mix_r, mix_a, dst);
@@ -3233,7 +3243,7 @@ static void blend_mask_pixels_oklab_normal_and_eraser_sse42(DP_Pixel15 *dst, DP_
                                                             int count)
 {
     DP_ASSERT(count % 4 == 0);
-    const __m128 bit15_to = _mm_set1_ps(BIT15_FLOAT);
+    const __m128 bit15f = _mm_set1_ps(BIT15_FLOAT);
 
     __m128i srcB = _mm_set1_epi32(src.b);
     __m128i srcG = _mm_set1_epi32(src.g);
@@ -3261,8 +3271,8 @@ static void blend_mask_pixels_oklab_normal_and_eraser_sse42(DP_Pixel15 *dst, DP_
         __m128i opa_a2 = mul_sse42(opa_a, erase_alpha);
         __m128i opa_out = _mm_add_epi32(opa_a2, mul_sse42(opa_b, dstA));
 
-        __m128 o = _mm_div_ps(_mm_cvtepi32_ps(opa_a2), bit15_to);
-        __m128 opa_out_f = _mm_div_ps(_mm_cvtepi32_ps(opa_out), bit15_to);
+        __m128 o = _mm_div_ps(_mm_cvtepi32_ps(opa_a2), bit15f);
+        __m128 opa_out_f = _mm_div_ps(_mm_cvtepi32_ps(opa_out), bit15f);
 
         __m128 dst_okl, dst_oka, dst_okb, dst_a;
         pixels_to_oklaba_sse42(
@@ -3275,9 +3285,9 @@ static void blend_mask_pixels_oklab_normal_and_eraser_sse42(DP_Pixel15 *dst, DP_
                         o,
                         &mix_bf, &mix_gf, &mix_rf, &mix_af);
 
-        __m128i mix_r = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_rf, opa_out_f), bit15_to));
-        __m128i mix_g = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_gf, opa_out_f), bit15_to));
-        __m128i mix_b = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_bf, opa_out_f), bit15_to));
+        __m128i mix_r = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_rf, opa_out_f), bit15f));
+        __m128i mix_g = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_gf, opa_out_f), bit15f));
+        __m128i mix_b = _mm_cvtps_epi32(_mm_mul_ps(channel_linear_premultiply_to_srgb_sse42(mix_bf, opa_out_f), bit15f));
 
         store_unaligned_sse42(mix_b, mix_g, mix_r, opa_out, dst);
     }
@@ -3310,7 +3320,9 @@ static __m256 channel_unpremultiply_to_linear_avx2(__m256 ch, __m256 alpha) {
     const __m256 pow_mul = _mm256_set1_ps(1.0f / 1.055f);
     const __m256 gamma = _mm256_set1_ps(2.4f);
 
-    __m256 unprem = _mm256_div_ps(ch, alpha);
+    __m256 unprem = _mm256_div_ps(ch, alpha);    
+    __m256 is_alpha_eq_zero = _mm256_cmp_ps(alpha, _mm256_setzero_ps(), _CMP_EQ_OQ);
+    unprem = _mm256_blendv_ps(unprem, _mm256_setzero_ps(), is_alpha_eq_zero);
     
     __m256 powed = vfastpow_avx2(_mm256_mul_ps(_mm256_add_ps(unprem, pow_add), pow_mul), gamma);
     __m256 small = _mm256_mul_ps(unprem, h);
@@ -3322,6 +3334,7 @@ static __m256 channel_unpremultiply_to_linear_avx2(__m256 ch, __m256 alpha) {
 }
 
 static __m256 channel_linear_premultiply_to_srgb_avx2(__m256 ch, __m256 alpha) {
+    const __m256 one = _mm256_set1_ps(1.0f);
     const __m256 threshold = _mm256_set1_ps(0.0031308f);
     const __m256 h = _mm256_set1_ps(12.92f);
 
@@ -3329,13 +3342,14 @@ static __m256 channel_linear_premultiply_to_srgb_avx2(__m256 ch, __m256 alpha) {
     const __m256 pow_mul = _mm256_set1_ps(1.055f);
     const __m256 inv_gamma = _mm256_set1_ps(1.0f / 2.4f);
 
+    ch = _mm256_min_ps(ch, one);
     __m256 powed = _mm256_sub_ps(_mm256_mul_ps(pow_mul, vfastpow_avx2(ch, inv_gamma)), pow_sub);
     __m256 small = _mm256_mul_ps(ch, h);
 
     __m256 branch = _mm256_cmp_ps(ch, threshold, _CMP_LE_OS);
 
     __m256 srgb = _mm256_blendv_ps(powed, small, branch);
-    __m256 srgb_prem = _mm256_mul_ps(srgb, alpha);
+    __m256 srgb_prem = _mm256_min_ps(_mm256_mul_ps(srgb, alpha), one) ;
     return srgb_prem;
 }
 
@@ -3344,7 +3358,7 @@ static void pixels_to_oklaba_avx2(
     __m256i src_b, __m256i src_g, __m256i src_r, __m256i src_a,
     __m256* out_okl, __m256* out_oka, __m256* out_okb, __m256* out_a
 ){
-    const __m256 bit15_from = _mm256_set1_ps(1.0f / BIT15_FLOAT);
+    const __m256 bit15 = _mm256_set1_ps(BIT15_FLOAT);
     
     __m256 src_rf, src_gf, src_bf, src_af;
     
@@ -3353,17 +3367,17 @@ static void pixels_to_oklaba_avx2(
     src_bf = _mm256_cvtepi32_ps(src_b);
     src_af = _mm256_cvtepi32_ps(src_a);
     
-    src_rf = _mm256_mul_ps(src_rf, bit15_from);
-    src_gf = _mm256_mul_ps(src_gf, bit15_from);
-    src_bf = _mm256_mul_ps(src_bf, bit15_from);
-    src_af = _mm256_mul_ps(src_af, bit15_from);
+    src_rf = _mm256_div_ps(src_rf, bit15);
+    src_gf = _mm256_div_ps(src_gf, bit15);
+    src_bf = _mm256_div_ps(src_bf, bit15);
+    src_af = _mm256_div_ps(src_af, bit15);
     
 
     __m256 src_rl = channel_unpremultiply_to_linear_avx2(src_rf, src_af);
     __m256 src_gl = channel_unpremultiply_to_linear_avx2(src_gf, src_af);
     __m256 src_bl = channel_unpremultiply_to_linear_avx2(src_bf, src_af);
- 
-    linear_srgb_to_oklab_avx2(src_rl, src_gl, src_bl, out_okl, out_oka, out_okb);
+
+    linear_srgb_to_oklab_avx2(src_bl, src_gl, src_rl, out_okl, out_oka, out_okb);
     *out_a = src_af;
 }
 
@@ -3377,22 +3391,24 @@ static void mix_oklab_avx2(
         const __m256 zero = _mm256_set1_ps(0.0f);
         
         __m256 alpha = _mm256_mul_ps(op, src_a);
-
         __m256 mix_a = _mm256_fmadd_ps(dst_a, _mm256_sub_ps(one, alpha), alpha);
         __m256 blend = _mm256_div_ps(alpha, mix_a);
-
+        
+        __m256 is_mix_a_eq_zero = _mm256_cmp_ps(mix_a, zero, _CMP_EQ_OQ);
+        blend = _mm256_blendv_ps(blend, zero, is_mix_a_eq_zero);
+        
         __m256 mix_okl = _mm256_fmadd_ps(_mm256_sub_ps(src_okl, dst_okl), blend, dst_okl);
         __m256 mix_oka = _mm256_fmadd_ps(_mm256_sub_ps(src_oka, dst_oka), blend, dst_oka);
         __m256 mix_okb = _mm256_fmadd_ps(_mm256_sub_ps(src_okb, dst_okb), blend, dst_okb);
         
         __m256 mix_rl, mix_gl, mix_bl;
-        oklab_to_linear_srgb_avx2(mix_okl, mix_oka, mix_okb, &mix_rl, &mix_gl, &mix_bl);
+        oklab_to_linear_srgb_avx2(mix_okl, mix_oka, mix_okb, &mix_bl, &mix_gl, &mix_rl);
 
-        *out_r = _mm256_max_ps(_mm256_min_ps(mix_rl, one), zero);
-        *out_g = _mm256_max_ps(_mm256_min_ps(mix_gl, one), zero);
-        *out_b = _mm256_max_ps(_mm256_min_ps(mix_bl, one), zero);
-        *out_a = mix_a;
-}
+        *out_r = _mm256_min_ps(_mm256_max_ps(mix_rl, zero), one);
+        *out_g = _mm256_min_ps(_mm256_max_ps(mix_gl, zero), one);
+        *out_b = _mm256_min_ps(_mm256_max_ps(mix_bl, zero), one);
+        *out_a = _mm256_min_ps(_mm256_max_ps(mix_a, zero), one);
+    }
 
 
 static void blend_mask_pixels_oklab_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
@@ -3401,7 +3417,7 @@ static void blend_mask_pixels_oklab_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
 {
     // clang-format off
     DP_ASSERT(count % 8 == 0);
-    const __m256 bit15_to = _mm256_set1_ps( BIT15_FLOAT);
+    const __m256 bit15 = _mm256_set1_ps( BIT15_FLOAT);
 
     // Do in parent function ?
     __m256i srcB = _mm256_set1_epi32(src.b);
@@ -3424,7 +3440,7 @@ static void blend_mask_pixels_oklab_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
         mask = _mm256_permutevar8x32_epi32(mask, _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7));
         
         __m256i oi = mul_avx2(mask, opacity);
-        __m256 o = _mm256_div_ps(_mm256_cvtepi32_ps(oi), bit15_to);
+        __m256 o = _mm256_div_ps(_mm256_cvtepi32_ps(oi), bit15);
         
         // Load dst
         __m256i dstB, dstG, dstR, dstA;
@@ -3442,14 +3458,16 @@ static void blend_mask_pixels_oklab_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
                         o,
                         &mix_bf, &mix_gf, &mix_rf, &mix_af
                         );
-        
-        __m256i mix_r, mix_g, mix_b, mix_a;
-        mix_r = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_rf, mix_af), bit15_to));
-        mix_g = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_gf, mix_af), bit15_to));
-        mix_b = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_bf, mix_af), bit15_to));
-        mix_a = _mm256_cvtps_epi32(_mm256_mul_ps(mix_af, bit15_to));
+
 
         
+        
+        __m256i mix_r, mix_g, mix_b, mix_a;
+        mix_r = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_rf, mix_af), bit15));
+        mix_g = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_gf, mix_af), bit15));
+        mix_b = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_bf, mix_af), bit15));
+        mix_a = _mm256_cvtps_epi32(_mm256_mul_ps(mix_af, bit15));
+
         store_unaligned_avx2(mix_b, mix_g, mix_r, mix_a, dst);
     }
     _mm256_zeroupper();
@@ -3462,7 +3480,7 @@ static void blend_mask_pixels_oklab_recolor_avx2(DP_Pixel15 *dst, DP_UPixel15 sr
 {
     // clang-format off
     DP_ASSERT(count % 8 == 0);
-    const __m256 bit15_to = _mm256_set1_ps( BIT15_FLOAT);
+    const __m256 bit15 = _mm256_set1_ps( BIT15_FLOAT);
 
     // Do in parent function ?
     __m256i srcB = _mm256_set1_epi32(src.b);
@@ -3485,7 +3503,7 @@ static void blend_mask_pixels_oklab_recolor_avx2(DP_Pixel15 *dst, DP_UPixel15 sr
         mask = _mm256_permutevar8x32_epi32(mask, _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7));
         
         __m256i oi = mul_avx2(mask, opacity);
-        __m256 o = _mm256_div_ps(_mm256_cvtepi32_ps(oi), bit15_to);
+        __m256 o = _mm256_div_ps(_mm256_cvtepi32_ps(oi), bit15);
 
         // Load dst
         __m256i dstB, dstG, dstR, dstA;
@@ -3505,9 +3523,9 @@ static void blend_mask_pixels_oklab_recolor_avx2(DP_Pixel15 *dst, DP_UPixel15 sr
         
         __m256i mix_r, mix_g, mix_b, mix_a;
         mix_a = dstA;
-        mix_r = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_rf, dst_a), bit15_to));
-        mix_g = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_gf, dst_a), bit15_to));
-        mix_b = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_bf, dst_a), bit15_to));
+        mix_r = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_rf, dst_a), bit15));
+        mix_g = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_gf, dst_a), bit15));
+        mix_b = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_bf, dst_a), bit15));
         
         store_unaligned_avx2(mix_b, mix_g, mix_r, mix_a, dst);
     }
@@ -3520,7 +3538,7 @@ static void blend_mask_pixels_oklab_normal_and_eraser_avx2(DP_Pixel15 *dst, DP_U
                                                             int count)
 {
     DP_ASSERT(count % 8 == 0);
-    const __m256 bit15_to = _mm256_set1_ps(BIT15_FLOAT);
+    const __m256 bit15f = _mm256_set1_ps(BIT15_FLOAT);
 
     __m256i srcB = _mm256_set1_epi32(src.b);
     __m256i srcG = _mm256_set1_epi32(src.g);
@@ -3550,8 +3568,8 @@ static void blend_mask_pixels_oklab_normal_and_eraser_avx2(DP_Pixel15 *dst, DP_U
         __m256i opa_a2 = mul_avx2(opa_a, erase_alpha);
         __m256i opa_out = _mm256_add_epi32(opa_a2, mul_avx2(opa_b, dstA));
 
-        __m256 o = _mm256_div_ps(_mm256_cvtepi32_ps(opa_a2), bit15_to);
-        __m256 opa_out_f = _mm256_div_ps(_mm256_cvtepi32_ps(opa_out), bit15_to);
+        __m256 o = _mm256_div_ps(_mm256_cvtepi32_ps(opa_a2), bit15f);
+        __m256 opa_out_f = _mm256_div_ps(_mm256_cvtepi32_ps(opa_out), bit15f);
 
         __m256 dst_okl, dst_oka, dst_okb, dst_a;
         pixels_to_oklaba_avx2(
@@ -3565,9 +3583,9 @@ static void blend_mask_pixels_oklab_normal_and_eraser_avx2(DP_Pixel15 *dst, DP_U
                         &mix_bf, &mix_gf, &mix_rf, &mix_af);
 
 
-        __m256i mix_r = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_rf, opa_out_f), bit15_to));
-        __m256i mix_g = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_gf, opa_out_f), bit15_to));
-        __m256i mix_b = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_bf, opa_out_f), bit15_to));
+        __m256i mix_r = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_rf, opa_out_f), bit15f));
+        __m256i mix_g = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_gf, opa_out_f), bit15f));
+        __m256i mix_b = _mm256_cvtps_epi32(_mm256_mul_ps(channel_linear_premultiply_to_srgb_avx2(mix_bf, opa_out_f), bit15f));
 
         store_unaligned_avx2(mix_b, mix_g, mix_r, opa_out, dst);
     }
@@ -4156,7 +4174,7 @@ static void blend_mask_oklab_normal_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
     for (int y = 0; y < h; ++y) {
         int remaining = w;
 
-        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2 && false) {
+        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2) {
             int remaining_after_avx_width = remaining % 8;
             int avx_width = remaining - remaining_after_avx_width;
 
