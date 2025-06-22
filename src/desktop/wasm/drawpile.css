@@ -235,3 +235,26 @@ progress {
   border: none;
   flex-grow: 1;
 }
+
+#language-selector {
+  align-items: center;
+  display: flex;
+  gap: 0.5em;
+  margin-bottom: 1em;
+}
+
+#language-selector > select {
+  flex-grow: 1;
+  height: 2em;
+}
+
+#pressure-tester {
+  align-items: center;
+  border: 1px dashed #999;
+  display: flex;
+  height: 6em;
+  justify-content: center;
+  margin-bottom: 1em;
+  text-align: center;
+  user-select: none;
+}

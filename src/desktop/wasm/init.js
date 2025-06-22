@@ -483,8 +483,6 @@ import { UAParser } from "ua-parser-js";
       }
     }
 
-    window.drawpileLocale = params.get("locale")?.trim();
-
     config.qt.onLoaded = () => {
       showScreen();
       registerEventHandlers(
@@ -829,70 +827,140 @@ import { UAParser } from "ua-parser-js";
     }
   }
 
+  function getLanguages(params) {
+    // Some languages are broken becuase the browser version of Qt doesn't have
+    // the necessary glyphs in its font.
+    const languages = [
+      { title: "English", locale: "en_US" },
+      { title: "اَلْعَرَبِيَّةُ / Arabic", locale: "ar_EG" },
+      { title: "Català / Catalan", locale: "ca_ES" },
+      { title: "Čeština / Czech", locale: "cs_CZ" },
+      { title: "Deutsch / German", locale: "de_DE" },
+      { title: "Español / Spanish", locale: "es_CO" },
+      { title: "Esperanto", locale: "eo_XZ" },
+      { title: "Suomi / Finnish", locale: "fi_FI" },
+      { title: "Français / French", locale: "fr_FR" },
+      { title: "Indonesia / Indoneisan", locale: "id_ID" },
+      { title: "Italiano / Italian", locale: "it_IT" },
+      { title: "日本語 / Japanese", locale: "ja_JP", broken: true },
+      { title: "조선어 / Korean", locale: "ko_KR", broken: true },
+      { title: "Polski / Polish", locale: "pl_PL" },
+      { title: "Português (Brasilia) / Portuguese (Brazil)", locale: "pt_BR" },
+      {
+        title: "Português (Portugal) / Portuguese (Portugal)",
+        locale: "pt_PT",
+      },
+      { title: "русский / Russian", locale: "ru_RU" },
+      { title: "ไทย / Thai", locale: "th_TH", broken: true },
+      { title: "Türkçe / Turkish", locale: "tr_TR" },
+      { title: "українська / Ukranian", locale: "uk_UA" },
+      { title: "Tiếng Việt / Vietnamese", locale: "vi_VN" },
+      { title: "简体中文 / Simplified Chinese", locale: "zh_CN", broken: true },
+    ];
+    if (isTrueParam(params.get("showbrokenlangs"))) {
+      return languages;
+    } else {
+      return languages.filter((l) => !l.broken);
+    }
+  }
+
+  function getSelectedLocale(params, languages) {
+    const selectedLocale =
+      params.get("locale")?.trim() ||
+      localStorage.getItem("drawpile_last_locale")?.trim();
+    if (selectedLocale) {
+      for (const l of languages) {
+        if (l.locale === selectedLocale) {
+          return l.locale;
+        }
+      }
+    }
+    return languages[0].locale;
+  }
+
+  function makeLanguageSelector(params) {
+    const languages = getLanguages(params);
+    const options = languages.map((l) =>
+      tag("option", { value: l.locale }, l.title)
+    );
+
+    const selectedLocale = getSelectedLocale(params, languages);
+    options
+      .find((elem) => elem.value === selectedLocale)
+      ?.setAttribute("selected", "");
+
+    return tag("label", { id: "language-selector" }, [
+      "Language:",
+      tag("select", options),
+    ]);
+  }
+
+  function setLanguage(select) {
+    const locale = select.options[select.selectedIndex].value;
+    window.drawpileLocale = locale;
+    localStorage.setItem("drawpile_last_locale", locale);
+  }
+
+  function makePressureTester() {
+    const pressureBox = tag(
+      "div",
+      { id: "pressure-tester" },
+      "🖊️ Test your pen pressure here"
+    );
+
+    const pressureValues = new Set();
+    let pointerType = null;
+
+    function handlePointer(e) {
+      if (e.pointerType !== pointerType) {
+        return;
+      }
+
+      if (e.pointerType !== "pen") {
+        pressureBox.textContent = `⚠️ Detected ${e.pointerType} input, not a pen`;
+        return;
+      }
+
+      pressureValues.add(e.pressure);
+      if (pressureValues.size >= 2) {
+        pressureBox.textContent = "✔️ Pen pressure detected";
+      }
+    }
+
+    function handlePointerDown(e) {
+      pointerType = e.pointerType;
+      handlePointer(e);
+    }
+
+    function handlePointerUpLeave(_e) {
+      if(pointerType === "pen" && pressureValues.size < 2) {
+        pressureBox.textContent = "⚠️ Pen detected, but no pressure variance";
+      }
+      pointerType = null;
+      pressureValues.clear();
+    }
+
+    pressureBox.addEventListener("pointerdown", handlePointerDown);
+    pressureBox.addEventListener("pointermove", handlePointer);
+    pressureBox.addEventListener("pointerup", handlePointerUpLeave);
+    pressureBox.addEventListener("pointerleave", handlePointerUpLeave);
+    return pressureBox;
+  }
+
   async function showStartup() {
     const startup = document.querySelector("#startup");
 
-const testerContainer = tag("div", {
-  id: "pen-pressure-tester",
-  style:
-    "border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; font-family: sans-serif; user-select: none;",
-});
-
-const pressureBox = tag("div", {
-  id: "pressureBox",
-  style:
-    "height: 200px; border: 1px dashed #999; display: flex; justify-content: center; align-items: center; text-align: center; font-size: 1.1rem;",
-}, "Test your pen pressure here");
-testerContainer.appendChild(pressureBox);
-
-let pressureValues = new Set();
-let eventTypes = new Set();
-let pressureDetected = false;
-
-pressureBox.addEventListener("pointerdown", handlePointer);
-pressureBox.addEventListener("pointermove", handlePointer);
-
-function handlePointer(e) {
-  eventTypes.add(e.pointerType);
-
-  if (e.pointerType !== "pen") {
-    pressureBox.textContent = "Detected input, but not a pen";
-    return;
-  }
-
-  if (pressureDetected) return;
-
-  if (e.pressure > 0) {
-    pressureValues.add(e.pressure.toFixed(2));
-    if (pressureValues.size >= 2) {
-      pressureBox.textContent = "Pen pressure detected!";
-      pressureDetected = true;
-    } else {
-      pressureBox.textContent = `Pressure: ${e.pressure.toFixed(2)}`;
-    }
-  } else {
-    pressureBox.textContent = "Detected pen input, but no pressure";
-  }
-}
-
-startup.appendChild(testerContainer);
-
-
-    let browserTrouble = false;
     try {
       const browserSupportMessage = checkBrowserSupport();
       if (browserSupportMessage) {
         startup.appendChild(browserSupportMessage);
-        browserTrouble = true;
       }
     } catch (e) {
       console.error(e);
     }
 
-    let haveDebugMessage = false;
     const params = getQueryParams();
     if (isTrueParam(params.get("uadebug"))) {
-      haveDebugMessage = true;
       try {
         startup.appendChild(debugUserAgent());
       } catch (e) {
@@ -915,7 +983,6 @@ startup.appendChild(testerContainer);
     let upToDate = false;
     let haveNotice = false;
     const commit = document.documentElement.dataset.commit || "-missing-";
-    const standalone = isStandalone(params);
     try {
       if (isTrueParam(params.get("blockupdatecheck"))) {
         throw Error("Update check blocked");
@@ -1014,26 +1081,24 @@ startup.appendChild(testerContainer);
     } finally {
       updateLoading.remove();
       const doStart = () => {
+        try {
+          setLanguage(startup.querySelector("#language-selector > select"));
+        } catch (e) {
+          console.error("Error setting language", e);
+        }
         startup.remove();
         start();
       };
 
-      if (
-        !browserTrouble &&
-        !haveDebugMessage &&
-        upToDate &&
-        (standalone || !haveNotice)
-      ) {
-        doStart();
-      } else {
-        const button = tag(
-          "button",
-          { class: upToDate ? "primary" : "danger" },
-          [upToDate ? "Start" : "Start Anyway"],
-        );
-        button.addEventListener("click", doStart);
-        startup.appendChild(button);
-      }
+      startup.appendChild(makeLanguageSelector(params));
+      startup.appendChild(makePressureTester());
+      const button = tag(
+        "button",
+        { class: upToDate ? "primary" : "danger" },
+        [upToDate ? "Start" : "Start Anyway"],
+      );
+      button.addEventListener("click", doStart);
+      startup.appendChild(button);
     }
   }
 
