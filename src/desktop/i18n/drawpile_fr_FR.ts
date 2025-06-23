@@ -11824,12 +11824,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>No layer selected</source>
-        <translation>Pas de couche sélectionnée.</translation>
+        <translation>Pas de couche sélectionnée</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Tool is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;outil est verrouillé</translation>
     </message>
 </context>
 <context>
@@ -11837,7 +11837,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../widgets/brushpreview.cpp" line="+18"/>
         <source>Click to edit brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquez pour modifier le pinceau</translation>
     </message>
 </context>
 <context>
