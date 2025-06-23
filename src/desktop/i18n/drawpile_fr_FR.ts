@@ -11977,7 +11977,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Show chat options</source>
-        <translation>Afficher les options</translation>
+        <translation>Afficher les options de discussion</translation>
     </message>
 </context>
 <context>
@@ -11995,7 +11995,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Toggle notifications for this window</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer/désactiver les notifications pour cette fenêtre</translation>
     </message>
     <message>
         <location line="+44"/>
@@ -12020,57 +12020,57 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+166"/>
         <source>/!: only operators are allowed to send shouts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!&#xa0;: seul·e·s les opérateur·e·s sont autorisé·e·s à envoyer des annonces.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/!: can only shout in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!&#xa0;: ne peut annoncer que dans un chat public.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/!: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!&#xa0;: pas de texte donné.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>/alert: only operators are allowed to send alerts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/alert&#xa0;: seul·e·s les opérateur·e·s sont autorisé·e·s à envoyer des alertes.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/alert: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/alert&#xa0;: pas de texte donné.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>/me: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/me&#xa0;: pas de texte donné.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>/pin: only operators are allowed to pin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin&#xa0;: seul·e·s les opérateur·e·s sont autorisé·e·s à épingler.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/pin: can only pin in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin&#xa0;: ne peut épingler que dans un chat public.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/pin: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin&#xa0;: pas de texte donné.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>/unpin: only operators are allowed to unpin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/unpin&#xa0;: seul·e·s les opérateur·e·s sont autorisé·e·s à désépingler.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/unpin: can only unpin in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/unpin&#xa0;: ne peut désépingler que dans un chat publique.</translation>
     </message>
     <message>
         <location line="+16"/>
