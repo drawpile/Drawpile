@@ -11824,7 +11824,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>No layer selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de couche sélectionnée.</translation>
     </message>
     <message>
         <location line="+4"/>
