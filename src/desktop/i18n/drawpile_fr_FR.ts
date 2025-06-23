@@ -11087,7 +11087,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-10"/>
         <source>Tint Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Teinte en Dessous</translation>
     </message>
     <message>
         <location line="-10"/>
@@ -11097,22 +11097,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+27"/>
         <source>Wrap</source>
-        <translation>Envelopper</translation>
+        <translation>Enveloppe</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tint Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Teinte au Dessus</translation>
     </message>
     <message>
         <location line="+109"/>
         <source>-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>-%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>+%1</source>
-        <translation type="unfinished"></translation>
+        <translation>+%1</translation>
     </message>
     <message>
         <location line="+42"/>
