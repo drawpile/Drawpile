@@ -11217,12 +11217,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/titlewidget.cpp" line="+36"/>
         <source>Docked</source>
-        <translation type="unfinished"></translation>
+        <translation>Ancré</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dockable by Dragging</source>
-        <translation type="unfinished"></translation>
+        <translation>Peut Être Ancré en Glissant</translation>
     </message>
     <message>
         <location line="+5"/>
