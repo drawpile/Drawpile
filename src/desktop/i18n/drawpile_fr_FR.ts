@@ -11855,32 +11855,32 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+28"/>
         <source>Press a key combination. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrez une combinaison de touches. Appuyez sur Échap pour annuler.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Click the desired mouse button into the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquez sur le bouton de la souris souhaité dans le champ ci-dessus, éventuellement en maintenant les touches enfoncées. Appuyez sur Echap pour annuler.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Turn the mouse wheel or click into in the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tournez la molette ou cliquez dans le champ ci-dessus, éventuellement en maintenant les touches enfoncées. Appuyez sur Echap pour annuler.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Hold down the desired key combination and click into the field above. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maintenez la combinaison de touches souhaitée enfoncée et cliquez dans le champ ci-dessus. Appuyez sur Echap pour annuler.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Unknown shortcut type %1. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Type de raccourci inconnu %1. Appuyez sur Échap pour annuler.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Press the Set button to assign a shortcut.</source>
-        <translation type="unfinished"></translation>
+        <translation>Appuyez sur la touche Définir pour attribuer un raccourci.</translation>
     </message>
 </context>
 <context>
@@ -11895,13 +11895,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+21"/>
         <location filename="../view/canvasview.cpp" line="+21"/>
         <source>Do you want to save the canvas as it was before the reset? Since this is a Drawpile 2.1 session, it may have desynchronized!</source>
-        <translation type="unfinished"></translation>
+        <translation>Voulez-vous sauvegarder le canevas tel qu&apos;il était avant la réinitialisation&#x202f;? Comme il s&apos;agit d&apos;une session Drawpile 2.1, il se peut qu&apos;il y ait eu désynchronisation&#x202f;!</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../view/canvasview.cpp" line="+5"/>
         <source>Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished"></translation>
+        <translation>Souhaitez-vous sauvegarder la toile telle qu&apos;elle était avant la réinitialisation&#x202f;?</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11912,37 +11912,37 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+375"/>
         <location filename="../view/canvascontroller.cpp" line="+465"/>
         <source>Vertical flip: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Flip vertical&#xa0;: ON</translation>
     </message>
     <message>
         <location line="+0"/>
         <location filename="../view/canvascontroller.cpp" line="+2"/>
         <source>Vertical flip: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Flip vertical&#xa0;: OFF</translation>
     </message>
     <message>
         <location line="+18"/>
         <location filename="../view/canvascontroller.cpp" line="+19"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Miroir horizontal&#xa0;: ON</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../view/canvascontroller.cpp" line="+2"/>
         <source>Horizontal mirror: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Miroir horizontal&#xa0;: OFF</translation>
     </message>
     <message>
         <location line="+1825"/>
         <location filename="../view/canvascontroller.cpp" line="+1964"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom&#xa0;: %1%</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../view/canvascontroller.cpp" line="+6"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotation&#xa0;: %1°</translation>
     </message>
     <message>
         <location line="+30"/>
