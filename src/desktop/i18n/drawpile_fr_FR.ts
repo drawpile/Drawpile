@@ -11145,7 +11145,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Paste a reference image from the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Coller une image de référence à partir du presse-papiers</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -11155,7 +11155,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Close the current reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>Fermer l&apos;image de référence actuelle</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -11165,7 +11165,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+9"/>
         <source>Pan image</source>
-        <translation type="unfinished"></translation>
+        <translation>Se déplacer sur l&apos;image</translation>
     </message>
     <message>
         <location line="+31"/>
