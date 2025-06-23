@@ -136,9 +136,9 @@ void WebSocketMessageQueue::receiveBinaryMessage(const QByteArray &bytes)
 
 		} else {
 			// The rest are normal messages
-			net::Message msg = net::Message::deserializeWs(
+			net::Message msg = deserializeMessage(
 				reinterpret_cast<const unsigned char *>(bytes.constData()),
-				messageLength, m_decodeOpaque);
+				messageLength);
 			if(msg.isNull()) {
 				qWarning("Error deserializing message: %s", DP_error());
 				emit badData(
