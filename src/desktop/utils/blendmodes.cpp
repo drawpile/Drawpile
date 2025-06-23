@@ -542,7 +542,7 @@ bool BlendModeManager::selectBlendMode(int blendMode)
 			m_eraseModeCombo->hide();
 			m_blendModeCombo->show();
 		}
-		setComboIndexBlocked(m_blendModeCombo, eraseModeIndex);
+		setComboIndexBlocked(m_eraseModeCombo, eraseModeIndex);
 		setButtonCheckedBlocked(m_alphaPreserveButton, m_alphaPreserve);
 		setButtonCheckedBlocked(m_eraseModeButton, true);
 		emit blendModeChanged(blendMode, true);
