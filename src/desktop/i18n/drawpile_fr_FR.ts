@@ -8635,7 +8635,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-81"/>
         <source>List servers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Liste des serveurs</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -9604,7 +9604,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Liste</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9830,7 +9830,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Liste</translation>
     </message>
     <message>
         <location line="+13"/>
