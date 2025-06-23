@@ -11160,7 +11160,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisir la couleur</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11170,7 +11170,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+31"/>
         <source>Reset zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Ré-initialiser le zoom</translation>
     </message>
     <message>
         <location line="+8"/>
