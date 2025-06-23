@@ -11117,7 +11117,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+42"/>
         <source>Opacity: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Opacité&#xa0;:</translation>
     </message>
 </context>
 <context>
