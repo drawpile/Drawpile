@@ -11117,7 +11117,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+42"/>
         <source>Opacity: %1%</source>
-        <translation>Opacité&#xa0;:</translation>
+        <translation>Opacité&#xa0;: %1%</translation>
     </message>
 </context>
 <context>
@@ -11135,7 +11135,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Open a file as a reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir un fichier comme image de référence</translation>
     </message>
     <message>
         <location line="+6"/>
