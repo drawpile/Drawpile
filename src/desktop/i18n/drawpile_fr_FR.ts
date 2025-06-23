@@ -11180,7 +11180,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+6"/>
         <source>Zoom: </source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom&#xa0;: </translation>
     </message>
     <message>
         <location line="+1"/>
