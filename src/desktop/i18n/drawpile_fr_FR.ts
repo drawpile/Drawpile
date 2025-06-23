@@ -8640,17 +8640,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+17"/>
         <source>Add list servers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter des serveurs de liste…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Remove selected list servers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Retirer les serveurs de liste sélectionnés…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove list servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Retirer les serveurs de liste</translation>
     </message>
     <message numerus="yes">
         <location line="+59"/>
@@ -9123,7 +9123,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Alpha lock cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Curseur de verrouillage alpha&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -9270,7 +9270,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Two-finger twist:</source>
-        <translation type="unfinished"></translation>
+        <translation>Torsion à deux doigts&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -9278,7 +9278,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+206"/>
         <source>Override system font size</source>
-        <translation type="unfinished"></translation>
+        <translation>Remplacer la taille de la police du système</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9314,22 +9314,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-160"/>
         <source>On left-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Sur le glissé avec clic gauche</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On middle-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Sur le glissé avec clic du milieu</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On right-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Sur le glissé avec clic droit</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On touch drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Sur le glissé avec touché</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -9379,12 +9379,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+33"/>
         <source>Zoom, rotate, mirror and flip notices</source>
-        <translation type="unfinished"></translation>
+        <translation>Avis de zoom, rotation, miroir et retournement</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>On-canvas notices:</source>
-        <translation type="unfinished"></translation>
+        <translation>Avis sur la toile&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9944,17 +9944,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+139"/>
         <source>Listing: a title is required for public sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Listing&#xa0;: un titre est requis pour les sessions publiques</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Listing: the title is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>Listing&#xa0;: le titre et inapproprié.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Listing: the ID alias is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>Listing&#xa0;: l&apos;alias de l&apos;ID est inapproprié.</translation>
     </message>
 </context>
 <context>
@@ -10235,7 +10235,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>Builtin server on this computer</source>
-        <translation type="unfinished"></translation>
+        <translation>Serveur intégré à cet ordinateur</translation>
     </message>
     <message>
         <location line="+2"/>
