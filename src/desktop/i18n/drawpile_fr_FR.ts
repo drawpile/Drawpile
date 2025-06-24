@@ -5803,7 +5803,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Elliptical dab: angle</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Tapotement elliptique&#xa0;: angle</translation>
+        <translation>Touche elliptique&#xa0;: angle</translation>
     </message>
     <message>
         <location line="+3"/>
