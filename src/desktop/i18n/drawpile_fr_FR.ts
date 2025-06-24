@@ -6051,14 +6051,14 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Identique à au-dessus, mais le rayon actuellement dessiné est utilisé, ce qui peut changer de façon dynamique</translation>
+        <translation>Identique à ci-dessus, mais utilise le rayon réellement tracé, qui peut changer dynamiquement</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Tapotements à dessiner chaque seconde, peu importe la distance à laquelle va le pointeur</translation>
+        <translation>Touches à dessiner à chaque seconde, quelle que soit la distance dont le pointeur s&apos;est déplacé</translation>
     </message>
     <message>
         <location line="+3"/>
