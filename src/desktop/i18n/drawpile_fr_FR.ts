@@ -5335,7 +5335,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>GridMap X</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Quadrillage</translation>
+        <translation>Quadrillage X</translation>
     </message>
     <message>
         <location line="+3"/>
