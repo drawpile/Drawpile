@@ -6024,7 +6024,7 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Bordure de pinceau-cercle en dur (le régler sur 0 ne dessinera rien). Pour atteindre la dureté maximale, vous devez désactiver la Plume pixellisé.</translation>
+        <translation>Brosse à bords dures circulaires (régler à zéro ne tracera rien). Vous devez désactiver l’anticrènelage pour atteindre la dureté maximum.</translation>
     </message>
     <message>
         <location line="+3"/>
