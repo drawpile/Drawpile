@@ -5342,41 +5342,41 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>GridMap Y</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Quadrillage</translation>
+        <translation>Quadrillage Y</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Zoom Level</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to canvas zoom</extracomment>
-        <translation type="unfinished">Niveau de Zoom</translation>
+        <translation>Niveau de Zoom</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Barrel Rotation</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Rotation du Barillet</translation>
+        <translation>Rotation du Barillet</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Base Brush Radius</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Rayon de Base du Pinceau</translation>
+        <translation>Rayon de Base du Pinceau</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Input</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished">Entrée Inconnue</translation>
+        <translation>Entrée Inconnue</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">La pression rapportée par la tablette. Comprise généralement entre 0.0 et 1.0, mais peut être plus élevée en cas de gain de pression. Si vous utilisez la souris, elle sera de 0.5 en cas d&apos;appui de bouton, et 0.0 dans les autres cas.</translation>
+        <translation>La pression rapportée par la tablette. Comprise généralement entre 0.0 et 1.0, mais peut être plus élevée en cas de gain de pression. Si vous utilisez la souris, elle sera de 0.5 en cas d&apos;appui de bouton, et 0.0 dans les autres cas.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5390,7 +5390,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Similaire à Vitesse réglée avec finesse, mais change plus lentement. Voir également le réglage &apos;Vitesse réglée plus succinctement&apos;.</translation>
+        <translation>Identique à Vitesse réglée avec finesse, mais change plus lentement. Voir également le réglage &apos;Vitesse réglée plus succinctement&apos;.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5404,42 +5404,42 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Cette entrée passe lentement de 0 à 1 lorsque vous faites un tracé. Elle peut être configuré pour retourner à 0 périodiquement lorsque vous vous déplacez. Regardez les réglages de &apos;durée de tracé&apos; et &apos;durée de maintien du tracé&apos;.</translation>
+        <translation>Cette entrée passe lentement de 0 à 1 lorsque vous faites un tracé. Elle peut être configuré pour retourner à 0 périodiquement lorsque vous vous déplacez. Regardez les réglages de &apos;durée de tracé&apos; et &apos;durée de maintien du tracé&apos;.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">L&apos;angle du tracé, en degrés. Cette valeur reste comprise entre 0.0 et 180.0, ignorant les tournants à 180 degrés.</translation>
+        <translation>L&apos;angle du tracé, en degrés. Cette valeur reste comprise entre 0.0 et 180.0, ignorant les tournants à 180 degrés.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Déclinaison de l&apos;inclinaison du stylet. 0 lorsque le stylet est parallèle à la tablette, et 90.0 lorsqu&apos;il est perpendiculaire à la tablette.</translation>
+        <translation>Déclinaison de l&apos;inclinaison du stylet. 0 lorsque le stylet est parallèle à la tablette et 90,0 lorsqu&apos;il est perpendiculaire à la tablette.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Déclinaison droite de l&apos;inclinaison du stylet. 0 lorsque le bout du stylet pointe vers vous, +90 s&apos;il est tourné de 90 degrés dans le sens horaire, -90 s&apos;il est tourné de 90 degrés dans le sens antihoraire.</translation>
+        <translation>Déclinaison droite de l&apos;inclinaison du stylet. 0 lorsque le bout du stylet pointe vers vous, +90 s&apos;il est tourné de 90 degrés dans le sens horaire, -90 s&apos;il est tourné de 90 degrés dans le sens antihoraire.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Ceci est une entrée définie par l&apos;utlisateur·ice. Regardez le réglage &apos;entrée personnalisé&apos; pour plus d&apos;informations.</translation>
+        <translation>Ceci est une entrée définie par l&apos;utlisateur·rice. Regardez le réglage &apos;entrée personnalisé&apos; pour plus de détails.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The angle of the stroke, from 0 to 360 degrees.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">L&apos;angle du tracé, comprise entre 0 et 360 degrés.</translation>
+        <translation>L&apos;angle du tracé, compris entre 0 et 360 degrés.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5450,7 +5450,7 @@ The range is +/-180.0.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">La différence, en degrés, entre l&apos;angle vers lequel le stylet pointe et l&apos;angle de mouvement du tracé.
+        <translation>La différence, en degrés, entre l&apos;angle vers lequel le stylet pointe et l&apos;angle de mouvement du tracé.
 La portée est de +/-180.0.
 0.0 indique que l&apos;angle du tracé correspond à celui du stylet. 
 90 indique que l&apos;angle du tracé est perpendiculaire à l&apos;angle du stylet. 
@@ -5461,14 +5461,14 @@ La portée est de +/-180.0.
         <source>Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">La déclinaison de l&apos;inclinaison du stylet sur un axe X. 90/-90 lorsqu&apos;il est parallèle à la tablette et 0 lorsqu&apos;il est perpendiculaire à la tablette.</translation>
+        <translation>La déclinaison de l&apos;inclinaison du stylet sur un axe X. 90/-90 lorsqu&apos;il est parallèle à la tablette et 0 lorsqu&apos;il est perpendiculaire à la tablette.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination of stylus tilt on Y-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">La déclinaison de l&apos;inclinaison du stylet sur un axe Y. 90/-90 lorsqu&apos;il est parallèle à la tablette et 0 lorsqu&apos;il est perpendiculaire à la tablette.</translation>
+        <translation>La déclinaison de l&apos;inclinaison du stylet sur un axe Y. 90/-90 lorsqu&apos;il est parallèle à la tablette et 0 lorsqu&apos;il est perpendiculaire à la tablette.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5476,7 +5476,7 @@ La portée est de +/-180.0.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">La coordonnée X sur une grille de 256 pixels. Elle tourne autour de 0-256 lorsque le curseur se déplace sur l&apos;axe X. Similaire à &quot;Tracé&quot;. Peut être utilisé pour ajouter un effet papier en modifiant l&apos;opacité, etc..
+        <translation>La coordonnée X sur une grille de 256 pixels. Elle tourne autour de 0-256 lorsque le curseur se déplace sur l&apos;axe X. Similaire à &quot;Tracé&quot;. Peut être utilisé pour ajouter un effet papier en modifiant l&apos;opacité, etc..
 La taille du pinceau doit être considérablement inférieure à la taille de la grille pour de meilleurs résultats.</translation>
     </message>
     <message>
@@ -5485,7 +5485,7 @@ La taille du pinceau doit être considérablement inférieure à la taille de la
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">La coordonnée Y sur une grille de 256 pixels. Elle tourne autour de 0-256 lorsque le curseur se déplace sur l&apos;axe Y. Similaire à &quot;Tracé&quot;. Peut être utilisé pour ajouter un effet papier en modifiant l&apos;opacité, etc..
+        <translation>La coordonnée Y sur une grille de 256 pixels. Elle tourne autour de 0-256 lorsque le curseur se déplace sur l&apos;axe Y. Similaire à &quot;Tracé&quot;. Peut être utilisé pour ajouter un effet papier en modifiant l&apos;opacité, etc..
 La taille du pinceau doit être considérablement inférieure à la taille de la grille pour de meilleurs résultats.</translation>
     </message>
     <message>
@@ -5519,7 +5519,7 @@ You can even cancel out dab size increase and adjust something else to make a br
 Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Le rayon du pinceau de base vous permet de changer le comportement d&apos;un pinceau lorsque vous le rendez plus grand ou plus petit.
+        <translation>Le rayon du pinceau de base vous permet de changer le comportement d&apos;un pinceau lorsque vous le rendez plus grand ou plus petit.
 Vous pouvez même annuler l&apos;augmentation de la taille de tapotement de pinceau et ajuster autre choses pour rendre un pinceau plus grand.
 Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements par rayon actuel&quot;, dont les comportements diffèrent grandement.</translation>
     </message>
@@ -5528,14 +5528,14 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Opacity</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Opacité</translation>
+        <translation>Opacité</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Opacity multiply</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Opacité par Produit</translation>
+        <translation>Opacité par Produit</translation>
     </message>
     <message>
         <location line="+3"/>
