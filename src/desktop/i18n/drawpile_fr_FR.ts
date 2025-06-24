@@ -5342,7 +5342,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>GridMap Y</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Grille de Carte Y</translation>
+        <translation>Quadrillage</translation>
     </message>
     <message>
         <location line="+4"/>
