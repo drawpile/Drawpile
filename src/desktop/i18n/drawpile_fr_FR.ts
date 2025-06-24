@@ -5796,7 +5796,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Elliptical dab: ratio</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Touche elliptique&#xa0;: Rapport</translation>
+        <translation>Touche elliptique&#xa0;: ratio</translation>
     </message>
     <message>
         <location line="+3"/>
