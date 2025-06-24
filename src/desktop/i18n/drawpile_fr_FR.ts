@@ -5279,7 +5279,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>Direction</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Direction</translation>
+        <translation>Direction</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5293,14 +5293,14 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>Ascension</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Ascension</translation>
+        <translation>Ascension</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Custom</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. the input is the output of the &quot;Custom input&quot; setting</extracomment>
-        <translation type="unfinished">Personnalisé</translation>
+        <translation>Personnalisé</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5335,7 +5335,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>GridMap X</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Grille de Carte X</translation>
+        <translation>Quadrillage</translation>
     </message>
     <message>
         <location line="+3"/>
