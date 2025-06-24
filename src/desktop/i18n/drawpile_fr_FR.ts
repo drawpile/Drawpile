@@ -6016,7 +6016,7 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>Rayon de base de la brosse (logarithmique)
- 0,7 correspond à 2 pixels
+ 0,7 correspond à 2 pixel
  3,0 correspond à 20 pixels</translation>
     </message>
     <message>
