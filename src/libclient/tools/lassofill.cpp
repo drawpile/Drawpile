@@ -49,6 +49,7 @@ void LassoFillTool::begin(const BeginParams &params)
 		m_clickDetector.begin(params.viewPos, params.deviceType);
 
 		QColor color = m_owner.foregroundColor();
+		emit m_owner.colorUsed(color);
 		color.setAlphaF(m_opacity);
 
 		QRect selBounds;
