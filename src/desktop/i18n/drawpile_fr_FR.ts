@@ -6024,7 +6024,7 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Brosse à bords dures circulaires (régler à zéro ne tracera rien). Vous devez désactiver l’anticrènelage pour atteindre la dureté maximum.</translation>
+        <translation>Brosse à bords dures circulaires (régler à zéro ne tracera rien). Vous devez désactiver l’anticrènelage pour atteindre la dureté maximale.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7982,7 +7982,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Custom:</source>
-        <translation type="unfinished">Personnalisée :</translation>
+        <translation>Personnalisé&#xa0;:</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -8028,7 +8028,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-148"/>
         <source>Language:</source>
-        <translation type="unfinished">Langue :</translation>
+        <translation>Langue&#xa0;:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8053,13 +8053,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished">Connexion :</translation>
+        <translation>Connexion&#xa0;:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Qt Graphics View</source>
         <extracomment>One of the canvas renderer options. &quot;Qt&quot; is a software framework.</extracomment>
-        <translation type="unfinished">Vue Graphique Qt</translation>
+        <translation>Vue Graphique Qt</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8077,7 +8077,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+3"/>
         <source>Default</source>
         <extracomment>One of the canvas renderer options.</extracomment>
-        <translation type="unfinished">Défaut</translation>
+        <translation>Défaut</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8224,7 +8224,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+11"/>
         <source>Session history:</source>
-        <translation type="unfinished">Historique de session :</translation>
+        <translation>Historique de session&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -8327,7 +8327,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Add</source>
-        <translation type="unfinished">Ajouter</translation>
+        <translation>Ajouter</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8337,7 +8337,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Remove</source>
-        <translation type="unfinished">Retirer</translation>
+        <translation>Retirer</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8443,7 +8443,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+12"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Déconnecté</translation>
+        <translation>Déconnecté</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -8562,7 +8562,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+11"/>
         <location line="+28"/>
         <source>Lock</source>
-        <translation type="unfinished">Verrouiller</translation>
+        <translation>Verrouiller</translation>
     </message>
     <message>
         <location line="-23"/>
@@ -8592,12 +8592,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+17"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished">Déverrouiller le contrôle parental</translation>
+        <translation>Déverrouiller le contrôle parental</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished">Verrouiller le contrôle parental</translation>
+        <translation>Verrouiller le contrôle parental</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8607,7 +8607,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+12"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished">Mot de passe incorrect.</translation>
+        <translation>Mot de passe incorrect.</translation>
     </message>
 </context>
 <context>
@@ -8672,13 +8672,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="-7"/>
         <location line="+57"/>
         <source>Add</source>
-        <translation type="unfinished">Ajouter</translation>
+        <translation>Ajouter</translation>
     </message>
     <message>
         <location line="-53"/>
         <location line="+58"/>
         <source>Remove</source>
-        <translation type="unfinished">Retirer</translation>
+        <translation>Retirer</translation>
     </message>
     <message>
         <location line="-54"/>
@@ -8775,7 +8775,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Add</source>
-        <translation type="unfinished">Ajouter</translation>
+        <translation>Ajouter</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8800,7 +8800,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Remove</source>
-        <translation type="unfinished">Retirer</translation>
+        <translation>Retirer</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8833,7 +8833,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>Brushes</source>
-        <translation type="unfinished">Brosses</translation>
+        <translation>Pinceaux</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8919,7 +8919,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished">Activer la sensibilité à la pression</translation>
+        <translation>Activer la sensibilité à la pression</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8934,7 +8934,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">Adoucissement :</translation>
+        <translation>Lissage&#xa0;:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9013,7 +9013,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-108"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+2"/>
