@@ -16,8 +16,9 @@ static constexpr long long DELTA_MSEC = 10;
 BezierTool::BezierTool(ToolController &owner)
 	: Tool(
 		  owner, BEZIER, utils::Cursors::curve(),
-		  Capability::AllowColorPick | Capability::AllowToolAdjust |
-			  Capability::Fractional)
+		  Capability::AllowColorPick | Capability::Fractional |
+			  Capability::AllowToolAdjust1 | Capability::AllowToolAdjust2 |
+			  Capability::AllowToolAdjust3)
 {
 }
 

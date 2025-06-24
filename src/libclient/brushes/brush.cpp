@@ -1225,6 +1225,17 @@ DP_BrushShape ActiveBrush::shape() const
 	return m_activeType == CLASSIC ? m_classic.shape : DP_BRUSH_SHAPE_MYPAINT;
 }
 
+bool ActiveBrush::hasHardness() const
+{
+	switch(shape()) {
+	case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
+	case DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE:
+		return false;
+	default:
+		return true;
+	}
+}
+
 DP_PaintMode ActiveBrush::paintMode() const
 {
 	return m_activeType == CLASSIC ? m_classic.paint_mode

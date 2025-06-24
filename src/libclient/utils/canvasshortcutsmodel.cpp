@@ -371,8 +371,12 @@ QString CanvasShortcutsModel::actionToString(const CanvasShortcuts::Shortcut &s)
 		return tr("Pick Color");
 	case CanvasShortcuts::LAYER_PICK:
 		return tr("Pick Layer");
-	case CanvasShortcuts::TOOL_ADJUST:
+	case CanvasShortcuts::TOOL_ADJUST1:
 		return tr("Change Brush Size");
+	case CanvasShortcuts::TOOL_ADJUST2:
+		return tr("Change Brush Opacity");
+	case CanvasShortcuts::TOOL_ADJUST3:
+		return tr("Change Brush Hardness");
 	case CanvasShortcuts::CONSTRAINT:
 		switch(s.flags & CanvasShortcuts::CONSTRAINT_MASK) {
 		case CanvasShortcuts::TOOL_CONSTRAINT1:

@@ -176,6 +176,8 @@ struct BrushSettings::Private {
 
 	QPointF previousOffset;
 	qreal quickAdjust1 = 0.0;
+	qreal quickAdjust2 = 0.0;
+	qreal quickAdjust3 = 0.0;
 	int brushSlotCount = BRUSH_SLOT_COUNT;
 	int current = 0;
 	int previousNonEraser = 0;
@@ -1283,8 +1285,7 @@ void BrushSettings::updateUi()
 	// Select brush type
 	const bool mypaintmode =
 		brush.activeType() == brushes::ActiveBrush::MYPAINT;
-	const bool softmode =
-		mypaintmode || classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
+	const bool softmode = brush.hasHardness();
 
 	if(mypaintmode) {
 		d->brushType = BrushType::MyPaint;
@@ -1864,12 +1865,28 @@ void BrushSettings::quickAdjust1(qreal adjustment)
 	// Adjust the currently visible box. Classic brush size gets increased
 	// exponentially, MyPaint brush size is already logarithmic.
 	if(d->currentIsMyPaint()) {
-		quickAdjustOn(d->ui.radiusLogarithmicBox, adjustment * 2.0);
+		quickAdjustOn(
+			d->ui.radiusLogarithmicBox, adjustment * 2.0, d->quickAdjust1);
 	} else {
 		KisSliderSpinBox *brushsizeBox = d->ui.brushsizeBox;
 		quickAdjustOn(
 			brushsizeBox,
-			qMax(1.0, std::cbrt(brushsizeBox->value())) * adjustment);
+			qMax(1.0, std::cbrt(brushsizeBox->value())) * adjustment,
+			d->quickAdjust1);
+	}
+}
+
+void BrushSettings::quickAdjust2(qreal adjustment)
+{
+	KisSliderSpinBox *opacityBox = d->ui.opacityBox;
+	quickAdjustOn(opacityBox, adjustment, d->quickAdjust2);
+}
+
+void BrushSettings::quickAdjust3(qreal adjustment)
+{
+	if(d->currentBrush().hasHardness()) {
+		KisSliderSpinBox *hardnessBox = d->ui.hardnessBox;
+		quickAdjustOn(hardnessBox, adjustment, d->quickAdjust3);
 	}
 }
 
@@ -1877,28 +1894,43 @@ void BrushSettings::stepAdjust1(bool increase)
 {
 	if(d->currentIsMyPaint()) {
 		KisSliderSpinBox *radiusLogarithmicBox = d->ui.radiusLogarithmicBox;
-		adjustSizeSlider(
+		adjustSlider(
 			radiusLogarithmicBox, stepLinear(
 									  radiusLogarithmicBox->minimum(),
 									  radiusLogarithmicBox->maximum(),
 									  radiusLogarithmicBox->value(), increase));
 	} else {
 		KisSliderSpinBox *brushsizeBox = d->ui.brushsizeBox;
-		adjustSizeSlider(
+		adjustSlider(
 			brushsizeBox, stepLogarithmic(
 							  brushsizeBox->minimum(), brushsizeBox->maximum(),
 							  brushsizeBox->value(), increase));
 	}
 }
 
-void BrushSettings::quickAdjustOn(KisSliderSpinBox *box, qreal adjustment)
+void BrushSettings::stepAdjust2(bool increase)
 {
-	d->quickAdjust1 += adjustment;
+	KisSliderSpinBox *opacityBox = d->ui.opacityBox;
+	adjustSlider(opacityBox, opacityBox->value() + (increase ? 1 : -1));
+}
+
+void BrushSettings::stepAdjust3(bool increase)
+{
+	if(d->currentBrush().hasHardness()) {
+		KisSliderSpinBox *hardnessBox = d->ui.hardnessBox;
+		adjustSlider(hardnessBox, hardnessBox->value() + (increase ? 1 : -1));
+	}
+}
+
+void BrushSettings::quickAdjustOn(
+	KisSliderSpinBox *box, qreal adjustment, qreal &quickAdjustN)
+{
+	quickAdjustN += adjustment;
 	qreal i;
-	qreal f = modf(d->quickAdjust1, &i);
+	qreal f = modf(quickAdjustN, &i);
 	if(int(i)) {
-		d->quickAdjust1 = f;
-		adjustSizeSlider(box, box->value() + int(i));
+		quickAdjustN = f;
+		adjustSlider(box, box->value() + int(i));
 	}
 }
 
@@ -2042,7 +2074,7 @@ void BrushSettings::updateRadiusLogarithmicLimit()
 	}
 }
 
-void BrushSettings::adjustSizeSlider(KisSliderSpinBox *slider, int value)
+void BrushSettings::adjustSlider(KisSliderSpinBox *slider, int value)
 {
 	if(slider->isSoftRangeActive()) {
 		slider->setValue(

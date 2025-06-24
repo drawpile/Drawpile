@@ -399,6 +399,28 @@ void FillSettings::quickAdjust1(qreal adjustment)
 	}
 }
 
+void FillSettings::quickAdjust2(qreal adjustment)
+{
+	m_quickAdjust2 += adjustment;
+	qreal i;
+	qreal f = modf(m_quickAdjust2, &i);
+	if(int(i)) {
+		m_quickAdjust2 = f;
+		m_ui->opacity->setValue(m_ui->opacity->value() + i);
+	}
+}
+
+void FillSettings::quickAdjust3(qreal adjustment)
+{
+	m_quickAdjust3 += adjustment;
+	qreal i;
+	qreal f = modf(m_quickAdjust3, &i);
+	if(int(i)) {
+		m_quickAdjust3 = f;
+		m_ui->feather->setValue(m_ui->feather->value() + i);
+	}
+}
+
 void FillSettings::stepAdjust1(bool increase)
 {
 	KisSliderSpinBox *size = m_ui->size;
@@ -406,6 +428,16 @@ void FillSettings::stepAdjust1(bool increase)
 		size->setValue(stepLogarithmic(
 			size->minimum(), size->maximum(), size->value(), increase));
 	}
+}
+
+void FillSettings::stepAdjust2(bool increase)
+{
+	m_ui->opacity->setValue(m_ui->opacity->value() + (increase ? 1 : -1));
+}
+
+void FillSettings::stepAdjust3(bool increase)
+{
+	m_ui->feather->setValue(m_ui->feather->value() + (increase ? 1 : -1));
 }
 
 void FillSettings::updateTolerance()

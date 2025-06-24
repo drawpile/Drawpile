@@ -762,8 +762,14 @@ void ToolSettings::changeBackgroundColor()
 void ToolSettings::quickAdjust(int type, qreal adjustment)
 {
 	switch(type) {
-	case int(tools::QuickAdjustType::Tool):
+	case int(tools::QuickAdjustType::Tool1):
 		quickAdjustCurrent1(adjustment);
+		break;
+	case int(tools::QuickAdjustType::Tool2):
+		quickAdjustCurrent2(adjustment);
+		break;
+	case int(tools::QuickAdjustType::Tool3):
+		quickAdjustCurrent3(adjustment);
 		break;
 	case int(tools::QuickAdjustType::ColorH):
 		requestColorAdjustment(0, adjustment, 360.0);
@@ -796,9 +802,29 @@ void ToolSettings::quickAdjustCurrent1(qreal adjustment)
 	d->currentSettings()->quickAdjust1(adjustment);
 }
 
+void ToolSettings::quickAdjustCurrent2(qreal adjustment)
+{
+	d->currentSettings()->quickAdjust2(adjustment);
+}
+
+void ToolSettings::quickAdjustCurrent3(qreal adjustment)
+{
+	d->currentSettings()->quickAdjust3(adjustment);
+}
+
 void ToolSettings::stepAdjustCurrent1(bool increase)
 {
 	d->currentSettings()->stepAdjust1(increase);
+}
+
+void ToolSettings::stepAdjustCurrent2(bool increase)
+{
+	d->currentSettings()->stepAdjust2(increase);
+}
+
+void ToolSettings::stepAdjustCurrent3(bool increase)
+{
+	d->currentSettings()->stepAdjust3(increase);
 }
 
 bool ToolSettings::hasBrushCursor(tools::Tool::Type tool)

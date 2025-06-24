@@ -34,7 +34,11 @@ public:
 	bool isLocked() override;
 
 	void quickAdjust1(qreal adjustment) override;
+	void quickAdjust2(qreal adjustment) override;
+	void quickAdjust3(qreal adjustment) override;
 	void stepAdjust1(bool increase) override;
+	void stepAdjust2(bool increase) override;
+	void stepAdjust3(bool increase) override;
 	void setForeground(const QColor &color) override;
 
 	int getSize() const override;
@@ -87,6 +91,8 @@ private:
 	BlendModeManager *m_blendModeManager = nullptr;
 	int m_toleranceBeforeDrag = -1;
 	qreal m_quickAdjust1 = 0.0;
+	qreal m_quickAdjust2 = 0.0;
+	qreal m_quickAdjust3 = 0.0;
 	bool m_featureAccess = true;
 	bool m_haveSelection = false;
 	bool m_updating = false;

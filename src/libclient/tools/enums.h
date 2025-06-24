@@ -7,16 +7,18 @@ namespace tools {
 
 enum class ColorPickSource { Canvas, Tool, Touch, Adjust };
 enum class DeviceType { Mouse, Tablet, Touch };
-enum class QuickAdjustType { Tool, ColorH, ColorS, ColorV };
+enum class QuickAdjustType { Tool1, Tool2, Tool3, ColorH, ColorS, ColorV };
 enum class ToolState { Normal, Busy };
 enum class Capability : unsigned int {
 	AllowColorPick = (1u << 0u),
-	AllowToolAdjust = (1u << 1u),
-	HandlesRightClick = (1u << 2u),
-	Fractional = (1u << 3u),
-	SupportsPressure = (1u << 4u),
-	IgnoresSelections = (1u << 5u),
-	SendsNoMessages = (1u << 6u),
+	HandlesRightClick = (1u << 1u),
+	Fractional = (1u << 2u),
+	SupportsPressure = (1u << 3u),
+	IgnoresSelections = (1u << 4u),
+	SendsNoMessages = (1u << 5u),
+	AllowToolAdjust1 = (1u << 6u),
+	AllowToolAdjust2 = (1u << 7u),
+	AllowToolAdjust3 = (1u << 8u),
 };
 Q_DECLARE_FLAGS(Capabilities, Capability)
 

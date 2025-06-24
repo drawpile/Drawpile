@@ -338,6 +338,7 @@ public:
 	void setActiveType(ActiveType activeType) { m_activeType = activeType; }
 
 	DP_BrushShape shape() const;
+	bool hasHardness() const;
 
 	ClassicBrush &classic() { return m_classic; }
 	const ClassicBrush &classic() const { return m_classic; }

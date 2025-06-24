@@ -62,6 +62,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Add OKLAB blend mode for layers and brushes. Thanks Bonbli for contributing.
  * Fix: Detect eraser pen tip on Android, since the eraser doesn't report it's in proximity until it hits the surface, similar to the browser. Thanks CosmosX007 for reporting.
  * Feature: Auto-correct attempts to host on http(s) sites by extracting the host portion from them. Thanks Charmandrigo for suggesting.
+ * Feature: Add shortcuts to change brush opacity and hardness. Thanks justanotatest for suggesting.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

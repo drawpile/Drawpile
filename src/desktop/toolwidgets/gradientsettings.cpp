@@ -157,6 +157,44 @@ void GradientSettings::toggleBlendMode(int blendMode)
 	m_blendModeManager->toggleBlendMode(blendMode);
 }
 
+void GradientSettings::quickAdjust2(qreal adjustment)
+{
+	m_quickAdjust2 += adjustment;
+	qreal i;
+	qreal f = modf(m_quickAdjust2, &i);
+	if(int(i)) {
+		m_quickAdjust2 = f;
+		m_fgOpacitySpinner->setValue(m_fgOpacitySpinner->value() + i);
+	}
+}
+
+void GradientSettings::quickAdjust3(qreal adjustment)
+{
+	if(m_bgOpacitySpinner->isEnabled()) {
+		m_quickAdjust3 += adjustment;
+		qreal i;
+		qreal f = modf(m_quickAdjust3, &i);
+		if(int(i)) {
+			m_quickAdjust3 = f;
+			m_bgOpacitySpinner->setValue(m_bgOpacitySpinner->value() + i);
+		}
+	}
+}
+
+void GradientSettings::stepAdjust2(bool increase)
+{
+	m_fgOpacitySpinner->setValue(
+		m_fgOpacitySpinner->value() + (increase ? 1 : -1));
+}
+
+void GradientSettings::stepAdjust3(bool increase)
+{
+	if(m_bgOpacitySpinner->isEnabled()) {
+		m_bgOpacitySpinner->setValue(
+			m_bgOpacitySpinner->value() + (increase ? 1 : -1));
+	}
+}
+
 void GradientSettings::setActions(
 	QAction *selectAll, QAction *selectLayerBounds)
 {

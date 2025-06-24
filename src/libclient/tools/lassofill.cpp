@@ -17,7 +17,9 @@ using utils::Cursors;
 namespace tools {
 
 LassoFillTool::LassoFillTool(ToolController &owner)
-	: Tool(owner, LASSOFILL, Cursors::lassoFill(), Capability::AllowColorPick)
+	: Tool(
+		  owner, LASSOFILL, Cursors::lassoFill(),
+		  Capability::AllowColorPick | Capability::AllowToolAdjust2)
 	, m_strokeEngine(
 		  [this](DP_BrushPoint bp, const drawdance::CanvasState &) {
 			  addPoint(QPointF(bp.x, bp.y));

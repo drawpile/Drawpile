@@ -375,9 +375,19 @@ private:
 		return m_toolCapabilities.testFlag(tools::Capability::AllowColorPick);
 	}
 
-	bool toolAllowsToolAdjust() const
+	bool toolAllowsToolAdjust1() const
 	{
-		return m_toolCapabilities.testFlag(tools::Capability::AllowToolAdjust);
+		return m_toolCapabilities.testFlag(tools::Capability::AllowToolAdjust1);
+	}
+
+	bool toolAllowsToolAdjust2() const
+	{
+		return m_toolCapabilities.testFlag(tools::Capability::AllowToolAdjust2);
+	}
+
+	bool toolAllowsToolAdjust3() const
+	{
+		return m_toolCapabilities.testFlag(tools::Capability::AllowToolAdjust3);
 	}
 
 	bool toolHandlesRightClick() const
