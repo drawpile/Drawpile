@@ -5542,7 +5542,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Opacity linearize</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Linéariser l&apos;opacité</translation>
+        <translation>Linéariser l&apos;Opacité</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5563,7 +5563,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Pixel feather</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Plume Pixellisé</translation>
+        <translation>Plume Pixelisé</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5591,7 +5591,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Radius by random</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Rayon aléatoire</translation>
+        <translation>Rayon aléatoire</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5605,7 +5605,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Gross speed filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Filtre de vitesse réglée plus succinctement</translation>
+        <translation>Filtre de vitesse brute</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5619,14 +5619,14 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Gross speed gamma</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Gamma de vitesse réglée plus succinctement</translation>
+        <translation>Gamma de vitesse brute</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Jitter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">À-coups</translation>
+        <translation>Saccade</translation>
     </message>
     <message>
         <location line="+3"/>
