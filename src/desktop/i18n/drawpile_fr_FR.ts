@@ -2652,7 +2652,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+6"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished">Ajuster à l&apos;Écran (&amp;F)</translation>
+        <translation>&amp;Ajuster à l&apos;Écran</translation>
     </message>
     <message>
         <location line="+128"/>
@@ -2753,7 +2753,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+0"/>
         <source>Browse session listings</source>
-        <translation type="unfinished">Parcourir listes de session</translation>
+        <translation>Parcourir listes de session</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2763,7 +2763,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+1"/>
         <source>Undo Limit…</source>
-        <translation type="unfinished">Annuler la limite…</translation>
+        <translation>Annuler la limite…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2937,12 +2937,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+432"/>
         <source>Freehand (erase mode, click to reset)</source>
-        <translation type="unfinished">Main libre (mode gomme, cliquer pour réinitialiser)</translation>
+        <translation>Main levée (mode gomme, cliquer pour réinitialiser)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (erase mode)</source>
-        <translation type="unfinished">Outil pinceau en main libre (mode gomme)</translation>
+        <translation>Outil pinceau en main levée (mode gomme)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2972,17 +2972,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+24"/>
         <source>Import &amp;Brushes...</source>
-        <translation type="unfinished">Importer les Pinceaux (&amp;B)…</translation>
+        <translation>Importer des &amp;Pinceaux…</translation>
     </message>
     <message>
         <location line="-16"/>
         <source>Export Session &amp;Template...</source>
-        <translation type="unfinished">Exporter le Modèle de Session (&amp;T)...</translation>
+        <translation>Exporter le &amp;Modèle de Session...</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Export &amp;Brushes…</source>
-        <translation type="unfinished">Exporter les Pinceaux (&amp;B)…</translation>
+        <translation>Exporter des &amp;Pinceaux…</translation>
     </message>
     <message>
         <location line="+203"/>
@@ -3002,12 +3002,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+6"/>
         <source>Cu&amp;t From Layer</source>
-        <translation type="unfinished">Couper depuis le Calque (&amp;T)</translation>
+        <translation>&amp;Couper du Calque</translation>
     </message>
     <message>
         <location line="+243"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished">Pilotes pour Tablette</translation>
+        <translation>Pilotes pour Tablette</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
@@ -5152,7 +5152,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="-53"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished">Régler la vélocité au maximum pour la Taille, l&apos;Opacité, la Dureté et l&apos;Étalement en même temps.</translation>
+        <translation>Définir la vitesse maximale pour la Taille, l&apos;Opacité, la Dureté et le Maculage en une seule fois.</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -5177,7 +5177,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+6"/>
         <source>Curve set for all settings in this brush.</source>
-        <translation type="unfinished">Courbe réglée pour tous les réglages de ce pinceau.</translation>
+        <translation>Courbe réglée pour tous les réglages de ce pinceau.</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -5187,17 +5187,17 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+11"/>
         <source>No brush dynamics.</source>
-        <translation type="unfinished">Pas de dynamique de pinceau.</translation>
+        <translation>Pas de dynamique de pinceau.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Not available in Indirect/Wash mode.</source>
-        <translation type="unfinished">Non disponible en mode Lavé/Indirect.</translation>
+        <translation>Non disponible en mode Indirect/Lavage.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dynamics not available in Indirect/Wash mode.</source>
-        <translation type="unfinished">Dynamiques non disponibles en mode Lavé/Indirect.</translation>
+        <translation>Dynamiques non disponibles en mode Indirect/Lavage.</translation>
     </message>
     <message>
         <location line="+59"/>
@@ -5212,22 +5212,22 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+4"/>
         <source>Edge hardness, 0% is blurry, 100% is sharp.</source>
-        <translation type="unfinished">Dureté de bord de pinceau, 0% pour flou, 100% pour net.</translation>
+        <translation>Dureté des bords, 0% pour flou, 100% pour net.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation type="unfinished">Mélange de couleurs sur le calque actuel de dessin.</translation>
+        <translation>Mélange de couleurs sur le calque de dessin actuel.</translation>
     </message>
     <message>
         <location line="+175"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation type="unfinished">Ralentit le tracé pour le stabiliser sur le temps. Une valeur élevée donnera un tracé lisse, mais le dessinera lentement. Lorsque vous cessez de bouger, la ligne rattrapera votre curseur. Le lissage de la tablette dans les préférences d&apos;entrée s&apos;applique également.</translation>
+        <translation>Ralentit le tracé pour le stabiliser sur le temps. Une valeur élevée donnera un tracé lisse, mais le dessinera lentement. Lorsque vous cessez de bouger, la ligne rattrapera votre curseur. Le lissage de la tablette dans les préférences d&apos;entrée s&apos;applique également.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation type="unfinished">Fait simplement une moyenne du nombre d&apos;entrées. Plus rapide que le stabilisateur basé sur le temps, mais pas aussi lisse que ce dernier, et ne rattrapera pas votre curseur si vous êtes à l&apos;arrêt. Ignore le lissage de la tablette dans les préférences d&apos;entrée.</translation>
+        <translation>Fait simplement une moyenne du nombre d&apos;entrées. Plus rapide que le stabilisateur basé sur le temps, mais pas aussi lisse que ce dernier, et ne rattrapera pas votre curseur si vous êtes à l&apos;arrêt. Ignore le lissage de la tablette dans les préférences d&apos;entrée.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5237,7 +5237,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+4"/>
         <source>Synchronizing stabilization settings with brushes is disabled.</source>
-        <translation type="unfinished">Les réglages de stabilisation synchrone avec les pinceaux sont désactivées.</translation>
+        <translation>Les réglages de stabilisation synchrone avec les pinceaux sont désactivées.</translation>
     </message>
     <message>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+14"/>
@@ -5251,28 +5251,28 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>Fine speed</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. &quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
-        <translation type="unfinished">Vitesse réglée avec finesse</translation>
+        <translation>Vitesse réglée avec finesse</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
-        <translation type="unfinished">Vitesse réglée plus succinctement</translation>
+        <translation>Vitesse réglée plus succinctement</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Random</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Aléatoire</translation>
+        <translation>Aléatoire</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Stroke</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Tracé</translation>
+        <translation>Tracé</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5307,28 +5307,28 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>Direction 360</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. refers to the direction of the stroke</extracomment>
-        <translation type="unfinished">Omnidirectionnel</translation>
+        <translation>Direction 360</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Attack Angle</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Angle d&apos;Attaque</translation>
+        <translation>Angle d&apos;Attaque</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination/Tilt X</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Déclinaison/Inclinaison X</translation>
+        <translation>Déclinaison/Inclinaison X</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Declination/Tilt Y</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Déclinaison/Inclinaison Y</translation>
+        <translation>Déclinaison/Inclinaison Y</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5719,35 +5719,35 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Change color value (HSV)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Changer la valeur de la couleur (HSV)</translation>
+        <translation>Changer la valeur de la couleur (TSV)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change color satur. (HSV)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Changer la saturation de la couleur (HSV)</translation>
+        <translation>Changer la saturation de la couleur (TSV)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Étaler</translation>
+        <translation>Maculage</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge length</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Longueur d&apos;étalage</translation>
+        <translation>Longueur de maculage</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Rayon d&apos;étalage</translation>
+        <translation>Rayon de maculage</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5866,21 +5866,21 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Smudge length multiplier</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Multiplicateur de longueur d&apos;étalement</translation>
+        <translation>Multiplicateur de longueur de maculage</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge bucket</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Seau d&apos;étalement</translation>
+        <translation>Seau de maculage</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Smudge transparency</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Transparence d&apos;étalement</translation>
+        <translation>Transparence de maculage</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6228,7 +6228,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Modifiez la valeur de couleur (luminosité, intensité) à l&apos;aide du modèle colorimétrique HSV. Les modifications HSV sont appliquées avant HSL.
+        <translation>Modifiez la valeur de couleur (luminosité, intensité) à l&apos;aide du modèle colorimétrique TSV. Les modifications TSV sont appliquées avant TSL.
 -1,0 plus foncé
  0,0 désactivé
  1,0 plus clair</translation>
@@ -6241,7 +6241,7 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Modifiez la saturation des couleurs à l&apos;aide du modèle colorimétrique HSV. Les modifications HSV sont appliquées avant HSL.
+        <translation>Modifiez la saturation des couleurs à l&apos;aide du modèle colorimétrique TSV. Les modifications TSV sont appliquées avant TSL.
 -1,0 plus grisâtre
  0,0 désactivé
  1,0 plus saturé</translation>
@@ -6254,10 +6254,10 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
  1.0 use only the smudge color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Peignez avec la couleur d&apos;estompage plutôt qu&apos;avec celle du pinceau. La couleur d&apos;estompage se transforme progressivement en couleur sur laquelle vous peignez.
- 0.0 Ne pas utiliser la couleur d&apos;estompage
- 0.5 Mélanger la couleur d&apos;estompage avec la couleur du pinceau
- 1.0 Utiliser uniquement la couleur d&apos;estompage</translation>
+        <translation>Peignez avec la couleur de maculage plutôt qu&apos;avec celle du pinceau. La couleur de maculage se transforme progressivement en couleur sur laquelle vous peignez.
+ 0.0 Ne pas utiliser la couleur de maculage
+ 0.5 Mélanger la couleur de maculage avec la couleur du pinceau
+ 1.0 Utiliser uniquement la couleur de maculage</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6267,10 +6267,10 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
 1.0 never change the smudge color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Cela contrôle la vitesse à laquelle la couleur de l&apos;estompe devient la couleur sur laquelle vous peignez.
-0.0 Mettre à jour immédiatement la couleur de l&apos;estompe (nécessite plus de cycles CPU en raison des vérifications fréquentes des couleurs)
-0.5 Changer progressivement la couleur de l&apos;estompe pour la rapprocher de la couleur de la toile
-1.0 Ne jamais changer la couleur de l&apos;estompe</translation>
+        <translation>Cela contrôle la vitesse à laquelle la couleur du maculage devient la couleur sur laquelle vous peignez.
+0.0 Mettre à jour immédiatement la couleur du maculage (nécessite plus de cycles CPU en raison des vérifications fréquentes des couleurs)
+0.5 Changer progressivement la couleur du maculage pour la rapprocher de la couleur de la toile
+1.0 Ne jamais changer la couleur du maculage</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6444,9 +6444,9 @@ Useful to correct for high-definition/large brushes with lots of dabs.
 The longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Multiplicateur logarithmique pour la valeur «&#xa0;Longueur de l&apos;estompage&#xa0;».
+        <translation>Multiplicateur logarithmique pour la valeur «&#xa0;Longueur de maculage&#xa0;».
 Utile pour corriger les pinceaux haute définition/grands avec de nombreuses touches.
-Plus l&apos;estompage est long, plus la couleur s&apos;étale et améliore considérablement les performances, car la zone de travail est échantillonnée moins souvent</translation>
+Plus le maculage est long, plus la couleur s&apos;étale et améliore considérablement les performances, car la zone de travail est échantillonnée moins souvent</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6468,7 +6468,7 @@ Particulièrement utile avec le paramètre «&#xa0;Saisie personnalisée&#xa0;»
 Negative values do the reverse</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Contrôlez le niveau de transparence récupéré et estompé, comme pour le verrouillage alpha.
+        <translation>Contrôlez le niveau de transparence récupéré et maculé, comme pour le verrouillage alpha.
 1,0 ne modifie aucune transparence.
 0,5 modifie uniquement 50 % de transparence et plus.
 0,0 n&apos;a aucun effet.
@@ -9103,7 +9103,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>HCL (Hue–Chroma–Luminance)</source>
-        <translation type="unfinished"></translation>
+        <translation>TCL (Teinte–Chroma–Luminance)</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -10838,13 +10838,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+4"/>
         <location filename="../docks/colorspinner.cpp" line="+3"/>
         <source>HSV</source>
-        <translation>TSL</translation>
+        <translation>TSV</translation>
     </message>
     <message>
         <location line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>HSL</source>
-        <translation type="unfinished"></translation>
+        <translation>TSL</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -12025,7 +12025,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>/!: can only shout in a public chat.</source>
-        <translation>/!&#xa0;: ne peut annoncer que dans un chat public.</translation>
+        <translation>/!&#xa0;: ne peut annoncer que dans une discussion public.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12055,7 +12055,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>/pin: can only pin in a public chat.</source>
-        <translation>/pin&#xa0;: ne peut épingler que dans un chat public.</translation>
+        <translation>/pin&#xa0;: ne peut épingler que dans une discussion public.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12070,12 +12070,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>/unpin: can only unpin in a public chat.</source>
-        <translation>/unpin&#xa0;: ne peut désépingler que dans un chat publique.</translation>
+        <translation>/unpin&#xa0;: ne peut désépingler que dans une discussion publique.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>/roll: invalid dice roll description.</source>
-        <translation type="unfinished"></translation>
+        <translation>/roll&#xa0;: description de jet de dés invalide.</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -12089,7 +12089,15 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
 /me &lt;text&gt; - send action-type message
 /roll &lt;dice&gt; - roll dice, e.g. 1d6 for a six-sided die</source>
         <extracomment>Don&apos;t translate the commands, only their descriptions!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Commandes client disponibles&#xa0;:
+/help - afficher ce message
+/clear - effacer la fenêtre de discussion
+/&#x202f;! &lt;texte&gt; - faire une annonce (Opérateurs uniquement)
+/alert &lt;texte&gt; - envoyer une alerte de haute priorité (Opérateurs uniquement)
+/pin &lt;texte&gt; - épingler un message en haut de la fenêtre de discussion (Opérateurs uniquement)
+/unpin - supprimer le message épinglé (Opérateurs uniquement)
+/me &lt;texte&gt; - envoyer un message de type action
+/roll &lt;dice&gt; - lancer les dés, par exemple 1d6 pour un dé à six faces</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -12099,7 +12107,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-711"/>
         <source>Clear</source>
-        <translation>Nettoyer</translation>
+        <translation>Effacer</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12229,7 +12237,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Square kernel shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Noyau de forme carrée</translation>
     </message>
     <message>
         <location line="+93"/>
@@ -12550,12 +12558,12 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location line="+330"/>
         <source>Set Key Frame to %1</source>
-        <translation>Régler Trame de Référence à %1</translation>
+        <translation>Définir la Trame de Référence à %1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation>Régler Trame de Référence au Calque Actuel</translation>
+        <translation>Fixer la Trame de Référence au Calque Actuel</translation>
     </message>
 </context>
 <context>
@@ -12563,7 +12571,7 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location filename="../chat/useritemdelegate.cpp" line="+167"/>
         <source>Operator</source>
-        <translation>Opérateur·ice</translation>
+        <translation>Opérateur·rice</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12578,17 +12586,17 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation>Fiable (&amp;T)</translation>
+        <translation>&amp;Fiable</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation>Verrouiller (&amp;L)</translation>
+        <translation>Verrouil&amp;ler</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation>Rendre &amp;Muet</translation>
+        <translation>&amp;Mettre en sourdine</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12603,12 +12611,12 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation>Renvoyer (&amp;K)</translation>
+        <translation>&amp;Renvoyer</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation>Renvoyer &amp;&amp; Exclure</translation>
+        <translation>Re&amp;nvoyer &amp;&amp; Exclure</translation>
     </message>
     <message>
         <location line="+4"/>
