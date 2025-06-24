@@ -5761,14 +5761,14 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Stroke threshold</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Seuil de tracé</translation>
+        <translation>Seuil de tracé</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Stroke duration</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Durée de tracé</translation>
+        <translation>Durée du tracé</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5782,21 +5782,21 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Custom input</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Entrée personnalisé</translation>
+        <translation>Entrée personnalisée</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Custom input filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Filtre d&apos;entrée personnalisé</translation>
+        <translation>Filtre d&apos;entrée personnalisé</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Elliptical dab: ratio</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Tapotement elliptique&#xa0;: ratio</translation>
+        <translation>Touche elliptique&#xa0;: Rapport</translation>
     </message>
     <message>
         <location line="+3"/>
