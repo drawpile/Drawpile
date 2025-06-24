@@ -10850,7 +10850,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>HCL</source>
-        <translation type="unfinished"></translation>
+        <translation>TCL</translation>
     </message>
     <message>
         <location filename="../docks/colorspinner.cpp" line="-99"/>
