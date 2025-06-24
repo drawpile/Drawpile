@@ -5957,7 +5957,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Posterize</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Postérisation</translation>
+        <translation>Postériser</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6015,9 +6015,9 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Rayon de pinceau basique (logarithmique)
- 0.7 pour 2 pixels
- 3.0 pour 20 pixels</translation>
+        <translation>Rayon de base de la brosse (logarithmique)
+ 0,7 correspond à 2 pixels
+ 3,0 correspond à 20 pixels</translation>
     </message>
     <message>
         <location line="+3"/>
