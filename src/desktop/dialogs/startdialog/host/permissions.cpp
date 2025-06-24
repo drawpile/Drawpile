@@ -604,7 +604,8 @@ QString Permissions::getFeatureLimitName(int featureLimit)
 
 QString Permissions::getFeatureLimitKey(int featureLimit, int tier)
 {
-	return QString::number((featureLimit * 1000) + (tier * 1000000));
+	return QString::number(
+		((featureLimit + 1) * 1000) + ((tier + 1) * 100000));
 }
 
 int Permissions::getDefaultFeatureTier(int feature)
