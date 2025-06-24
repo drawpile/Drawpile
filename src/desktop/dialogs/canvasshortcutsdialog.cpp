@@ -41,7 +41,11 @@ CanvasShortcutsDialog::CanvasShortcutsDialog(
 	d->ui.actionCombo->addItem(tr("Pick Color"), CanvasShortcuts::COLOR_PICK);
 	d->ui.actionCombo->addItem(tr("Pick Layer"), CanvasShortcuts::LAYER_PICK);
 	d->ui.actionCombo->addItem(
-		tr("Change Brush Size"), CanvasShortcuts::TOOL_ADJUST);
+		tr("Change Brush Size"), CanvasShortcuts::TOOL_ADJUST1);
+	d->ui.actionCombo->addItem(
+		tr("Change Brush Opacity"), CanvasShortcuts::TOOL_ADJUST2);
+	d->ui.actionCombo->addItem(
+		tr("Change Brush Hardness"), CanvasShortcuts::TOOL_ADJUST3);
 	d->ui.actionCombo->addItem(
 		tr("Change Color Hue"), CanvasShortcuts::COLOR_H_ADJUST);
 	d->ui.actionCombo->addItem(
@@ -205,7 +209,9 @@ void CanvasShortcutsDialog::updateAction()
 	case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
 	case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 	case CanvasShortcuts::CANVAS_ZOOM:
-	case CanvasShortcuts::TOOL_ADJUST:
+	case CanvasShortcuts::TOOL_ADJUST1:
+	case CanvasShortcuts::TOOL_ADJUST2:
+	case CanvasShortcuts::TOOL_ADJUST3:
 	case CanvasShortcuts::COLOR_H_ADJUST:
 	case CanvasShortcuts::COLOR_S_ADJUST:
 	case CanvasShortcuts::COLOR_V_ADJUST:

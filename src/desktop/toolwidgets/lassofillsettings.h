@@ -41,6 +41,9 @@ public:
 	void toggleAlphaPreserve() override;
 	void toggleBlendMode(int blendMode) override;
 
+	void quickAdjust2(qreal adjustment) override;
+	void stepAdjust2(bool increase) override;
+
 	void pushSettings() override;
 
 	QWidget *getHeaderWidget() override { return m_headerWidget; }
@@ -69,6 +72,7 @@ private:
 	QPushButton *m_applyButton = nullptr;
 	QPushButton *m_cancelButton = nullptr;
 	BlendModeManager *m_blendModeManager = nullptr;
+	qreal m_quickAdjust2 = 0.0;
 	bool m_featureAccess = true;
 };
 

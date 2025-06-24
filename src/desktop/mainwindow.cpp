@@ -6656,10 +6656,30 @@ void MainWindow::setupActions()
 	QAction *changeBackgroundColor = makeAction("changebackgroundcolor", widgets::DualColorButton::backgroundText()).statusTip(tr("Choose the current background color")).noDefaultShortcut();
 	QAction *swapcolors = makeAction("swapcolors", widgets::DualColorButton::swapText()).statusTip(tr("Swap current foreground and background color with each other")).shortcut("X");
 	QAction *resetcolors = makeAction("resetcolors", widgets::DualColorButton::resetText()).statusTip(tr("Set foreground color to black and background color to white")).noDefaultShortcut();
-	QAction *smallerbrush = makeAction("ensmallenbrush", tr("&Decrease Brush Size")).shortcut(Qt::Key_BracketLeft).autoRepeat();
-	QAction *biggerbrush = makeAction("embiggenbrush", tr("&Increase Brush Size")).shortcut(Qt::Key_BracketRight).autoRepeat();
-	QAction *reloadPreset = makeAction("reloadpreset", tr("&Reset Brush")).icon("view-refresh").shortcut("Shift+P");
 	// clang-format on
+	QAction *smallerbrush =
+		makeAction("ensmallenbrush", tr("&Decrease Brush Size"))
+			.shortcut(Qt::Key_BracketLeft)
+			.autoRepeat();
+	QAction *biggerbrush =
+		makeAction("embiggenbrush", tr("&Increase Brush Size"))
+			.shortcut(Qt::Key_BracketRight)
+			.autoRepeat();
+	QAction *stepdown2 = makeAction("stepdown2", tr("Decrease Brush Opacity"))
+							 .noDefaultShortcut()
+							 .autoRepeat();
+	QAction *stepup2 = makeAction("stepup2", tr("Increase Brush Opacity"))
+						   .noDefaultShortcut()
+						   .autoRepeat();
+	QAction *stepdown3 = makeAction("stepdown3", tr("Decrease Brush Hardness"))
+							 .noDefaultShortcut()
+							 .autoRepeat();
+	QAction *stepup3 = makeAction("stepup3", tr("Increase Brush Hardness"))
+						   .noDefaultShortcut()
+						   .autoRepeat();
+	QAction *reloadPreset = makeAction("reloadpreset", tr("&Reset Brush"))
+								.icon("view-refresh")
+								.shortcut("Shift+P");
 	QAction *reloadPresetSlots =
 		makeAction("reloadpresetslots", tr("Reset All Brush &Slots"))
 			.noDefaultShortcut();
@@ -6683,25 +6703,52 @@ void MainWindow::setupActions()
 	QAction *previousSlot = makeAction("prevslot", tr("Previous Brush Slot"))
 								.noDefaultShortcut()
 								.autoRepeat();
-	// clang-format off
+	connect(
+		currentEraseMode, &QAction::triggered, m_dockToolSettings,
+		&docks::ToolSettings::toggleEraserMode);
+	connect(
+		currentRecolorMode, &QAction::triggered, m_dockToolSettings,
+		&docks::ToolSettings::toggleAlphaPreserve);
+	connect(
+		changeForegroundColor, &QAction::triggered, m_dockToolSettings,
+		&docks::ToolSettings::changeForegroundColor);
+	connect(
+		changeBackgroundColor, &QAction::triggered, m_dockToolSettings,
+		&docks::ToolSettings::changeBackgroundColor);
+	connect(
+		swapcolors, &QAction::triggered, m_dockToolSettings,
+		&docks::ToolSettings::swapColors);
+	connect(
+		resetcolors, &QAction::triggered, m_dockToolSettings,
+		&docks::ToolSettings::resetColors);
 
-	connect(currentEraseMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleEraserMode);
-	connect(currentRecolorMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleAlphaPreserve);
-	connect(changeForegroundColor, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::changeForegroundColor);
-	connect(changeBackgroundColor, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::changeBackgroundColor);
-	connect(swapcolors, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::swapColors);
-	connect(resetcolors, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::resetColors);
-
-	connect(smallerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(false); });
-	connect(biggerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(true); });
-	connect(reloadPreset, &QAction::triggered, m_dockToolSettings->brushSettings(), &tools::BrushSettings::resetPreset);
+	connect(smallerbrush, &QAction::triggered, this, [this]() {
+		m_dockToolSettings->stepAdjustCurrent1(false);
+	});
+	connect(biggerbrush, &QAction::triggered, this, [this]() {
+		m_dockToolSettings->stepAdjustCurrent1(true);
+	});
+	connect(stepdown2, &QAction::triggered, this, [this]() {
+		m_dockToolSettings->stepAdjustCurrent2(false);
+	});
+	connect(stepup2, &QAction::triggered, this, [this]() {
+		m_dockToolSettings->stepAdjustCurrent2(true);
+	});
+	connect(stepdown3, &QAction::triggered, this, [this]() {
+		m_dockToolSettings->stepAdjustCurrent3(false);
+	});
+	connect(stepup3, &QAction::triggered, this, [this]() {
+		m_dockToolSettings->stepAdjustCurrent3(true);
+	});
+	connect(
+		reloadPreset, &QAction::triggered, m_dockToolSettings->brushSettings(),
+		&tools::BrushSettings::resetPreset);
 	connect(
 		reloadPresetSlots, &QAction::triggered,
 		m_dockToolSettings->brushSettings(),
 		&tools::BrushSettings::resetPresetsInAllSlots);
 	connect(
-		reloadAllPresets, &QAction::triggered,
-		m_dockBrushPalette,
+		reloadAllPresets, &QAction::triggered, m_dockBrushPalette,
 		&docks::BrushPalette::resetAllPresets);
 
 	toolshortcuts->addAction(currentEraseMode);
@@ -6712,6 +6759,10 @@ void MainWindow::setupActions()
 	toolshortcuts->addAction(resetcolors);
 	toolshortcuts->addAction(smallerbrush);
 	toolshortcuts->addAction(biggerbrush);
+	toolshortcuts->addAction(stepdown2);
+	toolshortcuts->addAction(stepup2);
+	toolshortcuts->addAction(stepdown3);
+	toolshortcuts->addAction(stepup3);
 	toolshortcuts->addAction(reloadPreset);
 	toolshortcuts->addAction(reloadPresetSlots);
 	toolshortcuts->addAction(reloadAllPresets);
@@ -6728,7 +6779,6 @@ void MainWindow::setupActions()
 	toggletoolbarmenu->addSeparator();
 	toggletoolbarmenu->addAction(toolbarconfig);
 
-	// clang-format on
 	for(const canvas::blendmode::Named &named :
 		canvas::blendmode::shortcutModeNames()) {
 		QString name = QStringLiteral("toggletoolblend%1").arg(int(named.mode));

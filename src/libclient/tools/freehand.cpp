@@ -19,8 +19,9 @@ namespace tools {
 Freehand::Freehand(ToolController &owner, bool isEraser)
 	: Tool(
 		  owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor,
-		  Capability::AllowColorPick | Capability::AllowToolAdjust |
-			  Capability::SupportsPressure)
+		  Capability::AllowColorPick | Capability::SupportsPressure |
+			  Capability::AllowToolAdjust1 | Capability::AllowToolAdjust2 |
+			  Capability::AllowToolAdjust3)
 	, m_strokeWorker(
 		  std::bind(&Freehand::pushMessage, this, _1),
 		  std::bind(&Freehand::pollControl, this, _1),

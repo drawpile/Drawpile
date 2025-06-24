@@ -109,6 +109,14 @@ void SelectionSettings::stepAdjust1(bool increase)
 	}
 }
 
+void SelectionSettings::stepAdjust2(bool increase)
+{
+	if(m_isMagicWand) {
+		m_opacitySlider->setValue(
+			m_opacitySlider->value() + (increase ? 1 : -1));
+	}
+}
+
 int SelectionSettings::getSize() const
 {
 	if(m_isMagicWand) {

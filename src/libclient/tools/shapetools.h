@@ -15,8 +15,9 @@ public:
 	ShapeTool(ToolController &owner, Type type, QCursor cursor)
 		: Tool(
 			  owner, type, cursor,
-			  Capability::AllowColorPick | Capability::AllowToolAdjust |
-				  Capability::Fractional)
+			  Capability::AllowColorPick | Capability::Fractional |
+				  Capability::AllowToolAdjust1 | Capability::AllowToolAdjust2 |
+				  Capability::AllowToolAdjust3)
 	{
 	}
 

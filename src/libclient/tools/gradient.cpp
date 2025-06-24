@@ -20,7 +20,8 @@ namespace tools {
 GradientTool::GradientTool(ToolController &owner)
 	: Tool(
 		  owner, GRADIENT, utils::Cursors::gradient(),
-		  Capability::AllowColorPick)
+		  Capability::AllowColorPick | Capability::AllowToolAdjust2 |
+			  Capability::AllowToolAdjust3)
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
 	, m_previewDebounce(200)
 {

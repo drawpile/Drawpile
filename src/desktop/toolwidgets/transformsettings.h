@@ -55,6 +55,9 @@ public:
 	void toggleAlphaPreserve() override;
 	void toggleBlendMode(int blendMode) override;
 
+	void quickAdjust2(qreal adjustment) override;
+	void stepAdjust2(bool increase) override;
+
 	QWidget *getHeaderWidget() override { return m_headerWidget; }
 
 signals:
@@ -110,6 +113,7 @@ private:
 	QPushButton *m_cancelButton = nullptr;
 	BlendModeManager *m_blendModeManager = nullptr;
 	view::CanvasWrapper *m_canvasView = nullptr;
+	qreal m_quickAdjust2 = 0.0;
 	bool m_handleButtonsVisible = true;
 };
 

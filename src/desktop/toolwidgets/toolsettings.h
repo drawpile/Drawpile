@@ -80,6 +80,8 @@ public:
 	 * @param adjustment how much to adjust by (-1/1 is the normal rate)
 	 */
 	virtual void quickAdjust1(qreal adjustment) { Q_UNUSED(adjustment) }
+	virtual void quickAdjust2(qreal adjustment) { Q_UNUSED(adjustment) }
+	virtual void quickAdjust3(qreal adjustment) { Q_UNUSED(adjustment) }
 
 	/**
 	 * @brief Increase or decrease tool parameter by one "step".
@@ -90,6 +92,8 @@ public:
 	 * @param increase If this is an increase (true) or decrease (false).
 	 */
 	virtual void stepAdjust1(bool increase) { Q_UNUSED(increase); }
+	virtual void stepAdjust2(bool increase) { Q_UNUSED(increase); }
+	virtual void stepAdjust3(bool increase) { Q_UNUSED(increase); }
 
 	/**
 	 * @brief Get the current brush size

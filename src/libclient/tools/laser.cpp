@@ -10,7 +10,7 @@ namespace tools {
 LaserPointer::LaserPointer(ToolController &owner)
 	: Tool(
 		  owner, LASERPOINTER, utils::Cursors::arrow(),
-		  Capability::AllowToolAdjust)
+		  Capability::AllowToolAdjust1)
 {
 }
 

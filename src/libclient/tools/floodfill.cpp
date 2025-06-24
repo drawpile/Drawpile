@@ -116,7 +116,8 @@ private:
 FloodFill::FloodFill(ToolController &owner)
 	: Tool(
 		  owner, FLOODFILL, Cursors::bucket(),
-		  Capability::AllowColorPick | Capability::AllowToolAdjust)
+		  Capability::AllowColorPick | Capability::AllowToolAdjust1 |
+			  Capability::AllowToolAdjust2 | Capability::AllowToolAdjust3)
 	, m_kernel(int(DP_FLOOD_FILL_KERNEL_ROUND))
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
 	, m_originalBlendMode(m_blendMode)

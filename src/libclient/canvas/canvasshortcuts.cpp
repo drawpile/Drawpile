@@ -110,7 +110,7 @@ void CanvasShortcuts::loadDefaults()
 		{SHIFT},
 		{},
 		Qt::LeftButton,
-		TOOL_ADJUST,
+		TOOL_ADJUST1,
 		NORMAL,
 	});
 	addShortcut({
@@ -118,7 +118,7 @@ void CanvasShortcuts::loadDefaults()
 		{SHIFT},
 		{},
 		Qt::MiddleButton,
-		TOOL_ADJUST,
+		TOOL_ADJUST1,
 		SWAP_AXES,
 	});
 	addShortcut({
@@ -126,7 +126,7 @@ void CanvasShortcuts::loadDefaults()
 		{SHIFT},
 		{Qt::Key_Space},
 		Qt::LeftButton,
-		TOOL_ADJUST,
+		TOOL_ADJUST1,
 		SWAP_AXES,
 	});
 	// Unlike other platforms, macOS has two-dimensional scrolling by default,
@@ -164,7 +164,7 @@ void CanvasShortcuts::loadDefaults()
 		{SHIFT},
 		{},
 		Qt::NoButton,
-		TOOL_ADJUST,
+		TOOL_ADJUST1,
 		NORMAL,
 	});
 	addShortcut({

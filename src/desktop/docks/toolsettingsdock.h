@@ -97,6 +97,8 @@ public slots:
 
 	//! Increase or decrease size for current tool by one step
 	void stepAdjustCurrent1(bool increase);
+	void stepAdjustCurrent2(bool increase);
+	void stepAdjustCurrent3(bool increase);
 
 	//! Select the tool previosly set with setTool or setToolSlot
 	void setPreviousTool();
@@ -168,6 +170,8 @@ private:
 	void startTransformMove(bool onlyMask, bool startMove, bool quickMove);
 	void clearTemporaryTransform();
 	void quickAdjustCurrent1(qreal adjustment);
+	void quickAdjustCurrent2(qreal adjustment);
+	void quickAdjustCurrent3(qreal adjustment);
 	void requestColorAdjustment(int channel, qreal adjustment, qreal max);
 	static bool hasBrushCursor(tools::Tool::Type tool);
 

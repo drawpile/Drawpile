@@ -42,7 +42,11 @@ public:
 	void setBackground(const QColor &color) override;
 	void setCompatibilityMode(bool compatibilityMode) override;
 	void quickAdjust1(qreal adjustment) override;
+	void quickAdjust2(qreal adjustment) override;
+	void quickAdjust3(qreal adjustment) override;
 	void stepAdjust1(bool increase) override;
+	void stepAdjust2(bool increase) override;
+	void stepAdjust3(bool increase) override;
 
 	int getSize() const override;
 	bool getSubpixelMode() const override;
@@ -138,7 +142,8 @@ private:
 	void updateFromUi();
 	void updateFromUiWith(bool updateShared);
 	void updateStabilizationSettingVisibility();
-	void quickAdjustOn(KisSliderSpinBox *box, qreal adjustment);
+	void
+	quickAdjustOn(KisSliderSpinBox *box, qreal adjustment, qreal &quickAdjustN);
 	void handlePresetChanged(
 		int presetId, const QString &name, const QString &description,
 		const QPixmap &thumbnail, const brushes::ActiveBrush &brush);
@@ -164,7 +169,7 @@ private:
 	void emitBlendModeChanged();
 	void emitBrushModeChanged();
 
-	void adjustSizeSlider(KisSliderSpinBox *slider, int value);
+	void adjustSlider(KisSliderSpinBox *slider, int value);
 	void updateRadiusLogarithmicLimit();
 	int clampBrushSize(int size) const;
 	static float myPaintRadiusToRadiusLogarithmic(float myPaintRadius);

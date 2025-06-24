@@ -877,9 +877,19 @@ void CanvasController::handleWheel(QWheelEvent *event)
 		}
 		break;
 	}
-	case CanvasShortcuts::TOOL_ADJUST:
+	case CanvasShortcuts::TOOL_ADJUST1:
 		wheelAdjust(
-			event, int(tools::QuickAdjustType::Tool), toolAllowsToolAdjust(),
+			event, int(tools::QuickAdjustType::Tool1), toolAllowsToolAdjust1(),
+			deltaY);
+		break;
+	case CanvasShortcuts::TOOL_ADJUST2:
+		wheelAdjust(
+			event, int(tools::QuickAdjustType::Tool2), toolAllowsToolAdjust2(),
+			deltaY);
+		break;
+	case CanvasShortcuts::TOOL_ADJUST3:
+		wheelAdjust(
+			event, int(tools::QuickAdjustType::Tool3), toolAllowsToolAdjust3(),
 			deltaY);
 		break;
 	case CanvasShortcuts::COLOR_H_ADJUST:
@@ -938,7 +948,9 @@ void CanvasController::handleKeyPress(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
 		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
-		case CanvasShortcuts::TOOL_ADJUST:
+		case CanvasShortcuts::TOOL_ADJUST1:
+		case CanvasShortcuts::TOOL_ADJUST2:
+		case CanvasShortcuts::TOOL_ADJUST3:
 		case CanvasShortcuts::COLOR_H_ADJUST:
 		case CanvasShortcuts::COLOR_S_ADJUST:
 		case CanvasShortcuts::COLOR_V_ADJUST:
@@ -961,27 +973,48 @@ void CanvasController::handleKeyPress(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
 		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
-		case CanvasShortcuts::TOOL_ADJUST:
+		case CanvasShortcuts::TOOL_ADJUST1:
+		case CanvasShortcuts::TOOL_ADJUST2:
+		case CanvasShortcuts::TOOL_ADJUST3:
 		case CanvasShortcuts::COLOR_H_ADJUST:
 		case CanvasShortcuts::COLOR_S_ADJUST:
 		case CanvasShortcuts::COLOR_V_ADJUST:
-			setDrag(SetDragParams::fromKeyMatch(keyMatch)
-						.setPenMode(PenMode::Normal)
-						.setDragMode(ViewDragMode::Started)
-						.setResetDragPoints()
-						.setResetDragRotation());
+			setDrag(
+				SetDragParams::fromKeyMatch(keyMatch)
+					.setPenMode(PenMode::Normal)
+					.setDragMode(ViewDragMode::Started)
+					.setResetDragPoints()
+					.setResetDragRotation());
 			break;
 		default:
 			CanvasShortcuts::Match mouseMatch =
 				m_canvasShortcuts.matchMouseButton(
 					modifiers, m_keysDown, Qt::LeftButton);
 			switch(mouseMatch.action()) {
-			case CanvasShortcuts::TOOL_ADJUST:
+			case CanvasShortcuts::TOOL_ADJUST1:
 				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
 							.setPenMode(PenMode::Normal)
 							.setDragMode(ViewDragMode::Prepared)
-							.setDragCondition(toolAllowsToolAdjust()));
-				if(!toolAllowsToolAdjust()) {
+							.setDragCondition(toolAllowsToolAdjust1()));
+				if(!toolAllowsToolAdjust1()) {
+					emitPenModify(modifiers);
+				}
+				break;
+			case CanvasShortcuts::TOOL_ADJUST2:
+				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+							.setPenMode(PenMode::Normal)
+							.setDragMode(ViewDragMode::Prepared)
+							.setDragCondition(toolAllowsToolAdjust2()));
+				if(!toolAllowsToolAdjust2()) {
+					emitPenModify(modifiers);
+				}
+				break;
+			case CanvasShortcuts::TOOL_ADJUST3:
+				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+							.setPenMode(PenMode::Normal)
+							.setDragMode(ViewDragMode::Prepared)
+							.setDragCondition(toolAllowsToolAdjust3()));
+				if(!toolAllowsToolAdjust3()) {
 					emitPenModify(modifiers);
 				}
 				break;
@@ -1053,7 +1086,9 @@ void CanvasController::handleKeyRelease(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
 		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
-		case CanvasShortcuts::TOOL_ADJUST:
+		case CanvasShortcuts::TOOL_ADJUST1:
+		case CanvasShortcuts::TOOL_ADJUST2:
+		case CanvasShortcuts::TOOL_ADJUST3:
 		case CanvasShortcuts::COLOR_H_ADJUST:
 		case CanvasShortcuts::COLOR_S_ADJUST:
 		case CanvasShortcuts::COLOR_V_ADJUST:
@@ -1078,7 +1113,9 @@ void CanvasController::handleKeyRelease(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
 		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
-		case CanvasShortcuts::TOOL_ADJUST:
+		case CanvasShortcuts::TOOL_ADJUST1:
+		case CanvasShortcuts::TOOL_ADJUST2:
+		case CanvasShortcuts::TOOL_ADJUST3:
 		case CanvasShortcuts::COLOR_H_ADJUST:
 		case CanvasShortcuts::COLOR_S_ADJUST:
 		case CanvasShortcuts::COLOR_V_ADJUST:
@@ -1098,11 +1135,23 @@ void CanvasController::handleKeyRelease(QKeyEvent *event)
 		modifiers, m_keysDown, Qt::LeftButton);
 	if(m_dragMode == ViewDragMode::Prepared) {
 		switch(mouseMatch.action()) {
-		case CanvasShortcuts::TOOL_ADJUST:
+		case CanvasShortcuts::TOOL_ADJUST1:
 			setDrag(SetDragParams::fromMouseMatch(mouseMatch)
 						.setDragMode(ViewDragMode::Prepared)
 						.setDragConditionClearDragModeOnFailure(
-							toolAllowsToolAdjust()));
+							toolAllowsToolAdjust1()));
+			break;
+		case CanvasShortcuts::TOOL_ADJUST2:
+			setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+						.setDragMode(ViewDragMode::Prepared)
+						.setDragConditionClearDragModeOnFailure(
+							toolAllowsToolAdjust2()));
+			break;
+		case CanvasShortcuts::TOOL_ADJUST3:
+			setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+						.setDragMode(ViewDragMode::Prepared)
+						.setDragConditionClearDragModeOnFailure(
+							toolAllowsToolAdjust3()));
 			break;
 		case CanvasShortcuts::COLOR_H_ADJUST:
 		case CanvasShortcuts::COLOR_S_ADJUST:
@@ -1460,11 +1509,27 @@ void CanvasController::penPressEvent(
 		switch(match.action()) {
 		case CanvasShortcuts::NO_ACTION:
 			break;
-		case CanvasShortcuts::TOOL_ADJUST:
+		case CanvasShortcuts::TOOL_ADJUST1:
 			setDrag(SetDragParams::fromMouseMatch(match)
 						.setDragMode(ViewDragMode::Prepared)
 						.setDragCondition(
-							toolAllowsToolAdjust() &&
+							toolAllowsToolAdjust1() &&
+							m_dragMode != ViewDragMode::Started)
+						.setUpdateOutline());
+			break;
+		case CanvasShortcuts::TOOL_ADJUST2:
+			setDrag(SetDragParams::fromMouseMatch(match)
+						.setDragMode(ViewDragMode::Prepared)
+						.setDragCondition(
+							toolAllowsToolAdjust2() &&
+							m_dragMode != ViewDragMode::Started)
+						.setUpdateOutline());
+			break;
+		case CanvasShortcuts::TOOL_ADJUST3:
+			setDrag(SetDragParams::fromMouseMatch(match)
+						.setDragMode(ViewDragMode::Prepared)
+						.setDragCondition(
+							toolAllowsToolAdjust3() &&
 							m_dragMode != ViewDragMode::Started)
 						.setUpdateOutline());
 			break;
@@ -1574,12 +1639,15 @@ void CanvasController::penReleaseEvent(
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
 		case CanvasShortcuts::CANVAS_ROTATE_NO_SNAP:
 		case CanvasShortcuts::CANVAS_ZOOM:
-		case CanvasShortcuts::TOOL_ADJUST:
+		case CanvasShortcuts::TOOL_ADJUST1:
+		case CanvasShortcuts::TOOL_ADJUST2:
+		case CanvasShortcuts::TOOL_ADJUST3:
 		case CanvasShortcuts::COLOR_H_ADJUST:
 		case CanvasShortcuts::COLOR_S_ADJUST:
 		case CanvasShortcuts::COLOR_V_ADJUST:
-			setDrag(SetDragParams::fromMouseMatch(mouseMatch)
-						.setDragMode(ViewDragMode::Prepared));
+			setDrag(
+				SetDragParams::fromMouseMatch(mouseMatch)
+					.setDragMode(ViewDragMode::Prepared));
 			break;
 		default:
 			setDrag(SetDragParams::fromNone());
@@ -1610,11 +1678,23 @@ void CanvasController::penReleaseEvent(
 							int(drawingboard::ToggleItem::Action::None);
 		if(!m_hoveringOverHud) {
 			switch(mouseMatch.action()) {
-			case CanvasShortcuts::TOOL_ADJUST:
+			case CanvasShortcuts::TOOL_ADJUST1:
 				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
 							.setPenMode(PenMode::Normal)
 							.setDragMode(ViewDragMode::Prepared)
-							.setDragCondition(toolAllowsToolAdjust()));
+							.setDragCondition(toolAllowsToolAdjust1()));
+				break;
+			case CanvasShortcuts::TOOL_ADJUST2:
+				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+							.setPenMode(PenMode::Normal)
+							.setDragMode(ViewDragMode::Prepared)
+							.setDragCondition(toolAllowsToolAdjust2()));
+				break;
+			case CanvasShortcuts::TOOL_ADJUST3:
+				setDrag(SetDragParams::fromMouseMatch(mouseMatch)
+							.setPenMode(PenMode::Normal)
+							.setDragMode(ViewDragMode::Prepared)
+							.setDragCondition(toolAllowsToolAdjust3()));
 				break;
 			case CanvasShortcuts::COLOR_H_ADJUST:
 			case CanvasShortcuts::COLOR_S_ADJUST:
@@ -1798,8 +1878,14 @@ void CanvasController::moveDrag(const QPoint &point)
 			}
 		}
 		break;
-	case CanvasShortcuts::TOOL_ADJUST:
-		dragAdjust(int(tools::QuickAdjustType::Tool), deltaX, 1.2);
+	case CanvasShortcuts::TOOL_ADJUST1:
+		dragAdjust(int(tools::QuickAdjustType::Tool1), deltaX, 1.2);
+		break;
+	case CanvasShortcuts::TOOL_ADJUST2:
+		dragAdjust(int(tools::QuickAdjustType::Tool2), deltaX, 1.2);
+		break;
+	case CanvasShortcuts::TOOL_ADJUST3:
+		dragAdjust(int(tools::QuickAdjustType::Tool3), deltaX, 1.2);
 		break;
 	case CanvasShortcuts::COLOR_H_ADJUST:
 		dragAdjust(int(tools::QuickAdjustType::ColorH), deltaX, 1.0);
@@ -1868,7 +1954,9 @@ void CanvasController::resetCursor()
 		case CanvasShortcuts::CANVAS_ZOOM:
 			setViewportCursor(Cursors::zoom());
 			break;
-		case CanvasShortcuts::TOOL_ADJUST:
+		case CanvasShortcuts::TOOL_ADJUST1:
+		case CanvasShortcuts::TOOL_ADJUST2:
+		case CanvasShortcuts::TOOL_ADJUST3:
 		case CanvasShortcuts::COLOR_H_ADJUST:
 		case CanvasShortcuts::COLOR_S_ADJUST:
 		case CanvasShortcuts::COLOR_V_ADJUST:
@@ -2002,7 +2090,7 @@ void CanvasController::updateOutlineVisibleInMode()
 		(m_dragMode == ViewDragMode::None
 			 ? m_penMode == PenMode::Normal && !m_locked &&
 				   m_toolState == int(tools::ToolState::Normal)
-			 : m_dragAction == CanvasShortcuts::TOOL_ADJUST);
+			 : m_dragAction == CanvasShortcuts::TOOL_ADJUST1);
 }
 
 QPointF CanvasController::getOutlinePos() const

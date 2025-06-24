@@ -38,6 +38,7 @@ public:
 	bool affectsLayer() override { return false; }
 
 	void stepAdjust1(bool increase) override;
+	void stepAdjust2(bool increase) override;
 
 	int getSize() const override;
 	bool isSquare() const override { return true; }

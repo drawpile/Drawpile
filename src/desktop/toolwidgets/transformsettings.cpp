@@ -127,6 +127,27 @@ void TransformSettings::toggleBlendMode(int blendMode)
 	}
 }
 
+void TransformSettings::quickAdjust2(qreal adjustment)
+{
+	if(m_opacitySlider->isEnabled()) {
+		m_quickAdjust2 += adjustment;
+		qreal i;
+		qreal f = modf(m_quickAdjust2, &i);
+		if(int(i)) {
+			m_quickAdjust2 = f;
+			m_opacitySlider->setValue(m_opacitySlider->value() + i);
+		}
+	}
+}
+
+void TransformSettings::stepAdjust2(bool increase)
+{
+	if(m_opacitySlider->isEnabled()) {
+		m_opacitySlider->setValue(
+			m_opacitySlider->value() + (increase ? 1 : -1));
+	}
+}
+
 QWidget *TransformSettings::createUiWidget(QWidget *parent)
 {
 	m_headerWidget = new QWidget(parent);
