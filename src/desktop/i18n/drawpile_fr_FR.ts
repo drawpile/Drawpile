@@ -5712,7 +5712,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Change color satur. (HSL)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Changer la saturation de la couleur, (TSL)</translation>
+        <translation>Changer la saturation de la couleur (TSL)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5754,7 +5754,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Eraser</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Gomme</translation>
+        <translation>Gomme</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5775,7 +5775,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Stroke hold time</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Durée de maintien de tracé</translation>
+        <translation>Durée de maintien de tracé</translation>
     </message>
     <message>
         <location line="+3"/>
