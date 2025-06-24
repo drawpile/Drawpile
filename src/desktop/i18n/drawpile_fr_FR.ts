@@ -5810,21 +5810,21 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Direction filter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Filtre directionnel</translation>
+        <translation>Filtre directionnel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Lock alpha</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Verrouillage de l&apos;alpha</translation>
+        <translation>Verrouillage de l&apos;alpha</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Colorize</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Coloriser</translation>
+        <translation>Colorer</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5838,28 +5838,28 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Pressure gain</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Gain de pression</translation>
+        <translation>Gain de pression</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap Scale</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Échelle de Grille de Carte</translation>
+        <translation>Échelle du Quadrillage</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap Scale X</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Échelle de Grille de Carte sur X</translation>
+        <translation>Échelle du Quadrillage sur X</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>GridMap Scale Y</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Échelle de Grille de Carte sur Y</translation>
+        <translation>Échelle du Quadrillage sur Y</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5964,7 +5964,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <source>Posterization levels</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Niveaux de postérisation</translation>
+        <translation>Niveaux de postérisation</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5977,7 +5977,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
         <location line="+2"/>
         <source>Unknown Setting</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Réglage Inconnu</translation>
+        <translation>Réglage Inconnu</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -5985,7 +5985,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
 (also known as alpha or opacity)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">0 indique que le pinceau est transparent, 1 qu&apos;il est pleinement visible.
+        <translation>0 indique que le pinceau est transparent, 1 qu&apos;il est pleinement visible.
 (également considéré comme alpha ou opacité)</translation>
     </message>
     <message>
@@ -5994,7 +5994,7 @@ Prenez compte de &quot;tapotements par rayon de base&quot; et &quot;tapotements 
 This setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to &apos;opaque&apos;.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Ceci s&apos;en retrouve multiplié avec l&apos;opaque. Vous devriez uniquement changer la pression d&apos;entrée de ce réglage. Utilisez à la place &apos;opaque&apos; pour faire à ce que l&apos;opacité dépende de la vitesse.
+        <translation>Ceci s&apos;en retrouve multiplié avec l&apos;opaque. Vous devriez uniquement changer la pression d&apos;entrée de ce réglage. Utilisez à la place &apos;opaque&apos; pour faire à ce que l&apos;opacité dépende de la vitesse.
 Ce réglage est responsable de l&apos;arrêt de la peinture lorsqu&apos;aucune pression est détectée. C&apos;est juste par convention, son comportement est identique à &apos;opaque&apos;.</translation>
     </message>
     <message>
