@@ -7227,7 +7227,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+38"/>
         <source>Log in with &apos;%1&apos; credentials</source>
-        <translation type="unfinished">Se connecter avec la combinaison de nom d&apos;utilisateur et de mot de passe de &apos;%1&apos;</translation>
+        <translation>Se connecter avec %1</translation>
     </message>
     <message>
         <location line="+1"/>
