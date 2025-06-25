@@ -1013,17 +1013,17 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+81"/>
         <source>No tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin tinte</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Tinte Azul</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar…</translation>
     </message>
     <message>
         <location line="-190"/>
@@ -1057,7 +1057,7 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Los muelles de Drawpile se pueden organizar libremente. Puedes usar Ver &gt; Docks&gt; Organizar Docks para arrastrarlos con mayor facilidad. Asegúrate de que la disposición se ajuste a tu resolución; de lo contrario, algunos controles podrían quedar fuera de la pantalla.</translation>
     </message>
 </context>
 <context>
@@ -1065,22 +1065,22 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location filename="../utils/widgetutils.cpp" line="+1129"/>
         <source>Open Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir enlace</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Este enlace no está un parte de Drawpile o la gente que hacen Drawpile. ¿Estás seguro que quieres navegar a &quot;%1&quot;?</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Yes, visit website</source>
-        <translation type="unfinished"></translation>
+        <translation>Sí, visitar sitio web</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>No, cancelar</translation>
     </message>
 </context>
 <context>
@@ -1276,61 +1276,61 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+92"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>desconectarte de la sesión</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>lose any unsaved changes</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>perder cualquier cambio no guardado</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>stop your recording</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>detener tu grabación</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>discard your playback</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>descartar tu reproducción</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+15"/>
         <source>Doing so will %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Al hacerlo, %1.</translation>
     </message>
     <message>
         <location line="-11"/>
         <source>Doing so will %1 and %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Al hacerlo, %1 y %2.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Doing so will %1, %2 and %3.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Al hacerlo, %1, %2 y %3.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Al hacerlo, se ejecutarán %1, %2, %3 y %4.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Estás seguro que quieres continuar?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, continue</source>
-        <translation type="unfinished"></translation>
+        <translation>Sí, continuar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>No, cancelar</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -1342,12 +1342,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="-2081"/>
         <location line="+3793"/>
         <source>Export Again</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar de nuevo</translation>
     </message>
     <message>
         <location line="-3789"/>
         <source>Export Again to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar de nuevo al %1</translation>
     </message>
     <message>
         <location line="+439"/>
@@ -1441,17 +1441,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estás a punto de crear un nuevo lienzo y cerrar este lienzo.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Open Recent File</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir Archivo Reciente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a recent file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estas a punto de abrir un Archivo Reciente y cerrar este lienzo.</translation>
     </message>
     <message>
         <location line="-1152"/>
@@ -1461,7 +1461,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a new file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estas por abrir un nuevo lienzo y cerrar este lienzo.</translation>
     </message>
     <message>
         <location line="+1438"/>
@@ -1502,7 +1502,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-1938"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
-        <translation type="unfinished"></translation>
+        <translation>¡Ya estás conectada a un sesión! Desconéctate para ser anfitrión de una sesión.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1527,7 +1527,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estás a punto de volver a conectarte a la sesión y cerrar este lienzo.</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -1578,7 +1578,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to connect to a new session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estás a punto de conectarte a una nueva sesión y cerrar este lienzo.</translation>
     </message>
     <message>
         <location line="+141"/>
@@ -1593,13 +1593,13 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+135"/>
         <source>Session blocked by parental controls</source>
-        <translation>Sesion bloqueada por controles parentales</translation>
+        <translation>Sesión bloqueada por controles parentales</translation>
     </message>
     <message>
         <location line="+559"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo cargar la imagen: %1.</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1614,12 +1614,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a debug dump and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Está a punto de abrir un archivo de diagnóstico y se cerrará esta ventana.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Cause Crash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Causa del Crasheo</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1644,7 +1644,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+26"/>
         <source>Show Icons on Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar iconos en barras de herramienta</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1654,7 +1654,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+5"/>
         <source>Arrange Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Organizar Paneles</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -1759,7 +1759,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+9"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar desde la pantalla</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1805,42 +1805,42 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+176"/>
         <source>&amp;Fit Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ajustar Lienzo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fit Canvas &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustar Lienzo &amp; Ancho</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Fit Canvas &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustar Lienzo &amp; Altura</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Restaurar rotación del Lienzo</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Rotate Canvas Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotar lienzo en dirección opuesta a las agujas del reloj</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Mirror Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflejar Lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflejar el Lienzo Horizontalmente</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflejar/Voltear el Lienzo Horizontalmente</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1850,12 +1850,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Flip the canvas upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Dar la Vuelta al Lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip canvas vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflejar/Voltear el Lienzo Verticalmente</translation>
     </message>
     <message>
         <location line="+139"/>
@@ -1865,12 +1865,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+0"/>
         <source>Show only the current parent layer group</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar solo el grupo principal de capas actual</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Stay Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiempo de estancia</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1905,22 +1905,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+57"/>
         <source>Clear Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar fuente de relleno</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Toggle Layer Check State</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Alternar estado de comprobación de capa</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Marcar todo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Uncheck All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;desmarcar todo</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2035,7 +2035,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+88"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuevo Grupo de Capas</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2045,98 +2045,98 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+55"/>
         <source>&amp;Invert Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Invertir Selección</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select Layer &amp;Bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar capa &amp; límites</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Layer to Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Capa a selección</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Expand/Shrink/Feather Selection</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Expandir/Encoger/Difuminar Selección</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>&amp;Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Transformar</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Transform the selection, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar la selección y volver a cambiar de herramienta después</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Transform Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar selección &amp;máscara</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar únicamente la máscara de selección en sí, luego volver a cambiar las herramientas</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Mirror Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Transformación de espejo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror the transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflejar la imagen transformada horizontalmente</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>mirror/flip transformed image horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>reflejar/voltear la imagen transformada horizontalmente</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Flip Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Voltear Transformación</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flip the transformed image upside-down</source>
-        <translation type="unfinished"></translation>
+        <translation>Darle la vuelta a la imagen transformada</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>mirror/flip transformed image vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>reflejar/voltear la imagen transformada verticalmente</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Rotate Transform Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rotar e sentido de las agujas de reloj</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotate Transform &amp;Counter-Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotar Transformar &amp;En Contra las agujas del reloj</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Shrink Transform to &amp;Fit View</source>
-        <translation type="unfinished"></translation>
+        <translation>Escalar transformación al t&amp;amaño de vista</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Stamp Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;stampar Transformación</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Selectio&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>Selección</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -2244,13 +2244,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar capa &amp;Visibilidad</translation>
     </message>
     <message>
         <location line="+4"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar capa &amp;Modo Sketch</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="-93"/>
@@ -2280,7 +2280,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+38"/>
         <source>Download Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Descarga completa</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2340,7 +2340,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+22"/>
         <source>Error downloading tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al descargar el registro de eventos de la tableta.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2395,7 +2395,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+50"/>
         <source>Altering selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Alterando la selección…</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -2476,7 +2476,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+171"/>
         <source>Lock Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear Paneles</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -2486,27 +2486,27 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+38"/>
         <source>&amp;Download Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Descargar Imagen…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Download Selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargar Selección…</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Export &amp;Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar &amp;Animación…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Import Animation &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar &amp;Frames de Animación…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar Animación desde &amp;LCapas…</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -2536,7 +2536,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+2"/>
         <source>&amp;Brush Settings</source>
-        <translation>&amp;Ajustes de</translation>
+        <translation>Ajustes de &amp;BPincel</translation>
     </message>
     <message>
         <location line="+194"/>
@@ -2551,22 +2551,22 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+20"/>
         <source>Zoom In On Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Acercar al centro</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Out From Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Alejar Desde El Centro</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reiniciar Zoom</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset Zoom At Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiniciar Zoom Al Centro</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -2576,22 +2576,22 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Show &amp;Rulers</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar &amp;Reglas</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show Selection &amp;Mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar Selección &amp;Mascara</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle selection display between a mask and an outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar la visualización de selección entre una máscara y un contorno</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Fit to Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ajustar a la Pantalla</translation>
     </message>
     <message>
         <location line="+128"/>
@@ -2838,12 +2838,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Siguiente Fotograma Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Anterior Fotograma Clave</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3096,7 +3096,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>System Information…</source>
-        <translation type="unfinished"></translation>
+        <translation>Información del Sistema…</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -3131,7 +3131,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Choose the current foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Elige el color de primer plano actual</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3141,57 +3141,57 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Swap current foreground and background color with each other</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercambiar el color actual de primer plano y del fondo entre sí</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set foreground color to black and background color to white</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurar el color de primer plano en negro y el color del fondo en blanco</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reiniciar pincel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Restablecer todos los pinceles &amp;Ranuras</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiniciar todos los &amp;Pinceles</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Next Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Siguiente Pincel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Previous Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pincel Anterior</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Siguiente Etiqueta de Pincel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiqueta de Pincel Anterior</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Next Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Siguiente Ranura de Pincel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Previous Brush Slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Ranura de Pincel Anterior</translation>
     </message>
     <message>
         <location line="+96"/>
@@ -3242,22 +3242,22 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="-181"/>
         <source>Create Layers on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear capas en el Frame clave actual</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Capas en el Siguiente Frame Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Capas en el Frame Clave Previo</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Create Layers on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Capas en el Frame Clave</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -3297,52 +3297,52 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+73"/>
         <source>&amp;Select</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Seleccionar</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select rectangular area</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar área rectangular</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Lasso Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramienta &amp;Laso</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select a free-form area</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione un área de forma libre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Magic Wand Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Varita &amp;Mágica</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select areas with similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar áreas con colores similares</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Transform Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramienta de &amp;Transformación</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Transform selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar selección</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Panorama</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Pan canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista panorámica del lienzo</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -3352,7 +3352,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+38"/>
         <source>Cause Crash…</source>
-        <translation type="unfinished"></translation>
+        <translation>Causar Crasheo…</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -3636,7 +3636,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Selection (Magic Wand)</source>
-        <translation type="unfinished"></translation>
+        <translation>Selección (Varita Mágica)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3646,7 +3646,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Panorama</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3669,7 +3669,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+50"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Necesitas ser un operador para reiniciar la sesión.</translation>
     </message>
 </context>
 <context>
@@ -3840,7 +3840,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+46"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Permitir usadores de web</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -3880,7 +3880,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+6"/>
         <source>Only operators can manage bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Solo los operadores pueden gestionar los baneos.</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -3897,12 +3897,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+72"/>
         <source>Add listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir anuncio</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove selected listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar el anuncio seleccionado</translation>
     </message>
     <message>
         <location line="-343"/>
@@ -3922,12 +3922,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+113"/>
         <source>Block new joins</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear nuevos ingresos</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Require a registered account to join</source>
-        <translation type="unfinished"></translation>
+        <translation>Requieres una cuenta registrada para unirte</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -4385,7 +4385,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location filename="../dialogs/animationexportdialog.cpp" line="+29"/>
         <source>Export Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Animación</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4430,7 +4430,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+2"/>
         <source>Loops:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bucles/Loops:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4445,7 +4445,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+6"/>
         <source>Scaling:</source>
-        <translation type="unfinished"></translation>
+        <translation>Escalado:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4455,7 +4455,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rango de Cuadros:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -4470,32 +4470,32 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Crop X:</source>
-        <translation type="unfinished"></translation>
+        <translation>Recortar X:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Crop Y:</source>
-        <translation type="unfinished"></translation>
+        <translation>Recortar Y:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiniciar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Reset inputs to the whole canvas and timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>Restablecer entradas a todo el lienzo y la línea de tiempo</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Set from Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer desde el Folioscopio</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set inputs to what is being previewed in the flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer entradas para lo que se previsualiza en el folioscopio</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4505,7 +4505,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+125"/>
         <source>Output resolution will be %1x%2 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>La resolución de salida será %1x%2 píxeles.</translation>
     </message>
 </context>
 <context>
@@ -4528,7 +4528,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+6"/>
         <source>Importing animation frames is not supported in the web browser version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>La versión del navegador web de Drawpile no admite la importación de cuadros de animación.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4548,27 +4548,27 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+6"/>
         <source>Sort</source>
-        <translation type="unfinished"></translation>
+        <translation>Clasificar</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Numeric Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Numérico ascendente</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Numeric Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Numérico Descendente</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Alfabético Ascendente</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Alphabetic Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Alfabético Descendente</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4578,7 +4578,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+4"/>
         <source>Import the layers of an ORA or PSD file as timeline frames.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importar las capas de un archivo ORA o PSD como fotogramas de la línea de tiempo.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4630,99 +4630,99 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location filename="../dialogs/artisticcolorwheeldialog.cpp" line="+23"/>
         <source>Color Circle Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de la Rueda de Color</translation>
     </message>
     <message>
         <location line="+86"/>
         <source>Continuous hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Tono continuo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Pasos de tono: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ángulo de tono: </translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+43"/>
         <source>°</source>
         <extracomment>Degree symbol. Unless your language uses a different one, keep as-is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>°</translation>
     </message>
     <message>
         <location line="-40"/>
         <source>Continuous chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>Chroma Continuo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Chroma steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Pasos de Chroma: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continuous luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>Luminancia continua</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Pasos de luminancia: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Saturación Continua</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Saturation steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Pasos de Saturación: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>Ligereza continua</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lightness steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Pasos de Ligereza: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous value</source>
-        <translation type="unfinished"></translation>
+        <translation>Valor continuo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Value steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Pasos de valor: </translation>
     </message>
     <message>
         <location line="+8"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Ninguno</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Gamut mask:</source>
-        <translation type="unfinished"></translation>
+        <translation>Máscara de gama:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Mask angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ángulo de la máscara: </translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Mask opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Opacidad de la Mascara: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4733,49 +4733,49 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="+54"/>
         <source>Atmosphere with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Atmósfera con acento</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Atmospheric triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tríada atmosférica</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Complementaria</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dominant hue with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tono dominante con acento</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Shifted triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tríada desplazada</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Dividido</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Complementarios Divididos</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tetradic</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tetradicos</translation>
     </message>
 </context>
 <context>
@@ -4790,7 +4790,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="-6"/>
         <source>Couldn&apos;t read image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>No se puede leer la imagen: %1</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4843,22 +4843,22 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+70"/>
         <source>Change…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar…</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation type="unfinished"></translation>
+        <translation>Atajo:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Choose File…</source>
-        <translation type="unfinished"></translation>
+        <translation>Escoger archivo…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se redimensionará a 64x64 píxeles.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4868,7 +4868,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Add Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir etiqueta:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4883,7 +4883,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+60"/>
         <source>No shortcut assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay ningún atajo asignado</translation>
     </message>
 </context>
 <context>
@@ -4901,7 +4901,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+0"/>
         <source>Brush metadata settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de metadatos del pincel.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4916,12 +4916,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+62"/>
         <source>Save as New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar como Pincel Nuevo</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Sobreescribir Pincel</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -6115,7 +6115,10 @@ Para velocidades muy lentas, ocurre lo opuesto.</translation>
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Añade un desplazamiento aleatorio a la posición donde se dibuja cada pincelada.­
+ 0.0 desactivado.
+ 1.0 desviación estándar equivale a un radio básico.
+&lt;0.0: valores negativos no producen fluctuación.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6135,7 +6138,7 @@ Para velocidades muy lentas, ocurre lo opuesto.</translation>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Qué tan lento vuelve el desplazamiento a cero cuando el cursor deja de moverse</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6419,7 +6422,11 @@ The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cambia la escala en la que opera el pincel de GridMap; afecta solo al eje X.
+
+El rango es de 0 a 5x.
+
+Esto permite estirar o comprimir el patrón de GridMap.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6593,7 +6600,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Girar lienzo libremente</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6710,12 +6717,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+426"/>
         <source>Create Invite Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear código de invitar</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Uses:</source>
-        <translation type="unfinished"></translation>
+        <translation>Usos:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6735,7 +6742,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Role:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rol:</translation>
     </message>
 </context>
 <context>
@@ -7018,7 +7025,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Mink</source>
-        <translation>Mink</translation>
+        <translation>Mink/Visón</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8892,7 +8899,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished">Qt6 Wintab</translation>
+        <translation>Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -10107,7 +10114,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host/roles.cpp" line="+36"/>
         <source>Define a password to let anyone become operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Definir una contraseña; cualquier persona pueden usar eso para convertirse a un operador</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10127,7 +10134,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Confiable</translation>
     </message>
 </context>
 <context>
@@ -11615,7 +11622,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Bilinear</source>
-        <translation type="unfinished">Bilinear</translation>
+        <translation>Bilinear</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12604,7 +12611,7 @@ O por medio de Animación ▸ Nueva Pista.</translation>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation>&amp;Mensaje Privado</translation>
+        <translation>Mensaje Pri&amp;vado</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12614,7 +12621,7 @@ O por medio de Animación ▸ Nueva Pista.</translation>
     <message>
         <location line="+2"/>
         <source>Take Current &amp;Brush</source>
-        <translation>Tomar &amp;Pincel Actual</translation>
+        <translation>Tomar P&amp;incel Actual</translation>
     </message>
     <message>
         <location line="+107"/>
@@ -12637,7 +12644,7 @@ O por medio de Animación ▸ Nueva Pista.</translation>
     <message>
         <location filename="../widgets/viewstatus.cpp" line="+77"/>
         <source>Canvas Rotation</source>
-        <translation>Rotar Canvas</translation>
+        <translation>Rotación del Lienzo</translation>
     </message>
     <message>
         <location line="+46"/>

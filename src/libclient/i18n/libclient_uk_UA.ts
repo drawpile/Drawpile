@@ -337,7 +337,7 @@
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation>Скорочення</translation>
+        <translation>Скороченням</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -564,17 +564,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation>все</translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation>Ctrl</translation>
+        <translation>Сtrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation>Мета</translation>
+        <translation>Meta</translation>
     </message>
 </context>
 <context>
@@ -722,7 +722,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation>нормальний</translation>
+        <translation>Нормальний</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -732,7 +732,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation>позаду</translation>
+        <translation>Позаду</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -757,7 +757,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Burn</source>
-        <translation>спалити</translation>
+        <translation>Спалити</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -827,12 +827,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation>насиченість</translation>
+        <translation>Насиченість</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation>світність</translation>
+        <translation>Світність</translation>
     </message>
     <message>
         <location line="+5"/>
