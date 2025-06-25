@@ -3242,22 +3242,22 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="-181"/>
         <source>Create Layers on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear capas en el Frame clave actual</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Capas en el Siguiente Frame Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layers on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Capas en el Frame Clave Previo</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Create Layers on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Capas en el Frame Clave</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -3302,47 +3302,47 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+0"/>
         <source>Select rectangular area</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar área rectangular</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Lasso Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramienta &amp;Laso</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select a free-form area</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione un área de forma libre</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Magic Wand Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Varita &amp;Mágica</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select areas with similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccionar áreas con colores similares</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Transform Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramienta de &amp;Transformación</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Transform selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar selección</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Panorama</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Pan canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista panorámica del lienzo</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -3352,7 +3352,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+38"/>
         <source>Cause Crash…</source>
-        <translation type="unfinished"></translation>
+        <translation>Causar Crasheo…</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -3636,7 +3636,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Selection (Magic Wand)</source>
-        <translation type="unfinished"></translation>
+        <translation>Selección (Varita Mágica)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3646,7 +3646,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Panorama</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3880,7 +3880,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+6"/>
         <source>Only operators can manage bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Solo los operadores pueden gestionar los baneos.</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -3897,12 +3897,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+72"/>
         <source>Add listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir anuncio</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Remove selected listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar el anuncio seleccionado</translation>
     </message>
     <message>
         <location line="-343"/>
@@ -3922,12 +3922,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+113"/>
         <source>Block new joins</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear nuevos ingresos</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Require a registered account to join</source>
-        <translation type="unfinished"></translation>
+        <translation>Requieres una cuenta registrada para unirte</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -4640,89 +4640,89 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Hue steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Pasos de tono: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ángulo de tono: </translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+43"/>
         <source>°</source>
         <extracomment>Degree symbol. Unless your language uses a different one, keep as-is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>°</translation>
     </message>
     <message>
         <location line="-40"/>
         <source>Continuous chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>Chroma Continuo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Chroma steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Pasos de Chroma: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continuous luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>Luminancia continua</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Pasos de luminancia: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Saturación Continua</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Saturation steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Pasos de Saturación: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>Ligereza continua</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lightness steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Pasos de Ligereza: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous value</source>
-        <translation type="unfinished"></translation>
+        <translation>Valor continuo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Value steps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Pasos de valor: </translation>
     </message>
     <message>
         <location line="+8"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Ninguno</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Gamut mask:</source>
-        <translation type="unfinished"></translation>
+        <translation>Máscara de gama:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Mask angle: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ángulo de la máscara: </translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Mask opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Opacidad de la Mascara: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4733,49 +4733,49 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="+54"/>
         <source>Atmosphere with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Atmósfera con acento</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Atmospheric triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tríada atmosférica</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Complementaria</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dominant hue with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tono dominante con acento</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Shifted triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tríada desplazada</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Dividido</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Split complementary</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Complementarios Divididos</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Tetradic</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tetradicos</translation>
     </message>
 </context>
 <context>
@@ -4848,7 +4848,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+14"/>
         <source>Shortcut:</source>
-        <translation type="unfinished"></translation>
+        <translation>Atajo:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4858,7 +4858,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+7"/>
         <source>Will be resized to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se redimensionará a 64x64 píxeles.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4868,7 +4868,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Add Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir etiqueta:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -4883,7 +4883,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+60"/>
         <source>No shortcut assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay ningún atajo asignado</translation>
     </message>
 </context>
 <context>
@@ -4901,7 +4901,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+0"/>
         <source>Brush metadata settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de metadatos del pincel.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4916,12 +4916,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+62"/>
         <source>Save as New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar como Pincel Nuevo</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Sobreescribir Pincel</translation>
     </message>
     <message>
         <location line="+80"/>
@@ -6115,7 +6115,10 @@ Para velocidades muy lentas, ocurre lo opuesto.</translation>
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Añade un desplazamiento aleatorio a la posición donde se dibuja cada pincelada.­
+ 0.0 desactivado.
+ 1.0 desviación estándar equivale a un radio básico.
+&lt;0.0: valores negativos no producen fluctuación.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6135,7 +6138,7 @@ Para velocidades muy lentas, ocurre lo opuesto.</translation>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Qué tan lento vuelve el desplazamiento a cero cuando el cursor deja de moverse</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6419,7 +6422,11 @@ The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cambia la escala en la que opera el pincel de GridMap; afecta solo al eje X.
+
+El rango es de 0 a 5x.
+
+Esto permite estirar o comprimir el patrón de GridMap.</translation>
     </message>
     <message>
         <location line="+3"/>
