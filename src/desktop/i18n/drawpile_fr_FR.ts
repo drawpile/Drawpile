@@ -7050,7 +7050,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Spider</source>
-        <translation>Araignées</translation>
+        <translation>Araignée</translation>
     </message>
 </context>
 <context>
@@ -7058,7 +7058,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/logindialog.cpp" line="+169"/>
         <source>Report...</source>
-        <translation type="unfinished">Signaler...</translation>
+        <translation>Signaler...</translation>
     </message>
     <message>
         <location line="+157"/>
@@ -7068,7 +7068,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+24"/>
         <source>Log in with server account</source>
-        <translation type="unfinished">Se connecter avec un compte serveur</translation>
+        <translation>Se connecter avec un compte serveur</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -7078,7 +7078,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished">Entrez un mot de passe de compte. Si vous n&apos;avez pas de compte, vous pouvez en enregistrer un sur %1.</translation>
+        <translation>Entrez un mot de passe de compte. Si vous n&apos;avez pas de compte, vous pouvez en créer un sur %1.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7088,7 +7088,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+21"/>
         <source>Close</source>
-        <translation type="unfinished">Fermer</translation>
+        <translation>Fermer</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -7167,27 +7167,27 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-636"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
-        <translation type="unfinished">Vous pouvez continuer sans compte ici. Si vous souhaitez vous enregistrer cependant, vous pouvez le faire sur %1.</translation>
+        <translation>Vous pouvez continuer sans compte. Si vous souhaitez quand même vous inscrire, vous pouvez le faire sur %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>An account is required. You can register one on %1.</source>
-        <translation type="unfinished">Un compte est requis ici. Vous pouvez en enregistrer un sur %1.</translation>
+        <translation>Un compte est requis. Vous pouvez en enregistrer un sur %1.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
-        <translation type="unfinished">Vous pouvez continuer sans avoir de compte ici. Cependant, ce serveur ne donne pas d&apos;information sur comment enregistrer de compte.</translation>
+        <translation>Vous pouvez continuer sans avoir de compte. Ce serveur ne donne pas d&apos;information sur comment s&apos;inscrire.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
-        <translation type="unfinished">Un compte est requis ici, mais ce serveur ne donne pas d&apos;information sur comment enregistrer de compte.</translation>
+        <translation>Un compte est requis, mais ce serveur ne donne pas d&apos;information sur comment en enregistrer un.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>See %1 for more information about this server. To register an account, visit %2.</source>
-        <translation type="unfinished">Voir %1 pour plus d&apos;informations sur ce serveur. Pour enregistrer un compte, veuillez visiter %2.</translation>
+        <translation>Voir %1 pour plus d&apos;informations sur ce serveur. Pour enregistrer un compte, veuillez visiter %2.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7222,7 +7222,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+540"/>
         <source>Enter the username and password for your %1 account.</source>
-        <translation type="unfinished">Entrez le nom d&apos;utilisateur·ice et le mot de passe pour votre compte %1.</translation>
+        <translation>Entrez le nom d&apos;utilisateur·ice et le mot de passe pour votre compte %1.</translation>
     </message>
     <message>
         <location line="+38"/>
