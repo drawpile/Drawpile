@@ -7020,7 +7020,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Hyena</source>
-        <translation type="unfinished">Hyène</translation>
+        <translation>Hyène</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7050,7 +7050,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Spider</source>
-        <translation type="unfinished">Araignée</translation>
+        <translation>Araignées</translation>
     </message>
 </context>
 <context>
