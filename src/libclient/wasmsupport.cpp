@@ -253,3 +253,104 @@ extern "C" void drawpileHandleBrowserAuth(int type, char *rawArg)
 			type, qUtf8Printable(arg));
 	}
 }
+
+// Text to translate
+#ifdef DRAWPILE_TRANSLATION_ONLY_JUST_HERE_FOR_LUPDATE
+QT_TRANSLATE_NOOP("BrowserStartPage", "Attempting to allocate %n page(s)")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Failed to allocate %n page(s): %1")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage",
+	"Memory allocation failed. This can happen in some browsers if you "
+	"refresh. Close this page and your browser entirely, then try again.")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage",
+	"Memory allocated is not a SharedArrayBuffer, even though your browser "
+	"supports it. You may need to change a setting.")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Drawpile logo")
+QT_TRANSLATE_NOOP("BrowserStartPage", "drawpile.net login")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Loading application")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Starting up…")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage", "Starting, this should only take a moment…")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Loading assets")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Loading, this may take a while…")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Preparing")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Initializing, this may take a while…")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Failed to start Drawpile: ${e}")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Setting up…")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Fatal error:")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage",
+	"This is usually because your browser is outdated or you are viewing the "
+	"page through some kind of embedded browser, like a chat application's, "
+	"and need to open it properly. For more information, check out <a "
+	"href=\"#\">this help page</a>.")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Invalid session link.")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage",
+	"However you got here was not via a valid link to a Drawpile session.")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage", "<strong>In-app browser:</strong> it looks like you "
+						"opened Drawpile in an in-app browser.")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage", "<strong>In-app browser:</strong> it looks like you "
+						"opened Drawpile in %1's in-app browser.")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage", "That usually doesn't work properly, please open this "
+						"page in a real web browser instead.")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Possibly incompatible browser:")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage",
+	"<strong>Possibly incompatible browser:</strong> Firefox on Linux doesn't "
+	"have support for pressure-sensitive pens on all systems. If you don't get "
+	"pressure, consider using a different browser or <a href=\"#\">the native "
+	"Linux application</a>.")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage",
+	"<strong>Incompatible browser:</strong> Firefox on Windows has some "
+	"trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo "
+	"may not work properly. Consider using a different browser or <a "
+	"href=\"#\">the native Windows application</a>.")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage",
+	"<strong>Incompatible browser:</strong> Chrome on %1 has some trouble "
+	"running Drawpile. It's really just the system browser (Safari) in a "
+	"different shell, which causes problems with controls ending up "
+	"off-screen. Consider using the system browser (Safari) directly instead.")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Language:")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Test your pen pressure here")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Detected mouse input, not a pen")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Detected touch input, not a pen")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Detected input, but not a pen")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Pen pressure detected")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Pen detected, but no pressure variance")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Checking for updates…")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Update check blocked")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage", "<strong>Warning:</strong> this installation is "
+						"<strong>outdated</strong> at version <code>%1</code>, "
+						"which is not the most recent version <code>%2</code>.")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage", "Try refreshing the page. If that doesn't change "
+						"anything, notify the server owner to update.")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage",
+	"<strong>Warning:</strong> Could not determine if installation is up to "
+	"date or not. It may be outdated at version <code>%1</code>.")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage",
+	"Try refreshing the page. If that doesn't change anything, consult the "
+	"server owner or check out <a href=\"#\">the help page on drawpile.net</a> "
+	"on how to get in contact with someone who can check what's going on.")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage",
+	"You can continue regardless, but things may not work properly.")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Start")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Start Anyway")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Version:")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Stable (%1)")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Beta (%1)")
+QT_TRANSLATE_NOOP(
+	"BrowserStartPage",
+	"The session you are trying to join requires the beta version of Drawpile.")
+#endif
