@@ -5258,7 +5258,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
-        <translation>Vitesse réglée plus succinctement</translation>
+        <translation>Vitesse brute</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6604,7 +6604,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished">Pivoter Canevas</translation>
+        <translation>&amp;Rotation du canvas</translation>
     </message>
     <message>
         <location line="+3"/>
