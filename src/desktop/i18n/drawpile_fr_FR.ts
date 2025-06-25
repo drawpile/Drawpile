@@ -624,7 +624,7 @@
         <location filename="../ui/fillsettings.ui" line="+330"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+310"/>
         <source>Feather: </source>
-        <translation>Adoucissement&#x202f;: </translation>
+        <translation>Adoucissement&#xa0;: </translation>
     </message>
     <message>
         <location line="-298"/>
@@ -1042,7 +1042,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+16"/>
         <source>Save</source>
-        <translation>Enregistrer</translation>
+        <translation>Sauvegarder</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1292,7 +1292,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+5"/>
         <source>Save</source>
-        <translation>Enregistrer</translation>
+        <translation>Sauvegarder</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1655,7 +1655,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
         <location line="+2"/>
         <location line="+2712"/>
         <source>Terminate</source>
-        <translation>Fermer</translation>
+        <translation>Mettre Fin</translation>
     </message>
     <message>
         <location line="-2698"/>
@@ -2336,7 +2336,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
     <message>
         <location line="+2"/>
         <source>Connection Failed</source>
-        <translation>Échec de la connexion</translation>
+        <translation>Échec de Connexion</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2507,7 +2507,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
     <message>
         <location line="+4"/>
         <source>Import Animation from &amp;Layers…</source>
-        <translation>Importer l&apos;Animation depuis les Ca&amp;lques…</translation>
+        <translation>Importer l&apos;Animation à partir des Ca&amp;lques…</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2748,7 +2748,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
     <message>
         <location line="+2"/>
         <source>&amp;Browse...</source>
-        <translation>Parcourir (&amp;B)...</translation>
+        <translation>&amp;Parcourir...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2881,7 +2881,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Toggle Layer &amp;Visibility</source>
-        <translation>Activer/Désactiver la Visibilité des Calques</translation>
+        <translation>Basculer la Visibilité des Calques</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6781,7 +6781,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+68"/>
         <source>Save</source>
-        <translation>Enregistrer</translation>
+        <translation>Sauvegarder</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -8635,7 +8635,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-81"/>
         <source>List servers:</source>
-        <translation>Liste des serveurs</translation>
+        <translation>Liste des serveurs&#xa0;:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -9146,7 +9146,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation>Gestures</translation>
+        <translation>Gestes</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9850,7 +9850,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+8"/>
         <source>Replace role list</source>
-        <translation>Remplacer la liste des rôles&#xa0;:</translation>
+        <translation>Remplacer la liste des rôles</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -12433,7 +12433,7 @@ Hex&#xa0;: %4</translation>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation>Enregistrer</translation>
+        <translation>Sauvegarder</translation>
     </message>
     <message>
         <location line="+3"/>
