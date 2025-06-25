@@ -189,6 +189,11 @@ QString SystemInfoDialog::getSystemInfo() const
 	info += QStringLiteral("Global smoothing: %1\n").arg(settings.smoothing());
 	info += QStringLiteral("Global pressure curve: \"%1\"\n")
 				.arg(settings.globalPressureCurve());
+	info += QStringLiteral("Global eraser curve: \"%1\"\n")
+				.arg(
+					settings.globalPressureCurveMode()
+						? settings.globalPressureCurveEraser()
+						: QStringLiteral("no"));
 	info +=
 		QStringLiteral("One-finger touch action: %1\n")
 			.arg(QMetaEnum::fromType<desktop::settings::OneFingerTouchAction>()

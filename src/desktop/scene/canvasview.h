@@ -77,6 +77,8 @@ public:
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation) const;
 
+	qreal mapPressure(qreal pressure) const;
+
 	QPointF mapToCanvas(const QPoint &point) const;
 	QPointF mapToCanvas(const QPointF &point) const;
 	QPolygonF mapToCanvas(const QRect &rect) const;
@@ -100,6 +102,12 @@ public:
 
 	KisCubicCurve pressureCurve() const { return m_pressureCurve; }
 	void setPressureCurve(const KisCubicCurve &pressureCurve);
+
+	KisCubicCurve pressureCurveEraser() const { return m_pressureCurveEraser; }
+	void setPressureCurveEraser(const KisCubicCurve &pressureCurveEraser);
+
+	int pressureCurveMode() const { return m_pressureCurveMode; }
+	void setPressureCurveMode(int pressureCurveMode);
 
 	//! Is drawing in progress at the moment?
 	bool isPenDown() const { return m_pendown != NOTDOWN; }
@@ -277,7 +285,8 @@ private:
 	class SetDragParams;
 
 	void startTabletEventTimer();
-	void resetTabletFilter();
+	void resetTabletDriver();
+	void setEraserTipActive(bool eraserTipActive);
 
 	// unified mouse/stylus event handlers
 	void penPressEvent(
@@ -473,6 +482,9 @@ private:
 	bool m_pixelgrid;
 
 	KisCubicCurve m_pressureCurve;
+	KisCubicCurve m_pressureCurveEraser;
+	int m_pressureCurveMode = 0;
+	bool m_eraserTipActive = false;
 
 	qreal m_dpi;
 	int m_brushCursorStyle;

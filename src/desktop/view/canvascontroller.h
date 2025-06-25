@@ -64,6 +64,8 @@ public:
 	bool isTouchDrawOrPanEnabled() const;
 
 	KisCubicCurve pressureCurve() const { return m_pressureCurve; }
+	KisCubicCurve pressureCurveEraser() const { return m_pressureCurveEraser; }
+	int pressureCurveMode() const { return m_pressureCurveMode; }
 
 	void setCanvasVisible(bool canvasVisible);
 	bool isCanvasVisible() const { return m_canvasVisible; }
@@ -212,12 +214,16 @@ private:
 	void setRenderSmooth(bool renderSmooth);
 	void setTabletEnabled(bool tabletEnabled);
 	void setSerializedPressureCurve(const QString &serializedPressureCurve);
+	void setSerializedPressureCurveEraser(
+		const QString &serializedPressureCurveEraser);
+	void setPressureCurveMode(int pressureCurveMode);
 	void setOutlineWidth(qreal outlineWidth);
 	void setCanvasShortcuts(QVariantMap canvasShortcuts);
 	void setShowTransformNotices(bool showTransformNotices);
 	void setTabletEventTimerDelay(int tabletEventTimerDelay);
 	void startTabletEventTimer();
-	void resetTabletFilter();
+	void resetTabletDriver();
+	void setEraserTipActive(bool eraserTipActive);
 
 	void penMoveEvent(
 		long long timeMsec, const QPointF &posf, qreal pressure, qreal xtilt,
@@ -276,6 +282,8 @@ private:
 	canvas::Point mapPenPointToCanvasF(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation) const;
+
+	qreal mapPressure(qreal pressure) const;
 
 	QPointF mapPointFromCanvasF(const QPointF &point) const;
 	QPolygonF mapRectFromCanvas(const QRect &rect) const;
@@ -377,6 +385,9 @@ private:
 	bool m_renderSmooth = false;
 	bool m_tabletEnabled = true;
 	KisCubicCurve m_pressureCurve;
+	KisCubicCurve m_pressureCurveEraser;
+	int m_pressureCurveMode = 0;
+	bool m_eraserTipActive = false;
 	bool m_pixelGrid = true;
 	bool m_pointerTracking = false;
 

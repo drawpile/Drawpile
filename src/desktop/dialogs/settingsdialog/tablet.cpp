@@ -53,8 +53,8 @@ void Tablet::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 void Tablet::initPressureCurve(
 	desktop::settings::Settings &settings, QFormLayout *form)
 {
-	auto *curve = new widgets::CurveWidget(this);
-	curve->setAxisTitleLabels(tr("Tablet"), tr("Output"));
+	widgets::CurveWidget *curve = new widgets::CurveWidget(this);
+	curve->setAxisTitleLabels(tr("Stylus"), tr("Output"));
 	curve->setCurveSize(200, 200);
 	settings.bindGlobalPressureCurve(
 		curve, &widgets::CurveWidget::setCurveFromString);
@@ -65,6 +65,28 @@ void Tablet::initPressureCurve(
 		});
 	form->addRow(tr("Global pressure curve:"), curve);
 	disableKineticScrollingOnWidget(curve->curveWidget());
+
+	utils::addFormSpacer(form);
+
+	QCheckBox *pressureCurveMode =
+		new QCheckBox(tr("Use separate curve for eraser tip"));
+	settings.bindGlobalPressureCurveMode(pressureCurveMode);
+	form->addRow(tr("Eraser pressure curve:"), pressureCurveMode);
+
+	widgets::CurveWidget *eraserCurve = new widgets::CurveWidget(this);
+	eraserCurve->setAxisTitleLabels(tr("Eraser"), tr("Output"));
+	eraserCurve->setCurveSize(200, 200);
+	settings.bindGlobalPressureCurveEraser(
+		eraserCurve, &widgets::CurveWidget::setCurveFromString);
+	settings.bindGlobalPressureCurveMode(
+		eraserCurve, &widgets::CurveWidget::setVisible);
+	connect(
+		eraserCurve, &widgets::CurveWidget::curveChanged, &settings,
+		[&settings](const KisCubicCurve &newCurve) {
+			settings.setGlobalPressureCurveEraser(newCurve.toString());
+		});
+	form->addRow(nullptr, eraserCurve);
+	disableKineticScrollingOnWidget(eraserCurve->curveWidget());
 }
 
 void Tablet::initTablet(

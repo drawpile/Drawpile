@@ -205,7 +205,12 @@ CanvasView::CanvasView(QWidget *parent)
 	DrawpileApp &app = dpApp();
 	connect(
 		&app, &DrawpileApp::tabletDriverChanged, this,
-		&CanvasView::resetTabletFilter, Qt::QueuedConnection);
+		&CanvasView::resetTabletDriver, Qt::QueuedConnection);
+#if !defined(Q_OS_ANDROID) && !defined(__EMSCRIPTEN__)
+	connect(
+		&app, &DrawpileApp::eraserNear, this,
+		&CanvasView::setEraserTipActive);
+#endif
 
 	desktop::settings::Settings &settings = app.settings();
 	settings.bindCanvasViewBackgroundColor(this, [this](QColor color) {
@@ -242,6 +247,13 @@ CanvasView::CanvasView(QWidget *parent)
 		curve.fromString(serializedCurve);
 		setPressureCurve(curve);
 	});
+	settings.bindGlobalPressureCurveEraser(this, [=](QString serializedCurve) {
+		KisCubicCurve curve;
+		curve.fromString(serializedCurve);
+		setPressureCurveEraser(curve);
+	});
+	settings.bindGlobalPressureCurveMode(
+		this, &CanvasView::setPressureCurveMode);
 
 	settings.bindCanvasShortcuts(
 		this, [=](desktop::settings::Settings::CanvasShortcutsType shortcuts) {
@@ -1056,8 +1068,8 @@ canvas::Point CanvasView::mapToCanvas(
 	qreal ytilt, qreal rotation) const
 {
 	return canvas::Point(
-		timeMsec, mapToCanvas(point), m_pressureCurve.value(pressure), xtilt,
-		ytilt, rotation);
+		timeMsec, mapToCanvas(point), mapPressure(pressure), xtilt, ytilt,
+		rotation);
 }
 
 canvas::Point CanvasView::mapToCanvas(
@@ -1065,8 +1077,17 @@ canvas::Point CanvasView::mapToCanvas(
 	qreal ytilt, qreal rotation) const
 {
 	return canvas::Point(
-		timeMsec, mapToCanvas(point), m_pressureCurve.value(pressure), xtilt,
-		ytilt, rotation);
+		timeMsec, mapToCanvas(point), mapPressure(pressure), xtilt, ytilt,
+		rotation);
+}
+
+qreal CanvasView::mapPressure(qreal pressure) const
+{
+	if(m_pressureCurveMode && m_eraserTipActive) {
+		return m_pressureCurveEraser.value(pressure);
+	} else {
+		return m_pressureCurve.value(pressure);
+	}
 }
 
 QPointF CanvasView::mapToCanvas(const QPoint &point) const
@@ -1193,9 +1214,15 @@ void CanvasView::startTabletEventTimer()
 	}
 }
 
-void CanvasView::resetTabletFilter()
+void CanvasView::resetTabletDriver()
 {
+	m_eraserTipActive = false;
 	m_tabletFilter.reset();
+}
+
+void CanvasView::setEraserTipActive(bool eraserTipActive)
+{
+	m_eraserTipActive = eraserTipActive;
 }
 
 void CanvasView::penPressEvent(
@@ -1203,6 +1230,10 @@ void CanvasView::penPressEvent(
 	qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button,
 	Qt::KeyboardModifiers modifiers, int deviceType, bool eraserOverride)
 {
+#if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
+	m_eraserTipActive = eraserOverride;
+#endif
+
 	if(m_pendown != NOTDOWN ||
 	   m_hudActionToActivate != int(drawingboard::ToggleItem::Action::None)) {
 		return;
@@ -2014,6 +2045,17 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 void CanvasView::setPressureCurve(const KisCubicCurve &pressureCurve)
 {
 	m_pressureCurve = pressureCurve;
+}
+
+void CanvasView::setPressureCurveEraser(
+	const KisCubicCurve &pressureCurveEraser)
+{
+	m_pressureCurveEraser = pressureCurveEraser;
+}
+
+void CanvasView::setPressureCurveMode(int pressureCurveMode)
+{
+	m_pressureCurveMode = pressureCurveMode;
 }
 
 void CanvasView::touchEvent(QTouchEvent *event)
