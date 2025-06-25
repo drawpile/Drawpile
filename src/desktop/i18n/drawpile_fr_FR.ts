@@ -1486,8 +1486,8 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
         <location line="+1"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-        <translation>Le serveur n&apos;a plus de place pour l&apos;historique et la session est devenue trop grande pour être réinitialisée automatiquement (Limite : %1 MB)
-Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace libre ne manque.</translation>
+        <translation>Le serveur n&apos;a plus de place pour l&apos;historique et la session est devenue trop grande pour être réinitialisée automatiquement (Limite&#xa0;: %1 MB)
+Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre ne manque.</translation>
     </message>
     <message>
         <location line="+436"/>
@@ -1599,7 +1599,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+1"/>
         <source>You&apos;re about to create a new canvas and close this window.</source>
-        <translation>Vous êtes sur le point de créer un nouveau canevas et de fermer cette fenêtre.</translation>
+        <translation>Vous êtes sur le point de créer une nouvelle toile et de fermer cette fenêtre.</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -1784,7 +1784,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+3"/>
         <source>Resi&amp;ze Canvas...</source>
-        <translation>Re&amp;dimensionner le canevas...</translation>
+        <translation>Re&amp;dimensionner la Toile...</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1945,7 +1945,7 @@ Simplifiez le canevas et réinitialisez manuellement avant que l&apos;espace lib
     <message>
         <location line="+17"/>
         <source>&amp;Expand Canvas</source>
-        <translation>&amp;Étendre le canevas</translation>
+        <translation>&amp;Étendre la Toile</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -2440,7 +2440,7 @@ Debug dump recording starts on the next canvas reset and the files will be saved
 Are you sure youwant to start recording debug dumps?</source>
         <translation>Les archives de débogage enregistrent les commandes effectués en local et à distance. Elles peuvent être utilisés pour régler des problèmes de réseaux, et parfois plus dans de rares cas. Si vous souhaitez effectuer un enregistrement classique, veuillez utiliser Fichier &gt; Enregistrer (Vidéo).
 
-L&apos;archive de débogage démarre sur la prochaine réinitialisation du canevas, et les fichiers seront sauvegardés sur %1
+L&apos;archive de débogage démarre sur la prochaine réinitialisation de la toile, et les fichiers seront sauvegardés sur %1
 
 Êtes vous sûr·e de vouloir commencer un enregistrement d&apos;archive de débogage&#x202f;?</translation>
     </message>
@@ -2567,7 +2567,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+110"/>
         <source>Canvas Background</source>
-        <translation>Arrière-plan du Canevas</translation>
+        <translation>Arrière-plan de la Toile</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -2733,7 +2733,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+27"/>
         <source>Share your canvas with others</source>
-        <translation>Partager votre canevas avec d&apos;autres</translation>
+        <translation>Partager votre toile avec d&apos;autres</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2823,7 +2823,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+2875"/>
         <source>Rotate Canvas Clockwise</source>
-        <translation>Rotation horaire du canevas</translation>
+        <translation>Rotation Horaire de la Toile</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -2927,12 +2927,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+257"/>
         <source>Canvas locked</source>
-        <translation>Canevas verrouillé</translation>
+        <translation>Toile verrouillée</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Canvas unlocked</source>
-        <translation>Canevas déverrouillé</translation>
+        <translation>Toile déverrouillée</translation>
     </message>
     <message>
         <location line="+432"/>
@@ -3266,7 +3266,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+0"/>
         <source>Point out things on the canvas</source>
-        <translation>Désigner des éléments du canevas</translation>
+        <translation>Désigner des éléments de la toile</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3276,7 +3276,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+0"/>
         <source>Zoom the canvas view</source>
-        <translation>Agrandir/Réduire la vue du canevas</translation>
+        <translation>Zoomer la vue de la toile</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3677,7 +3677,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location filename="../ui/resizedialog.ui" line="+14"/>
         <source>Resize Canvas</source>
-        <translation>Redimensionner le canevas</translation>
+        <translation>Redimensionner la Toile</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -3932,12 +3932,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+10"/>
         <source>Canvas Resizing:</source>
-        <translation>Redimensionnement du canevas :</translation>
+        <translation>Redimensionnement de la Toile&#xa0;:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Canvas Background:</source>
-        <translation>Arrière-plan du canevas :</translation>
+        <translation>Arrière-Plan de la Toile&#xa0;:</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -4485,7 +4485,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+2"/>
         <source>Reset inputs to the whole canvas and timeline</source>
-        <translation>Réinitialiser les entrées sur l&apos;ensemble du canevas et de la chronologie</translation>
+        <translation>Réinitialiser les entrées sur l&apos;ensemble de la toile et de la chronologie</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -4533,7 +4533,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
     <message>
         <location line="+8"/>
         <source>Canvas Background:</source>
-        <translation>Arrière-plan du Canevas&#xa0;:</translation>
+        <translation>Arrière-plan de la Toile&#xa0;:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -5495,9 +5495,9 @@ Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Le niveau de zoom actuel de la vue de canevas.
-Logarithmique&#xa0;: 0.0 est 100%, 0.69 est 200%, -1.38 est 25%.
-Pour le réglage du Rayon, utiliser une valeur de -4.15 rend la taille du pinceau relativement constant, relatif du niveau de zoom.</translation>
+        <translation>Le niveau de zoom actuel de la vue de la toile.
+Logarithmique&#xa0;: 0,0 est 100%, 0,69 est 200%, -1,38 est 25%.
+Pour le réglage du Rayon, utiliser une valeur de -4,15 rend la taille du pinceau relativement constant, relatif du niveau de zoom.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6268,9 +6268,9 @@ Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>Cela contrôle la vitesse à laquelle la couleur du maculage devient la couleur sur laquelle vous peignez.
-0.0 Mettre à jour immédiatement la couleur du maculage (nécessite plus de cycles CPU en raison des vérifications fréquentes des couleurs)
-0.5 Changer progressivement la couleur du maculage pour la rapprocher de la couleur de la toile
-1.0 Ne jamais changer la couleur du maculage</translation>
+0,0 Mettre à jour immédiatement la couleur du maculage (nécessite plus de cycles CPU en raison des vérifications fréquentes des couleurs)
+0,5 Changer progressivement la couleur du maculage pour la rapprocher de la couleur de la toile
+1,0 Ne jamais changer la couleur du maculage</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6446,7 +6446,7 @@ The longer the smudge length the more a color will spread and will also boost pe
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>Multiplicateur logarithmique pour la valeur «&#xa0;Longueur de maculage&#xa0;».
 Utile pour corriger les pinceaux haute définition/grands avec de nombreuses touches.
-Plus le maculage est long, plus la couleur s&apos;étale et améliore considérablement les performances, car la zone de travail est échantillonnée moins souvent</translation>
+Plus le maculage est long, plus la couleur s&apos;étale et améliore considérablement les performances, car la toile est échantillonnée moins souvent</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6604,24 +6604,24 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation>&amp;Rotation du canvas</translation>
+        <translation>Faire Pivoter la Toile</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas without snapping around 0°.</extracomment>
-        <translation type="unfinished">Pivotement Libre du Canevas</translation>
+        <translation>Rotation Libre de la Toile</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
-        <translation type="unfinished">Pivoter le Canevas par Incréments de 15°</translation>
+        <translation>Rotation de la Toile par Incréments</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished">Zoomer sur le Canevas</translation>
+        <translation>Zoomer sur la Toile</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6656,37 +6656,37 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished">Outil de Contrainte</translation>
+        <translation>Outil de Contrainte</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished">Outil de Centrage</translation>
+        <translation>Outil de Centrage</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished">Outil de Centrage et de Contrainte</translation>
+        <translation>Outil de Centrage et de Contrainte</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>A regular key combination on the canvas without further mouse or pen inputs. Example: holding Space to pan, without having to click as well.</source>
-        <translation type="unfinished">Une combinaison de touches régulière sur le canevas sans entrée de la part de la souris ou du stylet. Exemple&#xa0;: Maintenir Espace pour pivoter, sans avoir à cliquer.</translation>
+        <translation>Une combinaison de touches régulière sur la toile sans entrée de la part de la souris ou du stylet. Exemple&#xa0;: Maintenir Espace pour pivoter, sans avoir à cliquer.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pressing a mouse or pen button, optionally while also holding down keys. Putting the pen down is like a left click. Example: holding space and pressing left click to pan.</source>
-        <translation type="unfinished">Appuyer sur une touche du stylet ou de la souris, optionnellement pendant que d&apos;autres touches sont maintenues. Poser le stylet revient à faire un clic gauche. Exemple&#xa0;: Maintenir Espace et faire un clic gauche pour pivoter.</translation>
+        <translation>Appuyer sur une touche du stylet ou de la souris, optionnellement pendant que d&apos;autres touches sont maintenues. Poser le stylet revient à faire un clic gauche. Exemple&#xa0;: Maintenir Espace et faire un clic gauche pour pivoter la toile.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Turning the mouse wheel or some input device that acts like one, optionally while also holding down keys. Example: scrolling to zoom the canvas.</source>
-        <translation type="unfinished">Tourner la molette de la souris ou tout composant équivalent, optionnellement pendant que d&apos;autres touches sont maintenues. Exemple&#xa0;: tourner la molette pour zoomer sur le canevas.</translation>
+        <translation>Tourner la molette de la souris ou tout composant équivalent, optionnellement pendant que d&apos;autres touches sont maintenues. Exemple&#xa0;: tourner la molette pour zoomer sur la toile.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Keys to hold down to make rectangle, line or selection tools behave differently. Constrain means to e.g. keep the aspect ratio, center means to e.g. center shapes around the origin.</source>
-        <translation type="unfinished">Touches à maintenir pour faire un rectangle, une ligne ou altérer le comportement de certains outils. Contraindre revient par exemple à garder l&apos;aspect visuel actuel, ou centrer revient par exemple à centrer les formes autour du point d&apos;origine.</translation>
+        <translation>Touches à maintenir pour faire un rectangle, une ligne ou altérer le comportement de certains outils. Contraindre revient par exemple à garder l&apos;aspect visuel actuel, ou centrer revient par exemple à centrer les formes autour du point d&apos;origine.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6701,7 +6701,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>You can&apos;t assign a shortcut to a Left Click without any keys since that would interfere with drawing.</source>
-        <translation type="unfinished">Vous ne pouvez assigner de raccourci au clic gauche sans l&apos;appui d&apos;autres touches, car cela interférerait avec le dessin au clic gauche.</translation>
+        <translation>Vous ne pouvez pas assigner de raccourci au Clic Gauche sans l&apos;appui de touches, car cela interférerait avec le dessin.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6719,7 +6719,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/certificateview.cpp" line="+25"/>
         <source>SSL Certificate for %1</source>
-        <translation type="unfinished">Certificat SSL pour %1</translation>
+        <translation>Certificat SSL pour %1</translation>
     </message>
 </context>
 <context>
@@ -6737,17 +6737,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>&amp;None</source>
-        <translation type="unfinished">Aucu&amp;n</translation>
+        <translation>Aucu&amp;n</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished">Fiable (&amp;T)</translation>
+        <translation>&amp;Fiable</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished">&amp;Opérateur</translation>
+        <translation>&amp;Opérateur·trice</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6765,23 +6765,23 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+71"/>
         <source>Rename</source>
-        <translation type="unfinished">Renommer</translation>
+        <translation>Renommer</translation>
     </message>
     <message>
         <location line="-68"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Save</source>
-        <translation type="unfinished">Enregistrer</translation>
+        <translation>Enregistrer</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -6812,7 +6812,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+11"/>
         <source>Smooth Out</source>
-        <translation type="unfinished">Lisser en sortie</translation>
+        <translation>Lisser</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6822,7 +6822,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation type="unfinished">Lissage</translation>
+        <translation>Lisse</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6832,7 +6832,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished">Actuelle (non-sauvegardée)</translation>
+        <translation>Actuel (non-sauvegardé)</translation>
     </message>
 </context>
 <context>
@@ -6900,12 +6900,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+36"/>
         <source>Invite codes let someone join the session via a limited-use link. You can revoke the code later to take away their access again.</source>
-        <translation type="unfinished">Les codes d&apos;invitation permettent à un·e utilisateur·ice de rejoindre la session via un lien à usage limité. Vous pouvez révoquer ce code plus tard pour leur retirer cet accès.</translation>
+        <translation>Les codes d&apos;invitation permettent à un·e utilisateur·ice de rejoindre la session via un lien à usage limité. Vous pouvez révoquer ce code plus tard pour leur retirer cet accès.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Someone joining via an invite code bypasses normal session restrictions: they don&apos;t need the session password, can join via web browser, don&apos;t need a registered account and aren&apos;t affected by new joins being blocked.</source>
-        <translation type="unfinished">Un·e utilisateur·ice rejoignant via un code d&apos;invitation passe outre les restrictions de session habituelles&#xa0;: iels n&apos;ont pas besoin du mot de passe de la sessions, peuvent rejoindre depuis un navigateur web, n&apos;ont pas besoin d&apos;un compte enregistré et ne sont pas affectés par les blocages d&apos;arrivée de nouveaux·elles utilisateur·ice·s sur le salon.</translation>
+        <translation>Quelqu&apos;un rejoignant via un code d&apos;invitation passe outre les restrictions de session habituelles&#xa0;: iels n&apos;ont pas besoin du mot de passe de la sessions, peuvent rejoindre depuis un navigateur web, n&apos;ont pas besoin d&apos;un compte et ne sont pas affectés par les blocages d&apos;arrivée de nouveaux·elles utilisateur·ice·s.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6919,12 +6919,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/keyframepropertiesdialog.cpp" line="+127"/>
         <source>Key Frame Properties</source>
-        <translation type="unfinished">Propriétés de la Trame de Référence</translation>
+        <translation>Propriétés de la Trame de Référence</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Title:</source>
-        <translation type="unfinished">Titre :</translation>
+        <translation>Titre&#xa0;:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7359,13 +7359,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+49"/>
         <source>Shrink and feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation>Réduire et flouter depuis le bord du canevas</translation>
+        <translation>Réduire et flouter depuis le bord de la toile</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished">Flouter depuis le bord du canevas</translation>
+        <translation>Flouter depuis le bord de la toile</translation>
     </message>
 </context>
 <context>
@@ -11895,7 +11895,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+21"/>
         <location filename="../view/canvasview.cpp" line="+21"/>
         <source>Do you want to save the canvas as it was before the reset? Since this is a Drawpile 2.1 session, it may have desynchronized!</source>
-        <translation>Voulez-vous sauvegarder le canevas tel qu&apos;il était avant la réinitialisation&#x202f;? Comme il s&apos;agit d&apos;une session Drawpile 2.1, il se peut qu&apos;il y ait eu désynchronisation&#x202f;!</translation>
+        <translation>Voulez-vous sauvegarder la toile telle qu&apos;elle était avant la réinitialisation&#x202f;? Comme il s&apos;agit d&apos;une session Drawpile 2.1, il se peut qu&apos;il y ait eu désynchronisation&#x202f;!</translation>
     </message>
     <message>
         <location line="+3"/>
