@@ -7432,7 +7432,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Registered</source>
-        <translation type="unfinished">Enregistré</translation>
+        <translation>Enregistré</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7912,7 +7912,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/userinfodialog.cpp" line="+31"/>
         <source>Refresh</source>
-        <translation type="unfinished">Rafraîchir</translation>
+        <translation>Rafraîchir</translation>
     </message>
     <message>
         <location line="+45"/>
