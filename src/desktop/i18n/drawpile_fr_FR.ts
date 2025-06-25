@@ -6626,7 +6626,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Pick Color</source>
-        <translation type="unfinished">Sélectionner Couleur</translation>
+        <translation>Pipette à couleurs</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6947,7 +6947,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/layerproperties.cpp" line="+92"/>
         <source>New Layer Group</source>
-        <translation type="unfinished">Nouveau groupe de calque</translation>
+        <translation>Nouveau Groupe de Calques</translation>
     </message>
     <message>
         <location line="+0"/>
