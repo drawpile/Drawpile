@@ -2271,7 +2271,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
     <message>
         <location line="+5"/>
         <source>Could not read log file: %1</source>
-        <translation>Impossible de lire le fichier journal&#xa0;: %1</translation>
+        <translation>Lecture du fichier journal&#xa0;impossible&#xa0;: %1</translation>
     </message>
     <message>
         <location line="+88"/>
@@ -7227,7 +7227,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+38"/>
         <source>Log in with &apos;%1&apos; credentials</source>
-        <translation>Se connecter avec %1</translation>
+        <translation>Se connecter avec les informations d&apos;identification &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7240,7 +7240,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/netstats.cpp" line="+77"/>
         <source>not connected</source>
-        <translation type="unfinished">non connecté</translation>
+        <translation>non connecté</translation>
     </message>
 </context>
 <context>
@@ -7248,22 +7248,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="+32"/>
         <source>Playback</source>
-        <translation type="unfinished">Lecture</translation>
+        <translation>Relecture</translation>
     </message>
     <message>
         <location line="+144"/>
         <source>Building index...</source>
-        <translation type="unfinished">Construction de l&apos;index...</translation>
+        <translation>Construction de l&apos;index...</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Index building failed.</source>
-        <translation type="unfinished">Échec de la construction de l&apos;index.</translation>
+        <translation>Échec de la construction de l&apos;index.</translation>
     </message>
     <message>
         <location line="+165"/>
         <source>Video error</source>
-        <translation type="unfinished">Erreur vidéo</translation>
+        <translation>Erreur vidéo</translation>
     </message>
 </context>
 <context>
@@ -7276,12 +7276,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+14"/>
         <source>New</source>
-        <translation type="unfinished">Nouveau</translation>
+        <translation>Nouveau</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Open...</source>
-        <translation type="unfinished">Ouvrir...</translation>
+        <translation>Ouvrir...</translation>
     </message>
     <message>
         <location line="+71"/>
@@ -7296,7 +7296,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-3"/>
         <source>Reset</source>
-        <translation type="unfinished">Réinitialiser</translation>
+        <translation>Réinitialiser</translation>
     </message>
 </context>
 <context>
@@ -7324,7 +7324,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+12"/>
         <source>Resize</source>
-        <translation type="unfinished">Redimensionner</translation>
+        <translation>Redimensionner</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7334,12 +7334,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+93"/>
         <source>Error</source>
-        <translation type="unfinished">Erreur</translation>
+        <translation>Erreur</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Size is too large</source>
-        <translation type="unfinished">La taille est trop grande</translation>
+        <translation>La taille est trop grande</translation>
     </message>
 </context>
 <context>
@@ -7347,13 +7347,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/selectionalterdialog.cpp" line="+40"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Feather: </source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished">Adoucissement&#x202f;: </translation>
+        <translation>Adoucissement&#xa0;: </translation>
     </message>
     <message>
         <location line="+49"/>
@@ -7382,9 +7382,9 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+3"/>
         <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
-        <translation type="unfinished">
-            <numerusform>%1 %n n&apos;a pas pu être importé car invalide, ou est un duplicata.</numerusform>
-            <numerusform>%1 %n n&apos;ont pas pu être importés car invalides, ou sont des duplicatas.</numerusform>
+        <translation>
+            <numerusform>%1 %n n&apos;a pas pu être importé car il est invalide ou un duplicata.</numerusform>
+            <numerusform>%1 %n n&apos;ont pas pu être importés car ils sont invalides ou dupliqués.</numerusform>
         </translation>
     </message>
     <message>
@@ -7422,12 +7422,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+69"/>
         <source>Operators</source>
-        <translation type="unfinished">Opérateurs</translation>
+        <translation>Opérateurs·rices</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trusted</source>
-        <translation type="unfinished">Fiables</translation>
+        <translation>Fiables</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7437,31 +7437,31 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Everyone</source>
-        <translation type="unfinished">Tout le monde</translation>
+        <translation>Tout le monde</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation type="unfinished">oui</translation>
+        <translation>oui</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>no</source>
         <comment>password</comment>
-        <translation type="unfinished">non</translation>
+        <translation>non</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>change</source>
         <comment>password</comment>
-        <translation type="unfinished">modifier</translation>
+        <translation>modifier</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>assign</source>
         <comment>password</comment>
-        <translation type="unfinished">attribuer</translation>
+        <translation>attribuer</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -7512,27 +7512,27 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+122"/>
         <location line="+16"/>
         <source>Set a new password or leave blank to remove.</source>
-        <translation type="unfinished">Définir un nouveau mot de passe ou laisser vide pour ne plus protéger.</translation>
+        <translation>Définir un nouveau mot de passe ou laisser vide pour le retirer.</translation>
     </message>
     <message>
         <location line="-14"/>
         <source>Set a password for the session.</source>
-        <translation type="unfinished">Définir un mot de passe pour la session.</translation>
+        <translation>Définir un mot de passe pour la session.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session Password</source>
-        <translation type="unfinished">Mot de passe de la session</translation>
+        <translation>Mot de passe de la session</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set a password for gaining operator status.</source>
-        <translation type="unfinished">Définir un mot de passe pour obtenir le statut Opérateur.</translation>
+        <translation>Définir un mot de passe pour obtenir le statut Opérateur·trice.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator Password</source>
-        <translation type="unfinished">Mot de passe Opérateur</translation>
+        <translation>Mot de passe Opérateur·trice</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -7558,7 +7558,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+14"/>
         <source>Choose Ban Export Type</source>
-        <translation type="unfinished">Choisir le Type d&apos;Export de Bannissement</translation>
+        <translation>Choisir le Type d&apos;Exportation de Ban</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7629,7 +7629,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="+34"/>
         <source>Preferences</source>
-        <translation type="unfinished">Préférences</translation>
+        <translation>Préférences</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -7674,12 +7674,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Shortcuts</source>
-        <translation type="unfinished">Raccourcis clavier</translation>
+        <translation>Raccourcis</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Parental Controls</source>
-        <translation type="unfinished">Contrôle parental</translation>
+        <translation>Contrôles parentaux</translation>
     </message>
 </context>
 <context>
@@ -7772,7 +7772,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Preferences</source>
-        <translation type="unfinished">Préférences</translation>
+        <translation>Préférences</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7782,12 +7782,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+25"/>
         <source>Record</source>
-        <translation type="unfinished">Enregistrer</translation>
+        <translation>Enregistrer</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Add Server</source>
-        <translation type="unfinished">Ajouter un serveur</translation>
+        <translation>Ajouter un serveur</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7850,17 +7850,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+29"/>
         <source>Join</source>
-        <translation type="unfinished">Rejoindre</translation>
+        <translation>Rejoindre</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Host</source>
-        <translation type="unfinished">Hôte</translation>
+        <translation>Hôte</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Create</source>
-        <translation type="unfinished">Créer</translation>
+        <translation>Créer</translation>
     </message>
 </context>
 <context>
@@ -7977,7 +7977,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Original</source>
-        <translation type="unfinished">Originale</translation>
+        <translation>Original</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8577,7 +8577,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+13"/>
         <source>Unlock</source>
-        <translation type="unfinished">Déverrouiller</translation>
+        <translation>Déverrouiller</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -9039,17 +9039,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Dot</source>
-        <translation type="unfinished">Point</translation>
+        <translation>Point</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Crosshair</source>
-        <translation type="unfinished">Réticule</translation>
+        <translation>Réticule</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Arrow</source>
-        <translation type="unfinished">Flèche</translation>
+        <translation>Flèche</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9108,7 +9108,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+56"/>
         <source>Eraser</source>
-        <translation type="unfinished">Gomme</translation>
+        <translation>Gomme</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9160,12 +9160,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-82"/>
         <source>Undo</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Redo</source>
-        <translation type="unfinished">Refaire</translation>
+        <translation>Refaire</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9245,7 +9245,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Zoom</source>
-        <translation type="unfinished">Zoom</translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9419,7 +9419,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -9472,12 +9472,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+14"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtrer</translation>
+        <translation>Filtre</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Closed</source>
-        <translation type="unfinished">Fermé</translation>
+        <translation>Fermé</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9487,7 +9487,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Password</source>
-        <translation type="unfinished">Mot de passe</translation>
+        <translation>Mot de passe</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9497,7 +9497,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished">NAAM</translation>
+        <translation>NAAM</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9527,12 +9527,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+158"/>
         <source>Loading...</source>
-        <translation type="unfinished">Chargement...</translation>
+        <translation>Chargement...</translation>
     </message>
     <message>
         <location line="-95"/>
         <source>Join</source>
-        <translation type="unfinished">Rejoindre</translation>
+        <translation>Rejoindre</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9571,17 +9571,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location filename="../dialogs/startdialog/create.cpp" line="+26"/>
         <location line="+7"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Width:</source>
-        <translation type="unfinished">Largeur :</translation>
+        <translation>Largeur&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height:</source>
-        <translation type="unfinished">Hauteur :</translation>
+        <translation>Hauteur&#xa0;:</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -9591,7 +9591,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-33"/>
         <source>Background:</source>
-        <translation type="unfinished">Arrière-plan :</translation>
+        <translation>Arrière-plan&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -9619,7 +9619,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+4"/>
         <source>Bans</source>
-        <translation type="unfinished">Exclusions</translation>
+        <translation>Bans</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -9817,7 +9817,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+30"/>
         <source>Remove</source>
-        <translation type="unfinished">Retirer</translation>
+        <translation>Retirer</translation>
     </message>
 </context>
 <context>
@@ -9855,7 +9855,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+7"/>
         <source>Bans</source>
-        <translation type="unfinished">Exclusions</translation>
+        <translation>Bans</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9914,7 +9914,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Title:</source>
-        <translation type="unfinished">Titre :</translation>
+        <translation>Titre&#xa0;:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -9934,12 +9934,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+9"/>
         <source>Add</source>
-        <translation type="unfinished">Ajouter</translation>
+        <translation>Ajouter</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Remove selected</source>
-        <translation type="unfinished">Effacer la sélection</translation>
+        <translation>Effacer la sélection</translation>
     </message>
     <message>
         <location line="+139"/>
@@ -9968,13 +9968,13 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+37"/>
         <location line="+109"/>
         <source>Rename</source>
-        <translation type="unfinished">Renommer</translation>
+        <translation>Renommer</translation>
     </message>
     <message>
         <location line="-102"/>
         <location line="+140"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Effacer</translation>
     </message>
     <message>
         <location line="-131"/>
@@ -10088,22 +10088,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+112"/>
         <source>Everyone</source>
-        <translation type="unfinished">Tout le monde</translation>
+        <translation>Tout le monde</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Registered</source>
-        <translation type="unfinished">Enregistré</translation>
+        <translation>Enregistré</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Trusted</source>
-        <translation type="unfinished">Fiables</translation>
+        <translation>Fiables</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Operators</source>
-        <translation type="unfinished">Opérateurs</translation>
+        <translation>Opérateurs·trices</translation>
     </message>
 </context>
 <context>
@@ -10111,7 +10111,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-232"/>
         <source>Reset</source>
-        <translation type="unfinished">Réinitialiser</translation>
+        <translation>Réinitialiser</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -10129,7 +10129,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Operator password:</source>
-        <translation type="unfinished">Mot de passe Opérateur :</translation>
+        <translation>Mot de passe Opérateur·trice&#xa0;:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10139,12 +10139,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+47"/>
         <source>Operator</source>
-        <translation type="unfinished">Opérateur</translation>
+        <translation>Opérateur·trice</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Trusted</source>
-        <translation type="unfinished">Fiables</translation>
+        <translation>Fiable</translation>
     </message>
 </context>
 <context>
@@ -10157,7 +10157,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+14"/>
         <source>Name:</source>
-        <translation type="unfinished">Nom&#x202f;:</translation>
+        <translation>Nom&#xa0;:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10167,7 +10167,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+28"/>
         <source>Save</source>
-        <translation type="unfinished">Enregistrer</translation>
+        <translation>Sauvegarder</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10225,7 +10225,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation type="unfinished">Conserver l&apos;historique de discussion</translation>
+        <translation>Conserver l&apos;historique de discussion</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10311,7 +10311,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/brushpalettedock.cpp" line="+101"/>
         <source>Brushes</source>
-        <translation type="unfinished">Brosses</translation>
+        <translation>Pinceaux</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -10491,7 +10491,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+3"/>
         <location line="+45"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Effacer</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -10527,7 +10527,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/colorpalette.cpp" line="+372"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Effacer</translation>
     </message>
     <message>
         <location line="-249"/>
@@ -10628,7 +10628,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+20"/>
         <source>Import palette</source>
-        <translation type="unfinished">Importer une palette</translation>
+        <translation>Importer une palette</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10638,22 +10638,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>All files (*)</source>
-        <translation type="unfinished">Tous les fichiers (*)</translation>
+        <translation>Tous les fichiers (*)</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Export palette</source>
-        <translation type="unfinished">Exporter une palette</translation>
+        <translation>Exporter une palette</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>GIMP palette (%1)</source>
-        <translation type="unfinished">Palette GIMP (%1)</translation>
+        <translation>Palette GIMP (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error</source>
-        <translation type="unfinished">Erreur</translation>
+        <translation>Erreur</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -10663,7 +10663,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-58"/>
         <source>Delete palette &quot;%1&quot;?</source>
-        <translation type="unfinished">Effacer la palette &quot;%1&quot; ?</translation>
+        <translation>Effacer la palette &quot;%1&quot;&#x202f;?</translation>
     </message>
 </context>
 <context>
@@ -10885,7 +10885,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished">Haut</translation>
+        <translation>Haut</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10917,42 +10917,42 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="+14"/>
         <source>Lock this layer</source>
-        <translation type="unfinished">Verrouiller ce calque</translation>
+        <translation>Verrouiller ce calque</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Censor</source>
-        <translation type="unfinished">Censurer</translation>
+        <translation>Censurer</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Access tier:</source>
-        <translation type="unfinished">Autorisation d&apos;accès :</translation>
+        <translation>Autorisation d&apos;accès&#xa0;:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Operators</source>
-        <translation type="unfinished">Opérateurs</translation>
+        <translation>Opérateurs·trices</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Trusted</source>
-        <translation type="unfinished">Fiables</translation>
+        <translation>Fiable</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Registered</source>
-        <translation type="unfinished">Enregistré</translation>
+        <translation>Enregistré</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Everyone</source>
-        <translation type="unfinished">Tout le monde</translation>
+        <translation>Tout le monde</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Exclusive access:</source>
-        <translation type="unfinished">Accès exclusif :</translation>
+        <translation>Accès exclusif&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -10960,7 +10960,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-369"/>
         <source>Layers</source>
-        <translation type="unfinished">Calques</translation>
+        <translation>Calques</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -10971,12 +10971,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location line="+9"/>
         <location line="+1695"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacité&#x202f;: </translation>
+        <translation>Opacité&#xa0;: </translation>
     </message>
     <message>
         <location line="-1694"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11041,7 +11041,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+165"/>
         <source>Layer</source>
-        <translation type="unfinished">Calque</translation>
+        <translation>Calque</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -11064,17 +11064,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../docks/navigator.cpp" line="+475"/>
         <source>Navigator</source>
-        <translation type="unfinished">Navigateur</translation>
+        <translation>Navigateur</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Show Cursors</source>
-        <translation type="unfinished">Montrer les curseurs</translation>
+        <translation>Montrer les Curseurs</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Realtime Update</source>
-        <translation type="unfinished">Mise à jour en temps réel</translation>
+        <translation>Mise à jour en temps réel</translation>
     </message>
 </context>
 <context>
@@ -11092,7 +11092,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-10"/>
         <source>Onion Skins</source>
-        <translation type="unfinished">Pelures d&apos;Onion</translation>
+        <translation>Pelures d&apos;Onion</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -11150,7 +11150,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished">Fermer</translation>
+        <translation>Fermer</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11185,12 +11185,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Error</source>
-        <translation type="unfinished">Erreur</translation>
+        <translation>Erreur</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11209,7 +11209,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+181"/>
         <source> FPS</source>
-        <translation type="unfinished"> IPS</translation>
+        <translation> IPS</translation>
     </message>
 </context>
 <context>
@@ -11227,7 +11227,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished">Fermer</translation>
+        <translation>Fermer</translation>
     </message>
 </context>
 <context>
@@ -11299,17 +11299,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+5"/>
         <source>Merge</source>
-        <translation type="unfinished">Fusionner</translation>
+        <translation>Fusionner</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Effacer</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Left</source>
-        <translation type="unfinished">Gauche</translation>
+        <translation>Gauche</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11320,22 +11320,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-17"/>
         <source>Justify</source>
-        <translation type="unfinished">Justifié</translation>
+        <translation>Justifié</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right</source>
-        <translation type="unfinished">Droite</translation>
+        <translation>Droite</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Top</source>
-        <translation type="unfinished">Haut</translation>
+        <translation>Haut</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Bottom</source>
-        <translation type="unfinished">Bas</translation>
+        <translation>Bas</translation>
     </message>
     <message>
         <location line="+81"/>
@@ -11463,12 +11463,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+8"/>
         <source>Size: </source>
-        <translation type="unfinished">Taille&#x202f;: </translation>
+        <translation>Taille&#xa0;: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Pick from current layer only</source>
-        <translation type="unfinished">Ne prendre que sur le calque courant</translation>
+        <translation>Ne prendre que sur le calque courant</translation>
     </message>
 </context>
 <context>
@@ -11684,7 +11684,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+15"/>
         <source>Mode:</source>
-        <translation type="unfinished">Mode&#x202f;:</translation>
+        <translation>Mode&#xa0;:</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -11699,17 +11699,17 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+10"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacité&#x202f;: </translation>
+        <translation>Opacité&#xa0;: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished">Appliquer</translation>
+        <translation>Appliquer</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11719,7 +11719,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11732,12 +11732,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
         <source>Normal Size</source>
-        <translation type="unfinished">Taille d&apos;origine</translation>
+        <translation>Taille d&apos;origine</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fit To Window</source>
-        <translation type="unfinished">Ajuster à l&apos;écran</translation>
+        <translation>Ajuster à l&apos;écran</translation>
     </message>
 </context>
 <context>
@@ -11845,7 +11845,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../widgets/canvasshortcutedit.cpp" line="+269"/>
         <source>Cancel</source>
-        <translation type="unfinished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11889,7 +11889,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <location filename="../scene/canvasview.cpp" line="+332"/>
         <location filename="../view/canvasview.cpp" line="-30"/>
         <source>Reconnect</source>
-        <translation type="unfinished">Reconnexion</translation>
+        <translation>Reconnexion</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -11962,7 +11962,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../chat/chatbox.cpp" line="+45"/>
         <source>Invite</source>
-        <translation type="unfinished">Inviter</translation>
+        <translation>Inviter</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -11972,7 +11972,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+6"/>
         <source>Chat</source>
-        <translation type="unfinished">Discussion</translation>
+        <translation>Discussion</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11985,7 +11985,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../chat/chatwidget.cpp" line="+164"/>
         <source>Public</source>
-        <translation type="unfinished">Publique</translation>
+        <translation>Publique</translation>
     </message>
     <message>
         <location line="+71"/>
@@ -12000,22 +12000,22 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+44"/>
         <source>Chat (recorded)...</source>
-        <translation type="unfinished">Discussion (enregistrée)...</translation>
+        <translation>Discussion (enregistrée)...</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Chat...</source>
-        <translation type="unfinished">Discussion...</translation>
+        <translation>Discussion...</translation>
     </message>
     <message>
         <location line="+310"/>
         <source>%1 joined the session</source>
-        <translation type="unfinished">%1 a rejoint la session</translation>
+        <translation>%1 a rejoint la session</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>%1 left the session</source>
-        <translation type="unfinished">%1 a quitté la session</translation>
+        <translation>%1 a quitté la session</translation>
     </message>
     <message>
         <location line="+166"/>
@@ -12232,7 +12232,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Round expansion shape</source>
-        <translation type="unfinished">Forme d&apos;agrandissement ronde</translation>
+        <translation>Forme d&apos;agrandissement ronde</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12247,7 +12247,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>Expand: </source>
-        <translation type="unfinished">Étendre&#x202f;: </translation>
+        <translation>Étendre&#xa0;: </translation>
     </message>
 </context>
 <context>
@@ -12376,7 +12376,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../widgets/notifbar.cpp" line="+123"/>
         <source>Dismiss (%1)</source>
-        <translation type="unfinished">Passer (%1)</translation>
+        <translation>Passer (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12433,7 +12433,7 @@ Hex&#xa0;: %4</translation>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished">Enregistrer</translation>
+        <translation>Enregistrer</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12509,7 +12509,7 @@ Hex&#xa0;: %4</translation>
     <message>
         <location line="+2"/>
         <source>Toggle onion skin</source>
-        <translation type="unfinished">Basculer le pelage d&apos;oignon</translation>
+        <translation>Basculer le pelage d&apos;oignon</translation>
     </message>
     <message>
         <location line="+129"/>
@@ -12576,7 +12576,7 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished">Fiables</translation>
+        <translation>Fiables</translation>
     </message>
     <message>
         <location line="-138"/>
@@ -12606,7 +12606,7 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location line="+2"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">&amp;Refaire</translation>
+        <translation>&amp;Refaire</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12659,7 +12659,7 @@ Ou par Animation ▸ Nouvelle Piste.</translation>
     <message>
         <location line="+46"/>
         <source>Zoom</source>
-        <translation type="unfinished">Zoom</translation>
+        <translation>Zoom</translation>
     </message>
 </context>
 </TS>
