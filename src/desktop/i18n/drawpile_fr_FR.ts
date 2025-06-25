@@ -5251,7 +5251,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>Fine speed</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. &quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
-        <translation>Vitesse réglée avec finesse</translation>
+        <translation>Vitesse fine</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5286,7 +5286,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>Declination/Tilt</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Déclinaison/Inclinaison</translation>
+        <translation>Déclinaison/Inclinaison</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5390,7 +5390,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation du canev
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Identique à Vitesse réglée avec finesse, mais change plus lentement. Voir également le réglage &apos;Vitesse réglée plus succinctement&apos;.</translation>
+        <translation>Identique à vitesse fine, mais change plus lentement. Voir également le réglage &apos;vitesse brute&apos;.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6067,7 +6067,7 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Altère le rayon aléatoirement à chaque tapotement. Vous pouvez aussi faire ça avec l&apos;entrée &apos;aléatoire&apos; dans le réglage du rayon. Si vous le faites ici, deux différences&#xa0;:
+        <translation>Altère le rayon de chaque touche aléatoirement. Vous pouvez aussi faire ça avec l&apos;entrée au_hasard dans le réglage du rayon. Si vous le faites ici, deux différences&#xa0;:
 1) La valeur d&apos;opacité sera corrigé de sorte à ce qu&apos;un tapotement de grand rayon sera plus transparent
 2) Cela ne changera pas le rayon actuel de &apos;tapotements par rayon actuel&apos;</translation>
     </message>
@@ -6077,15 +6077,15 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">A quelle lenteur l&apos;entrée de vitesse réglée avec finesse suit la vitesse réelle
-0.0 la change instantanément si votre vitesse change (non recommandé, mais vous pouvez essayer)</translation>
+        <translation>Définit la lenteur l&apos;entrée de vitesse fine suit la vitesse réelle
+0,0 la change instantanément si votre vitesse change (non recommandé, mais vous pouvez essayer)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Similaire à filtre de vitesse réglée avec finesse, mais prenez en compte que sa portée diffère</translation>
+        <translation>Similaire à &apos;filtre de vitesse fine&apos;, mais prenez en compte que son étendue est différente</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6095,9 +6095,9 @@ La valeur opaque au dessus de 1.0 convient pour le tracé de pinceau final, cons
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Cela change la réaction d&apos;entrée de la &quot;vitesse fine&quot; à la vitesse physique extrême. La meilleure façon de voir la différence si la &quot;vitesse fine&quot; est assignée au rayon.
--8.0 vitesse très rapide n&apos;augmente pas beaucoup la &quot;vitesse fine&quot;.
-+8.0 vitesse très rapide augmente beaucoup la &quot;vitesse fine&quot;.
+        <translation>Cela change la réaction d&apos;entrée de la &quot;vitesse fine&quot; à la vitesse physique extrême. Vous verrez le plus de différence lorsque la &quot;vitesse fine&quot; est assignée au rayon.
+-8,0 vitesse très rapide n&apos;augmente pas beaucoup la &quot;vitesse fine&quot;.
++8,0 vitesse très rapide augmente beaucoup la &quot;vitesse fine&quot;.
 Il se passe l&apos;inverse pour les vitesses très lentes.</translation>
     </message>
     <message>
@@ -6594,12 +6594,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Constraint Key</source>
-        <translation type="unfinished">Touche de Contrainte</translation>
+        <translation>Touche de Contrainte</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished">Pivoter Canevas par Incréments</translation>
+        <translation>Pivoter la Toile</translation>
     </message>
     <message>
         <location line="+2"/>
