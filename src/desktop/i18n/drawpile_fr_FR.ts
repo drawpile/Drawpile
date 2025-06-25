@@ -2336,7 +2336,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
     <message>
         <location line="+2"/>
         <source>Connection Failed</source>
-        <translation>Connexion échoué</translation>
+        <translation>Échec de la connexion</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7573,7 +7573,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Plain</source>
-        <translation type="unfinished">Complet</translation>
+        <translation>Complet</translation>
     </message>
     <message>
         <location line="+52"/>
