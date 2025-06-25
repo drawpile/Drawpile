@@ -6952,12 +6952,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+0"/>
         <source>New Layer</source>
-        <translation type="unfinished">Nouveau calque</translation>
+        <translation>Nouveau Calque</translation>
     </message>
     <message>
         <location line="+110"/>
         <source>Pass Through</source>
-        <translation type="unfinished">Passer au Travers</translation>
+        <translation>Pass Through</translation>
     </message>
 </context>
 <context>
@@ -6965,7 +6965,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location filename="../dialogs/layoutsdialog.cpp" line="+167"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished">Actuelle (non-sauvegardée)</translation>
+        <translation>Actuel (non-sauvegardé)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6975,12 +6975,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>%1 (deleted)</source>
-        <translation type="unfinished">%1 (supprimée)</translation>
+        <translation>%1 (supprimé)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 (renamed from %2)</source>
-        <translation type="unfinished">%1 (renommée depuis %2)</translation>
+        <translation>%1 (renommé depuis %2)</translation>
     </message>
     <message>
         <location line="+136"/>
@@ -6990,7 +6990,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation type="unfinished">Effacer</translation>
+        <translation>Effacer</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -7000,7 +7000,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="-242"/>
         <source>Default</source>
-        <translation type="unfinished">Défaut</translation>
+        <translation>Défaut</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7010,12 +7010,12 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+2"/>
         <source>FireAlpaca-esque</source>
-        <translation type="unfinished">Façon FireAlpaca</translation>
+        <translation>Façon FireAlpaca</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Horizontal</source>
-        <translation type="unfinished">Horizontal</translation>
+        <translation>Horizontal</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7025,27 +7025,27 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     <message>
         <location line="+1"/>
         <source>Krita-esque</source>
-        <translation type="unfinished">Façon Krita</translation>
+        <translation>Façon Krita</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>MediBang-esque</source>
-        <translation type="unfinished">Façon MediBang</translation>
+        <translation>Façon MediBang</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mink</source>
-        <translation type="unfinished">Vison</translation>
+        <translation>Vison</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Paint.NET-esque</source>
-        <translation type="unfinished">Façon Paint.NET</translation>
+        <translation>Façon Paint.NET</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>SAI-esque</source>
-        <translation type="unfinished">Façon SAI</translation>
+        <translation>Façon SAI</translation>
     </message>
     <message>
         <location line="+1"/>
