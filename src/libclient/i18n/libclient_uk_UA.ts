@@ -19,232 +19,232 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
         <source>Attempting to allocate %n page(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Спроба виділити %n сторінок</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to allocate %n page(s): %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося виділити %n сторінок: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка розподілу пам’яті. Це може статися в деяких браузерах після оновлення. Закрийте цю сторінку та браузер повністю, а потім спробуйте ще раз.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Виділена пам&apos;ять не є SharedArrayBuffer, навіть якщо ваш браузер підтримує його. Можливо, вам потрібно змінити налаштування.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Логотип Drawpile</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation>Вхід на drawpile.net</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження програми</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Запуск…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>Початок, це має зайняти лише мить…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження ресурсів</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження, це може зайняти деякий час…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>Підготовка</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ініціалізація, це може зайняти деякий час…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: ${e}</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося запустити Drawpile: ${e}</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштування…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation type="unfinished"></translation>
+        <translation>Фатальна помилка:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Зазвичай це трапляється тому, що ваш браузер застарів, або ви переглядаєте сторінку через якийсь вбудований браузер, наприклад, додаток чату, і вам потрібно правильно її відкрити. Для отримання додаткової інформації перегляньте &lt;a href=&quot;#&quot;&gt;цю сторінку довідки&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недійсне посилання на сеанс.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Однак ви потрапили сюди не через дійсне посилання на сеанс Drawpile.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Вбудований браузер:&lt;/strong&gt; схоже, що ви відкрили Drawpile у вбудованому браузері програми.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Вбудований браузер:&lt;/strong&gt; схоже, що ви відкрили Drawpile у вбудованому браузері %1.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Зазвичай це не працює належним чином, будь ласка, відкрийте цю сторінку у справжньому веббраузері.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation type="unfinished"></translation>
+        <translation>Можливо, несумісний браузер:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Можливо, несумісний браузер:&lt;/strong&gt; Firefox на Linux не підтримує ручки, чутливі до тиску, на всіх системах. Якщо ви не відчуваєте тиску, спробуйте скористатися іншим браузером або &lt;a href=&quot;#&quot;&gt;нативною програмою Linux&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Несумісний браузер:&lt;/strong&gt; Firefox у Windows має деякі проблеми із запуском Drawpile. Введення тексту та/або натискання Ctrl+Z для скасування може працювати неправильно. Спробуйте скористатися іншим браузером або &lt;a href=&quot;#&quot;&gt;нативною програмою Windows&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Несумісний браузер:&lt;/strong&gt; У Chrome на %1 виникають проблеми із запуском Drawpile. Це просто системний браузер (Safari) в іншій оболонці, що призводить до проблем із зникненням елементів керування за межами екрана. Спробуйте використовувати системний браузер (Safari) безпосередньо.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>Мова:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Test your pen pressure here</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірте тиск ручки тут</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Виявлено введення мишею, а не пером</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected touch input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Виявлено сенсорне введення, а не ручку</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected input, but not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Виявлено введення, але не ручку</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen pressure detected</source>
-        <translation type="unfinished"></translation>
+        <translation>Виявлено тиск пера</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen detected, but no pressure variance</source>
-        <translation type="unfinished"></translation>
+        <translation>Перо виявлено, але немає варіацій тиску</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished">Перевірка оновлень…</translation>
+        <translation>Перевірка оновлень…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Update check blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірка оновлень заблокована</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Попередження:&lt;/strong&gt; ця інсталяція &lt;strong&gt;застаріла&lt;/strong&gt; до версії &lt;code&gt;%1&lt;/code&gt;, яка не є найновішою версією &lt;code&gt;%2&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>Спробуйте оновити сторінку. Якщо це нічого не змінить, повідомте власника сервера про оновлення.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Попередження:&lt;/strong&gt; Не вдалося визначити, чи інсталяція актуальна. Можливо, версія &lt;code&gt;%1&lt;/code&gt; застаріла.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Спробуйте оновити сторінку. Якщо це нічого не змінить, зверніться до власника сервера або перегляньте &lt;a href=&quot;#&quot;&gt;сторінку довідки на drawpile.net&lt;/a&gt;, щоб дізнатися, як зв’язатися з кимось, хто може перевірити, що відбувається.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue regardless, but things may not work properly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви можете продовжувати все одно, але щось може працювати неправильно.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Початок</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Start Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>Почати все одно</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Версія:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Stable (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Стабільний (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Beta (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Бета-версія (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The session you are trying to join requires the beta version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Для сеансу, до якого ви намагаєтеся приєднатися, потрібна бета-версія Drawpile.</translation>
     </message>
 </context>
 <context>
@@ -313,7 +313,7 @@
         <location line="+8"/>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Розмір полотна поза межами допустимого, ширина та висота мають бути між 1 та %1 для %2.</translation>
     </message>
 </context>
 <context>
@@ -443,12 +443,12 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Зміна непрозорості пензля</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Зміна твердості пензля</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -986,22 +986,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Greater Density</source>
-        <translation type="unfinished"></translation>
+        <translation>Більша щільність</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Маркер</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>OKLAB</source>
-        <translation type="unfinished"></translation>
+        <translation>OKLAB</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pigment</source>
-        <translation type="unfinished"></translation>
+        <translation>Пігмент</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1021,42 +1021,42 @@ Select a regular layer instead.</source>
     <message>
         <location line="+12"/>
         <source>Linear Dodge/Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Лінійне освітлення/додавання</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>Випалювання кольору</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation>Колірний додж</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Vivid Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Яскраве світло</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Штифтове світло</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Darker Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Темніший колір</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighter Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Світліший колір</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference</source>
-        <translation type="unfinished"></translation>
+        <translation>Різниця</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1066,42 +1066,42 @@ Select a regular layer instead.</source>
     <message>
         <location line="+30"/>
         <source>Shade (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Тінь (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Блиск (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shade/Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтінок/Блиск (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Опік (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Додж (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn/Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Берн/Додж (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Hard Mix (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Тверда суміш (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Різниця (SAI)</translation>
     </message>
     <message>
         <location line="-108"/>
@@ -1187,7 +1187,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation>Без тегів</translation>
+        <translation>Без тег</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2001,17 +2001,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (режим сумісності)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.3 (повністю сумісний)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Unlisted</source>
-        <translation type="unfinished"></translation>
+        <translation>Не в списку</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2180,7 +2180,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/gradient.cpp" line="+135"/>
         <source>You need to drag to create a gradient.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вам потрібно перетягнути, щоб створити градієнт.</translation>
     </message>
 </context>
 <context>
