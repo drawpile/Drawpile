@@ -19,232 +19,232 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
         <source>Attempting to allocate %n page(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Versuche %n Seite(n) zu allokieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to allocate %n page(s): %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte nicht %n Seite(n) allokieren: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Speicherallokation fehlgeschlagen. Das kann in einigen Browsern bei einem Neuladen der Seite passieren. Schließen Sie diese Seite und Ihren Browser vollständig, dann versuchen Sie es erneut.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der allokierte Speicher ist kein SharedArrayBuffer, obwohl Ihr Browser es unterstützt. Sie müssen ggf. eine Einstellung ändern.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile-Logo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation>drawpile.net-Login</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Applikation</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Starte…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>Starte, dies sollte nur einen Moment dauern…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Inhalte</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade, dies kann eine Weile dauern…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorbereitung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>Initialisiere, dies kann eine Weile dauern…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: ${e}</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile konnte nicht gestartet werden: ${e}</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Einrichtung…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation type="unfinished"></translation>
+        <translation>Schwerwiegender Fehler:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dies liegt normalerweise daran, dass Ihr Browser veraltet ist oder Sie diese Seite über einen eingebetten Browser, wie von einer Chat-Applikation, betrachten und Sie diese richtig öffnen müssen. Für mehr Informationen, schauen Sie &lt;a href=&quot;#&quot;&gt;auf diese Hilfeseite&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültiger Sitzungslink.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wieauchimmer Sie hierhergekommen sind war kein gültiger Link zu einer Drawpile-Sitzung.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;In-App-Browser:&lt;/strong&gt; es sieht so aus, als hätten Sie Drawpile in einem In-App-Browser geöffnet.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;In-App-Browser:&lt;/strong&gt; es sieht so aus, als hätten Sie Drawpile im In-App-Browser von %1 geöffnet.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das funktioniert meistens nicht richtig, bitte öffnen Sie diese Seite stattdessen in einem richtigen Browser.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation type="unfinished"></translation>
+        <translation>Möglicherweise inkompatibler Browser:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Möglicherweise inkompatibler Browser:&lt;/strong&gt; Firefox unter Linux unterstützt druckempfindliche Stifte nur auf manchen Systemen. Wenn Sie keinen Stiftdruck bekommen, verwenden Sie einen anderen Browser oder &lt;a href=&quot;#&quot;&gt;die native Linux-Applikation&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Inkompatibler Browser:&lt;/strong&gt; Firefox unter Windows hat einige Probleme Drawpile auszuführen. Texteingabe und/oder Druck auf Strg+Z zum Rückgängigmachen funktioniert ggf. nicht korrekt. Verwenden Sie einen anderen Browser oder &lt;a href=&quot;#&quot;&gt;die native Windows-Applikation&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Inkompatibler Browser:&lt;/strong&gt; Chrome auf einem %1 hat Probleme Drawpile auszuführen. Es ist eigentlich der System-Browser (Safari) unter einer anderen Schale, Bedienelemente außerhalb des Bildschirms verursacht. Verwenden Sie stattdessen direkt den System-Browser (Safari).</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sprache:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Test your pen pressure here</source>
-        <translation type="unfinished"></translation>
+        <translation>Testen Sie hier Ihren Stiftdruck</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Mauseingabe erkannt, kein Stift</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected touch input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Berührungseingabe erkannt, kein Stift</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected input, but not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingabe erkannt, aber keinen Stift</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen pressure detected</source>
-        <translation type="unfinished"></translation>
+        <translation>Stiftdruck erkannt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen detected, but no pressure variance</source>
-        <translation type="unfinished"></translation>
+        <translation>Stift erkannt, aber keine Druckänderung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished">Prüfe auf Updates…</translation>
+        <translation>Prüfe auf Updates…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Update check blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Update-Prüfung blockiert</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Warnung:&lt;/strong&gt; diese Installation ist &lt;strong&gt;veraltet&lt;/strong&gt; unter Version &lt;code&gt;%1&lt;/code&gt;, welche nicht die neueste Version &lt;code&gt;%2&lt;/code&gt; ist.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>Versuchen Sie diese Seite neuzuladen. Falls dies nichts ändert, melden Sie dem Serverbesitzer, dass ein Update erforderlich ist.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Warnung:&lt;/strong&gt; konnte nicht prüfen, ob diese Installation aktuell ist oder nicht. Sie ist ggf. veraltet mit Version &lt;code&gt;%1&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Versuchen Sie diese Seite neuzuladen. Falls das nichts ändert, fragen Sie den Serverbesitzer oder schauen Sie &lt;a href=&quot;#&quot;&gt;auf der Hilfeseite von drawpile.net&lt;/a&gt; nach wie Sie mit jemandem in Kontakt treten können, der prüfen kann, was hier los ist.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue regardless, but things may not work properly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie können trotzdem weitermachen, aber eventuell funktioniert die Applikation nicht korrekt.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Starten</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Start Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>Trotzdem starten</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Version:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Stable (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Stabil (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Beta (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Beta (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The session you are trying to join requires the beta version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Sitzung der Sie beitreten wollen erfordert die Betaversion von Drawpile.</translation>
     </message>
 </context>
 <context>
@@ -313,7 +313,7 @@
         <location line="+8"/>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Leinwandgröße, Breite und Höhe müssen zwischen 1 und %1 für %2 sein.</translation>
     </message>
 </context>
 <context>
@@ -443,12 +443,12 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinseldeckkraft ändern</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinselhärte ändern</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -983,22 +983,22 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+6"/>
         <source>Greater Density</source>
-        <translation type="unfinished"></translation>
+        <translation>Größere Dichte</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Marker</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>OKLAB</source>
-        <translation type="unfinished"></translation>
+        <translation>OKLAB</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pigment</source>
-        <translation type="unfinished"></translation>
+        <translation>Pigment</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1018,42 +1018,42 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+12"/>
         <source>Linear Dodge/Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Linear abwedeln/Addition</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbig nachbelichten</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbig abwedeln</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Vivid Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Strahlendes Licht</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Lichtpunkt</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Darker Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Dunklere Farbe</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighter Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Hellere Farbe</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference</source>
-        <translation type="unfinished"></translation>
+        <translation>Differenz</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1063,42 +1063,42 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+30"/>
         <source>Shade (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Schatten (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Leuchten (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shade/Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Schatten/Leuchten (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachbelichten (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Abwedeln (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn/Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachbelichten/Abwedeln (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Hard Mix (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Hart mischen (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Differenz (SAI)</translation>
     </message>
     <message>
         <location line="-108"/>
@@ -1998,17 +1998,17 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (Kompatibilitätsmodus)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.3 (vollständig kompatibel)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Unlisted</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungelistet</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2176,7 +2176,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../tools/gradient.cpp" line="+135"/>
         <source>You need to drag to create a gradient.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie müssen ziehen um einen Verlauf zu erstellen.</translation>
     </message>
 </context>
 <context>
