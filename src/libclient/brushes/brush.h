@@ -142,6 +142,7 @@ public:
 	StabilizationMode stabilizationMode;
 	int stabilizerSampleCount;
 	int smoothing;
+	bool confidential = false;
 
 private:
 	static constexpr float DEFAULT_VELOCITY = 5.0f;
@@ -238,6 +239,9 @@ public:
 	int smoothing() const { return m_smoothing; }
 	void setSmoothing(int smoothing) { m_smoothing = smoothing; }
 
+	bool isConfidential() const { return m_confidential; }
+	void setConfidential(bool confidential);
+
 	MyPaintCurve getCurve(int setting, int input) const;
 	void setCurve(int setting, int input, const MyPaintCurve &curve);
 	void removeCurve(int setting, int input);
@@ -259,6 +263,7 @@ private:
 	int m_stabilizerSampleCount;
 	int m_smoothing;
 	QHash<QPair<int, int>, MyPaintCurve> m_curves;
+	bool m_confidential = false;
 
 	static const DP_MyPaintSettings &getDefaultSettings();
 
@@ -322,6 +327,9 @@ public:
 
 	int smoothing() const;
 	void setSmoothing(int smoothing);
+
+	bool isConfidential() const;
+	void setConfidential(bool confidential);
 
 	QByteArray toJson(bool includeSlotProperties = false) const;
 	QByteArray toExportJson(const QString &description) const;

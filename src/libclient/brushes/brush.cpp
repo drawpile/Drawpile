@@ -63,7 +63,8 @@ bool ClassicBrush::equalPreset(
 	return DP_classic_brush_equal_preset(this, &other, inEraserSlot) &&
 		   stabilizationMode == other.stabilizationMode &&
 		   stabilizerSampleCount == other.stabilizerSampleCount &&
-		   smoothing == other.smoothing;
+		   smoothing == other.smoothing &&
+		   confidential == other.confidential;
 }
 
 void ClassicBrush::setSizeCurve(const KisCubicCurve &sizeCurve)
@@ -180,6 +181,7 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 		o["stabilizationmode"].toInt() == Smoothing ? Smoothing : Stabilizer;
 	b.stabilizerSampleCount = o["stabilizer"].toInt();
 	b.smoothing = o["smoothing"].toInt();
+	b.confidential = o.value(QStringLiteral("confidential")).toBool();
 
 	return b;
 }
@@ -287,6 +289,7 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 							: Stabilizer;
 	stabilizerSampleCount = settings["stabilizer"].toInt();
 	smoothing = settings["smoothing"].toInt();
+	confidential = settings.value(QStringLiteral("confidential")).toBool();
 }
 
 QJsonObject ClassicBrush::settingsToJson() const
@@ -350,6 +353,7 @@ QJsonObject ClassicBrush::settingsToJson() const
 	o["stabilizationmode"] = stabilizationMode;
 	o["stabilizer"] = stabilizerSampleCount;
 	o["smoothing"] = smoothing;
+	o[QStringLiteral("confidential")] = confidential;
 
 	// Note: color is intentionally omitted
 
@@ -445,6 +449,7 @@ MyPaintBrush::MyPaintBrush(const MyPaintBrush &other)
 	, m_stabilizerSampleCount{other.m_stabilizerSampleCount}
 	, m_smoothing{other.m_smoothing}
 	, m_curves{other.m_curves}
+	, m_confidential(other.m_confidential)
 {
 	if(other.m_settings) {
 		m_settings = new DP_MyPaintSettings;
@@ -459,6 +464,7 @@ MyPaintBrush::MyPaintBrush(MyPaintBrush &&other)
 	, m_stabilizerSampleCount{other.m_stabilizerSampleCount}
 	, m_smoothing{other.m_smoothing}
 	, m_curves{other.m_curves}
+	, m_confidential(other.m_confidential)
 {
 	other.m_settings = nullptr;
 }
@@ -471,6 +477,7 @@ MyPaintBrush &MyPaintBrush::operator=(MyPaintBrush &&other)
 	std::swap(m_stabilizerSampleCount, other.m_stabilizerSampleCount);
 	std::swap(m_smoothing, other.m_smoothing);
 	std::swap(m_curves, other.m_curves);
+	std::swap(m_confidential, other.m_confidential);
 	return *this;
 }
 
@@ -490,6 +497,7 @@ MyPaintBrush &MyPaintBrush::operator=(const MyPaintBrush &other)
 	m_stabilizerSampleCount = other.m_stabilizerSampleCount;
 	m_smoothing = other.m_smoothing;
 	m_curves = other.m_curves;
+	m_confidential = other.m_confidential;
 	return *this;
 }
 
@@ -502,7 +510,8 @@ bool MyPaintBrush::equalPreset(
 			   &constSettings(), &other.constSettings()) &&
 		   m_stabilizationMode == other.m_stabilizationMode &&
 		   m_stabilizerSampleCount == other.m_stabilizerSampleCount &&
-		   m_smoothing == other.m_smoothing;
+		   m_smoothing == other.m_smoothing &&
+		   m_confidential == other.m_confidential;
 }
 
 DP_MyPaintSettings &MyPaintBrush::settings()
@@ -516,6 +525,11 @@ DP_MyPaintSettings &MyPaintBrush::settings()
 const DP_MyPaintSettings &MyPaintBrush::constSettings() const
 {
 	return m_settings ? *m_settings : getDefaultSettings();
+}
+
+void MyPaintBrush::setConfidential(bool confidential)
+{
+	m_confidential = confidential;
 }
 
 MyPaintCurve MyPaintBrush::getCurve(int setting, int input) const
@@ -556,6 +570,7 @@ QJsonObject MyPaintBrush::toJson() const
 			 {"stabilizationmode", m_stabilizationMode},
 			 {"stabilizer", m_stabilizerSampleCount},
 			 {"smoothing", m_smoothing},
+			 {QStringLiteral("confidential"), m_confidential},
 			 {"mapping", mappingToJson()},
 		 }},
 	};
@@ -570,6 +585,7 @@ void MyPaintBrush::exportToJson(QJsonObject &json) const
 		{"stabilizationmode", m_stabilizationMode},
 		{"stabilizer", m_stabilizerSampleCount},
 		{"smoothing", m_smoothing},
+		{QStringLiteral("confidential"), m_confidential},
 	};
 	json["settings"] = mappingToJson();
 }
@@ -605,6 +621,7 @@ MyPaintBrush MyPaintBrush::fromJson(const QJsonObject &json)
 		o["stabilizationmode"].toInt() == Smoothing ? Smoothing : Stabilizer;
 	b.m_stabilizerSampleCount = stabilizerSampleCount;
 	b.m_smoothing = o["smoothing"].toInt();
+	b.m_confidential = o.value(QStringLiteral("confidential")).toBool();
 
 	return b;
 }
@@ -639,6 +656,8 @@ bool MyPaintBrush::fromExportJson(const QJsonObject &json)
 																   : Stabilizer;
 	m_stabilizerSampleCount = drawpileSettings["stabilizer"].toInt(-1);
 	m_smoothing = drawpileSettings["smoothing"].toInt();
+	m_confidential =
+		drawpileSettings.value(QStringLiteral("confidential")).toBool();
 
 	return true;
 }
@@ -1024,6 +1043,21 @@ void ActiveBrush::setSmoothing(int smoothing)
 	}
 }
 
+bool ActiveBrush::isConfidential() const
+{
+	if(m_activeType == CLASSIC) {
+		return m_classic.confidential;
+	} else {
+		return m_myPaint.isConfidential();
+	}
+}
+
+void ActiveBrush::setConfidential(bool confidential)
+{
+	m_classic.confidential = confidential;
+	m_myPaint.setConfidential(confidential);
+}
+
 QByteArray ActiveBrush::toJson(bool includeSlotProperties) const
 {
 	QJsonObject json{
@@ -1063,10 +1097,14 @@ QByteArray ActiveBrush::toExportJson(const QString &description) const
 
 QJsonObject ActiveBrush::toShareJson() const
 {
-	if(m_activeType == CLASSIC) {
-		return m_classic.toJson();
+	if(isConfidential()) {
+		return QJsonObject();
 	} else {
-		return m_myPaint.toJson();
+		if(m_activeType == CLASSIC) {
+			return m_classic.toJson();
+		} else {
+			return m_myPaint.toJson();
+		}
 	}
 }
 

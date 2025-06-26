@@ -1466,6 +1466,7 @@ void MainWindow::sendUserInfo(int userId)
 		client->myId(), userId, QJsonDocument{info}));
 }
 
+// clang-format on
 void MainWindow::requestCurrentBrush(int userId)
 {
 	m_brushRequestUserId = userId;
@@ -1476,24 +1477,28 @@ void MainWindow::requestCurrentBrush(int userId)
 		{QStringLiteral("correlator"), m_brushRequestCorrelator},
 	};
 	net::Client *client = m_doc->client();
-	client->sendMessage(net::makeUserInfoMessage(
-		client->myId(), userId, QJsonDocument{info}));
+	client->sendMessage(
+		net::makeUserInfoMessage(client->myId(), userId, QJsonDocument{info}));
 }
 
 void MainWindow::sendCurrentBrush(int userId, const QString &correlator)
 {
-	tools::BrushSettings *bs = m_dockToolSettings->brushSettings();
+	const brushes::ActiveBrush &brush =
+		m_dockToolSettings->brushSettings()->currentBrush();
 	QJsonObject info = {
 		{QStringLiteral("type"), QStringLiteral("current_brush")},
-		{QStringLiteral("brush"), bs->currentBrush().toShareJson()},
 		{QStringLiteral("correlator"), correlator},
 	};
+	if(brush.isConfidential()) {
+		info.insert(QStringLiteral("confidential"), true);
+	} else {
+		info.insert(QStringLiteral("brush"), brush.toShareJson());
+	}
 	net::Client *client = m_doc->client();
-	client->sendMessage(net::makeUserInfoMessage(
-		client->myId(), userId, QJsonDocument{info}));
+	client->sendMessage(
+		net::makeUserInfoMessage(client->myId(), userId, QJsonDocument{info}));
 }
 
-// clang-format on
 void MainWindow::receiveCurrentBrush(int userId, const QJsonObject &info)
 {
 	bool wasRequested = m_brushRequestUserId == userId &&
@@ -1510,6 +1515,9 @@ void MainWindow::receiveCurrentBrush(int userId, const QJsonObject &info)
 			tools::BrushSettings *bs = m_dockToolSettings->brushSettings();
 			bs->setCurrentBrushDetached(
 				brushes::ActiveBrush::fromJson(v.toObject()));
+		} else if(info.value(QStringLiteral("confidential")).toBool()) {
+			m_chatbox->receiveSystemMessage(
+				tr("The requested brush does not allow others to use it."));
 		}
 	}
 }
