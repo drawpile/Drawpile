@@ -19,167 +19,167 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
         <source>Attempting to allocate %n page(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Intentando asignar %n página(s)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to allocate %n page(s): %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudieron asignar %n página(s): %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error en la asignación de memoria. Esto puede ocurrir en algunos navegadores al actualizar. Cierre esta página y el navegador por completo, y vuelva a intentarlo.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>La memoria asignada no es un SharedArrayBuffer (Buffer de matriz compartida), aunque su navegador lo admita. Es posible que deba cambiar alguna configuración.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Logo genial de Drawpile</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation>inicio de sesión en drawpile.net</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando aplicación</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando, esto sólo debería tomar un momento…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando activos (assets)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando, esto puede tardar un poco…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>Preparando</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicializando, esto puede tardar un poco…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: ${e}</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo iniciar Drawpile: ${e}</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurando…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation type="unfinished"></translation>
+        <translation>Error fatal:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esto suele deberse a que tu navegador está desactualizado o a que estás viendo la página a través de algún navegador integrado, como una aplicación de chat, y necesitas abrirla correctamente. Para más información, consulta &lt;a href=&quot;#&quot;&gt;esta página de ayuda&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enlace de sesión invalido.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin embargo, usted llegó aquí sin haber obtenido un enlace válido a una sesión de Drawpile.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Navegador Integrado:&lt;/strong&gt; parece que abriste Drawpile en un navegador integrado de una aplicación.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Navegador Integrado:&lt;/strong&gt; parece que abriste Drawpile en un %1 navegador de aplicación integrado.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Por lo general, esto no funciona correctamente en esta clase de navegador; abra esta página en un navegador web real.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation type="unfinished"></translation>
+        <translation>Navegador posiblemente incompatible:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Posible incompatibilidad del navegador:&lt;/strong&gt; Firefox en Linux no es compatible con lápices sensibles a la presión en todos los sistemas. Si no detecta presión, considere usar otro navegador o &lt;a href=&quot;#&quot;&gt; la aplicación nativa de Linux&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Navegador incompatible:&lt;/strong&gt; Firefox en Windows tiene problemas para ejecutar Drawpile. Es posible que introducir texto o presionar Ctrl+Z para deshacer no funcione correctamente. Considere usar otro navegador o &lt;a href=&quot;#&quot;&gt;la aplicación nativa de Windows&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Navegador incompatible:&lt;/strong&gt; Chrome en %1 tiene problemas al ejecutar Drawpile. El problema radica en el navegador del sistema (Safari) en un shell diferente, lo que provoca que los controles queden fuera de la pantalla. Considere usar el navegador del sistema (Safari) directamente.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>Lenguaje:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Test your pen pressure here</source>
-        <translation type="unfinished"></translation>
+        <translation>Pruebe la presión de su lápiz aquí (o ejerce presión sobre él, como quieras)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Se detectó una entrada del mouse, no de un lápiz</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected touch input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Se detectó una entrada táctil, no un lápiz</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected input, but not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Se detectó entrada, pero no de un lápiz</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen pressure detected</source>
-        <translation type="unfinished"></translation>
+        <translation>Presión del lápiz detectada</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen detected, but no pressure variance</source>
-        <translation type="unfinished"></translation>
+        <translation>Se detectó lápiz, pero no hubo variación de presión</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -189,62 +189,62 @@
     <message>
         <location line="+1"/>
         <source>Update check blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Comprobación de actualización bloqueada</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Advertencia:&lt;/strong&gt; esta instalación está &lt;strong&gt;desactualizada&lt;/strong&gt; a una versión &lt;code&gt;%1&lt;/code&gt;, que no es la versión más reciente &lt;code&gt;%2&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>Intenta actualizar la página. Si no hay cambios, avisa al propietario del servidor para que la actualice.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Advertencia:&lt;/strong&gt; No se pudo determinar si la instalación está actualizada. Podría estar desactualizada en la versión &lt;code&gt;%1&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Intenta actualizar la página. Si no cambia nada, consulta al propietario del servidor o consulta &lt;a href=&quot;#&quot;&gt; la página de ayuda en drawpile.net&lt;/a&gt; para saber cómo contactar con alguien que pueda comprobar qué está pasando.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue regardless, but things may not work properly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Puedes continuar de todas formas, pero es posible que las cosas no funcionen correctamente.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Start Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciar de todos modos</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Versión:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Stable (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Estable (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Beta (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Beta (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The session you are trying to join requires the beta version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>La sesión a la que intentas unirte requiere la versión beta de Drawpile.</translation>
     </message>
 </context>
 <context>
