@@ -53,7 +53,7 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 	m_infoAction = m_userMenu->addAction(
 		QIcon::fromTheme("help-whatsthis"), tr("Show User &Information"));
 	m_brushAction = m_userMenu->addAction(
-		QIcon::fromTheme("draw-brush"), tr("Take Current &Brush"));
+		QIcon::fromTheme("draw-brush"), tr("Request Current &Brush"));
 
 	m_opAction->setCheckable(true);
 	m_trustAction->setCheckable(true);

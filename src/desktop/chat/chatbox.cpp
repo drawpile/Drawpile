@@ -182,6 +182,11 @@ void ChatBox::focusInput()
 	m_chatWidget->focusInput();
 }
 
+void ChatBox::receiveSystemMessage(const QString &message, int type)
+{
+	m_chatWidget->receiveSystemMessage(message, type);
+}
+
 void ChatBox::setCurrentLayer(int layerId)
 {
 	m_chatWidget->setCurrentLayer(layerId);

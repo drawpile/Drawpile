@@ -65,7 +65,8 @@ bool ClassicBrush::equalPreset(
 	return DP_classic_brush_equal_preset(this, &other, inEraserSlot) &&
 		   stabilizationMode == other.stabilizationMode &&
 		   stabilizerSampleCount == other.stabilizerSampleCount &&
-		   smoothing == other.smoothing && syncSamples == other.syncSamples;
+		   smoothing == other.smoothing && syncSamples == other.syncSamples &&
+		   confidential == other.confidential;
 }
 
 void ClassicBrush::setPaintMode(int paintMode)
@@ -248,6 +249,7 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.stabilizerSampleCount = o["stabilizer"].toInt();
 	b.smoothing = o["smoothing"].toInt();
 	b.syncSamples = o.value(QStringLiteral("syncsamples")).toBool();
+	b.confidential = o.value(QStringLiteral("confidential")).toBool();
 
 	return b;
 }
@@ -385,6 +387,7 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 	stabilizerSampleCount = settings["stabilizer"].toInt();
 	smoothing = settings["smoothing"].toInt();
 	syncSamples = settings.value(QStringLiteral("syncsamples")).toBool();
+	confidential = settings.value(QStringLiteral("confidential")).toBool();
 }
 
 QJsonObject ClassicBrush::settingsToJson() const
@@ -464,6 +467,7 @@ QJsonObject ClassicBrush::settingsToJson() const
 	o["stabilizer"] = stabilizerSampleCount;
 	o["smoothing"] = smoothing;
 	o[QStringLiteral("syncsamples")] = syncSamples;
+	o[QStringLiteral("confidential")] = confidential;
 
 	// Note: color is intentionally omitted
 
@@ -565,6 +569,7 @@ MyPaintBrush::MyPaintBrush(const MyPaintBrush &other)
 	, m_smoothing{other.m_smoothing}
 	, m_curves{other.m_curves}
 	, m_syncSamples(other.m_syncSamples)
+	, m_confidential(other.m_confidential)
 {
 	if(other.m_settings) {
 		m_settings = new DP_MyPaintSettings;
@@ -580,6 +585,7 @@ MyPaintBrush::MyPaintBrush(MyPaintBrush &&other)
 	, m_smoothing{other.m_smoothing}
 	, m_curves{other.m_curves}
 	, m_syncSamples(other.m_syncSamples)
+	, m_confidential(other.m_confidential)
 {
 	other.m_settings = nullptr;
 }
@@ -593,6 +599,7 @@ MyPaintBrush &MyPaintBrush::operator=(MyPaintBrush &&other)
 	std::swap(m_smoothing, other.m_smoothing);
 	std::swap(m_curves, other.m_curves);
 	std::swap(m_syncSamples, other.m_syncSamples);
+	std::swap(m_confidential, other.m_confidential);
 	return *this;
 }
 
@@ -613,6 +620,7 @@ MyPaintBrush &MyPaintBrush::operator=(const MyPaintBrush &other)
 	m_smoothing = other.m_smoothing;
 	m_curves = other.m_curves;
 	m_syncSamples = other.m_syncSamples;
+	m_confidential = other.m_confidential;
 	return *this;
 }
 
@@ -626,7 +634,8 @@ bool MyPaintBrush::equalPreset(
 		   m_stabilizationMode == other.m_stabilizationMode &&
 		   m_stabilizerSampleCount == other.m_stabilizerSampleCount &&
 		   m_smoothing == other.m_smoothing &&
-		   m_syncSamples == other.m_syncSamples;
+		   m_syncSamples == other.m_syncSamples &&
+		   m_confidential == other.m_confidential;
 }
 
 DP_MyPaintSettings &MyPaintBrush::settings()
@@ -689,6 +698,11 @@ bool MyPaintBrush::shouldSyncSamples() const
 void MyPaintBrush::setSyncSamples(bool syncSamples)
 {
 	m_syncSamples = syncSamples;
+}
+
+void MyPaintBrush::setConfidential(bool confidential)
+{
+	m_confidential = confidential;
 }
 
 float MyPaintBrush::maxSizeFor(float baseValue) const
@@ -755,6 +769,7 @@ QJsonObject MyPaintBrush::toJson() const
 			 {"stabilizer", m_stabilizerSampleCount},
 			 {"smoothing", m_smoothing},
 			 {QStringLiteral("syncsamples"), m_syncSamples},
+			 {QStringLiteral("confidential"), m_confidential},
 			 {"mapping", mappingToJson()},
 			 // Backward-compatibility.
 			 {"lock_alpha", m_brush.brush_mode == DP_BLEND_MODE_RECOLOR},
@@ -777,6 +792,7 @@ void MyPaintBrush::exportToJson(QJsonObject &json) const
 		{"stabilizer", m_stabilizerSampleCount},
 		{"smoothing", m_smoothing},
 		{QStringLiteral("syncsamples"), m_syncSamples},
+		{QStringLiteral("confidential"), m_confidential},
 		// Backward-compatibility.
 		{"lock_alpha", m_brush.brush_mode == DP_BLEND_MODE_RECOLOR},
 		{"indirect", m_brush.paint_mode != DP_PAINT_MODE_DIRECT},
@@ -848,6 +864,7 @@ MyPaintBrush MyPaintBrush::fromJson(const QJsonObject &json)
 	b.m_stabilizerSampleCount = stabilizerSampleCount;
 	b.m_smoothing = o["smoothing"].toInt();
 	b.m_syncSamples = o.value(QStringLiteral("syncsamples")).toBool();
+	b.m_confidential = o.value(QStringLiteral("confidential")).toBool();
 
 	return b;
 }
@@ -917,6 +934,8 @@ bool MyPaintBrush::fromExportJson(const QJsonObject &json)
 	m_smoothing = drawpileSettings["smoothing"].toInt();
 	m_syncSamples =
 		drawpileSettings.value(QStringLiteral("syncsamples")).toBool();
+	m_confidential =
+		drawpileSettings.value(QStringLiteral("confidential")).toBool();
 
 	return true;
 }
@@ -1380,6 +1399,21 @@ void ActiveBrush::setSyncSamples(bool syncSamples)
 	}
 }
 
+bool ActiveBrush::isConfidential() const
+{
+	if(m_activeType == CLASSIC) {
+		return m_classic.confidential;
+	} else {
+		return m_myPaint.isConfidential();
+	}
+}
+
+void ActiveBrush::setConfidential(bool confidential)
+{
+	m_classic.confidential = confidential;
+	m_myPaint.setConfidential(confidential);
+}
+
 QByteArray ActiveBrush::toJson(bool includeSlotProperties) const
 {
 	QJsonObject json{
@@ -1419,10 +1453,14 @@ QByteArray ActiveBrush::toExportJson(const QString &description) const
 
 QJsonObject ActiveBrush::toShareJson() const
 {
-	if(m_activeType == CLASSIC) {
-		return m_classic.toJson();
+	if(isConfidential()) {
+		return QJsonObject();
 	} else {
-		return m_myPaint.toJson();
+		if(m_activeType == CLASSIC) {
+			return m_classic.toJson();
+		} else {
+			return m_myPaint.toJson();
+		}
 	}
 }
 

@@ -40,6 +40,8 @@ public:
 		return m_state == State::Collapsed || !isVisible();
 	}
 
+	void receiveSystemMessage(const QString &message, int type = 0);
+
 public slots:
 	void setCurrentLayer(int layerId);
 

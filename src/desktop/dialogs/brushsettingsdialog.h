@@ -42,11 +42,14 @@ public:
 
 	void setChangeShortcutEnabled(bool enabled);
 
+	void setTakeable(bool takeable);
+
 signals:
 	void requestShortcutChange();
 	void presetNameChanged(const QString &name);
 	void presetDescriptionChanged(const QString &name);
 	void presetThumbnailChanged(const QPixmap &thumbnail);
+	void takeableChanged(bool takeable);
 
 private:
 	void choosePresetThumbnailFile();
@@ -62,6 +65,7 @@ private:
 	QLineEdit *m_presetLabelEdit;
 	QLineEdit *m_presetNameEdit;
 	QPlainTextEdit *m_presetDescriptionEdit;
+	QCheckBox *m_takeableCheckBox;
 	QPixmap m_presetThumbnail;
 	QPixmap m_scaledPresetThumbnail;
 };

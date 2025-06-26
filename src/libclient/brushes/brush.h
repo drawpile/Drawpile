@@ -172,6 +172,7 @@ public:
 	int stabilizerSampleCount = 0;
 	int smoothing = 0;
 	bool syncSamples = false;
+	bool confidential = false;
 
 private:
 	static constexpr float DEFAULT_VELOCITY = 5.0f;
@@ -278,6 +279,9 @@ public:
 	bool isSyncSamples() const { return m_syncSamples; }
 	void setSyncSamples(bool syncSamples);
 
+	bool isConfidential() const { return m_confidential; }
+	void setConfidential(bool confidential);
+
 	float maxSizeFor(float baseValue) const;
 	float baseValueForMaxSize(float maxSize) const;
 
@@ -305,6 +309,7 @@ private:
 	int m_smoothing;
 	QHash<QPair<int, int>, MyPaintCurve> m_curves;
 	bool m_syncSamples = false;
+	bool m_confidential = false;
 
 	static const DP_MyPaintSettings &getDefaultSettings();
 
@@ -381,6 +386,9 @@ public:
 	bool shouldSyncSamples() const;
 	bool isSyncSamples() const;
 	void setSyncSamples(bool syncSamples);
+
+	bool isConfidential() const;
+	void setConfidential(bool confidential);
 
 	QByteArray toJson(bool includeSlotProperties = false) const;
 	QByteArray toExportJson(const QString &description) const;

@@ -134,6 +134,15 @@ BrushPresetForm::BrushPresetForm(QWidget *parent)
 	connect(
 		m_presetDescriptionEdit, &QPlainTextEdit::textChanged, this,
 		&BrushPresetForm::emitPresetDescriptionChanged);
+
+	utils::addFormSpacer(attachedLayout);
+
+	m_takeableCheckBox =
+		new QCheckBox(tr("Allow others in a session to use this brush"));
+	attachedLayout->addRow(tr("Sharing:"), m_takeableCheckBox);
+	connect(
+		m_takeableCheckBox, &QCheckBox::clicked, this,
+		&BrushPresetForm::takeableChanged);
 }
 
 QString BrushPresetForm::presetName() const
@@ -196,6 +205,11 @@ void BrushPresetForm::setPresetShortcut(const QKeySequence &presetShortcut)
 void BrushPresetForm::setChangeShortcutEnabled(bool enabled)
 {
 	m_presetShortcutButton->setEnabled(enabled);
+}
+
+void BrushPresetForm::setTakeable(bool takeable)
+{
+	m_takeableCheckBox->setChecked(takeable);
 }
 
 void BrushPresetForm::choosePresetThumbnailFile()
@@ -446,6 +460,7 @@ void BrushSettingsDialog::updateUiFromActiveBrush(
 	QSignalBlocker blocker{this};
 	d->brush = brush;
 	d->blendModeManager->setCompatibilityMode(d->compatibilityMode);
+	d->brushPresetForm->setTakeable(!d->brush.isConfidential());
 
 	DP_BrushShape shape = brush.shape();
 	bool shapeChanged = shape != d->lastShape;
@@ -587,6 +602,12 @@ QWidget *BrushSettingsDialog::buildPresetPageUi()
 	connect(
 		d->brushPresetForm, &BrushPresetForm::presetThumbnailChanged, this,
 		&BrushSettingsDialog::presetThumbnailChanged);
+	connect(
+		d->brushPresetForm, &BrushPresetForm::takeableChanged, this,
+		[this](bool takeable) {
+			d->brush.setConfidential(!takeable);
+			emitChange();
+		});
 
 	QScrollArea *scroll = new QScrollArea(this);
 	scroll->setWidgetResizable(true);
