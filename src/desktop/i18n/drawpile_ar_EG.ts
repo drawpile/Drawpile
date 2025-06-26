@@ -86,14 +86,9 @@
         <translation>نوع الفُرشاة</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+87"/>
         <source>Pick initial color from layer</source>
         <translation>اختر اللون المبدئي من الطبقة</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Lock alpha (recolor mode)</source>
-        <translation>قُفْل الشفافية (وضع إعادة التلوين)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -106,7 +101,7 @@
         <translation>وضع الرسم المباشر</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+141"/>
         <source>px</source>
         <translation>بكسل</translation>
     </message>
@@ -116,57 +111,75 @@
         <translation>الحجم: </translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="-13"/>
         <source>Radius: </source>
         <translation>نصف القطر: </translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-13"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+164"/>
         <source>Opacity: </source>
         <translation>الشفافية: </translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="-76"/>
         <source>Hardness: </source>
         <translation>الحِدَّة: </translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location line="+14"/>
-        <location line="+14"/>
+        <location line="-123"/>
+        <location line="+3"/>
+        <location filename="../toolwidgets/fillsettings.cpp" line="+136"/>
+        <location filename="../toolwidgets/gradientsettings.cpp" line="+415"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
+        <location filename="../toolwidgets/transformsettings.cpp" line="+340"/>
+        <source>Preserve alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+133"/>
         <location line="+33"/>
+        <location line="+91"/>
+        <location line="+25"/>
         <source>Pressure sensitivity</source>
         <translation>حساسية الضغط</translation>
     </message>
     <message>
-        <location line="-16"/>
+        <location line="-41"/>
         <source>Smudging: </source>
         <translation>التلطيخ: </translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="-61"/>
         <source>Color Pickup: 1/</source>
         <translation>لاقط اللون: 1/</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="-30"/>
         <source>Spacing: </source>
         <translation>التباعد: </translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="-49"/>
         <source>Gain: </source>
         <translation>الاكتساب: </translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+213"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="-71"/>
         <source>Stabilizer: </source>
         <translation>استقرار الخط: </translation>
     </message>
     <message>
         <location line="+13"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+12"/>
         <source>Smoothing: </source>
         <translation>تنعيم الخط: </translation>
+    </message>
+    <message>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="-23"/>
+        <source>%</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -353,7 +366,7 @@
 <context>
     <name>FileWrangler</name>
     <message>
-        <location filename="../filewrangler.cpp" line="+169"/>
+        <location filename="../filewrangler.cpp" line="+170"/>
         <source>Certificates (%1)</source>
         <translation>الشهادات (%1)</translation>
     </message>
@@ -383,13 +396,13 @@
         <translation>استيراد الأدوار</translation>
     </message>
     <message>
-        <location line="+137"/>
-        <location line="+298"/>
+        <location line="+128"/>
+        <location line="+302"/>
         <source>Save Image</source>
         <translation>حفظ الصورة</translation>
     </message>
     <message>
-        <location line="-298"/>
+        <location line="-302"/>
         <source>Export Image</source>
         <translation>تصدير الصورة</translation>
     </message>
@@ -429,12 +442,12 @@
         <translation>سِجِل أحداث الجهاز اللوحي</translation>
     </message>
     <message>
-        <location line="+143"/>
+        <location line="+146"/>
         <source>Log File</source>
         <translation>ملف السِجِل</translation>
     </message>
     <message>
-        <location line="-171"/>
+        <location line="-174"/>
         <location line="+36"/>
         <source>Export MP4 Video</source>
         <translation>تصدير فيديو MP4</translation>
@@ -455,7 +468,7 @@
         <translation>حفظ إطارات الرسوم المتحركة</translation>
     </message>
     <message>
-        <location line="-271"/>
+        <location line="-262"/>
         <source>Add Avatar</source>
         <translation>إضافة صورة رمزية</translation>
     </message>
@@ -501,12 +514,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+391"/>
+        <location line="+385"/>
         <source>Session Settings (%1)</source>
         <translation>إعدادات الجَلسة (%1)</translation>
     </message>
     <message>
-        <location line="-390"/>
+        <location line="-384"/>
         <source>Session Bans (%1)</source>
         <translation>محظوري الجَلسة (%1)</translation>
     </message>
@@ -541,7 +554,7 @@
         <translation>صورة مرجعية</translation>
     </message>
     <message>
-        <location line="+168"/>
+        <location line="+159"/>
         <source>Export Frames in ZIP</source>
         <translation>تصدير الإطارات بصيغة ZIP</translation>
     </message>
@@ -561,7 +574,7 @@
         <translation>حفظ سلسلة الصور</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+77"/>
         <source>Export Brushes</source>
         <translation>تصدير الفُرَش</translation>
     </message>
@@ -581,38 +594,34 @@
         <translation>تصدير إعدادات الجَلسة</translation>
     </message>
     <message>
-        <location line="+38"/>
-        <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation>صيغة (PSD) تفتقر لدعم للتعليقات التوضيحية، والرسومات المتحركة وبعض أوضاع المزج. ذا كنت تريد الاحتفاظ بتلك الأشياء بشكل صحيح، عليك حفظ ملف بصيغة ORA.</translation>
+        <location line="+39"/>
+        <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save a different format.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation>سيؤدي التنسيق المحدد إلى حفظ صورة مدمجة. إذا كنت تريد الاحتفاظ بالطبقات، و التعليقات التوضيحية، و الخط الزمني للتحريك؛ عليك حفظ بملف ORA.</translation>
+        <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save a different format.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+28"/>
         <source>Save as Selected Format</source>
         <translation>حفظ بالتنسيق المحدد</translation>
     </message>
     <message>
         <location line="+1"/>
+        <location line="+6"/>
         <source>Save as %1</source>
         <translation>احفظ كـ %1</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Save as ORA</source>
-        <translation>احفظ كـ ORA</translation>
-    </message>
-    <message>
-        <location line="+70"/>
+        <location line="+168"/>
         <location line="+5"/>
         <source>Untitled</source>
         <translation>بدون عنوان</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+99"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
         <translation>بدون عنوان%1</translation>
@@ -621,8 +630,8 @@
 <context>
     <name>FillSettings</name>
     <message>
-        <location filename="../ui/fillsettings.ui" line="+330"/>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="+310"/>
+        <location filename="../ui/fillsettings.ui" line="+351"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+318"/>
         <source>Feather: </source>
         <translation>ريشة: </translation>
     </message>
@@ -632,8 +641,8 @@
         <translation>الحد الأقصى للحجم: غير محدود</translation>
     </message>
     <message>
-        <location filename="../ui/fillsettings.ui" line="-298"/>
-        <location line="+279"/>
+        <location filename="../ui/fillsettings.ui" line="-319"/>
+        <location line="+300"/>
         <location line="+16"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-192"/>
         <location line="+51"/>
@@ -666,7 +675,7 @@
         <translation>وضع:</translation>
     </message>
     <message>
-        <location line="-289"/>
+        <location line="-310"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-146"/>
         <source>Tolerance: </source>
         <translation>تسامح: </translation>
@@ -690,7 +699,7 @@
         <translation>ملء التحديد كُلََّه</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+99"/>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+59"/>
         <source>Merged image</source>
@@ -739,13 +748,13 @@
         <translation>إلغاء</translation>
     </message>
     <message>
-        <location line="-336"/>
+        <location line="-357"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
         <translation>حد الحجم: </translation>
     </message>
     <message>
-        <location line="+279"/>
+        <location line="+300"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+62"/>
         <source>Close Gaps: </source>
         <translation>إغلاق الفجوات: </translation>
@@ -759,17 +768,17 @@
         <translation>معاينة الإطارات المتتابعة</translation>
     </message>
     <message>
-        <location line="+28"/>
-        <source>Reset Zoom</source>
-        <translation>إعادة ضبط التقريب</translation>
-    </message>
-    <message>
-        <location line="-17"/>
+        <location line="+11"/>
         <source>Refresh</source>
         <translation>تحديث</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+17"/>
+        <source>Zoom</source>
+        <translation type="unfinished">تكبير</translation>
+    </message>
+    <message>
+        <location line="+39"/>
         <source>Rewind</source>
         <translation>ترجيع</translation>
     </message>
@@ -779,12 +788,7 @@
         <translation>تشغيل</translation>
     </message>
     <message>
-        <location line="+17"/>
-        <source>Frame:</source>
-        <translation>إطار:</translation>
-    </message>
-    <message>
-        <location line="+20"/>
+        <location line="+30"/>
         <source>Range</source>
         <translation>المدى</translation>
     </message>
@@ -896,7 +900,7 @@
 <context>
     <name>KisSliderSpinBoxPrivate</name>
     <message>
-        <location filename="../widgets/kis_slider_spin_box_p.h" line="+378"/>
+        <location filename="../widgets/kis_slider_spin_box_p.h" line="+384"/>
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
@@ -1031,6 +1035,21 @@ Subrange: [%3, %4]</source>
         <source>Choose…</source>
         <translation>اختر…</translation>
     </message>
+    <message>
+        <location line="+13"/>
+        <source>Inherit alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Clip to layer below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Blend alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LayoutsDialog</name>
@@ -1063,7 +1082,7 @@ Subrange: [%3, %4]</source>
 <context>
     <name>LinkCheck</name>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1129"/>
+        <location filename="../utils/widgetutils.cpp" line="+1193"/>
         <source>Open Link</source>
         <translation>افتح رابط</translation>
     </message>
@@ -1260,7 +1279,7 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+330"/>
+        <location filename="../mainwindow.cpp" line="+336"/>
         <source>Server out of space</source>
         <translation>نفدت مساحة الخادم</translation>
     </message>
@@ -1272,12 +1291,12 @@ Simplify the canvas and reset manually before space runs out.</source>
 يرجى تبسيط اللوحة وإعادة الضبط يدويًا قبل نفاد المساحة.</translation>
     </message>
     <message>
-        <location line="+344"/>
+        <location line="+401"/>
         <source>🙋 %1 joined!</source>
         <translation>%1🙋 قام بالانضمام!</translation>
     </message>
     <message>
-        <location line="+92"/>
+        <location line="+113"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
         <translation>قطع اتصالك بالجلسة</translation>
@@ -1338,18 +1357,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+62"/>
-        <location line="+2130"/>
+        <location line="+2317"/>
         <source>Untitled</source>
         <translation>بدون عنوان</translation>
     </message>
     <message>
-        <location line="-2081"/>
-        <location line="+3793"/>
+        <location line="-2265"/>
+        <location line="+4063"/>
         <source>Export Again</source>
         <translation>تصدير مجددًا</translation>
     </message>
     <message>
-        <location line="-3789"/>
+        <location line="-4059"/>
         <source>Export Again to %1</source>
         <translation>صدِّر مجددًا إلى %1</translation>
     </message>
@@ -1369,7 +1388,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>اصلح</translation>
     </message>
     <message>
-        <location line="+200"/>
+        <location line="+304"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>اخرج من Drawpile</translation>
@@ -1387,12 +1406,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+788"/>
+        <location line="+827"/>
         <source>Cancel</source>
         <translation>ألغ</translation>
     </message>
     <message>
-        <location line="-797"/>
+        <location line="-836"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>هناك تغييرات غير محفوظة. احفظهم قبل الخروج؟</translation>
     </message>
@@ -1463,7 +1482,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>جار فتح ملف…</translation>
     </message>
     <message>
-        <location line="-1254"/>
+        <location line="-1361"/>
         <source>Open</source>
         <translation type="unfinished">افتح</translation>
     </message>
@@ -1473,7 +1492,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>انت على وشك فتح ملفّ جديد، و تُغلق هذه النّافذة.</translation>
     </message>
     <message>
-        <location line="+1438"/>
+        <location line="+1549"/>
         <source>Saving...</source>
         <translation>جار الحفظ...</translation>
     </message>
@@ -1493,7 +1512,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>تم حفظ الصورة</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+63"/>
         <source>Download Complete</source>
         <translation>اكتمل التحميل</translation>
     </message>
@@ -1503,17 +1522,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>اكتمل التحميل، انقر على &quot;حفظ&quot; لحفظ ملفك.</translation>
     </message>
     <message>
-        <location line="+67"/>
-        <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
-        <translation>اُستضيفت هذه الجَلسة باستخدام إصدار أقدم من Drawpile، ولن تتوفر بعض الميزات الأحدث. ستظهر إصدارات Drawpile الأخرى نتائج مختلفة، وقد تؤدي إعادة ضبط الجَلسة إلى تغييرات مفاجئة.</translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="+78"/>
         <source>Compatibility Mode</source>
         <translation type="unfinished">حاول توازي الادوات القديمة...</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>Session template saved</source>
         <translation>تم حفظ قالب الجَلسة</translation>
     </message>
@@ -1544,12 +1558,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2256"/>
+        <location line="+2383"/>
         <source>Record...</source>
         <translation>تسجيل...</translation>
     </message>
     <message>
-        <location line="-2214"/>
+        <location line="-2341"/>
         <source>Unsupported format.</source>
         <translation>صيغة غير مدعومة.</translation>
     </message>
@@ -1594,17 +1608,17 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>حدث خطأ أثناء فتح سجل أحداث الجهاز اللوحي.</translation>
     </message>
     <message>
-        <location line="+183"/>
+        <location line="+188"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>أنت فعلًا متصل بجلسة! اقطع الاتصال أولًا لاستضافة واحدة.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>لا توجد لوحة للاستضافة! أنشئ واحدة أو افتح ملفًا.</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+25"/>
         <source>Invalid address</source>
         <translation>عنوان غير صالح</translation>
     </message>
@@ -1614,17 +1628,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>استضف جَلسة</translation>
     </message>
     <message>
-        <location line="+127"/>
+        <location line="+156"/>
         <source>Reconnect</source>
         <translation>إعادة الاتصال</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>You&apos;re about reconnect to the session and close this window.</source>
-        <translation>أنت على وشك إعادة الاتصال بالجلسة وإغلاق هذه النافذة.</translation>
-    </message>
-    <message>
-        <location line="+25"/>
+        <location line="+27"/>
         <source>Really leave the session?</source>
         <translation>أمتأكد من مغادرة الجَلسة؟</translation>
     </message>
@@ -1654,18 +1663,18 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>ضع كلمه مرور المشغل</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+66"/>
         <source>Terminate session</source>
         <translation>قاطع الجَلسة</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2712"/>
+        <location line="+3076"/>
         <source>Terminate</source>
         <translation>مقاطعة</translation>
     </message>
     <message>
-        <location line="-2698"/>
+        <location line="-3062"/>
         <source>Join Session</source>
         <translation>انضم لجلسة</translation>
     </message>
@@ -1685,12 +1694,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>انضم</translation>
     </message>
     <message>
-        <location line="+135"/>
+        <location line="+155"/>
         <source>Session blocked by parental controls</source>
         <translation>تم حظر الجَلسة بواسطة أدوات الرِّقابة الأبوية</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+55"/>
         <source>Undo Limit... (%1)</source>
         <translation>حد التراجع... (%1)</translation>
     </message>
@@ -1705,7 +1714,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>خطأ</translation>
     </message>
     <message>
-        <location line="+489"/>
+        <location line="+528"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
         <translation>لم نتمكن من تحميل الصورة: %1.</translation>
@@ -1716,7 +1725,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>عدم استطاع تحميل الصوره</translation>
     </message>
     <message>
-        <location line="+252"/>
+        <location line="+258"/>
         <source>User #%1</source>
         <translation>مستخدم#%1</translation>
     </message>
@@ -1732,23 +1741,23 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1601"/>
+        <location line="+1912"/>
         <source>Tablet Event Log...</source>
         <translation>سجل أحداث الجهاز اللوحي...</translation>
     </message>
     <message>
-        <location line="-1597"/>
+        <location line="-1908"/>
         <source>Stop Profile</source>
         <translation>إيقاف الملف الشخصي</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1598"/>
+        <location line="+1909"/>
         <source>Profile...</source>
         <translation>الملف الشخصي...</translation>
     </message>
     <message>
-        <location line="-1587"/>
+        <location line="-1898"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>تعيين التأخر الاصطناعي... (حاليًا %1 مللي ثانية)</translation>
     </message>
@@ -1774,12 +1783,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1545"/>
+        <location line="+1856"/>
         <source>Record Debug Dumps</source>
         <translation>سجل(Debug Dumps)</translation>
     </message>
     <message>
-        <location line="-1544"/>
+        <location line="-1855"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -1960,7 +1969,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>ادوات الملفات</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+54"/>
         <source>&amp;Undo</source>
         <translation>&amp;اعاده</translation>
     </message>
@@ -2066,7 +2075,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+170"/>
+        <location line="+157"/>
+        <source>Configure drawing toolbar…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Always show side toolbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Always show bottom toolbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Zoom In On Center</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2161,12 +2185,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+5"/>
+        <source>Set Selection Mask &amp;Color…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Change the color tint of the selection mask</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>&amp;Fit to Screen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+116"/>
+        <location line="+132"/>
         <source>Group View</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2211,12 +2245,52 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+67"/>
         <source>Clear Fill Source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+29"/>
+        <source>Automatically inherit alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Inherit and preserve alpha based on blend mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Alpha lock layer for you</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Censor layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Lock layer entirely</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Lock layer content</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Lock layer properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Lock layer position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>&amp;Toggle Layer Check State</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2231,17 +2305,37 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+13"/>
+        <source>Layer Color Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>&amp;Locks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <source>Select &amp;All</source>
         <translation>اختر الكل</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>&amp;Deselect</source>
         <translation>&amp;إلغاء التحديد</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+27"/>
+        <source>Selection Lightness to Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Selection Darkness to Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>Mirror the transformed image horizontally</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2261,7 +2355,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+17"/>
+        <source>Dra&amp;w on Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Mas&amp;k Strokes/Lasso Fills by Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Keep brush strokes inside the selection mask</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+154"/>
         <source>Create Layers on Current Key Frame</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2276,17 +2385,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+30"/>
+        <source>Key Frame Color Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>Create Layers on Key Frame</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-697"/>
+        <location line="-893"/>
         <source>Delete</source>
         <translation>امسح</translation>
     </message>
     <message>
-        <location line="+513"/>
+        <location line="+639"/>
         <source>Fill Selection</source>
         <translation>املي المختار</translation>
     </message>
@@ -2301,12 +2415,82 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>امسح اللون في المختار</translation>
     </message>
     <message>
-        <location line="-434"/>
+        <location line="-560"/>
         <source>&amp;Edit</source>
         <translation>&amp;غير</translation>
     </message>
     <message>
-        <location line="-1918"/>
+        <location line="-3899"/>
+        <source>The requested brush does not allow others to use it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+580"/>
+        <source>Canvas loaded in %1:%2.%3</source>
+        <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+199"/>
+        <source>Image saved in %1:%2.%3</source>
+        <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Animation export failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Couldn&apos;t export animation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Animation exported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Animation exported in %1:%2.%3</source>
+        <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <location line="+17"/>
+        <location line="+10"/>
+        <source>File is empty.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-10"/>
+        <source>Error setting up download.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Error performing download.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+68"/>
+        <source>This session was hosted with an older version of Drawpile. Several features – such as layer clipping, some blend modes and drawing within a selection mask – will be unavailable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+509"/>
+        <source>Canvas size too large to host.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+194"/>
+        <source>You&apos;re about to reconnect to the session and close this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+277"/>
         <source>Disconnected</source>
         <translation type="unfinished">انقطع الاتصال</translation>
     </message>
@@ -2326,12 +2510,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1414"/>
+        <location line="+1498"/>
         <source>Arrange Docks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+516"/>
+        <location line="+520"/>
         <source>&amp;Expand Canvas</source>
         <translation>&amp;وسع اللوحه</translation>
     </message>
@@ -2356,17 +2540,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;التخطيطات...</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>&amp;Toolbars</source>
         <translation>&amp;أشرطة الأدوات</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+7"/>
         <source>&amp;Docks</source>
         <translation>&amp;نافذات</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+17"/>
         <source>Chat</source>
         <translation>محادثة</translation>
     </message>
@@ -2441,17 +2625,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>إظهار شبكة البكسل</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+27"/>
         <source>&amp;Full Screen</source>
         <translation>&amp;تكبير الشاشة</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+88"/>
         <source>&amp;View</source>
         <translation>&amp;منظر</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+14"/>
         <source>&amp;Zoom</source>
         <translation>&amp;تكبير</translation>
     </message>
@@ -2506,7 +2690,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>ليزر المستخدمين</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+66"/>
         <source>New Layer</source>
         <translation>طبقه جديده</translation>
     </message>
@@ -2516,7 +2700,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>مجموعة طبقات جديده</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+483"/>
+        <location filename="../docks/layerlistdock.cpp" line="+577"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Duplicate Layer</source>
         <translation>اعاده الطبقه</translation>
@@ -2529,7 +2713,7 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+6"/>
-        <location filename="../mainwindow.cpp" line="+2"/>
+        <location filename="../mainwindow.cpp" line="+11"/>
         <source>Delete Layer</source>
         <translation>حذف الطبقه</translation>
     </message>
@@ -2551,7 +2735,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>حط لون اداه التعبئة</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+60"/>
         <source>Select Above</source>
         <translation>حدد أعلاه</translation>
     </message>
@@ -2561,12 +2745,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>حدد الاسفل</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+14"/>
         <source>&amp;Layer</source>
         <translation>&amp;طبقه</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+56"/>
         <source>&amp;Invert Selection</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2587,7 +2771,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+17"/>
         <source>&amp;Transform</source>
         <translation>تغيير الحجم</translation>
     </message>
@@ -2637,12 +2821,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+87"/>
         <source>Selectio&amp;n</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+40"/>
         <source>Flipbook</source>
         <translation>دفتر صور متحركة</translation>
     </message>
@@ -2687,7 +2871,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>لصق مفتاح الطبقه</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+11"/>
         <source>Key Frame Properties...</source>
         <translation>خصائص طبقات الرئيسي...</translation>
     </message>
@@ -2792,12 +2976,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>انسخ الطبقه السابقه</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+13"/>
         <source>&amp;Animation</source>
         <translation>&amp;صور متحركه</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+28"/>
         <source>Create Group on Key Frame</source>
         <translation>إنشاء مجموعة في مفتاح Frame</translation>
     </message>
@@ -2807,7 +2991,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>انسخ مفتاح Frame</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+107"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Host...</source>
         <translation>&amp;يستضيف...</translation>
@@ -2833,7 +3017,27 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>امنع تغييرات للوحه</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+62"/>
+        <source>Lass&amp;o Fill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Fill enclosed areas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Gradient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Create a gradient inside selected areas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>&amp;Select</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2883,7 +3087,23 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+32"/>
+        <source>%1 and Deselect</source>
+        <extracomment>This is the text for keyboard shortcuts that switch tools and remove the selection in a single action. %1 is the name of a tool, like &quot;Freehand&quot;, &quot;Eraser&quot; or &quot;Line&quot;.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Switch tool to %1 and deselect at once</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Deselect Shortcuts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>System Information…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2894,6 +3114,16 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+17"/>
+        <source>Toggle Alpha Preserve</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>toggle recolor mode/alpha preserve</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Choose the current foreground color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2913,12 +3143,32 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+10"/>
+        <source>Decrease Brush Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Increase Brush Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Decrease Brush Hardness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Increase Brush Hardness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+3"/>
         <source>&amp;Reset Brush</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Reset All Brush &amp;Slots</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2958,7 +3208,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+143"/>
+        <location line="+82"/>
+        <source>Tool blend mode: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+82"/>
         <source>Could not write log file: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2968,28 +3223,28 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-339"/>
+        <location line="-415"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Join...</source>
         <translation>&amp;ادخل...</translation>
     </message>
     <message>
-        <location line="-3547"/>
+        <location line="-3956"/>
         <source>Joined the session!</source>
         <translation>دخلت الجلسه!</translation>
     </message>
     <message>
-        <location line="+589"/>
+        <location line="+602"/>
         <source>Hosting on this computer is not available</source>
         <translation>الاستضافة على هذا الكمبيوتر غير متوفرة</translation>
     </message>
     <message>
-        <location line="+138"/>
+        <location line="+168"/>
         <source>Really leave and terminate the session?</source>
         <translation>حقا مغادرة وإنهاء الجلسة؟</translation>
     </message>
     <message>
-        <location line="+117"/>
+        <location line="+119"/>
         <source>Reason:</source>
         <translation>السبب:</translation>
     </message>
@@ -3004,7 +3259,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>غير متصل: %1</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+83"/>
         <source>Canvas locked</source>
         <translation>اللوحه مقفله</translation>
     </message>
@@ -3014,7 +3269,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>اللوحه فتحت</translation>
     </message>
     <message>
-        <location line="+432"/>
+        <location line="+483"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation>الفرشه (وضع المسح، انقر لإعادة التعيين)</translation>
     </message>
@@ -3034,7 +3289,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>اداه الفرشه (وضع قفل ألفا)</translation>
     </message>
     <message>
-        <location line="+890"/>
+        <location line="+917"/>
         <source>Export Image…</source>
         <translation>تصدير الصورة…</translation>
     </message>
@@ -3059,7 +3314,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>تصدير &amp;فرش…</translation>
     </message>
     <message>
-        <location line="+203"/>
+        <location line="+207"/>
         <source>&amp;Copy Merged</source>
         <translation>&amp;اندمجت نسخة</translation>
     </message>
@@ -3080,12 +3335,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
-        <location filename="../mainwindow.cpp" line="+562"/>
+        <location filename="../mainwindow.cpp" line="+612"/>
         <source>Layer Properties…</source>
         <translation>خصائص الطبقة…</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+298"/>
+        <location filename="../mainwindow.cpp" line="+524"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>انضم إلى جلسة الرسم الخاصة بمستخدم آخر</translation>
     </message>
@@ -3231,7 +3486,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>أداة التعبئة</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>&amp;Annotation</source>
         <translation>&amp;أداة النص</translation>
     </message>
@@ -3281,22 +3536,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>فتش مين رسمه</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+44"/>
         <source>&amp;Tools</source>
         <translation>&amp;أدوات</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
         <source>&amp;Shortcuts</source>
         <translation>&amp;الاختصارات</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Developer Tools</source>
         <translation>&amp;ادوات المطورين</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+31"/>
         <source>Set Artificial Lag...</source>
         <translation>تعيين التأخر الاصطناعي...</translation>
     </message>
@@ -3321,27 +3576,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>تبديل الى وضع الممحاة</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Toggle Recolor Mode</source>
-        <translation>تبديل الى وضع إعادة التلوين</translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="+12"/>
         <source>&amp;Decrease Brush Size</source>
         <translation>&amp;تقليل حجم الفرشاة</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+4"/>
         <source>&amp;Increase Brush Size</source>
         <translation>&amp;زيادة حجم الفرشاة</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+111"/>
         <source>Drawing tools</source>
         <translation>ادوات الرسم</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+42"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Homepage</source>
         <translation>&amp;الصفحة الرئيسية</translation>
@@ -3436,10 +3686,148 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>نافذة</translation>
     </message>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="-87"/>
+        <location filename="../utils/widgetutils.cpp" line="-92"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
         <translation type="unfinished">%1 (%2)</translation>
+    </message>
+</context>
+<context>
+    <name>MarkerColors</name>
+    <message>
+        <location line="+137"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Unmark layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Unmark key frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Blue</source>
+        <translation type="unfinished">أزرق</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark layer blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark key frame blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Green</source>
+        <translation type="unfinished">أخضر</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark layer green</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark key frame green</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Yellow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark layer yellow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark key frame yellow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Orange</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark layer orange</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark key frame orange</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Brown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark layer brown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark key frame brown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Red</source>
+        <translation type="unfinished">أحمر</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark layer red</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark key frame red</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Purple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark layer purple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark key frame purple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Gray</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark layer gray</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark key frame gray</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3571,12 +3959,12 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../filewrangler.cpp" line="-576"/>
+        <location filename="../filewrangler.cpp" line="-670"/>
         <source>All files (*)</source>
         <translation>كل الملفات (*)</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="+79"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="+82"/>
         <source>Freehand</source>
         <translation>اداه الفرشه</translation>
     </message>
@@ -3609,6 +3997,16 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+4"/>
         <source>Flood Fill</source>
         <translation>أداة التعبئة</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Lasso Fill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Gradient</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3682,7 +4080,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>تغيير حجم اللوحه</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+35"/>
         <source>Keep aspect ratio</source>
         <translation>إبقاء نسبة القياس</translation>
     </message>
@@ -3870,88 +4268,130 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>الأذونات</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+27"/>
+        <location line="+33"/>
+        <location line="+40"/>
+        <location line="+125"/>
+        <source>px</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-195"/>
+        <location line="+247"/>
+        <source>Operators: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-214"/>
+        <location line="+201"/>
+        <source>Trusted: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-178"/>
+        <source>Pigment &amp; OKLAB Brushes:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <location line="+26"/>
+        <source>Registered: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-7"/>
+        <source>Brush size limit:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <location line="+76"/>
+        <source>Everyone: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-30"/>
         <source>Cut, Paste &amp; Fill:</source>
         <translation>القص واللصق والتعبئة:</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-152"/>
         <source>New Annotations:</source>
         <translation>وضع اداه نص جديده:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+262"/>
         <source>permissions</source>
         <translation>الأذونات</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-64"/>
         <source>General Layer Editing:</source>
         <translation>تغيير الطبقات:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-165"/>
         <source>Own Layer Editing:</source>
         <translation>تغيير الطبقات المستعمل:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+109"/>
         <source>Canvas Resizing:</source>
         <translation>تغيير حجم اللوحه:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-20"/>
         <source>Canvas Background:</source>
         <translation>خلفيه اللوحه:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-115"/>
         <source>Laser Pointer:</source>
         <translation>مؤشر الليزر:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+204"/>
         <source>Undo &amp; Redo:</source>
         <translation>التراجع والإعادة:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-112"/>
         <source>Kick &amp; Ban:</source>
         <translation>الطرد و تحظر:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+67"/>
         <source>Operators</source>
         <translation>الرؤساء</translation>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+201"/>
+        <location line="+254"/>
         <source>Trusted</source>
         <translation>موثوق</translation>
     </message>
     <message>
-        <location line="-193"/>
+        <location line="-378"/>
         <source>Timeline:</source>
         <translation>اداه الرسوم المتحركه:</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <source>Metadata:</source>
-        <translation>البيانات الوصفية:</translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="+204"/>
         <source>Selection Move &amp; Resize:</source>
         <translation>نقل التحديد وتغيير الحجم:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-119"/>
         <source>MyPaint Brushes:</source>
         <translation>فرش Mypaint:</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+112"/>
+        <source>Layer count limit:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
         <source>Bans</source>
         <translation>المحظورين</translation>
     </message>
@@ -4054,7 +4494,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>يتوسطه خط</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+24"/>
+        <source>Rendering</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Annotation content</source>
         <translation>اداه النص, اكتب هنا</translation>
     </message>
@@ -4348,6 +4793,65 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
 </context>
 <context>
+    <name>dialogs</name>
+    <message>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+1184"/>
+        <source>No dynamics</source>
+        <translation type="unfinished">لا dynamics</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Pressure dynamics</source>
+        <translation type="unfinished">ضغط dynamics</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Velocity dynamics</source>
+        <translation type="unfinished">سرعة dynamics</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Distance dynamics</source>
+        <translation type="unfinished">المسافة dynamics</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Maximum Velocity: </source>
+        <translation type="unfinished">السرعة القصوى: </translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Maximum Distance: </source>
+        <translation type="unfinished">المسافة القصوى: </translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+20"/>
+        <source>Apply to All</source>
+        <translation type="unfinished">تنطبق على الكل</translation>
+    </message>
+    <message>
+        <location line="-18"/>
+        <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum velocity set for all settings in this brush.</source>
+        <translation type="unfinished">تم ضبط السرعة القصوى لجميع الإعدادات في هذه الفرشاة.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum distance set for all settings in this brush.</source>
+        <translation type="unfinished">أقصى مسافة ضبطها لجميع الإعدادات في هذه الفرشاة.</translation>
+    </message>
+</context>
+<context>
     <name>dialogs::AbuseReportDialog</name>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
@@ -4358,7 +4862,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::AddServerDialog</name>
     <message>
-        <location filename="../dialogs/addserverdialog.cpp" line="+130"/>
+        <location filename="../dialogs/addserverdialog.cpp" line="+131"/>
         <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
         <translation>&lt;strong&gt;خلل&lt;/strong&gt;%1</translation>
     </message>
@@ -4386,7 +4890,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::AnimationExportDialog</name>
     <message>
-        <location filename="../dialogs/animationexportdialog.cpp" line="+29"/>
+        <location filename="../dialogs/animationexportdialog.cpp" line="+30"/>
         <source>Export Animation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4514,7 +5018,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::AnimationImportDialog</name>
     <message>
-        <location filename="../dialogs/animationimportdialog.cpp" line="+43"/>
+        <location filename="../dialogs/animationimportdialog.cpp" line="+44"/>
         <source>Import Animation</source>
         <translation>استيراد الرسوم المتحركة</translation>
     </message>
@@ -4635,7 +5139,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::ArtisticColorWheelDialog</name>
     <message>
-        <location filename="../dialogs/artisticcolorwheeldialog.cpp" line="+23"/>
+        <location filename="../dialogs/artisticcolorwheeldialog.cpp" line="+24"/>
         <source>Color Circle Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4856,7 +5360,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::BrushPresetForm</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+70"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="-1184"/>
         <source>Change…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4896,6 +5400,16 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished">الوصف:</translation>
     </message>
     <message>
+        <location line="+8"/>
+        <source>Allow others in a session to use this brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Sharing:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+60"/>
         <source>No shortcut assigned</source>
         <translation type="unfinished"></translation>
@@ -4904,12 +5418,12 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location line="+133"/>
+        <location line="+149"/>
         <source>Brush Editor</source>
         <translation>مغير الفرش</translation>
     </message>
     <message>
-        <location line="+105"/>
+        <location line="+121"/>
         <source>Brush</source>
         <translation type="unfinished">فرشاة</translation>
     </message>
@@ -4939,13 +5453,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+89"/>
         <source>Brush Type:</source>
         <translation>نوع الفرشه:</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+425"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+440"/>
         <source>Round Pixel Brush</source>
         <translation>فرشاة بكسل مستديرة</translation>
     </message>
@@ -4968,40 +5482,48 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>فرشاة MyPaint</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location line="+14"/>
+        <location line="+30"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+12"/>
+        <source>Direct Build-Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
+        <source>Indirect Wash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
+        <source>Indirect Soft (Drawpile 2.2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
+        <source>Indirect Build-Up (Drawpile 2.1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <source>Blend Mode:</source>
         <translation>وضع المزج:</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="-51"/>
         <source>Paint Mode:</source>
         <translation>وضع الطلاء:</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Build-Up/Direct</source>
-        <translation>مباشر</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Wash/Indirect</source>
-        <translation>غسل/غير مباشر</translation>
-    </message>
-    <message>
-        <location line="+14"/>
+        <location line="+57"/>
         <source>Eraser Mode</source>
         <translation>وضع الممحاة</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+5"/>
         <source>Pick Initial Color from Layer</source>
         <translation>اختر اللون الأولي من الطبقة</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Lock Alpha (Recolor Mode)</source>
-        <translation>قفل ألفا (وضع إعادة التلوين)</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -5010,17 +5532,19 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+129"/>
-        <location line="+17"/>
-        <location line="+42"/>
-        <location line="+17"/>
-        <location line="+42"/>
-        <location line="+29"/>
+        <location line="+156"/>
+        <location line="+18"/>
+        <location line="+47"/>
+        <location line="+18"/>
+        <location line="+68"/>
+        <location line="+31"/>
+        <location line="+47"/>
+        <location line="+18"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="-267"/>
+        <location line="-393"/>
         <source>Stabilization Mode:</source>
         <translation>وضع الاستقرار:</translation>
     </message>
@@ -5040,18 +5564,18 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>استقرار الخط: </translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+14"/>
         <source>Smoothing: </source>
         <translation>تنعيم الخط: </translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+50"/>
         <source>Size: </source>
         <translation>الحجم: </translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+17"/>
+        <location line="+19"/>
         <source>px</source>
         <translation>بكسل</translation>
     </message>
@@ -5061,131 +5585,144 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>الحد الأدنى لحجم: </translation>
     </message>
     <message>
-        <location line="+10"/>
-        <location line="+419"/>
+        <location line="+11"/>
+        <location line="+579"/>
         <source>Size</source>
         <translation>الحجم</translation>
     </message>
     <message>
-        <location line="-419"/>
-        <location line="+59"/>
-        <location line="+59"/>
-        <location line="+71"/>
+        <location line="-579"/>
+        <location line="+65"/>
+        <location line="+65"/>
+        <location line="+99"/>
+        <location line="+64"/>
         <source>Input</source>
         <translation>مدخل</translation>
     </message>
     <message>
-        <location line="-158"/>
+        <location line="-259"/>
         <source>Opacity: </source>
         <translation>العتامة: </translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Minimum Opacity: </source>
         <translation>الحد الأدنى من التعتيم: </translation>
     </message>
     <message>
-        <location line="+11"/>
-        <location line="+362"/>
+        <location line="+13"/>
+        <location line="+516"/>
         <source>Opacity</source>
         <translation>العتامة</translation>
     </message>
     <message>
-        <location line="-331"/>
+        <location line="-482"/>
         <source>Hardness: </source>
         <translation>صلابة: </translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Minimum Hardness: </source>
         <translation>الحد الأدنى من الصلابة: </translation>
     </message>
     <message>
-        <location line="+11"/>
-        <location line="+308"/>
+        <location line="+13"/>
+        <location line="+456"/>
         <source>Hardness</source>
         <translation>صلابة</translation>
     </message>
     <message>
-        <location line="-277"/>
+        <location line="-425"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
+        <source>Smudge with transparency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Enabling this will make smudging take the alpha channel into account.
+Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+100"/>
+        <source>Jitter: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Minimum Jitter: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <location line="+300"/>
+        <source>Jitter</source>
+        <translation type="unfinished">اهتزاز</translation>
+    </message>
+    <message>
+        <location line="-112"/>
+        <source>Not available in indirect paint modes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Not available in indirect paint modes or when using a blend mode other than Normal.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Not available in indirect paint modes or when using the Marker or Greater Density blend modes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Synchronize smudging (slower, but more accurate)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>This will make the brush to wait for its own stroke to finish to allow it to accurately smudge with itself.
+If fast strokes cause artifacts when smudging, enabling this can help.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+45"/>
+        <source>Randomized offsets in the stroke center.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+68"/>
         <source>Smudging: </source>
         <translation>مزج: </translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="-463"/>
         <source>Color Pickup: 1/</source>
         <translation>لاقط اللون: 1/</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="-344"/>
+        <source>Preserve alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+816"/>
         <source>Minimum Smudging: </source>
         <translation>الحد الأدنى من مزج: </translation>
     </message>
     <message>
-        <location line="+11"/>
-        <location line="+241"/>
+        <location line="-80"/>
+        <location line="+84"/>
         <source>Smudging</source>
         <translation>خلط/مزج</translation>
     </message>
     <message>
-        <location line="-217"/>
-        <source>No dynamics</source>
-        <translation>لا dynamics</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Pressure dynamics</source>
-        <translation>ضغط dynamics</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Velocity dynamics</source>
-        <translation>سرعة dynamics</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Distance dynamics</source>
-        <translation>المسافة dynamics</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Velocity: </source>
-        <translation>السرعة القصوى: </translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Distance: </source>
-        <translation>المسافة القصوى: </translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <location line="+19"/>
-        <location line="+36"/>
+        <location line="-261"/>
         <source>Apply to All</source>
         <translation>تنطبق على الكل</translation>
     </message>
     <message>
-        <location line="-53"/>
-        <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation>اضبط السرعة القصوى للحجم والتعتيم والصلابة والتلطيخ مرة واحدة.</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Maximum velocity set for all settings in this brush.</source>
-        <translation>تم ضبط السرعة القصوى لجميع الإعدادات في هذه الفرشاة.</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation>قم بتعيين الحد الأقصى للمسافة للحجم والتعتيم والصلابة والتلطيخ مرة واحدة.</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Maximum distance set for all settings in this brush.</source>
-        <translation>أقصى مسافة ضبطها لجميع الإعدادات في هذه الفرشاة.</translation>
-    </message>
-    <message>
-        <location line="+23"/>
+        <location line="+2"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
         <translation>اضبط هذا المنحنى على الحجم والعتامة والصلابة والتلطيخ في وقت واحد.</translation>
     </message>
@@ -5195,27 +5732,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>تم ضبط المنحنى لجميع الإعدادات في هذه الفرشاة.</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+35"/>
         <source>Value: </source>
         <translation>قيمة: </translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>No brush dynamics.</source>
         <translation>لا اعداداتdynamics للفرشه.</translation>
     </message>
     <message>
-        <location line="+11"/>
-        <source>Not available in Indirect/Wash mode.</source>
-        <translation>غير متوفر في الوضع غير المباشر/الغسيل.</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Dynamics not available in Indirect/Wash mode.</source>
-        <translation>Dynamics غير متوفر في الوضع غير المباشر/الغسيل.</translation>
-    </message>
-    <message>
-        <location line="+59"/>
+        <location line="+111"/>
         <source>The radius of the brush.</source>
         <translation>نصف قطر الفرشاة.</translation>
     </message>
@@ -5235,7 +5762,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>مزج الألوان على الطبقة المرسومة عليها.</translation>
     </message>
     <message>
-        <location line="+175"/>
+        <location line="+71"/>
+        <source>Blending: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Minimum Blending: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Blending</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+126"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
         <translation>يبطئرسم الفرشه لتثبيتها مع مرور الوقت. تعطي القيم العالية خطوطًا ناعمة جدًا، ولكنها سترسم ببطء. عندما تتوقف عن الحركة، سيلحق الخط بالمؤشر.تنعيم كمبيوتر اللوحي ينطبق كمان.</translation>
     </message>
@@ -6588,6 +7130,11 @@ Values above 0.5 may not be noticeable.</source>
 0.0 لا يوجد خلط طيفي
 1.0 الخلط الطيفي فقط</translation>
     </message>
+    <message>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+3"/>
+        <source>Synchronize smudging</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>dialogs::CanvasShortcutsDialog</name>
@@ -6655,6 +7202,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+2"/>
+        <source>Change Brush Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Brush Hardness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Change Color Hue</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6709,7 +7266,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>نوع غير معروف %1.</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+47"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
         <translation>&lt;b&gt;تعارض:&lt;/b&gt; سيتم استبدال الاختصار الموجود لـ &apos;%1&apos; إذا تابعت.</translation>
     </message>
@@ -6740,7 +7297,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::CreateInviteCodeDialog</name>
     <message>
-        <location filename="../dialogs/invitedialog.cpp" line="+426"/>
+        <location filename="../dialogs/invitedialog.cpp" line="+477"/>
         <source>Create Invite Code</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6757,12 +7314,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">موثوق</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">الرئيس</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6853,7 +7410,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::Flipbook</name>
     <message>
-        <location filename="../dialogs/flipbook.cpp" line="+157"/>
+        <location filename="../dialogs/flipbook.cpp" line="+68"/>
+        <source>Reset crop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Upscale to fit view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+100"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -6866,13 +7433,13 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::InviteDialog</name>
     <message>
-        <location filename="../dialogs/invitedialog.cpp" line="-334"/>
-        <location line="+260"/>
+        <location filename="../dialogs/invitedialog.cpp" line="-379"/>
+        <location line="+275"/>
         <source>What are invite codes?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-122"/>
+        <location line="-123"/>
         <source>Invite link copied to clipboard.</source>
         <translation>تم نسخ رابط الدعوة إلى الحافظة.</translation>
     </message>
@@ -6889,7 +7456,7 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>This server does not support invite codes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6940,12 +7507,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::KeyFramePropertiesDialog</name>
     <message>
-        <location filename="../dialogs/keyframepropertiesdialog.cpp" line="+127"/>
+        <location filename="../dialogs/keyframepropertiesdialog.cpp" line="+128"/>
         <source>Key Frame Properties</source>
         <translation>الخصائص المفتاح</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+27"/>
         <source>Title:</source>
         <translation>عنوان:</translation>
     </message>
@@ -6968,7 +7535,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LayerProperties</name>
     <message>
-        <location filename="../dialogs/layerproperties.cpp" line="+92"/>
+        <location filename="../dialogs/layerproperties.cpp" line="+122"/>
         <source>New Layer Group</source>
         <translation type="unfinished">مجموعة طبقات جديده</translation>
     </message>
@@ -6978,15 +7545,30 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">طبقه جديده</translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location filename="../utils/blendmodes.cpp" line="+113"/>
         <source>Pass Through</source>
         <translation>مر من خلال</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="-1026"/>
+        <source>Blend alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Inherit alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Clip to layer below</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>dialogs::LayoutsDialog</name>
     <message>
-        <location filename="../dialogs/layoutsdialog.cpp" line="+167"/>
+        <location filename="../dialogs/layoutsdialog.cpp" line="+168"/>
         <source>Current (unsaved)</source>
         <translation>الحالي (غير محفوظ)</translation>
     </message>
@@ -7079,12 +7661,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+169"/>
+        <location filename="../dialogs/logindialog.cpp" line="+174"/>
         <source>Report...</source>
         <translation>الإبلاغ ...</translation>
     </message>
     <message>
-        <location line="+157"/>
+        <location line="+160"/>
         <source>Accept</source>
         <translation>اقبل</translation>
     </message>
@@ -7157,7 +7739,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>حقا ننسى هذا الحساب؟ سيؤدي هذا إلى إزالته فقط من قائمة حساباتك الحديثة، ولن يحذف الحساب.</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+52"/>
         <location line="+161"/>
         <source>Enter the name you want to use.</source>
         <translation>أدخل الاسم الذي تريد استخدامه.</translation>
@@ -7292,7 +7874,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::ResetDialog</name>
     <message>
-        <location filename="../dialogs/resetdialog.cpp" line="+132"/>
+        <location filename="../dialogs/resetdialog.cpp" line="+129"/>
         <source>Reset Session</source>
         <translation>إعادة ضبط الجلسة</translation>
     </message>
@@ -7307,7 +7889,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>افتح...</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+70"/>
         <source>Error opening file: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7325,7 +7907,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::ResizeDialog</name>
     <message>
-        <location filename="../dialogs/resizedialog.cpp" line="+30"/>
+        <location filename="../dialogs/resizedialog.cpp" line="+33"/>
         <source>Expand up</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7355,14 +7937,44 @@ Values above 0.5 may not be noticeable.</source>
         <translation>مركز</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+105"/>
         <source>Error</source>
         <translation>خطأ</translation>
     </message>
     <message>
-        <location line="+0"/>
-        <source>Size is too large</source>
-        <translation>الحجم كبير جدًا</translation>
+        <location line="+113"/>
+        <source>Width and height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Width must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Width and height must be between 1 and %1 pixels.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Width must be between 1 and %1 pixels.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Height must be between 1 and %1 pixels.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Total size must be between 1 and %1 pixels (you&apos;re at %2.)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7394,7 +8006,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SessionSettingsDialog</name>
     <message numerus="yes">
-        <location filename="../dialogs/sessionsettings.cpp" line="+355"/>
+        <location filename="../dialogs/sessionsettings.cpp" line="+373"/>
         <source>Imported %n session ban(s).</source>
         <translation>
             <numerusform>تم استيراد %n حظر للجلسة.</numerusform>
@@ -7420,13 +8032,13 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+469"/>
+        <location line="+594"/>
         <location line="+12"/>
         <source>Session Ban Import</source>
         <translation>استيراد ا حظر الجلسة</translation>
     </message>
     <message>
-        <location line="-467"/>
+        <location line="-592"/>
         <source>Session Ban Export</source>
         <translation>تصدير ا حظر الجلسة</translation>
     </message>
@@ -7441,7 +8053,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>خطأ في حظر الجلسة</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+51"/>
         <source>This list shows only registered users.</source>
         <translation>تظهر هذه القائمة للمستخدمين المسجلين فقط.</translation>
     </message>
@@ -7451,7 +8063,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>يمكن الرؤساء فقط رؤية هذه القائمة.</translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+130"/>
         <source>Operators</source>
         <translation>الرؤساء</translation>
     </message>
@@ -7471,7 +8083,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>الجميع</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+135"/>
         <source>yes</source>
         <comment>password</comment>
         <translation>نعم</translation>
@@ -7495,7 +8107,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>تعيين</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+40"/>
         <source>never</source>
         <extracomment>&quot;Idle timeout: never&quot;</extracomment>
         <translation>أبداً</translation>
@@ -7552,7 +8164,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>, </translation>
     </message>
     <message>
-        <location line="+122"/>
+        <location line="+128"/>
         <location line="+16"/>
         <source>Set a new password or leave blank to remove.</source>
         <translation>قم بتعيين كلمة مرور جديدة أو اتركها فارغة لإزالتها.</translation>
@@ -7674,7 +8286,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SettingsDialog</name>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="+34"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="+35"/>
         <source>Preferences</source>
         <translation>التفضيلات</translation>
     </message>
@@ -7705,6 +8317,11 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+2"/>
+        <source>Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Network</source>
         <translation>الشبكه</translation>
     </message>
@@ -7730,9 +8347,189 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>dialogs::ShadeSelectorDialog</name>
+    <message>
+        <location filename="../dialogs/shadeselectordialog.cpp" line="+26"/>
+        <source>Color Harmonies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Show harmony swatches under color wheel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Color harmony swatches are disabled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Click here to enable them.</source>
+        <extracomment>&quot;Them&quot; refers to the color harmony swatches.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Rows: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Row height: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>px</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Colors per row: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Border: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Set Color…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Custom</source>
+        <translation type="unfinished">مخصص</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hue</source>
+        <translation type="unfinished">تدرُّج</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Saturation</source>
+        <translation type="unfinished">التشبع</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Chroma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Value</source>
+        <translation type="unfinished">قيمة</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Lightness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Luminance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Shades</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Move Up</source>
+        <translation type="unfinished">التحريك للأعلى</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Move Down</source>
+        <translation type="unfinished">التحريك للأسفل</translation>
+    </message>
+    <message>
+        <location line="+122"/>
+        <location line="+4"/>
+        <source>Range: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location line="+12"/>
+        <source>Saturation range: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-12"/>
+        <location line="+12"/>
+        <source>Chroma range: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-8"/>
+        <location line="+12"/>
+        <source>Value range: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-12"/>
+        <location line="+12"/>
+        <source>Lightness range: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <location line="+12"/>
+        <source>Luminance range: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-8"/>
+        <source>Hue range: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Hue offset: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Saturation offset: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Chroma offset: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Value offset: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Lightness offset: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Luminance offset: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>%</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dialogs::StartDialog</name>
     <message>
-        <location filename="../dialogs/startdialog.cpp" line="+75"/>
+        <location filename="../dialogs/startdialog.cpp" line="+76"/>
         <source>Start</source>
         <translation>بدأ</translation>
     </message>
@@ -7917,13 +8714,36 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SystemInfoDialog</name>
     <message>
-        <location filename="../dialogs/systeminfodialog.cpp" line="+27"/>
+        <location filename="../dialogs/systeminfodialog.cpp" line="+28"/>
         <source>System Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Copy</source>
+        <translation type="unfinished">نسخ</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::ToolBarConfigDialog</name>
+    <message>
+        <location filename="../dialogs/toolbarconfigdialog.cpp" line="+21"/>
+        <source>Configure Toolbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Drag to reorder and uncheck to hide tools.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+88"/>
+        <source>Reset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Really revert the toolbar configuration to its default state?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8006,7 +8826,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::VideoExportDialog</name>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="+31"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="+32"/>
         <source>Image Series</source>
         <translation>سلسلة الصور</translation>
     </message>
@@ -8058,19 +8878,80 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
-    <name>dialogs::settingsdialog::General</name>
+    <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/general.cpp" line="+58"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation>عند افتعال، احفظ كل %1 دقيقة</translation>
+        <translation type="unfinished">عند افتعال، احفظ كل %1 دقيقة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation>الحفظ التلقائي:</translation>
+        <translation type="unfinished">الحفظ التلقائي:</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+4"/>
+        <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
+        <translation type="unfinished">يمكن تفعيل الحفظ التلقائي للملف الحالي ضمن ملف ▸ الحفظ التلقائي.</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Default (%1)</source>
+        <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <location line="+14"/>
+        <source>OpenRaster (.ora)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-12"/>
+        <location line="+14"/>
+        <source>Drawpile Canvas (.dpcs)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-12"/>
+        <source>Preferred save format:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>PNG (.png)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>JPEG (.jpg)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>QOI (.qoi)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>WEBP (.webp)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Photoshop Document (.psd)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Preferred export format:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::settingsdialog::General</name>
+    <message>
+        <location filename="../dialogs/settingsdialog/general.cpp" line="+52"/>
         <location line="+144"/>
         <location line="+15"/>
         <source>System</source>
@@ -8203,12 +9084,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-196"/>
-        <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation>يمكن تفعيل الحفظ التلقائي للملف الحالي ضمن ملف ▸ الحفظ التلقائي.</translation>
-    </message>
-    <message>
-        <location line="+106"/>
+        <location line="-90"/>
         <source>Interpolate when view is zoomed or rotated</source>
         <translation>يتم الاستيفاء عند تكبير العرض أو تدويره</translation>
     </message>
@@ -8501,7 +9377,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>انقطع الاتصال</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+32"/>
         <source>Preview event</source>
         <translation>معاينة الحدث</translation>
     </message>
@@ -8511,12 +9387,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+8"/>
         <source>Sound volume:</source>
         <translation>حجم الصوت:</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Use private message notification for mentions</source>
         <translation>استخدم إشعار الرسائل الخاصة للإشارات</translation>
     </message>
@@ -8536,7 +9412,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>يعتبر اسم المستخدم الخاص بك دائمًا بمثابة إشارة. يمكنك إضافة كلمات أو عبارات تحفيزية إضافية تريد احتسابها أيضًا، مثل الألقاب الأخرى. كلمة أو عبارة واحدة في كل سطر، لا يهم حالة الأحرف.</translation>
     </message>
     <message>
-        <location line="-83"/>
+        <location line="-95"/>
         <source>User joined</source>
         <translation>انضم المستخدم</translation>
     </message>
@@ -8917,19 +9793,20 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Tablet</name>
     <message>
-        <location filename="../dialogs/settingsdialog/tablet.cpp" line="+30"/>
+        <location filename="../dialogs/settingsdialog/tablet.cpp" line="+31"/>
         <source>Tablet Tester</source>
         <translation type="unfinished">اختبار الجهاز اللوحي</translation>
     </message>
     <message>
         <location line="+26"/>
-        <source>Tablet</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
+        <location line="+20"/>
         <source>Output</source>
         <translation type="unfinished">نتاج</translation>
+    </message>
+    <message>
+        <location line="-20"/>
+        <source>Stylus</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
@@ -8937,8 +9814,23 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">منحنى الضغط العالمي:</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <location filename="../mainwindow.cpp" line="-1247"/>
+        <location line="+6"/>
+        <source>Use separate curve for eraser tip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Eraser pressure curve:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Eraser</source>
+        <translation type="unfinished">ممحاة</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <location filename="../mainwindow.cpp" line="-587"/>
         <source>Windows Ink</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9004,7 +9896,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">التنعيم:</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Apply global smoothing to mouse</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9038,7 +9930,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Tools</name>
     <message>
-        <location filename="../dialogs/settingsdialog/tools.cpp" line="+146"/>
+        <location filename="../dialogs/settingsdialog/tools.cpp" line="+147"/>
         <source>Toggle between previous and current tool</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9058,7 +9950,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+47"/>
         <source>Attach selected brushes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9078,7 +9970,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-108"/>
+        <location line="-145"/>
         <source>px</source>
         <translation type="unfinished">بكسل</translation>
     </message>
@@ -9144,8 +10036,18 @@ Values above 0.5 may not be noticeable.</source>
         <extracomment>This stands for millseconds.</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location line="+42"/>
+        <source>Cancel action to deselect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Press %1 to deselect</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message numerus="yes">
-        <location line="+31"/>
+        <location line="+25"/>
         <source>Show %1 brush slot(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -9157,7 +10059,7 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="-136"/>
+        <location line="-173"/>
         <source>Color space:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9200,7 +10102,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Touch</name>
     <message>
-        <location filename="../dialogs/settingsdialog/touch.cpp" line="+25"/>
+        <location filename="../dialogs/settingsdialog/touch.cpp" line="+26"/>
         <source>Touch Tester</source>
         <translation type="unfinished">اللمس الفاحص</translation>
     </message>
@@ -9343,11 +10245,21 @@ Values above 0.5 may not be noticeable.</source>
         <source>Two-finger twist:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location line="+4"/>
+        <source>Smoothing:</source>
+        <translation type="unfinished">التنعيم:</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>%</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>dialogs::settingsdialog::UserInterface</name>
     <message>
-        <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+206"/>
+        <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+213"/>
         <source>Override system font size</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9362,7 +10274,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-170"/>
+        <location line="-177"/>
         <source>Interface mode:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9378,12 +10290,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+14"/>
-        <location line="+161"/>
+        <location line="+169"/>
         <source>Disabled</source>
         <translation type="unfinished">غير مفعل</translation>
     </message>
     <message>
-        <location line="-160"/>
+        <location line="-168"/>
         <source>On left-click drag</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9413,7 +10325,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Hide scroll bars</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9423,17 +10335,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+76"/>
         <source>Override system scale factor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-126"/>
+        <location line="-132"/>
         <source>Small screen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+57"/>
         <source>First checker color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9478,6 +10390,11 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+5"/>
+        <source>Automatically inherit and preserve alpha based on blend mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+9"/>
         <source>Scaling:</source>
         <translation type="unfinished"></translation>
@@ -9493,12 +10410,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">%</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+19"/>
         <source>Font size:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>Vertical sync:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9531,7 +10448,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Browse</name>
     <message>
-        <location filename="../dialogs/startdialog/browse.cpp" line="+61"/>
+        <location filename="../dialogs/startdialog/browse.cpp" line="+62"/>
         <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9639,8 +10556,8 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Create</name>
     <message>
-        <location filename="../dialogs/startdialog/create.cpp" line="+26"/>
-        <location line="+7"/>
+        <location filename="../dialogs/startdialog/create.cpp" line="+29"/>
+        <location line="+6"/>
         <source>px</source>
         <translation type="unfinished">بكسل</translation>
     </message>
@@ -9650,17 +10567,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>Height:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+51"/>
         <source>Canvas background color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-33"/>
+        <location line="-39"/>
         <source>Background:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9693,7 +10610,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">المحظورين</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+51"/>
         <source>Host Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9733,7 +10650,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Join</name>
     <message>
-        <location filename="../dialogs/startdialog/join.cpp" line="+26"/>
+        <location filename="../dialogs/startdialog/join.cpp" line="+25"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt; or &lt;strong&gt;IP address&lt;/strong&gt;:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9847,7 +10764,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Welcome</name>
     <message>
-        <location filename="../dialogs/startdialog/welcome.cpp" line="+50"/>
+        <location filename="../dialogs/startdialog/welcome.cpp" line="+51"/>
         <source>Standalone Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9885,7 +10802,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::host::Bans</name>
     <message>
-        <location filename="../dialogs/startdialog/host/bans.cpp" line="+24"/>
+        <location filename="../dialogs/startdialog/host/bans.cpp" line="+25"/>
         <source>No bans imported.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9941,7 +10858,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::host::ExportDialog</name>
     <message>
-        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+504"/>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+501"/>
         <source>Export Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9977,7 +10894,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::host::Listing</name>
     <message>
-        <location filename="../dialogs/startdialog/host/listing.cpp" line="+37"/>
+        <location filename="../dialogs/startdialog/host/listing.cpp" line="+38"/>
         <source>Set title automatically</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10035,7 +10952,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::host::LoadDialog</name>
     <message>
-        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-356"/>
+        <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-353"/>
         <source>Load Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10096,12 +11013,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::host::Permissions</name>
     <message>
-        <location filename="../dialogs/startdialog/host/permissions.cpp" line="+97"/>
+        <location filename="../dialogs/startdialog/host/permissions.cpp" line="+107"/>
         <source>Undo Limit: </source>
         <translation type="unfinished">حد التراجع: </translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+16"/>
         <source>Cut, paste and fill:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10116,7 +11033,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Manage own layers:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10136,8 +11053,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>MyPaint brushes:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Pigment and OKLAB brushes:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10146,7 +11068,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Animation timeline:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10161,22 +11083,43 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+11"/>
+        <source>Maximum brush size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Maximum amount of layers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+171"/>
+        <source>%1: </source>
+        <extracomment>%1 is an acccess tier, like &quot;Operator&quot; or &quot;Everyone&quot;. Unless your language uses something other than a colon, leave this as it is.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+296"/>
         <source>Everyone</source>
         <translation type="unfinished">الجميع</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+8"/>
+        <source>px</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-10"/>
         <source>Registered</source>
         <translation type="unfinished">مسجل</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="-2"/>
         <source>Trusted</source>
         <translation type="unfinished">موثوق</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-2"/>
         <source>Operators</source>
         <translation type="unfinished">الرؤساء</translation>
     </message>
@@ -10197,7 +11140,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::host::Roles</name>
     <message>
-        <location filename="../dialogs/startdialog/host/roles.cpp" line="+36"/>
+        <location filename="../dialogs/startdialog/host/roles.cpp" line="+37"/>
         <source>Define a password to let anyone become operator</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10263,7 +11206,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::host::Session</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="+38"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="+42"/>
         <source>Personal session, only people you invite can join</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10323,7 +11266,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+136"/>
         <source>Session: a password is required</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10479,7 +11422,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+227"/>
+        <location line="+225"/>
         <source>Overwrite Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10495,13 +11438,13 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+312"/>
+        <location line="+314"/>
         <location line="+45"/>
         <source>Keep</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-294"/>
+        <location line="-296"/>
         <source>Brush Import</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10559,7 +11502,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+41"/>
         <location line="+16"/>
         <source>Tag name:</source>
         <translation type="unfinished"></translation>
@@ -10594,7 +11537,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorCircleDock</name>
     <message>
-        <location filename="../docks/colorcircle.cpp" line="+25"/>
+        <location filename="../docks/colorcircle.cpp" line="+26"/>
         <source>Color Circle</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10612,7 +11555,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorPaletteDock</name>
     <message>
-        <location filename="../docks/colorpalette.cpp" line="+372"/>
+        <location filename="../docks/colorpalette.cpp" line="+373"/>
         <source>Delete</source>
         <translation type="unfinished">امسح</translation>
     </message>
@@ -10756,7 +11699,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorSliderDock</name>
     <message>
-        <location filename="../docks/colorsliders.cpp" line="+73"/>
+        <location filename="../docks/colorsliders.cpp" line="+74"/>
         <source>Color Sliders</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10891,7 +11834,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorSpinnerDock</name>
     <message>
-        <location filename="../docks/colorspinner.cpp" line="+88"/>
+        <location filename="../docks/colorspinner.cpp" line="+98"/>
         <source>Shape</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10980,8 +11923,28 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">مركز</translation>
     </message>
     <message>
+        <location line="+22"/>
+        <source>Show color harmonies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Toggle the harmony swatches below the color wheel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Configure color harmonies…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change the color harmonies and how they are displayed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../docks/colorcircle.cpp" line="+12"/>
-        <location filename="../docks/colorspinner.cpp" line="+11"/>
+        <location filename="../docks/colorspinner.cpp" line="-19"/>
         <source>Preview selected color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11002,17 +11965,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerAclMenu</name>
     <message>
-        <location filename="../docks/layeraclmenu.cpp" line="+14"/>
-        <source>Lock this layer</source>
+        <location filename="../docks/layeraclmenu.cpp" line="+27"/>
+        <source>Locks:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Censor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location line="+26"/>
         <source>Access tier:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11045,23 +12003,38 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="-369"/>
+        <location filename="../docks/layerlistdock.cpp" line="-435"/>
         <source>Layers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+13"/>
+        <source>Locks and permissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Clip to layer below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Inherit alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
         <source>Toggle sketch mode (only visible to you)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
-        <location line="+1695"/>
+        <location line="+1875"/>
         <source>Opacity: </source>
         <translation type="unfinished">العتامة: </translation>
     </message>
     <message>
-        <location line="-1694"/>
+        <location line="-1874"/>
         <source>%</source>
         <translation type="unfinished">%</translation>
     </message>
@@ -11071,7 +12044,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+284"/>
+        <location line="+327"/>
         <source>Duplicate Layer Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11121,12 +12094,47 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1366"/>
+        <location line="+1033"/>
+        <source>Layer Limit Reached</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+3"/>
+        <source>Can&apos;t create another/%n more layer(s).</source>
+        <extracomment>Singular should be &quot;can&apos;t create another layer&quot;, plural &quot;can&apos;t create %n more layers&quot;. Change this to make sense in your language.</extracomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>The layer limit in sessions hosted with Drawpile 2.2 is 256 per user.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>The layer limit for you is %n layer(s), session operators can change this in the session settings.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+463"/>
         <source>Sketch: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+165"/>
+        <location line="+265"/>
         <source>Layer</source>
         <translation>&amp;طبقه</translation>
     </message>
@@ -11136,7 +12144,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-710"/>
+        <location line="-895"/>
         <source>Delete Layer?</source>
         <translation>حذف الطبقه</translation>
     </message>
@@ -11149,7 +12157,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::Navigator</name>
     <message>
-        <location filename="../docks/navigator.cpp" line="+475"/>
+        <location filename="../docks/navigator.cpp" line="+476"/>
         <source>Navigator</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11167,7 +12175,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::OnionSkinsDock</name>
     <message>
-        <location filename="../docks/onionskins.cpp" line="+117"/>
+        <location filename="../docks/onionskins.cpp" line="+118"/>
         <source>Onion Skins</source>
         <translation type="unfinished">قشر البصل</translation>
     </message>
@@ -11210,7 +12218,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ReferenceDock</name>
     <message>
-        <location filename="../docks/reference.cpp" line="+26"/>
+        <location filename="../docks/reference.cpp" line="+27"/>
         <source>Reference</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11227,7 +12235,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;صق</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11275,7 +12283,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">%</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+90"/>
         <source>Error</source>
         <translation type="unfinished">خطأ</translation>
     </message>
@@ -11289,12 +12297,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::Timeline</name>
     <message>
-        <location filename="../docks/timeline.cpp" line="+19"/>
+        <location filename="../docks/timeline.cpp" line="+20"/>
         <source>Timeline</source>
         <translation>اداه الرسوم المتحركه:</translation>
     </message>
     <message>
-        <location line="+181"/>
+        <location line="+176"/>
         <source> FPS</source>
         <translation type="unfinished"> FPS</translation>
     </message>
@@ -11333,7 +12341,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>drawingboard::CanvasScene</name>
     <message>
-        <location filename="../scene/canvasscene.cpp" line="+331"/>
+        <location filename="../scene/canvasscene.cpp" line="+333"/>
         <source>Restoring canvas…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11341,7 +12349,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tabletinput</name>
     <message>
-        <location filename="../tabletinput.cpp" line="+151"/>
+        <location filename="../tabletinput.cpp" line="+149"/>
         <source>Qt tablet input</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11379,7 +12387,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::AnnotationSettings</name>
     <message>
-        <location filename="../toolwidgets/annotationsettings.cpp" line="+59"/>
+        <location filename="../toolwidgets/annotationsettings.cpp" line="+66"/>
         <source>Protect</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11425,7 +12433,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+9"/>
+        <source>Vector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Smooth</source>
+        <translation type="unfinished">سلس</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Pixel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+82"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
         <translation type="unfinished"></translation>
@@ -11437,7 +12460,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+343"/>
+        <location line="+385"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11445,7 +12468,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::BrushSettings</name>
     <message>
-        <location filename="../toolwidgets/brushsettings.cpp" line="-106"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="-135"/>
         <source>&amp;Edit Brush…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11455,7 +12478,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Reset All Brush &amp;Slots</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11485,22 +12508,26 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+110"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+42"/>
         <source>Time-Based Stabilizer</source>
         <translation type="unfinished">مثبت الوقت</translation>
     </message>
     <message>
         <location line="+1"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+2"/>
         <source>Average Smoothing</source>
         <translation type="unfinished">التنعيم الطبيعي</translation>
     </message>
     <message>
         <location line="+1"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+2"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="+5"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11525,17 +12552,39 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+161"/>
-        <source>This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.</source>
+        <location line="+143"/>
+        <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode with opacity dynamics is unavailable. &lt;a href=&quot;#inc&quot;&gt;Click here to switch to Direct/Build-Up Mode&lt;/a&gt; or &lt;a href=&quot;#opa&quot;&gt;here to disable opacity dynamics&lt;/a&gt;.</source>
+        <location line="+28"/>
+        <source>px</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-5"/>
+        <location line="+7"/>
+        <source>/%1px</source>
+        <extracomment>Limit suffix for the brush size slider, %1 is the size limit. So it will look something like &quot;100/255px&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+648"/>
+        <source>Smudging: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Blending: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+731"/>
+        <source>/%1</source>
+        <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-1417"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11561,7 +12610,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::FillSettings</name>
     <message>
-        <location filename="../toolwidgets/fillsettings.cpp" line="+74"/>
+        <location filename="../toolwidgets/fillsettings.cpp" line="-61"/>
         <source>Fill tool settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11586,12 +12635,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+116"/>
+        <location line="+114"/>
         <source>You don&apos;t have permission to use the fill tool.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+231"/>
+        <location line="+257"/>
         <source>Size Limit: Selection</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11599,6 +12648,136 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Size Limit: Unlimited</source>
         <translation type="unfinished">الحد الأقصى للحجم: غير محدود</translation>
+    </message>
+</context>
+<context>
+    <name>tools::GradientSettings</name>
+    <message>
+        <location filename="../toolwidgets/gradientsettings.cpp" line="-277"/>
+        <source>Foreground: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Opacity: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+111"/>
+        <source>Foreground color to transparency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Transparency to foreground color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Foreground color to background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Background color to foreground color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <location line="+11"/>
+        <location line="+44"/>
+        <source>%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-45"/>
+        <source>Background: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Linear</source>
+        <translation type="unfinished">خطي</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Straight gradient shape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Radial</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Circular gradient shape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Shape:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Focus: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Pad</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Continue gradient by padding it with the nearest color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Reflect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Continue gradient by reflecting it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Spread:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Mode:</source>
+        <translation type="unfinished">وضع:</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Apply the gradient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Discard the gradient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>The gradient tool requires a selection to operate in.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11618,6 +12797,49 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Laser trails are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>tools::LassoFillSettings</name>
+    <message>
+        <location filename="../toolwidgets/lassofillsettings.cpp" line="-16"/>
+        <source>Stabilization mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+65"/>
+        <source>Mode:</source>
+        <translation type="unfinished">وضع:</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Anti-aliasing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Smoothe out fill edges</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Apply the current fill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Discard the current fill</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11677,7 +12899,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../toolwidgets/transformsettings.cpp" line="+143"/>
+        <location filename="../toolwidgets/transformsettings.cpp" line="-151"/>
         <source>Fast</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11774,7 +12996,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">وضع:</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+35"/>
         <source>Constrain</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11830,7 +13052,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>utils::Recents</name>
     <message>
-        <location filename="../utils/recents.cpp" line="+432"/>
+        <location filename="../utils/recents.cpp" line="+424"/>
         <source>More…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11838,7 +13060,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../view/canvasscene.cpp" line="+573"/>
+        <location filename="../view/canvasscene.cpp" line="+597"/>
         <source>Restoring canvas…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11856,7 +13078,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::CanvasView</name>
     <message>
-        <location filename="../view/canvasview.cpp" line="+134"/>
+        <location filename="../view/canvasview.cpp" line="+128"/>
         <source>Save As…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11918,6 +13140,11 @@ Values above 0.5 may not be noticeable.</source>
         <source>Tool is locked</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location line="+4"/>
+        <source>Tool requires a selection</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>widgets::BrushPreview</name>
@@ -11973,20 +13200,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+332"/>
-        <location filename="../view/canvasview.cpp" line="-30"/>
+        <location filename="../scene/canvasview.cpp" line="+343"/>
+        <location filename="../view/canvasview.cpp" line="-23"/>
         <source>Reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">إعادة الاتصال</translation>
     </message>
     <message>
-        <location line="+21"/>
-        <location filename="../view/canvasview.cpp" line="+21"/>
-        <source>Do you want to save the canvas as it was before the reset? Since this is a Drawpile 2.1 session, it may have desynchronized!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <location filename="../view/canvasview.cpp" line="+5"/>
+        <location line="+20"/>
+        <location filename="../view/canvasview.cpp" line="+19"/>
         <source>Do you want to save the canvas as it was before the reset?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11997,7 +13218,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+375"/>
-        <location filename="../view/canvascontroller.cpp" line="+465"/>
+        <location filename="../view/canvascontroller.cpp" line="+473"/>
         <source>Vertical flip: ON</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12020,8 +13241,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1825"/>
-        <location filename="../view/canvascontroller.cpp" line="+1964"/>
+        <location line="+1956"/>
+        <location filename="../view/canvascontroller.cpp" line="+2098"/>
         <source>Zoom: %1%</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12070,7 +13291,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../chat/chatwidget.cpp" line="+164"/>
+        <location filename="../chat/chatwidget.cpp" line="+165"/>
         <source>Public</source>
         <translation>عام</translation>
     </message>
@@ -12223,9 +13444,9 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CurveWidget</name>
     <message>
-        <location filename="../widgets/curvewidget.cpp" line="+109"/>
+        <location filename="../widgets/curvewidget.cpp" line="+108"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">نسخ</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12253,7 +13474,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+102"/>
         <source>Curve copied to clipboard.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12350,7 +13571,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="+58"/>
+        <location filename="../widgets/netstatus.cpp" line="+59"/>
         <source>Copy address to clipboard</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12466,7 +13687,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::PaletteWidget</name>
     <message>
-        <location filename="../widgets/palettewidget.cpp" line="+41"/>
+        <location filename="../widgets/palettewidget.cpp" line="+42"/>
         <source>Add</source>
         <translation type="unfinished">يضيف</translation>
     </message>
@@ -12538,7 +13759,7 @@ Hex: %4</source>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+607"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+626"/>
         <source>Blank key frame (duplicate)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12588,14 +13809,14 @@ Hex: %4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+129"/>
+        <location line="+133"/>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+565"/>
+        <location line="+614"/>
         <source>Track</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12630,7 +13851,7 @@ or via Animation ▸ New Track.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+330"/>
+        <location line="+331"/>
         <source>Set Key Frame to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12643,7 +13864,7 @@ or via Animation ▸ New Track.</source>
 <context>
     <name>widgets::UserItemDelegate</name>
     <message>
-        <location filename="../chat/useritemdelegate.cpp" line="+167"/>
+        <location filename="../chat/useritemdelegate.cpp" line="+162"/>
         <source>Operator</source>
         <translation type="unfinished">الرؤساء</translation>
     </message>
@@ -12653,7 +13874,7 @@ or via Animation ▸ New Track.</source>
         <translation type="unfinished">موثوق</translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="-133"/>
         <source>&amp;Operator</source>
         <translation>الرئيس</translation>
     </message>
@@ -12704,11 +13925,11 @@ or via Animation ▸ New Track.</source>
     </message>
     <message>
         <location line="+2"/>
-        <source>Take Current &amp;Brush</source>
-        <translation>خذ الفرشه</translation>
+        <source>Request Current &amp;Brush</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+102"/>
         <source>Moderator</source>
         <translation>مشرف</translation>
     </message>

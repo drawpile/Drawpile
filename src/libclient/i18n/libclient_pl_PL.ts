@@ -15,6 +15,239 @@
     </message>
 </context>
 <context>
+    <name>BrowserStartPage</name>
+    <message>
+        <location filename="../wasmsupport.cpp" line="+259"/>
+        <source>Attempting to allocate %n page(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Failed to allocate %n page(s): %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Drawpile logo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>drawpile.net login</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Loading application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Starting up…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Starting, this should only take a moment…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Loading assets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Loading, this may take a while…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Preparing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Initializing, this may take a while…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Failed to start Drawpile: ${e}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Setting up…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Fatal error:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Invalid session link.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>However you got here was not via a valid link to a Drawpile session.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Possibly incompatible browser:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Language:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Test your pen pressure here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Detected mouse input, not a pen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Detected touch input, not a pen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Detected input, but not a pen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pen pressure detected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pen detected, but no pressure variance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Checking for updates…</source>
+        <translation type="unfinished">Sprawdzanie aktualizacji…</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Update check blocked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>You can continue regardless, but things may not work properly.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Start Anyway</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Version:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Stable (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Beta (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The session you are trying to join requires the beta version of Drawpile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BrushShortcutModel</name>
     <message>
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
@@ -42,12 +275,12 @@
 <context>
     <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../export/canvassaverrunnable.cpp" line="+84"/>
+        <location filename="../export/canvassaverrunnable.cpp" line="+89"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>Złe argumenty, prawdopodobnie jest to bug w Drawpile.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+6"/>
         <source>Unsupported format.</source>
         <translation>Niewspierany format.</translation>
     </message>
@@ -75,6 +308,12 @@
         <location line="+2"/>
         <source>Unknown error.</source>
         <translation>Nieznany błąd.</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
+        <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -200,6 +439,16 @@
         <location line="+2"/>
         <source>Change Brush Size</source>
         <translation>Zmień rozmiar pędzla</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Brush Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Brush Hardness</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
@@ -353,7 +602,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1005"/>
+        <location filename="../document.cpp" line="+1031"/>
         <source>Unknown format.</source>
         <translation>Nieznany format.</translation>
     </message>
@@ -378,7 +627,7 @@
         <translation>Nieznany błąd.</translation>
     </message>
     <message>
-        <location line="+664"/>
+        <location line="+689"/>
         <source>Error saving image</source>
         <translation>Błąd podczas zapisywania obrazu</translation>
     </message>
@@ -420,12 +669,12 @@
 <context>
     <name>FillSettings</name>
     <message>
-        <location filename="../tools/floodfill.cpp" line="+322"/>
+        <location filename="../tools/floodfill.cpp" line="+332"/>
         <source>Filling…</source>
         <translation>Wypełnienie</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+74"/>
         <source>No layer selected.</source>
         <translation>Nie wybrano warstwy.</translation>
     </message>
@@ -458,7 +707,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>MagicWandSettings</name>
     <message>
-        <location filename="../tools/magicwand.cpp" line="+291"/>
+        <location filename="../tools/magicwand.cpp" line="+292"/>
         <source>Selecting…</source>
         <translation>Wybieranie…</translation>
     </message>
@@ -466,7 +715,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>QGuiApplication</name>
     <message>
-        <location filename="../utils/images.cpp" line="+84"/>
+        <location filename="../utils/images.cpp" line="+72"/>
         <source>Images (%1)</source>
         <translation>Obrazy %1</translation>
     </message>
@@ -557,7 +806,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="-139"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="-143"/>
         <source>Shift</source>
         <translation>Shift</translation>
     </message>
@@ -720,135 +969,210 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>blendmode</name>
     <message>
-        <location filename="../canvas/blendmodes.cpp" line="+40"/>
+        <location filename="../canvas/blendmodes.cpp" line="+44"/>
         <source>Normal</source>
         <translation>Zwykły</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Recolor</source>
         <translation>Koloryzacja</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Behind</source>
         <translation>Z tyłu</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
+        <source>Greater Density</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>OKLAB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Pigment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Multiply</source>
         <translation>Mnożenie</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Screen</source>
         <translation>Ekran</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Overlay</source>
         <translation>Nakładanie</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+12"/>
+        <source>Linear Dodge/Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Color Burn</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Color Dodge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Vivid Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Pin Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Darker Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Lighter Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Difference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Divide</source>
         <translation>Dzielenie</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Burn</source>
-        <translation>Wypalanie</translation>
+        <location line="+30"/>
+        <source>Shade (SAI)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Dodge</source>
-        <translation>Unik</translation>
+        <location line="+6"/>
+        <source>Shine (SAI)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
+        <source>Shade/Shine (SAI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Burn (SAI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Dodge (SAI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Burn/Dodge (SAI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Hard Mix (SAI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Difference (SAI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-108"/>
         <source>Darken</source>
         <translation>Przyciemnianie</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Lighten</source>
         <translation>Rozjaśnianie</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+24"/>
         <source>Subtract</source>
         <translation>Odejmij</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Add</source>
-        <translation>Dodaj</translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="-114"/>
         <source>Erase</source>
         <translation>Wymazywanie</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Color Erase</source>
         <translation>Usuń kolor</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+66"/>
         <source>Hard Light</source>
         <translation>Twarde światło</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-6"/>
         <source>Soft Light</source>
         <translation>Miękkie światło</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-36"/>
         <source>Linear Burn</source>
         <translation>Wypalenie linii</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+12"/>
         <source>Linear Light</source>
         <translation>Liniowe światło</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Luminosity/Shine (SAI)</source>
-        <translation>Jasność/Blask (SAI)</translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="+84"/>
         <source>Hue</source>
         <translation>Odcień</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Saturation</source>
         <translation>Nasycenie</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Luminosity</source>
         <translation>Światłość</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Color</source>
         <translation>Kolor</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Unknown</source>
-        <translation>Nieznany</translation>
     </message>
 </context>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1367"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1245"/>
         <source>Default</source>
         <translation>Domyślne</translation>
     </message>
@@ -967,7 +1291,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Plik pędzla &apos;%1&apos; zawiera przestarzałe ustawienie &apos;%2&apos;</translation>
     </message>
     <message>
-        <location line="+129"/>
+        <location line="+133"/>
         <source>No brushes exported</source>
         <translation>Nie wyeksportowano żadnych pędzli</translation>
     </message>
@@ -982,17 +1306,17 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Błąd zapisu &apos;%1&apos;:&apos;%2&apos;</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+15"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
         <translation>Nie można wyeksportować tagu &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+20"/>
         <source>Missing preset %1</source>
         <translation>Brak ustawienia wstępnego&quot; %1&quot;</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
         <translation>Nie można wyeksportować ustawienia wstępnego &apos;%1&apos;</translation>
     </message>
@@ -1005,7 +1329,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+205"/>
+        <location filename="../canvas/paintengine.cpp" line="+208"/>
         <source>Layer %1</source>
         <translation>Warstwa %1</translation>
     </message>
@@ -1145,7 +1469,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+541"/>
+        <location filename="../net/client.cpp" line="+496"/>
         <source>%1 banned by %2.</source>
         <translation>Użytkownik %1 zablokowany przez %2.</translation>
     </message>
@@ -1180,7 +1504,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Status operatora %1 został cofnięty przez serwer.</translation>
     </message>
     <message>
-        <location line="-511"/>
+        <location line="-466"/>
         <source>You have been kicked.</source>
         <translation>Zostałeś wyrzucony z serwera.</translation>
     </message>
@@ -1220,7 +1544,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Rozłączono:%1</translation>
     </message>
     <message>
-        <location line="+420"/>
+        <location line="+375"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>Tylko moderatorzy mogą banować.</translation>
@@ -1433,7 +1757,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+109"/>
+        <location filename="../net/login.cpp" line="+110"/>
         <location line="+569"/>
         <source>Invalid state</source>
         <translation>Niewłaściwy stan</translation>
@@ -1443,13 +1767,13 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <location line="+8"/>
         <location line="+131"/>
         <location line="+408"/>
-        <location line="+181"/>
+        <location line="+178"/>
         <location line="+80"/>
         <source>Incompatible server</source>
         <translation>Niezgodny serwer</translation>
     </message>
     <message>
-        <location line="-793"/>
+        <location line="-790"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Serwer jest przeznaczony dla innej wersji Drawpile!</translation>
     </message>
@@ -1530,12 +1854,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Wystąpiło kilka sesji, chociaż spodziewano się tylko jednej</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+62"/>
         <source>New version</source>
         <translation>Nowa wersja</translation>
     </message>
     <message>
-        <location line="-45"/>
+        <location line="-41"/>
         <source>Session not yet started!</source>
         <translation>Sesja jeszcze się nie zaczęła!</translation>
     </message>
@@ -1550,7 +1874,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Trwa sesja innej wersji Drawpile (%1)!</translation>
     </message>
     <message>
-        <location line="+214"/>
+        <location line="+212"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation>Protokół TLS nie jest obsługiwany przez ten typ gniazda</translation>
@@ -1567,17 +1891,17 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Nieprawidłowy certyfikat SSL dla hosta %1</translation>
     </message>
     <message>
-        <location line="-856"/>
+        <location line="-854"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation>Tryb bezpieczny nie jest włączony na hoście z przypiętym certyfikatem!</translation>
     </message>
     <message>
-        <location line="+558"/>
+        <location line="+554"/>
         <source>Unknown version %1</source>
         <translation>Nieznana wersja %1</translation>
     </message>
     <message>
-        <location line="+280"/>
+        <location line="+282"/>
         <source>Pinned certificate has changed!</source>
         <translation>Przypięty certyfikat uległ zmianie!</translation>
     </message>
@@ -1670,22 +1994,27 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>(bez tytułu)</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+55"/>
         <source>%1 (incompatible)</source>
         <translation>%1 (niezgodne)</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Drawpile 2.1 (compatibility mode)</source>
-        <translation>Drawpile 2.1 (tryb zgodności)</translation>
+        <source>Drawpile 2.2 (compatibility mode)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Drawpile 2.2 (fully compatible)</source>
-        <translation>Drawpile 2.2 (w pełni kompatybilny)</translation>
+        <source>Drawpile 2.3 (fully compatible)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
+        <source>Unlisted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Incompatible version</source>
         <translation>Niezgodna wersja</translation>
     </message>
@@ -1799,7 +2128,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+214"/>
+        <location filename="../net/server.cpp" line="+245"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation>Jeśli nie zamierzasz korzystać z serwera proxy, możesz wyłączyć serwer proxy sieciowy w preferencjach Drawpile na karcie Sieć.</translation>
     </message>
@@ -1847,14 +2176,22 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     </message>
 </context>
 <context>
+    <name>tools::GradientSettings</name>
+    <message>
+        <location filename="../tools/gradient.cpp" line="+135"/>
+        <source>You need to drag to create a gradient.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../tools/transform.cpp" line="+164"/>
+        <location filename="../tools/transform.cpp" line="+163"/>
         <source>You don&apos;t have permission for that transformation.</source>
         <translation>Nie masz pozwolenia na tę transformację.</translation>
     </message>
     <message>
-        <location line="+207"/>
+        <location line="+206"/>
         <source>You don&apos;t have permission to stamp selections.</source>
         <translation>Nie masz uprawnień do stemplowania zaznaczeń.</translation>
     </message>
@@ -1885,7 +2222,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>utils::News</name>
     <message>
-        <location filename="../utils/news.cpp" line="+286"/>
+        <location filename="../utils/news.cpp" line="+282"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
         <translation>Sprawdzanie aktualizacji…</translation>
@@ -1939,7 +2276,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>wasmsupport</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="+109"/>
+        <location filename="../wasmsupport.cpp" line="-200"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
         <translation>Nie używasz oficjalnego klienta na web.drawpile.net. Większość serwerów nie zezwala na połączenia z innych miejsc.</translation>
     </message>

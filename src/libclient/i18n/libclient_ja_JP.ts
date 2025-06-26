@@ -15,6 +15,239 @@
     </message>
 </context>
 <context>
+    <name>BrowserStartPage</name>
+    <message>
+        <location filename="../wasmsupport.cpp" line="+259"/>
+        <source>Attempting to allocate %n page(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Failed to allocate %n page(s): %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Drawpile logo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>drawpile.net login</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Loading application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Starting up…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Starting, this should only take a moment…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Loading assets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Loading, this may take a while…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Preparing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Initializing, this may take a while…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Failed to start Drawpile: ${e}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Setting up…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Fatal error:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Invalid session link.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>However you got here was not via a valid link to a Drawpile session.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Possibly incompatible browser:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Language:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Test your pen pressure here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Detected mouse input, not a pen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Detected touch input, not a pen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Detected input, but not a pen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pen pressure detected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pen detected, but no pressure variance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Checking for updates…</source>
+        <translation type="unfinished">アップデートの確認…</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Update check blocked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>You can continue regardless, but things may not work properly.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Start Anyway</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Version:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Stable (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Beta (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The session you are trying to join requires the beta version of Drawpile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BrushShortcutModel</name>
     <message>
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
@@ -42,12 +275,12 @@
 <context>
     <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../export/canvassaverrunnable.cpp" line="+84"/>
+        <location filename="../export/canvassaverrunnable.cpp" line="+89"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>引数が間違っています。これはおそらく Drawpile のバグです。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+6"/>
         <source>Unsupported format.</source>
         <translation>サポートされていない形式。</translation>
     </message>
@@ -75,6 +308,12 @@
         <location line="+2"/>
         <source>Unknown error.</source>
         <translation>不明なエラー。</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
+        <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -200,6 +439,16 @@
         <location line="+2"/>
         <source>Change Brush Size</source>
         <translation>ブラシサイズ変更</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Brush Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Change Brush Hardness</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
@@ -353,7 +602,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1005"/>
+        <location filename="../document.cpp" line="+1031"/>
         <source>Unknown format.</source>
         <translation>不明な形式。</translation>
     </message>
@@ -378,7 +627,7 @@
         <translation>不明なエラー。</translation>
     </message>
     <message>
-        <location line="+664"/>
+        <location line="+689"/>
         <source>Error saving image</source>
         <translation>画像保存時のエラー</translation>
     </message>
@@ -420,12 +669,12 @@
 <context>
     <name>FillSettings</name>
     <message>
-        <location filename="../tools/floodfill.cpp" line="+322"/>
+        <location filename="../tools/floodfill.cpp" line="+332"/>
         <source>Filling…</source>
         <translation>塗りつぶし中…</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+74"/>
         <source>No layer selected.</source>
         <translation>レイヤーが未選択です。</translation>
     </message>
@@ -458,7 +707,7 @@ Select a regular layer instead.</source>
 <context>
     <name>MagicWandSettings</name>
     <message>
-        <location filename="../tools/magicwand.cpp" line="+291"/>
+        <location filename="../tools/magicwand.cpp" line="+292"/>
         <source>Selecting…</source>
         <translation>選択中…</translation>
     </message>
@@ -466,7 +715,7 @@ Select a regular layer instead.</source>
 <context>
     <name>QGuiApplication</name>
     <message>
-        <location filename="../utils/images.cpp" line="+84"/>
+        <location filename="../utils/images.cpp" line="+72"/>
         <source>Images (%1)</source>
         <translation>画像 (%1)</translation>
     </message>
@@ -557,7 +806,7 @@ Select a regular layer instead.</source>
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="-139"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="-143"/>
         <source>Shift</source>
         <translation>Shift</translation>
     </message>
@@ -714,135 +963,210 @@ Select a regular layer instead.</source>
 <context>
     <name>blendmode</name>
     <message>
-        <location filename="../canvas/blendmodes.cpp" line="+40"/>
+        <location filename="../canvas/blendmodes.cpp" line="+44"/>
         <source>Normal</source>
         <translation>標準</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Recolor</source>
         <translation>色替え</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Behind</source>
         <translation>後方</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
+        <source>Greater Density</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>OKLAB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Pigment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Multiply</source>
         <translation>乗算</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Screen</source>
         <translation>スクリーン</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Overlay</source>
         <translation>オーバーレイ</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+12"/>
+        <source>Linear Dodge/Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Color Burn</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Color Dodge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Vivid Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Pin Light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Darker Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Lighter Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Difference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Divide</source>
         <translation>除算</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Burn</source>
-        <translation>焼き込み</translation>
+        <location line="+30"/>
+        <source>Shade (SAI)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Dodge</source>
-        <translation>覆い焼き</translation>
+        <location line="+6"/>
+        <source>Shine (SAI)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
+        <source>Shade/Shine (SAI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Burn (SAI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Dodge (SAI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Burn/Dodge (SAI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Hard Mix (SAI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Difference (SAI)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-108"/>
         <source>Darken</source>
         <translation>暗くする</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Lighten</source>
         <translation>明るくする</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+24"/>
         <source>Subtract</source>
         <translation>減算</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Add</source>
-        <translation>加算</translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="-114"/>
         <source>Erase</source>
         <translation>消去</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Color Erase</source>
         <translation>色消去</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+66"/>
         <source>Hard Light</source>
         <translation>ハードライト</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-6"/>
         <source>Soft Light</source>
         <translation>ソフトライト</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-36"/>
         <source>Linear Burn</source>
         <translation>焼き込み(リニア)</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+12"/>
         <source>Linear Light</source>
         <translation>リニアライト</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Luminosity/Shine (SAI)</source>
-        <translation>発光(SAI)</translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="+84"/>
         <source>Hue</source>
         <translation>色相</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Saturation</source>
         <translation>彩度</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Luminosity</source>
         <translation>発光</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Color</source>
         <translation>色</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Unknown</source>
-        <translation>不明</translation>
     </message>
 </context>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1367"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1245"/>
         <source>Default</source>
         <translation>デフォルト</translation>
     </message>
@@ -961,7 +1285,7 @@ Select a regular layer instead.</source>
         <translation>ブラシファイル &apos;%1&apos; には古い設定 &apos;%2&apos; が含まれています</translation>
     </message>
     <message>
-        <location line="+129"/>
+        <location line="+133"/>
         <source>No brushes exported</source>
         <translation>ブラシはエクスポートされませんでした</translation>
     </message>
@@ -976,17 +1300,17 @@ Select a regular layer instead.</source>
         <translation>&apos;%1&apos;: %2 の書き込みエラー</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+15"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
         <translation>&apos;%1&apos; タグをエクスポートできません</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+20"/>
         <source>Missing preset %1</source>
         <translation>プリセット %1 がありません</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
         <translation>&apos;%1&apos; プリセットをエクスポートできません</translation>
     </message>
@@ -999,7 +1323,7 @@ Select a regular layer instead.</source>
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+205"/>
+        <location filename="../canvas/paintengine.cpp" line="+208"/>
         <source>Layer %1</source>
         <translation>レイヤー %1</translation>
     </message>
@@ -1139,7 +1463,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+541"/>
+        <location filename="../net/client.cpp" line="+496"/>
         <source>%1 banned by %2.</source>
         <translation>%1 は %2 によりBANされた。</translation>
     </message>
@@ -1174,7 +1498,7 @@ Select a regular layer instead.</source>
         <translation>サーバーによって %1 の管理者ステータスが破棄されました。</translation>
     </message>
     <message>
-        <location line="-511"/>
+        <location line="-466"/>
         <source>You have been kicked.</source>
         <translation>あなたはキックされました。</translation>
     </message>
@@ -1214,7 +1538,7 @@ Select a regular layer instead.</source>
         <translation>切断されました: %1</translation>
     </message>
     <message>
-        <location line="+420"/>
+        <location line="+375"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>モデレーターのみが通常のBANをエクスポートできます。</translation>
@@ -1427,7 +1751,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+109"/>
+        <location filename="../net/login.cpp" line="+110"/>
         <location line="+569"/>
         <source>Invalid state</source>
         <translation>無効な状態です</translation>
@@ -1437,13 +1761,13 @@ Select a regular layer instead.</source>
         <location line="+8"/>
         <location line="+131"/>
         <location line="+408"/>
-        <location line="+181"/>
+        <location line="+178"/>
         <location line="+80"/>
         <source>Incompatible server</source>
         <translation>互換性のないサーバー</translation>
     </message>
     <message>
-        <location line="-793"/>
+        <location line="-790"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>サーバーはあなたの Drawpile と異なるバージョンです！</translation>
     </message>
@@ -1524,12 +1848,12 @@ Select a regular layer instead.</source>
         <translation>１つではなく複数のセッションが発生しました</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+62"/>
         <source>New version</source>
         <translation>新しいバージョン</translation>
     </message>
     <message>
-        <location line="-45"/>
+        <location line="-41"/>
         <source>Session not yet started!</source>
         <translation>セッションはまだ開始されていません！</translation>
     </message>
@@ -1544,7 +1868,7 @@ Select a regular layer instead.</source>
         <translation>別の Drawpile バージョン (%1) のセッションが進行中です！</translation>
     </message>
     <message>
-        <location line="+214"/>
+        <location line="+212"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation>TLS はこの種類のソケットではサポートされていません</translation>
@@ -1561,17 +1885,17 @@ Select a regular layer instead.</source>
         <translation>ホスト %1 の SSL 証明書が無効です</translation>
     </message>
     <message>
-        <location line="-856"/>
+        <location line="-854"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation>固定された証明書を持つホストではセキュア モードが有効になっていません！</translation>
     </message>
     <message>
-        <location line="+558"/>
+        <location line="+554"/>
         <source>Unknown version %1</source>
         <translation>不明なバージョン %1</translation>
     </message>
     <message>
-        <location line="+280"/>
+        <location line="+282"/>
         <source>Pinned certificate has changed!</source>
         <translation>固定された証明書が変更されました！</translation>
     </message>
@@ -1664,22 +1988,27 @@ Select a regular layer instead.</source>
         <translation>(無題)</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+55"/>
         <source>%1 (incompatible)</source>
         <translation>%1 (互換性なし)</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Drawpile 2.1 (compatibility mode)</source>
-        <translation>Drawpile 2.1 (互換モード)</translation>
+        <source>Drawpile 2.2 (compatibility mode)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Drawpile 2.2 (fully compatible)</source>
-        <translation>Drawpile 2.2 (完全互換)</translation>
+        <source>Drawpile 2.3 (fully compatible)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
+        <source>Unlisted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Incompatible version</source>
         <translation>互換性のないバージョン</translation>
     </message>
@@ -1791,7 +2120,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+214"/>
+        <location filename="../net/server.cpp" line="+245"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation>プロキシを使用する予定がない場合は、Drawpile の設定の 「ネットワーク」タブでネットワーク プロキシを無効にすることができます。</translation>
     </message>
@@ -1839,9 +2168,17 @@ Select a regular layer instead.</source>
     </message>
 </context>
 <context>
+    <name>tools::GradientSettings</name>
+    <message>
+        <location filename="../tools/gradient.cpp" line="+135"/>
+        <source>You need to drag to create a gradient.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../tools/transform.cpp" line="+425"/>
+        <location filename="../tools/transform.cpp" line="+423"/>
         <source>You don&apos;t have permission to transform selections.</source>
         <translation>選択範囲を変形する権限がありません。</translation>
     </message>
@@ -1851,12 +2188,12 @@ Select a regular layer instead.</source>
         <translation>キャンバスが存在しません。</translation>
     </message>
     <message>
-        <location line="-254"/>
+        <location line="-253"/>
         <source>You don&apos;t have permission for that transformation.</source>
         <translation>その変換をする権限がありません。</translation>
     </message>
     <message>
-        <location line="+207"/>
+        <location line="+206"/>
         <source>You don&apos;t have permission to stamp selections.</source>
         <translation>選択範囲にスタンプする権限がありません。</translation>
     </message>
@@ -1877,7 +2214,7 @@ Select a regular layer instead.</source>
 <context>
     <name>utils::News</name>
     <message>
-        <location filename="../utils/news.cpp" line="+286"/>
+        <location filename="../utils/news.cpp" line="+282"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
         <translation>アップデートの確認…</translation>
@@ -1931,7 +2268,7 @@ Select a regular layer instead.</source>
 <context>
     <name>wasmsupport</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="+109"/>
+        <location filename="../wasmsupport.cpp" line="-200"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
         <translation>web.drawpile.net の公式クライアントを使用していません。ほとんどのサーバーは他の場所からの接続を許可しません。</translation>
     </message>
