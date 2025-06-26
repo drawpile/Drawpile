@@ -129,7 +129,7 @@
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+340"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти альфа-сигнал</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -179,7 +179,7 @@
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-23"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -596,12 +596,12 @@
     <message>
         <location line="+39"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>У форматі PSD відсутня підтримка анотацій, часової шкали анімації та деяких режимів накладання. Якщо ви хочете, щоб вони зберігалися належним чином, вам потрібно зберегти їх в іншому форматі.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибраний формат збереже об’єднане зображення. Якщо ви хочете зберегти шари, анотації та часову шкалу анімації, вам потрібно зберегти в іншому форматі.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -775,7 +775,7 @@
     <message>
         <location line="+17"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Збільшити</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -1038,17 +1038,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+13"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Успадкувати альфа-код</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>Обрізати до шару нижче</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Змішати альфа</translation>
     </message>
 </context>
 <context>
@@ -1518,62 +1518,62 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-994"/>
         <source>The requested brush does not allow others to use it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Запитаний пензель не дозволяє іншим його використовувати.</translation>
     </message>
     <message>
         <location line="+580"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Полотно завантажено %1:%2.%3</translation>
     </message>
     <message>
         <location line="+199"/>
         <source>Image saved in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Зображення збережено в %1:%2.%3</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Animation export failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати анімацію провалився</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося експортувати анімацію</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Animation exported</source>
-        <translation type="unfinished"></translation>
+        <translation>Анімація експортована</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Animation exported in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Анімація експортована в %1:%2.%3</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+17"/>
         <location line="+10"/>
         <source>File is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл порожній.</translation>
     </message>
     <message>
         <location line="-10"/>
         <source>Error setting up download.</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка налаштування завантаження.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error performing download.</source>
-        <translation type="unfinished"></translation>
+        <translation>Помилка завантаження.</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>This session was hosted with an older version of Drawpile. Several features – such as layer clipping, some blend modes and drawing within a selection mask – will be unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Цей сеанс було проведено за допомогою старішої версії Drawpile. Деякі функції, такі як обрізання шарів, деякі режими накладання та малювання в масці виділення, будуть недоступні.</translation>
     </message>
     <message>
         <location line="+504"/>
@@ -1583,12 +1583,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+5"/>
         <source>Canvas size too large to host.</source>
-        <translation type="unfinished"></translation>
+        <translation>Розмір полотна занадто великий для розміщення.</translation>
     </message>
     <message>
         <location line="+194"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви збираєтеся знову підключитися до сеансу та закрити це вікно.</translation>
     </message>
     <message>
         <location line="+1780"/>
@@ -2860,17 +2860,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Configure drawing toolbar…</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштувати панель інструментів для малювання…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Always show side toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Завжди показувати бічну панель інструментів</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Always show bottom toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Завжди показувати нижню панель інструментів</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2895,12 +2895,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+70"/>
         <source>Set Selection Mask &amp;Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити маску виділення та колір…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the color tint of the selection mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Зміна відтінку кольору маски виділення</translation>
     </message>
     <message>
         <location line="+149"/>
@@ -2927,42 +2927,42 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+30"/>
         <source>Automatically inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматично успадковувати альфа-код</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Успадкування та збереження альфа-каналу на основі режиму змішування</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Alpha lock layer for you</source>
-        <translation type="unfinished"></translation>
+        <translation>Шар альфа-блокування для вас</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Censor layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Шар цензури</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer entirely</source>
-        <translation type="unfinished"></translation>
+        <translation>Повністю заблокувати шар</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer content</source>
-        <translation type="unfinished"></translation>
+        <translation>Заблокувати вміст шару</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Зафіксувати властивості шару</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer position</source>
-        <translation type="unfinished"></translation>
+        <translation>Зафіксувати положення шару</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2982,12 +2982,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Layer Color Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Маркер кольору шару</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>&amp;Locks</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Замки</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -3013,12 +3013,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+11"/>
         <source>Selection Lightness to Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Від яскравості виділення до альфа-версії</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Selection Darkness to Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Темрява виділення до альфи</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3093,17 +3093,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Dra&amp;w on Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Малювати на виділеному</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Mas&amp;k Strokes/Lasso Fills by Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Обведення маскою/заливка ласо за допомогою виділення</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Keep brush strokes inside the selection mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберігайте мазки пензля всередині маски виділення</translation>
     </message>
     <message>
         <location line="+79"/>
@@ -3248,7 +3248,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+12"/>
         <source>Key Frame Color Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Маркер кольору ключового кадру</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3401,22 +3401,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Lass&amp;o Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Заливка ласо</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Fill enclosed areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Заповніть закриті ділянки</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Градієнт</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create a gradient inside selected areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Створення градієнта всередині вибраних областей</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3472,12 +3472,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+30"/>
         <source>%1 and Deselect</source>
         <extracomment>This is the text for keyboard shortcuts that switch tools and remove the selection in a single action. %1 is the name of a tool, like &quot;Freehand&quot;, &quot;Eraser&quot; or &quot;Line&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 і Зняти вибір</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Switch tool to %1 and deselect at once</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключити інструмент на %1 та одразу скасувати вибір</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3492,7 +3492,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Deselect Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Скасувати вибір комбінацій клавіш</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -3502,32 +3502,32 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>Збереження альфа-сигналу</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>toggle recolor mode/alpha preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>перемикання режиму зміни кольору/збереження альфа-сигналу</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Decrease Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Зменшити непрозорість пензля</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Increase Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Збільшити непрозорість пензля</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Decrease Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Зменшити жорсткість пензля</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Increase Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Збільшити твердість пензля</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3577,7 +3577,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+82"/>
         <source>Tool blend mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим змішування інструменту: %1</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -3696,137 +3696,137 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+137"/>
         <source>None</source>
-        <translation type="unfinished">Жодного</translation>
+        <translation>Жоден</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unmark layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Зняти позначку шару</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unmark key frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Зняти позначку з ключового кадру</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Blue</source>
-        <translation type="unfinished">Синій</translation>
+        <translation>Синій</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначити шар синім</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначити ключовий кадр синім</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Green</source>
-        <translation type="unfinished">Зелений</translation>
+        <translation>Зелений</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer green</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначити шар зеленим</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame green</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначити ключовий кадр зеленим</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Жовтий</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначити шар жовтим</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначити ключовий кадр жовтим</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Помаранчевий</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначити шар помаранчевим</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначте ключовий кадр помаранчевим кольором</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brown</source>
-        <translation type="unfinished"></translation>
+        <translation>Коричневий</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer brown</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначте шар коричневим</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame brown</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначте ключовий кадр коричневим</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Red</source>
-        <translation type="unfinished">Червоний</translation>
+        <translation>Червоний</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer red</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначити шар червоним</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame red</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначити ключовий кадр червоним</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Фіолетовий</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначити шар фіолетовим</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначте ключовий кадр фіолетовим</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Gray</source>
-        <translation type="unfinished"></translation>
+        <translation>Сірий</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer gray</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначити шар сірим</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame gray</source>
-        <translation type="unfinished"></translation>
+        <translation>Позначити ключовий кадр сірим</translation>
     </message>
 </context>
 <context>
@@ -4000,12 +4000,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Lasso Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Заливка лассо</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Градієнт</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4121,7 +4121,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+23"/>
         <source>Undo</source>
-        <translation>Скасувати</translation>
+        <translation>Відмінити</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4252,41 +4252,41 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+40"/>
         <location line="+125"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>пікселів</translation>
     </message>
     <message>
         <location line="-195"/>
         <location line="+247"/>
         <source>Operators: </source>
-        <translation type="unfinished"></translation>
+        <translation>Оператори: </translation>
     </message>
     <message>
         <location line="-214"/>
         <location line="+201"/>
         <source>Trusted: </source>
-        <translation type="unfinished"></translation>
+        <translation>Довірений: </translation>
     </message>
     <message>
         <location line="-178"/>
         <source>Pigment &amp; OKLAB Brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пензлі для пігментів та OKLAB:</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+26"/>
         <source>Registered: </source>
-        <translation type="unfinished"></translation>
+        <translation>Зареєстровано: </translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Brush size limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Обмеження розміру пензля:</translation>
     </message>
     <message>
         <location line="+30"/>
         <location line="+76"/>
         <source>Everyone: </source>
-        <translation type="unfinished"></translation>
+        <translation>Усі: </translation>
     </message>
     <message>
         <location line="-30"/>
@@ -4301,7 +4301,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+237"/>
         <source>Layer count limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Обмеження кількості шарів:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4495,7 +4495,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+24"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation>Рендеринг</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -4795,58 +4795,58 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+1184"/>
         <source>No dynamics</source>
-        <translation type="unfinished">Ніякої динаміки</translation>
+        <translation>Без динаміки</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished">Динаміка тиску</translation>
+        <translation>Динаміка тиску</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished">Динаміка швидкості</translation>
+        <translation>Динаміка швидкості</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished">Динаміка дистанції</translation>
+        <translation>Динаміка відстані</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished">Максимальна швидкість: </translation>
+        <translation>Максимальна швидкість: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished">Максимальна відстань: </translation>
+        <translation>Максимальна відстань: </translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+20"/>
         <source>Apply to All</source>
-        <translation type="unfinished">Застосувати до всіх</translation>
+        <translation>Застосувати до всіх</translation>
     </message>
     <message>
         <location line="-18"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановіть максимальну швидкість для розміру, непрозорості, твердості, розмазування та тремтіння одночасно.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished">Максимальна швидкість, встановлена для всіх налаштувань цього пензля.</translation>
+        <translation>Максимальна швидкість, встановлена для всіх налаштувань цього пензля.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановіть максимальну відстань для розміру, непрозорості, жорсткості, розмазування та тремтіння одночасно.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished">Максимальна відстань, встановлена для всіх параметрів у цьому пензлі.</translation>
+        <translation>Максимальна відстань, встановлена для всіх налаштувань цього пензля.</translation>
     </message>
 </context>
 <context>
@@ -5391,12 +5391,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>Allow others in a session to use this brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Дозволити іншим учасникам сеансу використовувати цей пензель</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Sharing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Спільне використання:</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -5474,25 +5474,25 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+30"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+12"/>
         <source>Direct Build-Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Пряме нарощування</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Wash</source>
-        <translation type="unfinished"></translation>
+        <translation>Непряме прання</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Soft (Drawpile 2.2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Непрямий м&apos;який (Drawpile 2.2)</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Build-Up (Drawpile 2.1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Непряме нарощування (Drawpile 2.1)</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -5624,60 +5624,62 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="-425"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Smudge with transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>Розмазування з прозорістю</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enabling this will make smudging take the alpha channel into account.
 Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнення цієї функції призведе до врахування альфа-каналу під час розмивання.
+Вимкнення цієї функції повертає поведінку до стану, який був до Drawpile 2.3.</translation>
     </message>
     <message>
         <location line="+100"/>
         <source>Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>Тремтіння: </translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Minimum Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>Мінімальне тремтіння: </translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+300"/>
         <source>Jitter</source>
-        <translation type="unfinished">Джиттер</translation>
+        <translation>Тремтіння</translation>
     </message>
     <message>
         <location line="-112"/>
         <source>Not available in indirect paint modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недоступно в режимах непрямого фарбування.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Not available in indirect paint modes or when using a blend mode other than Normal.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недоступно в режимах непрямого малювання або під час використання режиму накладання, відмінного від «Звичайного».</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not available in indirect paint modes or when using the Marker or Greater Density blend modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недоступно в режимах непрямого малювання або під час використання режимів змішування «Маркер» чи «Більша щільність».</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Synchronize smudging (slower, but more accurate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронізувати розмазування (повільніше, але точніше)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This will make the brush to wait for its own stroke to finish to allow it to accurately smudge with itself.
 If fast strokes cause artifacts when smudging, enabling this can help.</source>
-        <translation type="unfinished"></translation>
+        <translation>Це змусить пензель чекати на завершення власного мазка, щоб мати змогу акуратно розмазати його.
+Якщо швидкі мазки створюють артефакти під час розмазування, увімкнення цієї функції може допомогти.</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Randomized offsets in the stroke center.</source>
-        <translation type="unfinished"></translation>
+        <translation>Випадкові зміщення в центрі штриха.</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -5692,7 +5694,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="-344"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти альфа-версію</translation>
     </message>
     <message>
         <location line="+816"/>
@@ -5753,17 +5755,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+71"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Змішування: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Minimum Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Мінімальне змішування: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending</source>
-        <translation type="unfinished"></translation>
+        <translation>Змішування</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -7122,7 +7124,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="+3"/>
         <source>Synchronize smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>Синхронізувати розмазування</translation>
     </message>
 </context>
 <context>
@@ -7192,12 +7194,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Зміна непрозорості пензля</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Зміна твердості пензля</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7401,12 +7403,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+68"/>
         <source>Reset crop</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути обрізку</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Upscale to fit view</source>
-        <translation type="unfinished"></translation>
+        <translation>Збільшити масштаб для поміщення зображення</translation>
     </message>
     <message>
         <location line="+100"/>
@@ -7535,17 +7537,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../mainwindow.cpp" line="-1022"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Змішати альфа</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Успадкувати альфа-код</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>Обрізати до шару нижче</translation>
     </message>
 </context>
 <context>
@@ -7927,37 +7929,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+113"/>
         <source>Width and height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ширина та висота повинні бути в межах від 1 до %1 пікселів у сеансах, розміщених за допомогою Drawpile 2.2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Width must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ширина має бути від 1 до %1 пікселів у сеансах, розміщених за допомогою Drawpile 2.2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Висота має бути від 1 до %1 пікселів у сеансах, розміщених за допомогою Drawpile 2.2.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Width and height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ширина та висота мають бути від 1 до %1 пікселів.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Width must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ширина має бути від 1 до %1 пікселів.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Висота має бути від 1 до %1 пікселів.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Total size must be between 1 and %1 pixels (you&apos;re at %2.)</source>
-        <translation type="unfinished"></translation>
+        <translation>Загальний розмір має бути від 1 до %1 пікселів (ви знаходитесь на %2)</translation>
     </message>
 </context>
 <context>
@@ -8283,7 +8285,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Файли</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8316,179 +8318,179 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/shadeselectordialog.cpp" line="+26"/>
         <source>Color Harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>Колірні гармонії</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Show harmony swatches under color wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати зразки гармонії під колірним колом</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Color harmony swatches are disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Зразки гармонії кольорів вимкнено.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Click here to enable them.</source>
         <extracomment>&quot;Them&quot; refers to the color harmony swatches.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Натисніть тут, щоб увімкнути їх.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Rows: </source>
-        <translation type="unfinished"></translation>
+        <translation>Рядки: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Row height: </source>
-        <translation type="unfinished"></translation>
+        <translation>Висота рядка: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>пікселів</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Colors per row: </source>
-        <translation type="unfinished"></translation>
+        <translation>Кольори в рядку: </translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Border: </source>
-        <translation type="unfinished"></translation>
+        <translation>Кордон: </translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Set Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити колір…</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Custom</source>
-        <translation type="unfinished">Користувацька</translation>
+        <translation>Користувацька</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue</source>
-        <translation type="unfinished">Відтінок</translation>
+        <translation>Хюе</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Saturation</source>
-        <translation type="unfinished">Насиченість</translation>
+        <translation>Насиченість</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>Хрома</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Value</source>
-        <translation type="unfinished">Значення</translation>
+        <translation>Значення</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>Легкість</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>Яскравість</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shades</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтінки</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Move Up</source>
-        <translation type="unfinished">Вгору</translation>
+        <translation>Перемістити вгору</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Move Down</source>
-        <translation type="unfinished">Вниз</translation>
+        <translation>Перемістити вниз</translation>
     </message>
     <message>
         <location line="+122"/>
         <location line="+4"/>
         <source>Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Діапазон: </translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+12"/>
         <source>Saturation range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Діапазон насиченості: </translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+12"/>
         <source>Chroma range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Діапазон кольоровості: </translation>
     </message>
     <message>
         <location line="-8"/>
         <location line="+12"/>
         <source>Value range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Діапазон значень: </translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+12"/>
         <source>Lightness range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Діапазон яскравості: </translation>
     </message>
     <message>
         <location line="-11"/>
         <location line="+12"/>
         <source>Luminance range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Діапазон яскравість: </translation>
     </message>
     <message>
         <location line="-8"/>
         <source>Hue range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Діапазон відтінків: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Hue offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Зсув відтінку: </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saturation offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Зсув насиченості: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Chroma offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Зсув кольоровості: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Value offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Зсув значення: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lightness offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Зсув яскравості: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Зсув яскравість: </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -8691,22 +8693,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/toolbarconfigdialog.cpp" line="+21"/>
         <source>Configure Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштувати панель інструментів</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Drag to reorder and uncheck to hide tools.</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетягніть, щоб змінити порядок, та зніміть позначку, щоб приховати інструменти.</translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Reset</source>
-        <translation type="unfinished">Скинути</translation>
+        <translation>Скинути</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really revert the toolbar configuration to its default state?</source>
-        <translation type="unfinished"></translation>
+        <translation>Дійсно повернути конфігурацію панелі інструментів до стану за замовчуванням?</translation>
     </message>
 </context>
 <context>
@@ -8844,70 +8846,70 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation type="unfinished">Якщо ввімкнено, зберігати кожні %1 хвилин</translation>
+        <translation>Якщо ввімкнено, зберігати кожні %1 хвилин</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation type="unfinished">Автозбереження:</translation>
+        <translation>Автозбереження:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation type="unfinished">Автозбереження можна ввімкнути для поточного файлу в меню Файл ▸ Автозбереження.</translation>
+        <translation>Автозбереження можна ввімкнути для поточного файлу в меню Файл ▸ Автозбереження.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>За замовчуванням (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+14"/>
         <source>OpenRaster (.ora)</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenRaster (.ora)</translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+14"/>
         <source>Drawpile Canvas (.dpcs)</source>
-        <translation type="unfinished"></translation>
+        <translation>Полотно для витягування (.dpcs)</translation>
     </message>
     <message>
         <location line="-12"/>
         <source>Preferred save format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Бажаний формат збереження:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>PNG (.png)</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG (.png)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>JPEG (.jpg)</source>
-        <translation type="unfinished"></translation>
+        <translation>JPEG (.jpg)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>QOI (.qoi)</source>
-        <translation type="unfinished"></translation>
+        <translation>QOI (.qoi)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>WEBP (.webp)</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBP (.webp)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Photoshop Document (.psd)</source>
-        <translation type="unfinished"></translation>
+        <translation>Документ Photoshop (.psd)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preferred export format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Бажаний формат експорту:</translation>
     </message>
 </context>
 <context>
@@ -9756,7 +9758,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-20"/>
         <source>Stylus</source>
-        <translation type="unfinished"></translation>
+        <translation>Стилус</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9766,17 +9768,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Use separate curve for eraser tip</source>
-        <translation type="unfinished"></translation>
+        <translation>Використовуйте окрему криву для кінчика гумки</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Eraser pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>Крива тиску гумки:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Eraser</source>
-        <translation type="unfinished">Гумка</translation>
+        <translation>Гумка</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -9989,12 +9991,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+42"/>
         <source>Cancel action to deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>Скасувати дію для скасування вибору</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Press %1 to deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>Натисніть %1, щоб скасувати вибір</translation>
     </message>
     <message numerus="yes">
         <location line="+25"/>
@@ -10080,7 +10082,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-82"/>
         <source>Undo</source>
-        <translation>Скасувати</translation>
+        <translation>Відмінити</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10195,12 +10197,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">Згладжування:</translation>
+        <translation>Згладжування:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -10339,7 +10341,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Automatically inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоматичне успадкування та збереження альфа-сигналу на основі режиму змішування</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11004,7 +11006,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Pigment and OKLAB brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пігмент та пензлі OKLAB:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11029,18 +11031,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Maximum brush size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальний розмір пензля:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Maximum amount of layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальна кількість шарів:</translation>
     </message>
     <message>
         <location line="+171"/>
         <source>%1: </source>
         <extracomment>%1 is an acccess tier, like &quot;Operator&quot; or &quot;Everyone&quot;. Unless your language uses something other than a colon, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: </translation>
     </message>
     <message>
         <location line="+296"/>
@@ -11050,7 +11052,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>пікс</translation>
     </message>
     <message>
         <location line="-10"/>
@@ -11860,22 +11862,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+22"/>
         <source>Show color harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати колірні гармонії</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle the harmony swatches below the color wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Перемикання зразків гармонії під колірним колом</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Configure color harmonies…</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштувати колірні гармонії…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change the color harmonies and how they are displayed</source>
-        <translation type="unfinished"></translation>
+        <translation>Зміна колірних гармоній та способу їх відображення</translation>
     </message>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+12"/>
@@ -11902,7 +11904,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="+27"/>
         <source>Locks:</source>
-        <translation type="unfinished"></translation>
+        <translation>Замки:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -11945,17 +11947,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Locks and permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Блокування та дозволи</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>Обрізати до шару нижче</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Успадкувати альфа-код</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -12031,30 +12033,30 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1033"/>
         <source>Layer Limit Reached</source>
-        <translation type="unfinished"></translation>
+        <translation>Досягнуто ліміту шарів</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>Can&apos;t create another/%n more layer(s).</source>
         <extracomment>Singular should be &quot;can&apos;t create another layer&quot;, plural &quot;can&apos;t create %n more layers&quot;. Change this to make sense in your language.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Неможливо створити ще один/%n шар.</numerusform>
+            <numerusform>Неможливо створити ще один/%n шару.</numerusform>
+            <numerusform>Неможливо створити ще один/%n шарів.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The layer limit in sessions hosted with Drawpile 2.2 is 256 per user.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ліміт шарів у сеансах, розміщених за допомогою Drawpile 2.2, становить 256 на користувача.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>The layer limit for you is %n layer(s), session operators can change this in the session settings.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Ліміт шарів для вас становить %n шарів, оператори сеансу можуть змінити це в налаштуваннях сеансу.</numerusform>
+            <numerusform>Ліміт шару для вас становить %n шару, оператори сеансу можуть змінити це в налаштуваннях сеансу.</numerusform>
+            <numerusform>Ліміт шарів для вас становить %n шарів, оператори сеансів можуть змінити це в налаштуванні сеансів.</numerusform>
         </translation>
     </message>
     <message>
@@ -12364,17 +12366,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Vector</source>
-        <translation type="unfinished"></translation>
+        <translation>Вектор</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished">Гладкий</translation>
+        <translation>Гладкий</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pixel</source>
-        <translation type="unfinished"></translation>
+        <translation>Піксель</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -12483,34 +12485,34 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+143"/>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>У вас немає дозволу використовувати пензлі в режимі OKLAB або Пігмент.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>пікс</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>/%1px</source>
         <extracomment>Limit suffix for the brush size slider, %1 is the size limit. So it will look something like &quot;100/255px&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1пікс</translation>
     </message>
     <message>
         <location line="+648"/>
         <source>Smudging: </source>
-        <translation type="unfinished">Розмазування: </translation>
+        <translation>Розмазування: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Змішування: </translation>
     </message>
     <message>
         <location line="+731"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1</translation>
     </message>
     <message>
         <location line="-1417"/>
@@ -12584,129 +12586,129 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/gradientsettings.cpp" line="-277"/>
         <source>Foreground: </source>
-        <translation type="unfinished"></translation>
+        <translation>Передній план: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Непрозорість: </translation>
+        <translation>Непрозорість: </translation>
     </message>
     <message>
         <location line="+111"/>
         <source>Foreground color to transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>Колір переднього плану для прозорості</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Transparency to foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Прозорість для кольору переднього плану</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Foreground color to background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Колір переднього плану на колір фону</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Background color to foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Колір фону на колір переднього плану</translation>
     </message>
     <message>
         <location line="+34"/>
         <location line="+11"/>
         <location line="+44"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="-45"/>
         <source>Background: </source>
-        <translation type="unfinished"></translation>
+        <translation>Передісторія: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Linear</source>
-        <translation type="unfinished">Лінійний</translation>
+        <translation>Лінійний</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Straight gradient shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Пряма градієнтна форма</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Radial</source>
-        <translation type="unfinished"></translation>
+        <translation>Радіальний</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Circular gradient shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Кругова градієнтна форма</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Shape:</source>
-        <translation type="unfinished"></translation>
+        <translation>Форма:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Focus: </source>
-        <translation type="unfinished"></translation>
+        <translation>Фокус: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Pad</source>
-        <translation type="unfinished"></translation>
+        <translation>Прокладка</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continue gradient by padding it with the nearest color</source>
-        <translation type="unfinished"></translation>
+        <translation>Продовжуйте градієнт, додаючи його найближчим кольором</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Reflect</source>
-        <translation type="unfinished"></translation>
+        <translation>Відображати</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continue gradient by reflecting it</source>
-        <translation type="unfinished"></translation>
+        <translation>Продовжуйте градієнт, віддзеркалюючи його</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Spread:</source>
-        <translation type="unfinished"></translation>
+        <translation>Поширення:</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Mode:</source>
-        <translation type="unfinished">Режим:</translation>
+        <translation>Режим:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Apply</source>
-        <translation type="unfinished">Застосувати</translation>
+        <translation>Застосувати</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply the gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Застосування градієнта</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">Скасувати</translation>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Discard the gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкиньте градієнт</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>The gradient tool requires a selection to operate in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Інструмент «Градієнт» вимагає виділення для роботи.</translation>
     </message>
 </context>
 <context>
@@ -12734,42 +12736,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-16"/>
         <source>Stabilization mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим стабілізації</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>Mode:</source>
-        <translation type="unfinished">Режим:</translation>
+        <translation>Режим:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Anti-aliasing</source>
-        <translation type="unfinished">Згладжування</translation>
+        <translation>Згладжування</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothe out fill edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Згладити краї заливки</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished">Застосувати</translation>
+        <translation>Застосувати</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply the current fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Застосувати поточну заливку</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">Скасувати</translation>
+        <translation>Скасувати</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Discard the current fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Відхилити поточну заливку</translation>
     </message>
 </context>
 <context>
@@ -13072,7 +13074,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Tool requires a selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Інструмент вимагає вибору</translation>
     </message>
 </context>
 <context>
@@ -13868,7 +13870,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+2"/>
         <source>Request Current &amp;Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Запит струму та щітки</translation>
     </message>
     <message>
         <location line="+102"/>
