@@ -162,7 +162,7 @@
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+340"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha beibehalten</translation>
     </message>
     <message>
         <location line="+314"/>
@@ -179,7 +179,7 @@
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-23"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -596,12 +596,12 @@
     <message>
         <location line="+39"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das PSD-Format hat keine Unterstützung für Annotationen, den Animationszeitstrahl und einige Mischmodi. Wenn Sie diese behalten wollen, müssen Sie in einem anderen Format speichern.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das gewählte Format wird ein zusammengeführtes Bild speichern. Wenn sie Ebenen, Annotationen und den Animationszeitstrahl beibehalten wollen, müssen Sie in einem anderen Format speichern.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -776,7 +776,7 @@
     <message>
         <location line="+17"/>
         <source>Zoom</source>
-        <translation type="unfinished">Zoom</translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -1033,17 +1033,17 @@ Teilreichweite: [%3, %4]</translation>
     <message>
         <location line="+13"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha erben</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>Durch Ebene darunter beschneiden</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha mischen</translation>
     </message>
     <message>
         <location line="-231"/>
@@ -1323,7 +1323,7 @@ Teilreichweite: [%3, %4]</translation>
         <location line="+415"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand in %1:%2.%3 geladen</translation>
     </message>
     <message>
         <location line="+168"/>
@@ -1344,50 +1344,50 @@ Teilreichweite: [%3, %4]</translation>
         <location line="+4"/>
         <source>Image saved in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Bild in %1:%2.%3 gespeichert</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Animation export failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Animationsexport fehlgeschlagen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Animation konnte nicht exportiert werden</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Animation exported</source>
-        <translation type="unfinished"></translation>
+        <translation>Animation exportiert</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Animation exported in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Animation in %1:%2.%3 exportiert</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+17"/>
         <location line="+10"/>
         <source>File is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei ist leer.</translation>
     </message>
     <message>
         <location line="-10"/>
         <source>Error setting up download.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Einrichten des Downloads.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error performing download.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Durchführen des Downloads.</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>This session was hosted with an older version of Drawpile. Several features – such as layer clipping, some blend modes and drawing within a selection mask – will be unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Sitzung wurde mit einer älteren Version von Drawpile gehostet. Einige Funktionalität – wie Ebenenbeschneidung, einige Mischmodi und das Malen innerhalb einer Selektionsmaske – wird nicht verfügbar sein.</translation>
     </message>
     <message>
         <location line="+163"/>
@@ -1522,12 +1522,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="+200"/>
         <source>Canvas size too large to host.</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwandgröße zu groß zum Hosten.</translation>
     </message>
     <message>
         <location line="+194"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie sind im Begriff sich mit der Sitzung neuzuverbinden und dieses Fenster zu schließen.</translation>
     </message>
     <message>
         <location line="+77"/>
@@ -2309,7 +2309,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="+175"/>
         <source>The requested brush does not allow others to use it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der angeforderte Pinsel erlaubt es nicht, dass andere ihn nutzen.</translation>
     </message>
     <message>
         <location line="+296"/>
@@ -2716,17 +2716,17 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+34"/>
         <source>Configure drawing toolbar…</source>
-        <translation type="unfinished"></translation>
+        <translation>Malwerkzeugleiste konfigurieren…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Always show side toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Seitliche Werkzeugleiste immer anzeigen</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Always show bottom toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Untere Werkzeugleiste immer anzeigen</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2791,12 +2791,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+5"/>
         <source>Set Selection Mask &amp;Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionsmaskenfarbe setzen…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the color tint of the selection mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändert die Einfärbung der Selektionsmaske</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2861,42 +2861,42 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+29"/>
         <source>Automatically inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha automatisch erben</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha erben und beibehalten je nach Mischmodus</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Alpha lock layer for you</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha auf Ebene für Sie sperren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Censor layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene zensieren</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer entirely</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene komplett sperren</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer content</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebeneninhalt sperren</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebeneneigenschaften sperren</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer position</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebenenposition sperren</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2916,12 +2916,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+13"/>
         <source>Layer Color Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebenen-Farbmarkierung</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>&amp;Locks</source>
-        <translation type="unfinished"></translation>
+        <translation>Sperren</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -2947,12 +2947,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+11"/>
         <source>Selection Lightness to Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionshelligkeit zu Alpha</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Selection Darkness to Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionsdunkelheit zu Alpha</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3027,17 +3027,17 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+2"/>
         <source>Dra&amp;w on Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Auf Selektion &amp;malen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Mas&amp;k Strokes/Lasso Fills by Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Striche/Lassofüllungen mit Sele&amp;ktion maskieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Keep brush strokes inside the selection mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinselstriche innerhalb der Selektionsmaske behalten</translation>
     </message>
     <message>
         <location line="+79"/>
@@ -3192,7 +3192,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+12"/>
         <source>Key Frame Color Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild-Farbmarkierung</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3332,22 +3332,22 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+1"/>
         <source>Lass&amp;o Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Lass&amp;ofüllung</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Fill enclosed areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Füllt eingeschlossene Bereiche</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Verlauf</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create a gradient inside selected areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellt Verläufe innerhalb selektierter Bereiche</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3393,17 +3393,17 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location line="+30"/>
         <source>%1 and Deselect</source>
         <extracomment>This is the text for keyboard shortcuts that switch tools and remove the selection in a single action. %1 is the name of a tool, like &quot;Freehand&quot;, &quot;Eraser&quot; or &quot;Line&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 und deselektieren</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Switch tool to %1 and deselect at once</source>
-        <translation type="unfinished"></translation>
+        <translation>Wechselt zum Werkzeug %1 und entfernt die Selektion gleichzeitig</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Deselect Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Deselektionskürzel</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -3418,32 +3418,32 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+17"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>Alphaerhaltung umschalten</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>toggle recolor mode/alpha preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>Alphaerhaltung/Umfärbmodus umschalten</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Decrease Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinseldeckkraft reduzieren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Increase Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinseldeckkraft erhöhen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Decrease Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinselhärte reduzieren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Increase Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinselhärte erhöhen</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3493,7 +3493,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+82"/>
         <source>Tool blend mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Werkzeugmischmodus: %1</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -3697,137 +3697,137 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+137"/>
         <source>None</source>
-        <translation type="unfinished">Keine</translation>
+        <translation>Keine</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unmark layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebenenmarkierung aufheben</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unmark key frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbildmarkierung aufheben</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Blue</source>
-        <translation type="unfinished">Blau</translation>
+        <translation>Blau</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene blau markieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild blau markieren</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Green</source>
-        <translation type="unfinished">Grün</translation>
+        <translation>Grün</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer green</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene grün markieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame green</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild grün markieren</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelb</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene gelb markieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild gelb markieren</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Orange</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene orange markieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild orange markieren</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brown</source>
-        <translation type="unfinished"></translation>
+        <translation>Braun</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer brown</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene braun markieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame brown</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild braun markieren</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Red</source>
-        <translation type="unfinished">Rot</translation>
+        <translation>Rot</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer red</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene rot markieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame red</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild rot markieren</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Lila</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene lila markieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild lila markieren</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Gray</source>
-        <translation type="unfinished"></translation>
+        <translation>Grau</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer gray</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene grau markieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame gray</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild grau markieren</translation>
     </message>
 </context>
 <context>
@@ -4001,12 +4001,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+5"/>
         <source>Lasso Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Lassofüllung</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Verlauf</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4243,13 +4243,13 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location line="+40"/>
         <location line="+125"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-195"/>
         <location line="+247"/>
         <source>Operators: </source>
-        <translation type="unfinished"></translation>
+        <translation>Operatoren: </translation>
     </message>
     <message>
         <location line="-224"/>
@@ -4260,34 +4260,34 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location line="+10"/>
         <location line="+201"/>
         <source>Trusted: </source>
-        <translation type="unfinished"></translation>
+        <translation>Vertraut: </translation>
     </message>
     <message>
         <location line="-178"/>
         <source>Pigment &amp; OKLAB Brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pigment- &amp; OKLAB-Pinsel:</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+26"/>
         <source>Registered: </source>
-        <translation type="unfinished"></translation>
+        <translation>Registriert: </translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Brush size limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinselgrößenbegrenzung:</translation>
     </message>
     <message>
         <location line="+30"/>
         <location line="+76"/>
         <source>Everyone: </source>
-        <translation type="unfinished"></translation>
+        <translation>Alle: </translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Layer count limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebenenanzahlbegrenzung:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -4496,7 +4496,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+24"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation>Darstellung</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -4796,58 +4796,58 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+1184"/>
         <source>No dynamics</source>
-        <translation type="unfinished">Keine Dynamik</translation>
+        <translation>Keine Dynamik</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished">Druckdynamik</translation>
+        <translation>Druckdynamik</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished">Geschwindigkeitsdynamik</translation>
+        <translation>Geschwindigkeitsdynamik</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished">Distanzdynamik</translation>
+        <translation>Distanzdynamik</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished">Maximale Geschwindigkeit: </translation>
+        <translation>Maximale Geschwindigkeit: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished">Maximale Distanz: </translation>
+        <translation>Maximale Distanz: </translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+20"/>
         <source>Apply to All</source>
-        <translation type="unfinished">Auf alle anwenden</translation>
+        <translation>Auf alle anwenden</translation>
     </message>
     <message>
         <location line="-18"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Setzt die maximale Geschwindigkeit für Größe, Deckkraft, Härte, Schmieren und Zittern auf einmal.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished">Maximale Geschwindigkeit für alle Einstellungen dieses Pinsels angewendet.</translation>
+        <translation>Maximale Geschwindigkeit für alle Einstellungen dieses Pinsels angewendet.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Setzt die maximale Distanz für Größe, Deckkraft, Härte, Schmieren und Zittern auf einmal.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished">Maximale Distanz für alle Einstellungen dieses Pinsels angewendet.</translation>
+        <translation>Maximale Distanz für alle Einstellungen dieses Pinsels angewendet.</translation>
     </message>
 </context>
 <context>
@@ -5389,12 +5389,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+8"/>
         <source>Allow others in a session to use this brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Erlaube andere in einer Sitzung diesen Pinsel zu verwenden</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Sharing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Teilen:</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -5510,30 +5510,30 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location line="+130"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+12"/>
         <source>Direct Build-Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Direkt aufbauend</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Wash</source>
-        <translation type="unfinished"></translation>
+        <translation>Indirekt waschen</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Soft (Drawpile 2.2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Indirekt weich (Drawpile 2.2)</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Build-Up (Drawpile 2.1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Indirekt aufbauend (Drawpile 2.1)</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha beibehalten</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -5580,60 +5580,62 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location line="+44"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Smudge with transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit Transparenz schmieren</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enabling this will make smudging take the alpha channel into account.
 Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiviert beachtet schmieren den Alphakanal.
+Deaktiviert bringt das Verhalten vor Drawpile 2.3 zurück.</translation>
     </message>
     <message>
         <location line="+100"/>
         <source>Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>Zittern: </translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Minimum Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimales Zittern: </translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+300"/>
         <source>Jitter</source>
-        <translation type="unfinished">Zittern</translation>
+        <translation>Zittern</translation>
     </message>
     <message>
         <location line="-112"/>
         <source>Not available in indirect paint modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht in indirekten Malmodi verfügbar.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Not available in indirect paint modes or when using a blend mode other than Normal.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht in indirekten Malmodi oder bei anderen Mischmodi als Normal verfügbar.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not available in indirect paint modes or when using the Marker or Greater Density blend modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht in indirekten Malmodi oder bei den Mischmodi Marker oder größere Dichte verfügbar.</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Synchronize smudging (slower, but more accurate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Schmieren synchronisieren (langsamer, aber genauer)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This will make the brush to wait for its own stroke to finish to allow it to accurately smudge with itself.
 If fast strokes cause artifacts when smudging, enabling this can help.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dies lässt den Pinsel auf seine eigenen Striche warten, damit er korrekt mit sich selbst schmieren kann.
+Falls schnelle Striche Artefakte beim Schmieren verursachen, kann das Aktivieren dieser Einstellung dem behelfen.</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Randomized offsets in the stroke center.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zufälliger Versatz von der Mitte von Strichen.</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -5678,17 +5680,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+193"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Mischung: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Minimum Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimale Mischung: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending</source>
-        <translation type="unfinished"></translation>
+        <translation>Mischung</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -7120,7 +7122,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="+3"/>
         <source>Synchronize smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>Schmieren synchronisieren</translation>
     </message>
 </context>
 <context>
@@ -7190,12 +7192,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinseldeckkraft ändern</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinselhärte ändern</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7399,12 +7401,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+68"/>
         <source>Reset crop</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschneidung zurücksetzen</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Upscale to fit view</source>
-        <translation type="unfinished"></translation>
+        <translation>Auf Ansicht hochskalieren</translation>
     </message>
     <message>
         <location line="+100"/>
@@ -7531,17 +7533,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../mainwindow.cpp" line="-1022"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha mischen</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha erben</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>Durch Ebene darunter beschneiden</translation>
     </message>
 </context>
 <context>
@@ -7923,37 +7925,37 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+113"/>
         <source>Width and height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Breite und Höhe müssen für durch Drawpile 2.2 gehostete Sitzungen zwischen 1 und %1 Pixeln sein.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Width must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Breite muss für durch Drawpile 2.2 gehostete Sitzungen zwischen 1 und %1 Pixeln sein.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Höhe muss für durch Drawpile 2.2 gehostete Sitzungen zwischen 1 und %1 Pixeln sein.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Width and height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Breite und Höhe müssen zwischen 1 und %1 Pixeln sein.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Width must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Breite muss zwischen 1 und %1 Pixeln sein.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Höhe muss zwischen 1 und %1 Pixeln sein.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Total size must be between 1 and %1 pixels (you&apos;re at %2.)</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamtgröße muss zwischen 1 und %1 Pixeln sein (Sie sind bei %2.)</translation>
     </message>
 </context>
 <context>
@@ -8273,7 +8275,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateien</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8306,179 +8308,179 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/shadeselectordialog.cpp" line="+26"/>
         <source>Color Harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbharmonien</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Show harmony swatches under color wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Harmonien unter dem Farbkreis anzeigen</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Color harmony swatches are disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbharmonien sind deaktiviert.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Click here to enable them.</source>
         <extracomment>&quot;Them&quot; refers to the color harmony swatches.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Hier klicken, um sie zu aktivieren.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Rows: </source>
-        <translation type="unfinished"></translation>
+        <translation>Zeilen: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Row height: </source>
-        <translation type="unfinished"></translation>
+        <translation>Zeilenhöhe: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Colors per row: </source>
-        <translation type="unfinished"></translation>
+        <translation>Farben pro Zeile: </translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Border: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rand: </translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Set Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbe wählen…</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Custom</source>
-        <translation type="unfinished">Benutzerdefiniert</translation>
+        <translation>Benutzerdefiniert</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue</source>
-        <translation type="unfinished">Farbton</translation>
+        <translation>Farbton</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Saturation</source>
-        <translation type="unfinished">Sättigung</translation>
+        <translation>Sättigung</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>Chroma</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Value</source>
-        <translation type="unfinished">Wert</translation>
+        <translation>Hellogkeit</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>Heilligkeit</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>Leuchtkraft</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shades</source>
-        <translation type="unfinished"></translation>
+        <translation>Schatten</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Move Up</source>
-        <translation type="unfinished">Nach Oben</translation>
+        <translation>Nach Oben</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Move Down</source>
-        <translation type="unfinished">Nach Unten</translation>
+        <translation>Nach Unten</translation>
     </message>
     <message>
         <location line="+122"/>
         <location line="+4"/>
         <source>Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Bereich: </translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+12"/>
         <source>Saturation range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Sättigungsbereich: </translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+12"/>
         <source>Chroma range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Chromabereich: </translation>
     </message>
     <message>
         <location line="-8"/>
         <location line="+12"/>
         <source>Value range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Helligkeitsbereich: </translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+12"/>
         <source>Lightness range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Helligkeitsbereich: </translation>
     </message>
     <message>
         <location line="-11"/>
         <location line="+12"/>
         <source>Luminance range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Leuchtkraftbereich: </translation>
     </message>
     <message>
         <location line="-8"/>
         <source>Hue range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Farbtonbereich: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Hue offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Farbtonversatz: </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saturation offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Sättingungsversatz: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Chroma offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Chromaversatz: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Value offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Helligkeitsversatz: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lightness offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Helligkeitsversatz: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Leuchtkraftsversatz: </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -8680,22 +8682,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/toolbarconfigdialog.cpp" line="+21"/>
         <source>Configure Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Werkzeugleiste konfiguieren</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Drag to reorder and uncheck to hide tools.</source>
-        <translation type="unfinished"></translation>
+        <translation>Werkzeuge verschieben zum Umordnen, abhaken zum Verstecken.</translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Reset</source>
-        <translation type="unfinished">Zurücksetzen</translation>
+        <translation>Zurücksetzen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really revert the toolbar configuration to its default state?</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Werkzeugleistenkonfiguration wirklich auf ihren Standardwert zurücksetzen?</translation>
     </message>
 </context>
 <context>
@@ -8833,70 +8835,70 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation type="unfinished">Wenn aktiv, speichere alle %1 Minuten</translation>
+        <translation>Wenn aktiv, speichere alle %1 Minuten</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation type="unfinished">Automatisches Speichern:</translation>
+        <translation>Automatisches Speichern:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation type="unfinished">Automatisches Speichern kann für die aktuelle Datei unter Datei ▸ Automatsiches Speichern aktiviert werden.</translation>
+        <translation>Automatisches Speichern kann für die aktuelle Datei unter Datei ▸ Automatsiches Speichern aktiviert werden.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Standardwert (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+14"/>
         <source>OpenRaster (.ora)</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenRaster (.ora)</translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+14"/>
         <source>Drawpile Canvas (.dpcs)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile-Leinwand (.dpcs)</translation>
     </message>
     <message>
         <location line="-12"/>
         <source>Preferred save format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bevorzugtes Speicherformat:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>PNG (.png)</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG (.png)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>JPEG (.jpg)</source>
-        <translation type="unfinished"></translation>
+        <translation>JPEG (.jpg)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>QOI (.qoi)</source>
-        <translation type="unfinished"></translation>
+        <translation>QOI (.qoi)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>WEBP (.webp)</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBP (.webp)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Photoshop Document (.psd)</source>
-        <translation type="unfinished"></translation>
+        <translation>Photoshop-Dokument (.psd)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preferred export format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bevorzugtes Exportformat:</translation>
     </message>
 </context>
 <context>
@@ -9741,7 +9743,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="-20"/>
         <source>Stylus</source>
-        <translation type="unfinished"></translation>
+        <translation>Stift</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9751,17 +9753,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+6"/>
         <source>Use separate curve for eraser tip</source>
-        <translation type="unfinished"></translation>
+        <translation>Separate Kurve für Radierseite</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Eraser pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>Radierer-Druckkurve:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Eraser</source>
-        <translation type="unfinished">Radierer</translation>
+        <translation>Radierer</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -9974,12 +9976,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+42"/>
         <source>Cancel action to deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktion abbrechen zum Deselektieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Press %1 to deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 drücken zum Deselektieren</translation>
     </message>
     <message numerus="yes">
         <location line="+25"/>
@@ -10179,12 +10181,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+4"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">Glättung:</translation>
+        <translation>Glättung:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -10323,7 +10325,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+5"/>
         <source>Automatically inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha automatisch anhand Mischmodus erben und beibehalten</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10987,7 +10989,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+4"/>
         <source>Pigment and OKLAB brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pigment- und OKLAB-Pinsel:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11012,18 +11014,18 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+11"/>
         <source>Maximum brush size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Pinselgröße:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Maximum amount of layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Ebenenanzahl:</translation>
     </message>
     <message>
         <location line="+171"/>
         <source>%1: </source>
         <extracomment>%1 is an acccess tier, like &quot;Operator&quot; or &quot;Everyone&quot;. Unless your language uses something other than a colon, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: </translation>
     </message>
     <message>
         <location line="+296"/>
@@ -11033,7 +11035,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+8"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-10"/>
@@ -11840,22 +11842,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+22"/>
         <source>Show color harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbharmonien anzeigen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle the harmony swatches below the color wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Harmonien unter dem Farbkreis umschalten</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Configure color harmonies…</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbharmonien konfigurieren…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change the color harmonies and how they are displayed</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbharmonieren und ihre Anzeige ändern</translation>
     </message>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+12"/>
@@ -11882,7 +11884,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="+27"/>
         <source>Locks:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sperren:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -11925,17 +11927,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+13"/>
         <source>Locks and permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Sperren und Berechtigungen</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>Durch Ebene darunter beschneiden</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha erben</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -12011,28 +12013,28 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+1033"/>
         <source>Layer Limit Reached</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebenenbegrenzung erreicht</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>Can&apos;t create another/%n more layer(s).</source>
         <extracomment>Singular should be &quot;can&apos;t create another layer&quot;, plural &quot;can&apos;t create %n more layers&quot;. Change this to make sense in your language.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Kann nicht noch eine Ebene erstellen,</numerusform>
+            <numerusform>Kann nicht noch %n Ebenen erstellen,</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The layer limit in sessions hosted with Drawpile 2.2 is 256 per user.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Ebenenbegrenzung für durch Drawpile 2.2 gehostete Sitzungen ist 256 pro Nutzer.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>The layer limit for you is %n layer(s), session operators can change this in the session settings.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Die Ebenengrenze für Sie ist %n Ebene, Operatoren der Sitzung können dies in den Sitzungseinstellungen ändern.</numerusform>
+            <numerusform>Die Ebenengrenze für Sie ist %n Ebenen, Operatoren der Sitzung können dies in den Sitzungseinstellungen ändern.</numerusform>
         </translation>
     </message>
     <message>
@@ -12342,17 +12344,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+9"/>
         <source>Vector</source>
-        <translation type="unfinished"></translation>
+        <translation>Vektor</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>Glatt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pixel</source>
-        <translation type="unfinished"></translation>
+        <translation>Pixel</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -12461,34 +12463,34 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+143"/>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie haben keine Berechtigung Pinsel im OKLAB- oder Pigmentmodus zu verwenden.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>/%1px</source>
         <extracomment>Limit suffix for the brush size slider, %1 is the size limit. So it will look something like &quot;100/255px&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1px</translation>
     </message>
     <message>
         <location line="+648"/>
         <source>Smudging: </source>
-        <translation type="unfinished">Schmieren: </translation>
+        <translation>Schmieren: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Mischung: </translation>
     </message>
     <message>
         <location line="+731"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1</translation>
     </message>
     <message>
         <location line="-1417"/>
@@ -12562,129 +12564,129 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../toolwidgets/gradientsettings.cpp" line="-277"/>
         <source>Foreground: </source>
-        <translation type="unfinished"></translation>
+        <translation>Vordergrund: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Deckkraft: </translation>
+        <translation>Deckkraft: </translation>
     </message>
     <message>
         <location line="+111"/>
         <source>Foreground color to transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>Vordergrundfarbe zu Transparenz</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Transparency to foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Transparenz zu Vordergrundfarbe</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Foreground color to background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Vordergrund- zu Hintergrundfarbe</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Background color to foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrund- zu Vordergrundfarbe</translation>
     </message>
     <message>
         <location line="+34"/>
         <location line="+11"/>
         <location line="+44"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="-45"/>
         <source>Background: </source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrund: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Linear</source>
-        <translation type="unfinished">Linear</translation>
+        <translation>Linear</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Straight gradient shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerade Verlaufsform</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Radial</source>
-        <translation type="unfinished"></translation>
+        <translation>Radial</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Circular gradient shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Kreisförmige Verlaufsform</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Shape:</source>
-        <translation type="unfinished"></translation>
+        <translation>Form:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Focus: </source>
-        <translation type="unfinished"></translation>
+        <translation>Fokus: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Pad</source>
-        <translation type="unfinished"></translation>
+        <translation>Auffüllen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continue gradient by padding it with the nearest color</source>
-        <translation type="unfinished"></translation>
+        <translation>Verlauf mit der nächsten Farbe weiterführen</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Reflect</source>
-        <translation type="unfinished"></translation>
+        <translation>Reflektieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continue gradient by reflecting it</source>
-        <translation type="unfinished"></translation>
+        <translation>Verlauf durch Reflexion weiterführen</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Spread:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausbreitung:</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Mode:</source>
-        <translation type="unfinished">Modus:</translation>
+        <translation>Modus:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Apply</source>
-        <translation type="unfinished">Anwenden</translation>
+        <translation>Anwenden</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply the gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Verlauf anwenden</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Discard the gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Verlauf verwerfen</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>The gradient tool requires a selection to operate in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Verlaufswerkzeug erfordert eine Selektion, um darin zu arbeiten.</translation>
     </message>
 </context>
 <context>
@@ -12712,42 +12714,42 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-16"/>
         <source>Stabilization mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Stabilisationsmodus</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>Mode:</source>
-        <translation type="unfinished">Modus:</translation>
+        <translation>Modus:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Anti-aliasing</source>
-        <translation type="unfinished">Anti-Aliasing</translation>
+        <translation>Anti-Aliasing</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothe out fill edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Füllkanten weichzeichnen</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished">Anwenden</translation>
+        <translation>Anwenden</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply the current fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelle Füllung anwenden</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Discard the current fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelle Füllung verwerfen</translation>
     </message>
 </context>
 <context>
@@ -13050,7 +13052,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+4"/>
         <source>Tool requires a selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Werkzeug erfordert eine Selektion</translation>
     </message>
 </context>
 <context>
@@ -13846,7 +13848,7 @@ oder per Animation ▸ Neue Spur hinzufügen.</translation>
     <message>
         <location line="+2"/>
         <source>Request Current &amp;Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuellen Pinsel verwenden</translation>
     </message>
     <message>
         <location line="+102"/>
