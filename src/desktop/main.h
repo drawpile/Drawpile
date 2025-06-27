@@ -81,7 +81,8 @@ public:
 
 	void setNewProcessArgs(
 		const QCommandLineParser &parser,
-		const QVector<const QCommandLineOption *> &options);
+		const QVector<const QCommandLineOption *> &options,
+		const QVector<const QCommandLineOption *> &flags);
 
 	// Runs a new Drawpile process with the given arguments. Returns if that
 	// succeeded. Depending on the platform, this may always fail, e.g. Android

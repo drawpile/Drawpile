@@ -453,7 +453,8 @@ QPair<QSize, QSizeF> DrawpileApp::screenResolution()
 
 void DrawpileApp::setNewProcessArgs(
 	const QCommandLineParser &parser,
-	const QVector<const QCommandLineOption *> &options)
+	const QVector<const QCommandLineOption *> &options,
+	const QVector<const QCommandLineOption *> &flags)
 {
 #ifdef HAVE_RUN_IN_NEW_PROCESS
 	m_newProcessArgs.clear();
@@ -464,9 +465,16 @@ void DrawpileApp::setNewProcessArgs(
 			m_newProcessArgs.append(parser.value(*option));
 		}
 	}
+	for(const QCommandLineOption *flag : flags) {
+		if(parser.isSet(*flag)) {
+			m_newProcessArgs.append(
+				QStringLiteral("--") + flag->names().first());
+		}
+	}
 #else
 	Q_UNUSED(parser);
 	Q_UNUSED(options);
+	Q_UNUSED(flags);
 #endif
 }
 
@@ -815,16 +823,23 @@ static StartupOptions initApp(DrawpileApp &app)
 		"renderer", "none");
 	parser.addOption(renderer);
 
+	QCommandLineOption noNativeDialogs(
+		"no-native-dialogs",
+		QStringLiteral("Disable native dialogs, like the file picker."));
+	parser.addOption(noNativeDialogs);
+
 	// URL
 	parser.addPositionalArgument("url", "Filename or URL.");
 
 	parser.process(app);
 	app.setNewProcessArgs(
-		parser, {&dataDir, &portableDataDir, &opengl, &buffer, &renderer,
+		parser,
+		{&dataDir, &portableDataDir, &opengl, &buffer, &renderer,
 #ifdef Q_OS_WIN
-				 &copyLegacySettings
+		 &copyLegacySettings
 #endif
-				});
+		},
+		{&noNativeDialogs});
 
 	// Override data directories
 	if(parser.isSet(dataDir))
@@ -850,6 +865,10 @@ static StartupOptions initApp(DrawpileApp &app)
 		}
 	}
 #endif
+
+	if(parser.isSet(noNativeDialogs)) {
+		app.setAttribute(Qt::AA_DontUseNativeDialogs);
+	}
 
 	app.initState();
 	desktop::settings::Settings &settings = app.settings();
