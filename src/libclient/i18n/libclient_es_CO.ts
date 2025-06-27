@@ -313,7 +313,7 @@
         <location line="+8"/>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>El tamaño del lienzo está fuera de los límites, el ancho y la altura deben estar entre 1 y %1 para %2.</translation>
     </message>
 </context>
 <context>
@@ -443,12 +443,12 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar la Opacidad del Pincel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar la Dureza del Pincel</translation>
     </message>
     <message>
         <location line="+4"/>
