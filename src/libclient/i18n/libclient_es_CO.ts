@@ -983,22 +983,22 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+6"/>
         <source>Greater Density</source>
-        <translation type="unfinished"></translation>
+        <translation>Mayor Densidad</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcador</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>OKLAB</source>
-        <translation type="unfinished"></translation>
+        <translation>OKLAB</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pigment</source>
-        <translation type="unfinished"></translation>
+        <translation>Pigmento</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1018,42 +1018,42 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+12"/>
         <source>Linear Dodge/Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Sobreexposición lineal/Añadir</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>Quemadura de color</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation>Sobreexposición de color</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Vivid Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Luz vívida</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Luz de alfiler</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Darker Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Color más oscuro</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighter Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Color más claro</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference</source>
-        <translation type="unfinished"></translation>
+        <translation>Diferencia</translation>
     </message>
     <message>
         <location line="+12"/>
