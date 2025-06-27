@@ -596,12 +596,12 @@
     <message>
         <location line="+39"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>El formato PSD no es compatible con anotaciones, la línea de tiempo de la animación ni con algunos modos de fusión. Para conservarlos correctamente, debe guardar en un formato diferente.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>El formato seleccionado guardará una imagen fusionada. Si desea conservar las capas, las anotaciones y la línea de tiempo de la animación, deberá guardarla en un formato diferente.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -1032,17 +1032,17 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+13"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Heredar alfa</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>Recortar a la capa inferior</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Mezcla alfa</translation>
     </message>
     <message>
         <location line="-231"/>
