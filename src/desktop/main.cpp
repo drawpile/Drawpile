@@ -866,16 +866,22 @@ static StartupOptions initApp(DrawpileApp &app)
 	}
 #endif
 
-	if(parser.isSet(noNativeDialogs)) {
-		app.setAttribute(Qt::AA_DontUseNativeDialogs);
-	}
-
 	app.initState();
 	desktop::settings::Settings &settings = app.settings();
 	settings.bindWriteLogFile(&utils::enableLogFile);
 	app.initTheme();
 	app.initCanvasImplementation(parser.value(renderer));
 	app.initInterface();
+
+	if(parser.isSet(noNativeDialogs)) {
+		app.setAttribute(Qt::AA_DontUseNativeDialogs);
+	} else {
+#ifdef NATIVE_DIALOGS_SETTING_AVAILABLE
+		settings.bindNativeDialogs([&app](bool nativeDialogs) {
+			app.setAttribute(Qt::AA_DontUseNativeDialogs, !nativeDialogs);
+		});
+#endif
+	}
 
 #ifdef Q_OS_ANDROID
 	if(!settings.androidStylusChecked()) {

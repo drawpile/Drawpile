@@ -36,6 +36,10 @@
 #	define LAYER_SKETCH_TINT_DEFAULT QColor(62, 140, 236)
 #endif
 
+#if !defined(NATIVE_DIALOGS_SETTING_AVAILABLE) && defined(Q_OS_WIN)
+#	define NATIVE_DIALOGS_SETTING_AVAILABLE
+#endif
+
 #ifndef ONE_FINGER_TOUCH_DEFAULT
 #	if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 #		define ONE_FINGER_TOUCH_DEFAULT desktop::settings::OneFingerTouchAction::Guess
@@ -213,6 +217,9 @@ SETTING(layerSketchTint           , LayerSketchTint           , "layers/sketchti
 SETTING(layouts                   , Layouts                   , "layouts"                               , QVector<QVariantMap>())
 SETTING(mentionEnabled            , MentionEnabled            , "settings/mentions/enabled"             , true)
 SETTING(mentionTriggerList        , MentionTriggerList        , "settings/mentions/triggerlist"         , QString())
+#ifdef NATIVE_DIALOGS_SETTING_AVAILABLE
+SETTING(nativeDialogs             , NativeDialogs             , "settings/nativedialogs"                , true)
+#endif
 SETTING(navigatorRealtime         , NavigatorRealtime         , "navigator/realtime"                    , false)
 SETTING(navigatorShowCursors      , NavigatorShowCursors      , "navigator/showcursors"                 , true)
 SETTING_GETSET(newCanvasBackColor , NewCanvasBackColor        , "history/newcolor"                      , (QColor(Qt::white)),

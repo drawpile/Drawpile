@@ -64,6 +64,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Auto-correct attempts to host on http(s) sites by extracting the host portion from them. Thanks Charmandrigo for suggesting.
  * Feature: Add shortcuts to change brush opacity and hardness. Thanks justanotatest for suggesting.
  * Feature: Allow defining a separate pressure curve for the stylus eraser tip in the tablet preferences. Thanks CosmosX007 for suggesting.
+ * Feature: Allow turning off system file dialogs on Windows, in case they somehow cause trouble. Thanks CrustStuff for suggesting.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

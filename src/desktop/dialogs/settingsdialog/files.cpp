@@ -2,6 +2,7 @@
 #include "desktop/dialogs/settingsdialog/files.h"
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include <QCheckBox>
 #include <QComboBox>
 #include <QFormLayout>
 #include <QSpinBox>
@@ -24,6 +25,10 @@ void Files::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 	utils::addFormSeparator(layout);
 	initAutosave(settings, utils::addFormSection(layout));
 #endif
+#ifdef NATIVE_DIALOGS_SETTING_AVAILABLE
+	utils::addFormSeparator(layout);
+	initDialogs(settings, utils::addFormSection(layout));
+#endif
 }
 
 void Files::initAutosave(
@@ -39,9 +44,22 @@ void Files::initAutosave(
 	form->addRow(tr("Autosave:"), snapshotCountLayout);
 
 	form->addRow(
-		nullptr,
-		utils::formNote(tr("Autosave can be enabled for the current file under "
-						   "File ▸ Autosave.")));
+		nullptr, utils::formNote(
+					 tr("Autosave can be enabled for the current file under "
+						"File ▸ Autosave.")));
+}
+
+void Files::initDialogs(
+	desktop::settings::Settings &settings, QFormLayout *form)
+{
+	QCheckBox *nativeDialogs =
+		new QCheckBox(tr("Use system file picker dialogs"));
+#ifdef NATIVE_DIALOGS_SETTING_AVAILABLE
+	settings.bindNativeDialogs(nativeDialogs);
+#else
+	Q_UNUSED(settings);
+#endif
+	form->addRow(tr("Interface:"), nativeDialogs);
 }
 
 void Files::initFormats(
