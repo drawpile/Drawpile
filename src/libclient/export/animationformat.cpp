@@ -20,10 +20,10 @@ bool isAnimationFormatSupported(AnimationFormat format)
 	case AnimationFormat::Gif:
 		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_PALETTE) &&
 			   DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_GIF);
-	case AnimationFormat::Mp4:
-		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_MP4);
-	case AnimationFormat::Webm:
-		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_WEBM);
+	case AnimationFormat::Mp4Vp9:
+		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_MP4_VP9);
+	case AnimationFormat::WebmVp8:
+		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_WEBM_VP8);
 	case AnimationFormat::Webp:
 		return DP_save_video_format_supported(DP_SAVE_VIDEO_FORMAT_WEBP);
 #endif

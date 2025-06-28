@@ -56,9 +56,9 @@ static bool is_destination_ok(DP_SaveVideoDestination destination,
 static enum AVCodecID get_format_codec_id(int format)
 {
     switch (format) {
-    case DP_SAVE_VIDEO_FORMAT_MP4:
-        return AV_CODEC_ID_H264;
-    case DP_SAVE_VIDEO_FORMAT_WEBM:
+    case DP_SAVE_VIDEO_FORMAT_MP4_VP9:
+        return AV_CODEC_ID_VP9;
+    case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
         return AV_CODEC_ID_VP8;
     case DP_SAVE_VIDEO_FORMAT_WEBP:
         return AV_CODEC_ID_WEBP;
@@ -89,9 +89,9 @@ DP_Rect get_crop(DP_CanvasState *cs, const DP_Rect *area)
 const char *get_format_name(int format)
 {
     switch (format) {
-    case DP_SAVE_VIDEO_FORMAT_MP4:
+    case DP_SAVE_VIDEO_FORMAT_MP4_VP9:
         return "mp4";
-    case DP_SAVE_VIDEO_FORMAT_WEBM:
+    case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
         return "webm";
     case DP_SAVE_VIDEO_FORMAT_WEBP:
         return "webp";
@@ -116,17 +116,12 @@ static int get_format_loops(int format, int loops)
     }
 }
 
-static int get_format_dimension(int format, int target_dimension,
+static int get_format_dimension(DP_UNUSED int format, int target_dimension,
                                 int input_dimension)
 {
     int dimension = target_dimension > 0 ? target_dimension : input_dimension;
-    switch (format) {
-    case DP_SAVE_VIDEO_FORMAT_MP4:
-        // H264 dimensions must be divisible by 2.
-        return dimension + dimension % 2;
-    default:
-        return dimension;
-    }
+    // Some formats require dimensions to be divisible by 2, none currently.
+    return dimension;
 }
 
 static int get_format_codec_dimension(int format, int dimension)
@@ -144,7 +139,7 @@ static int get_scaling_flags(unsigned int flags, int input_width,
                              int output_height)
 {
     // Only scale smoothly if it was requested and the difference is notable. A
-    // 1 pixel difference may be due to get_format_dimensions padding for H264.
+    // 1 pixel difference may be due to get_format_dimensions padding.
     if ((flags & DP_SAVE_VIDEO_FLAGS_SCALE_SMOOTH)
         && abs(input_width - output_width) > 1
         && abs(input_height - output_height) > 1) {
@@ -184,13 +179,16 @@ static void set_option(void *obj, const char *name, const char *value)
 static void set_format_codec_params(int format, AVCodecContext *codec_context)
 {
     switch (format) {
-    case DP_SAVE_VIDEO_FORMAT_MP4:
     case DP_SAVE_VIDEO_FORMAT_PALETTE:
     case DP_SAVE_VIDEO_FORMAT_GIF:
         break;
-    case DP_SAVE_VIDEO_FORMAT_WEBM:
+    case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
         codec_context->bit_rate = 1 * 1024 * 1024;
         set_option(codec_context->priv_data, "crf", "15");
+        break;
+    case DP_SAVE_VIDEO_FORMAT_MP4_VP9:
+        codec_context->bit_rate = 0;
+        set_option(codec_context->priv_data, "crf", "20");
         break;
     case DP_SAVE_VIDEO_FORMAT_WEBP:
         set_option(codec_context->priv_data, "lossless", "1");
@@ -207,8 +205,8 @@ static void set_format_output_params(int format,
                                      AVFormatContext *format_context)
 {
     switch (format) {
-    case DP_SAVE_VIDEO_FORMAT_MP4:
-    case DP_SAVE_VIDEO_FORMAT_WEBM:
+    case DP_SAVE_VIDEO_FORMAT_MP4_VP9:
+    case DP_SAVE_VIDEO_FORMAT_WEBM_VP8:
     case DP_SAVE_VIDEO_FORMAT_PALETTE:
     case DP_SAVE_VIDEO_FORMAT_GIF:
         break;
