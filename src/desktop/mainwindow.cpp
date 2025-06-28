@@ -2591,7 +2591,8 @@ void MainWindow::showAnimationExportDialog(bool fromFlipbook)
 		dlg->raise();
 	} else {
 		dlg = new dialogs::AnimationExportDialog(
-			m_animationExportScalePercent, m_animationExportScaleSmooth, this);
+			m_animationExportLoops, m_animationExportScalePercent,
+			m_animationExportScaleSmooth, this);
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 		dlg->setObjectName(objectName);
 		dlg->setCanvas(m_doc->canvas());
@@ -2625,6 +2626,7 @@ void MainWindow::exportAnimation(
 	int format, int loops, int start, int end, int framerate, const QRect &crop,
 	int scalePercent, bool scaleSmooth)
 {
+	m_animationExportLoops = loops;
 	m_animationExportScalePercent = scalePercent;
 	m_animationExportScaleSmooth = scaleSmooth;
 

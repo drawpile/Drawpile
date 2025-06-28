@@ -485,6 +485,7 @@ private:
 	dialogs::SessionSettingsDialog *m_sessionSettings;
 	dialogs::ServerLogDialog *m_serverLogDialog;
 	dialogs::Flipbook::State m_flipbookState;
+	int m_animationExportLoops = 1;
 	int m_animationExportScalePercent = 100;
 	bool m_animationExportScaleSmooth = true;
 

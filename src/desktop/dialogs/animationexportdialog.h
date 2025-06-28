@@ -23,7 +23,8 @@ class AnimationExportDialog final : public QDialog {
 	Q_OBJECT
 public:
 	explicit AnimationExportDialog(
-		int scalePercent, bool scaleSmooth, QWidget *parent = nullptr);
+		int loops, int scalePercent, bool scaleSmooth,
+		QWidget *parent = nullptr);
 
 	void setCanvas(canvas::CanvasModel *canvas);
 

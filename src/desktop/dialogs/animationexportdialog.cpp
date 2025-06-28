@@ -24,7 +24,7 @@
 namespace dialogs {
 
 AnimationExportDialog::AnimationExportDialog(
-	int scalePercent, bool scaleSmooth, QWidget *parent)
+	int loops, int scalePercent, bool scaleSmooth, QWidget *parent)
 	: QDialog(parent)
 {
 	setWindowTitle(tr("Export Animation"));
@@ -63,6 +63,7 @@ AnimationExportDialog::AnimationExportDialog(
 	m_loopsLabel = new QLabel(tr("Loops:"));
 	m_loopsSpinner = new QSpinBox;
 	m_loopsSpinner->setRange(1, 99);
+	m_loopsSpinner->setValue(loops);
 	outputForm->addRow(m_loopsLabel, m_loopsSpinner);
 
 	m_scaleSpinner = new QSpinBox;
