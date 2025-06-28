@@ -3592,22 +3592,22 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Decrease Brush Opacity</source>
-        <translation>Disminuir la opacidad del pincel</translation>
+        <translation>Disminuir la Opacidad del Pincel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Increase Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Aumentar la Opacidad del Pincel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Decrease Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Disminuir la Dureza del Pincel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Increase Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Aumentar la Dureza del Pincel</translation>
     </message>
     <message>
         <location line="+99"/>
@@ -3617,7 +3617,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+9"/>
         <source>Tool blend mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo de fusión de herramientas: %1</translation>
     </message>
     <message>
         <location line="+33"/>
