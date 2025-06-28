@@ -45,8 +45,8 @@ AnimationExportDialog::AnimationExportDialog(
 		{tr("Frames as PNGs in ZIP"), AnimationFormat::Zip},
 		{tr("Animated GIF"), AnimationFormat::Gif},
 		{tr("Animated WEBP"), AnimationFormat::Webp},
-		{tr("MP4 Video"), AnimationFormat::Mp4},
-		{tr("WEBM Video"), AnimationFormat::Webm},
+		{tr("MP4 Video"), AnimationFormat::Mp4Vp9},
+		{tr("WEBM Video"), AnimationFormat::WebmVp8},
 	};
 	int lastFormat = dpApp().settings().animationExportFormat();
 	for(const QPair<QString, AnimationFormat> &p : formats) {
@@ -257,8 +257,8 @@ void AnimationExportDialog::accept()
 void AnimationExportDialog::updateOutputUi()
 {
 	int format = m_formatCombo->currentData().toInt();
-	bool showLoops = format == int(AnimationFormat::Mp4) ||
-					 format == int(AnimationFormat::Webm);
+	bool showLoops = format == int(AnimationFormat::Mp4Vp9) ||
+					 format == int(AnimationFormat::WebmVp8);
 	m_loopsLabel->setVisible(showLoops);
 	m_loopsSpinner->setVisible(showLoops);
 }
@@ -286,9 +286,9 @@ QString AnimationExportDialog::choosePath()
 		return FileWrangler(this).getSaveAnimationZipPath();
 	case AnimationFormat::Webp:
 		return FileWrangler(this).getSaveAnimationWebpPath();
-	case AnimationFormat::Mp4:
+	case AnimationFormat::Mp4Vp9:
 		return FileWrangler(this).getSaveAnimationMp4Path();
-	case AnimationFormat::Webm:
+	case AnimationFormat::WebmVp8:
 		return FileWrangler(this).getSaveAnimationWebmPath();
 	}
 	qWarning("choosePath: unhandled format %d", int(format));

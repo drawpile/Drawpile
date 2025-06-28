@@ -110,8 +110,8 @@ void AnimationSaverRunnable::run()
 		break;
 	}
 	case int(AnimationFormat::Webp):
-	case int(AnimationFormat::Mp4):
-	case int(AnimationFormat::Webm): {
+	case int(AnimationFormat::Mp4Vp9):
+	case int(AnimationFormat::WebmVp8): {
 		DP_SaveVideoParams params = {
 			m_canvasState.get(),
 			pr,
@@ -176,9 +176,9 @@ QString AnimationSaverRunnable::getFormatExtension() const
 		return QStringLiteral(".zip");
 	case int(AnimationFormat::Webp):
 		return QStringLiteral(".webp");
-	case int(AnimationFormat::Mp4):
+	case int(AnimationFormat::Mp4Vp9):
 		return QStringLiteral(".mp4");
-	case int(AnimationFormat::Webm):
+	case int(AnimationFormat::WebmVp8):
 		return QStringLiteral(".webm");
 	default:
 		qWarning("Don't know extension for animation format %d", m_format);
@@ -193,10 +193,10 @@ int AnimationSaverRunnable::formatToSaveVideoFormat() const
 	switch(m_format) {
 	case int(AnimationFormat::Webp):
 		return DP_SAVE_VIDEO_FORMAT_WEBP;
-	case int(AnimationFormat::Mp4):
-		return DP_SAVE_VIDEO_FORMAT_MP4;
-	case int(AnimationFormat::Webm):
-		return DP_SAVE_VIDEO_FORMAT_WEBM;
+	case int(AnimationFormat::Mp4Vp9):
+		return DP_SAVE_VIDEO_FORMAT_MP4_VP9;
+	case int(AnimationFormat::WebmVp8):
+		return DP_SAVE_VIDEO_FORMAT_WEBM_VP8;
 	default:
 		qWarning("formatToSaveVideoFormat: unhandled format %d", m_format);
 		return -1;
@@ -219,10 +219,10 @@ AnimationSaverRunnable::saveResultToErrorString(DP_SaveResult result) const
 		case int(AnimationFormat::Webp):
 			return CanvasSaverRunnable::badDimensionsErrorString(
 				16384, QStringLiteral("WEBP"));
-		case int(AnimationFormat::Mp4):
+		case int(AnimationFormat::Mp4Vp9):
 			return CanvasSaverRunnable::badDimensionsErrorString(
-				2147483646, QStringLiteral("MP4"));
-		case int(AnimationFormat::Webm):
+				65536, QStringLiteral("MP4"));
+		case int(AnimationFormat::WebmVp8):
 			return CanvasSaverRunnable::badDimensionsErrorString(
 				65536, QStringLiteral("WEBM"));
 		}

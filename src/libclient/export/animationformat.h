@@ -2,7 +2,14 @@
 #ifndef LIBCLIENT_EXPORT_ANIMATIONFORMAT_H
 #define LIBCLIENT_EXPORT_ANIMATIONFORMAT_H
 
-enum class AnimationFormat { Frames, Zip, Gif, Webp, Mp4, Webm };
+enum class AnimationFormat {
+	Frames,
+	Zip,
+	Gif,
+	Webp,
+	Mp4Vp9,
+	WebmVp8,
+};
 
 bool isAnimationFormatSupported(AnimationFormat format);
 

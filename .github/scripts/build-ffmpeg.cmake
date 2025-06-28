@@ -6,13 +6,11 @@ list(APPEND CMAKE_MODULE_PATH
 	${CMAKE_CURRENT_LIST_DIR}/../../cmake
 )
 
-set(LIBX264 "31e19f92f00c7003fa115047ce50978bc98c3a0d" CACHE STRING
-	"The commit of libx264 to build")
-set(LIBVPX "1.15.0" CACHE STRING
+set(LIBVPX "1.15.2" CACHE STRING
 	"The version of libvpx to build")
 set(LIBWEBP "1.5.0" CACHE STRING
 	"The version of libwebp to build")
-set(FFMPEG "7.1" CACHE STRING
+set(FFMPEG "7.1.1" CACHE STRING
 	"The version of ffmpeg to build")
 option(KEEP_ARCHIVES "Keep downloaded archives instead of deleting them" OFF)
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
@@ -70,7 +68,80 @@ if(LIBWEBP)
 	)
 endif()
 
-if(NOT EMSCRIPTEN AND LIBVPX)
+if(WIN32 AND LIBVPX)
+	# Building libvpx correctly on Windows is immensely difficult. Whatever
+	# vcpkg is doing works correctly though, so we just use that instead.
+	if(LIBVPX STREQUAL "1.15.2")
+		set(libvpx_vcpkg_commit "696237761650114ff0fb12e1a73b90ed1537b6d8")
+		set(libvpx_vcpkg_version "1.15.2#0")
+	else()
+		message(FATAL_ERROR "Unhandled LIBVPX version '${LIBVPX}'")
+	endif()
+
+	file(WRITE "vcpkg.json"
+		"{\n"
+		"    \"builtin-baseline\": \"${libvpx_vcpkg_commit}\",\n"
+		"	 \"dependencies\": [\n"
+		"        {\"name\": \"libvpx\", \"default-features\": false}\n"
+		"    ]\n,"
+		"    \"overrides\": [\n"
+		"        {\"name\": \"libvpx\", \"version\": \"${libvpx_vcpkg_version}\"}\n"
+		"    ]\n"
+		"}\n"
+	)
+
+	if(TARGET_ARCH STREQUAL "x86")
+		set(libvpx_arch "x86")
+	elseif(TARGET_ARCH STREQUAL "x86_64")
+		set(libvpx_arch "x64")
+	else()
+		message(FATAL_ERROR "Unhandled TARGET_ARCH '${TARGET_ARCH}'")
+	endif()
+
+	set(libvpx_triplet "${libvpx_arch}-windows-drawpile")
+
+	file(MAKE_DIRECTORY "triplets")
+	file(WRITE "triplets/${libvpx_triplet}.cmake"
+		"set(VCPKG_TARGET_ARCHITECTURE ${libvpx_arch})\n"
+		"set(VCPKG_CRT_LINKAGE dynamic)\n"
+		"set(VCPKG_LIBRARY_LINKAGE static)\n"
+		"set(VCPKG_BUILD_TYPE release)\n"
+	)
+	file(WRITE "vcpkg-configuration.json"
+		"{\"overlay-triplets\": [\"triplets\"]}\n"
+	)
+
+	execute_process(
+		COMMAND
+			vcpkg --disable-metrics --triplet "${libvpx_triplet}" install
+		COMMAND_ECHO STDOUT
+		COMMAND_ERROR_IS_FATAL ANY
+	)
+
+	file(INSTALL "vcpkg_installed/${libvpx_triplet}/"
+		DESTINATION "${CMAKE_INSTALL_PREFIX}"
+	)
+
+	file(TO_CMAKE_PATH "${CMAKE_INSTALL_PREFIX}" libvpx_prefix)
+	file(WRITE "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig/vpx.pc"
+		"prefix=${libvpx_prefix}\n"
+		"exec_prefix=\${prefix}\n"
+		"libdir=\${prefix}/lib\n"
+		"includedir=\${prefix}/include\n"
+		"\n"
+		"Name: vpx\n"
+		"Description: WebM Project VPx codec implementation\n"
+		"Version: ${LIBVPX}\n"
+		"Conflicts:\n"
+		"Libs: -L\${libdir} -lvpx\n"
+		"Requires:\n"
+		# The -MD is bogus here, but ffmpeg fails to configure without it.
+		# We strip it back out later when fixing up the generated pc files.
+		"Cflags: -MD -I\${includedir}\n"
+	)
+
+	file(REMOVE_RECURSE "vcpkg_installed")
+elseif(NOT EMSCRIPTEN AND LIBVPX)
 	set(libvpx_configure_args
 		--disable-debug
 		--disable-debug-libs
@@ -80,9 +151,10 @@ if(NOT EMSCRIPTEN AND LIBVPX)
 		--disable-tools
 		--disable-unit-tests
 		--disable-vp8-decoder
-		--disable-vp9
+		--disable-vp9-decoder
 		--enable-pic
 		--enable-vp8-encoder
+		--enable-vp9-encoder
 	)
 
 	if(APPLE)
@@ -112,16 +184,6 @@ if(NOT EMSCRIPTEN AND LIBVPX)
 		else()
 			message(FATAL_ERROR "Unhandled TARGET_ARCH '${TARGET_ARCH}'")
 		endif()
-	elseif(WIN32)
-		if(TARGET_ARCH STREQUAL "x86")
-			list(PREPEND libvpx_configure_args --target=x86-win32-vs17)
-			set(libvpx_arch_dir Win32)
-		elseif(TARGET_ARCH STREQUAL "x86_64")
-			list(PREPEND libvpx_configure_args --target=x86_64-win64-vs17)
-			set(libvpx_arch_dir x64)
-		else()
-			message(FATAL_ERROR "Unhandled TARGET_ARCH '${TARGET_ARCH}'")
-		endif()
 	elseif(UNIX)
 		if(TARGET_ARCH STREQUAL "x86")
 			list(PREPEND libvpx_configure_args --target=x86-linux-gcc)
@@ -140,6 +202,8 @@ if(NOT EMSCRIPTEN AND LIBVPX)
 		VERSIONS
 			1.15.0
 			SHA384=cd8aac7124b17379120e58a38465ea4ce52f2d18950cf5f53c81e57f53b0b392d5bc281499deef6122e9c12983b327b4
+			1.15.2
+			SHA384=12ebfaf8c4c2f2e62ab1bb34bd059d853dd4c48edf8e65a01c3f558ef6f7b9bf13d365b2f32e3d5df730bd4d83eba24f
 		ALL_PLATFORMS
 			AUTOMAKE
 				ASSIGN_PREFIX BROKEN_INSTALL
@@ -149,80 +213,6 @@ if(NOT EMSCRIPTEN AND LIBVPX)
 		PATCHES
 			ALL
 				patches/libvpx_configure.diff
-	)
-
-	# libvpx doesn't generate a pkg-config file on Windows and puts the library
-	# into a nested directory that ffmpeg can't deal with.
-	if(WIN32)
-		file(RENAME
-			"${CMAKE_INSTALL_PREFIX}/lib/${libvpx_arch_dir}/vpxmd.lib"
-			"${CMAKE_INSTALL_PREFIX}/lib/vpxmd.lib"
-		)
-		file(REMOVE "${CMAKE_INSTALL_PREFIX}/lib/${libvpx_arch_dir}")
-		file(TO_CMAKE_PATH "${CMAKE_INSTALL_PREFIX}" libvpx_prefix)
-		file(WRITE "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig/vpx.pc"
-			"prefix=${libvpx_prefix}\n"
-			"exec_prefix=\${prefix}\n"
-			"libdir=\${prefix}/lib\n"
-			"includedir=\${prefix}/include\n"
-			"\n"
-			"Name: vpx\n"
-			"Description: WebM Project VPx codec implementation\n"
-			"Version: ${LIBVPX}\n"
-			"Requires:\n"
-			"Conflicts:\n"
-			"Libs: -L\${libdir} -lvpxmd\n"
-			"Libs.private:\n"
-			# The -MD is bogus here, but ffmpeg fails to configure without it.
-			# We strip it back out later when fixing up the generated pc files.
-			"Cflags: -MD -I\${includedir}\n"
-		)
-	endif()
-endif()
-
-if(NOT EMSCRIPTEN AND LIBX264)
-	set(x264_configure_args
-		--enable-static
-		--enable-pic
-		--disable-lavf
-		--disable-swscale
-		--disable-avs
-		--disable-ffms
-		--disable-gpac
-		--disable-lsmash
-		--disable-bashcompletion
-		--disable-cli
-		--enable-strip
-	)
-
-	if(ANDROID)
-		if(TARGET_ARCH STREQUAL "arm32" OR TARGET_ARCH STREQUAL "x86")
-			# Configure only checks if *linkage* of functions works, but not if
-			# they're actually present in any headers. This causes weird
-			# compile errors about fseeko and ftello not being present on 32
-			# bit Android. The code appears to work fine though, so either this
-			# doesn't matter or we don't hit that code. So we just disable the
-			# error and carry on.
-			list(APPEND x264_configure_args "--extra-cflags=-Wno-error=implicit-function-declaration")
-		endif()
-		if(TARGET_ARCH STREQUAL "x86" OR TARGET_ARCH STREQUAL "x86_64")
-			# Configure fails to check for the nasm version properly somehow,
-			# failing even if a more recent version is found than required.
-			# We just disable assembly on this ABI then.
-			list(APPEND x264_configure_args "--disable-asm")
-		endif()
-	endif()
-
-	build_dependency(x264 ${LIBX264} ${BUILD_TYPE}
-		URL https://code.videolan.org/videolan/x264/-/archive/@version@/x264-@version@.tar.gz
-		TARGET_ARCH "${TARGET_ARCH}"
-		VERSIONS
-			31e19f92f00c7003fa115047ce50978bc98c3a0d
-			SHA384=bed835fcf11b4befa8341661b996c4f51842dfee6f7f87c9c2e767cebca0b7871a7f59435b4e92d89c2b13a659d1d737
-		ALL_PLATFORMS
-			AUTOMAKE
-				ASSIGN_HOST ASSIGN_PREFIX WIN32_CC_CL
-				ALL ${x264_configure_args}
 	)
 endif()
 
@@ -254,7 +244,6 @@ if(NOT EMSCRIPTEN AND FFMPEG)
 		--disable-securetransport
 		--disable-xlib
 		--disable-zlib
-		--enable-libx264
 		--enable-libvpx
 		--enable-libwebp
 		--disable-encoders
@@ -270,9 +259,9 @@ if(NOT EMSCRIPTEN AND FFMPEG)
 		--disable-filters
 		--enable-encoder=gif
 		--enable-encoder=libvpx_vp8
+		--enable-encoder=libvpx_vp9
 		--enable-encoder=libwebp
 		--enable-encoder=libwebp_anim
-		--enable-encoder=libx264
 		--enable-encoder=rawvideo
 		--enable-muxer=gif
 		--enable-muxer=mp4
@@ -323,6 +312,8 @@ if(NOT EMSCRIPTEN AND FFMPEG)
 		VERSIONS
 			7.1
 			SHA384=6c9c4971415ab500cd336a349c38231b596614a6bdff3051663954e4a3d7fb6f51547de296686efa3fa1be8f8251f1db
+			7.1.1
+			SHA384=f7307cf7fe789a3def5b9e7dce33c6386d3101b0e904d61525e8b4d906f521c6b2f2f326304e2c22a6b134b6e9500b86
 		ALL_PLATFORMS
 			AUTOMAKE
 				ASSIGN_PREFIX
