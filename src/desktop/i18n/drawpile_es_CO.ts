@@ -3617,7 +3617,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+9"/>
         <source>Tool blend mode: %1</source>
-        <translation>Modo de fusión de herramientas: %1</translation>
+        <translation>Herramienta de Modo de Fusión: %1</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -3700,7 +3700,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Unmark layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Desmarcar capa</translation>
     </message>
     <message>
         <location line="+1"/>
