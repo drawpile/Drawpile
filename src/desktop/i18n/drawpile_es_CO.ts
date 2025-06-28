@@ -1964,27 +1964,27 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Censor layer</source>
-        <translation>Capa de censura</translation>
+        <translation>Capa de Censura</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer entirely</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear capa por completo</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer content</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear el contenido de la capa</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear propiedades de capa</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer position</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear la posición de la capa</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2004,12 +2004,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+13"/>
         <source>Layer Color Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcador de color de capa</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>&amp;Locks</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Bloquear</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2049,13 +2049,13 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-3899"/>
         <source>The requested brush does not allow others to use it.</source>
-        <translation type="unfinished"></translation>
+        <translation>El Usuarios del pincel solicitado no permite que otros lo utilicen.</translation>
     </message>
     <message>
         <location line="+580"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Lienzo cargado en %1:%2.%3</translation>
     </message>
     <message>
         <location line="+3336"/>
@@ -2166,12 +2166,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+11"/>
         <source>Selection Lightness to Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Selección de luminosidad a alfa</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Selection Darkness to Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Selección de la Oscuridad a Alfa</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2246,17 +2246,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Dra&amp;w on Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dibujar en la selección</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Mas&amp;k Strokes/Lasso Fills by Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Trazos de Más&amp;cara/El lazo se rellena por selección</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Keep brush strokes inside the selection mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantener las pinceladas dentro de la máscara de selección</translation>
     </message>
     <message>
         <location line="+79"/>
@@ -2401,40 +2401,40 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+7"/>
         <source>Image saved in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Imagen guardada en %1:%2.%3</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Animation export failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Error en la exportación de la animación</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export animation</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo exportar la animación</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Animation exported</source>
-        <translation type="unfinished"></translation>
+        <translation>Animación exportada</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Animation exported in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Animación exportada en %1:%2.%3</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+17"/>
         <location line="+10"/>
         <source>File is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo está vacío.</translation>
     </message>
     <message>
         <location line="-10"/>
         <source>Error setting up download.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al configurar la descarga.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2449,12 +2449,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+6"/>
         <source>Error performing download.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al realizar la descarga.</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>This session was hosted with an older version of Drawpile. Several features – such as layer clipping, some blend modes and drawing within a selection mask – will be unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta sesión se realizó con una versión anterior de Drawpile. Varias funciones, como el recorte de capas, algunos modos de fusión y el dibujo dentro de una máscara de selección, no estarán disponibles.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2524,12 +2524,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+200"/>
         <source>Canvas size too large to host.</source>
-        <translation type="unfinished"></translation>
+        <translation>El tamaño del lienzo es demasiado grande para alojarlo.</translation>
     </message>
     <message>
         <location line="+194"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estás a punto de volver a conectarte a la sesión y cerrar esta ventana.</translation>
     </message>
     <message>
         <location line="+277"/>
@@ -3067,7 +3067,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+12"/>
         <source>Key Frame Color Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcador de color de fotograma clave</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3225,22 +3225,22 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Lass&amp;o Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Relleno de Laz&amp;o</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Fill enclosed areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Rellenar áreas cerradas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Gradiente</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create a gradient inside selected areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear un degradado dentro de las áreas seleccionadas</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3296,17 +3296,17 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="+30"/>
         <source>%1 and Deselect</source>
         <extracomment>This is the text for keyboard shortcuts that switch tools and remove the selection in a single action. %1 is the name of a tool, like &quot;Freehand&quot;, &quot;Eraser&quot; or &quot;Line&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 y Deseleccionar</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Switch tool to %1 and deselect at once</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar la herramienta a %1 y deseleccionar de inmediato</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Deselect Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Deseleccionar Atajos</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3572,12 +3572,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+17"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar Preservar Alfa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>toggle recolor mode/alpha preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar modo de recolor/preservar alfa</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -3592,7 +3592,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+3"/>
         <source>Decrease Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Disminuir la opacidad del pincel</translation>
     </message>
     <message>
         <location line="+3"/>
