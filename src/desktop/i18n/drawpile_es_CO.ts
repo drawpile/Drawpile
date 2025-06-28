@@ -1819,17 +1819,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+157"/>
         <source>Configure drawing toolbar…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurar la barra de herramientas de dibujo…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Always show side toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar siempre la barra de herramientas lateral</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Always show bottom toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar siempre la barra de herramientas inferior</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -1889,12 +1889,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+22"/>
         <source>Set Selection Mask &amp;Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer &amp;Color de Máscara de Selección…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the color tint of the selection mask</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar el tono de color de la máscara de selección</translation>
     </message>
     <message>
         <location line="+137"/>
@@ -1949,22 +1949,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+29"/>
         <source>Automatically inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Heredar alfa automáticamente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Heredar y conservar alfa según el modo de fusión</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Alpha lock layer for you</source>
-        <translation type="unfinished"></translation>
+        <translation>Capa de bloqueo alfa para ti</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Censor layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Capa de censura</translation>
     </message>
     <message>
         <location line="+4"/>
