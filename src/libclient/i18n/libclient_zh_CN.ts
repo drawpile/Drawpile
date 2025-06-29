@@ -19,232 +19,232 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
         <source>Attempting to allocate %n page(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>尝试分配 %n 页</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to allocate %n page(s): %1</source>
-        <translation type="unfinished"></translation>
+        <translation>分配 %n 页失败: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>内存分配失败. 某些浏览器在刷新时会出现这种情况. 请完全关闭此页面和浏览器, 然后再试一次.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>内存分配不是共享数据缓冲区, 尽管你的浏览器支持它. 你可能需要更改设置.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 图标</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation>drawpile.net 登录</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>加载程序</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>启动中…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>启动中, 这应该只需要一会儿…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation type="unfinished"></translation>
+        <translation>加载设备</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>加载中, 这可能需要一些时间…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>准备中</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>初始化中, 这可能需要一些时间…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: ${e}</source>
-        <translation type="unfinished"></translation>
+        <translation>启动失败 Drawpile: ${e}</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>设置中…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation type="unfinished"></translation>
+        <translation>严重错误:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>这通常是因为你的浏览器并不是最新版本或者你是通过某种嵌入式的浏览器来查看页面的, 比如聊天程序的浏览器, 因此你需要正确的打开它. 如需了解更多信息, 请查看 &lt;a href=&quot;#&quot;&gt;此帮助页面&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation type="unfinished"></translation>
+        <translation>无效房间链接.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation type="unfinished"></translation>
+        <translation>无论如何你都不是通过有效链接来到房间的.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;内置浏览器:&lt;/strong&gt; 看起来你是在一个内置浏览器中打开Drawpile的.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;内置浏览器:&lt;/strong&gt; 看起来你是在 %1 的内置浏览器中打开Drawpile的.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>这通常无法正常运作, 请在一个真正的浏览器中打开此页面.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation type="unfinished"></translation>
+        <translation>可能不兼容的浏览器:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;可能不兼容的浏览器:&lt;/strong&gt; Linux上的Firefox并非在所有系统上都支持笔压. 如果你没有笔压, 请考虑使用其他的浏览器或者 &lt;a href=&quot;#&quot;&gt;本机 Linux 程序&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;不兼容的浏览器:&lt;/strong&gt; Windows上的Firefox在运行Drawpile时会遇到一些问题. 比如输入文本/或者按 Ctrl+Z 撤销时可能无法正常工作. 请考虑使用其他的浏览器或者 &lt;a href=&quot;#&quot;&gt;本机 Windows 程序&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;不兼容的浏览器:&lt;/strong&gt; %1 上的Chrome在运行Drawpile时会遇到一些问题. 这实际上只是另一个shell中的 (Safari) 系统浏览器, 这会导致控件最终出现在屏幕外的问题. 请考虑直接使用 (Safari) 系统浏览器.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>语言:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Test your pen pressure here</source>
-        <translation type="unfinished"></translation>
+        <translation>在此处测试你的笔压</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>检测到鼠标输入, 而不是笔</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected touch input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>检测到触控输入, 而不是笔</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected input, but not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>检测到输入, 但不是笔</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen pressure detected</source>
-        <translation type="unfinished"></translation>
+        <translation>检测到笔压</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen detected, but no pressure variance</source>
-        <translation type="unfinished"></translation>
+        <translation>检测到笔, 但没有压力变化</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished">检查更新…</translation>
+        <translation>检查更新…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Update check blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>检查更新已被阻止</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;警告:&lt;/strong&gt; 此安装是 &lt;strong&gt;过时的&lt;/strong&gt; 版本 &lt;code&gt;%1&lt;/code&gt;, 而不是最新版本 &lt;code&gt;%2&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>请尝试刷新页面. 如果没有任何变化, 请通知服务器主人进行更新.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;警告:&lt;/strong&gt; 无法确定安装是否为最新版本. 可能 &lt;code&gt;%1&lt;/code&gt; 版本已经过时.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
-        <translation type="unfinished"></translation>
+        <translation>请尝试刷新页面. 如果没有任何变化, 请咨询服务器主人或者查看 &lt;a href=&quot;#&quot;&gt; drawpile.net 上的帮助页面&lt;/a&gt; 关于如何与可以检查相关事项的人取得联系.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue regardless, but things may not work properly.</source>
-        <translation type="unfinished"></translation>
+        <translation>无论如何你都可以继续, 但可能无法正常运作.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>启动</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Start Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>仍然启动</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>版本:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Stable (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>稳定版本 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Beta (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>测试版本 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The session you are trying to join requires the beta version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>你尝试要加入的房间需要使用测试版本的Drawpile.</translation>
     </message>
 </context>
 <context>
@@ -313,7 +313,7 @@
         <location line="+8"/>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>画布尺寸超出范围, %2 格式下的宽度和高度必须介于 1 和 %1 之间.</translation>
     </message>
 </context>
 <context>
@@ -443,12 +443,12 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>改变笔刷不透明度</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>改变笔刷硬度</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -980,22 +980,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Greater Density</source>
-        <translation type="unfinished"></translation>
+        <translation>比较 (浓度)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>马克笔</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>OKLAB</source>
-        <translation type="unfinished"></translation>
+        <translation>感知</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pigment</source>
-        <translation type="unfinished"></translation>
+        <translation>颜料</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1015,42 +1015,42 @@ Select a regular layer instead.</source>
     <message>
         <location line="+12"/>
         <source>Linear Dodge/Add</source>
-        <translation type="unfinished"></translation>
+        <translation>线性减淡 (添加)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>颜色加深</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation>颜色减淡</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Vivid Light</source>
-        <translation type="unfinished"></translation>
+        <translation>亮光</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation type="unfinished"></translation>
+        <translation>点光</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Darker Color</source>
-        <translation type="unfinished"></translation>
+        <translation>深色</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighter Color</source>
-        <translation type="unfinished"></translation>
+        <translation>浅色</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference</source>
-        <translation type="unfinished"></translation>
+        <translation>差值</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1060,42 +1060,42 @@ Select a regular layer instead.</source>
     <message>
         <location line="+30"/>
         <source>Shade (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>阴影 (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>发光 (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shade/Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>明暗 (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>加深 (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>减淡 (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn/Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>加深/减淡 (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Hard Mix (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>实色混合 (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>差值 (SAI)</translation>
     </message>
     <message>
         <location line="-108"/>
@@ -1485,12 +1485,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation>%1 通过服务器管理员创建的邀请成为操作员。</translation>
+        <translation>%1 通过服务器管理员创建的邀请代码获得了房间管理员身份.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation>%1 通过 %2 创建的邀请成为操作员。</translation>
+        <translation>%1 通过 %2 创建的邀请代码获得了房间管理员身份.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1596,7 +1596,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+93"/>
         <source>%1 trusted via invite created by a server administrator.</source>
-        <translation>%1 通过服务器管理员创建的邀请获得信任。</translation>
+        <translation>%1 通过服务器管理员创建的邀请代码获得了信任用户身份.</translation>
     </message>
     <message>
         <location line="-62"/>
@@ -1674,7 +1674,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>%1 trusted via invite created by %2.</source>
-        <translation>通过 %2 创建的邀请，%1 受到信任。</translation>
+        <translation>%1 通过 %2 创建的邀请代码获得了信任用户身份.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1995,17 +1995,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (兼容模式)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.3 (完全兼容)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Unlisted</source>
-        <translation type="unfinished"></translation>
+        <translation>未公开列表的</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2172,7 +2172,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/gradient.cpp" line="+135"/>
         <source>You need to drag to create a gradient.</source>
-        <translation type="unfinished"></translation>
+        <translation>你需要拖动来创建一个渐变.</translation>
     </message>
 </context>
 <context>
