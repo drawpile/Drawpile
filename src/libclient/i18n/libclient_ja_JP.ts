@@ -224,17 +224,17 @@
     <message>
         <location line="+1"/>
         <source>Stable (%1)</source>
-        <translation>安定 (%1)</translation>
+        <translation>安定版 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Beta (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>ベータ (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The session you are trying to join requires the beta version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>参加しようとしているセッションにはベータ版のDrawpileが必要です。</translation>
     </message>
 </context>
 <context>
@@ -303,7 +303,7 @@
         <location line="+8"/>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスのサイズが範囲外です、%2の幅と高さは、%2の1〜%1の間でなければなりません。</translation>
     </message>
 </context>
 <context>
