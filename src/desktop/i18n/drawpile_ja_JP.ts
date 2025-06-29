@@ -2355,7 +2355,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Configure drawing toolbar…</source>
-        <translation>描画ツールバーを構成します…</translation>
+        <translation>描画ツールバーを設定します…</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6928,7 +6928,7 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>明度と透明度を保持しながら、現在のブラシの色から色相と彩度(Saturation)を設定して、対象のレイヤを彩色します。</translation>
+        <translation>明るさと透明度を保持しながら、現在のブラシの色から色相と彩度(Saturation)を設定して、対象のレイヤを彩色します。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7206,7 +7206,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation>明度を変更する</translation>
+        <translation>明るさを変更する</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8365,7 +8365,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Value</source>
-        <translation type="unfinished">明度</translation>
+        <translation>明るさ</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8414,7 +8414,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-8"/>
         <location line="+12"/>
         <source>Value range: </source>
-        <translation>明度の範囲: </translation>
+        <translation>明るさの範囲: </translation>
     </message>
     <message>
         <location line="-12"/>
@@ -8426,22 +8426,22 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-11"/>
         <location line="+12"/>
         <source>Luminance range: </source>
-        <translation type="unfinished"></translation>
+        <translation>輝度の範囲: </translation>
     </message>
     <message>
         <location line="-8"/>
         <source>Hue range: </source>
-        <translation type="unfinished"></translation>
+        <translation>色相の範囲: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Hue offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>色相のオフセット: </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saturation offset: </source>
-        <translation>彩度(Saturation)オフセット: </translation>
+        <translation>彩度(Saturation)のオフセット: </translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8451,7 +8451,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Value offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>明るさのオフセット: </translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8461,7 +8461,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Luminance offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>輝度のオフセット: </translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8667,12 +8667,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/toolbarconfigdialog.cpp" line="+21"/>
         <source>Configure Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>ツールバーの構成</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Drag to reorder and uncheck to hide tools.</source>
-        <translation type="unfinished"></translation>
+        <translation>ドラッグして順序を変更しチェックを外すとツールが非表示になります。</translation>
     </message>
     <message>
         <location line="+88"/>
@@ -8682,7 +8682,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Really revert the toolbar configuration to its default state?</source>
-        <translation type="unfinished"></translation>
+        <translation>ツールバーの設定を本当にデフォルト状態に戻しますか?</translation>
     </message>
 </context>
 <context>
@@ -9989,7 +9989,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>HSV (Hue–Saturation–Value)</source>
-        <translation>HSV (色相 – 彩度(Saturation) – 明度)</translation>
+        <translation>HSV (色相 – 彩度(Saturation) – 明るさ)</translation>
     </message>
     <message>
         <location line="+2"/>
