@@ -312,7 +312,7 @@
     <message>
         <location line="+41"/>
         <source>Saturation</source>
-        <translation>彩度</translation>
+        <translation>彩度(Saturation)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -332,7 +332,7 @@
     <message>
         <location line="+37"/>
         <source>Value</source>
-        <translation>明度</translation>
+        <translation>明るさ</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5159,12 +5159,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-40"/>
         <source>Continuous chroma</source>
-        <translation>連続的な彩度</translation>
+        <translation>連続的な彩度(chroma)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Chroma steps: </source>
-        <translation>彩度の段階: </translation>
+        <translation>彩度(Chroma)の段階: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5179,32 +5179,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Continuous saturation</source>
-        <translation>連続的な彩度</translation>
+        <translation>連続的な彩度(Saturation)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Saturation steps: </source>
-        <translation>彩度の段階: </translation>
+        <translation>彩度(Saturation)の段階: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous lightness</source>
-        <translation>連続的な明るさ</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Lightness steps: </source>
-        <translation>明るさの段階: </translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Continuous value</source>
         <translation>連続的な明度</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Value steps: </source>
+        <source>Lightness steps: </source>
         <translation>明度の段階: </translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Continuous value</source>
+        <translation>連続的な明るさ</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Value steps: </source>
+        <translation>明るさの段階: </translation>
     </message>
     <message>
         <location line="+8"/>
@@ -5717,7 +5717,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+35"/>
         <source>Value: </source>
-        <translation>値: </translation>
+        <translation>明るさ: </translation>
     </message>
     <message>
         <location line="+12"/>
@@ -6217,14 +6217,14 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Color saturation</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>彩度</translation>
+        <translation>色の彩度(Saturation)</translation>
     </message>
     <message>
         <location line="-198"/>
         <source>Color value</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>明度</translation>
+        <translation>色の明るさ</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6259,7 +6259,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Change color value (HSV)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>明度の変更(HSV)</translation>
+        <translation>明るさの変更(HSV)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6706,7 +6706,7 @@ For very slow speed the opposite happens.</source>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>色の値 (明るさ、強度)</translation>
+        <translation>色の明るさ (明るさ、強度)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6755,7 +6755,7 @@ For very slow speed the opposite happens.</source>
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>HSL カラーモデルを使用して色の彩度を変更します。
+        <translation>HSL カラーモデルを使用して色の彩度(Saturation)を変更します。
 -1.0 よりグレーっぽくなります
  0.0 無効
  1.0 より飽和</translation>
@@ -6781,7 +6781,7 @@ For very slow speed the opposite happens.</source>
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>HSV カラーモデルを使用して色の彩度を変更します。 HSV の変更は HSL の前に適用されます。
+        <translation>HSV カラーモデルを使用して色の彩度(Saturation)を変更します。 HSV の変更は HSL の前に適用されます。
 -1.0 よりグレーっぽくなります
  0.0 無効
  1.0 より飽和</translation>
@@ -6928,7 +6928,7 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>明度と透明度を保持しながら、現在のブラシの色から色相と彩度を設定して、対象のレイヤを彩色します。</translation>
+        <translation>明度と透明度を保持しながら、現在のブラシの色から色相と彩度(Saturation)を設定して、対象のレイヤを彩色します。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7201,7 +7201,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation>彩度を変更する</translation>
+        <translation>色の彩度(Saturation)を変更する</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8355,12 +8355,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Saturation</source>
-        <translation type="unfinished">彩度</translation>
+        <translation>彩度(Saturation)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Chroma</source>
-        <translation>彩度</translation>
+        <translation>彩度(Chroma)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8402,25 +8402,25 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+5"/>
         <location line="+12"/>
         <source>Saturation range: </source>
-        <translation>彩度の範囲: </translation>
+        <translation>彩度(Saturation)の範囲: </translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+12"/>
         <source>Chroma range: </source>
-        <translation type="unfinished"></translation>
+        <translation>彩度(Chroma)の範囲: </translation>
     </message>
     <message>
         <location line="-8"/>
         <location line="+12"/>
         <source>Value range: </source>
-        <translation type="unfinished"></translation>
+        <translation>明度の範囲: </translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+12"/>
         <source>Lightness range: </source>
-        <translation type="unfinished"></translation>
+        <translation>明度の範囲: </translation>
     </message>
     <message>
         <location line="-11"/>
@@ -8441,12 +8441,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Saturation offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>彩度(Saturation)オフセット: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Chroma offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>彩度(Chroma)のオフセット: </translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8456,7 +8456,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Lightness offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>明度のオフセット: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9989,17 +9989,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>HSV (Hue–Saturation–Value)</source>
-        <translation>HSV (色相 – 彩度 – 明度)</translation>
+        <translation>HSV (色相 – 彩度(Saturation) – 明度)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HSL (Hue–Saturation–Lightness)</source>
-        <translation>HSL (色相 – 彩度 – 明度)</translation>
+        <translation>HSL (色相 – 彩度(Saturation) – 明度)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HCL (Hue–Chroma–Luminance)</source>
-        <translation>HCL (色相 – 彩度 – 輝度)</translation>
+        <translation>HCL (色相 – 彩度(Chroma) – 輝度)</translation>
     </message>
     <message>
         <location line="+56"/>
