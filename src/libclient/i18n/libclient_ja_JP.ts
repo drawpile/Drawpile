@@ -49,7 +49,7 @@
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation>起動中、これにはしばらく時間がかかる場合があります…</translation>
+        <translation>開始中、これにはしばらく時間がかかる場合があります…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -89,27 +89,27 @@
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>これは通常ブラウザが古い場合か、チャットアプリケーションのような何らかの組み込みブラウザを介してページを表示しているためです。詳細については、&lt;a href = &quot;＃&quot;&gt;このヘルプページ&lt;/a&gt;をご覧ください。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なセッションリンク。</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpileセッションへの有効なリンクからアクセスされませんでした。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;アプリ内ブラウザ：&lt;/strong&gt;アプリ内ブラウザーでDrawpileを開いたようです。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;アプリ内ブラウザー：&lt;/strong&gt;％1のアプリ内ブラウザでDrawpileを開いたようです</translation>
     </message>
     <message>
         <location line="+3"/>
