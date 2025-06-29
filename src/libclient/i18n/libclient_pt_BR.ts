@@ -139,7 +139,7 @@
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation>Idioma:</translation>
+        <translation>Idioma (Language):</translation>
     </message>
     <message>
         <location line="+1"/>
