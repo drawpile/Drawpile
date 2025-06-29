@@ -985,7 +985,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Pigment</source>
-        <translation>顔料</translation>
+        <translation>Pigment</translation>
     </message>
     <message>
         <location line="+18"/>
