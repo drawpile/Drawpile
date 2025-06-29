@@ -7975,13 +7975,13 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+49"/>
         <source>Shrink and feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation>Encoger y desenfocar desde el borde del lienzo</translation>
+        <translation>Encoger y desenfocar/difuminar desde el borde del lienzo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Desenfocar/Difuminar desde el borde del lienzo</translation>
     </message>
 </context>
 <context>
@@ -8056,7 +8056,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Error saving bans: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al guardar bans: %1</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8201,12 +8201,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-97"/>
         <source>File does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo no contiene una exportación de rol válida.</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Error saving roles: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al guardar roles: %1</translation>
     </message>
     <message numerus="yes">
         <location line="+61"/>
@@ -8260,12 +8260,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>Tableta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touch</source>
-        <translation type="unfinished"></translation>
+        <translation>Táctil</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8275,7 +8275,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8308,7 +8308,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/shadeselectordialog.cpp" line="+26"/>
         <source>Color Harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>Armonía de Colores</translation>
     </message>
     <message>
         <location line="+10"/>
