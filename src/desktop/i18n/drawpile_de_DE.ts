@@ -8850,12 +8850,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+8"/>
         <source>Use system file picker dialogs</source>
-        <translation type="unfinished"></translation>
+        <translation>System-Dateiauswahldialoge verwenden</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Interface:</source>
-        <translation type="unfinished"></translation>
+        <translation>Oberfläche:</translation>
     </message>
     <message>
         <location line="+7"/>
