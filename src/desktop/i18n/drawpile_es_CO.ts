@@ -6992,7 +6992,7 @@ The longer the smudge length the more a color will spread and will also boost pe
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>Multiplicador logarítmico para el valor de &quot;Longitud de la mancha&quot;.
 Útil para corregir pinceles de alta definición o largos con muchas pinceladas.
-Cuanto mayor sea la longitud de la mancha, más se extenderá el color y también mejorará considerablemente el rendimiento, ya que el lienzo se muestrea con menos frecuencia.</translation>
+Cuanto mayor sea la longitud de la mancha, más se extenderá el color y también mejorará considerablemente el rendimiento, ya que el lienzo se muestrea con menos frecuencia</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7001,7 +7001,9 @@ You can control which bucket to use to improve variability and realism of the br
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Hay 256 cubos, cada uno con capacidad para un color seleccionado del lienzo.
+Puedes controlar qué cubo usar para mejorar la variabilidad y el realismo del pincel.
+Especialmente útil con la opción &quot;Entrada personalizada&quot; para correlacionar los cubos con otros ajustes, como las compensaciones.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7012,7 +7014,11 @@ Especially useful with the &quot;Custom input&quot; setting to correlate buckets
 Negative values do the reverse</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Controla cuánta transparencia se capta y difumina, de forma similar al bloqueo alfa.
+1.0 no moverá ninguna transparencia.
+0.5 moverá solo el 50 % de transparencia o más.
+0.0 no tendrá ningún efecto.
+Los valores negativos tienen el efecto contrario</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7089,7 +7095,7 @@ Negative values do the reverse</source>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fuerza de la posterización, reduce el número de colores en función de la configuración de &quot;Niveles de posterización&quot;, manteniendo alfa.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7098,7 +7104,9 @@ Negative values do the reverse</source>
 Values above 0.5 may not be noticeable.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Número de niveles de posterización (dividido entre 100).
+0,05 = 5 niveles, 0,2 = 20 niveles, etc.
+Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7114,7 +7122,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="+3"/>
         <source>Synchronize smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>Sincronizar difuminado</translation>
     </message>
 </context>
 <context>
@@ -7184,27 +7192,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar la Opacidad del Pincel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar la Dureza del Pincel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar el Tono del Color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar la Saturación del Color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar el Valor del Color</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7259,7 +7267,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>You can&apos;t assign just a key combination to this action, change the type to mouse button instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>No puedes asignar sólo una combinación de teclas a esta acción, cambia el tipo a botón del mouse.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7290,7 +7298,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>&amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ninguno</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7393,12 +7401,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+68"/>
         <source>Reset crop</source>
-        <translation type="unfinished"></translation>
+        <translation>Restablecer recorte</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Upscale to fit view</source>
-        <translation type="unfinished"></translation>
+        <translation>Ampliar para adaptarse a la vista</translation>
     </message>
     <message>
         <location line="+100"/>
@@ -7417,7 +7425,7 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/invitedialog.cpp" line="-379"/>
         <location line="+275"/>
         <source>What are invite codes?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Qué son los códigos de invitación?</translation>
     </message>
     <message>
         <location line="-123"/>
@@ -7427,54 +7435,54 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+22"/>
         <source>Invite code link(s) copied to clipboard.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Enlace del código de invitación copiado al portapapeles.</numerusform>
+            <numerusform>Enlaces de los códigos de invitación copiados al portapapeles.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+35"/>
         <source>This server does not support invite codes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este servidor no admite códigos de invitación.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sólo los administradores del servidor pueden administrar los códigos de invitación en esta sesión.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only operators and server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sólo los operadores y administradores del servidor pueden administrar los códigos de invitación en esta sesión.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Revoke Invite Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Revocar Códigos de Invitación</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really revoke %n selected invite code(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>¿Realmente desea revocar %n código de invitación seleccionado?</numerusform>
+            <numerusform>¿Realmente desea revocar los %n códigos de invitación seleccionados?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Invite codes let someone join the session via a limited-use link. You can revoke the code later to take away their access again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Los códigos de invitación permiten a alguien unirse a la sesión mediante un enlace de uso limitado. Puedes revocar el código más tarde para retirarle el acceso.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Someone joining via an invite code bypasses normal session restrictions: they don&apos;t need the session password, can join via web browser, don&apos;t need a registered account and aren&apos;t affected by new joins being blocked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alguien que se une a través de un código de invitación evita las restricciones de sesión normales: no necesita la contraseña de sesión, puede unirse a través del navegador web, no necesita una cuenta registrada y no se ve afectado por el bloqueo de nuevas uniones.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>They don&apos;t bypass bans or server-wide restrictions.</source>
         <extracomment>&quot;They&quot; is referring to invite codes.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Los codigos de invitación No eluden las prohibiciones ni las restricciones de todo el servidor.</translation>
     </message>
 </context>
 <context>
@@ -7492,7 +7500,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar…</translation>
     </message>
     <message>
         <location line="+13"/>
