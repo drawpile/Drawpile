@@ -3044,32 +3044,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+4"/>
         <source>Lock layer entirely</source>
-        <translation>完全レイヤーロック</translation>
+        <translation>レイヤーロック完全</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer content</source>
-        <translation>ロックレイヤーコンテンツ</translation>
+        <translation>レイヤーロックコンテンツ</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer properties</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーロックプロパティ</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer position</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーロック位置</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Layer Color Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーマーカーレイヤー</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>&amp;Locks</source>
-        <translation type="unfinished"></translation>
+        <translation>ロック(&amp;L)</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -3095,12 +3095,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+11"/>
         <source>Selection Lightness to Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲の明度をアルファに</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Selection Darkness to Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲の暗さをアルファに</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3120,7 +3120,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation>選択とマスク自体のみを変換し、その後ツールを元に戻します</translation>
+        <translation>選択マスクのみを変形し、その後ツールを元に戻します</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3175,17 +3175,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Dra&amp;w on Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲に描画(&amp;w)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Mas&amp;k Strokes/Lasso Fills by Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲でマスクストローク/なげなわ塗りつぶし</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Keep brush strokes inside the selection mask</source>
-        <translation type="unfinished"></translation>
+        <translation>選択マスク内にブラシストロークを保持</translation>
     </message>
     <message>
         <location line="+79"/>
@@ -3824,7 +3824,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Mark key frame gray</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを灰色にマーク</translation>
     </message>
 </context>
 <context>
@@ -3998,12 +3998,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+5"/>
         <source>Lasso Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>なげなわ塗りつぶし</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>階調</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4256,7 +4256,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="-195"/>
         <location line="+247"/>
         <source>Operators: </source>
-        <translation type="unfinished"></translation>
+        <translation>管理者: </translation>
     </message>
     <message>
         <location line="-224"/>
@@ -4287,34 +4287,34 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="-30"/>
         <location line="+201"/>
         <source>Trusted: </source>
-        <translation type="unfinished"></translation>
+        <translation>信頼済み: </translation>
     </message>
     <message>
         <location line="-178"/>
         <source>Pigment &amp; OKLAB Brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>顔料 &amp; OKLAB ブラシ:</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+26"/>
         <source>Registered: </source>
-        <translation type="unfinished"></translation>
+        <translation>登録済み: </translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Brush size limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシサイズ制限:</translation>
     </message>
     <message>
         <location line="+30"/>
         <location line="+76"/>
         <source>Everyone: </source>
-        <translation type="unfinished"></translation>
+        <translation>全員: </translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Layer count limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー数制限:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -4493,7 +4493,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+24"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation>レンダリング</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -4793,58 +4793,58 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+1184"/>
         <source>No dynamics</source>
-        <translation type="unfinished">ダイナミクスなし</translation>
+        <translation>ダイナミクスなし</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished">筆圧のダイナミクス</translation>
+        <translation>筆圧のダイナミクス</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished">速度のダイナミクス</translation>
+        <translation>速度のダイナミクス</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished">間隔ダイナミクス</translation>
+        <translation>間隔ダイナミクス</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished">最大の速度: </translation>
+        <translation>最大の速度: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished">最大の間隔: </translation>
+        <translation>最大の間隔: </translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+20"/>
         <source>Apply to All</source>
-        <translation type="unfinished">すべてに適用</translation>
+        <translation>すべてに適用</translation>
     </message>
     <message>
         <location line="-18"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ、透明度、硬さ、混色、ジッターの最大速度を一度に設定します。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished">このブラシのすべての設定に設定された最大速度です。</translation>
+        <translation>このブラシのすべての設定に設定された最大速度です。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ、透明度、硬さ、混色、ジッターの最大距離を一度に設定します。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished">このブラシのすべての設定に設定されている最大間隔。</translation>
+        <translation>このブラシのすべての設定に設定されている最大間隔。</translation>
     </message>
 </context>
 <context>
@@ -5383,12 +5383,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+8"/>
         <source>Allow others in a session to use this brush</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション内の他のユーザーがこのブラシを使用できるようにする</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Sharing:</source>
-        <translation type="unfinished"></translation>
+        <translation>共有:</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -5466,19 +5466,19 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+30"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+12"/>
         <source>Direct Build-Up</source>
-        <translation type="unfinished"></translation>
+        <translation>直接増大</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Wash</source>
-        <translation type="unfinished"></translation>
+        <translation>直接水彩</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Soft (Drawpile 2.2)</source>
-        <translation type="unfinished"></translation>
+        <translation>直接ソフト(Drawpile2.2)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -11868,7 +11868,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="+27"/>
         <source>Locks:</source>
-        <translation type="unfinished"></translation>
+        <translation>ロック:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -11911,7 +11911,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Locks and permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>ロックと権限</translation>
     </message>
     <message>
         <location line="+9"/>
