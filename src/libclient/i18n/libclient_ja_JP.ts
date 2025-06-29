@@ -79,17 +79,17 @@
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation>設定する</translation>
+        <translation>設定中…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation>致命的なエラー</translation>
+        <translation>致命的なエラー:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation>これは通常ブラウザが古い場合か、チャットアプリケーションのような何らかの組み込みブラウザを介してページを表示しているためです。詳細については、&lt;a href = &quot;＃&quot;&gt;このヘルプページ&lt;/a&gt;をご覧ください。</translation>
+        <translation>これは通常ブラウザが古い場合か、チャットアプリケーションのような何らかの組み込みブラウザを介してページを表示しているためです。詳細については、&lt;a href = &quot;#&quot;&gt;このヘルプページ&lt;/a&gt;をご覧ください。</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -109,7 +109,7 @@
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation>&lt;strong&gt;アプリ内ブラウザー：&lt;/strong&gt;％1のアプリ内ブラウザでDrawpileを開いたようです。</translation>
+        <translation>&lt;strong&gt;アプリ内ブラウザー：&lt;/strong&gt;%1のアプリ内ブラウザでDrawpileを開いたようです。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -179,22 +179,22 @@
     <message>
         <location line="+1"/>
         <source>Update check blocked</source>
-        <translation>更新の確認がブロックされました</translation>
+        <translation>アップデートの確認がブロックされました</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;警告:&lt;/strong&gt;このインストールは&lt;strong&gt;古い&lt;/strong&gt;バージョン&lt;code&gt;%1&lt;/code&gt;で、これは最新のバージョン&lt;code&gt;%2 &lt;/code&gt;ではありません。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>ページを更新してみてください。それが何も変更されない場合は、サーバーの所有者に更新するように通知します。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;警告:&lt;/strong&gt;インストールが最新かどうかを判断できませんでした。バージョン&lt;code&gt;%1 &lt;/code&gt;は古いバージョンである場合があります。</translation>
     </message>
     <message>
         <location line="+4"/>
