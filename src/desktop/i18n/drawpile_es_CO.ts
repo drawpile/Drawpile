@@ -7702,12 +7702,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Unknown reason.</source>
-        <translation>Razón Desconocida</translation>
+        <translation>Razón Desconocida.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Can&apos;t join session</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo unir a la sesión</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -7872,12 +7872,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+70"/>
         <source>Error opening file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al abrir el archivo: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error opening file: %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al abrir el archivo: %1 (%2)</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -7890,22 +7890,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+33"/>
         <source>Expand up</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir hacia arriba</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand left</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir hacia la izquierda</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand right</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir hacia la derecha</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand down</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir hacia abajo</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7925,37 +7925,37 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+113"/>
         <source>Width and height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>El ancho y la altura deben estar entre 1 y %1 píxeles en sesiones alojadas con Drawpile 2.2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Width must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>El ancho debe estar entre 1 y %1 píxeles en sesiones alojadas con Drawpile 2.2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>La altura debe estar entre 1 y %1 píxeles en sesiones alojadas con Drawpile 2.2.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Width and height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>El ancho y la altura deben estar entre 1 y %1 píxeles.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Width must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>El ancho debe estar entre 1 y %1 píxeles.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>La altura debe estar entre 1 y %1 píxeles.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Total size must be between 1 and %1 pixels (you&apos;re at %2.)</source>
-        <translation type="unfinished"></translation>
+        <translation>El tamaño total debe estar entre 1 y %1 píxeles (estás en %2).</translation>
     </message>
 </context>
 <context>
