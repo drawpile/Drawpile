@@ -12590,7 +12590,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Linear</source>
-        <translation>リニア</translation>
+        <translation>直線</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12620,12 +12620,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Pad</source>
-        <translation>１回のみ</translation>
+        <translation>繰り返さない</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continue gradient by padding it with the nearest color</source>
-        <translation>最も近い色で敷き詰めてグラデーションを継続します</translation>
+        <translation>最も近い色で敷き詰めてグラデーションを繰り返します</translation>
     </message>
     <message>
         <location line="+8"/>
