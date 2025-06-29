@@ -3785,7 +3785,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+6"/>
         <source>Red</source>
-        <translation type="unfinished">Rojo</translation>
+        <translation>Rojo</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3825,7 +3825,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Mark key frame gray</source>
-        <translation>Marcar frame clave en gris</translation>
+        <translation>Marcar frame clave de gris</translation>
     </message>
 </context>
 <context>
@@ -3999,7 +3999,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+5"/>
         <source>Lasso Fill</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Relleno de lazo</translation>
     </message>
     <message>
         <location line="+5"/>
