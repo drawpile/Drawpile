@@ -3556,12 +3556,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+17"/>
         <source>Toggle Alpha Preserve</source>
-        <translation>アルファ保存の切り替え</translation>
+        <translation>アルファ値保持の切り替え</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>toggle recolor mode/alpha preserve</source>
-        <translation>色替えモード/アルファ保存の切り替え</translation>
+        <translation>色替えモード/アルファ値保持の切り替え</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -5747,17 +5747,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+71"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>ブレンド: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Minimum Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>最小ブレンド: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending</source>
-        <translation type="unfinished"></translation>
+        <translation>ブレンド</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -7116,7 +7116,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="+3"/>
         <source>Synchronize smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>ぼかしを同期</translation>
     </message>
 </context>
 <context>
@@ -7191,7 +7191,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの硬さの変更</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7395,12 +7395,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+68"/>
         <source>Reset crop</source>
-        <translation type="unfinished"></translation>
+        <translation>切り出しのリセット</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Upscale to fit view</source>
-        <translation type="unfinished"></translation>
+        <translation>表示に合わせて拡大</translation>
     </message>
     <message>
         <location line="+100"/>
@@ -7525,17 +7525,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../mainwindow.cpp" line="-936"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファブレンド</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ値の継承</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>下のレイヤーにクリップ</translation>
     </message>
 </context>
 <context>
@@ -7917,37 +7917,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+113"/>
         <source>Width and height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 でホストされるセッションでは、幅と高さは 1 ～ %1 ピクセルの範囲でなければなりません。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Width must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 でホストされるセッションでは、幅は 1 ～ %1 ピクセルにする必要があります。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 でホストされるセッションでは、高さは 1 ～ %1 ピクセルの範囲でなければなりません。</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Width and height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>幅と高さは 1 ～ %1 ピクセルの範囲でなければなりません。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Width must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>幅は 1 ～ %1 ピクセルの範囲で指定する必要があります。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>高さは 1 ～ %1 ピクセルの範囲でなければなりません。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Total size must be between 1 and %1 pixels (you&apos;re at %2.)</source>
-        <translation type="unfinished"></translation>
+        <translation>合計サイズは 1 ～ %1 ピクセルの範囲でなければなりません (現在は %2 です)。</translation>
     </message>
 </context>
 <context>
@@ -10315,7 +10315,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Automatically inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>ブレンドモードに基づいて自動的にアルファ値を継承、保持します</translation>
     </message>
     <message>
         <location line="+9"/>
