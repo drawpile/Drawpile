@@ -5663,13 +5663,14 @@ Al desactivarla, el comportamiento se restablece a su estado anterior a Drawpile
     <message>
         <location line="+56"/>
         <source>Synchronize smudging (slower, but more accurate)</source>
-        <translation>Sincronizar la limpieza (más lenta, pero más precisa)</translation>
+        <translation>Sincronizar difuminado (más lenta, pero más precisa)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This will make the brush to wait for its own stroke to finish to allow it to accurately smudge with itself.
 If fast strokes cause artifacts when smudging, enabling this can help.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esto hará que el pincel espere a que termine su propio trazo para poder difuminarse con precisión.
+Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar esta opción puede ser útil.</translation>
     </message>
     <message>
         <location line="+45"/>
