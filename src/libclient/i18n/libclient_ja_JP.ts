@@ -19,22 +19,22 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>メモリの割り当てに失敗しました。ブラウザによっては、更新時にこのような現象が発生することがあります。このページとブラウザを完全に閉じてから、もう一度お試しください。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラウザはSharedArrayBufferをサポートしていますが、割り当てられたメモリはSharedArrayBufferではありません。設定を変更する必要があるかもしれません。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpileのロゴ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation>drawpile.netへログイン</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -49,7 +49,7 @@
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>起動中、これには少し時間がかかります…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -59,7 +59,7 @@
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>読込中、これにはしばらく時間がかかるかもしれません…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -69,7 +69,7 @@
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>初期化中、これにはしばらく時間がかかる場合があります…</translation>
     </message>
     <message>
         <location line="+1"/>
