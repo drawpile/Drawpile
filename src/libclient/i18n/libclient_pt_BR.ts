@@ -19,67 +19,67 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>A alocação de memória falhou. Isso pode acontecer em alguns navegadores se você reiniciar. Feche esta página e seu navegador inteiro, e tente novamente.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>A memória alocada não é um SharedArrayBuffer, mesmo que o navegador tenha suporte. Você pode precisar mudar alguma configuração.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Logotipo do Drawpile</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation>login do drawpile.net</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregando aplicativo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciando, vai ser rapidinho…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregando</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregando, vai tomar um tempinho…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>Preparando...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicializando, vai tomar um tempinho…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Falha ao iniciar o Drawpile: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurando…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -89,7 +89,7 @@
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Isso normalmente acontece porque seu navegador está desatualizado, ou você está vendo a página em algum navegador embutido, tipo um aplicativo de mensagens. Você precisa abrir esta página adequadamente. Para mais informações, leia &lt;a href=&quot;#&quot;&gt;essa página de ajuda&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
