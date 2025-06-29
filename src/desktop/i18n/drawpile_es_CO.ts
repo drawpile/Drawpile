@@ -8308,7 +8308,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/shadeselectordialog.cpp" line="+26"/>
         <source>Color Harmonies</source>
-        <translation>Armonía de Colores</translation>
+        <translation>Colores Armónicos</translation>
     </message>
     <message>
         <location line="+10"/>
