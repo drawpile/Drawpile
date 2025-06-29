@@ -64,7 +64,7 @@
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>準備中</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -139,7 +139,7 @@
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>言語:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -209,7 +209,7 @@
     <message>
         <location line="+3"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>始点</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -219,7 +219,7 @@
     <message>
         <location line="+1"/>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>バージョン:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -975,7 +975,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>マーカー</translation>
     </message>
     <message>
         <location line="+6"/>
