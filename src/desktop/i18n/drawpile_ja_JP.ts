@@ -129,7 +129,7 @@
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+340"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ保存</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -179,7 +179,7 @@
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-23"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -596,12 +596,12 @@
     <message>
         <location line="+39"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>PSD形式には、注釈、アニメーションのタイムライン、いくつかのブレンドモードのサポートがありません。それらを適切に保持したい場合は、別の形式で保存する必要があります。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した形式は統合された画像を保存します。レイヤー、注釈、アニメーションのタイムラインを保持する場合は、別の形式で保存する必要があります。</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -775,7 +775,7 @@
     <message>
         <location line="+17"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>ズーム</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -1038,17 +1038,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+13"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ継承</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーの下にクリップ</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファブレンド</translation>
     </message>
 </context>
 <context>
@@ -1282,7 +1282,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-1641"/>
         <source>The requested brush does not allow others to use it.</source>
-        <translation type="unfinished"></translation>
+        <translation>要求されたブラシは、他の人がそれを使用することを許可しません。</translation>
     </message>
     <message>
         <location line="+129"/>
@@ -1326,7 +1326,7 @@ Subrange: [%3, %4]</source>
         <location line="+415"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスはロードされました (%1:%2.%3)</translation>
     </message>
     <message>
         <location line="+193"/>
@@ -1337,7 +1337,7 @@ Subrange: [%3, %4]</source>
         <location line="+6"/>
         <source>Image saved in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>画像は保存されました( %1分%2秒%3)</translation>
     </message>
     <message>
         <location line="+17"/>
