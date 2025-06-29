@@ -44,12 +44,12 @@
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation>起動しています…</translation>
+        <translation>開始しています…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation>起動中、これには少し時間がかかります…</translation>
+        <translation>起動中、これにはしばらく時間がかかる場合があります…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -59,7 +59,7 @@
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation>読込中、これにはしばらく時間がかかるかもしれません…</translation>
+        <translation>読込中、これにはしばらく時間がかかる場合があります…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -74,7 +74,7 @@
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpileの開始に失敗: %1</translation>
     </message>
     <message>
         <location line="+1"/>
