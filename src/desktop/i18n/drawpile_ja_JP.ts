@@ -7947,7 +7947,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Total size must be between 1 and %1 pixels (you&apos;re at %2.)</source>
-        <translation>合計サイズは 1 ～ %1 ピクセルの範囲でなければなりません (現在は %2 です)。</translation>
+        <translation>合計サイズは 1 ～ %1 ピクセルの範囲でなければなりません (現在は %2 です)</translation>
     </message>
 </context>
 <context>
@@ -8261,7 +8261,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8294,23 +8294,23 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/shadeselectordialog.cpp" line="+26"/>
         <source>Color Harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>色の調和</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Show harmony swatches under color wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーホイールの下に調和見本を表示する</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Color harmony swatches are disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>色彩調和見本は無効になっています。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Click here to enable them.</source>
         <extracomment>&quot;Them&quot; refers to the color harmony swatches.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>有効にするには、ここをクリックしてください。</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -8330,7 +8330,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Colors per row: </source>
-        <translation type="unfinished"></translation>
+        <translation>行ごとの色数: </translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8340,7 +8340,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+43"/>
         <source>Set Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>色の設定…</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -8360,7 +8360,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>彩度</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8370,17 +8370,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>明度</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>輝度</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shades</source>
-        <translation type="unfinished"></translation>
+        <translation>陰影</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8396,13 +8396,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+122"/>
         <location line="+4"/>
         <source>Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>範囲: </translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+12"/>
         <source>Saturation range: </source>
-        <translation type="unfinished"></translation>
+        <translation>彩度の範囲: </translation>
     </message>
     <message>
         <location line="-12"/>
@@ -11833,7 +11833,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Toggle the harmony swatches below the color wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーホイールの下の調和見本の表示を切り替える</translation>
     </message>
     <message>
         <location line="+4"/>
