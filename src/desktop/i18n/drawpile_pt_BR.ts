@@ -564,7 +564,7 @@
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation>Exportar Vídeo WEBM</translation>
+        <translation>Exportar Vídeo WebM</translation>
     </message>
     <message>
         <location line="+7"/>
