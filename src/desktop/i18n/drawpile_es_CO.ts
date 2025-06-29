@@ -6980,9 +6980,7 @@ This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>Cambia la escala en la que opera el pincel de GridMap; afecta solo al eje Y.
-
 El rango es de 0 a 5x.
-
 Esto permite estirar o comprimir el patrón de GridMap.</translation>
     </message>
     <message>
@@ -6992,7 +6990,9 @@ Useful to correct for high-definition/large brushes with lots of dabs.
 The longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Multiplicador logarítmico para el valor de &quot;Longitud de la mancha&quot;.
+Útil para corregir pinceles de alta definición o largos con muchas pinceladas.
+Cuanto mayor sea la longitud de la mancha, más se extenderá el color y también mejorará considerablemente el rendimiento, ya que el lienzo se muestrea con menos frecuencia.</translation>
     </message>
     <message>
         <location line="+3"/>
