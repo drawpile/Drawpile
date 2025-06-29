@@ -174,7 +174,7 @@
     <message>
         <location line="+1"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished">アップデートの確認…</translation>
+        <translation>アップデートの確認…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -303,7 +303,7 @@
         <location line="+8"/>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
-        <translation>キャンバスのサイズが範囲外です、%2の幅と高さは、%2の1〜%1の間でなければなりません。</translation>
+        <translation>キャンバスのサイズが範囲外です、%2の幅と高さは1〜%1の間でなければなりません。</translation>
     </message>
 </context>
 <context>
@@ -351,7 +351,7 @@
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation>%1 時間 %2 分 {1:?} {2?}</translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -433,12 +433,12 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ透明度を変更</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの硬さを変更</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -483,7 +483,7 @@
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation>明度を変更</translation>
+        <translation>色の明るさを変更</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -970,7 +970,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Greater Density</source>
-        <translation type="unfinished"></translation>
+        <translation>高密度</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -980,12 +980,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>OKLAB</source>
-        <translation type="unfinished"></translation>
+        <translation>OKLAB</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pigment</source>
-        <translation type="unfinished"></translation>
+        <translation>顔料</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1005,42 +1005,42 @@ Select a regular layer instead.</source>
     <message>
         <location line="+12"/>
         <source>Linear Dodge/Add</source>
-        <translation type="unfinished"></translation>
+        <translation>覆い焼き(リニア/加算)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>焼き込みカラー</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation>覆い焼きカラー</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Vivid Light</source>
-        <translation type="unfinished"></translation>
+        <translation>ビビッドライト</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation type="unfinished"></translation>
+        <translation>ピンライト</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Darker Color</source>
-        <translation type="unfinished"></translation>
+        <translation>カラー比較(暗)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighter Color</source>
-        <translation type="unfinished"></translation>
+        <translation>カラー比較(明)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference</source>
-        <translation type="unfinished"></translation>
+        <translation>差の絶対値</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1050,42 +1050,42 @@ Select a regular layer instead.</source>
     <message>
         <location line="+30"/>
         <source>Shade (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>陰影(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>発光(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shade/Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>明暗(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>焼き込み(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>覆い焼き(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn/Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>焼き/覆い(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Hard Mix (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>ハードミックス(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>差の絶対値(SAI)</translation>
     </message>
     <message>
         <location line="-108"/>
@@ -1576,12 +1576,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+14"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation>セッションのパスワードはサーバーの管理者によって削除されました。このサーバーは、パブリックセッションでWebブラウザを許可していないため切断されます。</translation>
+        <translation>セッションのパスワードはサーバーの管理者によって削除されました。このサーバーは、公開セッションでWebブラウザを許可していないため切断されます。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation>セッションのパスワードは %1 によって削除されました。このサーバーは、パブリックセッションでWebブラウザを許可していないため切断されます。</translation>
+        <translation>セッションのパスワードは %1 によって削除されました。このサーバーは、公開セッションでWebブラウザを許可していないため切断されます。</translation>
     </message>
     <message>
         <location line="+93"/>
@@ -1962,7 +1962,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation>ここでは公開セッションをホストすることは許可されていません、個人セッションのみが許可されています。 セッションタブでパブリックから個人に切り替えることができます。</translation>
+        <translation>ここでは公開セッションをホストすることは許可されていません、個人セッションのみが許可されています。 セッションタブで公開から個人に切り替えることができます。</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -1985,17 +1985,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (互換モード)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.3 (完全互換)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Unlisted</source>
-        <translation type="unfinished"></translation>
+        <translation>未リスト</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2162,7 +2162,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/gradient.cpp" line="+135"/>
         <source>You need to drag to create a gradient.</source>
-        <translation type="unfinished"></translation>
+        <translation>グラデーションを作成するにはドラッグする必要があります。</translation>
     </message>
 </context>
 <context>
