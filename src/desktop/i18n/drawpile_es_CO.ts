@@ -4279,13 +4279,13 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="-7"/>
         <source>Brush size limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Límite de tamaño del pincel:</translation>
     </message>
     <message>
         <location line="+30"/>
         <location line="+76"/>
         <source>Everyone: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Todos: </translation>
     </message>
     <message>
         <location line="-30"/>
@@ -4418,7 +4418,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+112"/>
         <source>Layer count limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Límite de número de capas:</translation>
     </message>
     <message>
         <location line="+92"/>
@@ -4494,7 +4494,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+24"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Renderizado</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -4830,7 +4830,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="-18"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Establezca la velocidad máxima para Tamaño, Opacidad, Dureza, Manchas y Vibración a la vez.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4840,7 +4840,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Establezca la distancia máxima para Tamaño, Opacidad, Dureza, Difuminado y Vibración a la vez.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -5387,12 +5387,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+8"/>
         <source>Allow others in a session to use this brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Permitir que otros en una sesión utilicen este pincel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Sharing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Compartir:</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -5470,25 +5470,25 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="+30"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+12"/>
         <source>Direct Build-Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Acumulación directa</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Wash</source>
-        <translation type="unfinished"></translation>
+        <translation>Lavado indirecto</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Soft (Drawpile 2.2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Indirecto suave (Drawpile 2.2)</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Build-Up (Drawpile 2.1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Acumulación indirecta (Drawpile 2.1)</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -5620,13 +5620,15 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="-425"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Smudge with transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>Difuminar con transparencia</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enabling this will make smudging take the alpha channel into account.
 Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Al activar esta opción, el difuminado tendrá en cuenta el canal alfa.
+
+Al desactivarla, el comportamiento se restablece a su estado anterior a Drawpile 2.3.</translation>
     </message>
     <message>
         <location line="+100"/>
