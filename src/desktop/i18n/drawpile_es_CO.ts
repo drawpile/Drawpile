@@ -7500,7 +7500,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+8"/>
         <source>Search…</source>
-        <translation>Buscar…</translation>
+        <translation>Buscar. . .</translation>
     </message>
     <message>
         <location line="+13"/>
