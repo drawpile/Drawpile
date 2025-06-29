@@ -1370,12 +1370,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-10"/>
         <source>Error setting up download.</source>
-        <translation>ダウンロードの設定でエラー</translation>
+        <translation>ダウンロードの設定でエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error performing download.</source>
-        <translation type="unfinished"></translation>
+        <translation>ダウンロードの実行中にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1385,7 +1385,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+42"/>
         <source>This session was hosted with an older version of Drawpile. Several features – such as layer clipping, some blend modes and drawing within a selection mask – will be unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>このセッションは古いバージョンのDrawpileでホストされていました。レイヤークリッピング、いくつかのブレンドモード、選択マスク内の描画など、いくつかの機能は利用できません。</translation>
     </message>
     <message>
         <location line="+83"/>
