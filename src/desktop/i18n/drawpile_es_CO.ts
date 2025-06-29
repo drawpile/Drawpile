@@ -5627,18 +5627,17 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <source>Enabling this will make smudging take the alpha channel into account.
 Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
         <translation>Al activar esta opción, el difuminado tendrá en cuenta el canal alfa.
-
 Al desactivarla, el comportamiento se restablece a su estado anterior a Drawpile 2.3.</translation>
     </message>
     <message>
         <location line="+100"/>
         <source>Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desviación: </translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Minimum Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desviación Mínima: </translation>
     </message>
     <message>
         <location line="+12"/>
@@ -5649,22 +5648,22 @@ Al desactivarla, el comportamiento se restablece a su estado anterior a Drawpile
     <message>
         <location line="-112"/>
         <source>Not available in indirect paint modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>No disponible en modos de pintura indirecta.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Not available in indirect paint modes or when using a blend mode other than Normal.</source>
-        <translation type="unfinished"></translation>
+        <translation>No disponible en modos de pintura indirecta o cuando se utiliza un modo de fusión distinto de Normal.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not available in indirect paint modes or when using the Marker or Greater Density blend modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>No disponible en modos de pintura indirecta ni cuando se utilizan los modos de fusión Marcador o Mayor densidad.</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Synchronize smudging (slower, but more accurate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sincronizar la limpieza (más lenta, pero más precisa)</translation>
     </message>
     <message>
         <location line="+2"/>
