@@ -7955,7 +7955,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+6"/>
         <source>Total size must be between 1 and %1 pixels (you&apos;re at %2.)</source>
-        <translation>El tamaño total debe estar entre 1 y %1 píxeles (estás en %2).</translation>
+        <translation>El tamaño total debe estar entre 1 y %1 píxeles (estás en %2.)</translation>
     </message>
 </context>
 <context>
@@ -7975,7 +7975,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+49"/>
         <source>Shrink and feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Encoger y desenfocar desde el borde del lienzo</translation>
     </message>
     <message>
         <location line="+3"/>
