@@ -1385,7 +1385,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+42"/>
         <source>This session was hosted with an older version of Drawpile. Several features – such as layer clipping, some blend modes and drawing within a selection mask – will be unavailable.</source>
-        <translation>このセッションは古いバージョンのDrawpileでホストされていました。レイヤークリッピング、いくつかのブレンドモード、選択マスク内の描画など、いくつかの機能は利用できません。</translation>
+        <translation>このセッションは古いバージョンのDrawpileでホストされています。レイヤークリッピング、いくつかのブレンドモード、選択マスク内の描画など、いくつかの機能は利用できません。</translation>
     </message>
     <message>
         <location line="+83"/>
@@ -1395,7 +1395,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+428"/>
         <source>Canvas size too large to host.</source>
-        <translation type="unfinished"></translation>
+        <translation>ホストするには大きすぎるキャンバスサイズです。</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -1405,7 +1405,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+174"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションに再接続し、このウィンドウを閉じようとしています。</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -2355,17 +2355,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Configure drawing toolbar…</source>
-        <translation type="unfinished"></translation>
+        <translation>描画ツールバーを構成します…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Always show side toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>サイドツールバーを常に表示</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Always show bottom toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>ボトムツールバーを常に表示</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -2475,12 +2475,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Set Selection Mask &amp;Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>カラー範囲マスクを設定します…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the color tint of the selection mask</source>
-        <translation type="unfinished"></translation>
+        <translation>選択マスクの色合いを変更します</translation>
     </message>
     <message>
         <location line="+5"/>
