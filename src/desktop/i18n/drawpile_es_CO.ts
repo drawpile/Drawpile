@@ -5675,7 +5675,7 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
     <message>
         <location line="+45"/>
         <source>Randomized offsets in the stroke center.</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamientos aleatorios en el centro del trazo.</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -5751,17 +5751,17 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
     <message>
         <location line="+71"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Mezcla: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Minimum Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Mezcla mínima: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending</source>
-        <translation type="unfinished"></translation>
+        <translation>Mezcla</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -6979,7 +6979,11 @@ The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cambia la escala en la que opera el pincel de GridMap; afecta solo al eje Y.
+
+El rango es de 0 a 5x.
+
+Esto permite estirar o comprimir el patrón de GridMap.</translation>
     </message>
     <message>
         <location line="+3"/>
