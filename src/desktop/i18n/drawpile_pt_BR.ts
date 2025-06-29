@@ -599,7 +599,7 @@
     <message>
         <location line="+39"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save a different format.</source>
-        <translation>O formato PSD não dá suporte a anotações, linha do tempo de animação e alguns modos de mistura. Se quiser que essas funcionalidades se mantenham no arquivo, você deve utilizar outro formato.</translation>
+        <translation>O formato PSD não tem suporte a anotações, linha do tempo de animação e alguns modos de mistura. Se você quiser salvar essas propriedades do seu desenho, salve no formato de arquivo ORA.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -689,7 +689,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+71"/>
         <source>Merged image</source>
-        <translation>Imagem Mesclada</translation>
+        <translation>Imagem Unida</translation>
     </message>
     <message>
         <location line="+17"/>
