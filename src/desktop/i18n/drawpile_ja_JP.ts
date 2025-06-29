@@ -2475,7 +2475,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Set Selection Mask &amp;Color…</source>
-        <translation>カラー範囲マスクを設定します…</translation>
+        <translation>選択マスクと色を設定します…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3024,32 +3024,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+30"/>
         <source>Automatically inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>自動的にアルファを継承</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>ブレンドモードに基づいてアルファを継承および保存</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Alpha lock layer for you</source>
-        <translation type="unfinished"></translation>
+        <translation>透明度保護レイヤー</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Censor layer</source>
-        <translation type="unfinished"></translation>
+        <translation>センシティブレイヤー</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer entirely</source>
-        <translation type="unfinished"></translation>
+        <translation>完全レイヤーロック</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer content</source>
-        <translation type="unfinished"></translation>
+        <translation>ロックレイヤーコンテンツ</translation>
     </message>
     <message>
         <location line="+4"/>
