@@ -89,7 +89,7 @@
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation>これは通常ブラウザが古い場合か、チャットアプリケーションのような何らかの組み込みブラウザを介してページを表示しているためです。詳細については、&lt;a href = &quot;#&quot;&gt;このヘルプページ&lt;/a&gt;をご覧ください。</translation>
+        <translation>これは通常ブラウザが古い場合か、チャットアプリケーションのような何らかの組み込みブラウザを介してページを表示しているためです。詳細については、&lt;a href=&quot;#&quot;&gt;このヘルプページ&lt;/a&gt;をご覧ください。</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -199,12 +199,12 @@
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
-        <translation type="unfinished"></translation>
+        <translation>ページを更新してみてください。それが何も変更されない場合はサーバーの所有者に相談するか、&lt;a href=&quot;#&quot;&gt;drawpile.net&lt;/a&gt;のヘルプページをチェックしてください。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue regardless, but things may not work properly.</source>
-        <translation type="unfinished"></translation>
+        <translation>それでも続行できますが、正しく動作しない場合があります。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -224,7 +224,7 @@
     <message>
         <location line="+1"/>
         <source>Stable (%1)</source>
-        <translation>安定</translation>
+        <translation>安定 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
