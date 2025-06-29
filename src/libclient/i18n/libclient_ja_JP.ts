@@ -109,27 +109,27 @@
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation>&lt;strong&gt;アプリ内ブラウザー：&lt;/strong&gt;％1のアプリ内ブラウザでDrawpileを開いたようです</translation>
+        <translation>&lt;strong&gt;アプリ内ブラウザー：&lt;/strong&gt;％1のアプリ内ブラウザでDrawpileを開いたようです。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>通常それは正常に機能しません。代わりに実際のウェブブラウザでこのページを開いてください。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation type="unfinished"></translation>
+        <translation>おそらく互換性のないブラウザ:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;おそらく互換性のないブラウザ:&lt;/strong&gt; LinuxのFirefoxは、すべてのシステムで筆圧感知を持つペンをサポートしていません。筆圧がかからない場合は、別のブラウザまたは&lt;a href=&quot;#&quot;&gt;通常のLinuxアプリケーションを使用することを検討してください&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;互換性のないブラウザ:&lt;/strong&gt; WindowsのfirefoxはDrawpileの実行に問題が発生します。テキストの入力や/Ctrl+Zの押下が、正常に機能しない場合があります。別のブラウザまたは&lt;a href=&quot;#&quot;&gt;Windowsアプリケーション版を使用することを検討してください&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="+6"/>
