@@ -54,7 +54,7 @@
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation>Carregando</translation>
+        <translation>Carregando recursos...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -64,7 +64,7 @@
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation>Preparando...</translation>
+        <translation>Preparando</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -84,7 +84,7 @@
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro fatal:</translation>
     </message>
     <message>
         <location line="+1"/>
