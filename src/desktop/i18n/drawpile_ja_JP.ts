@@ -5472,19 +5472,19 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+5"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Wash</source>
-        <translation>直接水彩</translation>
+        <translation>間接水彩</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Soft (Drawpile 2.2)</source>
-        <translation>直接ソフト(Drawpile2.2)</translation>
+        <translation>間接ソフト(Drawpile2.2)</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Build-Up (Drawpile 2.1)</source>
-        <translation type="unfinished"></translation>
+        <translation>間接増大 (Drawpile 2.1)</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -5616,39 +5616,40 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="-425"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Smudge with transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>透明感のあるぼかし</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enabling this will make smudging take the alpha channel into account.
 Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
-        <translation type="unfinished"></translation>
+        <translation>これを有効にすると、ぼかしがアルファチャネルを考慮します。
+無効にすると、Drawpile 2.3より前の挙動に戻ります。</translation>
     </message>
     <message>
         <location line="+100"/>
         <source>Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>ジッター: </translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Minimum Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>最小ジッター: </translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+300"/>
         <source>Jitter</source>
-        <translation type="unfinished">ジッター</translation>
+        <translation>ジッター</translation>
     </message>
     <message>
         <location line="-112"/>
         <source>Not available in indirect paint modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>間接ペイントモードでは利用できません。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Not available in indirect paint modes or when using a blend mode other than Normal.</source>
-        <translation type="unfinished"></translation>
+        <translation>間接描画モードまたは通常以外のブレンド モードを使用する場合は使用できません。</translation>
     </message>
     <message>
         <location line="+5"/>
