@@ -54,7 +54,7 @@
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation>Carregando recursos...</translation>
+        <translation>Carregando recursos</translation>
     </message>
     <message>
         <location line="+1"/>
