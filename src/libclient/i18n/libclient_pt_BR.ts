@@ -1018,7 +1018,7 @@ Selecione uma camada normal em vez disso.</translation>
     <message>
         <location line="+6"/>
         <source>Color Dodge</source>
-        <translation>Desviar Cor</translation>
+        <translation>Subexposição de Cor</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2152,7 +2152,7 @@ Selecione uma camada normal em vez disso.</translation>
         <location line="+51"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
-        <translation>Erro no socket %1: %2</translation>
+        <translation>Erro de socket %1: %2</translation>
     </message>
     <message>
         <location line="+4"/>
