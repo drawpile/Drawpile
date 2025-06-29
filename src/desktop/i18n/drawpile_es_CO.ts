@@ -8384,7 +8384,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+0"/>
         <source>Lightness</source>
-        <translation type="unfinished">Ligereza</translation>
+        <translation type="unfinished">Luminosidad</translation>
     </message>
     <message>
         <location line="+0"/>
