@@ -564,7 +564,7 @@
     <message>
         <location line="+14"/>
         <source>Export WEBM Video</source>
-        <translation>Exportar Vídeo WebM</translation>
+        <translation>Exportar Vídeo WEBM</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -604,7 +604,7 @@
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save a different format.</source>
-        <translation>O formato selecionado vai salvar uma imagem unida. Se você quiser manter separadas as camadas, anotações e linha do tempo de animação, você deve usar um formato diferente.</translation>
+        <translation>O formato selecionado vai salvar uma imagem única unindo todas as camadas. Se você quiser manter separadas as camadas, anotações e linha do tempo de animação, você deve usar um formato diferente.</translation>
     </message>
     <message>
         <location line="+28"/>
