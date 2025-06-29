@@ -1326,7 +1326,7 @@ Subrange: [%3, %4]</source>
         <location line="+415"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation>キャンバスはロードされました (%1:%2.%3)</translation>
+        <translation>キャンバスはロードされました( %1分%2秒%3)</translation>
     </message>
     <message>
         <location line="+193"/>
@@ -1342,35 +1342,35 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+17"/>
         <source>Animation export failed</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションのエクスポートに失敗</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export animation</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションをエクスポートできませんでした</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Animation exported</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションをエクスポートしました</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Animation exported in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションをエクスポートしました( %1分%2秒%3)</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+17"/>
         <location line="+10"/>
         <source>File is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルは空です。</translation>
     </message>
     <message>
         <location line="-10"/>
         <source>Error setting up download.</source>
-        <translation type="unfinished"></translation>
+        <translation>ダウンロードの設定でエラー</translation>
     </message>
     <message>
         <location line="+10"/>
