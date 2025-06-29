@@ -114,7 +114,7 @@
         <location line="-13"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+164"/>
         <source>Opacity: </source>
-        <translation>透明度: </translation>
+        <translation>不透明度: </translation>
     </message>
     <message>
         <location line="-76"/>
@@ -129,7 +129,7 @@
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+340"/>
         <source>Preserve alpha</source>
-        <translation>アルファ保存</translation>
+        <translation>アルファ値保持</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -661,7 +661,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation>透明度: </translation>
+        <translation>不透明度: </translation>
     </message>
     <message>
         <location line="-118"/>
@@ -3029,7 +3029,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Inherit and preserve alpha based on blend mode</source>
-        <translation>ブレンドモードに基づいてアルファを継承および保存</translation>
+        <translation>ブレンドモードに基づいてアルファ値を継承および保持</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3325,7 +3325,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+12"/>
         <source>Key Frame Color Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームカラーマーカー</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3460,22 +3460,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Lass&amp;o Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>なげなわ塗りつぶし(&amp;o)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Fill enclosed areas</source>
-        <translation type="unfinished"></translation>
+        <translation>囲まれた領域を塗りつぶす</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>グラデーション(&amp;G)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create a gradient inside selected areas</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した範囲内にグラデーションを作成</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3521,12 +3521,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+30"/>
         <source>%1 and Deselect</source>
         <extracomment>This is the text for keyboard shortcuts that switch tools and remove the selection in a single action. %1 is the name of a tool, like &quot;Freehand&quot;, &quot;Eraser&quot; or &quot;Line&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 と選択解除</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Switch tool to %1 and deselect at once</source>
-        <translation type="unfinished"></translation>
+        <translation>ツールを%1に切り替えて一度に選択を解除</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3541,7 +3541,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Deselect Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>選択解除ショートカット</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -3556,32 +3556,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+17"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ保存の切り替え</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>toggle recolor mode/alpha preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>色替えモード/アルファ保存の切り替え</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Decrease Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの不透明度を下げる</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Increase Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの不透明度を上げる:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Decrease Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの硬さを下げる</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Increase Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの硬さを上げる</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3631,7 +3631,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+82"/>
         <source>Tool blend mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ツールのブレンドモード: %1</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -3699,12 +3699,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Unmark layer</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーのマークを外す</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unmark key frame</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームのマークを外す</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3714,12 +3714,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Mark layer blue</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを青でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame blue</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを青でマーク</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3729,57 +3729,57 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Mark layer green</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを緑でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame green</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを緑でマーク</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>黄色</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを黄色でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを黄色でマーク</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Orange</source>
-        <translation type="unfinished"></translation>
+        <translation>オレンジ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer orange</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーをオレンジでマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame orange</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームをオレンジでマーク</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brown</source>
-        <translation type="unfinished"></translation>
+        <translation>茶色</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer brown</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを茶色でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame brown</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを茶色でマーク</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3789,37 +3789,37 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Mark layer red</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを赤でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame red</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを赤でマーク</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Purple</source>
-        <translation type="unfinished"></translation>
+        <translation>紫</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer purple</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを紫でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame purple</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを紫でマーク</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Gray</source>
-        <translation type="unfinished"></translation>
+        <translation>灰色</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer gray</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを灰色でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4829,7 +4829,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-18"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation>サイズ、透明度、硬さ、混色、ジッターの最大速度を一度に設定します。</translation>
+        <translation>サイズ、不透明度、硬さ、混色、ジッターの最大速度を一度に設定します。</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4839,7 +4839,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation>サイズ、透明度、硬さ、混色、ジッターの最大距離を一度に設定します。</translation>
+        <translation>サイズ、不透明度、硬さ、混色、ジッターの最大距離を一度に設定します。</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -5644,7 +5644,7 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="-112"/>
         <source>Not available in indirect paint modes.</source>
-        <translation>間接ペイントモードでは利用できません。</translation>
+        <translation>間接描画モードでは利用できません。</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5654,23 +5654,24 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="+5"/>
         <source>Not available in indirect paint modes or when using the Marker or Greater Density blend modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>間接描画モードや、マーカー ブレンドモードまたは高密度ブレンド モードを使用している場合は使用できません。</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Synchronize smudging (slower, but more accurate)</source>
-        <translation type="unfinished"></translation>
+        <translation>ぼかしを同期する(遅いがより正確)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This will make the brush to wait for its own stroke to finish to allow it to accurately smudge with itself.
 If fast strokes cause artifacts when smudging, enabling this can help.</source>
-        <translation type="unfinished"></translation>
+        <translation>これによってブラシは自身のストロークが終了するまで待機し、ブラシ自身で正確にぼかすことができます。
+高速ストロークでぼかしをする際に異常が発生する場合は、これを有効にすると改善される可能性があります。</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Randomized offsets in the stroke center.</source>
-        <translation type="unfinished"></translation>
+        <translation>ストロークの中心のランダムなオフセット。</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -5685,7 +5686,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="-344"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ値保持</translation>
     </message>
     <message>
         <location line="+816"/>
@@ -7185,7 +7186,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの不透明度の変更</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12552,7 +12553,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>不透明度: </translation>
     </message>
     <message>
         <location line="+111"/>
@@ -12900,7 +12901,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Opacity: </source>
-        <translation>透明度: </translation>
+        <translation>不透明度: </translation>
     </message>
     <message>
         <location line="+1"/>
