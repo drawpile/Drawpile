@@ -3024,7 +3024,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+30"/>
         <source>Automatically inherit alpha</source>
-        <translation>自動的にアルファを継承</translation>
+        <translation>自動的にアルファ値を継承</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9967,7 +9967,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+42"/>
         <source>Cancel action to deselect</source>
-        <translation>選択を解除するにはキャンセル操作を行う</translation>
+        <translation>選択解除するにはキャンセル操作を行う</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10978,7 +10978,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Pigment and OKLAB brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>顔料とOKLABブラシ:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11003,18 +11003,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Maximum brush size:</source>
-        <translation type="unfinished"></translation>
+        <translation>最大ブラシサイズ:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Maximum amount of layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>最大レイヤー数:</translation>
     </message>
     <message>
         <location line="+171"/>
         <source>%1: </source>
         <extracomment>%1 is an acccess tier, like &quot;Operator&quot; or &quot;Everyone&quot;. Unless your language uses something other than a colon, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: </translation>
     </message>
     <message>
         <location line="+296"/>
@@ -11918,12 +11918,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>下のレイヤーにクリップ</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ値の継承</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -11999,26 +11999,26 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1033"/>
         <source>Layer Limit Reached</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー数制限に到達</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>Can&apos;t create another/%n more layer(s).</source>
         <extracomment>Singular should be &quot;can&apos;t create another layer&quot;, plural &quot;can&apos;t create %n more layers&quot;. Change this to make sense in your language.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>別の/%n 以上のレイヤーを作成できません。</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The layer limit in sessions hosted with Drawpile 2.2 is 256 per user.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 でホストされるセッションのレイヤー数制限は、ユーザーあたり 256 です。</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>The layer limit for you is %n layer(s), session operators can change this in the session settings.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>レイヤー数制限は %n レイヤーです。セッションの管理者はセッション設定でこれを変更できます。</numerusform>
         </translation>
     </message>
     <message>
@@ -12328,7 +12328,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Vector</source>
-        <translation type="unfinished"></translation>
+        <translation>ベクター</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12338,7 +12338,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Pixel</source>
-        <translation type="unfinished"></translation>
+        <translation>ピクセル</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -12447,7 +12447,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+143"/>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>OKLAB または Pigment モードでブラシを使用する権限がありません。</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -12458,7 +12458,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+7"/>
         <source>/%1px</source>
         <extracomment>Limit suffix for the brush size slider, %1 is the size limit. So it will look something like &quot;100/255px&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1px</translation>
     </message>
     <message>
         <location line="+648"/>
@@ -12468,13 +12468,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>ブレンド: </translation>
     </message>
     <message>
         <location line="+731"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1</translation>
     </message>
     <message>
         <location line="-1417"/>
@@ -12548,7 +12548,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/gradientsettings.cpp" line="-277"/>
         <source>Foreground: </source>
-        <translation type="unfinished"></translation>
+        <translation>前景: </translation>
     </message>
     <message>
         <location line="+0"/>
@@ -12558,22 +12558,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+111"/>
         <source>Foreground color to transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>前景色を透明にする</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Transparency to foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>前景色の透明度</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Foreground color to background color</source>
-        <translation type="unfinished"></translation>
+        <translation>前景色から背景色へ</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Background color to foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>背景色から前景色へ</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -12585,7 +12585,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-45"/>
         <source>Background: </source>
-        <translation type="unfinished"></translation>
+        <translation>背景色: </translation>
     </message>
     <message>
         <location line="+10"/>
