@@ -256,8 +256,6 @@ extern "C" void drawpileHandleBrowserAuth(int type, char *rawArg)
 
 // Text to translate
 #ifdef DRAWPILE_TRANSLATION_ONLY_JUST_HERE_FOR_LUPDATE
-QT_TRANSLATE_NOOP("BrowserStartPage", "Attempting to allocate %n page(s)")
-QT_TRANSLATE_NOOP("BrowserStartPage", "Failed to allocate %n page(s): %1")
 QT_TRANSLATE_NOOP(
 	"BrowserStartPage",
 	"Memory allocation failed. This can happen in some browsers if you "
@@ -276,7 +274,7 @@ QT_TRANSLATE_NOOP("BrowserStartPage", "Loading assets")
 QT_TRANSLATE_NOOP("BrowserStartPage", "Loading, this may take a while…")
 QT_TRANSLATE_NOOP("BrowserStartPage", "Preparing")
 QT_TRANSLATE_NOOP("BrowserStartPage", "Initializing, this may take a while…")
-QT_TRANSLATE_NOOP("BrowserStartPage", "Failed to start Drawpile: ${e}")
+QT_TRANSLATE_NOOP("BrowserStartPage", "Failed to start Drawpile: %1")
 QT_TRANSLATE_NOOP("BrowserStartPage", "Setting up…")
 QT_TRANSLATE_NOOP("BrowserStartPage", "Fatal error:")
 QT_TRANSLATE_NOOP(

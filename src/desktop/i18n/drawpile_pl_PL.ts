@@ -1357,18 +1357,18 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+62"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>Bez tytułu</translation>
     </message>
     <message>
-        <location line="-2265"/>
-        <location line="+4063"/>
+        <location line="-2267"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation>Eksportuj ponownie</translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation>Eksportuj ponownie do %1</translation>
     </message>
@@ -1406,12 +1406,12 @@ zatrzymaj nagrywanie</translation>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>Anuluj</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Istnieją niezapisane zmiany. Zapisać je przed wyjściem?</translation>
     </message>
@@ -1537,7 +1537,7 @@ zatrzymaj nagrywanie</translation>
         <translation>Nie można wyeksportować szablonu sesji</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+57"/>
         <source>Saving animation...</source>
         <translation>Zapisywanie animacji...</translation>
     </message>
@@ -2352,7 +2352,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>&amp;Edytuj</translation>
     </message>
     <message>
-        <location line="-3899"/>
+        <location line="-3901"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2412,7 +2412,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+509"/>
+        <location line="+511"/>
         <source>Canvas size too large to host.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3211,12 +3211,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>&amp;Dołączyć...</translation>
     </message>
     <message>
-        <location line="-3956"/>
+        <location line="-3958"/>
         <source>Joined the session!</source>
         <translation>Dołączyłem do sesji!</translation>
     </message>
     <message>
-        <location line="+602"/>
+        <location line="+604"/>
         <source>Hosting on this computer is not available</source>
         <translation>Hosting na tym komputerze jest niedostępny</translation>
     </message>
@@ -4941,7 +4941,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Pętle</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -8845,7 +8845,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8861,6 +8861,16 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation type="unfinished"></translation>

@@ -1275,12 +1275,12 @@ Subrange: [%3, %4]</source>
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+960"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>未命名</translation>
     </message>
     <message>
-        <location line="-1510"/>
+        <location line="-1512"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>退出Drawpile</translation>
@@ -1298,12 +1298,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>有未保存的更改. 要在退出前保存它们吗?</translation>
     </message>
@@ -1338,7 +1338,7 @@ Subrange: [%3, %4]</source>
         <translation>加入了房间!</translation>
     </message>
     <message>
-        <location line="+205"/>
+        <location line="+207"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
@@ -1476,7 +1476,7 @@ Subrange: [%3, %4]</source>
         <translation>录制...</translation>
     </message>
     <message>
-        <location line="-4772"/>
+        <location line="-4774"/>
         <source>Server out of space</source>
         <translation>服务器空间不足</translation>
     </message>
@@ -1549,12 +1549,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4063"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation>再次导出</translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation>再次导出到 %1</translation>
     </message>
@@ -1665,7 +1665,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>无法导出房间模板</translation>
     </message>
     <message>
-        <location line="+218"/>
+        <location line="+220"/>
         <source>Error downloading profile.</source>
         <translation>下载简介时出错.</translation>
     </message>
@@ -2740,7 +2740,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>直线(&amp;L)</translation>
     </message>
     <message>
-        <location line="-5797"/>
+        <location line="-5799"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 加入了!</translation>
     </message>
@@ -2805,7 +2805,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>这个房间是用Drawpile旧版本开的. 多个新功能 – 像是剪贴图层, 一些混合模式和在选区蒙版内绘制 – 都将无法使用.</translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+83"/>
         <source>Saving animation...</source>
         <translation>保存动画...</translation>
     </message>
@@ -3116,12 +3116,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>图层(&amp;L)</translation>
     </message>
     <message>
-        <location line="-3823"/>
+        <location line="-3825"/>
         <source>Opening file…</source>
         <translation>打开文件…</translation>
     </message>
     <message>
-        <location line="+858"/>
+        <location line="+860"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>没有画布可供创建房间! 新建一个或者打开一个文件.</translation>
     </message>
@@ -4936,7 +4936,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>循环:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -8819,7 +8819,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation>保存间隔: %1 分钟</translation>
     </message>
@@ -8835,6 +8835,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation>默认 (%1)</translation>

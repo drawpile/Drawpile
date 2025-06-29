@@ -1293,12 +1293,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     </message>
     <message>
         <location line="+222"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>Senza titolo</translation>
     </message>
     <message>
-        <location line="-1510"/>
+        <location line="-1512"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Esci da Drawpile</translation>
@@ -1316,12 +1316,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>Сancella</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Ci sono modifiche non salvate. Salvarle prima di uscire?</translation>
     </message>
@@ -1371,7 +1371,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Impossibile esportare il template della sessione</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+139"/>
         <source>Pause</source>
         <translation>Pausa</translation>
     </message>
@@ -1515,7 +1515,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Salvataggio dell&apos;animazione...</translation>
     </message>
     <message>
-        <location line="-994"/>
+        <location line="-996"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1575,7 +1575,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+504"/>
+        <location line="+506"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>Nessuna tela da hostare! Creane una o aprite un file.</translation>
     </message>
@@ -2308,7 +2308,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Mostra Livelli Censurati</translation>
     </message>
     <message>
-        <location line="-4386"/>
+        <location line="-4388"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt; La scorciatoia &apos;%1&apos; è ambigua, corrisponde a:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -2374,12 +2374,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4063"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation>Esporta di nuovo</translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation>Esporta di nuovo in %1</translation>
     </message>
@@ -2475,7 +2475,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Download completato, clicca su &quot;Salva&quot; per salvare il file.</translation>
     </message>
     <message>
-        <location line="+290"/>
+        <location line="+292"/>
         <source>Unsupported format.</source>
         <translation>Formato non supportato.</translation>
     </message>
@@ -4937,7 +4937,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
         <translation>Loop:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -8829,7 +8829,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished">Quando è abilitato, salva ogni %1 minuti</translation>
     </message>
@@ -8845,6 +8845,16 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation type="unfinished"></translation>

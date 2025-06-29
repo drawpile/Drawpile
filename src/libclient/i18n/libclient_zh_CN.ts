@@ -18,16 +18,6 @@
     <name>BrowserStartPage</name>
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
-        <source>Attempting to allocate %n page(s)</source>
-        <translation>尝试分配 %n 页</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Failed to allocate %n page(s): %1</source>
-        <translation>分配 %n 页失败: %1</translation>
-    </message>
-    <message>
-        <location line="+1"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
         <translation>内存分配失败. 某些浏览器在刷新时会出现这种情况. 请完全关闭此页面和浏览器, 然后再试一次.</translation>
     </message>
@@ -83,8 +73,8 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Failed to start Drawpile: ${e}</source>
-        <translation>启动失败 Drawpile: ${e}</translation>
+        <source>Failed to start Drawpile: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2268,7 +2258,7 @@ Select a regular layer instead.</source>
 <context>
     <name>wasmsupport</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="-200"/>
+        <location filename="../wasmsupport.cpp" line="-198"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
         <translation>你使用的不是 web.drawpile.net 上的官方客户端. 大多数服务器不允许从其他地方连接.</translation>
     </message>

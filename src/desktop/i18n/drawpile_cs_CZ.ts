@@ -1275,12 +1275,12 @@ Subrange: [%3, %4]</source>
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+960"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>Bez názvu</translation>
     </message>
     <message>
-        <location line="-1639"/>
+        <location line="-1641"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1303,12 +1303,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Jsou tu neuložené změny. Uložit je před ukončením?</translation>
     </message>
@@ -1388,7 +1388,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+83"/>
         <source>Saving animation...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1531,7 +1531,7 @@ Subrange: [%3, %4]</source>
         <translation>Nahrávat...</translation>
     </message>
     <message>
-        <location line="-2722"/>
+        <location line="-2724"/>
         <source>Saving...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1541,7 +1541,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+301"/>
+        <location line="+303"/>
         <source>Pause</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1918,7 +1918,7 @@ Subrange: [%3, %4]</source>
         <translation>Ukázat laserová &amp;ukazovátka uživatele</translation>
     </message>
     <message>
-        <location line="-4946"/>
+        <location line="-4948"/>
         <source>🙋 %1 joined!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1984,12 +1984,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4063"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2100,7 +2100,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+190"/>
+        <location line="+192"/>
         <source>Unsupported format.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2845,7 +2845,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Čá&amp;ra</translation>
     </message>
     <message>
-        <location line="-6199"/>
+        <location line="-6201"/>
         <source>Server out of space</source>
         <translation>Nedostatek místa na serveru</translation>
     </message>
@@ -2862,7 +2862,7 @@ Zjednodušte plátno a nastavte ručně, předtím než dojde místo.</translati
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+858"/>
+        <location line="+860"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4931,7 +4931,7 @@ Zjednodušte plátno a nastavte ručně, předtím než dojde místo.</translati
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8742,7 +8742,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8758,6 +8758,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation type="unfinished"></translation>

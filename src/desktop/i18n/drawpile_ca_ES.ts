@@ -1353,18 +1353,18 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     </message>
     <message>
         <location line="+62"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>Sense titol</translation>
     </message>
     <message>
-        <location line="-2265"/>
-        <location line="+4063"/>
+        <location line="-2267"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation>Expotar de nou</translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation>Exportar de nou a %1</translation>
     </message>
@@ -1402,12 +1402,12 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Hi ha canvis sense desar. Els voleu guardar abans de sortir?</translation>
     </message>
@@ -1533,7 +1533,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
         <translation>No s&apos;ha pogut exportar la plantilla de sessió</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+57"/>
         <source>Saving animation...</source>
         <translation>Guardant animació...</translation>
     </message>
@@ -2418,7 +2418,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation>&amp;Edita</translation>
     </message>
     <message>
-        <location line="-3899"/>
+        <location line="-3901"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2478,7 +2478,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+509"/>
+        <location line="+511"/>
         <source>Canvas size too large to host.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3227,12 +3227,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation>&amp;Unir-se</translation>
     </message>
     <message>
-        <location line="-3956"/>
+        <location line="-3958"/>
         <source>Joined the session!</source>
         <translation>Us heu unit a la sessió!</translation>
     </message>
     <message>
-        <location line="+602"/>
+        <location line="+604"/>
         <source>Hosting on this computer is not available</source>
         <translation>Allotjar en aquest ordinador no està disponible</translation>
     </message>
@@ -4937,7 +4937,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation>Bucles:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -8757,7 +8757,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished">Quan està habilitat, desa cada %1 minuts</translation>
     </message>
@@ -8773,6 +8773,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation type="unfinished"></translation>

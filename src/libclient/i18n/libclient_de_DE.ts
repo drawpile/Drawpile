@@ -18,16 +18,6 @@
     <name>BrowserStartPage</name>
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
-        <source>Attempting to allocate %n page(s)</source>
-        <translation>Versuche %n Seite(n) zu allokieren</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Failed to allocate %n page(s): %1</source>
-        <translation>Konnte nicht %n Seite(n) allokieren: %1</translation>
-    </message>
-    <message>
-        <location line="+1"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
         <translation>Speicherallokation fehlgeschlagen. Das kann in einigen Browsern bei einem Neuladen der Seite passieren. Schließen Sie diese Seite und Ihren Browser vollständig, dann versuchen Sie es erneut.</translation>
     </message>
@@ -83,8 +73,8 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Failed to start Drawpile: ${e}</source>
-        <translation>Drawpile konnte nicht gestartet werden: ${e}</translation>
+        <source>Failed to start Drawpile: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2272,7 +2262,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
 <context>
     <name>wasmsupport</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="-200"/>
+        <location filename="../wasmsupport.cpp" line="-198"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
         <translation>Sie verwenden nicht den offiziellen Client auf web.drawpile.net. Die meisten Server erlauben keine Verbindungen von anderswo.</translation>
     </message>

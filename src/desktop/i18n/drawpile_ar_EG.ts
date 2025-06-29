@@ -1357,18 +1357,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+62"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>بدون عنوان</translation>
     </message>
     <message>
-        <location line="-2265"/>
-        <location line="+4063"/>
+        <location line="-2267"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation>تصدير مجددًا</translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation>صدِّر مجددًا إلى %1</translation>
     </message>
@@ -1406,12 +1406,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>ألغ</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>هناك تغييرات غير محفوظة. احفظهم قبل الخروج؟</translation>
     </message>
@@ -1537,7 +1537,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>تعذر تصدير قالب الجَلسة</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+57"/>
         <source>Saving animation...</source>
         <translation>جار حفظ الصورة المتحركة...</translation>
     </message>
@@ -2420,7 +2420,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;غير</translation>
     </message>
     <message>
-        <location line="-3899"/>
+        <location line="-3901"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2480,7 +2480,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+509"/>
+        <location line="+511"/>
         <source>Canvas size too large to host.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3229,12 +3229,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;ادخل...</translation>
     </message>
     <message>
-        <location line="-3956"/>
+        <location line="-3958"/>
         <source>Joined the session!</source>
         <translation>دخلت الجلسه!</translation>
     </message>
     <message>
-        <location line="+602"/>
+        <location line="+604"/>
         <source>Hosting on this computer is not available</source>
         <translation>الاستضافة على هذا الكمبيوتر غير متوفرة</translation>
     </message>
@@ -4940,7 +4940,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation type="unfinished">%</translation>
     </message>
@@ -8880,7 +8880,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished">عند افتعال، احفظ كل %1 دقيقة</translation>
     </message>
@@ -8896,6 +8896,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation type="unfinished"></translation>

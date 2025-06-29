@@ -1353,18 +1353,18 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     </message>
     <message>
         <location line="+62"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>Sem Título</translation>
     </message>
     <message>
-        <location line="-2265"/>
-        <location line="+4063"/>
+        <location line="-2267"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation>Exportar novamente</translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation>Exportar novamente para %1</translation>
     </message>
@@ -1402,12 +1402,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Existem modificações não gravadas, deseja gravá-las antes de sair?</translation>
     </message>
@@ -1533,7 +1533,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Não foi possível exportar o modelo da sessão</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+57"/>
         <source>Saving animation...</source>
         <translation>A gravar animação...</translation>
     </message>
@@ -2418,7 +2418,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>&amp;Editar</translation>
     </message>
     <message>
-        <location line="-3899"/>
+        <location line="-3901"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2478,7 +2478,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+509"/>
+        <location line="+511"/>
         <source>Canvas size too large to host.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3227,12 +3227,12 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>&amp;Entrar numa sessão...</translation>
     </message>
     <message>
-        <location line="-3956"/>
+        <location line="-3958"/>
         <source>Joined the session!</source>
         <translation>Entrou na sessão!</translation>
     </message>
     <message>
-        <location line="+602"/>
+        <location line="+604"/>
         <source>Hosting on this computer is not available</source>
         <translation>Não é possível hospedar neste computador</translation>
     </message>
@@ -4937,7 +4937,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>Repetições:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation type="unfinished">%</translation>
     </message>
@@ -8829,7 +8829,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished">Quando ativado, gravar a cada %1 minuto(s)</translation>
     </message>
@@ -8845,6 +8845,16 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation type="unfinished"></translation>

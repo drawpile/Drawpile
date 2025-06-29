@@ -1353,18 +1353,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+62"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>Sin título</translation>
     </message>
     <message>
-        <location line="-2265"/>
-        <location line="+4063"/>
+        <location line="-2267"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation>Exportar de nuevo</translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation>Exportar de nuevo al %1</translation>
     </message>
@@ -1402,12 +1402,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Hay cambios sin guardar. Guardar antes de salir?</translation>
     </message>
@@ -1498,7 +1498,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Imagen guardada</translation>
     </message>
     <message>
-        <location line="+301"/>
+        <location line="+303"/>
         <source>Pause</source>
         <translation>Pausar</translation>
     </message>
@@ -2047,7 +2047,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;Editar</translation>
     </message>
     <message>
-        <location line="-3899"/>
+        <location line="-3901"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation>El Usuarios del pincel solicitado no permite que otros lo utilicen.</translation>
     </message>
@@ -2058,7 +2058,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Lienzo cargado en %1:%2.%3</translation>
     </message>
     <message>
-        <location line="+3336"/>
+        <location line="+3338"/>
         <source>&amp;Expand Canvas</source>
         <translation>&amp;Expandir Canvas</translation>
     </message>
@@ -2393,7 +2393,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Seleccionar debajo</translation>
     </message>
     <message>
-        <location line="-3596"/>
+        <location line="-3598"/>
         <source>Image saving failed</source>
         <translation>Guardando imagen ha reprobada</translation>
     </message>
@@ -2472,7 +2472,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>No se pudo exportar plantilla de sesión</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+57"/>
         <source>Saving animation...</source>
         <translation>Guardando animación...</translation>
     </message>
@@ -2799,7 +2799,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>&amp;Capa</translation>
     </message>
     <message>
-        <location line="-3823"/>
+        <location line="-3825"/>
         <source>Opening file…</source>
         <translation>Abriendo Archivo…</translation>
     </message>
@@ -2809,7 +2809,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>¡Te uniste a la sesión!</translation>
     </message>
     <message>
-        <location line="+602"/>
+        <location line="+604"/>
         <source>Hosting on this computer is not available</source>
         <translation>Hostear en este computador no esta disponible</translation>
     </message>
@@ -4937,7 +4937,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Bucles/Loops:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation type="unfinished">%</translation>
     </message>
@@ -5688,7 +5688,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="-344"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Preservar alfa</translation>
     </message>
     <message>
         <location line="+816"/>
@@ -7519,17 +7519,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../mainwindow.cpp" line="-1022"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mezcla alfa</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Heredar alfa</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Recortar a la capa inferior</translation>
     </message>
 </context>
 <context>
@@ -8819,7 +8819,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished">Cuando esta habilitado, guardar cada %1 minutos</translation>
     </message>
@@ -8835,6 +8835,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation type="unfinished"></translation>
@@ -11918,12 +11928,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Recortar a la capa inferior</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Heredar alfa</translation>
     </message>
     <message>
         <location line="+28"/>

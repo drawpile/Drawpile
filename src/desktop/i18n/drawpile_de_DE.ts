@@ -1277,12 +1277,12 @@ Teilreichweite: [%3, %4]</translation>
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+960"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>Unbenannt</translation>
     </message>
     <message>
-        <location line="-1510"/>
+        <location line="-1512"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Drawpile verlassen</translation>
@@ -1300,12 +1300,12 @@ Teilreichweite: [%3, %4]</translation>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Es gibt noch ungespeicherte Änderungen. Sollen diese vor dem Verlassen gespeichert werden?</translation>
     </message>
@@ -1390,7 +1390,7 @@ Teilreichweite: [%3, %4]</translation>
         <translation>Diese Sitzung wurde mit einer älteren Version von Drawpile gehostet. Einige Funktionalität – wie Ebenenbeschneidung, einige Mischmodi und das Malen innerhalb einer Selektionsmaske – wird nicht verfügbar sein.</translation>
     </message>
     <message>
-        <location line="+163"/>
+        <location line="+165"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
@@ -1483,7 +1483,7 @@ Teilreichweite: [%3, %4]</translation>
         <translation>Aufzeichnen...</translation>
     </message>
     <message>
-        <location line="-4772"/>
+        <location line="-4774"/>
         <source>Server out of space</source>
         <translation>Kein Speicherplatz auf Server</translation>
     </message>
@@ -1510,7 +1510,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Sitzungsvorlage konnte nicht exportiert werden</translation>
     </message>
     <message>
-        <location line="+258"/>
+        <location line="+260"/>
         <source>Error closing tablet event log.</source>
         <translation>Fehler beim Schließen des Tablet-Ereignislogs.</translation>
     </message>
@@ -1815,12 +1815,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Vorschaufenster für Animation anzeigen</translation>
     </message>
     <message>
-        <location line="-3759"/>
+        <location line="-3761"/>
         <source>Joined the session!</source>
         <translation>Der Sitzung beigetreten!</translation>
     </message>
     <message>
-        <location line="+889"/>
+        <location line="+891"/>
         <source>Reason:</source>
         <translation>Grund:</translation>
     </message>
@@ -2216,7 +2216,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>&amp;Gerade</translation>
     </message>
     <message>
-        <location line="-5797"/>
+        <location line="-5799"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 ist beigetreten!</translation>
     </message>
@@ -2282,12 +2282,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4063"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation>Nochmal exportieren</translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation>Nochmal exportieren nach %1</translation>
     </message>
@@ -2393,7 +2393,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Download abgeschlossen, klicken Sie auf &quot;Speichern&quot; um Ihre Datei zu speichern.</translation>
     </message>
     <message>
-        <location line="+155"/>
+        <location line="+157"/>
         <source>Saving animation...</source>
         <translation>Animation wird gespeichert...</translation>
     </message>
@@ -4939,7 +4939,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <translation>Durchläufe:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -8833,7 +8833,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation>Wenn aktiv, speichere alle %1 Minuten</translation>
     </message>
@@ -8849,6 +8849,16 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation>Standardwert (%1)</translation>

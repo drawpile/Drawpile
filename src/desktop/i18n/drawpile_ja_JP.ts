@@ -1275,12 +1275,12 @@ Subrange: [%3, %4]</source>
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+960"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>無題</translation>
     </message>
     <message>
-        <location line="-1639"/>
+        <location line="-1641"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1303,12 +1303,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>未保存の変更内容があります。終了する前に保存しますか？</translation>
     </message>
@@ -1388,7 +1388,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+83"/>
         <source>Saving animation...</source>
         <translation>アニメーションを保存中...</translation>
     </message>
@@ -1531,7 +1531,7 @@ Subrange: [%3, %4]</source>
         <translation>記録...</translation>
     </message>
     <message>
-        <location line="-2722"/>
+        <location line="-2724"/>
         <source>Saving...</source>
         <translation>保存中...</translation>
     </message>
@@ -1541,7 +1541,7 @@ Subrange: [%3, %4]</source>
         <translation>画像を保存しました</translation>
     </message>
     <message>
-        <location line="+301"/>
+        <location line="+303"/>
         <source>Pause</source>
         <translation>一時停止</translation>
     </message>
@@ -1849,7 +1849,7 @@ Subrange: [%3, %4]</source>
         <translation>ユーザーポインターを表示(&amp;P)</translation>
     </message>
     <message>
-        <location line="-4946"/>
+        <location line="-4948"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 が入室しました！</translation>
     </message>
@@ -1915,12 +1915,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4063"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation>再エクスポート</translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation>%1 に再エクスポート</translation>
     </message>
@@ -2031,7 +2031,7 @@ Subrange: [%3, %4]</source>
         <translation>セッションのテンプレートをエクスポートできませんでした</translation>
     </message>
     <message>
-        <location line="+190"/>
+        <location line="+192"/>
         <source>Unsupported format.</source>
         <translation>サポートしていない形式。</translation>
     </message>
@@ -2795,7 +2795,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>直線(&amp;L)</translation>
     </message>
     <message>
-        <location line="-6199"/>
+        <location line="-6201"/>
         <source>Server out of space</source>
         <translation>サーバーのスペースが不足</translation>
     </message>
@@ -2807,7 +2807,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 キャンバスの内容をシンプルにしてスペースがなくなる前に手動でリセットします。</translation>
     </message>
     <message>
-        <location line="+2994"/>
+        <location line="+2996"/>
         <source>Become Operator</source>
         <translation>管理者になる</translation>
     </message>
@@ -2891,12 +2891,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>センシティブレイヤーの表示</translation>
     </message>
     <message>
-        <location line="-3644"/>
+        <location line="-3646"/>
         <source>Opening file…</source>
         <translation>ファイルを開く…</translation>
     </message>
     <message>
-        <location line="+858"/>
+        <location line="+860"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>ホストするキャンバスがありません!！ファイルを作成するか、ファイルを開いてください。</translation>
     </message>
@@ -4936,7 +4936,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>ループ:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -8816,7 +8816,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished">有効にすると、%1 分ごとに保存されます</translation>
     </message>
@@ -8832,6 +8832,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation type="unfinished"></translation>

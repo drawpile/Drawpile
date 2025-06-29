@@ -1276,12 +1276,12 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+960"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>Sans titre</translation>
     </message>
     <message>
-        <location line="-1510"/>
+        <location line="-1512"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Quitter Drawpile</translation>
@@ -1299,12 +1299,12 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Il y a des modifications non enregistrées. Les enregistrer avant de quitter ?</translation>
     </message>
@@ -1324,12 +1324,12 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
         <translation>Enregistrement de l&apos;image impossible</translation>
     </message>
     <message>
-        <location line="+311"/>
+        <location line="+313"/>
         <source>Stop Recording</source>
         <translation>Arrêter d’Enregistrer</translation>
     </message>
     <message>
-        <location line="-336"/>
+        <location line="-338"/>
         <source>Saving...</source>
         <translation>Sauvegarde...</translation>
     </message>
@@ -1354,7 +1354,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
         <translation>Le modèle de session n&apos;a pas pu être exporté</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+139"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
@@ -1492,7 +1492,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
         <translation>Capture vidéo...</translation>
     </message>
     <message>
-        <location line="-4772"/>
+        <location line="-4774"/>
         <source>Server out of space</source>
         <translation>Serveur à court d&apos;espace</translation>
     </message>
@@ -1565,12 +1565,12 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4063"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation>Exporter à Nouveau</translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation>Exporter à Nouveau vers %1</translation>
     </message>
@@ -1636,7 +1636,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
         <translation>Vous êtes sur le point d&apos;ouvrir un nouveau fichier et de fermer cette fenêtre.</translation>
     </message>
     <message>
-        <location line="+2211"/>
+        <location line="+2213"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>Vous êtes déjà connecté à une session&#x202f;! Déconnectez-vous pour pouvoir en héberger une.</translation>
     </message>
@@ -2363,7 +2363,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
         <translation>Annuler l&apos;action</translation>
     </message>
     <message>
-        <location line="-4563"/>
+        <location line="-4565"/>
         <source>Image saving failed</source>
         <translation>Échec de l&apos;enregistrement de l&apos;image</translation>
     </message>
@@ -2438,7 +2438,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+244"/>
+        <location line="+246"/>
         <source>Error downloading profile.</source>
         <translation>Erreur lors du téléchargement des fichiers.</translation>
     </message>
@@ -2985,12 +2985,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
         <translation>Afficher les &amp;annotations</translation>
     </message>
     <message>
-        <location line="-4945"/>
+        <location line="-4947"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 a rejoint&#x202f;!</translation>
     </message>
     <message>
-        <location line="+1894"/>
+        <location line="+1896"/>
         <source>Saving animation...</source>
         <translation>Sauvegarde de l&apos;animation...</translation>
     </message>
@@ -3069,7 +3069,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
         <translation>Afficher les calques censurés</translation>
     </message>
     <message>
-        <location line="-4386"/>
+        <location line="-4388"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;Le raccourci &apos;%1&apos; est ambigu, il correspond à&#xa0;:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -3094,7 +3094,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
         <translation>A rejoint la session&#x202f;!</translation>
     </message>
     <message>
-        <location line="+889"/>
+        <location line="+891"/>
         <source>Reason:</source>
         <translation>Raison&#xa0;:</translation>
     </message>
@@ -4937,7 +4937,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
         <translation>Boucles&#xa0;:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -8829,7 +8829,7 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished">Quand activé, enregistre toutes les %1 minutes</translation>
     </message>
@@ -8845,6 +8845,16 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation type="unfinished"></translation>

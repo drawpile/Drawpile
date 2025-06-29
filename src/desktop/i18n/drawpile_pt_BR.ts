@@ -1279,12 +1279,12 @@ Subintervalo: [%3,%4]</translation>
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+960"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>Sem Título</translation>
     </message>
     <message>
-        <location line="-1510"/>
+        <location line="-1512"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Sair do Drawpile</translation>
@@ -1302,12 +1302,12 @@ Subintervalo: [%3,%4]</translation>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Existem modificações não salvas, deseja salvar elas antes de sair?</translation>
     </message>
@@ -1327,12 +1327,12 @@ Subintervalo: [%3,%4]</translation>
         <translation>Não foi possível salvar a imagem</translation>
     </message>
     <message>
-        <location line="+311"/>
+        <location line="+313"/>
         <source>Stop Recording</source>
         <translation>Parar de Gravar</translation>
     </message>
     <message>
-        <location line="-336"/>
+        <location line="-338"/>
         <source>Saving...</source>
         <translation>Salvando...</translation>
     </message>
@@ -1357,7 +1357,7 @@ Subintervalo: [%3,%4]</translation>
         <translation>Não foi possível exportar o modelo da sessão</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+139"/>
         <source>Pause</source>
         <translation>Pausar</translation>
     </message>
@@ -1495,7 +1495,7 @@ Subintervalo: [%3,%4]</translation>
         <translation>Gravar...</translation>
     </message>
     <message>
-        <location line="-4772"/>
+        <location line="-4774"/>
         <source>Server out of space</source>
         <translation>Servidor sem memória disponível</translation>
     </message>
@@ -1568,12 +1568,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4063"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1639,7 +1639,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2211"/>
+        <location line="+2213"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2366,7 +2366,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Cancelar ação</translation>
     </message>
     <message>
-        <location line="-4563"/>
+        <location line="-4565"/>
         <source>Image saving failed</source>
         <translation>Falha ao salvar a imagem</translation>
     </message>
@@ -2441,7 +2441,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+244"/>
+        <location line="+246"/>
         <source>Error downloading profile.</source>
         <translation>Erro ao baixar o perfil.</translation>
     </message>
@@ -2988,12 +2988,12 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Mostrar &amp;Anotações</translation>
     </message>
     <message>
-        <location line="-4945"/>
+        <location line="-4947"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 entrou!</translation>
     </message>
     <message>
-        <location line="+1894"/>
+        <location line="+1896"/>
         <source>Saving animation...</source>
         <translation>Salvando animação...</translation>
     </message>
@@ -3072,7 +3072,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Mostrar camadas censuradas</translation>
     </message>
     <message>
-        <location line="-4386"/>
+        <location line="-4388"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;O atalho &apos;%1&apos; já está sendo usado em várias ocasiões:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -3097,7 +3097,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Entrou na sessão!</translation>
     </message>
     <message>
-        <location line="+889"/>
+        <location line="+891"/>
         <source>Reason:</source>
         <translation>Motivo:</translation>
     </message>
@@ -4941,7 +4941,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Loops:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation type="unfinished">%</translation>
     </message>
@@ -8833,7 +8833,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished">Quando ativado, salvar a cada %1 minuto(s)</translation>
     </message>
@@ -8849,6 +8849,16 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation type="unfinished"></translation>

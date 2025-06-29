@@ -1294,12 +1294,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+222"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>Без назви</translation>
     </message>
     <message>
-        <location line="-1510"/>
+        <location line="-1512"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Вихід з Drawpile</translation>
@@ -1317,12 +1317,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Деякі зміни не збережено. Зберегти їх перед виходом?</translation>
     </message>
@@ -1372,7 +1372,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Не вдалося експортувати шаблон сеансу</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+139"/>
         <source>Pause</source>
         <translation>Призупинити</translation>
     </message>
@@ -1516,7 +1516,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Зберігаємо анімацію...</translation>
     </message>
     <message>
-        <location line="-994"/>
+        <location line="-996"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation>Запитаний пензель не дозволяє іншим його використовувати.</translation>
     </message>
@@ -1576,7 +1576,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Цей сеанс було проведено за допомогою старішої версії Drawpile. Деякі функції, такі як обрізання шарів, деякі режими накладання та малювання в масці виділення, будуть недоступні.</translation>
     </message>
     <message>
-        <location line="+504"/>
+        <location line="+506"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>Немає полотна для розгортання! Створіть нове або відкрийте файл.</translation>
     </message>
@@ -2309,7 +2309,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Показати цензуровані шари</translation>
     </message>
     <message>
-        <location line="-4386"/>
+        <location line="-4388"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;Комбінація клавіш &quot;%1&quot; неоднозначна, вона відповідає:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -2375,12 +2375,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4063"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation>Знову експорт</translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation>Знову експортуйте до %1</translation>
     </message>
@@ -2476,7 +2476,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Завантаження завершено, натисніть «Зберегти», щоб зберегти файл.</translation>
     </message>
     <message>
-        <location line="+290"/>
+        <location line="+292"/>
         <source>Unsupported format.</source>
         <translation>Формат не підтримується.</translation>
     </message>
@@ -4938,7 +4938,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Петлі:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -8844,7 +8844,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation>Якщо ввімкнено, зберігати кожні %1 хвилин</translation>
     </message>
@@ -8860,6 +8860,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation>За замовчуванням (%1)</translation>

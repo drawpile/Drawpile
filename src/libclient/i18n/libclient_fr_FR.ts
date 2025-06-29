@@ -18,16 +18,6 @@
     <name>BrowserStartPage</name>
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
-        <source>Attempting to allocate %n page(s)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Failed to allocate %n page(s): %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -83,7 +73,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Failed to start Drawpile: ${e}</source>
+        <source>Failed to start Drawpile: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2272,7 +2262,7 @@ Veuillez sélectionner un autre calque.</translation>
 <context>
     <name>wasmsupport</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="-200"/>
+        <location filename="../wasmsupport.cpp" line="-198"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
         <translation type="unfinished">Vous n&apos;utilisez pas le client officiel sur web.drawpile.net. La plupart des serveurs n&apos;autorisent pas les connections venant d&apos;ailleurs.</translation>
     </message>

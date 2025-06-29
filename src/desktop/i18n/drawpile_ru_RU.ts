@@ -1277,12 +1277,12 @@ Subrange: [%3, %4]</source>
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+960"/>
-        <location line="+2317"/>
+        <location line="+2319"/>
         <source>Untitled</source>
         <translation>Без названия</translation>
     </message>
     <message>
-        <location line="-1510"/>
+        <location line="-1512"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Выйти из Drawpile</translation>
@@ -1300,12 +1300,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <location line="+29"/>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location line="-836"/>
+        <location line="-838"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Есть несохранённые изменения.
 Сохранить их перед выходом?</translation>
@@ -1326,12 +1326,12 @@ Subrange: [%3, %4]</source>
         <translation>Невозможно сохранить изображение</translation>
     </message>
     <message>
-        <location line="+311"/>
+        <location line="+313"/>
         <source>Stop Recording</source>
         <translation>Остановить запись</translation>
     </message>
     <message>
-        <location line="-336"/>
+        <location line="-338"/>
         <source>Saving...</source>
         <translation>Сохранение...</translation>
     </message>
@@ -1341,7 +1341,7 @@ Subrange: [%3, %4]</source>
         <translation>Изображение сохранено</translation>
     </message>
     <message>
-        <location line="+301"/>
+        <location line="+303"/>
         <source>Pause</source>
         <translation>Приостановить</translation>
     </message>
@@ -1444,7 +1444,7 @@ Subrange: [%3, %4]</source>
         <translation>Записать...</translation>
     </message>
     <message>
-        <location line="-4772"/>
+        <location line="-4774"/>
         <source>Server out of space</source>
         <translation>На сервере нет места</translation>
     </message>
@@ -1456,7 +1456,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 Упростите холст и сбросьте вручную до того как место закончится.</translation>
     </message>
     <message>
-        <location line="+2718"/>
+        <location line="+2720"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1682,7 +1682,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>У&amp;величить</translation>
     </message>
     <message>
-        <location line="-3999"/>
+        <location line="-4001"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1742,7 +1742,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3088"/>
+        <location line="+3090"/>
         <source>Zoom &amp;Out</source>
         <translation>У&amp;меньшить</translation>
     </message>
@@ -2022,7 +2022,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Показывать &amp;аннотации</translation>
     </message>
     <message>
-        <location line="-4945"/>
+        <location line="-4947"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 присоединяется!</translation>
     </message>
@@ -2077,7 +2077,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+57"/>
         <source>Saving animation...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2645,12 +2645,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Удалить слой</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-3433"/>
+        <location filename="../mainwindow.cpp" line="-3435"/>
         <source>Joined the session!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+889"/>
+        <location line="+891"/>
         <source>Reason:</source>
         <translation type="unfinished">Причина:</translation>
     </message>
@@ -2705,7 +2705,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4235"/>
+        <location line="-4237"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
         <translation type="unfinished"></translation>
@@ -2766,12 +2766,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4063"/>
+        <location line="+4065"/>
         <source>Export Again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4059"/>
+        <location line="-4061"/>
         <source>Export Again to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2837,7 +2837,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2211"/>
+        <location line="+2213"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4935,7 +4935,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>%</source>
         <translation type="unfinished">%</translation>
     </message>
@@ -8746,7 +8746,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8762,6 +8762,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+8"/>
+        <source>Use system file picker dialogs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Interface:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
         <translation type="unfinished"></translation>

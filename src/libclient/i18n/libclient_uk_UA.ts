@@ -18,16 +18,6 @@
     <name>BrowserStartPage</name>
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
-        <source>Attempting to allocate %n page(s)</source>
-        <translation>Спроба виділити %n сторінок</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Failed to allocate %n page(s): %1</source>
-        <translation>Не вдалося виділити %n сторінок: %1</translation>
-    </message>
-    <message>
-        <location line="+1"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
         <translation>Помилка розподілу пам’яті. Це може статися в деяких браузерах після оновлення. Закрийте цю сторінку та браузер повністю, а потім спробуйте ще раз.</translation>
     </message>
@@ -83,8 +73,8 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Failed to start Drawpile: ${e}</source>
-        <translation>Не вдалося запустити Drawpile: ${e}</translation>
+        <source>Failed to start Drawpile: %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2276,7 +2266,7 @@ Select a regular layer instead.</source>
 <context>
     <name>wasmsupport</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="-200"/>
+        <location filename="../wasmsupport.cpp" line="-198"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
         <translation>Ви не використовуєте офіційний клієнт на web.drawpile.net. Більшість серверів не дозволяють підключатися з іншого боку.</translation>
     </message>
