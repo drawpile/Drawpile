@@ -39,12 +39,12 @@
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>アプリケーションを起動しています</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>起動しています…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -54,7 +54,7 @@
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation type="unfinished"></translation>
+        <translation>アセットダウンロード中</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -79,12 +79,12 @@
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>設定する</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation type="unfinished"></translation>
+        <translation>致命的なエラー</translation>
     </message>
     <message>
         <location line="+1"/>
