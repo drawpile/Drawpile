@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/icons">
         <file>drawpile.png</file>
+        <file>drawpilebeta.png</file>
         <file>censored.svg</file>
     </qresource>
 </RCC>
