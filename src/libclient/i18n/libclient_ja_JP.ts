@@ -214,7 +214,7 @@
     <message>
         <location line="+1"/>
         <source>Start Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>とにかく始める</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -224,7 +224,7 @@
     <message>
         <location line="+1"/>
         <source>Stable (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>安定</translation>
     </message>
     <message>
         <location line="+1"/>
