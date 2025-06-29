@@ -149,7 +149,7 @@
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation>ペンではなくマウス入力を検知しました</translation>
+        <translation>ペンではなくマウス入力を検出しました</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -159,17 +159,17 @@
     <message>
         <location line="+1"/>
         <source>Detected input, but not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>ペンではない入力を検出しました</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen pressure detected</source>
-        <translation type="unfinished"></translation>
+        <translation>ペンの筆圧を検出しました</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen detected, but no pressure variance</source>
-        <translation type="unfinished"></translation>
+        <translation>ペンを検出しましたが筆圧の変化がありません</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -179,7 +179,7 @@
     <message>
         <location line="+1"/>
         <source>Update check blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>更新の確認がブロックされました</translation>
     </message>
     <message>
         <location line="+1"/>
