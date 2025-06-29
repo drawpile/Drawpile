@@ -124,17 +124,17 @@
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation>&lt;strong&gt;おそらく互換性のないブラウザ:&lt;/strong&gt; LinuxのFirefoxは、すべてのシステムで筆圧感知を持つペンをサポートしていません。筆圧がかからない場合は、別のブラウザまたは&lt;a href=&quot;#&quot;&gt;通常のLinuxアプリケーションを使用することを検討してください&lt;/a&gt;。</translation>
+        <translation>&lt;strong&gt;おそらく互換性のないブラウザ:&lt;/strong&gt; LinuxのFirefoxは、すべてのシステムで筆圧感知を持つペンをサポートしていません。筆圧がかからない場合は、別のブラウザまたは&lt;a href=&quot;#&quot;&gt;Linuxアプリケーション版を使用することを検討してください&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation>&lt;strong&gt;互換性のないブラウザ:&lt;/strong&gt; WindowsのfirefoxはDrawpileの実行に問題が発生します。テキストの入力や/Ctrl+Zの押下が、正常に機能しない場合があります。別のブラウザまたは&lt;a href=&quot;#&quot;&gt;Windowsアプリケーション版を使用することを検討してください&lt;/a&gt;</translation>
+        <translation>&lt;strong&gt;互換性のないブラウザ:&lt;/strong&gt; WindowsのfirefoxはDrawpileの実行に問題が発生します。テキストの入力や/Ctrl+Zの押下が、正常に機能しない場合があります。別のブラウザまたは&lt;a href=&quot;#&quot;&gt;Windowsアプリケーション版を使用することを検討してください&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;互換性のないブラウザ:&lt;/strong&gt;%1のChromeはDrawpileの実行に問題があります。このブラウザは、実質的にシステムの標準ブラウザ（Safari）と同じ仕組みで動作するため、操作パネル等が画面の外にはみ出してしまう等の表示上の問題が起きることがあります。代わりにシステム標準のブラウザ（Safari）を直接使用することを検討してください。</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -144,17 +144,17 @@
     <message>
         <location line="+1"/>
         <source>Test your pen pressure here</source>
-        <translation type="unfinished"></translation>
+        <translation>ここでペンの筆圧をテストしてください</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>ペンではなくマウス入力を検知しました</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected touch input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>ペンではなくタッチ入力を検出しました</translation>
     </message>
     <message>
         <location line="+1"/>
