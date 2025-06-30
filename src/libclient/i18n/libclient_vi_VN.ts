@@ -1005,7 +1005,7 @@ Hãy chọn một lớp thông thường thay vào đó.</translation>
     <message>
         <location line="+12"/>
         <source>Linear Dodge/Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Linear Dodge/Add</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1020,37 +1020,37 @@ Hãy chọn một lớp thông thường thay vào đó.</translation>
     <message>
         <location line="+6"/>
         <source>Vivid Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiếu rực rỡ</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Đèn Pin</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Darker Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Màu tối</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighter Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Màu sáng</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference</source>
-        <translation type="unfinished"></translation>
+        <translation>Độ khác</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Divide</source>
-        <translation>Chia Cắt</translation>
+        <translation>Chia</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Shade (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Shade (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
