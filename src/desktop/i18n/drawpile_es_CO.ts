@@ -8445,32 +8445,32 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-8"/>
         <source>Hue range: </source>
-        <translation>Rango de tonos: </translation>
+        <translation>Rango de tono: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Hue offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de tono: </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saturation offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de saturación: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Chroma offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de croma: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Value offset: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Desplazamiento de valor: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lightness offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de luminosidad: </translation>
     </message>
     <message>
         <location line="+1"/>
