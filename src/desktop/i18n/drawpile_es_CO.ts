@@ -8440,12 +8440,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="-11"/>
         <location line="+12"/>
         <source>Luminance range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango de luminancia: </translation>
     </message>
     <message>
         <location line="-8"/>
         <source>Hue range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango de tonos: </translation>
     </message>
     <message>
         <location line="+10"/>
