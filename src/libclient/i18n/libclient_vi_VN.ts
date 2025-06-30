@@ -44,7 +44,7 @@
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Đang khởi động…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -54,7 +54,7 @@
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation type="unfinished"></translation>
+        <translation>Đang Tải Nội Dung</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -79,7 +79,7 @@
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Đang cài đặt…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1010,12 +1010,12 @@ Hãy chọn một lớp thông thường thay vào đó.</translation>
     <message>
         <location line="+12"/>
         <source>Color Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>Màu phơi sáng</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation>Màu chắn sáng</translation>
     </message>
     <message>
         <location line="+6"/>
