@@ -8687,17 +8687,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Drag to reorder and uncheck to hide tools.</source>
-        <translation>Arrastre para reordenar y desmarque para ocultar herramientas</translation>
+        <translation>Arrastre para reordenar y desmarque para ocultar herramientas.</translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiniciar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really revert the toolbar configuration to its default state?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Realmente desea revertir la configuración de la barra de herramientas a su estado predeterminado?</translation>
     </message>
 </context>
 <context>
@@ -8850,30 +8850,30 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+8"/>
         <source>Use system file picker dialogs</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilice los cuadros de diálogo del selector de archivos del sistema</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Interface:</source>
-        <translation type="unfinished"></translation>
+        <translation>Interfaz:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Predeterminado (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+14"/>
         <source>OpenRaster (.ora)</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenRaster (.ora)</translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+14"/>
         <source>Drawpile Canvas (.dpcs)</source>
-        <translation type="unfinished"></translation>
+        <translation>Lienzo de Drawpile/Drawpile Canvas (.dpcs)</translation>
     </message>
     <message>
         <location line="-12"/>
