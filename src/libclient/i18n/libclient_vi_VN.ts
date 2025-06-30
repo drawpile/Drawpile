@@ -19,12 +19,12 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gặp lỗi khi cấp phát vùng nhớ. Vấn đề này có thể xảy ra ở một số trình duyệt nếu bạn tải lại trang. Hãy khởi động lại trình duyệt của bạn.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vùng nhớ được cấp phát không phải là SharedArrayBuffer, mặc dù trình duyệt của bạn hỗ trợ nó. Bạn có thể phải vào phần cài đặt.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -34,12 +34,12 @@
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation>đăng nhập drawpile.net</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>Đang khởi động chương trình</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -49,7 +49,7 @@
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>Đang khởi động, sẽ chỉ mất một chút…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -59,7 +59,7 @@
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>Đang khởi động, có thể mất một lúc…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -69,12 +69,12 @@
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>Đang khởi tạo, có thể mất một lúc…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Gặp lỗi khi khởi chạy Drawpile: %1</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -84,37 +84,37 @@
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation type="unfinished"></translation>
+        <translation>Lỗi nghiêm trọng:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Điều này có thể là vì trình duyệt của bạn lỗi thời hoặc bạn đang xem trang thông qua một trình duyệt nhúng, v.d. thông qua đoạn chat, trong đó bạn phải mở đúng cách. Để đọc thêm, truy cập &lt;a href=&quot;#&quot;&gt;trang trợ giúp&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Liên kết đến phiên không hợp lệ.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bạn đã truy cập vào Drawpile không thông qua đường link hợp lệ.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Trình duyệt trong ứng dụng:&lt;/strong&gt; có vẻ như bạn đã mở Drawpile trong trình duyệt của một ứng dụng.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Trình duyệt trong ứng dụng:&lt;/strong&gt; có vẻ như bạn đã mở Drawpile trong trình duyệt của %1.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Việc này có thể gây lỗi, hãy mở trang này trong một trình duyệt thật.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1050,7 +1050,7 @@ Hãy chọn một lớp thông thường thay vào đó.</translation>
     <message>
         <location line="+30"/>
         <source>Shade (SAI)</source>
-        <translation type="unfinished">Shade (SAI)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
