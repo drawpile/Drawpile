@@ -74,7 +74,7 @@
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>启动 Drawpile 失败: %1</translation>
     </message>
     <message>
         <location line="+1"/>
