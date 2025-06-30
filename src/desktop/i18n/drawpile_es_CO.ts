@@ -3705,7 +3705,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Unmark key frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Desmarcar frame clave</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3715,12 +3715,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Mark layer blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar capa de azul</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar frame clave de azul</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3730,102 +3730,102 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>Mark layer green</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar capa de verde</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame green</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar frame clave de verde</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Amarillo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar capa de amarillo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar frame clave de amarillo</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Naranja</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar capa de naranja</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar frame clave de naranja</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brown</source>
-        <translation type="unfinished"></translation>
+        <translation>Café</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer brown</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar capa de café</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame brown</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar frame clave de café</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Red</source>
-        <translation type="unfinished">Rojo</translation>
+        <translation>Rojo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer red</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar capa de rojo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame red</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar frame clave de rojo</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Morado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar capa de morado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar frame clave de morado</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Gray</source>
-        <translation type="unfinished"></translation>
+        <translation>Gris</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer gray</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar capa de gris</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame gray</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar frame clave de gris</translation>
     </message>
 </context>
 <context>
@@ -3999,12 +3999,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+5"/>
         <source>Lasso Fill</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Relleno de lazo</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Gradiente</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4257,35 +4257,35 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="-195"/>
         <location line="+247"/>
         <source>Operators: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Operadores: </translation>
     </message>
     <message>
         <location line="-214"/>
         <location line="+201"/>
         <source>Trusted: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">De confianza: </translation>
     </message>
     <message>
         <location line="-178"/>
         <source>Pigment &amp; OKLAB Brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pigmentos y pinceles OKLAB:</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+26"/>
         <source>Registered: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Registrado: </translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Brush size limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Límite de tamaño del pincel:</translation>
     </message>
     <message>
         <location line="+30"/>
         <location line="+76"/>
         <source>Everyone: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Todos: </translation>
     </message>
     <message>
         <location line="-30"/>
@@ -4418,7 +4418,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+112"/>
         <source>Layer count limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Límite de número de capas:</translation>
     </message>
     <message>
         <location line="+92"/>
@@ -4494,7 +4494,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+24"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Renderizado</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -4830,7 +4830,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="-18"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Establezca la velocidad máxima para Tamaño, Opacidad, Dureza, Manchas y Vibración a la vez.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4840,7 +4840,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Establezca la distancia máxima para Tamaño, Opacidad, Dureza, Difuminado y Vibración a la vez.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -5387,12 +5387,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+8"/>
         <source>Allow others in a session to use this brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Permitir que otros en una sesión utilicen este pincel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Sharing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Compartir:</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -5470,25 +5470,25 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="+30"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+12"/>
         <source>Direct Build-Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Acumulación directa</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Wash</source>
-        <translation type="unfinished"></translation>
+        <translation>Lavado indirecto</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Soft (Drawpile 2.2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Indirecto suave (Drawpile 2.2)</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Build-Up (Drawpile 2.1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Acumulación indirecta (Drawpile 2.1)</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -5620,23 +5620,24 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="-425"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Smudge with transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>Difuminar con transparencia</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enabling this will make smudging take the alpha channel into account.
 Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Al activar esta opción, el difuminado tendrá en cuenta el canal alfa.
+Al desactivarla, el comportamiento se restablece a su estado anterior a Drawpile 2.3.</translation>
     </message>
     <message>
         <location line="+100"/>
         <source>Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desviación: </translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Minimum Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desviación Mínima: </translation>
     </message>
     <message>
         <location line="+12"/>
@@ -5647,33 +5648,34 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="-112"/>
         <source>Not available in indirect paint modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>No disponible en modos de pintura indirecta.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Not available in indirect paint modes or when using a blend mode other than Normal.</source>
-        <translation type="unfinished"></translation>
+        <translation>No disponible en modos de pintura indirecta o cuando se utiliza un modo de fusión distinto de Normal.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not available in indirect paint modes or when using the Marker or Greater Density blend modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>No disponible en modos de pintura indirecta ni cuando se utilizan los modos de fusión Marcador o Mayor densidad.</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Synchronize smudging (slower, but more accurate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sincronizar difuminado (más lenta, pero más precisa)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This will make the brush to wait for its own stroke to finish to allow it to accurately smudge with itself.
 If fast strokes cause artifacts when smudging, enabling this can help.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esto hará que el pincel espere a que termine su propio trazo para poder difuminarse con precisión.
+Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar esta opción puede ser útil.</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Randomized offsets in the stroke center.</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamientos aleatorios en el centro del trazo.</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -5749,17 +5751,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+71"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Mezcla: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Minimum Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Mezcla mínima: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending</source>
-        <translation type="unfinished"></translation>
+        <translation>Mezcla</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -6977,7 +6979,9 @@ The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Cambia la escala en la que opera el pincel de GridMap; afecta solo al eje Y.
+El rango es de 0 a 5x.
+Esto permite estirar o comprimir el patrón de GridMap.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6986,7 +6990,9 @@ Useful to correct for high-definition/large brushes with lots of dabs.
 The longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Multiplicador logarítmico para el valor de &quot;Longitud de la mancha&quot;.
+Útil para corregir pinceles de alta definición o largos con muchas pinceladas.
+Cuanto mayor sea la longitud de la mancha, más se extenderá el color y también mejorará considerablemente el rendimiento, ya que el lienzo se muestrea con menos frecuencia</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6995,7 +7001,9 @@ You can control which bucket to use to improve variability and realism of the br
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Hay 256 cubos, cada uno con capacidad para un color seleccionado del lienzo.
+Puedes controlar qué cubo usar para mejorar la variabilidad y el realismo del pincel.
+Especialmente útil con la opción &quot;Entrada personalizada&quot; para correlacionar los cubos con otros ajustes, como las compensaciones.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7006,7 +7014,11 @@ Especially useful with the &quot;Custom input&quot; setting to correlate buckets
 Negative values do the reverse</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Controla cuánta transparencia se capta y difumina, de forma similar al bloqueo alfa.
+1.0 no moverá ninguna transparencia.
+0.5 moverá solo el 50 % de transparencia o más.
+0.0 no tendrá ningún efecto.
+Los valores negativos tienen el efecto contrario</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7083,7 +7095,7 @@ Negative values do the reverse</source>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fuerza de la posterización, reduce el número de colores en función de la configuración de &quot;Niveles de posterización&quot;, manteniendo alfa.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7092,7 +7104,9 @@ Negative values do the reverse</source>
 Values above 0.5 may not be noticeable.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Número de niveles de posterización (dividido entre 100).
+0,05 = 5 niveles, 0,2 = 20 niveles, etc.
+Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7108,7 +7122,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="+3"/>
         <source>Synchronize smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>Sincronizar difuminado</translation>
     </message>
 </context>
 <context>
@@ -7178,27 +7192,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar la Opacidad del Pincel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar la Dureza del Pincel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar el Tono del Color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar la Saturación del Color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar el Valor del Color</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7253,7 +7267,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>You can&apos;t assign just a key combination to this action, change the type to mouse button instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>No puedes asignar sólo una combinación de teclas a esta acción, cambia el tipo a botón del mouse.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7284,7 +7298,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>&amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ninguno</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7387,12 +7401,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+68"/>
         <source>Reset crop</source>
-        <translation type="unfinished"></translation>
+        <translation>Restablecer recorte</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Upscale to fit view</source>
-        <translation type="unfinished"></translation>
+        <translation>Ampliar para adaptarse a la vista</translation>
     </message>
     <message>
         <location line="+100"/>
@@ -7411,7 +7425,7 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/invitedialog.cpp" line="-379"/>
         <location line="+275"/>
         <source>What are invite codes?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Qué son los códigos de invitación?</translation>
     </message>
     <message>
         <location line="-123"/>
@@ -7421,54 +7435,54 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+22"/>
         <source>Invite code link(s) copied to clipboard.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Enlace del código de invitación copiado al portapapeles.</numerusform>
+            <numerusform>Enlaces de los códigos de invitación copiados al portapapeles.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+35"/>
         <source>This server does not support invite codes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este servidor no admite códigos de invitación.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sólo los administradores del servidor pueden administrar los códigos de invitación en esta sesión.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only operators and server administrators can manage invite codes on this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sólo los operadores y administradores del servidor pueden administrar los códigos de invitación en esta sesión.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Revoke Invite Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Revocar Códigos de Invitación</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really revoke %n selected invite code(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>¿Realmente desea revocar %n código de invitación seleccionado?</numerusform>
+            <numerusform>¿Realmente desea revocar los %n códigos de invitación seleccionados?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Invite codes let someone join the session via a limited-use link. You can revoke the code later to take away their access again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Los códigos de invitación permiten a alguien unirse a la sesión mediante un enlace de uso limitado. Puedes revocar el código más tarde para retirarle el acceso.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Someone joining via an invite code bypasses normal session restrictions: they don&apos;t need the session password, can join via web browser, don&apos;t need a registered account and aren&apos;t affected by new joins being blocked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alguien que se une a través de un código de invitación evita las restricciones de sesión normales: no necesita la contraseña de sesión, puede unirse a través del navegador web, no necesita una cuenta registrada y no se ve afectado por el bloqueo de nuevas uniones.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>They don&apos;t bypass bans or server-wide restrictions.</source>
         <extracomment>&quot;They&quot; is referring to invite codes.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Los codigos de invitación No eluden las prohibiciones ni las restricciones de todo el servidor.</translation>
     </message>
 </context>
 <context>
@@ -7486,17 +7500,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Anterior</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Siguiente</translation>
     </message>
 </context>
 <context>
@@ -7688,12 +7702,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Unknown reason.</source>
-        <translation type="unfinished"></translation>
+        <translation>Razón Desconocida.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Can&apos;t join session</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo unir a la sesión</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -7858,12 +7872,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+70"/>
         <source>Error opening file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al abrir el archivo: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error opening file: %1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al abrir el archivo: %1 (%2)</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -7876,22 +7890,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+33"/>
         <source>Expand up</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir hacia arriba</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand left</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir hacia la izquierda</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand right</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir hacia la derecha</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Expand down</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir hacia abajo</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7911,37 +7925,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+113"/>
         <source>Width and height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>El ancho y la altura deben estar entre 1 y %1 píxeles en sesiones alojadas con Drawpile 2.2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Width must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>El ancho debe estar entre 1 y %1 píxeles en sesiones alojadas con Drawpile 2.2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>La altura debe estar entre 1 y %1 píxeles en sesiones alojadas con Drawpile 2.2.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Width and height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>El ancho y la altura deben estar entre 1 y %1 píxeles.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Width must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>El ancho debe estar entre 1 y %1 píxeles.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>La altura debe estar entre 1 y %1 píxeles.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Total size must be between 1 and %1 pixels (you&apos;re at %2.)</source>
-        <translation type="unfinished"></translation>
+        <translation>El tamaño total debe estar entre 1 y %1 píxeles (estás en %2.)</translation>
     </message>
 </context>
 <context>
@@ -7961,13 +7975,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+49"/>
         <source>Shrink and feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Encoger y desenfocar/difuminar desde el borde del lienzo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Feather from canvas edge</source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Desenfocar/Difuminar desde el borde del lienzo</translation>
     </message>
 </context>
 <context>
@@ -8042,7 +8056,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Error saving bans: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al guardar bans: %1</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8187,12 +8201,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-97"/>
         <source>File does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo no contiene una exportación de rol válida.</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Error saving roles: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al guardar roles: %1</translation>
     </message>
     <message numerus="yes">
         <location line="+61"/>
@@ -8246,12 +8260,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Tablet</source>
-        <translation type="unfinished"></translation>
+        <translation>Tableta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touch</source>
-        <translation type="unfinished"></translation>
+        <translation>Táctil</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8261,7 +8275,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivos</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8294,33 +8308,33 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/shadeselectordialog.cpp" line="+26"/>
         <source>Color Harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>Armonía de Colores</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Show harmony swatches under color wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar muestras de armonía bajo la rueda de color</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Color harmony swatches are disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Las muestras de armonía de colores están deshabilitadas.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Click here to enable them.</source>
         <extracomment>&quot;Them&quot; refers to the color harmony swatches.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Click aquí para activarlas.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Rows: </source>
-        <translation type="unfinished"></translation>
+        <translation>Filas: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Row height: </source>
-        <translation type="unfinished"></translation>
+        <translation>Altura de la fila: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8330,17 +8344,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Colors per row: </source>
-        <translation type="unfinished"></translation>
+        <translation>Colores por fila: </translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Border: </source>
-        <translation type="unfinished"></translation>
+        <translation>Borde: </translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Set Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer color…</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -8360,7 +8374,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>Croma</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8370,17 +8384,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Lightness</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Luminosidad</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>Luminancia</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shades</source>
-        <translation type="unfinished"></translation>
+        <translation>Sombras</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8396,72 +8410,72 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+122"/>
         <location line="+4"/>
         <source>Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango: </translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+12"/>
         <source>Saturation range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango de saturación: </translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+12"/>
         <source>Chroma range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango de croma: </translation>
     </message>
     <message>
         <location line="-8"/>
         <location line="+12"/>
         <source>Value range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango de valores: </translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+12"/>
         <source>Lightness range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango de luminosidad: </translation>
     </message>
     <message>
         <location line="-11"/>
         <location line="+12"/>
         <source>Luminance range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango de luminancia: </translation>
     </message>
     <message>
         <location line="-8"/>
         <source>Hue range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rango de tono: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Hue offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de tono: </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saturation offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de saturación: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Chroma offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de croma: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Value offset: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Desplazamiento de valor: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lightness offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de luminosidad: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de luminancia: </translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8579,32 +8593,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Save/Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar/Cargar</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Reload defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation>Recargar valores predeterminados…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Load settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargar ajustes…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar ajustes…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import from file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar desde archivo…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Export to file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar a archivo…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8655,7 +8669,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/systeminfodialog.cpp" line="+28"/>
         <source>System Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Información del sistema</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8668,22 +8682,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/toolbarconfigdialog.cpp" line="+21"/>
         <source>Configure Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurar la barra de herramientas</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Drag to reorder and uncheck to hide tools.</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastre para reordenar y desmarque para ocultar herramientas.</translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiniciar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really revert the toolbar configuration to its default state?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Realmente desea revertir la configuración de la barra de herramientas a su estado predeterminado?</translation>
     </message>
 </context>
 <context>
@@ -8836,30 +8850,30 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Use system file picker dialogs</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilice los cuadros de diálogo del selector de archivos del sistema</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Interface:</source>
-        <translation type="unfinished"></translation>
+        <translation>Interfaz:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Predeterminado (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+14"/>
         <source>OpenRaster (.ora)</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenRaster (.ora)</translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+14"/>
         <source>Drawpile Canvas (.dpcs)</source>
-        <translation type="unfinished"></translation>
+        <translation>Lienzo de Drawpile/Drawpile Canvas (.dpcs)</translation>
     </message>
     <message>
         <location line="-12"/>

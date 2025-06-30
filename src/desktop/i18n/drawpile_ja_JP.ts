@@ -114,7 +114,7 @@
         <location line="-13"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+164"/>
         <source>Opacity: </source>
-        <translation>透明度: </translation>
+        <translation>不透明度: </translation>
     </message>
     <message>
         <location line="-76"/>
@@ -129,7 +129,7 @@
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+340"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ値保持</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -179,7 +179,7 @@
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-23"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -312,7 +312,7 @@
     <message>
         <location line="+41"/>
         <source>Saturation</source>
-        <translation>彩度</translation>
+        <translation>彩度(Saturation)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -332,7 +332,7 @@
     <message>
         <location line="+37"/>
         <source>Value</source>
-        <translation>明度</translation>
+        <translation>明るさ</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -596,12 +596,12 @@
     <message>
         <location line="+39"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>PSD形式には、注釈、アニメーションのタイムライン、いくつかのブレンドモードのサポートがありません。それらを適切に保持したい場合は、別の形式で保存する必要があります。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した形式は統合された画像を保存します。レイヤー、注釈、アニメーションのタイムラインを保持する場合は、別の形式で保存する必要があります。</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -661,7 +661,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation>透明度: </translation>
+        <translation>不透明度: </translation>
     </message>
     <message>
         <location line="-118"/>
@@ -775,7 +775,7 @@
     <message>
         <location line="+17"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>ズーム</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -1038,17 +1038,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+13"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ継承</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーの下にクリップ</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファブレンド</translation>
     </message>
 </context>
 <context>
@@ -1282,7 +1282,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-1641"/>
         <source>The requested brush does not allow others to use it.</source>
-        <translation type="unfinished"></translation>
+        <translation>要求されたブラシは、他の人がそれを使用することを許可しません。</translation>
     </message>
     <message>
         <location line="+129"/>
@@ -1326,7 +1326,7 @@ Subrange: [%3, %4]</source>
         <location line="+415"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスはロードされました( %1分%2秒%3)</translation>
     </message>
     <message>
         <location line="+193"/>
@@ -1337,45 +1337,45 @@ Subrange: [%3, %4]</source>
         <location line="+6"/>
         <source>Image saved in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>画像は保存されました( %1分%2秒%3)</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Animation export failed</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションのエクスポートに失敗</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export animation</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションをエクスポートできませんでした</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Animation exported</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションをエクスポートしました</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Animation exported in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションをエクスポートしました( %1分%2秒%3)</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+17"/>
         <location line="+10"/>
         <source>File is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルは空です。</translation>
     </message>
     <message>
         <location line="-10"/>
         <source>Error setting up download.</source>
-        <translation type="unfinished"></translation>
+        <translation>ダウンロードの設定でエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error performing download.</source>
-        <translation type="unfinished"></translation>
+        <translation>ダウンロードの実行中にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1385,7 +1385,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+42"/>
         <source>This session was hosted with an older version of Drawpile. Several features – such as layer clipping, some blend modes and drawing within a selection mask – will be unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>このセッションは古いバージョンのDrawpileでホストされています。レイヤークリッピング、いくつかのブレンドモード、選択マスク内の描画など、いくつかの機能は利用できません。</translation>
     </message>
     <message>
         <location line="+83"/>
@@ -1395,7 +1395,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+428"/>
         <source>Canvas size too large to host.</source>
-        <translation type="unfinished"></translation>
+        <translation>ホストするには大きすぎるキャンバスサイズです。</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -1405,7 +1405,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+174"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションに再接続し、このウィンドウを閉じようとしています。</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -2355,17 +2355,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Configure drawing toolbar…</source>
-        <translation type="unfinished"></translation>
+        <translation>描画ツールバーを設定します…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Always show side toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>サイドツールバーを常に表示</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Always show bottom toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>ボトムツールバーを常に表示</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -2475,12 +2475,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Set Selection Mask &amp;Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>選択マスクと色を設定します…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the color tint of the selection mask</source>
-        <translation type="unfinished"></translation>
+        <translation>選択マスクの色合いを変更します</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3024,52 +3024,52 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+30"/>
         <source>Automatically inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>自動的にアルファ値を継承</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>ブレンドモードに基づいてアルファ値を継承および保持</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Alpha lock layer for you</source>
-        <translation type="unfinished"></translation>
+        <translation>透明度保護レイヤー</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Censor layer</source>
-        <translation type="unfinished"></translation>
+        <translation>センシティブレイヤー</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer entirely</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーロック完全</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer content</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーロックコンテンツ</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer properties</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーロックプロパティ</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer position</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーロック位置</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Layer Color Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーマーカーレイヤー</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>&amp;Locks</source>
-        <translation type="unfinished"></translation>
+        <translation>ロック(&amp;L)</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -3095,12 +3095,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+11"/>
         <source>Selection Lightness to Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲の明度をアルファに</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Selection Darkness to Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲の暗さをアルファに</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3120,7 +3120,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
-        <translation>選択とマスク自体のみを変換し、その後ツールを元に戻します</translation>
+        <translation>選択マスクのみを変形し、その後ツールを元に戻します</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3175,17 +3175,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Dra&amp;w on Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲に描画(&amp;w)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Mas&amp;k Strokes/Lasso Fills by Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>選択範囲でマスクストローク/なげなわ塗りつぶし</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Keep brush strokes inside the selection mask</source>
-        <translation type="unfinished"></translation>
+        <translation>選択マスク内にブラシストロークを保持</translation>
     </message>
     <message>
         <location line="+79"/>
@@ -3325,7 +3325,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+12"/>
         <source>Key Frame Color Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームカラーマーカー</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3460,22 +3460,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Lass&amp;o Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>なげなわ塗りつぶし(&amp;o)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Fill enclosed areas</source>
-        <translation type="unfinished"></translation>
+        <translation>囲まれた領域を塗りつぶす</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>グラデーション(&amp;G)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create a gradient inside selected areas</source>
-        <translation type="unfinished"></translation>
+        <translation>選択した範囲内にグラデーションを作成</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3521,12 +3521,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+30"/>
         <source>%1 and Deselect</source>
         <extracomment>This is the text for keyboard shortcuts that switch tools and remove the selection in a single action. %1 is the name of a tool, like &quot;Freehand&quot;, &quot;Eraser&quot; or &quot;Line&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 と選択解除</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Switch tool to %1 and deselect at once</source>
-        <translation type="unfinished"></translation>
+        <translation>ツールを%1に切り替えて一度に選択を解除</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3541,7 +3541,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Deselect Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>選択解除ショートカット</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -3556,32 +3556,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+17"/>
         <source>Toggle Alpha Preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ値保持の切り替え</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>toggle recolor mode/alpha preserve</source>
-        <translation type="unfinished"></translation>
+        <translation>色替えモード/アルファ値保持の切り替え</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Decrease Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの不透明度を下げる</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Increase Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの不透明度を上げる:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Decrease Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの硬さを下げる</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Increase Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの硬さを上げる</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3631,7 +3631,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+82"/>
         <source>Tool blend mode: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ツールのブレンドモード: %1</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -3694,137 +3694,137 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+137"/>
         <source>None</source>
-        <translation type="unfinished">なし</translation>
+        <translation>なし</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unmark layer</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーのマークを外す</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unmark key frame</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームのマークを外す</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Blue</source>
-        <translation type="unfinished">B</translation>
+        <translation>青</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer blue</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを青でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame blue</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを青でマーク</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Green</source>
-        <translation type="unfinished">G</translation>
+        <translation>緑</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer green</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを緑でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame green</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを緑でマーク</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>黄色</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを黄色でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを黄色でマーク</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Orange</source>
-        <translation type="unfinished"></translation>
+        <translation>オレンジ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer orange</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーをオレンジでマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame orange</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームをオレンジでマーク</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brown</source>
-        <translation type="unfinished"></translation>
+        <translation>茶色</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer brown</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを茶色でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame brown</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを茶色でマーク</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Red</source>
-        <translation type="unfinished">R</translation>
+        <translation>赤</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer red</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを赤でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame red</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを赤でマーク</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Purple</source>
-        <translation type="unfinished"></translation>
+        <translation>紫</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer purple</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを紫でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame purple</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを紫でマーク</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Gray</source>
-        <translation type="unfinished"></translation>
+        <translation>灰色</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark layer gray</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを灰色でマーク</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark key frame gray</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームを灰色にマーク</translation>
     </message>
 </context>
 <context>
@@ -3998,12 +3998,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+5"/>
         <source>Lasso Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>なげなわ塗りつぶし</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>グラデーション</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4250,13 +4250,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+40"/>
         <location line="+125"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-195"/>
         <location line="+247"/>
         <source>Operators: </source>
-        <translation type="unfinished"></translation>
+        <translation>管理者: </translation>
     </message>
     <message>
         <location line="-224"/>
@@ -4287,34 +4287,34 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="-30"/>
         <location line="+201"/>
         <source>Trusted: </source>
-        <translation type="unfinished"></translation>
+        <translation>信頼済み: </translation>
     </message>
     <message>
         <location line="-178"/>
         <source>Pigment &amp; OKLAB Brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pigment &amp; OKLAB ブラシ:</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+26"/>
         <source>Registered: </source>
-        <translation type="unfinished"></translation>
+        <translation>登録済み: </translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Brush size limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシサイズ制限:</translation>
     </message>
     <message>
         <location line="+30"/>
         <location line="+76"/>
         <source>Everyone: </source>
-        <translation type="unfinished"></translation>
+        <translation>全員: </translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Layer count limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー数制限:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -4493,7 +4493,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+24"/>
         <source>Rendering</source>
-        <translation type="unfinished"></translation>
+        <translation>レンダリング</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -4793,58 +4793,58 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+1184"/>
         <source>No dynamics</source>
-        <translation type="unfinished">ダイナミクスなし</translation>
+        <translation>ダイナミクスなし</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished">筆圧のダイナミクス</translation>
+        <translation>筆圧のダイナミクス</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished">速度のダイナミクス</translation>
+        <translation>速度のダイナミクス</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished">間隔ダイナミクス</translation>
+        <translation>間隔ダイナミクス</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished">最大の速度: </translation>
+        <translation>最大の速度: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished">最大の間隔: </translation>
+        <translation>最大の間隔: </translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+20"/>
         <source>Apply to All</source>
-        <translation type="unfinished">すべてに適用</translation>
+        <translation>すべてに適用</translation>
     </message>
     <message>
         <location line="-18"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ、不透明度、硬さ、混色、ジッターの最大速度を一度に設定します。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished">このブラシのすべての設定に設定された最大速度です。</translation>
+        <translation>このブラシのすべての設定に設定された最大速度です。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズ、不透明度、硬さ、混色、ジッターの最大距離を一度に設定します。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished">このブラシのすべての設定に設定されている最大間隔。</translation>
+        <translation>このブラシのすべての設定に設定されている最大間隔。</translation>
     </message>
 </context>
 <context>
@@ -5159,12 +5159,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-40"/>
         <source>Continuous chroma</source>
-        <translation>連続的な彩度</translation>
+        <translation>連続的な彩度(chroma)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Chroma steps: </source>
-        <translation>彩度の段階: </translation>
+        <translation>彩度(Chroma)の段階: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5179,32 +5179,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Continuous saturation</source>
-        <translation>連続的な彩度</translation>
+        <translation>連続的な彩度(Saturation)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Saturation steps: </source>
-        <translation>彩度の段階: </translation>
+        <translation>彩度(Saturation)の段階: </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continuous lightness</source>
-        <translation>連続的な明るさ</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Lightness steps: </source>
-        <translation>明るさの段階: </translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Continuous value</source>
         <translation>連続的な明度</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Value steps: </source>
+        <source>Lightness steps: </source>
         <translation>明度の段階: </translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Continuous value</source>
+        <translation>連続的な明るさ</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Value steps: </source>
+        <translation>明るさの段階: </translation>
     </message>
     <message>
         <location line="+8"/>
@@ -5383,12 +5383,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+8"/>
         <source>Allow others in a session to use this brush</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション内の他のユーザーがこのブラシを使用できるようにする</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Sharing:</source>
-        <translation type="unfinished"></translation>
+        <translation>共有:</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -5466,25 +5466,25 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+30"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+12"/>
         <source>Direct Build-Up</source>
-        <translation type="unfinished"></translation>
+        <translation>直接増大</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Wash</source>
-        <translation type="unfinished"></translation>
+        <translation>間接水彩</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Soft (Drawpile 2.2)</source>
-        <translation type="unfinished"></translation>
+        <translation>間接ソフト(Drawpile2.2)</translation>
     </message>
     <message>
         <location line="+7"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>Indirect Build-Up (Drawpile 2.1)</source>
-        <translation type="unfinished"></translation>
+        <translation>間接増大 (Drawpile 2.1)</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -5616,60 +5616,62 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="-425"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Smudge with transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>透明感のあるぼかし</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Enabling this will make smudging take the alpha channel into account.
 Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
-        <translation type="unfinished"></translation>
+        <translation>これを有効にすると、ぼかしがアルファチャネルを考慮します。
+無効にすると、Drawpile 2.3より前の挙動に戻ります。</translation>
     </message>
     <message>
         <location line="+100"/>
         <source>Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>ジッター: </translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Minimum Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>最小ジッター: </translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+300"/>
         <source>Jitter</source>
-        <translation type="unfinished">ジッター</translation>
+        <translation>ジッター</translation>
     </message>
     <message>
         <location line="-112"/>
         <source>Not available in indirect paint modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>間接描画モードでは利用できません。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Not available in indirect paint modes or when using a blend mode other than Normal.</source>
-        <translation type="unfinished"></translation>
+        <translation>間接描画モードまたは通常以外のブレンド モードを使用する場合は使用できません。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not available in indirect paint modes or when using the Marker or Greater Density blend modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>間接描画モードや、マーカー ブレンドモードまたは高密度ブレンド モードを使用している場合は使用できません。</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Synchronize smudging (slower, but more accurate)</source>
-        <translation type="unfinished"></translation>
+        <translation>ぼかしを同期する(遅いがより正確)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This will make the brush to wait for its own stroke to finish to allow it to accurately smudge with itself.
 If fast strokes cause artifacts when smudging, enabling this can help.</source>
-        <translation type="unfinished"></translation>
+        <translation>これによってブラシは自身のストロークが終了するまで待機し、ブラシ自身で正確にぼかすことができます。
+高速ストロークでぼかしをする際に異常が発生する場合は、これを有効にすると改善される可能性があります。</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Randomized offsets in the stroke center.</source>
-        <translation type="unfinished"></translation>
+        <translation>ストロークの中心のランダムなオフセット。</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -5684,7 +5686,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="-344"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ値保持</translation>
     </message>
     <message>
         <location line="+816"/>
@@ -5715,7 +5717,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+35"/>
         <source>Value: </source>
-        <translation>値: </translation>
+        <translation>明るさ: </translation>
     </message>
     <message>
         <location line="+12"/>
@@ -5745,17 +5747,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+71"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>ブレンド: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Minimum Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>最小ブレンド: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending</source>
-        <translation type="unfinished"></translation>
+        <translation>ブレンド</translation>
     </message>
     <message>
         <location line="+126"/>
@@ -6215,14 +6217,14 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Color saturation</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>彩度</translation>
+        <translation>色の彩度(Saturation)</translation>
     </message>
     <message>
         <location line="-198"/>
         <source>Color value</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>明度</translation>
+        <translation>色の明るさ</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6257,7 +6259,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Change color value (HSV)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>明度の変更(HSV)</translation>
+        <translation>明るさの変更(HSV)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6509,7 +6511,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
-        <translation>顔料</translation>
+        <translation>Pigment</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6704,7 +6706,7 @@ For very slow speed the opposite happens.</source>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>色の値 (明るさ、強度)</translation>
+        <translation>色の明るさ (明るさ、強度)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6753,7 +6755,7 @@ For very slow speed the opposite happens.</source>
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>HSL カラーモデルを使用して色の彩度を変更します。
+        <translation>HSL カラーモデルを使用して色の彩度(Saturation)を変更します。
 -1.0 よりグレーっぽくなります
  0.0 無効
  1.0 より飽和</translation>
@@ -6779,7 +6781,7 @@ For very slow speed the opposite happens.</source>
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>HSV カラーモデルを使用して色の彩度を変更します。 HSV の変更は HSL の前に適用されます。
+        <translation>HSV カラーモデルを使用して色の彩度(Saturation)を変更します。 HSV の変更は HSL の前に適用されます。
 -1.0 よりグレーっぽくなります
  0.0 無効
  1.0 より飽和</translation>
@@ -6926,7 +6928,7 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>明度と透明度を保持しながら、現在のブラシの色から色相と彩度を設定して、対象のレイヤを彩色します。</translation>
+        <translation>明るさと透明度を保持しながら、現在のブラシの色から色相と彩度(Saturation)を設定して、対象のレイヤを彩色します。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7114,7 +7116,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="+3"/>
         <source>Synchronize smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>ぼかしを同期</translation>
     </message>
 </context>
 <context>
@@ -7184,12 +7186,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの不透明度の変更</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの硬さの変更</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7199,12 +7201,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation>彩度を変更する</translation>
+        <translation>色の彩度(Saturation)を変更する</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation>明度を変更する</translation>
+        <translation>明るさを変更する</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7393,12 +7395,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+68"/>
         <source>Reset crop</source>
-        <translation type="unfinished"></translation>
+        <translation>切り出しのリセット</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Upscale to fit view</source>
-        <translation type="unfinished"></translation>
+        <translation>表示に合わせて拡大</translation>
     </message>
     <message>
         <location line="+100"/>
@@ -7523,17 +7525,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../mainwindow.cpp" line="-936"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファブレンド</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ値の継承</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>下のレイヤーにクリップ</translation>
     </message>
 </context>
 <context>
@@ -7915,37 +7917,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+113"/>
         <source>Width and height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 でホストされるセッションでは、幅と高さは 1 ～ %1 ピクセルの範囲でなければなりません。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Width must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 でホストされるセッションでは、幅は 1 ～ %1 ピクセルにする必要があります。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Height must be between 1 and %1 pixels in sessions hosted with Drawpile 2.2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 でホストされるセッションでは、高さは 1 ～ %1 ピクセルの範囲でなければなりません。</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Width and height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>幅と高さは 1 ～ %1 ピクセルの範囲でなければなりません。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Width must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>幅は 1 ～ %1 ピクセルの範囲で指定する必要があります。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height must be between 1 and %1 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>高さは 1 ～ %1 ピクセルの範囲でなければなりません。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Total size must be between 1 and %1 pixels (you&apos;re at %2.)</source>
-        <translation type="unfinished"></translation>
+        <translation>合計サイズは 1 ～ %1 ピクセルの範囲でなければなりません (現在は %2 です)</translation>
     </message>
 </context>
 <context>
@@ -8259,7 +8261,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8292,179 +8294,179 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/shadeselectordialog.cpp" line="+26"/>
         <source>Color Harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>色彩調和</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Show harmony swatches under color wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーホイールの下に調和見本を表示する</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Color harmony swatches are disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>色彩調和見本は無効になっています。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Click here to enable them.</source>
         <extracomment>&quot;Them&quot; refers to the color harmony swatches.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>有効にするには、ここをクリックしてください。</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Rows: </source>
-        <translation type="unfinished"></translation>
+        <translation>行: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Row height: </source>
-        <translation type="unfinished"></translation>
+        <translation>行の高さ </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Colors per row: </source>
-        <translation type="unfinished"></translation>
+        <translation>行ごとの色数: </translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Border: </source>
-        <translation type="unfinished"></translation>
+        <translation>境界線 </translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Set Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>色の設定…</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Custom</source>
-        <translation type="unfinished">カスタム</translation>
+        <translation>カスタム</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue</source>
-        <translation type="unfinished">色相</translation>
+        <translation>色相</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Saturation</source>
-        <translation type="unfinished">彩度</translation>
+        <translation>彩度(Saturation)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Chroma</source>
-        <translation type="unfinished"></translation>
+        <translation>彩度(Chroma)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Value</source>
-        <translation type="unfinished">明度</translation>
+        <translation>明るさ</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>明度</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>輝度</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shades</source>
-        <translation type="unfinished"></translation>
+        <translation>陰影</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Move Up</source>
-        <translation type="unfinished">上へ移動</translation>
+        <translation>上へ移動</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Move Down</source>
-        <translation type="unfinished">下へ移動</translation>
+        <translation>下へ移動</translation>
     </message>
     <message>
         <location line="+122"/>
         <location line="+4"/>
         <source>Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>範囲: </translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+12"/>
         <source>Saturation range: </source>
-        <translation type="unfinished"></translation>
+        <translation>彩度(Saturation)の範囲: </translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+12"/>
         <source>Chroma range: </source>
-        <translation type="unfinished"></translation>
+        <translation>彩度(Chroma)の範囲: </translation>
     </message>
     <message>
         <location line="-8"/>
         <location line="+12"/>
         <source>Value range: </source>
-        <translation type="unfinished"></translation>
+        <translation>明るさの範囲: </translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+12"/>
         <source>Lightness range: </source>
-        <translation type="unfinished"></translation>
+        <translation>明度の範囲: </translation>
     </message>
     <message>
         <location line="-11"/>
         <location line="+12"/>
         <source>Luminance range: </source>
-        <translation type="unfinished"></translation>
+        <translation>輝度の範囲: </translation>
     </message>
     <message>
         <location line="-8"/>
         <source>Hue range: </source>
-        <translation type="unfinished"></translation>
+        <translation>色相の範囲: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Hue offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>色相のオフセット: </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Saturation offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>彩度(Saturation)のオフセット: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Chroma offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>彩度(Chroma)のオフセット: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Value offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>明るさのオフセット: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lightness offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>明度のオフセット: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Luminance offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>輝度のオフセット: </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -8665,22 +8667,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/toolbarconfigdialog.cpp" line="+21"/>
         <source>Configure Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>ツールバーの設定</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Drag to reorder and uncheck to hide tools.</source>
-        <translation type="unfinished"></translation>
+        <translation>ドラッグして順序を変更しチェックを外すとツールが非表示になります。</translation>
     </message>
     <message>
         <location line="+88"/>
         <source>Reset</source>
-        <translation type="unfinished">リセット</translation>
+        <translation>リセット</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really revert the toolbar configuration to its default state?</source>
-        <translation type="unfinished"></translation>
+        <translation>ツールバーの設定を本当にデフォルト状態に戻しますか?</translation>
     </message>
 </context>
 <context>
@@ -8818,80 +8820,80 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation type="unfinished">有効にすると、%1 分ごとに保存されます</translation>
+        <translation>有効にすると、%1 分ごとに保存されます</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation type="unfinished">自動保存:</translation>
+        <translation>自動保存:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation type="unfinished">[ファイル] ▸ [自動保存] で現在のファイルの自動保存を有効にできます。</translation>
+        <translation>[ファイル] ▸ [自動保存] で現在のファイルの自動保存を有効にできます。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Use system file picker dialogs</source>
-        <translation type="unfinished"></translation>
+        <translation>システムのファイル選択ダイアログを使用</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Interface:</source>
-        <translation type="unfinished"></translation>
+        <translation>インターフェース:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>デフォルト(%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+14"/>
         <source>OpenRaster (.ora)</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenRaster形式(.ora)</translation>
     </message>
     <message>
         <location line="-12"/>
         <location line="+14"/>
         <source>Drawpile Canvas (.dpcs)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpileキャンバス(.dpcs)</translation>
     </message>
     <message>
         <location line="-12"/>
         <source>Preferred save format:</source>
-        <translation type="unfinished"></translation>
+        <translation>優先する保存形式:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>PNG (.png)</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG形式 (.png)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>JPEG (.jpg)</source>
-        <translation type="unfinished"></translation>
+        <translation>JPEG形式 (.jpg)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>QOI (.qoi)</source>
-        <translation type="unfinished"></translation>
+        <translation>QOI(Quite OK Image Format)形式 (.qoi)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>WEBP (.webp)</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBP形式 (.webp)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Photoshop Document (.psd)</source>
-        <translation type="unfinished"></translation>
+        <translation>Photoshopドキュメント形式(.psd)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preferred export format:</source>
-        <translation type="unfinished"></translation>
+        <translation>優先するエクスポート形式:</translation>
     </message>
 </context>
 <context>
@@ -9732,7 +9734,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-20"/>
         <source>Stylus</source>
-        <translation type="unfinished"></translation>
+        <translation>ペン</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9742,17 +9744,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Use separate curve for eraser tip</source>
-        <translation type="unfinished"></translation>
+        <translation>消しゴムの先端に別のカーブを使用する</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Eraser pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>消しゴム筆圧曲線:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Eraser</source>
-        <translation type="unfinished">消しゴム</translation>
+        <translation>消しゴム</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -9965,12 +9967,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+42"/>
         <source>Cancel action to deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>選択解除するにはキャンセル操作を行う</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Press %1 to deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>%1を押すと選択解除</translation>
     </message>
     <message numerus="yes">
         <location line="+25"/>
@@ -9987,17 +9989,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>HSV (Hue–Saturation–Value)</source>
-        <translation>HSV (色相 – 彩度 – 明度)</translation>
+        <translation>HSV (色相 – 彩度(Saturation) – 明るさ)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HSL (Hue–Saturation–Lightness)</source>
-        <translation>HSL (色相 – 彩度 – 明度)</translation>
+        <translation>HSL (色相 – 彩度(Saturation) – 明度)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HCL (Hue–Chroma–Luminance)</source>
-        <translation>HCL (色相 – 彩度 – 輝度)</translation>
+        <translation>HCL (色相 – 彩度(Chroma) – 輝度)</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -10169,12 +10171,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">スムージング:</translation>
+        <translation>スムージング:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -10313,7 +10315,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Automatically inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>ブレンドモードに基づいて自動的にアルファ値を継承、保持します</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10376,7 +10378,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
-        <translation>パブリック Drawpile サーバーを追加するには、&lt;a href=&quot;#&quot;&gt;ここをクリック&lt;/a&gt;してください。</translation>
+        <translation>公開 Drawpile サーバーを追加するには、&lt;a href=&quot;#&quot;&gt;ここをクリック&lt;/a&gt;してください。</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -10702,7 +10704,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation>ドローイングセッションへの招待リンクがある場合は、直接&lt;a href=&quot;#join&quot;&gt;参加&lt;/a&gt;できます。 あるいはパブリックセッションを&lt;a href=&quot;#browse&quot;&gt;参照&lt;/a&gt;したり、&lt;a href=&quot;#create&quot;&gt;新しいキャンバス&lt;/a&gt;を作成して独自に描画したりすることもできます。</translation>
+        <translation>ドローイングセッションへの招待リンクがある場合は、直接&lt;a href=&quot;#join&quot;&gt;参加&lt;/a&gt;できます。 あるいは公開セッションを&lt;a href=&quot;#browse&quot;&gt;参照&lt;/a&gt;したり、&lt;a href=&quot;#create&quot;&gt;新しいキャンバス&lt;/a&gt;を作成して独自に描画したりすることもできます。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -10852,7 +10854,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+139"/>
         <source>Listing: a title is required for public sessions</source>
-        <translation>リスト: パブリックセッションにはタイトルが必要です</translation>
+        <translation>リスト: 公開セッションにはタイトルが必要です</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10976,7 +10978,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Pigment and OKLAB brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>PigmentとOKLABブラシ:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11001,18 +11003,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Maximum brush size:</source>
-        <translation type="unfinished"></translation>
+        <translation>最大ブラシサイズ:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Maximum amount of layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>最大レイヤー数:</translation>
     </message>
     <message>
         <location line="+171"/>
         <source>%1: </source>
         <extracomment>%1 is an acccess tier, like &quot;Operator&quot; or &quot;Everyone&quot;. Unless your language uses something other than a colon, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: </translation>
     </message>
     <message>
         <location line="+296"/>
@@ -11022,7 +11024,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-10"/>
@@ -11129,7 +11131,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Public session, anyone can freely join</source>
-        <translation>パブリックセッション、誰でも自由に参加できます</translation>
+        <translation>公開セッション、誰でも自由に参加できます</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11194,7 +11196,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+70"/>
         <source>This will host your session on the public Drawpile server. It&apos;s freely available for anyone. To keep space available, sessions will be stopped when they&apos;re inactive for a while or after everybody leaves.</source>
-        <translation>この操作を行うと、あなたのセッションはパブリックDrawpileサーバー上でホストされます。このサーバーは誰でも無料で利用できます。スペースを確保するため、セッションが一定時間アクティブでない状態が続くか参加者全員が退出した場合、セッションは自動的に停止されます。</translation>
+        <translation>この操作を行うと、あなたのセッションは公開Drawpileサーバー上でホストされます。このサーバーは誰でも無料で利用できます。スペースを確保するため、セッションが一定時間アクティブでない状態が続くか参加者全員が退出した場合、セッションは自動的に停止されます。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -11450,7 +11452,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Configure…</source>
-        <translation>構成…</translation>
+        <translation>設定…</translation>
     </message>
 </context>
 <context>
@@ -11826,22 +11828,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+22"/>
         <source>Show color harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>色彩調和の表示</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle the harmony swatches below the color wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>カラーホイールの下の調和見本の表示を切り替える</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Configure color harmonies…</source>
-        <translation type="unfinished"></translation>
+        <translation>色彩調和の設定…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change the color harmonies and how they are displayed</source>
-        <translation type="unfinished"></translation>
+        <translation>色彩調和とその表示方法を変更する</translation>
     </message>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+12"/>
@@ -11868,7 +11870,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="+27"/>
         <source>Locks:</source>
-        <translation type="unfinished"></translation>
+        <translation>ロック:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -11911,17 +11913,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Locks and permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>ロックと権限</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished"></translation>
+        <translation>下のレイヤーにクリップ</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>アルファ値の継承</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -11997,26 +11999,26 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1033"/>
         <source>Layer Limit Reached</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー数制限に到達</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>Can&apos;t create another/%n more layer(s).</source>
         <extracomment>Singular should be &quot;can&apos;t create another layer&quot;, plural &quot;can&apos;t create %n more layers&quot;. Change this to make sense in your language.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>別の/%n 以上のレイヤーを作成できません。</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The layer limit in sessions hosted with Drawpile 2.2 is 256 per user.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 でホストされるセッションのレイヤー数制限は、ユーザーあたり 256 です。</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>The layer limit for you is %n layer(s), session operators can change this in the session settings.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>レイヤー数制限は %n レイヤーです。セッションの管理者はセッション設定でこれを変更できます。</numerusform>
         </translation>
     </message>
     <message>
@@ -12326,17 +12328,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Vector</source>
-        <translation type="unfinished"></translation>
+        <translation>ベクター</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished">スムーズ</translation>
+        <translation>スムーズ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pixel</source>
-        <translation type="unfinished"></translation>
+        <translation>ピクセル</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -12445,34 +12447,34 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+143"/>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>OKLAB または Pigment モードでブラシを使用する権限がありません。</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>/%1px</source>
         <extracomment>Limit suffix for the brush size slider, %1 is the size limit. So it will look something like &quot;100/255px&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1px</translation>
     </message>
     <message>
         <location line="+648"/>
         <source>Smudging: </source>
-        <translation type="unfinished">混色: </translation>
+        <translation>混色: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>ブレンド: </translation>
     </message>
     <message>
         <location line="+731"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1</translation>
     </message>
     <message>
         <location line="-1417"/>
@@ -12546,129 +12548,129 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/gradientsettings.cpp" line="-277"/>
         <source>Foreground: </source>
-        <translation type="unfinished"></translation>
+        <translation>前景色: </translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>不透明度: </translation>
     </message>
     <message>
         <location line="+111"/>
         <source>Foreground color to transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>前景色を透明にする</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Transparency to foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>前景色の透明度</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Foreground color to background color</source>
-        <translation type="unfinished"></translation>
+        <translation>前景色から背景色へ</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Background color to foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>背景色から前景色へ</translation>
     </message>
     <message>
         <location line="+34"/>
         <location line="+11"/>
         <location line="+44"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="-45"/>
         <source>Background: </source>
-        <translation type="unfinished"></translation>
+        <translation>背景色: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Linear</source>
-        <translation type="unfinished">リニア</translation>
+        <translation>直線</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Straight gradient shape</source>
-        <translation type="unfinished"></translation>
+        <translation>直線グラデーション形状</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Radial</source>
-        <translation type="unfinished"></translation>
+        <translation>放射状</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Circular gradient shape</source>
-        <translation type="unfinished"></translation>
+        <translation>円形グラデーション形状</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Shape:</source>
-        <translation type="unfinished"></translation>
+        <translation>形状:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Focus: </source>
-        <translation type="unfinished"></translation>
+        <translation>フォーカス: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Pad</source>
-        <translation type="unfinished"></translation>
+        <translation>繰り返さない</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Continue gradient by padding it with the nearest color</source>
-        <translation type="unfinished"></translation>
+        <translation>最も近い色で敷き詰めてグラデーションを繰り返します</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Reflect</source>
-        <translation type="unfinished"></translation>
+        <translation>繰り返し</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continue gradient by reflecting it</source>
-        <translation type="unfinished"></translation>
+        <translation>繰り返してグラデーションを続ける</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Spread:</source>
-        <translation type="unfinished"></translation>
+        <translation>敷き詰め:</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Mode:</source>
-        <translation type="unfinished">モード:</translation>
+        <translation>モード:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Apply</source>
-        <translation type="unfinished">適用</translation>
+        <translation>適用</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply the gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>グラデーションを適用</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation>キャンセル</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Discard the gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>グラデーションを破棄</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>The gradient tool requires a selection to operate in.</source>
-        <translation type="unfinished"></translation>
+        <translation>グラデーションツールの利用には選択範囲が必要です。</translation>
     </message>
 </context>
 <context>
@@ -12696,42 +12698,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-16"/>
         <source>Stabilization mode</source>
-        <translation type="unfinished"></translation>
+        <translation>手ブレ補正モード</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>Mode:</source>
-        <translation type="unfinished">モード:</translation>
+        <translation>モード:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Anti-aliasing</source>
-        <translation type="unfinished">アンチエイリアス</translation>
+        <translation>アンチエイリアス</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smoothe out fill edges</source>
-        <translation type="unfinished"></translation>
+        <translation>塗りつぶし境界を滑らかにする</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished">適用</translation>
+        <translation>適用</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply the current fill</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の塗りつぶしを適用</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation>キャンセル</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Discard the current fill</source>
-        <translation type="unfinished"></translation>
+        <translation>現在の塗りつぶしを破棄</translation>
     </message>
 </context>
 <context>
@@ -12899,7 +12901,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Opacity: </source>
-        <translation>透明度: </translation>
+        <translation>不透明度: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -13034,7 +13036,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Tool requires a selection</source>
-        <translation type="unfinished"></translation>
+        <translation>このツールには選択範囲が必要です</translation>
     </message>
 </context>
 <context>
@@ -13830,7 +13832,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+2"/>
         <source>Request Current &amp;Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のブラシをリクエスト(&amp;B)</translation>
     </message>
     <message>
         <location line="+102"/>

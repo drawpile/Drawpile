@@ -19,222 +19,222 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>メモリの割り当てに失敗しました。ブラウザによっては、更新時にこのような現象が発生することがあります。このページとブラウザを完全に閉じてから、もう一度お試しください。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラウザはSharedArrayBufferをサポートしていますが、割り当てられたメモリはSharedArrayBufferではありません。設定を変更する必要があるかもしれません。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpileのロゴ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation>drawpile.netへログイン</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>アプリケーションを起動しています</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>開始しています…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>開始中、これにはしばらく時間がかかる場合があります…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation type="unfinished"></translation>
+        <translation>アセットダウンロード中</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>読込中、これにはしばらく時間がかかる場合があります…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>準備中</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>初期化中、これにはしばらく時間がかかる場合があります…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpileの開始に失敗: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>設定中…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation type="unfinished"></translation>
+        <translation>致命的なエラー:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>これは通常ブラウザが古い場合か、チャットアプリケーションのような何らかの組み込みブラウザを介してページを表示しているためです。詳細については、&lt;a href=&quot;#&quot;&gt;このヘルプページ&lt;/a&gt;をご覧ください。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なセッションリンク。</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpileセッションへの有効なリンクからアクセスされませんでした。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;アプリ内ブラウザ：&lt;/strong&gt;アプリ内ブラウザーでDrawpileを開いたようです。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;アプリ内ブラウザー：&lt;/strong&gt;%1のアプリ内ブラウザでDrawpileを開いたようです。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>通常それは正常に機能しません。代わりに実際のウェブブラウザでこのページを開いてください。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation type="unfinished"></translation>
+        <translation>おそらく互換性のないブラウザ:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;おそらく互換性のないブラウザ:&lt;/strong&gt; LinuxのFirefoxは、すべてのシステムで筆圧感知を持つペンをサポートしていません。筆圧がかからない場合は、別のブラウザまたは&lt;a href=&quot;#&quot;&gt;Linuxアプリケーション版を使用することを検討してください&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;互換性のないブラウザ:&lt;/strong&gt; WindowsのfirefoxはDrawpileの実行に問題が発生します。テキストの入力や/Ctrl+Zの押下が、正常に機能しない場合があります。別のブラウザまたは&lt;a href=&quot;#&quot;&gt;Windowsアプリケーション版を使用することを検討してください&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;互換性のないブラウザ:&lt;/strong&gt;%1のChromeはDrawpileの実行に問題があります。このブラウザは、実質的にシステムの標準ブラウザ（Safari）と同じ仕組みで動作するため、操作パネル等が画面の外にはみ出してしまう等の表示上の問題が起きることがあります。代わりにシステム標準のブラウザ（Safari）を直接使用することを検討してください。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>言語:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Test your pen pressure here</source>
-        <translation type="unfinished"></translation>
+        <translation>ここでペンの筆圧をテストしてください</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>ペンではなくマウス入力を検出しました</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected touch input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>ペンではなくタッチ入力を検出しました</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected input, but not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>ペンではない入力を検出しました</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen pressure detected</source>
-        <translation type="unfinished"></translation>
+        <translation>ペンの筆圧を検出しました</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen detected, but no pressure variance</source>
-        <translation type="unfinished"></translation>
+        <translation>ペンを検出しましたが筆圧の変化がありません</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished">アップデートの確認…</translation>
+        <translation>アップデートの確認…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Update check blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>アップデートの確認がブロックされました</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;警告:&lt;/strong&gt;このインストールは&lt;strong&gt;古い&lt;/strong&gt;バージョン&lt;code&gt;%1&lt;/code&gt;で、これは最新のバージョン&lt;code&gt;%2 &lt;/code&gt;ではありません。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>ページを更新してみてください。それが何も変更されない場合は、サーバーの所有者に更新するように通知します。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;警告:&lt;/strong&gt;インストールが最新かどうかを判断できませんでした。バージョン&lt;code&gt;%1 &lt;/code&gt;は古いバージョンである場合があります。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
-        <translation type="unfinished"></translation>
+        <translation>ページを更新してみてください。それが何も変更されない場合はサーバーの所有者に相談するか、&lt;a href=&quot;#&quot;&gt;drawpile.net&lt;/a&gt;のヘルプページをチェックしてください。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue regardless, but things may not work properly.</source>
-        <translation type="unfinished"></translation>
+        <translation>それでも続行できますが、正しく動作しない場合があります。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>始点</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Start Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>とにかく始める</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>バージョン:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Stable (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>安定版 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Beta (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>ベータ (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The session you are trying to join requires the beta version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>参加しようとしているセッションにはベータ版のDrawpileが必要です。</translation>
     </message>
 </context>
 <context>
@@ -303,7 +303,7 @@
         <location line="+8"/>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスのサイズが範囲外です、%2の幅と高さは1〜%1の間でなければなりません。</translation>
     </message>
 </context>
 <context>
@@ -351,7 +351,7 @@
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation>%1 時間 %2 分 {1:?} {2?}</translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -433,12 +433,12 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ透明度を変更</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシの硬さを変更</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -483,7 +483,7 @@
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation>明度を変更</translation>
+        <translation>色の明るさを変更</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -970,22 +970,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Greater Density</source>
-        <translation type="unfinished"></translation>
+        <translation>高密度</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>マーカー</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>OKLAB</source>
-        <translation type="unfinished"></translation>
+        <translation>OKLAB</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pigment</source>
-        <translation type="unfinished"></translation>
+        <translation>Pigment</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1005,42 +1005,42 @@ Select a regular layer instead.</source>
     <message>
         <location line="+12"/>
         <source>Linear Dodge/Add</source>
-        <translation type="unfinished"></translation>
+        <translation>覆い焼き(リニア/加算)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>焼き込みカラー</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation>覆い焼きカラー</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Vivid Light</source>
-        <translation type="unfinished"></translation>
+        <translation>ビビッドライト</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation type="unfinished"></translation>
+        <translation>ピンライト</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Darker Color</source>
-        <translation type="unfinished"></translation>
+        <translation>カラー比較(暗)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighter Color</source>
-        <translation type="unfinished"></translation>
+        <translation>カラー比較(明)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference</source>
-        <translation type="unfinished"></translation>
+        <translation>差の絶対値</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1050,42 +1050,42 @@ Select a regular layer instead.</source>
     <message>
         <location line="+30"/>
         <source>Shade (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>陰影(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>発光(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shade/Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>明暗(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>焼き込み(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>覆い焼き(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn/Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>焼き/覆い(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Hard Mix (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>ハードミックス(SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>差の絶対値(SAI)</translation>
     </message>
     <message>
         <location line="-108"/>
@@ -1576,12 +1576,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+14"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation>セッションのパスワードはサーバーの管理者によって削除されました。このサーバーは、パブリックセッションでWebブラウザを許可していないため切断されます。</translation>
+        <translation>セッションのパスワードはサーバーの管理者によって削除されました。このサーバーは、公開セッションでWebブラウザを許可していないため切断されます。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation>セッションのパスワードは %1 によって削除されました。このサーバーは、パブリックセッションでWebブラウザを許可していないため切断されます。</translation>
+        <translation>セッションのパスワードは %1 によって削除されました。このサーバーは、公開セッションでWebブラウザを許可していないため切断されます。</translation>
     </message>
     <message>
         <location line="+93"/>
@@ -1962,7 +1962,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation>ここでは公開セッションをホストすることは許可されていません、個人セッションのみが許可されています。 セッションタブでパブリックから個人に切り替えることができます。</translation>
+        <translation>ここでは公開セッションをホストすることは許可されていません、個人セッションのみが許可されています。 セッションタブで公開から個人に切り替えることができます。</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -1985,17 +1985,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (互換モード)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.3 (完全互換)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Unlisted</source>
-        <translation type="unfinished"></translation>
+        <translation>未リスト</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2162,7 +2162,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/gradient.cpp" line="+135"/>
         <source>You need to drag to create a gradient.</source>
-        <translation type="unfinished"></translation>
+        <translation>グラデーションを作成するにはドラッグする必要があります。</translation>
     </message>
 </context>
 <context>
