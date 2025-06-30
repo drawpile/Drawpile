@@ -8475,7 +8475,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Luminance offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento de luminancia: </translation>
     </message>
     <message>
         <location line="+12"/>
@@ -8593,32 +8593,32 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+5"/>
         <source>Save/Load</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar/Cargar</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Reload defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation>Recargar valores predeterminados…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Load settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargar ajustes…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save settings…</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar ajustes…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import from file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar desde archivo…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Export to file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar a archivo…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8669,7 +8669,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/systeminfodialog.cpp" line="+28"/>
         <source>System Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Información del sistema</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8682,12 +8682,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/toolbarconfigdialog.cpp" line="+21"/>
         <source>Configure Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurar la barra de herramientas</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Drag to reorder and uncheck to hide tools.</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastre para reordenar y desmarque para ocultar herramientas</translation>
     </message>
     <message>
         <location line="+88"/>
