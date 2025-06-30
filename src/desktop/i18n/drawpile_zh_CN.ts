@@ -8836,12 +8836,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Use system file picker dialogs</source>
-        <translation type="unfinished"></translation>
+        <translation>使用系统文件选择器窗口</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Interface:</source>
-        <translation type="unfinished"></translation>
+        <translation>界面:</translation>
     </message>
     <message>
         <location line="+7"/>
