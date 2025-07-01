@@ -3027,7 +3027,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>&amp;Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Degradat</translation>
     </message>
     <message>
         <location line="+0"/>
