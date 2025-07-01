@@ -4840,7 +4840,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix la mida màxima per a la mida, l&apos;opacitat, la duresa i el difuminat alhora.</translation>
     </message>
     <message>
         <location line="+14"/>
