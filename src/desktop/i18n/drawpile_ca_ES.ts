@@ -3380,7 +3380,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Undo Limit…</source>
-        <translation>Límit de desfer…</translation>
+        <translation>Límit de retrocessos:</translation>
     </message>
     <message>
         <location line="+2"/>
