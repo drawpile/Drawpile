@@ -4794,7 +4794,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+1184"/>
         <source>No dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Sense dinàmiques de pinzell.</translation>
     </message>
     <message>
         <location line="+2"/>
