@@ -10743,7 +10743,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/bans.cpp" line="+25"/>
         <source>No bans imported.</source>
-        <translation>Uno ha Bandos importados.</translation>
+        <translation>No se importaron Bandos.</translation>
     </message>
     <message>
         <location line="+30"/>
