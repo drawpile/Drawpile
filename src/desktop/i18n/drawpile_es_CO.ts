@@ -10096,12 +10096,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Toggle eraser</source>
-        <translation>Alternar a borrador</translation>
+        <translation>Alternar borrador</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle erase mode</source>
-        <translation>Alternar a modo de borrador</translation>
+        <translation>Alternar modo de borrador</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10111,27 +10111,27 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+13"/>
         <source>One-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Toque con un dedo:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Two-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Toque con dos dedos:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Three-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Toque con tres dedos:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Four-finger tap:</source>
-        <translation type="unfinished"></translation>
+        <translation>Toque con cuatro dedos:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>elegir color</translation>
     </message>
     <message>
         <location line="+8"/>
