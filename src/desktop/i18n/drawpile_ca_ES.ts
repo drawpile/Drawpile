@@ -4305,7 +4305,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="+30"/>
         <location line="+76"/>
         <source>Everyone: </source>
-        <translation type="unfinished"></translation>
+        <translation>Tothom </translation>
     </message>
     <message>
         <location line="-30"/>
