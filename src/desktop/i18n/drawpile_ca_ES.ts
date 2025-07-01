@@ -4830,7 +4830,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="-18"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation>Estableix la velocitat màxima per a la mida, l&apos;opacitat, la duresa i el difuminat alhora.</translation>
+        <translation>Estableix la velocitat màxima per a la mida, l&apos;opacitat, la duresa, el difuminat i la dispersió alhora.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4840,7 +4840,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation>Estableix la mida màxima per a la mida, l&apos;opacitat, la duresa i el difuminat alhora.</translation>
+        <translation>Estableix la mida màxima per a la mida, l&apos;opacitat, la duresa, el difuminat i la dispersió alhora.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -5631,18 +5631,18 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="+100"/>
         <source>Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>Dispersió: </translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Minimum Jitter: </source>
-        <translation type="unfinished"></translation>
+        <translation>Dispersió mínima: </translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+300"/>
         <source>Jitter</source>
-        <translation type="unfinished">Dispersió</translation>
+        <translation>Dispersió</translation>
     </message>
     <message>
         <location line="-112"/>
@@ -6163,7 +6163,7 @@ Fixeu-vos en &quot;Tocs per radi bàsic&quot; i &quot;Tocs per radi real&quot;, 
         <source>Jitter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Dispersió</translation>
+        <translation>Dispersió</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6452,7 +6452,7 @@ Fixeu-vos en &quot;Tocs per radi bàsic&quot; i &quot;Tocs per radi real&quot;, 
         <source>Angular Offset: View</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Desplaçament angular: Visualització</translation>
+        <translation>Desplaçament angular: Vista</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6494,7 +6494,7 @@ Fixeu-vos en &quot;Tocs per radi bàsic&quot; i &quot;Tocs per radi real&quot;, 
         <source>Posterize</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Posterització</translation>
     </message>
     <message>
         <location line="+3"/>
