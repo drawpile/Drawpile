@@ -2460,7 +2460,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="+17"/>
         <location line="+10"/>
         <source>File is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>El fitxer és buit</translation>
     </message>
     <message>
         <location line="-10"/>
