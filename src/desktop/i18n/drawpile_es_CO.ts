@@ -10791,7 +10791,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+8"/>
         <source>Replace ban list</source>
-        <translation>Reemplazar la lista de prohibición</translation>
+        <translation>Reemplazar la lista de Bans</translation>
     </message>
 </context>
 <context>
@@ -10799,22 +10799,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+501"/>
         <source>Export Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Ajustes</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pick the sections you want to export:</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione las secciones que desea exportar:</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Export Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de Exportación</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Could not export session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo exportar la configuración de la sesión.</translation>
     </message>
 </context>
 <context>
@@ -10822,12 +10822,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-113"/>
         <source>Import Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar Ajustes</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to import:</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione las secciones que desea importar:</translation>
     </message>
 </context>
 <context>
@@ -10835,12 +10835,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/listing.cpp" line="+38"/>
         <source>Set title automatically</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer título automáticamente</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Enter a publicly visible title</source>
-        <translation type="unfinished"></translation>
+        <translation>Introduzca un título visible públicamente</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10850,12 +10850,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+11"/>
         <source>Publicly visible ID for pretty invite links</source>
-        <translation type="unfinished"></translation>
+        <translation>ID visible públicamente para enlaces de invitación atractivos</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>ID alias:</source>
-        <translation type="unfinished"></translation>
+        <translation>Alias de ID:</translation>
     </message>
     <message>
         <location line="+13"/>
