@@ -601,7 +601,7 @@
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save a different format.</source>
-        <translation>El format seleccionat desara una imatge fusionada. Si voleu mantenir les capes, anotacions i la línia de temps d&apos;animació, heu de guardar com a fitxer ORA.</translation>
+        <translation>El format seleccionat desarà una imatge fusionada. Si voleu mantenir les capes, anotacions i la línia de temps d&apos;animació, heu de guardar en un format diferent.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -2075,7 +2075,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+157"/>
         <source>Configure drawing toolbar…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configura la barra d&apos;eines de dibuix…</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2280,7 +2280,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+4"/>
         <source>Lock layer properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloqueja les propietats de la capa</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2460,7 +2460,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="+17"/>
         <location line="+10"/>
         <source>File is empty.</source>
-        <translation>El fitxer és buit</translation>
+        <translation>El fitxer és buit.</translation>
     </message>
     <message>
         <location line="-10"/>
@@ -3027,7 +3027,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>&amp;Gradient</source>
-        <translation>Degradat</translation>
+        <translation>De&amp;gradat</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3143,12 +3143,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+10"/>
         <source>Decrease Brush Opacity</source>
-        <translation>Disminueix la opacitat del pinzell</translation>
+        <translation>Disminueix l&apos;opacitat del pinzell</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Increase Brush Opacity</source>
-        <translation>Incrementa la opacitat del pinzell</translation>
+        <translation>Incrementa l&apos;opacitat del pinzell</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3380,7 +3380,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Undo Limit…</source>
-        <translation>Límit de retrocessos:</translation>
+        <translation>Límit de retrocessos…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3740,7 +3740,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+6"/>
         <source>Yellow</source>
-        <translation>Groga</translation>
+        <translation>Groc</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4277,13 +4277,13 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="-195"/>
         <location line="+247"/>
         <source>Operators: </source>
-        <translation>Operadors </translation>
+        <translation>Operadors: </translation>
     </message>
     <message>
         <location line="-214"/>
         <location line="+201"/>
         <source>Trusted: </source>
-        <translation>De confiança </translation>
+        <translation>De confiança: </translation>
     </message>
     <message>
         <location line="-178"/>
@@ -4294,7 +4294,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="+17"/>
         <location line="+26"/>
         <source>Registered: </source>
-        <translation type="unfinished"></translation>
+        <translation>Registrats: </translation>
     </message>
     <message>
         <location line="-7"/>
@@ -4305,7 +4305,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="+30"/>
         <location line="+76"/>
         <source>Everyone: </source>
-        <translation>Tothom </translation>
+        <translation>Tothom: </translation>
     </message>
     <message>
         <location line="-30"/>
@@ -4794,7 +4794,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+1184"/>
         <source>No dynamics</source>
-        <translation>Sense dinàmiques de pinzell.</translation>
+        <translation>Sense dinàmiques</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5134,7 +5134,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location filename="../dialogs/artisticcolorwheeldialog.cpp" line="+24"/>
         <source>Color Circle Settings</source>
-        <translation>Configuració dels cercles</translation>
+        <translation>Configuració dels cercles de color</translation>
     </message>
     <message>
         <location line="+86"/>
