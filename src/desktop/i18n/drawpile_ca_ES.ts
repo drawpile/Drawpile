@@ -5134,7 +5134,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location filename="../dialogs/artisticcolorwheeldialog.cpp" line="+24"/>
         <source>Color Circle Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuració dels cercles</translation>
     </message>
     <message>
         <location line="+86"/>
