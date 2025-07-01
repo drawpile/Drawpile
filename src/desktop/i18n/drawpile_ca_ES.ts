@@ -3755,7 +3755,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+7"/>
         <source>Orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Taronja</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3770,7 +3770,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+7"/>
         <source>Brown</source>
-        <translation type="unfinished"></translation>
+        <translation>Marró</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3800,7 +3800,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+6"/>
         <source>Purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Morat</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3815,7 +3815,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+7"/>
         <source>Gray</source>
-        <translation type="unfinished"></translation>
+        <translation>Gris</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4004,7 +4004,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+5"/>
         <source>Gradient</source>
-        <translation type="unfinished"></translation>
+        <translation>Degradat</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4830,7 +4830,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="-18"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix la velocitat màxima per a la mida, l&apos;opacitat, la duresa i el difuminat alhora.</translation>
     </message>
     <message>
         <location line="+14"/>
