@@ -3143,7 +3143,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+10"/>
         <source>Decrease Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Disminueix la opacitat del pinzell</translation>
     </message>
     <message>
         <location line="+3"/>
