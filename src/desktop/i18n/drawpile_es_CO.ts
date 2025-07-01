@@ -10743,7 +10743,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/bans.cpp" line="+25"/>
         <source>No bans imported.</source>
-        <translation>No se importaron Bandos.</translation>
+        <translation>No se importaron Baneos.</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -10761,12 +10761,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Listado</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Replace announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>Reemplazar anuncios</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10781,7 +10781,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+8"/>
         <source>Replace role list</source>
-        <translation type="unfinished"></translation>
+        <translation>Reemplazar lista de roles</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10791,7 +10791,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+8"/>
         <source>Replace ban list</source>
-        <translation type="unfinished"></translation>
+        <translation>Reemplazar la lista de prohibición</translation>
     </message>
 </context>
 <context>
