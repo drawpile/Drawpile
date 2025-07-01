@@ -184,6 +184,8 @@ signals:
 	void serverDisconnected(
 		const QString &message, const QString &errorcode, bool localDisconnect,
 		bool anyMessageReceived);
+	void
+	serverDisconnectedAgain(const QString &message, const QString &errorcode);
 	void compatibilityModeChanged(bool compatibilityMode);
 
 	void canvasChanged(canvas::CanvasModel *canvas);

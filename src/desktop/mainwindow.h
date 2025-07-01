@@ -223,6 +223,8 @@ private slots:
 	void onServerDisconnected(
 		const QString &message, const QString &errorcode, bool localDisconnect,
 		bool anyMessageReceived);
+	void
+	onServerDisconnectedAgain(const QString &message, const QString &errorcode);
 	void onCompatibilityModeChanged(bool compatibilityMode);
 	void onNsfmChanged(bool nsfm);
 
