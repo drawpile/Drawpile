@@ -10305,12 +10305,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+33"/>
         <source>Zoom, rotate, mirror and flip notices</source>
-        <translation type="unfinished"></translation>
+        <translation>Avisos de acercar, rotar, reflejar y voltear</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>On-canvas notices:</source>
-        <translation type="unfinished"></translation>
+        <translation>Avisos en el lienzo:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10325,7 +10325,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Prompt when creating layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Aviso al crear capas</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10335,7 +10335,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+5"/>
         <source>Automatically inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Heredar y conservar automáticamente el alfa según el modo de fusión</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10345,7 +10345,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+20"/>
         <source>Scale factor: </source>
-        <translation type="unfinished"></translation>
+        <translation>Factor de escala: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10355,12 +10355,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+19"/>
         <source>Font size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño de fuente:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Vertical sync:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sincronización vertical:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10375,17 +10375,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+16"/>
         <source>%1px</source>
-        <translation type="unfinished"></translation>
+        <translation>%1px</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <translation type="unfinished"></translation>
+        <translation>%1pt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Changes apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Los cambios se aplican al reiniciar Drawpile. El factor de escala actual es %1% y el tamaño de fuente es %2.</translation>
     </message>
 </context>
 <context>
@@ -10438,12 +10438,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>Inactivo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar sesiones que no tienen usuarios que dibujen activamente</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10535,7 +10535,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Listado</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10555,35 +10555,35 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+51"/>
         <source>Host Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Error de host</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>Invalid input(s), please correct the following:</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Entrada no válida, corrija lo siguiente:</numerusform>
+            <numerusform>Entradas no válidas, corrija lo siguiente:</numerusform>
         </translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Failed to read file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo leer el archivo: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No file or content received.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se recibió ningún archivo o contenido.</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Import Failed</source>
-        <translation type="unfinished"></translation>
+        <translation>La importación falló</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Could not import session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo importar la configuración de la sesión.</translation>
     </message>
 </context>
 <context>
