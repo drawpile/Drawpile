@@ -10855,7 +10855,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>ID alias:</source>
-        <translation>Alias de ID:</translation>
+        <translation>alias de ID:</translation>
     </message>
     <message>
         <location line="+13"/>
