@@ -8861,12 +8861,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Use system file picker dialogs</source>
-        <translation type="unfinished"></translation>
+        <translation>Використовуйте діалоги для вибору системних файлів</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Interface:</source>
-        <translation type="unfinished"></translation>
+        <translation>Інтерфейс:</translation>
     </message>
     <message>
         <location line="+7"/>
