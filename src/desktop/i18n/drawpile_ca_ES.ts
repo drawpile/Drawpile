@@ -4277,7 +4277,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="-195"/>
         <location line="+247"/>
         <source>Operators: </source>
-        <translation type="unfinished"></translation>
+        <translation>Operadors </translation>
     </message>
     <message>
         <location line="-214"/>
