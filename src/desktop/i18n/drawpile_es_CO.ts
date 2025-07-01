@@ -10131,12 +10131,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation>elegir color</translation>
+        <translation>Seleccionar color/Cuentagotas</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>One-finger tap and hold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Toque y mantenga presionado con un dedo:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -10151,12 +10151,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Guess</source>
-        <translation type="unfinished"></translation>
+        <translation>Reconoces</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>One-finger touch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Toque con un dedo:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10166,17 +10166,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Two-finger pinch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pellizco con dos dedos:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Girar el lienzo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Free rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotación libre del lienzo</translation>
     </message>
     <message>
         <location line="+3"/>
