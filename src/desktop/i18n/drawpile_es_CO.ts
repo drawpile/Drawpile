@@ -10176,17 +10176,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Free rotate canvas</source>
-        <translation>Rotación libre del lienzo</translation>
+        <translation>Rotación libre del Lienzo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet rotate canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotación de lienzo con trinquete (en pasos fijos)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Two-finger twist:</source>
-        <translation type="unfinished"></translation>
+        <translation>Giro con dos dedos:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10224,7 +10224,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinámico</translation>
     </message>
     <message>
         <location line="+1"/>
