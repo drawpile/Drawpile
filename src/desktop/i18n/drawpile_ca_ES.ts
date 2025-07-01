@@ -2485,7 +2485,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+194"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esteu a punt de reconnectar a la sessió i tancar aquesta finestra.</translation>
     </message>
     <message>
         <location line="+277"/>
@@ -3740,7 +3740,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+6"/>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Groga</translation>
     </message>
     <message>
         <location line="+1"/>
