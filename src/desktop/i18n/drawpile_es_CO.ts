@@ -10224,7 +10224,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Dynamic</source>
-        <translation>Dinámico</translation>
+        <translation>Dinámica</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10280,17 +10280,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+76"/>
         <source>Override system scale factor</source>
-        <translation type="unfinished"></translation>
+        <translation>Anular el factor de escala del sistema</translation>
     </message>
     <message>
         <location line="-132"/>
         <source>Small screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Pantalla pequeña</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>First checker color</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Primer color del damero</translation>
     </message>
     <message>
         <location line="+1"/>
