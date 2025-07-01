@@ -4283,7 +4283,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="-214"/>
         <location line="+201"/>
         <source>Trusted: </source>
-        <translation type="unfinished"></translation>
+        <translation>De confiança </translation>
     </message>
     <message>
         <location line="-178"/>
