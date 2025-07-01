@@ -486,6 +486,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_doc, &Document::serverConnected, this, &MainWindow::onServerConnected);
 	connect(m_doc, &Document::serverLoggedIn, this, &MainWindow::onServerLogin);
 	connect(m_doc, &Document::serverDisconnected, this, &MainWindow::onServerDisconnected);
+	connect(m_doc, &Document::serverDisconnectedAgain, this, &MainWindow::onServerDisconnectedAgain);
 	connect(m_doc, &Document::serverDisconnected, this, [this]() {
 		m_viewStatusBar->setSessionHistorySize(-1);
 		m_viewStatusBar->setLatency(-1);
@@ -3350,6 +3351,19 @@ void MainWindow::onServerDisconnected(
 		QTimer::singleShot(100, this, &QMainWindow::close);
 	}
 #endif
+}
+
+void MainWindow::onServerDisconnectedAgain(
+	const QString &message, const QString &errorcode)
+{
+	Q_UNUSED(errorcode);
+	if(!message.isEmpty()) {
+		QString name = QStringLiteral("disconnectederrormessagebox");
+		QMessageBox *msgbox = findChild<QMessageBox *>(name);
+		if(msgbox && msgbox->informativeText().isEmpty()) {
+			msgbox->setInformativeText(message);
+		}
+	}
 }
 
 /**

@@ -154,11 +154,9 @@ void Client::handleDisconnect(
 	const QString &message, const QString &errorcode, bool localDisconnect,
 	bool anyMessageReceived)
 {
-	// WebSockets may report multiple disconnects, some with error messages,
-	// some without. We just emit them all so the UI can report what it wants.
-	emit serverDisconnected(
-		message, errorcode, localDisconnect, anyMessageReceived);
 	if(isConnected()) {
+		emit serverDisconnected(
+			message, errorcode, localDisconnect, anyMessageReceived);
 		m_compatibilityMode = false;
 		m_server->deleteLater();
 		m_server = nullptr;
@@ -169,6 +167,10 @@ void Client::handleDisconnect(
 		m_wakeLock = nullptr;
 		m_wifiLock = nullptr;
 #endif
+	} else {
+		// WebSockets may report multiple disconnects, sometimes amending error
+		// information to them. So emit those too.
+		emit serverDisconnectedAgain(message, errorcode);
 	}
 }
 

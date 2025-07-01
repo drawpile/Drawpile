@@ -263,6 +263,8 @@ signals:
 	void serverDisconnected(
 		const QString &message, const QString &errorcode, bool localDisconnect,
 		bool anyMessageReceived);
+	void
+	serverDisconnectedAgain(const QString &message, const QString &errorcode);
 	void youWereKicked(const QString &kickedBy);
 
 	void serverMessage(const QString &message, int type);

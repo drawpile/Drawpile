@@ -106,6 +106,9 @@ Document::Document(
 		m_client, &net::Client::serverDisconnected, this,
 		&Document::serverDisconnected);
 	connect(
+		m_client, &net::Client::serverDisconnectedAgain, this,
+		&Document::serverDisconnectedAgain);
+	connect(
 		m_client, &net::Client::serverPreparingReset, this,
 		&Document::setPreparingReset);
 
