@@ -8873,42 +8873,42 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="-12"/>
         <location line="+14"/>
         <source>Drawpile Canvas (.dpcs)</source>
-        <translation>Lienzo de Drawpile/Drawpile Canvas (.dpcs)</translation>
+        <translation>Drawpile Canvas (.dpcs)</translation>
     </message>
     <message>
         <location line="-12"/>
         <source>Preferred save format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato de guardado preferido:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>PNG (.png)</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG (.png)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>JPEG (.jpg)</source>
-        <translation type="unfinished"></translation>
+        <translation>JPEG (.jpg)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>QOI (.qoi)</source>
-        <translation type="unfinished"></translation>
+        <translation>QOI (.qoi)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>WEBP (.webp)</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBP (.webp)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Photoshop Document (.psd)</source>
-        <translation type="unfinished"></translation>
+        <translation>Photoshop Document (.psd)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preferred export format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato de exportación preferido:</translation>
     </message>
 </context>
 <context>
@@ -8960,13 +8960,13 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+2"/>
         <source>Hardware (experimental)</source>
         <extracomment>One of the canvas renderer options. Hardware meaning it uses the GPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Hardware (Experimental)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Software (experimental)</source>
         <extracomment>One of the canvas renderer options. Software meaning it uses the CPU.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Software (Experimental)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8977,7 +8977,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+10"/>
         <source>Renderer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Renderizador:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8989,7 +8989,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Current renderer: %1. Changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Renderizador actual: %1. Los cambios se aplican después de reiniciar Drawpile.</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -9009,57 +9009,57 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+36"/>
         <source>Blue Apatite</source>
-        <translation type="unfinished"></translation>
+        <translation>Apatita azul/Blue Apatite</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Indigo</source>
-        <translation type="unfinished"></translation>
+        <translation>Índigo/Indigo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ocean Deep</source>
-        <translation type="unfinished"></translation>
+        <translation>Océano Profundo/Océano Deep</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pool Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesa de billar/Pool Table</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rose Quartz</source>
-        <translation type="unfinished"></translation>
+        <translation>Cuarzo Rosa/Rose Quartz</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rust</source>
-        <translation type="unfinished"></translation>
+        <translation>Óxido/Rust</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Watermelon</source>
-        <translation type="unfinished"></translation>
+        <translation>Sandía/Watermelon</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>%1 offline undo levels by default</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 niveles de deshacer sin conexión de forma predeterminada</translation>
     </message>
     <message>
         <location line="-90"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolar cuando se amplía o gira la vista</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Previene la difuminación en ciertos niveles de zoom y rotación</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilitar estas opciones puede afectar el rendimiento en algunos sistemas.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -9182,7 +9182,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Network proxy:</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy de red:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9217,7 +9217,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+0"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9562,7 +9562,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="-7"/>
         <location line="+57"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir</translation>
     </message>
     <message>
         <location line="-53"/>
@@ -9584,13 +9584,13 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+60"/>
         <source>Pin</source>
         <extracomment>This refers to &quot;certificate pinning&quot;, a technical term.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Fijar</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+82"/>
         <source>Pin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Fijar certificados seleccionados</translation>
     </message>
     <message>
         <location line="-65"/>
@@ -9602,7 +9602,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+1"/>
         <location line="+65"/>
         <source>Unpin selected certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Desfijar certificados seleccionados</translation>
     </message>
     <message>
         <location line="-35"/>
@@ -9612,7 +9612,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+11"/>
         <source>Import certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar certificados</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -9625,12 +9625,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/shortcutfilterinput.cpp" line="+18"/>
         <source>Search…</source>
-        <translation type="unfinished"></translation>
+        <translation>Buscar…</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show conflicts only</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar solo conflictos</translation>
     </message>
 </context>
 <context>
@@ -9665,7 +9665,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+0"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9675,12 +9675,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+5"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Edit selected canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar acceso directo del lienzo seleccionado…</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -9718,7 +9718,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+95"/>
         <source>Actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Acciones</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9728,13 +9728,13 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+5"/>
         <source>Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Lienzo</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 (%2)</source>
         <extracomment>This is for showing search feedback in the tabs of the shortcut preferences. %1 is the original tab title, like &quot;Actions&quot; or &quot;Brushes&quot;, %2 is the number of search results in that tab.</extracomment>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -9742,7 +9742,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/tablet.cpp" line="+31"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Probador de Tableta</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -9753,7 +9753,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-20"/>
         <source>Stylus</source>
-        <translation type="unfinished"></translation>
+        <translation>Stylus/Lápiz</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9763,12 +9763,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+6"/>
         <source>Use separate curve for eraser tip</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilice una curva separada para la punta del borrador</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Eraser pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>Curva de presión del borrador:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9779,25 +9779,25 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+21"/>
         <location filename="../mainwindow.cpp" line="-587"/>
         <source>Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tinta de Windows</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Windows Ink Non-Native</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Windows Ink no nativo</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Wintab</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>Wintab Relativo</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9820,7 +9820,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+8"/>
         <source>Tablet driver:</source>
-        <translation type="unfinished"></translation>
+        <translation>Controlador de tableta:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9830,12 +9830,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Pen pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>Presión del lápiz:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Global smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Suavizado global: </translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9845,7 +9845,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Apply global smoothing to mouse</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicar suavizado global al ratón</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9855,23 +9855,23 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+6"/>
         <source>Treat as regular pen tip</source>
-        <translation type="unfinished"></translation>
+        <translation>Trátelo como una punta de bolígrafo normal</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar a la ranura de borrador</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar con pincel actual</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser tip behavior:</source>
         <extracomment>This refers to the eraser end tablet pen, not a tooltip or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Comportamiento de la punta del borrador:</translation>
     </message>
 </context>
 <context>
@@ -9894,22 +9894,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+10"/>
         <source>Switch tool temporarily by holding primary shortcut for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar de herramienta temporalmente manteniendo presionado el acceso directo principal durante %1</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Attach selected brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Adjuntar pinceles seleccionados</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>When enabled, changes in a brush slot will be saved to the brush itself automatically. When disabled, the brush itself only changes when you save it explicitly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Al habilitar esta opción, los cambios en una ranura de pincel se guardarán automáticamente en el pincel. Al deshabilitarla, el pincel solo cambia al guardarla explícitamente.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Brush slots:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ranuras de pincel:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9935,22 +9935,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-71"/>
         <source>Brush outline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Contorno del pincel:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Same as brush cursor</source>
-        <translation type="unfinished"></translation>
+        <translation>Igual que el cursor de pincel</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dot</source>
-        <translation type="unfinished">Punto</translation>
+        <translation>Punto</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Crosshair</source>
-        <translation type="unfinished">Punto de mira</translation>
+        <translation>Punto de mira</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9970,35 +9970,35 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+14"/>
         <source>Show sampling ring</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar anillo de muestreo</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color picker:</source>
-        <translation type="unfinished"></translation>
+        <translation>Selector de color:</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>ms</source>
         <extracomment>This stands for millseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ms</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Cancel action to deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancelar la acción para deseleccionar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Press %1 to deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>Presione %1 para deseleccionar</translation>
     </message>
     <message numerus="yes">
         <location line="+25"/>
         <source>Show %1 brush slot(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Mostrar %1 ranura de pincel</numerusform>
+            <numerusform>Mostrar %1 Ranuras de pinceles</numerusform>
         </translation>
     </message>
     <message>
@@ -10029,17 +10029,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+9"/>
         <source>Brush cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cursor de pincel:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Eraser cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cursor del borrador:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Alpha lock cursor:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cursor de bloqueo alfa:</translation>
     </message>
 </context>
 <context>
@@ -10071,7 +10071,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+13"/>
         <location line="+9"/>
         <source>No action</source>
-        <translation type="unfinished"></translation>
+        <translation>Ninguna acción</translation>
     </message>
     <message>
         <location line="-82"/>
@@ -10086,27 +10086,27 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Hide docks</source>
-        <translation type="unfinished"></translation>
+        <translation>Ocultar Paneles</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle color picker</source>
-        <translation type="unfinished"></translation>
+        <translation>Activar o desactivar el selector de color</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar a borrador</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle erase mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar a modo de borrador</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Toggle recolor mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar modo recolor</translation>
     </message>
     <message>
         <location line="+13"/>
