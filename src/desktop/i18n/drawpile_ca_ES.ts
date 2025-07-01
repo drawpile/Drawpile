@@ -6072,7 +6072,7 @@ Fixeu-vos en &quot;Tocs per radi bàsic&quot; i &quot;Tocs per radi real&quot;, 
         <source>Opacity multiply</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Multiplica l&apos;opacitat</translation>
+        <translation>Multiplica l&apos;opacitat</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6424,35 +6424,35 @@ Fixeu-vos en &quot;Tocs per radi bàsic&quot; i &quot;Tocs per radi real&quot;, 
         <source>Offset Y</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Desplaçament Y</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Offset X</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Desplaçament X</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Angular Offset: Direction</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Desplaçament angular: Direcció</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Angular Offset: Ascension</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Desplaçament angular: Ascensió</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Angular Offset: View</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Desplaçament angular: Visualització</translation>
     </message>
     <message>
         <location line="+3"/>
