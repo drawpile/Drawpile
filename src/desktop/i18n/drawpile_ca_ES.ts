@@ -6480,14 +6480,14 @@ Fixeu-vos en &quot;Tocs per radi bàsic&quot; i &quot;Tocs per radi real&quot;, 
         <source>Angular Offsets Adjustment</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ajustament dels desplaçaments angulars</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Offsets Multiplier</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Multiplicador del desplaçament</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6501,14 +6501,14 @@ Fixeu-vos en &quot;Tocs per radi bàsic&quot; i &quot;Tocs per radi real&quot;, 
         <source>Posterization levels</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Nivells de posterització</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Pigment</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6522,7 +6522,8 @@ Fixeu-vos en &quot;Tocs per radi bàsic&quot; i &quot;Tocs per radi real&quot;, 
 (also known as alpha or opacity)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>0 vol dir que el pinzell és transparent, 1 que es completament visible
+(també conegut com a alfa o opacitat)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6551,7 +6552,9 @@ Aquesta opció és la responsable de deixar de pintar quan hi ha una pressió ze
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Radi del pinzell bàsic (logarítmic)
+ 0,7 significa 2 píxels
+ 3.0 significa 20 píxels</translation>
     </message>
     <message>
         <location line="+3"/>
