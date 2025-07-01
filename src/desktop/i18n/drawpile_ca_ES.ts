@@ -5261,7 +5261,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="+5"/>
         <source>Shifted triad</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation>Tríada desplaçada</translation>
+        <translation type="unfinished">Triada desplaçada</translation>
     </message>
     <message>
         <location line="+5"/>
