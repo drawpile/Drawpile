@@ -10591,7 +10591,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+25"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt; or &lt;strong&gt;IP address&lt;/strong&gt;:</source>
-        <translation type="unfinished"></translation>
+        <translation>Introduzca una &lt;strong&gt;URL de sesión&lt;/strong&gt;, un &lt;strong&gt;nombre de host&lt;/strong&gt; o una &lt;strong&gt;dirección IP&lt;/strong&gt;:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -10705,12 +10705,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/welcome.cpp" line="+51"/>
         <source>Standalone Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo independiente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You are running the web browser version of Drawpile in standalone mode. It will &lt;strong&gt;not&lt;/strong&gt; automatically save what you draw, so save often!</source>
-        <translation type="unfinished"></translation>
+        <translation>Estás usando la versión de navegador web de Drawpile en modo independiente. &lt;strong&gt; No &lt;/strong&gt; guardará automáticamente lo que dibujes, ¡así que guárdalo con frecuencia!</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -10743,7 +10743,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/bans.cpp" line="+25"/>
         <source>No bans imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Uno ha Bandos importados.</translation>
     </message>
     <message>
         <location line="+30"/>
