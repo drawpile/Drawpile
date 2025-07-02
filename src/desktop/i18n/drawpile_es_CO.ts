@@ -10994,48 +10994,48 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>MyPaint brushes:</source>
-        <translation>Pinceles MyPaint:</translation>
+        <translation>Pinceles de MyPaint:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Pigment and OKLAB brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinceles de pigmento y OKLAB:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Laser pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Puntero láser:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Animation timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Línea de tiempo de la animación:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Undo and redo:</source>
-        <translation type="unfinished"></translation>
+        <translation>Deshacer y rehacer:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Kick and ban:</source>
-        <translation type="unfinished"></translation>
+        <translation>Expulsar y Banear:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum brush size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño máximo del pincel:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Maximum amount of layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cantidad máxima de capas:</translation>
     </message>
     <message>
         <location line="+171"/>
         <source>%1: </source>
         <extracomment>%1 is an acccess tier, like &quot;Operator&quot; or &quot;Everyone&quot;. Unless your language uses something other than a colon, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: </translation>
     </message>
     <message>
         <location line="+296"/>
@@ -11050,12 +11050,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-10"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>Registrado</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>De confianza</translation>
     </message>
     <message>
         <location line="-2"/>
@@ -11068,12 +11068,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-232"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiniciar</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pick the sections you want to reset to their defaults:</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleccione las secciones que desea restablecer a sus valores predeterminados:</translation>
     </message>
 </context>
 <context>
@@ -11091,7 +11091,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>No roles imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se importaron roles.</translation>
     </message>
     <message>
         <location line="+47"/>
@@ -11109,7 +11109,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="+282"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargar ajustes</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -11119,7 +11119,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Pick the sections you want to save:</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecciona las secciones que quieres guardar:</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -11129,17 +11129,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>El ajuste preestablecido %1 ya existe, ¿desea reemplazarlo?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Sí, reemplazar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>No, dejar</translation>
     </message>
 </context>
 <context>
@@ -11147,12 +11147,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/session.cpp" line="+42"/>
         <source>Personal session, only people you invite can join</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesión personal, sólo las personas que invites podrán unirse</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Public session, anyone can freely join</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesión pública, cualquiera puede unirse libremente.</translation>
     </message>
     <message>
         <location line="+9"/>
