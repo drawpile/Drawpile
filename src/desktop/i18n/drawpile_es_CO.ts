@@ -10855,17 +10855,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>ID alias:</source>
-        <translation>alias de ID:</translation>
+        <translation>Alias de ID:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Announcements:</source>
-        <translation type="unfinished"></translation>
+        <translation>Anuncios:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Añadir</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -10875,17 +10875,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+139"/>
         <source>Listing: a title is required for public sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Listado: se requiere un título para las sesiones públicas</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Listing: the title is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>Listado: el título es inapropiado.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Listing: the ID alias is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>Listado: el alias del ID es inapropiado.</translation>
     </message>
 </context>
 <context>
@@ -10893,7 +10893,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/dialogs.cpp" line="-353"/>
         <source>Load Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargar Ajustes</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -10910,43 +10910,43 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-131"/>
         <source>Pick the sections you want to load:</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecciona las secciones que deseas cargar:</translation>
     </message>
     <message>
         <location line="+94"/>
         <source>Choose a new name for preset %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Elija un nuevo nombre para el ajuste preestablecido %1.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>Conflicto</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preset %1 already exists, do you want to replace it?</source>
-        <translation type="unfinished"></translation>
+        <translation>El ajuste preestablecido %1 ya existe, ¿desea reemplazarlo?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Yes, replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Sí, reemplazar</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+22"/>
         <source>No, keep</source>
-        <translation type="unfinished"></translation>
+        <translation>No, dejar</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Are you sure you want to delete preset %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Estás seguro de que deseas eliminar el ajuste preestablecido %1?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Sí, eliminar</translation>
     </message>
 </context>
 <context>
@@ -10959,42 +10959,42 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+16"/>
         <source>Cut, paste and fill:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cortar, pegar y rellenar:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Transform selections:</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar selecciones:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Create annotations:</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear anotaciones:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Manage own layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Administrar capas propias:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Manage all layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Administrar todas las capas:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Change canvas size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar el tamaño del lienzo:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change background:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar el fondo:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>MyPaint brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinceles MyPaint:</translation>
     </message>
     <message>
         <location line="+4"/>
