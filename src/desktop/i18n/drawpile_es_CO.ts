@@ -11288,7 +11288,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-580"/>
         <source>&amp;Edit Brush</source>
-        <translation>&amp;Editar pincel</translation>
+        <translation>&amp;Editar Pincel</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11303,47 +11303,47 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>&amp;New Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nuevo Pincel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;obreescribir Pincel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Borrar Pincel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Brush &amp;Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Etique&amp;tas del Pincel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Icon Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño de &amp;Icono</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ne&amp;w Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Nue&amp;va Etiqueta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rena&amp;me Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Reno&amp;mbrar Etiqueta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>De&amp;lete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;liminar Etiqueta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Im&amp;port Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Im&amp;portar Pinceles</translation>
     </message>
     <message>
         <location line="+1"/>
