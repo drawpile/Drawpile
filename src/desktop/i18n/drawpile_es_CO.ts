@@ -11343,12 +11343,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Im&amp;port Brushes…</source>
-        <translation>Im&amp;portar Pinceles</translation>
+        <translation>Im&amp;portar Pinceles…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>E&amp;xport Tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;xportar Etiqueta…</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -11368,19 +11368,19 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Really overwrite brush &apos;%1&apos; with the current one?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Realmente sobrescribir el pincel &apos;%1&apos; con el actual?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Overwrite</source>
-        <translation type="unfinished"></translation>
+        <translation>Sobreescribir</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+314"/>
         <location line="+45"/>
         <source>Keep</source>
-        <translation type="unfinished"></translation>
+        <translation>Dejar</translation>
     </message>
     <message>
         <location line="-296"/>
@@ -11420,13 +11420,13 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+116"/>
         <source>No tags</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but there&apos;s no tags to assign it to.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>No hay etiquetas</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>No brush selected</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but no brush is actually selected.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>No seleccionaste ningun pincel</translation>
     </message>
     <message>
         <location line="+41"/>
