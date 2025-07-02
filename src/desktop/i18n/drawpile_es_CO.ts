@@ -11426,7 +11426,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+23"/>
         <source>No brush selected</source>
         <extracomment>This message is shown when trying to assign a brush to tags, but no brush is actually selected.</extracomment>
-        <translation>No seleccionaste ningun pincel</translation>
+        <translation>No seleccionaste ningún pincel</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -11453,12 +11453,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-3"/>
         <source>Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar Pincel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete brush &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Realmente quieres eliminar el pincel &apos;%1&apos;?</translation>
     </message>
 </context>
 <context>
@@ -11466,17 +11466,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+26"/>
         <source>Color Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Rueda de Colores</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Rueda/Círculo</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Configure…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurar…</translation>
     </message>
 </context>
 <context>
@@ -11489,12 +11489,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-249"/>
         <source>New palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Nueva Paleta</translation>
     </message>
     <message>
         <location line="-12"/>
         <source>Color Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta de Color</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -11504,7 +11504,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+14"/>
         <source>Duplicate palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicar paleta</translation>
     </message>
     <message>
         <location line="+2"/>
