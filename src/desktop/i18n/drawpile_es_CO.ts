@@ -11152,22 +11152,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Public session, anyone can freely join</source>
-        <translation>Sesión pública, cualquiera puede unirse libremente.</translation>
+        <translation>Sesión pública, cualquiera puede unirse libremente</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Set a session title in the Listing tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Establezca un título de sesión en la pestaña Listado.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Session password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Contraseña de sesión:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter or generate a session password</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingresar o generar una contraseña de sesión</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11177,7 +11177,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished">No es apto para menores (NSFM)</translation>
+        <translation>No es apto para menores (NSFM)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11187,52 +11187,52 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+14"/>
         <source>Host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Host o dirección IP</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Builtin server on this computer</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor integrado en esta computadora</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server:</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Enter a host or IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Introduzca un host o una dirección IP</translation>
     </message>
     <message>
         <location line="+136"/>
         <source>Session: a password is required</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesión: se requiere una contraseña</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Session: a server is required</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesión: se requiere un servidor</translation>
     </message>
     <message>
         <location line="+70"/>
         <source>This will host your session on the public Drawpile server. It&apos;s freely available for anyone. To keep space available, sessions will be stopped when they&apos;re inactive for a while or after everybody leaves.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esto alojará tu sesión en el servidor público de Drawpile. Está disponible gratuitamente para todos. Para mantener el espacio disponible, las sesiones se detendrán si permanecen inactivas durante un tiempo o después de que todos se retiren.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Sessions must comply with the rules, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;click here to view them&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Las sesiones deben cumplir con las reglas, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;haga clic aquí para verlas&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Hosting on your own computer requires additional setup!</source>
-        <translation type="unfinished"></translation>
+        <translation>¡El alojamiento en su propia computadora requiere configuración adicional!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;Haga clic aquí para obtener instrucciones.&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -11240,27 +11240,27 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/files.cpp" line="+52"/>
         <source>This file doesn&apos;t contain any valid session settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este archivo no contiene ninguna configuración de sesión válida.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Invalid session settings format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato de configuración de sesión no válido.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>File contains session settings to import.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo contiene configuraciones de sesión para importar.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Invalid role format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato de rol no válido.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>File contains no roles to import.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo no contiene roles para importar.</translation>
     </message>
 </context>
 <context>
@@ -11288,17 +11288,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-580"/>
         <source>&amp;Edit Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Editar pincel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished">&amp;Reiniciar pincel</translation>
+        <translation>&amp;Reiniciar pincel</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished">Reiniciar todos los &amp;Pinceles</translation>
+        <translation>Reiniciar todos los &amp;Pinceles</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11363,7 +11363,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+225"/>
         <source>Overwrite Brush</source>
-        <translation type="unfinished">Sobreescribir Pincel</translation>
+        <translation>Sobreescribir Pincel</translation>
     </message>
     <message>
         <location line="+1"/>
