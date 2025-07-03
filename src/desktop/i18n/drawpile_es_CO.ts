@@ -12389,7 +12389,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-135"/>
         <source>&amp;Edit Brush…</source>
-        <translation>&amp;Editar Pincel</translation>
+        <translation>&amp;Editar Pincel…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -12409,12 +12409,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+5"/>
         <source>&amp;New Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nuevo Pincel…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Overwrite Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;sobreescribir Pincel</translation>
     </message>
     <message>
         <location line="+6"/>
