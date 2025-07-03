@@ -30,6 +30,7 @@ Unreleased Version 2.2.3-pre
  * Feature: Add language selector to browser startup page.
  * Feature: Add a brush setting to disallow others in a session to use it. This does not prevent them from replicating the brush in other ways, but this setting is there if you feel strongly about not making it easy. Thanks Blozzom for suggesting.
  * Fix: Don't crash on macOS when inputting an invalid session address to join. Thanks Charmandrigo for reporting and Axocrat for testing.
+ * Fix: Restore normal layer view mode when loading a canvas into the same window.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.
