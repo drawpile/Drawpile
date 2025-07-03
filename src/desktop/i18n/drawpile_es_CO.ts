@@ -11978,12 +11978,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <translation>Fusionar grupo de capas</translation>
+        <translation>Fusionar Grupo de Capas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>Propiedades del grupo de capas…</translation>
     </message>
     <message>
         <location line="+1"/>
