@@ -12414,17 +12414,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+6"/>
         <source>&amp;Overwrite Brush</source>
-        <translation>S&amp;sobreescribir Pincel</translation>
+        <translation>S&amp;obreescribir Pincel</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Delete Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>E&amp;liminar Pincel</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>De&amp;tach Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Separar el Pincel</translation>
     </message>
     <message>
         <location line="+110"/>
