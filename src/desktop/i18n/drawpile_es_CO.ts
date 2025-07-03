@@ -11564,7 +11564,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+5"/>
         <source>Hide only on this dock</source>
-        <translation>Esconderse sólo en este panel</translation>
+        <translation>Esconder sólo en este panel</translation>
     </message>
     <message>
         <location line="+65"/>
@@ -11580,7 +11580,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+0"/>
         <source>Rename Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Renombrar Paleta</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -11628,7 +11628,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+74"/>
         <source>Color Sliders</source>
-        <translation type="unfinished"></translation>
+        <translation>Deslizadores de Color</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -11638,38 +11638,38 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+9"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Espacio de color</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+394"/>
         <source>HSV</source>
         <extracomment>Color space HSV (hue, chroma, value)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="-383"/>
         <location line="+359"/>
         <source>HSL</source>
         <extracomment>Color space HSL (hue, saturation, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="-348"/>
         <location line="+360"/>
         <source>HCL</source>
         <extracomment>Color space HCL (hue, chroma, lightness)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location line="-347"/>
         <source>Show all sliders at once</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar todos los controles deslizantes a la vez</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show hex input</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar entrada hexadecimal</translation>
     </message>
     <message>
         <location line="+84"/>
@@ -11681,7 +11681,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+10"/>
         <source>G</source>
         <extracomment>The &quot;Green&quot; G of RGB.</extracomment>
-        <translation type="unfinished">V</translation>
+        <translation>G</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -11692,14 +11692,14 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+19"/>
         <source>RGB</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB</translation>
     </message>
     <message>
         <location line="+203"/>
         <source>H</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
-        <translation type="unfinished">M</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11720,7 +11720,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <source>H</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Hue&quot; H of HCL.</extracomment>
-        <translation type="unfinished">M</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11741,7 +11741,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <source>H</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Hue&quot; H of HSV.</extracomment>
-        <translation type="unfinished">M</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -11755,7 +11755,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <source>V</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Value&quot; V of HSV.</extracomment>
-        <translation type="unfinished">Vi</translation>
+        <translation>V</translation>
     </message>
 </context>
 <context>
@@ -11763,56 +11763,56 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../docks/colorspinner.cpp" line="+98"/>
         <source>Shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Forma</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Rotating triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Triángulo giratorio</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Rotating square</source>
-        <translation type="unfinished"></translation>
+        <translation>Cuadrado giratorio</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Triángulo fijo</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Fixed square</source>
-        <translation type="unfinished"></translation>
+        <translation>Cuadrado fijo</translation>
     </message>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+6"/>
         <location filename="../docks/colorspinner.cpp" line="+15"/>
         <source>Color space</source>
-        <translation type="unfinished"></translation>
+        <translation>Espacio de Color</translation>
     </message>
     <message>
         <location line="+4"/>
         <location filename="../docks/colorspinner.cpp" line="+3"/>
         <source>HSV</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV</translation>
     </message>
     <message>
         <location line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>HSL</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL</translation>
     </message>
     <message>
         <location line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="+11"/>
         <source>HCL</source>
-        <translation type="unfinished"></translation>
+        <translation>HCL</translation>
     </message>
     <message>
         <location filename="../docks/colorspinner.cpp" line="-99"/>
         <source>Color Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Rueda de Color</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -11837,7 +11837,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+11"/>
         <source>Alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Alineación</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11847,33 +11847,33 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+9"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Centro</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Show color harmonies</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar armonías de color</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle the harmony swatches below the color wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar las muestras de armonía debajo de la rueda de color</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Configure color harmonies…</source>
-        <translation type="unfinished"></translation>
+        <translation>Configurar armonías de color…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change the color harmonies and how they are displayed</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar las armonías de color y cómo se muestran</translation>
     </message>
     <message>
         <location filename="../docks/colorcircle.cpp" line="+12"/>
         <location filename="../docks/colorspinner.cpp" line="-19"/>
         <source>Preview selected color</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista previa del color seleccionado</translation>
     </message>
 </context>
 <context>
@@ -11881,12 +11881,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../docks/dockbase.cpp" line="+73"/>
         <source>Drag here to arrange</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastre aquí para organizar</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Finish arranging</source>
-        <translation type="unfinished"></translation>
+        <translation>Terminar de arreglar</translation>
     </message>
 </context>
 <context>
@@ -11894,7 +11894,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="+27"/>
         <source>Locks:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloqueadas:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -11937,22 +11937,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+13"/>
         <source>Locks and permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloqueos y permisos</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished">Recortar a la capa inferior</translation>
+        <translation>Fijar a la capa inferior</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished">Heredar alfa</translation>
+        <translation>Heredar alfa</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Toggle sketch mode (only visible to you)</source>
-        <translation type="unfinished"></translation>
+        <translation>Activar o desactivar el modo boceto (solo visible para usted)</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11968,17 +11968,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+10"/>
         <source>Change sketch tint</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar el tono del boceto</translation>
     </message>
     <message>
         <location line="+327"/>
         <source>Duplicate Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicar Grupo de Capas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Fusionar grupo de capas</translation>
     </message>
     <message>
         <location line="+1"/>
