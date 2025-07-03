@@ -68,6 +68,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Remember loops field in animation export dialog during a single run, instead of resetting it to 1 every time.
  * Fix: Don't crash on macOS when inputting an invalid session address to join. Thanks Charmandrigo for reporting and Axocrat for testing.
  * Feature: Allow swapping the sides of docks, toolbars and on-canvas buttons via View → Left-Handed Mode in small screen mode. Thanks yoossy for suggesting.
+ * Fix: Restore normal layer view mode when loading a canvas into the same window.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.

@@ -658,6 +658,11 @@ void MainWindow::autoJoin(const QUrl &url, const QString &autoRecordPath)
 
 void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 {
+	QAction *layerviewnormal = getAction("layerviewnormal");
+	if(!layerviewnormal->isChecked()) {
+		layerviewnormal->trigger();
+	}
+
 	m_canvasView->setCanvas(canvas);
 
 	canvas::AclState *aclState = canvas->aclState();
