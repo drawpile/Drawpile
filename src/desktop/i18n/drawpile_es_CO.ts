@@ -12231,7 +12231,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../docks/titlewidget.cpp" line="+36"/>
         <source>Docked</source>
-        <translation>Panel fijo</translation>
+        <translation>Fijo</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12254,7 +12254,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+0"/>
         <source>Tool Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de Herramientas</translation>
     </message>
 </context>
 <context>
@@ -12280,7 +12280,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink non-native input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada no nativa de KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12354,7 +12354,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+9"/>
         <source>Vector</source>
-        <translation type="unfinished"></translation>
+        <translation>Vector</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12364,24 +12364,24 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Pixel</source>
-        <translation type="unfinished"></translation>
+        <translation>Pixel</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Las anotaciones están ocultas. </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show</source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar</translation>
     </message>
     <message>
         <location line="+385"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>No tienes permiso para pegar anotaciones fusionadas.</translation>
     </message>
 </context>
 <context>
@@ -12389,22 +12389,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="-135"/>
         <source>&amp;Edit Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Editar Pincel</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Reset Brush</source>
-        <translation type="unfinished">&amp;Reiniciar pincel</translation>
+        <translation>&amp;Restablecer pincel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Reset All Brush &amp;Slots</source>
-        <translation type="unfinished">Restablecer todos los pinceles &amp;Ranuras</translation>
+        <translation>Restablecer todos los pinceles &amp;Ranuras</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset All &amp;Brushes</source>
-        <translation type="unfinished">Reiniciar todos los &amp;Pinceles</translation>
+        <translation>Restablecer todos los &amp;Pinceles</translation>
     </message>
     <message>
         <location line="+5"/>
