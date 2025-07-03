@@ -443,11 +443,6 @@ jobs:
           fetch-depth: 0 # for git-describe
           submodules: true
 
-      - name: Install Ninja on macOS
-        run: |
-          brew install ninja
-        if: runner.os == 'macOS'
-
       - name: Activate MSVC
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756
         with:
