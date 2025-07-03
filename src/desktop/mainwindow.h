@@ -411,6 +411,7 @@ private:
 	void showToolBarConfigDialog();
 
 	static bool isInitialSmallScreenMode();
+	void setLeftyMode(bool leftyMode);
 	void updateInterfaceMode();
 	bool shouldUseSmallScreenMode(const desktop::settings::Settings &settings);
 	static bool isSmallScreenModeSize(const QSize &s);
@@ -431,6 +432,7 @@ private:
 
 	bool m_singleSession;
 	bool m_smallScreenMode;
+	bool m_leftyMode = false;
 	bool m_updatingInterfaceMode;
 	QByteArray m_desktopModeState;
 	QDeadlineTimer m_lastDisconnectNotificationTimer;

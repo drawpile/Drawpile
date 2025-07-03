@@ -7,13 +7,11 @@
 namespace drawingboard {
 
 ToggleItem::ToggleItem(
-	Action action, Qt::Alignment side, double fromTop, const QIcon &icon,
-	QGraphicsItem *parent)
+	Action action, Qt::Alignment side, double fromTop, QGraphicsItem *parent)
 	: BaseItem{parent}
 	, m_action{action}
 	, m_right{side == Qt::AlignRight}
 	, m_fromTop{fromTop}
-	, m_icon{icon}
 {
 	setFlag(ItemIgnoresTransformations);
 	setZValue(Z_TOGGLE);
@@ -52,6 +50,14 @@ void ToggleItem::removeHover()
 {
 	if(m_hover) {
 		m_hover = false;
+		refresh();
+	}
+}
+
+void ToggleItem::setIcon(const QIcon &icon)
+{
+	if(icon.cacheKey() != m_icon.cacheKey()) {
+		m_icon = icon;
 		refresh();
 	}
 }

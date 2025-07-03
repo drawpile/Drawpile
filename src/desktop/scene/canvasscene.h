@@ -142,7 +142,7 @@ public slots:
 	//! Show/hide laser pointer trails
 	void showLaserTrails(bool show);
 
-	void showToggleItems(bool show);
+	void showToggleItems(bool show, bool leftyMode);
 
 	//! Select the currently active/highlighted annotation
 	void setActiveAnnotation(int id);

@@ -215,6 +215,7 @@ SETTING(lastWindowViewState       , LastWindowViewState       , "window/viewstat
 SETTING(layerSketchOpacityPercent , LayerSketchOpacityPercent , "layers/sketchopacitypercent"           , 75)
 SETTING(layerSketchTint           , LayerSketchTint           , "layers/sketchtint"                     , LAYER_SKETCH_TINT_DEFAULT)
 SETTING(layouts                   , Layouts                   , "layouts"                               , QVector<QVariantMap>())
+SETTING(leftyMode                 , LeftyMode                 , "settings/leftymode"                    , false)
 SETTING(mentionEnabled            , MentionEnabled            , "settings/mentions/enabled"             , true)
 SETTING(mentionTriggerList        , MentionTriggerList        , "settings/mentions/triggerlist"         , QString())
 #ifdef NATIVE_DIALOGS_SETTING_AVAILABLE

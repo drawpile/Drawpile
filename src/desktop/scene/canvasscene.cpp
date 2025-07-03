@@ -739,27 +739,33 @@ void CanvasScene::showLaserTrails(bool show)
 	}
 }
 
-void CanvasScene::showToggleItems(bool show)
+void CanvasScene::showToggleItems(bool show, bool leftyMode)
 {
-	if(show && m_toggleItems.isEmpty()) {
-		m_toggleItems = {
-			new ToggleItem{
-				ToggleItem::Action::Left, Qt::AlignLeft, 1.0 / 3.0,
-				QIcon::fromTheme("draw-brush")},
-			new ToggleItem{
-				ToggleItem::Action::Top, Qt::AlignLeft, 2.0 / 3.0,
-				QIcon::fromTheme("keyframe")},
-			new ToggleItem{
-				ToggleItem::Action::Right, Qt::AlignRight, 1.0 / 3.0,
-				QIcon::fromTheme("layer-visible-on")},
-			new ToggleItem{
-				ToggleItem::Action::Bottom, Qt::AlignRight, 2.0 / 3.0,
-				QIcon::fromTheme("edit-comment")},
-		};
-		for(ToggleItem *ti : m_toggleItems) {
-			addItem(ti);
-			ti->updateSceneBounds(m_sceneBounds);
+	if(show) {
+		if(m_toggleItems.isEmpty()) {
+			m_toggleItems = {
+				new ToggleItem(
+					ToggleItem::Action::Left, Qt::AlignLeft, 1.0 / 3.0),
+				new ToggleItem(
+					ToggleItem::Action::Top, Qt::AlignLeft, 2.0 / 3.0),
+				new ToggleItem(
+					ToggleItem::Action::Right, Qt::AlignRight, 1.0 / 3.0),
+				new ToggleItem(
+					ToggleItem::Action::Bottom, Qt::AlignRight, 2.0 / 3.0),
+			};
+			for(ToggleItem *ti : m_toggleItems) {
+				addItem(ti);
+				ti->updateSceneBounds(m_sceneBounds);
+			}
 		}
+		QIcon brushIcon = QIcon::fromTheme("draw-brush");
+		QIcon keyFrameIcon = QIcon::fromTheme("keyframe");
+		QIcon layerIcon = QIcon::fromTheme("layer-visible-on");
+		QIcon chatIcon = QIcon::fromTheme("edit-comment");
+		m_toggleItems[0]->setIcon(leftyMode ? layerIcon : brushIcon);
+		m_toggleItems[1]->setIcon(leftyMode ? chatIcon : keyFrameIcon);
+		m_toggleItems[2]->setIcon(leftyMode ? brushIcon : layerIcon);
+		m_toggleItems[3]->setIcon(leftyMode ? keyFrameIcon : chatIcon);
 	} else if(!show && !m_toggleItems.isEmpty()) {
 		for(ToggleItem *ti : m_toggleItems) {
 			removeItem(ti);

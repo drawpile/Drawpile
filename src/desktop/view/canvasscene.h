@@ -78,7 +78,7 @@ public:
 	void setEvadeUserCursors(bool evadeUserCursors);
 	void setShowOwnUserMarker(bool showOwnUserMarker);
 	void setShowLaserTrails(bool showLaserTrails);
-	void setShowToggleItems(bool showToggleItems);
+	void setShowToggleItems(bool showToggleItems, bool leftyMode);
 	void setShowSelectionMask(bool showSelectionMask);
 	void setUserMarkerPersistence(int userMarkerPersistence);
 

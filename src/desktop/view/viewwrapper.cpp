@@ -140,9 +140,9 @@ void ViewWrapper::setPointerTracking(bool pointerTracking)
 	m_controller->setPointerTracking(pointerTracking);
 }
 
-void ViewWrapper::setShowToggleItems(bool showToggleItems)
+void ViewWrapper::setShowToggleItems(bool showToggleItems, bool leftyMode)
 {
-	m_scene->setShowToggleItems(showToggleItems);
+	m_scene->setShowToggleItems(showToggleItems, leftyMode);
 }
 
 void ViewWrapper::setCatchupProgress(int percent, bool force)

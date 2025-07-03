@@ -44,7 +44,7 @@ public:
 	void setShowLaserTrails(bool showLaserTrails) override;
 	void setShowOwnUserMarker(bool showOwnUserMarker) override;
 	void setPointerTracking(bool pointerTracking) override;
-	void setShowToggleItems(bool showToggleItems) override;
+	void setShowToggleItems(bool showToggleItems, bool leftyMode) override;
 
 	void setCatchupProgress(int percent, bool force) override;
 	void setStreamResetProgress(int percent) override;

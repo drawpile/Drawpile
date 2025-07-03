@@ -147,10 +147,10 @@ void SceneWrapper::setPointerTracking(bool pointerTracking)
 	m_view->setPointerTracking(pointerTracking);
 }
 
-void SceneWrapper::setShowToggleItems(bool showToggleItems)
+void SceneWrapper::setShowToggleItems(bool showToggleItems, bool leftyMode)
 {
 	if(m_scene) {
-		m_scene->showToggleItems(showToggleItems);
+		m_scene->showToggleItems(showToggleItems, leftyMode);
 	}
 }
 

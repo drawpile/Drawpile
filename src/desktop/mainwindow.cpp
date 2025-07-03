@@ -274,7 +274,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	// Create canvas view (first splitter item)
 	m_canvasView =
 		view::CanvasWrapper::instantiate(dpApp().canvasImplementation(), this);
-	m_canvasView->setShowToggleItems(m_smallScreenMode);
+	m_canvasView->setShowToggleItems(m_smallScreenMode, m_leftyMode);
 
 	m_canvasFrame = new widgets::CanvasFrame(m_canvasView->viewWidget());
 	m_splitter->addWidget(m_canvasFrame);
@@ -571,6 +571,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	settings.bindInterfaceMode(this, [this](bool) {
 		updateInterfaceMode();
 	});
+	settings.bindLeftyMode(this, &MainWindow::setLeftyMode);
 	settings.bindToolBarConfig(this, &MainWindow::setToolBarConfig);
 	settings.bindTemporaryToolSwitch(
 		this, &MainWindow::updateTemporaryToolSwitch);
@@ -578,6 +579,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		this, &MainWindow::updateTemporaryToolSwitch);
 	settings.bindAutomaticAlphaPreserve(
 		getAction("layerautomaticalphapreserve"));
+	settings.bindLeftyMode(getAction("smallscreenleftymode"));
 	settings.trySubmit();
 
 	m_updatingInterfaceMode = false;
@@ -638,6 +640,7 @@ QMenu *MainWindow::createPopupMenu()
 	if(m_smallScreenMode) {
 		menu->addAction(getAction("smallscreensidetoolbar"));
 		menu->addAction(getAction("smallscreenbottomtoolbar"));
+		menu->addAction(getAction("smallscreenleftymode"));
 	}
 	return menu;
 }
@@ -3984,18 +3987,20 @@ void MainWindow::handleToggleAction(int action)
 
 		m_viewStatusBar->hide();
 
+		int actionLeft = int(m_leftyMode ? Action::Right : Action::Left);
+		int actionRight = int(m_leftyMode ? Action::Left : Action::Right);
 		QPair<QWidget *, int> dockActions[] = {
-			{m_dockToolSettings, int(Action::Left)},
-			{m_dockBrushPalette, int(Action::Left)},
+			{m_dockToolSettings, actionLeft},
+			{m_dockBrushPalette, actionLeft},
 			{m_dockTimeline, int(Action::Top)},
 			{m_dockOnionSkins, int(Action::Top)},
 			{m_dockNavigator, int(Action::None)},
-			{m_dockColorSpinner, int(Action::Right)},
-			{m_dockColorSliders, int(Action::Right)},
-			{m_dockColorPalette, int(Action::Right)},
-			{m_dockColorCircle, int(Action::Right)},
-			{m_dockReference, int(Action::Right)},
-			{m_dockLayers, int(Action::Right)},
+			{m_dockColorSpinner, actionRight},
+			{m_dockColorSliders, actionRight},
+			{m_dockColorPalette, actionRight},
+			{m_dockColorCircle, actionRight},
+			{m_dockReference, actionRight},
+			{m_dockLayers, actionRight},
 			{m_chatbox, int(Action::Bottom)},
 		};
 		QVector<QWidget *> docksToShow;
@@ -5637,6 +5642,10 @@ void MainWindow::setupActions()
 			.checkable()
 			.checked()
 			.remembered();
+	QAction *smallScreenLeftyMode =
+		makeAction("smallscreenleftymode", tr("Left-handed mode"))
+			.noDefaultShortcut()
+			.checkable();
 	// clang-format off
 
 	QAction *toggleChat = makeAction("togglechat", tr("Chat")).shortcut("Alt+C").checked();
@@ -5830,6 +5839,8 @@ void MainWindow::setupActions()
 	m_smallScreenModeActions->addAction(smallScreenSideToolbar);
 	viewmenu->addAction(smallScreenBottomToolbar);
 	m_smallScreenModeActions->addAction(smallScreenBottomToolbar);
+	viewmenu->addAction(smallScreenLeftyMode);
+	m_smallScreenModeActions->addAction(smallScreenLeftyMode);
 	viewmenu->addSeparator();
 
 	QMenu *zoommenu = viewmenu->addMenu(tr("&Zoom"));
@@ -7187,27 +7198,32 @@ void MainWindow::createDocks()
 
 void MainWindow::resetDefaultDocks()
 {
-	addDockWidget(Qt::LeftDockWidgetArea, m_dockToolSettings);
+	bool leftyMode = m_smallScreenMode && m_leftyMode;
+	Qt::DockWidgetArea leftArea =
+		leftyMode ? Qt::RightDockWidgetArea : Qt::LeftDockWidgetArea;
+	Qt::DockWidgetArea rightArea =
+		leftyMode ? Qt::LeftDockWidgetArea : Qt::RightDockWidgetArea;
+	addDockWidget(leftArea, m_dockToolSettings);
 	m_dockToolSettings->show();
-	addDockWidget(Qt::LeftDockWidgetArea, m_dockBrushPalette);
+	addDockWidget(leftArea, m_dockBrushPalette);
 	m_dockBrushPalette->show();
-	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSpinner);
+	addDockWidget(rightArea, m_dockColorSpinner);
 	m_dockColorSpinner->show();
-	addDockWidget(Qt::RightDockWidgetArea, m_dockColorPalette);
+	addDockWidget(rightArea, m_dockColorPalette);
 	m_dockColorPalette->show();
-	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSliders);
+	addDockWidget(rightArea, m_dockColorSliders);
 	m_dockColorSliders->show();
-	addDockWidget(Qt::RightDockWidgetArea, m_dockColorCircle);
+	addDockWidget(rightArea, m_dockColorCircle);
 	m_dockColorCircle->show();
-	addDockWidget(Qt::RightDockWidgetArea, m_dockReference);
+	addDockWidget(rightArea, m_dockReference);
 	m_dockReference->show();
 	tabifyDockWidget(m_dockReference, m_dockColorCircle);
 	tabifyDockWidget(m_dockColorCircle, m_dockColorPalette);
 	tabifyDockWidget(m_dockColorPalette, m_dockColorSliders);
 	tabifyDockWidget(m_dockColorSliders, m_dockColorSpinner);
-	addDockWidget(Qt::RightDockWidgetArea, m_dockLayers);
+	addDockWidget(rightArea, m_dockLayers);
 	m_dockLayers->show();
-	addDockWidget(Qt::RightDockWidgetArea, m_dockNavigator);
+	addDockWidget(rightArea, m_dockNavigator);
 	m_dockNavigator->hide(); // hidden by default
 	addDockWidget(Qt::TopDockWidgetArea, m_dockTimeline);
 	m_dockTimeline->show();
@@ -7223,7 +7239,9 @@ void MainWindow::resetDefaultToolbars()
 	if(m_smallScreenMode) {
 		addToolBar(Qt::BottomToolBarArea, m_toolBarEdit);
 		addToolBar(Qt::BottomToolBarArea, m_toolBarFile);
-		addToolBar(Qt::LeftToolBarArea, m_toolBarDraw);
+		addToolBar(
+			m_leftyMode ? Qt::RightToolBarArea : Qt::LeftToolBarArea,
+			m_toolBarDraw);
 		if(!m_smallScreenLeftSpacer) {
 			m_smallScreenLeftSpacer = new QWidget;
 			m_smallScreenLeftSpacer->setFixedWidth(16);
@@ -7278,6 +7296,26 @@ bool MainWindow::isInitialSmallScreenMode()
 		s = settings.lastWindowSize();
 	}
 	return isSmallScreenModeSize(s);
+}
+
+void MainWindow::setLeftyMode(bool leftyMode)
+{
+	if(m_leftyMode != leftyMode) {
+		m_leftyMode = leftyMode;
+		if(m_smallScreenMode) {
+			setUpdatesEnabled(false);
+			resetDefaultDocks();
+			resetDefaultToolbars();
+			initDefaultDocks();
+			for(QDockWidget *dw : findChildren<QDockWidget *>(
+					QString(), Qt::FindDirectChildrenOnly)) {
+				dw->hide();
+			}
+			updateSmallScreenToolBarVisibility();
+			m_canvasView->setShowToggleItems(true, leftyMode);
+			reenableUpdates();
+		}
+	}
 }
 
 void MainWindow::updateInterfaceMode()
@@ -7389,7 +7427,7 @@ void MainWindow::switchInterfaceMode(bool smallScreenMode)
 		setFreezeDocks(getAction("freezedocks")->isChecked());
 	}
 
-	m_canvasView->setShowToggleItems(smallScreenMode);
+	m_canvasView->setShowToggleItems(smallScreenMode, m_leftyMode);
 	updateSmallScreenToolBarVisibility();
 	updateInterfaceModeActions();
 	reenableUpdates();

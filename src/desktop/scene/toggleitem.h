@@ -19,7 +19,7 @@ public:
 	};
 
 	ToggleItem(
-		Action action, Qt::Alignment side, double fromTop, const QIcon &icon,
+		Action action, Qt::Alignment side, double fromTop,
 		QGraphicsItem *parent = nullptr);
 
 	int type() const override { return Type; }
@@ -32,6 +32,8 @@ public:
 
 	bool checkHover(const QPointF &scenePos, bool &outWasHovering);
 	void removeHover();
+
+	void setIcon(const QIcon &icon);
 
 protected:
 	void paint(
