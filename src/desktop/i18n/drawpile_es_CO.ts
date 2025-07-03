@@ -12003,54 +12003,54 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Check Layer Group</source>
-        <translation>Comprobar Grupo de Capas</translation>
+        <translation>Marcar Grupo de Capas</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Desmarcar el Grupo de Capas</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Check Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcar Capa</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Uncheck Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Desmarcar Capa</translation>
     </message>
     <message>
         <location line="+1033"/>
         <source>Layer Limit Reached</source>
-        <translation type="unfinished"></translation>
+        <translation>Se Alcanzo Limite de Capas</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>Can&apos;t create another/%n more layer(s).</source>
         <extracomment>Singular should be &quot;can&apos;t create another layer&quot;, plural &quot;can&apos;t create %n more layers&quot;. Change this to make sense in your language.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>No se puede crear otra/%n capa más.</numerusform>
+            <numerusform>No se pueden crear %n más capas.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The layer limit in sessions hosted with Drawpile 2.2 is 256 per user.</source>
-        <translation type="unfinished"></translation>
+        <translation>El límite de capas en las sesiones alojadas con Drawpile 2.2 es de 256 por usuario.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>The layer limit for you is %n layer(s), session operators can change this in the session settings.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>El límite de capa para usted es %n capa, los operadores de sesión pueden cambiar esto en la configuración de la sesión.</numerusform>
+            <numerusform>El límite de capas para usted es %n capas, los operadores de sesión pueden cambiar esto en la configuración de la sesión.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+463"/>
         <source>Sketch: </source>
-        <translation type="unfinished"></translation>
+        <translation>Boceto: </translation>
     </message>
     <message>
         <location line="+265"/>
@@ -12139,17 +12139,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../docks/reference.cpp" line="+27"/>
         <source>Reference</source>
-        <translation type="unfinished"></translation>
+        <translation>Referencia</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open a file as a reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir un archivo como imagen de referencia</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -12159,7 +12159,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Paste a reference image from the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Pegar una imagen de referencia desde el portapapeles</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -12169,32 +12169,32 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Close the current reference image</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerrar la imagen de referencia actual</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Pick color</source>
-        <translation type="unfinished"></translation>
+        <translation>Elegir color</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pan image</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagen panorámica</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Reset zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Restablecer zoom</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Zoom to fit</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom para ajustar</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Zoom: </source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12210,7 +12210,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+2"/>
         <source>Could not open reference image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo abrir la imagen de referencia: %1.</translation>
     </message>
 </context>
 <context>
@@ -12231,12 +12231,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../docks/titlewidget.cpp" line="+36"/>
         <source>Docked</source>
-        <translation type="unfinished"></translation>
+        <translation>Panel fijo</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dockable by Dragging</source>
-        <translation type="unfinished"></translation>
+        <translation>Acoplable mediante arrastre</translation>
     </message>
     <message>
         <location line="+5"/>
