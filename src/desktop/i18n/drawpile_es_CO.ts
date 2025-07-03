@@ -12031,7 +12031,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <extracomment>Singular should be &quot;can&apos;t create another layer&quot;, plural &quot;can&apos;t create %n more layers&quot;. Change this to make sense in your language.</extracomment>
         <translation>
             <numerusform>No se puede crear otra/%n capa más.</numerusform>
-            <numerusform>No se pueden crear %n más capas.</numerusform>
+            <numerusform>No se pueden crear /%n más capas.</numerusform>
         </translation>
     </message>
     <message>
@@ -12424,7 +12424,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+8"/>
         <source>De&amp;tach Brush</source>
-        <translation>Separar el Pincel</translation>
+        <translation>Sep&amp;arar el Pincel</translation>
     </message>
     <message>
         <location line="+110"/>
@@ -12473,7 +12473,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+143"/>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>No tienes permiso para usar pinceles en el modo OKLAB o Pigment.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -12484,23 +12484,23 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+7"/>
         <source>/%1px</source>
         <extracomment>Limit suffix for the brush size slider, %1 is the size limit. So it will look something like &quot;100/255px&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1px</translation>
     </message>
     <message>
         <location line="+648"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Difuminado: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Mezcla: </translation>
     </message>
     <message>
         <location line="+731"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1</translation>
     </message>
     <message>
         <location line="-1417"/>
@@ -12531,42 +12531,42 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="-61"/>
         <source>Fill tool settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuración de la herramienta de relleno</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Edit pending fills</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Editar rellenos pendientes</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Apply changes in settings, color and layer to fills not yet applied</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicar cambios en la configuración, color y capa a rellenos aún no aplicados</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Confirm fills with second click</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Confirmar relleno con segundo clic</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lets you apply fills with a click instead of starting another fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Le permite aplicar rellenos con un clic en lugar de iniciar otro relleno</translation>
     </message>
     <message>
         <location line="+114"/>
         <source>You don&apos;t have permission to use the fill tool.</source>
-        <translation type="unfinished"></translation>
+        <translation>No tienes permiso para utilizar la herramienta de relleno.</translation>
     </message>
     <message>
         <location line="+257"/>
         <source>Size Limit: Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Límite de tamaño: Selección</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished">Límite de Tamaño: Sin límite</translation>
+        <translation>Límite de Tamaño: ilimitado</translation>
     </message>
 </context>
 <context>
@@ -12574,7 +12574,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../toolwidgets/gradientsettings.cpp" line="-277"/>
         <source>Foreground: </source>
-        <translation type="unfinished"></translation>
+        <translation>Primer plano: </translation>
     </message>
     <message>
         <location line="+0"/>
@@ -12584,22 +12584,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+111"/>
         <source>Foreground color to transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>Color de primer plano a transparencia</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Transparency to foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Transparencia al color de primer plano</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Foreground color to background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Color de primer plano a color de fondo</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Background color to foreground color</source>
-        <translation type="unfinished"></translation>
+        <translation>Color de fondo a color de primer plano</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -12611,7 +12611,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-45"/>
         <source>Background: </source>
-        <translation type="unfinished"></translation>
+        <translation>Fondo: </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -12621,12 +12621,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Straight gradient shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Forma de gradiente recto</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Radial</source>
-        <translation type="unfinished"></translation>
+        <translation>Radial</translation>
     </message>
     <message>
         <location line="+1"/>
