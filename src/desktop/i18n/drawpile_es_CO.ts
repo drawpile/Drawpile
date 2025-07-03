@@ -11988,22 +11988,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar Grupo de Capas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Activar o Desactivar la &amp;Visibilidad del Grupo de Capas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Activar o Desactivar el modo de &amp;Boceto del Grupo de Capas</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Check Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Comprobar Grupo de Capas</translation>
     </message>
     <message>
         <location line="+0"/>
