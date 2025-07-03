@@ -624,16 +624,14 @@ void LayerListModel::setLayersVisibleInFrame(
 	bool viewModeChanged = viewMode != m_viewMode;
 	m_frameLayers = layers;
 	m_viewMode = viewMode;
-	if(viewModeChanged) {
-		int last = m_items.size() - 1;
+
+	int count = m_items.size();
+	if(viewModeChanged && count != 0) {
 		emit dataChanged(
-			createIndex(m_items.at(0).relIndex, 0, quintptr(0)),
-			createIndex(m_items.at(last).relIndex, 0, last),
-			{IsHiddenInTreeRole});
+			index(0, 0), index(rowCount() - 1, 0), {IsHiddenInTreeRole});
 	}
 
 	if(!changedFrameLayers.isEmpty()) {
-		int count = m_items.size();
 		for(int i = 0; i < count; ++i) {
 			const LayerListItem &item = m_items[i];
 			if(changedFrameLayers.contains(item.id)) {
