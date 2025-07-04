@@ -8281,7 +8281,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+43"/>
         <source>Set Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix un color</translation>
     </message>
     <message>
         <location line="+41"/>
