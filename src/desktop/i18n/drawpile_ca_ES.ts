@@ -8276,7 +8276,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Border: </source>
-        <translation type="unfinished"></translation>
+        <translation>Vora </translation>
     </message>
     <message>
         <location line="+43"/>
