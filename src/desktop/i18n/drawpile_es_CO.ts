@@ -485,7 +485,7 @@
     <message>
         <location line="+1"/>
         <source>Frame Images</source>
-        <translation type="unfinished">Imágenes de fotograma</translation>
+        <translation>Imágenes de fotograma</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -526,7 +526,7 @@
     <message>
         <location line="+1"/>
         <source>Session Roles (%1)</source>
-        <translation type="unfinished">Roles de sesión (%1)</translation>
+        <translation>Roles de sesión (%1)</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -655,7 +655,7 @@
         <location line="-135"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-115"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -728,7 +728,7 @@
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location line="-357"/>
@@ -775,7 +775,7 @@
     <message>
         <location line="+17"/>
         <source>Zoom</source>
-        <translation type="unfinished">Acercar</translation>
+        <translation>Acercar</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -813,7 +813,7 @@
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished">Marcar mosaicos multiples</translation>
+        <translation>Marcar mosaicos completos</translation>
     </message>
 </context>
 <context>
@@ -826,7 +826,7 @@
     <message>
         <location line="+17"/>
         <source>Session</source>
-        <translation type="unfinished">Sesion</translation>
+        <translation>Sesión</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -851,7 +851,7 @@
     <message>
         <location line="+38"/>
         <source>Create</source>
-        <translation type="unfinished">Crear</translation>
+        <translation>Crear</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -861,7 +861,7 @@
     <message>
         <location line="+11"/>
         <source>Copy</source>
-        <translation type="unfinished">Copiar</translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -1076,7 +1076,7 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s docks can be freely arranged. You can use View &gt; Docks &gt; Arrange Docks to let you drag them more easily. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished">Los muelles de Drawpile se pueden organizar libremente. Puedes usar Ver &gt; Docks&gt; Organizar Docks para arrastrarlos con mayor facilidad. Asegúrate de que la disposición se ajuste a tu resolución; de lo contrario, algunos controles podrían quedar fuera de la pantalla.</translation>
+        <translation>Los paneles de Drawpile se pueden organizar libremente. Puedes usar Ver &gt; Paneles &gt; Organizar Paneles para arrastrarlos con mayor facilidad. Asegúrate de que la disposición se ajuste a tu resolución; de lo contrario, algunos controles podrían quedar fuera de la pantalla.</translation>
     </message>
 </context>
 <context>
@@ -1089,7 +1089,7 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+1"/>
         <source>This link will take you to the website at &quot;%1&quot;, which is not run by Drawpile. Are you sure you want to go there?</source>
-        <translation type="unfinished">Este enlace no está un parte de Drawpile o la gente que hacen Drawpile. ¿Estás seguro que quieres navegar a &quot;%1&quot;?</translation>
+        <translation>Este enlace te llevará al sitio web &quot;%1&quot;, que no está gestionado por Drawpile. ¿Estás seguro de que quieres ir allí?</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1319,7 +1319,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+5"/>
         <location line="+15"/>
         <source>Doing so will %1.</source>
-        <translation type="unfinished">Al hacerlo, %1.</translation>
+        <translation>Al hacer esto, %1.</translation>
     </message>
     <message>
         <location line="-11"/>
@@ -1329,12 +1329,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Doing so will %1, %2 and %3.</source>
-        <translation type="unfinished">Al hacerlo, %1, %2 y %3.</translation>
+        <translation>Al hacer esto, %1, %2 y %3.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Doing so will %1, %2, %3 and %4.</source>
-        <translation type="unfinished">Al hacerlo, se ejecutarán %1, %2, %3 y %4.</translation>
+        <translation>Al hacer esto, se ejecutarán %1, %2, %3 y %4.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1455,7 +1455,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+112"/>
         <source>New</source>
-        <translation type="unfinished">Nuevo</translation>
+        <translation>Nuevo</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1475,7 +1475,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-1259"/>
         <source>Open</source>
-        <translation type="unfinished">Abrir</translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1541,7 +1541,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+156"/>
         <source>Reconnect</source>
-        <translation type="unfinished">Reconectar</translation>
+        <translation>Reconectar</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -1587,7 +1587,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-3062"/>
         <source>Join Session</source>
-        <translation type="unfinished">Unirse a sesion</translation>
+        <translation>Unirse a la sesion</translation>
     </message>
     <message>
         <location line="+1"/>
