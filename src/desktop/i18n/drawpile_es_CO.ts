@@ -1587,7 +1587,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-3062"/>
         <source>Join Session</source>
-        <translation>Unirse a la sesion</translation>
+        <translation>Unirse a la sesión</translation>
     </message>
     <message>
         <location line="+1"/>
