@@ -36,6 +36,7 @@ public:
 
 	static QString addSchemeToUserSuppliedAddress(const QString &remoteAddress);
 	static QUrl fixUpAddress(const QUrl &originalUrl, bool join);
+	static QString extractAutoJoinIdFromUrl(const QUrl &url);
 	static QString extractAutoJoinId(const QString &path);
 
 	explicit Server(Client *client);
@@ -52,6 +53,8 @@ public:
 
 	void login(LoginHandler *login);
 	void logout();
+
+	void replaceWithRedirect(LoginHandler *login, bool late);
 
 	/**
 	 * @brief Is the user in a session

@@ -28,6 +28,9 @@
 #ifdef __EMSCRIPTEN__
 #	include "libclient/wasmsupport.h"
 #endif
+#ifdef HAVE_LIBSODIUM
+#	include "libshared/util/authtoken.h"
+#endif
 
 Q_LOGGING_CATEGORY(lcDpLogin, "net.drawpile.login", QtWarningMsg)
 
@@ -50,26 +53,24 @@ QFileInfo getCertFile(CertLocation location, const QString &hostname)
 
 namespace net {
 
-LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
+LoginHandler::LoginHandler(
+	const QSharedPointer<const LoginHostParams> &hostParams,
+	const QString &autoJoinId, const QUrl &url, quint64 redirectNonce,
+	const QStringList &redirectHistory, const QJsonObject &redirectData,
+	QObject *parent)
 	: QObject(parent)
-	, m_mode(mode)
+	, m_mode(
+		  hostParams.isNull()  ? Mode::Join
+		  : hostParams->remote ? Mode::HostRemote
+							   : Mode::HostBuiltin)
+	, m_hostParams(hostParams)
 	, m_address(url)
+	, m_userid(hostParams ? hostParams->userId : 0)
+	, m_autoJoinId(autoJoinId)
+	, m_redirectNonce(redirectNonce)
+	, m_redirectHistory(redirectHistory)
+	, m_redirectData(redirectData)
 {
-	m_sessions = new LoginSessionModel(this);
-
-	// Automatically join a session if the ID is included in the URL, either in
-	// the path or in the "session" query parameter. WebSocket URLs only support
-	// the latter, since they need the path to actually make a connection.
-	QString path;
-	if(!m_address.scheme().startsWith(
-		   QStringLiteral("ws"), Qt::CaseInsensitive)) {
-		path = m_address.path();
-	}
-	if(path.isEmpty()) {
-		path = QUrlQuery(url).queryItemValue(
-			QStringLiteral("session"), QUrl::FullyDecoded);
-	}
-	m_autoJoinId = net::Server::extractAutoJoinId(path);
 }
 
 #ifdef __EMSCRIPTEN__
@@ -127,6 +128,7 @@ bool LoginHandler::receiveMessage(const ServerReply &msg)
 		break;
 	case WAIT_FOR_LOGIN_PASSWORD:
 	case WAIT_FOR_EXTAUTH:
+	case REDIRECTING:
 		expectNothing();
 		break;
 	case EXPECT_IDENTIFIED:
@@ -141,7 +143,6 @@ bool LoginHandler::receiveMessage(const ServerReply &msg)
 	case WAIT_FOR_JOIN_PASSWORD:
 	case EXPECT_LOGIN_OK:
 		return expectLoginOk(msg);
-		break;
 	case ABORT_LOGIN: /* ignore messages in this state */
 		break;
 	}
@@ -217,9 +218,22 @@ void LoginHandler::expectHello(const ServerReply &msg)
 			m_supportsLookup = true;
 		} else if(flag == QStringLiteral("CINFO")) {
 			m_supportsClientInfo = true;
+		} else if(flag == QStringLiteral("ROUT")) {
+			m_mayRedirect = true;
+		} else if(flag == QStringLiteral("RIN")) {
+			m_acceptsRedirects = true;
 		} else {
 			qCWarning(lcDpLogin) << "Unknown server capability:" << flag;
 		}
+	}
+
+	if(!m_redirectData.isEmpty() && !m_acceptsRedirects) {
+		failLogin(
+			// %1 is the URL that the user got redirected to.
+			tr("Got redirected to a server that doesn't accept redirects: %1")
+				.arg(m_address.toString(
+					QUrl::PrettyDecoded | QUrl::RemoveUserInfo)));
+		return;
 	}
 
 	// Server rules, if present.
@@ -282,6 +296,7 @@ void LoginHandler::expectHello(const ServerReply &msg)
 			send("startTls");
 		} else {
 			failLogin(tr("Server expects STARTTLS on unsupported socket."));
+			return;
 		}
 	} else {
 		// If this is a trusted host, it should always be in secure mode
@@ -353,11 +368,36 @@ void LoginHandler::lookUpSession()
 {
 	if(m_supportsLookup) {
 		setState(EXPECT_LOOKUP_OK);
+
 		QJsonArray args;
 		if(m_mode == Mode::Join) {
 			args.append(m_autoJoinId);
 		}
-		send("lookup", args);
+
+		QJsonObject kwargs;
+		if(m_hostParams) {
+			kwargs.insert(QStringLiteral("nsfm"), m_hostParams->nsfm);
+			kwargs.insert(
+				QStringLiteral("password"), !m_hostParams->password.isEmpty());
+			if(!m_hostParams->alias.isEmpty()) {
+				kwargs.insert(QStringLiteral("alias"), m_hostParams->alias);
+			}
+		}
+
+		bool haveRedirectData = !m_redirectData.isEmpty();
+		if(haveRedirectData) {
+			kwargs.insert(QStringLiteral("redirect"), m_redirectData);
+		}
+
+		if(haveRedirectData || m_mayRedirect) {
+			if(m_redirectNonce == 0) {
+				m_redirectNonce = generateRedirectNonce();
+			}
+			kwargs.insert(
+				QStringLiteral("nonce"), QString::number(m_redirectNonce, 16));
+		}
+
+		send("lookup", args, kwargs);
 	} else {
 		presentRules();
 	}
@@ -384,9 +424,64 @@ void LoginHandler::expectLookupOk(const ServerReply &msg)
 		} else if(lookup == QStringLiteral("host")) {
 			presentRules();
 			return;
+		} else if(lookup == QStringLiteral("redirect")) {
+			handleRedirect(msg.reply, false);
+			return;
 		}
 	}
 	failLogin(tr("Session lookup failed"));
+}
+
+void LoginHandler::handleRedirect(const QJsonObject &reply, bool late)
+{
+	if(!m_mayRedirect) {
+		qCWarning(lcDpLogin, "Got redirected without receiving ROUT flag");
+		failLogin(tr("Incompatible server"));
+		return;
+	}
+
+	QString target = reply.value(QString("target")).toString();
+	qCInfo(lcDpLogin, "Got redirect target '%s'", qUtf8Printable(target));
+
+	QUrl url(target, QUrl::StrictMode);
+	if(!url.isValid() ||
+	   !QStringList({QStringLiteral("drawpile"), QStringLiteral("ws"),
+					 QStringLiteral("wss")})
+			.contains(url.scheme())) {
+		qCWarning(lcDpLogin, "Bad redirect target");
+		failLogin(tr("Incompatible redirect"));
+		return;
+	}
+
+	if(m_redirectHistory.contains(target)) {
+		qCWarning(lcDpLogin, "Circular redirect");
+		failLogin(tr("Circular redirect"));
+		return;
+	}
+
+	m_redirectHistory.append(target);
+	if(m_redirectHistory.size() > MAX_REDIRECTS) {
+		qCWarning(lcDpLogin, "Redirected more than %d times", MAX_REDIRECTS);
+		failLogin(tr("Too many redirects"));
+		return;
+	}
+
+	QJsonObject redirectData = reply.value("data").toObject();
+	if(redirectData.isEmpty()) {
+		qCWarning(lcDpLogin, "No redirect data received");
+		failLogin(tr("Incompatible server"));
+		return;
+	}
+
+	QString autoJoinId = Server::extractAutoJoinIdFromUrl(url);
+	if(autoJoinId.isEmpty()) {
+		autoJoinId = m_autoJoinId;
+	}
+
+	setState(REDIRECTING);
+	emit redirectRequested(
+		m_hostParams, autoJoinId, url, m_redirectNonce, m_redirectHistory,
+		redirectData, late);
 }
 
 void LoginHandler::presentRules()
@@ -689,14 +784,15 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 		m_userFlags << f.toString().toUpper();
 	}
 
-	m_sessions->setModeratorMode(m_userFlags.contains("MOD"));
+	LoginSessionModel *sessions = getOrMakeSessions();
+	sessions->setModeratorMode(m_userFlags.contains("MOD"));
 
 	emit loginOk(m_loginIntent, m_address.host(), m_address.userName());
 	// Show session selector if in multisession mode
 	// In single-session mode we can just automatically join
 	// the first session we see.
 	if(m_mode == Mode::Join && m_multisession) {
-		emit sessionChoiceNeeded(m_sessions);
+		emit sessionChoiceNeeded(sessions);
 	}
 }
 
@@ -720,14 +816,17 @@ void LoginHandler::sendHostCommand()
 {
 	QJsonObject kwargs = makeClientInfo();
 
-	if(!m_sessionAlias.isEmpty())
-		kwargs["alias"] = m_sessionAlias;
+	if(!m_hostParams->alias.isEmpty()) {
+		kwargs.insert(QStringLiteral("alias"), m_hostParams->alias);
+	}
 
-	kwargs["protocol"] = protocol::ProtocolVersion::current().asString();
-	kwargs["user_id"] = m_userid;
-	if(!m_sessionPassword.isEmpty()) {
-		kwargs["password"] = m_sessionPassword;
-		m_joinPassword = m_sessionPassword;
+	kwargs.insert(
+		QStringLiteral("protocol"),
+		protocol::ProtocolVersion::current().asString());
+	kwargs.insert(QStringLiteral("user_id"), m_userid);
+	if(!m_hostParams->password.isEmpty()) {
+		m_joinPassword = m_hostParams->password;
+		kwargs.insert(QStringLiteral("password"), m_joinPassword);
 	}
 
 	send("host", {}, kwargs);
@@ -736,17 +835,20 @@ void LoginHandler::sendHostCommand()
 
 void LoginHandler::sendInitialState()
 {
-	m_server->sendMessages(m_initialState.count(), m_initialState.constData());
+	m_server->sendMessages(
+		m_hostParams->initialState.count(),
+		m_hostParams->initialState.constData());
 }
 
 void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 {
 	Q_ASSERT(m_mode != Mode::HostRemote);
 
+	LoginSessionModel *sessions = getOrMakeSessions();
 	if(msg.reply.contains("sessions")) {
 		for(const QJsonValue &jsv : msg.reply["sessions"].toArray()) {
 			LoginSession session = updateSession(jsv.toObject());
-			m_sessions->updateSession(session);
+			sessions->updateSession(session);
 			if(!m_autoJoinId.isEmpty() &&
 			   (session.id == m_autoJoinId || session.alias == m_autoJoinId)) {
 				// A session ID was given as part of the URL
@@ -764,17 +866,17 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 
 	if(msg.reply.contains("remove")) {
 		for(const QJsonValue j : msg.reply["remove"].toArray()) {
-			m_sessions->removeSession(j.toString());
+			sessions->removeSession(j.toString());
 		}
 	}
 
 	if(!m_multisession || (!m_autoJoinId.isEmpty() && m_supportsLookup)) {
 		// Single session mode: automatically join the (only) session
-		int sessionCount = m_sessions->rowCount();
+		int sessionCount = sessions->rowCount();
 		if(sessionCount > 1) {
 			failLogin(tr("Got multiple sessions when only one was expected"));
 		} else {
-			LoginSession session = m_sessions->getFirstSession();
+			LoginSession session = sessions->getFirstSession();
 			if(checkSession(session, true)) {
 				prepareJoinSelectedSession(
 					session.id, session.needPassword,
@@ -860,7 +962,7 @@ LoginSession LoginHandler::updateSession(const QJsonObject &js)
 		js[QStringLiteral("unlisted")].toBool(),
 		js["nsfm"].toBool(),
 	};
-	m_sessions->updateSession(session);
+	getOrMakeSessions()->updateSession(session);
 	return session;
 }
 
@@ -880,7 +982,15 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 		return true;
 	}
 
-	if(msg.reply["state"] == "join" || msg.reply["state"] == "host") {
+	QString state = msg.reply.value(QStringLiteral("state")).toString();
+	if(state == QStringLiteral("redirect")) {
+		handleRedirect(msg.reply, true);
+		return true;
+	}
+
+	QString expectedState =
+		m_mode == Mode::Join ? QStringLiteral("join") : QStringLiteral("host");
+	if(state == expectedState) {
 		QJsonObject join = msg.reply[QStringLiteral("join")].toObject();
 		QString sessionId = join[QStringLiteral("id")].toString();
 		m_address.setPath(QStringLiteral("/") + sessionId);
@@ -908,44 +1018,44 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 		if(m_mode != Mode::Join) {
 			QJsonObject kwargs;
 
-			if(m_title.isEmpty()) {
-				kwargs[QStringLiteral("title")] =
-					QStringLiteral("%1 Drawpile").arg(m_address.userName());
-				kwargs[QStringLiteral("autotitle")] = true;
-			} else {
-				kwargs[QStringLiteral("title")] = m_title;
+			QString title = m_hostParams->title;
+			if(title.isEmpty()) {
+				title = QStringLiteral("%1 Drawpile").arg(m_address.userName());
+				kwargs.insert(QStringLiteral("autotitle"), true);
 			}
+			kwargs.insert(QStringLiteral("title"), title);
 
-			if(!m_operatorPassword.isEmpty()) {
-				kwargs[QStringLiteral("opword")] = m_operatorPassword;
+			if(!m_hostParams->operatorPassword.isEmpty()) {
+				kwargs.insert(
+					QStringLiteral("opword"), m_hostParams->operatorPassword);
 			}
-			if(m_nsfm) {
-				kwargs[QStringLiteral("nsfm")] = true;
+			if(m_hostParams->nsfm) {
+				kwargs.insert(QStringLiteral("nsfm"), true);
 			}
-			if(m_keepChat) {
-				kwargs[QStringLiteral("preserveChat")] = true;
+			if(m_hostParams->keepChat) {
+				kwargs.insert(QStringLiteral("preserveChat"), true);
 			}
-			if(m_deputies) {
-				kwargs[QStringLiteral("deputies")] = true;
+			if(m_hostParams->deputies) {
+				kwargs.insert(QStringLiteral("deputies"), true);
 			}
 
 			send("sessionconf", {}, kwargs);
 
-			for(const QString &announceUrl : m_announceUrls) {
+			for(const QString &announceUrl : m_hostParams->announcementUrls) {
 				m_server->sendMessage(ServerCommand::makeAnnounce(announceUrl));
 			}
 
-			int authImportCount = m_authToImport.size();
+			int authImportCount = m_hostParams->authToImport.size();
 			int authImportDone = 0;
 			while(authImportDone < authImportCount) {
 				QJsonArray auth;
 				while(auth.size() < 100 && authImportDone < authImportCount) {
-					auth.append(m_authToImport[authImportDone++]);
+					auth.append(m_hostParams->authToImport[authImportDone++]);
 				}
 				send(QStringLiteral("auth-list"), {QJsonValue(auth)});
 			}
 
-			for(const QString &bans : m_bansToImport) {
+			for(const QString &bans : m_hostParams->bansToImport) {
 				send(QStringLiteral("import-bans"), {bans});
 			}
 
@@ -956,7 +1066,7 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 				sendInitialState();
 				send("init-complete");
 			} else if(m_mode == Mode::HostBuiltin) {
-				Q_ASSERT(m_initialState.size() == 3);
+				Q_ASSERT(m_hostParams->initialState.size() == 3);
 				sendInitialState();
 			}
 		}
@@ -989,7 +1099,7 @@ void LoginHandler::prepareJoinSelectedSession(
 
 void LoginHandler::confirmJoinSelectedSession()
 {
-	if(m_needSessionPassword && !m_sessions->isModeratorMode()) {
+	if(m_needSessionPassword && !getOrMakeSessions()->isModeratorMode()) {
 		setState(WAIT_FOR_JOIN_PASSWORD);
 		QString joinPasswordFromUrl = QUrlQuery{m_address}.queryItemValue(
 			QStringLiteral("p"), QUrl::FullyDecoded);
@@ -1262,6 +1372,14 @@ void LoginHandler::failLogin(const QString &message, const QString &errorcode)
 	m_server->loginFailure(message, errorcode);
 }
 
+net::LoginSessionModel *LoginHandler::getOrMakeSessions()
+{
+	if(!m_sessions) {
+		m_sessions = new LoginSessionModel(this);
+	}
+	return m_sessions;
+}
+
 void LoginHandler::send(
 	const QString &cmd, const QJsonArray &args, const QJsonObject &kwargs,
 	bool containsAvatar)
@@ -1438,6 +1556,19 @@ QString LoginHandler::generateTamperSid()
 QString LoginHandler::generateSid()
 {
 	return QUuid::createUuid().toString(QUuid::Id128);
+}
+
+quint64 LoginHandler::generateRedirectNonce()
+{
+	quint64 redirectNonce;
+#ifdef HAVE_LIBSODIUM
+	redirectNonce = server::AuthToken::generateNonce();
+	if(redirectNonce != 0) {
+		return redirectNonce;
+	}
+#endif
+	redirectNonce = QRandomGenerator::global()->generate64();
+	return redirectNonce == 0 ? 1 : redirectNonce;
 }
 
 }

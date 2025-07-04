@@ -834,6 +834,49 @@ padding: 16px;</string>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="redirectPage">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="redirectPromptLabel">
+         <property name="styleSheet">
+          <string notr="true">background: #4d4d4d;
+color: #fcfcfc;
+padding: 16px;</string>
+         </property>
+         <property name="text">
+          <string notr="true">REDIRECT</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::PlainText</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="redirectLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>This session is hosted on another server, you will be redirected.
+
+To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>

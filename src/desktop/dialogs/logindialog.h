@@ -94,6 +94,8 @@ private:
 	static constexpr char LAST_GUEST_NAME_KEY[] = "login/lastguestname";
 	static constexpr char LAST_GUEST_AVATAR_KEY[] = "login/lastguestavatar";
 
+	void resetLoginHandler(net::LoginHandler *login, bool late);
+	void connectLoginHandler(net::LoginHandler *login);
 	void adjustSize(int width, int height, bool allowShrink);
 	void selectCurrentAvatar();
 	void selectRecentAccount(bool logIn);

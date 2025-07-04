@@ -506,6 +506,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_doc, &Document::sessionNsfmChanged, this, &MainWindow::onNsfmChanged);
 
 	connect(m_doc, &Document::serverConnected, m_netstatus, &widgets::NetStatus::connectingToHost);
+	connect(m_doc, &Document::serverRedirected, m_netstatus, &widgets::NetStatus::connectingToHost);
 	connect(m_doc->client(), &net::Client::serverDisconnecting, m_netstatus, &widgets::NetStatus::hostDisconnecting);
 	connect(m_doc, &Document::serverDisconnected, m_netstatus, &widgets::NetStatus::hostDisconnected);
 	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::joinPasswordChanged, m_netstatus, &widgets::NetStatus::setJoinPassword);
@@ -3124,28 +3125,25 @@ void MainWindow::hostSession(const HostParams &params)
 #endif
 	}
 
-	// Connect to server
-	net::LoginHandler *login = new net::LoginHandler(
-		useremote ? net::LoginHandler::Mode::HostRemote
-				  : net::LoginHandler::Mode::HostBuiltin,
-		address, this);
-	login->setUserId(m_doc->canvas()->localUserId());
-	login->setSessionAlias(params.alias);
-	login->setPassword(params.password);
-	login->setTitle(params.title);
-	login->setOperatorPassword(params.operatorPassword);
-	login->setAnnounceUrls(params.announcementUrls);
-	login->setNsfm(params.nsfm);
-	login->setKeepChat(params.keepChat);
-	login->setDeputies(params.deputies);
-	login->setAuthToImport(params.auth);
-	login->setBansToImport(params.bans);
+	net::LoginHostParams *loginParams = new net::LoginHostParams;
+	loginParams->remote = useremote;
+	loginParams->nsfm = params.nsfm;
+	loginParams->keepChat = params.keepChat;
+	loginParams->deputies = params.deputies;
+	loginParams->userId = m_doc->canvas()->localUserId();
+	loginParams->alias = params.alias;
+	loginParams->title = params.title;
+	loginParams->operatorPassword = params.operatorPassword;
+	loginParams->announcementUrls = params.announcementUrls;
+	loginParams->bansToImport = params.bans;
+	loginParams->authToImport = params.auth;
+
 	if(useremote) {
 		utils::ScopedOverrideCursor waitCursor;
-		login->setInitialState(m_doc->canvas()->generateSnapshot(
+		loginParams->initialState = m_doc->canvas()->generateSnapshot(
 			true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS,
 			params.undoLimit, &params.featurePermissions,
-			&params.featureLimits));
+			&params.featureLimits);
 	} else {
 		QVector<uint8_t> features;
 		features.reserve(DP_FEATURE_COUNT);
@@ -3181,12 +3179,16 @@ void MainWindow::hostSession(const HostParams &params)
 			}
 		}
 
-		login->setInitialState({
+		loginParams->initialState = {
 			net::makeFeatureAccessLevelsMessage(0, features),
 			net::makeFeatureLimitsMessage(0, limits),
 			net::makeUndoDepthMessage(0, params.undoLimit),
-		});
+		};
 	}
+
+	net::LoginHandler *login = new net::LoginHandler(
+		QSharedPointer<const net::LoginHostParams>(loginParams), QString(),
+		address, 0, QStringList(), QJsonObject(), this);
 
 	utils::showWindow(
 		new dialogs::LoginDialog(login, getStartDialogOrThis()),
@@ -3464,9 +3466,12 @@ void MainWindow::connectToSession(
 		return;
 	}
 
+	QUrl loginUrl = net::Server::fixUpAddress(url, true);
+	QString autoJoinId = net::Server::extractAutoJoinIdFromUrl(loginUrl);
 	net::LoginHandler *login = new net::LoginHandler(
-		net::LoginHandler::Mode::Join, net::Server::fixUpAddress(url, true),
-		this);
+		QSharedPointer<const net::LoginHostParams>(nullptr), autoJoinId,
+		loginUrl, 0, QStringList(), QJsonObject(), this);
+
 	dialogs::LoginDialog *dlg =
 		new dialogs::LoginDialog(login, getStartDialogOrThis());
 	connect(

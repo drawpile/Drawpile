@@ -125,6 +125,22 @@ QUrl Server::fixUpAddress(const QUrl &originalUrl, bool join)
 	return originalUrl;
 }
 
+QString Server::extractAutoJoinIdFromUrl(const QUrl &url)
+{
+	// Automatically join a session if the ID is included in the URL, either in
+	// the path or in the "session" query parameter. WebSocket URLs only support
+	// the latter, since they need the path to actually make a connection.
+	QString path;
+	if(!url.scheme().startsWith(QStringLiteral("ws"), Qt::CaseInsensitive)) {
+		path = url.path();
+	}
+	if(path.isEmpty()) {
+		path = QUrlQuery(url).queryItemValue(
+			QStringLiteral("session"), QUrl::FullyDecoded);
+	}
+	return extractAutoJoinId(path);
+}
+
 QString Server::extractAutoJoinId(const QString &path)
 {
 	if(path.length() > 1) {
@@ -172,6 +188,15 @@ void Server::logout()
 	m_localDisconnect = true;
 	messageQueue()->sendDisconnect(
 		MessageQueue::GracefulDisconnect::Shutdown, QString());
+}
+
+void Server::replaceWithRedirect(LoginHandler *login, bool late)
+{
+	if(m_loginstate) {
+		emit m_loginstate->replacedByRedirect(login, late);
+	} else {
+		qWarning("replaceWithRedirect: not in login state!");
+	}
 }
 
 bool Server::isBrowser() const

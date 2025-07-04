@@ -2,9 +2,11 @@
 #ifndef DP_NET_CLIENT_H
 #define DP_NET_CLIENT_H
 #include "libclient/net/server.h"
+#include <QMetaObject>
 #include <QObject>
 #include <QSslCertificate>
 #include <QUrl>
+#include <QVector>
 
 class QJsonObject;
 class QJsonArray;
@@ -20,6 +22,7 @@ namespace net {
 
 class Message;
 class LoginHandler;
+struct LoginHostParams;
 struct ServerReply;
 
 /**
@@ -257,7 +260,8 @@ signals:
 	void sessionOutOfSpace();
 	void inviteCodeCreated(const QString &secret);
 
-	void serverConnected(const QString &address, int port);
+	void serverConnected(const QUrl &url);
+	void serverRedirected(const QUrl &url);
 	void serverLoggedIn(
 		bool join, bool compatibilityMode, const QString &joinPassword,
 		const QString &authId);
@@ -299,6 +303,11 @@ private slots:
 	void handleDisconnect(
 		const QString &message, const QString &errorcode, bool localDisconnect,
 		bool anyMessageReceived);
+	void handleRedirect(
+		const QSharedPointer<const net::LoginHostParams> &hostParams,
+		const QString &autoJoinId, const QUrl &url, quint64 redirectNonce,
+		const QStringList &redirectHistory, const QJsonObject &redirectData,
+		bool late);
 	void nudgeCatchup();
 
 private:
@@ -313,6 +322,9 @@ private:
 	{
 		return isConnected() && !sessionSupportsAutoReset();
 	}
+
+	void connectToServerInternal(
+		net::LoginHandler *loginhandler, bool redirect, bool transparent);
 
 	void sendRemoteMessages(int count, const net::Message *msgs);
 	QVector<net::Message>
@@ -333,6 +345,7 @@ private:
 	utils::AndroidWakeLock *m_wakeLock = nullptr;
 	utils::AndroidWifiLock *m_wifiLock = nullptr;
 #endif
+	QVector<QMetaObject::Connection> m_connections;
 
 	QUrl m_connectionUrl;
 	QUrl m_lastUrl;
@@ -343,6 +356,8 @@ private:
 	bool m_supportsAutoReset = false;
 	bool m_compatibilityMode = false;
 
+	int m_timeoutSecs = 0;
+	int m_proxyMode = 0;
 	int m_catchupTo = 0;
 	int m_caughtUp = 0;
 	int m_catchupProgress = 0;

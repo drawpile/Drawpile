@@ -16,6 +16,16 @@
 #include <QStringList>
 #include <utility>
 
+// REDIRECTS: clients support servers redirecting them. It works similar to HTTP
+// redirects in that they will receive a URL, disconnect and try to connect to
+// the URL. Clients will send along a payload received from the source server so
+// that the target server may verify the source if it wants to. The idea is that
+// we use the same kind of auth token stuff that's used for ext-auth.
+//
+// This is currently not yet implemented in the server. Look for other comments
+// in this file that start with REDIRECTS for more information on where the
+// implementation would go.
+
 namespace server {
 
 namespace {
@@ -121,6 +131,10 @@ void LoginHandler::startLoginProcess()
 	flags << QStringLiteral("MBANIMPEX") // Moderators can always export bans.
 		  << QStringLiteral("LOOKUP")	 // This server supports lookups.
 		  << QStringLiteral("CINFO");	 // Supports client info messages.
+
+	// REDIRECTS: the ROUT flag tells the client that this server may "redirect
+	// out", the RIN flag says that it may accept redirects. See top of file for
+	// more information.
 
 	QJsonObject methods;
 	bool allowGuestHosts =
@@ -424,6 +438,20 @@ void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
 			QStringLiteral("Session lookup already done"));
 		return;
 	}
+
+	// REDIRECTS: if this server sent a ROUT or RIN flag, the lookup kwargs will
+	// contain a "nonce". For an ROUT server can use this to generate a token
+	// and respond with a "redirect" lookup result, which must contain a
+	// "target" key with a URL value and a "data" key with a non-empty object
+	// value. That object should at least contain a "transparent" key with a
+	// boolean value that tells the client whether it's a transparent redirect
+	// (true), which will make invite links continue to link against the
+	// original server, or an opaque redirect (false), which will generate
+	// invite links against the destination. For an RIN server, the lookup
+	// kwargs may contain a "redirect" key that indicates that this is an
+	// incoming redirect. It will contain the contents of the "data" object that
+	// the source server passed, which this server cna use to decide if it wants
+	// to accept the redirect or not. See top of file for more information.
 
 	compat::sizetype argc = cmd.args.size();
 	net::Message msg;
@@ -1160,6 +1188,13 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 			QStringLiteral("Cannot look up one session and then join another"));
 		return;
 	}
+
+	// REDIRECTS: The server may return a result with key "state" being
+	// "redirect" here, with further keys as during lookup above. This should
+	// only be used if the client is joining the server without targeting a
+	// session, since by this point they will have gone through the trouble of
+	// logging in and have to start the process over. The login dialog will
+	// whinge at the user appropriately. See top of file for more information.
 
 	if(!verifySystemId(
 		   clientInfoLogGuard.sid(),

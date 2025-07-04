@@ -48,12 +48,17 @@ enum class Mode {
 	Catchup,	 // logged in: catching up (dialog can be closed at this point)
 	CertChanged, // SSL certificate has changed (can be ignored)
 	ConfirmNsfm, // confirm NSFM session join
+	Redirect,	 // tell the user they're in for another round
 };
 
 struct LoginDialog::Private {
 	Mode mode;
+	Mode redirectMode = Mode::Redirect;
 
 	QPointer<net::LoginHandler> loginHandler;
+	LoginDialog *loginDialog;
+	QUrl originalUrl;
+	QUrl currentUrl;
 	AvatarListModel *avatars;
 	AccountListModel *accounts;
 	LoginSessionFilterProxyModel *sessions;
@@ -82,12 +87,16 @@ struct LoginDialog::Private {
 	bool wasRecentAccount = false;
 	bool logInAfterPasswordRead = true;
 	bool passwordReadFromKeychain = false;
+	bool lateRedirect = false;
 
 	QMetaObject::Connection loginDestructConnection;
 
 	Private(net::LoginHandler *login, LoginDialog *dlg)
 		: mode(Mode::Loading)
 		, loginHandler(login)
+		, loginDialog(dlg)
+		, originalUrl(login->url())
+		, currentUrl(originalUrl)
 		, ui(new Ui_LoginDialog)
 	{
 		Q_ASSERT(loginHandler);
@@ -181,6 +190,7 @@ struct LoginDialog::Private {
 	~Private() { delete ui; }
 
 	void resetMode(Mode mode);
+	void updateHostLabels();
 	QWidget *setupAuthPage(bool usernameEnabled, bool passwordVisible);
 	void setLoginExplanation(const QString &explanation, bool isError);
 	void setLoginMode(const QString &prompt);
@@ -307,6 +317,15 @@ void LoginDialog::Private::resetMode(Mode newMode)
 		return;
 	}
 
+	Q_ASSERT(newMode != Mode::Redirect);
+	if(lateRedirect && newMode != Mode::Loading) {
+		if(redirectMode == Mode::Redirect) {
+			 loginDialog->adjustSize(400, 350, true);
+		}
+		redirectMode = newMode;
+		newMode = Mode::Redirect;
+	}
+
 	mode = newMode;
 	readPasswordJobId = 0;
 
@@ -320,10 +339,7 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	switch(mode) {
 	case Mode::Loading: {
 		okButton->setVisible(false);
-		QString host = loginHandler->url().host();
-		ui->loginPromptLabel->setText(host);
-		ui->authModePromptLabel->setText(host);
-		ui->recentPromptLabel->setText(host);
+		updateHostLabels();
 		page = ui->loadingPage;
 		break;
 	}
@@ -422,6 +438,9 @@ void LoginDialog::Private::resetMode(Mode newMode)
 		yesButton->setText(originalYesButtonText);
 		page = ui->nsfmConfirmPage;
 		break;
+	case Mode::Redirect:
+		page = ui->redirectPage;
+		break;
 	}
 
 	switch(mode) {
@@ -478,6 +497,23 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	ui->pages->setCurrentWidget(page);
 }
 
+void LoginDialog::Private::updateHostLabels()
+{
+	QString originalHost = originalUrl.host();
+	QString currentHost = currentUrl.host();
+	QString host;
+	if(originalHost == currentHost) {
+		host = originalHost;
+	} else {
+		host = QStringLiteral("%1\n%2").arg(
+			currentHost, tr("(redirected from %1)").arg(originalHost));
+	}
+	ui->loginPromptLabel->setText(host);
+	ui->authModePromptLabel->setText(host);
+	ui->recentPromptLabel->setText(host);
+	ui->redirectPromptLabel->setText(host);
+}
+
 QWidget *
 LoginDialog::Private::setupAuthPage(bool usernameEnabled, bool passwordVisible)
 {
@@ -516,7 +552,7 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 {
 	setWindowModality(Qt::WindowModal);
 	setAttribute(Qt::WA_DeleteOnClose);
-	setWindowTitle(login->url().host());
+	setWindowTitle(d->originalUrl.host());
 
 	connect(
 		d->ui->username, &QLineEdit::textChanged, this,
@@ -551,7 +587,6 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 		d->yesButton, &QPushButton::clicked, this, &LoginDialog::onYesClicked);
 	connect(
 		d->noButton, &QPushButton::clicked, this, &LoginDialog::onNoClicked);
-	connect(this, &QDialog::rejected, login, &net::LoginHandler::cancelLogin);
 
 	connect(
 		d->ui->recentLogInButton, &QAbstractButton::clicked, this,
@@ -590,61 +625,11 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 		d->ui->viewNewCert, &QPushButton::clicked, this,
 		&LoginDialog::showNewCert);
 
-	d->loginDestructConnection = connect(
-		login, &net::LoginHandler::destroyed, this, &LoginDialog::deleteLater);
-
-	connect(
-		login, &net::LoginHandler::ruleAcceptanceNeeded, this,
-		&LoginDialog::onRuleAcceptanceNeeded);
-	connect(
-		login, &net::LoginHandler::loginMethodChoiceNeeded, this,
-		&LoginDialog::onLoginMethodChoiceNeeded);
-	connect(
-		login, &net::LoginHandler::loginMethodMismatch, this,
-		&LoginDialog::onLoginMethodMismatch);
-	connect(
-		login, &net::LoginHandler::usernameNeeded, this,
-		&LoginDialog::onUsernameNeeded);
-	connect(
-		login, &net::LoginHandler::loginNeeded, this,
-		&LoginDialog::onLoginNeeded);
-	connect(
-		login, &net::LoginHandler::extAuthNeeded, this,
-		&LoginDialog::onExtAuthNeeded);
-	connect(
-		login, &net::LoginHandler::sessionConfirmationNeeded, this,
-		&LoginDialog::onSessionConfirmationNeeded);
-	connect(
-		login, &net::LoginHandler::sessionPasswordNeeded, this,
-		&LoginDialog::onSessionPasswordNeeded);
-	connect(
-		login, &net::LoginHandler::badSessionPassword, this,
-		&LoginDialog::onBadSessionPassword);
-	connect(login, &net::LoginHandler::loginOk, this, &LoginDialog::onLoginOk);
-	connect(
-		login, &net::LoginHandler::badLoginPassword, this,
-		&LoginDialog::onBadLoginPassword);
-	connect(
-		login, &net::LoginHandler::extAuthComplete, this,
-		&LoginDialog::onExtAuthComplete);
-	connect(
-		login, &net::LoginHandler::sessionChoiceNeeded, this,
-		&LoginDialog::onSessionChoiceNeeded);
-	connect(
-		login, &net::LoginHandler::certificateCheckNeeded, this,
-		&LoginDialog::onCertificateCheckNeeded);
-	connect(
-		login, &net::LoginHandler::serverTitleChanged, this,
-		&LoginDialog::onServerTitleChanged);
-#ifdef __EMSCRIPTEN__
-	connect(login, &net::LoginHandler::browserAuthCancelled, this, [this]() {
-		d->resetMode(Mode::LoginMethod);
-	});
-#endif
-
 	connect(
 		d->accounts, &AccountListModel::passwordReadFinished, this,
 		&LoginDialog::onPasswordReadFinished);
+
+	connectLoginHandler(login);
 
 	d->restoreAvatar(dpApp().settings().lastAvatar());
 	selectCurrentAvatar();
@@ -716,6 +701,9 @@ void LoginDialog::updateOkButtonEnabled()
 	}
 	case Mode::CertChanged:
 		enabled = d->ui->replaceCert->isChecked();
+		break;
+	case Mode::Redirect:
+		enabled = true;
 		break;
 	}
 
@@ -846,11 +834,10 @@ void LoginDialog::showNewCert()
 
 void LoginDialog::onRuleAcceptanceNeeded(const QString &ruleText)
 {
-	QString host = d->loginHandler->url().host();
+	QString host = d->originalUrl.host();
 	d->ruleKey = QStringLiteral("login/rules/%1").arg(host.toCaseFolded());
 
-	QString title =
-		tr("Server Rules for %1").arg(d->loginHandler->url().host());
+	QString title = tr("Server Rules for %1").arg(d->originalUrl.host());
 	QString ruleHtml =
 		QStringLiteral("<h2>%1</h2>").arg(title) +
 		htmlutils::newlineToBr(htmlutils::linkify(ruleText.toHtmlEscaped()));
@@ -1345,6 +1332,12 @@ void LoginDialog::onOkClicked()
 		d->loginHandler->acceptServerCertificate();
 #endif
 		break;
+	case Mode::Redirect: {
+		d->lateRedirect = false;
+		d->resetMode(d->redirectMode);
+		d->redirectMode = Mode::Redirect;
+		break;
+	}
 	}
 }
 
@@ -1476,6 +1469,81 @@ void LoginDialog::catchupProgress(int value)
 	d->ui->progressBar->setValue(value);
 	if(d->mode == Mode::Catchup && value >= 100)
 		this->deleteLater();
+}
+
+void LoginDialog::resetLoginHandler(net::LoginHandler *login, bool late)
+{
+	if(d->loginHandler) {
+		disconnect(d->loginDestructConnection);
+		disconnect(
+			this, &QDialog::rejected, login, &net::LoginHandler::cancelLogin);
+	}
+
+	d->loginHandler = login;
+	d->lateRedirect = late;
+	if(login) {
+		d->currentUrl = login->url();
+		d->updateHostLabels();
+		connectLoginHandler(login);
+	}
+}
+
+void LoginDialog::connectLoginHandler(net::LoginHandler *login)
+{
+	d->loginDestructConnection = connect(
+		login, &net::LoginHandler::destroyed, this, &LoginDialog::deleteLater);
+	connect(
+		login, &net::LoginHandler::replacedByRedirect, this,
+		&LoginDialog::resetLoginHandler);
+	connect(this, &QDialog::rejected, login, &net::LoginHandler::cancelLogin);
+	connect(
+		login, &net::LoginHandler::ruleAcceptanceNeeded, this,
+		&LoginDialog::onRuleAcceptanceNeeded);
+	connect(
+		login, &net::LoginHandler::loginMethodChoiceNeeded, this,
+		&LoginDialog::onLoginMethodChoiceNeeded);
+	connect(
+		login, &net::LoginHandler::loginMethodMismatch, this,
+		&LoginDialog::onLoginMethodMismatch);
+	connect(
+		login, &net::LoginHandler::usernameNeeded, this,
+		&LoginDialog::onUsernameNeeded);
+	connect(
+		login, &net::LoginHandler::loginNeeded, this,
+		&LoginDialog::onLoginNeeded);
+	connect(
+		login, &net::LoginHandler::extAuthNeeded, this,
+		&LoginDialog::onExtAuthNeeded);
+	connect(
+		login, &net::LoginHandler::sessionConfirmationNeeded, this,
+		&LoginDialog::onSessionConfirmationNeeded);
+	connect(
+		login, &net::LoginHandler::sessionPasswordNeeded, this,
+		&LoginDialog::onSessionPasswordNeeded);
+	connect(
+		login, &net::LoginHandler::badSessionPassword, this,
+		&LoginDialog::onBadSessionPassword);
+	connect(login, &net::LoginHandler::loginOk, this, &LoginDialog::onLoginOk);
+	connect(
+		login, &net::LoginHandler::badLoginPassword, this,
+		&LoginDialog::onBadLoginPassword);
+	connect(
+		login, &net::LoginHandler::extAuthComplete, this,
+		&LoginDialog::onExtAuthComplete);
+	connect(
+		login, &net::LoginHandler::sessionChoiceNeeded, this,
+		&LoginDialog::onSessionChoiceNeeded);
+	connect(
+		login, &net::LoginHandler::certificateCheckNeeded, this,
+		&LoginDialog::onCertificateCheckNeeded);
+	connect(
+		login, &net::LoginHandler::serverTitleChanged, this,
+		&LoginDialog::onServerTitleChanged);
+#ifdef __EMSCRIPTEN__
+	connect(login, &net::LoginHandler::browserAuthCancelled, this, [this]() {
+		d->resetMode(Mode::LoginMethod);
+	});
+#endif
 }
 
 void LoginDialog::adjustSize(int width, int height, bool allowShrink)

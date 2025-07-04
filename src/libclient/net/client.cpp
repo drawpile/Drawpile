@@ -6,10 +6,13 @@
 #include "libshared/net/servercmd.h"
 #include "libshared/util/qtcompat.h"
 #include <QDebug>
+#include <QLoggingCategory>
 #include <QTimer>
 #ifdef Q_OS_ANDROID
 #	include "libshared/util/androidutils.h"
 #endif
+
+Q_LOGGING_CATEGORY(lcDpClient, "net.drawpile.client", QtWarningMsg)
 
 namespace net {
 
@@ -30,8 +33,21 @@ void Client::connectToServer(
 {
 	Q_ASSERT(!isConnected());
 	m_builtin = builtin;
+	m_timeoutSecs = timeoutSecs;
+	m_proxyMode = proxyMode;
+	connectToServerInternal(loginhandler, false, false);
+}
 
-	m_server = Server::make(loginhandler->url(), timeoutSecs, proxyMode, this);
+void Client::connectToServerInternal(
+	net::LoginHandler *loginhandler, bool redirect, bool transparent)
+{
+	qCDebug(lcDpClient) << "Connect to" << loginhandler->url() << "redirect"
+						<< redirect << "transparent" << transparent
+						<< "connected" << isConnected();
+	Q_ASSERT(!isConnected());
+
+	m_server =
+		Server::make(loginhandler->url(), m_timeoutSecs, m_proxyMode, this);
 	m_server->setSmoothDrainRate(m_smoothDrainRate);
 
 #ifdef Q_OS_ANDROID
@@ -53,17 +69,24 @@ void Client::connectToServer(
 	}
 #endif
 
-	connect(
+	m_connections.clear();
+	m_connections.append(connect(
 		m_server, &Server::initiatingConnection, this,
-		&Client::setConnectionUrl);
-	connect(m_server, &Server::loggingOut, this, &Client::serverDisconnecting);
-	connect(
-		m_server, &Server::serverDisconnected, this, &Client::handleDisconnect);
-	connect(m_server, &Server::loggedIn, this, &Client::handleConnect);
-	connect(m_server, &Server::bytesReceived, this, &Client::bytesReceived);
-	connect(m_server, &Server::bytesSent, this, &Client::bytesSent);
-	connect(m_server, &Server::lagMeasured, this, &Client::lagMeasured);
-	connect(
+		&Client::setConnectionUrl));
+	m_connections.append(connect(
+		m_server, &Server::loggingOut, this, &Client::serverDisconnecting));
+	m_connections.append(connect(
+		m_server, &Server::serverDisconnected, this,
+		&Client::handleDisconnect));
+	m_connections.append(
+		connect(m_server, &Server::loggedIn, this, &Client::handleConnect));
+	m_connections.append(connect(
+		m_server, &Server::bytesReceived, this, &Client::bytesReceived));
+	m_connections.append(
+		connect(m_server, &Server::bytesSent, this, &Client::bytesSent));
+	m_connections.append(
+		connect(m_server, &Server::lagMeasured, this, &Client::lagMeasured));
+	m_connections.append(connect(
 		m_server, &Server::gracefullyDisconnecting, this,
 		[this](
 			MessageQueue::GracefulDisconnect reason, const QString &message) {
@@ -100,13 +123,17 @@ void Client::connectToServer(
 				break;
 			}
 			emit serverMessage(chat, int(ServerMessageType::Alert));
-		});
+		}));
 
-	if(loginhandler->mode() == LoginHandler::Mode::HostRemote)
-		loginhandler->setUserId(m_myId);
+	m_connections.append(connect(
+		loginhandler, &LoginHandler::redirectRequested, this,
+		&Client::handleRedirect));
 
-	emit serverConnected(
-		loginhandler->url().host(), loginhandler->url().port());
+	if(!redirect) {
+		emit serverConnected(loginhandler->url());
+	} else if(!transparent) {
+		emit serverRedirected(loginhandler->url());
+	}
 	m_server->login(loginhandler);
 
 	m_catchupTo = 0;
@@ -116,8 +143,12 @@ void Client::connectToServer(
 
 void Client::disconnectFromServer()
 {
-	if(m_server)
+	if(m_server) {
+		qCDebug(lcDpClient, "Disconnect from connected server");
 		m_server->logout();
+	} else {
+		qCDebug(lcDpClient, "Disconnect from server, but not connected");
+	}
 }
 
 QUrl Client::sessionUrl(bool includeUser) const
@@ -154,7 +185,12 @@ void Client::handleDisconnect(
 	const QString &message, const QString &errorcode, bool localDisconnect,
 	bool anyMessageReceived)
 {
-	if(isConnected()) {
+	bool connected = isConnected();
+	qCDebug(lcDpClient) << "Handle disconnect connected" << connected
+						<< "localDisconnect" << localDisconnect
+						<< "anyMessageReceived" << anyMessageReceived
+						<< "errorcode" << errorcode << "message" << message;
+	if(connected) {
 		emit serverDisconnected(
 			message, errorcode, localDisconnect, anyMessageReceived);
 		m_compatibilityMode = false;
@@ -171,6 +207,38 @@ void Client::handleDisconnect(
 		// WebSockets may report multiple disconnects, sometimes amending error
 		// information to them. So emit those too.
 		emit serverDisconnectedAgain(message, errorcode);
+	}
+}
+
+void Client::handleRedirect(
+	const QSharedPointer<const net::LoginHostParams> &hostParams,
+	const QString &autoJoinId, const QUrl &url, quint64 redirectNonce,
+	const QStringList &redirectHistory, const QJsonObject &redirectData,
+	bool late)
+{
+	bool connected = isConnected();
+	qCDebug(lcDpClient) << "Handle redirect connected" << connected << "url"
+						<< url << "redirectData" << redirectData;
+	if(connected) {
+		for(const QMetaObject::Connection &connection : m_connections) {
+			disconnect(connection);
+		}
+		m_connections.clear();
+
+		net::LoginHandler *loginhandler = new net::LoginHandler(
+			hostParams, autoJoinId, url, redirectNonce, redirectHistory,
+			redirectData, this);
+		m_server->replaceWithRedirect(loginhandler, late);
+
+		connect(
+			m_server, &Server::serverDisconnected, m_server,
+			&Server::deleteLater);
+		m_server->logout();
+		m_server = nullptr;
+
+		connectToServerInternal(
+			loginhandler, true,
+			redirectData.value(QStringLiteral("transparent")).toBool());
 	}
 }
 

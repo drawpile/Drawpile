@@ -147,10 +147,11 @@ void NetStatus::setJoinPassword(const QString &joinPassword)
  * A context menu to copy the address to clipboard will be enabled.
  * @param address the address to display
  */
-void NetStatus::connectingToHost(const QString &address, int port)
+void NetStatus::connectingToHost(const QUrl &url)
 {
+	QString address = url.host();
 	m_address = address;
-	m_port = port;
+	m_port = url.port();
 	m_state = Connecting;
 	m_copyaction->setEnabled(true);
 	updateLabel();

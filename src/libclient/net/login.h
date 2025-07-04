@@ -2,13 +2,13 @@
 #ifndef DP_CLIENT_NET_LOGINHANDLER_H
 #define DP_CLIENT_NET_LOGINHANDLER_H
 #include "libclient/net/message.h"
-#include "libshared/net/protover.h"
 #include <QByteArray>
 #include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QObject>
 #include <QPixmap>
+#include <QSharedPointer>
 #include <QSslError>
 #include <QString>
 #include <QUrl>
@@ -21,6 +21,7 @@ namespace net {
 
 class LoginSessionModel;
 class Server;
+struct LoginHostParams;
 struct LoginSession;
 struct ServerCommand;
 struct ServerReply;
@@ -40,129 +41,15 @@ public:
 	enum class Mode { HostRemote, HostBuiltin, Join };
 	enum class LoginMethod { Unknown, Guest, Auth, ExtAuth };
 
-	LoginHandler(Mode mode, const QUrl &url, QObject *parent = nullptr);
+	LoginHandler(
+		const QSharedPointer<const LoginHostParams> &hostParams,
+		const QString &autoJoinId, const QUrl &url, quint64 redirectNonce,
+		const QStringList &redirectHistory, const QJsonObject &redirectData,
+		QObject *parent = nullptr);
 
 #ifdef __EMSCRIPTEN__
 	~LoginHandler() override;
 #endif
-
-	/**
-	 * @brief Set the desired user ID
-	 *
-	 * Only for host mode. When joining an existing session, the server assigns
-	 * the user ID.
-	 *
-	 * @param userid
-	 */
-	void setUserId(uint8_t userid)
-	{
-		Q_ASSERT(m_mode != Mode::Join);
-		m_userid = userid;
-	}
-
-	/**
-	 * @brief Set desired session ID alias
-	 *
-	 * Only in host mode.
-	 * @param id
-	 */
-	void setSessionAlias(const QString &alias)
-	{
-		Q_ASSERT(m_mode != Mode::Join);
-		m_sessionAlias = alias;
-	}
-
-	/**
-	 * @brief Set the session password
-	 *
-	 * Only for host mode.
-	 *
-	 * @param password
-	 */
-	void setPassword(const QString &password)
-	{
-		Q_ASSERT(m_mode != Mode::Join);
-		m_sessionPassword = password;
-	}
-
-	/**
-	 * @brief Set the session title
-	 *
-	 * Only for host mode.
-	 *
-	 * @param title
-	 */
-	void setTitle(const QString &title)
-	{
-		Q_ASSERT(m_mode != Mode::Join);
-		m_title = title;
-	}
-
-	/**
-	 * @brief Set the initial session content to upload to the server
-	 *
-	 * Only for remote host mode.
-	 *
-	 * @param msgs
-	 */
-	void setInitialState(const net::MessageList &msgs)
-	{
-		Q_ASSERT(m_mode != Mode::Join);
-		m_initialState = msgs;
-	}
-
-	void setOperatorPassword(const QString &operatorPassword)
-	{
-		Q_ASSERT(m_mode != Mode::Join);
-		m_operatorPassword = operatorPassword;
-	}
-
-	/**
-	 * @brief Set session announcement URLs
-	 *
-	 * Only for host mode.
-	 */
-	void setAnnounceUrls(const QStringList &urls)
-	{
-		Q_ASSERT(m_mode != Mode::Join);
-		m_announceUrls = urls;
-	}
-
-	/**
-	 * @brief Set session NSFM flag
-	 *
-	 * Only for host mode.
-	 */
-	void setNsfm(bool nsfm)
-	{
-		Q_ASSERT(m_mode != Mode::Join);
-		m_nsfm = nsfm;
-	}
-
-	void setKeepChat(bool keepChat)
-	{
-		Q_ASSERT(m_mode != Mode::Join);
-		m_keepChat = keepChat;
-	}
-
-	void setDeputies(bool deputies)
-	{
-		Q_ASSERT(m_mode != Mode::Join);
-		m_deputies = deputies;
-	}
-
-	void setAuthToImport(const QJsonArray &authToImport)
-	{
-		Q_ASSERT(m_mode != Mode::Join);
-		m_authToImport = authToImport;
-	}
-
-	void setBansToImport(const QStringList &bansToImport)
-	{
-		Q_ASSERT(m_mode != Mode::Join);
-		m_bansToImport = bansToImport;
-	}
-
 	/**
 	 * @brief Set the server we're communicating with
 	 * @param server
@@ -454,11 +341,21 @@ signals:
 	 */
 	void serverTitleChanged(const QString &title);
 
+	void redirectRequested(
+		const QSharedPointer<const LoginHostParams> &hostParams,
+		const QString &autoJoinId, const QUrl &url, quint64 redirectNonce,
+		const QStringList &redirectHistory, const QJsonObject &redirectData,
+		bool late);
+
+	void replacedByRedirect(LoginHandler *login, bool late);
+
 private slots:
 	void
 	failLogin(const QString &message, const QString &errorcode = QString());
 
 private:
+	static constexpr int MAX_REDIRECTS = 3;
+
 	enum State {
 		EXPECT_HELLO,
 		EXPECT_STARTTLS,
@@ -471,8 +368,11 @@ private:
 		EXPECT_SESSIONLIST_TO_HOST,
 		WAIT_FOR_JOIN_PASSWORD,
 		EXPECT_LOGIN_OK,
-		ABORT_LOGIN
+		ABORT_LOGIN,
+		REDIRECTING,
 	};
+
+	net::LoginSessionModel *getOrMakeSessions();
 
 	void send(
 		const QString &cmd, const QJsonArray &args = QJsonArray(),
@@ -486,6 +386,7 @@ private:
 	void expectClientInfoOk(const ServerReply &msg);
 	void lookUpSession();
 	void expectLookupOk(const ServerReply &msg);
+	void handleRedirect(const QJsonObject &reply, bool late);
 	void presentRules();
 	void chooseLoginMethod();
 	void prepareToSendIdentity();
@@ -517,6 +418,7 @@ private:
 	static QString getSid();
 	static QString generateTamperSid();
 	static QString generateSid();
+	static quint64 generateRedirectNonce();
 
 #ifdef __EMSCRIPTEN__
 	bool inBrowserAuth() const { return m_inBrowserAuth; }
@@ -525,21 +427,15 @@ private:
 	static constexpr bool inBrowserAuth() { return false; }
 #endif
 
-	Mode m_mode;
+	const Mode m_mode;
+	const QSharedPointer<const LoginHostParams> m_hostParams;
+
 	QUrl m_address;
 	QPixmap m_avatar;
 
 	// Settings for hosting
 	uint8_t m_userid;
 	QString m_authId;
-	QString m_sessionPassword;
-	QString m_sessionAlias;
-	QString m_title;
-	QString m_operatorPassword;
-	QStringList m_announceUrls;
-	QStringList m_bansToImport;
-	QJsonArray m_authToImport;
-	net::MessageList m_initialState;
 
 	// Settings for joining
 	QString m_joinPassword;
@@ -553,16 +449,13 @@ private:
 	Server *m_server;
 	State m_state = EXPECT_HELLO;
 	State m_passwordState = WAIT_FOR_LOGIN_PASSWORD;
-	LoginSessionModel *m_sessions;
+	LoginSessionModel *m_sessions = nullptr;
 
 	QString m_selectedId;
 	QStringList m_sessionFlags;
 
 	QFileInfo m_certFile;
 
-	bool m_nsfm = false;
-	bool m_keepChat = false;
-	bool m_deputies = false;
 	bool m_messageReceived = false;
 #ifdef __EMSCRIPTEN__
 	bool m_inBrowserAuth = false;
@@ -580,9 +473,15 @@ private:
 	bool m_supportsClientInfo = false;
 	bool m_supportsLookup = false;
 	bool m_supportsExtAuthAvatars = false;
+	bool m_mayRedirect = false;
+	bool m_acceptsRedirects = false;
 	bool m_compatibilityMode = false;
 	bool m_needSessionPassword = false;
 	bool m_isGuest = true;
+
+	quint64 m_redirectNonce = 0;
+	QStringList m_redirectHistory;
+	QJsonObject m_redirectData;
 
 	QString m_ruleText;
 	QString m_loginInfo;
@@ -593,6 +492,23 @@ private:
 	// User flags
 	QStringList m_userFlags;
 };
+
+struct LoginHostParams {
+	bool remote;
+	bool nsfm;
+	bool keepChat;
+	bool deputies;
+	uint8_t userId;
+	QString alias;
+	QString title;
+	QString password;
+	QString operatorPassword;
+	QStringList announcementUrls;
+	QStringList bansToImport;
+	QJsonArray authToImport;
+	net::MessageList initialState;
+};
+
 }
 
 #endif

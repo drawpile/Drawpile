@@ -49,7 +49,7 @@ signals:
 public slots:
 	void setHaveJoinPassword(bool haveJoinPassword);
 	void setJoinPassword(const QString &joinPassword);
-	void connectingToHost(const QString &address, int port);
+	void connectingToHost(const QUrl &url);
 	void loggedIn(const QUrl &sessionUrl, const QString &joinPassword);
 	void hostDisconnecting();
 	void hostDisconnected();
