@@ -8805,7 +8805,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-12"/>
         <source>Preferred save format:</source>
-        <translation>Format de desat preferit:</translation>
+        <translation>Format de desament preferit:</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8815,7 +8815,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>JPEG (.jpg)</source>
-        <translation>JPEG (*.jpg; *.jpeg)</translation>
+        <translation>JPEG (.jpg)</translation>
     </message>
     <message>
         <location line="+1"/>
