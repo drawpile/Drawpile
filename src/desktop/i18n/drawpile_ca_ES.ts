@@ -8782,13 +8782,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Interface:</source>
-        <translation type="unfinished"></translation>
+        <translation>Interfície:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Per defecte (%1$s)</translation>
     </message>
     <message>
         <location line="+6"/>
