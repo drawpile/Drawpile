@@ -11,7 +11,7 @@
     <message>
         <location line="+19"/>
         <source>Add avatar…</source>
-        <translation>Afegeix avatar…</translation>
+        <translation>Afegeix un avatar…</translation>
     </message>
 </context>
 <context>
