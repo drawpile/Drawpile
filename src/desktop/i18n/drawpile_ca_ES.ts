@@ -8805,7 +8805,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-12"/>
         <source>Preferred save format:</source>
-        <translation>Format de desament preferit:</translation>
+        <translation>Format de desat preferit:</translation>
     </message>
     <message>
         <location line="+5"/>
