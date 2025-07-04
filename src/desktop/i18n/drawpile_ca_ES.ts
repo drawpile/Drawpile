@@ -8794,7 +8794,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+6"/>
         <location line="+14"/>
         <source>OpenRaster (.ora)</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenRaster (*.ora)</translation>
     </message>
     <message>
         <location line="-12"/>
@@ -8810,12 +8810,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>PNG (.png)</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG (*.png)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>JPEG (.jpg)</source>
-        <translation type="unfinished"></translation>
+        <translation>JPEG (*.jpg; *.jpeg)</translation>
     </message>
     <message>
         <location line="+1"/>
