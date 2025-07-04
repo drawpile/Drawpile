@@ -1587,7 +1587,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-3062"/>
         <source>Join Session</source>
-        <translation>Unirse a la sesión</translation>
+        <translation>Unirse a la Sesión</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1623,7 +1623,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+428"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished">Abrir volcado de depuración</translation>
+        <translation>Abrir registro/volcado de depuración</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1633,7 +1633,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+12"/>
         <source>Cause Crash</source>
-        <translation type="unfinished">Causa del Crasheo</translation>
+        <translation>Causar Crasheo</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1874,7 +1874,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Flip Canvas</source>
-        <translation type="unfinished">Reflejar lienzo</translation>
+        <translation>Voltear Lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2049,7 +2049,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-3901"/>
         <source>The requested brush does not allow others to use it.</source>
-        <translation>El Usuarios del pincel solicitado no permite que otros lo utilicen.</translation>
+        <translation>El Usuario del pincel solicitado no permite que otros lo utilicen.</translation>
     </message>
     <message>
         <location line="+580"/>
@@ -2125,7 +2125,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Frame View</source>
-        <translation type="unfinished">Vista de Cuadros</translation>
+        <translation>Vista de Cuadros</translation>
     </message>
     <message>
         <location line="+0"/>
