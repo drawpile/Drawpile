@@ -8723,7 +8723,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Custom FFmpeg Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordre personalitzada</translation>
     </message>
     <message>
         <location line="+3"/>
