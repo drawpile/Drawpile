@@ -8276,12 +8276,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Border: </source>
-        <translation>Vora </translation>
+        <translation>Vora: </translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Set Color…</source>
-        <translation>Estableix un color</translation>
+        <translation>Estableix el color…</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -8355,7 +8355,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-8"/>
         <location line="+12"/>
         <source>Value range: </source>
-        <translation>Rang de valors </translation>
+        <translation>Rang de valors: </translation>
     </message>
     <message>
         <location line="-12"/>
@@ -8382,7 +8382,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Saturation offset: </source>
-        <translation type="unfinished"></translation>
+        <translation>Desplaçament de la saturació: </translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8723,7 +8723,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Custom FFmpeg Command</source>
-        <translation>Ordre personalitzada</translation>
+        <translation>Ordre FFmpeg personalitzada</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8788,7 +8788,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+7"/>
         <source>Default (%1)</source>
         <extracomment>%1 is a file extension, like &quot;.ora&quot; or &quot;.png&quot;</extracomment>
-        <translation>Per defecte (%1$s)</translation>
+        <translation>Per defecte (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8805,7 +8805,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-12"/>
         <source>Preferred save format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Format de desament preferit:</translation>
     </message>
     <message>
         <location line="+5"/>
