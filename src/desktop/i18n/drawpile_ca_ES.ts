@@ -8311,12 +8311,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Lightness</source>
-        <translation type="unfinished"></translation>
+        <translation>Lluminositat</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Luminance</source>
-        <translation type="unfinished"></translation>
+        <translation>Lluminància</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8337,7 +8337,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+122"/>
         <location line="+4"/>
         <source>Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rang: </translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8355,7 +8355,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-8"/>
         <location line="+12"/>
         <source>Value range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rang de valors </translation>
     </message>
     <message>
         <location line="-12"/>
