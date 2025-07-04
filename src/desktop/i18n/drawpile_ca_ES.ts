@@ -8619,7 +8619,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+88"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Restableix</translation>
     </message>
     <message>
         <location line="+1"/>
