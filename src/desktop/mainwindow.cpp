@@ -3226,16 +3226,21 @@ void MainWindow::join()
 
 void MainWindow::reconnect()
 {
-	questionWindowReplacement(
-		tr("Reconnect"),
-		tr("You're about to reconnect to the session and close this window."),
-		[this](bool ok) {
-			if(ok) {
-				connectToSession(
-					m_doc->client()->sessionUrl(canReplace()), QString());
-			}
-		});
+    questionWindowReplacement(
+        tr("Reconnect"),
+        tr("You're about to reconnect to the session and close this window."),
+        [this](bool ok) {
+            if(ok) {
+                if (m_doc->save()) {
+                    connectToSession(
+                        m_doc->client()->sessionUrl(canReplace()), QString());
+                } else {
+                    QMessageBox::warning(this, tr("Save Error"), tr("Failed to save the session."));
+                }
+            }
+        });
 }
+
 
 void MainWindow::browse()
 {
