@@ -19,7 +19,7 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bellek tahsisi başarısız oldu. Bu, bazı tarayıcılarda yenilemeniz durumunda gerçekleşebilir. Bu sayfayı ve tarayıcınızı tamamen kapatın, ardından tekrar deneyin.</translation>
     </message>
     <message>
         <location line="+4"/>
