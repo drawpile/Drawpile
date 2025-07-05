@@ -124,7 +124,11 @@ quint64 AuthToken::generateNonce()
 	}
 	quint64 nonce;
 	randombytes_buf(&nonce, sizeof(nonce));
-	return nonce;
+	if(nonce == 0) {
+		return 1;
+	} else {
+		return nonce;
+	}
 }
 
 }
