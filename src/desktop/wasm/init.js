@@ -1087,6 +1087,7 @@ import { UAParser } from "ua-parser-js";
           console.error("Error setting language", e);
         }
         startup.remove();
+        document.querySelector("footer")?.remove();
         start();
       };
 

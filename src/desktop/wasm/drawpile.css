@@ -258,3 +258,14 @@ progress {
   text-align: center;
   user-select: none;
 }
+
+footer {
+  color: #aaa;
+  font-size: smaller;
+  margin-top: 5em;
+  text-align: center;
+}
+
+footer a {
+  color: #555;
+}
