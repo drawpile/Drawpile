@@ -10,6 +10,7 @@ import { UAParser } from "ua-parser-js";
     : "";
   let uaParserInstance = null;
   let initialConsoleMessages = [];
+  let pathMappingPrefix = null;
   const pathMappings = {};
 
   function locateFile(path, scriptDirectory) {
@@ -496,11 +497,7 @@ import { UAParser } from "ua-parser-js";
       );
     };
 
-    let assetBundlePath = "assets.bundle";
-    if (cachebuster) {
-      assetBundlePath += cachebusterSuffix;
-      config.locateFile = locateFile;
-    }
+    config.locateFile = locateFile;
 
     if (isTrueParam(params.get("console"))) {
       const con = document.createElement("div");
@@ -552,7 +549,7 @@ import { UAParser } from "ua-parser-js";
       initialConsoleMessages = undefined;
     }
 
-    const response = await fetch(assetBundlePath);
+    const response = await fetch(locateFile("assets.bundle"));
     const reader = response.body.getReader();
     let accumulator = new Uint8Array(assetSize);
     let done = 0;
@@ -810,21 +807,66 @@ import { UAParser } from "ua-parser-js";
     ]);
   }
 
-  function makePathMappings(_wasmtype) {
-    let prefix = null;
-    // Currently there's only the base wasm, but this can be used to put other
-    // versions of the three below files into a directory and use those.
-    if (prefix) {
+  function makePathMappings() {
+    if (pathMappingPrefix) {
       for (const path of [
+        "assets.bundle",
         "drawpile.js",
         "drawpile.wasm",
         "drawpile.worker.js",
       ]) {
-        const mappedPath = prefix + path;
+        const mappedPath = pathMappingPrefix + path;
         initialConsoleMessages.push(`Mapping path ${path} to ${mappedPath}`);
         pathMappings[path] = mappedPath;
       }
     }
+  }
+
+  function makeVersionSelector(params) {
+    const stableOption = tag("option", { value: "stable" }, "Drawpile 2.2.2");
+    const betaOption = tag(
+      "option",
+      { value: "beta" },
+      "Drawpile 2.3.0-beta.1"
+    );
+
+    if (params.has("v1")) {
+      stableOption.setAttribute("disabled", "");
+      betaOption.setAttribute("selected", "");
+    } else {
+      const versionToSelect = params.get("version")?.trim();
+      if (versionToSelect && /beta|alpha/i.test(versionToSelect)) {
+        betaOption.setAttribute("selected", "");
+      } else {
+        stableOption.setAttribute("selected", "");
+      }
+    }
+
+    const select = tag("select", [stableOption, betaOption]);
+    const updateVersion = () => {
+      const version = select.options[select.selectedIndex].value;
+      let favicon, logo;
+      if (version === "beta") {
+        pathMappingPrefix = null;
+        favicon = "faviconbeta.ico";
+        logo = "drawpilebeta.svg";
+      } else {
+        pathMappingPrefix = "stable/";
+        favicon = "favicon.ico";
+        logo = "drawpile.svg";
+      }
+      document.querySelector("link[rel=icon]").href =
+        favicon + cachebusterSuffix;
+      document.querySelector("#logo").src = logo + cachebusterSuffix;
+    };
+    select.addEventListener("change", updateVersion);
+    updateVersion();
+
+    return tag(
+      "label",
+      { id: "version-selector", className: "selector", autocomplete: "off" },
+      ["Version:", select]
+    );
   }
 
   function getLanguages(params) {
@@ -889,10 +931,11 @@ import { UAParser } from "ua-parser-js";
       .find((elem) => elem.value === selectedLocale)
       ?.setAttribute("selected", "");
 
-    return tag("label", { id: "language-selector" }, [
-      "Language:",
-      tag("select", options),
-    ]);
+    return tag(
+      "label",
+      { id: "language-selector", className: "selector", autocomplete: "off" },
+      ["Language:", tag("select", options)]
+    );
   }
 
   function setLanguage(select) {
@@ -933,7 +976,7 @@ import { UAParser } from "ua-parser-js";
     }
 
     function handlePointerUpLeave(_e) {
-      if(pointerType === "pen" && pressureValues.size < 2) {
+      if (pointerType === "pen" && pressureValues.size < 2) {
         pressureBox.textContent = "⚠️ Pen detected, but no pressure variance";
       }
       pointerType = null;
@@ -966,12 +1009,6 @@ import { UAParser } from "ua-parser-js";
       } catch (e) {
         console.error(e);
       }
-    }
-
-    try {
-      makePathMappings(params.get("wasmtype"));
-    } catch (e) {
-      console.error(e);
     }
 
     const updateLoading = tag("p", { "aria-busy": "true" }, [
@@ -1086,18 +1123,22 @@ import { UAParser } from "ua-parser-js";
         } catch (e) {
           console.error("Error setting language", e);
         }
+        try {
+          makePathMappings();
+        } catch (e) {
+          console.error("Error mapping paths", e);
+        }
         startup.remove();
         document.querySelector("footer")?.remove();
         start();
       };
 
+      startup.appendChild(makeVersionSelector(params));
       startup.appendChild(makeLanguageSelector(params));
       startup.appendChild(makePressureTester());
-      const button = tag(
-        "button",
-        { class: upToDate ? "primary" : "danger" },
-        [upToDate ? "Start" : "Start Anyway"],
-      );
+      const button = tag("button", { class: upToDate ? "primary" : "danger" }, [
+        upToDate ? "Start" : "Start Anyway",
+      ]);
       button.addEventListener("click", doStart);
       startup.appendChild(button);
     }

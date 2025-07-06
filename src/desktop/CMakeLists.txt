@@ -924,16 +924,14 @@ elseif(EMSCRIPTEN)
 		set(wasm_favicon "favicon.ico")
 	endif()
 
-	configure_file(
-		"${CMAKE_CURRENT_SOURCE_DIR}/icons/${wasm_logo}"
-		"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${wasm_logo}"
-		COPYONLY
-	)
-	configure_file(
-		"${CMAKE_CURRENT_SOURCE_DIR}/icons/${wasm_favicon}"
-		"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${wasm_favicon}"
-		COPYONLY
-	)
+	foreach(wasm_file IN ITEMS
+			"drawpile.svg" "drawpilebeta.svg" "favicon.ico" "faviconbeta.ico")
+		configure_file(
+			"${CMAKE_CURRENT_SOURCE_DIR}/icons/${wasm_file}"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${wasm_file}"
+			COPYONLY
+		)
+	endforeach()
 	configure_file(
 		"${CMAKE_CURRENT_SOURCE_DIR}/wasm/drawpile.css"
 		"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.css"
@@ -994,7 +992,10 @@ elseif(EMSCRIPTEN)
 		DEPENDS
 			drawpile_assets_bundle
 			drawpile_init_js
-			"${CMAKE_CURRENT_SOURCE_DIR}/icons/${wasm_logo}"
+			"${CMAKE_CURRENT_SOURCE_DIR}/icons/drawpile.svg"
+			"${CMAKE_CURRENT_SOURCE_DIR}/icons/drawpilebeta.svg"
+			"${CMAKE_CURRENT_SOURCE_DIR}/icons/favicon.ico"
+			"${CMAKE_CURRENT_SOURCE_DIR}/icons/faviconbeta.ico"
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/drawpile.css"
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/index.html"
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/init.js"
@@ -1011,10 +1012,12 @@ elseif(EMSCRIPTEN)
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets.bundle"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.css"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.js"
-			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${wasm_logo}"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.svg"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpilebeta.svg"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.wasm"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.worker.js"
-			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${wasm_favicon}"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/favicon.ico"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/faviconbeta.ico"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/init.js"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qtloader.js"

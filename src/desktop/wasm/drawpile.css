@@ -58,9 +58,20 @@ h1 {
   text-align: center;
 }
 
+@keyframes logofadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 #logo {
   width: 200px;
   height: 200px;
+  animation: logofadein 0.5s ease-in-out;
+  animation-delay: 0.5;
 }
 
 #startup {
@@ -236,14 +247,14 @@ progress {
   flex-grow: 1;
 }
 
-#language-selector {
+.selector {
   align-items: center;
   display: flex;
   gap: 0.5em;
   margin-bottom: 1em;
 }
 
-#language-selector > select {
+.selector > select {
   flex-grow: 1;
   height: 2em;
 }
