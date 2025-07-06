@@ -887,7 +887,7 @@ import { UAParser } from "ua-parser-js";
       { title: "日本語 / Japanese", locale: "ja_JP", broken: true },
       { title: "조선어 / Korean", locale: "ko_KR", broken: true },
       { title: "Polski / Polish", locale: "pl_PL" },
-      { title: "Português (Brasilia) / Portuguese (Brazil)", locale: "pt_BR" },
+      { title: "Português (Brasil) / Portuguese (Brazil)", locale: "pt_BR" },
       {
         title: "Português (Portugal) / Portuguese (Portugal)",
         locale: "pt_PT",
