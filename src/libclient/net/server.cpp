@@ -54,6 +54,9 @@ QString Server::addSchemeToUserSuppliedAddress(const QString &remoteAddress)
 				QUrl outUrl;
 				outUrl.setScheme(QStringLiteral("drawpile"));
 				outUrl.setHost(host);
+				if(int port = url.port(); port > 0) {
+					outUrl.setPort(port);
+				}
 				return outUrl.toString();
 			}
 		}
