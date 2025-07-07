@@ -1044,6 +1044,11 @@ elseif(UNIX)
 
 	include(DrawpileFileExtensions)
 	get_xdg_extensions(MIME_TYPES)
+	if(USE_BETA_ICON)
+		set(APPIMAGE_ICON drawpilebeta)
+	else()
+		set(APPIMAGE_ICON drawpile)
+	endif()
 	configure_file(drawpile.desktop.in drawpile.desktop)
 	install_datarootdir(drawpile "${CMAKE_CURRENT_BINARY_DIR}/drawpile.desktop" applications
 		RENAME net.drawpile.drawpile.desktop
