@@ -915,6 +915,11 @@ void LoginHandler::extAuthGuestLogin(
 				"extauthOutgroup",
 				"This username cannot log in to this server");
 
+		} else if(status == "banned") {
+			sendError(
+				"extauthLocked", "Username is locked, probably because the "
+								 "associated account was recently deleted");
+
 		} else {
 			sendError("extauth", "Unexpected ext-auth response: " + status);
 		}
