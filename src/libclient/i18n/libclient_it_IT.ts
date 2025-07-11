@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1031"/>
+        <location filename="../document.cpp" line="+1037"/>
         <source>Unknown format.</source>
         <translation>Formato sconosciuto.</translation>
     </message>
@@ -1456,7 +1456,7 @@ Seleziona invece un livello normale.</translation>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+496"/>
+        <location filename="../net/client.cpp" line="+566"/>
         <source>%1 banned by %2.</source>
         <translation>%1 bannato da %2.</translation>
     </message>
@@ -1491,7 +1491,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Stato da Operatore revocato da %1 dal server.</translation>
     </message>
     <message>
-        <location line="-466"/>
+        <location line="-513"/>
         <source>You have been kicked.</source>
         <translation>Sei stato espulso.</translation>
     </message>
@@ -1531,7 +1531,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Disconnesso: %1</translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+422"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>Solo i moderatori possono esportare i ban.</translation>
@@ -1744,28 +1744,35 @@ Seleziona invece un livello normale.</translation>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+110"/>
-        <location line="+569"/>
+        <location filename="../net/login.cpp" line="+111"/>
+        <location line="+663"/>
         <source>Invalid state</source>
         <translation>Stato non valido</translation>
     </message>
     <message>
-        <location line="-512"/>
+        <location line="-606"/>
         <location line="+8"/>
-        <location line="+131"/>
-        <location line="+408"/>
-        <location line="+178"/>
+        <location line="+145"/>
+        <location line="+118"/>
+        <location line="+33"/>
+        <location line="+338"/>
+        <location line="+192"/>
         <location line="+80"/>
         <source>Incompatible server</source>
         <translation>Server incompatibile</translation>
     </message>
     <message>
-        <location line="-790"/>
+        <location line="-899"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Il server è per una diversa versione di Drawpile!</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+50"/>
+        <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+49"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>Questo server non fornisce un modo per accedere a una sessione!</translation>
     </message>
@@ -1780,17 +1787,32 @@ Seleziona invece un livello normale.</translation>
         <translation>Server si aspetta STARTTLS su socket non supportato.</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+65"/>
         <source>Failed to retrieve server info</source>
         <translation>Impossibile recuperare le informazioni del server</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+69"/>
         <source>Session lookup failed</source>
         <translation>Ricerca sessione fallita</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+20"/>
+        <source>Incompatible redirect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Circular redirect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Too many redirects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>This server does not allow guest logins</source>
         <translation>Questo server non consente accessi guest</translation>
     </message>
@@ -1836,7 +1858,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Il Server ha segnalato due diversi URL ext-auth</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+125"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation>Ho più sessioni quando solo una era prevista</translation>
     </message>
@@ -1861,7 +1883,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Sessione per un&apos;altra versione di Drawpile (%1) in corso!</translation>
     </message>
     <message>
-        <location line="+212"/>
+        <location line="+220"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation>TLS non è supportato tramite questo tipo di presa</translation>
@@ -1878,17 +1900,17 @@ Seleziona invece un livello normale.</translation>
         <translation>Certificato SSL non valido per l&apos;host %1</translation>
     </message>
     <message>
-        <location line="-854"/>
+        <location line="-949"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation>Modalità sicura non abilitata su un host con certificato bloccato!</translation>
     </message>
     <message>
-        <location line="+554"/>
+        <location line="+641"/>
         <source>Unknown version %1</source>
         <translation>Versione sconosciuta %1</translation>
     </message>
     <message>
-        <location line="+282"/>
+        <location line="+290"/>
         <source>Pinned certificate has changed!</source>
         <translation>Il certificato bloccato è cambiato!</translation>
     </message>
@@ -1968,7 +1990,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Qui non ti è consentito ospitare sessioni pubbliche, sono consentite solo sessioni personali. Puoi passare da pubblico a personale nella scheda Sessione.</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+41"/>
         <source>Client failed to serialize command</source>
         <translation>Il client non è riuscito a serializzare il comando</translation>
     </message>
@@ -2114,7 +2136,7 @@ Seleziona invece un livello normale.</translation>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+245"/>
+        <location filename="../net/server.cpp" line="+273"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation>Se non intendi utilizzare un proxy, puoi disattivare il proxy di rete nelle preferenze di Drawpile, nella scheda Rete.</translation>
     </message>

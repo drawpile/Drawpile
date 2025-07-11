@@ -1211,7 +1211,14 @@ Sub-rango: [%3, %4]</translation>
         <translation>No preguntar nuevamente a menos de que cambien las reglas</translation>
     </message>
     <message>
-        <location line="-574"/>
+        <location line="+38"/>
+        <source>This session is hosted on another server, you will be redirected.
+
+To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-612"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
         <translation>Mostrar sesiones no aptas para menores (NSFM)</translation>
     </message>
@@ -1287,7 +1294,7 @@ Simplify the canvas and reset manually before space runs out.</source>
  Simplifique el canvas y resetear manualmente antes de que se acabe el espacio.</translation>
     </message>
     <message>
-        <location line="+401"/>
+        <location line="+411"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 ¡Se ha unido!</translation>
     </message>
@@ -1353,18 +1360,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+62"/>
-        <location line="+2319"/>
+        <location line="+2320"/>
         <source>Untitled</source>
         <translation>Sin título</translation>
     </message>
     <message>
-        <location line="-2267"/>
-        <location line="+4065"/>
+        <location line="-2268"/>
+        <location line="+4084"/>
         <source>Export Again</source>
         <translation>Exportar de nuevo</translation>
     </message>
     <message>
-        <location line="-4061"/>
+        <location line="-4080"/>
         <source>Export Again to %1</source>
         <translation>Exportar de nuevo al %1</translation>
     </message>
@@ -1514,12 +1521,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2383"/>
+        <location line="+2402"/>
         <source>Record...</source>
         <translation>Grabar...</translation>
     </message>
     <message>
-        <location line="-2060"/>
+        <location line="-2079"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>¡Ya estás conectada a un sesión! Desconéctate para ser anfitrión de una sesión.</translation>
     </message>
@@ -1539,7 +1546,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Hostear Sesion</translation>
     </message>
     <message>
-        <location line="+156"/>
+        <location line="+157"/>
         <source>Reconnect</source>
         <translation>Reconectar</translation>
     </message>
@@ -1580,12 +1587,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3076"/>
+        <location line="+3100"/>
         <source>Terminate</source>
         <translation>Terminar</translation>
     </message>
     <message>
-        <location line="-3062"/>
+        <location line="-3086"/>
         <source>Join Session</source>
         <translation>Unirse a la Sesión</translation>
     </message>
@@ -1595,7 +1602,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Estás a punto de conectarte a una nueva sesión y cerrar este lienzo.</translation>
     </message>
     <message>
-        <location line="+141"/>
+        <location line="+144"/>
         <source>Would you like to join the session instead?</source>
         <translation>Desearia en cambio unirse a la sesion?</translation>
     </message>
@@ -1605,12 +1612,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Unirse</translation>
     </message>
     <message>
-        <location line="+155"/>
+        <location line="+168"/>
         <source>Session blocked by parental controls</source>
         <translation>Sesión bloqueada por controles parentales</translation>
     </message>
     <message>
-        <location line="+617"/>
+        <location line="+619"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
         <translation>No se pudo cargar la imagen: %1.</translation>
@@ -1832,7 +1839,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Mostrar siempre la barra de herramientas inferior</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+6"/>
+        <source>Left-handed mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>&amp;Fit Canvas</source>
         <translation>&amp;Ajustar Lienzo</translation>
     </message>
@@ -1897,7 +1909,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Cambiar el tono de color de la máscara de selección</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+139"/>
         <source>Group View</source>
         <translation>Vista de Grupo</translation>
     </message>
@@ -2022,12 +2034,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;Deseleccionar</translation>
     </message>
     <message>
-        <location line="-620"/>
+        <location line="-626"/>
         <source>Delete</source>
         <translation>Borrar</translation>
     </message>
     <message>
-        <location line="+639"/>
+        <location line="+645"/>
         <source>Fill Selection</source>
         <translation>Rellenar Seleccion</translation>
     </message>
@@ -2042,12 +2054,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Borrar Color de Seleccion</translation>
     </message>
     <message>
-        <location line="-560"/>
+        <location line="-566"/>
         <source>&amp;Edit</source>
         <translation>&amp;Editar</translation>
     </message>
     <message>
-        <location line="-3901"/>
+        <location line="-3920"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation>El Usuario del pincel solicitado no permite que otros lo utilicen.</translation>
     </message>
@@ -2058,7 +2070,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Lienzo cargado en %1:%2.%3</translation>
     </message>
     <message>
-        <location line="+3338"/>
+        <location line="+3357"/>
         <source>&amp;Expand Canvas</source>
         <translation>&amp;Expandir Canvas</translation>
     </message>
@@ -2078,7 +2090,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;Muelles</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+21"/>
         <source>Chat</source>
         <translation></translation>
     </message>
@@ -2103,7 +2115,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Mover Lienzo hacia Abajo</translation>
     </message>
     <message>
-        <location line="+206"/>
+        <location line="+208"/>
         <source>Normal View</source>
         <translation>Vista Normal</translation>
     </message>
@@ -2274,7 +2286,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Mostrar ventana de vista previa de animacion</translation>
     </message>
     <message>
-        <location line="-631"/>
+        <location line="-633"/>
         <source>Zoom &amp;In</source>
         <translation>Acerc&amp;ar</translation>
     </message>
@@ -2334,7 +2346,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;Vista</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+16"/>
         <source>&amp;Zoom</source>
         <translation></translation>
     </message>
@@ -2393,7 +2405,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Seleccionar debajo</translation>
     </message>
     <message>
-        <location line="-3598"/>
+        <location line="-3623"/>
         <source>Image saving failed</source>
         <translation>Guardando imagen ha reprobada</translation>
     </message>
@@ -2527,12 +2539,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>El tamaño del lienzo es demasiado grande para alojarlo.</translation>
     </message>
     <message>
-        <location line="+194"/>
+        <location line="+195"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
         <translation>Estás a punto de volver a conectarte a la sesión y cerrar esta ventana.</translation>
     </message>
     <message>
-        <location line="+277"/>
+        <location line="+280"/>
         <source>Disconnected</source>
         <translation>Desconectado</translation>
     </message>
@@ -2552,7 +2564,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>No podía establecer una conexión al servidor.</translation>
     </message>
     <message>
-        <location line="+231"/>
+        <location line="+244"/>
         <source>Undo Limit... (%1)</source>
         <translation>Deshacer Limite...(%1)</translation>
     </message>
@@ -2567,7 +2579,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location line="+802"/>
+        <location line="+804"/>
         <source>User #%1</source>
         <translation>Usuario #%1</translation>
     </message>
@@ -2583,23 +2595,23 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1912"/>
+        <location line="+1918"/>
         <source>Tablet Event Log...</source>
         <translation>Registro de Eventos de Tableta...</translation>
     </message>
     <message>
-        <location line="-1908"/>
+        <location line="-1914"/>
         <source>Stop Profile</source>
         <translation>Detener Perfil</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1909"/>
+        <location line="+1915"/>
         <source>Profile...</source>
         <translation>Perfil...</translation>
     </message>
     <message>
-        <location line="-1898"/>
+        <location line="-1904"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Establecer Retraso Artificial... (actualmente %1 ms)</translation>
     </message>
@@ -2625,12 +2637,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1856"/>
+        <location line="+1862"/>
         <source>Record Debug Dumps</source>
         <translation>Guardar volcado de depuración</translation>
     </message>
     <message>
-        <location line="-1855"/>
+        <location line="-1861"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2728,7 +2740,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>&amp;Diseños...</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+43"/>
         <source>Zoom In On Center</source>
         <translation>Acercar al centro</translation>
     </message>
@@ -2773,7 +2785,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>&amp;Ajustar a la Pantalla</translation>
     </message>
     <message>
-        <location line="+144"/>
+        <location line="+146"/>
         <source>Layer View Mode</source>
         <translation>Modo Vista de Capas</translation>
     </message>
@@ -2799,7 +2811,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>&amp;Capa</translation>
     </message>
     <message>
-        <location line="-3825"/>
+        <location line="-3850"/>
         <source>Opening file…</source>
         <translation>Abriendo Archivo…</translation>
     </message>
@@ -2814,7 +2826,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Hostear en este computador no esta disponible</translation>
     </message>
     <message>
-        <location line="+168"/>
+        <location line="+169"/>
         <source>Really leave and terminate the session?</source>
         <translation>¿Realmente quieres salir y terminar la sesion?</translation>
     </message>
@@ -2824,7 +2836,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Razón:</translation>
     </message>
     <message>
-        <location line="+179"/>
+        <location line="+182"/>
         <source>You&apos;ve been disconnected from the session.</source>
         <translation>Has sido desconectado de la sesión.</translation>
     </message>
@@ -2834,7 +2846,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Desconectado: %1</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+96"/>
         <source>Canvas locked</source>
         <translation>Lienzo bloqueado</translation>
     </message>
@@ -2844,7 +2856,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Lienzo desbloqueado</translation>
     </message>
     <message>
-        <location line="+483"/>
+        <location line="+485"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation>Manolibre (Modo de borrado, hacer clic para reiniciar)</translation>
     </message>
@@ -2925,7 +2937,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="+3"/>
-        <location filename="../mainwindow.cpp" line="+369"/>
+        <location filename="../mainwindow.cpp" line="+375"/>
         <source>Layer Properties…</source>
         <translation>Propiedades de Capa…</translation>
     </message>
@@ -4790,65 +4802,6 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     </message>
 </context>
 <context>
-    <name>dialogs</name>
-    <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+1184"/>
-        <source>No dynamics</source>
-        <translation type="unfinished">Sin Dynamicas</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Pressure dynamics</source>
-        <translation type="unfinished">Dinámicas de presión</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Velocity dynamics</source>
-        <translation type="unfinished">Dinámicas de velocidad</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Distance dynamics</source>
-        <translation type="unfinished">Dinámicas de distancia</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Velocity: </source>
-        <translation type="unfinished">Velocidad Maxima: </translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Distance: </source>
-        <translation type="unfinished">Distancia Maxima: </translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <location line="+20"/>
-        <source>Apply to All</source>
-        <translation type="unfinished">Aplicar a Todo</translation>
-    </message>
-    <message>
-        <location line="-18"/>
-        <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation>Establezca la velocidad máxima para Tamaño, Opacidad, Dureza, Manchas y Vibración a la vez.</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished">Velocidad máxima establecida para todos los ajustes de este pincel.</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation>Establezca la distancia máxima para Tamaño, Opacidad, Dureza, Difuminado y Vibración a la vez.</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished">Distancia máxima establecida para todos los ajustes de este Pincel.</translation>
-    </message>
-</context>
-<context>
     <name>dialogs::AbuseReportDialog</name>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
@@ -5345,7 +5298,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
 <context>
     <name>dialogs::BrushPresetForm</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="-1184"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+73"/>
         <source>Change…</source>
         <translation>Cambiar…</translation>
     </message>
@@ -5517,7 +5470,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     </message>
     <message>
         <location line="+1"/>
-        <location line="+156"/>
+        <location line="+157"/>
         <location line="+18"/>
         <location line="+47"/>
         <location line="+18"/>
@@ -5529,7 +5482,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>%</translation>
     </message>
     <message>
-        <location line="-393"/>
+        <location line="-394"/>
         <source>Stabilization Mode:</source>
         <translation>Modo de Estabilización:</translation>
     </message>
@@ -5544,7 +5497,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Alisado Promediado</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+14"/>
         <source>Stabilizer: </source>
         <translation>Estabilizador: </translation>
     </message>
@@ -5571,12 +5524,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     </message>
     <message>
         <location line="+11"/>
-        <location line="+579"/>
+        <location line="+585"/>
         <source>Size</source>
         <translation>Tamaño</translation>
     </message>
     <message>
-        <location line="-579"/>
+        <location line="-585"/>
         <location line="+65"/>
         <location line="+65"/>
         <location line="+99"/>
@@ -5596,12 +5549,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     </message>
     <message>
         <location line="+13"/>
-        <location line="+516"/>
+        <location line="+522"/>
         <source>Opacity</source>
         <translation>Opacidad</translation>
     </message>
     <message>
-        <location line="-482"/>
+        <location line="-488"/>
         <source>Hardness: </source>
         <translation>Dureza: </translation>
     </message>
@@ -5612,12 +5565,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     </message>
     <message>
         <location line="+13"/>
-        <location line="+456"/>
+        <location line="+462"/>
         <source>Hardness</source>
         <translation>Dureza</translation>
     </message>
     <message>
-        <location line="-425"/>
+        <location line="-431"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Smudge with transparency</source>
         <translation>Difuminar con transparencia</translation>
@@ -5641,12 +5594,62 @@ Al desactivarla, el comportamiento se restablece a su estado anterior a Drawpile
     </message>
     <message>
         <location line="+12"/>
-        <location line="+300"/>
+        <location line="+306"/>
         <source>Jitter</source>
         <translation type="unfinished">Temblor</translation>
     </message>
     <message>
-        <location line="-112"/>
+        <location line="-284"/>
+        <source>No dynamics</source>
+        <translation type="unfinished">Sin Dynamicas</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Pressure dynamics</source>
+        <translation type="unfinished">Dinámicas de presión</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Velocity dynamics</source>
+        <translation type="unfinished">Dinámicas de velocidad</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Distance dynamics</source>
+        <translation type="unfinished">Dinámicas de distancia</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Maximum Velocity: </source>
+        <translation type="unfinished">Velocidad Maxima: </translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Maximum Distance: </source>
+        <translation type="unfinished">Distancia Maxima: </translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished">Establezca la velocidad máxima para Tamaño, Opacidad, Dureza, Manchas y Vibración a la vez.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum velocity set for all settings in this brush.</source>
+        <translation type="unfinished">Velocidad máxima establecida para todos los ajustes de este pincel.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished">Establezca la distancia máxima para Tamaño, Opacidad, Dureza, Difuminado y Vibración a la vez.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum distance set for all settings in this brush.</source>
+        <translation type="unfinished">Distancia máxima establecida para todos los ajustes de este Pincel.</translation>
+    </message>
+    <message>
+        <location line="+89"/>
         <source>Not available in indirect paint modes.</source>
         <translation>No disponible en modos de pintura indirecta.</translation>
     </message>
@@ -5683,17 +5686,17 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
         <translation>Difuminar: </translation>
     </message>
     <message>
-        <location line="-463"/>
+        <location line="-469"/>
         <source>Color Pickup: 1/</source>
         <translation>Selección de color: 1/</translation>
     </message>
     <message>
-        <location line="-344"/>
+        <location line="-345"/>
         <source>Preserve alpha</source>
         <translation type="unfinished">Preservar alfa</translation>
     </message>
     <message>
-        <location line="+816"/>
+        <location line="+823"/>
         <source>Minimum Smudging: </source>
         <translation>Difuminado Mínimo: </translation>
     </message>
@@ -5704,7 +5707,9 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
         <translation>Difuminado</translation>
     </message>
     <message>
-        <location line="-261"/>
+        <location line="-318"/>
+        <location line="+20"/>
+        <location line="+37"/>
         <source>Apply to All</source>
         <translation>Aplicar a Todo</translation>
     </message>
@@ -5769,7 +5774,7 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
         <translation>Ralentiza el trazo para estabilizarlo con el tiempo. Valores altos dan líneas suaves, pero se dibujaran lentamente. Cuando dejas de moverte, la linea alcanzara al cursor. El suavizado en tableta en las preferencias de entrada aplican tambien.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
         <translation>Simplemente promedia algunas de las entradas. Se siente mas rápido que el estabilizador basado por tiempo, pero no es tan suave y no alcanzara al cursor cuando lo dejas de mover. Sobrescribe suavizado de tableta de las preferencias de entrada.</translation>
     </message>
@@ -7642,12 +7647,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+174"/>
+        <location filename="../dialogs/logindialog.cpp" line="+183"/>
         <source>Report...</source>
         <translation>Reportar...</translation>
     </message>
     <message>
-        <location line="+160"/>
+        <location line="+167"/>
         <source>Accept</source>
         <translation>Aceptar</translation>
     </message>
@@ -7677,7 +7682,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <translation>Cerrar</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+21"/>
         <source>Decline</source>
         <translation>Rechazar</translation>
     </message>
@@ -7695,7 +7700,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <translation>Atras</translation>
     </message>
     <message>
-        <location line="+198"/>
+        <location line="+25"/>
+        <source>(redirected from %1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+139"/>
         <source>You can&apos;t join this session because:</source>
         <translation>No puedes entrar la sesión porque:</translation>
     </message>
@@ -7710,7 +7720,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <translation>No se pudo unir a la sesión</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+66"/>
         <source>Remove Account</source>
         <translation>Remover Cuenta</translation>
     </message>
@@ -7721,7 +7731,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     </message>
     <message>
         <location line="+52"/>
-        <location line="+161"/>
+        <location line="+160"/>
         <source>Enter the name you want to use.</source>
         <translation>Introduzca el nombre que quieres usar.</translation>
     </message>
@@ -7746,12 +7756,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <translation>Este nombre de usuario no pertenece a una cuenta en este servidor. ¡Esta no es tu cuenta de drawpile.net!</translation>
     </message>
     <message>
-        <location line="+552"/>
+        <location line="+633"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation>Introduzca el nombre de usuario y contraseña de tu cuenta en este servidor. ¡Esta no es tu cuenta de drawpile.net!</translation>
     </message>
     <message>
-        <location line="-636"/>
+        <location line="-717"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation>Puedes continuar sin una cuenta. Si quieres registrar una de todas formas, puedes hacerlo en %1.</translation>
     </message>
@@ -7806,7 +7816,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <translation>Este nombre de usuario pertenece a algún otro método de inicio de sesión, no puedes usarlo para acceder como %1 en este servidor.</translation>
     </message>
     <message>
-        <location line="+540"/>
+        <location line="+621"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation>Entra el nombre de usuario y contraseña para tu cuenta %1.</translation>
     </message>
@@ -9777,7 +9787,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     </message>
     <message>
         <location line="+21"/>
-        <location filename="../mainwindow.cpp" line="-587"/>
+        <location filename="../mainwindow.cpp" line="-593"/>
         <source>Windows Ink</source>
         <translation type="unfinished">Tinta de Windows</translation>
     </message>
@@ -12979,7 +12989,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../view/canvasscene.cpp" line="+597"/>
+        <location filename="../view/canvasscene.cpp" line="+603"/>
         <source>Restoring canvas…</source>
         <translation type="unfinished">Restaurando Lienzo…</translation>
     </message>
@@ -13528,7 +13538,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <translation>Mostrar certificado</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+89"/>
         <source>Self-signed certificate</source>
         <translation>Certificado autofirmado</translation>
     </message>

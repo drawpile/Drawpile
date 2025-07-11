@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1031"/>
+        <location filename="../document.cpp" line="+1037"/>
         <source>Unknown format.</source>
         <translation>Format desconegut.</translation>
     </message>
@@ -1455,7 +1455,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+496"/>
+        <location filename="../net/client.cpp" line="+566"/>
         <source>%1 banned by %2.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1490,7 +1490,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-466"/>
+        <location line="-513"/>
         <source>You have been kicked.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1530,7 +1530,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+422"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation type="unfinished"></translation>
@@ -1743,28 +1743,35 @@ Select a regular layer instead.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+110"/>
-        <location line="+569"/>
+        <location filename="../net/login.cpp" line="+111"/>
+        <location line="+663"/>
         <source>Invalid state</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-512"/>
+        <location line="-606"/>
         <location line="+8"/>
-        <location line="+131"/>
-        <location line="+408"/>
-        <location line="+178"/>
+        <location line="+145"/>
+        <location line="+118"/>
+        <location line="+33"/>
+        <location line="+338"/>
+        <location line="+192"/>
         <location line="+80"/>
         <source>Incompatible server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-790"/>
+        <location line="-899"/>
         <source>Server is for a different Drawpile version!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+50"/>
+        <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+49"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1779,17 +1786,32 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+65"/>
         <source>Failed to retrieve server info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+69"/>
         <source>Session lookup failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+20"/>
+        <source>Incompatible redirect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Circular redirect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Too many redirects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>This server does not allow guest logins</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1835,7 +1857,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+125"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1860,7 +1882,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+212"/>
+        <location line="+220"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation type="unfinished"></translation>
@@ -1877,17 +1899,17 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-854"/>
+        <location line="-949"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+554"/>
+        <location line="+641"/>
         <source>Unknown version %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+282"/>
+        <location line="+290"/>
         <source>Pinned certificate has changed!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1967,7 +1989,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+41"/>
         <source>Client failed to serialize command</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2113,7 +2135,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+245"/>
+        <location filename="../net/server.cpp" line="+273"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation type="unfinished"></translation>
     </message>

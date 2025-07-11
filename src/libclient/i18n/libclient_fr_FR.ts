@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1031"/>
+        <location filename="../document.cpp" line="+1037"/>
         <source>Unknown format.</source>
         <translation>Format inconnu.</translation>
     </message>
@@ -1456,7 +1456,7 @@ Veuillez sélectionner un autre calque.</translation>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+496"/>
+        <location filename="../net/client.cpp" line="+566"/>
         <source>%1 banned by %2.</source>
         <translation>%1 banni·e par %2.</translation>
     </message>
@@ -1491,7 +1491,7 @@ Veuillez sélectionner un autre calque.</translation>
         <translation>Statut d&apos;opérateur·ice de %1 révoqué par le serveur.</translation>
     </message>
     <message>
-        <location line="-466"/>
+        <location line="-513"/>
         <source>You have been kicked.</source>
         <translation>Vous avez été exclu·e.</translation>
     </message>
@@ -1531,7 +1531,7 @@ Veuillez sélectionner un autre calque.</translation>
         <translation>Déconnecté·e&#xa0;: %1</translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+422"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation type="unfinished">Seul·e·s les modérateur·ice·s peuvent exporter les bannissements en clair.</translation>
@@ -1744,28 +1744,35 @@ Veuillez sélectionner un autre calque.</translation>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+110"/>
-        <location line="+569"/>
+        <location filename="../net/login.cpp" line="+111"/>
+        <location line="+663"/>
         <source>Invalid state</source>
         <translation type="unfinished">État non valide</translation>
     </message>
     <message>
-        <location line="-512"/>
+        <location line="-606"/>
         <location line="+8"/>
-        <location line="+131"/>
-        <location line="+408"/>
-        <location line="+178"/>
+        <location line="+145"/>
+        <location line="+118"/>
+        <location line="+33"/>
+        <location line="+338"/>
+        <location line="+192"/>
         <location line="+80"/>
         <source>Incompatible server</source>
         <translation type="unfinished">Serveur non compatible</translation>
     </message>
     <message>
-        <location line="-790"/>
+        <location line="-899"/>
         <source>Server is for a different Drawpile version!</source>
         <translation type="unfinished">Ce serveur est pour une autre version de Drawpile !</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+50"/>
+        <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+49"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>Ce serveur ne dispose pas d&apos;un moyen de se connecter pour rejoindre une session&#x202f;!</translation>
     </message>
@@ -1780,17 +1787,32 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Le serveur attend un STARTTLS sur un socket non supporté.</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+65"/>
         <source>Failed to retrieve server info</source>
         <translation type="unfinished">Échec lors de la récupération des informations de serveur</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+69"/>
         <source>Session lookup failed</source>
         <translation type="unfinished">Échec lors de la récupération de la session</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+20"/>
+        <source>Incompatible redirect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Circular redirect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Too many redirects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>This server does not allow guest logins</source>
         <translation type="unfinished">Ce serveur n&apos;autorise pas les connexions Invités</translation>
     </message>
@@ -1836,7 +1858,7 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Le serveur a reporté deux URL ext-auth différentes</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+125"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation type="unfinished">Plusieurs sessions en cours alors qu&apos;une seule session est attendue</translation>
     </message>
@@ -1861,7 +1883,7 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Session pour une version différente de Drawpile (%1) en cours&#x202f;!</translation>
     </message>
     <message>
-        <location line="+212"/>
+        <location line="+220"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation type="unfinished">TLS n&apos;est pas supporté via ce type de socket</translation>
@@ -1878,17 +1900,17 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Certificat SSL de l&apos;hôte %1 non valide</translation>
     </message>
     <message>
-        <location line="-854"/>
+        <location line="-949"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation type="unfinished">Mode sécurisé non actif sur un hôte avec un certificat épinglé&#x202f;!</translation>
     </message>
     <message>
-        <location line="+554"/>
+        <location line="+641"/>
         <source>Unknown version %1</source>
         <translation>Version inconnue %1</translation>
     </message>
     <message>
-        <location line="+282"/>
+        <location line="+290"/>
         <source>Pinned certificate has changed!</source>
         <translation type="unfinished">Le certificat épinglé à changé&#x202f;!</translation>
     </message>
@@ -1968,7 +1990,7 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Vous n&apos;êtes pas autorisé à héberger des sessions publiques ici, seules les sessions personnelles sont autorisées. Vous pouvez passer de public à personnel dans l&apos;onglet Sessions.</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+41"/>
         <source>Client failed to serialize command</source>
         <translation type="unfinished">Échec du client à sérialiser la commande</translation>
     </message>
@@ -2114,7 +2136,7 @@ Veuillez sélectionner un autre calque.</translation>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+245"/>
+        <location filename="../net/server.cpp" line="+273"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation type="unfinished">Si vous n&apos;avez pas l&apos;intention d&apos;utiliser un proxy, vous pouvez désactiver le proxy de réseau dans les préférences de Drawpile depuis l&apos;onglet Réseau.</translation>
     </message>

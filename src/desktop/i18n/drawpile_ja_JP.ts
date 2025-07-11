@@ -1221,7 +1221,14 @@ Subrange: [%3, %4]</source>
         <translation>ルールが変更されない限り再質問しない</translation>
     </message>
     <message>
-        <location line="-402"/>
+        <location line="+38"/>
+        <source>This session is hosted on another server, you will be redirected.
+
+To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-440"/>
         <source>View old</source>
         <translation>古いものを見る</translation>
     </message>
@@ -1274,13 +1281,13 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+960"/>
-        <location line="+2319"/>
+        <location filename="../mainwindow.cpp" line="+970"/>
+        <location line="+2320"/>
         <source>Untitled</source>
         <translation>無題</translation>
     </message>
     <message>
-        <location line="-1641"/>
+        <location line="-1642"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation>要求されたブラシは、他の人がそれを使用することを許可しません。</translation>
     </message>
@@ -1403,7 +1410,7 @@ Subrange: [%3, %4]</source>
         <translation>無効なアドレスです</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+175"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
         <translation>セッションに再接続し、このウィンドウを閉じようとしています。</translation>
     </message>
@@ -1433,7 +1440,7 @@ Subrange: [%3, %4]</source>
         <translation>理由:</translation>
     </message>
     <message>
-        <location line="+157"/>
+        <location line="+160"/>
         <source>Would you like to join the session instead?</source>
         <translation>代わりにこのセッションに参加しますか？</translation>
     </message>
@@ -1443,7 +1450,7 @@ Subrange: [%3, %4]</source>
         <translation>参加</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+117"/>
         <source>Canvas locked</source>
         <translation>キャンバスのロック</translation>
     </message>
@@ -1453,7 +1460,7 @@ Subrange: [%3, %4]</source>
         <translation>キャンバスのロック解除</translation>
     </message>
     <message>
-        <location line="+483"/>
+        <location line="+485"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation>フリーハンド(消去モード,クリックでリセット)</translation>
     </message>
@@ -1525,13 +1532,13 @@ Subrange: [%3, %4]</source>
         <translation>自動保存</translation>
     </message>
     <message>
-        <location line="-2356"/>
-        <location line="+2383"/>
+        <location line="-2375"/>
+        <location line="+2402"/>
         <source>Record...</source>
         <translation>記録...</translation>
     </message>
     <message>
-        <location line="-2724"/>
+        <location line="-2743"/>
         <source>Saving...</source>
         <translation>保存中...</translation>
     </message>
@@ -1551,18 +1558,18 @@ Subrange: [%3, %4]</source>
         <translation>再生</translation>
     </message>
     <message>
-        <location line="+680"/>
+        <location line="+681"/>
         <source>Terminate session</source>
         <translation>セッションを終了</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3076"/>
+        <location line="+3100"/>
         <source>Terminate</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location line="-1361"/>
+        <location line="-1367"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
         <translation>終了(&amp;Q)</translation>
@@ -1609,7 +1616,7 @@ Subrange: [%3, %4]</source>
         <translation>貼り付け(&amp;P)</translation>
     </message>
     <message>
-        <location line="+537"/>
+        <location line="+543"/>
         <source>Stay Time</source>
         <translation>滞在時間</translation>
     </message>
@@ -1684,7 +1691,7 @@ Subrange: [%3, %4]</source>
         <translation>選択範囲を色消しゴムで消去</translation>
     </message>
     <message>
-        <location line="-560"/>
+        <location line="-566"/>
         <source>&amp;Edit</source>
         <translation>編集(&amp;E)</translation>
     </message>
@@ -1704,12 +1711,12 @@ Subrange: [%3, %4]</source>
         <translation>ドック(&amp;D)</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+21"/>
         <source>Chat</source>
         <translation>チャット</translation>
     </message>
     <message>
-        <location line="+303"/>
+        <location line="+305"/>
         <source>New Layer Group</source>
         <translation>新しいレイヤーグループ</translation>
     </message>
@@ -1844,12 +1851,12 @@ Subrange: [%3, %4]</source>
         <translation>アクションをキャンセル</translation>
     </message>
     <message>
-        <location line="-1289"/>
+        <location line="-1291"/>
         <source>Show User &amp;Pointers</source>
         <translation>ユーザーポインターを表示(&amp;P)</translation>
     </message>
     <message>
-        <location line="-4948"/>
+        <location line="-4971"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 が入室しました！</translation>
     </message>
@@ -1915,12 +1922,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4065"/>
+        <location line="+4084"/>
         <source>Export Again</source>
         <translation>再エクスポート</translation>
     </message>
     <message>
-        <location line="-4061"/>
+        <location line="-4080"/>
         <source>Export Again to %1</source>
         <translation>%1 に再エクスポート</translation>
     </message>
@@ -2081,7 +2088,7 @@ Subrange: [%3, %4]</source>
         <translation>すでにセッションに参加しています。ホストになるには一度切断してください。</translation>
     </message>
     <message>
-        <location line="+205"/>
+        <location line="+206"/>
         <source>Reconnect</source>
         <translation>再接続</translation>
     </message>
@@ -2096,7 +2103,7 @@ Subrange: [%3, %4]</source>
         <translation>このウィンドウを閉じ、新しいセッションに接続します。</translation>
     </message>
     <message>
-        <location line="+117"/>
+        <location line="+120"/>
         <source>Disconnected</source>
         <translation>切断しました</translation>
     </message>
@@ -2116,7 +2123,7 @@ Subrange: [%3, %4]</source>
         <translation>サーバーへの接続を確立できませんでした。</translation>
     </message>
     <message>
-        <location line="+231"/>
+        <location line="+244"/>
         <source>Undo Limit... (%1)</source>
         <translation>取り消し制限回数... (%1)</translation>
     </message>
@@ -2131,7 +2138,7 @@ Subrange: [%3, %4]</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location line="+528"/>
+        <location line="+530"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
         <translation>%1 により画像の読み込みに失敗しました。</translation>
@@ -2153,23 +2160,23 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1912"/>
+        <location line="+1918"/>
         <source>Tablet Event Log...</source>
         <translation>タブレットイベントのログ...</translation>
     </message>
     <message>
-        <location line="-1908"/>
+        <location line="-1914"/>
         <source>Stop Profile</source>
         <translation>プロファイルの停止</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1909"/>
+        <location line="+1915"/>
         <source>Profile...</source>
         <translation>プロファイル...</translation>
     </message>
     <message>
-        <location line="-1898"/>
+        <location line="-1904"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>強制遅延を設定... (現在 %1 ミリ秒)</translation>
     </message>
@@ -2195,12 +2202,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1856"/>
+        <location line="+1862"/>
         <source>Record Debug Dumps</source>
         <translation>デバッグダンプの記録</translation>
     </message>
     <message>
-        <location line="-1855"/>
+        <location line="-1861"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2368,7 +2375,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>ボトムツールバーを常に表示</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+6"/>
+        <source>Left-handed mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Zoom In On Center</source>
         <translation>中心からズーム</translation>
     </message>
@@ -2493,7 +2505,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>表示(&amp;V)</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+16"/>
         <source>&amp;Zoom</source>
         <translation>ズーム(&amp;Z)</translation>
     </message>
@@ -2683,7 +2695,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>キャンバスの中心</translation>
     </message>
     <message>
-        <location line="-4255"/>
+        <location line="-4280"/>
         <source>Stop Recording</source>
         <translation>セッションの記録を停止</translation>
     </message>
@@ -2693,7 +2705,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>セッションをホスト</translation>
     </message>
     <message>
-        <location line="+1711"/>
+        <location line="+1730"/>
         <source>A collaborative drawing program.</source>
         <translation>共同作業可能なドローイングアプリケーションです。</translation>
     </message>
@@ -2750,17 +2762,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>設定(&amp;n)</translation>
     </message>
     <message>
-        <location line="+701"/>
+        <location line="+707"/>
         <source>Select &amp;All</source>
         <translation>すべて選択(&amp;A)</translation>
     </message>
     <message>
-        <location line="-483"/>
+        <location line="-489"/>
         <source>Edit Tools</source>
         <translation>編集ツール</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+55"/>
         <source>Zoom &amp;In</source>
         <translation>ズームイン(&amp;I)</translation>
     </message>
@@ -2780,7 +2792,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>全画面(&amp;F)</translation>
     </message>
     <message>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Pick colors from the image</source>
         <translation>画像から色を抽出</translation>
     </message>
@@ -2795,7 +2807,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>直線(&amp;L)</translation>
     </message>
     <message>
-        <location line="-6201"/>
+        <location line="-6236"/>
         <source>Server out of space</source>
         <translation>サーバーのスペースが不足</translation>
     </message>
@@ -2807,7 +2819,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 キャンバスの内容をシンプルにしてスペースがなくなる前に手動でリセットします。</translation>
     </message>
     <message>
-        <location line="+2996"/>
+        <location line="+3007"/>
         <source>Become Operator</source>
         <translation>管理者になる</translation>
     </message>
@@ -2817,12 +2829,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>管理者パスワードを入力</translation>
     </message>
     <message>
-        <location line="+381"/>
+        <location line="+397"/>
         <source>Session blocked by parental controls</source>
         <translation>ペアレンタルコントロールによりブロック済のセッション</translation>
     </message>
     <message>
-        <location line="+1317"/>
+        <location line="+1319"/>
         <source>Hide Docks</source>
         <translation>ドックを隠す</translation>
     </message>
@@ -2837,7 +2849,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location line="+204"/>
+        <location line="+208"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>キャンバスを時計回りに回転</translation>
     </message>
@@ -2857,7 +2869,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>アバターを表示</translation>
     </message>
     <message>
-        <location line="+241"/>
+        <location line="+243"/>
         <source>New Layer</source>
         <translation>新しいレイヤー</translation>
     </message>
@@ -2891,7 +2903,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>センシティブレイヤーの表示</translation>
     </message>
     <message>
-        <location line="-3646"/>
+        <location line="-3671"/>
         <source>Opening file…</source>
         <translation>ファイルを開く…</translation>
     </message>
@@ -2906,12 +2918,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>このコンピューターでホストすることはできません</translation>
     </message>
     <message>
-        <location line="+168"/>
+        <location line="+169"/>
         <source>Really leave and terminate the session?</source>
         <translation>本当に退出してセッションを終了しますか？</translation>
     </message>
     <message>
-        <location line="+298"/>
+        <location line="+301"/>
         <source>You&apos;ve been disconnected from the session.</source>
         <translation>セッションから切断されました。</translation>
     </message>
@@ -2921,7 +2933,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>切断済み: %1</translation>
     </message>
     <message>
-        <location line="+1252"/>
+        <location line="+1267"/>
         <source>Primary screen:</source>
         <translation>メイン画面:</translation>
     </message>
@@ -2961,7 +2973,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>タブレットドライバー</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+60"/>
         <source>Move Canvas Left</source>
         <translation>キャンバスを左へ移動</translation>
     </message>
@@ -2981,7 +2993,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>キャンバスを下へ移動</translation>
     </message>
     <message>
-        <location line="+206"/>
+        <location line="+208"/>
         <source>Normal View</source>
         <translation>すべて表示</translation>
     </message>
@@ -4789,65 +4801,6 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
-    <name>dialogs</name>
-    <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+1184"/>
-        <source>No dynamics</source>
-        <translation>ダイナミクスなし</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Pressure dynamics</source>
-        <translation>筆圧のダイナミクス</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Velocity dynamics</source>
-        <translation>速度のダイナミクス</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Distance dynamics</source>
-        <translation>間隔ダイナミクス</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Velocity: </source>
-        <translation>最大の速度: </translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Distance: </source>
-        <translation>最大の間隔: </translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <location line="+20"/>
-        <source>Apply to All</source>
-        <translation>すべてに適用</translation>
-    </message>
-    <message>
-        <location line="-18"/>
-        <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation>サイズ、不透明度、硬さ、混色、ジッターの最大速度を一度に設定します。</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Maximum velocity set for all settings in this brush.</source>
-        <translation>このブラシのすべての設定に設定された最大速度です。</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation>サイズ、不透明度、硬さ、混色、ジッターの最大距離を一度に設定します。</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Maximum distance set for all settings in this brush.</source>
-        <translation>このブラシのすべての設定に設定されている最大間隔。</translation>
-    </message>
-</context>
-<context>
     <name>dialogs::AbuseReportDialog</name>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
@@ -5341,7 +5294,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::BrushPresetForm</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="-1184"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+73"/>
         <source>Change…</source>
         <translation>変更…</translation>
     </message>
@@ -5513,7 +5466,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+156"/>
+        <location line="+157"/>
         <location line="+18"/>
         <location line="+47"/>
         <location line="+18"/>
@@ -5525,7 +5478,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="-393"/>
+        <location line="-394"/>
         <source>Stabilization Mode:</source>
         <translation>手ブレ補正モード:</translation>
     </message>
@@ -5540,7 +5493,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>平均的にスムージング</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+14"/>
         <source>Stabilizer: </source>
         <translation>手ブレ補正: </translation>
     </message>
@@ -5567,12 +5520,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+11"/>
-        <location line="+579"/>
+        <location line="+585"/>
         <source>Size</source>
         <translation>サイズ</translation>
     </message>
     <message>
-        <location line="-579"/>
+        <location line="-585"/>
         <location line="+65"/>
         <location line="+65"/>
         <location line="+99"/>
@@ -5592,12 +5545,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+516"/>
+        <location line="+522"/>
         <source>Opacity</source>
         <translation>不透明度</translation>
     </message>
     <message>
-        <location line="-482"/>
+        <location line="-488"/>
         <source>Hardness: </source>
         <translation>硬さ: </translation>
     </message>
@@ -5608,12 +5561,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+456"/>
+        <location line="+462"/>
         <source>Hardness</source>
         <translation>硬さ</translation>
     </message>
     <message>
-        <location line="-425"/>
+        <location line="-431"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Smudge with transparency</source>
         <translation>透明感のあるぼかし</translation>
@@ -5637,12 +5590,62 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     </message>
     <message>
         <location line="+12"/>
-        <location line="+300"/>
+        <location line="+306"/>
         <source>Jitter</source>
         <translation>ジッター</translation>
     </message>
     <message>
-        <location line="-112"/>
+        <location line="-284"/>
+        <source>No dynamics</source>
+        <translation type="unfinished">ダイナミクスなし</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Pressure dynamics</source>
+        <translation type="unfinished">筆圧のダイナミクス</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Velocity dynamics</source>
+        <translation type="unfinished">速度のダイナミクス</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Distance dynamics</source>
+        <translation type="unfinished">間隔ダイナミクス</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Maximum Velocity: </source>
+        <translation type="unfinished">最大の速度: </translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Maximum Distance: </source>
+        <translation type="unfinished">最大の間隔: </translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished">サイズ、不透明度、硬さ、混色、ジッターの最大速度を一度に設定します。</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum velocity set for all settings in this brush.</source>
+        <translation type="unfinished">このブラシのすべての設定に設定された最大速度です。</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished">サイズ、不透明度、硬さ、混色、ジッターの最大距離を一度に設定します。</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum distance set for all settings in this brush.</source>
+        <translation type="unfinished">このブラシのすべての設定に設定されている最大間隔。</translation>
+    </message>
+    <message>
+        <location line="+89"/>
         <source>Not available in indirect paint modes.</source>
         <translation>間接描画モードでは利用できません。</translation>
     </message>
@@ -5679,17 +5682,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>混色: </translation>
     </message>
     <message>
-        <location line="-463"/>
+        <location line="-469"/>
         <source>Color Pickup: 1/</source>
         <translation>色抽出 : 1/</translation>
     </message>
     <message>
-        <location line="-344"/>
+        <location line="-345"/>
         <source>Preserve alpha</source>
         <translation>アルファ値保持</translation>
     </message>
     <message>
-        <location line="+816"/>
+        <location line="+823"/>
         <source>Minimum Smudging: </source>
         <translation>最小の混色: </translation>
     </message>
@@ -5700,7 +5703,9 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>混色</translation>
     </message>
     <message>
-        <location line="-261"/>
+        <location line="-318"/>
+        <location line="+20"/>
+        <location line="+37"/>
         <source>Apply to All</source>
         <translation>すべてに適用</translation>
     </message>
@@ -5765,7 +5770,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>ストローク描画を遅くして時間の経過とともに安定させます。 値を高くすると線は非常に滑らかになりますが描画が遅くなります。 動きを止めると線がカーソルに追いつきます。 入力設定からのタブレット スムージングも同様に適用されます。</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
         <translation>単純に多数の入力を平均します。 「時間基準の手ブレ補正」よりも速く感じられますが、それほどスムーズではなく動きを止めたときにカーソルが追いつきません。 入力設定からタブレットのスムージングを上書きします。</translation>
     </message>
@@ -7634,12 +7639,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+174"/>
+        <location filename="../dialogs/logindialog.cpp" line="+183"/>
         <source>Report...</source>
         <translation>報告...</translation>
     </message>
     <message>
-        <location line="+160"/>
+        <location line="+167"/>
         <source>Accept</source>
         <translation>承認</translation>
     </message>
@@ -7669,7 +7674,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+21"/>
         <source>Decline</source>
         <translation>拒否</translation>
     </message>
@@ -7687,7 +7692,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>戻る</translation>
     </message>
     <message>
-        <location line="+198"/>
+        <location line="+25"/>
+        <source>(redirected from %1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+139"/>
         <source>You can&apos;t join this session because:</source>
         <translation>セッションに参加できない理由:</translation>
     </message>
@@ -7702,7 +7712,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>セッションに参加できない</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+66"/>
         <source>Remove Account</source>
         <translation>アカウントの削除</translation>
     </message>
@@ -7713,7 +7723,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+52"/>
-        <location line="+161"/>
+        <location line="+160"/>
         <source>Enter the name you want to use.</source>
         <translation>使用したい名前を入力してください。</translation>
     </message>
@@ -7738,12 +7748,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>このユーザー名は、このサーバー上のアカウントに属していません。これはあなたの drawpile.net アカウントではありません!</translation>
     </message>
     <message>
-        <location line="+552"/>
+        <location line="+633"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation>このサーバー上のアカウントのユーザー名とパスワードを入力します。これはあなたの drawpile.net アカウントではありません!</translation>
     </message>
     <message>
-        <location line="-636"/>
+        <location line="-717"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation>アカウントなしで続行できます。アカウントを登録したい場合は %1 で可能です。</translation>
     </message>
@@ -7798,7 +7808,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>このユーザー名は他のログイン方法に属しています。このサーバーで %1 を使用してログインすることはできません。</translation>
     </message>
     <message>
-        <location line="+540"/>
+        <location line="+621"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation>%1 アカウントのユーザー名とパスワードを入力してください。</translation>
     </message>
@@ -9758,7 +9768,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+21"/>
-        <location filename="../mainwindow.cpp" line="-587"/>
+        <location filename="../mainwindow.cpp" line="-593"/>
         <source>Windows Ink</source>
         <translation>Windows Ink</translation>
     </message>
@@ -12953,7 +12963,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../view/canvasscene.cpp" line="+597"/>
+        <location filename="../view/canvasscene.cpp" line="+603"/>
         <source>Restoring canvas…</source>
         <translation>キャンバスを復元中…</translation>
     </message>
@@ -13502,7 +13512,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>証明書を表示</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+89"/>
         <source>Self-signed certificate</source>
         <translation>自己署名証明書</translation>
     </message>

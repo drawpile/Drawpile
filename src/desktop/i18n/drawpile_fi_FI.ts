@@ -1209,7 +1209,14 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-574"/>
+        <location line="+38"/>
+        <source>This session is hosted on another server, you will be redirected.
+
+To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-612"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1273,13 +1280,13 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+960"/>
-        <location line="+2319"/>
+        <location filename="../mainwindow.cpp" line="+970"/>
+        <location line="+2320"/>
         <source>Untitled</source>
         <translation>Nimetön</translation>
     </message>
     <message>
-        <location line="-1824"/>
+        <location line="-1825"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1543,7 +1550,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+143"/>
+        <location line="+144"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1578,7 +1585,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished">Syy:</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+136"/>
         <source>Disconnected</source>
         <translation type="unfinished">Yhteys katkaistu</translation>
     </message>
@@ -1618,7 +1625,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+96"/>
         <source>Canvas locked</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1643,7 +1650,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished">Virhe</translation>
     </message>
     <message>
-        <location line="+544"/>
+        <location line="+546"/>
         <source>The image could not be loaded</source>
         <translation>Kuvaa ei voitu ladata</translation>
     </message>
@@ -1664,23 +1671,23 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1912"/>
+        <location line="+1918"/>
         <source>Tablet Event Log...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1908"/>
+        <location line="-1914"/>
         <source>Stop Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1909"/>
+        <location line="+1915"/>
         <source>Profile...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1898"/>
+        <location line="-1904"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1706,12 +1713,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1856"/>
+        <location line="+1862"/>
         <source>Record Debug Dumps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1855"/>
+        <location line="-1861"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -1892,7 +1899,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+60"/>
         <source>Move Canvas Left</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1912,7 +1919,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+206"/>
+        <location line="+208"/>
         <source>Normal View</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2264,13 +2271,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4252"/>
-        <location line="+2383"/>
+        <location line="-4277"/>
+        <location line="+2402"/>
         <source>Record...</source>
         <translation>Nauhoita...</translation>
     </message>
     <message>
-        <location line="-4774"/>
+        <location line="-4803"/>
         <source>Server out of space</source>
         <translation>Tila loppu palvelimelta</translation>
     </message>
@@ -2282,12 +2289,12 @@ Simplify the canvas and reset manually before space runs out.</source>
 Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     </message>
     <message>
-        <location line="+2214"/>
+        <location line="+2224"/>
         <source>This session was hosted with an older version of Drawpile. Several features – such as layer clipping, some blend modes and drawing within a selection mask – will be unavailable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+782"/>
+        <location line="+783"/>
         <source>Become Operator</source>
         <translation>Ryhdy operaattoriksi</translation>
     </message>
@@ -2303,17 +2310,17 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3076"/>
+        <location line="+3100"/>
         <source>Terminate</source>
         <translation>Lopeta</translation>
     </message>
     <message>
-        <location line="-2763"/>
+        <location line="-2771"/>
         <source>Session blocked by parental controls</source>
         <translation>Tämä istunto on estetty lapsilukon toimesta</translation>
     </message>
     <message>
-        <location line="+1317"/>
+        <location line="+1319"/>
         <source>Hide Docks</source>
         <translation>Piilota telakat</translation>
     </message>
@@ -2370,7 +2377,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>L&amp;iitä</translation>
     </message>
     <message>
-        <location line="+739"/>
+        <location line="+745"/>
         <source>&amp;Deselect</source>
         <translation>&amp;Poista valinta</translation>
     </message>
@@ -2390,7 +2397,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Poista väri valinnasta</translation>
     </message>
     <message>
-        <location line="-560"/>
+        <location line="-566"/>
         <source>&amp;Edit</source>
         <translation>&amp;Muokkaa</translation>
     </message>
@@ -2410,12 +2417,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>&amp;Telakoitavat ikkunat</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+21"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+303"/>
+        <location line="+305"/>
         <source>New Layer Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2430,12 +2437,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Näytä animaation esikatseluikkuna</translation>
     </message>
     <message>
-        <location line="-611"/>
+        <location line="-613"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>Kierrä myötäpäivään</translation>
     </message>
     <message>
-        <location line="-1510"/>
+        <location line="-1514"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2470,7 +2477,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+580"/>
+        <location line="+584"/>
         <source>Show Names</source>
         <translation>Näytä nimet</translation>
     </message>
@@ -2485,7 +2492,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Näytä avatarit</translation>
     </message>
     <message>
-        <location line="+175"/>
+        <location line="+177"/>
         <source>User Pointers</source>
         <translation>Käyttäjien osoittimet</translation>
     </message>
@@ -2544,12 +2551,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Peruuta toiminto</translation>
     </message>
     <message>
-        <location line="-1289"/>
+        <location line="-1291"/>
         <source>Show User &amp;Pointers</source>
         <translation>Näytä käyttäjien osoittimet</translation>
     </message>
     <message>
-        <location line="-459"/>
+        <location line="-463"/>
         <source>&amp;Import</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2589,7 +2596,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+94"/>
         <source>Show La&amp;ser Trails</source>
         <translation>Näytä laser vanat</translation>
     </message>
@@ -2604,7 +2611,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>&amp;Näytä</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+16"/>
         <source>&amp;Zoom</source>
         <translation>Suurennus</translation>
     </message>
@@ -2723,7 +2730,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Piirtotyökalut</translation>
     </message>
     <message>
-        <location line="-4062"/>
+        <location line="-4087"/>
         <source>Stop Recording</source>
         <translation>Lopeta nauhoitus</translation>
     </message>
@@ -2733,7 +2740,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Isännöi</translation>
     </message>
     <message>
-        <location line="+1956"/>
+        <location line="+1975"/>
         <source>Close</source>
         <translation>Sulje</translation>
     </message>
@@ -2770,17 +2777,17 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Asetukset</translation>
     </message>
     <message>
-        <location line="+701"/>
+        <location line="+707"/>
         <source>Select &amp;All</source>
         <translation>Valitse kaikki</translation>
     </message>
     <message>
-        <location line="-483"/>
+        <location line="-489"/>
         <source>Edit Tools</source>
         <translation>Muokkaustyökalut</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+55"/>
         <source>Zoom &amp;In</source>
         <translation>&amp;Suurenna</translation>
     </message>
@@ -2800,7 +2807,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>&amp;Koko ruutu</translation>
     </message>
     <message>
-        <location line="+827"/>
+        <location line="+829"/>
         <source>Pick colors from the image</source>
         <translation>Poimi värejä kuvasta</translation>
     </message>
@@ -2815,7 +2822,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Viiva</translation>
     </message>
     <message>
-        <location line="-5799"/>
+        <location line="-5824"/>
         <source>🙋 %1 joined!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2881,12 +2888,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4065"/>
+        <location line="+4084"/>
         <source>Export Again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4061"/>
+        <location line="-4080"/>
         <source>Export Again to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2936,7 +2943,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+198"/>
+        <location line="+199"/>
         <source>Reconnect</source>
         <translation type="unfinished">Yhdistä uudelleen</translation>
     </message>
@@ -2951,7 +2958,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+915"/>
+        <location line="+933"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
         <translation type="unfinished"></translation>
@@ -2997,7 +3004,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+6"/>
+        <source>Left-handed mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Zoom In On Center</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3107,7 +3119,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+132"/>
+        <location line="+134"/>
         <source>Group View</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4783,65 +4795,6 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     </message>
 </context>
 <context>
-    <name>dialogs</name>
-    <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+1184"/>
-        <source>No dynamics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Pressure dynamics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Velocity dynamics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Distance dynamics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Velocity: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Distance: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <location line="+20"/>
-        <source>Apply to All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-18"/>
-        <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>dialogs::AbuseReportDialog</name>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
@@ -5338,7 +5291,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
 <context>
     <name>dialogs::BrushPresetForm</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="-1184"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+73"/>
         <source>Change…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5510,7 +5463,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+156"/>
+        <location line="+157"/>
         <location line="+18"/>
         <location line="+47"/>
         <location line="+18"/>
@@ -5522,7 +5475,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished">%</translation>
     </message>
     <message>
-        <location line="-393"/>
+        <location line="-394"/>
         <source>Stabilization Mode:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5537,7 +5490,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+14"/>
         <source>Stabilizer: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -5564,12 +5517,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     </message>
     <message>
         <location line="+11"/>
-        <location line="+579"/>
+        <location line="+585"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-579"/>
+        <location line="-585"/>
         <location line="+65"/>
         <location line="+65"/>
         <location line="+99"/>
@@ -5589,12 +5542,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+516"/>
+        <location line="+522"/>
         <source>Opacity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-482"/>
+        <location line="-488"/>
         <source>Hardness: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -5605,12 +5558,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+456"/>
+        <location line="+462"/>
         <source>Hardness</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-425"/>
+        <location line="-431"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Smudge with transparency</source>
         <translation type="unfinished"></translation>
@@ -5633,12 +5586,62 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     </message>
     <message>
         <location line="+12"/>
-        <location line="+300"/>
+        <location line="+306"/>
         <source>Jitter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-112"/>
+        <location line="-284"/>
+        <source>No dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Pressure dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Velocity dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Distance dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Maximum Velocity: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Maximum Distance: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum velocity set for all settings in this brush.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum distance set for all settings in this brush.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+89"/>
         <source>Not available in indirect paint modes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5674,17 +5677,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-463"/>
+        <location line="-469"/>
         <source>Color Pickup: 1/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-344"/>
+        <location line="-345"/>
         <source>Preserve alpha</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+816"/>
+        <location line="+823"/>
         <source>Minimum Smudging: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -5695,7 +5698,9 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-261"/>
+        <location line="-318"/>
+        <location line="+20"/>
+        <location line="+37"/>
         <source>Apply to All</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5760,7 +5765,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7538,12 +7543,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+174"/>
+        <location filename="../dialogs/logindialog.cpp" line="+183"/>
         <source>Report...</source>
         <translation type="unfinished">Ilmianna...</translation>
     </message>
     <message>
-        <location line="+160"/>
+        <location line="+167"/>
         <source>Accept</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7573,7 +7578,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Sulje</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+21"/>
         <source>Decline</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7591,7 +7596,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+198"/>
+        <location line="+25"/>
+        <source>(redirected from %1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+139"/>
         <source>You can&apos;t join this session because:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7606,7 +7616,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+66"/>
         <source>Remove Account</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7617,7 +7627,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+52"/>
-        <location line="+161"/>
+        <location line="+160"/>
         <source>Enter the name you want to use.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7642,12 +7652,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+552"/>
+        <location line="+633"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-636"/>
+        <location line="-717"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7702,7 +7712,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+540"/>
+        <location line="+621"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9673,7 +9683,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+21"/>
-        <location filename="../mainwindow.cpp" line="-587"/>
+        <location filename="../mainwindow.cpp" line="-593"/>
         <source>Windows Ink</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12875,7 +12885,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../view/canvasscene.cpp" line="+597"/>
+        <location filename="../view/canvasscene.cpp" line="+603"/>
         <source>Restoring canvas…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13416,7 +13426,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Näytä sertifikaatti</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+89"/>
         <source>Self-signed certificate</source>
         <translation type="unfinished"></translation>
     </message>

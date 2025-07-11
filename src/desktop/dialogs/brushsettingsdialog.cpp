@@ -1174,12 +1174,10 @@ QWidget *BrushSettingsDialog::buildClassicJitterPageUi()
 	return scroll;
 }
 
-BrushSettingsDialog::Dynamics BrushSettingsDialog ::buildClassicDynamics(
-	QVBoxLayout *layout,
-	void (brushes::ClassicBrush::*setType)(DP_ClassicBrushDynamicType),
-	void (brushes::ClassicBrush::*setVelocity)(float),
-	void (brushes::ClassicBrush::*setDistance)(float))
+QComboBox *BrushSettingsDialog::buildClassicTypeCombo()
 {
+	// Qt fails to load these translations if this is not in its own function
+	// for some reason. I really don't know what's going on, but whatever.
 	QComboBox *typeCombo = new QComboBox;
 	typeCombo->addItem(tr("No dynamics"), int(DP_CLASSIC_BRUSH_DYNAMIC_NONE));
 	typeCombo->addItem(
@@ -1188,6 +1186,16 @@ BrushSettingsDialog::Dynamics BrushSettingsDialog ::buildClassicDynamics(
 		tr("Velocity dynamics"), int(DP_CLASSIC_BRUSH_DYNAMIC_VELOCITY));
 	typeCombo->addItem(
 		tr("Distance dynamics"), int(DP_CLASSIC_BRUSH_DYNAMIC_DISTANCE));
+	return typeCombo;
+}
+
+BrushSettingsDialog::Dynamics BrushSettingsDialog::buildClassicDynamics(
+	QVBoxLayout *layout,
+	void (brushes::ClassicBrush::*setType)(DP_ClassicBrushDynamicType),
+	void (brushes::ClassicBrush::*setVelocity)(float),
+	void (brushes::ClassicBrush::*setDistance)(float))
+{
+	QComboBox *typeCombo = buildClassicTypeCombo();
 	connect(
 		typeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		makeBrushChangeCallbackArg<int>([this, typeCombo, setType](int index) {

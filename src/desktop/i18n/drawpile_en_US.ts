@@ -1209,7 +1209,14 @@ Subrange: [%3, %4]</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-574"/>
+        <location line="+38"/>
+        <source>This session is hosted on another server, you will be redirected.
+
+To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-612"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
         <translation>Show sessions not suitable for minors (NSFM)</translation>
     </message>
@@ -1284,7 +1291,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+401"/>
+        <location line="+411"/>
         <source>🙋 %1 joined!</source>
         <translation></translation>
     </message>
@@ -1350,18 +1357,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+62"/>
-        <location line="+2319"/>
+        <location line="+2320"/>
         <source>Untitled</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-2267"/>
-        <location line="+4065"/>
+        <location line="-2268"/>
+        <location line="+4084"/>
         <source>Export Again</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-4061"/>
+        <location line="-4080"/>
         <source>Export Again to %1</source>
         <translation></translation>
     </message>
@@ -1551,12 +1558,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2383"/>
+        <location line="+2402"/>
         <source>Record...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-2341"/>
+        <location line="-2360"/>
         <source>Unsupported format.</source>
         <translation></translation>
     </message>
@@ -1621,7 +1628,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+156"/>
+        <location line="+157"/>
         <source>Reconnect</source>
         <translation></translation>
     </message>
@@ -1662,12 +1669,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3076"/>
+        <location line="+3100"/>
         <source>Terminate</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-3062"/>
+        <location line="-3086"/>
         <source>Join Session</source>
         <translation></translation>
     </message>
@@ -1677,7 +1684,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+141"/>
+        <location line="+144"/>
         <source>Would you like to join the session instead?</source>
         <translation></translation>
     </message>
@@ -1687,7 +1694,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+155"/>
+        <location line="+168"/>
         <source>Session blocked by parental controls</source>
         <translation></translation>
     </message>
@@ -1707,7 +1714,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location line="+528"/>
+        <location line="+530"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
         <translation></translation>
@@ -1734,23 +1741,23 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1912"/>
+        <location line="+1918"/>
         <source>Tablet Event Log...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-1908"/>
+        <location line="-1914"/>
         <source>Stop Profile</source>
         <translation></translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1909"/>
+        <location line="+1915"/>
         <source>Profile...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-1898"/>
+        <location line="-1904"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation></translation>
     </message>
@@ -1776,12 +1783,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1856"/>
+        <location line="+1862"/>
         <source>Record Debug Dumps</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-1855"/>
+        <location line="-1861"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2081,7 +2088,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+6"/>
+        <source>Left-handed mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Zoom In On Center</source>
         <translation>Zoom In On Center</translation>
     </message>
@@ -2191,7 +2203,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;Fit to Screen</translation>
     </message>
     <message>
-        <location line="+132"/>
+        <location line="+134"/>
         <source>Group View</source>
         <translation></translation>
     </message>
@@ -2386,12 +2398,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Create Layers on Key Frame</translation>
     </message>
     <message>
-        <location line="-893"/>
+        <location line="-899"/>
         <source>Delete</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+639"/>
+        <location line="+645"/>
         <source>Fill Selection</source>
         <translation></translation>
     </message>
@@ -2406,12 +2418,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-560"/>
+        <location line="-566"/>
         <source>&amp;Edit</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-3901"/>
+        <location line="-3920"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation></translation>
     </message>
@@ -2476,12 +2488,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+194"/>
+        <location line="+195"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+277"/>
+        <location line="+280"/>
         <source>Disconnected</source>
         <translation>Disconnected</translation>
     </message>
@@ -2501,7 +2513,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Could not establish a connection to the server.</translation>
     </message>
     <message>
-        <location line="+1498"/>
+        <location line="+1513"/>
         <source>Arrange Docks</source>
         <translation></translation>
     </message>
@@ -2541,7 +2553,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+21"/>
         <source>Chat</source>
         <translation></translation>
     </message>
@@ -2626,7 +2638,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+16"/>
         <source>&amp;Zoom</source>
         <translation></translation>
     </message>
@@ -3220,7 +3232,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-3958"/>
+        <location line="-3983"/>
         <source>Joined the session!</source>
         <translation></translation>
     </message>
@@ -3230,7 +3242,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+168"/>
+        <location line="+169"/>
         <source>Really leave and terminate the session?</source>
         <translation></translation>
     </message>
@@ -3240,7 +3252,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+179"/>
+        <location line="+182"/>
         <source>You&apos;ve been disconnected from the session.</source>
         <translation></translation>
     </message>
@@ -3250,7 +3262,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+96"/>
         <source>Canvas locked</source>
         <translation></translation>
     </message>
@@ -3260,7 +3272,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+483"/>
+        <location line="+485"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation></translation>
     </message>
@@ -3326,7 +3338,7 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
-        <location filename="../mainwindow.cpp" line="+612"/>
+        <location filename="../mainwindow.cpp" line="+618"/>
         <source>Layer Properties…</source>
         <translation></translation>
     </message>
@@ -4782,65 +4794,6 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
 </context>
 <context>
-    <name>dialogs</name>
-    <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+1184"/>
-        <source>No dynamics</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Pressure dynamics</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Velocity dynamics</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Distance dynamics</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Velocity: </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Distance: </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <location line="+20"/>
-        <source>Apply to All</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-18"/>
-        <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Maximum velocity set for all settings in this brush.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Maximum distance set for all settings in this brush.</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
     <name>dialogs::AbuseReportDialog</name>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
@@ -5337,7 +5290,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::BrushPresetForm</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="-1184"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+73"/>
         <source>Change…</source>
         <translation></translation>
     </message>
@@ -5509,7 +5462,7 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+156"/>
+        <location line="+157"/>
         <location line="+18"/>
         <location line="+47"/>
         <location line="+18"/>
@@ -5521,7 +5474,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-393"/>
+        <location line="-394"/>
         <source>Stabilization Mode:</source>
         <translation>Stabilization Mode:</translation>
     </message>
@@ -5536,7 +5489,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Average Smoothing</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+14"/>
         <source>Stabilizer: </source>
         <translation></translation>
     </message>
@@ -5563,12 +5516,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+11"/>
-        <location line="+579"/>
+        <location line="+585"/>
         <source>Size</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-579"/>
+        <location line="-585"/>
         <location line="+65"/>
         <location line="+65"/>
         <location line="+99"/>
@@ -5588,12 +5541,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+516"/>
+        <location line="+522"/>
         <source>Opacity</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-482"/>
+        <location line="-488"/>
         <source>Hardness: </source>
         <translation></translation>
     </message>
@@ -5604,12 +5557,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+456"/>
+        <location line="+462"/>
         <source>Hardness</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-425"/>
+        <location line="-431"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Smudge with transparency</source>
         <translation></translation>
@@ -5632,12 +5585,62 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     </message>
     <message>
         <location line="+12"/>
-        <location line="+300"/>
+        <location line="+306"/>
         <source>Jitter</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-112"/>
+        <location line="-284"/>
+        <source>No dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Pressure dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Velocity dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Distance dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Maximum Velocity: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Maximum Distance: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum velocity set for all settings in this brush.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum distance set for all settings in this brush.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+89"/>
         <source>Not available in indirect paint modes.</source>
         <translation></translation>
     </message>
@@ -5673,17 +5676,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-463"/>
+        <location line="-469"/>
         <source>Color Pickup: 1/</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-344"/>
+        <location line="-345"/>
         <source>Preserve alpha</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+816"/>
+        <location line="+823"/>
         <source>Minimum Smudging: </source>
         <translation></translation>
     </message>
@@ -5694,7 +5697,9 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-261"/>
+        <location line="-318"/>
+        <location line="+20"/>
+        <location line="+37"/>
         <source>Apply to All</source>
         <translation></translation>
     </message>
@@ -5759,7 +5764,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
         <translation>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</translation>
     </message>
@@ -7537,12 +7542,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+174"/>
+        <location filename="../dialogs/logindialog.cpp" line="+183"/>
         <source>Report...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+160"/>
+        <location line="+167"/>
         <source>Accept</source>
         <translation></translation>
     </message>
@@ -7572,7 +7577,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+21"/>
         <source>Decline</source>
         <translation></translation>
     </message>
@@ -7590,7 +7595,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+198"/>
+        <location line="+25"/>
+        <source>(redirected from %1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+139"/>
         <source>You can&apos;t join this session because:</source>
         <translation>You can&apos;t join this session because:</translation>
     </message>
@@ -7605,7 +7615,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Can&apos;t join session</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+66"/>
         <source>Remove Account</source>
         <translation></translation>
     </message>
@@ -7616,7 +7626,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+52"/>
-        <location line="+161"/>
+        <location line="+160"/>
         <source>Enter the name you want to use.</source>
         <translation></translation>
     </message>
@@ -7641,12 +7651,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+552"/>
+        <location line="+633"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-636"/>
+        <location line="-717"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation></translation>
     </message>
@@ -7701,7 +7711,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+540"/>
+        <location line="+621"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation></translation>
     </message>
@@ -9672,7 +9682,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+21"/>
-        <location filename="../mainwindow.cpp" line="-587"/>
+        <location filename="../mainwindow.cpp" line="-593"/>
         <source>Windows Ink</source>
         <translation></translation>
     </message>
@@ -12874,7 +12884,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../view/canvasscene.cpp" line="+597"/>
+        <location filename="../view/canvasscene.cpp" line="+603"/>
         <source>Restoring canvas…</source>
         <translation>Restoring canvas…</translation>
     </message>
@@ -13415,7 +13425,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+89"/>
         <source>Self-signed certificate</source>
         <translation>Self-signed certificate</translation>
     </message>

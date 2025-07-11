@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1031"/>
+        <location filename="../document.cpp" line="+1037"/>
         <source>Unknown format.</source>
         <translation>未知格式.</translation>
     </message>
@@ -1453,7 +1453,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+496"/>
+        <location filename="../net/client.cpp" line="+566"/>
         <source>%1 banned by %2.</source>
         <translation>%1 已被 %2 禁止IP.</translation>
     </message>
@@ -1488,7 +1488,7 @@ Select a regular layer instead.</source>
         <translation>%1 的房间管理员身份已被服务器移除.</translation>
     </message>
     <message>
-        <location line="-466"/>
+        <location line="-513"/>
         <source>You have been kicked.</source>
         <translation>你已被踢除.</translation>
     </message>
@@ -1528,7 +1528,7 @@ Select a regular layer instead.</source>
         <translation>断开连接: %1</translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+422"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>只有服务器管理员可以导出普通的被禁的用户.</translation>
@@ -1741,33 +1741,35 @@ Select a regular layer instead.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+110"/>
-        <location line="+569"/>
+        <location filename="../net/login.cpp" line="+111"/>
+        <location line="+663"/>
         <source>Invalid state</source>
         <translation>无效状态</translation>
     </message>
     <message>
-        <location line="-512"/>
+        <location line="-606"/>
         <location line="+8"/>
-        <location line="+131"/>
-        <location line="+408"/>
-        <location line="+178"/>
+        <location line="+145"/>
+        <location line="+118"/>
+        <location line="+33"/>
+        <location line="+338"/>
+        <location line="+192"/>
         <location line="+80"/>
         <source>Incompatible server</source>
         <translation>服务器不兼容</translation>
     </message>
     <message>
-        <location line="-790"/>
+        <location line="-899"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>服务器不支持当前的Drawpile版本！</translation>
     </message>
     <message>
-        <location line="+1040"/>
+        <location line="+1149"/>
         <source>Username already taken!</source>
         <translation>用户名已被使用!</translation>
     </message>
     <message>
-        <location line="-795"/>
+        <location line="-810"/>
         <source>This server does not allow guest logins</source>
         <translation>此服务器不支持非注册用户登录</translation>
     </message>
@@ -1793,7 +1795,7 @@ Select a regular layer instead.</source>
         <translation>不支持ext-auth的URL方案</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+196"/>
         <source>New version</source>
         <translation>新版本</translation>
     </message>
@@ -1808,7 +1810,7 @@ Select a regular layer instead.</source>
         <translation>已被控制面板屏蔽</translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+324"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>服务器 %1 证书无效</translation>
@@ -1859,17 +1861,22 @@ Select a regular layer instead.</source>
         <translation>你不能在这里创建公共房间, 只有私人房间允许被创建. 你可以在房间栏中切换到私人房间来重新创建.</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+41"/>
         <source>Client failed to serialize command</source>
         <translation>客户端序列化命令失败</translation>
     </message>
     <message>
-        <location line="-90"/>
+        <location line="-98"/>
         <source>Cancelled</source>
         <translation>已取消</translation>
     </message>
     <message>
-        <location line="-921"/>
+        <location line="-1066"/>
+        <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+49"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>此服务器没有提供登录方式来加入房间!</translation>
     </message>
@@ -1884,7 +1891,7 @@ Select a regular layer instead.</source>
         <translation>服务器期望在不支持的socket上使用 STARTTLS.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation>未在有固定证书的服务器上启用安全模式!</translation>
     </message>
@@ -1894,12 +1901,27 @@ Select a regular layer instead.</source>
         <translation>读取服务器信息失败</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+69"/>
         <source>Session lookup failed</source>
         <translation>房间查找失败</translation>
     </message>
     <message>
-        <location line="+140"/>
+        <location line="+20"/>
+        <source>Incompatible redirect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Circular redirect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Too many redirects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+159"/>
         <source>Group membership needed</source>
         <translation>需要群组成员资格</translation>
     </message>
@@ -1919,7 +1941,7 @@ Select a regular layer instead.</source>
         <translation>服务器报告了两个不同的外部认证 URLs</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+125"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation>在预期只有一个房间的情况下出现了多个房间</translation>
     </message>
@@ -1934,7 +1956,7 @@ Select a regular layer instead.</source>
         <translation>未知版本 %1</translation>
     </message>
     <message>
-        <location line="+184"/>
+        <location line="+192"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation>此类socket不支持 TLS</translation>
@@ -2110,7 +2132,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+245"/>
+        <location filename="../net/server.cpp" line="+273"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation>如果你不打算使用代理, 你可以在首选项的网络页面中禁用网络代理.</translation>
     </message>

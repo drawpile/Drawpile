@@ -1211,7 +1211,14 @@ Podzakres: [%3, %4]</translation>
         <translation>Nie pytaj ponownie, chyba że zasady ulegną zmianie</translation>
     </message>
     <message>
-        <location line="-574"/>
+        <location line="+38"/>
+        <source>This session is hosted on another server, you will be redirected.
+
+To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-612"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
         <translation>Pokaż sesje nieodpowiednie dla nieletnich (NSFM)</translation>
     </message>
@@ -1288,7 +1295,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 Uprość płótno i zresetuj ręcznie, zanim skończy się miejsce.</translation>
     </message>
     <message>
-        <location line="+401"/>
+        <location line="+411"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋%1 dołącza!</translation>
     </message>
@@ -1357,18 +1364,18 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+62"/>
-        <location line="+2319"/>
+        <location line="+2320"/>
         <source>Untitled</source>
         <translation>Bez tytułu</translation>
     </message>
     <message>
-        <location line="-2267"/>
-        <location line="+4065"/>
+        <location line="-2268"/>
+        <location line="+4084"/>
         <source>Export Again</source>
         <translation>Eksportuj ponownie</translation>
     </message>
     <message>
-        <location line="-4061"/>
+        <location line="-4080"/>
         <source>Export Again to %1</source>
         <translation>Eksportuj ponownie do %1</translation>
     </message>
@@ -1558,12 +1565,12 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2383"/>
+        <location line="+2402"/>
         <source>Record...</source>
         <translation>Nagraj...</translation>
     </message>
     <message>
-        <location line="-2341"/>
+        <location line="-2360"/>
         <source>Unsupported format.</source>
         <translation>Niewspierany format.</translation>
     </message>
@@ -1628,7 +1635,7 @@ zatrzymaj nagrywanie</translation>
         <translation>Rozpocznij sesję</translation>
     </message>
     <message>
-        <location line="+156"/>
+        <location line="+157"/>
         <source>Reconnect</source>
         <translation>Połącz ponownie</translation>
     </message>
@@ -1669,12 +1676,12 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3076"/>
+        <location line="+3100"/>
         <source>Terminate</source>
         <translation>Przerwij</translation>
     </message>
     <message>
-        <location line="-3062"/>
+        <location line="-3086"/>
         <source>Join Session</source>
         <translation>Dołącz do sesji</translation>
     </message>
@@ -1684,7 +1691,7 @@ zatrzymaj nagrywanie</translation>
         <translation>Zamierzasz połączyć się z nową sesją i zamknąć to okno.</translation>
     </message>
     <message>
-        <location line="+141"/>
+        <location line="+144"/>
         <source>Would you like to join the session instead?</source>
         <translation>Czy chciałbyś zamiast tego dołączyć do sesji?</translation>
     </message>
@@ -1694,7 +1701,7 @@ zatrzymaj nagrywanie</translation>
         <translation>Dołącz</translation>
     </message>
     <message>
-        <location line="+155"/>
+        <location line="+168"/>
         <source>Session blocked by parental controls</source>
         <translation>Sesja zablokowana przez kontrolę rodzicielską</translation>
     </message>
@@ -1714,7 +1721,7 @@ zatrzymaj nagrywanie</translation>
         <translation>Bład</translation>
     </message>
     <message>
-        <location line="+528"/>
+        <location line="+530"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
         <translation>Nie można załadować obrazu.</translation>
@@ -1741,23 +1748,23 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1912"/>
+        <location line="+1918"/>
         <source>Tablet Event Log...</source>
         <translation>Dziennik zdarzeń tabletu...</translation>
     </message>
     <message>
-        <location line="-1908"/>
+        <location line="-1914"/>
         <source>Stop Profile</source>
         <translation>Zatrzymaj profil</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1909"/>
+        <location line="+1915"/>
         <source>Profile...</source>
         <translation>Profil...</translation>
     </message>
     <message>
-        <location line="-1898"/>
+        <location line="-1904"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Ustaw sztuczne opóźnienie... (obecnie %1 ms)</translation>
     </message>
@@ -1783,12 +1790,12 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1856"/>
+        <location line="+1862"/>
         <source>Record Debug Dumps</source>
         <translation>Nagrywanie zrzutów debugowania</translation>
     </message>
     <message>
-        <location line="-1855"/>
+        <location line="-1861"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2092,7 +2099,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+6"/>
+        <source>Left-handed mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Zoom In On Center</source>
         <translation>Powiększ środek</translation>
     </message>
@@ -2202,7 +2214,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>&amp;Dopasuj do ekranu</translation>
     </message>
     <message>
-        <location line="+132"/>
+        <location line="+134"/>
         <source>Group View</source>
         <translation>Widok Grupowy</translation>
     </message>
@@ -2327,12 +2339,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>&amp;Odznacz</translation>
     </message>
     <message>
-        <location line="-620"/>
+        <location line="-626"/>
         <source>Delete</source>
         <translation>Usuń</translation>
     </message>
     <message>
-        <location line="+639"/>
+        <location line="+645"/>
         <source>Fill Selection</source>
         <translation>Wypełnij zaznaczone</translation>
     </message>
@@ -2347,12 +2359,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Wybór koloru</translation>
     </message>
     <message>
-        <location line="-560"/>
+        <location line="-566"/>
         <source>&amp;Edit</source>
         <translation>&amp;Edytuj</translation>
     </message>
     <message>
-        <location line="-3901"/>
+        <location line="-3920"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2417,12 +2429,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+194"/>
+        <location line="+195"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+277"/>
+        <location line="+280"/>
         <source>Disconnected</source>
         <translation>Rozłączony</translation>
     </message>
@@ -2442,7 +2454,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Nie można nawiązać&#xa0;połączenia z serwerem RDP „%s”.</translation>
     </message>
     <message>
-        <location line="+1498"/>
+        <location line="+1513"/>
         <source>Arrange Docks</source>
         <translation>Ułóż doki</translation>
     </message>
@@ -2482,7 +2494,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>&amp;Dok</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+21"/>
         <source>Chat</source>
         <translation>Czat</translation>
     </message>
@@ -2567,7 +2579,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>&amp;Widok</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+16"/>
         <source>&amp;Zoom</source>
         <translation>&amp;Powiększenie</translation>
     </message>
@@ -3211,7 +3223,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>&amp;Dołączyć...</translation>
     </message>
     <message>
-        <location line="-3958"/>
+        <location line="-3983"/>
         <source>Joined the session!</source>
         <translation>Dołączyłem do sesji!</translation>
     </message>
@@ -3221,7 +3233,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Hosting na tym komputerze jest niedostępny</translation>
     </message>
     <message>
-        <location line="+168"/>
+        <location line="+169"/>
         <source>Really leave and terminate the session?</source>
         <translation>Naprawdę opuścić i zakończyć sesję?</translation>
     </message>
@@ -3231,7 +3243,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Powód:</translation>
     </message>
     <message>
-        <location line="+179"/>
+        <location line="+182"/>
         <source>You&apos;ve been disconnected from the session.</source>
         <translation>Zostałeś rozłączony z sesją.</translation>
     </message>
@@ -3241,7 +3253,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Rozłączono:%1</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+96"/>
         <source>Canvas locked</source>
         <translation>Płótno zablokowane</translation>
     </message>
@@ -3251,7 +3263,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Płótno odblokowane</translation>
     </message>
     <message>
-        <location line="+483"/>
+        <location line="+485"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation>Freehand (tryb wymazywania, kliknij, aby zresetować)</translation>
     </message>
@@ -3317,7 +3329,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
-        <location filename="../mainwindow.cpp" line="+612"/>
+        <location filename="../mainwindow.cpp" line="+618"/>
         <source>Layer Properties…</source>
         <translation>Właściwości warstwy…</translation>
     </message>
@@ -4794,65 +4806,6 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
     </message>
 </context>
 <context>
-    <name>dialogs</name>
-    <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+1184"/>
-        <source>No dynamics</source>
-        <translation type="unfinished">Brak dynamiki</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Pressure dynamics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Velocity dynamics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Distance dynamics</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Velocity: </source>
-        <translation type="unfinished">Maksymalna prędkość: </translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Distance: </source>
-        <translation type="unfinished">Maksymalna odległość </translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <location line="+20"/>
-        <source>Apply to All</source>
-        <translation type="unfinished">Zastosuj dla wszystkich</translation>
-    </message>
-    <message>
-        <location line="-18"/>
-        <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished">Maksymalna prędkość ustawiona dla wszystkich ustawień tego pędzla.</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished">Maksymalna odległość ustawiona dla wszystkich ustawień tego pędzla.</translation>
-    </message>
-</context>
-<context>
     <name>dialogs::AbuseReportDialog</name>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
@@ -5352,7 +5305,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
 <context>
     <name>dialogs::BrushPresetForm</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="-1184"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+73"/>
         <source>Change…</source>
         <translation>Zmień…</translation>
     </message>
@@ -5525,7 +5478,7 @@ do 64x64 pikseli.</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+156"/>
+        <location line="+157"/>
         <location line="+18"/>
         <location line="+47"/>
         <location line="+18"/>
@@ -5537,7 +5490,7 @@ do 64x64 pikseli.</translation>
         <translation>%</translation>
     </message>
     <message>
-        <location line="-393"/>
+        <location line="-394"/>
         <source>Stabilization Mode:</source>
         <translation>Tryb stabilizacji:</translation>
     </message>
@@ -5552,7 +5505,7 @@ do 64x64 pikseli.</translation>
         <translation>Średnie wygładzanie</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+14"/>
         <source>Stabilizer: </source>
         <translation>Stabilizacja: </translation>
     </message>
@@ -5579,12 +5532,12 @@ do 64x64 pikseli.</translation>
     </message>
     <message>
         <location line="+11"/>
-        <location line="+579"/>
+        <location line="+585"/>
         <source>Size</source>
         <translation>Wymiary</translation>
     </message>
     <message>
-        <location line="-579"/>
+        <location line="-585"/>
         <location line="+65"/>
         <location line="+65"/>
         <location line="+99"/>
@@ -5604,12 +5557,12 @@ do 64x64 pikseli.</translation>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+516"/>
+        <location line="+522"/>
         <source>Opacity</source>
         <translation>Przeźroczystość</translation>
     </message>
     <message>
-        <location line="-482"/>
+        <location line="-488"/>
         <source>Hardness: </source>
         <translation>Twardość: </translation>
     </message>
@@ -5620,12 +5573,12 @@ do 64x64 pikseli.</translation>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+456"/>
+        <location line="+462"/>
         <source>Hardness</source>
         <translation>Twardość</translation>
     </message>
     <message>
-        <location line="-425"/>
+        <location line="-431"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Smudge with transparency</source>
         <translation type="unfinished"></translation>
@@ -5648,12 +5601,62 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     </message>
     <message>
         <location line="+12"/>
-        <location line="+300"/>
+        <location line="+306"/>
         <source>Jitter</source>
         <translation type="unfinished">Odchylenie</translation>
     </message>
     <message>
-        <location line="-112"/>
+        <location line="-284"/>
+        <source>No dynamics</source>
+        <translation type="unfinished">Brak dynamiki</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Pressure dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Velocity dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Distance dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Maximum Velocity: </source>
+        <translation type="unfinished">Maksymalna prędkość: </translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Maximum Distance: </source>
+        <translation type="unfinished">Maksymalna odległość </translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum velocity set for all settings in this brush.</source>
+        <translation type="unfinished">Maksymalna prędkość ustawiona dla wszystkich ustawień tego pędzla.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum distance set for all settings in this brush.</source>
+        <translation type="unfinished">Maksymalna odległość ustawiona dla wszystkich ustawień tego pędzla.</translation>
+    </message>
+    <message>
+        <location line="+89"/>
         <source>Not available in indirect paint modes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5689,17 +5692,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>Rozmazywanie: </translation>
     </message>
     <message>
-        <location line="-463"/>
+        <location line="-469"/>
         <source>Color Pickup: 1/</source>
         <translation>Pobieranie koloru: 1/</translation>
     </message>
     <message>
-        <location line="-344"/>
+        <location line="-345"/>
         <source>Preserve alpha</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+816"/>
+        <location line="+823"/>
         <source>Minimum Smudging: </source>
         <translation>Minimalne rozmazywanie: </translation>
     </message>
@@ -5710,7 +5713,9 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>Rozmazywanie:</translation>
     </message>
     <message>
-        <location line="-261"/>
+        <location line="-318"/>
+        <location line="+20"/>
+        <location line="+37"/>
         <source>Apply to All</source>
         <translation>Zastosuj dla wszystkich</translation>
     </message>
@@ -5775,7 +5780,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>Spowalnia ruch, aby ustabilizować go w czasie. Wysokie wartości dają bardzo gładkie linie, ale będą rysowane powoli. Gdy przestaniesz się poruszać, linia dogoni kursor. Wygładzanie tabletu z preferencji wprowadzania danych również ma zastosowanie.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
         <translation>Po prostu uśrednia liczbę danych wejściowych. Wydaje się szybszy niż stabilizator oparty na czasie, ale nie tak płynny i nie dogoni kursora, gdy przestaniesz się poruszać. Zastępuje wygładzanie tabletu z preferencji wejściowych.</translation>
     </message>
@@ -7647,12 +7652,12 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+174"/>
+        <location filename="../dialogs/logindialog.cpp" line="+183"/>
         <source>Report...</source>
         <translation>Raport...</translation>
     </message>
     <message>
-        <location line="+160"/>
+        <location line="+167"/>
         <source>Accept</source>
         <translation>Akceptuj</translation>
     </message>
@@ -7682,7 +7687,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation>Zamknij</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+21"/>
         <source>Decline</source>
         <translation>Odmów</translation>
     </message>
@@ -7700,7 +7705,12 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation>Wstecz</translation>
     </message>
     <message>
-        <location line="+198"/>
+        <location line="+25"/>
+        <source>(redirected from %1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+139"/>
         <source>You can&apos;t join this session because:</source>
         <translation>Nie możesz dołączyć do tej sesji, ponieważ:</translation>
     </message>
@@ -7715,7 +7725,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation>Nie można dołączyć do sesji</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+66"/>
         <source>Remove Account</source>
         <translation>Usuń konto</translation>
     </message>
@@ -7726,7 +7736,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
     </message>
     <message>
         <location line="+52"/>
-        <location line="+161"/>
+        <location line="+160"/>
         <source>Enter the name you want to use.</source>
         <translation>Wprowadź nazwę, której chcesz użyć.</translation>
     </message>
@@ -7751,12 +7761,12 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation>Ta nazwa użytkownika nie należy do konta na tym serwerze. To nie jest twoje konto drawpile.net!</translation>
     </message>
     <message>
-        <location line="+552"/>
+        <location line="+633"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation>Wprowadź nazwę użytkownika i hasło do swojego konta na tym serwerze. To nie jest twoje konto drawpile.net!</translation>
     </message>
     <message>
-        <location line="-636"/>
+        <location line="-717"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation>Możesz kontynuować bez konta. Jeśli mimo wszystko chcesz je zarejestrować, możesz to zrobić na %1.</translation>
     </message>
@@ -7811,7 +7821,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+540"/>
+        <location line="+621"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9793,7 +9803,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
     </message>
     <message>
         <location line="+21"/>
-        <location filename="../mainwindow.cpp" line="-587"/>
+        <location filename="../mainwindow.cpp" line="-593"/>
         <source>Windows Ink</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13002,7 +13012,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../view/canvasscene.cpp" line="+597"/>
+        <location filename="../view/canvasscene.cpp" line="+603"/>
         <source>Restoring canvas…</source>
         <translation>Przywracanie płótna…</translation>
     </message>
@@ -13543,7 +13553,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+89"/>
         <source>Self-signed certificate</source>
         <translation>Certyfikat podpisany przez siebie</translation>
     </message>

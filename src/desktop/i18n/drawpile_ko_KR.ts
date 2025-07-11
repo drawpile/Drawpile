@@ -1211,7 +1211,14 @@ Subrange: [%3, %4]</source>
         <translation>역할이 바뀌지 않는 이상 다시 묻지 않기</translation>
     </message>
     <message>
-        <location line="-574"/>
+        <location line="+38"/>
+        <source>This session is hosted on another server, you will be redirected.
+
+To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-612"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
         <translation>미성년자에게 부적합한 세션 표시 (NSFM)</translation>
     </message>
@@ -1286,7 +1293,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 용량이 차기 전에 캔버스를 최소화 하고 수동적으로 초기화 하시기 바랍니다.</translation>
     </message>
     <message>
-        <location line="+401"/>
+        <location line="+411"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋&#xa0;안녕, %1!</translation>
     </message>
@@ -1352,18 +1359,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+62"/>
-        <location line="+2319"/>
+        <location line="+2320"/>
         <source>Untitled</source>
         <translation>무제</translation>
     </message>
     <message>
-        <location line="-2267"/>
-        <location line="+4065"/>
+        <location line="-2268"/>
+        <location line="+4084"/>
         <source>Export Again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4061"/>
+        <location line="-4080"/>
         <source>Export Again to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1553,12 +1560,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2383"/>
+        <location line="+2402"/>
         <source>Record...</source>
         <translation>녹화 중...</translation>
     </message>
     <message>
-        <location line="-2341"/>
+        <location line="-2360"/>
         <source>Unsupported format.</source>
         <translation>미지원된 포맷입니다.</translation>
     </message>
@@ -1623,7 +1630,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>세션을 호스팅하기</translation>
     </message>
     <message>
-        <location line="+156"/>
+        <location line="+157"/>
         <source>Reconnect</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1664,12 +1671,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3076"/>
+        <location line="+3100"/>
         <source>Terminate</source>
         <translation>종료</translation>
     </message>
     <message>
-        <location line="-3062"/>
+        <location line="-3086"/>
         <source>Join Session</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1679,7 +1686,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+141"/>
+        <location line="+144"/>
         <source>Would you like to join the session instead?</source>
         <translation>이 서버에 대신 접속하기를 원하십니까?</translation>
     </message>
@@ -1689,7 +1696,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>접속</translation>
     </message>
     <message>
-        <location line="+155"/>
+        <location line="+168"/>
         <source>Session blocked by parental controls</source>
         <translation>세션이 자녀보호기능에 의해 차단되어 있습니다</translation>
     </message>
@@ -1709,7 +1716,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>오류</translation>
     </message>
     <message>
-        <location line="+528"/>
+        <location line="+530"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
         <translation type="unfinished"></translation>
@@ -1736,23 +1743,23 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1912"/>
+        <location line="+1918"/>
         <source>Tablet Event Log...</source>
         <translation>타블렛 이벤트 로그...</translation>
     </message>
     <message>
-        <location line="-1908"/>
+        <location line="-1914"/>
         <source>Stop Profile</source>
         <translation>분석 중지</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1909"/>
+        <location line="+1915"/>
         <source>Profile...</source>
         <translation>프로필...</translation>
     </message>
     <message>
-        <location line="-1898"/>
+        <location line="-1904"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>인위 랙을 설정합니다... (현재 %1 ms)</translation>
     </message>
@@ -1778,12 +1785,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1856"/>
+        <location line="+1862"/>
         <source>Record Debug Dumps</source>
         <translation>디버그 덤프 녹화</translation>
     </message>
     <message>
-        <location line="-1855"/>
+        <location line="-1861"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2087,7 +2094,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+6"/>
+        <source>Left-handed mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Zoom In On Center</source>
         <translation>중앙으로 확대</translation>
     </message>
@@ -2197,7 +2209,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+132"/>
+        <location line="+134"/>
         <source>Group View</source>
         <translation>그룹 표시</translation>
     </message>
@@ -2392,12 +2404,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>키 프레임에 레이어 생성</translation>
     </message>
     <message>
-        <location line="-893"/>
+        <location line="-899"/>
         <source>Delete</source>
         <translation>삭제</translation>
     </message>
     <message>
-        <location line="+639"/>
+        <location line="+645"/>
         <source>Fill Selection</source>
         <translation>선택영역 채우기</translation>
     </message>
@@ -2412,12 +2424,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>선택영여에서 지정색을 지우기</translation>
     </message>
     <message>
-        <location line="-560"/>
+        <location line="-566"/>
         <source>&amp;Edit</source>
         <translation>&amp;편집</translation>
     </message>
     <message>
-        <location line="-3901"/>
+        <location line="-3920"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2482,12 +2494,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+194"/>
+        <location line="+195"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+277"/>
+        <location line="+280"/>
         <source>Disconnected</source>
         <translation>연결 끊어짐</translation>
     </message>
@@ -2507,7 +2519,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>서버에 연결할 수 없습니다.</translation>
     </message>
     <message>
-        <location line="+1498"/>
+        <location line="+1513"/>
         <source>Arrange Docks</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2547,7 +2559,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;도커</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+21"/>
         <source>Chat</source>
         <translation>채팅창</translation>
     </message>
@@ -2632,7 +2644,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;표시</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+16"/>
         <source>&amp;Zoom</source>
         <translation>&amp;확대/축소</translation>
     </message>
@@ -3226,7 +3238,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;참여...</translation>
     </message>
     <message>
-        <location line="-3958"/>
+        <location line="-3983"/>
         <source>Joined the session!</source>
         <translation>세션에 참여했습니다!</translation>
     </message>
@@ -3236,7 +3248,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>이 컴퓨터에 호스팅이 지원되지 않습니다</translation>
     </message>
     <message>
-        <location line="+168"/>
+        <location line="+169"/>
         <source>Really leave and terminate the session?</source>
         <translation>정말로 세션을 나감으로서 종료하겠습니까?</translation>
     </message>
@@ -3246,7 +3258,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>이유:</translation>
     </message>
     <message>
-        <location line="+179"/>
+        <location line="+182"/>
         <source>You&apos;ve been disconnected from the session.</source>
         <translation>세션에서 연결이 끊어졌습니다.</translation>
     </message>
@@ -3256,7 +3268,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>연결 끊어짐: %1</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+96"/>
         <source>Canvas locked</source>
         <translation>캔버스 잠김</translation>
     </message>
@@ -3266,7 +3278,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>캔버스 잠금 해제됨</translation>
     </message>
     <message>
-        <location line="+483"/>
+        <location line="+485"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation>프리핸드 (지우기 모드, 클릭해서 초기화)</translation>
     </message>
@@ -3332,7 +3344,7 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
-        <location filename="../mainwindow.cpp" line="+612"/>
+        <location filename="../mainwindow.cpp" line="+618"/>
         <source>Layer Properties…</source>
         <translation>레이어 설정…</translation>
     </message>
@@ -4789,65 +4801,6 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
 </context>
 <context>
-    <name>dialogs</name>
-    <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+1184"/>
-        <source>No dynamics</source>
-        <translation type="unfinished">다이내믹 끄기</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Pressure dynamics</source>
-        <translation type="unfinished">압력 다이내믹</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Velocity dynamics</source>
-        <translation type="unfinished">속도 다이내믹</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Distance dynamics</source>
-        <translation type="unfinished">거리 다이내믹</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Velocity: </source>
-        <translation type="unfinished">최대 속도: </translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Maximum Distance: </source>
-        <translation type="unfinished">최대 거리: </translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <location line="+20"/>
-        <source>Apply to All</source>
-        <translation type="unfinished">모든 요소에 적용</translation>
-    </message>
-    <message>
-        <location line="-18"/>
-        <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished">최대 속력값이 이 브러시의 모든 세팅에 적용됨.</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished">최대 거리값이 이 브러시의 모든 세팅에 적용됨.</translation>
-    </message>
-</context>
-<context>
     <name>dialogs::AbuseReportDialog</name>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
@@ -5341,7 +5294,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::BrushPresetForm</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="-1184"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+73"/>
         <source>Change…</source>
         <translation type="unfinished">변경…</translation>
     </message>
@@ -5513,7 +5466,7 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+156"/>
+        <location line="+157"/>
         <location line="+18"/>
         <location line="+47"/>
         <location line="+18"/>
@@ -5525,7 +5478,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="-393"/>
+        <location line="-394"/>
         <source>Stabilization Mode:</source>
         <translation>안정 모드:</translation>
     </message>
@@ -5540,7 +5493,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>평균적 완곡화</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+14"/>
         <source>Stabilizer: </source>
         <translation>스태빌리저: </translation>
     </message>
@@ -5567,12 +5520,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+11"/>
-        <location line="+579"/>
+        <location line="+585"/>
         <source>Size</source>
         <translation>크기</translation>
     </message>
     <message>
-        <location line="-579"/>
+        <location line="-585"/>
         <location line="+65"/>
         <location line="+65"/>
         <location line="+99"/>
@@ -5592,12 +5545,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+516"/>
+        <location line="+522"/>
         <source>Opacity</source>
         <translation>불투명도</translation>
     </message>
     <message>
-        <location line="-482"/>
+        <location line="-488"/>
         <source>Hardness: </source>
         <translation>선명도: </translation>
     </message>
@@ -5608,12 +5561,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+456"/>
+        <location line="+462"/>
         <source>Hardness</source>
         <translation>선명도</translation>
     </message>
     <message>
-        <location line="-425"/>
+        <location line="-431"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Smudge with transparency</source>
         <translation type="unfinished"></translation>
@@ -5636,12 +5589,62 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     </message>
     <message>
         <location line="+12"/>
-        <location line="+300"/>
+        <location line="+306"/>
         <source>Jitter</source>
         <translation type="unfinished">지터링</translation>
     </message>
     <message>
-        <location line="-112"/>
+        <location line="-284"/>
+        <source>No dynamics</source>
+        <translation type="unfinished">다이내믹 끄기</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Pressure dynamics</source>
+        <translation type="unfinished">압력 다이내믹</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Velocity dynamics</source>
+        <translation type="unfinished">속도 다이내믹</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Distance dynamics</source>
+        <translation type="unfinished">거리 다이내믹</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Maximum Velocity: </source>
+        <translation type="unfinished">최대 속도: </translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Maximum Distance: </source>
+        <translation type="unfinished">최대 거리: </translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum velocity set for all settings in this brush.</source>
+        <translation type="unfinished">최대 속력값이 이 브러시의 모든 세팅에 적용됨.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Maximum distance set for all settings in this brush.</source>
+        <translation type="unfinished">최대 거리값이 이 브러시의 모든 세팅에 적용됨.</translation>
+    </message>
+    <message>
+        <location line="+89"/>
         <source>Not available in indirect paint modes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5677,17 +5680,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>스머징: </translation>
     </message>
     <message>
-        <location line="-463"/>
+        <location line="-469"/>
         <source>Color Pickup: 1/</source>
         <translation>색상 픽업: 1/</translation>
     </message>
     <message>
-        <location line="-344"/>
+        <location line="-345"/>
         <source>Preserve alpha</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+816"/>
+        <location line="+823"/>
         <source>Minimum Smudging: </source>
         <translation>최소 스머징: </translation>
     </message>
@@ -5698,7 +5701,9 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>스머징</translation>
     </message>
     <message>
-        <location line="-261"/>
+        <location line="-318"/>
+        <location line="+20"/>
+        <location line="+37"/>
         <source>Apply to All</source>
         <translation>모든 요소에 적용</translation>
     </message>
@@ -5763,7 +5768,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>스트로크가 안정화 되는 시간동안 느려집니다. 높은 값일수록 부드러운 선을 그리며, 차츰 커서를 따라갈 것입니다. 타블렛 스무딩 입력값도 적용됩니다.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
         <translation>단순히 잆력값을 평준화 합니다. 시간 중심 스태빌리저보단 빠르나, 그만큼 부드럽지 않으며 움직임 멈추면 따라잡지 않습니다. 입력 설정의 타블렛 스무딩을 덮어씁니다.</translation>
     </message>
@@ -7554,12 +7559,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+174"/>
+        <location filename="../dialogs/logindialog.cpp" line="+183"/>
         <source>Report...</source>
         <translation type="unfinished">신고...</translation>
     </message>
     <message>
-        <location line="+160"/>
+        <location line="+167"/>
         <source>Accept</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7589,7 +7594,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">닫기</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+21"/>
         <source>Decline</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7607,7 +7612,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+198"/>
+        <location line="+25"/>
+        <source>(redirected from %1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+139"/>
         <source>You can&apos;t join this session because:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7622,7 +7632,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+66"/>
         <source>Remove Account</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7633,7 +7643,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+52"/>
-        <location line="+161"/>
+        <location line="+160"/>
         <source>Enter the name you want to use.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7658,12 +7668,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+552"/>
+        <location line="+633"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-636"/>
+        <location line="-717"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7718,7 +7728,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+540"/>
+        <location line="+621"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9678,7 +9688,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+21"/>
-        <location filename="../mainwindow.cpp" line="-587"/>
+        <location filename="../mainwindow.cpp" line="-593"/>
         <source>Windows Ink</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12873,7 +12883,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../view/canvasscene.cpp" line="+597"/>
+        <location filename="../view/canvasscene.cpp" line="+603"/>
         <source>Restoring canvas…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13414,7 +13424,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+89"/>
         <source>Self-signed certificate</source>
         <translation type="unfinished"></translation>
     </message>

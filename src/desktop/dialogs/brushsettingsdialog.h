@@ -133,6 +133,7 @@ private:
 	QWidget *buildClassicHardnessPageUi();
 	QWidget *buildClassicSmudgingPageUi();
 	QWidget *buildClassicJitterPageUi();
+	QComboBox *buildClassicTypeCombo();
 	Dynamics buildClassicDynamics(
 		QVBoxLayout *layout,
 		void (brushes::ClassicBrush::*setType)(DP_ClassicBrushDynamicType),

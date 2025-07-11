@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1031"/>
+        <location filename="../document.cpp" line="+1037"/>
         <source>Unknown format.</source>
         <translation>Unbekanntes Format.</translation>
     </message>
@@ -1456,7 +1456,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+496"/>
+        <location filename="../net/client.cpp" line="+566"/>
         <source>%1 banned by %2.</source>
         <translation>%1 wurde von %2 gebannt.</translation>
     </message>
@@ -1491,7 +1491,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Der Operatorstatus von %1 wurde vom Server widerrufen.</translation>
     </message>
     <message>
-        <location line="-466"/>
+        <location line="-513"/>
         <source>You have been kicked.</source>
         <translation>Sie wurden gekickt.</translation>
     </message>
@@ -1531,7 +1531,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Verbindung getrennt: %1</translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+422"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>Nur Moderatoren können Bans im Klartext exportieren.</translation>
@@ -1744,33 +1744,35 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+110"/>
-        <location line="+569"/>
+        <location filename="../net/login.cpp" line="+111"/>
+        <location line="+663"/>
         <source>Invalid state</source>
         <translation>Ungültiger Zustand</translation>
     </message>
     <message>
-        <location line="-512"/>
+        <location line="-606"/>
         <location line="+8"/>
-        <location line="+131"/>
-        <location line="+408"/>
-        <location line="+178"/>
+        <location line="+145"/>
+        <location line="+118"/>
+        <location line="+33"/>
+        <location line="+338"/>
+        <location line="+192"/>
         <location line="+80"/>
         <source>Incompatible server</source>
         <translation>Inkompatibler Server</translation>
     </message>
     <message>
-        <location line="-790"/>
+        <location line="-899"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Server unterstützt eine andere Drawpile Version!</translation>
     </message>
     <message>
-        <location line="+1040"/>
+        <location line="+1149"/>
         <source>Username already taken!</source>
         <translation>Benutzername bereits vergeben!</translation>
     </message>
     <message>
-        <location line="-795"/>
+        <location line="-810"/>
         <source>This server does not allow guest logins</source>
         <translation>Dieser Server erlaubt keine Gastzugänge</translation>
     </message>
@@ -1796,7 +1798,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>URL-Schema für externe Authentifizierung nicht unterstützt</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+196"/>
         <source>New version</source>
         <translation>Neue Version</translation>
     </message>
@@ -1811,7 +1813,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Blockiert durch Jugendschutzeinstellungen</translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+324"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>Ungültiges SSL Zertifikat für Host %1</translation>
@@ -1862,17 +1864,22 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Sie dürfen hier keine öffentlichen Sitzungen hosten, nur persönliche Sitzungen sind erlaubt. Sie können von öffentlich zu personlich im Sitzung-Tab umschalten.</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+41"/>
         <source>Client failed to serialize command</source>
         <translation>Client kann Befehl nicht serialisieren</translation>
     </message>
     <message>
-        <location line="-90"/>
+        <location line="-98"/>
         <source>Cancelled</source>
         <translation>Abgebrochen</translation>
     </message>
     <message>
-        <location line="-921"/>
+        <location line="-1066"/>
+        <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+49"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>Der Server stellt keine Möglichkeit bereit für den Login zum Beitritt einer Sitzung!</translation>
     </message>
@@ -1887,7 +1894,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Server erwartet STARTTLS auf nicht unterstütztem Socket.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation>Sicherer Modus nicht aktiviert auf einem Host mit einem gepinnten Zertifikat!</translation>
     </message>
@@ -1897,12 +1904,27 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Fehler beim Anfordern der Serverinformationen</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+69"/>
         <source>Session lookup failed</source>
         <translation>Nachschlagen der Sitzung fehlgeschlagen</translation>
     </message>
     <message>
-        <location line="+140"/>
+        <location line="+20"/>
+        <source>Incompatible redirect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Circular redirect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Too many redirects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+159"/>
         <source>Group membership needed</source>
         <translation>Gruppenzugehörigkeit benötigt</translation>
     </message>
@@ -1922,7 +1944,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Der Server vermeldet zwei verschiedene Ext-Auth-URLs</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+125"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation>Mehrere Sitzungen erhalten, aber nur eine war erwartet</translation>
     </message>
@@ -1937,7 +1959,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Unbekannte Version %1</translation>
     </message>
     <message>
-        <location line="+184"/>
+        <location line="+192"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation>TLS ist auf dieser Art von Socket nicht unterstützt</translation>
@@ -2114,7 +2136,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+245"/>
+        <location filename="../net/server.cpp" line="+273"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation>Wenn Sie keinen Proxy verwenden wollten, können Sie in den Drawpile-Einstellungen im Netzwerk-Tab den Netzwerkproxy deaktivieren.</translation>
     </message>
