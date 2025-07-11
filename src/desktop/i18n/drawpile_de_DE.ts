@@ -1216,7 +1216,9 @@ Teilreichweite: [%3, %4]</translation>
         <source>This session is hosted on another server, you will be redirected.
 
 To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Sitzung ist auf einem anderen Server gehostet, Sie werden weitergeleitet.
+
+Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdessen die Durchsuchen-Seite oder einen direkten Link zu einer Sitzung.</translation>
     </message>
     <message>
         <location line="-612"/>
@@ -2738,7 +2740,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+6"/>
         <source>Left-handed mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Linkshändermodus</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5561,52 +5563,52 @@ Deaktiviert bringt das Verhalten vor Drawpile 2.3 zurück.</translation>
     <message>
         <location line="-284"/>
         <source>No dynamics</source>
-        <translation type="unfinished">Keine Dynamik</translation>
+        <translation>Keine Dynamik</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished">Druckdynamik</translation>
+        <translation>Druckdynamik</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished">Geschwindigkeitsdynamik</translation>
+        <translation>Geschwindigkeitsdynamik</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished">Distanzdynamik</translation>
+        <translation>Distanzdynamik</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished">Maximale Geschwindigkeit: </translation>
+        <translation>Maximale Geschwindigkeit: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished">Maximale Distanz: </translation>
+        <translation>Maximale Distanz: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished">Setzt die maximale Geschwindigkeit für Größe, Deckkraft, Härte, Schmieren und Zittern auf einmal.</translation>
+        <translation>Setzt die maximale Geschwindigkeit für Größe, Deckkraft, Härte, Schmieren und Zittern auf einmal.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished">Maximale Geschwindigkeit für alle Einstellungen dieses Pinsels angewendet.</translation>
+        <translation>Maximale Geschwindigkeit für alle Einstellungen dieses Pinsels angewendet.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished">Setzt die maximale Distanz für Größe, Deckkraft, Härte, Schmieren und Zittern auf einmal.</translation>
+        <translation>Setzt die maximale Distanz für Größe, Deckkraft, Härte, Schmieren und Zittern auf einmal.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished">Maximale Distanz für alle Einstellungen dieses Pinsels angewendet.</translation>
+        <translation>Maximale Distanz für alle Einstellungen dieses Pinsels angewendet.</translation>
     </message>
     <message>
         <location line="+89"/>
@@ -7702,7 +7704,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+25"/>
         <source>(redirected from %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>(weitergeleitet von %1)</translation>
     </message>
     <message>
         <location line="+139"/>
@@ -12040,8 +12042,8 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <source>Can&apos;t create another/%n more layer(s).</source>
         <extracomment>Singular should be &quot;can&apos;t create another layer&quot;, plural &quot;can&apos;t create %n more layers&quot;. Change this to make sense in your language.</extracomment>
         <translation>
-            <numerusform>Kann nicht noch eine Ebene erstellen,</numerusform>
-            <numerusform>Kann nicht noch %n Ebenen erstellen,</numerusform>
+            <numerusform>Kann nicht noch eine Ebene erstellen.</numerusform>
+            <numerusform>Kann nicht noch %n Ebenen erstellen.</numerusform>
         </translation>
     </message>
     <message>
