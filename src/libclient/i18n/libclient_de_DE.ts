@@ -1876,7 +1876,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="-1066"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Wurde zu einem Server weitergeleitet, der keine Weiterleitungen akzeptiert: %1</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -1911,12 +1911,12 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+20"/>
         <source>Incompatible redirect</source>
-        <translation type="unfinished"></translation>
+        <translation>Inkompatible Weiterleitung</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Circular redirect</source>
-        <translation type="unfinished"></translation>
+        <translation>Zirkuläre Weiterleitung</translation>
     </message>
     <message>
         <location line="+7"/>
