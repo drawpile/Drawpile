@@ -1921,7 +1921,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location line="+7"/>
         <source>Too many redirects</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu viele Weiterleitungen</translation>
     </message>
     <message>
         <location line="+159"/>
