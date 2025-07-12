@@ -5633,7 +5633,7 @@ Al desactivarla, el comportamiento se restablece a su estado anterior a Drawpile
     <message>
         <location line="+11"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation>Establezca la velocidad máxima para Tamaño, Opacidad, Dureza, Suavizado y Desviación a la vez.</translation>
+        <translation>Establezca la velocidad máxima para Tamaño, Opacidad, Dureza, Difuminado y Desviación a la vez.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -5643,12 +5643,12 @@ Al desactivarla, el comportamiento se restablece a su estado anterior a Drawpile
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished">Establezca la distancia máxima para Tamaño, Opacidad, Dureza, Difuminado y Vibración a la vez.</translation>
+        <translation>Establezca la distancia máxima para Tamaño, Opacidad, Dureza, Difuminado y Desviación a la vez.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished">Distancia máxima establecida para todos los ajustes de este Pincel.</translation>
+        <translation>Distancia máxima establecida para todos los ajustes de este Pincel.</translation>
     </message>
     <message>
         <location line="+89"/>
@@ -5695,7 +5695,7 @@ Si los trazos rápidos causan alteraciones no deseadas al difuminar, activar est
     <message>
         <location line="-345"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished">Preservar alfa</translation>
+        <translation>Preservar alfa</translation>
     </message>
     <message>
         <location line="+823"/>
@@ -6666,10 +6666,10 @@ Para velocidades muy lentas, ocurre lo opuesto.</translation>
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Añade un desplazamiento aleatorio a la posición donde se dibuja cada pincelada.­
+        <translation>Añade un desplazamiento aleatorio a la posición donde se dibuja cada pincelada.­
  0.0 desactivado.
  1.0 desviación estándar equivale a un radio básico.
-&lt;0.0: valores negativos no producen fluctuación.</translation>
+&lt;0.0: valores negativos no producen Desviación/Fluctuación.</translation>
     </message>
     <message>
         <location line="+3"/>
