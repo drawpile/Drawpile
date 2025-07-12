@@ -1308,6 +1308,30 @@ static void blend_tile_normal_sse42(DP_Pixel15 *DP_RESTRICT dst,
     // clang-format on
 }
 
+static void blend_tile_recolor_sse42(DP_Pixel15 *DP_RESTRICT dst,
+                                     const DP_Pixel15 *DP_RESTRICT src,
+                                     uint16_t opacity)
+{
+    __m128i o = _mm_set1_epi32(opacity);
+    for (int i = 0; i < DP_TILE_LENGTH; i += 4) {
+        __m128i src_b, src_g, src_r, src_a;
+        load_aligned_sse42(&src[i], &src_b, &src_g, &src_r, &src_a);
+
+        __m128i dst_b, dst_g, dst_r, dst_a;
+        load_aligned_sse42(&dst[i], &dst_b, &dst_g, &dst_r, &dst_a);
+
+        __m128i abo = mul_sse42(dst_a, o);
+        __m128i as1 =
+            _mm_sub_epi32(_mm_set1_epi32(DP_BIT15), mul_sse42(src_a, o));
+
+        dst_b = _mm_add_epi32(mul_sse42(dst_b, as1), mul_sse42(src_b, abo));
+        dst_g = _mm_add_epi32(mul_sse42(dst_g, as1), mul_sse42(src_g, abo));
+        dst_r = _mm_add_epi32(mul_sse42(dst_r, as1), mul_sse42(src_r, abo));
+
+        store_aligned_sse42(dst_b, dst_g, dst_r, dst_a, &dst[i]);
+    }
+}
+
 static void blend_tile_behind_sse42(DP_Pixel15 *DP_RESTRICT dst,
                                     const DP_Pixel15 *DP_RESTRICT src,
                                     uint16_t opacity)
@@ -1587,6 +1611,31 @@ static void blend_tile_normal_avx2(DP_Pixel15 *DP_RESTRICT dst,
     }
     _mm256_zeroupper();
     // clang-format on
+}
+
+static void blend_tile_recolor_avx2(DP_Pixel15 *DP_RESTRICT dst,
+                                    const DP_Pixel15 *DP_RESTRICT src,
+                                    uint16_t opacity)
+{
+    __m256i o = _mm256_set1_epi32(opacity);
+    for (int i = 0; i < DP_TILE_LENGTH; i += 8) {
+        __m256i src_b, src_g, src_r, src_a;
+        load_aligned_avx2(&src[i], &src_b, &src_g, &src_r, &src_a);
+
+        __m256i dst_b, dst_g, dst_r, dst_a;
+        load_aligned_avx2(&dst[i], &dst_b, &dst_g, &dst_r, &dst_a);
+
+        __m256i abo = mul_avx2(dst_a, o);
+        __m256i as1 =
+            _mm256_sub_epi32(_mm256_set1_epi32(1 << 15), mul_avx2(src_a, o));
+
+        dst_b = _mm256_add_epi32(mul_avx2(dst_b, as1), mul_avx2(src_b, abo));
+        dst_g = _mm256_add_epi32(mul_avx2(dst_g, as1), mul_avx2(src_g, abo));
+        dst_r = _mm256_add_epi32(mul_avx2(dst_r, as1), mul_avx2(src_r, abo));
+
+        store_aligned_avx2(dst_b, dst_g, dst_r, dst_a, &dst[i]);
+    }
+    _mm256_zeroupper();
 }
 
 static void blend_tile_behind_avx2(DP_Pixel15 *DP_RESTRICT dst,
@@ -4761,6 +4810,18 @@ void DP_blend_tile(DP_Pixel15 *DP_RESTRICT dst,
             return;
         case DP_CPU_SUPPORT_SSE42:
             blend_tile_normal_sse42(aligned_dst, aligned_src, opacity);
+            return;
+        default:
+            break;
+        }
+        break;
+    case DP_BLEND_MODE_RECOLOR:
+        switch (DP_cpu_support) {
+        case DP_CPU_SUPPORT_AVX2:
+            blend_tile_recolor_avx2(aligned_dst, aligned_src, opacity);
+            return;
+        case DP_CPU_SUPPORT_SSE42:
+            blend_tile_recolor_sse42(aligned_dst, aligned_src, opacity);
             return;
         default:
             break;
