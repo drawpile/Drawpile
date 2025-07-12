@@ -10156,7 +10156,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Pan canvas</source>
-        <translation>Alejar lienzo</translation>
+        <translation>Mover lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10171,7 +10171,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Zoom</source>
-        <translation type="unfinished">Acercar</translation>
+        <translation>Acercar</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10201,12 +10201,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">Suavizado:</translation>
+        <translation>Suavizado:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -10300,12 +10300,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+57"/>
         <source>First checker color</source>
-        <translation type="unfinished">Primer color del damero</translation>
+        <translation>Primer color del damero</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Second checker color</source>
-        <translation type="unfinished">Segundo color del damero</translation>
+        <translation>Segundo color del damero</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -10350,7 +10350,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+9"/>
         <source>Scaling:</source>
-        <translation type="unfinished">Escalado:</translation>
+        <translation>Escalado:</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -10360,7 +10360,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -10375,12 +10375,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Enabled</source>
-        <translation type="unfinished">Habilitado</translation>
+        <translation>Habilitado</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>System</source>
-        <translation type="unfinished">Sistema</translation>
+        <translation>Sistema</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -10540,7 +10540,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host.cpp" line="+41"/>
         <source>Session</source>
-        <translation type="unfinished">Sesion</translation>
+        <translation>Sesión</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10550,17 +10550,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Permissions</source>
-        <translation type="unfinished">Permisos</translation>
+        <translation>Permisos</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles</source>
-        <translation type="unfinished">Roles</translation>
+        <translation>Roles</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Bans</source>
-        <translation type="unfinished">Baneos</translation>
+        <translation>Baneos</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -10758,7 +10758,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+30"/>
         <source>Remove</source>
-        <translation type="unfinished">Remover</translation>
+        <translation>Remover</translation>
     </message>
 </context>
 <context>
@@ -10766,7 +10766,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/categories.cpp" line="+27"/>
         <source>Session</source>
-        <translation type="unfinished">Sesion</translation>
+        <translation>Sesión</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10781,12 +10781,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Permissions</source>
-        <translation type="unfinished">Permisos</translation>
+        <translation>Permisos</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles</source>
-        <translation type="unfinished">Roles</translation>
+        <translation>Roles</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -10796,7 +10796,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Bans</source>
-        <translation type="unfinished">Baneos</translation>
+        <translation>Baneos</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -10855,7 +10855,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Title:</source>
-        <translation type="unfinished">Titulo:</translation>
+        <translation>Titulo:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -10880,7 +10880,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+5"/>
         <source>Remove selected</source>
-        <translation type="unfinished">Remover seleccionados</translation>
+        <translation>Remover seleccionados</translation>
     </message>
     <message>
         <location line="+139"/>
@@ -10909,13 +10909,13 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+37"/>
         <location line="+109"/>
         <source>Rename</source>
-        <translation type="unfinished">Renombrar</translation>
+        <translation>Renombrar</translation>
     </message>
     <message>
         <location line="-102"/>
         <location line="+140"/>
         <source>Delete</source>
-        <translation type="unfinished">Borrar</translation>
+        <translation>Borrar</translation>
     </message>
     <message>
         <location line="-131"/>
@@ -10964,7 +10964,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/startdialog/host/permissions.cpp" line="+107"/>
         <source>Undo Limit: </source>
-        <translation type="unfinished">Limite de Deshacer </translation>
+        <translation>Limite de Deshacer </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -11050,12 +11050,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+296"/>
         <source>Everyone</source>
-        <translation type="unfinished">Todos</translation>
+        <translation>Todos</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-10"/>
@@ -11070,7 +11070,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-2"/>
         <source>Operators</source>
-        <translation type="unfinished">Operadores</translation>
+        <translation>Operadores</translation>
     </message>
 </context>
 <context>
@@ -11096,7 +11096,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Operator password:</source>
-        <translation type="unfinished">Contraseña de operador:</translation>
+        <translation>Contraseña de operador:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -11106,7 +11106,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+47"/>
         <source>Operator</source>
-        <translation type="unfinished">Operador</translation>
+        <translation>Operador</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -11124,7 +11124,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+14"/>
         <source>Name:</source>
-        <translation type="unfinished">Nombre:</translation>
+        <translation>Nombre:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -11134,7 +11134,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+28"/>
         <source>Save</source>
-        <translation type="unfinished">Guardar</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11182,7 +11182,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Generate</source>
-        <translation type="unfinished">Generar</translation>
+        <translation>Generar</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -11192,7 +11192,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation type="unfinished">Mantener historial de chat</translation>
+        <translation>Mantener historial de chat</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -11458,7 +11458,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+3"/>
         <location line="+45"/>
         <source>Delete</source>
-        <translation type="unfinished">Borrar</translation>
+        <translation>Borrar</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -11509,7 +11509,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+0"/>
         <source>Palette</source>
-        <translation type="unfinished">Paleta</translation>
+        <translation>Paleta</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -11643,7 +11643,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+0"/>
         <source>Sliders</source>
-        <translation type="unfinished">Controles Deslizantes</translation>
+        <translation>Controles Deslizantes</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11827,22 +11827,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+0"/>
         <source>Wheel</source>
-        <translation type="unfinished">Rueda</translation>
+        <translation>Rueda</translation>
     </message>
     <message>
         <location line="+110"/>
         <source>Direction</source>
-        <translation type="unfinished">Direccion</translation>
+        <translation>Dirección</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ascending</source>
-        <translation type="unfinished">Ascendente</translation>
+        <translation>Ascendente</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Descending</source>
-        <translation type="unfinished">Descendente</translation>
+        <translation>Descendente</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -11852,7 +11852,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished">Cima</translation>
+        <translation>Cima</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -12116,7 +12116,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-10"/>
         <source>Onion Skins</source>
-        <translation type="unfinished">Piel de Cebolla</translation>
+        <translation>Piel de Cebolla</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -12164,7 +12164,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+6"/>
         <source>Paste</source>
-        <translation type="unfinished">Pegar</translation>
+        <translation>Pegar</translation>
     </message>
     <message>
         <location line="+2"/>
