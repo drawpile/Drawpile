@@ -1215,7 +1215,9 @@ Sub-rango: [%3, %4]</translation>
         <source>This session is hosted on another server, you will be redirected.
 
 To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta sesión está alojada en otro servidor y será redirigido.
+
+Para evitar este paso adicional en el futuro, utilice la página Explorar o un enlace directo a una sesión.</translation>
     </message>
     <message>
         <location line="-612"/>
@@ -1841,7 +1843,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+6"/>
         <source>Left-handed mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo para zurdos</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -3667,12 +3669,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+42"/>
         <source>Could not write log file: %1</source>
-        <translation type="unfinished">No podía escribir archivo de historia: %1</translation>
+        <translation>No se pudo escribir el archivo de registro: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Could not read log file: %1</source>
-        <translation type="unfinished">No podía leer archivo de historia: %1</translation>
+        <translation>No pudo leer el archivo de registro: %1</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3699,7 +3701,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location filename="../utils/widgetutils.cpp" line="-92"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -3707,7 +3709,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+137"/>
         <source>None</source>
-        <translation type="unfinished">Ninguno</translation>
+        <translation>Ninguno</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3722,7 +3724,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+6"/>
         <source>Blue</source>
-        <translation type="unfinished">Azul</translation>
+        <translation>Azul</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3737,7 +3739,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+6"/>
         <source>Green</source>
-        <translation type="unfinished">Verde</translation>
+        <translation>Verde</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4011,7 +4013,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+5"/>
         <source>Lasso Fill</source>
-        <translation type="unfinished">Relleno de lazo</translation>
+        <translation>Relleno de lazo</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4051,7 +4053,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+5"/>
         <source>Transform</source>
-        <translation type="unfinished">Transformar</translation>
+        <translation>Transformar</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4263,19 +4265,19 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="+40"/>
         <location line="+125"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-195"/>
         <location line="+247"/>
         <source>Operators: </source>
-        <translation type="unfinished">Operadores: </translation>
+        <translation>Operadores: </translation>
     </message>
     <message>
         <location line="-214"/>
         <location line="+201"/>
         <source>Trusted: </source>
-        <translation type="unfinished">De confianza: </translation>
+        <translation>De confianza: </translation>
     </message>
     <message>
         <location line="-178"/>
@@ -4286,7 +4288,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="+17"/>
         <location line="+26"/>
         <source>Registered: </source>
-        <translation type="unfinished">Registrado: </translation>
+        <translation>Registrado: </translation>
     </message>
     <message>
         <location line="-7"/>
@@ -4297,7 +4299,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="+30"/>
         <location line="+76"/>
         <source>Everyone: </source>
-        <translation type="unfinished">Todos: </translation>
+        <translation>Todos: </translation>
     </message>
     <message>
         <location line="-30"/>
@@ -4506,7 +4508,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+24"/>
         <source>Rendering</source>
-        <translation type="unfinished">Renderizado</translation>
+        <translation>Renderizado</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -4872,7 +4874,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>MP4 Video</source>
-        <translation type="unfinished">Video MP4</translation>
+        <translation>Video MP4</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4882,7 +4884,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+12"/>
         <source>Format:</source>
-        <translation type="unfinished">Formato:</translation>
+        <translation>Formato:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4892,12 +4894,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+9"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished">Suavizado</translation>
+        <translation>Suavizado</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4907,7 +4909,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+7"/>
         <source>Input</source>
-        <translation type="unfinished">Entrada</translation>
+        <translation>Entrada</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4917,12 +4919,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+12"/>
         <source> FPS</source>
-        <translation type="unfinished"> FPS</translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Cuadros por segundo:</translation>
+        <translation>Cuadros por segundo:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4957,7 +4959,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+6"/>
         <source>Export</source>
-        <translation type="unfinished">Exportar</translation>
+        <translation>Exportar</translation>
     </message>
     <message>
         <location line="+125"/>
@@ -5030,12 +5032,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+7"/>
         <source>Layers</source>
-        <translation type="unfinished">Capas</translation>
+        <translation>Capas</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Import the layers of an ORA or PSD file as timeline frames.</source>
-        <translation type="unfinished">Importar las capas de un archivo ORA o PSD como fotogramas de la línea de tiempo.</translation>
+        <translation>Importar las capas de un archivo ORA o PSD como fotogramas de la línea de tiempo.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5056,7 +5058,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+9"/>
         <source> FPS</source>
-        <translation type="unfinished"> FPS</translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5184,7 +5186,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+54"/>
@@ -5320,7 +5322,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+5"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished">Miniatura:</translation>
+        <translation>Miniatura:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5330,12 +5332,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+8"/>
         <source>Name:</source>
-        <translation type="unfinished">Nombre:</translation>
+        <translation>Nombre:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Description:</source>
-        <translation type="unfinished">Descripcion:</translation>
+        <translation>Descripción:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -5363,7 +5365,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+121"/>
         <source>Brush</source>
-        <translation type="unfinished">Pincel</translation>
+        <translation>Pincel</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5596,42 +5598,42 @@ Al desactivarla, el comportamiento se restablece a su estado anterior a Drawpile
         <location line="+12"/>
         <location line="+306"/>
         <source>Jitter</source>
-        <translation type="unfinished">Temblor</translation>
+        <translation>Desviación</translation>
     </message>
     <message>
         <location line="-284"/>
         <source>No dynamics</source>
-        <translation type="unfinished">Sin Dynamicas</translation>
+        <translation>Sin Dinámicas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished">Dinámicas de presión</translation>
+        <translation>Dinámicas de presión</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished">Dinámicas de velocidad</translation>
+        <translation>Dinámicas de velocidad</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished">Dinámicas de distancia</translation>
+        <translation>Dinámicas de distancia</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished">Velocidad Maxima: </translation>
+        <translation>Velocidad Maxima: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished">Distancia Maxima: </translation>
+        <translation>Distancia Maxima: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished">Establezca la velocidad máxima para Tamaño, Opacidad, Dureza, Manchas y Vibración a la vez.</translation>
+        <translation>Establezca la velocidad máxima para Tamaño, Opacidad, Dureza, Manchas y Desviación a la vez.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -7702,7 +7704,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+25"/>
         <source>(redirected from %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>(redirigido desde %1)</translation>
     </message>
     <message>
         <location line="+139"/>
@@ -8490,7 +8492,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+12"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -8684,7 +8686,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+15"/>
         <source>Copy</source>
-        <translation type="unfinished">Copiar</translation>
+        <translation>Copiar</translation>
     </message>
 </context>
 <context>
