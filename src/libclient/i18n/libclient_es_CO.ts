@@ -1640,7 +1640,7 @@ En su lugar, selecciona una capa regular.</translation>
         <location line="+5"/>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
-        <translation>Sesión finalizada por un moderador (%1)</translation>
+        <translation>Sesión finalizada por un moderador (%1).</translation>
     </message>
     <message>
         <location line="+4"/>
