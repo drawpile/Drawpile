@@ -9789,7 +9789,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+21"/>
         <location filename="../mainwindow.cpp" line="-593"/>
         <source>Windows Ink</source>
-        <translation>Tinta de Windows</translation>
+        <translation>Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9813,13 +9813,13 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+10"/>
         <source>Qt5</source>
-        <translation type="unfinished">Qt5</translation>
+        <translation>Qt5</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+9"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished">Tinte Qt6 Windows</translation>
+        <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9835,7 +9835,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished">Permitir sensibilidad de presión</translation>
+        <translation>Permitir sensibilidad de presión</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9850,7 +9850,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">Suavizado:</translation>
+        <translation>Suavizado:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9860,7 +9860,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Compensate jagged curves</source>
-        <translation type="unfinished">Compensar curvas dentadas</translation>
+        <translation>Compensar curvas irregulares</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9965,7 +9965,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Arrow</source>
-        <translation type="unfinished">Puntero</translation>
+        <translation>Puntero/Flecha</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10034,7 +10034,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+56"/>
         <source>Eraser</source>
-        <translation type="unfinished">Borrador</translation>
+        <translation>Borrador</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10057,22 +10057,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/touch.cpp" line="+26"/>
         <source>Touch Tester</source>
-        <translation type="unfinished">Probador Tactil</translation>
+        <translation>Probador Tactil</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Touch mode:</source>
-        <translation type="unfinished">Modo táctil:</translation>
+        <translation>Modo táctil:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished">Pantalla táctil</translation>
+        <translation>Pantalla táctil</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished">Gestos</translation>
+        <translation>Gestos</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -10086,12 +10086,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-82"/>
         <source>Undo</source>
-        <translation type="unfinished">Deshacer</translation>
+        <translation>Deshacer</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Redo</source>
-        <translation type="unfinished">Rehacer</translation>
+        <translation>Rehacer</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10151,12 +10151,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+11"/>
         <source>Draw</source>
-        <translation type="unfinished">Dibujar</translation>
+        <translation>Dibujar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pan canvas</source>
-        <translation type="unfinished">Alejar lienzo</translation>
+        <translation>Alejar lienzo</translation>
     </message>
     <message>
         <location line="+2"/>
