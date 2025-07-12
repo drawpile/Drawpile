@@ -12116,7 +12116,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="-10"/>
         <source>Onion Skins</source>
-        <translation>Piel de Cebolla</translation>
+        <translation>Pieles de Cebolla</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -12174,7 +12174,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished">Cerrar</translation>
+        <translation>Cerrar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12209,12 +12209,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Error</source>
-        <translation type="unfinished">Error</translation>
+        <translation>Error</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12369,7 +12369,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished">Suavizado</translation>
+        <translation>Suavizado</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12446,7 +12446,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+1"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+2"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished">Suavizado Promedio</translation>
+        <translation>Suavizado por Promedio</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12488,7 +12488,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+28"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -12589,7 +12589,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+0"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacidad: </translation>
+        <translation>Opacidad: </translation>
     </message>
     <message>
         <location line="+111"/>
@@ -12616,7 +12616,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+11"/>
         <location line="+44"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="-45"/>
@@ -12626,7 +12626,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+10"/>
         <source>Linear</source>
-        <translation type="unfinished">Lineal</translation>
+        <translation>Lineal</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12681,12 +12681,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+31"/>
         <source>Mode:</source>
-        <translation type="unfinished">Modo:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Apply</source>
-        <translation type="unfinished">Aplicar</translation>
+        <translation>Aplicar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12696,7 +12696,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12739,7 +12739,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+65"/>
         <source>Mode:</source>
-        <translation type="unfinished">Modo:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12754,7 +12754,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+9"/>
         <source>Apply</source>
-        <translation type="unfinished">Aplicar</translation>
+        <translation>Aplicar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12764,7 +12764,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12860,7 +12860,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+14"/>
         <source>Nearest</source>
-        <translation type="unfinished">Mas cercano</translation>
+        <translation>Mas cercano</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12896,7 +12896,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+10"/>
         <source>Scale</source>
-        <translation type="unfinished">Escala</translation>
+        <translation>Escala</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12906,7 +12906,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+8"/>
         <source>Distort</source>
-        <translation type="unfinished">Distorcionar</translation>
+        <translation>Distorcionar</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12922,7 +12922,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+15"/>
         <source>Mode:</source>
-        <translation type="unfinished">Modo:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -12937,12 +12937,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+10"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Opacidad: </translation>
+        <translation>Opacidad: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -12957,7 +12957,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+9"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12991,7 +12991,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../view/canvasscene.cpp" line="+603"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished">Restaurando Lienzo…</translation>
+        <translation>Restaurando Lienzo…</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -13009,7 +13009,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../view/canvasview.cpp" line="+128"/>
         <source>Save As…</source>
-        <translation type="unfinished">Guardar como…</translation>
+        <translation>Guardar como…</translation>
     </message>
 </context>
 <context>
@@ -13022,42 +13022,42 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Reset in progress</source>
-        <translation type="unfinished">Reinicio en progreso</translation>
+        <translation>Reinicio en progreso</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation type="unfinished">Lienzo bloqueado</translation>
+        <translation>Lienzo bloqueado</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>User is locked</source>
-        <translation type="unfinished">Usuario bloqueado</translation>
+        <translation>Usuario bloqueado</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer is a group</source>
-        <translation type="unfinished">La capa es un grupo</translation>
+        <translation>La capa es un grupo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is locked</source>
-        <translation type="unfinished">Capa bloqueada</translation>
+        <translation>Capa bloqueada</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is censored</source>
-        <translation type="unfinished">Capa censurada</translation>
+        <translation>Capa censurada</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation type="unfinished">La capa esta escondida</translation>
+        <translation>La capa esta escondida</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is not visible in this frame</source>
-        <translation type="unfinished">La capa no es visible en este cuadro</translation>
+        <translation>La capa no es visible en este cuadro</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13067,7 +13067,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Tool is locked</source>
-        <translation type="unfinished">La herramienta esta blockeada</translation>
+        <translation>La herramienta esta blockeada</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13454,17 +13454,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../widgets/expandshrinkspinner.cpp" line="+27"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Expand</source>
-        <translation type="unfinished">Expandir</translation>
+        <translation>Expandir</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Shrink</source>
-        <translation type="unfinished">Contraer</translation>
+        <translation>Contraer</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13484,7 +13484,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+0"/>
         <source>Expand: </source>
-        <translation type="unfinished">Expandir: </translation>
+        <translation>Expandir: </translation>
     </message>
 </context>
 <context>
