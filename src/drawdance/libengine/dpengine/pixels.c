@@ -308,6 +308,37 @@ static BGR15 set_sat(BGR15 bgr, Fix15 s)
     return bgr;
 }
 
+static float fastcbrt(float x)
+{
+    union FloatInt {
+        float f;
+        uint32_t i;
+    };
+
+    if (x == 0.0f) {
+        return 0.0f;
+    }
+
+    const uint32_t sign_mask = 0x80000000;
+    const uint32_t magic_number = 0x2a51067f;
+
+    union FloatInt u = {.f = x};
+    uint32_t sign = u.i & sign_mask;
+    u.i &= ~sign_mask;
+    float abs_x = u.f;
+
+    // u.i = u.i / 3 + magic_number; float division to match the SIMD variants
+    u.i = (uint32_t)((float)u.i * (1.0f / 3.0f)) + magic_number;
+
+
+    float y3 = u.f * u.f * u.f;
+    // halley iteration
+    u.f = u.f * (y3 + 2.0f * abs_x) / (2.0f * y3 + abs_x);
+    u.i |= sign;
+
+    return u.f;
+}
+
 // SPDX-SnippetBegin
 // SPDX-License-Identifier: MIT
 // SPDX-SnippetCopyrightText: Copyright (c) 2020 Björn Ottosson
@@ -324,9 +355,15 @@ static Lab linear_srgb_to_oklab(BGRf c)
     float m = 0.2119034982f * c.r + 0.6806995451f * c.g + 0.1073969566f * c.b;
     float s = 0.0883024619f * c.r + 0.2817188376f * c.g + 0.6299787005f * c.b;
 
-    float l_ = cbrtf(l);
-    float m_ = cbrtf(m);
-    float s_ = cbrtf(s);
+    // Non standard oklab transfer function to approximate cielabs perceptual
+    // lightness in the darker values; The blogpost by bjorn on okhsv and okhsl
+    // introduce a different function, but it contains another square root which
+    // is computationally not feasible these 2 biases also make white and black
+    // mix the same on normal and oklab the argument is that we know we're
+    // dealing with srgb values, therefore we can set a reference
+    float l_ = fastcbrt(l + 0.0037930732552754493f) - 0.15595420054924858f;
+    float m_ = fastcbrt(m + 0.0037930732552754493f) - 0.15595420054924858f;
+    float s_ = fastcbrt(s + 0.0037930732552754493f) - 0.15595420054924858f;
 
     return (Lab){
         .L = 0.2104542553f * l_ + 0.7936177850f * m_ - 0.0040720468f * s_,
@@ -337,13 +374,16 @@ static Lab linear_srgb_to_oklab(BGRf c)
 
 static BGRf oklab_to_linear_srgb(Lab c)
 {
-    float l_ = c.L + 0.3963377774f * c.a + 0.2158037573f * c.b;
-    float m_ = c.L - 0.1055613458f * c.a - 0.0638541728f * c.b;
-    float s_ = c.L - 0.0894841775f * c.a - 1.2914855480f * c.b;
+    float l_ =
+        c.L + 0.3963377774f * c.a + 0.2158037573f * c.b + 0.15595420054924858f;
+    float m_ =
+        c.L - 0.1055613458f * c.a - 0.0638541728f * c.b + 0.15595420054924858f;
+    float s_ =
+        c.L - 0.0894841775f * c.a - 1.2914855480f * c.b + 0.15595420054924858f;
 
-    float l = l_ * l_ * l_;
-    float m = m_ * m_ * m_;
-    float s = s_ * s_ * s_;
+    float l = l_ * l_ * l_ - 0.0037930732552754493f;
+    float m = m_ * m_ * m_ - 0.0037930732552754493f;
+    float s = s_ * s_ * s_ - 0.0037930732552754493f;
 
     return (BGRf){
         .r = +4.0767416621f * l - 3.3077115913f * m + 0.2309699292f * s,
