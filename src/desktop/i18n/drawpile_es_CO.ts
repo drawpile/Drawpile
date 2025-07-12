@@ -5633,12 +5633,12 @@ Al desactivarla, el comportamiento se restablece a su estado anterior a Drawpile
     <message>
         <location line="+11"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation>Establezca la velocidad máxima para Tamaño, Opacidad, Dureza, Manchas y Desviación a la vez.</translation>
+        <translation>Establezca la velocidad máxima para Tamaño, Opacidad, Dureza, Suavizado y Desviación a la vez.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished">Velocidad máxima establecida para todos los ajustes de este pincel.</translation>
+        <translation>Velocidad máxima establecida para todos los ajustes de este pincel.</translation>
     </message>
     <message>
         <location line="+6"/>
