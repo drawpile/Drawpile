@@ -5249,7 +5249,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="-6"/>
         <source>Couldn&apos;t read image: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
-        <translation>No se puede leer la imagen: %1</translation>
+        <translation>No se puede leer la imagen: %1.</translation>
     </message>
     <message>
         <location line="+6"/>
