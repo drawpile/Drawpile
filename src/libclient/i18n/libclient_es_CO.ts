@@ -174,7 +174,7 @@
     <message>
         <location line="+1"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished">Buscando actualizaciones…</translation>
+        <translation>Buscando actualizaciones…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1028,7 +1028,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation type="unfinished">Luz de alfiler</translation>
+        <translation>Fijar Luz</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1769,7 +1769,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+50"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fuiste redirigido a un servidor que no acepta redirecciones: %1</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -1799,17 +1799,17 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+20"/>
         <source>Incompatible redirect</source>
-        <translation type="unfinished"></translation>
+        <translation>Redirección incompatible</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Circular redirect</source>
-        <translation type="unfinished"></translation>
+        <translation>Redirección circular</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Too many redirects</source>
-        <translation type="unfinished"></translation>
+        <translation>Demasiadas redirecciones</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -2020,7 +2020,7 @@ En su lugar, selecciona una capa regular.</translation>
     <message>
         <location line="+4"/>
         <source>Unlisted</source>
-        <translation type="unfinished">Desenlistado</translation>
+        <translation>Desenlistado</translation>
     </message>
     <message>
         <location line="+2"/>
