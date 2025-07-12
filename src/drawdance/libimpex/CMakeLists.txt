@@ -100,4 +100,8 @@ if(BENCHMARKS)
     dp_add_executable(bench_multidab)
     dp_target_sources(bench_multidab bench/bench_multidab.c)
     target_link_libraries(bench_multidab PUBLIC dpimpex)
+
+    dp_add_executable(bench_flatten)
+    dp_target_sources(bench_flatten bench/bench_flatten.c)
+    target_link_libraries(bench_flatten PUBLIC dpimpex)
 endif()
