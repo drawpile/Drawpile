@@ -835,18 +835,18 @@ void DP_pixels15_to_8_tile(DP_Pixel8 *dst, const DP_Pixel15 *src)
 {
     DP_Pixel8 *aligned_dst = DP_ASSUME_SIMD_ALIGNED(dst);
     const DP_Pixel15 *aligned_src = DP_ASSUME_SIMD_ALIGNED(src);
-    switch (DP_cpu_support) {
 #ifdef DP_CPU_X64
-    case DP_CPU_SUPPORT_AVX2:
+    DP_CpuSupport cpu_support = DP_cpu_support;
+    if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
         pixels15_to_8_avx2(aligned_dst, aligned_src);
-        break;
-    case DP_CPU_SUPPORT_SSE42:
+    }
+    else if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
         pixels15_to_8_sse42(aligned_dst, aligned_src);
-        break;
+    }
+    else
 #endif
-    default:
+    {
         DP_pixels15_to_8(aligned_dst, aligned_src, DP_TILE_LENGTH);
-        break;
     }
 }
 
@@ -3568,18 +3568,18 @@ static DP_Spectral rgb_to_spectral(BGRf bgr)
     float g = srgb_to_linear(bgr.g) * WGM_OFFSET + WGM_EPSILON;
     float r = srgb_to_linear(bgr.r) * WGM_OFFSET + WGM_EPSILON;
     DP_Spectral out;
-    switch (DP_cpu_support) {
 #ifdef DP_CPU_X64
-    case DP_CPU_SUPPORT_AVX2:
+    DP_CpuSupport cpu_support = DP_cpu_support;
+    if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
         rgb_to_spectral_avx2(b, g, r, out.channels);
-        break;
-    case DP_CPU_SUPPORT_SSE42:
+    }
+    else if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
         rgb_to_spectral_sse42(b, g, r, out.channels);
-        break;
+    }
+    else
 #endif
-    default:
+    {
         rgb_to_spectral_scalar(b, g, r, out.channels);
-        break;
     }
     return out;
 }
@@ -4162,10 +4162,11 @@ static void blend_mask_normal(DP_Pixel15 *dst, DP_UPixel15 src,
                               int mask_skip, int base_skip)
 {
 #ifdef DP_CPU_X64
+    DP_CpuSupport cpu_support = DP_cpu_support;
     for (int y = 0; y < h; ++y) {
         int remaining = w;
 
-        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2) {
+        if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
             int remaining_after_avx_width = remaining % 8;
             int avx_width = remaining - remaining_after_avx_width;
 
@@ -4176,7 +4177,7 @@ static void blend_mask_normal(DP_Pixel15 *dst, DP_UPixel15 src,
             mask += avx_width;
         }
 
-        if (DP_cpu_support >= DP_CPU_SUPPORT_SSE42) {
+        if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
             int remaining_after_sse_width = remaining % 4;
             int sse_width = remaining - remaining_after_sse_width;
 
@@ -4210,10 +4211,11 @@ static void blend_mask_normal_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
                                          int base_skip)
 {
 #ifdef DP_CPU_X64
+    DP_CpuSupport cpu_support = DP_cpu_support;
     for (int y = 0; y < h; ++y) {
         int remaining = w;
 
-        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2) {
+        if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
             int remaining_after_avx_width = remaining % 8;
             int avx_width = remaining - remaining_after_avx_width;
 
@@ -4225,7 +4227,7 @@ static void blend_mask_normal_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
             mask += avx_width;
         }
 
-        if (DP_cpu_support >= DP_CPU_SUPPORT_SSE42) {
+        if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
             int remaining_after_sse_width = remaining % 4;
             int sse_width = remaining - remaining_after_sse_width;
 
@@ -4630,10 +4632,11 @@ static void blend_mask_recolor(DP_Pixel15 *dst, DP_UPixel15 src,
                                int h, int mask_skip, int base_skip)
 {
 #ifdef DP_CPU_X64
+    DP_CpuSupport cpu_support = DP_cpu_support;
     for (int y = 0; y < h; ++y) {
         int remaining = w;
 
-        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2) {
+        if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
             int remaining_after_avx_width = remaining % 8;
             int avx_width = remaining - remaining_after_avx_width;
 
@@ -4644,7 +4647,7 @@ static void blend_mask_recolor(DP_Pixel15 *dst, DP_UPixel15 src,
             mask += avx_width;
         }
 
-        if (DP_cpu_support >= DP_CPU_SUPPORT_SSE42) {
+        if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
             int remaining_after_sse_width = remaining % 4;
             int sse_width = remaining - remaining_after_sse_width;
 
@@ -4677,10 +4680,11 @@ static void blend_mask_oklab_normal(DP_Pixel15 *dst, DP_UPixel15 src,
                                     int h, int mask_skip, int base_skip)
 {
 #ifdef DP_CPU_X64
+    DP_CpuSupport cpu_support = DP_cpu_support;
     for (int y = 0; y < h; ++y) {
         int remaining = w;
 
-        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2) {
+        if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
             int remaining_after_avx_width = remaining % 8;
             int avx_width = remaining - remaining_after_avx_width;
 
@@ -4692,7 +4696,7 @@ static void blend_mask_oklab_normal(DP_Pixel15 *dst, DP_UPixel15 src,
             mask += avx_width;
         }
 
-        if (DP_cpu_support >= DP_CPU_SUPPORT_SSE42) {
+        if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
             int remaining_after_sse_width = remaining % 4;
             int sse_width = remaining - remaining_after_sse_width;
 
@@ -4726,10 +4730,11 @@ static void blend_mask_oklab_recolor(DP_Pixel15 *dst, DP_UPixel15 src,
                                      int h, int mask_skip, int base_skip)
 {
 #ifdef DP_CPU_X64
+    DP_CpuSupport cpu_support = DP_cpu_support;
     for (int y = 0; y < h; ++y) {
         int remaining = w;
 
-        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2) {
+        if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
             int remaining_after_avx_width = remaining % 8;
             int avx_width = remaining - remaining_after_avx_width;
 
@@ -4741,7 +4746,7 @@ static void blend_mask_oklab_recolor(DP_Pixel15 *dst, DP_UPixel15 src,
             mask += avx_width;
         }
 
-        if (DP_cpu_support >= DP_CPU_SUPPORT_SSE42) {
+        if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
             int remaining_after_sse_width = remaining % 4;
             int sse_width = remaining - remaining_after_sse_width;
 
@@ -4776,10 +4781,11 @@ static void blend_mask_oklab_normal_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
                                                int mask_skip, int base_skip)
 {
 #ifdef DP_CPU_X64
+    DP_CpuSupport cpu_support = DP_cpu_support;
     for (int y = 0; y < h; ++y) {
         int remaining = w;
 
-        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2) {
+        if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
             int remaining_after_avx_width = remaining % 8;
             int avx_width = remaining - remaining_after_avx_width;
 
@@ -4791,7 +4797,7 @@ static void blend_mask_oklab_normal_and_eraser(DP_Pixel15 *dst, DP_UPixel15 src,
             mask += avx_width;
         }
 
-        if (DP_cpu_support >= DP_CPU_SUPPORT_SSE42) {
+        if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
             int remaining_after_sse_width = remaining % 4;
             int sse_width = remaining - remaining_after_sse_width;
 
@@ -6107,66 +6113,65 @@ void DP_blend_tile(DP_Pixel15 *DP_RESTRICT dst,
 #ifdef DP_CPU_X64
     switch (blend_mode) {
     // Alpha-affecting blend modes.
-    case DP_BLEND_MODE_NORMAL:
-        switch (DP_cpu_support) {
-        case DP_CPU_SUPPORT_AVX2:
+    case DP_BLEND_MODE_NORMAL: {
+        DP_CpuSupport cpu_support = DP_cpu_support;
+        if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
             blend_tile_normal_avx2(aligned_dst, aligned_src, opacity);
             return;
-        case DP_CPU_SUPPORT_SSE42:
+        }
+        else if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
             blend_tile_normal_sse42(aligned_dst, aligned_src, opacity);
             return;
-        default:
-            break;
         }
         break;
-    case DP_BLEND_MODE_RECOLOR:
-        switch (DP_cpu_support) {
-        case DP_CPU_SUPPORT_AVX2:
+    }
+    case DP_BLEND_MODE_RECOLOR: {
+        DP_CpuSupport cpu_support = DP_cpu_support;
+        if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
             blend_tile_recolor_avx2(aligned_dst, aligned_src, opacity);
             return;
-        case DP_CPU_SUPPORT_SSE42:
+        }
+        else if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
             blend_tile_recolor_sse42(aligned_dst, aligned_src, opacity);
-            return;
-        default:
-            break;
         }
         break;
-    case DP_BLEND_MODE_BEHIND:
-        switch (DP_cpu_support) {
-        case DP_CPU_SUPPORT_AVX2:
+    }
+    case DP_BLEND_MODE_BEHIND: {
+        DP_CpuSupport cpu_support = DP_cpu_support;
+        if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
             blend_tile_behind_avx2(aligned_dst, aligned_src, opacity);
             return;
-        case DP_CPU_SUPPORT_SSE42:
+        }
+        else if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
             blend_tile_behind_sse42(aligned_dst, aligned_src, opacity);
             return;
-        default:
-            break;
         }
         break;
-    case DP_BLEND_MODE_OKLAB_NORMAL:
-        switch (DP_cpu_support) {
-        case DP_CPU_SUPPORT_AVX2:
+    }
+    case DP_BLEND_MODE_OKLAB_NORMAL: {
+        DP_CpuSupport cpu_support = DP_cpu_support;
+        if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
             blend_tile_oklab_normal_avx2(aligned_dst, aligned_src, opacity);
             return;
-        case DP_CPU_SUPPORT_SSE42:
+        }
+        else if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
             blend_tile_oklab_normal_sse42(aligned_dst, aligned_src, opacity);
             return;
-        default:
-            break;
         }
         break;
-    case DP_BLEND_MODE_OKLAB_RECOLOR:
-        switch (DP_cpu_support) {
-        case DP_CPU_SUPPORT_AVX2:
+    }
+    case DP_BLEND_MODE_OKLAB_RECOLOR: {
+        DP_CpuSupport cpu_support = DP_cpu_support;
+        if (cpu_support >= DP_CPU_SUPPORT_AVX2) {
             blend_tile_oklab_recolor_avx2(aligned_dst, aligned_src, opacity);
             return;
-        case DP_CPU_SUPPORT_SSE42:
+        }
+        else if (cpu_support >= DP_CPU_SUPPORT_SSE42) {
             blend_tile_oklab_recolor_sse42(aligned_dst, aligned_src, opacity);
             return;
-        default:
-            break;
         }
         break;
+    }
     default:
         break;
     }
