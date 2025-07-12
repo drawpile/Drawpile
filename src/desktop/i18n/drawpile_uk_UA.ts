@@ -1215,7 +1215,9 @@ Subrange: [%3, %4]</source>
         <source>This session is hosted on another server, you will be redirected.
 
 To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Цей сеанс розміщено на іншому сервері, вас буде перенаправлено.
+
+Щоб уникнути цього додаткового кроку в майбутньому, скористайтеся сторінкою перегляду або прямим посиланням на сеанс.</translation>
     </message>
     <message>
         <location line="-612"/>
@@ -2882,7 +2884,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Left-handed mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим для лівшів</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5605,52 +5607,52 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="-284"/>
         <source>No dynamics</source>
-        <translation type="unfinished">Без динаміки</translation>
+        <translation>Без динаміки</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished">Динаміка тиску</translation>
+        <translation>Динаміка тиску</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished">Динаміка швидкості</translation>
+        <translation>Динаміка швидкості</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished">Динаміка відстані</translation>
+        <translation>Динаміка відстані</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished">Максимальна швидкість: </translation>
+        <translation>Максимальна швидкість: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished">Максимальна відстань: </translation>
+        <translation>Максимальна відстань: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished">Встановіть максимальну швидкість для розміру, непрозорості, твердості, розмазування та тремтіння одночасно.</translation>
+        <translation>Встановіть максимальну швидкість для розміру, непрозорості, твердості, розмазування та тремтіння одночасно.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished">Максимальна швидкість, встановлена для всіх налаштувань цього пензля.</translation>
+        <translation>Максимальна швидкість, встановлена для всіх налаштувань цього пензля.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished">Встановіть максимальну відстань для розміру, непрозорості, жорсткості, розмазування та тремтіння одночасно.</translation>
+        <translation>Встановіть максимальну відстань для розміру, непрозорості, жорсткості, розмазування та тремтіння одночасно.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished">Максимальна відстань, встановлена для всіх налаштувань цього пензля.</translation>
+        <translation>Максимальна відстань, встановлена для всіх налаштувань цього пензля.</translation>
     </message>
     <message>
         <location line="+89"/>
@@ -7706,7 +7708,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+25"/>
         <source>(redirected from %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>(перенаправлено з %1)</translation>
     </message>
     <message>
         <location line="+139"/>
