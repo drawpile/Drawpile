@@ -6669,7 +6669,7 @@ Para velocidades muy lentas, ocurre lo opuesto.</translation>
         <translation>Añade un desplazamiento aleatorio a la posición donde se dibuja cada pincelada.­
  0.0 desactivado.
  1.0 desviación estándar equivale a un radio básico.
-&lt;0.0: valores negativos no producen Desviación/Fluctuación.</translation>
+&lt;0.0: valores negativos no producen Desviación/Fluctuación</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6973,10 +6973,8 @@ The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Cambia la escala en la que opera el pincel de GridMap; afecta solo al eje X.
-
+        <translation>Cambia la escala en la que opera el pincel de GridMap; afecta solo al eje X.
 El rango es de 0 a 5x.
-
 Esto permite estirar o comprimir el patrón de GridMap.</translation>
     </message>
     <message>
@@ -7310,12 +7308,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished">&amp;Confiado</translation>
+        <translation>&amp;Confianza</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished">&amp;Operador</translation>
+        <translation>&amp;Operador</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7385,7 +7383,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>Smooth In</source>
-        <translation type="unfinished">Suavizar</translation>
+        <translation>Suavizar En</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7525,32 +7523,32 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/layerproperties.cpp" line="+122"/>
         <source>New Layer Group</source>
-        <translation type="unfinished">Nuevo Grupo de Capas</translation>
+        <translation>Nuevo Grupo de Capas</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>New Layer</source>
-        <translation type="unfinished">Nueva Capa</translation>
+        <translation>Nueva Capa</translation>
     </message>
     <message>
         <location filename="../utils/blendmodes.cpp" line="+113"/>
         <source>Pass Through</source>
-        <translation type="unfinished">Pasar Atravez</translation>
+        <translation>Transparente/Pasar a Través</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="-1022"/>
         <source>Blend alpha</source>
-        <translation type="unfinished">Mezcla alfa</translation>
+        <translation>Mezcla alfa</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished">Heredar alfa</translation>
+        <translation>Heredar alfa</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Clip to layer below</source>
-        <translation type="unfinished">Recortar a la capa inferior</translation>
+        <translation>Fijar a la capa inferior</translation>
     </message>
 </context>
 <context>
@@ -7975,13 +7973,13 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/selectionalterdialog.cpp" line="+40"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Feather: </source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished">Pluma: </translation>
+        <translation>Difuminar: </translation>
     </message>
     <message>
         <location line="+49"/>
@@ -8351,7 +8349,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8371,17 +8369,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+41"/>
         <source>Custom</source>
-        <translation type="unfinished">Personalizado</translation>
+        <translation>Personalizado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hue</source>
-        <translation type="unfinished">Tono</translation>
+        <translation>Tono</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Saturation</source>
-        <translation type="unfinished">Saturación</translation>
+        <translation>Saturación</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8391,12 +8389,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Value</source>
-        <translation type="unfinished">Valor</translation>
+        <translation>Valor</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lightness</source>
-        <translation type="unfinished">Luminosidad</translation>
+        <translation>Luminosidad</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8411,12 +8409,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+13"/>
         <source>Move Up</source>
-        <translation type="unfinished">Mover hacia arriba</translation>
+        <translation>Mover hacia arriba</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Move Down</source>
-        <translation type="unfinished">Mover hacia abajo</translation>
+        <translation>Mover hacia abajo</translation>
     </message>
     <message>
         <location line="+122"/>
@@ -8477,7 +8475,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>Value offset: </source>
-        <translation type="unfinished">Desplazamiento de valor: </translation>
+        <translation>Desplazamiento de valor: </translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8847,17 +8845,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation type="unfinished">Cuando esta habilitado, guardar cada %1 minutos</translation>
+        <translation>Cuando esta habilitado, guardar cada %1 minutos</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation type="unfinished">guardado automatice:</translation>
+        <translation>guardado automático:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation type="unfinished">Guardado automático puede ser habilitado para el archivo actual bajo Archivo ▸ guardado automático.</translation>
+        <translation>El Guardado automático puede ser habilitado para el archivo actual bajo Archivo ▸ guardado automático.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -8984,7 +8982,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+3"/>
         <source>Default</source>
         <extracomment>One of the canvas renderer options.</extracomment>
-        <translation type="unfinished">Predeterminado</translation>
+        <translation>Predeterminado</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -8996,7 +8994,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <source>Unknown</source>
         <comment>CanvasImplementation</comment>
         <extracomment>Refers to an unknown canvas renderer, should never happen.</extracomment>
-        <translation type="unfinished">Desconocido</translation>
+        <translation>Desconocido</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9199,17 +9197,17 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+1"/>
         <source>System</source>
-        <translation type="unfinished">Sistema</translation>
+        <translation>Sistema</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disabled</source>
-        <translation type="unfinished">Deshabilitado</translation>
+        <translation>Deshabilitado</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Receive delay:</source>
-        <translation type="unfinished">Recibir retrasos:</translation>
+        <translation>Recibir retrasos:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9239,7 +9237,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+0"/>
         <source>Remove</source>
-        <translation type="unfinished">Remover</translation>
+        <translation>Remover</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9300,7 +9298,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Bounce dock</source>
-        <translation type="unfinished">Rebotar dock</translation>
+        <translation>Panel de Rebote</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9580,7 +9578,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="-53"/>
         <location line="+58"/>
         <source>Remove</source>
-        <translation type="unfinished">Remover</translation>
+        <translation>Remover</translation>
     </message>
     <message>
         <location line="-54"/>
@@ -9667,12 +9665,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+123"/>
         <location line="+27"/>
         <source>Edit Canvas Shortcut</source>
-        <translation type="unfinished">Editar Atajo de Lienzo</translation>
+        <translation>Editar Atajo de Lienzo</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Add canvas shortcut…</source>
-        <translation type="unfinished">Añadir atajos de lienzo…</translation>
+        <translation>Añadir atajos de lienzo…</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -9682,7 +9680,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+4"/>
         <source>New Canvas Shortcut</source>
-        <translation type="unfinished">Nuevo Atajo de Lienzo</translation>
+        <translation>Nuevo Atajo de Lienzo</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9697,22 +9695,22 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+15"/>
         <source>Remove selected canvas shortcut…</source>
-        <translation type="unfinished">Remover atajos de lienzo seleccionados…</translation>
+        <translation>Remover atajos de lienzo seleccionados…</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Remove</source>
-        <translation type="unfinished">Remover</translation>
+        <translation>Remover</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove canvas shortcut</source>
-        <translation type="unfinished">Remover atajos de lienzo</translation>
+        <translation>Remover atajos de lienzo</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>¿Realmente deseas remover %n atajo de lienzo?</numerusform>
             <numerusform>¿Realmente deseas remover %n atajos de lienzo?</numerusform>
         </translation>
@@ -9720,12 +9718,12 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+7"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished">Restaurar Atajos de Lienzo por Defecto</translation>
+        <translation>Restaurar Atajos de Lienzo por Defecto</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really restore all canvas shortcuts to their default values?</source>
-        <translation type="unfinished">¿Realmente deseas restaurar todos los atajos de lienzo a sus valores por defecto?</translation>
+        <translation>¿Realmente deseas restaurar todos los atajos de lienzo a sus valores por defecto?</translation>
     </message>
     <message>
         <location line="+95"/>
@@ -9735,7 +9733,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+5"/>
         <source>Brushes</source>
-        <translation type="unfinished">Pinceles</translation>
+        <translation>Pinceles</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9760,7 +9758,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+26"/>
         <location line="+20"/>
         <source>Output</source>
-        <translation type="unfinished">Salida</translation>
+        <translation>Salida</translation>
     </message>
     <message>
         <location line="-20"/>
@@ -9770,7 +9768,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+9"/>
         <source>Global pressure curve:</source>
-        <translation type="unfinished">Presión de curva global:</translation>
+        <translation>Presión de curva global:</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9785,19 +9783,19 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
     <message>
         <location line="+3"/>
         <source>Eraser</source>
-        <translation type="unfinished">Borrador</translation>
+        <translation>Borrador</translation>
     </message>
     <message>
         <location line="+21"/>
         <location filename="../mainwindow.cpp" line="-593"/>
         <source>Windows Ink</source>
-        <translation type="unfinished">Tinta de Windows</translation>
+        <translation>Tinta de Windows</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+8"/>
         <source>Windows Ink Non-Native</source>
-        <translation type="unfinished">Windows Ink no nativo</translation>
+        <translation>Windows Ink no nativo</translation>
     </message>
     <message>
         <location line="+3"/>
