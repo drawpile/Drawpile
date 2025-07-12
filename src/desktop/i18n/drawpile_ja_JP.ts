@@ -2377,7 +2377,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Left-handed mode</source>
-        <translation type="unfinished"></translation>
+        <translation>左手モード</translation>
     </message>
     <message>
         <location line="+17"/>
