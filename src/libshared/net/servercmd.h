@@ -109,6 +109,7 @@ struct ServerReply {
 		StreamProgress,	  // streamed session reset progress control message
 		PasswordChange,	  // session password changed
 		InviteCreated,	  // invite code created
+		Thumbnail,		  // server wants us to make a thumbnail
 	} type;
 	QString message;
 	QJsonObject reply;
@@ -228,6 +229,12 @@ struct ServerReply {
 	static net::Message makeStatusUpdate(int size);
 
 	static net::Message makeInviteCreated(const QString &secret);
+
+	static net::Message makeThumbnailQuery(const QString &payload);
+
+	static net::Message makeThumbnail(
+		const QString &correlator, int maxWidth, int maxHeight, int quality,
+		const QString &format);
 };
 
 }

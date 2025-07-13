@@ -163,6 +163,7 @@ struct Client::Private {
 	bool isGhost = false;
 	bool gracefulDisconnect = false;
 	bool quietDisconnect = false;
+	CapabilityFlags capabilities = CapabilityFlag::None;
 	ResetFlags resetFlags = ResetFlag::None;
 	BanResult ban = BanResult::notBanned();
 
@@ -286,13 +287,23 @@ QJsonObject Client::description(bool includeSession) const
 		break;
 	}
 	u.insert(QStringLiteral("state"), state);
+	u.insert(
+		QStringLiteral("capabilities"),
+		QJsonObject({
+			{QStringLiteral("keepalive"),
+			 hasCapability(CapabilityFlag::KeepAlive)},
+			{QStringLiteral("thumbnail"),
+			 hasCapability(CapabilityFlag::Thumbnail)},
+		}));
 	return u;
 }
 
 JsonApiResult Client::callJsonApi(
 	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
-	if(!path.isEmpty()) {
+	if(path.size() == 1 && path[0] == QStringLiteral("thumbnail")) {
+		return callThumbnailJsonApi(method, request);
+	} else if(!path.isEmpty()) {
 		return JsonApiNotFound();
 	}
 
@@ -330,6 +341,94 @@ JsonApiResult Client::callJsonApi(
 
 	} else if(method == JsonApiMethod::Get) {
 		return JsonApiResult{JsonApiResult::Ok, QJsonDocument(description())};
+
+	} else {
+		return JsonApiBadMethod();
+	}
+}
+
+JsonApiResult
+Client::callThumbnailJsonApi(JsonApiMethod method, const QJsonObject &request)
+{
+	if(method == JsonApiMethod::Create) {
+		if(id() == 0) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, QStringLiteral("Invalid client id"));
+		}
+
+		if(!hasCapability(CapabilityFlag::Thumbnail)) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest,
+				QStringLiteral("Client does not have thumbnail capabilities"));
+		}
+
+		int maxWidth = 0;
+		QJsonValue maxWidthValue = request.value(QStringLiteral("maxWidth"));
+		if(!maxWidthValue.isUndefined()) {
+			if(maxWidthValue.isDouble()) {
+				maxWidth = maxWidthValue.toInt();
+			} else {
+				return JsonApiErrorResult(
+					JsonApiResult::BadRequest,
+					QStringLiteral("maxWidth must be a number"));
+			}
+		}
+
+		int maxHeight = 0;
+		QJsonValue maxHeightValue = request.value(QStringLiteral("maxHeight"));
+		if(!maxHeightValue.isUndefined()) {
+			if(maxHeightValue.isDouble()) {
+				maxHeight = maxHeightValue.toInt();
+			} else {
+				return JsonApiErrorResult(
+					JsonApiResult::BadRequest,
+					QStringLiteral("maxHeight must be a number"));
+			}
+		}
+
+		int quality = 0;
+		QJsonValue qualityValue = request.value(QStringLiteral("quality"));
+		if(!qualityValue.isUndefined()) {
+			if(qualityValue.isDouble()) {
+				quality = qualityValue.toInt();
+			} else {
+				return JsonApiErrorResult(
+					JsonApiResult::BadRequest,
+					QStringLiteral("quality must be a number"));
+			}
+		}
+
+		QString format = request.value(QStringLiteral("format")).toString();
+		QString correlator = session()->startThumbnailGeneration(
+			this, request.value(QStringLiteral("reason")).toString());
+		if(correlator.isEmpty()) {
+			return JsonApiErrorResult(
+				JsonApiResult::Conflict,
+				QStringLiteral(
+					"This client is already generating a thumbnail"));
+		}
+
+		sendDirectMessage(
+			net::ServerReply::makeThumbnail(
+				correlator, maxWidth, maxHeight, quality, format));
+
+		return JsonApiResult{
+			JsonApiResult::Accepted,
+			QJsonDocument(
+				QJsonObject{{QStringLiteral("correlator"), correlator}})};
+
+	} else if(method == JsonApiMethod::Delete) {
+		if(session()->cancelThumbnailGeneration(this)) {
+			return JsonApiResult{
+				JsonApiResult::Ok,
+				QJsonDocument(
+					QJsonObject{
+						{QStringLiteral("status"), QStringLiteral("ok")}})};
+		} else {
+			return JsonApiErrorResult(
+				JsonApiResult::NotFound,
+				QStringLiteral("Client is not generating a thumbnail"));
+		}
 
 	} else {
 		return JsonApiBadMethod();
@@ -393,6 +492,21 @@ void Client::setAuthFlags(const QSet<QString> &flags)
 QSet<QString> Client::authFlags() const
 {
 	return d->flags;
+}
+
+Client::CapabilityFlags Client::capabilities() const
+{
+	return d->capabilities;
+}
+
+bool Client::hasCapability(CapabilityFlag capability) const
+{
+	return d->capabilities.testFlag(capability);
+}
+
+void Client::setCapability(CapabilityFlag capability, bool on)
+{
+	d->capabilities.setFlag(capability, on);
 }
 
 void Client::setUsername(const QString &username)

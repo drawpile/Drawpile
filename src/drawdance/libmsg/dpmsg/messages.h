@@ -55,6 +55,7 @@ typedef enum DP_MessageType {
     DP_MSG_DISCONNECT = 1,
     DP_MSG_PING = 2,
     DP_MSG_KEEP_ALIVE = 3,
+    DP_MSG_THUMBNAIL = 4,
     DP_MSG_INTERNAL = 31,
     DP_MSG_JOIN = 32,
     DP_MSG_LEAVE = 33,
@@ -319,6 +320,47 @@ DP_Message *DP_msg_keep_alive_deserialize_compat(unsigned int context_id,
 
 DP_Message *DP_msg_keep_alive_parse(unsigned int context_id,
                                     DP_TextReader *reader);
+
+
+/*
+ * DP_MSG_THUMBNAIL
+ *
+ * Message from the client to the server to provide a canvas
+ * thumbnail. The data may be prefixed by a correlation sequence as
+ * sent by the server, followed by the compressed image data in a
+ * format like JPEG or WEBP. The server does not interpret this data.
+ */
+
+#define DP_MSG_THUMBNAIL_STATIC_LENGTH        0
+#define DP_MSG_THUMBNAIL_STATIC_LENGTH_COMPAT 0
+
+#define DP_MSG_THUMBNAIL_DATA_MIN_SIZE 0
+#define DP_MSG_THUMBNAIL_DATA_MAX_SIZE 65535
+
+typedef struct DP_MsgThumbnail DP_MsgThumbnail;
+
+DP_Message *DP_msg_thumbnail_new(unsigned int context_id,
+                                 void (*set_data)(size_t, unsigned char *,
+                                                  void *),
+                                 size_t data_size, void *data_user);
+
+DP_Message *DP_msg_thumbnail_deserialize(unsigned int context_id,
+                                         const unsigned char *buffer,
+                                         size_t length);
+
+DP_Message *DP_msg_thumbnail_deserialize_compat(unsigned int context_id,
+                                                const unsigned char *buffer,
+                                                size_t length);
+
+DP_Message *DP_msg_thumbnail_parse(unsigned int context_id,
+                                   DP_TextReader *reader);
+
+DP_MsgThumbnail *DP_msg_thumbnail_cast(DP_Message *msg);
+
+const unsigned char *DP_msg_thumbnail_data(const DP_MsgThumbnail *mt,
+                                           size_t *out_size);
+
+size_t DP_msg_thumbnail_data_size(const DP_MsgThumbnail *mt);
 
 
 /*

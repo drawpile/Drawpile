@@ -12,6 +12,7 @@ extern "C" {
 #include "libshared/util/passwordhash.h"
 #include <QDebug>
 #include <QFile>
+#include <QSaveFile>
 #include <QScopedPointer>
 #include <QSet>
 #include <QTimerEvent>
@@ -640,6 +641,10 @@ void FiledHistory::terminate()
 	m_journal->close();
 	removeOrArchive(m_journal);
 	removeOrArchive(m_recording);
+	QFile thumbnailFile(thumbnailFilePath());
+	if(thumbnailFile.exists()) {
+		removeOrArchive(&thumbnailFile);
+	}
 }
 
 void FiledHistory::closeBlock()
@@ -1188,6 +1193,96 @@ CheckInviteResult FiledHistory::checkInvite(
 	}
 
 	return result;
+}
+
+const QByteArray &FiledHistory::thumbnail() const
+{
+	if(!m_thumbnailValid) {
+		m_thumbnailValid = true;
+		QFile file(thumbnailFilePath());
+		if(file.open(QIODevice::ReadOnly)) {
+			m_thumbnail = file.readAll();
+			file.close();
+
+			QFileInfo info(file.fileName());
+#if QT_VERSION < QT_VERSION_CHECK(6, 6, 0)
+			m_thumbnailGeneratedAt = info.lastModified().toUTC();
+#else
+			m_thumbnailGeneratedAt = info.lastModified(QTimeZone::UTC);
+#endif
+		}
+	}
+	return m_thumbnail;
+}
+
+bool FiledHistory::setThumbnail(const QByteArray &thumbnail)
+{
+	m_thumbnail = thumbnail;
+	m_thumbnailGeneratedAt = QDateTime::currentDateTimeUtc();
+	m_thumbnailValid = true;
+
+	QString path = thumbnailFilePath();
+	if(thumbnail.isEmpty()) {
+		QFile file(path);
+		if(file.exists() && !file.remove()) {
+			qWarning(
+				"Failed to remove thumbnail %s: %s",
+				qUtf8Printable(file.fileName()),
+				qUtf8Printable(file.errorString()));
+			return false;
+		} else {
+			return true;
+		}
+
+	} else {
+		QSaveFile file(path);
+		if(!file.open(QIODevice::WriteOnly)) {
+			qWarning(
+				"Failed to open thumbnail %s: %s",
+				qUtf8Printable(file.fileName()),
+				qUtf8Printable(file.errorString()));
+			return false;
+		}
+
+		qint64 written = file.write(thumbnail);
+		if(written == -1) {
+			qWarning(
+				"Failed writing thumbnail %s: %s",
+				qUtf8Printable(file.fileName()),
+				qUtf8Printable(file.errorString()));
+			return false;
+		} else if(written != qint64(thumbnail.size())) {
+			qWarning(
+				"Failed writing thumbnail %s: wrong length written",
+				qUtf8Printable(file.fileName()));
+			return false;
+		}
+
+		if(!file.commit()) {
+			qWarning(
+				"Failed to commit thumbnail %s: %s",
+				qUtf8Printable(file.fileName()),
+				qUtf8Printable(file.errorString()));
+			return false;
+		}
+
+		return true;
+	}
+}
+
+bool FiledHistory::hasThumbnail() const
+{
+	return !thumbnail().isEmpty();
+}
+
+QDateTime FiledHistory::thumbnailGeneratedAt() const
+{
+	return m_thumbnailGeneratedAt;
+}
+
+QString FiledHistory::thumbnailFilePath() const
+{
+	return m_dir.absoluteFilePath(QStringLiteral("%1.thumbnail").arg(id()));
 }
 
 

@@ -942,6 +942,21 @@ removeInvite(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 	return CmdResult::ok();
 }
 
+CmdResult thumbnailError(
+	Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(kwargs);
+	if(args.size() != 2) {
+		return CmdResult::err(QStringLiteral(
+			"Thumbnail error expected 2 arguments: correlator, error"));
+	}
+
+	client->session()->handleThumbnailError(
+		client, args[0].toString(), args[1].toString());
+
+	return CmdResult::ok();
+}
+
 SrvCommandSet::SrvCommandSet()
 {
 	commands << SrvCommand("ready-to-autoreset", readyToAutoReset)
@@ -965,7 +980,9 @@ SrvCommandSet::SrvCommandSet()
 			 << SrvCommand("stream-reset-abort", streamResetAbort)
 			 << SrvCommand("stream-reset-finish", streamResetFinish)
 			 << SrvCommand("invite-create", createInvite)
-			 << SrvCommand("invite-remove", removeInvite);
+			 << SrvCommand("invite-remove", removeInvite)
+			 << SrvCommand(
+					"thumbnail-error", thumbnailError, SrvCommand::NONOP);
 }
 
 } // end of anonymous namespace

@@ -149,15 +149,15 @@ static const char *encode_error_to_string(WebPEncodingError error)
 }
 
 bool DP_image_webp_write(DP_Output *output, int width, int height,
-                         DP_Pixel8 *pixels)
+                         DP_Pixel8 *pixels, float quality, bool lossless)
 {
     WebPConfig config;
-    if (!WebPConfigPreset(&config, WEBP_PRESET_DRAWING, 100.0f)) {
+    if (!WebPConfigPreset(&config, WEBP_PRESET_DRAWING, quality)) {
         DP_error_set("Error initializing encoding config");
         return false;
     }
 
-    config.lossless = true;
+    config.lossless = lossless;
     if (!WebPValidateConfig(&config)) {
         DP_error_set("Error validating encoding config");
         return false;

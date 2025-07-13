@@ -483,6 +483,12 @@ static bool mem_output_clear(void *internal)
     return true;
 }
 
+static size_t mem_output_tell(void *internal, DP_UNUSED bool *out_error)
+{
+    DP_MemOutputState *state = internal;
+    return state->used;
+}
+
 static bool mem_output_dispose(void *internal, DP_UNUSED bool discard)
 {
     DP_MemOutputState *state = internal;
@@ -493,7 +499,7 @@ static bool mem_output_dispose(void *internal, DP_UNUSED bool discard)
 }
 
 static const DP_OutputMethods mem_output_methods = {
-    mem_output_write,   mem_output_clear, NULL, NULL, NULL, NULL,
+    mem_output_write,   mem_output_clear, NULL, mem_output_tell, NULL, NULL,
     mem_output_dispose,
 };
 

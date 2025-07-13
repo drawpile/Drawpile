@@ -71,6 +71,20 @@ enum class CheckInviteResult {
 	AlreadyInvitedNameChanged,
 };
 
+enum class ThumbnailStartResult {
+	Ok,
+	InvalidUser,
+	AlreadyGenerating,
+};
+
+enum class ThumbnailFinishResult {
+	Ok,
+	InvalidUser,
+	InvalidCorrelator,
+	NoData,
+	WriteError,
+};
+
 struct InviteUse {
 	QString name;
 	QString at;
@@ -498,6 +512,20 @@ public:
 		InviteUse **outInviteUse = nullptr);
 	const QHash<QString, Invite> &invitesBySecret() const { return m_invites; }
 
+	QJsonValue getThumbnailDescription() const;
+	ThumbnailStartResult
+	startThumbnailGeneration(uint8_t contextId, QString &outCorrelator);
+	ThumbnailFinishResult
+	finishThumbnailGeneration(uint8_t contextId, const QByteArray &data);
+	bool cancelThumbnailGeneration(
+		uint8_t contextId = 0, const QString &correlator = QString());
+	void purgeThumbnail();
+
+	virtual const QByteArray &thumbnail() const = 0;
+	virtual bool setThumbnail(const QByteArray &thumbnail) = 0;
+	virtual bool hasThumbnail() const = 0;
+	virtual QDateTime thumbnailGeneratedAt() const = 0;
+
 signals:
 	/**
 	 * @brief This signal is emited when new messages are added to the history
@@ -577,6 +605,9 @@ private:
 	int m_resetStreamMessageCount = 0;
 	DP_ResetStreamConsumer *m_resetStreamConsumer = nullptr;
 	StreamResetAddResult m_resetStreamAddError;
+
+	uint8_t m_thumbnailCtxId = 0;
+	QString m_thumbnailCorrelator;
 
 	QSet<QString> m_authOps;
 	QSet<QString> m_authTrusted;

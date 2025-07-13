@@ -424,6 +424,7 @@ void Session::onClientLeave(Client *client)
 		// We simply cancel the reset in that case and go on
 		abortReset();
 	}
+	m_history->cancelThumbnailGeneration(client->id());
 }
 
 void Session::abortReset()
@@ -1407,6 +1408,56 @@ void Session::handleClientMessage(Client &client, const net::Message &msg)
 		handleClientServerCommand(&client, cmd.cmd, cmd.args, cmd.kwargs);
 		return;
 	}
+	case DP_MSG_THUMBNAIL: {
+		DP_MsgThumbnail *mt = msg.toThumbnail();
+		size_t size;
+		const unsigned char *data = DP_msg_thumbnail_data(mt, &size);
+		ThumbnailFinishResult result = m_history->finishThumbnailGeneration(
+			client.id(),
+			QByteArray::fromRawData(
+				reinterpret_cast<const char *>(data), compat::castSize(size)));
+		switch(result) {
+		case ThumbnailFinishResult::Ok:
+			client.log(
+				Log()
+					.about(Log::Level::Info, Log::Topic::Status)
+					.message(QStringLiteral("Thumbnail set")));
+			return;
+		case ThumbnailFinishResult::InvalidUser:
+			client.log(
+				Log()
+					.about(Log::Level::Warn, Log::Topic::Status)
+					.message(QStringLiteral(
+						"Got thumbnail from user we didn't want it from")));
+			return;
+		case ThumbnailFinishResult::InvalidCorrelator:
+			client.log(
+				Log()
+					.about(Log::Level::Warn, Log::Topic::Status)
+					.message(QStringLiteral(
+						"Got thumbnail with correlator we weren't waiting "
+						"on")));
+			return;
+		case ThumbnailFinishResult::NoData:
+			client.log(
+				Log()
+					.about(Log::Level::Warn, Log::Topic::Status)
+					.message(QStringLiteral("Got thumbnail with no data")));
+			return;
+		case ThumbnailFinishResult::WriteError:
+			client.log(
+				Log()
+					.about(Log::Level::Error, Log::Topic::Status)
+					.message(QStringLiteral("Thumbnail write error")));
+			return;
+		}
+		client.log(
+			Log()
+				.about(Log::Level::Warn, Log::Topic::Status)
+				.message(QStringLiteral("Unknown thumbnail result %1")
+							 .arg(int(result))));
+		return;
+	}
 	case DP_MSG_SESSION_OWNER: {
 		if(!client.isOperator()) {
 			client.log(Log()
@@ -2083,6 +2134,54 @@ void Session::sendAbuseReport(
 	connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater);
 }
 
+QString
+Session::startThumbnailGeneration(const Client *client, const QString &reason)
+{
+	QString correlator;
+	ThumbnailStartResult result =
+		m_history->startThumbnailGeneration(client->id(), correlator);
+	if(result == ThumbnailStartResult::Ok) {
+		client->log(
+			Log()
+				.about(Log::Level::Info, Log::Topic::Status)
+				.message(
+					reason.isEmpty()
+						? QStringLiteral(
+							  "Thumbnail generation started (no reason given)")
+						: QStringLiteral(
+							  "Thumbnail generation started, reason: %1")
+							  .arg(reason)));
+		return correlator;
+	} else {
+		return QString();
+	}
+}
+
+bool Session::cancelThumbnailGeneration(const Client *client)
+{
+	if(m_history->cancelThumbnailGeneration(client->id())) {
+		client->log(
+			Log()
+				.about(Log::Level::Info, Log::Topic::Status)
+				.message(QStringLiteral("Thumbnail generation cancelled")));
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void Session::handleThumbnailError(
+	const Client *client, const QString &correlator, const QString &error)
+{
+	if(m_history->cancelThumbnailGeneration(client->id(), correlator)) {
+		client->log(
+			Log()
+				.about(Log::Level::Warn, Log::Topic::Status)
+				.message(QStringLiteral("Thumbnail generation failed: %1")
+							 .arg(error)));
+	}
+}
+
 QJsonObject Session::getDescription(bool full, bool invite) const
 {
 	// The basic description contains just the information
@@ -2164,6 +2263,9 @@ QJsonObject Session::getDescription(bool full, bool invite) const
 			// Having the "chat" key present indicates we support that feature.
 			o[QStringLiteral("chat")] = QJsonValue();
 		}
+
+		o.insert(
+			QStringLiteral("thumbnail"), m_history->getThumbnailDescription());
 	}
 
 	return o;
@@ -2254,6 +2356,8 @@ JsonApiResult Session::callJsonApi(
 			return callChatJsonApi(method, tail, request);
 		} else if(head == QStringLiteral("invites")) {
 			return callInvitesJsonApi(method, tail, request);
+		} else if(head == QStringLiteral("thumbnail")) {
+			return callThumbnailJsonApi(method, tail, request);
 		}
 
 		int userId = head.toInt();
@@ -2626,6 +2730,54 @@ JsonApiResult Session::callInvitesJsonApi(
 		}
 	} else {
 		return JsonApiNotFound();
+	}
+}
+
+JsonApiResult Session::callThumbnailJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	int pathCount = path.size();
+	if(pathCount != 0) {
+		return JsonApiNotFound();
+	}
+
+	if(method == JsonApiMethod::Get) {
+		if(m_history->hasThumbnail()) {
+			QJsonObject result = {
+				{QStringLiteral("data"),
+				 QString::fromUtf8(m_history->thumbnail().toBase64())},
+				{QStringLiteral("at"),
+				 m_history->thumbnailGeneratedAt().toString(Qt::ISODate)},
+			};
+			return JsonApiResult{JsonApiResult::Ok, QJsonDocument(result)};
+		} else {
+			return JsonApiErrorResult(
+				JsonApiResult::NotFound,
+				QStringLiteral("No thumbnail available"));
+		}
+
+	} else if(method == JsonApiMethod::Delete) {
+		bool thumbnail =
+			parseRequestBool(request, QStringLiteral("thumbnail"), 1, 1);
+		if(thumbnail) {
+			m_history->purgeThumbnail();
+		}
+
+		bool generation =
+			parseRequestBool(request, QStringLiteral("generation"), 1, 1);
+		if(generation) {
+			m_history->cancelThumbnailGeneration();
+		}
+
+		QJsonObject result = {
+			{QStringLiteral("status"), QStringLiteral("ok")},
+			{QStringLiteral("thumbnail"), thumbnail},
+			{QStringLiteral("generation"), generation},
+		};
+		return JsonApiResult{JsonApiResult::Ok, QJsonDocument(result)};
+
+	} else {
+		return JsonApiBadMethod();
 	}
 }
 

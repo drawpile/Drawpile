@@ -81,6 +81,11 @@ public:
 		return m_announcements.values();
 	}
 
+	const QByteArray &thumbnail() const override;
+	bool setThumbnail(const QByteArray &thumbnail) override;
+	bool hasThumbnail() const override;
+	QDateTime thumbnailGeneratedAt() const override;
+
 protected:
 	void historyAdd(const net::Message &msg) override;
 	void historyReset(const net::MessageList &newHistory) override;
@@ -110,6 +115,8 @@ private:
 	protocol::ProtocolVersion m_version;
 	QByteArray m_password;
 	QByteArray m_opword;
+	QByteArray m_thumbnail;
+	QDateTime m_thumbnailGeneratedAt;
 	int m_maxUsers;
 	size_t m_autoReset;
 	Flags m_flags;

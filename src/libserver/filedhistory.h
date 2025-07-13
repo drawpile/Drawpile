@@ -109,6 +109,11 @@ public:
 		QString *outClientKey = nullptr, Invite **outInvite = nullptr,
 		InviteUse **outInviteUse = nullptr) override;
 
+	const QByteArray &thumbnail() const override;
+	bool setThumbnail(const QByteArray &thumbnail) override;
+	bool hasThumbnail() const override;
+	QDateTime thumbnailGeneratedAt() const override;
+
 protected:
 	void historyAdd(const net::Message &msg) override;
 	void historyReset(const net::MessageList &newHistory) override;
@@ -195,9 +200,11 @@ private:
 	void writeBytesToJournal(const QByteArray &bytes);
 	void flushRecording();
 	void flushJournal();
-	void removeOrArchive(QFile *recording) const;
+	void removeOrArchive(QFile *f) const;
 
 	bool copyForkMessagesToResetStream(QString &outError);
+
+	QString thumbnailFilePath() const;
 
 	QDir m_dir;
 	QFile *m_journal;
@@ -212,6 +219,8 @@ private:
 	protocol::ProtocolVersion m_version;
 	QByteArray m_password;
 	QByteArray m_opword;
+	mutable QByteArray m_thumbnail;
+	mutable QDateTime m_thumbnailGeneratedAt;
 	int m_maxUsers;
 	size_t m_autoResetThreshold;
 	Flags m_flags;
@@ -221,6 +230,7 @@ private:
 	mutable BlockCache m_blockCache;
 	int m_fileCount;
 	bool m_archive;
+	mutable bool m_thumbnailValid = false;
 
 	QString m_resetStreamFileName;
 	QFile *m_resetStreamRecording = nullptr;

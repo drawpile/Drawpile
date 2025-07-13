@@ -34,6 +34,13 @@ struct BanResult;
 class Client : public QObject {
 	Q_OBJECT
 public:
+	enum class CapabilityFlag {
+		None = 0,
+		KeepAlive = 1 << 0,
+		Thumbnail = 1 << 1,
+	};
+	Q_DECLARE_FLAGS(CapabilityFlags, CapabilityFlag)
+
 	enum class ResetFlag {
 		None = 0,
 		Awaiting = 1 << 0,
@@ -83,6 +90,10 @@ public:
 	 */
 	QSet<QString> authFlags() const;
 	void setAuthFlags(const QSet<QString> &flags);
+
+	CapabilityFlags capabilities() const;
+	bool hasCapability(CapabilityFlag capability) const;
+	void setCapability(CapabilityFlag capability, bool on = true);
 
 	/**
 	 * @brief Get the user name of this client
@@ -359,6 +370,9 @@ private:
 	void triggerGarbage();
 	void triggerHang();
 	void triggerTimer();
+
+	JsonApiResult
+	callThumbnailJsonApi(JsonApiMethod method, const QJsonObject &request);
 
 	struct Private;
 	Private *d;

@@ -186,8 +186,10 @@ ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 		r.type = ServerReply::ReplyType::StreamProgress;
 	} else if(typestr == QStringLiteral("passwordchange")) {
 		r.type = ServerReply::ReplyType::PasswordChange;
-	} else if(typestr == QStringLiteral("invitecreated")){
+	} else if(typestr == QStringLiteral("invitecreated")) {
 		r.type = ServerReply::ReplyType::InviteCreated;
+	} else if(typestr == QStringLiteral("thumbnail")) {
+		r.type = ServerReply::ReplyType::Thumbnail;
 	} else {
 		r.type = ServerReply::ReplyType::Unknown;
 	}
@@ -587,5 +589,35 @@ net::Message ServerReply::makeInviteCreated(const QString &secret)
 	return make(
 		{{QStringLiteral("type"), QStringLiteral("invitecreated")},
 		 {QStringLiteral("secret"), secret}});
+}
+
+net::Message ServerReply::makeThumbnailQuery(const QString &payload)
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("thumbnail")},
+		 {QStringLiteral("query"), true},
+		 {QStringLiteral("payload"), payload}});
+}
+
+net::Message ServerReply::makeThumbnail(
+	const QString &correlator, int maxWidth, int maxHeight, int quality,
+	const QString &format)
+{
+	QJsonObject json(
+		{{QStringLiteral("type"), QStringLiteral("thumbnail")},
+		 {QStringLiteral("correlator"), correlator}});
+	if(maxWidth > 0) {
+		json.insert(QStringLiteral("maxWidth"), maxWidth);
+	}
+	if(maxHeight > 0) {
+		json.insert(QStringLiteral("maxHeight"), maxHeight);
+	}
+	if(quality > 0) {
+		json.insert(QStringLiteral("quality"), quality);
+	}
+	if(!format.isEmpty()) {
+		json.insert(QStringLiteral("format"), format);
+	}
+	return make(json);
 }
 }

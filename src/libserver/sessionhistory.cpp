@@ -593,6 +593,90 @@ Invite &SessionHistory::resetInvite(
 	return invite;
 }
 
+QJsonValue SessionHistory::getThumbnailDescription() const
+{
+	QJsonObject o;
+	if(hasThumbnail()) {
+		o.insert(
+			QStringLiteral("generatedAt"),
+			thumbnailGeneratedAt().toString(Qt::ISODate));
+	}
+	if(m_thumbnailCtxId != 0 || !m_thumbnailCorrelator.isEmpty()) {
+		o.insert(QStringLiteral("generatorCtxId"), m_thumbnailCtxId);
+		o.insert(QStringLiteral("generatorCorrelator"), m_thumbnailCorrelator);
+	}
+	return o;
+}
+
+ThumbnailStartResult SessionHistory::startThumbnailGeneration(
+	uint8_t contextId, QString &outCorrelator)
+{
+	static uint32_t correlatorIndex;
+
+	if(contextId == 0) {
+		return ThumbnailStartResult::InvalidUser;
+	}
+
+	if(contextId == m_thumbnailCtxId) {
+		return ThumbnailStartResult::AlreadyGenerating;
+	}
+
+	m_thumbnailCtxId = contextId;
+	m_thumbnailCorrelator = QStringLiteral("%1:%2").arg(
+		QString::number(correlatorIndex++, 16),
+		QString::number(QDateTime::currentMSecsSinceEpoch(), 16));
+
+	outCorrelator = m_thumbnailCorrelator;
+	return ThumbnailStartResult::Ok;
+}
+
+ThumbnailFinishResult SessionHistory::finishThumbnailGeneration(
+	uint8_t contextId, const QByteArray &data)
+{
+	if(m_thumbnailCtxId != contextId) {
+		return ThumbnailFinishResult::InvalidUser;
+	}
+
+	QByteArray correlatorBytes = m_thumbnailCorrelator.toUtf8();
+	if(!data.startsWith(correlatorBytes)) {
+		return ThumbnailFinishResult::InvalidCorrelator;
+	}
+
+	m_thumbnailCtxId = 0;
+	m_thumbnailCorrelator.clear();
+
+	compat::sizetype dataSize = data.size();
+	compat::sizetype correlatorSize = correlatorBytes.size();
+	if(dataSize <= correlatorSize) {
+		return ThumbnailFinishResult::NoData;
+	}
+
+	if(!setThumbnail(QByteArray(
+		   data.constData() + correlatorSize, dataSize - correlatorSize))) {
+		return ThumbnailFinishResult::WriteError;
+	}
+
+	return ThumbnailFinishResult::Ok;
+}
+
+bool SessionHistory::cancelThumbnailGeneration(
+	uint8_t contextId, const QString &correlator)
+{
+	if((contextId == 0 || contextId == m_thumbnailCtxId) &&
+	   (correlator.isEmpty() || correlator == m_thumbnailCorrelator)) {
+		m_thumbnailCtxId = 0;
+		m_thumbnailCorrelator.clear();
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void SessionHistory::purgeThumbnail()
+{
+	setThumbnail(QByteArray());
+}
+
 int SessionHistory::incrementNextCatchupKey(int &nextCatchupKey)
 {
 	int result = nextCatchupKey;

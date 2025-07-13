@@ -38,6 +38,7 @@ bool DP_message_type_control(DP_MessageType type)
     case DP_MSG_DISCONNECT:
     case DP_MSG_PING:
     case DP_MSG_KEEP_ALIVE:
+    case DP_MSG_THUMBNAIL:
     case DP_MSG_INTERNAL:
         return true;
     default:
@@ -150,6 +151,7 @@ bool DP_message_type_compatible(DP_MessageType type)
     case DP_MSG_DISCONNECT:
     case DP_MSG_PING:
     case DP_MSG_KEEP_ALIVE:
+    case DP_MSG_THUMBNAIL:
     case DP_MSG_INTERNAL:
     case DP_MSG_JOIN:
     case DP_MSG_LEAVE:
@@ -229,6 +231,8 @@ const char *DP_message_type_name(DP_MessageType type)
         return "ping";
     case DP_MSG_KEEP_ALIVE:
         return "keepalive";
+    case DP_MSG_THUMBNAIL:
+        return "thumbnail";
     case DP_MSG_INTERNAL:
         return "internal";
     case DP_MSG_JOIN:
@@ -389,6 +393,8 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_PING";
     case DP_MSG_KEEP_ALIVE:
         return "DP_MSG_KEEP_ALIVE";
+    case DP_MSG_THUMBNAIL:
+        return "DP_MSG_THUMBNAIL";
     case DP_MSG_INTERNAL:
         return "DP_MSG_INTERNAL";
     case DP_MSG_JOIN:
@@ -557,6 +563,9 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     }
     else if (DP_str_equal(type_name, "keepalive")) {
         return DP_MSG_KEEP_ALIVE;
+    }
+    else if (DP_str_equal(type_name, "thumbnail")) {
+        return DP_MSG_THUMBNAIL;
     }
     else if (DP_str_equal(type_name, "join")) {
         return DP_MSG_JOIN;
@@ -817,6 +826,8 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
             return DP_msg_ping_deserialize(context_id, buf, length);
         case DP_MSG_KEEP_ALIVE:
             return DP_msg_keep_alive_deserialize(context_id, buf, length);
+        case DP_MSG_THUMBNAIL:
+            return DP_msg_thumbnail_deserialize(context_id, buf, length);
         case DP_MSG_INTERNAL:
             DP_error_set(
                 "Can't deserialize reserved message type 31 DP_MSG_INTERNAL");
@@ -1029,6 +1040,8 @@ DP_Message *DP_message_deserialize_body_compat(int type,
         case DP_MSG_KEEP_ALIVE:
             return DP_msg_keep_alive_deserialize_compat(context_id, buf,
                                                         length);
+        case DP_MSG_THUMBNAIL:
+            return DP_msg_thumbnail_deserialize_compat(context_id, buf, length);
         case DP_MSG_INTERNAL:
             DP_error_set(
                 "Can't deserialize reserved message type 31 DP_MSG_INTERNAL");
@@ -1276,6 +1289,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_ping_parse(context_id, reader);
     case DP_MSG_KEEP_ALIVE:
         return DP_msg_keep_alive_parse(context_id, reader);
+    case DP_MSG_THUMBNAIL:
+        return DP_msg_thumbnail_parse(context_id, reader);
     case DP_MSG_INTERNAL:
         DP_error_set("Can't parse reserved message type 31 DP_MSG_INTERNAL");
         return NULL;
@@ -2078,6 +2093,124 @@ DP_Message *DP_msg_keep_alive_parse(unsigned int context_id,
                                     DP_UNUSED DP_TextReader *reader)
 {
     return DP_msg_keep_alive_new(context_id);
+}
+
+
+/* DP_MSG_THUMBNAIL */
+
+struct DP_MsgThumbnail {
+    uint16_t data_size;
+    unsigned char data[];
+};
+
+static size_t msg_thumbnail_payload_length(DP_Message *msg)
+{
+    DP_MsgThumbnail *mt = DP_message_internal(msg);
+    return mt->data_size;
+}
+
+static size_t msg_thumbnail_serialize_payload(DP_Message *msg,
+                                              unsigned char *data)
+{
+    DP_MsgThumbnail *mt = DP_message_internal(msg);
+    size_t written = 0;
+    written += write_bytes(mt->data, mt->data_size, data + written);
+    DP_ASSERT(written == msg_thumbnail_payload_length(msg));
+    return written;
+}
+
+static bool msg_thumbnail_write_payload_text(DP_Message *msg,
+                                             DP_TextWriter *writer)
+{
+    DP_MsgThumbnail *mt = DP_message_internal(msg);
+    return DP_text_writer_write_base64(writer, "data", mt->data, mt->data_size);
+}
+
+static bool msg_thumbnail_equals(DP_Message *DP_RESTRICT msg,
+                                 DP_Message *DP_RESTRICT other)
+{
+    DP_MsgThumbnail *a = DP_message_internal(msg);
+    DP_MsgThumbnail *b = DP_message_internal(other);
+    return a->data_size == b->data_size
+        && memcmp(a->data, b->data, DP_uint16_to_size(a->data_size)) == 0;
+}
+
+static const DP_MessageMethods msg_thumbnail_methods = {
+    msg_thumbnail_payload_length,     msg_thumbnail_serialize_payload,
+    msg_thumbnail_payload_length,     msg_thumbnail_serialize_payload,
+    msg_thumbnail_write_payload_text, msg_thumbnail_equals,
+};
+
+DP_Message *DP_msg_thumbnail_new(unsigned int context_id,
+                                 void (*set_data)(size_t, unsigned char *,
+                                                  void *),
+                                 size_t data_size, void *data_user)
+{
+    DP_Message *msg =
+        DP_message_new(DP_MSG_THUMBNAIL, context_id, &msg_thumbnail_methods,
+                       DP_FLEX_SIZEOF(DP_MsgThumbnail, data, data_size));
+    DP_MsgThumbnail *mt = DP_message_internal(msg);
+    mt->data_size = DP_size_to_uint16(data_size);
+    if (set_data) {
+        set_data(mt->data_size, mt->data, data_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_thumbnail_deserialize(unsigned int context_id,
+                                         const unsigned char *buffer,
+                                         size_t length)
+{
+    if (length > 65535) {
+        DP_error_set("Wrong length for thumbnail message; "
+                     "expected between 0 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    size_t data_bytes = length - read;
+    uint16_t data_size = DP_size_to_uint16(data_bytes);
+    void *data_user = (void *)(buffer + read);
+    return DP_msg_thumbnail_new(context_id, read_bytes, data_size, data_user);
+}
+
+DP_Message *DP_msg_thumbnail_deserialize_compat(unsigned int context_id,
+                                                const unsigned char *buffer,
+                                                size_t length)
+{
+    DP_Message *msg = DP_msg_thumbnail_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
+}
+
+DP_Message *DP_msg_thumbnail_parse(unsigned int context_id,
+                                   DP_TextReader *reader)
+{
+    size_t data_size;
+    DP_TextReaderParseParams data_params =
+        DP_text_reader_get_base64_string(reader, "data", &data_size);
+    return DP_msg_thumbnail_new(context_id, DP_text_reader_parse_base64,
+                                data_size, &data_params);
+}
+
+DP_MsgThumbnail *DP_msg_thumbnail_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_THUMBNAIL);
+}
+
+const unsigned char *DP_msg_thumbnail_data(const DP_MsgThumbnail *mt,
+                                           size_t *out_size)
+{
+    DP_ASSERT(mt);
+    if (out_size) {
+        *out_size = mt->data_size;
+    }
+    return mt->data;
+}
+
+size_t DP_msg_thumbnail_data_size(const DP_MsgThumbnail *mt)
+{
+    return mt->data_size;
 }
 
 

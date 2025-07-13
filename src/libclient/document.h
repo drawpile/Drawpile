@@ -372,6 +372,14 @@ private:
 	void setStreamResetState(StreamResetState state, int messageCount = 0);
 	void emitStreamResetProgress();
 
+	void onThumbnailQueried(const QString &payload);
+	void onThumbnailRequested(
+		const QByteArray &correlator, int maxWidth, int maxHeight, int quality,
+		const QString &format);
+	void onThumbnailGenerationFinished(const net::Message &msg);
+	void onThumbnailGenerationFailed(
+		const QByteArray &correlator, const QString &error);
+
 	QString m_currentPath;
 	QString m_exportPath;
 	DP_SaveImageType m_currentType = DP_SAVE_IMAGE_UNKNOWN;
@@ -402,6 +410,7 @@ private:
 	bool m_canAutosave;
 	bool m_saveInProgress;
 	bool m_wantCanvasHistoryDump;
+	bool m_generatingThumbnail = false;
 	QTimer *m_autosaveTimer;
 
 	bool m_sessionPersistent;

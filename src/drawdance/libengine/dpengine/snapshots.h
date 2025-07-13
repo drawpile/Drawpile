@@ -38,7 +38,10 @@ typedef struct DP_ResetImageOptions {
     DP_ResetImageCompression compression;
     int thumb_width;
     int thumb_height;
-    bool (*thumb_write)(DP_Image *, DP_Output *);
+    struct {
+        bool (*fn)(void *, DP_Image *, DP_Output *);
+        void *user;
+    } thumb_write;
 } DP_ResetImageOptions;
 
 typedef enum DP_ResetEntryType {

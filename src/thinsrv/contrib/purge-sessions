@@ -173,7 +173,7 @@ sub is_archived_path {
 sub gather_sessions {
     my %sessions;
     my $wanted = sub {
-        if(-f && /\A([a-z0-9]+)(?:_r[0-9]+)?(?:\.(?:session|dprec))(?:\.archived)?\z/) {
+        if(-f && /\A([a-z0-9]+)(?:_r[0-9]+)?(?:\.(?:session|dprec|thumbnail))(?:\.archived)?\z/) {
             my $id = $1;
             my $st = stat($_) or die "Can't stat '$File::Find::name': $!\n";
 

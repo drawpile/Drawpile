@@ -86,6 +86,7 @@ public:
 	DP_MsgResetStream *toResetStream() const;
 	DP_MsgServerCommand *toServerCommand() const;
 	DP_MsgSessionOwner *toSessionOwner() const;
+	DP_MsgThumbnail *toThumbnail() const;
 	DP_MsgTrustedUsers *toTrustedUsers() const;
 	DP_MsgUserAcl *toUserAcl() const;
 
@@ -135,6 +136,9 @@ Message
 makeSessionOwnerMessage(uint8_t contextId, const QVector<uint8_t> &users);
 
 Message makeSoftResetMessage(uint8_t contextId);
+
+Message makeThumbnailMessage(
+	uint8_t contextId, const QByteArray &correlator, const QByteArray &data);
 
 Message
 makeTrustedUsersMessage(uint8_t contextId, const QVector<uint8_t> &users);

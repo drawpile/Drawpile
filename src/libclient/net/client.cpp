@@ -527,6 +527,20 @@ void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 	case ServerReply::ReplyType::InviteCreated:
 		emit inviteCodeCreated(
 			reply.value(QStringLiteral("secret")).toString());
+		break;
+	case net::ServerReply::ReplyType::Thumbnail:
+		if(reply.value(QStringLiteral("query")).toBool()) {
+			emit thumbnailQueried(
+				reply.value(QStringLiteral("payload")).toString());
+		} else {
+			emit thumbnailRequested(
+				reply.value(QStringLiteral("correlator")).toString().toUtf8(),
+				reply.value(QStringLiteral("maxWidth")).toInt(),
+				reply.value(QStringLiteral("maxHeight")).toInt(),
+				reply.value(QStringLiteral("quality")).toInt(),
+				reply.value(QStringLiteral("format")).toString());
+		}
+		break;
 	}
 }
 

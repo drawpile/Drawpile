@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 #include "image.h"
+#include "canvas_state.h"
 #include "compress.h"
 #include "draw_context.h"
 #include "image_transform.h"
@@ -90,7 +91,7 @@ DP_ImageFileType DP_image_guess(const unsigned char *buf, size_t size)
     else if (guess_webp(buf, size)) {
         return DP_IMAGE_FILE_TYPE_WEBP;
     }
-    else if (guess_qoi(buf, size)){
+    else if (guess_qoi(buf, size)) {
         return DP_IMAGE_FILE_TYPE_QOI;
     }
     else {
@@ -420,6 +421,149 @@ bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
     }
     else {
         *out_thumb = NULL;
+        return true;
+    }
+}
+
+static DP_Image *thumbnail_from_canvas_nearest(DP_CanvasState *cs,
+                                               int thumb_width,
+                                               int thumb_height, double scale_x,
+                                               double scale_y)
+{
+    DP_Image *thumb = DP_image_new(thumb_width, thumb_height);
+    for (int y = 0; y < thumb_height; ++y) {
+        for (int x = 0; x < thumb_width; ++x) {
+            DP_image_pixel_at_set(
+                thumb, x, y,
+                DP_pixel15_to_8(DP_canvas_state_to_flat_pixel(
+                    cs, DP_double_to_int(DP_int_to_double(x) * scale_x),
+                    DP_double_to_int(DP_int_to_double(y) * scale_y))));
+        }
+    }
+    return thumb;
+}
+
+static int guess_thumbnail_interpolation(double scale_x, double scale_y)
+{
+#ifdef DP_LIBSWSCALE
+    double scale_max = DP_max_double(scale_x, scale_y);
+    if (scale_max <= 2.5) {
+        return DP_IMAGE_SCALE_INTERPOLATION_FAST_BILINEAR;
+    }
+    else {
+        return DP_IMAGE_SCALE_INTERPOLATION_LANCZOS;
+    }
+#else
+    (void)scale_x;
+    (void)scale_y;
+    return DP_IMAGE_SCALE_INTERPOLATION_FAST_BILINEAR;
+#endif
+}
+
+static DP_Image *thumbnail_from_canvas_scale(DP_CanvasState *cs,
+                                             DP_DrawContext *dc,
+                                             int thumb_width, int thumb_height,
+                                             int interpolation)
+{
+    DP_Image *img = DP_canvas_state_to_flat_image(
+        cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, NULL);
+    if (img) {
+        DP_Image *thumb =
+            DP_image_scale(img, dc, thumb_width, thumb_height, interpolation);
+        DP_image_free(img);
+        return thumb;
+    }
+    else {
+        return NULL;
+    }
+}
+
+DP_Image *DP_image_thumbnail_from_canvas(DP_CanvasState *cs,
+                                         DP_DrawContext *dc_or_null,
+                                         int max_width, int max_height)
+{
+    DP_ASSERT(cs);
+
+    int canvas_width = DP_canvas_state_width(cs);
+    int canvas_height = DP_canvas_state_height(cs);
+    if (canvas_width <= 0 || canvas_height <= 0) {
+        DP_error_set("Canvas has no pixels");
+        return NULL;
+    }
+
+    int thumb_width, thumb_height;
+    DP_image_thumbnail_dimensions(canvas_width, canvas_height, max_width,
+                                  max_height, &thumb_width, &thumb_height);
+    if (thumb_width <= 0 || thumb_height <= 0) {
+        DP_error_set("Thumbnail would have no pixels");
+        return NULL;
+    }
+
+    if (thumb_width == canvas_width && thumb_height == canvas_height) {
+        return DP_canvas_state_to_flat_image(cs, DP_FLAT_IMAGE_RENDER_FLAGS,
+                                             NULL, NULL);
+    }
+
+    double scale_x =
+        DP_int_to_double(canvas_width) / DP_int_to_double(thumb_width);
+    double scale_y =
+        DP_int_to_double(canvas_height) / DP_int_to_double(thumb_height);
+    if (!dc_or_null) {
+        return thumbnail_from_canvas_nearest(cs, thumb_width, thumb_height,
+                                             scale_x, scale_y);
+    }
+    else {
+        DP_Image *thumb = thumbnail_from_canvas_scale(
+            cs, dc_or_null, thumb_width, thumb_height,
+            guess_thumbnail_interpolation(scale_x, scale_y));
+        if (thumb) {
+            return thumb;
+        }
+        else {
+            DP_warn("Thumbnail scaling failed, falling back: %s", DP_error());
+            return thumbnail_from_canvas_nearest(cs, thumb_width, thumb_height,
+                                                 scale_x, scale_y);
+        }
+    }
+}
+
+bool DP_image_thumbnail_from_canvas_write(
+    DP_CanvasState *cs, DP_DrawContext *dc_or_null, int max_width,
+    int max_height, bool (*write_fn)(void *, DP_Image *, DP_Output *),
+    void *user, void **out_buffer, size_t *out_size)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(write_fn);
+    DP_ASSERT(out_size);
+    DP_ASSERT(out_buffer);
+
+    DP_Image *thumb =
+        DP_image_thumbnail_from_canvas(cs, dc_or_null, max_width, max_height);
+    if (!thumb) {
+        return false;
+    }
+
+    void **buffer_ptr;
+    size_t *size_ptr;
+    DP_Output *output = DP_mem_output_new(1024, false, &buffer_ptr, &size_ptr);
+    bool write_ok = write_fn(user, thumb, output);
+    void *buffer = *buffer_ptr;
+    size_t size = *size_ptr;
+    DP_output_free(output);
+    DP_image_free(thumb);
+
+    if (!write_ok) {
+        DP_free(buffer);
+        return false;
+    }
+    else if (!buffer || size == 0) {
+        DP_error_set("Writing reset thumbnail resulted in no data");
+        DP_free(buffer);
+        return false;
+    }
+    else {
+        *out_buffer = buffer;
+        *out_size = size;
         return true;
     }
 }

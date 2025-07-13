@@ -5,6 +5,7 @@
 #include "image_qoi.h"
 #include "image_webp.h"
 #include <dpcommon/common.h>
+#include <dpcommon/conversions.h>
 #include <dpcommon/input.h>
 #include <dpcommon/output.h>
 #include <dpengine/image.h>
@@ -129,10 +130,20 @@ bool DP_image_write_qoi(DP_Image *img, DP_Output *output)
                               DP_image_pixels(img));
 }
 
+bool DP_image_write_webp_lossy(DP_Image *img, DP_Output *output, int quality)
+{
+    DP_ASSERT(img);
+    DP_ASSERT(output);
+    return DP_image_webp_write(output, DP_image_width(img),
+                               DP_image_height(img), DP_image_pixels(img),
+                               DP_int_to_float(quality), false);
+}
+
 bool DP_image_write_webp(DP_Image *img, DP_Output *output)
 {
     DP_ASSERT(img);
     DP_ASSERT(output);
     return DP_image_webp_write(output, DP_image_width(img),
-                               DP_image_height(img), DP_image_pixels(img));
+                               DP_image_height(img), DP_image_pixels(img),
+                               100.0f, true);
 }

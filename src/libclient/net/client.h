@@ -259,6 +259,10 @@ signals:
 	void sessionPasswordChanged(const QString &password);
 	void sessionOutOfSpace();
 	void inviteCodeCreated(const QString &secret);
+	void thumbnailQueried(const QString &payload);
+	void thumbnailRequested(
+		const QByteArray &correlator, int maxWidth, int maxHeight, int quality,
+		const QString &format);
 
 	void serverConnected(const QUrl &url);
 	void serverRedirected(const QUrl &url);

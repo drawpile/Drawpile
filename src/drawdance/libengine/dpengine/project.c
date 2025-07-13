@@ -1748,9 +1748,10 @@ static void snapshot_handle_entry_callback(void *user,
     }
 }
 
-static int snapshot_canvas(DP_Project *prj, long long snapshot_id,
-                           DP_CanvasState *cs,
-                           bool (*thumb_write)(DP_Image *, DP_Output *))
+static int
+snapshot_canvas(DP_Project *prj, long long snapshot_id, DP_CanvasState *cs,
+                bool (*thumb_write_fn)(void *, DP_Image *, DP_Output *),
+                void *thumb_write_user)
 {
     if (prj->snapshot.id != snapshot_id) {
         return DP_PROJECT_SNAPSHOT_CANVAS_ERROR_NOT_OPEN;
@@ -1761,9 +1762,13 @@ static int snapshot_canvas(DP_Project *prj, long long snapshot_id,
     }
 
     prj->snapshot.state = DP_PROJECT_SNAPSHOT_STATE_OK;
-    DP_ResetImageOptions options = {
-        true, true, false,      DP_RESET_IMAGE_COMPRESSION_ZSTD8LE,
-        256,  256,  thumb_write};
+    DP_ResetImageOptions options = {true,
+                                    true,
+                                    false,
+                                    DP_RESET_IMAGE_COMPRESSION_ZSTD8LE,
+                                    256,
+                                    256,
+                                    {thumb_write_fn, thumb_write_user}};
     DP_reset_image_build_with(cs, &options, snapshot_handle_entry_callback,
                               prj);
 
@@ -1776,12 +1781,15 @@ static int snapshot_canvas(DP_Project *prj, long long snapshot_id,
 
 int DP_project_snapshot_canvas(DP_Project *prj, long long snapshot_id,
                                DP_CanvasState *cs,
-                               bool (*thumb_write)(DP_Image *, DP_Output *))
+                               bool (*thumb_write_fn)(void *, DP_Image *,
+                                                      DP_Output *),
+                               void *thumb_write_user)
 {
     DP_ASSERT(prj);
     DP_ASSERT(snapshot_id > 0LL);
     DP_PERF_BEGIN(fn, "save");
-    int result = snapshot_canvas(prj, snapshot_id, cs, thumb_write);
+    int result =
+        snapshot_canvas(prj, snapshot_id, cs, thumb_write_fn, thumb_write_user);
     DP_PERF_END(fn);
     return result;
 }
@@ -2964,7 +2972,9 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(DP_Project *prj,
 
 
 int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
-                           bool (*thumb_write)(DP_Image *, DP_Output *))
+                           bool (*thumb_write_fn)(void *, DP_Image *,
+                                                  DP_Output *),
+                           void *thumb_write_user)
 {
     DP_ASSERT(cs);
     DP_ASSERT(path);
@@ -2983,8 +2993,8 @@ int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
         return DP_PROJECT_CANVAS_SAVE_ERROR_OPEN_SNAPSHOT;
     }
 
-    int snapshot_result =
-        DP_project_snapshot_canvas(prj, snapshot_id, cs, thumb_write);
+    int snapshot_result = DP_project_snapshot_canvas(
+        prj, snapshot_id, cs, thumb_write_fn, thumb_write_user);
     if (snapshot_result != 0) {
         project_close(prj, true);
         return snapshot_result;

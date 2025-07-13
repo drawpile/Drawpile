@@ -296,6 +296,12 @@ DP_MsgSessionOwner *Message::toSessionOwner() const
 	return static_cast<DP_MsgSessionOwner *>(DP_message_internal(m_data));
 }
 
+DP_MsgThumbnail *Message::toThumbnail() const
+{
+	Q_ASSERT(type() == DP_MSG_THUMBNAIL);
+	return static_cast<DP_MsgThumbnail *>(DP_message_internal(m_data));
+}
+
 DP_MsgTrustedUsers *Message::toTrustedUsers() const
 {
 	Q_ASSERT(type() == DP_MSG_TRUSTED_USERS);
@@ -472,6 +478,28 @@ makeSessionOwnerMessage(uint8_t contextId, const QVector<uint8_t> &users)
 Message makeSoftResetMessage(uint8_t contextId)
 {
 	return Message::noinc(DP_msg_soft_reset_new(contextId));
+}
+
+static void setThumbnailData(size_t size, unsigned char *out, void *user)
+{
+	Q_UNUSED(size);
+	const QByteArray **params = static_cast<const QByteArray **>(user);
+	size_t correlatorSize = params[0]->size();
+	memcpy(out, params[0]->constData(), correlatorSize);
+	memcpy(out + correlatorSize, params[1]->constData(), params[1]->size());
+}
+
+Message makeThumbnailMessage(
+	uint8_t contextId, const QByteArray &correlator, const QByteArray &data)
+{
+	size_t size = correlator.size() + data.size();
+	if(size <= DP_MSG_THUMBNAIL_DATA_MAX_SIZE) {
+		const QByteArray *params[] = {&correlator, &data};
+		return Message::noinc(
+			DP_msg_thumbnail_new(contextId, setThumbnailData, size, params));
+	} else {
+		return Message::null();
+	}
 }
 
 Message

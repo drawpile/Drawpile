@@ -467,48 +467,22 @@ static void thumb_to_reset_image(struct DP_ResetImageContext *c,
                                  DP_CanvasState *cs)
 {
     DP_PERF_BEGIN(fn, "image:thumb");
-    int canvas_width = DP_canvas_state_width(cs);
-    int canvas_height = DP_canvas_state_height(cs);
-    int thumb_width, thumb_height;
-    DP_image_thumbnail_dimensions(
-        canvas_width, canvas_height, c->options.thumb_width,
-        c->options.thumb_height, &thumb_width, &thumb_height);
-    double scale_x =
-        DP_int_to_double(canvas_width) / DP_int_to_double(thumb_width);
-    double scale_y =
-        DP_int_to_double(canvas_height) / DP_int_to_double(thumb_height);
 
-    DP_Image *thumb = DP_image_new(thumb_width, thumb_height);
-    for (int y = 0; y < thumb_height; ++y) {
-        for (int x = 0; x < thumb_width; ++x) {
-            DP_image_pixel_at_set(
-                thumb, x, y,
-                DP_pixel15_to_8(DP_canvas_state_to_flat_pixel(
-                    cs, DP_double_to_int(DP_int_to_double(x) * scale_x),
-                    DP_double_to_int(DP_int_to_double(y) * scale_y))));
-        }
-    }
+    void *buffer;
+    size_t size;
+    bool ok = DP_image_thumbnail_from_canvas_write(
+        cs, NULL, c->options.thumb_width, c->options.thumb_height,
+        c->options.thumb_write.fn, c->options.thumb_write.user, &buffer, &size);
 
-    void **buffer_ptr;
-    size_t *size_ptr;
-    DP_Output *output = DP_mem_output_new(64, false, &buffer_ptr, &size_ptr);
-    bool write_ok = c->options.thumb_write(thumb, output);
-    void *buffer = *buffer_ptr;
-    size_t size = *size_ptr;
-    DP_output_free(output);
-    DP_image_free(thumb);
-
-    if (!write_ok) {
-        DP_warn("Failed to write reset thumbnail: %s", DP_error());
-    }
-    else if (!buffer || size == 0) {
-        DP_warn("Writing reset thumbnail resulted in no data");
-    }
-    else {
+    if (ok) {
         reset_image_handle(
             c, (DP_ResetEntry){DP_RESET_ENTRY_THUMB, .thumb = {size, buffer}});
+        DP_free(buffer);
     }
-    DP_free(buffer);
+    else {
+        DP_warn("Failed to generate reset thumbnail: %s", DP_error());
+    }
+
     DP_PERF_END(fn);
 }
 
@@ -809,7 +783,7 @@ static void canvas_state_to_reset_image(struct DP_ResetImageContext *c,
     DP_Worker *worker = c->worker;
     int width = DP_canvas_state_width(cs);
     int height = DP_canvas_state_height(cs);
-    if (width > 0 && height > 0 && c->options.thumb_write
+    if (width > 0 && height > 0 && c->options.thumb_write.fn
         && c->options.thumb_width > 0 && c->options.thumb_height > 0) {
         if (worker) {
             struct DP_ResetImageJob job = {c, DP_RESET_IMAGE_JOB_THUMB,
@@ -1192,7 +1166,7 @@ void DP_reset_image_build(DP_CanvasState *cs, unsigned int context_id,
         compatibility_mode ? DP_RESET_IMAGE_COMPRESSION_GZIP8BE
                            : DP_RESET_IMAGE_COMPRESSION_ZSTD8LE;
     DP_ResetImageOptions options = {
-        true, false, !compatibility_mode, compression, 0, 0, NULL};
+        true, false, !compatibility_mode, compression, 0, 0, {NULL, NULL}};
     struct DP_ResetImageMessageContext c = {
         context_id, 0, compatibility_mode, DP_mutex_new(), push_message, user};
     if (!c.mutex) {

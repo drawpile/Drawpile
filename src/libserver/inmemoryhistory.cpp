@@ -134,4 +134,26 @@ void InMemoryHistory::discardResetStream()
 	m_resetStreamIndex = -1;
 }
 
+const QByteArray &InMemoryHistory::thumbnail() const
+{
+	return m_thumbnail;
+}
+
+bool InMemoryHistory::setThumbnail(const QByteArray &thumbnail)
+{
+	m_thumbnail = thumbnail;
+	m_thumbnailGeneratedAt = QDateTime::currentDateTimeUtc();
+	return true;
+}
+
+bool InMemoryHistory::hasThumbnail() const
+{
+	return !m_thumbnail.isEmpty();
+}
+
+QDateTime InMemoryHistory::thumbnailGeneratedAt() const
+{
+	return m_thumbnailGeneratedAt;
+}
+
 }

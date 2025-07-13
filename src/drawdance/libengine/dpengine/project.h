@@ -208,7 +208,9 @@ int DP_project_snapshot_discard_all_except(DP_Project *prj,
 
 int DP_project_snapshot_canvas(DP_Project *prj, long long snapshot_id,
                                DP_CanvasState *cs,
-                               bool (*thumb_write)(DP_Image *, DP_Output *));
+                               bool (*thumb_write_fn)(void *, DP_Image *,
+                                                      DP_Output *),
+                               void *thumb_write_user);
 
 
 DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
@@ -221,10 +223,12 @@ DP_CanvasState *DP_project_canvas_from_latest_snapshot(DP_Project *prj,
 
 // Returns 0 on success and a negative DP_PROJECT_OPEN_ERROR_*,
 // DP_PROJECT_SNAPSHOT_CANVAS_ERROR_*, DP_PROJECT_SNAPSHOT_FINISH_ERROR_* or
-// DP_PROJECT_CANVAS_SAVE_ERROR_* value on failure. The thumb_write parameter is
-// optional.
+// DP_PROJECT_CANVAS_SAVE_ERROR_* value on failure. The thumb_write_* parameters
+// are optional.
 int DP_project_canvas_save(DP_CanvasState *cs, const char *path,
-                           bool (*thumb_write)(DP_Image *, DP_Output *));
+                           bool (*thumb_write_fn)(void *, DP_Image *,
+                                                  DP_Output *),
+                           void *thumb_write_user);
 
 // Returns 0 on success and a negative DP_PROJECT_OPEN_ERROR_* or
 // DP_PROJECT_CANVAS_LOAD_ERROR_* value on failure. The out_cs parameter is

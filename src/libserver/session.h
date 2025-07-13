@@ -357,6 +357,12 @@ public:
 	void sendAbuseReport(
 		const Client *reporter, int aboutUser, const QString &message);
 
+	QString
+	startThumbnailGeneration(const Client *client, const QString &reason);
+	bool cancelThumbnailGeneration(const Client *client);
+	void handleThumbnailError(
+		const Client *client, const QString &correlator, const QString &error);
+
 	/**
 	 * @brief Get a JSON object describing the session
 	 *
@@ -535,6 +541,10 @@ private:
 		const QJsonObject &request);
 
 	JsonApiResult callInvitesJsonApi(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request);
+
+	JsonApiResult callThumbnailJsonApi(
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request);
 

@@ -12,6 +12,7 @@ extern "C" {
 #include "libclient/canvas/userlist.h"
 #include "libclient/document.h"
 #include "libclient/export/canvassaverrunnable.h"
+#include "libclient/export/thumbnailerrunnable.h"
 #include "libclient/net/invitelistmodel.h"
 #include "libclient/settings.h"
 #include "libclient/tools/selection.h"
@@ -151,6 +152,12 @@ Document::Document(
 	connect(
 		m_client, &net::Client::sessionOutOfSpace, this,
 		&Document::onSessionOutOfSpace);
+	connect(
+		m_client, &net::Client::thumbnailQueried, this,
+		&Document::onThumbnailQueried);
+	connect(
+		m_client, &net::Client::thumbnailRequested, this,
+		&Document::onThumbnailRequested);
 
 	connect(
 		this, &Document::justInTimeSnapshotGenerated, this,
@@ -1909,6 +1916,82 @@ QImage Document::getClipboardImageData(const QMimeData *mimeData)
 		}
 	}
 	return QImage();
+}
+
+void Document::onThumbnailQueried(const QString &payload)
+{
+	qDebug("Server queried thumbnail");
+	if(m_canvas && m_client->isFullyCaughtUp()) {
+		bool serverAutoReset = m_settings.serverAutoReset();
+		QJsonArray pings;
+		for(qint64 ping : m_pingHistory) {
+			pings.append(qreal(ping) / 1000.0);
+		}
+		QJsonObject kwargs = {
+			{QStringLiteral("payload"), payload},
+			{QStringLiteral("formats"),
+			 QJsonArray({QStringLiteral("jpeg"), QStringLiteral("webp")})},
+			{QStringLiteral("os"), net::ServerCommand::autoresetOs()},
+			{QStringLiteral("net"), serverAutoReset ? 100.0 : 0.0},
+			{QStringLiteral("pings"), pings},
+		};
+		m_client->sendMessage(
+			net::ServerCommand::make(
+				QStringLiteral("ready-thumbnail"), {}, kwargs));
+	}
+}
+
+void Document::onThumbnailRequested(
+	const QByteArray &correlator, int maxWidth, int maxHeight, int quality,
+	const QString &format)
+{
+	if(!m_canvas) {
+		qWarning("Thumbnail requested without a canvas");
+		m_client->sendMessage(
+			net::ServerCommand::make(
+				QStringLiteral("thumbnail-error"),
+				{QString::fromUtf8(correlator), QStringLiteral("nocanvas")}));
+		return;
+	}
+
+	if(m_generatingThumbnail) {
+		qWarning(
+			"Thumbnail requested while thumbnail generation is in progress");
+		m_client->sendMessage(
+			net::ServerCommand::make(
+				QStringLiteral("thumbnail-error"),
+				{QString::fromUtf8(correlator), QStringLiteral("inprogress")}));
+		return;
+	}
+	m_generatingThumbnail = true;
+
+	ThumbnailerRunnable *runnable = new ThumbnailerRunnable(
+		m_client->myId(), correlator,
+		m_canvas->paintEngine()->historyCanvasState(), maxWidth, maxHeight,
+		quality, format);
+	connect(
+		runnable, &ThumbnailerRunnable::thumbnailGenerationFinished, this,
+		&Document::onThumbnailGenerationFinished);
+	connect(
+		runnable, &ThumbnailerRunnable::thumbnailGenerationFailed, this,
+		&Document::onThumbnailGenerationFailed);
+	QThreadPool::globalInstance()->start(runnable);
+}
+
+void Document::onThumbnailGenerationFinished(const net::Message &msg)
+{
+	m_generatingThumbnail = false;
+	m_client->sendMessage(msg);
+}
+
+void Document::onThumbnailGenerationFailed(
+	const QByteArray &correlator, const QString &error)
+{
+	m_generatingThumbnail = false;
+	m_client->sendMessage(
+		net::ServerCommand::make(
+			QStringLiteral("thumbnail-error"),
+			{QString::fromUtf8(correlator), error}));
 }
 
 #ifdef HAVE_CLIPBOARD_EMULATION

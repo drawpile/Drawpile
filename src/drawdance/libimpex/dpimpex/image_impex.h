@@ -25,6 +25,8 @@ bool DP_image_write_jpeg_quality(DP_Image *img, DP_Output *output,
                                  int quality) DP_MUST_CHECK;
 bool DP_image_write_jpeg(DP_Image *img, DP_Output *output) DP_MUST_CHECK;
 bool DP_image_write_qoi(DP_Image *img, DP_Output *output) DP_MUST_CHECK;
+bool DP_image_write_webp_lossy(DP_Image *img, DP_Output *output,
+                               int quality) DP_MUST_CHECK;
 bool DP_image_write_webp(DP_Image *img, DP_Output *output) DP_MUST_CHECK;
 
 

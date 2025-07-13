@@ -1030,14 +1030,16 @@ save_flat_image(DP_CanvasState *cs, DP_DrawContext *dc, DP_Rect *crop,
 }
 
 
-static bool write_project_thumbnail(DP_Image *img, DP_Output *output)
+static bool write_project_thumbnail(DP_UNUSED void *user, DP_Image *img,
+                                    DP_Output *output)
 {
     return DP_image_write_jpeg_quality(img, output, 80);
 }
 
 static DP_SaveResult save_project_canvas(DP_CanvasState *cs, const char *path)
 {
-    int result = DP_project_canvas_save(cs, path, write_project_thumbnail);
+    int result =
+        DP_project_canvas_save(cs, path, write_project_thumbnail, NULL);
     switch (result) {
     case 0:
         return DP_SAVE_RESULT_SUCCESS;

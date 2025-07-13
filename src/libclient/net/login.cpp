@@ -1506,8 +1506,9 @@ QJsonObject LoginHandler::makeClientInfo()
 		{"s", getSid()},
 		{"m", QString::fromUtf8(QSysInfo::machineUniqueId().toBase64())},
 		// Comma-separated list of client capabilities. KEEPALIVE indicates
-		// support for DP_MSG_KEEP_ALIVE messages from the server.
-		{"capabilities", QStringLiteral("KEEPALIVE")},
+		// support for DP_MSG_KEEP_ALIVE messages from the server. THUMBNAIL
+		// indicates that we can generate canvas thumbnails.
+		{"capabilities", QStringLiteral("KEEPALIVE,THUMBNAIL")},
 	};
 }
 

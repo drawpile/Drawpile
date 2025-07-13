@@ -1359,7 +1359,11 @@ void LoginHandler::checkClientCapabilities(const net::ServerCommand &cmd)
 	const QString capabilities =
 		cmd.kwargs[QStringLiteral("capabilities")].toString();
 	if(capabilities.contains(QStringLiteral("KEEPALIVE"))) {
+		m_client->setCapability(Client::CapabilityFlag::KeepAlive);
 		m_client->setKeepAliveTimeout(30 * 1000);
+	}
+	if(capabilities.contains(QStringLiteral("THUMBNAIL"))) {
+		m_client->setCapability(Client::CapabilityFlag::Thumbnail);
 	}
 }
 

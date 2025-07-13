@@ -24,6 +24,7 @@
 #include "pixels.h"
 #include <dpcommon/common.h>
 
+typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Input DP_Input;
 typedef struct DP_Output DP_Output;
@@ -123,6 +124,15 @@ void DP_image_thumbnail_dimensions(int width, int height, int max_width,
 bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
                         int max_height, int interpolation,
                         DP_Image **out_thumb) DP_MUST_CHECK;
+
+DP_Image *DP_image_thumbnail_from_canvas(DP_CanvasState *cs,
+                                         DP_DrawContext *dc_or_null,
+                                         int max_width, int max_height);
+
+bool DP_image_thumbnail_from_canvas_write(
+    DP_CanvasState *cs, DP_DrawContext *dc_or_null, int max_width,
+    int max_height, bool (*write_fn)(void *, DP_Image *, DP_Output *),
+    void *user, void **out_buffer, size_t *out_size);
 
 DP_Image *DP_image_scale_pixels(int src_width, int src_height,
                                 const DP_Pixel8 *src_pixels, DP_DrawContext *dc,
