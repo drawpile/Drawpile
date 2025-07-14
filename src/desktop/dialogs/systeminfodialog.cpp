@@ -2,6 +2,7 @@
 #include "desktop/dialogs/systeminfodialog.h"
 #include "cmake-config/config.h"
 #include "desktop/main.h"
+#include "desktop/notifications.h"
 #include "desktop/settings.h"
 #include "desktop/tabletinput.h"
 #include "desktop/utils/widgetutils.h"
@@ -261,6 +262,10 @@ QString SystemInfoDialog::getSystemInfo() const
 		info += QStringLiteral("\n");
 		++screenNumber;
 	}
+
+	info += QStringLiteral("Sound player backend: %1\n")
+				.arg(app.notifications()->soundPlayerBackend());
+	info += QStringLiteral("\n");
 
 	QNetworkProxy proxy = QNetworkProxy::applicationProxy();
 	QNetworkProxy::ProxyType proxyType = proxy.type();

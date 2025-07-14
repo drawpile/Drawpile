@@ -8,18 +8,24 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_OBJCXX_STANDARD 17)
 set(CMAKE_OBJCXX_STANDARD_REQUIRED ON)
-set(CMAKE_OBJCXX_EXTENSIONS OFF)
 
 if(EMSCRIPTEN)
     # This flag is required when compiling all objects or linking will fail
     # when --shared-memory is used, which it is implicitly
     add_compile_options(-pthread)
+	# Extensions are required on Emscripten for EM_ASM to work.
+	set(CMAKE_C_EXTENSIONS ON)
+	set(CMAKE_CXX_EXTENSIONS ON)
+	set(CMAKE_OBJCXX_EXTENSIONS ON)
+else()
+	# On other platforms we don't need any extensions currently.
+	set(CMAKE_C_EXTENSIONS OFF)
+	set(CMAKE_CXX_EXTENSIONS OFF)
+	set(CMAKE_OBJCXX_EXTENSIONS OFF)
 endif()
 
 if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)

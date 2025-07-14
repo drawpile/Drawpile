@@ -30,6 +30,11 @@ void Notifications::trigger(
 	notify(widget, event, message, false);
 }
 
+QString Notifications::soundPlayerBackend() const
+{
+	return m_soundPlayer.getBackendName();
+}
+
 void Notifications::notify(
 	QWidget *widget, Event event, const QString &message, bool isPreview)
 {

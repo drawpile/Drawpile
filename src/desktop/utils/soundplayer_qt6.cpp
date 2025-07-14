@@ -45,3 +45,8 @@ bool SoundPlayer::isPlaying() const
 	return d->player &&
 		   d->player->playbackState() == QMediaPlayer::PlayingState;
 }
+
+QString SoundPlayer::getBackendName() const
+{
+	return QStringLiteral("QtMultimedia 6");
+}

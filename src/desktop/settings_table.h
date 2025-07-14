@@ -286,7 +286,7 @@ SETTING(showInviteDialogOnHost    , ShowInviteDialogOnHost    , "invites/showdia
 SETTING(showNsfmWarningOnJoin     , ShowNsfmWarningOnJoin     , "pc/shownsfmwarningonjoin"              , true)
 SETTING(showTransformNotices      , ShowTransformNotices      , "settings/showtransformnotices"         , true)
 SETTING(showTrayIcon              , ShowTrayIcon              , "ui/trayicon"                           , true)
-SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , SESSION_UNDO_LIMIT_DEFAULT)
+SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , 60)
 SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/tabletdriver"           , tabletinput::Mode::KisTabletWinink
 	, &tabletDriver::get, &tabletDriver::set)
 SETTING_GETSET(tabletEraserAction , TabletEraserAction        , "settings/input/tableteraseraction"     , int(tabletinput::EraserAction::Default)

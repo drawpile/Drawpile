@@ -35,6 +35,8 @@ public:
 	void preview(QWidget *widget, Event event, const QString &message);
 	void trigger(QWidget *widget, Event event, const QString &message);
 
+	QString soundPlayerBackend() const;
+
 private:
 	static constexpr qint64 SOUND_DELAY_MSEC = 1500;
 
