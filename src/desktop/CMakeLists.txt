@@ -1,9 +1,6 @@
 find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS
 	Gui OpenGL Sql Svg Widgets Xml
 )
-if(NOT WIN32)
-	find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Multimedia)
-endif()
 if(QT_VERSION VERSION_GREATER_EQUAL 6)
 	find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS OpenGLWidgets)
 endif()
@@ -466,8 +463,20 @@ target_link_libraries(drawpile PRIVATE
 	${QT_PACKAGE_NAME}::Xml
 )
 
-if(NOT WIN32)
+if(AUDIO_IMPL STREQUAL "MINIAUDIO")
+	add_subdirectory(bundled/miniaudio)
+	target_link_libraries(drawpile PRIVATE miniaudio)
+	target_sources(drawpile PRIVATE utils/soundplayer_miniaudio.cpp)
+elseif(AUDIO_IMPL STREQUAL "QT")
+	find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Multimedia)
 	target_link_libraries(drawpile PRIVATE ${QT_PACKAGE_NAME}::Multimedia)
+	if(QT_VERSION_MAJOR VERSION_LESS 6)
+		target_sources(drawpile PRIVATE utils/soundplayer_qt5.cpp)
+	else()
+		target_sources(drawpile PRIVATE utils/soundplayer_qt6.cpp)
+	endif()
+else()
+	message(FATAL_ERROR "Unknown AUDIO_IMPL '${AUDIO_IMPL}'")
 endif()
 
 if(QT_VERSION VERSION_GREATER_EQUAL 6)
@@ -531,14 +540,6 @@ if(WIN32 AND QT_VERSION_MAJOR VERSION_EQUAL 6)
 	# TODO: Check this is doing the right thing
 	target_include_directories(drawpile SYSTEM PRIVATE
 		"${Qt6Gui_PRIVATE_INCLUDE_DIRS}")
-endif()
-
-if(WIN32)
-	target_sources(drawpile PRIVATE utils/soundplayer_win32.cpp)
-elseif(QT_VERSION_MAJOR VERSION_LESS 6)
-	target_sources(drawpile PRIVATE utils/soundplayer_qt5.cpp)
-else()
-	target_sources(drawpile PRIVATE utils/soundplayer_qt6.cpp)
 endif()
 
 if(DISABLE_UPDATE_CHECK_DEFAULT)
@@ -1061,7 +1062,7 @@ if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
 		bundle_translations(bundle_files
 			NAME all
 			OUTPUT_LOCATION i18n-bundle
-			QT qtbase qtmultimedia
+			QT qtbase
 			TARGETS dpclient drawpile
 		)
 	endif()

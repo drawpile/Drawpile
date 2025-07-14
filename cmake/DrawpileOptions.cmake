@@ -103,6 +103,9 @@ add_feature_info(
 	"Use proxy style to fix dark theme contrasts - only needed if not patching Qt, breaks on some non-English Windows versions (PROXY_STYLE)"
 	PROXY_STYLE "")
 
+set(AUDIO_IMPL MINIAUDIO CACHE STRING "Audio playback implementation (MINIAUDIO, QT)")
+add_feature_info("Audio playback implementation (AUDIO_IMPL)" ON ${AUDIO_IMPL})
+
 # Feature info will be emitted later once it is clear whether or not these
 # features could actually be enabled
 option(CLANG_TIDY "Automatically enable Clang-Tidy" OFF)

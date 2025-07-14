@@ -17,6 +17,8 @@ public:
 	void playSound(const QString &path, int volume);
 	bool isPlaying() const;
 
+	QString getBackendName() const;
+
 private:
 	struct Private;
 	Private *d;

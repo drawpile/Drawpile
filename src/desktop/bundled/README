@@ -22,3 +22,8 @@ kis_tablet_support_win.cpp: d7345683f218d90c9b933ff5226b98d023c643c2 (9/2017)
 
 Path in repository: /libs/ui/input/wintab/
 
+
+miniaudio
+---------
+
+Cross-platform audio library. See version info in the file.
