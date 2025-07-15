@@ -1686,7 +1686,7 @@ void DP_brush_engine_free(DP_BrushEngine *be)
         DP_free(be->mask.map);
         DP_layer_content_decref_nullable(be->mask.lc);
         DP_canvas_state_decref_nullable(be->cs);
-        DP_free(be->buffer);
+        DP_free_simd(be->buffer);
         stroke_engine_dispose(&be->se);
         DP_free(be);
     }
