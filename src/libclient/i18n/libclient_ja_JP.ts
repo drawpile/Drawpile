@@ -1766,7 +1766,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+50"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>リダイレクトを受け入れないサーバーにリダイレクトされました：%1</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -1796,17 +1796,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+20"/>
         <source>Incompatible redirect</source>
-        <translation type="unfinished"></translation>
+        <translation>互換性のないリダイレクト</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Circular redirect</source>
-        <translation type="unfinished"></translation>
+        <translation>円形リダイレクト</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Too many redirects</source>
-        <translation type="unfinished"></translation>
+        <translation>多すぎるリダイレクト</translation>
     </message>
     <message>
         <location line="+57"/>
