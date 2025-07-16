@@ -2624,7 +2624,7 @@ static bool cfs_read_key_frames(DP_ProjectCanvasFromSnapshotContext *c,
         }
 
         int layer_id = sqlite3_column_int(frame_stmt, 2);
-        if (layer_id < 0 || layer_id > UINT16_MAX) {
+        if (layer_id < 0 || layer_id > DP_UINT24_MAX) {
             DP_warn("Frame %d layer id in track %d out of bounds", frame_index,
                     track_index);
             layer_id = 0;
