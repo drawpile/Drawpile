@@ -1448,7 +1448,9 @@ static DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
 
 static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
                             const char *flat_image_layer_title,
-                            unsigned int flags, DP_LoadResult *out_result,
+                            unsigned int flags,
+                            const char *(copy_dpcs_fn)(void *),
+                            void *copy_dpcs_user, DP_LoadResult *out_result,
                             DP_SaveImageType *out_type)
 {
     DP_Input *input = DP_file_input_new_from_path(path);
@@ -1482,7 +1484,20 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
     }
     else if (type == DP_SAVE_IMAGE_PROJECT_CANVAS) {
         DP_input_free(input);
-        return DP_load_project_canvas(dc, path, flags, out_result);
+        // On Android, we probably have some kind of content:// URL here that
+        // SQLite can't deal with and we have to copy it to a temporary file.
+        const char *dpcs_path;
+        if (copy_dpcs_fn) {
+            dpcs_path = copy_dpcs_fn(copy_dpcs_user);
+            if (!dpcs_path) {
+                assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
+                return NULL;
+            }
+        }
+        else {
+            dpcs_path = path;
+        }
+        return DP_load_project_canvas(dc, dpcs_path, flags, out_result);
     }
 
     if (!DP_input_rewind(input)) {
@@ -1515,12 +1530,15 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
 
 DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
                         const char *flat_image_layer_title, unsigned int flags,
-                        DP_LoadResult *out_result, DP_SaveImageType *out_type)
+                        const char *(copy_dpcs_fn)(void *),
+                        void *copy_dpcs_user, DP_LoadResult *out_result,
+                        DP_SaveImageType *out_type)
 {
     if (path) {
         DP_PERF_BEGIN_DETAIL(fn, "image", "path=%s,flags=%x", path, flags);
         DP_CanvasState *cs =
-            load(dc, path, flat_image_layer_title, flags, out_result, out_type);
+            load(dc, path, flat_image_layer_title, flags, copy_dpcs_fn,
+                 copy_dpcs_user, out_result, out_type);
         DP_PERF_END(fn);
         return cs;
     }

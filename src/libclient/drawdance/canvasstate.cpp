@@ -21,6 +21,10 @@ extern "C" {
 #include "libclient/drawdance/layergroup.h"
 #include "libclient/drawdance/layerprops.h"
 #include <QObject>
+#ifdef Q_OS_ANDROID
+#	include "libshared/util/paths.h"
+#	include <QFile>
+#endif
 
 namespace drawdance {
 
@@ -40,6 +44,75 @@ CanvasState CanvasState::noinc(DP_CanvasState *cs)
 }
 
 
+#ifdef Q_OS_ANDROID
+namespace {
+class CopyDpcsContext {
+public:
+	CopyDpcsContext(const QString &sourcePath)
+		: m_sourcePath(sourcePath)
+	{
+		tryRemoveTempPath();
+	}
+
+	~CopyDpcsContext()
+	{
+		if(!m_tempPathBytes.isEmpty()) {
+			tryRemoveTempPath();
+		}
+	}
+
+	const char *targetPath() const { return m_tempPathBytes.constData(); }
+
+	bool tryCopyDpcs()
+	{
+		QFile sourceFile(m_sourcePath);
+		qWarning(
+			"Copy '%s' to '%s'", qUtf8Printable(m_sourcePath),
+			qUtf8Printable(m_tempPath));
+		if(sourceFile.copy(m_tempPath)) {
+			m_tempPathBytes = m_tempPath.toUtf8();
+			return true;
+		} else {
+			tryRemoveTempPath();
+			DP_error_set(
+				"Failed to copy '%s' to '%s': %s", qUtf8Printable(m_sourcePath),
+				qUtf8Printable(m_tempPath),
+				qUtf8Printable(sourceFile.errorString()));
+			return false;
+		}
+	}
+
+	void tryRemoveTempPath()
+	{
+		qWarning("Remove temp '%s'", qUtf8Printable(m_tempPath));
+		QFile tempFile(m_tempPath);
+		if(tempFile.exists() && !tempFile.remove()) {
+			qWarning(
+				"Failed to remove temporary '%s': %s",
+				qUtf8Printable(m_tempPath),
+				qUtf8Printable(tempFile.errorString()));
+		}
+	}
+
+	static const char *copyDpcs(void *user)
+	{
+		CopyDpcsContext *copyDpcsContext = static_cast<CopyDpcsContext *>(user);
+		if(copyDpcsContext->tryCopyDpcs()) {
+			return copyDpcsContext->targetPath();
+		} else {
+			return nullptr;
+		}
+	}
+
+private:
+	const QString &m_sourcePath;
+	QString m_tempPath =
+		utils::paths::writablePath(QStringLiteral("_loadtemp.dpcs"));
+	QByteArray m_tempPathBytes;
+};
+}
+#endif
+
 CanvasState CanvasState::load(
 	const QString &path, DP_LoadResult *outResult, DP_SaveImageType *outType)
 {
@@ -47,9 +120,20 @@ CanvasState CanvasState::load(
 	QByteArray flatImageLayerTitleBytes =
 		QObject::tr("Layer %1").arg(1).toUtf8();
 	DrawContext dc = DrawContextPool::acquire();
+	// Android needs to copy content:// URLs to a "real" file so that SQLite can
+	// actually open them.
+#ifdef Q_OS_ANDROID
+	CopyDpcsContext copyDpcsContext(path);
+#endif
 	DP_CanvasState *cs = DP_load(
 		dc.get(), pathBytes.constData(), flatImageLayerTitleBytes.constData(),
-		loadFlags(), outResult, outType);
+		loadFlags(),
+#ifdef Q_OS_ANDROID
+		&CopyDpcsContext::copyDpcs, &copyDpcsContext,
+#else
+		nullptr, nullptr,
+#endif
+		outResult, outType);
 	return CanvasState::noinc(cs);
 }
 

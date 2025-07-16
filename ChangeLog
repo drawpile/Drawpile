@@ -30,7 +30,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Increase canvas size limit to up to 1 million pixels as long as the total canvas size doesn't exceed 1073676289 pixels (32767 squared). Previously each dimension was limited to 32767 instead. Thanks johannesCmayer and yvantot for suggesting and MajorCooke for testing.
  * Feature: A Drawpile 2.2 compatibility mode, allowing you to join sessions hosted with the previous version. Thanks lambda20xx for testing.
  * Feature: Add shortcuts that switch tools and deselect in a single action. Thanks Bonbli for suggesting.
- * Feature: New .dpcs canvas file format that's much faster and in most cases also leads to smaller sizes. Thanks Bonbli for suggesting an optimization to this and hpar for testing.
+ * Feature: New .dpcs canvas file format that's much faster and in most cases also leads to smaller sizes. Thanks Bonbli for suggesting an optimization to this; CosmosX007, Fanshen and hpar for reporting issues.
  * Feature: A gradient tool, which works inside of selections. Thanks ChristianJohnsten, lambda20x, Malrn and Maffi for suggesting.
  * Feature: Preview brushes with fixed X and Y offsets with an offset outline. Thanks Phoneme for suggesting.
  * Fix: Don't mark the canvas as having unsaved changes from just making a selection on it. Thanks MachKerman for reporting.

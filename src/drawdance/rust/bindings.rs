@@ -92,6 +92,10 @@ pub const DP_MSG_PING_STATIC_LENGTH: u32 = 1;
 pub const DP_MSG_PING_STATIC_LENGTH_COMPAT: u32 = 1;
 pub const DP_MSG_KEEP_ALIVE_STATIC_LENGTH: u32 = 0;
 pub const DP_MSG_KEEP_ALIVE_STATIC_LENGTH_COMPAT: u32 = 0;
+pub const DP_MSG_THUMBNAIL_STATIC_LENGTH: u32 = 0;
+pub const DP_MSG_THUMBNAIL_STATIC_LENGTH_COMPAT: u32 = 0;
+pub const DP_MSG_THUMBNAIL_DATA_MIN_SIZE: u32 = 0;
+pub const DP_MSG_THUMBNAIL_DATA_MAX_SIZE: u32 = 65535;
 pub const DP_MSG_JOIN_STATIC_LENGTH: u32 = 2;
 pub const DP_MSG_JOIN_STATIC_LENGTH_COMPAT: u32 = 2;
 pub const DP_MSG_JOIN_FLAGS_AUTH: u32 = 1;
@@ -2840,6 +2844,32 @@ extern "C" {
         max_height: ::std::os::raw::c_int,
         interpolation: ::std::os::raw::c_int,
         out_thumb: *mut *mut DP_Image,
+    ) -> bool;
+}
+extern "C" {
+    pub fn DP_image_thumbnail_from_canvas(
+        cs: *mut DP_CanvasState,
+        dc_or_null: *mut DP_DrawContext,
+        max_width: ::std::os::raw::c_int,
+        max_height: ::std::os::raw::c_int,
+    ) -> *mut DP_Image;
+}
+extern "C" {
+    pub fn DP_image_thumbnail_from_canvas_write(
+        cs: *mut DP_CanvasState,
+        dc_or_null: *mut DP_DrawContext,
+        max_width: ::std::os::raw::c_int,
+        max_height: ::std::os::raw::c_int,
+        write_fn: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: *mut ::std::os::raw::c_void,
+                arg2: *mut DP_Image,
+                arg3: *mut DP_Output,
+            ) -> bool,
+        >,
+        user: *mut ::std::os::raw::c_void,
+        out_buffer: *mut *mut ::std::os::raw::c_void,
+        out_size: *mut usize,
     ) -> bool;
 }
 extern "C" {
@@ -8722,6 +8752,13 @@ extern "C" {
     pub fn DP_image_write_qoi(img: *mut DP_Image, output: *mut DP_Output) -> bool;
 }
 extern "C" {
+    pub fn DP_image_write_webp_lossy(
+        img: *mut DP_Image,
+        output: *mut DP_Output,
+        quality: ::std::os::raw::c_int,
+    ) -> bool;
+}
+extern "C" {
     pub fn DP_image_write_webp(img: *mut DP_Image, output: *mut DP_Output) -> bool;
 }
 pub const DP_SAVE_IMAGE_UNKNOWN: DP_SaveImageType = 0;
@@ -8799,6 +8836,12 @@ extern "C" {
         path: *const ::std::os::raw::c_char,
         flat_image_layer_title: *const ::std::os::raw::c_char,
         flags: ::std::os::raw::c_uint,
+        copy_dpcs_fn: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: *mut ::std::os::raw::c_void,
+            ) -> *const ::std::os::raw::c_char,
+        >,
+        copy_dpcs_user: *mut ::std::os::raw::c_void,
         out_result: *mut DP_LoadResult,
         out_type: *mut DP_SaveImageType,
     ) -> *mut DP_CanvasState;
@@ -9872,6 +9915,7 @@ pub const DP_MSG_SERVER_COMMAND: DP_MessageType = 0;
 pub const DP_MSG_DISCONNECT: DP_MessageType = 1;
 pub const DP_MSG_PING: DP_MessageType = 2;
 pub const DP_MSG_KEEP_ALIVE: DP_MessageType = 3;
+pub const DP_MSG_THUMBNAIL: DP_MessageType = 4;
 pub const DP_MSG_INTERNAL: DP_MessageType = 31;
 pub const DP_MSG_JOIN: DP_MessageType = 32;
 pub const DP_MSG_LEAVE: DP_MessageType = 33;
@@ -10159,6 +10203,57 @@ extern "C" {
         context_id: ::std::os::raw::c_uint,
         reader: *mut DP_TextReader,
     ) -> *mut DP_Message;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MsgThumbnail {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn DP_msg_thumbnail_new(
+        context_id: ::std::os::raw::c_uint,
+        set_data: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: usize,
+                arg2: *mut ::std::os::raw::c_uchar,
+                arg3: *mut ::std::os::raw::c_void,
+            ),
+        >,
+        data_size: usize,
+        data_user: *mut ::std::os::raw::c_void,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_thumbnail_deserialize(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_thumbnail_deserialize_compat(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_thumbnail_parse(
+        context_id: ::std::os::raw::c_uint,
+        reader: *mut DP_TextReader,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_thumbnail_cast(msg: *mut DP_Message) -> *mut DP_MsgThumbnail;
+}
+extern "C" {
+    pub fn DP_msg_thumbnail_data(
+        mt: *const DP_MsgThumbnail,
+        out_size: *mut usize,
+    ) -> *const ::std::os::raw::c_uchar;
+}
+extern "C" {
+    pub fn DP_msg_thumbnail_data_size(mt: *const DP_MsgThumbnail) -> usize;
 }
 extern "C" {
     pub fn DP_msg_join_flags_flag_name(

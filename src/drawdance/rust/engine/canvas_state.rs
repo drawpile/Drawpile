@@ -159,6 +159,8 @@ impl CanvasState {
                 cpath.as_ptr(),
                 flat_image_layer_title.as_ptr(),
                 0,
+                None,
+                null_mut(),
                 null_mut(),
                 null_mut(),
             )
