@@ -19,6 +19,7 @@ class QCursor;
 class QFormLayout;
 class QFrame;
 class QHeaderView;
+class QInputDialog;
 class QKeySequence;
 class QLabel;
 class QWidget;
@@ -260,17 +261,22 @@ QMessageBox *showCritical(
 	QWidget *parent, const QString &title, const QString &text,
 	const QString &informativeText = QString());
 
-void getInputText(
+QInputDialog *getInputText(
 	QWidget *parent, const QString &title, const QString &label,
 	const QString &text, const std::function<void(const QString &)> &fn);
 
-void getInputPassword(
+QInputDialog *getInputPassword(
 	QWidget *parent, const QString &title, const QString &label,
 	const QString &text, const std::function<void(const QString &)> &fn);
 
-void getInputInt(
+QInputDialog *getInputInt(
 	QWidget *parent, const QString &title, const QString &label, int value,
 	int minValue, int maxValue, const std::function<void(int)> &fn);
+
+QInputDialog *getOrRaiseInputInt(
+	QWidget *parent, const QString &objectName, const QString &title, const
+	QString &label, int value, int minValue, int maxValue, const
+	std::function<void(int)> &fn);
 
 bool openOrQuestionUrl(QWidget *parent, const QUrl &url);
 

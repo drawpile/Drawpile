@@ -1120,7 +1120,7 @@ QString scrubAccelerators(const QString &text)
 }
 
 namespace {
-static void getInputTextWith(
+static QInputDialog *getInputTextWith(
 	QWidget *parent, const QString &title, const QString &label,
 	const QString &text, const std::function<void(const QString &)> &fn,
 	QLineEdit::EchoMode echoMode)
@@ -1134,24 +1134,41 @@ static void getInputTextWith(
 	dlg->setTextValue(text);
 	QObject::connect(dlg, &QInputDialog::textValueSelected, parent, fn);
 	dlg->show();
+	return dlg;
+}
+
+static QInputDialog *
+raiseExistingInput(QWidget *parent, const QString &objectName)
+{
+	if(parent && !objectName.isEmpty()) {
+		QInputDialog *existingDlg = parent->findChild<QInputDialog *>(
+			objectName, Qt::FindDirectChildrenOnly);
+		if(existingDlg) {
+			existingDlg->activateWindow();
+			existingDlg->raise();
+			return existingDlg;
+		}
+	}
+	return nullptr;
 }
 }
 
-void getInputText(
+QInputDialog *getInputText(
 	QWidget *parent, const QString &title, const QString &label,
 	const QString &text, const std::function<void(const QString &)> &fn)
 {
-	getInputTextWith(parent, title, label, text, fn, QLineEdit::Normal);
+	return getInputTextWith(parent, title, label, text, fn, QLineEdit::Normal);
 }
 
-void getInputPassword(
+QInputDialog *getInputPassword(
 	QWidget *parent, const QString &title, const QString &label,
 	const QString &text, const std::function<void(const QString &)> &fn)
 {
-	getInputTextWith(parent, title, label, text, fn, QLineEdit::Password);
+	return getInputTextWith(
+		parent, title, label, text, fn, QLineEdit::Password);
 }
 
-void getInputInt(
+QInputDialog *getInputInt(
 	QWidget *parent, const QString &title, const QString &label, int value,
 	int minValue, int maxValue, const std::function<void(int)> &fn)
 {
@@ -1165,6 +1182,22 @@ void getInputInt(
 	dlg->setIntValue(value);
 	QObject::connect(dlg, &QInputDialog::intValueSelected, parent, fn);
 	dlg->show();
+	return dlg;
+}
+
+QInputDialog *getOrRaiseInputInt(
+	QWidget *parent, const QString &objectName, const QString &title,
+	const QString &label, int value, int minValue, int maxValue,
+	const std::function<void(int)> &fn)
+{
+	if(QInputDialog *existingDlg = raiseExistingInput(parent, objectName)) {
+		return existingDlg;
+	} else {
+		QInputDialog *dlg =
+			getInputInt(parent, title, label, value, minValue, maxValue, fn);
+		dlg->setObjectName(objectName);
+		return dlg;
+	}
 }
 
 bool openOrQuestionUrl(QWidget *parent, const QUrl &url)

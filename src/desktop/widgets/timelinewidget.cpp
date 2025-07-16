@@ -1487,8 +1487,8 @@ void TimelineWidget::deleteTrack()
 void TimelineWidget::setFrameCount()
 {
 	if(d->editable) {
-		utils::getInputInt(
-			this, tr("Change Frame Count"),
+		utils::getOrRaiseInputInt(
+			this, QStringLiteral("framecountdlg"), tr("Change Frame Count"),
 			tr("Frame Count (key frames beyond this point will be deleted)"),
 			d->frameCount(), 1, 9999, [this](int frameCount) {
 				changeFrameCount(frameCount);
@@ -1499,9 +1499,10 @@ void TimelineWidget::setFrameCount()
 void TimelineWidget::setFramerate()
 {
 	if(d->editable) {
-		utils::getInputInt(
-			this, tr("Change Framerate"), tr("Frames Per Second (FPS)"),
-			d->framerate(), 1, 999, [this](int framerate) {
+		utils::getOrRaiseInputInt(
+			this, QStringLiteral("frameratedlg"), tr("Change Framerate"),
+			tr("Frames Per Second (FPS)"), d->framerate(), 1, 999,
+			[this](int framerate) {
 				changeFramerate(framerate);
 			});
 	}
