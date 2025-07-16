@@ -503,8 +503,13 @@ if(QT_VERSION VERSION_GREATER_EQUAL 6)
 endif()
 
 if(WIN32)
+	if(USE_BETA_ICON)
+		set(DRAWPILE_ICO drawpilebeta.ico)
+	else()
+		set(DRAWPILE_ICO drawpile.ico)
+	endif()
 	target_sources(drawpile PRIVATE
-		icons/drawpile.ico
+		"icons/${DRAWPILE_ICO}"
 		utils/wineventfilter.h
 		utils/wineventfilter.cpp
 	)
