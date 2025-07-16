@@ -185,7 +185,7 @@ Message makeLayerAclMessage(
 }
 
 Message makeLayerTreeCreateMessage(
-	uint8_t contextId, uint32_t id, uint16_t source, uint16_t target,
+	uint8_t contextId, uint32_t id, uint32_t source, uint32_t target,
 	uint32_t fill, uint8_t flags, const QString &name)
 {
 	QByteArray bytes = name.toUtf8();
