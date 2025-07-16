@@ -1225,7 +1225,9 @@ Subrange: [%3, %4]</source>
         <source>This session is hosted on another server, you will be redirected.
 
 To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>このセッションは別のサーバーでホストされており、リダイレクトされます。
+
+この余分なステップを省略したい場合、代わりにページを参照するか、セッションへの直接リンクを使用してください。</translation>
     </message>
     <message>
         <location line="-440"/>
@@ -5597,52 +5599,52 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="-284"/>
         <source>No dynamics</source>
-        <translation type="unfinished">ダイナミクスなし</translation>
+        <translation>ダイナミクスなし</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished">筆圧のダイナミクス</translation>
+        <translation>筆圧のダイナミクス</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished">速度のダイナミクス</translation>
+        <translation>速度のダイナミクス</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished">間隔ダイナミクス</translation>
+        <translation>間隔ダイナミクス</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished">最大の速度: </translation>
+        <translation>最大の速度: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished">最大の間隔: </translation>
+        <translation>最大の間隔: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished">サイズ、不透明度、硬さ、混色、ジッターの最大速度を一度に設定します。</translation>
+        <translation>サイズ、不透明度、硬さ、混色、ジッターの最大速度を一度に設定します。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished">このブラシのすべての設定に設定された最大速度です。</translation>
+        <translation>このブラシのすべての設定に設定された最大速度です。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished">サイズ、不透明度、硬さ、混色、ジッターの最大距離を一度に設定します。</translation>
+        <translation>サイズ、不透明度、硬さ、混色、ジッターの最大距離を一度に設定します。</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished">このブラシのすべての設定に設定されている最大間隔。</translation>
+        <translation>このブラシのすべての設定に設定されている最大間隔。</translation>
     </message>
     <message>
         <location line="+89"/>
@@ -7694,7 +7696,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+25"/>
         <source>(redirected from %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>(%1からリダイレクト)</translation>
     </message>
     <message>
         <location line="+139"/>
