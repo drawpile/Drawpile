@@ -1160,9 +1160,9 @@ void getInputInt(
 	dlg->setWindowTitle(title);
 	dlg->setLabelText(label);
 	dlg->setInputMode(QInputDialog::IntInput);
-	dlg->setIntValue(value);
 	dlg->setIntMinimum(minValue);
 	dlg->setIntMaximum(maxValue);
+	dlg->setIntValue(value);
 	QObject::connect(dlg, &QInputDialog::intValueSelected, parent, fn);
 	dlg->show();
 }
