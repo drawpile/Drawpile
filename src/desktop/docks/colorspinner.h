@@ -50,9 +50,6 @@ public slots:
 signals:
 	void colorSelected(const QColor &color);
 
-protected:
-	void showEvent(QShowEvent *event) override;
-
 private:
 	void updateShapeAction();
 	void setSwatchFlags(int flags);
