@@ -32,6 +32,7 @@ Unreleased Version 2.2.3-pre
  * Fix: Don't crash on macOS when inputting an invalid session address to join. Thanks Charmandrigo for reporting and Axocrat for testing.
  * Fix: Restore normal layer view mode when loading a canvas into the same window.
  * Fix: Replace the notification sound playback backend, which should make it work on Android, the Linux AppImage and on 32 bit Windows. It should hopefully also no longer have occasional crashes on some Linux and Windows systems.
+ * Server Fix: The server now checks whether it can actually start with a GUI if you run it without arguments on Linux and other non-macOS Unix systems, rather than trying it and crashing because you don't have a graphical environment. Thanks Epiglottal Axolotl for reporting.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.
