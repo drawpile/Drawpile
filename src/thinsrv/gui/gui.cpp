@@ -131,6 +131,10 @@ bool start() {
 	QCommandLineOption guiOption(QStringList() << "gui", "Run the graphical version.");
 	parser.addOption(guiOption);
 
+	// --no-gui (dito)
+	QCommandLineOption noGuiOption(QStringList() << "no-gui", "Run the headless version.");
+	parser.addOption(noGuiOption);
+
 	// remote <address>
 	QCommandLineOption remoteOption(QStringList() << "remote", "Remote admin mode", "address");
 	parser.addOption(remoteOption);

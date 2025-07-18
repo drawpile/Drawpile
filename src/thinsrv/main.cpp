@@ -73,7 +73,8 @@ int main(int argc, char *argv[])
 		for(int i = 1; i < argc; ++i) {
 			if(strcmp(argv[i], "--gui") == 0) {
 				useGui = true;
-				break;
+			} else if(strcmp(argv[i], "--no-gui") == 0) {
+				useGui = false;
 			}
 		}
 	}
