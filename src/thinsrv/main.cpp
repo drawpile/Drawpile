@@ -17,6 +17,35 @@
 #	include <unistd.h>
 #endif
 
+namespace {
+// Guess whether this system is running without a screen. Only really does
+// something on Unix-esque systems by looking whether DISPLAY or WAYLAND_DISPLAY
+// is set. Those variables aren't always defined I think, but it's okay to miss
+// those cases since the server will still run, rather than the other way round
+// where it will just crash on startup due to lack of a display server.
+static bool isHeadless()
+{
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
+	const char *keys[] = {"DISPLAY", "WAYLAND_DISPLAY"};
+	for(const char *key : keys) {
+		QByteArray value = qgetenv(key);
+		if(!value.isEmpty()) {
+			QString s = QString::fromUtf8(value);
+			// Internet search says that some people set these environment
+			// variables to "values that definitely don't exist" to prevent some
+			// programs starting with a screen, so let's try to weed those out.
+			if(s.compare(QStringLiteral("false"), Qt::CaseInsensitive) != 0 &&
+			   s.compare(QStringLiteral("no"), Qt::CaseInsensitive) != 0) {
+				return false;
+			}
+		}
+	}
+	return true;
+#else
+	return false;
+#endif
+}
+}
 
 int main(int argc, char *argv[])
 {
@@ -40,7 +69,7 @@ int main(int argc, char *argv[])
 #ifdef HAVE_SERVERGUI
 	bool useGui = false;
 	if(initsys::getListenFds().isEmpty()) {
-		useGui = argc == 1;
+		useGui = argc <= 1 && !isHeadless();
 		for(int i = 1; i < argc; ++i) {
 			if(strcmp(argv[i], "--gui") == 0) {
 				useGui = true;
