@@ -216,6 +216,14 @@ bool GradientTool::isMultipart() const
 	return !m_points.isEmpty();
 }
 
+void GradientTool::setActiveLayer(int layerId)
+{
+	Q_UNUSED(layerId);
+	if(isMultipart()) {
+		updatePending();
+	}
+}
+
 void GradientTool::setSelectionValid(bool selectionValid)
 {
 	if(isMultipart()) {

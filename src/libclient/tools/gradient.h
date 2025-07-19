@@ -33,6 +33,7 @@ public:
 	void redoMultipart() override;
 	bool isMultipart() const override;
 
+	void setActiveLayer(int layerId) override;
 	void setSelectionValid(bool selectionValid) override;
 
 	void setParameters(
