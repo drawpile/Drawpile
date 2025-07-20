@@ -109,6 +109,7 @@ typedef struct DP_MyPaintBrush {
     DP_BlendMode brush_mode;
     DP_BlendMode erase_mode;
     bool erase;
+    bool pixel_perfect;
 } DP_MyPaintBrush;
 
 

@@ -275,6 +275,7 @@ struct BrushSettingsDialog::Private {
 	struct MyPaintPage {
 		KisDoubleSliderSpinBox *baseValueSpinner;
 		QCheckBox *syncSamplesBox;
+		QCheckBox *pixelPerfectBox;
 		widgets::MyPaintInput *inputs[MYPAINT_BRUSH_INPUTS_COUNT];
 		QLabel *constantLabel;
 		QLabel *disabledLabel;
@@ -736,13 +737,12 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 			emitChange();
 		}));
 
-	d->pixelPerfectBox = new QCheckBox{tr("Pixel-perfect"), widget};
-	d->pixelPerfectBox->setIcon(QIcon::fromTheme("drawpile_square"));
+	d->pixelPerfectBox = buildPixelPerfectBox();
 	layout->addRow(d->pixelPerfectBox);
 	connect(
 		d->pixelPerfectBox, &QCheckBox::clicked,
 		makeBrushChangeCallbackArg<bool>([this](bool checked) {
-			d->brush.classic().pixel_perfect = checked;
+			d->brush.setPixelPerfect(checked);
 			emitChange();
 		}));
 
@@ -1322,6 +1322,8 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 		mypaint_brush_setting_info(MyPaintBrushSetting(setting));
 	Private::MyPaintPage &page = d->myPaintPages[setting];
 
+	page.syncSamplesBox = nullptr;
+	page.pixelPerfectBox = nullptr;
 	if(isSmudgeMyPaintSetting(setting)) {
 		page.syncSamplesBox = buildSyncSamplesBox();
 		layout->addWidget(page.syncSamplesBox);
@@ -1331,8 +1333,15 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 				d->brush.myPaint().setSyncSamples(checked);
 				emitChange();
 			});
-	} else {
-		page.syncSamplesBox = nullptr;
+	} else if(isPixelPerfectMyPaintSetting(setting)) {
+		page.pixelPerfectBox = buildPixelPerfectBox();
+		layout->addWidget(page.pixelPerfectBox);
+		connect(
+			page.pixelPerfectBox, &QCheckBox::clicked, this,
+			[this](bool checked) {
+				d->brush.myPaint().setPixelPerfect(checked);
+				emitChange();
+			});
 	}
 
 	page.baseValueSpinner = new KisDoubleSliderSpinBox{widget};
@@ -1432,6 +1441,15 @@ QCheckBox *BrushSettingsDialog::buildSyncSamplesBox()
 		tr("This will make the brush to wait for its own stroke to finish to "
 		   "allow it to accurately smudge with itself.\nIf fast strokes cause "
 		   "artifacts when smudging, enabling this can help."));
+	return box;
+}
+
+QCheckBox *BrushSettingsDialog::buildPixelPerfectBox()
+{
+	QCheckBox *box = new QCheckBox(tr("Pixel-perfect"));
+	box->setIcon(QIcon::fromTheme("drawpile_pixelperfect"));
+	box->setToolTip(
+		tr("Prevents L-shaped curves, mostly useful for small pixel brushes."));
 	return box;
 }
 
@@ -1599,7 +1617,8 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 {
 	const DP_MyPaintBrush &brush = d->brush.myPaint().constBrush();
 	d->colorPickBox->setVisible(false);
-	d->pixelPerfectBox->setVisible(false);
+	d->pixelPerfectBox->setVisible(true);
+	d->pixelPerfectBox->setChecked(brush.pixel_perfect);
 	d->spacingSpinner->setVisible(false);
 
 	int brushMode = DP_mypaint_brush_blend_mode(&brush);
@@ -1652,12 +1671,22 @@ void BrushSettingsDialog::updateMyPaintSettingPage(int setting)
 		break;
 	}
 
-	page.baseValueSpinner->setVisible(enabled);
+	bool pixelPerfect;
+	if(page.pixelPerfectBox) {
+		pixelPerfect = mypaint.isPixelPerfect();
+		page.pixelPerfectBox->setChecked(pixelPerfect);
+		page.pixelPerfectBox->setVisible(enabled);
+	} else {
+		pixelPerfect = false;
+	}
+
+	bool visible = enabled && !pixelPerfect;
+	page.baseValueSpinner->setVisible(visible);
 
 	const MyPaintBrushSettingInfo *settingInfo =
 		mypaint_brush_setting_info(MyPaintBrushSetting(setting));
 	if(settingInfo->constant) {
-		page.constantLabel->setVisible(enabled);
+		page.constantLabel->setVisible(visible);
 	} else {
 		for(int input = 0; input < MYPAINT_BRUSH_INPUTS_COUNT; ++input) {
 			widgets::MyPaintInput *inputWidget = page.inputs[input];
@@ -1668,7 +1697,7 @@ void BrushSettingsDialog::updateMyPaintSettingPage(int setting)
 				inputWidget->setControlPoints(mapping.inputs[input]);
 				mypaint.setCurve(setting, input, inputWidget->myPaintCurve());
 			}
-			inputWidget->setVisible(enabled);
+			inputWidget->setVisible(visible);
 		}
 	}
 
@@ -1793,6 +1822,18 @@ bool BrushSettingsDialog::isSmudgeMyPaintSetting(int setting)
 	case MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH_LOG:
 	case MYPAINT_BRUSH_SETTING_SMUDGE_BUCKET:
 	case MYPAINT_BRUSH_SETTING_SMUDGE_TRANSPARENCY:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool BrushSettingsDialog::isPixelPerfectMyPaintSetting(int setting)
+{
+	switch(setting) {
+	case MYPAINT_BRUSH_SETTING_HARDNESS:
+	case MYPAINT_BRUSH_SETTING_ANTI_ALIASING:
+	case MYPAINT_BRUSH_SETTING_SNAP_TO_PIXEL:
 		return true;
 	default:
 		return false;

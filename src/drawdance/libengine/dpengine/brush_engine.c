@@ -87,6 +87,31 @@ typedef struct DP_SplinePoint {
     bool drawn;
 } DP_SplinePoint;
 
+typedef struct DP_PixelDabParams {
+    uint8_t flags;
+    uint8_t opacity;
+    uint16_t size;
+    int32_t x;
+    int32_t y;
+    uint32_t color;
+} DP_PixelDabParams;
+
+typedef struct DP_MyPaintDabParams {
+    uint8_t flags;
+    uint8_t mode;
+    uint8_t lock_alpha;
+    uint8_t colorize;
+    uint8_t posterize;
+    uint8_t opacity;
+    uint8_t hardness;
+    uint8_t angle;
+    uint8_t aspect_ratio;
+    int32_t x;
+    int32_t y;
+    uint32_t size;
+    uint32_t color;
+} DP_MyPaintDabParams;
+
 struct DP_StrokeEngine {
     struct {
         bool enabled;
@@ -195,16 +220,18 @@ struct DP_BrushEngine {
         void *buffer;
     } dabs;
     struct {
+        bool perfect;
         bool have_last;
         bool have_tentative;
-        uint8_t tentative_flags;
-        uint8_t tentative_opacity;
-        uint16_t tentative_size;
         int last_x;
         int last_y;
         int tentative_x;
         int tentative_y;
-        uint32_t tentative_color;
+        union {
+            int dummy; // Make this initializable without the compiler whining.
+            DP_PixelDabParams pixel;
+            DP_MyPaintDabParams mypaint;
+        } tentative_dab;
     } pixel;
     DP_BrushEnginePushMessageFn push_message;
     DP_BrushEnginePollControlFn poll_control;
@@ -1077,56 +1104,123 @@ static bool handle_selection_mask(DP_BrushEngine *be, DP_PaintMode paint_mode,
 }
 
 
+static bool is_tentative_pixel(int x1, int y1, int x2, int y2)
+{
+    return abs(x2 - x1) <= 1 && abs(y2 - y1) <= 1;
+}
+
+static void pixel_perfect_apply(DP_BrushEngine *be, int x, int y,
+                                void (*append_dab)(DP_BrushEngine *, void *),
+                                void (*append_tentative)(DP_BrushEngine *),
+                                void (*assign_tentative)(DP_BrushEngine *,
+                                                         void *),
+                                void *user)
+{
+    // For "pixel-perfect" drawing, we want to avoid doubling up dabs that are
+    // one pixel away from the previous dab. For that, we hold onto at most one
+    // tentative dab and clobber it if the subsequent pixel would again only be
+    // one pixel from the previous one.
+    if (be->pixel.perfect) {
+        if (be->pixel.have_last) {
+            // Check if we need to flush a currently stashed tentative dab.
+            bool last_tentative =
+                is_tentative_pixel(x, y, be->pixel.last_x, be->pixel.last_y);
+            if (be->pixel.have_tentative && !last_tentative) {
+                be->pixel.have_tentative = false;
+                be->pixel.last_x = be->pixel.tentative_x;
+                be->pixel.last_y = be->pixel.tentative_y;
+                last_tentative = is_tentative_pixel(x, y, be->pixel.last_x,
+                                                    be->pixel.last_y);
+                append_tentative(be);
+            }
+            // Consider stashing the dab if it's too close to the previous one
+            // to be sure if it's perfect and bail out int that case. If there
+            // was a prior tentative dab, it will be clobbered. If it is far
+            // enough away from the previously placed dab then just flush it.
+            if (last_tentative) {
+                be->pixel.have_tentative = true;
+                be->pixel.tentative_x = x;
+                be->pixel.tentative_y = y;
+                assign_tentative(be, user);
+                return;
+            }
+            else {
+                be->pixel.last_x = x;
+                be->pixel.last_y = y;
+            }
+        }
+        else {
+            // First dab is always perfect.
+            be->pixel.have_last = true;
+            be->pixel.last_x = x;
+            be->pixel.last_y = y;
+        }
+    }
+    // Not a tentative dab, put it down.
+    append_dab(be, user);
+}
+
+
 static DP_Rect pixel_dab_bounds(int x, int y, int dab_size)
 {
     int radius = (dab_size + 1) / 2;
     return (DP_Rect){x - radius, y - radius, x + radius, y + radius};
 }
 
-static bool is_tentative_pixel(int x1, int y1, int x2, int y2)
-{
-    return abs(x2 - x1) <= 1 && abs(y2 - y1) <= 1;
-}
-
-static void append_pixel_dab(DP_BrushEngine *be, uint8_t dab_flags,
-                             uint8_t dab_opacity, uint16_t dab_size,
-                             int32_t dab_x, int32_t dab_y, uint32_t dab_color)
+static void append_pixel_dab(DP_BrushEngine *be, const DP_PixelDabParams *dab)
 {
     int used = be->dabs.used;
     int8_t dx, dy;
     bool can_append = used != 0 && used < DP_MSG_DRAW_DABS_PIXEL_DABS_MAX
-                   && be->classic.dab_flags == dab_flags
-                   && be->classic.dab_color == dab_color
-                   && delta_xy(be, dab_x, dab_y, &dx, &dy);
-    be->dabs.last_x = dab_x;
-    be->dabs.last_y = dab_y;
+                   && be->classic.dab_flags == dab->flags
+                   && be->classic.dab_color == dab->color
+                   && delta_xy(be, dab->x, dab->y, &dx, &dy);
+    be->dabs.last_x = dab->x;
+    be->dabs.last_y = dab->y;
 
     if (!can_append) {
         DP_brush_engine_dabs_flush(be);
-        be->classic.dab_flags = dab_flags;
-        be->classic.dab_x = dab_x;
-        be->classic.dab_y = dab_y;
-        be->classic.dab_color = dab_color;
+        be->classic.dab_flags = dab->flags;
+        be->classic.dab_x = dab->x;
+        be->classic.dab_y = dab->y;
+        be->classic.dab_color = dab->color;
         dx = 0;
         dy = 0;
     }
 
     DP_BrushEnginePixelDab *dabs = get_dab_buffer(be, sizeof(*dabs));
     dabs[be->dabs.used++] =
-        (DP_BrushEnginePixelDab){dx, dy, dab_size, dab_opacity};
+        (DP_BrushEnginePixelDab){dx, dy, dab->size, dab->opacity};
+}
+
+static void pixel_perfect_append_pixel(DP_BrushEngine *be, void *user)
+{
+    append_pixel_dab(be, user);
+}
+
+static void pixel_perfect_append_tentative_pixel(DP_BrushEngine *be)
+{
+    append_pixel_dab(be, &be->pixel.tentative_dab.pixel);
+}
+
+static void pixel_perfect_assign_tentative_pixel(DP_BrushEngine *be, void *user)
+{
+    DP_PixelDabParams *dab = user;
+    be->pixel.tentative_dab.pixel = *dab;
 }
 
 static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
                           float pressure, float velocity, float distance)
 {
-    uint16_t dab_size = DP_classic_brush_pixel_dab_size_at(
+    DP_PixelDabParams dab;
+    dab.size = DP_classic_brush_pixel_dab_size_at(
         cb, pressure, velocity, distance, be->stroke.compatibility_mode);
-    uint8_t dab_opacity =
+    dab.opacity =
         DP_classic_brush_dab_opacity_at(cb, pressure, velocity, distance);
 
     float jitter = DP_classic_brush_jitter_at(cb, pressure, velocity, distance);
     if (jitter > 0.0f) {
-        float length = brush_engine_randf(be) * DP_uint16_to_float(dab_size)
+        float length = brush_engine_randf(be) * DP_uint16_to_float(dab.size)
                      * 2.0f * jitter;
         float angle = brush_engine_randf(be) * (float)M_PI * 2.0f;
         x += DP_float_to_int(roundf(length * cosf(angle)));
@@ -1135,56 +1229,18 @@ static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
 
     uint8_t mask_flags;
     DP_PaintMode paint_mode = get_classic_brush_paint_mode(be, cb);
-    if (dab_size > 0 && dab_opacity > 0
+    if (dab.size > 0 && dab.opacity > 0
         && handle_selection_mask(
-            be, paint_mode, pixel_dab_bounds(x, y, dab_size), &mask_flags)) {
-        uint8_t dab_flags = (uint8_t)paint_mode | mask_flags;
-        int32_t dab_x = DP_int_to_int32(x);
-        int32_t dab_y = DP_int_to_int32(y);
-        uint32_t dab_color = combine_upixel_float(
+            be, paint_mode, pixel_dab_bounds(x, y, dab.size), &mask_flags)) {
+        dab.flags = (uint8_t)paint_mode | mask_flags;
+        dab.x = DP_int_to_int32(x);
+        dab.y = DP_int_to_int32(y);
+        dab.color = combine_upixel_float(
             blend_classic_color(be, cb, pressure, velocity, distance));
 
-        if (be->classic.brush.pixel_perfect) {
-            if (!be->pixel.have_last) {
-                be->pixel.have_last = true;
-                be->pixel.last_x = x;
-                be->pixel.last_y = y;
-            }
-            else {
-                bool last_tentative = is_tentative_pixel(x, y, be->pixel.last_x,
-                                                         be->pixel.last_y);
-                if (be->pixel.have_tentative && !last_tentative) {
-                    be->pixel.have_tentative = false;
-                    be->pixel.last_x = be->pixel.tentative_x;
-                    be->pixel.last_y = be->pixel.tentative_y;
-                    last_tentative = is_tentative_pixel(x, y, be->pixel.last_x,
-                                                        be->pixel.last_y);
-                    append_pixel_dab(
-                        be, be->pixel.tentative_flags,
-                        be->pixel.tentative_opacity, be->pixel.tentative_size,
-                        be->pixel.tentative_x, be->pixel.tentative_y,
-                        be->pixel.tentative_color);
-                }
-
-                if (last_tentative) {
-                    be->pixel.have_tentative = true;
-                    be->pixel.tentative_flags = dab_flags;
-                    be->pixel.tentative_opacity = dab_opacity;
-                    be->pixel.tentative_x = dab_x;
-                    be->pixel.tentative_y = dab_y;
-                    be->pixel.tentative_size = dab_size;
-                    be->pixel.tentative_color = dab_color;
-                    return;
-                }
-                else {
-                    be->pixel.last_x = x;
-                    be->pixel.last_y = y;
-                }
-            }
-        }
-
-        append_pixel_dab(be, dab_flags, dab_opacity, dab_size, dab_x, dab_y,
-                         dab_color);
+        pixel_perfect_apply(be, x, y, pixel_perfect_append_pixel,
+                            pixel_perfect_append_tentative_pixel,
+                            pixel_perfect_assign_tentative_pixel, &dab);
     }
 }
 
@@ -1408,6 +1464,59 @@ static uint8_t get_mypaint_dab_aspect_ratio(float aspect_ratio)
     return DP_float_to_uint8(CLAMP(value, 0, UINT8_MAX));
 }
 
+static void append_mypaint_dab(DP_BrushEngine *be,
+                               const DP_MyPaintDabParams *dab)
+{
+    int used = be->dabs.used;
+    int8_t dx, dy;
+    bool can_append = used != 0 && used < DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX
+                   && be->mypaint.dab_color == dab->color
+                   && be->mypaint.dab_flags == dab->flags
+                   && be->mypaint.dab_lock_alpha == dab->lock_alpha
+                   && be->mypaint.dab_colorize == dab->colorize
+                   && be->mypaint.dab_posterize == dab->posterize
+                   && be->mypaint.dab_mode == dab->mode
+                   && delta_xy(be, dab->x, dab->y, &dx, &dy);
+    be->dabs.last_x = dab->x;
+    be->dabs.last_y = dab->y;
+
+    if (!can_append) {
+        DP_brush_engine_dabs_flush(be);
+        be->mypaint.dab_x = dab->x;
+        be->mypaint.dab_y = dab->y;
+        be->mypaint.dab_color = dab->color;
+        be->mypaint.dab_flags = dab->flags;
+        be->mypaint.dab_lock_alpha = dab->lock_alpha;
+        be->mypaint.dab_colorize = dab->colorize;
+        be->mypaint.dab_posterize = dab->posterize;
+        be->mypaint.dab_mode = dab->mode;
+        dx = 0;
+        dy = 0;
+    }
+
+    DP_BrushEngineMyPaintDab *dabs = get_dab_buffer(be, sizeof(*dabs));
+    dabs[be->dabs.used++] = (DP_BrushEngineMyPaintDab){
+        dx,           dy,         dab->size,        dab->hardness,
+        dab->opacity, dab->angle, dab->aspect_ratio};
+}
+
+static void pixel_perfect_append_mypaint(DP_BrushEngine *be, void *user)
+{
+    append_mypaint_dab(be, user);
+}
+
+static void pixel_perfect_append_tentative_mypaint(DP_BrushEngine *be)
+{
+    append_mypaint_dab(be, &be->pixel.tentative_dab.mypaint);
+}
+
+static void pixel_perfect_assign_tentative_mypaint(DP_BrushEngine *be,
+                                                   void *user)
+{
+    DP_MyPaintDabParams *dab = user;
+    be->pixel.tentative_dab.mypaint = *dab;
+}
+
 static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
                                    float radius, float color_r, float color_g,
                                    float color_b, float opaque, float hardness,
@@ -1434,126 +1543,95 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
         return 0;
     }
 
-    uint32_t dab_size =
-        get_mypaint_dab_size(radius, be->stroke.compatibility_mode);
+    DP_MyPaintDabParams dab;
+    dab.size = get_mypaint_dab_size(radius, be->stroke.compatibility_mode);
     uint8_t mask_flags;
     if (!handle_selection_mask(
             be, paint_mode,
-            subpixel_dab_bounds(x, y, DP_uint32_to_float(dab_size) / 256.0f),
+            subpixel_dab_bounds(x, y, DP_uint32_to_float(dab.size) / 256.0f),
             &mask_flags)) {
         return 0;
     }
 
-    int32_t dab_x = DP_float_to_int32(x * 4.0f);
-    int32_t dab_y = DP_float_to_int32(y * 4.0f);
-    uint32_t dab_color;
-    uint8_t dab_flags, dab_lock_alpha, dab_colorize, dab_posterize, dab_mode;
-
+    dab.x = DP_float_to_int32(x * 4.0f);
+    dab.y = DP_float_to_int32(y * 4.0f);
     if (be->stroke.compatibility_mode) {
         if (paint_mode == DP_PAINT_MODE_DIRECT) {
-            dab_flags = 0;
+            dab.flags = 0;
             switch (blend_mode) {
             case DP_BLEND_MODE_ERASE:
             case DP_BLEND_MODE_ERASE_PRESERVE:
-                dab_color = 0;
-                dab_lock_alpha = 0;
-                dab_colorize = 0;
-                dab_posterize = 0;
-                dab_mode = 0;
+                dab.color = 0;
+                dab.lock_alpha = 0;
+                dab.colorize = 0;
+                dab.posterize = 0;
+                dab.mode = 0;
                 break;
             case DP_BLEND_MODE_RECOLOR:
-                dab_color = get_mypaint_dab_color(color_r, color_g, color_b,
+                dab.color = get_mypaint_dab_color(color_r, color_g, color_b,
                                                   alpha_eraser);
-                dab_lock_alpha = 255;
-                dab_colorize = 0;
-                dab_posterize = 0;
-                dab_mode = 0;
+                dab.lock_alpha = 255;
+                dab.colorize = 0;
+                dab.posterize = 0;
+                dab.mode = 0;
                 break;
             case DP_BLEND_MODE_COLOR:
             case DP_BLEND_MODE_COLOR_ALPHA:
-                dab_color = get_mypaint_dab_color(color_r, color_g, color_b,
+                dab.color = get_mypaint_dab_color(color_r, color_g, color_b,
                                                   alpha_eraser);
-                dab_lock_alpha = 0;
-                dab_colorize = 255;
-                dab_posterize = 0;
-                dab_mode = 0;
+                dab.lock_alpha = 0;
+                dab.colorize = 255;
+                dab.posterize = 0;
+                dab.mode = 0;
                 break;
             default:
-                dab_color = get_mypaint_dab_color(color_r, color_g, color_b,
+                dab.color = get_mypaint_dab_color(color_r, color_g, color_b,
                                                   alpha_eraser);
-                dab_lock_alpha = get_mypaint_dab_lock_alpha(lock_alpha);
-                dab_colorize = get_mypaint_dab_colorize(colorize);
-                dab_posterize = get_mypaint_dab_posterize(posterize);
-                dab_mode =
-                    get_mypaint_dab_posterize_num(dab_posterize, posterize_num);
+                dab.lock_alpha = get_mypaint_dab_lock_alpha(lock_alpha);
+                dab.colorize = get_mypaint_dab_colorize(colorize);
+                dab.posterize = get_mypaint_dab_posterize(posterize);
+                dab.mode =
+                    get_mypaint_dab_posterize_num(dab.posterize, posterize_num);
                 break;
             }
         }
         else {
-            dab_color = get_mypaint_dab_color(color_r, color_g, color_b, 1.0f);
-            dab_flags = 0;
-            dab_lock_alpha = 0;
-            dab_colorize = 0;
-            dab_posterize = 0;
-            dab_mode =
+            dab.color = get_mypaint_dab_color(color_r, color_g, color_b, 1.0f);
+            dab.flags = 0;
+            dab.lock_alpha = 0;
+            dab.colorize = 0;
+            dab.posterize = 0;
+            dab.mode =
                 DP_MYPAINT_BRUSH_MODE_FLAG | get_mypaint_dab_mode(blend_mode);
         }
     }
     else if (paint_mode == DP_PAINT_MODE_DIRECT
              && is_normal_mypaint_mode(blend_mode)) {
-        dab_color =
+        dab.color =
             get_mypaint_dab_color(color_r, color_g, color_b, alpha_eraser);
-        dab_flags = get_mypaint_dab_blend_mode_flag(blend_mode) | mask_flags;
-        dab_lock_alpha = get_mypaint_dab_lock_alpha(lock_alpha);
-        dab_colorize = get_mypaint_dab_colorize(colorize);
-        dab_posterize = get_mypaint_dab_posterize(posterize);
-        dab_mode = get_mypaint_dab_posterize_num(dab_posterize, posterize_num);
+        dab.flags = get_mypaint_dab_blend_mode_flag(blend_mode) | mask_flags;
+        dab.lock_alpha = get_mypaint_dab_lock_alpha(lock_alpha);
+        dab.colorize = get_mypaint_dab_colorize(colorize);
+        dab.posterize = get_mypaint_dab_posterize(posterize);
+        dab.mode = get_mypaint_dab_posterize_num(dab.posterize, posterize_num);
     }
     else {
-        dab_color = get_mypaint_dab_color(color_r, color_g, color_b, 1.0f);
-        dab_flags = (uint8_t)paint_mode | mask_flags;
-        dab_lock_alpha = 0;
-        dab_colorize = 0;
-        dab_posterize = 0;
-        dab_mode = 0;
+        dab.color = get_mypaint_dab_color(color_r, color_g, color_b, 1.0f);
+        dab.flags = (uint8_t)paint_mode | mask_flags;
+        dab.lock_alpha = 0;
+        dab.colorize = 0;
+        dab.posterize = 0;
+        dab.mode = 0;
     }
 
-    int used = be->dabs.used;
-    int8_t dx, dy;
-    bool can_append = used != 0 && used < DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX
-                   && be->mypaint.dab_color == dab_color
-                   && be->mypaint.dab_flags == dab_flags
-                   && be->mypaint.dab_lock_alpha == dab_lock_alpha
-                   && be->mypaint.dab_colorize == dab_colorize
-                   && be->mypaint.dab_posterize == dab_posterize
-                   && be->mypaint.dab_mode == dab_mode
-                   && delta_xy(be, dab_x, dab_y, &dx, &dy);
-    be->dabs.last_x = dab_x;
-    be->dabs.last_y = dab_y;
-
-    if (!can_append) {
-        DP_brush_engine_dabs_flush(be);
-        be->mypaint.dab_x = dab_x;
-        be->mypaint.dab_y = dab_y;
-        be->mypaint.dab_color = dab_color;
-        be->mypaint.dab_flags = dab_flags;
-        be->mypaint.dab_lock_alpha = dab_lock_alpha;
-        be->mypaint.dab_colorize = dab_colorize;
-        be->mypaint.dab_posterize = dab_posterize;
-        be->mypaint.dab_mode = dab_mode;
-        dx = 0;
-        dy = 0;
-    }
-
-    DP_BrushEngineMyPaintDab *dabs = get_dab_buffer(be, sizeof(*dabs));
-    dabs[be->dabs.used++] = (DP_BrushEngineMyPaintDab){
-        dx,
-        dy,
-        get_mypaint_dab_size(radius, be->stroke.compatibility_mode),
-        get_uint8(hardness),
-        get_uint8(opaque),
-        get_mypaint_dab_angle(angle),
-        get_mypaint_dab_aspect_ratio(aspect_ratio)};
+    dab.size = get_mypaint_dab_size(radius, be->stroke.compatibility_mode);
+    dab.hardness = get_uint8(hardness);
+    dab.opacity = get_uint8(opaque);
+    dab.angle = get_mypaint_dab_angle(angle);
+    dab.aspect_ratio = get_mypaint_dab_aspect_ratio(aspect_ratio);
+    pixel_perfect_apply(be, dab.x / 4, dab.y / 4, pixel_perfect_append_mypaint,
+                        pixel_perfect_append_tentative_mypaint,
+                        pixel_perfect_assign_tentative_mypaint, &dab);
     return 1;
 }
 
@@ -1733,7 +1811,7 @@ DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
         {false, false, 0, 0, NULL, 0, NULL, NULL},
         {0},
         {0, 0, 0, 0, NULL},
-        {false, false, 0, 0, 0, 0, 0, 0, 0, 0},
+        {false, false, false, 0, 0, 0, 0, {0}},
         push_message,
         poll_control_or_null,
         sync_or_null,
@@ -1800,9 +1878,11 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
     case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
     case DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE:
         be->active = DP_BRUSH_ENGINE_ACTIVE_PIXEL;
+        be->pixel.perfect = brush->pixel_perfect;
         break;
     default:
         be->active = DP_BRUSH_ENGINE_ACTIVE_SOFT;
+        be->pixel.perfect = false;
         break;
     }
 
@@ -1847,9 +1927,10 @@ static void disable_mypaint_dynamics(MyPaintBrush *mb, MyPaintBrushSetting s)
     }
 }
 
-static void disable_mypaint_setting(MyPaintBrush *mb, MyPaintBrushSetting s)
+static void disable_mypaint_setting(MyPaintBrush *mb, MyPaintBrushSetting s,
+                                    float base_value)
 {
-    mypaint_brush_set_base_value(mb, s, 0.0f);
+    mypaint_brush_set_base_value(mb, s, base_value);
     disable_mypaint_dynamics(mb, s);
 }
 
@@ -1911,7 +1992,7 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     disable_mypaint_dynamics(mb, MYPAINT_BRUSH_SETTING_PAINT_MODE);
 
     // We have our own, better stabilizer, so turn the MyPaint one off.
-    disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SLOW_TRACKING);
+    disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SLOW_TRACKING, 0.0f);
 
     bool indirect = be->mypaint.paint_mode != DP_PAINT_MODE_DIRECT;
     if (indirect || DP_blend_mode_compares_alpha((int)blend_mode)) {
@@ -1919,26 +2000,38 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
         // drawing, in indirect mode it just causes really wrong behavior. The
         // same goes for blend modes like Greater, which effectively do an
         // indirect mode on top of the existing color.
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_OPAQUE_LINEARIZE);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_OPAQUE_LINEARIZE,
+                                0.0f);
     }
 
     if (indirect) {
         // Indirect mode can't smudge.
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE);
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH);
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_RADIUS_LOG);
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH_LOG);
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_BUCKET);
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_TRANSPARENCY);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE, 0.0f);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH, 0.0f);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_RADIUS_LOG,
+                                0.0f);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH_LOG,
+                                0.0f);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_BUCKET, 0.0f);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SMUDGE_TRANSPARENCY,
+                                0.0f);
     }
 
     if (indirect || !is_normal_mypaint_mode(blend_mode)) {
         // Indirect mode also can't do any of these. They're also basically
         // blend modes, so they only work when that hasn't been altered.
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_ERASER);
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_LOCK_ALPHA);
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_COLORIZE);
-        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_POSTERIZE);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_ERASER, 0.0f);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_LOCK_ALPHA, 0.0f);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_COLORIZE, 0.0f);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_POSTERIZE, 0.0f);
+    }
+
+    bool pixel_perfect = brush->pixel_perfect;
+    be->pixel.perfect = pixel_perfect;
+    if (pixel_perfect) {
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_HARDNESS, 1.0f);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_ANTI_ALIASING, 0.0f);
+        disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_SNAP_TO_PIXEL, 1.0f);
     }
 }
 

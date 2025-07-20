@@ -260,6 +260,12 @@ public:
 	void setPaintMode(int paintMode);
 	void setBlendMode(int blendMode, bool isErase);
 
+	bool isPixelPerfect() const { return m_brush.pixel_perfect; }
+	void setPixelPerfect(bool pixelPerfect)
+	{
+		m_brush.pixel_perfect = pixelPerfect;
+	}
+
 	StabilizationMode stabilizationMode() const { return m_stabilizationMode; }
 	void setStabilizationMode(StabilizationMode stabilizationMode)
 	{
@@ -373,6 +379,9 @@ public:
 	void setQColor(const QColor &c);
 
 	QPointF getOffset() const;
+
+	bool isPixelPerfect() const;
+	void setPixelPerfect(bool pixelPerfect);
 
 	StabilizationMode stabilizationMode() const;
 	void setStabilizationMode(StabilizationMode stabilizationMode);

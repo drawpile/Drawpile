@@ -1324,7 +1324,8 @@ void BrushSettings::updateUi()
 	int blendMode = brush.blendMode();
 	d->blendModeManager->setMyPaint(mypaintmode);
 	d->blendModeManager->selectBlendMode(blendMode);
-	adjustSettingVisibilities(softmode, mypaintmode);
+	adjustSettingVisibilities(
+		mypaintmode ? !myPaint.isPixelPerfect() : softmode, mypaintmode);
 
 	d->ui.modeEraser->setEnabled(!isCurrentEraserSlot());
 	d->ui.modeColorpick->setEnabled(
@@ -1370,8 +1371,8 @@ void BrushSettings::updateUi()
 			d->ui.opacityBox, myPaintSettings, MYPAINT_BRUSH_SETTING_OPAQUE);
 		setSliderFromMyPaintSetting(
 			d->ui.hardnessBox, myPaintSettings, MYPAINT_BRUSH_SETTING_HARDNESS);
-		d->pixelPerfectAction->setChecked(false);
-		d->pixelPerfectAction->setEnabled(false);
+		d->pixelPerfectAction->setChecked(myPaint.isPixelPerfect());
+		d->pixelPerfectAction->setEnabled(true);
 	} else {
 		d->ui.opacityBox->setValue(qRound(classic.opacity.max * 100.0));
 		d->ui.hardnessBox->setValue(qRound(classic.hardness.max * 100.0));
@@ -1511,6 +1512,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			setMyPaintSettingFromSlider(
 				d->ui.hardnessBox, myPaintSettings,
 				MYPAINT_BRUSH_SETTING_HARDNESS);
+			myPaint.setPixelPerfect(d->pixelPerfectAction->isChecked());
 		} else {
 			classic.opacity.max = d->ui.opacityBox->value() / 100.0;
 			classic.opacity_dynamic.type =
@@ -1552,7 +1554,8 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	pushSettings();
 
 	adjustSettingVisibilities(
-		mypaintmode || classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND,
+		mypaintmode ? !myPaint.isPixelPerfect()
+					: classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND,
 		mypaintmode);
 	emitOffsetChanged();
 	emitBlendModeChanged();

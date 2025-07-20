@@ -145,6 +145,7 @@ private:
 		int setting, int input, const MyPaintBrushSettingInfo *settingInfo,
 		utils::KineticScroller *kineticScroller);
 	QCheckBox *buildSyncSamplesBox();
+	QCheckBox *buildPixelPerfectBox();
 
 	void applyCurveToAllClassicSettings(const KisCubicCurve &curve);
 
@@ -188,6 +189,7 @@ private:
 	static bool shouldIncludeMyPaintSetting(int setting);
 	static MyPaintCondition getMyPaintCondition(int setting);
 	static bool isSmudgeMyPaintSetting(int setting);
+	static bool isPixelPerfectMyPaintSetting(int setting);
 
 	static QString getMyPaintInputTitle(int input);
 	static QString getMyPaintInputDescription(int input);

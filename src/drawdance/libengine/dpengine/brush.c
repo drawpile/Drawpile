@@ -428,7 +428,8 @@ static bool preset_equal_mypaint_brush(const DP_MyPaintBrush *a,
 {
     return a->paint_mode == b->paint_mode && a->brush_mode == b->brush_mode
         && a->erase_mode == b->erase_mode
-        && (in_eraser_slot || a->erase == b->erase);
+        && (in_eraser_slot || a->erase == b->erase)
+        && a->pixel_perfect == b->pixel_perfect;
 }
 
 bool DP_mypaint_brush_equal_preset(const DP_MyPaintBrush *a,

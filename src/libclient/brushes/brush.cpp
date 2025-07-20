@@ -554,6 +554,7 @@ MyPaintBrush::MyPaintBrush()
 		   DP_PAINT_MODE_DIRECT,
 		   DP_BLEND_MODE_NORMAL,
 		   DP_BLEND_MODE_ERASE,
+		   false,
 		   false})
 	, m_settings(nullptr)
 	, m_stabilizationMode(Stabilizer)
@@ -777,6 +778,7 @@ QJsonObject MyPaintBrush::toJson() const
 			 {"smoothing", m_smoothing},
 			 {QStringLiteral("syncsamples"), m_syncSamples},
 			 {QStringLiteral("confidential"), m_confidential},
+			 {QStringLiteral("pixelperfect"), m_brush.pixel_perfect},
 			 {"mapping", mappingToJson()},
 			 // Backward-compatibility.
 			 {"lock_alpha", m_brush.brush_mode == DP_BLEND_MODE_RECOLOR},
@@ -800,6 +802,7 @@ void MyPaintBrush::exportToJson(QJsonObject &json) const
 		{"smoothing", m_smoothing},
 		{QStringLiteral("syncsamples"), m_syncSamples},
 		{QStringLiteral("confidential"), m_confidential},
+		{QStringLiteral("pixelperfect"), m_brush.pixel_perfect},
 		// Backward-compatibility.
 		{"lock_alpha", m_brush.brush_mode == DP_BLEND_MODE_RECOLOR},
 		{"indirect", m_brush.paint_mode != DP_PAINT_MODE_DIRECT},
@@ -851,6 +854,7 @@ MyPaintBrush MyPaintBrush::fromJson(const QJsonObject &json)
 	}
 
 	b.m_brush.erase = o["erase"].toBool();
+	b.m_brush.pixel_perfect = o.value(QStringLiteral("pixelperfect")).toBool();
 	b.loadJsonSettings(o["mapping"].toObject());
 
 	// If there's no Drawpile stabilizer defined, we get a sensible default
@@ -934,6 +938,8 @@ bool MyPaintBrush::fromExportJson(const QJsonObject &json)
 	}
 
 	m_brush.erase = drawpileSettings["erase"].toBool(false);
+	m_brush.pixel_perfect =
+		drawpileSettings.value(QStringLiteral("pixelperfect")).toBool();
 	m_stabilizationMode =
 		drawpileSettings["stabilizationmode"].toInt() == Smoothing ? Smoothing
 																   : Stabilizer;
@@ -1331,6 +1337,24 @@ QPointF ActiveBrush::getOffset() const
 		return m_myPaint.getOffset();
 	} else {
 		return QPointF(0.0, 0.0);
+	}
+}
+
+bool ActiveBrush::isPixelPerfect() const
+{
+	if(m_activeType == MYPAINT) {
+		return m_myPaint.isPixelPerfect();
+	} else {
+		return m_classic.pixel_perfect;
+	}
+}
+
+void ActiveBrush::setPixelPerfect(bool pixelPerfect)
+{
+	if(m_activeType == MYPAINT) {
+		m_myPaint.setPixelPerfect(pixelPerfect);
+	} else {
+		m_classic.pixel_perfect = pixelPerfect;
 	}
 }
 
