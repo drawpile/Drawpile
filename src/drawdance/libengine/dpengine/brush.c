@@ -66,6 +66,7 @@ static bool preset_equal_classic_brush(const DP_ClassicBrush *a,
         && a->brush_mode == b->brush_mode && a->erase_mode == b->erase_mode
         && (in_eraser_slot || a->erase == b->erase)
         && a->colorpick == b->colorpick && a->smudge_alpha == b->smudge_alpha
+        && a->pixel_perfect == b->pixel_perfect
         && preset_equal_classic_brush_dynamic(&a->size_dynamic,
                                               &b->size_dynamic)
         && preset_equal_classic_brush_dynamic(&a->hardness_dynamic,

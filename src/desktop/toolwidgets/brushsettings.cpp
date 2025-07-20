@@ -165,6 +165,7 @@ struct BrushSettings::Private {
 	QAction *paintModeIndirectNormalAction;
 	QAction *smudgeAlphaAction;
 	QAction *syncSamplesAction;
+	QAction *pixelPerfectAction;
 
 	QActionGroup *stabilizationModeGroup;
 	QAction *stabilizerAction;
@@ -487,6 +488,11 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->syncSamplesAction = paintModeMenu->addAction(QCoreApplication::translate(
 		"dialogs::BrushSettingsDialog", "Synchronize smudging"));
 	d->syncSamplesAction->setCheckable(true);
+	paintModeMenu->addSeparator();
+	d->pixelPerfectAction = paintModeMenu->addAction(
+		QCoreApplication::translate(
+			"dialogs::BrushSettingsDialog", "Pixel-perfect"));
+	d->pixelPerfectAction->setCheckable(true);
 	d->ui.paintMode->setMenu(paintModeMenu);
 	setPaintModeInUi(int(DP_PAINT_MODE_DIRECT), false);
 
@@ -1364,9 +1370,13 @@ void BrushSettings::updateUi()
 			d->ui.opacityBox, myPaintSettings, MYPAINT_BRUSH_SETTING_OPAQUE);
 		setSliderFromMyPaintSetting(
 			d->ui.hardnessBox, myPaintSettings, MYPAINT_BRUSH_SETTING_HARDNESS);
+		d->pixelPerfectAction->setChecked(false);
+		d->pixelPerfectAction->setEnabled(false);
 	} else {
 		d->ui.opacityBox->setValue(qRound(classic.opacity.max * 100.0));
 		d->ui.hardnessBox->setValue(qRound(classic.hardness.max * 100.0));
+		d->pixelPerfectAction->setChecked(classic.pixel_perfect);
+		d->pixelPerfectAction->setEnabled(!softmode);
 		// Smudging only works right in incremental mode
 		if(classic.smudge.max != 0.0) {
 			canChangePaintMode = false;
@@ -1515,6 +1525,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 						: DP_CLASSIC_BRUSH_DYNAMIC_NONE;
 			}
 			classic.smudge_alpha = d->smudgeAlphaAction->isChecked();
+			classic.pixel_perfect = d->pixelPerfectAction->isChecked();
 			// Smudging only works right in incremental mode
 			if(classic.smudge.max != 0.0) {
 				canChangePaintMode = false;

@@ -194,6 +194,18 @@ struct DP_BrushEngine {
         size_t capacity;
         void *buffer;
     } dabs;
+    struct {
+        bool have_last;
+        bool have_tentative;
+        uint8_t tentative_flags;
+        uint8_t tentative_opacity;
+        uint16_t tentative_size;
+        int last_x;
+        int last_y;
+        int tentative_x;
+        int tentative_y;
+        uint32_t tentative_color;
+    } pixel;
     DP_BrushEnginePushMessageFn push_message;
     DP_BrushEnginePollControlFn poll_control;
     DP_BrushEngineSyncFn sync;
@@ -1071,6 +1083,39 @@ static DP_Rect pixel_dab_bounds(int x, int y, int dab_size)
     return (DP_Rect){x - radius, y - radius, x + radius, y + radius};
 }
 
+static bool is_tentative_pixel(int x1, int y1, int x2, int y2)
+{
+    return abs(x2 - x1) <= 1 && abs(y2 - y1) <= 1;
+}
+
+static void append_pixel_dab(DP_BrushEngine *be, uint8_t dab_flags,
+                             uint8_t dab_opacity, uint16_t dab_size,
+                             int32_t dab_x, int32_t dab_y, uint32_t dab_color)
+{
+    int used = be->dabs.used;
+    int8_t dx, dy;
+    bool can_append = used != 0 && used < DP_MSG_DRAW_DABS_PIXEL_DABS_MAX
+                   && be->classic.dab_flags == dab_flags
+                   && be->classic.dab_color == dab_color
+                   && delta_xy(be, dab_x, dab_y, &dx, &dy);
+    be->dabs.last_x = dab_x;
+    be->dabs.last_y = dab_y;
+
+    if (!can_append) {
+        DP_brush_engine_dabs_flush(be);
+        be->classic.dab_flags = dab_flags;
+        be->classic.dab_x = dab_x;
+        be->classic.dab_y = dab_y;
+        be->classic.dab_color = dab_color;
+        dx = 0;
+        dy = 0;
+    }
+
+    DP_BrushEnginePixelDab *dabs = get_dab_buffer(be, sizeof(*dabs));
+    dabs[be->dabs.used++] =
+        (DP_BrushEnginePixelDab){dx, dy, dab_size, dab_opacity};
+}
+
 static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
                           float pressure, float velocity, float distance)
 {
@@ -1099,28 +1144,47 @@ static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
         uint32_t dab_color = combine_upixel_float(
             blend_classic_color(be, cb, pressure, velocity, distance));
 
-        int used = be->dabs.used;
-        int8_t dx, dy;
-        bool can_append = used != 0 && used < DP_MSG_DRAW_DABS_PIXEL_DABS_MAX
-                       && be->classic.dab_flags == dab_flags
-                       && be->classic.dab_color == dab_color
-                       && delta_xy(be, dab_x, dab_y, &dx, &dy);
-        be->dabs.last_x = dab_x;
-        be->dabs.last_y = dab_y;
+        if (be->classic.brush.pixel_perfect) {
+            if (!be->pixel.have_last) {
+                be->pixel.have_last = true;
+                be->pixel.last_x = x;
+                be->pixel.last_y = y;
+            }
+            else {
+                bool last_tentative = is_tentative_pixel(x, y, be->pixel.last_x,
+                                                         be->pixel.last_y);
+                if (be->pixel.have_tentative && !last_tentative) {
+                    be->pixel.have_tentative = false;
+                    be->pixel.last_x = be->pixel.tentative_x;
+                    be->pixel.last_y = be->pixel.tentative_y;
+                    last_tentative = is_tentative_pixel(x, y, be->pixel.last_x,
+                                                        be->pixel.last_y);
+                    append_pixel_dab(
+                        be, be->pixel.tentative_flags,
+                        be->pixel.tentative_opacity, be->pixel.tentative_size,
+                        be->pixel.tentative_x, be->pixel.tentative_y,
+                        be->pixel.tentative_color);
+                }
 
-        if (!can_append) {
-            DP_brush_engine_dabs_flush(be);
-            be->classic.dab_flags = dab_flags;
-            be->classic.dab_x = dab_x;
-            be->classic.dab_y = dab_y;
-            be->classic.dab_color = dab_color;
-            dx = 0;
-            dy = 0;
+                if (last_tentative) {
+                    be->pixel.have_tentative = true;
+                    be->pixel.tentative_flags = dab_flags;
+                    be->pixel.tentative_opacity = dab_opacity;
+                    be->pixel.tentative_x = dab_x;
+                    be->pixel.tentative_y = dab_y;
+                    be->pixel.tentative_size = dab_size;
+                    be->pixel.tentative_color = dab_color;
+                    return;
+                }
+                else {
+                    be->pixel.last_x = x;
+                    be->pixel.last_y = y;
+                }
+            }
         }
 
-        DP_BrushEnginePixelDab *dabs = get_dab_buffer(be, sizeof(*dabs));
-        dabs[be->dabs.used++] =
-            (DP_BrushEnginePixelDab){dx, dy, dab_size, dab_opacity};
+        append_pixel_dab(be, dab_flags, dab_opacity, dab_size, dab_x, dab_y,
+                         dab_color);
     }
 }
 
@@ -1669,6 +1733,7 @@ DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
         {false, false, 0, 0, NULL, 0, NULL, NULL},
         {0},
         {0, 0, 0, 0, NULL},
+        {false, false, 0, 0, 0, 0, 0, 0, 0, 0},
         push_message,
         poll_control_or_null,
         sync_or_null,
@@ -2170,6 +2235,9 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
         be->push_message(be->user, DP_msg_undo_point_new(context_id));
     }
     DP_stroke_engine_stroke_begin(&be->se);
+
+    be->pixel.have_last = false;
+    be->pixel.have_tentative = false;
 
     // If we're supposed to synchronize smudging, grab a fresh canvas state here
     // if we haven't been given one to use yet, cf. DP_StrokeWorker not passing

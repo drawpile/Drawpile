@@ -79,6 +79,7 @@ typedef struct DP_ClassicBrush {
     bool erase;
     bool colorpick;
     bool smudge_alpha;
+    bool pixel_perfect;
     DP_ClassicBrushDynamic size_dynamic;
     DP_ClassicBrushDynamic hardness_dynamic;
     DP_ClassicBrushDynamic opacity_dynamic;

@@ -295,6 +295,7 @@ struct BrushSettingsDialog::Private {
 	QComboBox *eraseModeCombo;
 	QCheckBox *eraseModeBox;
 	QCheckBox *colorPickBox;
+	QCheckBox *pixelPerfectBox;
 	QCheckBox *preserveAlphaBox;
 	KisSliderSpinBox *spacingSpinner;
 	QComboBox *stabilizationModeCombo;
@@ -732,6 +733,16 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 		d->colorPickBox, &QCheckBox::clicked,
 		makeBrushChangeCallbackArg<bool>([this](bool checked) {
 			d->brush.classic().colorpick = checked;
+			emitChange();
+		}));
+
+	d->pixelPerfectBox = new QCheckBox{tr("Pixel-perfect"), widget};
+	d->pixelPerfectBox->setIcon(QIcon::fromTheme("drawpile_square"));
+	layout->addRow(d->pixelPerfectBox);
+	connect(
+		d->pixelPerfectBox, &QCheckBox::clicked,
+		makeBrushChangeCallbackArg<bool>([this](bool checked) {
+			d->brush.classic().pixel_perfect = checked;
 			emitChange();
 		}));
 
@@ -1494,6 +1505,12 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 		brushMode != DP_BLEND_MODE_ERASE_PRESERVE);
 	d->colorPickBox->setVisible(true);
 
+	bool isPixelBrush = classic.shape == DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND ||
+						classic.shape == DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE;
+	d->pixelPerfectBox->setChecked(classic.pixel_perfect);
+	d->pixelPerfectBox->setEnabled(isPixelBrush);
+	d->pixelPerfectBox->setVisible(isPixelBrush);
+
 	bool forceDirectMode =
 		canvas::blendmode::directOnly(brushMode) || classic.smudge.max > 0.0f;
 	setComboBoxIndexByData(
@@ -1582,6 +1599,7 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 {
 	const DP_MyPaintBrush &brush = d->brush.myPaint().constBrush();
 	d->colorPickBox->setVisible(false);
+	d->pixelPerfectBox->setVisible(false);
 	d->spacingSpinner->setVisible(false);
 
 	int brushMode = DP_mypaint_brush_blend_mode(&brush);

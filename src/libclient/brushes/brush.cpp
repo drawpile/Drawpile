@@ -45,6 +45,7 @@ ClassicBrush::ClassicBrush()
 		  false,
 		  true,
 		  true,
+		  false,
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
@@ -243,6 +244,7 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.erase_mode = DP_BlendMode(eraseBlendMode);
 
 	b.erase = o["erase"].toBool();
+	b.pixel_perfect = o.value(QStringLiteral("pixelperfect")).toBool();
 
 	b.stabilizationMode =
 		o["stabilizationmode"].toInt() == Smoothing ? Smoothing : Stabilizer;
@@ -380,6 +382,7 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 	erase_mode = DP_BlendMode(eraseBlendMode);
 
 	erase = settings["erase"].toBool();
+	pixel_perfect = settings.value(QStringLiteral("pixelperfect")).toBool();
 
 	stabilizationMode = settings["stabilizationmode"].toInt() == Smoothing
 							? Smoothing
@@ -462,6 +465,10 @@ QJsonObject ClassicBrush::settingsToJson() const
 	o["blend"] = canvas::blendmode::oraName(brush_mode);
 	o["blenderase"] = canvas::blendmode::oraName(erase_mode);
 	o["erase"] = erase;
+
+	if(pixel_perfect) {
+		o.insert(QStringLiteral("pixelperfect"), true);
+	}
 
 	o["stabilizationmode"] = stabilizationMode;
 	o["stabilizer"] = stabilizerSampleCount;
