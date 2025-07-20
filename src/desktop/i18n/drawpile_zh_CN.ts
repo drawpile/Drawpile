@@ -1215,7 +1215,9 @@ Subrange: [%3, %4]</source>
         <source>This session is hosted on another server, you will be redirected.
 
 To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>此房间已在另一个服务器上创建, 你将被重新定向.
+
+为了避免将来出现此额外步骤, 请通过房间大厅或者一个直接的链接来加入房间.</translation>
     </message>
     <message>
         <location line="-612"/>
@@ -1974,7 +1976,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+6"/>
         <source>Left-handed mode</source>
-        <translation type="unfinished"></translation>
+        <translation>左手模式</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -5555,52 +5557,52 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="-284"/>
         <source>No dynamics</source>
-        <translation type="unfinished">无动态</translation>
+        <translation>无动态</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished">笔压动态</translation>
+        <translation>笔压动态</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished">速度动态</translation>
+        <translation>速度动态</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished">距离动态</translation>
+        <translation>距离动态</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished">速度最大值: </translation>
+        <translation>速度最大值: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished">距离最大值: </translation>
+        <translation>距离最大值: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished">一次性设置最大速度应用于大小, 不透明度, 硬度, 混合和抖动.</translation>
+        <translation>一次性设置最大速度应用于大小, 不透明度, 硬度, 混合和抖动.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished">为此画笔的所有设置设定最大速度.</translation>
+        <translation>为此画笔的所有设置设定最大速度.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness, Smudging and Jitter at once.</source>
-        <translation type="unfinished">一次性设置最大距离应用于大小, 不透明度, 硬度, 混合和抖动.</translation>
+        <translation>一次性设置最大距离应用于大小, 不透明度, 硬度, 混合和抖动.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished">为此画笔的所有设置设定最大距离.</translation>
+        <translation>为此画笔的所有设置设定最大距离.</translation>
     </message>
     <message>
         <location line="+89"/>
@@ -7695,7 +7697,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+25"/>
         <source>(redirected from %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>重新定向自 %1)</translation>
     </message>
     <message>
         <location line="+139"/>
