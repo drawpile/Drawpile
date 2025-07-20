@@ -1873,7 +1873,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="-1066"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>已重新定向到一个不接受重新定向的服务器: %1</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -1908,17 +1908,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+20"/>
         <source>Incompatible redirect</source>
-        <translation type="unfinished"></translation>
+        <translation>不兼容的重新定向</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Circular redirect</source>
-        <translation type="unfinished"></translation>
+        <translation>循环重新定向</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Too many redirects</source>
-        <translation type="unfinished"></translation>
+        <translation>太多重新定向</translation>
     </message>
     <message>
         <location line="+159"/>
