@@ -1862,17 +1862,17 @@ static void apply_layer_alpha_lock(DP_BlendMode *in_out_blend_mode,
 
 void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
                                        const DP_ClassicBrush *brush,
-                                       const DP_BrushEngineStrokeParams *sesp,
+                                       const DP_BrushEngineStrokeParams *besp,
                                        const DP_UPixelFloat *color_override,
                                        bool eraser_override)
 {
     DP_ASSERT(be);
     DP_ASSERT(brush);
-    DP_ASSERT(sesp);
-    DP_ASSERT(sesp->layer_id == 0
-              || DP_layer_id_normal_or_selection(sesp->layer_id));
+    DP_ASSERT(besp);
+    DP_ASSERT(besp->layer_id == 0
+              || DP_layer_id_normal_or_selection(besp->layer_id));
 
-    set_common_stroke_params(be, sesp);
+    set_common_stroke_params(be, besp);
 
     switch (brush->shape) {
     case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
@@ -1894,7 +1894,7 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
     }
 
     apply_layer_alpha_lock(cb->erase ? &cb->erase_mode : &cb->brush_mode,
-                           sesp->layer_alpha_lock);
+                           besp->layer_alpha_lock);
 
     if (DP_blend_mode_direct_only((int)DP_classic_brush_blend_mode(cb))) {
         cb->paint_mode = DP_PAINT_MODE_DIRECT;
