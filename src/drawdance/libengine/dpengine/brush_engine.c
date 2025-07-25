@@ -1878,7 +1878,7 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
     case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
     case DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE:
         be->active = DP_BRUSH_ENGINE_ACTIVE_PIXEL;
-        be->pixel.perfect = brush->pixel_perfect;
+        be->pixel.perfect = besp->allow_pixel_perfect && brush->pixel_perfect;
         break;
     default:
         be->active = DP_BRUSH_ENGINE_ACTIVE_SOFT;
@@ -2027,7 +2027,7 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     }
 
     bool pixel_perfect = brush->pixel_perfect;
-    be->pixel.perfect = pixel_perfect;
+    be->pixel.perfect = besp->allow_pixel_perfect && pixel_perfect;
     if (pixel_perfect) {
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_HARDNESS, 1.0f);
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_ANTI_ALIASING, 0.0f);

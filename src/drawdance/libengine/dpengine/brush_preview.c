@@ -241,10 +241,12 @@ static void stroke_ellipse(DP_BrushEngine *be, DP_CanvasState *cs, DP_Rect rect,
     }
 }
 
-void render_brush_preview(
-    DP_BrushPreview *bp, DP_DrawContext *dc, int width, int height,
-    DP_BrushPreviewShape shape, DP_UPixelFloat initial_color,
-    void (*set_brush)(void *, DP_BrushEngine *, DP_UPixelFloat), void *user)
+void render_brush_preview(DP_BrushPreview *bp, DP_DrawContext *dc, int width,
+                          int height, DP_BrushPreviewShape shape,
+                          DP_UPixelFloat initial_color,
+                          void (*set_brush)(void *, DP_BrushEngine *,
+                                            DP_UPixelFloat, bool),
+                          void *user)
 {
     DP_ASSERT(bp);
     DP_ASSERT(dc);
@@ -267,7 +269,7 @@ void render_brush_preview(
     DP_Rect rect = DP_rect_make(width / 8, height / 4, width - width / 4,
                                 height - height / 2);
     DP_BrushEngine *be = bp->be;
-    set_brush(user, be, initial_color);
+    set_brush(user, be, initial_color, shape == DP_BRUSH_PREVIEW_STROKE);
     DP_brush_engine_stroke_begin(be, cs, 1, false, false, false, false, 1.0f,
                                  0.0f);
     long long time_msec = 0;
@@ -299,10 +301,11 @@ void render_brush_preview(
 }
 
 static void set_preview_classic_brush(void *user, DP_BrushEngine *be,
-                                      DP_UPixelFloat color)
+                                      DP_UPixelFloat color,
+                                      bool allow_pixel_perfect)
 {
     DP_BrushEngineStrokeParams besp = {
-        {0, 0, false, false, false}, 1, 0, false, false};
+        {0, 0, false, false, false}, 1, 0, false, false, allow_pixel_perfect};
     DP_brush_engine_classic_brush_set(be, user, &besp, &color, false);
 }
 
@@ -319,12 +322,13 @@ void DP_brush_preview_render_classic(DP_BrushPreview *bp, DP_DrawContext *dc,
 }
 
 static void set_preview_mypaint_brush(void *user, DP_BrushEngine *be,
-                                      DP_UPixelFloat color)
+                                      DP_UPixelFloat color,
+                                      bool allow_pixel_perfect)
 {
     const DP_MyPaintBrush *brush = ((void **)user)[0];
     const DP_MyPaintSettings *settings = ((void **)user)[1];
     DP_BrushEngineStrokeParams besp = {
-        {0, 0, false, false, false}, 1, 0, false, false};
+        {0, 0, false, false, false}, 1, 0, false, false, allow_pixel_perfect};
     DP_brush_engine_mypaint_brush_set(be, brush, settings, &besp, &color,
                                       false);
 }

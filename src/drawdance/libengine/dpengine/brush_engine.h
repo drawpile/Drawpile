@@ -52,6 +52,7 @@ typedef struct DP_BrushEngineStrokeParams {
     int selection_id;
     bool layer_alpha_lock;
     bool sync_samples;
+    bool allow_pixel_perfect;
 } DP_BrushEngineStrokeParams;
 
 

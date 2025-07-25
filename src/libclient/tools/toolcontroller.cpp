@@ -787,6 +787,7 @@ const brushes::ActiveBrush &ToolController::fillBrushEngineStrokeParams(
 			: DP_SELECTION_ID_MAIN,
 		activeLayerAlphaLock(),
 		freehand && brush.shouldSyncSamples(),
+		freehand,
 	};
 	if(freehand) {
 		stroke.se.interpolate = m_interpolateInputs;

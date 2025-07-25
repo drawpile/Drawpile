@@ -69,7 +69,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Allow swapping the sides of docks, toolbars and on-canvas buttons via View → Left-Handed Mode in small screen mode. Thanks yoossy for suggesting.
  * Feature: Redirect handling in the client, allowing servers to forward connections to other servers, with the option of only accepting signed redirects.
  * Server Feature: Session thumbnail generation, by requesting the client to generate one. Currently only through the web admin API, thumbnails are not displayed anywhere or generated automatically yet.
- * Feature: Add pixel-perfect option for pixel brushes, available in the brush editor and under the paint mode dropdown. Thanks Meru and Squishy for suggesting.
+ * Feature: Add pixel-perfect option for pixel brushes, available in the brush editor and under the paint mode dropdown. Thanks Meru and Squishy for suggesting, lan700ng for testing.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.
