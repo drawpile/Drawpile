@@ -38,6 +38,7 @@ target_include_directories(uthash SYSTEM INTERFACE "uthash")
 
 add_library(bundled_sqlite3 OBJECT
     sqlite3/dbdata.c
+    sqlite3/drawpile_sqlite3.h
     sqlite3/sqlite3.c
     sqlite3/sqlite3.h
     sqlite3/sqlite3recover.c
