@@ -334,7 +334,7 @@ void Session::showServerPub()
 {
 	m_server = SERVER_PUB;
 	m_serverInfo->clearImages();
-	m_serverInfo->setText(
+	QString text =
 		QStringLiteral("<p>%1</p><p>%2</p>")
 			.arg(
 				tr("This will host your session on the public Drawpile server. "
@@ -344,7 +344,20 @@ void Session::showServerPub()
 					.toHtmlEscaped(),
 				tr("Sessions must comply with the rules, <a "
 				   "href=\"https://drawpile.net/pubrules\">click here to view "
-				   "them</a>.")));
+				   "them</a>."));
+	if(dpApp().settings().donationLinksEnabled()) {
+		text.append(
+			utils::toHtmlWithLink(
+				QCoreApplication::translate(
+					//: The [] will be turned into a clickable link! Keep them
+					//: in your translation. You can copy the heart ♥ into your
+					//: text if it doesn't look weird for your language, else
+					//: just leave it.
+					"donations", "[♥ Donate to Drawpile] to help keep the "
+								 "public server running."),
+				utils::getDonationLink()));
+	}
+	m_serverInfo->setText(text);
 	m_addressCombo->hide();
 	m_serverInfo->show();
 }

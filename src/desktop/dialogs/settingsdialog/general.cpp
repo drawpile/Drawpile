@@ -34,7 +34,8 @@ void General::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 	utils::addFormSeparator(layout);
 
 	QFormLayout *canvasSection = utils::addFormSection(layout);
-	initLogging(settings, canvasSection);
+	// Uncomment later.
+	// initContributing(settings, canvasSection);
 	utils::addFormSpacer(canvasSection);
 	initUndo(settings, canvasSection);
 	utils::addFormSpacer(canvasSection);
@@ -90,12 +91,13 @@ QString General::formatLanguage(const QLocale &locale)
 	}
 }
 
-void General::initLogging(
+void General::initContributing(
 	desktop::settings::Settings &settings, QFormLayout *form)
 {
-	auto *enableLogging = new QCheckBox(tr("Write debugging log to file"));
-	settings.bindWriteLogFile(enableLogging);
-	form->addRow(tr("Logging:"), enableLogging);
+	QCheckBox *enableContributing =
+		new QCheckBox(tr("Show contribution, donation and feedback links"));
+	settings.bindDonationLinksEnabled(enableContributing);
+	form->addRow(tr("Contributing:"), enableContributing);
 }
 
 void General::initPerformance(

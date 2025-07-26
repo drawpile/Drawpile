@@ -21,10 +21,11 @@ Files::Files(desktop::settings::Settings &settings, QWidget *parent)
 void Files::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 {
 	initFormats(settings, utils::addFormSection(layout));
-#ifndef __EMSCRIPTEN__
 	utils::addFormSeparator(layout);
+#ifndef __EMSCRIPTEN__
 	initAutosave(settings, utils::addFormSection(layout));
 #endif
+	initLogging(settings, utils::addFormSection(layout));
 #ifdef NATIVE_DIALOGS_SETTING_AVAILABLE
 	utils::addFormSeparator(layout);
 	initDialogs(settings, utils::addFormSection(layout));
@@ -93,6 +94,14 @@ void Files::initFormats(
 		tr("Photoshop Document (.psd)"), QStringLiteral("psd"));
 	settings.bindPreferredExportFormat(preferredExportFormat, Qt::UserRole);
 	form->addRow(tr("Preferred export format:"), preferredExportFormat);
+}
+
+void Files::initLogging(
+	desktop::settings::Settings &settings, QFormLayout *form)
+{
+	QCheckBox *enableLogging = new QCheckBox(tr("Write debugging log to file"));
+	settings.bindWriteLogFile(enableLogging);
+	form->addRow(tr("Logging:"), enableLogging);
 }
 
 }

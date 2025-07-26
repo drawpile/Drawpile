@@ -581,6 +581,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	settings.bindAutomaticAlphaPreserve(
 		getAction("layerautomaticalphapreserve"));
 	settings.bindLeftyMode(getAction("smallscreenleftymode"));
+	settings.bindDonationLinksEnabled(
+		this, &MainWindow::setDonationLinkEnabled);
 	settings.trySubmit();
 
 	m_updatingInterfaceMode = false;
@@ -1805,6 +1807,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			QMessageBox box(QMessageBox::Question, tr("Exit Drawpile"),
 					tr("There are unsaved changes. Save them before exiting?"),
 					QMessageBox::NoButton, this);
+			box.setInformativeText(makeContributionInfoText());
 #ifndef SINGLE_MAIN_WINDOW
 			box.setWindowModality(Qt::WindowModal);
 #endif
@@ -2484,7 +2487,8 @@ void MainWindow::offerDownload(
 	} else {
 		QMessageBox *msgbox = utils::makeInformationWithSaveButton(
 			this, tr("Download Complete"),
-			tr("Download complete, click on \"Save\" to save your file."));
+			tr("Download complete, click on \"Save\" to save your file."),
+			makeContributionInfoText());
 		connect(
 			msgbox->button(QMessageBox::Save), &QAbstractButton::clicked, this,
 			[this, defaultName, bytes]() {
@@ -4864,10 +4868,18 @@ void MainWindow::about()
 					.arg(mmSize.width()).arg(mmSize.height())));
 }
 
+// clang-format on
 void MainWindow::homepage()
 {
 	QDesktopServices::openUrl(QUrl(cmake_config::website()));
 }
+
+void MainWindow::donate()
+{
+	QDesktopServices::openUrl(
+		QUrl(QStringLiteral("https://drawpile.net/donate/")));
+}
+// clang-format off
 
 /**
  * @brief Create a new action.
@@ -6860,7 +6872,20 @@ void MainWindow::setupActions()
 	//
 	// Help menu
 	//
-	QAction *homepage = makeAction("dphomepage", tr("&Homepage")).statusTip(cmake_config::website()).noDefaultShortcut();
+	// clang-format on
+	QAction *homepage = makeAction("dphomepage", tr("&Homepage"))
+							.icon("globe")
+							.statusTip(cmake_config::website())
+							.noDefaultShortcut();
+	QAction *donate =
+		makeAction(
+			"dpdonate", QCoreApplication::translate("donations", "Donate"))
+			.icon("love")
+			.statusTip(
+				QCoreApplication::translate(
+					"donations", "Open Drawpile's donate page in your browser"))
+			.noDefaultShortcut();
+	// clang-format off
 	QAction *tablettester = makeAction("tablettester", tr("Tablet Tester")).icon("input-tablet").noDefaultShortcut();
 	QAction *touchtester = makeAction("touchtester", tr("Touch Tester")).icon("input-touchscreen").noDefaultShortcut();
 	QAction *showlogfile = makeAction("showlogfile", tr("Log File")).noDefaultShortcut();
@@ -6870,7 +6895,9 @@ void MainWindow::setupActions()
 	QAction *versioncheck = makeAction("versioncheck", tr("Check For Updates")).noDefaultShortcut();
 #endif
 
+
 	connect(homepage, &QAction::triggered, &MainWindow::homepage);
+	connect(donate, &QAction::triggered, &MainWindow::donate);
 	connect(about, &QAction::triggered, &MainWindow::about);
 	connect(aboutqt, &QAction::triggered, &QApplication::aboutQt);
 
@@ -6923,6 +6950,7 @@ void MainWindow::setupActions()
 
 	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
 	helpmenu->addAction(homepage);
+	helpmenu->addAction(donate);
 	helpmenu->addAction(tablettester);
 	helpmenu->addAction(touchtester);
 	helpmenu->addAction(showlogfile);
@@ -7596,4 +7624,43 @@ void MainWindow::updateDockTabs()
 			}
 		}
 	}
+}
+
+void MainWindow::setDonationLinkEnabled(bool enabled)
+{
+	QAction *action = searchAction(QStringLiteral("dpdonate"));
+	if(action) {
+		action->setEnabled(enabled);
+		action->setVisible(enabled);
+	}
+}
+
+QString MainWindow::makeContributionInfoText()
+{
+	if(!dpApp().settings().donationLinksEnabled()) {
+		return QString();
+	}
+
+	QColor color = palette().windowText().color();
+	color.setAlphaF(0.7);
+	QString attrs =
+		QStringLiteral(" style=\"color:%1;\"").arg(color.name(QColor::HexArgb));
+
+	QString donationText = utils::toHtmlWithLink(
+		QCoreApplication::translate(
+			//: The [] will be turned into a clickable link! Keep them in
+			//: your translation. You can copy the heart ♥ into your text if
+			//: it doesn't look weird for your language, else just leave it.
+			"donations", "[♥ Donate to Drawpile] to help keep development "
+						 "going and the servers running."),
+		utils::getDonationLink(), attrs);
+
+	QString helpText = utils::toHtmlWithLink(
+		//: The [] will be turned into a clickable link to Drawpile's help page!
+		//: Keep them in your translation.
+		tr("To report a bug or suggest a feature, [take a look here]."),
+		utils::getHelpLink(), attrs);
+
+	return QStringLiteral("<p%1>%2</p><p%1>%3<br></p>")
+		.arg(attrs, donationText, helpText);
 }
