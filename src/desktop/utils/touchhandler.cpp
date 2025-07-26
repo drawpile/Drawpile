@@ -768,20 +768,10 @@ void TouchHandler::updateSmoothedMotion()
 			m_smoothZoomCurrent = m_smoothZoomTarget;
 		}
 
-		qreal rotationDelta = m_smoothRotationTarget - m_smoothRotationCurrent;
-		if(rotationDelta > 180.0) {
-			rotationDelta = 360.0 - rotationDelta;
-		} else if(rotationDelta < -180.0) {
-			rotationDelta = 360.0 + rotationDelta;
-		}
-
-		if(qAbs(rotationDelta) > eps) {
-			m_smoothRotationCurrent = std::fmod(
-				m_smoothRotationCurrent + rotationDelta * m_smoothMultiplier,
-				360.0);
-		} else {
-			m_smoothRotationCurrent = m_smoothRotationTarget;
-		}
+		// XXX: Smoothing rotation causes weird issues with the canvas not
+		// ratcheting properly or spinning forever. Hard to reproduce, so I'm
+		// just turning off that part for now, presumably it's still okay.
+		m_smoothRotationCurrent = m_smoothRotationTarget;
 
 		emit touchZoomedRotated(m_smoothZoomCurrent, m_smoothRotationCurrent);
 	}
