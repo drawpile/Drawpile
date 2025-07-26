@@ -34,8 +34,10 @@ void General::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 	utils::addFormSeparator(layout);
 
 	QFormLayout *canvasSection = utils::addFormSection(layout);
-	initLogging(settings, canvasSection);
+	// Uncomment later.
+	// initContributing(settings, canvasSection);
 	utils::addFormSpacer(canvasSection);
+	initLogging(settings, canvasSection);
 	initUndo(settings, canvasSection);
 #ifndef __EMSCRIPTEN__
 	utils::addFormSpacer(canvasSection);
@@ -110,6 +112,15 @@ QString General::formatLanguage(const QLocale &locale)
 			.arg(locale.nativeLanguageName())
 			.arg(QLocale::languageToString(locale.language()));
 	}
+}
+
+void General::initContributing(
+	desktop::settings::Settings &settings, QFormLayout *form)
+{
+	QCheckBox *enableContributing =
+		new QCheckBox(tr("Show contribution, donation and feedback links"));
+	settings.bindDonationLinksEnabled(enableContributing);
+	form->addRow(tr("Contributing:"), enableContributing);
 }
 
 void General::initLogging(

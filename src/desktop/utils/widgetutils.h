@@ -276,6 +276,13 @@ bool openOrQuestionUrl(QWidget *parent, const QUrl &url);
 
 QString makeActionShortcutText(QString text, const QKeySequence &shortcut);
 
+QString toHtmlWithLink(
+	const QString &text, const QString &link,
+	const QString &extraAttrs = QString());
+
+QString getHelpLink();
+QString getDonationLink();
+
 QIcon makeColorIcon(int size, const QColor &color);
 QIcon makeColorIconFor(const QWidget *parent, const QColor &color);
 

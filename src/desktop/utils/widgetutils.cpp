@@ -1113,6 +1113,43 @@ QString makeActionShortcutText(QString text, const QKeySequence &shortcut)
 	}
 }
 
+QString toHtmlWithLink(
+	const QString &text, const QString &link, const QString &extraAttrs)
+{
+	static const QRegularExpression linkRegex(
+		QStringLiteral("\\[([^\\[\\]]+)\\]"));
+	QString html = text.toHtmlEscaped();
+	html.replace(
+		linkRegex, QStringLiteral("<a href=\"%1\" %2>\\1</a>")
+					   .arg(link.toHtmlEscaped(), extraAttrs));
+	return html;
+}
+
+
+namespace {
+static QString appendLanguageQueryParam(const QString &s)
+{
+	const QString &language = dpApp().language();
+	if(language.isEmpty()) {
+		return s;
+	} else {
+		return QStringLiteral("%1?lang=%2").arg(s, language.toHtmlEscaped());
+	}
+}
+}
+
+QString getHelpLink()
+{
+	return appendLanguageQueryParam(
+		QStringLiteral("https://drawpile.net/help/"));
+}
+
+QString getDonationLink()
+{
+	return appendLanguageQueryParam(
+		QStringLiteral("https://drawpile.net/donate/"));
+}
+
 namespace {
 static void getInputTextWith(
 	QWidget *parent, const QString &title, const QString &label,

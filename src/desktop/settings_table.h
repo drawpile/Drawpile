@@ -134,6 +134,7 @@ SETTING(compactChat               , CompactChat               , "history/compact
 SETTING(confirmLayerDelete        , ConfirmLayerDelete        , "settings/confirmlayerdelete"           , false)
 SETTING_GETSET(debounceDelayMs    , DebounceDelayMs           , "settings/debouncedelayms"              , DEBOUNCE_DELAY_MS_DEFAULT
 	, &debounceDelayMs::get, &debounceDelayMs::set)
+SETTING(donationLinksEnabled      , DonationLinksEnabled      , "settings/donationlinksenabled"         , false)
 SETTING(parentalControlsHideLocked, ParentalControlsHideLocked, "pc/hidelocked"                         , false)
 SETTING(curvesPresets             , CurvesPresets             , "curves/presets"                        , QVector<QVariantMap>())
 SETTING(curvesPresetsConverted    , CurvesPresetsConverted    , "curves/inputpresetsconverted"          , false)

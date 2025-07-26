@@ -653,6 +653,7 @@ static void initTranslations(DrawpileApp &app, const QLocale &locale)
 			if(translator->load(filename, directory) &&
 			   !translator->isEmpty()) {
 				qApp->installTranslator(translator);
+				app.setLanguage(translator->language());
 				return;
 			}
 		}

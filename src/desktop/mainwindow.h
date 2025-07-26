@@ -184,6 +184,7 @@ public slots:
 
 	static void about();
 	static void homepage();
+	static void donate();
 
 	//! Create a blank new document
 	void newDocument(const QSize &size, const QColor &background);
@@ -413,6 +414,9 @@ private:
 	void deactivateAllDocks();
 	void prepareDockTabUpdate();
 	void updateDockTabs();
+
+	void setDonationLinkEnabled(bool enabled);
+	QString makeContributionInfoText();
 
 	bool m_singleSession;
 	bool m_smallScreenMode;
