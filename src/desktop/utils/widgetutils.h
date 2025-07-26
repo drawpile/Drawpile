@@ -274,14 +274,20 @@ QInputDialog *getInputInt(
 	int minValue, int maxValue, const std::function<void(int)> &fn);
 
 QInputDialog *getOrRaiseInputInt(
-	QWidget *parent, const QString &objectName, const QString &title, const
-	QString &label, int value, int minValue, int maxValue, const
-	std::function<void(int)> &fn);
+	QWidget *parent, const QString &objectName, const QString &title,
+	const QString &label, int value, int minValue, int maxValue,
+	const std::function<void(int)> &fn);
 
 bool openOrQuestionUrl(QWidget *parent, const QUrl &url);
 
 QString makeActionShortcutText(QString text, const QKeySequence &shortcut);
 QString scrubAccelerators(const QString &text);
+QString toHtmlWithLink(
+	const QString &text, const QString &link,
+	const QString &extraAttrs = QString());
+
+QString getHelpLink();
+QString getDonationLink();
 
 QIcon makeColorIcon(int size, const QColor &color);
 QIcon makeColorIconFor(const QWidget *parent, const QColor &color);

@@ -29,6 +29,7 @@ private:
 	void initFormats(desktop::settings::Settings &settings, QFormLayout *form);
 	void initAutosave(desktop::settings::Settings &settings, QFormLayout *form);
 	void initDialogs(desktop::settings::Settings &settings, QFormLayout *form);
+	void initLogging(desktop::settings::Settings &settings, QFormLayout *form);
 };
 
 }

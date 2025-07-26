@@ -14,9 +14,10 @@ public:
 	Links(bool vertical, QWidget *parent = nullptr);
 
 private:
+	static constexpr int DONATION_LINK_INDEX = 0;
 	struct LinkDefinition;
 
-	void setUpLink(const LinkDefinition &ld, QAbstractButton *link);
+	void setUpLink(int index, const LinkDefinition &ld, QAbstractButton *link);
 };
 
 }

@@ -29,7 +29,8 @@ private:
 
 	static QString formatLanguage(const QLocale &locale);
 
-	void initLogging(desktop::settings::Settings &settings, QFormLayout *form);
+	void
+	initContributing(desktop::settings::Settings &settings, QFormLayout *form);
 
 	void
 	initPerformance(desktop::settings::Settings &settings, QFormLayout *form);

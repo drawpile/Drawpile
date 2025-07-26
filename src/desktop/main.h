@@ -67,6 +67,9 @@ public:
 
 	brushes::BrushPresetTagModel *brushPresets() { return m_brushPresets; }
 
+	void setLanguage(const QString &language) { m_language = language; }
+	const QString language() const { return m_language; }
+
 	int canvasImplementation() const { return m_canvasImplementation; }
 	static int getCanvasImplementationFor(int canvasImplementation);
 	bool isCanvasImplementationFromSettings() const
@@ -113,6 +116,7 @@ private:
 	utils::StateDatabase *m_state = nullptr;
 	utils::Recents *m_recents = nullptr;
 	brushes::BrushPresetTagModel *m_brushPresets = nullptr;
+	QString m_language;
 	QString m_originalSystemStyle;
 	QPalette m_originalSystemPalette;
 #ifdef Q_OS_WIN
