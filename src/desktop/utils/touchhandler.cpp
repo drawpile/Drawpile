@@ -315,6 +315,7 @@ void TouchHandler::handleTouchUpdate(
 				avgDist += squareDist(spot.current - center);
 			}
 			anchorAvgDist = sqrt(anchorAvgDist);
+			qWarning("%.1f", anchorAvgDist);
 
 			qreal touchZoom = zoom;
 			if(isTouchPinchEnabled()) {
