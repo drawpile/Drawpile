@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1037"/>
+        <location filename="../document.cpp" line="+1044"/>
         <source>Unknown format.</source>
         <translation>Formato sconosciuto.</translation>
     </message>
@@ -788,7 +788,7 @@ Seleziona invece un livello normale.</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+48"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+121"/>
         <source>Layer %1</source>
         <translation>Livello %1</translation>
     </message>
@@ -1456,7 +1456,7 @@ Seleziona invece un livello normale.</translation>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+566"/>
+        <location filename="../net/client.cpp" line="+580"/>
         <source>%1 banned by %2.</source>
         <translation>%1 bannato da %2.</translation>
     </message>
@@ -1491,7 +1491,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Stato da Operatore revocato da %1 dal server.</translation>
     </message>
     <message>
-        <location line="-513"/>
+        <location line="-527"/>
         <source>You have been kicked.</source>
         <translation>Sei stato espulso.</translation>
     </message>
@@ -1531,7 +1531,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Disconnesso: %1</translation>
     </message>
     <message>
-        <location line="+422"/>
+        <location line="+436"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>Solo i moderatori possono esportare i ban.</translation>
