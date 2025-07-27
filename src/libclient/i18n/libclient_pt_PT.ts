@@ -19,222 +19,222 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>A alocação de memória falhou. Isto pode acontecer em alguns navegadores se recarregar. Feche esta página e o seu navegador completamente e tente de novo.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>A memória alocada não é um SharedArrayBuffer, mesmo que o navegador tenha suporte. Pode precisar mudar alguma configuração.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Logotipo do Drawpile</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation>login do drawpile.net</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>A carregar a aplicação</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>A iniciar…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>A iniciar, vai demorar um pouco…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation type="unfinished"></translation>
+        <translation>A carregar recursos</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>A carregar, vai demorar um pouco…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>A preparar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>A inicializar, vai demorar um pouco…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Falha ao iniciar o Drawpile: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>A configurar…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro fatal:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Isto normalmente acontece porque o seu navegador está desatualizado, ou está a ver a página em algum navegador embutido, tipo uma aplicação de mensagens. Precisa abrir esta página adequadamente. Para mais informações, leia &lt;a href=&quot;#&quot;&gt;esta página de ajuda&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ligação de sessão inválida.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Independente de como chegou aqui, não foi por uma ligação válida de uma sessão Drawpile.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Navegador embutido:&lt;/strong&gt; parece que abriu o Drawpile num navegador embutido.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Navegador embutido:&lt;/strong&gt; parece que abriu o Drawpile no navegador embutido do %1.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalmente isto não vai funcionar direito. Por favor, abra num navegador real no lugar disso.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation type="unfinished"></translation>
+        <translation>Navegador provavelmente incompatível:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Navegador provavelmente incompatível:&lt;/strong&gt; O Firefox no Linux não tem apoio para canetas sensíveis à pressão em todos os sistemas. Se a pressão não funcionar para si, tente usar um navegador diferente, ou &lt;a href=&quot;#&quot;&gt;a aplicação nativa para Linux&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Navegador incompatível:&lt;/strong&gt; O Firefox no Windows tem alguns problemas ao abrir o Drawpile. Digitar texto e/ou apertar Ctrl+Z para desfazer pode não funcionar. Considere usar um navegador diferente ou &lt;a href=&quot;#&quot;&gt;a aplicação nativa para Windows&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Navegador Incompatível:&lt;/strong&gt; O Chrome no %1 tem alguns problemas ao abrir o Drawpile. Na verdade, ele é só o navegador padrão do sistema (Safari) com outra cara. Isso causa problemas como os controles ficarem fora do ecrã. Considere usar o Safari diretamente em vez disso.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Test your pen pressure here</source>
-        <translation type="unfinished"></translation>
+        <translation>Teste a pressão da sua caneta aqui</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada de rato detetado, mas não é uma caneta</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected touch input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Toque detetado, não é uma caneta</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected input, but not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada detetada, mas não é uma caneta</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen pressure detected</source>
-        <translation type="unfinished"></translation>
+        <translation>Pressão de caneta detetada</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen detected, but no pressure variance</source>
-        <translation type="unfinished"></translation>
+        <translation>Caneta detetada, mas a pressão não está variando</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished">A procurar atualizações…</translation>
+        <translation>A verificar atualizações…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Update check blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Verificação de atualizações bloqueada</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Aviso:&lt;/strong&gt; esta instalação está &lt;strong&gt;desatualizada&lt;/strong&gt; na versão &lt;code&gt;%1&lt;/code&gt;. A versão mais recente é a &lt;code&gt;%2&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tente atualizar a página. Se não mudar nada, notifique o dono do servidor para atualizá-lo.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Aviso:&lt;/strong&gt; Não é possível determinar se a instalação está atualizada ou não. Essa versão é a &lt;code&gt;%1&lt;/code&gt; e talvez não seja a versão mais atualizada.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tente reiniciar a página. Se não funcionar, consulte o dono do servidor ou leia &lt;a href=&quot;#&quot;&gt;a página de ajuda em drawpile.net&lt;/a&gt; sobre como entrar em contato com alguém que pode ver o que acontece.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue regardless, but things may not work properly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pode ignorar isso e continuar, mas as coisas podem não funcionar direito.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Start Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciar Mesmo Assim</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Versão:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Stable (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Estável (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Beta (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Beta (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The session you are trying to join requires the beta version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>A sessão que tenta entrar requer a versão beta do Drawpile.</translation>
     </message>
 </context>
 <context>
@@ -243,7 +243,7 @@
         <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
-        <translation type="unfinished">Conflito</translation>
+        <translation>Conflito</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -303,7 +303,7 @@
         <location line="+8"/>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tela fora dos limites, largura e altura devem ser entre 1 e %1 para o formato %2.</translation>
     </message>
 </context>
 <context>
@@ -433,12 +433,12 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Mudar Opacidade do Pincel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>Mudar Dureza do Pincel</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -672,7 +672,8 @@
         <location line="+15"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível preencher o grupo %1.
+Selecione uma camada normal em vez disso.</translation>
     </message>
 </context>
 <context>
@@ -856,7 +857,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+12"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished">Número de utilizadores activos a desenhar desconhecido</translation>
+        <translation>Número desconhecido de utilizadores desenhando ativamente</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
@@ -934,7 +935,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation type="unfinished">Entrada pela web não permitida</translation>
+        <translation>proibida a entrada pelo navegador</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -972,22 +973,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Greater Density</source>
-        <translation type="unfinished"></translation>
+        <translation>Maior Densidade</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcador</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>OKLAB</source>
-        <translation type="unfinished"></translation>
+        <translation>OKLAB</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Pigment</source>
-        <translation type="unfinished"></translation>
+        <translation>Pigmento</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1007,42 +1008,42 @@ Select a regular layer instead.</source>
     <message>
         <location line="+12"/>
         <source>Linear Dodge/Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Desvio Linear/Adicionar</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>Queimar Cor</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation>Subexposição de Cor</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Vivid Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Cor Vívida</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Fixar Luz</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Darker Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Cor Escura</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighter Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Cor Clara</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference</source>
-        <translation type="unfinished"></translation>
+        <translation>Diferença</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1052,42 +1053,42 @@ Select a regular layer instead.</source>
     <message>
         <location line="+30"/>
         <source>Shade (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sombra (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Brilho (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shade/Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sombra/Brilho (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Queimar (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Desviar (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn/Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Queimar/Desviar (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Hard Mix (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mistura Dura (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Diferença (SAI)</translation>
     </message>
     <message>
         <location line="-108"/>
@@ -1244,7 +1245,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+15"/>
         <source>Unknown brush format in file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato de pincel desconhecido no ficheiro &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -1264,17 +1265,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+34"/>
         <source>Brush file &apos;%1&apos; has invalid version %d</source>
-        <translation type="unfinished"></translation>
+        <translation>A versão no ficheiro de pincel &apos;%1&apos; é inválida</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>O ficheiro de pincel &apos;%1&apos; contém configuração de cores inválida</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
-        <translation type="unfinished"></translation>
+        <translation>O ficheiro de pincel &apos;%1&apos; contém a configuração obsoleta &apos;%2&apos;</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -1477,12 +1478,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 virou operador pelo convite criado por um administrador.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 virou operador pelo convite criado por %2.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1578,17 +1579,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+14"/>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>A palavra-passe da sessão foi removida por um administrador. Este servidor não permite navegadores em sessões públicas, eles serão desconectados.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>A palavra-passe da sessão foi removida por %1. Este servidor não permite navegadores em sessões públicas, eles serão desconectados.</translation>
     </message>
     <message>
         <location line="+93"/>
         <source>%1 trusted via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 agora é confiável pelo convite criado por um administrador.</translation>
     </message>
     <message>
         <location line="-62"/>
@@ -1598,7 +1599,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>A sessão está sem espaço! Para continuar desenhando, um operador deve reiniciá-la para diminuir o seu tamanho. Ele pode fazer isso em Sessão &gt; Reiniciar.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1623,7 +1624,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 está a compactar a tela. Por favor, espere um pouco que a sessão já volta…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1633,7 +1634,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 está a reverter a tela para uma cópia mais antiga. Por favor, espere um pouco que a sessão já volta…</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1666,7 +1667,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+10"/>
         <source>%1 trusted via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 agora é confiável pelo convite criado por %2.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1684,13 +1685,13 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/invitelistmodel.cpp" line="+119"/>
         <source>No invite codes, click Create to add one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há códigos de convite, crie clicando em Criar.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
-        <translation type="unfinished">Utilizado %1 por %2</translation>
+        <translation>Usado em %1 por %2</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1783,7 +1784,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation type="unfinished"></translation>
+        <translation>O servidor espera STARTTLS num protocolo sem suporte.</translation>
     </message>
     <message>
         <location line="+65"/>
@@ -1885,12 +1886,12 @@ Select a regular layer instead.</source>
         <location line="+220"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
-        <translation type="unfinished"></translation>
+        <translation>Não há suporte para TLS nesse tipo de socket</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível ativar o modo de ignorar erros TLS</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -1901,7 +1902,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="-949"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
-        <translation type="unfinished"></translation>
+        <translation>O modo seguro não está ativado num hospedeiro com certificado fixado!</translation>
     </message>
     <message>
         <location line="+641"/>
@@ -1911,7 +1912,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+290"/>
         <source>Pinned certificate has changed!</source>
-        <translation type="unfinished"></translation>
+        <translation>O certificado fixado mudou!</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -1986,7 +1987,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não tem permissão de hospedar sessões públicas aqui, somente sessões pessoais são permitidas. Pode mudar de público para pessoal na guia Sessão.</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -2009,17 +2010,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (modo de compatibilidade)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.3 (totalmente compatível)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Unlisted</source>
-        <translation type="unfinished"></translation>
+        <translation>Não-listado</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2117,19 +2118,19 @@ Select a regular layer instead.</source>
         <location line="+7"/>
         <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>A sessão está hospedada com uma versão nova do Drawpile. Precisa atualizá-lo. Se não há atualização disponível, ela deve estar hospedada numa versão de desenvolvimento do Drawpile.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>A sessão está hospedada numa versão antiga e incompatível do Drawpile.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>A sessão está hospedadada por um protocolo incompatível.</translation>
     </message>
 </context>
 <context>
@@ -2137,7 +2138,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/server.cpp" line="+273"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se não pretende usar um proxy, pode desativar o proxy de rede nas preferências do Drawpile, na guia de Rede.</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -2152,7 +2153,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+11"/>
         <source>Network write error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro de escrita na rede</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2162,18 +2163,18 @@ Select a regular layer instead.</source>
     <message>
         <location line="+9"/>
         <source>Network connection timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo esgotado para conexão de rede</translation>
     </message>
     <message>
         <location line="+97"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">Os dados recebidos são inválidos</translation>
+        <translation>Os dados recebidos são inválidos</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Erro de socket %1: %2</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2187,7 +2188,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/gradient.cpp" line="+135"/>
         <source>You need to drag to create a gradient.</source>
-        <translation type="unfinished"></translation>
+        <translation>Precisa arrastar para criar um gradiente.</translation>
     </message>
 </context>
 <context>
@@ -2285,17 +2286,17 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../wasmsupport.cpp" line="-198"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não usa o cliente oficial no web.drawpile.net. Vários servidores não permitem conexões de clientes web alternativos.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>The session address does not look like a valid WebSocket URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>O endereço da sessão não parece uma ligação para WebSocket válido.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
-        <translation type="unfinished"></translation>
+        <translation>Está a tentar conectar com um endereço IP em vez de um domínio próprio. Isto normalmente não funciona, a não ser que tenha configurado o seu navegador antes para permitir isto.</translation>
     </message>
     <message>
         <location line="+7"/>
