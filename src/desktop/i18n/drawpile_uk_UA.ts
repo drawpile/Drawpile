@@ -3633,7 +3633,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+643"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Щоб повідомити про помилку або запропонувати функцію, [перегляньте сюди].</translation>
     </message>
     <message>
         <location line="-943"/>
@@ -5691,12 +5691,12 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <location line="+8"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Pixel-perfect</source>
-        <translation type="unfinished"></translation>
+        <translation>Ідеально до пікселів</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevents L-shaped curves, mostly useful for small pixel brushes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Запобігає появі L-подібних кривих, здебільшого корисно для маленьких піксельних пензлів.</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -8953,12 +8953,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Write debugging log to file</source>
-        <translation type="unfinished">Записати журнал налагодження у файл</translation>
+        <translation>Запис журналу налагодження у файл</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished">Лісозаготівля:</translation>
+        <translation>Лісозаготівля:</translation>
     </message>
 </context>
 <context>
@@ -9094,12 +9094,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-54"/>
         <source>Show contribution, donation and feedback links</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати посилання на внески, пожертви та відгуки</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Contributing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Сприяння:</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -12324,25 +12324,25 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[♥ Зробіть пожертву Drawpile], щоб допомогти підтримувати роботу публічного сервера.</translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
         <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
-        <translation type="unfinished"></translation>
+        <translation>Пожертвувати</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../mainwindow.cpp" line="+3"/>
         <source>Open Drawpile&apos;s donate page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Відкрийте сторінку пожертв Drawpile у вашому браузері</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[♥ Зробіть пожертву Drawpile], щоб допомогти продовжувати розробку та роботу серверів.</translation>
     </message>
 </context>
 <context>
