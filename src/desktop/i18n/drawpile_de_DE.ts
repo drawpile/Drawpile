@@ -3554,7 +3554,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location line="+619"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Um einen Bug zu melden oder ein Feature vorzuschlagen, [klicken Sie hier].</translation>
     </message>
     <message>
         <location line="-1066"/>
@@ -5647,12 +5647,12 @@ Falls schnelle Striche Artefakte beim Schmieren verursachen, kann das Aktivieren
         <location line="+8"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Pixel-perfect</source>
-        <translation type="unfinished"></translation>
+        <translation>Pixel-perfekt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevents L-shaped curves, mostly useful for small pixel brushes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verhindert L-Kurven, am nützlichsten für kleine Pixelpinsel.</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -8942,12 +8942,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+6"/>
         <source>Write debugging log to file</source>
-        <translation type="unfinished">Schreibe Debug-Log in Datei</translation>
+        <translation>Schreibe Debug-Log in Datei</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished">Loggen:</translation>
+        <translation>Loggen:</translation>
     </message>
 </context>
 <context>
@@ -9083,12 +9083,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="-54"/>
         <source>Show contribution, donation and feedback links</source>
-        <translation type="unfinished"></translation>
+        <translation>Links zur Beteiligung, Spenden und Feedback anzeigen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Contributing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Beteiligung:</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -12302,25 +12302,25 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[♥ Spenden Sie an Drawpile] um den weiteren Betrieb des öffentlichen Servers zu unterstützen.</translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
         <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
-        <translation type="unfinished"></translation>
+        <translation>Spenden</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../mainwindow.cpp" line="+3"/>
         <source>Open Drawpile&apos;s donate page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffent die Spendenseite von Drawpile in Ihrem Browser</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[♥ Spenden Sie an Drawpile] um die weitere Entwicklung und Betrieb der Server zu unterstützen.</translation>
     </message>
 </context>
 <context>
