@@ -1080,7 +1080,7 @@ Subrange: [%3, %4]</source>
 <context>
     <name>LinkCheck</name>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1193"/>
+        <location filename="../utils/widgetutils.cpp" line="+1263"/>
         <source>Open Link</source>
         <translation></translation>
     </message>
@@ -1291,7 +1291,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+411"/>
+        <location line="+413"/>
         <source>🙋 %1 joined!</source>
         <translation></translation>
     </message>
@@ -1357,18 +1357,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+62"/>
-        <location line="+2320"/>
+        <location line="+2322"/>
         <source>Untitled</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-2268"/>
-        <location line="+4084"/>
+        <location line="-2270"/>
+        <location line="+4094"/>
         <source>Export Again</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-4080"/>
+        <location line="-4090"/>
         <source>Export Again to %1</source>
         <translation></translation>
     </message>
@@ -1405,18 +1405,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+29"/>
-        <location line="+829"/>
+        <location line="+30"/>
+        <location line="+830"/>
         <source>Cancel</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-838"/>
+        <location line="-840"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Save</source>
         <translation></translation>
     </message>
@@ -1482,7 +1482,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-1361"/>
+        <location line="-1362"/>
         <source>Open</source>
         <translation></translation>
     </message>
@@ -1492,7 +1492,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+1549"/>
+        <location line="+1550"/>
         <source>Saving...</source>
         <translation></translation>
     </message>
@@ -1522,7 +1522,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Download complete, click on &quot;Save&quot; to save your file.</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+79"/>
         <source>Compatibility Mode</source>
         <translation></translation>
     </message>
@@ -1558,12 +1558,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2402"/>
+        <location line="+2410"/>
         <source>Record...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-2360"/>
+        <location line="-2368"/>
         <source>Unsupported format.</source>
         <translation></translation>
     </message>
@@ -1669,12 +1669,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3100"/>
+        <location line="+3108"/>
         <source>Terminate</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-3086"/>
+        <location line="-3094"/>
         <source>Join Session</source>
         <translation></translation>
     </message>
@@ -1741,23 +1741,23 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1918"/>
+        <location line="+1926"/>
         <source>Tablet Event Log...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-1914"/>
+        <location line="-1922"/>
         <source>Stop Profile</source>
         <translation></translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1915"/>
+        <location line="+1923"/>
         <source>Profile...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-1904"/>
+        <location line="-1912"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation></translation>
     </message>
@@ -1783,12 +1783,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1862"/>
+        <location line="+1870"/>
         <source>Record Debug Dumps</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-1861"/>
+        <location line="-1869"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -1847,7 +1847,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+150"/>
+        <location line="+158"/>
         <source>Toggle Dock %1</source>
         <translation>Toggle Dock %1</translation>
     </message>
@@ -2398,7 +2398,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Create Layers on Key Frame</translation>
     </message>
     <message>
-        <location line="-899"/>
+        <location line="+1266"/>
+        <source>To report a bug or suggest a feature, [take a look here].</source>
+        <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-2165"/>
         <source>Delete</source>
         <translation></translation>
     </message>
@@ -2423,12 +2429,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-3920"/>
+        <location line="-3930"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+580"/>
+        <location line="+581"/>
         <source>Canvas loaded in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
         <translation></translation>
@@ -2463,17 +2469,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+14"/>
         <location line="+17"/>
-        <location line="+10"/>
+        <location line="+11"/>
         <source>File is empty.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-10"/>
+        <location line="-11"/>
         <source>Error setting up download.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+11"/>
         <source>Error performing download.</source>
         <translation></translation>
     </message>
@@ -2513,7 +2519,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Could not establish a connection to the server.</translation>
     </message>
     <message>
-        <location line="+1513"/>
+        <location line="+1521"/>
         <source>Arrange Docks</source>
         <translation></translation>
     </message>
@@ -3216,7 +3222,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+97"/>
         <source>Could not write log file: %1</source>
         <translation>Could not write log file: %1</translation>
     </message>
@@ -3226,13 +3232,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Could not read log file: %1</translation>
     </message>
     <message>
-        <location line="-415"/>
+        <location line="-430"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Join...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-3983"/>
+        <location line="-3991"/>
         <source>Joined the session!</source>
         <translation></translation>
     </message>
@@ -3292,7 +3298,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+917"/>
+        <location line="+925"/>
         <source>Export Image…</source>
         <translation></translation>
     </message>
@@ -3594,13 +3600,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+43"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Homepage</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+13"/>
         <source>Tablet Tester</source>
         <translation></translation>
     </message>
@@ -3632,7 +3638,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+28"/>
         <source>Missing Log File</source>
         <translation>Missing Log File</translation>
     </message>
@@ -3654,7 +3660,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+32"/>
         <source>Brush slot #%1</source>
         <translation></translation>
     </message>
@@ -3689,7 +3695,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="-92"/>
+        <location filename="../utils/widgetutils.cpp" line="-162"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
         <translation></translation>
@@ -3698,7 +3704,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>MarkerColors</name>
     <message>
-        <location line="+137"/>
+        <location line="+207"/>
         <source>None</source>
         <translation></translation>
     </message>
@@ -5348,7 +5354,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location line="+149"/>
+        <location line="+151"/>
         <source>Brush Editor</source>
         <translation></translation>
     </message>
@@ -5389,7 +5395,7 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+2"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+440"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+441"/>
         <source>Round Pixel Brush</source>
         <translation></translation>
     </message>
@@ -5456,13 +5462,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+24"/>
         <source>Spacing: </source>
         <translation></translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+157"/>
+        <location line="+156"/>
         <location line="+18"/>
         <location line="+47"/>
         <location line="+18"/>
@@ -5474,7 +5480,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-394"/>
+        <location line="-393"/>
         <source>Stabilization Mode:</source>
         <translation>Stabilization Mode:</translation>
     </message>
@@ -5489,7 +5495,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Average Smoothing</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+13"/>
         <source>Stabilizer: </source>
         <translation></translation>
     </message>
@@ -5516,12 +5522,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+11"/>
-        <location line="+585"/>
+        <location line="+605"/>
         <source>Size</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-585"/>
+        <location line="-605"/>
         <location line="+65"/>
         <location line="+65"/>
         <location line="+99"/>
@@ -5541,12 +5547,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+522"/>
+        <location line="+542"/>
         <source>Opacity</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-488"/>
+        <location line="-508"/>
         <source>Hardness: </source>
         <translation></translation>
     </message>
@@ -5557,12 +5563,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+462"/>
+        <location line="+482"/>
         <source>Hardness</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-431"/>
+        <location line="-451"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Smudge with transparency</source>
         <translation></translation>
@@ -5585,12 +5591,12 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     </message>
     <message>
         <location line="+12"/>
-        <location line="+306"/>
+        <location line="+326"/>
         <source>Jitter</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-284"/>
+        <location line="-302"/>
         <source>No dynamics</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5640,7 +5646,7 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+98"/>
         <source>Not available in indirect paint modes.</source>
         <translation></translation>
     </message>
@@ -5666,38 +5672,49 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+8"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
+        <source>Pixel-perfect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Prevents L-shaped curves, mostly useful for small pixel brushes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
         <source>Randomized offsets in the stroke center.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+74"/>
         <source>Smudging: </source>
         <translation></translation>
     </message>
     <message>
-        <location line="-469"/>
+        <location line="-495"/>
         <source>Color Pickup: 1/</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-345"/>
+        <location line="-353"/>
         <source>Preserve alpha</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+823"/>
+        <location line="+857"/>
         <source>Minimum Smudging: </source>
         <translation></translation>
     </message>
     <message>
-        <location line="-80"/>
-        <location line="+84"/>
+        <location line="-86"/>
+        <location line="+90"/>
         <source>Smudging</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-318"/>
+        <location line="-342"/>
         <location line="+20"/>
         <location line="+37"/>
         <source>Apply to All</source>
@@ -5714,7 +5731,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+44"/>
         <source>Value: </source>
         <translation></translation>
     </message>
@@ -5724,7 +5741,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+120"/>
         <source>The radius of the brush.</source>
         <translation></translation>
     </message>
@@ -5744,7 +5761,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+77"/>
         <source>Blending: </source>
         <translation></translation>
     </message>
@@ -5759,12 +5776,12 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+126"/>
+        <location line="+138"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
         <translation>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
         <translation>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</translation>
     </message>
@@ -7020,7 +7037,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+3"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="-5"/>
         <source>Synchronize smudging</source>
         <translation></translation>
     </message>
@@ -7431,7 +7448,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1026"/>
+        <location filename="../mainwindow.cpp" line="-1042"/>
         <source>Blend alpha</source>
         <translation></translation>
     </message>
@@ -8262,12 +8279,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>Custom</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Hue</source>
         <translation></translation>
     </message>
@@ -8282,7 +8299,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Value</source>
         <translation></translation>
     </message>
@@ -8297,7 +8314,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Shades</source>
         <translation></translation>
     </message>
@@ -8572,7 +8589,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SystemInfoDialog</name>
     <message>
-        <location filename="../dialogs/systeminfodialog.cpp" line="+28"/>
+        <location filename="../dialogs/systeminfodialog.cpp" line="+29"/>
         <source>System Information</source>
         <translation>System Information</translation>
     </message>
@@ -8738,7 +8755,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Files</name>
     <message>
-        <location filename="../dialogs/settingsdialog/files.cpp" line="+42"/>
+        <location filename="../dialogs/settingsdialog/files.cpp" line="+43"/>
         <source>When enabled, save every %1 minutes</source>
         <translation></translation>
     </message>
@@ -8815,18 +8832,28 @@ Values above 0.5 may not be noticeable.</source>
         <source>Preferred export format:</source>
         <translation></translation>
     </message>
+    <message>
+        <location line="+6"/>
+        <source>Write debugging log to file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Logging:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>dialogs::settingsdialog::General</name>
     <message>
-        <location filename="../dialogs/settingsdialog/general.cpp" line="+52"/>
-        <location line="+144"/>
+        <location filename="../dialogs/settingsdialog/general.cpp" line="+53"/>
+        <location line="+145"/>
         <location line="+15"/>
         <source>System</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-148"/>
+        <location line="-149"/>
         <source>Language:</source>
         <translation></translation>
     </message>
@@ -8846,17 +8873,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>Write debugging log to file</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Logging:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+11"/>
+        <location line="+23"/>
         <source>Qt Graphics View</source>
         <extracomment>One of the canvas renderer options. &quot;Qt&quot; is a software framework.</extracomment>
         <translation>Qt Graphics View</translation>
@@ -8957,7 +8974,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-54"/>
+        <source>Show contribution, donation and feedback links</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Contributing:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
         <translation></translation>
     </message>
@@ -9241,7 +9268,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+27"/>
         <source>Preview event</source>
         <translation></translation>
     </message>
@@ -9251,7 +9278,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+2"/>
         <source>Sound volume:</source>
         <translation></translation>
     </message>
@@ -9276,7 +9303,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-95"/>
+        <location line="-84"/>
         <source>User joined</source>
         <translation></translation>
     </message>
@@ -10507,7 +10534,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Links</name>
     <message>
-        <location filename="../dialogs/startdialog/links.cpp" line="+28"/>
+        <location filename="../dialogs/startdialog/links.cpp" line="+36"/>
         <source>Help</source>
         <translation></translation>
     </message>
@@ -11130,7 +11157,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+41"/>
         <source>Hosting on your own computer requires additional setup!</source>
         <translation></translation>
     </message>
@@ -11666,7 +11693,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorSpinnerDock</name>
     <message>
-        <location filename="../docks/colorspinner.cpp" line="+98"/>
+        <location filename="../docks/colorspinner.cpp" line="+97"/>
         <source>Shape</source>
         <translation></translation>
     </message>
@@ -12163,6 +12190,31 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>donations</name>
+    <message>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-36"/>
+        <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
+        <location filename="../mainwindow.cpp" line="+1408"/>
+        <source>Donate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location filename="../mainwindow.cpp" line="+3"/>
+        <source>Open Drawpile&apos;s donate page in your browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="+765"/>
+        <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>drawingboard::CanvasScene</name>
     <message>
         <location filename="../scene/canvasscene.cpp" line="+333"/>
@@ -12332,7 +12384,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+115"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+42"/>
         <source>Time-Based Stabilizer</source>
         <translation>Time-Based Stabilizer</translation>
@@ -12392,7 +12444,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+648"/>
+        <location line="+649"/>
         <source>Smudging: </source>
         <translation></translation>
     </message>
@@ -12402,13 +12454,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+731"/>
+        <location line="+738"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location line="-1417"/>
+        <location line="-1425"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
         <translation></translation>
     </message>
@@ -13670,7 +13722,7 @@ or via Animation ▸ New Track.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Frames Per Second (FPS)</source>
         <translation></translation>
     </message>

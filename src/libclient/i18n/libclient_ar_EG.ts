@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1037"/>
+        <location filename="../document.cpp" line="+1044"/>
         <source>Unknown format.</source>
         <translation>امتداد مجهول.</translation>
     </message>
@@ -788,7 +788,7 @@ Select a regular layer instead.</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+48"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+121"/>
         <source>Layer %1</source>
         <translation>الطبقة %1</translation>
     </message>
@@ -1468,7 +1468,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+566"/>
+        <location filename="../net/client.cpp" line="+580"/>
         <source>%1 banned by %2.</source>
         <translation>تم حظر %1 بواسطة %2.</translation>
     </message>
@@ -1503,7 +1503,7 @@ Select a regular layer instead.</source>
         <translation>تم إبطال حالة المشغل من %1 بواسطة الخادم.</translation>
     </message>
     <message>
-        <location line="-513"/>
+        <location line="-527"/>
         <source>You have been kicked.</source>
         <translation>لقد تم طردك.</translation>
     </message>
@@ -1543,7 +1543,7 @@ Select a regular layer instead.</source>
         <translation>انقطع الاتصال: %1</translation>
     </message>
     <message>
-        <location line="+422"/>
+        <location line="+436"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>فقط للمشرفين يمكنهم تصدير الحظر العادي.</translation>

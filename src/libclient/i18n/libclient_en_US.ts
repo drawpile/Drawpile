@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1037"/>
+        <location filename="../document.cpp" line="+1044"/>
         <source>Unknown format.</source>
         <translation></translation>
     </message>
@@ -788,7 +788,7 @@ Select a regular layer instead.</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+48"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+121"/>
         <source>Layer %1</source>
         <translation></translation>
     </message>
@@ -1456,7 +1456,7 @@ Select a regular layer instead.</translation>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+566"/>
+        <location filename="../net/client.cpp" line="+580"/>
         <source>%1 banned by %2.</source>
         <translation></translation>
     </message>
@@ -1491,7 +1491,7 @@ Select a regular layer instead.</translation>
         <translation></translation>
     </message>
     <message>
-        <location line="-513"/>
+        <location line="-527"/>
         <source>You have been kicked.</source>
         <translation></translation>
     </message>
@@ -1531,7 +1531,7 @@ Select a regular layer instead.</translation>
         <translation></translation>
     </message>
     <message>
-        <location line="+422"/>
+        <location line="+436"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation></translation>
