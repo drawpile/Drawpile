@@ -1286,12 +1286,12 @@ Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdess
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+972"/>
-        <location line="+2322"/>
+        <location line="+2323"/>
         <source>Untitled</source>
         <translation>Unbenannt</translation>
     </message>
     <message>
-        <location line="-1515"/>
+        <location line="-1516"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Drawpile verlassen</translation>
@@ -1409,7 +1409,7 @@ Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdess
         <translation>Abspielen</translation>
     </message>
     <message>
-        <location line="+363"/>
+        <location line="+364"/>
         <source>Invalid address</source>
         <translation>Ungültige Adresse</translation>
     </message>
@@ -1449,7 +1449,7 @@ Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdess
         <translation>Das Bild konnte nicht geladen werden</translation>
     </message>
     <message>
-        <location line="+461"/>
+        <location line="+462"/>
         <source>About Drawpile</source>
         <translation>Über Drawpile</translation>
     </message>
@@ -1486,13 +1486,13 @@ Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdess
         <translation>Automatisch speichern</translation>
     </message>
     <message>
-        <location line="-2383"/>
-        <location line="+2410"/>
+        <location line="-2385"/>
+        <location line="+2412"/>
         <source>Record...</source>
         <translation>Aufzeichnen...</translation>
     </message>
     <message>
-        <location line="-4815"/>
+        <location line="-4817"/>
         <source>Server out of space</source>
         <translation>Kein Speicherplatz auf Server</translation>
     </message>
@@ -1529,7 +1529,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Fehler beim Öffnen des Tablet-Ereignislogs.</translation>
     </message>
     <message>
-        <location line="+200"/>
+        <location line="+201"/>
         <source>Canvas size too large to host.</source>
         <translation>Leinwandgröße zu groß zum Hosten.</translation>
     </message>
@@ -1555,12 +1555,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3108"/>
+        <location line="+3110"/>
         <source>Terminate</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location line="-2779"/>
+        <location line="-2781"/>
         <source>Session blocked by parental controls</source>
         <translation>Sitzung durch Jugenschutzeinstellungen blockiert</translation>
     </message>
@@ -1580,18 +1580,18 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Benutzer #%1</translation>
     </message>
     <message>
-        <location line="+92"/>
+        <location line="+93"/>
         <source>Stop Tablet Event Log</source>
         <translation>Tablet-Ereignislog stoppen</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1926"/>
+        <location line="+1927"/>
         <source>Tablet Event Log...</source>
         <translation>Tablet-Ereignislog...</translation>
     </message>
     <message>
-        <location line="-1794"/>
+        <location line="-1795"/>
         <source>Tablet Input:</source>
         <translation>Tablet-Eingabe:</translation>
     </message>
@@ -1813,7 +1813,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Als Füllquelle setzen</translation>
     </message>
     <message>
-        <location line="+323"/>
+        <location line="+324"/>
         <source>Flipbook</source>
         <translatorcomment>Does this need to be translated to german?</translatorcomment>
         <translation>Daumenkino</translation>
@@ -1824,12 +1824,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Vorschaufenster für Animation anzeigen</translation>
     </message>
     <message>
-        <location line="-3794"/>
+        <location line="-3797"/>
         <source>Joined the session!</source>
         <translation>Der Sitzung beigetreten!</translation>
     </message>
     <message>
-        <location line="+892"/>
+        <location line="+893"/>
         <source>Reason:</source>
         <translation>Grund:</translation>
     </message>
@@ -1864,7 +1864,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Freihand-Pinselwerkzeug (Alphasperrmodus)</translation>
     </message>
     <message>
-        <location line="+925"/>
+        <location line="+926"/>
         <source>Export Image…</source>
         <translation>Bild exportieren…</translation>
     </message>
@@ -1968,7 +1968,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>&amp;Ebenen</translation>
     </message>
     <message>
-        <location line="+443"/>
+        <location line="+444"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Host...</source>
         <translation>&amp;Hosten...</translation>
@@ -2051,7 +2051,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Zeichenwerkzeuge</translation>
     </message>
     <message>
-        <location line="-922"/>
+        <location line="-923"/>
         <source>User Pointers</source>
         <translation>Nutzerzeiger</translation>
     </message>
@@ -2088,22 +2088,22 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Darunterliegende Ebene auswählen</translation>
     </message>
     <message>
-        <location line="+472"/>
+        <location line="+473"/>
         <source>Lock Everything</source>
         <translation>Alles sperren</translation>
     </message>
     <message>
-        <location line="-3789"/>
+        <location line="-3792"/>
         <source>Stop Recording</source>
         <translation>Aufzeichnung beenden</translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+376"/>
         <source>Host Session</source>
         <translation>Sitzung hosten</translation>
     </message>
     <message>
-        <location line="+1983"/>
+        <location line="+1984"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
@@ -2190,7 +2190,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>&amp;Vollbild</translation>
     </message>
     <message>
-        <location line="+588"/>
+        <location line="+589"/>
         <source>Create Layers on Current Key Frame</source>
         <translation>Ebenen auf aktuellem Schlüsselbild erstellen</translation>
     </message>
@@ -2225,7 +2225,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>&amp;Gerade</translation>
     </message>
     <message>
-        <location line="-5834"/>
+        <location line="-5837"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 ist beigetreten!</translation>
     </message>
@@ -2291,12 +2291,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4094"/>
+        <location line="+4096"/>
         <source>Export Again</source>
         <translation>Nochmal exportieren</translation>
     </message>
     <message>
-        <location line="-4090"/>
+        <location line="-4092"/>
         <source>Export Again to %1</source>
         <translation>Nochmal exportieren nach %1</translation>
     </message>
@@ -2442,7 +2442,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Fehler beim Download des Tablet-Ereignislogs.</translation>
     </message>
     <message>
-        <location line="+218"/>
+        <location line="+219"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>Sie sind bereits mit einer Sitzung verbunden! Trennen Sie ihre Verbindung, um zu hosten.</translation>
     </message>
@@ -2523,18 +2523,18 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Modifiziere Selektion…</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+48"/>
         <source>Stop Profile</source>
         <translation>Profil beenden</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1923"/>
+        <location line="+1924"/>
         <source>Profile...</source>
         <translation>Profil aufnehmen...</translation>
     </message>
     <message>
-        <location line="-1912"/>
+        <location line="-1913"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Künstliches Lag setzen... (aktuell %1 ms)</translation>
     </message>
@@ -2560,12 +2560,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1870"/>
+        <location line="+1871"/>
         <source>Record Debug Dumps</source>
         <translation>Debug-Dumps aufnehmen</translation>
     </message>
     <message>
-        <location line="-1869"/>
+        <location line="-1870"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2984,7 +2984,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <translation>Selektions&amp;maske transformieren</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation>Transformiert nur die Selektionsmaske selbst, wechselt danach auf das vorhere Werkzeug zurück</translation>
     </message>
@@ -7555,7 +7555,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Durchreichen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1038"/>
+        <location filename="../mainwindow.cpp" line="-1039"/>
         <source>Blend alpha</source>
         <translation>Alpha mischen</translation>
     </message>
@@ -12299,13 +12299,14 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-36"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1408"/>
+        <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12316,8 +12317,9 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+765"/>
+        <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

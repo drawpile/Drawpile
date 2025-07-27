@@ -1300,12 +1300,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     </message>
     <message>
         <location line="+222"/>
-        <location line="+2322"/>
+        <location line="+2323"/>
         <source>Untitled</source>
         <translation>Senza titolo</translation>
     </message>
     <message>
-        <location line="-1515"/>
+        <location line="-1516"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Esci da Drawpile</translation>
@@ -1394,12 +1394,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2410"/>
+        <location line="+2412"/>
         <source>Record...</source>
         <translation>Registra…</translation>
     </message>
     <message>
-        <location line="-2055"/>
+        <location line="-2056"/>
         <source>Invalid address</source>
         <translation>Indirizzo non valido</translation>
     </message>
@@ -1445,12 +1445,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3108"/>
+        <location line="+3110"/>
         <source>Terminate</source>
         <translation>Termina</translation>
     </message>
     <message>
-        <location line="-2949"/>
+        <location line="-2951"/>
         <source>Would you like to join the session instead?</source>
         <translation>Vorresti unirti alla sessione?</translation>
     </message>
@@ -1470,7 +1470,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>L&apos;immagine non può essere caricata</translation>
     </message>
     <message>
-        <location line="+461"/>
+        <location line="+462"/>
         <source>About Drawpile</source>
         <translation>Informazioni su Drawpile</translation>
     </message>
@@ -1517,7 +1517,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Salvataggio automatico</translation>
     </message>
     <message>
-        <location line="-2476"/>
+        <location line="-2478"/>
         <source>Saving animation...</source>
         <translation>Salvataggio dell&apos;animazione...</translation>
     </message>
@@ -1582,7 +1582,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+506"/>
+        <location line="+507"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>Nessuna tela da hostare! Creane una o aprite un file.</translation>
     </message>
@@ -1597,7 +1597,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1806"/>
+        <location line="+1807"/>
         <source>Arrange Docks</source>
         <translation>Disponi i dock</translation>
     </message>
@@ -1946,7 +1946,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Nuovo Gruppo di Livelli</translation>
     </message>
     <message>
-        <location line="+339"/>
+        <location line="+340"/>
         <source>Flipbook</source>
         <translation>Libro Animato</translation>
     </message>
@@ -1956,12 +1956,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Mostra la finestra di anteprima dell&apos;animazione</translation>
     </message>
     <message>
-        <location line="-633"/>
+        <location line="-634"/>
         <source>Zoom &amp;In</source>
         <translation>Zoom &amp;Avanti</translation>
     </message>
     <message>
-        <location line="-2269"/>
+        <location line="-2270"/>
         <source>Reason:</source>
         <translation>Ragione:</translation>
     </message>
@@ -1996,7 +1996,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Pennello a mano libera (modalità di blocco alfa)</translation>
     </message>
     <message>
-        <location line="+925"/>
+        <location line="+926"/>
         <source>Export Image…</source>
         <translation>Esporta Immagine…</translation>
     </message>
@@ -2120,7 +2120,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Attiva modalità Livello&amp;Schizzo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+352"/>
+        <location filename="../mainwindow.cpp" line="+353"/>
         <source>Next Frame</source>
         <translation>Frame successivo</translation>
     </message>
@@ -2310,12 +2310,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Focus della tela</translation>
     </message>
     <message>
-        <location line="-1152"/>
+        <location line="-1153"/>
         <source>Show Censored Layers</source>
         <translation>Mostra Livelli Censurati</translation>
     </message>
     <message>
-        <location line="-4423"/>
+        <location line="-4425"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt; La scorciatoia &apos;%1&apos; è ambigua, corrisponde a:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -2381,12 +2381,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4094"/>
+        <location line="+4096"/>
         <source>Export Again</source>
         <translation>Esporta di nuovo</translation>
     </message>
     <message>
-        <location line="-4090"/>
+        <location line="-4092"/>
         <source>Export Again to %1</source>
         <translation>Esporta di nuovo in %1</translation>
     </message>
@@ -2527,7 +2527,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Errore nell&apos;apertura del registro eventi della tavoletta.</translation>
     </message>
     <message>
-        <location line="+188"/>
+        <location line="+189"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>Sei già connesso a una sessione! Disconnettiti prima per ospitarne una.</translation>
     </message>
@@ -2618,29 +2618,29 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Alterazione della selezione…</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+43"/>
         <source>Stop Tablet Event Log</source>
         <translation>Arresto del Registro Eventi della tavoletta</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1926"/>
+        <location line="+1927"/>
         <source>Tablet Event Log...</source>
         <translation>Registro Eventi del Tablet...</translation>
     </message>
     <message>
-        <location line="-1922"/>
+        <location line="-1923"/>
         <source>Stop Profile</source>
         <translation>Arresto del Profilo</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1923"/>
+        <location line="+1924"/>
         <source>Profile...</source>
         <translation>Profilo...</translation>
     </message>
     <message>
-        <location line="-1912"/>
+        <location line="-1913"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Imposta Lag artificiale... (attualmente %1 ms)</translation>
     </message>
@@ -2666,12 +2666,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1870"/>
+        <location line="+1871"/>
         <source>Record Debug Dumps</source>
         <translation>Registra Dump di Debug</translation>
     </message>
     <message>
-        <location line="-1869"/>
+        <location line="-1870"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -3047,7 +3047,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
         <translation>Trasforma selezione e &amp;Maschera</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation>Trasforma solo la maschera di selezione stessa, poi ripristina gli strumenti</translation>
     </message>
@@ -7549,7 +7549,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>Attraversa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1038"/>
+        <location filename="../mainwindow.cpp" line="-1039"/>
         <source>Blend alpha</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12293,13 +12293,14 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-36"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1408"/>
+        <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12310,8 +12311,9 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+765"/>
+        <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1281,12 +1281,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+972"/>
-        <location line="+2322"/>
+        <location line="+2323"/>
         <source>Untitled</source>
         <translation>Nimetön</translation>
     </message>
     <message>
-        <location line="-1827"/>
+        <location line="-1828"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1535,7 +1535,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+200"/>
+        <location line="+201"/>
         <source>Canvas size too large to host.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1665,29 +1665,29 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+43"/>
         <source>Stop Tablet Event Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1926"/>
+        <location line="+1927"/>
         <source>Tablet Event Log...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1922"/>
+        <location line="-1923"/>
         <source>Stop Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1923"/>
+        <location line="+1924"/>
         <source>Profile...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1912"/>
+        <location line="-1913"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1713,12 +1713,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1870"/>
+        <location line="+1871"/>
         <source>Record Debug Dumps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1869"/>
+        <location line="-1870"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -1960,7 +1960,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+324"/>
+        <location line="+325"/>
         <source>Change Frame Count...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2271,13 +2271,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4301"/>
-        <location line="+2410"/>
+        <location line="-4304"/>
+        <location line="+2412"/>
         <source>Record...</source>
         <translation>Nauhoita...</translation>
     </message>
     <message>
-        <location line="-4815"/>
+        <location line="-4817"/>
         <source>Server out of space</source>
         <translation>Tila loppu palvelimelta</translation>
     </message>
@@ -2294,7 +2294,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+783"/>
+        <location line="+784"/>
         <source>Become Operator</source>
         <translation>Ryhdy operaattoriksi</translation>
     </message>
@@ -2310,17 +2310,17 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3108"/>
+        <location line="+3110"/>
         <source>Terminate</source>
         <translation>Lopeta</translation>
     </message>
     <message>
-        <location line="-2779"/>
+        <location line="-2781"/>
         <source>Session blocked by parental controls</source>
         <translation>Tämä istunto on estetty lapsilukon toimesta</translation>
     </message>
     <message>
-        <location line="+1327"/>
+        <location line="+1328"/>
         <source>Hide Docks</source>
         <translation>Piilota telakat</translation>
     </message>
@@ -2427,7 +2427,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+339"/>
+        <location line="+340"/>
         <source>Flipbook</source>
         <translation>Pläri</translation>
     </message>
@@ -2437,12 +2437,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Näytä animaation esikatseluikkuna</translation>
     </message>
     <message>
-        <location line="-613"/>
+        <location line="-614"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>Kierrä myötäpäivään</translation>
     </message>
     <message>
-        <location line="-1522"/>
+        <location line="-1523"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2462,7 +2462,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+957"/>
+        <location line="+958"/>
         <source>Import &amp;Brushes...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2531,7 +2531,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Näytä sensuroidut tasot</translation>
     </message>
     <message>
-        <location line="+635"/>
+        <location line="+636"/>
         <source>Report...</source>
         <translation>Ilmianna...</translation>
     </message>
@@ -2551,7 +2551,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Peruuta toiminto</translation>
     </message>
     <message>
-        <location line="-1307"/>
+        <location line="-1308"/>
         <source>Show User &amp;Pointers</source>
         <translation>Näytä käyttäjien osoittimet</translation>
     </message>
@@ -2647,7 +2647,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+443"/>
+        <location line="+444"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Host...</source>
         <translation>&amp;Isännöi...</translation>
@@ -2730,17 +2730,17 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Piirtotyökalut</translation>
     </message>
     <message>
-        <location line="-4095"/>
+        <location line="-4098"/>
         <source>Stop Recording</source>
         <translation>Lopeta nauhoitus</translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+376"/>
         <source>Host Session</source>
         <translation>Isännöi</translation>
     </message>
     <message>
-        <location line="+1983"/>
+        <location line="+1984"/>
         <source>Close</source>
         <translation>Sulje</translation>
     </message>
@@ -2807,7 +2807,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>&amp;Koko ruutu</translation>
     </message>
     <message>
-        <location line="+829"/>
+        <location line="+830"/>
         <source>Pick colors from the image</source>
         <translation>Poimi värejä kuvasta</translation>
     </message>
@@ -2822,7 +2822,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Viiva</translation>
     </message>
     <message>
-        <location line="-5834"/>
+        <location line="-5837"/>
         <source>🙋 %1 joined!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2888,12 +2888,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4094"/>
+        <location line="+4096"/>
         <source>Export Again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4090"/>
+        <location line="-4092"/>
         <source>Export Again to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2933,7 +2933,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+416"/>
+        <location line="+417"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2964,7 +2964,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+444"/>
+        <location line="+445"/>
         <source>Open Debug Dump</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3280,7 +3280,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7449,7 +7449,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-951"/>
+        <location filename="../mainwindow.cpp" line="-952"/>
         <source>Blend alpha</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12193,13 +12193,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-36"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1408"/>
+        <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12210,8 +12211,9 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+765"/>
+        <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

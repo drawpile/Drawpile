@@ -1281,18 +1281,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+972"/>
-        <location line="+2322"/>
+        <location line="+2323"/>
         <source>Untitled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2270"/>
-        <location line="+4094"/>
+        <location line="-2271"/>
+        <location line="+4096"/>
         <source>Export Again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4090"/>
+        <location line="-4092"/>
         <source>Export Again to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1486,7 +1486,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+218"/>
+        <location line="+219"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1627,7 +1627,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location line="+121"/>
         <source>Open Debug Dump</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1709,13 +1709,13 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2383"/>
-        <location line="+2410"/>
+        <location line="-2385"/>
+        <location line="+2412"/>
         <source>Record...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4303"/>
+        <location line="-4305"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1805,18 +1805,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished">Přehrát</translation>
     </message>
     <message>
-        <location line="+681"/>
+        <location line="+682"/>
         <source>Terminate session</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3108"/>
+        <location line="+3110"/>
         <source>Terminate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1452"/>
+        <location line="-1453"/>
         <source>Hide Docks</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2203,7 +2203,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+339"/>
+        <location line="+340"/>
         <source>Flipbook</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2213,7 +2213,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-613"/>
+        <location line="-614"/>
         <source>Rotate Canvas Clockwise</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2287,7 +2287,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+635"/>
+        <location line="+636"/>
         <source>Report...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2493,12 +2493,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1307"/>
+        <location line="-1308"/>
         <source>Show User &amp;Pointers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4981"/>
+        <location line="-4983"/>
         <source>🙋 %1 joined!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2568,7 +2568,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+924"/>
+        <location line="+925"/>
         <source>Undo Limit... (%1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2583,29 +2583,29 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+92"/>
+        <location line="+93"/>
         <source>Stop Tablet Event Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1926"/>
+        <location line="+1927"/>
         <source>Tablet Event Log...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1922"/>
+        <location line="-1923"/>
         <source>Stop Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1923"/>
+        <location line="+1924"/>
         <source>Profile...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1912"/>
+        <location line="-1913"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2631,12 +2631,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1870"/>
+        <location line="+1871"/>
         <source>Record Debug Dumps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1869"/>
+        <location line="-1870"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2766,7 +2766,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+251"/>
+        <location line="+252"/>
         <source>Set Key Frame to Current Layer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2915,17 +2915,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4304"/>
+        <location line="-4307"/>
         <source>Stop Recording</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+376"/>
         <source>Host Session</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1730"/>
+        <location line="+1731"/>
         <source>A collaborative drawing program.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2997,7 +2997,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+829"/>
+        <location line="+830"/>
         <source>Pick colors from the image</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3012,7 +3012,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-6248"/>
+        <location line="-6251"/>
         <source>Server out of space</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3028,7 +3028,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+861"/>
+        <location line="+862"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3068,7 +3068,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1120"/>
+        <location line="+1121"/>
         <source>Primary screen:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3220,7 +3220,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7448,7 +7448,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1661"/>
+        <location filename="../mainwindow.cpp" line="-1662"/>
         <source>Blend alpha</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12192,13 +12192,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-36"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1408"/>
+        <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12209,8 +12210,9 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+765"/>
+        <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

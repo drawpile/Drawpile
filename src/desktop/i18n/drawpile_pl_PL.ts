@@ -1364,18 +1364,18 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+62"/>
-        <location line="+2322"/>
+        <location line="+2323"/>
         <source>Untitled</source>
         <translation>Bez tytułu</translation>
     </message>
     <message>
-        <location line="-2270"/>
-        <location line="+4094"/>
+        <location line="-2271"/>
+        <location line="+4096"/>
         <source>Export Again</source>
         <translation>Eksportuj ponownie</translation>
     </message>
     <message>
-        <location line="-4090"/>
+        <location line="-4092"/>
         <source>Export Again to %1</source>
         <translation>Eksportuj ponownie do %1</translation>
     </message>
@@ -1565,12 +1565,12 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2410"/>
+        <location line="+2412"/>
         <source>Record...</source>
         <translation>Nagraj...</translation>
     </message>
     <message>
-        <location line="-2368"/>
+        <location line="-2370"/>
         <source>Unsupported format.</source>
         <translation>Niewspierany format.</translation>
     </message>
@@ -1615,7 +1615,7 @@ zatrzymaj nagrywanie</translation>
         <translation>Błąd przy otwieraniu dziennika zdarzeń tabletu.</translation>
     </message>
     <message>
-        <location line="+188"/>
+        <location line="+189"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>Jesteś już połączony z sesją! Najpierw rozłącz się, aby ją zorganizować.</translation>
     </message>
@@ -1676,12 +1676,12 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3108"/>
+        <location line="+3110"/>
         <source>Terminate</source>
         <translation>Przerwij</translation>
     </message>
     <message>
-        <location line="-3094"/>
+        <location line="-3096"/>
         <source>Join Session</source>
         <translation>Dołącz do sesji</translation>
     </message>
@@ -1742,29 +1742,29 @@ zatrzymaj nagrywanie</translation>
         <translation>Zmiana wyboru…</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+43"/>
         <source>Stop Tablet Event Log</source>
         <translation>Zatrzymaj dziennik zdarzeń tabletu</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1926"/>
+        <location line="+1927"/>
         <source>Tablet Event Log...</source>
         <translation>Dziennik zdarzeń tabletu...</translation>
     </message>
     <message>
-        <location line="-1922"/>
+        <location line="-1923"/>
         <source>Stop Profile</source>
         <translation>Zatrzymaj profil</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1923"/>
+        <location line="+1924"/>
         <source>Profile...</source>
         <translation>Profil...</translation>
     </message>
     <message>
-        <location line="-1912"/>
+        <location line="-1913"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Ustaw sztuczne opóźnienie... (obecnie %1 ms)</translation>
     </message>
@@ -1790,12 +1790,12 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1870"/>
+        <location line="+1871"/>
         <source>Record Debug Dumps</source>
         <translation>Nagrywanie zrzutów debugowania</translation>
     </message>
     <message>
-        <location line="-1869"/>
+        <location line="-1870"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2339,13 +2339,13 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>&amp;Odznacz</translation>
     </message>
     <message>
-        <location line="+1539"/>
+        <location line="+1540"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2165"/>
+        <location line="-2166"/>
         <source>Delete</source>
         <translation>Usuń</translation>
     </message>
@@ -2370,7 +2370,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>&amp;Edytuj</translation>
     </message>
     <message>
-        <location line="-3930"/>
+        <location line="-3932"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2430,7 +2430,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+511"/>
+        <location line="+512"/>
         <source>Canvas size too large to host.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2460,7 +2460,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Nie można nawiązać&#xa0;połączenia z serwerem RDP „%s”.</translation>
     </message>
     <message>
-        <location line="+1521"/>
+        <location line="+1522"/>
         <source>Arrange Docks</source>
         <translation>Ułóż doki</translation>
     </message>
@@ -2746,7 +2746,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Przekształć zaznaczenie</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation>Przekształć tylko samą maskę wyboru, a następnie przełącz narzędzia z powrotem</translation>
     </message>
@@ -3229,12 +3229,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>&amp;Dołączyć...</translation>
     </message>
     <message>
-        <location line="-3991"/>
+        <location line="-3994"/>
         <source>Joined the session!</source>
         <translation>Dołączyłem do sesji!</translation>
     </message>
     <message>
-        <location line="+604"/>
+        <location line="+605"/>
         <source>Hosting on this computer is not available</source>
         <translation>Hosting na tym komputerze jest niedostępny</translation>
     </message>
@@ -3289,7 +3289,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Narzędzie pędzla odręcznego (tryb blokady alfa)</translation>
     </message>
     <message>
-        <location line="+925"/>
+        <location line="+926"/>
         <source>Export Image…</source>
         <translation>Eksportuj obraz</translation>
     </message>
@@ -3340,7 +3340,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Właściwości warstwy…</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+524"/>
+        <location filename="../mainwindow.cpp" line="+525"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>Dołącz do sesji rysowania innego użytkownika</translation>
     </message>
@@ -7558,7 +7558,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation>Przekaz do aplikacji</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1042"/>
+        <location filename="../mainwindow.cpp" line="-1043"/>
         <source>Blend alpha</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12320,13 +12320,14 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-36"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1408"/>
+        <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12337,8 +12338,9 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+765"/>
+        <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

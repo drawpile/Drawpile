@@ -1286,12 +1286,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+972"/>
-        <location line="+2322"/>
+        <location line="+2323"/>
         <source>Untitled</source>
         <translation>Sem Título</translation>
     </message>
     <message>
-        <location line="-1515"/>
+        <location line="-1516"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Sair do Drawpile</translation>
@@ -1409,7 +1409,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Erro ao abrir log de eventos da mesa digitalizadora.</translation>
     </message>
     <message>
-        <location line="+220"/>
+        <location line="+221"/>
         <source>Invalid address</source>
         <translation>Endereço inválido</translation>
     </message>
@@ -1454,7 +1454,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Não foi possível carregar a imagem</translation>
     </message>
     <message>
-        <location line="+461"/>
+        <location line="+462"/>
         <source>About Drawpile</source>
         <translation>Sobre o Drawpile</translation>
     </message>
@@ -1496,13 +1496,13 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Salvar automaticamente</translation>
     </message>
     <message>
-        <location line="-2383"/>
-        <location line="+2410"/>
+        <location line="-2385"/>
+        <location line="+2412"/>
         <source>Record...</source>
         <translation>Gravar...</translation>
     </message>
     <message>
-        <location line="-4815"/>
+        <location line="-4817"/>
         <source>Server out of space</source>
         <translation>Servidor sem memória disponível</translation>
     </message>
@@ -1575,12 +1575,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4094"/>
+        <location line="+4096"/>
         <source>Export Again</source>
         <translation>Exportar Novamente</translation>
     </message>
     <message>
-        <location line="-4090"/>
+        <location line="-4092"/>
         <source>Export Again to %1</source>
         <translation>Exportar Novamente para %1</translation>
     </message>
@@ -1646,7 +1646,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Você está abrindo um novo arquivo e fechando esta janela.</translation>
     </message>
     <message>
-        <location line="+2215"/>
+        <location line="+2216"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>Você já está conectado a uma sessão! Desconecte-se antes de hospedar uma nova.</translation>
     </message>
@@ -1672,12 +1672,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3108"/>
+        <location line="+3110"/>
         <source>Terminate</source>
         <translation>Terminar</translation>
     </message>
     <message>
-        <location line="-3094"/>
+        <location line="-3096"/>
         <source>Join Session</source>
         <translation>Entrar na Sessão</translation>
     </message>
@@ -1698,7 +1698,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>A imagem não pode ser carregada: %1.</translation>
     </message>
     <message>
-        <location line="+444"/>
+        <location line="+445"/>
         <source>Open Debug Dump</source>
         <translation>Abrir Registro de Depuração</translation>
     </message>
@@ -2077,7 +2077,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Definir como Origem do Preenchimento</translation>
     </message>
     <message>
-        <location line="+323"/>
+        <location line="+324"/>
         <source>Flipbook</source>
         <translation>Rolar Animação</translation>
     </message>
@@ -2087,7 +2087,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Mostrar janela de previsão da animação</translation>
     </message>
     <message>
-        <location line="-633"/>
+        <location line="-634"/>
         <source>Zoom &amp;In</source>
         <translation>D&amp;iminuir zoom</translation>
     </message>
@@ -2143,7 +2143,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Transformar &amp;Máscara de Seleção</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation>Transformar somente a máscara de seleção, depois retornar ferramentas</translation>
     </message>
@@ -2373,7 +2373,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Cancelar ação</translation>
     </message>
     <message>
-        <location line="-4615"/>
+        <location line="-4618"/>
         <source>Image saving failed</source>
         <translation>Falha ao salvar a imagem</translation>
     </message>
@@ -2458,7 +2458,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Erro ao baixar o log de eventos da mesa digitalizadora.</translation>
     </message>
     <message>
-        <location line="+225"/>
+        <location line="+226"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>Nenhuma tela de pintura para hospedar! Crie uma ou abra um arquivo.</translation>
     </message>
@@ -2538,29 +2538,29 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Alterando a seleção…</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+43"/>
         <source>Stop Tablet Event Log</source>
         <translation>Parar Registro de Eventos da Mesa Digitalizadora</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1926"/>
+        <location line="+1927"/>
         <source>Tablet Event Log...</source>
         <translation>Registro de Eventos da Mesa Digitalizadora...</translation>
     </message>
     <message>
-        <location line="-1922"/>
+        <location line="-1923"/>
         <source>Stop Profile</source>
         <translation>Parar Perfil</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1923"/>
+        <location line="+1924"/>
         <source>Profile...</source>
         <translation>Perfil...</translation>
     </message>
     <message>
-        <location line="-1912"/>
+        <location line="-1913"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Definir Latência Artificial (atualmente %1 ms)</translation>
     </message>
@@ -2586,12 +2586,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1870"/>
+        <location line="+1871"/>
         <source>Record Debug Dumps</source>
         <translation>Gravar Registro de Depuração</translation>
     </message>
     <message>
-        <location line="-1869"/>
+        <location line="-1870"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2875,7 +2875,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Ca&amp;mada</translation>
     </message>
     <message>
-        <location line="+268"/>
+        <location line="+269"/>
         <source>Increase Key Frame Exposure</source>
         <translation>Aumentar Exposição do Keyframe</translation>
     </message>
@@ -2995,12 +2995,12 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Focar na tela de pintura</translation>
     </message>
     <message>
-        <location line="-1312"/>
+        <location line="-1313"/>
         <source>Show &amp;Annotations</source>
         <translation>Mostrar &amp;Anotações</translation>
     </message>
     <message>
-        <location line="-4980"/>
+        <location line="-4982"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 entrou!</translation>
     </message>
@@ -3010,7 +3010,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Salvando animação...</translation>
     </message>
     <message>
-        <location line="+3056"/>
+        <location line="+3058"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>Girar tela de pintura no sentido horário</translation>
     </message>
@@ -3084,7 +3084,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Mostrar camadas censuradas</translation>
     </message>
     <message>
-        <location line="-4423"/>
+        <location line="-4425"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;O atalho &apos;%1&apos; já está sendo usado em várias ocasiões:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -3109,7 +3109,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Entrou na sessão!</translation>
     </message>
     <message>
-        <location line="+892"/>
+        <location line="+893"/>
         <source>Reason:</source>
         <translation>Motivo:</translation>
     </message>
@@ -3144,7 +3144,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>À mão livre (canal alfa bloqueado)</translation>
     </message>
     <message>
-        <location line="+836"/>
+        <location line="+837"/>
         <source>Toggle Dock %1</source>
         <translation>Ligar Painel de %1</translation>
     </message>
@@ -3205,7 +3205,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Propriedades da Camada…</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+328"/>
+        <location filename="../mainwindow.cpp" line="+329"/>
         <source>Change Frame Count...</source>
         <translation>Mudar Contagem de Quadros...</translation>
     </message>
@@ -3695,7 +3695,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2165"/>
+        <location line="-2166"/>
         <source>Delete</source>
         <translation>Apagar</translation>
     </message>
@@ -12299,13 +12299,14 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-36"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1408"/>
+        <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12316,8 +12317,9 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+765"/>
+        <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

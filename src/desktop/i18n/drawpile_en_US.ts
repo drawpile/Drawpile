@@ -1357,18 +1357,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+62"/>
-        <location line="+2322"/>
+        <location line="+2323"/>
         <source>Untitled</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-2270"/>
-        <location line="+4094"/>
+        <location line="-2271"/>
+        <location line="+4096"/>
         <source>Export Again</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-4090"/>
+        <location line="-4092"/>
         <source>Export Again to %1</source>
         <translation></translation>
     </message>
@@ -1558,12 +1558,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2410"/>
+        <location line="+2412"/>
         <source>Record...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-2368"/>
+        <location line="-2370"/>
         <source>Unsupported format.</source>
         <translation></translation>
     </message>
@@ -1608,7 +1608,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+188"/>
+        <location line="+189"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation></translation>
     </message>
@@ -1669,12 +1669,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3108"/>
+        <location line="+3110"/>
         <source>Terminate</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-3094"/>
+        <location line="-3096"/>
         <source>Join Session</source>
         <translation></translation>
     </message>
@@ -1735,29 +1735,29 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Altering selection…</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+43"/>
         <source>Stop Tablet Event Log</source>
         <translation></translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1926"/>
+        <location line="+1927"/>
         <source>Tablet Event Log...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-1922"/>
+        <location line="-1923"/>
         <source>Stop Profile</source>
         <translation></translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1923"/>
+        <location line="+1924"/>
         <source>Profile...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-1912"/>
+        <location line="-1913"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation></translation>
     </message>
@@ -1783,12 +1783,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1870"/>
+        <location line="+1871"/>
         <source>Record Debug Dumps</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-1869"/>
+        <location line="-1870"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2338,7 +2338,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+17"/>
         <source>Mirror the transformed image horizontally</source>
         <translation></translation>
     </message>
@@ -2404,7 +2404,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-2165"/>
+        <location line="-2166"/>
         <source>Delete</source>
         <translation></translation>
     </message>
@@ -2429,7 +2429,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-3930"/>
+        <location line="-3932"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation></translation>
     </message>
@@ -2489,7 +2489,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+511"/>
+        <location line="+512"/>
         <source>Canvas size too large to host.</source>
         <translation></translation>
     </message>
@@ -2519,7 +2519,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Could not establish a connection to the server.</translation>
     </message>
     <message>
-        <location line="+1521"/>
+        <location line="+1522"/>
         <source>Arrange Docks</source>
         <translation></translation>
     </message>
@@ -2795,7 +2795,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Transform Selection &amp;Mask</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation>Transform only the selection mask itself, switch back tools afterwards</translation>
     </message>
@@ -3238,12 +3238,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-3991"/>
+        <location line="-3994"/>
         <source>Joined the session!</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+604"/>
+        <location line="+605"/>
         <source>Hosting on this computer is not available</source>
         <translation></translation>
     </message>
@@ -3298,7 +3298,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+925"/>
+        <location line="+926"/>
         <source>Export Image…</source>
         <translation></translation>
     </message>
@@ -3349,7 +3349,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+524"/>
+        <location filename="../mainwindow.cpp" line="+525"/>
         <source>Join another user&apos;s drawing session</source>
         <translation></translation>
     </message>
@@ -7448,7 +7448,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1042"/>
+        <location filename="../mainwindow.cpp" line="-1043"/>
         <source>Blend alpha</source>
         <translation></translation>
     </message>
@@ -12192,13 +12192,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-36"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1408"/>
+        <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
         <translation></translation>
     </message>
@@ -12209,8 +12210,9 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+765"/>
+        <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation></translation>
     </message>
 </context>

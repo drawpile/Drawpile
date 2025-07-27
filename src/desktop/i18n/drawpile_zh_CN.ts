@@ -1284,12 +1284,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+972"/>
-        <location line="+2322"/>
+        <location line="+2323"/>
         <source>Untitled</source>
         <translation>未命名</translation>
     </message>
     <message>
-        <location line="-1515"/>
+        <location line="-1516"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>退出Drawpile</translation>
@@ -1357,7 +1357,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>播放</translation>
     </message>
     <message>
-        <location line="+363"/>
+        <location line="+364"/>
         <source>Invalid address</source>
         <translation>无效地址</translation>
     </message>
@@ -1432,7 +1432,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>无法载入图片</translation>
     </message>
     <message>
-        <location line="+461"/>
+        <location line="+462"/>
         <source>About Drawpile</source>
         <translation>关于 Drawpile</translation>
     </message>
@@ -1479,13 +1479,13 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>自动保存</translation>
     </message>
     <message>
-        <location line="-2383"/>
-        <location line="+2410"/>
+        <location line="-2385"/>
+        <location line="+2412"/>
         <source>Record...</source>
         <translation>录制...</translation>
     </message>
     <message>
-        <location line="-4815"/>
+        <location line="-4817"/>
         <source>Server out of space</source>
         <translation>服务器空间不足</translation>
     </message>
@@ -1558,12 +1558,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4094"/>
+        <location line="+4096"/>
         <source>Export Again</source>
         <translation>再次导出</translation>
     </message>
     <message>
-        <location line="-4090"/>
+        <location line="-4092"/>
         <source>Export Again to %1</source>
         <translation>再次导出到 %1</translation>
     </message>
@@ -1694,7 +1694,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>打开数位板事件日志出错.</translation>
     </message>
     <message>
-        <location line="+188"/>
+        <location line="+189"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>你已经连接到一个房间! 请先断开连接再创建新的房间.</translation>
     </message>
@@ -1720,12 +1720,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3108"/>
+        <location line="+3110"/>
         <source>Terminate</source>
         <translation>终止</translation>
     </message>
     <message>
-        <location line="-3094"/>
+        <location line="-3096"/>
         <source>Join Session</source>
         <translation>地址加入</translation>
     </message>
@@ -1791,18 +1791,18 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>更改选区…</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+43"/>
         <source>Stop Tablet Event Log</source>
         <translation>停止数位板事件日志</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1926"/>
+        <location line="+1927"/>
         <source>Tablet Event Log...</source>
         <translation>数位板事件日志...</translation>
     </message>
     <message>
-        <location line="-1849"/>
+        <location line="-1850"/>
         <source>Open Debug Dump</source>
         <translation>打开调试数据</translation>
     </message>
@@ -2224,13 +2224,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>颜色擦除所选区域</translation>
     </message>
     <message>
-        <location line="+1515"/>
+        <location line="+1516"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2081"/>
+        <location line="-2082"/>
         <source>&amp;Edit</source>
         <translation>编辑(&amp;E)</translation>
     </message>
@@ -2301,7 +2301,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>设置为填充源</translation>
     </message>
     <message>
-        <location line="+323"/>
+        <location line="+324"/>
         <source>Flipbook</source>
         <translation>动画预览</translation>
     </message>
@@ -2311,7 +2311,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>显示动画预览窗口</translation>
     </message>
     <message>
-        <location line="-613"/>
+        <location line="-614"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>顺时针旋转画布</translation>
     </message>
@@ -2380,7 +2380,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>选择下一个图层</translation>
     </message>
     <message>
-        <location line="+470"/>
+        <location line="+471"/>
         <source>Report...</source>
         <translation>报告...</translation>
     </message>
@@ -2535,7 +2535,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>取消动作</translation>
     </message>
     <message>
-        <location line="-1307"/>
+        <location line="-1308"/>
         <source>Show User &amp;Pointers</source>
         <translation>显示光标(&amp;P)</translation>
     </message>
@@ -2585,7 +2585,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>新建图层组</translation>
     </message>
     <message>
-        <location line="+534"/>
+        <location line="+535"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Host...</source>
         <translation>创建(&amp;H)...</translation>
@@ -2668,17 +2668,17 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>绘画工具</translation>
     </message>
     <message>
-        <location line="-4095"/>
+        <location line="-4098"/>
         <source>Stop Recording</source>
         <translation>停止录制</translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+376"/>
         <source>Host Session</source>
         <translation>创建房间</translation>
     </message>
     <message>
-        <location line="+1983"/>
+        <location line="+1984"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
@@ -2745,7 +2745,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>全屏(&amp;F)</translation>
     </message>
     <message>
-        <location line="+829"/>
+        <location line="+830"/>
         <source>Pick colors from the image</source>
         <translation>从当前图层取色</translation>
     </message>
@@ -2760,7 +2760,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>直线(&amp;L)</translation>
     </message>
     <message>
-        <location line="-5834"/>
+        <location line="-5837"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 加入了!</translation>
     </message>
@@ -2855,7 +2855,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>打开简介时出错.</translation>
     </message>
     <message>
-        <location line="+252"/>
+        <location line="+253"/>
         <source>Canvas size too large to host.</source>
         <translation>画布尺寸太大无法创建房间.</translation>
     </message>
@@ -2865,18 +2865,18 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>你将重新连接房间并关闭此窗口.</translation>
     </message>
     <message>
-        <location line="+1464"/>
+        <location line="+1465"/>
         <source>Stop Profile</source>
         <translation>停止概况</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1923"/>
+        <location line="+1924"/>
         <source>Profile...</source>
         <translation>概况...</translation>
     </message>
     <message>
-        <location line="-1912"/>
+        <location line="-1913"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>设置人工滞后... (目前为 %1 ms)</translation>
     </message>
@@ -2902,12 +2902,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1870"/>
+        <location line="+1871"/>
         <source>Record Debug Dumps</source>
         <translation>录制调试数据</translation>
     </message>
     <message>
-        <location line="-1869"/>
+        <location line="-1870"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -3016,7 +3016,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>变换选区蒙版(&amp;M)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation>只变换选区蒙版本身, 然后切换回工具</translation>
     </message>
@@ -3131,17 +3131,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>事件日志</translation>
     </message>
     <message>
-        <location line="-449"/>
+        <location line="-450"/>
         <source>&amp;Layer</source>
         <translation>图层(&amp;L)</translation>
     </message>
     <message>
-        <location line="-3859"/>
+        <location line="-3861"/>
         <source>Opening file…</source>
         <translation>打开文件…</translation>
     </message>
     <message>
-        <location line="+861"/>
+        <location line="+862"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>没有画布可供创建房间! 新建一个或者打开一个文件.</translation>
     </message>
@@ -3166,7 +3166,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>断开连接: %1</translation>
     </message>
     <message>
-        <location line="+1267"/>
+        <location line="+1268"/>
         <source>Primary screen:</source>
         <translation>主屏幕:</translation>
     </message>
@@ -3232,7 +3232,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>图层属性…</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+328"/>
+        <location filename="../mainwindow.cpp" line="+329"/>
         <source>Change Frame Count...</source>
         <translation>更改帧数...</translation>
     </message>
@@ -7548,7 +7548,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>穿透</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-951"/>
+        <location filename="../mainwindow.cpp" line="-952"/>
         <source>Blend alpha</source>
         <translation>混合透明度</translation>
     </message>
@@ -12274,13 +12274,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-36"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1408"/>
+        <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12291,8 +12292,9 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+765"/>
+        <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

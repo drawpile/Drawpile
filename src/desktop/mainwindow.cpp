@@ -7647,10 +7647,10 @@ QString MainWindow::makeContributionInfoText()
 		QStringLiteral(" style=\"color:%1;\"").arg(color.name(QColor::HexArgb));
 
 	QString donationText = utils::toHtmlWithLink(
+		//: The [] will be turned into a clickable link! Keep them in
+		//: translation. You can copy the heart ♥ into your text if it doesn't
+		//: look weird for your language.
 		QCoreApplication::translate(
-			//: The [] will be turned into a clickable link! Keep them in
-			//: your translation. You can copy the heart ♥ into your text if
-			//: it doesn't look weird for your language, else just leave it.
 			"donations", "[♥ Donate to Drawpile] to help keep development "
 						 "going and the servers running."),
 		utils::getDonationLink(), attrs);

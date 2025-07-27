@@ -1284,12 +1284,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+972"/>
-        <location line="+2322"/>
+        <location line="+2323"/>
         <source>Untitled</source>
         <translation>Без названия</translation>
     </message>
     <message>
-        <location line="-1515"/>
+        <location line="-1516"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Выйти из Drawpile</translation>
@@ -1358,7 +1358,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Воспроизвести</translation>
     </message>
     <message>
-        <location line="+363"/>
+        <location line="+364"/>
         <source>Invalid address</source>
         <translation>Неправильный адрес</translation>
     </message>
@@ -1403,7 +1403,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Изображение не может быть загружено</translation>
     </message>
     <message>
-        <location line="+461"/>
+        <location line="+462"/>
         <source>About Drawpile</source>
         <translation>О Drawpile</translation>
     </message>
@@ -1445,13 +1445,13 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Автосохранение</translation>
     </message>
     <message>
-        <location line="-2383"/>
-        <location line="+2410"/>
+        <location line="-2385"/>
+        <location line="+2412"/>
         <source>Record...</source>
         <translation>Записать...</translation>
     </message>
     <message>
-        <location line="-4815"/>
+        <location line="-4817"/>
         <source>Server out of space</source>
         <translation>На сервере нет места</translation>
     </message>
@@ -1463,7 +1463,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 Упростите холст и сбросьте вручную до того как место закончится.</translation>
     </message>
     <message>
-        <location line="+2734"/>
+        <location line="+2735"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1494,12 +1494,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3108"/>
+        <location line="+3110"/>
         <source>Terminate</source>
         <translation>Завершить</translation>
     </message>
     <message>
-        <location line="-2927"/>
+        <location line="-2929"/>
         <source>You&apos;ve been disconnected from the session.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1514,7 +1514,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Сессия заблокирована родительским контролем</translation>
     </message>
     <message>
-        <location line="+1327"/>
+        <location line="+1328"/>
         <source>Hide Docks</source>
         <translation>Скрывать доки</translation>
     </message>
@@ -1674,7 +1674,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Слой (&amp;L)</translation>
     </message>
     <message>
-        <location line="+248"/>
+        <location line="+249"/>
         <source>Flipbook</source>
         <translation>Кинеограф</translation>
     </message>
@@ -1684,12 +1684,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Показать окно предпросмотра анимации</translation>
     </message>
     <message>
-        <location line="-633"/>
+        <location line="-634"/>
         <source>Zoom &amp;In</source>
         <translation>У&amp;величить</translation>
     </message>
     <message>
-        <location line="-4034"/>
+        <location line="-4036"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1749,12 +1749,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3121"/>
+        <location line="+3123"/>
         <source>Zoom &amp;Out</source>
         <translation>У&amp;меньшить</translation>
     </message>
     <message>
-        <location line="+632"/>
+        <location line="+633"/>
         <source>Change Frame Count...</source>
         <translation>Изменить количество кадров.</translation>
     </message>
@@ -1994,7 +1994,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Отменить действие</translation>
     </message>
     <message>
-        <location line="-1306"/>
+        <location line="-1307"/>
         <source>Show Names</source>
         <translation>Показать имена</translation>
     </message>
@@ -2014,7 +2014,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Указатели пользователей</translation>
     </message>
     <message>
-        <location line="+611"/>
+        <location line="+612"/>
         <source>Become Operator...</source>
         <translation>Стать оператором...</translation>
     </message>
@@ -2024,12 +2024,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Заблокировать всё</translation>
     </message>
     <message>
-        <location line="-797"/>
+        <location line="-798"/>
         <source>Show &amp;Annotations</source>
         <translation>Показывать &amp;аннотации</translation>
     </message>
     <message>
-        <location line="-4980"/>
+        <location line="-4982"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 присоединяется!</translation>
     </message>
@@ -2134,7 +2134,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+200"/>
+        <location line="+201"/>
         <source>Canvas size too large to host.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2189,29 +2189,29 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+43"/>
         <source>Stop Tablet Event Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1926"/>
+        <location line="+1927"/>
         <source>Tablet Event Log...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1922"/>
+        <location line="-1923"/>
         <source>Stop Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1923"/>
+        <location line="+1924"/>
         <source>Profile...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1912"/>
+        <location line="-1913"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2237,12 +2237,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1870"/>
+        <location line="+1871"/>
         <source>Record Debug Dumps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1869"/>
+        <location line="-1870"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2510,7 +2510,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+327"/>
+        <location filename="../mainwindow.cpp" line="+328"/>
         <source>Set Key Frame to Current Layer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2647,17 +2647,17 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-7"/>
-        <location filename="../mainwindow.cpp" line="-1051"/>
+        <location filename="../mainwindow.cpp" line="-1052"/>
         <source>Delete Layer</source>
         <translation>Удалить слой</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-3468"/>
+        <location filename="../mainwindow.cpp" line="-3470"/>
         <source>Joined the session!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+892"/>
+        <location line="+893"/>
         <source>Reason:</source>
         <translation type="unfinished">Причина:</translation>
     </message>
@@ -2692,7 +2692,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+925"/>
+        <location line="+926"/>
         <source>Export Image…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2712,7 +2712,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4266"/>
+        <location line="-4268"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
         <translation type="unfinished"></translation>
@@ -2773,12 +2773,12 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4094"/>
+        <location line="+4096"/>
         <source>Export Again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4090"/>
+        <location line="-4092"/>
         <source>Export Again to %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2844,7 +2844,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2215"/>
+        <location line="+2216"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2870,7 +2870,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+444"/>
+        <location line="+445"/>
         <source>Open Debug Dump</source>
         <translation type="unfinished">Открыть Дамп Отладки</translation>
     </message>
@@ -3236,7 +3236,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3690,7 +3690,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2165"/>
+        <location line="-2166"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
@@ -12221,13 +12221,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-36"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1408"/>
+        <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12238,8 +12239,9 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+765"/>
+        <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

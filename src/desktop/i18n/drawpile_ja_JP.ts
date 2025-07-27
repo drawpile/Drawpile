@@ -1284,12 +1284,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+972"/>
-        <location line="+2322"/>
+        <location line="+2323"/>
         <source>Untitled</source>
         <translation>無題</translation>
     </message>
     <message>
-        <location line="-1644"/>
+        <location line="-1645"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation>要求されたブラシは、他の人がそれを使用することを許可しません。</translation>
     </message>
@@ -1402,7 +1402,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>アニメーションを保存中...</translation>
     </message>
     <message>
-        <location line="+428"/>
+        <location line="+429"/>
         <source>Canvas size too large to host.</source>
         <translation>ホストするには大きすぎるキャンバスサイズです。</translation>
     </message>
@@ -1487,7 +1487,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>画像を読み込みできませんでした</translation>
     </message>
     <message>
-        <location line="+461"/>
+        <location line="+462"/>
         <source>About Drawpile</source>
         <translation>Drawpile について</translation>
     </message>
@@ -1534,13 +1534,13 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>自動保存</translation>
     </message>
     <message>
-        <location line="-2383"/>
-        <location line="+2410"/>
+        <location line="-2385"/>
+        <location line="+2412"/>
         <source>Record...</source>
         <translation>記録...</translation>
     </message>
     <message>
-        <location line="-2752"/>
+        <location line="-2754"/>
         <source>Saving...</source>
         <translation>保存中...</translation>
     </message>
@@ -1560,18 +1560,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>再生</translation>
     </message>
     <message>
-        <location line="+681"/>
+        <location line="+682"/>
         <source>Terminate session</source>
         <translation>セッションを終了</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3108"/>
+        <location line="+3110"/>
         <source>Terminate</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location line="-1367"/>
+        <location line="-1368"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
         <translation>終了(&amp;Q)</translation>
@@ -1723,7 +1723,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>新しいレイヤーグループ</translation>
     </message>
     <message>
-        <location line="+339"/>
+        <location line="+340"/>
         <source>Flipbook</source>
         <translation>フリップブック</translation>
     </message>
@@ -1733,12 +1733,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>アニメーションのプレビューウィンドウを表示</translation>
     </message>
     <message>
-        <location line="-406"/>
+        <location line="-407"/>
         <source>User Pointers</source>
         <translation>ユーザーポインター</translation>
     </message>
     <message>
-        <location line="+434"/>
+        <location line="+435"/>
         <source>Next Frame</source>
         <translation>次のフレーム</translation>
     </message>
@@ -1853,12 +1853,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>アクションをキャンセル</translation>
     </message>
     <message>
-        <location line="-1307"/>
+        <location line="-1308"/>
         <source>Show User &amp;Pointers</source>
         <translation>ユーザーポインターを表示(&amp;P)</translation>
     </message>
     <message>
-        <location line="-4981"/>
+        <location line="-4983"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 が入室しました！</translation>
     </message>
@@ -1924,12 +1924,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4094"/>
+        <location line="+4096"/>
         <source>Export Again</source>
         <translation>再エクスポート</translation>
     </message>
     <message>
-        <location line="-4090"/>
+        <location line="-4092"/>
         <source>Export Again to %1</source>
         <translation>%1 に再エクスポート</translation>
     </message>
@@ -2085,7 +2085,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>タブレットのイベント ログを開く際にエラーが発生しました。</translation>
     </message>
     <message>
-        <location line="+188"/>
+        <location line="+189"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>すでにセッションに参加しています。ホストになるには一度切断してください。</translation>
     </message>
@@ -2156,29 +2156,29 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>選択範囲を変更しています…</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+43"/>
         <source>Stop Tablet Event Log</source>
         <translation>タブレットイベントのログの停止</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1926"/>
+        <location line="+1927"/>
         <source>Tablet Event Log...</source>
         <translation>タブレットイベントのログ...</translation>
     </message>
     <message>
-        <location line="-1922"/>
+        <location line="-1923"/>
         <source>Stop Profile</source>
         <translation>プロファイルの停止</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1923"/>
+        <location line="+1924"/>
         <source>Profile...</source>
         <translation>プロファイル...</translation>
     </message>
     <message>
-        <location line="-1912"/>
+        <location line="-1913"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>強制遅延を設定... (現在 %1 ミリ秒)</translation>
     </message>
@@ -2204,12 +2204,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1870"/>
+        <location line="+1871"/>
         <source>Record Debug Dumps</source>
         <translation>デバッグダンプの記録</translation>
     </message>
     <message>
-        <location line="-1869"/>
+        <location line="-1870"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2553,7 +2553,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>レイヤー(&amp;L)</translation>
     </message>
     <message>
-        <location line="+251"/>
+        <location line="+252"/>
         <source>Set Key Frame to Current Layer</source>
         <translation>現在のレイヤーにキーフレームを設定</translation>
     </message>
@@ -2697,17 +2697,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>キャンバスの中心</translation>
     </message>
     <message>
-        <location line="-4304"/>
+        <location line="-4307"/>
         <source>Stop Recording</source>
         <translation>セッションの記録を停止</translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+376"/>
         <source>Host Session</source>
         <translation>セッションをホスト</translation>
     </message>
     <message>
-        <location line="+1730"/>
+        <location line="+1731"/>
         <source>A collaborative drawing program.</source>
         <translation>共同作業可能なドローイングアプリケーションです。</translation>
     </message>
@@ -2794,7 +2794,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>全画面(&amp;F)</translation>
     </message>
     <message>
-        <location line="+829"/>
+        <location line="+830"/>
         <source>Pick colors from the image</source>
         <translation>画像から色を抽出</translation>
     </message>
@@ -2809,7 +2809,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>直線(&amp;L)</translation>
     </message>
     <message>
-        <location line="-6248"/>
+        <location line="-6251"/>
         <source>Server out of space</source>
         <translation>サーバーのスペースが不足</translation>
     </message>
@@ -2821,7 +2821,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 キャンバスの内容をシンプルにしてスペースがなくなる前に手動でリセットします。</translation>
     </message>
     <message>
-        <location line="+3011"/>
+        <location line="+3012"/>
         <source>Become Operator</source>
         <translation>管理者になる</translation>
     </message>
@@ -2836,7 +2836,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>ペアレンタルコントロールによりブロック済のセッション</translation>
     </message>
     <message>
-        <location line="+1327"/>
+        <location line="+1328"/>
         <source>Hide Docks</source>
         <translation>ドックを隠す</translation>
     </message>
@@ -2905,12 +2905,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>センシティブレイヤーの表示</translation>
     </message>
     <message>
-        <location line="-3680"/>
+        <location line="-3682"/>
         <source>Opening file…</source>
         <translation>ファイルを開く…</translation>
     </message>
     <message>
-        <location line="+861"/>
+        <location line="+862"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>ホストするキャンバスがありません!！ファイルを作成するか、ファイルを開いてください。</translation>
     </message>
@@ -2935,7 +2935,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>切断済み: %1</translation>
     </message>
     <message>
-        <location line="+1267"/>
+        <location line="+1268"/>
         <source>Primary screen:</source>
         <translation>メイン画面:</translation>
     </message>
@@ -3132,7 +3132,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>選択とマスクの変形(&amp;M)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation>選択マスクのみを変形し、その後ツールを元に戻します</translation>
     </message>
@@ -7547,7 +7547,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>貫通</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1661"/>
+        <location filename="../mainwindow.cpp" line="-1662"/>
         <source>Blend alpha</source>
         <translation>アルファブレンド</translation>
     </message>
@@ -12273,13 +12273,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-36"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1408"/>
+        <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12290,8 +12291,9 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+765"/>
+        <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

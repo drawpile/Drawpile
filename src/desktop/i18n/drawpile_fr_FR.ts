@@ -1283,12 +1283,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.cpp" line="+972"/>
-        <location line="+2322"/>
+        <location line="+2323"/>
         <source>Untitled</source>
         <translation>Sans titre</translation>
     </message>
     <message>
-        <location line="-1515"/>
+        <location line="-1516"/>
         <location line="+28"/>
         <source>Exit Drawpile</source>
         <translation>Quitter Drawpile</translation>
@@ -1406,7 +1406,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Erreurs lors de l&apos;ouverture de la table des évènements.</translation>
     </message>
     <message>
-        <location line="+220"/>
+        <location line="+221"/>
         <source>Invalid address</source>
         <translation>Adresse non valide</translation>
     </message>
@@ -1451,7 +1451,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>L&apos;image n&apos;a pas pu être chargée</translation>
     </message>
     <message>
-        <location line="+461"/>
+        <location line="+462"/>
         <source>About Drawpile</source>
         <translation>À propos de Drawpile</translation>
     </message>
@@ -1493,13 +1493,13 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Enregistrement automatique</translation>
     </message>
     <message>
-        <location line="-2383"/>
-        <location line="+2410"/>
+        <location line="-2385"/>
+        <location line="+2412"/>
         <source>Record...</source>
         <translation>Capture vidéo...</translation>
     </message>
     <message>
-        <location line="-4815"/>
+        <location line="-4817"/>
         <source>Server out of space</source>
         <translation>Serveur à court d&apos;espace</translation>
     </message>
@@ -1572,12 +1572,12 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4094"/>
+        <location line="+4096"/>
         <source>Export Again</source>
         <translation>Exporter à Nouveau</translation>
     </message>
     <message>
-        <location line="-4090"/>
+        <location line="-4092"/>
         <source>Export Again to %1</source>
         <translation>Exporter à Nouveau vers %1</translation>
     </message>
@@ -1643,7 +1643,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
         <translation>Vous êtes sur le point d&apos;ouvrir un nouveau fichier et de fermer cette fenêtre.</translation>
     </message>
     <message>
-        <location line="+2215"/>
+        <location line="+2216"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>Vous êtes déjà connecté à une session&#x202f;! Déconnectez-vous pour pouvoir en héberger une.</translation>
     </message>
@@ -1669,12 +1669,12 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3108"/>
+        <location line="+3110"/>
         <source>Terminate</source>
         <translation>Mettre Fin</translation>
     </message>
     <message>
-        <location line="-3094"/>
+        <location line="-3096"/>
         <source>Join Session</source>
         <translation>Rejoindre la Session</translation>
     </message>
@@ -1695,7 +1695,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
         <translation>L&apos;image n&apos;a pas pu être chargée&#xa0;: %1.</translation>
     </message>
     <message>
-        <location line="+444"/>
+        <location line="+445"/>
         <source>Open Debug Dump</source>
         <translation>Ouvrir le Dépôt de Débogage</translation>
     </message>
@@ -2074,7 +2074,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
         <translation>Définir Comme Source de Remplissage</translation>
     </message>
     <message>
-        <location line="+323"/>
+        <location line="+324"/>
         <source>Flipbook</source>
         <translation>Folioscope</translation>
     </message>
@@ -2084,7 +2084,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
         <translation>Afficher la prévisualisation d&apos;animation</translation>
     </message>
     <message>
-        <location line="-633"/>
+        <location line="-634"/>
         <source>Zoom &amp;In</source>
         <translation>Zoom &amp;avant</translation>
     </message>
@@ -2140,7 +2140,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
         <translation>Transformer le &amp;Masque de Sélection</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation>Transformer uniquement le masque de sélection lui-même, puis revenir aux outils précédents</translation>
     </message>
@@ -2370,7 +2370,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
         <translation>Annuler l&apos;action</translation>
     </message>
     <message>
-        <location line="-4615"/>
+        <location line="-4618"/>
         <source>Image saving failed</source>
         <translation>Échec de l&apos;enregistrement de l&apos;image</translation>
     </message>
@@ -2455,7 +2455,7 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
         <translation>Erreur d&apos;enregistrement de la table des évènements.</translation>
     </message>
     <message>
-        <location line="+225"/>
+        <location line="+226"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>Pas de toile à héberger&#x202f;! Créez-en une ou ouvrez un fichier.</translation>
     </message>
@@ -2535,29 +2535,29 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
         <translation>Altération de la sélection…</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+43"/>
         <source>Stop Tablet Event Log</source>
         <translation>Arrêter la Table des Évènements</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1926"/>
+        <location line="+1927"/>
         <source>Tablet Event Log...</source>
         <translation>Table des Évènements...</translation>
     </message>
     <message>
-        <location line="-1922"/>
+        <location line="-1923"/>
         <source>Stop Profile</source>
         <translation>Arrêter le Profil</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1923"/>
+        <location line="+1924"/>
         <source>Profile...</source>
         <translation>Profil...</translation>
     </message>
     <message>
-        <location line="-1912"/>
+        <location line="-1913"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Régler Latence Artificielle... (Actuellement %1 ms)</translation>
     </message>
@@ -2583,12 +2583,12 @@ Simplifiez la toile et réinitialisez manuellement avant que l&apos;espace libre
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1870"/>
+        <location line="+1871"/>
         <source>Record Debug Dumps</source>
         <translation>Enregistrer Archive de Débogage</translation>
     </message>
     <message>
-        <location line="-1869"/>
+        <location line="-1870"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2872,7 +2872,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
         <translation>Ca&amp;lque</translation>
     </message>
     <message>
-        <location line="+268"/>
+        <location line="+269"/>
         <source>Increase Key Frame Exposure</source>
         <translation>Augmenter l&apos;Exposition de la Trame de Référence</translation>
     </message>
@@ -2992,12 +2992,12 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
         <translation>Centrer sur la toile</translation>
     </message>
     <message>
-        <location line="-1312"/>
+        <location line="-1313"/>
         <source>Show &amp;Annotations</source>
         <translation>Afficher les &amp;annotations</translation>
     </message>
     <message>
-        <location line="-4980"/>
+        <location line="-4982"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 a rejoint&#x202f;!</translation>
     </message>
@@ -3007,7 +3007,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
         <translation>Sauvegarde de l&apos;animation...</translation>
     </message>
     <message>
-        <location line="+3056"/>
+        <location line="+3058"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>Rotation Horaire de la Toile</translation>
     </message>
@@ -3081,7 +3081,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
         <translation>Afficher les calques censurés</translation>
     </message>
     <message>
-        <location line="-4423"/>
+        <location line="-4425"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;Le raccourci &apos;%1&apos; est ambigu, il correspond à&#xa0;:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -3106,7 +3106,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
         <translation>A rejoint la session&#x202f;!</translation>
     </message>
     <message>
-        <location line="+892"/>
+        <location line="+893"/>
         <source>Reason:</source>
         <translation>Raison&#xa0;:</translation>
     </message>
@@ -3141,7 +3141,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
         <translation>Outil pinceau en main libre (mode alpha verrouillé)</translation>
     </message>
     <message>
-        <location line="+836"/>
+        <location line="+837"/>
         <source>Toggle Dock %1</source>
         <translation>Basculer Panneau %1</translation>
     </message>
@@ -3202,7 +3202,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
         <translation>Propriétés du calque…</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+328"/>
+        <location filename="../mainwindow.cpp" line="+329"/>
         <source>Change Frame Count...</source>
         <translation>Changer le Nombre d&apos;Images...</translation>
     </message>
@@ -3692,7 +3692,7 @@ L&apos;archive de débogage démarre sur la prochaine réinitialisation de la to
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2165"/>
+        <location line="-2166"/>
         <source>Delete</source>
         <translation>Effacer</translation>
     </message>
@@ -12293,13 +12293,14 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-36"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1408"/>
+        <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12310,8 +12311,9 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+765"/>
+        <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
+        <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
