@@ -175,11 +175,11 @@ public:
 	/**
 	 * Set the active brush in the Drawdance brush engine.
 	 *
-	 * The freehand parameter can be used to turn off stabilizer
+	 * The source parameter can be used to turn off stabilizer
 	 * interference when drawing previews, shapes, lines and curves.
 	 */
-	void setBrushEngineBrush(drawdance::BrushEngine &be, bool freehand);
-	void setStrokeWorkerBrush(drawdance::StrokeWorker &sw, bool freehand);
+	void setBrushEngineBrush(drawdance::BrushEngine &be, Tool::Type source);
+	void setStrokeWorkerBrush(drawdance::StrokeWorker &sw, Tool::Type source);
 	void setStrokeEngineParams(
 		drawdance::StrokeEngine &se, int stabilizerSampleCount = 0,
 		int smoothing = 0);
@@ -308,7 +308,7 @@ private:
 	void startDrawingFromHotSwapParams();
 	void updateSelectionMaskingEnabled(bool compatibilityMode);
 	const brushes::ActiveBrush &fillBrushEngineStrokeParams(
-		bool freehand, DP_BrushEngineStrokeParams &outStroke) const;
+		Tool::Type source, DP_BrushEngineStrokeParams &outStroke) const;
 
 	Tool *m_toolbox[Tool::_LASTTOOL];
 	net::Client *m_client;

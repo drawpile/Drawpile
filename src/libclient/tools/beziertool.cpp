@@ -103,7 +103,7 @@ void BezierTool::finishMultipart()
 	if(m_points.size() > 2) {
 		m_points.pop_back();
 
-		m_owner.setBrushEngineBrush(m_brushEngine, false);
+		m_owner.setBrushEngineBrush(m_brushEngine, type());
 
 		drawdance::CanvasState canvasState =
 			m_owner.model()->paintEngine()->sampleCanvasState();
@@ -220,7 +220,7 @@ void BezierTool::updatePreview()
 	if(pv.size() <= 1)
 		return;
 
-	m_owner.setBrushEngineBrush(m_brushEngine, false);
+	m_owner.setBrushEngineBrush(m_brushEngine, type());
 
 	canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 	drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();

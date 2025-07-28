@@ -109,7 +109,7 @@ void ShapeTool::end(const EndParams &params)
 		canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 		drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
 
-		m_owner.setBrushEngineBrush(m_brushEngine, false);
+		m_owner.setBrushEngineBrush(m_brushEngine, type());
 
 		const canvas::PointVector pv = pointVector();
 		m_brushEngine.beginStroke(
@@ -132,7 +132,7 @@ QPointF ShapeTool::getConstrainPoint() const
 
 void ShapeTool::updatePreview()
 {
-	m_owner.setBrushEngineBrush(m_brushEngine, false);
+	m_owner.setBrushEngineBrush(m_brushEngine, type());
 	canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 	drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
 

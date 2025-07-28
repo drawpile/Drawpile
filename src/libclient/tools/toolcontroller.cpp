@@ -644,20 +644,20 @@ void ToolController::offsetActiveTool(int xOffset, int yOffset)
 }
 
 void ToolController::setBrushEngineBrush(
-	drawdance::BrushEngine &be, bool freehand)
+	drawdance::BrushEngine &be, Tool::Type source)
 {
 	DP_BrushEngineStrokeParams stroke;
 	const brushes::ActiveBrush &brush =
-		fillBrushEngineStrokeParams(freehand, stroke);
+		fillBrushEngineStrokeParams(source, stroke);
 	brush.setInBrushEngine(be, stroke);
 }
 
 void ToolController::setStrokeWorkerBrush(
-	drawdance::StrokeWorker &sw, bool freehand)
+	drawdance::StrokeWorker &sw, Tool::Type source)
 {
 	DP_BrushEngineStrokeParams stroke;
 	const brushes::ActiveBrush &brush =
-		fillBrushEngineStrokeParams(freehand, stroke);
+		fillBrushEngineStrokeParams(source, stroke);
 	brush.setInStrokeWorker(sw, stroke);
 }
 
@@ -770,9 +770,10 @@ void ToolController::updateSelectionMaskingEnabled(bool compatibilityMode)
 }
 
 const brushes::ActiveBrush &ToolController::fillBrushEngineStrokeParams(
-	bool freehand, DP_BrushEngineStrokeParams &outStroke) const
+	Tool::Type source, DP_BrushEngineStrokeParams &outStroke) const
 {
 	const brushes::ActiveBrush &brush = activeBrush();
+	bool freehand = source == Tool::Type::FREEHAND;
 	DP_BrushEngineStrokeParams stroke = {
 		{
 			0,
@@ -787,7 +788,7 @@ const brushes::ActiveBrush &ToolController::fillBrushEngineStrokeParams(
 			: DP_SELECTION_ID_MAIN,
 		activeLayerAlphaLock(),
 		freehand && brush.shouldSyncSamples(),
-		freehand,
+		source != Tool::Type::RECTANGLE && source != Tool::Type::ELLIPSE,
 	};
 	if(freehand) {
 		stroke.se.interpolate = m_interpolateInputs;

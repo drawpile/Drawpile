@@ -56,7 +56,7 @@ void Freehand::begin(const BeginParams &params)
 	m_drawing = true;
 	m_firstPoint = true;
 
-	m_owner.setStrokeWorkerBrush(m_strokeWorker, true);
+	m_owner.setStrokeWorkerBrush(m_strokeWorker, type());
 
 	// The pressure value of the first point is unreliable
 	// because it is (or was?) possible to get a synthetic MousePress event
