@@ -2227,7 +2227,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+1516"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>如需报告故障或者提出建议, [请查看此处].</translation>
     </message>
     <message>
         <location line="-2082"/>
@@ -5641,12 +5641,12 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <location line="+8"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
         <source>Pixel-perfect</source>
-        <translation type="unfinished"></translation>
+        <translation>像素-完美</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevents L-shaped curves, mostly useful for small pixel brushes.</source>
-        <translation type="unfinished"></translation>
+        <translation>防止出现L形曲线, 主要对小的像素笔刷有用.</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -8928,12 +8928,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Write debugging log to file</source>
-        <translation type="unfinished">写入日志文件</translation>
+        <translation>写入日志文件</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished">记录:</translation>
+        <translation>记录:</translation>
     </message>
 </context>
 <context>
@@ -9069,12 +9069,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-54"/>
         <source>Show contribution, donation and feedback links</source>
-        <translation type="unfinished"></translation>
+        <translation>显示贡献, 捐赠和反馈链接</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Contributing:</source>
-        <translation type="unfinished"></translation>
+        <translation>贡献:</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -12277,25 +12277,25 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[♥ 向 Drawpile 捐赠]以帮助维持公共服务器的运行.</translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
         <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
-        <translation type="unfinished"></translation>
+        <translation>捐赠</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../mainwindow.cpp" line="+3"/>
         <source>Open Drawpile&apos;s donate page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>在浏览器中打开 Drawpile 的捐赠页面</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[♥ 向 Drawpile 捐赠]以帮助维持开发工作和服务器的运行.</translation>
     </message>
 </context>
 <context>
