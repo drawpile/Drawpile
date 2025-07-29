@@ -6,22 +6,22 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+52"/>
         <source>Add New</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐌹𐌰𐌿𐌰𐌿𐌺 𐌽𐌹𐍅𐌹</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌹𐌿𐍀 𐌼𐌹𐌸𐍃𐌰𐍄𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌳𐌰𐌻𐌰𐌸 𐌼𐌹𐌸𐍃𐌰𐍄𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍃𐌽𐌹𐌼𐌰𐌽</translation>
     </message>
 </context>
 <context>
@@ -29,27 +29,27 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐌼𐌰𐌷𐍄 𐌳𐌰𐌹𐌻𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌴𐌻:</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Reason:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐍂𐌿𐌽𐌳𐌿𐍃:</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Entire session</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌻𐌻 𐌼𐌴𐌻</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍆𐌼𐌰𐍂𐌶𐌾𐌰𐌽𐌳𐍃:</translation>
     </message>
 </context>
 <context>
@@ -57,7 +57,7 @@
     <message>
         <location filename="../ui/addserverdialog.ui" line="+14"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐌹𐌰𐌿𐌰𐌿𐌺 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐍃</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -103,12 +103,12 @@
     <message>
         <location line="+141"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍀𐍇</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌹𐌺𐌹𐌻𐌴𐌹: </translation>
     </message>
     <message>
         <location line="-13"/>
@@ -119,12 +119,12 @@
         <location line="-13"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+164"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐍃𐌹𐌿𐌽𐍃: </translation>
     </message>
     <message>
         <location line="-76"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐌷𐌰𐍂𐌳𐌴𐌹: </translation>
     </message>
     <message>
         <location line="-123"/>
@@ -157,7 +157,7 @@
     <message>
         <location line="-30"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐍂𐌿𐌼: </translation>
     </message>
     <message>
         <location line="-49"/>
@@ -294,7 +294,7 @@
     <message>
         <location line="+13"/>
         <source>Fingerprints</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌰𐌹𐍃𐍄𐌴𐌹𐍃</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -307,7 +307,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+19"/>
         <source>Select Color</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐍂𐍅𐌰 𐍅𐌰𐌻𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -327,17 +327,17 @@
     <message>
         <location line="+7"/>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐌻𐌴𐍅𐍃</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍅𐌰𐌹𐍂𐌸</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐍂𐍉𐌽𐍃</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -347,7 +347,7 @@
     <message>
         <location line="+7"/>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍂𐌰𐌿𐌸</translation>
     </message>
 </context>
 <context>
@@ -355,12 +355,12 @@
     <message>
         <location filename="../ui/filetypedialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌰𐌼𐍉:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌺𐌿𐌽:</translation>
     </message>
 </context>
 <context>
@@ -399,12 +399,12 @@
         <location line="+128"/>
         <location line="+302"/>
         <source>Save Image</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐍂𐌹𐍃𐌰𐌷𐍄 𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌽</translation>
     </message>
     <message>
         <location line="-302"/>
         <source>Export Image</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐍂𐌹𐍃𐌰𐌷𐍄 𐌿𐍃𐌱𐌰𐌹𐍂𐌰𐌽</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -444,7 +444,7 @@
     <message>
         <location line="+146"/>
         <source>Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌰𐌿𐌲𐍆𐌰𐌾𐌻</translation>
     </message>
     <message>
         <location line="-174"/>
@@ -500,23 +500,23 @@
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐍂𐌿𐍃𐌺𐌰𐌽𐍃 𐌹𐌽𐌽𐌰𐍄𐌱𐌰𐌹𐍂𐌰𐌽</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Import Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌴𐌻𐌹𐍃 𐌻𐌰𐌲𐌴𐌹𐌽𐌹𐌽𐍃 𐌹𐌽𐌽𐌰𐍄𐌱𐌰𐌹𐍂𐌰𐌽</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌻𐌻𐌰 𐌲𐌰𐍄𐌹𐌻𐌰 𐍆𐌰𐌾𐌻𐌰 (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+385"/>
         <source>Session Settings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌴𐌻𐌹𐍃 𐌻𐌰𐌲𐌴𐌹𐌽𐍉𐍃 (%1)</translation>
     </message>
     <message>
         <location line="-384"/>
@@ -536,7 +536,7 @@
     <message>
         <location line="+12"/>
         <source>Open Image</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐍂𐌹𐍃𐌰𐌷𐍄 𐌿𐍃𐌻𐌿𐌺𐌰𐌽</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -612,19 +612,19 @@
         <location line="+1"/>
         <location line="+6"/>
         <source>Save as %1</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌽 𐍃𐍅𐌴 %1</translation>
     </message>
     <message>
         <location line="+168"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌽𐌰𐌼𐌽𐌹𐌸</translation>
     </message>
     <message>
         <location line="+99"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌽𐌰𐌼𐌽𐌹𐌸%1</translation>
     </message>
 </context>
 <context>
@@ -633,12 +633,12 @@
         <location filename="../ui/fillsettings.ui" line="+351"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+318"/>
         <source>Feather: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌹𐌸𐍂𐌰: </translation>
     </message>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+143"/>
         <source>Size Limit: Unlimited</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐍂𐌺𐌰 𐌼𐌹𐌺𐌹𐌻𐌴𐌹𐌽𐍃: 𐌰𐌽𐌳𐌹𐌻𐌰𐌿𐍃𐌰</translation>
     </message>
     <message>
         <location filename="../ui/fillsettings.ui" line="-319"/>
@@ -648,31 +648,31 @@
         <location line="+51"/>
         <location line="+12"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍀𐍇</translation>
     </message>
     <message>
         <location line="-26"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+67"/>
         <source>Source:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐍂𐌿𐌽𐌽𐌰:</translation>
     </message>
     <message>
         <location line="-135"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-115"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-2"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐍃𐌹𐌿𐌽: </translation>
     </message>
     <message>
         <location line="+174"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+158"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐍉𐌳𐌿𐍃:</translation>
     </message>
     <message>
         <location line="-310"/>
@@ -751,7 +751,7 @@
         <location line="-357"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-113"/>
         <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐍂𐌺𐌰 𐌼𐌹𐌺𐌹𐌻𐌴𐌹𐌽𐍃: </translation>
     </message>
     <message>
         <location line="+300"/>
@@ -785,7 +785,7 @@
     <message>
         <location line="+23"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐍀𐌹𐌻𐌻𐍉</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -821,7 +821,7 @@
     <message>
         <location filename="../ui/invitedialog.ui" line="+14"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌰𐌸𐍉𐌽</translation>
     </message>
     <message>
         <location line="+17"/>
