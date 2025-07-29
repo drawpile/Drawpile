@@ -12,10 +12,9 @@ struct DP_Semaphore;
 
 namespace tools {
 
-//! Freehand brush tool
 class Freehand final : public Tool {
 public:
-	Freehand(ToolController &owner, bool isEraser);
+	Freehand(ToolController &owner);
 	~Freehand() override;
 
 	void begin(const BeginParams &params) override;
@@ -60,6 +59,26 @@ private:
 	qreal m_zoom = 1.0;
 	qreal m_angle = 0.0;
 	QAtomicInt m_cancelling = 0;
+};
+
+class FreehandEraser final : public Tool {
+public:
+	FreehandEraser(ToolController &owner, Freehand *freehand);
+
+	void begin(const BeginParams &params) override;
+	void motion(const MotionParams &params) override;
+	void end(const EndParams &params) override;
+
+	bool undoRedo(bool redo) override;
+
+	bool usesBrushColor() const override { return true; }
+
+	void offsetActiveTool(int x, int y) override;
+
+	void finish() override;
+
+private:
+	Freehand *m_freehand;
 };
 
 }

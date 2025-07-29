@@ -16,9 +16,9 @@ using std::placeholders::_1;
 
 namespace tools {
 
-Freehand::Freehand(ToolController &owner, bool isEraser)
+Freehand::Freehand(ToolController &owner)
 	: Tool(
-		  owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor,
+		  owner, FREEHAND, Qt::CrossCursor,
 		  Capability::AllowColorPick | Capability::SupportsPressure |
 			  Capability::AllowToolAdjust1 | Capability::AllowToolAdjust2 |
 			  Capability::AllowToolAdjust3)
@@ -252,6 +252,47 @@ void Freehand::syncUnlockCallback(void *user)
 bool Freehand::isOnMainThread()
 {
 	return QCoreApplication::instance()->thread() == QThread::currentThread();
+}
+
+
+FreehandEraser::FreehandEraser(ToolController &owner, Freehand *freehand)
+	: Tool(
+		  owner, ERASER, Qt::CrossCursor,
+		  Capability::AllowColorPick | Capability::SupportsPressure |
+			  Capability::AllowToolAdjust1 | Capability::AllowToolAdjust2 |
+			  Capability::AllowToolAdjust3)
+	, m_freehand(freehand)
+{
+}
+
+void FreehandEraser::begin(const BeginParams &params)
+{
+	m_freehand->begin(params);
+}
+
+void FreehandEraser::motion(const MotionParams &params)
+{
+	m_freehand->motion(params);
+}
+
+void FreehandEraser::end(const EndParams &params)
+{
+	m_freehand->end(params);
+}
+
+bool FreehandEraser::undoRedo(bool redo)
+{
+	return m_freehand->undoRedo(redo);
+}
+
+void FreehandEraser::offsetActiveTool(int x, int y)
+{
+	m_freehand->offsetActiveTool(x, y);
+}
+
+void FreehandEraser::finish()
+{
+	m_freehand->finish();
 }
 
 }
