@@ -11,6 +11,7 @@ extern "C" {
 #include <QImage>
 #include <QRegularExpression>
 #include <QStringList>
+#include <QTimer>
 
 namespace canvas {
 
@@ -268,7 +269,11 @@ bool LayerListModel::dropMimeData(
 			}
 		}
 
-		emit moveRequested(topLevelLayerIds, targetId, intoGroup, below);
+		QTimer::singleShot(
+			500, this, [this, topLevelLayerIds, targetId, intoGroup, below] {
+				emit moveRequested(
+					topLevelLayerIds, targetId, intoGroup, below);
+			});
 
 	} else {
 		// TODO support new layer drops
