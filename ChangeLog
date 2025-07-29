@@ -165,6 +165,7 @@ Unreleased Version 2.2.3-pre
  * Fix: Deduplicate brush and tag names when exporting brushes. Thanks Blozzom for reporting.
  * Fix: Don't crash under Windows 7 when attempting to play two sounds once. Thanks pachuco for reporting.
  * Server Feature: Allow configuring filter regular expressions for usernames and session titles. One expression to remove allow-listed parts and one to block disallowed ones.
+ * Fix: Work around a rare crash when reordering layers on Windows. Thanks Momo for reporting.
 
 2025-02-12 Version 2.2.2-beta.5
  * Feature: Color circle dock with gamut masks, available through View > Docks > Color Circle. Similar to Krita's Artistic Color Selector and MyPaint's HSV/HCY Wheel.
