@@ -56,9 +56,9 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 {
 	Q_ASSERT(client);
 
-	registerTool(new Freehand(*this, false));
-	registerTool(
-		new Freehand(*this, true)); // eraser is a specialized freehand tool
+	Freehand *freehand = new Freehand(*this);
+	registerTool(freehand);
+	registerTool(new FreehandEraser(*this, freehand));
 	registerTool(new ColorPicker(*this));
 	registerTool(new Line(*this));
 	registerTool(new Rectangle(*this));
@@ -96,20 +96,25 @@ void ToolController::registerTool(Tool *tool)
 
 ToolController::~ToolController()
 {
+	// The freehand tool has other tools depending on it, so it must be disposed
+	// and deleted last. The loops below assume that it's the first tool.
+	static_assert(int(Tool::FREEHAND) == 0, "Freehand tool comes first");
 	// The transform tool may want to switch back to a previous tool when it's
 	// cancelled. That causes signals to be emitted into objects that are being
 	// destroyed, which Qt doesn't appreciate. So we block signals here.
 	blockSignals(true);
 	// May be null if a file failed to open or a session didn't connect.
 	if(m_model) {
-		for(Tool *t : m_toolbox) {
-			t->dispose();
+		for(int i = int(Tool::FREEHAND) + 1; i < int(Tool::_LASTTOOL); ++i) {
+			m_toolbox[i]->dispose();
 		}
+		m_toolbox[int(Tool::FREEHAND)]->dispose();
 	}
 	m_threadPool.waitForDone();
-	for(Tool *t : m_toolbox) {
-		delete t;
+	for(int i = int(Tool::FREEHAND) + 1; i < int(Tool::_LASTTOOL); ++i) {
+		delete m_toolbox[i];
 	}
+	delete m_toolbox[int(Tool::FREEHAND)];
 }
 
 Tool *ToolController::getTool(Tool::Type type)
