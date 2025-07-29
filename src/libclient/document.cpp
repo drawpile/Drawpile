@@ -198,7 +198,7 @@ void Document::initCanvas()
 		&Document::markDirty);
 	connect(
 		m_canvas->layerlist(), &canvas::LayerListModel::moveRequested, this,
-		&Document::onMoveLayerRequested);
+		&Document::onMoveLayerRequested, Qt::QueuedConnection);
 
 	connect(
 		m_canvas, &canvas::CanvasModel::titleChanged, this,
