@@ -44,7 +44,7 @@
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐍃𐍄𐍉𐌳𐌾𐌰𐌳𐌰…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -64,7 +64,7 @@
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌽𐍅𐌾𐌰𐌳𐌰</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -139,12 +139,12 @@
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍂𐌰𐌶𐌳𐌰:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Test your pen pressure here</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐍉𐌺𐌴𐌹 𐌰𐌽𐌰𐍀𐍂𐌰𐌲𐌲𐌴𐌹𐌽 𐌺𐍂𐌴𐍄𐌹𐌽𐍃 𐌷𐌴𐍂</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -204,22 +204,22 @@
     <message>
         <location line="+5"/>
         <source>You can continue regardless, but things may not work properly.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌲𐍄 𐌸𐌰𐌹𐍂𐌷𐍅𐌹𐍃𐌰𐌽, 𐌹𐌸 𐌼𐌰𐌷𐍄𐌴𐌹𐌲 𐌹𐍃𐍄 𐌸𐌰𐍄𐌴𐌹 𐌽𐌹 𐍅𐌰𐌿𐍂𐌺𐌴𐌹𐌸 𐍂𐌰𐌹𐌷𐍄𐌰𐌱𐌰.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌳𐌿𐌲𐌹𐌽𐌽𐌰𐌽</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Start Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐍅𐌴𐌸𐌰𐌿𐌷 𐌳𐌿𐌲𐌹𐌽𐌽𐌰𐌽</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍃𐌼𐌴𐍂𐌴𐌹𐌽𐍃:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -254,7 +254,7 @@
     <message>
         <location line="+85"/>
         <source>Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐍂𐌿𐍃𐌺𐍃</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -282,7 +282,7 @@
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐌿𐍃𐌻𐌿𐌺𐌰𐌽 𐍆𐌰𐌾𐌻 𐌳𐌿 𐌼𐌴𐌻𐌾𐌰𐌽.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -292,12 +292,12 @@
     <message>
         <location line="+3"/>
         <source>Internal error during saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌹𐌽𐌽𐌰𐌽𐌰 𐌰𐌹𐍂𐌶𐌴𐌹 𐌼𐌹𐌸𐌸𐌰𐌽𐌴𐌹 𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌳𐌰 𐍅𐌰𐍂𐌸.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌺𐌿𐌽𐌸𐌰 𐌰𐌹𐍂𐌶𐌴𐌹.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -328,12 +328,12 @@
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍄𐌰𐌿𐌹</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Modifiers</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌹𐌽𐌼𐌰𐌹𐌳𐌾𐌰𐌽𐌳𐍃</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -362,7 +362,7 @@
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌿𐍃 𐍈𐌹𐌿𐌻</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -373,17 +373,17 @@
     <message>
         <location line="+40"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌻𐌰𐌲𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍆 𐌷𐌻𐌴𐌹𐌳𐌿𐌼𐌴𐌹𐌽 𐌺𐌻𐌹𐌺𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍆 𐍄𐌰𐌹𐌷𐍃𐍅𐍉𐌽 𐌺𐌻𐌹𐌺𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -418,27 +418,27 @@
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐍂𐍅𐌰 𐌽𐌹𐌼𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌰𐌲𐌾𐍉𐌽 𐌽𐌹𐌼𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌹𐌺𐌹𐌻𐌴𐌹𐌽 𐌱𐍂𐌿𐍃𐌺𐌹𐍃 𐌹𐌽𐌼𐌰𐌹𐌳𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐍃𐌹𐌿𐌽 𐌱𐍂𐌿𐍃𐌺𐌹𐍃 𐌹𐌽𐌼𐌰𐌹𐌳𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌷𐌰𐍂𐌳𐌴𐌹𐌽 𐌱𐍂𐌿𐍃𐌺𐌹𐍃 𐌹𐌽𐌼𐌰𐌹𐌳𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -448,7 +448,7 @@
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌹𐌳𐌿𐌼𐌰𐍄𐍉𐌻</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -478,17 +478,17 @@
     <message>
         <location line="+2"/>
         <source>Change Color Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐍂𐍅𐍉𐍃 𐍃𐌰𐍄𐌿𐍂𐌰𐍄𐍃𐌾𐍉𐌽 𐌹𐌽𐌼𐌰𐌹𐌳𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍅𐌰𐌹𐍂𐌸 𐍆𐌰𐍂𐍅𐍉𐍃 𐌹𐌽𐌼𐌰𐌹𐌳𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Action %1</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌺𐌿𐌽𐌸 𐍄𐌰𐌿𐌹 %1</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -571,7 +571,7 @@
     <message>
         <location line="+126"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍄𐌰𐌿𐌹</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -586,7 +586,7 @@
     <message>
         <location line="+2"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐌹𐌿𐌷𐍄</translation>
     </message>
 </context>
 <context>
@@ -604,22 +604,22 @@
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌹𐍂𐌶𐌴𐌹 𐍅𐌰𐍂𐌸 𐌼𐌹𐌸𐌸𐌰𐌽𐌴𐌹 𐍆𐌰𐌾𐌻 𐌿𐍃𐌻𐌰𐌿𐌺.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error starting recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌹𐍂𐌶𐌴𐌹 𐍅𐌰𐍂𐌸 𐌼𐌹𐌸𐌸𐌰𐌽𐌴𐌹 𐌳𐌿𐌲𐌰𐌽 𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌽𐌳.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌺𐌿𐌽𐌸𐌰 𐌰𐌹𐍂𐌶𐌴𐌹.</translation>
     </message>
     <message>
         <location line="+689"/>
         <source>Error saving image</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌹𐍂𐌶𐌴𐌹 𐍅𐌰𐍂𐌸 𐌼𐌹𐌸𐌸𐌰𐌽𐌴𐌹 𐍆𐍂𐌹𐍃𐌰𐌷𐍄𐍃 𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌳𐌰 𐍅𐌰𐍂𐌸</translation>
     </message>
 </context>
 <context>
@@ -627,12 +627,12 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+62"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌲𐍄 𐌰𐍄𐌳𐍂𐌰𐌲𐌰𐌽 𐌿𐍃𐌼𐌴𐍂𐌹 𐍅𐌹𐌽𐌳𐍉𐍅𐍃 𐌸𐌰𐌿 𐍆𐍆𐌼𐍀𐌴𐌲 𐍆𐍂𐌰𐌼 &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. 𐍅𐌰𐌻𐌴𐌹 ffmpeg.exe 𐍃𐍅𐌴 𐍅𐌹𐌲 𐌳𐌿 ffmpeg 𐌹𐌽 𐌳𐍂𐌰𐍅𐍀𐌰𐌾𐌻.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌲𐍄 𐌰𐍄𐌳𐍂𐌰𐌲𐌰𐌽 ffmpeg 𐌸𐌰𐌹𐍂𐌷 Homebrew.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -643,12 +643,12 @@
         <location line="+98"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐌰𐌽𐌰𐍃𐍄𐍉𐌳𐌾𐌰𐌽 ffmpeg 𐌸𐌰𐌹𐍂𐌷 &apos;%1&apos;. %2</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Ffmpeg crashed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ffmpeg 𐌱𐍂𐌰𐌺!</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -661,7 +661,7 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+332"/>
         <source>Filling…</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌹𐌻𐌻𐌴𐌹𐌽𐍃…</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -672,7 +672,8 @@
         <location line="+15"/>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌷𐍄𐍃 𐌽𐌹𐍃𐍄 𐍆𐌹𐌻𐌻𐌾𐌰𐌽 𐌻𐌰𐌲𐌾𐍉𐌽𐍃 𐌺𐌿𐌽𐌹 %1.
+𐌱𐌹𐌳𐌾𐌰𐌼 𐌸𐌿𐌺, 𐍅𐌰𐌻𐌴𐌹 𐌱𐌹𐌿𐌷𐍄 𐌻𐌰𐌲𐌾𐍉𐌽.</translation>
     </message>
 </context>
 <context>
@@ -680,17 +681,17 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐍃𐌹𐌿𐌽𐍃: 𐌰𐍆𐍆𐌹𐌻𐌷𐌰𐌽𐌰</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐍃𐌹𐌿𐌽𐍃: 𐌱𐌰𐌽𐌳𐍅𐌹𐌳𐌰</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐍃𐌹𐌿𐌽𐍃: 𐌱𐌴𐍂𐌿𐍃𐌹</translation>
     </message>
 </context>
 <context>
@@ -698,7 +699,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+292"/>
         <source>Selecting…</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍅𐌰𐌻𐌾𐌰𐌽𐌳𐍉…</translation>
     </message>
 </context>
 <context>
@@ -706,7 +707,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/images.cpp" line="+72"/>
         <source>Images (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐍂𐌹𐍃𐌰𐌷𐍄𐌴𐌹𐍃 (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -746,7 +747,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 𐍆𐌹𐌻𐌼 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -761,7 +762,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐍂𐌿𐍃𐌺𐌹𐍃 𐌷𐌿𐌶𐌳 (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -797,22 +798,22 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-143"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐌾𐌹𐍆𐍄</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌻𐍄</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌺𐌰𐌿𐌽𐍄𐍂𐌰𐌿𐌻</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌴𐍄𐌰</translation>
     </message>
 </context>
 <context>
@@ -820,61 +821,61 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+76"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1𐌳%2𐍈%3𐌼</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1𐍈%2𐌼</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1𐌼</translation>
     </message>
     <message>
         <location line="+437"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation>(𐌿𐌽𐌽𐌰𐌼𐌽𐌹𐌸)</translation>
     </message>
     <message numerus="yes">
         <location line="-328"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n 𐌱𐍂𐌿𐌺𐌾𐌰</numerusform>
+            <numerusform>%n 𐌱𐍂𐌿𐌺𐌾𐌰𐌽𐍃</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-3"/>
         <source>%1/%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1/%n 𐌱𐍂𐌿𐌺𐌾𐌰</numerusform>
+            <numerusform>%1/%n 𐌱𐍂𐌿𐌺𐌾𐌰𐌽𐍃</numerusform>
         </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌺𐌿𐌽𐌸 𐌽𐌹𐍃𐍄 𐍈𐌰𐌽 𐍆𐌹𐌻𐌿 𐌱𐍂𐌿𐌺𐌾𐌰𐌽𐌴 𐌽𐌿 𐍆𐍂𐌹𐍃𐌰𐌷𐍄𐌾𐌰𐌽𐌳</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n 𐍆𐍂𐌹𐍃𐌰𐌷𐍄𐌾𐌰𐌽𐌳𐍃 𐌱𐍂𐌿𐌺𐌾𐌰 𐌽𐌿</numerusform>
+            <numerusform>%n 𐍆𐍂𐌹𐍃𐌰𐌷𐍄𐌾𐌰𐌽𐌳𐌰𐌽𐍃 𐌱𐍂𐌿𐌺𐌾𐌰𐌽𐍃 𐌽𐌿</numerusform>
         </translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐍄𐌹𐌻</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Requires compatibility mode (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌸𐌰𐍂𐍆 𐌼𐍉𐌳𐌰𐌿𐍃 𐌲𐌰𐍄𐌹𐌻𐌹𐍃 (%1)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -899,7 +900,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍆𐌰𐍂𐌼𐌴𐌻𐌹</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -919,27 +920,27 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌹𐌷𐌰𐌽𐌳𐍃</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌻𐌳𐌹</translation>
     </message>
     <message>
         <location line="+169"/>
         <source>incompatible</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌲𐌰𐍄𐌹𐌻</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>joining from web not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐌼𐌰𐌹𐌳𐌾𐌰𐌽 𐌰𐌽𐌰 𐍅𐌰𐌱𐌾𐌰 𐌰𐌽𐌳𐌻𐌴𐍄𐌰𐌽 𐌽𐌹𐍃𐍄</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌿𐌺𐌰𐌽</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -967,7 +968,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌷𐌹𐌽𐌳𐌰𐍂</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1022,7 +1023,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Vivid Light</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐌷𐌴𐌹𐍃 𐌻𐌹𐌿𐌷𐌰𐌸</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1047,12 +1048,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+12"/>
         <source>Divide</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐌺𐌰𐌹𐌳𐌰𐌽</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Shade (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐌺𐌰𐌳𐍅𐌴𐌹𐌽𐍃 (𐍃𐌰𐌹)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1067,7 +1068,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Burn (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐍂𐌹𐌽𐌽𐌰𐌽 (𐍃𐌰𐌹)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1082,22 +1083,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Hard Mix (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐌻𐌰𐌽𐌳𐌰𐌽 𐌷𐌰𐍂𐌳𐌿𐌱𐌰 (𐍃𐌰𐌹)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌸𐌰𐍂𐌻𐌴𐌹𐌺𐌴𐌹 (𐍃𐌰𐌹)</translation>
     </message>
     <message>
         <location line="-108"/>
         <source>Darken</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍂𐌹𐌵𐌹𐌶𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighten</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌹𐌿𐌷𐍄𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1142,7 +1143,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐌰𐍄𐌿𐍂𐌰𐍄𐍃𐌾𐍉</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1152,7 +1153,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐍂𐍅𐌰</translation>
     </message>
 </context>
 <context>
@@ -1160,7 +1161,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+1245"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐌹𐌿𐌷𐍄</translation>
     </message>
 </context>
 <context>
@@ -1168,27 +1169,27 @@ Select a regular layer instead.</source>
     <message>
         <location line="-128"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌻𐌻</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌽𐌰𐌼𐌽𐌹𐌸</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐌰𐌽𐌳𐍅𐌴𐌹 𐌰𐌻𐌻𐌰𐌽𐍃 𐌱𐍂𐌿𐍃𐌺𐌰𐌽𐍃, 𐍃𐍅𐌰𐍂𐌴 𐌷𐌰𐌹𐍄𐌰𐌽𐌰𐌹 𐍃𐌹𐌽𐌳.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐌰𐌽𐌳𐍅𐌴𐌹 𐌱𐍂𐌿𐍃𐌺𐌰𐌽𐍃 𐌽𐌹 𐌷𐌰𐌱𐌰𐌽𐌳𐌰𐌽𐍃 𐌱𐌰𐌽𐌳𐍅𐍉𐌽𐍃.</translation>
     </message>
     <message>
         <location line="+198"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐌹𐌿𐌷𐍄</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1204,7 +1205,7 @@ Select a regular layer instead.</source>
         <location line="+16"/>
         <location line="+457"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌷𐍄𐍃 𐌽𐌹𐍃𐍄 𐌿𐍃𐌻𐌿𐌺𐌰𐌽 &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="-423"/>
@@ -1239,7 +1240,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+19"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌷𐍄𐍃 𐌽𐌹𐍃𐍄 𐌰𐌽𐌰𐌺𐌿𐌽𐌽𐌰𐌽 𐍆𐌰𐌾𐌻 𐌱𐍂𐌿𐍃𐌺𐌹𐍃 &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1279,17 +1280,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+133"/>
         <source>No brushes exported</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌱𐍂𐌿𐍃𐌺𐍉𐍃 𐌿𐍃𐌱𐌰𐌿𐍂𐌰𐌽𐌰𐌹</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Can&apos;t export order.conf</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌷𐍄𐍃 𐌽𐌹𐍃𐍄 𐌿𐍃𐌱𐌰𐌹𐍂𐌰𐌽 order.conf</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌹𐍂𐌶𐌴𐌹 𐍅𐌰𐍂𐌸 𐌼𐌹𐌸𐌸𐌰𐌽𐌴𐌹 𐌼𐌴𐌻𐌾𐌰𐌳𐌰 𐍅𐌰𐍂𐌸 &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1317,7 +1318,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/paintengine.cpp" line="+208"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌰𐌲𐌾𐍉 %1</translation>
     </message>
 </context>
 <context>
@@ -1345,17 +1346,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐌲𐌰𐌽𐌰𐍄𐌾𐌹𐍃</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍆𐌲𐌰𐌽𐌰𐍄𐌾𐌹𐍃</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐍂𐌿𐌺𐌾𐌰</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1413,7 +1414,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐍂𐌿𐌺𐌾𐌰</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1449,7 +1450,7 @@ Select a regular layer instead.</source>
         <location line="+2"/>
         <location line="+11"/>
         <source>Banned by</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐌰𐌽𐌽𐌰𐌽 𐍆𐍂𐌰𐌼</translation>
     </message>
 </context>
 <context>
@@ -1457,7 +1458,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/client.cpp" line="+580"/>
         <source>%1 banned by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 𐌱𐌰𐌽𐌽𐌰𐌽 𐍆𐍂𐌰𐌼 %2.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1502,32 +1503,32 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌹𐍂𐌶𐌴𐌹 𐍅𐌰𐍂𐌸 𐌰𐌽𐌰 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐌶𐌰.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌹𐍂𐌶𐌴𐌹 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐌶𐌹𐍃 𐍅𐌰𐍂𐌸: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐍃 𐌿𐍃𐍄𐌹𐌿𐌷𐌹𐌸.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌴𐌻 𐌿𐍃𐍄𐌰𐌿𐌷: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌲𐌰𐍅𐌹𐌳𐌰𐌽.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌲𐌰𐍅𐌹𐌳𐌰𐌽: %1</translation>
     </message>
     <message>
         <location line="+436"/>
@@ -1538,7 +1539,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌹𐍂𐌶𐌴𐌹 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐌶𐌹𐍃.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1690,13 +1691,13 @@ Select a regular layer instead.</source>
         <location line="+16"/>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐍂𐌿𐌷𐍄𐌰 %1 𐍆𐍂𐌰𐌼 %2</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Created %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐍃𐌺𐌰𐍀𐌰𐌽 %1 𐍆𐍂𐌰𐌼 %2</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1737,7 +1738,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Uses</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐍂𐌿𐌺𐌴𐌹𐌽𐍉𐍃</translation>
     </message>
 </context>
 <context>
@@ -1864,17 +1865,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+62"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍃𐌼𐌴𐍂𐌹 𐌽𐌹𐍅𐌹</translation>
     </message>
     <message>
         <location line="-41"/>
         <source>Session not yet started!</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌴𐌻 𐌽𐌹 𐌽𐌰𐌿𐌷 𐌳𐌿𐌲𐌹𐌽𐌽𐌹𐌸!</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐌿𐍂𐌳𐌰𐌼𐌼𐌾𐌰𐌳𐌰 𐍆𐍂𐌰𐌼 𐌱𐌴𐍂𐌿𐍃𐌾𐍉𐌼</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1906,7 +1907,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+641"/>
         <source>Unknown version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌺𐌿𐌽𐌸 𐌿𐍃𐌼𐌴𐍂𐌹 %1</translation>
     </message>
     <message>
         <location line="+290"/>
@@ -1926,27 +1927,27 @@ Select a regular layer instead.</source>
     <message>
         <location line="+15"/>
         <source>Invalid username!</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐍂𐌰𐌹𐌷𐍄 𐌱𐍂𐌿𐌺𐌾𐌰𐌽𐌰𐌼𐍉!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This username has been locked</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌸𐌰𐍄𐌰 𐌱𐍂𐌿𐌺𐌾𐌰𐌽𐌰𐌼𐍉 𐌻𐌿𐌺𐌰𐌽 𐌹𐍃𐍄</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Username already taken!</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐍂𐌿𐌺𐌾𐌰𐌽𐌰𐌼𐍉 𐌾𐌿 𐌽𐌿𐌼𐌰𐌽 𐌹𐍃𐍄!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session is closed!</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌴𐌻 𐌿𐍃𐍄𐌰𐌿𐌷!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server is full!</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐍃 𐌹𐍃𐍄 𐍆𐌿𐌻𐌻𐍃!</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1999,7 +2000,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation>(𐌿𐌽𐌽𐌰𐌼𐌽𐌹𐌸)</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -2024,12 +2025,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍃𐌼𐌴𐍂𐌹 𐌿𐌽𐌲𐌰𐍄𐌹𐌻</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Closed (not allowed to join from the web browser)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌿𐌺𐌰𐌽 (𐌰𐌽𐌳𐌻𐌴𐍄𐌰𐌽 𐌽𐌹𐍃𐍄 𐌲𐌰𐌼𐌰𐌹𐌽𐌾𐌰𐌽 𐍆𐍂𐌰𐌼 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂 𐍅𐌰𐌱𐌾𐌹𐍃)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2039,12 +2040,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Closed (guest logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌿𐌺𐌰𐌽 (𐌰𐍄𐌲𐌰𐌲𐌲𐌰 𐌲𐌰𐍃𐍄𐌴 𐍆𐌰𐌿𐍂𐌳𐌰𐌼𐌼𐌾𐌰𐌽𐌳𐌰)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌿𐌺𐌰𐌽 (𐌰𐍄𐌲𐌰𐌲𐌲𐌰 𐌽𐌹𐌿𐌾𐌰 𐍆𐌰𐌿𐍂𐌳𐌰𐌼𐌼𐌾𐌰𐌽𐌳𐌰)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2072,17 +2073,17 @@ Select a regular layer instead.</source>
     <message>
         <location line="+68"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍆𐌰𐍂𐌼𐌴𐌻𐌹</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Started by</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐍃𐍄𐍉𐌳𐌹𐌸 𐍆𐍂𐌰𐌼</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐍂𐌿𐌺𐌾𐌰𐌽𐍃</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2093,7 +2094,7 @@ Select a regular layer instead.</source>
         <location line="+42"/>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌿𐌻𐌻 𐌸𐌰𐌿 𐌻𐌿𐌺𐌰𐌽 𐌹𐍃𐍄.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2123,13 +2124,13 @@ Select a regular layer instead.</source>
         <location line="+6"/>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐍅𐌰𐌹𐍂𐌳𐌿𐍃 𐌹𐍃𐍄 𐌼𐌹𐌸 𐌿𐍃𐌼𐌴𐍂𐌾𐌰 𐍆𐌰𐌹𐍂𐌽𐌾𐌰𐌼𐌼𐌰 𐌾𐌰𐌷 𐌿𐌽𐌲𐌰𐍄𐌹𐌻𐌰𐌼𐌼𐌰 𐌳𐍂𐌰𐍅𐍀𐌰𐌾𐌻𐌹𐍃.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐍅𐌰𐌹𐍂𐌳𐌿𐍃 𐌹𐍃𐍄 𐌼𐌹𐌸 𐍀𐍂𐍉𐍄𐍉𐌺𐌰𐌿𐌻𐌰 𐌿𐌽𐌲𐌰𐍄𐌹𐌻𐌰𐌼𐌼𐌰.</translation>
     </message>
 </context>
 <context>
@@ -2137,12 +2138,12 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/server.cpp" line="+273"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌾𐌰𐌱𐌰𐌹 𐌽𐌹 𐌼𐌿𐌽𐌳𐌴𐍃 𐌱𐍂𐌿𐌺𐌾𐌰𐌽 𐍀𐍂𐌰𐌿𐌺𐍃𐌴𐌹𐌽𐍃, 𐌼𐌰𐌲𐍄 𐌿𐌽𐌻𐌰𐌲𐌾𐌰𐌽 𐍀𐍂𐌰𐌿𐌺𐍃𐌴𐌹𐌽 𐌽𐌰𐍄𐌾𐌰𐍅𐌰𐌿𐍂𐌺𐌹𐍃 𐌹𐌽 𐌻𐌹𐌿𐌱𐍉𐍃𐍄𐌰𐌹𐌼 𐌻𐌰𐌲𐌴𐌹𐌽𐌹𐌼 𐌿𐍆 𐌽𐌰𐍄𐌾𐌰𐍅𐌰𐌿𐍂𐌺𐌹𐍃 𐍄𐌰𐌱.</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Network read error</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌹𐍂𐌶𐌴𐌹 𐍅𐌰𐍂𐌸 𐌰𐌽𐌰𐌺𐌿𐌽𐌽𐌰𐌽 𐌽𐌰𐍄𐌾𐌰𐍅𐌰𐌿𐍂𐌺</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2232,7 +2233,7 @@ Select a regular layer instead.</source>
         <location filename="../utils/news.cpp" line="+282"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐍉𐌺𐌾𐌰𐌽𐌳𐌰 𐌰𐌽𐌰𐌽𐌹𐌿𐌾𐌹𐌸𐍉𐍃…</translation>
     </message>
     <message>
         <location line="-23"/>
@@ -2277,7 +2278,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐍀𐌹𐌻𐌻 𐌽𐌹𐍃𐍄.</translation>
     </message>
 </context>
 <context>
@@ -2300,7 +2301,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>The server may not support joining via web browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌷𐍄𐍃 𐌹𐍃𐍄 𐌸𐌰𐍄𐌴𐌹 𐍃𐌰 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐍃 𐌽𐌹 𐍃𐍄𐍉𐌳𐌴𐌹𐌸 𐌲𐌰𐌼𐌰𐌹𐌽𐌾𐌰𐌽 𐍆𐍂𐌰𐌼 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂 𐍅𐌰𐌱𐌾𐌹𐍃.</translation>
     </message>
 </context>
 </TS>
