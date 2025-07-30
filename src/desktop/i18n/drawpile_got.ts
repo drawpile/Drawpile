@@ -88,7 +88,7 @@
     <message>
         <location line="+87"/>
         <source>Pick initial color from layer</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹𐌼 𐍆𐌰𐍂𐍅𐌰 𐌳𐌿 𐌰𐌽𐌰𐍃𐍄𐍉𐌳𐌾𐌰𐌽 𐌰𐌽𐌰 𐌻𐌰𐌲𐌾𐍉𐌽</translation>
     </message>
     <message>
         <location line="+14"/>
