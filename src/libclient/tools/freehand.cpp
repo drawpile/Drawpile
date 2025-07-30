@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
 #include <dpcommon/threading.h>
+#include <dpengine/layer_content.h>
+#include <dpengine/layer_group.h>
 #include <dpmsg/msg_internal.h>
 }
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/freehand.h"
@@ -48,6 +51,13 @@ Freehand::~Freehand()
 
 void Freehand::begin(const BeginParams &params)
 {
+	beginWith(params, nullptr, 0.0);
+}
+
+void Freehand::beginWith(
+	const BeginParams &params, DP_LayerContent *floodLcOrNull,
+	double floodTolerance)
+{
 	Q_ASSERT(!m_drawing);
 	if(params.right) {
 		return;
@@ -56,7 +66,8 @@ void Freehand::begin(const BeginParams &params)
 	m_drawing = true;
 	m_firstPoint = true;
 
-	m_owner.setStrokeWorkerBrush(m_strokeWorker, type());
+	m_owner.setStrokeWorkerBrush(
+		m_strokeWorker, type(), floodLcOrNull, floodTolerance);
 
 	// The pressure value of the first point is unreliable
 	// because it is (or was?) possible to get a synthetic MousePress event
@@ -293,6 +304,110 @@ void FreehandEraser::offsetActiveTool(int x, int y)
 void FreehandEraser::finish()
 {
 	m_freehand->finish();
+}
+
+
+FreehandFill::FreehandFill(ToolController &owner, Freehand *freehand)
+	: Tool(
+		  owner, BRUSHFILL, Qt::CrossCursor,
+		  Capability::AllowColorPick | Capability::SupportsPressure |
+			  Capability::AllowToolAdjust1 | Capability::AllowToolAdjust2 |
+			  Capability::AllowToolAdjust3)
+	, m_freehand(freehand)
+{
+}
+
+void FreehandFill::begin(const BeginParams &params)
+{
+	canvas::CanvasModel *canvas = m_owner.model();
+	if(!canvas) {
+		return;
+	}
+
+	int layerId = canvas->layerlist()->fillSourceLayerId();
+	if(layerId <= 0) {
+		return;
+	}
+
+	drawdance::LayerSearchResult lsr =
+		canvas->paintEngine()->viewCanvasState().searchLayer(layerId, true);
+	if(drawdance::LayerContent *layerContent =
+		   std::get_if<drawdance::LayerContent>(&lsr.data)) {
+		setLayerContentSource(layerContent->get());
+	} else if(
+		drawdance::LayerGroup *layerGroup =
+			std::get_if<drawdance::LayerGroup>(&lsr.data)) {
+		setLayerGroupSource(layerGroup->get(), lsr.props.get());
+	} else {
+		qWarning("Brush fill source %d not found", layerId);
+		return;
+	}
+
+	Q_ASSERT(m_sourceLc);
+	m_freehand->beginWith(params, m_sourceLc, m_tolerance);
+}
+
+void FreehandFill::motion(const MotionParams &params)
+{
+	m_freehand->motion(params);
+}
+
+void FreehandFill::end(const EndParams &params)
+{
+	m_freehand->end(params);
+}
+
+bool FreehandFill::undoRedo(bool redo)
+{
+	return m_freehand->undoRedo(redo);
+}
+
+void FreehandFill::offsetActiveTool(int x, int y)
+{
+	m_freehand->offsetActiveTool(x, y);
+}
+
+void FreehandFill::finish()
+{
+	m_freehand->finish();
+	clearSource();
+}
+
+void FreehandFill::dispose()
+{
+	clearSource();
+}
+
+void FreehandFill::setLayerContentSource(DP_LayerContent *lc)
+{
+	Q_ASSERT(lc);
+	if(m_sourceLg || m_sourceLc != lc) {
+		clearSource();
+		qDebug("Set layer content source");
+		m_sourceLc = DP_layer_content_incref(lc);
+	}
+}
+
+void FreehandFill::setLayerGroupSource(DP_LayerGroup *lg, DP_LayerProps *lp)
+{
+	Q_ASSERT(lg);
+	Q_ASSERT(lp);
+	if(m_sourceLg != lg) {
+		clearSource();
+		qDebug("Set layer group source");
+		m_sourceLg = DP_layer_group_incref(lg);
+		m_sourceLc = DP_transient_layer_content_persist(
+			DP_layer_group_merge(lg, lp, false));
+	}
+}
+
+void FreehandFill::clearSource()
+{
+	qDebug("Clear source");
+	DP_layer_group_decref_nullable(m_sourceLg);
+	DP_layer_content_decref_nullable(m_sourceLc);
+	m_sourceLg = nullptr;
+	m_sourceLc = nullptr;
 }
 
 }

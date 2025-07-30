@@ -104,6 +104,9 @@ struct ToolSettings::Private {
 				new tools::LassoFillSettings(ctrl)),
 			"lassofill", QIcon::fromTheme("drawpile_lassofill"),
 			QApplication::tr("Lasso Fill")};
+		pages[tools::Tool::BRUSHFILL] = {
+			brush, "brushfill", QIcon::fromTheme("drawpile_brushfill"),
+			QApplication::tr("Brush Fill")};
 		pages[tools::Tool::GRADIENT] = {
 			QSharedPointer<tools::ToolSettings>(
 				new tools::GradientSettings(ctrl)),
@@ -836,6 +839,7 @@ bool ToolSettings::hasBrushCursor(tools::Tool::Type tool)
 	case tools::Tool::RECTANGLE:
 	case tools::Tool::ELLIPSE:
 	case tools::Tool::BEZIER:
+	case tools::Tool::BRUSHFILL:
 		return true;
 	default:
 		return false;

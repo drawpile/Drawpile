@@ -185,4 +185,6 @@ bool DP_mypaint_brush_equal_preset(const DP_MyPaintBrush *a,
 
 DP_BlendMode DP_mypaint_brush_blend_mode(const DP_MyPaintBrush *mb);
 
+float DP_mypaint_brush_aspect_ratio_from_uint8(uint8_t aspect_ratio);
+
 #endif

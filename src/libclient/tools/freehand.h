@@ -7,6 +7,9 @@
 #include <QAtomicInt>
 #include <QTimer>
 
+struct DP_LayerContent;
+struct DP_LayerGroup;
+struct DP_LayerProps;
 struct DP_MaskSync;
 struct DP_Mutex;
 struct DP_Semaphore;
@@ -19,6 +22,9 @@ public:
 	~Freehand() override;
 
 	void begin(const BeginParams &params) override;
+	void beginWith(
+		const BeginParams &params, DP_LayerContent *floodLcOrNull,
+		double floodTolerance);
 	void motion(const MotionParams &params) override;
 	void end(const EndParams &params) override;
 
@@ -79,7 +85,35 @@ public:
 	void finish() override;
 
 private:
-	Freehand *m_freehand;
+	Freehand *const m_freehand;
+};
+
+class FreehandFill final : public Tool {
+public:
+	FreehandFill(ToolController &owner, Freehand *freehand);
+
+	void begin(const BeginParams &params) override;
+	void motion(const MotionParams &params) override;
+	void end(const EndParams &params) override;
+
+	bool undoRedo(bool redo) override;
+
+	bool usesBrushColor() const override { return true; }
+
+	void offsetActiveTool(int x, int y) override;
+
+	void finish() override;
+	void dispose() override;
+
+private:
+	void setLayerContentSource(DP_LayerContent *lc);
+	void setLayerGroupSource(DP_LayerGroup *lg, DP_LayerProps *lp);
+	void clearSource();
+
+	Freehand *const m_freehand;
+	DP_LayerContent *m_sourceLc = nullptr;
+	DP_LayerGroup *m_sourceLg = nullptr;
+	double m_tolerance = 0.0;
 };
 
 }

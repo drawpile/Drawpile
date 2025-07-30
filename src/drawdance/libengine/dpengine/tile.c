@@ -597,6 +597,29 @@ size_t DP_tile_compress_split_delta_zstd8le(
     }
 }
 
+size_t DP_tile_compress_mask_delta_zstd8le_opaque(
+    unsigned char *(*get_output_buffer)(size_t, void *), void *user)
+{
+    unsigned char *mask = get_output_buffer(1, user);
+    mask[0] = 0;
+    return 1;
+}
+
+size_t DP_tile_compress_mask_delta_zstd8le_normal(
+    DP_Tile *t, ZSTD_CCtx **in_out_ctx_or_null, uint8_t *channel_buffer,
+    unsigned char *(*get_output_buffer)(size_t, void *), void *user)
+{
+    const DP_Pixel15 *pixels = DP_tile_pixels(t);
+    uint8_t last_a = 0;
+    for (int i = 0; i < DP_TILE_LENGTH; ++i) {
+        uint8_t a = DP_channel15_to_8(pixels[i].a);
+        channel_buffer[i] = a - last_a;
+        last_a = a;
+    }
+    return DP_compress_zstd(in_out_ctx_or_null, channel_buffer, DP_TILE_LENGTH,
+                            get_output_buffer, user);
+}
+
 size_t DP_tile_compress_mask_delta_zstd8le(
     DP_Tile *t, ZSTD_CCtx **in_out_ctx_or_null, uint8_t *channel_buffer,
     unsigned char *(*get_output_buffer)(size_t, void *), void *user)
@@ -605,20 +628,12 @@ size_t DP_tile_compress_mask_delta_zstd8le(
     DP_ASSERT(DP_atomic_get(&t->refcount) > 0);
 
     if (DP_tile_opaque_ident(t)) {
-        unsigned char *mask = get_output_buffer(1, user);
-        mask[0] = 0;
-        return 1;
+        return DP_tile_compress_mask_delta_zstd8le_opaque(get_output_buffer,
+                                                          user);
     }
     else {
-        const DP_Pixel15 *pixels = DP_tile_pixels(t);
-        uint8_t last_a = 0;
-        for (int i = 0; i < DP_TILE_LENGTH; ++i) {
-            uint8_t a = DP_channel15_to_8(pixels[i].a);
-            channel_buffer[i] = a - last_a;
-            last_a = a;
-        }
-        return DP_compress_zstd(in_out_ctx_or_null, channel_buffer,
-                                DP_TILE_LENGTH, get_output_buffer, user);
+        return DP_tile_compress_mask_delta_zstd8le_normal(
+            t, in_out_ctx_or_null, channel_buffer, get_output_buffer, user);
     }
 }
 

@@ -56,6 +56,11 @@ LayerGroup::~LayerGroup()
     DP_layer_group_decref_nullable(m_data);
 }
 
+DP_LayerGroup *LayerGroup::get() const
+{
+    return m_data;
+}
+
 bool LayerGroup::isNull() const
 {
     return !m_data;
