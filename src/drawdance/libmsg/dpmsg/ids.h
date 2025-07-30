@@ -16,8 +16,12 @@
 
 #define DP_LAYER_ID_SELECTION_FLAG (1 << 23)
 
-#define DP_SELECTION_ID_MAIN         1
-#define DP_SELECTION_ID_FIRST_REMOTE 128
+#define DP_SELECTION_ID_MAIN               1
+#define DP_SELECTION_ID_FIRST_LOCAL        1
+#define DP_SELECTION_ID_FIRST_REMOTE       128
+#define DP_SELECTION_ID_MAIN_FLOOD         64
+#define DP_SELECTION_ID_FIRST_FLOOD_LOCAL  64
+#define DP_SELECTION_ID_FIRST_FLOOD_REMOTE 192
 
 
 DP_INLINE int DP_protocol_to_layer_id(uint32_t protocol_layer_id)
