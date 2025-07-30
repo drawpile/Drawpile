@@ -27,7 +27,6 @@
 
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_Image DP_Image;
-typedef struct DP_LayerContent DP_LayerContent;
 
 typedef enum DP_FloodFillKernel {
     DP_FLOOD_FILL_KERNEL_ROUND,
@@ -61,8 +60,5 @@ DP_selection_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
                   bool from_edge, DP_Image **out_img, int *out_x, int *out_y,
                   DP_FloodFillShouldCancelFn should_cancel, void *user);
 
-// Mask and dst may alias!
-bool DP_flood_fill_dab(int top, int left, int diameter, const uint16_t *mask,
-                        uint16_t *dst, DP_LayerContent *flood_lc);
 
 #endif

@@ -1310,16 +1310,6 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
     } last_error_type;
     int last_error_arg;
 
-    DP_LayerRoutesEntry *lre =
-        DP_layer_routes_search(lr, DP_layer_id_make(1, 0));
-    DP_LayerContent *flood_lc = lre && !DP_layer_routes_entry_is_group(lre)
-                                  ? DP_layer_routes_entry_content(lre, cs)
-                                  : NULL;
-    if (flood_lc) {
-        DP_debug("Flood '%s'", DP_layer_props_title(
-                                   DP_layer_routes_entry_props(lre, cs), NULL));
-    }
-
     DP_PaintDrawDabsParams params;
     while (next(user, &params)) {
         if (params.dab_count < 1) {
@@ -1443,7 +1433,7 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
             target = tlc;
         }
 
-        DP_paint_draw_dabs(dc, ucs_or_null, &params, target, mask_lc, flood_lc);
+        DP_paint_draw_dabs(dc, ucs_or_null, &params, target, mask_lc);
     }
 
     switch (errors) {
