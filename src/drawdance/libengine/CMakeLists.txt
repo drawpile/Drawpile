@@ -101,6 +101,7 @@ target_link_libraries(dpengine PUBLIC
     mypaint uthash qgrayraster parson dpmsg dpdb dpcommon zstd::libzstd
     ZLIB::ZLIB "Qt${QT_VERSION_MAJOR}::Core"
 )
+target_compile_definitions(dpengine PRIVATE DP_SELECTION_DEBUG_ID=448)
 
 if(TARGET LIBAV::LIBSWSCALE)
     target_link_libraries(dpengine PUBLIC LIBAV::LIBSWSCALE)

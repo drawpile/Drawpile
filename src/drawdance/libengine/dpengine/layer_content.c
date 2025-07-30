@@ -1709,12 +1709,26 @@ DP_transient_layer_content_incref(DP_TransientLayerContent *tlc)
         (DP_LayerContent *)tlc);
 }
 
+DP_TransientLayerContent *DP_transient_layer_content_incref_nullable(
+    DP_TransientLayerContent *tlc_or_null)
+{
+    return tlc_or_null ? DP_transient_layer_content_incref(tlc_or_null) : NULL;
+}
+
 void DP_transient_layer_content_decref(DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
     DP_ASSERT(tlc->transient);
     DP_layer_content_decref((DP_LayerContent *)tlc);
+}
+
+void DP_transient_layer_content_decref_nullable(
+    DP_TransientLayerContent *tlc_or_null)
+{
+    if (tlc_or_null) {
+        DP_transient_layer_content_decref(tlc_or_null);
+    }
 }
 
 int DP_transient_layer_content_refcount(DP_TransientLayerContent *tlc)
