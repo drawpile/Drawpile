@@ -496,7 +496,7 @@ int DP_msg_draw_dabs_mypaint_blend_paint_mode(
 
 static int unpack_mask_selection_id(int flags)
 {
-    int n = (flags & 0xf8) >> 3;
+    int n = (flags & 0x38) >> 3;
     return n == 0 ? 0 : DP_SELECTION_ID_FIRST_REMOTE - 1 + n;
 }
 
@@ -523,6 +523,39 @@ int DP_msg_draw_dabs_mypaint_blend_mask_selection_id(
 {
     DP_ASSERT(mddmpb);
     return unpack_mask_selection_id(
+        DP_msg_draw_dabs_mypaint_blend_flags(mddmpb));
+}
+
+
+static int unpack_flood_selection_id(int flags)
+{
+    int n = (flags & 0xc0) >> 6;
+    return n == 0 ? 0 : DP_SELECTION_ID_FIRST_FLOOD_REMOTE - 1 + n;
+}
+
+int DP_msg_draw_dabs_classic_flood_selection_id(DP_MsgDrawDabsClassic *mddc)
+{
+    DP_ASSERT(mddc);
+    return unpack_flood_selection_id(DP_msg_draw_dabs_classic_flags(mddc));
+}
+
+int DP_msg_draw_dabs_pixel_flood_selection_id(DP_MsgDrawDabsPixel *mddp)
+{
+    DP_ASSERT(mddp);
+    return unpack_flood_selection_id(DP_msg_draw_dabs_pixel_flags(mddp));
+}
+
+int DP_msg_draw_dabs_mypaint_flood_selection_id(DP_MsgDrawDabsMyPaint *mddmp)
+{
+    DP_ASSERT(mddmp);
+    return unpack_flood_selection_id(DP_msg_draw_dabs_mypaint_flags(mddmp));
+}
+
+int DP_msg_draw_dabs_mypaint_blend_flood_selection_id(
+    DP_MsgDrawDabsMyPaintBlend *mddmpb)
+{
+    DP_ASSERT(mddmpb);
+    return unpack_flood_selection_id(
         DP_msg_draw_dabs_mypaint_blend_flags(mddmpb));
 }
 

@@ -149,6 +149,16 @@ int DP_msg_draw_dabs_mypaint_blend_mask_selection_id(
     DP_MsgDrawDabsMyPaintBlend *mddmpb);
 
 
+int DP_msg_draw_dabs_classic_flood_selection_id(DP_MsgDrawDabsClassic *mddc);
+
+int DP_msg_draw_dabs_pixel_flood_selection_id(DP_MsgDrawDabsPixel *mddp);
+
+int DP_msg_draw_dabs_mypaint_flood_selection_id(DP_MsgDrawDabsMyPaint *mddmp);
+
+int DP_msg_draw_dabs_mypaint_blend_flood_selection_id(
+    DP_MsgDrawDabsMyPaintBlend *mddmpb);
+
+
 void DP_msg_draw_dabs_mypaint_mode_extract(DP_MsgDrawDabsMyPaint *mddmp,
                                            int *out_blend_mode,
                                            int *out_paint_mode,

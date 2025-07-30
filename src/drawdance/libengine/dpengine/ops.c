@@ -1298,10 +1298,13 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
     DP_TransientLayerContent *sub_tlc = NULL;
     DP_TransientLayerProps *sub_tlp = NULL;
     DP_LayerContent *last_mask_lc = NULL;
+    DP_LayerContent *last_flood_lc = NULL;
     int last_layer_id = -1;
     int last_sublayer_id = -1;
     unsigned int last_mask_context_id = 0;
+    unsigned int last_flood_context_id = 0;
     int last_mask_selection_id = -1;
+    int last_flood_selection_id = -1;
     int errors = 0;
     enum {
         DP_DRAW_DABS_ERROR_BLEND_MODE,
@@ -1355,34 +1358,38 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
             }
         }
 
-        int mask_selection_id = params.mask_selection_id;
-        DP_LayerContent *mask_lc;
-        if (mask_selection_id == 0) {
-            mask_lc = NULL;
-        }
-        else {
-            unsigned int mask_context_id = params.context_id;
-            if (mask_context_id != last_mask_context_id
-                || mask_selection_id != last_mask_selection_id) {
-                DP_Selection *sel = draw_dabs_search_selection(
-                    cs, mask_context_id, mask_selection_id);
-                if (sel) {
-                    last_mask_context_id = mask_context_id;
-                    last_mask_selection_id = mask_selection_id;
-                    last_mask_lc = DP_selection_content_noinc(sel);
-                }
-                else {
-                    ++errors;
-                    last_error_type = DP_DRAW_DABS_ERROR_SELECTION_ID;
-                    last_error_arg = DP_selection_id_make(mask_context_id,
-                                                          mask_selection_id);
-                    DP_debug("Draw dabs: bad context id %u selection id %d",
-                             mask_context_id, mask_selection_id);
-                    continue;
-                }
-            }
-            mask_lc = last_mask_lc;
-        }
+#define DRAW_DABS_GET_SELECTION(X)                                             \
+    int X##_selection_id = params.X##_selection_id;                            \
+    DP_LayerContent *X##_lc;                                                   \
+    if (X##_selection_id == 0) {                                               \
+        X##_lc = NULL;                                                         \
+    }                                                                          \
+    else {                                                                     \
+        unsigned int X##_context_id = params.context_id;                       \
+        if (X##_context_id != last_##X##_context_id                            \
+            || X##_selection_id != last_##X##_selection_id) {                  \
+            DP_Selection *sel = draw_dabs_search_selection(cs, X##_context_id, \
+                                                           X##_selection_id);  \
+            if (sel) {                                                         \
+                last_##X##_context_id = X##_context_id;                        \
+                last_##X##_selection_id = X##_selection_id;                    \
+                last_##X##_lc = DP_selection_content_noinc(sel);               \
+            }                                                                  \
+            else {                                                             \
+                ++errors;                                                      \
+                last_error_type = DP_DRAW_DABS_ERROR_SELECTION_ID;             \
+                last_error_arg =                                               \
+                    DP_selection_id_make(X##_context_id, X##_selection_id);    \
+                DP_debug("Draw dabs: bad " #X                                  \
+                         " context id %u selection id %d",                     \
+                         X##_context_id, X##_selection_id);                    \
+                continue;                                                      \
+            }                                                                  \
+        }                                                                      \
+        X##_lc = last_##X##_lc;                                                \
+    }
+        DRAW_DABS_GET_SELECTION(mask)
+        DRAW_DABS_GET_SELECTION(flood)
 
         DP_TransientLayerContent *target;
         if (DP_paint_mode_indirect(params.paint_mode, &params.blend_mode)) {
@@ -1433,7 +1440,7 @@ DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
             target = tlc;
         }
 
-        DP_paint_draw_dabs(dc, ucs_or_null, &params, target, mask_lc);
+        DP_paint_draw_dabs(dc, ucs_or_null, &params, target, mask_lc, flood_lc);
     }
 
     switch (errors) {

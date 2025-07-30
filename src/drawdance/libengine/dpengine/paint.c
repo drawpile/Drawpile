@@ -368,7 +368,8 @@ static void apply_mask_lc_into(int top, int left, int diameter,
 static DP_BrushStamp get_classic_offset_stamp(DP_BrushStamp *mask_stamp,
                                               uint16_t *offset_mask, int x,
                                               int y, int scaled_hardness,
-                                              DP_LayerContent *mask_lc_or_null)
+                                              DP_LayerContent *mask_lc_or_null,
+                                              DP_LayerContent *flood_lc_or_null)
 {
     int left = mask_stamp->left + x / 4;
     int top = mask_stamp->top + y / 4;
@@ -403,11 +404,22 @@ static DP_BrushStamp get_classic_offset_stamp(DP_BrushStamp *mask_stamp,
         if (needs_mask_lc(top, left, diameter, mask_lc_or_null)) {
             apply_mask_lc(top, left, diameter, offset_mask, mask_lc_or_null);
         }
+        if (needs_mask_lc(top, left, diameter, flood_lc_or_null)) {
+            apply_mask_lc(top, left, diameter, offset_mask, flood_lc_or_null);
+        }
         return (DP_BrushStamp){top, left, diameter, offset_mask};
     }
     else if (needs_mask_lc(top, left, diameter, mask_lc_or_null)) {
         apply_mask_lc_into(top, left, diameter, mask, offset_mask,
                            mask_lc_or_null);
+        if (needs_mask_lc(top, left, diameter, flood_lc_or_null)) {
+            apply_mask_lc(top, left, diameter, offset_mask, flood_lc_or_null);
+        }
+        return (DP_BrushStamp){top, left, diameter, offset_mask};
+    }
+    else if (needs_mask_lc(top, left, diameter, flood_lc_or_null)) {
+        apply_mask_lc_into(top, left, diameter, mask, offset_mask,
+                           flood_lc_or_null);
         return (DP_BrushStamp){top, left, diameter, offset_mask};
     }
     else {
@@ -418,7 +430,8 @@ static DP_BrushStamp get_classic_offset_stamp(DP_BrushStamp *mask_stamp,
 static void draw_dabs_classic(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                               DP_PaintDrawDabsParams *params,
                               DP_TransientLayerContent *tlc,
-                              DP_LayerContent *mask_lc_or_null)
+                              DP_LayerContent *mask_lc_or_null,
+                              DP_LayerContent *flood_lc_or_null)
 {
     int last_x = params->origin_x;
     int last_y = params->origin_y;
@@ -469,9 +482,9 @@ static void draw_dabs_classic(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                                            scaled_hardness);
                 }
 
-                DP_BrushStamp offset_stamp =
-                    get_classic_offset_stamp(&mask_stamp, offset_mask, x, y,
-                                             scaled_hardness, mask_lc_or_null);
+                DP_BrushStamp offset_stamp = get_classic_offset_stamp(
+                    &mask_stamp, offset_mask, x, y, scaled_hardness,
+                    mask_lc_or_null, flood_lc_or_null);
                 DP_transient_layer_content_brush_stamp_apply(
                     tlc, context_id, pixel, DP_channel8_to_15(opacity),
                     blend_mode, &offset_stamp);
@@ -514,7 +527,8 @@ static void get_round_pixel_mask_stamp(uint16_t *stamp_buffer, int diameter)
 static void draw_dabs_pixel(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                             DP_PaintDrawDabsParams *params,
                             DP_TransientLayerContent *tlc,
-                            DP_LayerContent *mask_lc_or_null, bool square)
+                            DP_LayerContent *mask_lc_or_null,
+                            DP_LayerContent *flood_lc_or_null, bool square)
 {
     int last_x = params->origin_x;
     int last_y = params->origin_y;
@@ -534,7 +548,7 @@ static void draw_dabs_pixel(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
             DP_square_int(DP_uint16_to_int(clamp_pixel_dab_size(max_diameter)));
         uint16_t *stamp_buffer;
         uint16_t *masked_buffer;
-        if (mask_lc_or_null) {
+        if (mask_lc_or_null || flood_lc_or_null) {
             get_stamp_buffer_pair(dc, DP_int_to_size(max_diameter_squared),
                                   &stamp_buffer, &masked_buffer);
         }
@@ -581,6 +595,18 @@ static void draw_dabs_pixel(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                     apply_mask_lc_into(stamp.top, stamp.left, stamp.diameter,
                                        stamp_buffer, masked_buffer,
                                        mask_lc_or_null);
+                    if (needs_mask_lc(stamp.top, stamp.left, stamp.diameter,
+                                      flood_lc_or_null)) {
+                        apply_mask_lc(stamp.top, stamp.left, stamp.diameter,
+                                      masked_buffer, flood_lc_or_null);
+                    }
+                    stamp.data = masked_buffer;
+                }
+                else if (needs_mask_lc(stamp.top, stamp.left, stamp.diameter,
+                                       flood_lc_or_null)) {
+                    apply_mask_lc_into(stamp.top, stamp.left, stamp.diameter,
+                                       stamp_buffer, masked_buffer,
+                                       flood_lc_or_null);
                     stamp.data = masked_buffer;
                 }
                 else {
@@ -1108,13 +1134,21 @@ static uint16_t scale_opacity(float ratio, float opacity)
 
 static void apply_mypaint_mask_lc(DP_BrushStamp *stamp, const uint16_t *src,
                                   uint16_t *dst,
-                                  DP_LayerContent *mask_lc_or_null)
+                                  DP_LayerContent *mask_lc_or_null,
+                                  DP_LayerContent *flood_lc_or_null)
 {
     int top = stamp->top;
     int left = stamp->left;
     int diameter = stamp->diameter;
     if (needs_mask_lc(top, left, diameter, mask_lc_or_null)) {
         apply_mask_lc_into(top, left, diameter, src, dst, mask_lc_or_null);
+        if (needs_mask_lc(top, left, diameter, flood_lc_or_null)) {
+            apply_mask_lc(top, left, diameter, dst, flood_lc_or_null);
+        }
+        stamp->data = dst;
+    }
+    else if (needs_mask_lc(top, left, diameter, flood_lc_or_null)) {
+        apply_mask_lc_into(top, left, diameter, src, dst, flood_lc_or_null);
         stamp->data = dst;
     }
 }
@@ -1165,7 +1199,8 @@ static void apply_mypaint_dab(DP_TransientLayerContent *tlc,
 static void draw_dabs_mypaint(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                               DP_PaintDrawDabsParams *params,
                               DP_TransientLayerContent *tlc,
-                              DP_LayerContent *mask_lc_or_null)
+                              DP_LayerContent *mask_lc_or_null,
+                              DP_LayerContent *flood_lc_or_null)
 {
     const DP_MyPaintDab *dabs = params->mypaint.dabs;
     int dab_count = params->dab_count;
@@ -1229,7 +1264,8 @@ static void draw_dabs_mypaint(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
         float radius = get_mypaint_brush_stamp(&stamp, mask1, mask2.rr, last_x,
                                                last_y, last_size, last_hardness,
                                                last_aspect_ratio, last_angle);
-        apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null);
+        apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null,
+                              flood_lc_or_null);
         apply_mypaint_dab(tlc, context_id, indirect, pixel, normal, lock_alpha,
                           colorize, posterize, posterize_num, &stamp,
                           DP_mypaint_dab_opacity(first_dab),
@@ -1270,7 +1306,8 @@ static void draw_dabs_mypaint(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                 get_mypaint_brush_stamp_offsets(&stamp, xf, yf, radius);
             }
 
-            apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null);
+            apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null,
+                                  flood_lc_or_null);
             apply_mypaint_dab(
                 tlc, context_id, indirect, pixel, normal, lock_alpha, colorize,
                 posterize, posterize_num, &stamp, DP_mypaint_dab_opacity(dab),
@@ -1292,7 +1329,8 @@ static void draw_dabs_mypaint_blend(DP_DrawContext *dc,
                                     DP_UserCursors *ucs_or_null,
                                     DP_PaintDrawDabsParams *params,
                                     DP_TransientLayerContent *tlc,
-                                    DP_LayerContent *mask_lc_or_null)
+                                    DP_LayerContent *mask_lc_or_null,
+                                    DP_LayerContent *flood_lc_or_null)
 {
     const DP_MyPaintBlendDab *dabs = params->mypaint_blend.dabs;
     int dab_count = params->dab_count;
@@ -1330,7 +1368,8 @@ static void draw_dabs_mypaint_blend(DP_DrawContext *dc,
         float radius = get_mypaint_brush_stamp(&stamp, mask1, mask2.rr, last_x,
                                                last_y, last_size, last_hardness,
                                                last_aspect_ratio, last_angle);
-        apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null);
+        apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null,
+                              flood_lc_or_null);
         DP_transient_layer_content_brush_stamp_apply(
             tlc, context_id, pixel,
             DP_channel8_to_15(DP_mypaint_blend_dab_opacity(first_dab)),
@@ -1373,7 +1412,8 @@ static void draw_dabs_mypaint_blend(DP_DrawContext *dc,
                 get_mypaint_brush_stamp_offsets(&stamp, xf, yf, radius);
             }
 
-            apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null);
+            apply_mypaint_mask_lc(&stamp, mask1, mask2.stamp, mask_lc_or_null,
+                                  flood_lc_or_null);
             DP_transient_layer_content_brush_stamp_apply(
                 tlc, context_id, pixel,
                 DP_channel8_to_15(DP_mypaint_blend_dab_opacity(dab)),
@@ -1395,7 +1435,8 @@ static void draw_dabs_mypaint_blend(DP_DrawContext *dc,
 void DP_paint_draw_dabs(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
                         DP_PaintDrawDabsParams *params,
                         DP_TransientLayerContent *tlc,
-                        DP_LayerContent *mask_lc_or_null)
+                        DP_LayerContent *mask_lc_or_null,
+                        DP_LayerContent *flood_lc_or_null)
 {
     DP_ASSERT(dc);
     DP_ASSERT(params);
@@ -1404,19 +1445,24 @@ void DP_paint_draw_dabs(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
     int type = params->type;
     switch (type) {
     case DP_MSG_DRAW_DABS_CLASSIC:
-        draw_dabs_classic(dc, ucs_or_null, params, tlc, mask_lc_or_null);
+        draw_dabs_classic(dc, ucs_or_null, params, tlc, mask_lc_or_null,
+                          flood_lc_or_null);
         break;
     case DP_MSG_DRAW_DABS_PIXEL:
-        draw_dabs_pixel(dc, ucs_or_null, params, tlc, mask_lc_or_null, false);
+        draw_dabs_pixel(dc, ucs_or_null, params, tlc, mask_lc_or_null,
+                        flood_lc_or_null, false);
         break;
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-        draw_dabs_pixel(dc, ucs_or_null, params, tlc, mask_lc_or_null, true);
+        draw_dabs_pixel(dc, ucs_or_null, params, tlc, mask_lc_or_null,
+                        flood_lc_or_null, true);
         break;
     case DP_MSG_DRAW_DABS_MYPAINT:
-        draw_dabs_mypaint(dc, ucs_or_null, params, tlc, mask_lc_or_null);
+        draw_dabs_mypaint(dc, ucs_or_null, params, tlc, mask_lc_or_null,
+                          flood_lc_or_null);
         break;
     case DP_MSG_DRAW_DABS_MYPAINT_BLEND:
-        draw_dabs_mypaint_blend(dc, ucs_or_null, params, tlc, mask_lc_or_null);
+        draw_dabs_mypaint_blend(dc, ucs_or_null, params, tlc, mask_lc_or_null,
+                                flood_lc_or_null);
         break;
     default:
         DP_UNREACHABLE();
