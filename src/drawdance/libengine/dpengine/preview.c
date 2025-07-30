@@ -664,9 +664,10 @@ static void preview_dabs_render(DP_Preview *pv, DP_CanvasState *cs,
         params.type = (int)type;
         params.origin_x += offset_x;
         params.origin_y += offset_y;
-        DP_paint_draw_dabs(
-            dc, NULL, &params,
-            params.paint_mode == DP_PAINT_MODE_DIRECT ? tlc : sub_tlc, mask_lc);
+        DP_paint_draw_dabs(dc, NULL, &params,
+                           params.paint_mode == DP_PAINT_MODE_DIRECT ? tlc
+                                                                     : sub_tlc,
+                           mask_lc, NULL);
     }
 
     if (sub_tlc) {
