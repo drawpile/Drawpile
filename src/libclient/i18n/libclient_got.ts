@@ -19,7 +19,7 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐌲𐌰𐌼𐌿𐌽𐌳 𐌳𐌰𐌹𐌻𐌾𐌰𐌽. 𐌸𐌰𐍄𐌰 𐍅𐌰𐌹𐍂𐌸𐌹𐌸 𐌹𐌽 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂𐌰𐌼 𐍃𐌿𐌼𐌰𐌹𐌼 𐌾𐌰𐌱𐌰𐌹 𐌰𐌽𐌰𐌽𐌹𐌿𐌾𐌹𐍃. 𐌻𐌿𐌺 𐌸𐌰𐌽𐌰 𐌻𐌰𐌿𐍆 𐌾𐌰𐌷 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂 𐌰𐌻𐌻𐌹𐍃, 𐌸𐌰𐍂𐌿𐌷 𐍃𐍉𐌺𐌴𐌹 𐌰𐍆𐍄𐍂𐌰.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -34,12 +34,12 @@
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation>drawpile.net 𐌰𐍄𐌲𐌰𐌲𐌲</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍄𐌱𐌰𐌹𐍂𐌰𐌳𐌰 𐌰𐍀𐍀𐌻𐌴𐌹𐌺𐌰𐍄𐍃𐌾𐍉𐌽</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -49,7 +49,7 @@
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐍃𐍄𐍉𐌳𐌾𐌰𐌳𐌰, 𐌱𐌴𐌹𐌳𐌰𐌹 𐌼𐌰𐌿𐍂𐌲𐌾𐌹𐍃 𐌼𐌴𐌻𐌹𐍃…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -59,7 +59,7 @@
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍄𐌱𐍂𐌹𐌲𐌲𐌰𐌳𐌰, 𐌼𐌰𐌲 𐌻𐌰𐌲𐌲 𐌼𐌴𐌻 𐍅𐌰𐌹𐍂𐌸𐌰𐌽…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -69,7 +69,7 @@
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐍃𐍄𐍉𐌳𐌾𐌰𐌳𐌰, 𐌼𐌰𐌲 𐌻𐌰𐌲𐌲 𐌼𐌴𐌻 𐍅𐌰𐌹𐍂𐌸𐌰𐌽…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -84,12 +84,12 @@
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍃𐌵𐌹𐍃𐍄𐌾𐌰𐌽𐌳𐌴𐌹 𐌰𐌹𐍂𐌶𐌴𐌹 :</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌸𐌰𐍄𐌰 𐌹𐍃𐍄 𐌿𐌽𐍄𐌴 𐌱𐍂𐌿𐌺𐌾𐌹𐍃 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂𐍃 𐍆𐌰𐌹𐍂𐌽𐌾𐌹𐍃 𐌸𐌰𐌿 𐍃𐌰𐌹𐍈𐌹𐍃 𐌸𐌰𐌽𐌰 𐌻𐌰𐌿𐍆 𐌹𐌽𐌻𐌰𐌲𐌹𐌸 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂, 𐍃𐍅𐌰𐍅𐍃𐍅𐌴 𐌰𐍀𐍀𐌻𐌴𐌹𐌺𐌰𐍄𐍃𐌾𐍉𐌽𐍃 𐌲𐌰𐍅𐌰𐌿𐍂𐌳𐌾𐌹𐍃, 𐌾𐌰𐌷 𐌸𐌰𐌿𐍂𐍆𐍄 𐌹𐍃𐍄 𐌸𐌿𐍃 𐌿𐍃𐌻𐌿𐌺𐌰𐌽 𐍂𐌰𐌹𐌷𐍄𐌰𐌱𐌰. 𐌼𐌰𐌹𐌶𐌹𐌽 𐌺𐌿𐌽𐌸𐌾𐌰, 𐍃𐌰𐌹 &lt;a href=&quot;#&quot;&gt;𐌸𐌰𐌽𐌰 𐌻𐌰𐌿𐍆 𐌷𐌹𐌻𐍀𐍉𐍃&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -114,27 +114,27 @@
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌸𐌰𐍄𐌰 𐌿𐍆𐍄𐌰 𐌽𐌹 𐍅𐌰𐌿𐍂𐌺𐌴𐌹𐌸 𐍂𐌰𐌹𐌷𐍄𐌰𐌱𐌰, 𐌸𐌰𐌿 𐌱𐌹𐌳𐌾𐌰𐌼 𐌸𐌿𐌺 𐌿𐍃𐌻𐌿𐌺 𐌸𐌰𐌽𐌰 𐌻𐌰𐌿𐍆 𐌹𐌽 𐍅𐌰𐌱𐌾𐌰𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂𐌰 𐍃𐌿𐌽𐌾𐌴𐌹𐌽𐌰𐌼𐌼𐌰.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌷𐍄𐌴𐌹𐌲 𐌿𐌽𐌲𐌰𐍄𐌹𐌻 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;𐌼𐌰𐌷𐍄𐌴𐌹𐌲 𐌿𐌽𐌲𐌰𐍄𐌹𐌻 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂:&lt;/strong&gt; Firefox 𐌰𐌽𐌰 Linux 𐌽𐌹 𐍃𐍄𐍉𐌳𐌴𐌹𐌸 𐌺𐍂𐌴𐍄𐌰𐌽𐍃 𐌸𐌰𐌹𐌴𐌹 𐌸𐌰𐌿𐍂𐌱𐌰𐌽𐌳 𐌰𐍄𐍄𐌴𐌺𐌴𐌹𐌽𐌰𐌹𐍃 𐌸𐍂𐌿𐌺𐌹𐍃 𐌰𐌽𐌰 𐍃𐍅𐍃𐍄𐌴𐌼𐌰𐌼 𐌰𐌻𐌻𐌰𐌹𐌼. 𐌾𐌰𐌱𐌰𐌹 𐌽𐌹 𐌷𐌰𐌱𐌰𐌹𐍃 𐌸𐍂𐌿𐌺, 𐌱𐍂𐌿𐌺𐌾𐌰𐌹𐍃 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂𐍃 𐌰𐌽𐌸𐌰𐍂𐌹𐍃 𐌸𐌰𐌿 &lt;a href=&quot;#&quot;&gt;𐌹𐌽𐌲𐌰𐍄𐌹𐌼𐍂𐌹𐌳𐌰𐌹𐌶𐍉𐍃 𐌰𐍀𐍀𐌻𐌴𐌹𐌺𐌰𐍄𐍃𐌾𐍉𐌽𐍃 Linux&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;𐌿𐌽𐌲𐌰𐍄𐌹𐌻 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂:&lt;/strong&gt; Firefox 𐌰𐌽𐌰 𐍅𐌹𐌽𐌳𐍉𐍅𐍃 𐌷𐌰𐌱𐌰𐌹𐌳𐌰 𐌰𐌲𐌻𐍉𐌽𐍃 𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽 𐌳𐍂𐌰𐍅𐍀𐌰𐌾𐌻. 𐌹𐌽𐌻𐌰𐌲𐌾𐌰𐌽 𐌱𐍉𐌺𐍉 𐌸𐌰𐌿 𐌸𐍂𐌿𐌺𐌾𐌰𐌽 𐌺𐌰𐌿𐌽𐍄𐍂𐌰𐌿𐌻+𐌶 𐌿𐌽𐌲𐌰𐍄𐌰𐌿𐌾𐌰𐌽 𐌽𐌹 𐌼𐌰𐌲𐌹 𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽 𐍂𐌰𐌹𐌷𐍄𐌰𐌱𐌰. 𐌸𐌰𐌲𐌺𐌴𐌹 𐌾𐌰𐌱𐌰𐌹 𐍅𐌹𐌻𐌴𐌹𐍃 𐌱𐍂𐌿𐌺𐌾𐌰𐌽 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂𐍃 𐌰𐌽𐌸𐌰𐍂𐌹𐍃 𐌸𐌰𐌿 &lt;a href=&quot;#&quot;&gt;𐌹𐌽𐌲𐌰𐍄𐌰𐌼𐍂𐌹𐌳𐌰𐌹𐌶𐍉𐍃 𐌰𐍀𐍀𐌻𐌴𐌹𐌺𐌰𐍄𐍃𐌾𐍉𐌽𐍃 𐍅𐌹𐌽𐌳𐍉𐍅𐍃&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;𐌿𐌽𐌲𐌰𐍄𐌹𐌻 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂:&lt;/strong&gt; Chrome 𐌰𐌽𐌰 %1 𐌽𐌹 𐌼𐌰𐌲 𐍅𐌰𐌹𐌻𐌰 𐌲𐌰𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽 𐌳𐍂𐌰𐍅𐍀𐌰𐌾𐌻. 𐌸𐌰𐍄𐌰𐌹𐌽𐌴𐌹 𐌹𐍃𐍄 𐍃𐍅𐍃𐍄𐌴𐌼𐍃 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂 (𐍃𐌰𐍆𐌰𐍂𐌴𐌹) 𐌹𐌽 𐌰𐌽𐌸𐌰𐍂𐌰𐌹 𐍃𐌺𐌰𐌻𐌾𐌰𐌹, 𐌸𐌰𐍄𐌴𐌹 𐌼𐌰𐌲𐍄 𐌲𐌰𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽 𐌰𐌹𐍂𐌶𐌴𐌹𐌽𐍃 𐌹𐌽 𐍂𐌰𐌹𐌷𐍄𐌴𐌹𐌽𐌹𐌼 𐌿𐍄𐌰 𐍃𐌺𐌰𐌹𐍂𐌼𐌰. 𐌸𐌰𐌿 𐌸𐌰𐌲𐌺𐌴𐌹 𐌱𐌹 𐌸𐌰𐍄𐌰 𐌾𐌰𐌱𐌰𐌹 𐍅𐌹𐌻𐌴𐌹𐍃 𐌱𐍂𐌿𐌺𐌾𐌰𐌽 𐌰𐌽𐌸𐌰𐍂𐌹𐍃 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂𐍃 (𐍃𐌰𐍆𐌰𐍂𐌴𐌹).</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -164,12 +164,12 @@
     <message>
         <location line="+1"/>
         <source>Pen pressure detected</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌸𐍂𐌿𐌺𐍃 𐌺𐍂𐌴𐍄𐌹𐌽𐍃 𐌲𐌰𐌿𐌼𐌾𐌰𐌳𐌰</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen detected, but no pressure variance</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌺𐍂𐌴𐍄𐌰 𐌲𐌰𐌿𐌼𐌾𐌰𐌳𐌰, 𐌹𐌸 𐌽𐌹 𐌲𐌰𐌿𐌼𐌾𐌰𐌳𐌰 𐌰𐌽𐌸𐌰𐍂𐌻𐌴𐌹𐌺𐌴𐌹𐌽 𐌸𐍂𐌿𐌺𐌹𐍃</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -179,7 +179,7 @@
     <message>
         <location line="+1"/>
         <source>Update check blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌰𐍄𐌹𐌳𐌰 𐍃𐍉𐌺𐌽 𐌰𐌽𐌰𐌽𐌹𐌿𐌾𐌹𐌸𐍉𐍃</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -194,7 +194,7 @@
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;𐍈𐍉𐍄𐌰:&lt;/strong&gt; 𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐍃𐌰𐌹𐍈𐌰𐌽 𐌾𐌰𐌱𐌰𐌹 𐌹𐌽𐍃𐍄𐌰𐌻𐌻𐌰 𐌰𐌽𐌰𐌽𐌹𐌿𐌾𐌹𐌸𐍃 𐌹𐍃𐍄 𐌸𐌰𐌿 𐌽𐌹𐍃𐍄. 𐌼𐌰𐌲 𐍅𐌹𐍃𐌰𐌽 𐌿𐍃𐌼𐌴𐍂𐌹 𐍆𐌰𐌹𐍂𐌽𐌹 &lt;code&gt;%1&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -287,7 +287,7 @@
     <message>
         <location line="+2"/>
         <source>Save operation failed, but the file might have been partially written.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐍅𐌰𐍂𐌸 𐍄𐌰𐌿𐌹 𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌹𐌽𐌰𐌹𐍃, 𐌰𐌺 𐌼𐌰𐌷𐍄𐌴𐌹𐌲 𐌹𐍃𐍄 𐌸𐌰𐍄𐌴𐌹 𐍆𐌰𐌾𐌻 𐍃𐌿𐌼𐌰𐌽 𐌲𐌰𐌼𐌴𐌻𐌹𐌸 𐌹𐍃𐍄.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -368,7 +368,7 @@
         <location line="+4"/>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>+</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -398,7 +398,7 @@
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌷𐌰𐌿𐌱𐌹𐌳𐌹𐌻𐍉 %1</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -443,7 +443,7 @@
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍄𐍉𐌻 𐌲𐌰𐌰𐌲𐌲𐍅𐌴𐌹𐌽𐌰𐌹𐍃</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -458,7 +458,7 @@
     <message>
         <location line="+2"/>
         <source>Unknown Constraint 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐌲𐌲𐍅𐌴𐌹𐌽𐍃 𐌿𐌽𐌺𐌿𐌽𐌸𐌰 0x%1</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -666,7 +666,7 @@
     <message>
         <location line="+74"/>
         <source>No layer selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌿𐍃𐍃𐍉𐌺𐌹𐌳𐌴𐍃 𐌻𐌰𐌲𐌾𐍉𐌽.</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -752,7 +752,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>WebM 𐍆𐌹𐌻𐌼 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -915,7 +915,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍅𐌰𐌿𐍂𐌺𐌴𐌹𐌸</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -945,7 +945,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐍂𐌹𐌸𐍉𐌽 𐌼𐌹𐌸 𐍂𐌿𐌽𐌰𐍅𐌰𐌿𐍂𐌳𐌰</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -963,7 +963,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Recolor</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍆𐍄𐍂𐌰𐍆𐌰𐍂𐍅𐌰</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1028,7 +1028,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍀𐌹𐌽𐌰𐌻𐌹𐌿𐌷𐌰𐌸</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1225,7 +1225,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+53"/>
         <source>Could not create tag &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐍃𐌺𐌰𐍀𐌾𐌰𐌽 𐍃𐍉𐌺𐌴𐌹𐌽𐌹𐍅𐌰𐌿𐍂𐌳 &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1295,7 +1295,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+15"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐌿𐍄𐌱𐌰𐌹𐍂𐌰𐌽 𐍃𐍉𐌺𐌴𐌹𐌽𐌹𐍅𐌰𐌿𐍂𐌳 &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -1399,17 +1399,17 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌹𐌳𐌿𐌼𐍉𐌽𐌳𐍃</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽𐌳𐍃</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍄𐍂𐌰𐌿𐌰𐌽</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1473,22 +1473,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 𐍄𐌰𐍅𐌹𐌳𐌰 𐌳𐌿 𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽𐌳 𐍆𐍂𐌰𐌼 %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 made operator via invite created by a server administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 𐍄𐌰𐍅𐌹𐌳𐌰 𐌳𐌿 𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽𐌳 𐌸𐌰𐌹𐍂𐌷 𐌻𐌰𐌸𐍉𐌽 𐌲𐌰𐍃𐌺𐌰𐍀𐌰𐌽𐌰 𐍆𐍂𐌰𐌼 𐍆𐍂𐌰𐌿𐌾𐌹𐌽𐍉𐌽𐌳 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐌶𐌹𐍃.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>%1 made operator via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 𐍄𐌰𐍅𐌹𐌳𐌰 𐌳𐌿 𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽𐌳 𐌸𐌰𐌹𐍂𐌷 𐌻𐌰𐌸𐍉𐌽 𐌲𐌰𐍃𐌺𐌰𐍀𐌰𐌽𐌰 𐍆𐍂𐌰𐌼 %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽𐌳𐌹𐍃 𐍃𐍄𐌰𐍃𐍃 𐌿𐍃𐌽𐌰𐌼𐌰𐌽𐌰 𐌰𐍆 %1 𐍆𐍂𐌰𐌼 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐌶𐌰.</translation>
     </message>
     <message>
         <location line="-527"/>
@@ -1554,12 +1554,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐌰 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐍃 𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐌰𐌽𐌰𐌺𐌿𐌽𐌽𐌰𐌽 𐌳𐌰𐍄𐌰 𐌹𐌽𐌽𐌰𐍄𐌱𐌰𐌿𐍂𐌰𐌽𐌰. 𐌼𐌰𐌷𐍄𐌴𐌹𐌲 𐌹𐍃𐍄 𐌸𐌰𐍄𐌴𐌹 𐌸𐌰𐍄𐌰 𐌹𐍃𐍄 𐌿𐌽𐍄𐌴 𐌿𐍄𐌱𐌰𐌿𐍂𐌰𐌽𐌰 𐍃𐌹𐌽𐌳 𐍆𐍂𐌰𐌼 𐌼𐌹𐍃𐍃𐌰𐌻𐌴𐌹𐌺𐌰𐌼𐌼𐌰 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐌶𐌰. 𐌼𐌰𐌲𐍄 𐌸𐌰𐍄𐌰𐌹𐌽𐌴𐌹 𐌹𐌽𐌽𐌰𐍄𐌱𐌰𐌹𐍂𐌰𐌽 𐌲𐌰𐌻𐌰𐍄𐌴𐌹𐌽𐌹𐌽𐍃 𐌹𐌽 𐌸𐌰𐌽𐌰 𐍃𐌰𐌼𐌰𐌽𐌰 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐍃 𐌿𐍄𐌰𐌽𐌰 𐌿𐍄𐌱𐌰𐌿𐍂𐌰𐌽𐌰 𐍅𐌴𐍃𐌿𐌽.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐍂𐌰𐌹𐌷𐍄𐌰 𐌳𐌰𐍄𐌰 𐌹𐌽𐌽𐌰𐍄𐌱𐌰𐌿𐍂𐌹𐍃.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1594,7 +1594,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="-62"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽𐌳𐌹𐍃 𐍃𐍄𐌰𐍃𐍃 𐌿𐍃𐌽𐌿𐌼𐌰𐌽𐌰 𐌰𐍆 %1 𐍆𐍂𐌰𐌼 %2.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1662,22 +1662,22 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%2 𐍄𐍂𐌰𐌿𐌰𐌹𐌳𐌰 %1.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>%1 trusted via invite created by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%2 𐍄𐍂𐌰𐌿𐌰𐌹𐌳𐌰 %1 𐌸𐌰𐌹𐍂𐌷 𐌻𐌰𐌸𐍉𐌽.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>%1 untrusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐌰 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐍃 𐌽𐌹 𐍄𐍂𐌰𐌿𐌰𐌹𐌳𐌰 %1.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%2 𐌽𐌹 𐍄𐍂𐌰𐌿𐌰𐌹𐌳𐌰 %1.</translation>
     </message>
 </context>
 <context>
@@ -1707,7 +1707,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽𐌳𐍃</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1728,7 +1728,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Creator</source>
-        <translation>𐍃𐌺𐌰𐍀𐌾𐌰𐌽𐌳𐍃</translation>
+        <translation>𐍃𐌺𐌰𐍀𐌾𐌰𐌽𐌳𐍃/𐍃𐌺𐌰𐍀𐌾𐌰𐌽𐌳𐌹</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1747,7 +1747,7 @@ Select a regular layer instead.</source>
         <location filename="../net/login.cpp" line="+111"/>
         <location line="+663"/>
         <source>Invalid state</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐍄𐌰𐍃𐍃 𐌿𐌽𐌲𐌰𐍄𐌹𐌻𐌰</translation>
     </message>
     <message>
         <location line="-606"/>
@@ -1759,7 +1759,7 @@ Select a regular layer instead.</source>
         <location line="+192"/>
         <location line="+80"/>
         <source>Incompatible server</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌲𐌰𐍄𐌹𐌻𐍃 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐍃</translation>
     </message>
     <message>
         <location line="-899"/>
@@ -1789,12 +1789,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+65"/>
         <source>Failed to retrieve server info</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐌺𐌿𐌽𐌸𐌹 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐍃 𐌽𐌹𐌼𐌰𐌽</translation>
     </message>
     <message>
         <location line="+69"/>
         <source>Session lookup failed</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐌱𐌹𐌲𐌹𐍄𐌰𐌽 𐌼𐌴𐌻</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -1967,12 +1967,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌸𐌰𐍄𐌰 𐍅𐌰𐌹𐍂𐌸𐌹𐌸 𐌾𐌰𐌱𐌰𐌹 𐌿𐍃𐌼𐌴𐍂𐌹 𐌳𐍂𐌰𐍅𐍀𐌰𐌾𐌻𐍃 𐌸𐌴𐌹𐌽𐌹𐍃 𐌿𐍆𐌰𐍂𐌰𐌻𐌸𐌹 𐌹𐍃𐍄. 𐌸𐌰𐍂𐍆𐍄 𐌰𐌽𐌰𐌽𐌹𐌿𐌾𐌹𐌸𐍉𐍃?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌴𐌻 𐌽𐌹 𐌱𐌹𐌲𐌹𐍄𐌰𐌽, 𐌼𐌰𐌷𐍄𐍃 𐌹𐍃𐍄 𐌸𐌰𐍄𐌴𐌹 𐌿𐍃𐍄𐌰𐌿𐌷 𐌸𐌰𐌿 𐌻𐌰𐌸𐍉𐌽𐌰𐌹𐍃 𐌲𐌰𐍅𐌹𐍃𐍃 𐌹𐌽𐌼𐌰𐌹𐌳𐌹𐌳𐌰</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2020,7 +2020,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+4"/>
         <source>Unlisted</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌰𐌽𐌰 𐍅𐌹𐌺𐍉𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2106,7 +2106,7 @@ Select a regular layer instead.</source>
         <location line="+5"/>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌷𐍄𐍃 𐌽𐌹𐍃𐍄 𐌲𐌰𐌼𐌰𐌹𐌽𐌾𐌰𐌽 𐌸𐌰𐌹𐍂𐌷 𐍅𐌰𐌾𐌰𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2188,7 +2188,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/gradient.cpp" line="+135"/>
         <source>You need to drag to create a gradient.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌳𐍂𐌰𐌲𐌰𐌹𐍃 𐌳𐌿 𐍃𐌺𐌰𐍀𐌾𐌰𐌽 𐌲𐍂𐌴𐌳𐌹𐌽𐍃.</translation>
     </message>
 </context>
 <context>
@@ -2196,7 +2196,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/transform.cpp" line="+423"/>
         <source>You don&apos;t have permission to transform selections.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌷𐌰𐌱𐌰𐌹𐍃 𐌰𐌽𐌳𐌻𐌴𐍄 𐌹𐌽𐌼𐌰𐌹𐌳𐌾𐌰𐌽 𐌸𐌰𐍄𐌴𐌹 𐌿𐍃𐍃𐍉𐌺𐌹𐌳𐌴𐍃.</translation>
     </message>
     <message>
         <location line="-7"/>
@@ -2286,7 +2286,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../wasmsupport.cpp" line="-198"/>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌱𐍂𐌿𐌺𐌴𐌹𐍃 𐌲𐌰𐍃𐍄𐌹𐍃 𐌰𐌽𐌳𐌱𐌰𐌷𐍄𐌹𐍃 𐌰𐌽𐌰 web.drawpile.net. 𐌼𐌰𐌽𐌰𐌲𐌰 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐌶𐌰 𐌽𐌹 𐌰𐌽𐌳𐌻𐌴𐍄𐌰𐌽𐌳 𐌲𐌰𐌲𐌰𐌷𐌰𐍆𐍄𐌾𐌰𐌽 𐌰𐌻𐌾𐌰𐌸𐍂𐍉.</translation>
     </message>
     <message>
         <location line="+7"/>
