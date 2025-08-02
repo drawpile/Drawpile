@@ -253,6 +253,9 @@ if(OPENSSL)
 				INSTALL_TARGET install_sw
 				ENV ${OPENSSL_ENV}
 				ALL shared no-tests ${OPENSSL_FLAGS}
+		PATCHES
+			1.1.1t
+				patches/openssl_arm64.diff
 	)
 endif()
 
