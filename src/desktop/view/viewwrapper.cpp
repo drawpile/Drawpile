@@ -460,6 +460,12 @@ void ViewWrapper::connectToolSettings(docks::ToolSettings *toolSettings)
 		m_controller, &CanvasController::quickAdjust, toolSettings,
 		&docks::ToolSettings::quickAdjust);
 
+	tools::AnnotationSettings *annotationSettings = toolSettings->annotationSettings();
+	annotationSettings->setCanvasView(this);
+	connect(
+		m_scene, &CanvasScene::annotationResized, annotationSettings,
+		&tools::AnnotationSettings::onAnnotationResize, Qt::QueuedConnection);
+
 	tools::BrushSettings *brushSettings = toolSettings->brushSettings();
 	connect(
 		brushSettings, &tools::BrushSettings::blendModeChanged, m_controller,
@@ -480,7 +486,6 @@ void ViewWrapper::connectToolSettings(docks::ToolSettings *toolSettings)
 		zoomSettings, &tools::ZoomSettings::fitToWindow, m_controller,
 		&CanvasController::zoomToFit);
 
-	toolSettings->annotationSettings()->setCanvasView(this);
 	toolSettings->transformSettings()->setCanvasView(this);
 }
 

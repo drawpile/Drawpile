@@ -23,13 +23,16 @@ int AnnotationItem::userId() const
 	return DP_annotation_id_context_id(m_id);
 }
 
-void AnnotationItem::setGeometry(const QRect &rect)
+bool AnnotationItem::setGeometry(const QRect &rect)
 {
-	if(m_rect != rect) {
+	if(m_rect == rect) {
+		return false;
+	} else {
 		refreshGeometry();
 		m_rect = rect;
 		m_doc.setTextWidth(rect.width());
 		m_pixmapDirty = true;
+		return true;
 	}
 }
 

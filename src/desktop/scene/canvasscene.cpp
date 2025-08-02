@@ -472,12 +472,15 @@ void CanvasScene::annotationsChanged(const drawdance::AnnotationList &al)
 			annotationItems.erase(it);
 		}
 		ai->setText(a.text());
-		ai->setGeometry(a.bounds());
+		bool resized = ai->setGeometry(a.bounds());
 		ai->setColor(a.backgroundColor());
 		ai->setProtect(a.protect());
 		ai->setAlias(a.alias());
 		ai->setRasterize(a.rasterize());
 		ai->setValign(a.valign());
+		if(resized) {
+			emit annotationResized(id);
+		}
 	}
 
 	for(AnnotationItem *ai : annotationItems) {
@@ -495,7 +498,9 @@ void CanvasScene::previewAnnotation(int id, const QRect &shape)
 		ai->setVisible(m_showAnnotations);
 	}
 
-	ai->setGeometry(shape);
+	if(ai->setGeometry(shape)) {
+		annotationResized(id);
+	}
 }
 
 void CanvasScene::setSelection(

@@ -2,13 +2,16 @@
 extern "C" {
 #include <dpmsg/ids.h>
 }
+#include "desktop/main.h"
 #include "desktop/scene/annotationitem.h"
+#include "desktop/settings.h"
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/view/canvaswrapper.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
@@ -185,6 +188,9 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 		m_updatetimer, &QTimer::timeout, this,
 		&AnnotationSettings::saveChanges);
 
+	dpApp().settings().bindCanvasViewBackgroundColor(
+		this, &AnnotationSettings::setCanvasViewBackgroundColor);
+
 	// Select a nice default font
 	QStringList defaultFonts;
 	defaultFonts << "Arial"
@@ -273,15 +279,8 @@ bool AnnotationSettings::shouldAlias() const
 
 void AnnotationSettings::setEditorBackgroundColor(const QColor &color)
 {
-	// Blend transparent colors with white
-	const QColor c = QColor::fromRgbF(
-		color.redF() * color.alphaF() + (1 - color.alphaF()),
-		color.greenF() * color.alphaF() + (1 - color.alphaF()),
-		color.blueF() * color.alphaF() + (1 - color.alphaF()));
-
-	// We need to use the stylesheet because native styles ignore the palette.
-	m_ui->content->setStyleSheet(
-		QStringLiteral("QTextEdit { background-color: %1; }").arg(c.name()));
+	m_editorBackgroundColor = color;
+	updateEditorBackgroundColor();
 }
 
 void AnnotationSettings::updateStyleButtons()
@@ -529,6 +528,13 @@ void AnnotationSettings::setFocus()
 	setFocusAt(-1);
 }
 
+void AnnotationSettings::onAnnotationResize(int annotationId)
+{
+	if(annotationId == m_selectionId) {
+		updateEditorBackgroundColor();
+	}
+}
+
 void AnnotationSettings::applyChanges()
 {
 	if(!m_noupdate && selected()) {
@@ -626,6 +632,70 @@ void AnnotationSettings::updateWidgets()
 		m_ui->size->setVisible(m_annotationsShown);
 		m_annotationsHiddenLabel->setVisible(!m_annotationsShown);
 	}
+}
+
+void AnnotationSettings::updateEditorBackgroundColor()
+{
+	QColor bg = backgroundColor();
+	QColor c = QColor::fromRgbF(
+		m_editorBackgroundColor.redF() * m_editorBackgroundColor.alphaF() +
+			(1 - m_editorBackgroundColor.alphaF()) * bg.redF(),
+		m_editorBackgroundColor.greenF() * m_editorBackgroundColor.alphaF() +
+			(1 - m_editorBackgroundColor.alphaF()) * bg.greenF(),
+		m_editorBackgroundColor.blueF() * m_editorBackgroundColor.alphaF() +
+			(1 - m_editorBackgroundColor.alphaF()) * bg.blueF());
+	QColor textColor = c.lightnessF() < 0.5 ? Qt::white : Qt::black;
+	// We need to use the stylesheet because native styles ignore the
+	// palette.
+	m_ui->content->setStyleSheet(
+		QStringLiteral("QTextEdit { background-color: %1; color: %2; }")
+			.arg(c.name(), textColor.name()));
+}
+
+void AnnotationSettings::setCanvasViewBackgroundColor(const QColor &color)
+{
+	if(color.isValid() && color.alpha() > 0) {
+		m_canvasViewBackgroundColor = color;
+		m_canvasViewBackgroundColor.setAlpha(255);
+	}
+	updateEditorBackgroundColor();
+}
+
+QColor AnnotationSettings::backgroundColor()
+{
+	canvas::CanvasModel *canvas = controller()->model();
+	if(canvas) {
+		if(m_canvasView && m_selectionId > 0) {
+			const drawingboard::AnnotationItem *a =
+				m_canvasView->getAnnotationItem(m_selectionId);
+			if(a) {
+				QRectF annotationRect = a->rect();
+				qreal annotationArea =
+					annotationRect.width() * annotationRect.height();
+
+				QSizeF sizeOnCanvas =
+					annotationRect
+						.intersected(
+							QRectF(QPointF(0.0, 0.0), QSizeF(canvas->size())))
+						.size();
+				qreal areaOnCanvas =
+					sizeOnCanvas.width() * sizeOnCanvas.height();
+
+				if(areaOnCanvas < annotationArea / 2.0) {
+					return m_canvasViewBackgroundColor;
+				}
+			}
+		}
+
+		QColor canvasBackgroundColor =
+			canvas->paintEngine()->viewBackgroundColor();
+		if(canvasBackgroundColor.isValid() &&
+		   canvasBackgroundColor.alpha() > 0) {
+			canvasBackgroundColor.setAlpha(255);
+			return canvasBackgroundColor;
+		}
+	}
+	return Qt::white;
 }
 
 }

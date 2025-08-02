@@ -160,10 +160,8 @@ public slots:
 	void setStreamResetProgress(int percent);
 
 signals:
-	//! Canvas size has just changed
 	void canvasResized(int xoffset, int yoffset, const QSize &oldSize);
-
-	//! An annotation item was just deleted
+	void annotationResized(int id);
 	void annotationDeleted(int id);
 
 private slots:

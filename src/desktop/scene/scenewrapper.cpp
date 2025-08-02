@@ -470,6 +470,13 @@ void SceneWrapper::connectToolSettings(docks::ToolSettings *toolSettings)
 		m_view, &CanvasView::quickAdjust, toolSettings,
 		&docks::ToolSettings::quickAdjust);
 
+	tools::AnnotationSettings *annotationSettings =
+		toolSettings->annotationSettings();
+	annotationSettings->setCanvasView(this);
+	connect(
+		m_scene, &CanvasScene::annotationResized, annotationSettings,
+		&tools::AnnotationSettings::onAnnotationResize, Qt::QueuedConnection);
+
 	tools::BrushSettings *brushSettings = toolSettings->brushSettings();
 	connect(
 		brushSettings, &tools::BrushSettings::blendModeChanged, m_view,
@@ -490,7 +497,6 @@ void SceneWrapper::connectToolSettings(docks::ToolSettings *toolSettings)
 		zoomSettings, &tools::ZoomSettings::fitToWindow, m_view,
 		&CanvasView::zoomToFit);
 
-	toolSettings->annotationSettings()->setCanvasView(this);
 	toolSettings->transformSettings()->setCanvasView(this);
 }
 

@@ -133,6 +133,7 @@ public:
 	void removeHover();
 
 signals:
+	void annotationResized(int id);
 	void annotationDeleted(int id);
 
 private:

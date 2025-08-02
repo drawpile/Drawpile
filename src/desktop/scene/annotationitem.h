@@ -23,7 +23,7 @@ public:
 	int userId() const;
 
 	//! Set the text box position and size
-	void setGeometry(const QRect &rect);
+	bool setGeometry(const QRect &rect);
 
 	QRectF rect() const { return m_rect; }
 

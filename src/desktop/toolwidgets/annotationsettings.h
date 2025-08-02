@@ -65,6 +65,8 @@ public slots:
 	//! Focus the content editing box
 	void setFocus();
 
+	void onAnnotationResize(int annotationId);
+
 signals:
 	void selectionIdChanged(int id);
 	void showAnnotationsRequested();
@@ -98,6 +100,9 @@ private:
 	void setUiEnabled(bool enabled);
 	void updateWidgets();
 	bool shouldAlias() const;
+	void updateEditorBackgroundColor();
+	void setCanvasViewBackgroundColor(const QColor &color);
+	QColor backgroundColor();
 
 	QWidget *m_headerWidget = nullptr;
 	QStackedWidget *m_stack = nullptr;
@@ -110,6 +115,8 @@ private:
 	bool m_noupdate = false;
 	QTimer *m_updatetimer = nullptr;
 	view::CanvasWrapper *m_canvasView = nullptr;
+	QColor m_editorBackgroundColor = Qt::transparent;
+	QColor m_canvasViewBackgroundColor = Qt::darkGray;
 };
 
 }
