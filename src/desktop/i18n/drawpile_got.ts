@@ -83,7 +83,7 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+64"/>
         <source>Brush type</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌺𐌿𐌽𐍃 𐌱𐍂𐌿𐍃𐌺𐍃</translation>
     </message>
     <message>
         <location line="+87"/>
@@ -93,7 +93,7 @@
     <message>
         <location line="+14"/>
         <source>Eraser mode</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍆𐌷𐍂𐌰𐌹𐌽𐌴𐌹𐌽𐌰𐌹𐍃 𐌼𐍉𐌳𐌿𐍃</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -134,7 +134,7 @@
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+340"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌹 𐌰𐌻𐌸𐌰</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -142,7 +142,7 @@
         <location line="+91"/>
         <location line="+25"/>
         <source>Pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐍅𐌹𐌽𐌸𐌴𐌹 𐌸𐍂𐌿𐌺𐌹𐍃</translation>
     </message>
     <message>
         <location line="-41"/>
@@ -152,12 +152,12 @@
     <message>
         <location line="-61"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐍂𐍅𐍉𐍃 𐌽𐌿𐌼𐍄𐍃: 1/</translation>
     </message>
     <message>
         <location line="-30"/>
         <source>Spacing: </source>
-        <translation>𐍂𐌿𐌼: </translation>
+        <translation>𐍂𐌿𐌼𐌹𐍃: </translation>
     </message>
     <message>
         <location line="-49"/>
@@ -174,12 +174,12 @@
         <location line="+13"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+12"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐌻𐌰𐌹𐌷𐍄𐌴𐌹: </translation>
     </message>
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-23"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%</translation>
     </message>
 </context>
 <context>
@@ -192,18 +192,18 @@
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌺𐌿𐌽</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌿𐍂𐌲𐌿𐍅𐌹𐌲𐍃</translation>
     </message>
     <message>
         <location line="+16"/>
         <location line="+50"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍄𐌰𐌿𐌹</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -213,7 +213,7 @@
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌹𐌽𐍅𐌰𐌽𐌳𐌹𐌸</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -237,7 +237,7 @@
         <location line="+6"/>
         <location line="+107"/>
         <source>Organization:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌿𐍂𐌲𐌰𐌽𐌹𐍃𐌰𐍄𐍃𐌾𐍉:</translation>
     </message>
     <message>
         <location line="-100"/>
@@ -247,17 +247,17 @@
     <message>
         <location line="+23"/>
         <source>Issued by</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌹𐌱𐌰𐌽 𐍆𐍂𐌰𐌼</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Expires on:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍃𐍄𐌹𐌿𐌷𐌹𐌸:</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>MD5 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌳5 𐌻𐌰𐌹𐍃𐍄𐍃:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -268,28 +268,28 @@
     <message>
         <location line="-7"/>
         <source>Issued on:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌹𐌱𐌰𐌽 𐌹𐍃𐍄 𐌹𐌽 𐌼𐌴𐌻𐌰:</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+50"/>
         <source>Common name:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌰𐌼𐍉 𐌲𐌰𐌼𐌰𐌹𐌽:</translation>
     </message>
     <message>
         <location line="-43"/>
         <source>Serial number:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍄𐌴𐍅𐍉𐍃 𐍂𐌰𐌸𐌾𐍉:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Issued to</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌹𐌱𐌰𐌽 𐌳𐌿</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Validity period</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌴𐌻 𐌸𐌰𐍄𐌴𐌹 𐍅𐌰𐌿𐍂𐌺𐌴𐌹𐌸</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -299,7 +299,7 @@
     <message>
         <location line="+41"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌹𐌶𐍉 𐌺𐌿𐌽𐌸𐌹</translation>
     </message>
 </context>
 <context>
@@ -312,7 +312,7 @@
     <message>
         <location line="+41"/>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐌰𐍄𐌿𐍂𐌰𐍄𐍃𐌾𐍉</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -322,7 +322,7 @@
     <message>
         <location line="+17"/>
         <source>Hex</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌷𐌰𐌹𐌺𐍃</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -342,7 +342,7 @@
     <message>
         <location line="+7"/>
         <source>Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌻𐌸𐌰</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -373,12 +373,12 @@
     <message>
         <location line="+10"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌹𐌽𐌽𐌰𐍄𐌱𐌰𐌿𐍂</translation>
     </message>
     <message>
         <location line="-135"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍃𐌻𐌿𐌺</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -429,7 +429,7 @@
     <message>
         <location line="+20"/>
         <source>Export Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍄𐌱𐌰𐌹𐍂 𐍅𐌹𐌲𐌰𐌽𐌳𐍉 GIF</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -450,17 +450,17 @@
         <location line="-174"/>
         <location line="+36"/>
         <source>Export MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍄𐌱𐌰𐌹𐍂 𐌼𐍀4 𐍆𐌹𐌻𐌼</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍄𐌱𐌰𐌹𐍂 𐍅𐌴𐌱𐌼 𐍆𐌹𐌻𐌼</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Custom FFmpeg Video</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍄𐌱𐌰𐌹𐍂 𐍃𐌹𐌻𐌱𐌰𐍅𐌰𐌻𐌹𐌸 𐍆𐍆𐌼𐍀𐌴𐌲 𐍆𐌹𐌻𐌼</translation>
     </message>
     <message>
         <location line="-77"/>
@@ -490,12 +490,12 @@
     <message>
         <location line="+10"/>
         <source>Import Animation from Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌹𐌽𐌽𐌰𐍄𐌱𐌰𐌹𐍂 𐌰𐌽𐌴𐌹𐌼𐌰𐍄𐍃𐌾𐍉𐌽 𐌻𐌰𐌲𐌾𐌰𐌽𐌴</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌰𐌲𐌹𐌳𐍉𐍃 𐍆𐍂𐌹𐍃𐌰𐌷𐍄𐌴𐌹𐍃</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -541,7 +541,7 @@
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌰𐌲𐌴𐌹 𐌻𐌴𐌹𐍄𐌹𐌻𐌰 𐍆𐍂𐌹𐍃𐌰𐌷𐍄 𐌱𐍂𐌿𐍃𐌺𐌹𐍃 𐍆𐌰𐌿𐍂𐌰𐌻𐌰𐌲𐌴𐌹𐌽𐌰𐌹𐍃</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -591,7 +591,7 @@
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍄𐌱𐌰𐌹𐍂 𐌻𐌰𐌲𐌴𐌹𐌽𐌹𐌽𐍃 𐌼𐌴𐌻𐌹𐍃</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -606,7 +606,7 @@
     <message>
         <location line="+28"/>
         <source>Save as Selected Format</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌹 𐍃𐍅𐌴 𐌲𐌰𐍅𐌰𐌻𐌹𐌸 𐍆𐌰𐌿𐍂𐌼𐌰𐍄</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -690,7 +690,7 @@
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill all similar colors</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌿𐌻𐌻𐌴𐌹 𐌰𐌻𐌻𐍉𐍃 𐍆𐌰𐍂𐍅𐍉𐍃 𐌹𐌱𐌽𐌰𐌻𐌴𐌹𐌺𐍉𐍃</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -770,7 +770,7 @@
     <message>
         <location line="+11"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍆𐍄𐍂𐌰𐌰𐌽𐌰𐌽𐌹𐌿𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -808,7 +808,7 @@
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
         <source>Last edited by:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐌹 𐍃𐍀𐌴𐌳𐌹𐍃𐍄𐌹𐌽 𐌹𐌽𐌼𐌰𐌹𐌳𐌹𐌸 𐍆𐍂𐌰𐌼:</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -894,7 +894,7 @@
     <message>
         <location line="+1"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍆𐍄𐍂𐌰𐌻𐌰𐌲𐌾𐌰𐌽</translation>
     </message>
 </context>
 <context>
@@ -927,7 +927,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/lasersettings.ui" line="+17"/>
         <source>Color:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐍂𐍅𐌰:</translation>
     </message>
     <message>
         <location line="+87"/>
@@ -937,12 +937,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>s</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trail: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌰𐌹𐍃𐍄𐍃: </translation>
     </message>
 </context>
 <context>
@@ -955,7 +955,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌰𐌼𐍉:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -971,7 +971,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-45"/>
         <source>Blending Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐍉𐌳𐌿𐍃 𐌱𐌻𐌰𐌽𐌳𐌰𐌽𐌳𐍃:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -981,7 +981,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Visible to you</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐍃𐌹𐌿𐌽 𐌳𐌿 𐌸𐌿𐍃</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1011,12 +1011,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Default for new users</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐌹𐌿𐌷𐍄 𐌱𐍂𐌿𐌺𐌾𐌰𐌼 𐌽𐌹𐌿𐌾𐌰𐌹𐌼</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Created by:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐍃𐌺𐌰𐍀𐌰𐌽 𐍆𐍂𐌰𐌼:</translation>
     </message>
     <message>
         <location line="+81"/>
@@ -1031,7 +1031,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+13"/>
         <source>Choose…</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍅𐌰𐌻𐌴𐌹…</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1064,12 +1064,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍆𐍄𐍂𐌰𐌷𐌰𐌹𐍄𐌰𐌽</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍃𐌵𐌹𐍃𐍄𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1111,17 +1111,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-187"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍂𐌿𐌽𐌰𐍅𐌰𐌿𐍂𐌳</translation>
     </message>
     <message>
         <location line="-36"/>
         <source>Remember my password</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐌼𐌿𐌽𐌽𐍉 𐍂𐌿𐌽𐌰𐍅𐌰𐌿𐍂𐌳𐌰 𐌼𐌴𐌹𐌽𐌰𐌼𐌼𐌰</translation>
     </message>
     <message>
         <location line="-24"/>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐍂𐌿𐌺𐌾𐌰𐌽𐌰𐌼𐍉</translation>
     </message>
     <message>
         <location line="+158"/>
@@ -1141,7 +1141,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+22"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍂𐌿𐌽𐌰𐍅𐌰𐌿𐍂𐌳:</translation>
     </message>
     <message>
         <location line="+183"/>
@@ -1176,37 +1176,37 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌱𐍂𐌿𐌺𐌴𐌹 𐍃𐌿𐌼𐌰𐌼𐌼𐌰 𐌸𐌹𐌶𐌴 𐌰𐌺𐌰𐍅𐌽𐍄𐌴.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in a different way</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍄𐌲𐌰𐌲𐌲 𐌹𐌽 𐌰𐌽𐌸𐌰𐍂𐌰𐌼𐌼𐌰 𐌷𐌰𐌹𐌳𐌰𐌿</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Log in with the selected account.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍄𐌲𐌰𐌲𐌲 𐌼𐌹𐌸 𐌲𐌰𐍅𐌰𐌻𐌹𐌳𐌰𐌼𐌼𐌰 𐌰𐌺𐌰𐍅𐌽𐍄𐌰.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in with this account</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍄𐌲𐌰𐌲𐌲 𐌼𐌹𐌸 𐌸𐌰𐌼𐌼𐌰 𐌰𐌺𐌰𐍅𐌽𐍄𐌰</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍆𐌰𐍂𐌼𐌿𐌽𐌽𐍉 𐌸𐌰𐌼𐌼𐌰 𐌰𐌺𐌰𐍅𐌽𐍄𐌰.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Forget this account</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍆𐌰𐍂𐌼𐌿𐌽𐌽𐍉 𐌸𐌰𐌼𐌼𐌰 𐌰𐌺𐌰𐍅𐌽𐍄𐌰</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐍆𐍂𐌰𐌹𐌷𐌽 𐌰𐍆𐍄𐍂𐌰 𐌰𐌻𐌾𐌰 𐌲𐌰𐍂𐌰𐌹𐌳𐌴𐌹𐌽𐌹𐌼 𐌰𐌽𐌸𐌰𐍂𐌰𐌹𐌼</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -1293,13 +1293,13 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+413"/>
         <source>🙋 %1 joined!</source>
-        <translation type="unfinished"></translation>
+        <translation>🙋 %1 𐌲𐌰𐌼𐌰𐌹𐌽𐌹𐌳𐌰!</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌸𐌰𐍄𐌰 𐌹𐍃𐍄 𐍄𐌰𐌿𐌹 𐌸𐌰𐌽𐌿𐌷 𐌰𐌿𐌲𐌰𐌳𐌰𐌿𐍂𐍉 𐌻𐌿𐌺𐌹𐌸. 𐌼𐌰𐌷𐍄𐍃 𐌹𐍃𐍄 𐌸𐌰𐍄𐌴𐌹 𐌻𐌰𐌲𐌾𐌰𐌳𐌰 𐌹𐌽 𐍅𐌹𐌺𐍉𐌽 𐌼𐌹𐌸 𐍄𐍉𐌾𐌰𐌼 𐌰𐌽𐌸𐌰𐍂𐌰𐌹𐌼.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1348,29 +1348,29 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Yes, continue</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌾𐌰𐌹, 𐌸𐌰𐌹𐍂𐌷𐍅𐌹𐍃</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No, cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌴, 𐍃𐍅𐌴𐌹𐌱</translation>
     </message>
     <message>
         <location line="+62"/>
         <location line="+2323"/>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌷𐌰𐌹𐍄𐌰𐌽</translation>
     </message>
     <message>
         <location line="-2271"/>
         <location line="+4096"/>
         <source>Export Again</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍄𐌱𐌰𐌹𐍂 𐌰𐍆𐍄𐍂𐌰</translation>
     </message>
     <message>
         <location line="-4092"/>
         <source>Export Again to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍄𐌱𐌰𐌹𐍂 𐌰𐍆𐍄𐍂𐌰 𐌳𐌿 %1</translation>
     </message>
     <message>
         <location line="+439"/>
@@ -1418,7 +1418,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+6"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌹</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1459,7 +1459,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+112"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹𐍅𐌹</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1484,32 +1484,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-1362"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐍃𐌻𐌿𐌺</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You&apos;re about to open a new file and close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐌾𐌻 𐌽𐌹𐍅𐌹 𐌿𐍃𐌻𐌿𐌺𐌹𐍃 𐌾𐌰𐌷 𐌸𐌰𐍄𐌰 𐌰𐌿𐌲𐌰𐌳𐌰𐌿𐍂𐍉 𐌻𐌿𐌺𐌹𐌸.</translation>
     </message>
     <message>
         <location line="+1550"/>
         <source>Saving...</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌳𐌰…</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Image saving failed</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐍆𐍂𐌹𐍃𐌰𐌷𐍄 𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌽</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Couldn&apos;t save image</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐍆𐍂𐌹𐍃𐌰𐌷𐍄 𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Image saved</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐍂𐌹𐍃𐌰𐌷𐍄𐍃 𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌽𐌰</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -4392,7 +4392,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-119"/>
         <source>MyPaint Brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌴𐌹𐌽𐌰𐌹 𐌱𐍂𐌿𐍃𐌺𐍉𐍃 𐍆𐌰𐌹𐌷𐌴𐌹𐌽𐌰𐌹𐍃:</translation>
     </message>
     <message>
         <location line="+112"/>
@@ -5464,7 +5464,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+24"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐍂𐌿𐌼𐌹𐍃: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5477,7 +5477,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+47"/>
         <location line="+18"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%</translation>
     </message>
     <message>
         <location line="-393"/>
@@ -5507,13 +5507,13 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+50"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌹𐌺𐌹𐌻𐌴𐌹: </translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+19"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍀𐍇</translation>
     </message>
     <message>
         <location line="-1"/>
@@ -5533,7 +5533,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+99"/>
         <location line="+64"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌹𐌽𐌻𐌰𐌲𐌴𐌹𐌽𐍃</translation>
     </message>
     <message>
         <location line="-259"/>
@@ -5554,18 +5554,18 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-508"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐌷𐌰𐍂𐌳𐌴𐌹: </translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Minimum Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌹𐌽𐌽𐌹𐍃𐍄𐌰 𐌷𐌰𐍂𐌳𐌴𐌹: </translation>
     </message>
     <message>
         <location line="+13"/>
         <location line="+482"/>
         <source>Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌷𐌰𐍂𐌳𐌴𐌹</translation>
     </message>
     <message>
         <location line="-451"/>
@@ -5700,7 +5700,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="-353"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌹 𐌰𐌻𐌸𐌰</translation>
     </message>
     <message>
         <location line="+857"/>
@@ -5718,7 +5718,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <location line="+20"/>
         <location line="+37"/>
         <source>Apply to All</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐌰𐍄𐌾𐌰𐌽 𐌳𐌿 𐌰𐌻𐌻𐌰𐌼𐌼𐌰</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5733,7 +5733,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+44"/>
         <source>Value: </source>
-        <translation type="unfinished"></translation>
+        <translation>𐍅𐌰𐌹𐍂𐌸: </translation>
     </message>
     <message>
         <location line="+12"/>
@@ -5773,7 +5773,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+4"/>
         <source>Blending</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐌻𐌰𐌽𐌳𐌰𐌽</translation>
     </message>
     <message>
         <location line="+138"/>
@@ -5800,7 +5800,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <source>Pressure</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌸𐍂𐌿𐌺𐍃</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5856,7 +5856,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <source>Custom</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. the input is the output of the &quot;Custom input&quot; setting</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌸𐌰𐍂𐌻𐌴𐌹𐌺</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5925,7 +5925,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <location line="+2"/>
         <source>Unknown Input</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌺𐌿𐌽𐌸𐌰 𐌹𐌽𐌻𐌰𐌲𐌴𐌹𐌽𐍃</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -5988,7 +5988,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌸𐌰𐍄𐌰 𐌹𐍃𐍄 𐌹𐌽𐌻𐌰𐌲𐌴𐌹𐌽𐍃 𐌲𐌰𐍅𐌰𐌻𐌹𐌳𐌰 𐍆𐍂𐌰𐌼 𐌱𐍂𐌿𐌺𐌾𐌹𐌽. 𐍃𐌰𐌹 &apos;𐌰𐌽𐌸𐌰𐍂𐌻𐌴𐌹𐌺𐌰 𐌹𐌽𐌻𐌰𐌲𐌴𐌹𐌽𐍃&apos; 𐌻𐌰𐌲𐌴𐌹𐌽𐍃 𐌼𐌰𐌹𐌶𐌹𐌽 𐌺𐌿𐌽𐌸𐌾𐌰.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6071,14 +6071,14 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Opacity</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐍃𐌹𐌿𐌽𐍃</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Opacity multiply</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌰𐍃𐌹𐌿𐌽 𐌼𐌰𐌽𐌰𐌲𐍆𐌰𐌻𐌸𐌰𐌽</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6099,14 +6099,14 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Hardness</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌷𐌰𐍂𐌳𐌴𐌹</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pixel feather</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐍀𐌹𐌺𐍃𐌰𐌹𐌻 𐍆𐌹𐌸𐍂𐌰</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6220,21 +6220,21 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Color saturation</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐍂𐍅𐍉𐍃 𐍃𐌰𐍄𐌿𐍂𐌰𐍄𐍃𐌾𐍉</translation>
     </message>
     <message>
         <location line="-198"/>
         <source>Color value</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐍂𐍅𐍉𐍃 𐍅𐌰𐌹𐍂𐌸</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save color</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐍆𐌰𐍃𐍄𐌰𐌹 𐍆𐌰𐍂𐍅𐌰</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6297,7 +6297,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Eraser</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍆𐌷𐍂𐌰𐌹𐌽𐌾𐌰𐌽𐌳𐍃</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6367,7 +6367,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Colorize</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐌹𐌷𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6514,13 +6514,13 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult. The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐌹𐌷𐌴𐌹𐌽𐍃</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Setting</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌺𐌿𐌽𐌸𐌰 𐌻𐌰𐌲𐌴𐌹𐌽𐍃</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6528,7 +6528,8 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
 (also known as alpha or opacity)</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>0 𐌹𐍃𐍄 𐌸𐌰𐍄𐌴𐌹 𐌱𐍂𐌿𐍃𐌺𐍃 𐌿𐌽𐌰𐌽𐌰𐍃𐌹𐌿𐌽𐍃 𐌹𐍃𐍄, 1 𐌰𐌽𐌰𐍃𐌹𐌿𐌽𐍃 𐍆𐌿𐌻𐌻𐍃
+(𐌾𐌰𐌷 𐌺𐌿𐌽𐌸 𐍃𐍅𐌴 𐌰𐌻𐌸𐌰 𐌸𐌰𐌹 𐌿𐌽𐌰𐌽𐌰𐍃𐌹𐌿𐌽𐍃)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6585,7 +6586,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐌸𐌰𐍄𐌰 𐍃𐌰𐌼𐍉 𐍃𐍅𐌴 𐌿𐍆𐌰𐍂, 𐌹𐌸 𐍂𐌰𐌳𐌹𐌿𐍃 𐌸𐌰𐍄𐌴𐌹 𐍆𐍂𐌹𐍃𐌰𐌷𐍄𐌹𐌸 𐌹𐍃𐍄 𐌱𐍂𐌿𐌺𐌾𐌰𐌳𐌰, 𐌸𐌰𐍄𐌴𐌹 𐌼𐌰𐌲 𐍃𐌹𐌽𐍄𐌴𐌹𐌽𐍉 𐌹𐌽𐌼𐌰𐌹𐌳𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+3"/>
