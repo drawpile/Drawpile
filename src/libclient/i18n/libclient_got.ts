@@ -323,7 +323,7 @@
     <message>
         <location line="+76"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌿𐍂𐌲𐌿𐍅𐌹𐌲𐍃</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -388,12 +388,12 @@
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌹𐌽 𐌼𐌹𐌳𐌿𐌼𐌰𐌹 𐌺𐌻𐌹𐌺𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unknown Button 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌿𐌽𐌺𐌿𐌽𐌸 𐌷𐌰𐌿𐌱𐌹𐌳𐌹𐌻𐍉 0x%1</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -453,7 +453,7 @@
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐌰𐌲𐌲𐍅𐌴𐌹𐌽𐌰𐌹𐍃 𐌾𐌰𐌷 𐌼𐌹𐌳𐌿𐌼𐍉𐍃 𐍄𐍉𐌻</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -576,12 +576,12 @@
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌿𐍂𐌲𐌿𐍅𐌹𐌲𐍃</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌽𐌸𐌰𐍂𐌹𐍃 𐌱𐍂𐌿𐌺𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -712,7 +712,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>GIF (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌹𐍆 (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -757,7 +757,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+8"/>
         <source>Text File (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌱𐍉𐌺𐌰𐍆𐌰𐌾𐌻 (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -880,7 +880,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+3"/>
         <source>Requires newer client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌸𐌰𐍂𐍆 𐌽𐌹𐌿𐌾𐌹𐌶𐌹𐍃 𐍂𐍉𐌳𐌾𐌰𐌽𐌳𐌹𐍃 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐌶𐌹𐍃 (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -988,7 +988,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Pigment</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐌹𐌷𐌴𐌹𐌽𐍃</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1331,12 +1331,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽𐌳𐍃</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍄𐍂𐌰𐌿𐌰𐌽𐍃</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1361,12 +1361,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌺𐌿𐌽𐌹</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐍄𐌰𐍃𐍃</translation>
     </message>
     <message>
         <location line="+182"/>
@@ -1468,7 +1468,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+20"/>
         <source>%1 made operator by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐍃 𐍄𐌰𐍅𐌹𐌳𐌰 %1 𐌳𐌿 𐍅𐌰𐌿𐍂𐌺𐌾𐌰𐌽𐌳.</translation>
     </message>
     <message>
         <location line="+2"/>
