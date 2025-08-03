@@ -59,18 +59,20 @@ elseif(WIN32)
 		# properly if you have multiple users on your machine, but that's such
 		# a niche use case that supporting it really doesn't matter. See
 		# https://gitlab.kitware.com/cmake/cmake/-/issues/20962
-		set(CPACK_WIX_INSTALL_SCOPE NONE)
+		if(BUILD_WIX_ARCHITECTURE STREQUAL "x64" OR BUILD_WIX_ARCHITECTURE STREQUAL "x86")
+			set(CPACK_WIX_INSTALL_SCOPE NONE)
+		elseif(BUILD_WIX_ARCHITECTURE STREQUAL "arm64")
+			# ARM doesn't have old installers, so we can use the proper value.
+			set(CPACK_WIX_INSTALL_SCOPE perMachine)
+		else()
+			message(FATAL_ERROR "Unhandled BUILD_WIX_ARCHITECTURE '${BUILD_WIX_ARCHITECTURE}'")
+		endif()
+		set(CPACK_WIX_ARCHITECTURE "${BUILD_WIX_ARCHITECTURE}")
 
 		include(DrawpileFileExtensions)
 		get_wix_extensions("${PROJECT_NAME}" "drawpile.exe" WIX_DRAWPILE_PROGIDS)
 		if(MSVC)
 			math(EXPR WIX_DRAWPILE_TOOLSET_VERSION_MAJOR "${MSVC_TOOLSET_VERSION} / 10")
-		endif()
-
-		if(BUILD_WIX_ARCHITECTURE MATCHES "^(x86|x64|arm64)$")
-			set(CPACK_WIX_ARCHITECTURE "${BUILD_WIX_ARCHITECTURE}")
-		else()
-			message(FATAL_ERROR "Unhandled BUILD_WIX_ARCHITECTURE '${BUILD_WIX_ARCHITECTURE}'")
 		endif()
 
 		message(STATUS "Configuring ${CPACK_WIX_ARCHITECTURE} installer")
