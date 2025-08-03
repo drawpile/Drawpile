@@ -301,6 +301,7 @@ if(BASE)
 				patches/androidtilt-qt5.diff
 				patches/android_no_build_id.diff
 				patches/kineticscrollfilter-qt5.diff
+				patches/android35-qt5.diff
 			6.7.2
 				patches/qtbug-113394.diff
 				patches/cancel_touch_on_pen.diff

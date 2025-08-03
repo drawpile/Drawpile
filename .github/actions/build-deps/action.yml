@@ -110,7 +110,7 @@ runs:
     - uses: ./.github/actions/build-and-cache
       with:
         name: Qt
-        cache_key: qt-${{ inputs.cache_key }}-${{ inputs.qt }}
+        cache_key: qt-android35-${{ inputs.cache_key }}-${{ inputs.qt }}
         path: ${{ inputs.path }}/qt
         pre_build: ${{ inputs.qt_pre_build }}
         build: >
@@ -125,7 +125,7 @@ runs:
     - uses: ./.github/actions/build-and-cache
       with:
         name: ffmpeg dependencies
-        cache_key: ffmpeg-${{ inputs.cache_key }}-${{ inputs.libvpx }}-${{ inputs.libwebp }}-${{ inputs.ffmpeg }}
+        cache_key: ffmpeg-android35-${{ inputs.cache_key }}-${{ inputs.libvpx }}-${{ inputs.libwebp }}-${{ inputs.ffmpeg }}
         path: ${{ inputs.path }}/ffmpeg
         pre_build: ${{ inputs.ffmpeg_pre_build }}
         build: >
@@ -143,7 +143,7 @@ runs:
     - uses: ./.github/actions/build-and-cache
       with:
         name: other dependencies
-        cache_key: other-${{ inputs.cache_key }}-${{ inputs.libmicrohttpd }}-${{ inputs.libsodium }}-${{ inputs.qtkeychain }}-${{ inputs.qt }}-${{ inputs.libzip }}-${{ inputs.karchive5 }}-${{ inputs.karchive6 }}-${{ inputs.zlib }}-${{ inputs.zstd }}
+        cache_key: other-android35-${{ inputs.cache_key }}-${{ inputs.libmicrohttpd }}-${{ inputs.libsodium }}-${{ inputs.qtkeychain }}-${{ inputs.qt }}-${{ inputs.libzip }}-${{ inputs.karchive5 }}-${{ inputs.karchive6 }}-${{ inputs.zlib }}-${{ inputs.zstd }}
         path: ${{ inputs.path }}/other
         pre_build: ${{ inputs.other_pre_build }}
         build: >
