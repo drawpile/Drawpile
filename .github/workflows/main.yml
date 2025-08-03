@@ -366,7 +366,7 @@ jobs:
             arch: x86_64
             android_sdk_versions: ''
             sccache_triplet: x86_64-pc-windows-msvc
-            build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
+            build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -DBUILD_WIX_ARCHITECTURE=x64 -G Ninja
             build_type: RelWithDebInfo
             collect_symbols: true
             signpath: true
@@ -392,7 +392,7 @@ jobs:
             arch: x86_64
             android_sdk_versions: ''
             sccache_triplet: x86_64-pc-windows-msvc
-            build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
+            build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -DBUILD_WIX_ARCHITECTURE=x64 -G Ninja
             build_type: RelWithDebInfo
             collect_symbols: false
             signpath: false
@@ -416,7 +416,33 @@ jobs:
             arch: x86
             android_sdk_versions: ''
             sccache_triplet: x86_64-pc-windows-msvc
-            build_flags: -DCARGO_TRIPLE=i686-pc-windows-msvc -DBUILD_PACKAGE_SUFFIX=x86 -G Ninja
+            build_flags: -DCARGO_TRIPLE=i686-pc-windows-msvc -DBUILD_PACKAGE_SUFFIX=x86 -DBUILD_WIX_ARCHITECTURE=x86 -G Ninja
+            build_type: RelWithDebInfo
+            collect_symbols: false
+            signpath: true
+            qt_pre_build: >
+              choco install gperf jom winflexbison3 &&
+              New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
+              New-Item -Path C:\ProgramData\Chocolatey\bin\bison.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_bison.exe
+            ffmpeg_pre_build: >
+              choco install yasm
+            # Copying files is a disgusting hack because windeployqt does not
+            # search PATH to find DLLs and it gets confused by QtKeychain having
+            # a Qt prefix and thinks it is part of Qt and tries to process it
+            # and fails if it is not in the Qt bin directory with the rest of
+            # them
+            packager: >
+              cp .github/deps/other/bin/qt*.dll .github/deps/qt/bin &&
+              cpack --verbose --config build/CPackConfig.cmake -C RelWithDebInfo
+
+          - os: windows-11-arm
+            cross_os: ''
+            component: ''
+            qt: 5.15.16
+            arch: arm64
+            android_sdk_versions: ''
+            sccache_triplet: aarch64-pc-windows-msvc
+            build_flags: -DBUILD_PACKAGE_SUFFIX=arm64 -DBUILD_WIX_ARCHITECTURE=arm64 -G Ninja
             build_type: RelWithDebInfo
             collect_symbols: false
             signpath: true
@@ -446,7 +472,7 @@ jobs:
       - name: Activate MSVC
         uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756
         with:
-          arch: win${{ matrix.arch == 'x86_64' && '64' || '32' }}
+          arch: ${{ matrix.arch }}
         if: runner.os == 'Windows'
 
       - name: Install NASM for building ffmpeg in macOS
@@ -458,7 +484,7 @@ jobs:
         uses: ilammy/setup-nasm@72793074d3c8cdda771dba85f6deafe00623038b
         with:
           platform: win${{ matrix.arch == 'x86_64' && '64' || '32' }}
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && matrix.arch != 'arm64'
 
       - name: Install YASM for building libvpx in macOS
         run: |
@@ -473,7 +499,7 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce
         with:
-          msbuild-architecture: x${{ matrix.arch == 'x86_64' && '64' || '32' }}
+          msbuild-architecture: ${{ matrix.arch == 'x86_64' && 'x64' || matrix.arch }}
         if: runner.os == 'Windows'
 
       - name: Set Android environment variables
@@ -683,6 +709,12 @@ jobs:
         working-directory: build
         if: '!matrix.cross_os'
 
+      - name: Install WIX toolkit missing on ARM64 Windows runner
+        run: |
+          choco install wixtoolset --version 3.14.1.20250415
+          echo "C:\Program Files (x86)\WiX Toolset v3.14\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        if: runner.os == 'Windows' && matrix.packager && matrix.arch == 'arm64'
+
       - name: Run packaging
         run: ${{ matrix.packager }}
         if: matrix.packager
@@ -843,4 +875,6 @@ jobs:
             'Drawpile-Tools-Windows-x86_64-Qt5.15.16;Drawpile-*.zip;Windows Server and Tools Portable ZIP 64bit - does not include Drawpile' \
             'Drawpile-Android-23-23-arm32-Qt5.15.16;Drawpile-*.apk;Android APK 32bit - do not use, you want 64bit' \
             'Drawpile-Windows-x86-Qt5.15.16;Drawpile-*.msi;Windows Installer 32bit - do not use, you want 64bit' \
-            'Drawpile-Windows-x86-Qt5.15.16;Drawpile-*.zip;Windows Portable ZIP 32bit - do not use, you want 64bit'
+            'Drawpile-Windows-x86-Qt5.15.16;Drawpile-*.zip;Windows Portable ZIP 32bit - do not use, you want 64bit' \
+            'Drawpile-Windows-arm64-Qt5.15.16;Drawpile-*.msi;Windows Installer for ARM-based devices - do not use, you want 64bit' \
+            'Drawpile-Windows-arm64-Qt5.15.16;Drawpile-*.zip;Windows Portable ZIP for ARM-based devices - do not use, you want 64bit'

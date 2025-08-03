@@ -70,6 +70,7 @@ Unreleased Version 2.3.0-pre
  * Server Feature: Session thumbnail generation, by requesting the client to generate one. Currently only through the web admin API, thumbnails are not displayed anywhere or generated automatically yet.
  * Feature: Add pixel-perfect option for pixel brushes, available in the brush editor and under the paint mode dropdown. Thanks Meru and Squishy for suggesting, lan700ng for testing.
  * Feature: Use the canvas background color or the color behind the canvas as the background color for the annotation editor, depending on where the annotation is placed. Thanks Blozzom for suggesting.
+ * Feature: Add a build for Windows on ARM. Thanks fizbin for testing.
 
 Unreleased Version 2.2.3-pre
  * Fix: Disable audio playback under 32 bit Windows, since it just crashes.
