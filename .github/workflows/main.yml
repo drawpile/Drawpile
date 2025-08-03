@@ -308,7 +308,7 @@ jobs:
           - os: macos-13
             cross_os: ''
             component: ''
-            qt: 6.8.2
+            qt: 6.8.3
             arch: x86_64
             android_sdk_versions: ''
             build_flags: -DBUILD_PACKAGE_SUFFIX=x86_64 -G Ninja
@@ -335,7 +335,7 @@ jobs:
           - os: macos-14
             cross_os: ''
             component: ''
-            qt: 6.8.2
+            qt: 6.8.3
             arch: arm64
             android_sdk_versions: ''
             build_flags: -DBUILD_PACKAGE_SUFFIX=arm64 -G Ninja
@@ -867,8 +867,8 @@ jobs:
             'Drawpile-Android-30-34-arm64-Qt5.15.17;Drawpile-*.apk;Android APK 64bit' \
             'Drawpile-Android-23-23-arm64-Qt5.15.17;Drawpile-*.apk;Android APK 64bit for end of life systems - only use if you have Android 10 or older' \
             'Drawpile-Linux-x86_64-Qt5.15.17;Drawpile-*.AppImage;Linux AppImage 64bit' \
-            'Drawpile-macOS-x86_64-Qt6.8.2;Drawpile-*.dmg;macOS Disk Image for Intel' \
-            'Drawpile-macOS-arm64-Qt6.8.2;Drawpile-*.dmg;macOS Disk Image for Apple Silicon' \
+            'Drawpile-macOS-x86_64-Qt6.8.3;Drawpile-*.dmg;macOS Disk Image for Intel' \
+            'Drawpile-macOS-arm64-Qt6.8.3;Drawpile-*.dmg;macOS Disk Image for Apple Silicon' \
             'Drawpile-Windows-x86_64-Qt5.15.17;Drawpile-*.msi;Windows Installer 64bit' \
             'Drawpile-Windows-x86_64-Qt5.15.17;Drawpile-*.zip;Windows Portable ZIP 64bit' \
             'Drawpile-Windows-x86_64-Qt5.15.17;DrawpileSymbols-*.zip;Debug Symbols for Windows 64bit - does not include Drawpile' \
