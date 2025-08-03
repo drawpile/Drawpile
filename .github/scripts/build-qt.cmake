@@ -262,8 +262,8 @@ if(BASE)
 		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
-			5.15.16
-			SHA384=249460e42289f758fc932d667339745b7f5b72769558a40df33cda295032866a9bdb0b7f71a6e63df1021f75e0829bde
+			5.15.17
+			SHA384=7a39dfa69b2ef819afde52f2f905907a31ff1a9f9f5c4698f8d042994a2fa08e5632bd98e7ced76b8e333645bb849d15
 			6.7.2
 			SHA384=47f0fb85e5a34220e91a5f9d4ecb3fa358442fbcd7fdeb4e7f7a86c4ecd6271268d6fbf07b03abb301e858253b8f76a2
 			6.8.2
@@ -284,7 +284,7 @@ if(BASE)
 				RELEASE
 					-release ${BASE_RELEASE_FLAGS}
 		PATCHES
-			5.15.16
+			5.15.17
 				patches/qtbug-111538.diff
 				patches/androiddeployqt_keystore_env.diff
 				patches/cast_types_for_egl_x11_test.diff
@@ -296,7 +296,6 @@ if(BASE)
 				patches/qt5androidsupport_params.diff
 				patches/android_backtrace.diff
 				patches/androidtilt-qt5.diff
-				patches/qtbug-104895.diff
 				patches/android_no_build_id.diff
 				patches/kineticscrollfilter-qt5.diff
 			6.7.2
@@ -340,8 +339,8 @@ if(SVG)
 		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
-			5.15.16
-			SHA384=5e18ae955ec4e9a220f27274024804c60cafdfcf4aa8b01b018526ecd6d10a83012eb4e605e22cf9b22eefc2aa37d5f6
+			5.15.17
+			SHA384=7346d8ea7f756406610614087bee6ac90883b22ac017fa0e15361fae5191cbdea5f72ae3c80292ab7b169a2603241362
 			6.7.2
 			SHA384=384c7dac3434be7063fca4931c0da179657c275b2e3a343fb6b9f597c1b1390a4c17ca4a16b73f31c23841fd987685c8
 			6.8.2
@@ -357,8 +356,8 @@ if(IMAGEFORMATS)
 		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
-			5.15.16
-			SHA384=5b68e0e1eacf67e31957d0ac29bf2fce1a745788e693737c328983e7e8546ed131bc290d76ede47f254276d36acdaa47
+			5.15.17
+			SHA384=457917b0c8eeb6ebcbe8bf754a3dc6482b91149e910354d1c88958edd2e0dba614feecfda8afe18c1932ad950c0e569a
 			6.7.2
 			SHA384=fd1a98a1ff4643a4eccbcbb6d383eebf306a1f421889e4ef2a9d6cfef80360fe10c506b673db45bda0d21647c49b75aa
 			6.8.2
@@ -395,8 +394,8 @@ if(MULTIMEDIA)
 		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
-			5.15.16
-			SHA384=87cdb677c2566e4b8148bbfaccf40c28162818918d733f4852259f591a236cb5b051650a6116f35737e84598fe250b81
+			5.15.17
+			SHA384=ff33b29081e7f7f609121e4b06aaa4f44a9b999210a0a37e4966f97b9b4ab8a8fd31ccf6970268ca57e741e9e9e4e432
 			6.7.2
 			SHA384=ef58f56cc00b9d32dcbdcf2713f2cc7145be09b12cf919d0c8e1e7a1ec88c312c4a477d1aaf1e5ed4d16550008172584
 			6.8.2
@@ -417,8 +416,8 @@ if(TOOLS)
 		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
-			5.15.16
-			SHA384=6e294b46e790ea46e96ddffcee3e93b5e2bf9e4f5ab88f39dc55a3229b7630555206687bb6749eae916d31718807cc98
+			5.15.17
+			SHA384=fba513518a1fbaef8b9515466a47ae9dc2edc513a8a5e988ebc2b1df19ca980b5a70f74e131970bba2f1d63d4a10b2b8
 			6.7.2
 			SHA384=ecd8e52476dfb7aad42acf6bb68a8ad03a307c066cb0f0be235d0a4724725fbb297ddfcd90c704667415eef73ba2a6cb
 			6.8.2
@@ -447,8 +446,8 @@ if(ANDROID_EXTRAS)
 		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
-			5.15.16
-			SHA384=e5db5dd11fa0d57f25ed3547f9db6da3db7bc33ccb06d83565f4615bb5839d3bb16812e219a5f7f2b5c4f28f7409c22d
+			5.15.17
+			SHA384=54fa55d66ef7983ac62e22a0d2b5b2866d53bfffd8bb8aacfec388d5c89dbca15d4dc39b7e99f6ee180e6147341f0814
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 	)
@@ -460,8 +459,8 @@ if(TRANSLATIONS)
 		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
-			5.15.16
-			SHA384=037591740dae69f87b4cf661c028d9d03c8063c91d2c8e136323d0cc8fc42a0c1387e770e79d1411f0dac4e202249efd
+			5.15.17
+			SHA384=fe4edf5d4a8867950574c3218190a71be58d99eadde34505a6b0a2d759fda241822ada837cc2e08035dc23ffb6957117
 			6.7.2
 			SHA384=428908175b3f14da484fac4a682d85de16add57c734863ca55e4873d82826328cde2451dd2b353a8d77e96d4dbfafa82
 			6.8.2
@@ -477,8 +476,8 @@ if(WEBSOCKETS)
 		TARGET_ARCH "${TARGET_ARCH}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
-			5.15.16
-			SHA384=bb97b8d8dbffc18074a3e1be7c781cef89d42a8366821836f59e2b0fe433f6ad0613bdc32c238d2d18fc4c50f88923bc
+			5.15.17
+			SHA384=4fd8b976f17b9a51eeac08eb0ca2cc90786f649ce4b801004aa2cfd22db618bce89f81ecff5b89cc461f9cdc20c2fd6f
 			6.7.2
 			SHA384=a668d863fb73d8e25e4e334cd9bc22d7b98333186496110ba4080d007fdd52b6134ccf50c5aa671ff04540b3e10fa6a9
 			6.8.2
