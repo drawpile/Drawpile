@@ -32,7 +32,7 @@ typedef LONG64 volatile DP_Atomic;
 #    define DP_atomic_get(X)        ((int)(*(X)))
 #    define DP_atomic_set(X, VALUE) ((void)InterlockedExchange64((X), (VALUE)))
 #    define DP_atomic_xch(X, VALUE) ((int)InterlockedExchange64((X), (VALUE)))
-#    define DP_atomic_add(X, VALUE) ((void)_InlineInterlockedAdd64((X), VALUE))
+#    define DP_atomic_add(X, VALUE) ((void)InterlockedAdd64((X), VALUE))
 #    define DP_atomic_inc(X)        ((void)InterlockedIncrement64((X)))
 #    define DP_atomic_dec(X)        (InterlockedDecrement64((X)) == 0)
 
