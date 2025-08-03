@@ -17,7 +17,7 @@ inputs:
     type: string
   version:
     description: sccache version
-    default: 0.3.3
+    default: 0.10.0
     type: string
 
 outputs:
