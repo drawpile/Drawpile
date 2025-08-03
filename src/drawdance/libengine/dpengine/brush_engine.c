@@ -2443,7 +2443,7 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
         if (push_undo_point && (update_mask_sync_id(be) || be->mask.lc)) {
             push_selection_sync_clear(be);
             be->mask.current_selection_id = 0;
-            DP_layer_content_decref(be->mask.lc);
+            DP_layer_content_decref_nullable(be->mask.lc);
             be->mask.lc = NULL;
         }
     }
