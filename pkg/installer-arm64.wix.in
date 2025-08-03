@@ -1,0 +1,26 @@
+<CPackWiXPatch>
+	<CPackWiXFragment Id="CM_CP_drawpile.exe">${WIX_DRAWPILE_PROGIDS}</CPackWiXFragment>
+
+	<CPackWiXFragment Id="#PRODUCT">
+		<InstallExecuteSequence>
+			<CreateShortcuts>NOT (UPGRADINGPRODUCTCODE OR WIX_UPGRADE_DETECTED OR WIX_DOWNGRADE_DETECTED)</CreateShortcuts>
+			<RemoveShortcuts>Installed AND NOT (UPGRADINGPRODUCTCODE OR WIX_UPGRADE_DETECTED OR WIX_DOWNGRADE_DETECTED)</RemoveShortcuts>
+		</InstallExecuteSequence>
+
+		<Condition Message="${PROJECT_NAME} requires Windows 7 or later.">
+			<![CDATA[Installed OR (VersionNT64 >= 601)]]>
+		</Condition>
+
+		<Property Id="VC_REDIST_INSTALLED" Secure="yes">
+			<RegistrySearch
+				Id="VC_REDIST_RegKey"
+				Type="raw"
+				Root="HKLM"
+				Key="SOFTWARE\Microsoft\VisualStudio\${WIX_DRAWPILE_TOOLSET_VERSION_MAJOR}.0\VC\Runtimes\ARM64"
+				Name="Version"/>
+		</Property>
+		<Condition Message="${PROJECT_NAME} requires the Visual Studio arm64 Redistributable. Check the bottom of the Downloads page on drawpile.net or visit https://aka.ms/vs/17/release/vc_redist.arm64.exe to download and install it.">
+			Installed OR VC_REDIST_INSTALLED
+		</Condition>
+	</CPackWiXFragment>
+</CPackWiXPatch>

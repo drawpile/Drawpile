@@ -13,6 +13,9 @@ set(BUILD_ICON_TYPE "auto" CACHE STRING "Icon to use, one of: auto, beta, stable
 if(ANDROID)
     set(BUILD_ANDROID_VERSION_CODE "" CACHE STRING "Android version code")
     add_feature_info("Android version code (BUILD_ANDROID_VERSION_CODE)" ON "${BUILD_ANDROID_VERSION_CODE}")
+elseif(WIN32)
+    set(BUILD_WIX_ARCHITECTURE "" CACHE STRING "")
+    add_feature_info("WIX installer architecture (BUILD_WIX_ARCHITECTURE)" ON "${BUILD_WIX_ARCHITECTURE}")
 endif()
 
 option(UPDATE_TRANSLATIONS "Update translation files from source")
