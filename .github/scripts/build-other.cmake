@@ -163,7 +163,7 @@ if(NOT EMSCRIPTEN AND LIBSODIUM)
 			SHA384=67473eaecf7085446feac68c36859cbdb2cc3ecc2748b0209ca364dd00f0c836f7000790c8dec5e890cd97d6646303f1
 		WIN32
 			MSBUILD
-				SOLUTION builds/msvc/vs2019/libsodium.sln
+				SOLUTION builds/msvc/vs2022/libsodium.sln
 				SHARED DynRelease
 				STATIC StaticRelease
 				DEBUG_SHARED DynDebug
