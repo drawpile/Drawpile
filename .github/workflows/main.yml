@@ -359,7 +359,7 @@ jobs:
                 fi
               done
 
-          - os: windows-latest
+          - os: windows-2025
             cross_os: ''
             component: ''
             qt: 5.15.17
@@ -385,7 +385,7 @@ jobs:
               cp .github/deps/other/bin/qt*.dll .github/deps/qt/bin &&
               cpack --verbose --config build/CPackConfig.cmake -C RelWithDebInfo
 
-          - os: windows-latest
+          - os: windows-2025
             cross_os: ''
             component: 'Tools'
             qt: 5.15.17
@@ -411,7 +411,7 @@ jobs:
               cp .github/deps/other/bin/qt*.dll .github/deps/qt/bin &&
               cpack --verbose --config build/CPackConfig.cmake -C RelWithDebInfo
 
-          - os: windows-latest
+          - os: windows-2025
             qt: 5.15.17
             arch: x86
             android_sdk_versions: ''
