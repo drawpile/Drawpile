@@ -374,6 +374,13 @@ function(_build_cmake build_type target_arch source_dir)
 		set(build_flag "-DCMAKE_BUILD_TYPE=Release")
 	endif()
 
+	if(CMAKE_ANDROID_NDK)
+		get_android_page_alignment_flags(page_align_ldflags "${CMAKE_ANDROID_ARCH_ABI}")
+		if(page_align_ldflags)
+			list(APPEND env "LDFLAGS=${page_align_ldflags}")
+		endif()
+	endif()
+
 	set(binary_dir "${source_dir}-build")
 	file(MAKE_DIRECTORY "${binary_dir}")
 	execute_process(
@@ -404,6 +411,29 @@ function(_build_cmake build_type target_arch source_dir)
 	endif()
 endfunction()
 
+function(get_android_page_alignment_flags out_var abi)
+	if(abi STREQUAL "armeabi-v7a")
+		set(needs_16k_page_alignment OFF)
+	elseif(abi STREQUAL "arm64-v8a")
+		set(needs_16k_page_alignment ON)
+	elseif(abi STREQUAL "x86")
+		set(needs_16k_page_alignment OFF)
+	elseif(abi STREQUAL "x86_64")
+		set(needs_16k_page_alignment ON)
+	else()
+		message(FATAL_ERROR "Unknown Android ABI '${abi}'")
+	endif()
+
+	if(needs_16k_page_alignment)
+		set(${out_var}
+			"-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"
+			PARENT_SCOPE
+		)
+	else()
+		set(${out_var} "" PARENT_SCOPE)
+	endif()
+endfunction()
+
 function(get_android_env _out_env _out_ffmpeg_flags _out_triplet ndk abi platform)
 	if(abi STREQUAL "armeabi-v7a")
 		set(triplet armv7a-linux-androideabi)
@@ -426,7 +456,7 @@ function(get_android_env _out_env _out_ffmpeg_flags _out_triplet ndk abi platfor
 	get_android_toolchain(toolchain "${ndk}")
 	set(cc "${toolchain}/bin/${triplet}${api}-clang")
 
-	set(${_out_env}
+	set(env_to_set
 		"PATH=${toolchain}/bin:$ENV{PATH}"
 		"TOOLCHAIN=${toolchain}"
 		"TARGET=${triplet}"
@@ -437,8 +467,18 @@ function(get_android_env _out_env _out_ffmpeg_flags _out_triplet ndk abi platfor
 		"LD=${toolchain}/bin/ld"
 		"RANLIB=${toolchain}/bin/llvm-ranlib"
 		"STRIP=${toolchain}/bin/llvm-strip"
-		PARENT_SCOPE
 	)
+	set(ffmpeg_extra_ldflags_to_set
+		"-lc -lm -ldl -llog -landroid -Wl,--hash-style=both -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libunwind.a"
+	)
+
+	get_android_page_alignment_flags(page_align_ldflags "${abi}")
+	if(page_align_ldflags)
+		list(APPEND env_to_set "LDFLAGS=${page_align_ldflags}")
+		string(APPEND ffmpeg_extra_ldflags_to_set " ${page_align_ldflags}")
+	endif()
+
+	set(${_out_env} ${env_to_set} PARENT_SCOPE)
 	set(${_out_ffmpeg_flags}
 		"--ar=${toolchain}/bin/llvm-ar"
 		"--cc=${cc}"
@@ -447,7 +487,7 @@ function(get_android_env _out_env _out_ffmpeg_flags _out_triplet ndk abi platfor
 		"--ranlib=${toolchain}/bin/llvm-ranlib"
 		"--strip=${toolchain}/bin/llvm-strip"
 		"--extra-cflags=-DANDROID_NDK -fPIC -DANDROID -D__ANDROID__"
-		"--extra-ldflags=-lc -lm -ldl -llog -landroid -Wl,--hash-style=both -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libunwind.a"
+		"--extra-ldflags=${ffmpeg_extra_ldflags_to_set}"
 		"--sysroot=${CMAKE_SYSROOT}"
 		PARENT_SCOPE
 	)
@@ -536,6 +576,13 @@ function(_build_qmake build_type source_dir)
 		find_program(make make REQUIRED)
 		if(NOT NPROCS EQUAL 0)
 			set(make_flags -j${NPROCS})
+		endif()
+	endif()
+
+	if(CMAKE_ANDROID_NDK)
+		get_android_page_alignment_flags(page_align_ldflags "${CMAKE_ANDROID_ARCH_ABI}")
+		if(page_align_ldflags)
+			list(APPEND env "LDFLAGS=${page_align_ldflags}")
 		endif()
 	endif()
 

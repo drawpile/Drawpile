@@ -114,6 +114,13 @@ if(ANDROID)
 		set(DRAWPILE_ANDROID_VERSION_CODE "${BUILD_ANDROID_VERSION_CODE}")
 	endif()
 	message(STATUS "Android version code: ${DRAWPILE_ANDROID_VERSION_CODE}")
+
+    if (ANDROID_ABI STREQUAL "arm64-v8a" OR ANDROID_ABI STREQUAL "x86_64")
+        message(STATUS "Enabling 16K page alignment for Android ABI ${ANDROID_ABI}")
+        add_link_options(-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384)
+	else()
+        message(STATUS "Not enabling 16K page alignment for Android ${ANDROID_ABI}")
+    endif()
 endif()
 
 # https://doc.qt.io/qt-6/cmake-qt5-and-qt6-compatibility.html

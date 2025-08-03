@@ -67,6 +67,11 @@ check_sdk() {
                 error=1
             fi
             ;;
+        '35')
+            if ! check_java_version 17; then
+                error=1
+            fi
+            ;;
         *)
             carp "Unknown ANDROID_PLATFORM_VERSION '$ANDROID_PLATFORM_VERSION'"
             error=1
@@ -150,8 +155,25 @@ setup() {
     echo
 }
 
+get_installed_sdk_packages() {
+    "$ANDROID_SDKMANAGER" --list_installed 2>&1
+}
+
+get_sdk_packages_to_install() {
+    echo "$1" |
+        ANDROID_BUILD_TOOLS_VERSION="$ANDROID_BUILD_TOOLS_VERSION" \
+        ANDROID_NDK_VERSION="$ANDROID_NDK_VERSION" \
+        ANDROID_PLATFORM="$ANDROID_PLATFORM" \
+        perl -na \
+        -e '$packages{$F[0]} = 1;' \
+        -e 'END { print join " ", grep { !$packages{$_} }' \
+        -e '    "build-tools;$ENV{ANDROID_BUILD_TOOLS_VERSION}",' \
+        -e '    "ndk;$ENV{ANDROID_NDK_VERSION}",' \
+        -e '    "platforms;$ENV{ANDROID_PLATFORM}" }'
+}
+
 get_sdk_packages_to_uninstall() {
-    "$ANDROID_SDKMANAGER" --list_installed 2>&1 |
+    echo "$1" |
         ANDROID_BUILD_TOOLS_VERSION="$ANDROID_BUILD_TOOLS_VERSION" \
         ANDROID_NDK_VERSION="$ANDROID_NDK_VERSION" \
         ANDROID_PLATFORM="$ANDROID_PLATFORM" \
@@ -160,11 +182,14 @@ get_sdk_packages_to_uninstall() {
         -e '&& $F[0] ne "build-tools;$ENV{ANDROID_BUILD_TOOLS_VERSION}" ' \
         -e '&& $F[0] ne "ndk;$ENV{ANDROID_NDK_VERSION}"' \
         -e '&& $F[0] ne "platforms;$ENV{ANDROID_PLATFORM}";' \
-        -e 'END { print join " ", @p }'
+        -e 'END { print join " ", map { qq("$_") } @p }'
 }
 
 check_sdk_packages() {
-    packages_to_uninstall="$(get_sdk_packages_to_uninstall)"
+    local installed_packages packages_to_install packages_to_uninstall
+
+    installed_packages="$(get_installed_sdk_packages)"
+    packages_to_uninstall="$(get_sdk_packages_to_uninstall "$installed_packages")"
     if [[ -n $packages_to_uninstall ]]; then
         carp
         carp "Found superfluous Android SDK packages installed. Having extra"
@@ -178,6 +203,13 @@ check_sdk_packages() {
         carp "    $ANDROID_SDKMANAGER --uninstall $packages_to_uninstall"
         carp
         exit 1
+    fi
+
+    packages_to_install="$(get_sdk_packages_to_install "$installed_packages")"
+    if [[ -n $packages_to_install ]]; then
+        set -xe
+        "$ANDROID_SDKMANAGER" --install $packages_to_install
+        set +xe
     fi
 }
 
@@ -226,9 +258,9 @@ fi
 : "${BUILD_TYPE:=release}"
 : "${QT_VERSION:=5.15.17}"
 : "${ANDROID_ABI:=arm64-v8a}"
-: "${ANDROID_BUILD_TOOLS_VERSION:=34.0.0-rc3}"
-: "${ANDROID_NDK_VERSION:=27.0.12077973}"
-: "${ANDROID_PLATFORM_VERSION:=34}"
+: "${ANDROID_BUILD_TOOLS_VERSION:=35.0.0}"
+: "${ANDROID_NDK_VERSION:=27.3.13750724}"
+: "${ANDROID_PLATFORM_VERSION:=35}"
 : "${ANDROID_TARGET_VERSION:="$ANDROID_PLATFORM_VERSION"}"
 : "${ANDROID_SDK_DIR:=$HOME/Android/Sdk}"
 : "${ANDROID_SDKMANAGER:=$ANDROID_SDK_DIR/cmdline-tools/latest/bin/sdkmanager}"
