@@ -276,7 +276,8 @@ if(BASE)
 				ALL
 					-opensource -confirm-license
 					-nomake tests -nomake examples
-					-no-sql -qt-libjpeg -qt-libpng -qt-sqlite -qt-harfbuzz
+					-no-sql-mysql -no-sql-sqlite -no-sql-psql -qt-libjpeg
+					-qt-libpng -qt-harfbuzz
 					${BASE_FLAGS}
 				DEBUG
 					${BASE_DEBUG_FLAGS} ${BASE_DEBUG_INFO_FLAGS}
