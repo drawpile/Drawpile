@@ -44,8 +44,8 @@ endif()
 
 # ExternalProject, except useful!
 function(build_dependency name version build_type)
-	set(oneValueArgs URL SOURCE_DIR SOURCE_BUILD_PATH TARGET_ARCH)
-	set(multiValueArgs VERSIONS PATCHES ALL_PLATFORMS UNIX WIN32)
+	set(oneValueArgs URL SOURCE_DIR SOURCE_BUILD_PATH TARGET_ARCH USE_GIT)
+	set(multiValueArgs VERSIONS PATCHES ALL_PLATFORMS UNIX WIN32 GIT_SUBMODULES)
 	cmake_parse_arguments(PARSE_ARGV 3 ARG "" "${oneValueArgs}" "${multiValueArgs}")
 
 	if(ARG_TARGET_ARCH STREQUAL "x86" OR ARG_TARGET_ARCH STREQUAL "arm32" OR ARG_TARGET_ARCH STREQUAL "wasm")
@@ -73,14 +73,6 @@ function(build_dependency name version build_type)
 		return()
 	endif()
 
-	list(FIND ARG_VERSIONS "${version}" hash_index)
-	if(hash_index EQUAL -1)
-		set(url_hash "")
-	else()
-		math(EXPR hash_index "${hash_index} + 1")
-		list(GET ARG_VERSIONS ${hash_index} url_hash)
-	endif()
-
 	string(REGEX REPLACE "\\.[0-9]+$" "" version_major "${version}")
 	string(CONFIGURE "${ARG_URL}" url @ONLY)
 	if(ARG_SOURCE_DIR)
@@ -93,7 +85,16 @@ function(build_dependency name version build_type)
 		message(STATUS "Reusing existing source directory")
 		# If the directory already exists, it was probably patched too!
 		set(skip_patch true)
+	elseif(ARG_USE_GIT)
+		_clone("${url}" "${version}" "${source_dir}" "${ARG_GIT_SUBMODULES}")
 	else()
+		list(FIND ARG_VERSIONS "${version}" hash_index)
+		if(hash_index EQUAL -1)
+			set(url_hash "")
+		else()
+			math(EXPR hash_index "${hash_index} + 1")
+			list(GET ARG_VERSIONS ${hash_index} url_hash)
+		endif()
 		_download("${url}" "${url_hash}")
 	endif()
 	message(STATUS "Installing ${source_dir}")
@@ -111,11 +112,19 @@ function(build_dependency name version build_type)
 					set(apply_patch FALSE)
 				endif()
 			elseif(apply_patch)
-				message(STATUS "Applying patch ${item}")
+				if(item MATCHES "^(.+):(.+)$")
+					message(STATUS "Applying patch ${CMAKE_MATCH_2} in ${CMAKE_MATCH_1}")
+					set(patch_dir "${source_dir}/${CMAKE_MATCH_1}")
+					set(patch_file "${CMAKE_MATCH_2}")
+				else()
+					message(STATUS "Applying patch ${item}")
+					set(patch_dir "${source_dir}")
+					set(patch_file "${item}")
+				endif()
 				execute_process(
 					COMMAND "${patch}" -p1
-					INPUT_FILE "${CMAKE_CURRENT_LIST_DIR}/${item}"
-					WORKING_DIRECTORY "${source_dir}"
+					INPUT_FILE "${CMAKE_CURRENT_LIST_DIR}/${patch_file}"
+					WORKING_DIRECTORY "${patch_dir}"
 					COMMAND_ECHO STDOUT
 					COMMAND_ERROR_IS_FATAL ANY
 				)
@@ -360,7 +369,7 @@ function(_build_cmake build_type target_arch source_dir)
 		endif()
 
 		if(ANDROID_SDK_ROOT)
-			list(APPEND default_flags "-DANDROID_SDK=${ANDROID_SDK_ROOT}")
+			list(APPEND default_flags "-DANDROID_SDK=${ANDROID_SDK_ROOT}" "-G" "Ninja")
 		endif()
 	endif()
 
@@ -372,6 +381,13 @@ function(_build_cmake build_type target_arch source_dir)
 		set(build_flag "-DCMAKE_BUILD_TYPE=RelWithDebInfo")
 	else()
 		set(build_flag "-DCMAKE_BUILD_TYPE=Release")
+	endif()
+
+	if(CMAKE_ANDROID_NDK)
+		get_android_page_alignment_flags(page_align_ldflags "${CMAKE_ANDROID_ARCH_ABI}")
+		if(page_align_ldflags)
+			list(APPEND env "LDFLAGS=${page_align_ldflags}")
+		endif()
 	endif()
 
 	set(binary_dir "${source_dir}-build")
@@ -386,6 +402,7 @@ function(_build_cmake build_type target_arch source_dir)
 		WORKING_DIRECTORY "${binary_dir}"
 		COMMAND_ERROR_IS_FATAL ANY
 	)
+
 	execute_process(
 		COMMAND "${CMAKE_COMMAND}" --build . ${make_flags}
 		COMMAND_ECHO STDOUT
@@ -401,6 +418,29 @@ function(_build_cmake build_type target_arch source_dir)
 
 	if(NOT KEEP_BINARY_DIRS)
 		file(REMOVE_RECURSE "${binary_dir}")
+	endif()
+endfunction()
+
+function(get_android_page_alignment_flags out_var abi)
+	if(abi STREQUAL "armeabi-v7a")
+		set(needs_16k_page_alignment OFF)
+	elseif(abi STREQUAL "arm64-v8a")
+		set(needs_16k_page_alignment ON)
+	elseif(abi STREQUAL "x86")
+		set(needs_16k_page_alignment OFF)
+	elseif(abi STREQUAL "x86_64")
+		set(needs_16k_page_alignment ON)
+	else()
+		message(FATAL_ERROR "Unknown Android ABI '${abi}'")
+	endif()
+
+	if(needs_16k_page_alignment)
+		set(${out_var}
+			"-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"
+			PARENT_SCOPE
+		)
+	else()
+		set(${out_var} "" PARENT_SCOPE)
 	endif()
 endfunction()
 
@@ -426,7 +466,7 @@ function(get_android_env _out_env _out_ffmpeg_flags _out_triplet ndk abi platfor
 	get_android_toolchain(toolchain "${ndk}")
 	set(cc "${toolchain}/bin/${triplet}${api}-clang")
 
-	set(${_out_env}
+	set(env_to_set
 		"PATH=${toolchain}/bin:$ENV{PATH}"
 		"TOOLCHAIN=${toolchain}"
 		"TARGET=${triplet}"
@@ -437,8 +477,18 @@ function(get_android_env _out_env _out_ffmpeg_flags _out_triplet ndk abi platfor
 		"LD=${toolchain}/bin/ld"
 		"RANLIB=${toolchain}/bin/llvm-ranlib"
 		"STRIP=${toolchain}/bin/llvm-strip"
-		PARENT_SCOPE
 	)
+	set(ffmpeg_extra_ldflags_to_set
+		"-lc -lm -ldl -llog -landroid -Wl,--hash-style=both -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libunwind.a"
+	)
+
+	get_android_page_alignment_flags(page_align_ldflags "${abi}")
+	if(page_align_ldflags)
+		list(APPEND env_to_set "LDFLAGS=${page_align_ldflags}")
+		string(APPEND ffmpeg_extra_ldflags_to_set " ${page_align_ldflags}")
+	endif()
+
+	set(${_out_env} ${env_to_set} PARENT_SCOPE)
 	set(${_out_ffmpeg_flags}
 		"--ar=${toolchain}/bin/llvm-ar"
 		"--cc=${cc}"
@@ -447,7 +497,7 @@ function(get_android_env _out_env _out_ffmpeg_flags _out_triplet ndk abi platfor
 		"--ranlib=${toolchain}/bin/llvm-ranlib"
 		"--strip=${toolchain}/bin/llvm-strip"
 		"--extra-cflags=-DANDROID_NDK -fPIC -DANDROID -D__ANDROID__"
-		"--extra-ldflags=-lc -lm -ldl -llog -landroid -Wl,--hash-style=both -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libunwind.a"
+		"--extra-ldflags=${ffmpeg_extra_ldflags_to_set}"
 		"--sysroot=${CMAKE_SYSROOT}"
 		PARENT_SCOPE
 	)
@@ -539,6 +589,13 @@ function(_build_qmake build_type source_dir)
 		endif()
 	endif()
 
+	if(CMAKE_ANDROID_NDK)
+		get_android_page_alignment_flags(page_align_ldflags "${CMAKE_ANDROID_ARCH_ABI}")
+		if(page_align_ldflags)
+			list(APPEND env "LDFLAGS=${page_align_ldflags}")
+		endif()
+	endif()
+
 	set(binary_dir "${source_dir}-build")
 	file(MAKE_DIRECTORY "${binary_dir}")
 	execute_process(
@@ -569,6 +626,33 @@ function(_build_qmake build_type source_dir)
 	if(NOT KEEP_BINARY_DIRS)
 		file(REMOVE_RECURSE "${binary_dir}")
 	endif()
+endfunction()
+
+function(_clone url version source_dir)
+	message(STATUS "Cloning ${url}...")
+	find_package(Git REQUIRED)
+
+	execute_process(
+		COMMAND "${GIT_EXECUTABLE}" "clone" "--" "${url}" "${source_dir}"
+		COMMAND_ECHO STDOUT
+		COMMAND_ERROR_IS_FATAL ANY
+	)
+
+	execute_process(
+		COMMAND "${GIT_EXECUTABLE}" "checkout" "${version}"
+		COMMAND_ECHO STDOUT
+		WORKING_DIRECTORY "${source_dir}"
+		COMMAND_ERROR_IS_FATAL ANY
+	)
+
+	foreach(submodule IN LISTS ARGN)
+		execute_process(
+			COMMAND "${GIT_EXECUTABLE}" "submodule" "update" "--init" "${submodule}"
+			COMMAND_ECHO STDOUT
+			WORKING_DIRECTORY "${source_dir}"
+			COMMAND_ERROR_IS_FATAL ANY
+		)
+	endforeach()
 endfunction()
 
 function(_download url hash)
@@ -604,7 +688,7 @@ function(_download url hash)
 		else()
 			set(algo SHA384)
 			file(${algo} "${filename}" actual)
-			message(FATAL_ERROR "No hash available (${algo}=${actual})")
+			message(WARNING "No hash available (${algo}=${actual})")
 		endif()
 	else()
 		list(GET result 1 result)

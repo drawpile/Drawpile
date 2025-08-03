@@ -1125,6 +1125,25 @@ static void startApplication(DrawpileApp *app)
 }
 
 
+#ifdef Q_OS_ANDROID
+extern "C" JNIEXPORT void JNICALL
+Java_net_drawpile_android_DrawpileNative_processEvents(
+	JNIEnv *env, jobject obj, jint n)
+{
+	Q_UNUSED(env);
+	Q_UNUSED(obj);
+	Q_UNUSED(n);
+	if(dpApp().applicationState() == Qt::ApplicationSuspended) {
+		qWarning("DrawpileNative::processEvents start");
+		// TODO ?
+		qWarning("DrawpileNative::processEvents done");
+	} else {
+		qWarning("DrawpileNative::not suspended");
+	}
+}
+#endif
+
+
 int main(int argc, char **argv)
 {
 #ifdef __EMSCRIPTEN__

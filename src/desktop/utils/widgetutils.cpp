@@ -2,6 +2,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/main.h"
 #include "desktop/settings.h"
+#include "desktop/utils/qtguicompat.h"
 #include <QAbstractItemView>
 #include <QAbstractScrollArea>
 #include <QButtonGroup>
@@ -645,7 +646,22 @@ void showWindow(QWidget *widget, bool maximized, bool isMainWindow)
 	// native UI works. This wrapper takes care of that very common switch.
 #ifdef Q_OS_ANDROID
 	Q_UNUSED(maximized);
+#	ifdef DRAWPILE_KRITA_PATCHED_QT
+	// When using the Krita patched version of Qt, there's a frame around our
+	// window and showMaximized doesn't handle it properly. Too much effort to
+	// figure out how to patch that up correctly, so we'll just maximize
+	// manually. The padding is always 25 at the top and 3 everywhere else.
+	QScreen *screen = compat::widgetScreen(*widget);
+	if(screen) {
+		QRect r = screen->availableGeometry();
+		widget->setGeometry(r.marginsAdded(QMargins(3, 25, 0, -25)));
+		widget->show();
+	} else {
+		widget->showMaximized();
+	}
+#	else
 	widget->showMaximized();
+#	endif
 #else
 	if(maximized) {
 		widget->showMaximized();

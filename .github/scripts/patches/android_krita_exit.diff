@@ -1,0 +1,15 @@
+Description: This reverts the commit "Android: Don't invoke Qt's exit path".
+Krita patches out this call to QtActivityDelegate::onDestroy because it causes
+crashes on exit for them and they instead kill their process with a signal.
+Drawpile doesn't have an issue with this, so we patch it back in. Without this,
+closing Drawpile and reopening it gives you a blank activity.
+
+--- a/src/android/java/src/org/qtproject/qt5/android/bindings/QtActivity.java
++++ b/src/android/java/src/org/qtproject/qt5/android/bindings/QtActivity.java
+@@ -397,6 +397,7 @@ public class QtActivity extends Activity
+     protected void onDestroy()
+     {
+         super.onDestroy();
++        QtApplication.invokeDelegate();
+     }
+     //---------------------------------------------------------------------------

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name = "DefaultTheme" parent="android:Theme.Material">
+        <item name="android:windowBackground">@android:color/black</item>
+        <!-- Only works until android-35, next version breaks the UI. -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+    </style>
+</resources>

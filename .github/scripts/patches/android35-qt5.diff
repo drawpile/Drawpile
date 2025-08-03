@@ -1,0 +1,62 @@
+--- a/src/android/templates/build.gradle
++++ b/src/android/templates/build.gradle
+@@ -1,17 +1,17 @@
+ buildscript {
+     repositories {
+         google()
+-        jcenter()
++        mavenCentral()
+     }
+
+     dependencies {
+-        classpath 'com.android.tools.build:gradle:7.0.2'
++        classpath 'com.android.tools.build:gradle:8.12.0'
+     }
+ }
+
+ repositories {
+     google()
+-    jcenter()
++    mavenCentral()
+ }
+
+ apply plugin: 'com.android.application'
+@@ -33,6 +33,8 @@
+      * updated by QtCreator and androiddeployqt tools.
+      * Changing them manually might break the compilation!
+      *******************************************************/
++    namespace = drawpileNamespace
++    buildFeatures.aidl = true
+
+     compileSdkVersion androidCompileSdkVersion
+     buildToolsVersion androidBuildToolsVersion
+
+--- a/src/3rdparty/gradle/gradle/wrapper/gradle-wrapper.properties
++++ b/src/3rdparty/gradle/gradle/wrapper/gradle-wrapper.properties
+@@ -1,5 +1,5 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-7.2-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-8.13-bin.zip
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+--- a/src/3rdparty/gradle/gradlew
++++ b/src/3rdparty/gradle/gradlew
+@@ -86,7 +86,7 @@
+ APP_BASE_NAME=${0##*/}
+
+ # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+-DEFAULT_JVM_OPTS='-Dfile.encoding=UTF-8 "-Xmx64m" "-Xms64m"'
++DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+
+ # Use the maximum available, or set MAX_FD != -1 to use that value.
+ MAX_FD=maximum
+--- a/src/tools/androiddeployqt/main.cpp
++++ b/src/tools/androiddeployqt/main.cpp
+@@ -2467,6 +2467,7 @@ bool buildAndroidProject(const Options &options)
+         abiList.append(it.key());
+     }
+     gradleProperties["qtTargetAbiList"] = abiList.toLocal8Bit();// armeabi-v7a or arm64-v8a or ...
++    gradleProperties["drawpileNamespace"] = options.packageName.toUtf8();
+     if (!mergeGradleProperties(gradlePropertiesPath, gradleProperties))
+         return false;

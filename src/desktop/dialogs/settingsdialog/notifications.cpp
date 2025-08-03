@@ -9,9 +9,13 @@
 #include <QCheckBox>
 #include <QFormLayout>
 #include <QGridLayout>
+#include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QToolButton>
 #include <QVBoxLayout>
+#ifdef Q_OS_ANDROID
+#	include "libshared/util/androidutils.h"
+#endif
 
 namespace dialogs {
 namespace settingsdialog {

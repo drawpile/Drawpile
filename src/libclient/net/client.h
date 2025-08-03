@@ -348,6 +348,9 @@ private:
 #ifdef Q_OS_ANDROID
 	utils::AndroidWakeLock *m_wakeLock = nullptr;
 	utils::AndroidWifiLock *m_wifiLock = nullptr;
+#	ifdef DRAWPILE_USE_CONNECT_SERVICE
+	bool m_connectServiceStarted = false;
+#	endif
 #endif
 	QVector<QMetaObject::Connection> m_connections;
 

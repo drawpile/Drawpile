@@ -1,0 +1,15 @@
+Description: Add a #define that indicates that this Qt is patched. Relevant for
+e.g. Android to figure out whether we have window management available or not.
+
+--- a/src/corelib/global/qglobal.h
++++ b/src/corelib/global/qglobal.h
+@@ -51,6 +51,8 @@
+ #  include <stddef.h>
+ #endif
+ 
++#define DRAWPILE_KRITA_PATCHED_QT 1
++
+ /*
+    QT_VERSION is (major << 16) + (minor << 8) + patch.
+ */
+

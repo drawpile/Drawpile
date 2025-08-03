@@ -596,6 +596,7 @@ if(ANDROID)
 		icons/android/drawable-anydpi/ic_launcher_foreground.xml
 		icons/android/drawable-anydpi/ic_launcher_monochrome.xml
 		icons/android/values/strings.xml
+		icons/android/values/styles.xml
 		icons/android/xml/remote_action.xml
 	)
 	if(TARGET ${QT_PACKAGE_NAME}::AndroidExtras)
@@ -780,6 +781,8 @@ elseif(APPLE)
 	target_sources(drawpile PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.icns")
 	set_property(TARGET drawpile APPEND PROPERTY RESOURCE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.icns")
 elseif(ANDROID)
+	cmake_minimum_required(VERSION 3.26) # for copy_directory_if_different
+
 	set_target_properties(drawpile PROPERTIES
 		# Qt5 requires the output name to match the project name; Qt6 does not
 		# but might as well be consistent
@@ -796,11 +799,53 @@ elseif(ANDROID)
 	# This directory will get translations and other generated files added to it
 	# so it cannot be just a symlink to the source assets directory
 	file(MAKE_DIRECTORY "${build_time_assets_dir}")
-	set(output_apk "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_PROPERTY:drawpile,OUTPUT_NAME>-${PROJECT_VERSION}-${ANDROID_MIN_SDK_VERSION}-${ANDROID_TARGET_SDK_VERSION}-${ANDROID_ABI}.apk")
+
+	# Different pacakge name for debug builds so that both can be installed.
+	# Include a version number in release builds, don't include one in debug
+	# builds because it's annoying to end up with multiple APK versions.
+	if(CMAKE_BUILD_TYPE MATCHES "^[rR][eE][lL]")
+		set(ANDROID_PACKAGE_NAMESPACE "net.drawpile")
+		set(DRAWPILE_ANDROID_APP_NAME "Drawpile")
+		set(output_apk "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_PROPERTY:drawpile,OUTPUT_NAME>-${PROJECT_VERSION}-${ANDROID_MIN_SDK_VERSION}-${ANDROID_TARGET_SDK_VERSION}-${ANDROID_ABI}.apk")
+	else()
+		set(ANDROID_PACKAGE_NAMESPACE "net.drawpile.debug")
+		set(DRAWPILE_ANDROID_APP_NAME "Drawpile Debug")
+		set(output_apk "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_PROPERTY:drawpile,OUTPUT_NAME>-debug-${ANDROID_ABI}.apk")
+	endif()
+
+	# The namespace gets baked into the resource code, so we have to wrap it.
+	configure_file(
+		"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/cfg/DrawpileResources.java.in"
+		"${CMAKE_BINARY_DIR}/DrawpileResources.java"
+		@ONLY
+	)
+
 	include(GetSharedLibs)
 	get_shared_libs(android_extra_libs drawpile)
 
 	if(QT_VERSION VERSION_GREATER_EQUAL 6)
+		# TODO: The Java code references the "qt5" package, which probably
+		# changed in Qt6. So we probably have to split the Java code into a Qt5
+		# and a Qt6 directory or something.
+		cmake_language(DEFER CALL add_custom_command
+			TARGET drawpile_make_apk PRE_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+				"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/android"
+				"${CMAKE_BINARY_DIR}/android-build/src/net/drawpile/android"
+			COMMAND_EXPAND_LISTS
+			COMMENT "Copying Java sources"
+			VERBATIM
+		)
+		cmake_language(DEFER CALL add_custom_command
+			TARGET drawpile_make_apk PRE_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy
+				"${CMAKE_BINARY_DIR}/DrawpileResources.java"
+				"${CMAKE_BINARY_DIR}/android-build/src/net/drawpile/cfg/DrawpileResources.java"
+			COMMAND_EXPAND_LISTS
+			COMMENT "Copying resources wrapper"
+			VERBATIM
+		)
+
 		set_property(TARGET drawpile APPEND PROPERTY
 			QT_ANDROID_EXTRA_LIBS ${android_extra_libs}
 		)
@@ -816,6 +861,26 @@ elseif(ANDROID)
 			VERBATIM
 		)
 	else()
+		add_custom_target(drawpile_copy_android_java_sources ALL
+			COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+				"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/android"
+				"${CMAKE_BINARY_DIR}/android-build/src/net/drawpile/android"
+			COMMAND_EXPAND_LISTS
+			COMMENT "Copying Java sources"
+			VERBATIM
+		)
+		add_dependencies(apk drawpile_copy_android_java_sources)
+
+		add_custom_target(drawpile_copy_android_resources_wrapper ALL
+			COMMAND ${CMAKE_COMMAND} -E copy
+				"${CMAKE_BINARY_DIR}/DrawpileResources.java"
+				"${CMAKE_BINARY_DIR}/android-build/src/net/drawpile/cfg/DrawpileResources.java"
+			COMMAND_EXPAND_LISTS
+			COMMENT "Copying resources wrapper"
+			VERBATIM
+		)
+		add_dependencies(apk drawpile_copy_android_resources_wrapper)
+
 		set(ANDROID_QT_NAMESPACE org.qtproject.qt5)
 		file(READ AndroidManifest.xml.qt5 ANDROID_EXTRA_METADATA)
 		target_link_libraries(drawpile PRIVATE ${QT_PACKAGE_NAME}::AndroidExtras)
@@ -862,6 +927,7 @@ elseif(ANDROID)
 			list(INSERT cursed_json 1 "\"android-extra-libs\": \"${android_extra_libs}\",")
 		endif()
 
+		list(JOIN cursed_json "\n" cursed_json)
 		file(WRITE "${CMAKE_BINARY_DIR}/android_deployment_settings.json" ${cursed_json})
 	endif()
 
@@ -872,7 +938,6 @@ elseif(ANDROID)
 	else()
 		set(ANDROID_APPLICATION_ATTRIBUTES "android:icon=\"@drawable/ic_launcher_foreground\"")
 	endif()
-	set(ANDROID_PACKAGE_NAMESPACE net.drawpile)
 	get_android_extensions(ANDROID_VIEW_INTENTS)
 
 	configure_file(AndroidManifest.xml.in

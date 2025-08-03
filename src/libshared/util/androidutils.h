@@ -46,6 +46,9 @@ private:
 
 bool androidHasStylusInput();
 
+void startConnectService();
+void stopConnectService();
+
 }
 
 #endif

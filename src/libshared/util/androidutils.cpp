@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libshared/util/androidutils.h"
 #include <QString>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#	include <QtAndroid>
+#endif
 
 namespace utils {
 
@@ -193,6 +196,30 @@ bool androidHasStylusInput()
 
 	env->ReleaseIntArrayElements(inputDeviceIds.object<jintArray>(), ids, 0);
 	return stylusFound;
+}
+
+void startConnectService()
+{
+	QJniEnvironment env;
+	QJniObject activity = QJniObject::callStaticObjectMethod(
+		"org/qtproject/qt5/android/QtNative", "activity",
+		"()Landroid/app/Activity;");
+	if(!clearException(env) && checkValid("activity", activity)) {
+		activity.callMethod<void>("startConnectService", "()V");
+		clearException(env);
+	}
+}
+
+void stopConnectService()
+{
+	QJniEnvironment env;
+	QJniObject activity = QJniObject::callStaticObjectMethod(
+		"org/qtproject/qt5/android/QtNative", "activity",
+		"()Landroid/app/Activity;");
+	if(!clearException(env) && checkValid("activity", activity)) {
+		activity.callMethod<void>("stopConnectService", "()V");
+		clearException(env);
+	}
 }
 
 }

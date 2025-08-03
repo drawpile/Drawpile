@@ -101,9 +101,9 @@ jobs:
           - os: ubuntu-22.04
             cross_os: Android
             component: ''
-            qt: 5.15.17
+            qt: 5.K4b3b2a81b7a285e5705e70d11e5535fddc89b3e1
             arch: arm64
-            android_sdk_versions: '30-34'
+            android_sdk_versions: '30-35'
             sccache_triplet: x86_64-unknown-linux-musl
             build_type: Release
             collect_symbols: false
@@ -170,7 +170,7 @@ jobs:
           - os: ubuntu-22.04
             cross_os: Android
             component: ''
-            qt: 5.15.17
+            qt: 5.K4b3b2a81b7a285e5705e70d11e5535fddc89b3e1
             arch: arm64
             android_sdk_versions: '23-23'
             sccache_triplet: x86_64-unknown-linux-musl
@@ -239,7 +239,7 @@ jobs:
           - os: ubuntu-22.04
             cross_os: Android
             component: ''
-            qt: 5.15.17
+            qt: 5.K4b3b2a81b7a285e5705e70d11e5535fddc89b3e1
             arch: arm32
             android_sdk_versions: '23-23'
             sccache_triplet: x86_64-unknown-linux-musl
@@ -502,16 +502,22 @@ jobs:
           msbuild-architecture: ${{ matrix.arch == 'x86_64' && 'x64' || matrix.arch }}
         if: runner.os == 'Windows'
 
+      - uses: actions/setup-java@17f84c3641ba7b8f6deff6309fc4c864478f5d62
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+        if: matrix.cross_os == 'Android'
+
       - name: Set Android environment variables
         run: |
           min_sdk_version="$(echo "$ANDROID_SDK_VERSIONS" | cut -f1 -d-)"
           target_sdk_version="$(echo "$ANDROID_SDK_VERSIONS" | cut -f2 -d-)"
           echo "SDK=$ANDROID_SDK_VERSIONS min=$min_sdk_version target=$target_sdk_version"
-          build_tools_version=34.0.0-rc3
-          ndk_version=27.0.12077973
+          build_tools_version=35.0.0
+          ndk_version=27.3.13750724
           ndk_root="$ANDROID_SDK_ROOT/ndk/$ndk_version"
           ndk_toolchain_file="$ndk_root/build/cmake/android.toolchain.cmake"
-          platform=android-34
+          platform=android-35
           echo "ANDROID_BUILD_TOOLS_VERSION=$build_tools_version" >> "$GITHUB_ENV"
           echo "ANDROID_NDK_VERSION=$ndk_version" >> "$GITHUB_ENV"
           echo "ANDROID_NDK_ROOT=$ndk_root" >> "$GITHUB_ENV"
@@ -543,14 +549,13 @@ jobs:
         if: matrix.cross_os == 'Android'
 
       # This check is here to make sure the Java version doesn't change from
-      # under us. Both 11 and 17 should be okay for android-34. Lower and
-      # higher versions are known broken. Anything in-between is not LTS.
+      # under us. 17 is supported for android-35, lower ones are unsupported.
       - name: Check Java version
         run: |
           java_version_output="$(java -version 2>&1)"
           echo "$java_version_output"
           java_version="$(echo "$java_version_output" | perl -0777 -ne '/version\s+"([0-9]+)\./ && print $1')"
-          expected_java_version='11'
+          expected_java_version='17'
           if [ "$java_version" = "$expected_java_version" ]; then
             echo "Java version $java_version matches expected version $expected_java_version"
           else
@@ -864,8 +869,8 @@ jobs:
           PRERELEASE: ${{ !startsWith(github.ref, 'refs/tags/') || contains(github.ref, '-') }}
         run: |
           checkout/pkg/make-github-release.sh \
-            'Drawpile-Android-30-34-arm64-Qt5.15.17;Drawpile-*.apk;Android APK 64bit' \
-            'Drawpile-Android-23-23-arm64-Qt5.15.17;Drawpile-*.apk;Android APK 64bit for end of life systems - only use if you have Android 10 or older' \
+            'Drawpile-Android-30-35-arm64-Qt5.K4b3b2a81b7a285e5705e70d11e5535fddc89b3e1;Drawpile-*.apk;Android APK 64bit' \
+            'Drawpile-Android-23-23-arm64-Qt5.K4b3b2a81b7a285e5705e70d11e5535fddc89b3e1;Drawpile-*.apk;Android APK 64bit for end of life systems - only use if you have Android 10 or older' \
             'Drawpile-Linux-x86_64-Qt5.15.17;Drawpile-*.AppImage;Linux AppImage 64bit' \
             'Drawpile-macOS-x86_64-Qt6.8.3;Drawpile-*.dmg;macOS Disk Image for Intel' \
             'Drawpile-macOS-arm64-Qt6.8.3;Drawpile-*.dmg;macOS Disk Image for Apple Silicon' \
@@ -873,7 +878,7 @@ jobs:
             'Drawpile-Windows-x86_64-Qt5.15.17;Drawpile-*.zip;Windows Portable ZIP 64bit' \
             'Drawpile-Windows-x86_64-Qt5.15.17;DrawpileSymbols-*.zip;Debug Symbols for Windows 64bit - does not include Drawpile' \
             'Drawpile-Tools-Windows-x86_64-Qt5.15.17;Drawpile-*.zip;Windows Server and Tools Portable ZIP 64bit - does not include Drawpile' \
-            'Drawpile-Android-23-23-arm32-Qt5.15.17;Drawpile-*.apk;Android APK 32bit - do not use, you want 64bit' \
+            'Drawpile-Android-23-23-arm32-Qt5.K4b3b2a81b7a285e5705e70d11e5535fddc89b3e1;Drawpile-*.apk;Android APK 32bit - do not use, you want 64bit' \
             'Drawpile-Windows-x86-Qt5.15.17;Drawpile-*.msi;Windows Installer 32bit - do not use, you want 64bit' \
             'Drawpile-Windows-x86-Qt5.15.17;Drawpile-*.zip;Windows Portable ZIP 32bit - do not use, you want 64bit' \
             'Drawpile-Windows-arm64-Qt5.15.17;Drawpile-*.msi;Windows Installer for ARM-based devices - do not use, you want 64bit' \

@@ -18,6 +18,9 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="29"
         tools:ignore="ScopedStorage" />
+    <!-- Foreground service isn't working yet, so turn this off for now. -->
+    <!-- FOREGROUND_SERVICE is used to keep connected in the background. -->
+    <!-- <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> -->
     <!-- %%INSERT_FEATURES -->
     <supports-screens
         android:anyDensity="true"
@@ -27,18 +30,22 @@
     <application
         android:name="${ANDROID_QT_NAMESPACE}.android.bindings.QtApplication"
         android:hardwareAccelerated="true"
-        android:label="-- %%INSERT_APP_NAME%% --"
+        android:label="${DRAWPILE_ANDROID_APP_NAME}"
         android:requestLegacyExternalStorage="true"
         android:allowNativeHeapPointerTagging="false"
         android:allowBackup="true"
         android:fullBackupOnly="false"
         android:resizeableActivity="true"
+        android:hasFragileUserData="true"
+        android:theme="@style/DefaultTheme"
         ${ANDROID_APPLICATION_ATTRIBUTES}>
+
         <meta-data android:name="android.max_aspect" android:value="2.1" />
+
         <activity
-            android:name="${ANDROID_QT_NAMESPACE}.android.bindings.QtActivity"
+            android:name="net.drawpile.android.MainActivity"
             android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
-            android:label="-- %%INSERT_APP_NAME%% --"
+            android:label="${DRAWPILE_ANDROID_APP_NAME}"
             android:launchMode="singleTop"
             android:screenOrientation="unspecified"
             android:exported="true"
@@ -77,5 +84,16 @@
                 ${ANDROID_VIEW_INTENTS}
             </intent-filter>
         </activity>
+
+        <activity android:name="org.qtproject.qt5.android.bindings.QtActivity" />
+
+        <!-- Foreground service isn't working yet, so turn this off for now. -->
+        <!--
+        <service
+            android:name="net.drawpile.ConnectService"
+            android:foregroundServiceType="shortService"
+            android:exported="false" />
+        -->
+
     </application>
 </manifest>

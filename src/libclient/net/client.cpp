@@ -67,6 +67,13 @@ void Client::connectToServerInternal(
 		m_wifiLock =
 			new utils::AndroidWifiLock{"WIFI_MODE_FULL_LOW_LATENCY", tag};
 	}
+
+#	ifdef DRAWPILE_USE_CONNECT_SERVICE
+	if(!m_connectServiceStarted) {
+		m_connectServiceStarted = true;
+		utils::startConnectService();
+	}
+#	endif
 #endif
 
 	m_connections.clear();
@@ -202,6 +209,11 @@ void Client::handleDisconnect(
 		delete m_wifiLock;
 		m_wakeLock = nullptr;
 		m_wifiLock = nullptr;
+#	ifdef DRAWPILE_USE_CONNECT_SERVICE
+		if(m_connectServiceStarted) {
+			utils::stopConnectService();
+		}
+#	endif
 #endif
 	} else {
 		// WebSockets may report multiple disconnects, sometimes amending error
