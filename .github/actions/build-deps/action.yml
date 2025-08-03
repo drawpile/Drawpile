@@ -106,7 +106,7 @@ runs:
     - uses: ./.github/actions/build-and-cache
       with:
         name: Qt
-        cache_key: qt-${{ inputs.cache_key }}-${{ inputs.qt }}
+        cache_key: qt-sqlite-${{ inputs.cache_key }}-${{ inputs.qt }}
         path: ${{ inputs.path }}/qt
         pre_build: ${{ inputs.qt_pre_build }}
         build: >
