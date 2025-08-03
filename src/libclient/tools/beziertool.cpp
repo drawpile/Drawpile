@@ -13,12 +13,13 @@ using canvas::PointVector;
 
 static constexpr long long DELTA_MSEC = 10;
 
-BezierTool::BezierTool(ToolController &owner)
+BezierTool::BezierTool(ToolController &owner, DP_MaskSync *ms)
 	: Tool(
 		  owner, BEZIER, utils::Cursors::curve(),
 		  Capability::AllowColorPick | Capability::Fractional |
 			  Capability::AllowToolAdjust1 | Capability::AllowToolAdjust2 |
 			  Capability::AllowToolAdjust3)
+	, m_brushEngine(ms)
 {
 }
 

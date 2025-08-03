@@ -10,13 +10,13 @@ extern "C" {
 namespace drawdance {
 
 StrokeWorker::StrokeWorker(
-	const PushMessageFn &pushMessage, const PollControlFn &pollControl,
-	const SyncFn &sync)
+	DP_MaskSync *msOrNull, const PushMessageFn &pushMessage,
+	const PollControlFn &pollControl, const SyncFn &sync)
 	: m_pushMessage(pushMessage)
 	, m_pollControl(pollControl)
 	, m_sync(sync)
 	, m_data(DP_stroke_worker_new(DP_brush_engine_new(
-		  &StrokeWorker::pushMessage, &StrokeWorker::pollControl,
+		  msOrNull, &StrokeWorker::pushMessage, &StrokeWorker::pollControl,
 		  &StrokeWorker::sync, this)))
 {
 }

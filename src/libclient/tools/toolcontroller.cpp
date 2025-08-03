@@ -56,14 +56,15 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 {
 	Q_ASSERT(client);
 
-	Freehand *freehand = new Freehand(*this);
+	DP_MaskSync *ms = DP_mask_sync_new();
+	Freehand *freehand = new Freehand(*this, ms);
 	registerTool(freehand);
 	registerTool(new FreehandEraser(*this, freehand));
 	registerTool(new ColorPicker(*this));
-	registerTool(new Line(*this));
-	registerTool(new Rectangle(*this));
-	registerTool(new Ellipse(*this));
-	registerTool(new BezierTool(*this));
+	registerTool(new Line(*this, ms));
+	registerTool(new Rectangle(*this, ms));
+	registerTool(new Ellipse(*this, ms));
+	registerTool(new BezierTool(*this, ms));
 	registerTool(new FloodFill(*this));
 	registerTool(new LassoFillTool(*this));
 	registerTool(new GradientTool(*this));
@@ -76,6 +77,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new ZoomTool(*this));
 	registerTool(new Inspector(*this));
 	registerTool(new TransformTool(*this));
+	DP_mask_sync_decref(ms);
 
 	m_activeTool = m_toolbox[Tool::FREEHAND];
 	m_activeLayer = 0;

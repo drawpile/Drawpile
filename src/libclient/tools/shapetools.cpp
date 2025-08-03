@@ -157,8 +157,8 @@ void ShapeTool::updateShape(bool constrain, bool center)
 	m_p1 = center ? m_start - (m_p2 - m_start) : m_start;
 }
 
-Line::Line(ToolController &owner)
-	: ShapeTool(owner, LINE, utils::Cursors::line())
+Line::Line(ToolController &owner, DP_MaskSync *ms)
+	: ShapeTool(owner, LINE, utils::Cursors::line(), ms)
 {
 }
 
@@ -175,8 +175,8 @@ QPointF Line::getConstrainPoint() const
 	return constraints::angle(m_start, m_current);
 }
 
-Rectangle::Rectangle(ToolController &owner)
-	: ShapeTool(owner, RECTANGLE, utils::Cursors::rectangle())
+Rectangle::Rectangle(ToolController &owner, DP_MaskSync *ms)
+	: ShapeTool(owner, RECTANGLE, utils::Cursors::rectangle(), ms)
 {
 }
 
@@ -191,8 +191,8 @@ canvas::PointVector Rectangle::pointVector() const
 	return gen.pv();
 }
 
-Ellipse::Ellipse(ToolController &owner)
-	: ShapeTool(owner, ELLIPSE, utils::Cursors::ellipse())
+Ellipse::Ellipse(ToolController &owner, DP_MaskSync *ms)
+	: ShapeTool(owner, ELLIPSE, utils::Cursors::ellipse(), ms)
 {
 }
 

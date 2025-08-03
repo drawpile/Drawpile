@@ -64,6 +64,7 @@ public:
 	using SyncFn = std::function<DP_CanvasState *()>;
 
 	BrushEngine(
+		DP_MaskSync *msOrNull = nullptr,
 		const PollControlFn &pollControl = nullptr,
 		const SyncFn &sync = nullptr);
 	~BrushEngine();

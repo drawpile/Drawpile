@@ -61,8 +61,9 @@ static void push_message(void *user, DP_Message *msg)
 DP_BrushPreview *DP_brush_preview_new(void)
 {
     DP_BrushPreview *bp = DP_malloc(sizeof(*bp));
-    *bp = (DP_BrushPreview){DP_brush_engine_new(push_message, NULL, NULL, bp),
-                            NULL, DP_VECTOR_NULL};
+    *bp = (DP_BrushPreview){
+        DP_brush_engine_new(NULL, push_message, NULL, NULL, bp), NULL,
+        DP_VECTOR_NULL};
     DP_VECTOR_INIT_TYPE(&bp->messages, DP_Message *, 64);
     return bp;
 }

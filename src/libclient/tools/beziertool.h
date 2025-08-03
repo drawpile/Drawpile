@@ -4,6 +4,8 @@
 #include "libclient/drawdance/brushengine.h"
 #include "libclient/tools/tool.h"
 
+struct DP_MaskSync;
+
 namespace tools {
 
 /**
@@ -11,7 +13,7 @@ namespace tools {
  */
 class BezierTool final : public Tool {
 public:
-	BezierTool(ToolController &owner);
+	BezierTool(ToolController &owner, DP_MaskSync *ms);
 
 	void begin(const BeginParams &params) override;
 	void motion(const MotionParams &params) override;

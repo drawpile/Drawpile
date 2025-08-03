@@ -16,14 +16,14 @@ using std::placeholders::_1;
 
 namespace tools {
 
-Freehand::Freehand(ToolController &owner)
+Freehand::Freehand(ToolController &owner, DP_MaskSync *ms)
 	: Tool(
 		  owner, FREEHAND, Qt::CrossCursor,
 		  Capability::AllowColorPick | Capability::SupportsPressure |
 			  Capability::AllowToolAdjust1 | Capability::AllowToolAdjust2 |
 			  Capability::AllowToolAdjust3)
 	, m_strokeWorker(
-		  std::bind(&Freehand::pushMessage, this, _1),
+		  ms, std::bind(&Freehand::pushMessage, this, _1),
 		  std::bind(&Freehand::pollControl, this, _1),
 		  std::bind(&Freehand::sync, this))
 	, m_mutex(DP_mutex_new())

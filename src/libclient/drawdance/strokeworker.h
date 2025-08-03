@@ -6,6 +6,7 @@
 struct DP_BrushEngineStrokeParams;
 struct DP_CanvasState;
 struct DP_ClassicBrush;
+struct DP_MaskSync;
 struct DP_Message;
 struct DP_MyPaintBrush;
 struct DP_MyPaintSettings;
@@ -26,8 +27,8 @@ public:
 	using SyncFn = std::function<DP_CanvasState *()>;
 
 	StrokeWorker(
-		const PushMessageFn &pushMessage, const PollControlFn &pollControl,
-		const SyncFn &sync);
+		DP_MaskSync *msOrNull, const PushMessageFn &pushMessage,
+		const PollControlFn &pollControl, const SyncFn &sync);
 	~StrokeWorker();
 
 	StrokeWorker(const StrokeWorker &) = delete;

@@ -112,6 +112,12 @@ typedef struct DP_MyPaintDabParams {
     uint32_t color;
 } DP_MyPaintDabParams;
 
+struct DP_MaskSync {
+    DP_Atomic refcount;
+    DP_Atomic sync_id;
+    int last_sync_id;
+};
+
 struct DP_StrokeEngine {
     struct {
         bool enabled;
@@ -170,6 +176,8 @@ struct DP_BrushEngine {
         bool preview;
         int next_selection_id;
         int current_selection_id;
+        int sync_id;
+        DP_MaskSync *ms;
         DP_LayerContent *lc;
         size_t capacity;
         bool *map;
@@ -238,6 +246,43 @@ struct DP_BrushEngine {
     DP_BrushEngineSyncFn sync;
     void *user;
 };
+
+
+DP_MaskSync *DP_mask_sync_new(void)
+{
+    DP_MaskSync *ms = DP_malloc(sizeof(*ms));
+    *ms = (DP_MaskSync){DP_ATOMIC_INIT(1), DP_ATOMIC_INIT(0), 0};
+    return ms;
+}
+
+DP_MaskSync *DP_mask_sync_incref(DP_MaskSync *ms)
+{
+    DP_ASSERT(ms);
+    DP_ASSERT(DP_atomic_get(&ms->refcount) > 0);
+    DP_atomic_inc(&ms->refcount);
+    return ms;
+}
+
+DP_MaskSync *DP_mask_sync_incref_nullable(DP_MaskSync *ms_or_null)
+{
+    return ms_or_null ? DP_mask_sync_incref(ms_or_null) : NULL;
+}
+
+void DP_mask_sync_decref(DP_MaskSync *ms)
+{
+    DP_ASSERT(ms);
+    DP_ASSERT(DP_atomic_get(&ms->refcount) > 0);
+    if (DP_atomic_dec(&ms->refcount)) {
+        DP_free(ms);
+    }
+}
+
+void DP_mask_sync_decref_nullable(DP_MaskSync *ms_or_null)
+{
+    if (ms_or_null) {
+        DP_mask_sync_decref(ms_or_null);
+    }
+}
 
 
 static DP_PaintMode convert_paint_mode(DP_BrushEngine *be,
@@ -1785,7 +1830,8 @@ static void brush_engine_handle_stroke_engine_poll_control(void *user,
 
 
 DP_BrushEngine *
-DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
+DP_brush_engine_new(DP_MaskSync *ms_or_null,
+                    DP_BrushEnginePushMessageFn push_message,
                     DP_BrushEnginePollControlFn poll_control_or_null,
                     DP_BrushEngineSyncFn sync_or_null, void *user)
 {
@@ -1808,7 +1854,8 @@ DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
          get_color_mypaint_pigment,
          NULL},
         {0, 1.0f, 0.0f, false, false, false, false, false, false, 0},
-        {false, false, 0, 0, NULL, 0, NULL, NULL},
+        {false, false, 0, 0, ms_or_null ? ++ms_or_null->last_sync_id : 0,
+         DP_mask_sync_incref_nullable(ms_or_null), NULL, 0, NULL, NULL},
         {0},
         {0, 0, 0, 0, NULL},
         {false, false, false, 0, 0, 0, 0, {0}},
@@ -1828,6 +1875,7 @@ void DP_brush_engine_free(DP_BrushEngine *be)
         DP_compress_zstd_free(&be->mask.zstd_cctx);
         DP_free(be->mask.map);
         DP_layer_content_decref_nullable(be->mask.lc);
+        DP_mask_sync_decref_nullable(be->mask.ms);
         DP_canvas_state_decref_nullable(be->cs);
         DP_free_simd(be->buffer);
         stroke_engine_dispose(&be->se);
@@ -2302,6 +2350,16 @@ static void push_selection_sync_clear(DP_BrushEngine *be)
     push_selection_sync(be, 0xffff, 0xffff, 0, NULL);
 }
 
+static bool update_mask_sync_id(DP_BrushEngine *be)
+{
+    if (be->mask.ms) {
+        int sync_id = be->mask.sync_id;
+        int prev_sync_id = DP_atomic_xch(&be->mask.ms->sync_id, sync_id);
+        return sync_id != prev_sync_id;
+    }
+    return false;
+}
+
 void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
                                   DP_CanvasState *cs_or_null,
                                   unsigned int context_id,
@@ -2350,9 +2408,20 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
     if (!compatibility_mode && mask_lc) {
         be->mask.active = true;
         be->mask.preview = !push_undo_point;
-        if (push_undo_point && mask_lc != be->mask.lc) {
+        bool sync_id_changed;
+        if (push_undo_point
+            && ((sync_id_changed = update_mask_sync_id(be))
+                || mask_lc != be->mask.lc)) {
+            // Not strictly necessary, but we'll clear the next selection if
+            // another brush engine has changed it from under us.
+            bool clear_next =
+                sync_id_changed
+                && be->mask.current_selection_id != next_selection_id;
             push_selection_sync_clear(be);
             be->mask.current_selection_id = next_selection_id;
+            if (clear_next) {
+                push_selection_sync_clear(be);
+            }
             DP_layer_content_decref_nullable(be->mask.lc);
             be->mask.lc = DP_layer_content_incref(mask_lc);
             size_t required_capacity = DP_int_to_size(DP_tile_total_round(
@@ -2371,7 +2440,7 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
     }
     else {
         be->mask.active = false;
-        if (push_undo_point && be->mask.lc) {
+        if (push_undo_point && (update_mask_sync_id(be) || be->mask.lc)) {
             push_selection_sync_clear(be);
             be->mask.current_selection_id = 0;
             DP_layer_content_decref(be->mask.lc);

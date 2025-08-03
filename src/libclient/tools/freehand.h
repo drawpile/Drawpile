@@ -7,6 +7,7 @@
 #include <QAtomicInt>
 #include <QTimer>
 
+struct DP_MaskSync;
 struct DP_Mutex;
 struct DP_Semaphore;
 
@@ -14,7 +15,7 @@ namespace tools {
 
 class Freehand final : public Tool {
 public:
-	Freehand(ToolController &owner);
+	Freehand(ToolController &owner, DP_MaskSync *ms);
 	~Freehand() override;
 
 	void begin(const BeginParams &params) override;

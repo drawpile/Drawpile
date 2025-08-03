@@ -77,11 +77,12 @@ void StrokeEngine::pollControl(void *user, bool enable)
 }
 
 
-BrushEngine::BrushEngine(const PollControlFn &pollControl, const SyncFn &sync)
+BrushEngine::BrushEngine(
+	DP_MaskSync *msOrNull, const PollControlFn &pollControl, const SyncFn &sync)
 	: m_pollControl(pollControl)
 	, m_sync(sync)
 	, m_data(DP_brush_engine_new(
-		  &BrushEngine::pushMessage,
+		  msOrNull, &BrushEngine::pushMessage,
 		  pollControl ? &BrushEngine::pollControl : nullptr,
 		  sync ? &BrushEngine::sync : nullptr, this))
 {

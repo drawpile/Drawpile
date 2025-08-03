@@ -63,8 +63,16 @@ typedef void (*DP_BrushEnginePushMessageFn)(void *user, DP_Message *msg);
 typedef void (*DP_BrushEnginePollControlFn)(void *user, bool enable);
 typedef DP_CanvasState *(*DP_BrushEngineSyncFn)(void *user);
 
+typedef struct DP_MaskSync DP_MaskSync;
 typedef struct DP_StrokeEngine DP_StrokeEngine;
 typedef struct DP_BrushEngine DP_BrushEngine;
+
+
+DP_MaskSync *DP_mask_sync_new(void);
+DP_MaskSync *DP_mask_sync_incref(DP_MaskSync *ms);
+DP_MaskSync *DP_mask_sync_incref_nullable(DP_MaskSync *ms_or_null);
+void DP_mask_sync_decref(DP_MaskSync *ms);
+void DP_mask_sync_decref_nullable(DP_MaskSync *ms_or_null);
 
 
 DP_StrokeEngine *
@@ -90,7 +98,8 @@ void DP_stroke_engine_stroke_end(DP_StrokeEngine *se, long long time_msec,
 
 
 DP_BrushEngine *
-DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
+DP_brush_engine_new(DP_MaskSync *ms_or_null,
+                    DP_BrushEnginePushMessageFn push_message,
                     DP_BrushEnginePollControlFn poll_control_or_null,
                     DP_BrushEngineSyncFn sync_or_null, void *user);
 

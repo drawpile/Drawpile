@@ -5,6 +5,8 @@
 #include "libclient/tools/tool.h"
 #include <QRectF>
 
+struct DP_MaskSync;
+
 namespace tools {
 
 /**
@@ -12,12 +14,13 @@ namespace tools {
  */
 class ShapeTool : public Tool {
 public:
-	ShapeTool(ToolController &owner, Type type, QCursor cursor)
+	ShapeTool(ToolController &owner, Type type, QCursor cursor, DP_MaskSync *ms)
 		: Tool(
 			  owner, type, cursor,
 			  Capability::AllowColorPick | Capability::Fractional |
 				  Capability::AllowToolAdjust1 | Capability::AllowToolAdjust2 |
 				  Capability::AllowToolAdjust3)
+		, m_brushEngine(ms)
 	{
 	}
 
@@ -57,7 +60,7 @@ private:
  */
 class Line final : public ShapeTool {
 public:
-	Line(ToolController &owner);
+	Line(ToolController &owner, DP_MaskSync *ms);
 
 protected:
 	canvas::PointVector pointVector() const override;
@@ -71,7 +74,7 @@ protected:
  */
 class Rectangle final : public ShapeTool {
 public:
-	Rectangle(ToolController &owner);
+	Rectangle(ToolController &owner, DP_MaskSync *ms);
 
 protected:
 	canvas::PointVector pointVector() const override;
@@ -84,7 +87,7 @@ protected:
  */
 class Ellipse final : public ShapeTool {
 public:
-	Ellipse(ToolController &owner);
+	Ellipse(ToolController &owner, DP_MaskSync *ms);
 
 protected:
 	canvas::PointVector pointVector() const override;
