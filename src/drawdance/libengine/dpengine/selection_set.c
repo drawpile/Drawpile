@@ -243,6 +243,15 @@ void DP_selection_set_diff_nullable(DP_SelectionSet *ss_or_null,
     DP_Selection *prev_sel = get_active(prev_or_null, prev_active_context_id,
                                         prev_active_selection_id);
     DP_selection_diff_nullable(sel, prev_sel, diff);
+#ifdef DP_SELECTION_DEBUG_ID
+    unsigned int debug_context_id = (DP_SELECTION_DEBUG_ID & 0xff00u) >> 8u;
+    int debug_selection_id = DP_SELECTION_DEBUG_ID & 0xff;
+    DP_Selection *debug_sel =
+        get_active(ss_or_null, debug_context_id, debug_selection_id);
+    DP_Selection *prev_debug_sel =
+        get_active(prev_or_null, debug_context_id, debug_selection_id);
+    DP_selection_diff_nullable(debug_sel, prev_debug_sel, diff);
+#endif
 }
 
 

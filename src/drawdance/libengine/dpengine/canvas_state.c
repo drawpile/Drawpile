@@ -1747,14 +1747,12 @@ static DP_ViewModeContext get_clip_layer(void *user, int i,
     return DP_view_mode_context_root_at_clip(vmcr, cs, i, out_lle, out_lp);
 }
 
-static DP_TransientTile *flatten_active_selection(DP_CanvasState *cs,
-                                                  int tile_index,
-                                                  DP_TransientTile *tt,
-                                                  bool include_sublayers,
-                                                  DP_UPixel15 color)
+static DP_TransientTile *
+flatten_selection(DP_CanvasState *cs, int tile_index, DP_TransientTile *tt,
+                  bool include_sublayers, DP_UPixel15 color,
+                  unsigned int context_id, int selection_id)
 {
-    int active_selection_id = cs->active_selection_id;
-    if (active_selection_id <= 0) {
+    if (selection_id <= 0) {
         return tt;
     }
 
@@ -1763,8 +1761,8 @@ static DP_TransientTile *flatten_active_selection(DP_CanvasState *cs,
         return tt;
     }
 
-    DP_Selection *sel = DP_selection_set_search_noinc(ss, cs->active_context_id,
-                                                      active_selection_id);
+    DP_Selection *sel =
+        DP_selection_set_search_noinc(ss, context_id, selection_id);
     if (!sel) {
         return tt;
     }
@@ -1825,9 +1823,16 @@ DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
         }
     }
     if (selection_tint) {
-        tt = flatten_active_selection(cs, tile_index, tt, include_sublayers,
-                                      *selection_tint);
+        tt = flatten_selection(cs, tile_index, tt, include_sublayers,
+                               *selection_tint, cs->active_context_id,
+                               cs->active_selection_id);
     }
+#ifdef DP_SELECTION_DEBUG_ID
+    tt = flatten_selection(cs, tile_index, tt, include_sublayers,
+                           (DP_UPixel15){0, DP_BIT15, 0, DP_BIT15 / 2},
+                           (DP_SELECTION_DEBUG_ID & 0xff00u) >> 8u,
+                           DP_SELECTION_DEBUG_ID & 0xff);
+#endif
     return tt;
 }
 

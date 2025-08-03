@@ -102,6 +102,9 @@ target_link_libraries(dpengine PUBLIC
     ZLIB::ZLIB "Qt${QT_VERSION_MAJOR}::Core"
 )
 
+# For selection debugging, (context_id << 8) | selection_id.
+# target_compile_definitions(dpengine PRIVATE DP_SELECTION_DEBUG_ID=384)
+
 if(TARGET LIBAV::LIBSWSCALE)
     target_link_libraries(dpengine PUBLIC LIBAV::LIBSWSCALE)
     target_compile_definitions(dpengine PUBLIC DP_LIBSWSCALE=1)
