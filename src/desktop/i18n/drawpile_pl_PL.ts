@@ -2342,7 +2342,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <location line="+1540"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[Kliknij tutaj], aby zgłosić błąd lub spytać o nową funkcjonalność.</translation>
     </message>
     <message>
         <location line="-2166"/>
@@ -9093,12 +9093,12 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
     <message>
         <location line="-54"/>
         <source>Show contribution, donation and feedback links</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokaż linki do stron o braniu udziału w rozwoju Drawpile, darowiznach i zgłaszaniu opinii</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Contributing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Współpraca:</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -12323,25 +12323,25 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[♥ Przekaż darowiznę dla Drawpile], aby wesprzeć działanie serwerów.</translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
         <location filename="../mainwindow.cpp" line="+1409"/>
         <source>Donate</source>
-        <translation type="unfinished"></translation>
+        <translation>Wesprzyj</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../mainwindow.cpp" line="+3"/>
         <source>Open Drawpile&apos;s donate page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Otwórz stronę do przekazywania darowizn w twojej przeglądarce internetowej</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+768"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[♥ Przekaż darowiznę dla Drawpile], aby wesprzeć rozwój programu i działanie serwerów.</translation>
     </message>
 </context>
 <context>
