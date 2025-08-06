@@ -51,7 +51,8 @@ public:
 	int clicks() const { return m_clicks; }
 
 private:
-	static constexpr int CLICK_TIME = 150;
+	static constexpr int CLICK_TIME = 200;
+	static constexpr int CLICK_DISTANCE = 100;
 
 	static int getDoubleClickTime()
 	{
@@ -65,15 +66,11 @@ private:
 		int distance;
 		switch(deviceType) {
 		case DeviceType::Mouse:
-			distance = 2;
-			break;
-		case DeviceType::Tablet:
-		case DeviceType::Touch:
-			distance = 20;
+			// Mice are pretty stable, so they don't need as much fudge.
+			distance = CLICK_DISTANCE / 2;
 			break;
 		default:
-			qWarning("Unknown device type %d", int(deviceType));
-			distance = 0;
+			distance = CLICK_DISTANCE;
 			break;
 		}
 		return qreal(qMax(

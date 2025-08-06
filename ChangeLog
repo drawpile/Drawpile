@@ -35,6 +35,7 @@ Unreleased Version 2.2.3-pre
  * Server Fix: The server now checks whether it can actually start with a GUI if you run it without arguments on Linux and other non-macOS Unix systems, rather than trying it and crashing because you don't have a graphical environment. Thanks Epiglottal Axolotl for reporting.
  * Server Feature: Add a --no-gui option to explicitly run the server without a graphical shell.
  * Feature: Bind deselect to both Ctrl+Shift+A and Ctrl+D by default, since other software is inconsistent in this regard. Thanks Geese for suggesting.
+ * Fix: Make click detection more sensitive, to avoid accidentally creating tiny selections when trying to just click to deselect. Thanks Bluestrings for reporting.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.
