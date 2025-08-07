@@ -16,8 +16,6 @@
   <url type="help">https://drawpile.net/help/</url>
   <url type="donation">https://donate.drawpile.org/</url>
   <url type="translate">https://hosted.weblate.org/engage/drawpile/</url>
-  <url type="vcs-browser">https://github.com/drawpile/Drawpile</url>
-  <url type="contribute">https://docs.drawpile.net/help/development/contributing</url>
   <screenshots>
     <screenshot type="default">
       <image>https://drawpile.net/media/d/images/screenshot2.png</image>
