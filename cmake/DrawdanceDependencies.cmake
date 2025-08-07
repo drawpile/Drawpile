@@ -6,27 +6,40 @@ if(NOT WIN32)
     dp_find_package(Threads REQUIRED)
 endif()
 
-if(CLIENT OR TOOLS)
-    if(EMSCRIPTEN)
-        dp_find_package(zstd REQUIRED CONFIG)
-    else()
-        # zstd is supposed to provide a cmake config, but at least Fedora can't
-        # manage to actually ship it, so there's a fallback for PkgConfig.
-        dp_find_package(zstd CONFIG)
-        find_package(PkgConfig QUIET)
-        if(PKGCONFIG_FOUND)
-            if(NOT TARGET zstd::libzstd)
-                pkg_check_modules(LIBZSTD IMPORTED_TARGET GLOBAL libzstd)
-                if(TARGET PkgConfig::LIBZSTD)
-                    message(STATUS "libzstd found via PkgConfig")
-                    add_library(zstd::libzstd ALIAS PkgConfig::LIBZSTD)
-                else()
-                    message(SEND_ERROR
-                        "libzstd NOT FOUND (tried CMake config and PkgConfig)"
-                    )
-                endif()
-            endif()
+if(NOT EMSCRIPTEN)
+    find_package(PkgConfig QUIET)
+endif()
 
+if(EMSCRIPTEN)
+    dp_find_package(zstd REQUIRED CONFIG)
+else()
+    # zstd is supposed to provide a cmake config, but at least Fedora can't
+    # manage to actually ship it, so there's a fallback for PkgConfig.
+    dp_find_package(zstd CONFIG)
+    if(NOT TARGET zstd::libzstd AND PKGCONFIG_FOUND)
+        pkg_check_modules(LIBZSTD IMPORTED_TARGET GLOBAL libzstd)
+        if(TARGET PkgConfig::LIBZSTD)
+            message(STATUS "libzstd found via PkgConfig")
+            add_library(zstd::libzstd ALIAS PkgConfig::LIBZSTD)
+        else()
+            message(SEND_ERROR
+                "libzstd NOT FOUND (tried CMake config and PkgConfig)"
+            )
+        endif()
+    else()
+        message(WARNING "PkgConfig NOT FOUND")
+        if(NOT TARGET zstd::libzstd)
+            message(SEND_ERROR
+                "libzstd NOT FOUND via CMake config and can't fall back to "
+                "PkgConfig because that wasn't found either"
+            )
+        endif()
+    endif()
+endif()
+
+if(CLIENT OR TOOLS)
+    if(NOT EMSCRIPTEN)
+        if(PKGCONFIG_FOUND)
             pkg_check_modules(LIBSWSCALE IMPORTED_TARGET GLOBAL
                 libswscale
             )
@@ -71,14 +84,6 @@ if(CLIENT OR TOOLS)
                         PkgConfig::LIBAV INTERFACE LIBAV::LIBSWSCALE)
                     add_library(LIBAV::LIBAV ALIAS PkgConfig::LIBAV)
                 endif()
-            endif()
-        else()
-            message(WARNING "PkgConfig NOT FOUND")
-            if(NOT TARGET zstd::libzstd)
-                message(SEND_ERROR
-                    "libzstd NOT FOUND via CMake config and can't fall back to "
-                    "PkgConfig because that wasn't found either"
-                )
             endif()
         endif()
         add_feature_info("Image scaling via libav" "TARGET LIBAV::LIBSWSCALE" "")
