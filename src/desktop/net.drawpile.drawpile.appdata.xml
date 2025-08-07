@@ -11,8 +11,13 @@
     <p>Drawpile lets you draw, sketch, paint and animate together with other people on the same canvas.</p>
   </description>
   <url type="homepage">https://drawpile.net/</url>
-  <url type="help">https://drawpile.net/help/</url>
   <url type="bugtracker">https://github.com/drawpile/Drawpile/issues</url>
+  <url type="faq">https://docs.drawpile.net/help/common/faq</url>
+  <url type="help">https://drawpile.net/help/</url>
+  <url type="donation">https://donate.drawpile.org/</url>
+  <url type="translate">https://hosted.weblate.org/engage/drawpile/</url>
+  <url type="vcs-browser">https://github.com/drawpile/Drawpile</url>
+  <url type="contribute">https://docs.drawpile.net/help/development/contributing</url>
   <screenshots>
     <screenshot type="default">
       <image>https://drawpile.net/media/d/images/screenshot2.png</image>
