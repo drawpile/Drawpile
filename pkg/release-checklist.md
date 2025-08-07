@@ -53,10 +53,8 @@ Yes, this can be automated to a large degree, but it currently happens infrequen
         * `gh release download $VERSION -D artifacts`
         * `gh release download $VERSION -D artifacts --archive=tar.gz`
         * `gh release download $VERSION -D artifacts --archive=zip`
-    * Download Linux AppImage, Android APKs (64 and 32 bit), macOS Disk Images (ARM and Intel), Windows Installers (64 and 32 bit) and source code in tar.gz format into this directory.
     * Run `pkg/update-appdata-releases.py --artifacts` to add artifact links and checksums to drawpile.appdata.xml. If this fails because the Android build versions or something have changed, update them in the script.
     * Run `pkg/update-appdata-releases.py --artifacts --legacy` to add them to net.drawpile.drawpile.appdata.xml.
-    * Delete `artifacts` directory
     * Create a signed commit "Add $VERSION artifacts to appdata XMLs"
 * Create checksum files:
     * Create a directory `pkg/checksums/$VERSION`
@@ -66,6 +64,7 @@ Yes, this can be automated to a large degree, but it currently happens infrequen
         * `b2sum *.* >../pkg/checksums/$VERSION/b2sums.txt`
     * Create a signed commit "Add $VERSION artifact checksums"
     * Upload that directory to the website, chown it to webfiles:webfiles and move it to `/home/webfiles/www/checksums`.
+    * You can now delete the `artifacts` directory again.
 * Update Cargo version for the next release:
     * Run `pkg/update-cargo-version.bash $NEXTVERSION-pre`.
     * Build locally so that the Cargo.lock file gets updated.
