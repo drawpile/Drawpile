@@ -25,6 +25,86 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.3.0-beta.1" type="development" date="2025-08-07">
+      <url>https://drawpile.net/news/release-2.3.0-beta.1/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Removed Feature: Compatibility with the old 2.1 versions, which was originally released 6 years ago. 2.3 is compatible with 2.2 instead.</li>
+          <li>Feature: Add Edit &gt; Lightness/Darkness to Alpha action. Thanks Ben for suggesting.</li>
+          <li>Feature: Allow switching annotation rendering between vector, smooth and pixel fonts. Thanks cvrsoiioo4 for suggesting.</li>
+          <li>Feature: "Clip to layer below" toggle on layers, for people used to that way of alpha preserving. Will be loaded from and saved to PSD files.</li>
+          <li>Fix: Change the dptxt recording format to use JSON to represent message bodies instead of a bespoke format that sometimes doesn't round-trip properly.</li>
+          <li>Feature: "Inherit alpha" toggle on layers and "preserve alpha" toggle on tools, for people used to that way of alpha preserving from Krita. You can toggle automatic alpha preserverance in the user interface preferences. Thanks Bubble for testing.</li>
+          <li>Feature: "Greater Density" blend mode, which will only draw where it will increase opacity. Works like "Greater" in Krita and "Compare Density" in CSP, minus the glitches when you use different colors. Thanks Annoy suggesting.</li>
+          <li>Feature: "Marker" blend mode, which will only increase opacity, but always change the color. Works like the marker in SAI and sorta similar to "Alpha Darken" in Krita, minus the glitches for different colors again. Thanks cromachina for suggesting.</li>
+          <li>Fix: Make indirect wash mode actually work like it's supposed to, without causing weird effects for soft brushes. The previous mode is now available as a separate paint mode.</li>
+          <li>Feature: Bring back the indirect normal mode from Drawpile 2.1 as another paint mode option.</li>
+          <li>Feature: Allow using blend modes with MyPaint brushes, rather than restricting them to normal, recolor and erase.</li>
+          <li>Feature: Allow using MyPaint brush color dynamics in indirect mode.</li>
+          <li>Feature: Remember who changed tiles across session resets and compressing the canvas. Thanks Bluestrings for suggesting and callaa for originally implementing it before it fell off again for compatibility.</li>
+          <li>Fix: Don't displace annotations when resizing the canvas to the left or top.</li>
+          <li>Feature: Make the Shine (SAI) blend mode work exactly like in SAI, even with alpha preserve off. Thanks cromachina for providing the logic for this.</li>
+          <li>Feature: Implement more blend modes: Vivid Light, Pin Light, Difference, Darker Color, Lighter Color, Shade (SAI), Shade/Shine (SAI), Burn (SAI), Dodge (SAI), Burn/Dodge (SAI), Hard Mix (SAI) and Difference (SAI). Thanks cromachina for providing the logic for the SAI blend modes.</li>
+          <li>Feature: Increase maximum brush size to 1000. Session operators can limit this and the default limit for non-operators is 255. Thanks ariqhadiyan and TGS for suggesting.</li>
+          <li>Fix: Make MyPaint brush outline more accurate to the actual maximum size of the brush (although it still can't account for crazier brushes.)</li>
+          <li>Feature: Pigment blend mode, which allows for more realistic color mixing. Session operators can restrict this mode and by default it's only enabled for operators, since it's very performance-intensive. Thanks chaitae for suggesting, username and xxx for testing.</li>
+          <li>Feature: Increase maximum layer count to 32767 per user, up from the previous 256. Operators can also now limit the layer count in the session settings. Thanks haxekhaex2 for suggesting.</li>
+          <li>Feature: Allow drawing on selections via Selection → Draw on Selection.</li>
+          <li>Feature: Allow changing the color of the selection mask via View → Set Selection Mask Color.</li>
+          <li>Feature: Make selections mask brush strokes. Can be toggled via Selection → Mask Brush Strokes With Selection. Thanks Bluestrings for testing.</li>
+          <li>Feature: Switch pixel compression algorithm to zstd, which is many times faster than the old gzip. Thanks Bonbli for suggesting a way to get better compression with this.</li>
+          <li>Feature: Don't require paste permission for transforms that modify the opacity or blend mode.</li>
+          <li>Feature: Allow alpha locking layers. This basically works the same as enabling alpha lock on the tool you're using, it's just there for people that are used to doing it this way from other programs.</li>
+          <li>Feature: Allow locking layer properties to avoid accidentally changing e.g. the blend mode.</li>
+          <li>Feature: Allow locking layer positions to avoid accidentally moving them. Thanks Athena for suggesting.</li>
+          <li>Feature: Increase canvas size limit to up to 1 million pixels as long as the total canvas size doesn't exceed 1073676289 pixels (32767 squared). Previously each dimension was limited to 32767 instead. Thanks johannesCmayer and yvantot for suggesting and MajorCooke for testing.</li>
+          <li>Feature: A Drawpile 2.2 compatibility mode, allowing you to join sessions hosted with the previous version. Thanks lambda20xx for testing.</li>
+          <li>Feature: Add shortcuts that switch tools and deselect in a single action. Thanks Bonbli for suggesting.</li>
+          <li>Feature: New .dpcs canvas file format that's much faster and in most cases also leads to smaller sizes. Thanks Bonbli for suggesting an optimization to this; CosmosX007, Fanshen and hpar for reporting issues.</li>
+          <li>Feature: A gradient tool, which works inside of selections. Thanks ChristianJohnsten, lambda20x, Malrn and Maffi for suggesting.</li>
+          <li>Feature: Preview brushes with fixed X and Y offsets with an offset outline. Thanks Phoneme for suggesting.</li>
+          <li>Fix: Don't mark the canvas as having unsaved changes from just making a selection on it. Thanks MachKerman for reporting.</li>
+          <li>Fix: Don't include credentials in the URL when opening a new window on reconnect, they're only for use in the same window. Thanks MachKerman for reporting.</li>
+          <li>Fix: Save and restore smudge minimum value properly instead of resetting it to zero.</li>
+          <li>Feature: Add jitter setting for classic brushes, available in the brush settings. This setting offsets the dabs from the center of the stroke, useful for pencil, charcoal or spraycan brushes.</li>
+          <li>Feature: Show the time it took to open, save and export files in the status bar.</li>
+          <li>Fix: Don't disconnect when receiving an unknown message from user 0. Thanks Blozzom and unsername for reporting.</li>
+          <li>Fix: Compensate jagged curves in when using the lasso select tool. Thanks Blozzom for reporting.</li>
+          <li>Feature: Make arrow keys navigate the animation timeline when it has focus. Thanks MorrowShore for suggesting.</li>
+          <li>Feature: Add support for opening and exporting images in Quite Okay Image Format (QOI).</li>
+          <li>Feature: Add -B/--background-color option to drawpile-timelapse command to set an override background color. Thanks Bluestrings for suggesting.</li>
+          <li>Feature: Add a "synchronize smudging" brush setting. This will make the brush stroke wait for itself before smudging, which is slower, but required for some smudge brushes to work properly when making fast strokes. Thanks Donatello and xxxx for reporting.</li>
+          <li>Feature: Allow classic brushes to smudge with transparency. This can be toggled in the brush settings. The old mode now calls itself "blending" instead to be able to tell it apart. Thanks xxxx for suggesting and lambda20xx for testing.</li>
+          <li>Feature: A lasso fill tool, bound to Shift+F by default. Thanks EvilKitty3, Fallen, Geese, MorrowShore and Juzeror for suggesting, Blozzom and Bonbli for suggesting additions to it.</li>
+          <li>Feature: Allow pressing Escape (or whatever you bound "cancel action" to) to deselect. Can be disabled in the tool preferences. Thanks RannyBergamotte for suggesting.</li>
+          <li>Feature: Upscale small animations by whole numbers to fill the flipbook view. Can be toggled using the zoom button at the bottom. Thanks Ian700ng for suggesting.</li>
+          <li>Fix: Properly stop flood fills at selection boundaries. Thanks Bluestrings for reporting.</li>
+          <li>Feature: Allow assigning keyboard shirtcuts to tool blend modes. Thanks Izzy and Meru for suggesting.</li>
+          <li>Fix: Don't reattach detached brushes when switching slots. Thanks MachKerman for reporting.</li>
+          <li>Feature: Show tooltips of tool buttons immediately, so that you can tell better what they do without having to wait for them.</li>
+          <li>Fix: Don't switch away from a detached brush when only right-clicking, just like it works when you disable brush detaching altogether. Thanks MachKerman for reporting.</li>
+          <li>Feature: Harmony swatches, showing color harmonies for the current color to make palettes or shade with. Can be enabled and configured through the hamburger by right-click menu on the color wheel. Thanks tiar for suggesting.</li>
+          <li>Fix: Don't allow toggling toolbars in small screen mode, since they will just reappear again. Thanks CosmosX007 for reporting.</li>
+          <li>Feature: Add View → Always Show Side/Bottom Toolbar actions to let you choose whether to always show those toolbars in small screen mode or only when something is folded out using the tabs on the side. Thanks CosmosX007 for suggesting.</li>
+          <li>Fix: Add some space to the sides of the bottom toolbar in small-screen mode so that the undo and record buttons don't get eaten by rounded corners. Thanks March for reporting.</li>
+          <li>Feature: Allow reordering and toggling which drawing tools are visible in the toolbar, via e.g. Tools → Configure drawing toolbar. Thanks MorrowShore for suggesting.</li>
+          <li>Feature: Add OKLAB blend mode for layers and brushes. Thanks Bonbli for contributing.</li>
+          <li>Fix: Detect eraser pen tip on Android, since the eraser doesn't report it's in proximity until it hits the surface, similar to the browser. Thanks CosmosX007 for reporting.</li>
+          <li>Feature: Auto-correct attempts to host on http(s) sites by extracting the host portion from them. Thanks Charmandrigo for suggesting.</li>
+          <li>Feature: Add shortcuts to change brush opacity and hardness. Thanks justanotatest for suggesting.</li>
+          <li>Feature: Allow defining a separate pressure curve for the stylus eraser tip in the tablet preferences. Thanks CosmosX007 for suggesting.</li>
+          <li>Feature: Allow turning off system file dialogs on Windows, in case they somehow cause trouble. Thanks CrustStuff for suggesting.</li>
+          <li>Fix: Remember loops field in animation export dialog during a single run, instead of resetting it to 1 every time.</li>
+          <li>Feature: Allow swapping the sides of docks, toolbars and on-canvas buttons via View → Left-Handed Mode in small screen mode. Thanks yoossy for suggesting.</li>
+          <li>Feature: Redirect handling in the client, allowing servers to forward connections to other servers, with the option of only accepting signed redirects.</li>
+          <li>Server Feature: Session thumbnail generation, by requesting the client to generate one. Currently only through the web admin API, thumbnails are not displayed anywhere or generated automatically yet.</li>
+          <li>Feature: Add pixel-perfect option for pixel brushes, available in the brush editor and under the paint mode dropdown. Thanks Meru and Squishy for suggesting, lan700ng for testing.</li>
+          <li>Feature: Use the canvas background color or the color behind the canvas as the background color for the annotation editor, depending on where the annotation is placed. Thanks Blozzom for suggesting.</li>
+          <li>Feature: Add a build for Windows on ARM. Thanks fizbin for testing.</li>
+        </ul>
+      </description>
+    </release>
     <release version="2.2.2" type="stable" date="2025-03-26">
       <url>https://drawpile.net/news/release-2.2.2/</url>
       <description>
