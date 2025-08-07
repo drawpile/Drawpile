@@ -34,8 +34,7 @@ void General::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 	utils::addFormSeparator(layout);
 
 	QFormLayout *canvasSection = utils::addFormSection(layout);
-	// Uncomment later.
-	// initContributing(settings, canvasSection);
+	initContributing(settings, canvasSection);
 	utils::addFormSpacer(canvasSection);
 	initLogging(settings, canvasSection);
 	initUndo(settings, canvasSection);
