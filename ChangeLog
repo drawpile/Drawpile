@@ -1,4 +1,6 @@
 Unreleased Version 2.3.0-pre
+
+2025-08-07 Version 2.3.0-beta.1
  * Removed Feature: Compatibility with the old 2.1 versions, which was originally released 6 years ago. 2.3 is compatible with 2.2 instead.
  * Feature: Add Edit > Lightness/Darkness to Alpha action. Thanks Ben for suggesting.
  * Feature: Allow switching annotation rendering between vector, smooth and pixel fonts. Thanks cvrsoiioo4 for suggesting.
