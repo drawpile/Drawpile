@@ -1,0 +1,1 @@
+First major release of the 2.3 series. Adds layer clipping, pigment blending, OKLAB mode, pixel-perfect pixel brushes, lasso fills, gradient tool, improved mobile mode and more. See the website for a full changelog.
