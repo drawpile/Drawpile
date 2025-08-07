@@ -1,9 +1,9 @@
 FROM alpine:3.20 as common
-RUN apk add --no-cache libbz2 libmicrohttpd libsodium qt5-qtbase qt5-qtbase-sqlite qt5-qtwebsockets
+RUN apk add --no-cache libbz2 libmicrohttpd libsodium qt5-qtbase qt5-qtbase-sqlite qt5-qtwebsockets zstd
 
 ## Build container
 FROM common as builder
-RUN apk add cargo cmake g++ libmicrohttpd-dev libsodium-dev make qt5-qtbase-dev qt5-qtwebsockets-dev
+RUN apk add cargo cmake g++ libmicrohttpd-dev libsodium-dev make qt5-qtbase-dev qt5-qtwebsockets-dev zstd-dev
 
 # On ARM, the C and C++ compilers have hiccups that make them randomy segfault.
 # We just retry the compilation up to ten times to work around that.
