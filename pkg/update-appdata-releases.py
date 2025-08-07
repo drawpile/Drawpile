@@ -135,6 +135,7 @@ def update_release_artifacts(appdata, include_legacy_platform_ids):
     binaries = (
         ('x86_64-windows-msvc', 'win64', f'Drawpile-{version}-x86_64.msi'),
         ('i386-windows-msvc', 'win32', f'Drawpile-{version}-x86.msi'),
+        ('aarch64-windows-msvc', '', f'Drawpile-{version}-arm64.msi'),
         ('x86_64-darwin-gnu', 'macos', f'Drawpile-{version}-x86_64.dmg'),
         ('aarch64-darwin-gnu', '', f'Drawpile-{version}-arm64.dmg'),
         ('x86_64-linux-gnu', '', f'Drawpile-{version}-x86_64.AppImage'),
