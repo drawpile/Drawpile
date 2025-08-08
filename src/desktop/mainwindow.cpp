@@ -3137,6 +3137,7 @@ void MainWindow::hostSession(const HostParams &params)
 	loginParams->userId = m_doc->canvas()->localUserId();
 	loginParams->alias = params.alias;
 	loginParams->title = params.title;
+	loginParams->password = params.password;
 	loginParams->operatorPassword = params.operatorPassword;
 	loginParams->announcementUrls = params.announcementUrls;
 	loginParams->bansToImport = params.bans;
