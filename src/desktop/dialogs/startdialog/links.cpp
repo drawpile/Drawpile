@@ -94,14 +94,14 @@ void Links::setUpLink(
 		QDesktopServices::openUrl(url);
 	});
 
+	layout()->addWidget(link);
+
 	if(index == DONATION_LINK_INDEX) {
 		dpApp().settings().bindDonationLinksEnabled(link, [link](bool enabled) {
 			link->setEnabled(enabled);
 			link->setVisible(enabled);
 		});
 	}
-
-	layout()->addWidget(link);
 }
 
 }
