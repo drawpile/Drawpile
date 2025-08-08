@@ -23,9 +23,10 @@ namespace {
 // is set. Those variables aren't always defined I think, but it's okay to miss
 // those cases since the server will still run, rather than the other way round
 // where it will just crash on startup due to lack of a display server.
+#ifdef HAVE_SERVERGUI
 static bool isHeadless()
 {
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
+#	if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
 	const char *keys[] = {"DISPLAY", "WAYLAND_DISPLAY"};
 	for(const char *key : keys) {
 		QByteArray value = qgetenv(key);
@@ -41,10 +42,11 @@ static bool isHeadless()
 		}
 	}
 	return true;
-#else
+#	else
 	return false;
-#endif
+#	endif
 }
+#endif
 }
 
 int main(int argc, char *argv[])
