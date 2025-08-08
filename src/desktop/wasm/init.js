@@ -845,19 +845,11 @@ import { UAParser } from "ua-parser-js";
     const select = tag("select", [stableOption, betaOption]);
     const updateVersion = () => {
       const version = select.options[select.selectedIndex].value;
-      let favicon, logo;
       if (version === "beta") {
         pathMappingPrefix = null;
-        favicon = "faviconbeta.ico";
-        logo = "drawpilebeta.svg";
       } else {
         pathMappingPrefix = "stable/";
-        favicon = "favicon.ico";
-        logo = "drawpile.svg";
       }
-      document.querySelector("link[rel=icon]").href =
-        favicon + cachebusterSuffix;
-      document.querySelector("#logo").src = logo + cachebusterSuffix;
     };
     select.addEventListener("change", updateVersion);
     updateVersion();
