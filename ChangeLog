@@ -1,4 +1,5 @@
-Unreleased Version 2.3.0-pre
+2025-08-08 Version 2.3.0-beta.2
+ * Fix: Make start dialog not flicker briefly on some systems.
 
 2025-08-07 Version 2.3.0-beta.1
  * Removed Feature: Compatibility with the old 2.1 versions, which was originally released 6 years ago. 2.3 is compatible with 2.2 instead.
