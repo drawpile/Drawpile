@@ -35,6 +35,53 @@
           <li>Fix: Make hosting session with a password work, it did not get picked up sometimes. Thanks Bluestrings for reporting.</li>
         </ul>
       </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-x86_64.msi</location>
+          <checksum type="sha256">3617cff04d883dcce408f6f9815321874badfb500d4f0b7ef9b62f6da75384ea</checksum>
+          <size type="download">23904256</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-x86.msi</location>
+          <checksum type="sha256">6213a1c9c76f4c1ba272c1a3e09bc0c640fbe746fa434e4a318eaf165eaae8aa</checksum>
+          <size type="download">20619264</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-arm64.msi</location>
+          <checksum type="sha256">1cb03224620c7d6fedbbec1733a4b67f221669234374898564db5a839fd55c44</checksum>
+          <size type="download">21766144</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-x86_64.dmg</location>
+          <checksum type="sha256">275866f3b7db7a3f0af8e4dee13c1523a45f44d2b8acc0d9b37e68e191121c9c</checksum>
+          <size type="download">34293444</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-arm64.dmg</location>
+          <checksum type="sha256">d718caef1005e51fac2c49a3e62df9ecfc153a40428a8104fe0455560088e859</checksum>
+          <size type="download">30916737</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-x86_64.AppImage</location>
+          <checksum type="sha256">476a1d5ea6918133c6f7db7ac11fb19e25b85b7ca13bcb06aa0e4b5e94613c68</checksum>
+          <size type="download">55325888</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-30-34-arm64-v8a.apk</location>
+          <checksum type="sha256">53a179177e8bb1393ccddd6f1960ffbd9f5cb15164e79b38f704198d402bd12b</checksum>
+          <size type="download">23589744</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.2/Drawpile-2.3.0-beta.2-23-23-armeabi-v7a.apk</location>
+          <checksum type="sha256">0a68f4cea8c7918bc991414f55dbeef95910d0f97db80d445091569b9c92de57</checksum>
+          <size type="download">20194320</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.3.0-beta.2.tar.gz</location>
+          <checksum type="sha256">4e5968a9681be08aace549ff7a86229d82509c9484c1c6755cefc17be1001d28</checksum>
+          <size type="download">10985095</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.3.0-beta.1" type="development" date="2025-08-07">
       <url>https://drawpile.net/news/release-2.3.0-beta.1/</url>
