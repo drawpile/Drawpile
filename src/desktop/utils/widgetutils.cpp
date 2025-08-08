@@ -1118,7 +1118,14 @@ QString toHtmlWithLink(
 {
 	static const QRegularExpression linkRegex(
 		QStringLiteral("\\[([^\\[\\]]+)\\]"));
-	QString html = text.toHtmlEscaped();
+	QString html = text;
+#ifdef Q_OS_ANDROID
+	// Hearts don't work on Android.
+	static const QRegularExpression heartRegex(
+		QStringLiteral("♥\\s+"));
+	html.replace(heartRegex, QString());
+#endif
+	html = html.toHtmlEscaped();
 	html.replace(
 		linkRegex, QStringLiteral("<a href=\"%1\" %2>\\1</a>")
 					   .arg(link.toHtmlEscaped(), extraAttrs));
