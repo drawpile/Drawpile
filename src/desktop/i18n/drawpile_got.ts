@@ -62,7 +62,7 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌴𐌻𐌴𐌹 𐍅𐌹𐌺𐍉𐌽𐍃 𐌲𐌰𐍅𐌹𐍃𐍃 𐌽𐌰𐍄𐌾𐌰𐌸𐌴𐍅𐌹𐍃:</translation>
     </message>
     <message>
         <location line="+43"/>
