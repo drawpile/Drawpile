@@ -24,12 +24,12 @@
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌻𐌰𐌲𐌹𐌸 𐌲𐌰𐌼𐌹𐌽𐌸𐌹 𐌽𐌹𐍃𐍄 SharedArrayBuffer, 𐌸𐌰𐌿𐌷 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂 𐌸𐌴𐌹𐌽 𐍃𐍄𐍉𐌳𐌴𐌹𐌸 𐌸𐌰𐍄𐌰. 𐌹𐌽𐌼𐌰𐌹𐌳𐌴𐌹 𐌻𐌰𐌲𐌴𐌹𐌽.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍄𐌰𐌹𐌺𐌽𐍃 𐌳𐍂𐌰𐍅𐍀𐌰𐌾𐌻𐍃</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -104,12 +104,12 @@
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;𐌹𐌽-𐌰𐍀𐍀𐌰 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂:&lt;/strong&gt; 𐌸𐌿𐌲𐌺𐌴𐌹𐌸 𐌸𐌰𐍄𐌴𐌹 𐌳𐍂𐌰𐍅𐍀𐌰𐌾𐌻 𐌿𐍃𐌻𐌰𐌿𐌺𐍄 𐌹𐌽 𐌹𐌽-𐌰𐍀𐍀𐌰 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂𐌰.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;𐌹𐌽-𐌰𐍀𐍀𐌰 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂:&lt;/strong&gt; 𐌸𐌿𐌲𐌺𐌴𐌹𐌸 𐌸𐌰𐍄𐌴𐌹 𐌳𐍂𐌰𐍅𐍀𐌰𐌾𐌻 𐌿𐍃𐌻𐌰𐌿𐌺𐍄 𐌹𐌽 %1𐍃 𐌹𐌽-𐌰𐍀𐍀𐌰 𐌱𐍂𐌰𐍅𐍃𐌰𐌹𐍂𐌰.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -184,7 +184,7 @@
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;𐍈𐍉𐍄𐌰:&lt;/strong&gt; 𐍃𐍉 𐌲𐌰𐍃𐌿𐌻𐌴𐌹𐌽𐍃 𐌹𐍃𐍄 &lt;strong&gt;𐍆𐌰𐌹𐍂𐌽𐌹&lt;/strong&gt; 𐌰𐍄 𐌿𐍃𐌼𐌴𐍂𐌾𐌰 &lt;code&gt;%1&lt;/code&gt;, 𐌸𐌰𐍄𐌴𐌹 𐌽𐌹𐍃𐍄 𐌸𐌰𐍄𐌰 𐌿𐍃𐌼𐌴𐍂𐌹 𐌽𐌹𐌿𐌾𐌹𐍃𐍄𐍉 &lt;code&gt;%2&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -259,7 +259,7 @@
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌰𐌿𐍂𐌲𐌿𐍅𐌹𐌲𐍃</translation>
     </message>
 </context>
 <context>
@@ -498,7 +498,7 @@
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌹𐌽𐍅𐌰𐌽𐌳𐌹𐌸</translation>
     </message>
     <message>
         <location line="+3"/>
