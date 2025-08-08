@@ -1,6 +1,6 @@
 [package]
 name = "drawpilecmd"
-version = "2.3.0-pre"
+version = "2.3.1-beta.2"
 rust-version = "1.66.1"
 edition = "2021"
 
