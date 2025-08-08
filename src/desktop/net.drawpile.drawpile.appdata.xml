@@ -25,6 +25,17 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.3.0-beta.2" type="development" date="2025-08-08">
+      <url>https://drawpile.net/news/release-2.3.0-beta.2/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fix: Make start dialog not flicker briefly on some systems.</li>
+          <li>Removed Feature: Use the same logo for the application, too distracting evidently.</li>
+          <li>Fix: Make hosting session with a password work, it did not get picked up sometimes. Thanks Bluestrings for reporting.</li>
+        </ul>
+      </description>
+    </release>
     <release version="2.3.0-beta.1" type="development" date="2025-08-07">
       <url>https://drawpile.net/news/release-2.3.0-beta.1/</url>
       <description>
