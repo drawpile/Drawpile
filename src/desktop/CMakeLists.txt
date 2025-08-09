@@ -248,8 +248,6 @@ target_sources(drawpile PRIVATE
 	icons/censored.svg
 	icons/drawpile.png
 	icons/drawpile.svg
-	icons/drawpilebeta.png
-	icons/drawpilebeta.svg
 	scene/anchorlineitem.cpp
 	scene/anchorlineitem.h
 	scene/annotationitem.cpp
@@ -503,13 +501,8 @@ if(QT_VERSION VERSION_GREATER_EQUAL 6)
 endif()
 
 if(WIN32)
-	if(USE_BETA_ICON)
-		set(DRAWPILE_ICO drawpilebeta.ico)
-	else()
-		set(DRAWPILE_ICO drawpile.ico)
-	endif()
 	target_sources(drawpile PRIVATE
-		"icons/${DRAWPILE_ICO}"
+		icons/drawpile.ico
 		utils/wineventfilter.h
 		utils/wineventfilter.cpp
 	)
@@ -578,10 +571,6 @@ if(PROXY_STYLE)
 		"${Qt${QT_VERSION_MAJOR}Widgets_PRIVATE_INCLUDE_DIRS}")
 endif()
 
-if(USE_BETA_ICON)
-	target_compile_definitions(drawpile PRIVATE USE_BETA_ICON=1)
-endif()
-
 # Some special handling for Android:
 # * It can't deal with multiple main windows properly, trying to open a second
 #	one hides the first with no way to switch between them.
@@ -599,24 +588,16 @@ if(ANDROID)
 		HAVE_CHAT_LINE_EDIT_MOBILE=1
 		SINGLE_MAIN_WINDOW=1
 	)
-
-	if(USE_BETA_ICON)
-		set(android_icon_dir beta)
-	else()
-		set(android_icon_dir stable)
-	endif()
-
 	target_sources(drawpile PRIVATE
 		chat/chatlineeditmobile.cpp
 		chat/chatlineeditmobile.h
-		icons/android/${android_icon_dir}/drawable-anydpi-v26/ic_launcher.xml
-		icons/android/${android_icon_dir}/drawable-anydpi/ic_launcher.xml
-		icons/android/${android_icon_dir}/drawable-anydpi/ic_launcher_foreground.xml
-		icons/android/${android_icon_dir}/drawable-anydpi/ic_launcher_monochrome.xml
-		icons/android/${android_icon_dir}/values/strings.xml
-		icons/android/${android_icon_dir}/xml/remote_action.xml
+		icons/android/drawable-anydpi-v26/ic_launcher.xml
+		icons/android/drawable-anydpi/ic_launcher.xml
+		icons/android/drawable-anydpi/ic_launcher_foreground.xml
+		icons/android/drawable-anydpi/ic_launcher_monochrome.xml
+		icons/android/values/strings.xml
+		icons/android/xml/remote_action.xml
 	)
-
 	if(TARGET ${QT_PACKAGE_NAME}::AndroidExtras)
 		target_link_libraries(drawpile PRIVATE ${QT_PACKAGE_NAME}::AndroidExtras)
 	endif()
@@ -791,16 +772,10 @@ elseif(APPLE)
 	include(DrawpileFileExtensions)
 	get_plist_extensions(drawpile.icns MACOSX_BUNDLE_EXTENSIONS)
 
-	if(USE_BETA_ICON)
-		set(iconset "drawpile.iconset")
-	else()
-		set(iconset "drawpilebeta.iconset")
-	endif()
-
 	add_custom_command(
 		OUTPUT drawpile.icns
-		DEPENDS "icons/${iconset}/icon_512x512@2x.png"
-		COMMAND iconutil -c icns -o drawpile.icns "${CMAKE_CURRENT_SOURCE_DIR}/icons/${iconset}"
+		DEPENDS icons/drawpile.iconset/icon_512x512@2x.png
+		COMMAND iconutil -c icns -o drawpile.icns "${CMAKE_CURRENT_SOURCE_DIR}/icons/drawpile.iconset"
 	)
 	target_sources(drawpile PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.icns")
 	set_property(TARGET drawpile APPEND PROPERTY RESOURCE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.icns")
@@ -905,7 +880,7 @@ elseif(ANDROID)
 	)
 
 	file(CREATE_LINK
-		"${CMAKE_CURRENT_SOURCE_DIR}/icons/android/${android_icon_dir}"
+		"${CMAKE_CURRENT_SOURCE_DIR}/icons/android"
 		"${CMAKE_CURRENT_BINARY_DIR}/android/res"
 		SYMBOLIC
 	)
@@ -922,16 +897,7 @@ elseif(EMSCRIPTEN)
 		# 128MB, to avoid regrowing memory on startup. Default would be 50MB.
 		QT_WASM_INITIAL_MEMORY "134217728")
 
-	if(USE_BETA_ICON)
-		set(wasm_logo "drawpilebeta.svg")
-		set(wasm_favicon "faviconbeta.ico")
-	else()
-		set(wasm_logo "drawpile.svg")
-		set(wasm_favicon "favicon.ico")
-	endif()
-
-	foreach(wasm_file IN ITEMS
-			"drawpile.svg" "drawpilebeta.svg" "favicon.ico" "faviconbeta.ico")
+	foreach(wasm_file IN ITEMS "drawpile.svg" "favicon.ico")
 		configure_file(
 			"${CMAKE_CURRENT_SOURCE_DIR}/icons/${wasm_file}"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${wasm_file}"
@@ -992,16 +958,12 @@ elseif(EMSCRIPTEN)
 			"-DOUTPUT_PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
 			"-DASSETS_PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets.bundle"
 			"-DWASM_PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.wasm"
-			"-DLOGO=${wasm_logo}"
-			"-DFAVICON=${wasm_favicon}"
 			-P "${PROJECT_SOURCE_DIR}/cmake/GenerateIndexHtml.cmake"
 		DEPENDS
 			drawpile_assets_bundle
 			drawpile_init_js
 			"${CMAKE_CURRENT_SOURCE_DIR}/icons/drawpile.svg"
-			"${CMAKE_CURRENT_SOURCE_DIR}/icons/drawpilebeta.svg"
 			"${CMAKE_CURRENT_SOURCE_DIR}/icons/favicon.ico"
-			"${CMAKE_CURRENT_SOURCE_DIR}/icons/faviconbeta.ico"
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/drawpile.css"
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/index.html"
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/init.js"
@@ -1019,11 +981,9 @@ elseif(EMSCRIPTEN)
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.css"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.js"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.svg"
-			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpilebeta.svg"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.wasm"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.worker.js"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/favicon.ico"
-			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/faviconbeta.ico"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/init.js"
 			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qtloader.js"
@@ -1050,21 +1010,12 @@ elseif(UNIX)
 
 	include(DrawpileFileExtensions)
 	get_xdg_extensions(MIME_TYPES)
-	if(USE_BETA_ICON)
-		set(APPIMAGE_ICON drawpilebeta)
-	else()
-		set(APPIMAGE_ICON drawpile)
-	endif()
 	configure_file(drawpile.desktop.in drawpile.desktop)
 	install_datarootdir(drawpile "${CMAKE_CURRENT_BINARY_DIR}/drawpile.desktop" applications
 		RENAME net.drawpile.drawpile.desktop
 	)
 	install_datarootdir(drawpile icons/drawpile.png icons/hicolor/256x256/apps)
 	install_datarootdir(drawpile icons/drawpile.svg icons/hicolor/scalable/apps)
-	if(USE_BETA_ICON)
-		install_datarootdir(drawpile icons/drawpilebeta.png icons/hicolor/256x256/apps)
-		install_datarootdir(drawpile icons/drawpilebeta.svg icons/hicolor/scalable/apps)
-	endif()
 	install_datarootdir(drawpile drawpile.appdata.xml metainfo
 		RENAME net.drawpile.drawpile.appdata.xml
 	)

@@ -116,19 +116,6 @@ if(ANDROID)
 	message(STATUS "Android version code: ${DRAWPILE_ANDROID_VERSION_CODE}")
 endif()
 
-if(BUILD_ICON_TYPE MATCHES "^[aA][uU][tT][oO]$")
-	message(STATUS "Using stable icon automatically")
-	set(USE_BETA_ICON OFF)
-elseif(BUILD_ICON_TYPE MATCHES "^[bB][eE][tT][aA]$")
-	message(STATUS "Using beta icon as requested")
-	set(USE_BETA_ICON ON)
-elseif(BUILD_ICON_TYPE MATCHES "^[sS][tT][aA][bB][lL][eE]$")
-	message(STATUS "Using stable icon as requested")
-	set(USE_BETA_ICON OFF)
-else()
-	message(FATAL_ERROR "Unknown BUILD_ICON_TYPE '${BUILD_ICON_TYPE}'")
-endif()
-
 # https://doc.qt.io/qt-6/cmake-qt5-and-qt6-compatibility.html
 
 if(QT_VERSION)
