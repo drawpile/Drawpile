@@ -161,6 +161,7 @@ bool DrawpileApp::event(QEvent *e)
 			// windows.
 			openStart(QString(), false);
 		}
+		break;
 	}
 #endif
 
