@@ -35,6 +35,7 @@ croak_with_usage() {
     carp
     carp "The following environment variables can be set:"
     carp "    BUILD_TYPE (release, relwithdebinfo, debug) [$BUILD_TYPE]"
+    carp "    SRC_DIR [$SRC_DIR]"
     carp
     exit 2
 }
@@ -252,7 +253,7 @@ build_prefix_dir="$SCRIPT_DIR/build$BUILD_TYPE/prefix"
 host_source_dir="$SCRIPT_DIR/buildhost/source"
 host_prefix_dir="$SCRIPT_DIR/buildhost/prefix"
 
-SRC_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
+: "${SRC_DIR:="$(dirname "$(dirname "$SCRIPT_DIR")")"}"
 if [[ -z $SRC_DIR ]]; then
     croak "Couldn't figure out source directory based on '$SCRIPT_DIR'"
 fi
