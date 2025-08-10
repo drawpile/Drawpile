@@ -374,6 +374,10 @@ function(_build_cmake build_type target_arch source_dir)
 		set(build_flag "-DCMAKE_BUILD_TYPE=Release")
 	endif()
 
+	if(IOS_IPADOS)
+		list(APPEND default_flags "-DCMAKE_OSX_ARCHITECTURES=x86_64\;arm64")
+	endif()
+
 	set(binary_dir "${source_dir}-build")
 	file(MAKE_DIRECTORY "${binary_dir}")
 	execute_process(

@@ -39,6 +39,9 @@ include(DrawpileCheckSymlinks)
 # `project` call
 if(APPLE)
 	enable_language(OBJCXX)
+	if(IOS)
+		enable_language(OBJC)
+	endif()
 endif()
 
 # CMake includes warning and exception handling flags into the MSVC command line

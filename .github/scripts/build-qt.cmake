@@ -19,6 +19,9 @@ option(EMSCRIPTEN_ASYNCIFY "Enable Asyncify in Emscripten" OFF)
 option(EMSCRIPTEN_THREADS "Enable threads in Emscripten" ON)
 set(EMSCRIPTEN_HOST_PATH "" CACHE STRING "Path to Qt host installation for Emscripten builds")
 
+option(IOS_IPADOS "Build for iOS/iPadOS" OFF)
+set(IOS_IPADOS_HOST_PATH "" CACHE STRING "Path to Qt host installation for iOS/iPadOS builds")
+
 set(QT_VERSION "" CACHE STRING "The version of Qt to build")
 if((QT_VERSION VERSION_LESS 6 AND WIN32) OR ANDROID)
 	set(OPENSSL "1.1.1t" CACHE STRING "The version of OpenSSL to build")
@@ -138,6 +141,15 @@ elseif(EMSCRIPTEN)
 	else()
 		message(FATAL_ERROR "Building for Emscripten is only implemented for Qt6")
 	endif()
+elseif(IOS_IPADOS)
+	if(QT_VERSION VERSION_GREATER_EQUAL 6)
+		list(APPEND BASE_FLAGS
+			-platform macx-ios-clang
+			-qt-host-path "${IOS_IPADOS_HOST_PATH}"
+		)
+	else()
+		message(FATAL_ERROR "Building for iOS/iPadOS is only implemented for Qt6")
+	endif()
 endif()
 
 if(WIN32)
@@ -155,7 +167,7 @@ if(USE_ASAN)
 	list(APPEND BASE_FLAGS -sanitize address)
 endif()
 
-if(EMSCRIPTEN)
+if(EMSCRIPTEN OR IOS_IPADOS)
 	unset(BASE_DEBUG_INFO_FLAGS)
 	set(BASE_RELEASE_FLAGS -feature-optimize_full)
 else()
@@ -271,6 +283,8 @@ if(BASE)
 			SHA384=47f0fb85e5a34220e91a5f9d4ecb3fa358442fbcd7fdeb4e7f7a86c4ecd6271268d6fbf07b03abb301e858253b8f76a2
 			6.8.3
 			SHA384=ad909f70006e9ab97da86505a4b93dd23507a647b95f05c4ae249751442cb5badb1db9b2ebda14e6844f50509489ada4
+			6.9.1
+			SHA384=68fc565e7d40cf2a2d8098ff4ad97f0aa2b64dddf902e7c09feda81f74634682396f33994339cee2156cef1eccc8da60
 		ALL_PLATFORMS
 			${BASE_GENERATOR}
 				ALL
@@ -333,6 +347,21 @@ if(BASE)
 				# patches/browser_keyboard_input.diff
 				patches/android_no_build_id.diff
 				patches/kineticscrollfilter-qt6.diff
+			6.9.1
+				# TODO: make these patches work.
+				patches/qtbug-113394.diff
+				patches/cancel_touch_on_pen.diff
+				# patches/qtbug-121416.diff
+				patches/qtbug-116754.diff
+				patches/touchstart_prevent_default.diff
+				# patches/fusioncontrast-qt6.diff
+				patches/macostabs-qt6.diff
+				patches/qt6androidmacros_build_tools_revision.diff
+				# patches/findeglemscripten.diff
+				# patches/noasyncify.diff
+				# patches/browser_keyboard_input.diff
+				patches/android_no_build_id.diff
+				# patches/kineticscrollfilter-qt6.diff
 	)
 endif()
 
@@ -348,6 +377,8 @@ if(SVG)
 			SHA384=384c7dac3434be7063fca4931c0da179657c275b2e3a343fb6b9f597c1b1390a4c17ca4a16b73f31c23841fd987685c8
 			6.8.3
 			SHA384=79d688174b899383b87da518f8817db6203bc7d847e29b19c1a180ae75baa67c6934185fa76f95b0f59e664eaa9fc7d5
+			6.9.1
+			SHA384=dbaf12fcc91af1cb5fdbec944a7dcb786c9a3f2098d294812631d4dac73ee616745f655c1986af86857e75c152bafaae
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 	)
@@ -365,6 +396,8 @@ if(IMAGEFORMATS)
 			SHA384=fd1a98a1ff4643a4eccbcbb6d383eebf306a1f421889e4ef2a9d6cfef80360fe10c506b673db45bda0d21647c49b75aa
 			6.8.3
 			SHA384=f9ee66cb619e6070dbf8974b0bcc15a4dfc89e0eca202da2ee8a201224d54570eb469a072a349f198b20649b70e1f4ff
+			6.9.1
+			SHA384=a82965cc68c80ece414cd74cb3496add0fa3c18b4a443fb0e48b88b05474004ba1600a9e860deeb9522f07572857171d
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 				ALL ${FLAGS_SEPARATOR}
@@ -386,6 +419,8 @@ if(SHADERTOOLS OR (QT_VERSION VERSION_GREATER_EQUAL 6 AND MULTIMEDIA))
 			SHA384=56a7ea77e78006f805283befa415b3d78c21e7509d790b95e3fbb836495c824a736abaaf4ff01cccd019e66198edc4fe
 			6.8.3
 			SHA384=cb2d4f4fe3e5aa556d6923cdb1408444114730ef9cb52f10796bd363ad9f4da38b3676633f1fe06678d10eee695cf97f
+			6.9.1
+			SHA384=a0c21c49d5a364f33f3313f0a0713de75dfbb8b1a1e3c9777118dc8a4311368a3aaedf6444ad298e7eff56f259b5ecfa
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 	)
@@ -403,6 +438,8 @@ if(MULTIMEDIA)
 			SHA384=ef58f56cc00b9d32dcbdcf2713f2cc7145be09b12cf919d0c8e1e7a1ec88c312c4a477d1aaf1e5ed4d16550008172584
 			6.8.3
 			SHA384=bdac10fe1da84398f026a32cda120d109ab9ef3e6c938d64d20e93e2208da0d44b73027924057bf6dd06992fb0e139c1
+			6.9.1
+			SHA384=0d7d0577ec05f78597b86b99fd09ce48e3558b7da7538b644e3696c0d2b942105d170e0cb4c63c9ae318ec86623f346f
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 				ALL ${FLAGS_SEPARATOR} ${MULTIMEDIA_FLAGS}
@@ -425,6 +462,8 @@ if(TOOLS)
 			SHA384=ecd8e52476dfb7aad42acf6bb68a8ad03a307c066cb0f0be235d0a4724725fbb297ddfcd90c704667415eef73ba2a6cb
 			6.8.3
 			SHA384=1c0d200820356f8cc297ba471d1873a4d3b5feda8a8c2d765cf12e216dcafbc350d3bebdf526f777484b6321fcd4e49c
+			6.9.1
+			SHA384=cde0cfe16a4e3203ce9ab49058866c644d4d3c4a75f0202fc67eab5ca85321dd31bb5382d6d5a9c03ae5d7811e582b56
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 				# linguist is required for translation compilation, and it transitively
@@ -468,6 +507,8 @@ if(TRANSLATIONS)
 			SHA384=428908175b3f14da484fac4a682d85de16add57c734863ca55e4873d82826328cde2451dd2b353a8d77e96d4dbfafa82
 			6.8.3
 			SHA384=a7c5bef878c88646f9db9bc102fdc733a748e2a22d1d40f050c435c929acd858cf742a3408ae983e7df97eccc1334240
+			6.9.1
+			SHA384=c14963c6af4c9e75273309694441958fb0e92b6b2a1be0dea3c10359775749755fd6d47409f55ac65bb3380a8420a2d4
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 	)
@@ -485,6 +526,8 @@ if(WEBSOCKETS)
 			SHA384=a668d863fb73d8e25e4e334cd9bc22d7b98333186496110ba4080d007fdd52b6134ccf50c5aa671ff04540b3e10fa6a9
 			6.8.3
 			SHA384=1bf6667c83d90b1100e4e5f2bc14a2936392d5a7cd4bb7842f573390b1d9913c6c6d09405d1c2a47525ca174c7edc86c
+			6.9.1
+			SHA384=118d58e82b1c40425f48cc6804dd79d935a330ed5db2ebd3feb86115c4307d86f4b4970449e4f4d080b615157b65e989
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 	)

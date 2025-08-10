@@ -10,6 +10,7 @@ CMakeUserPresets.json
 /*install*/
 /pkg/android/*build*/
 /pkg/emscripten/*build*/
+/pkg/ios/*build*/
 /pkg/macos/*build*/
 
 *.swp

@@ -22,6 +22,38 @@ set(TARGET_ARCH "x86_64" CACHE STRING
 set(OVERRIDE_CMAKE_COMMAND "" CACHE STRING
 	"Command to use to run cmake (instead of ${CMAKE_COMMAND})")
 
+if(NOT IOS_IPADOS)
+	message(FATAL_ERROR "Not building with IOS")
+endif()
+
+# Hack to get Qt version, since its `find_package` code does not support script
+# mode and this information is needed to set up QtKeychain and the macOS version
+# minimum
+set(CMAKE_FIND_LIBRARY_PREFIXES_OLD ${CMAKE_FIND_LIBRARY_PREFIXES})
+set(CMAKE_FIND_LIBRARY_PREFIXES "")
+set(CMAKE_FIND_LIBRARY_SUFFIXES_OLD ${CMAKE_FIND_LIBRARY_SUFFIXES})
+set(CMAKE_FIND_LIBRARY_SUFFIXES "")
+find_library(QT_CONFIG
+	REQUIRED
+	PATH_SUFFIXES
+		CMake/Qt6
+		cmake/Qt6
+		CMake/Qt5
+		cmake/Qt5
+	NAMES
+		Qt6ConfigVersion.cmake
+		qt6-config-version.cmake
+		Qt5ConfigVersion.cmake
+		qt5-config-version.cmake
+)
+set(CMAKE_FIND_LIBRARY_PREFIXES ${CMAKE_FIND_LIBRARY_PREFIXES_OLD})
+set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES_OLD})
+include(${QT_CONFIG})
+set(QT_VERSION ${PACKAGE_VERSION})
+
+include(QtMacDeploymentTarget)
+set_mac_deployment_target(${QT_VERSION})
+
 include(BuildDependency)
 
 if(LIBWEBP)
@@ -143,7 +175,7 @@ if(WIN32 AND LIBVPX)
 	)
 
 	file(REMOVE_RECURSE "vcpkg_installed")
-elseif(NOT EMSCRIPTEN AND LIBVPX)
+elseif(NOT EMSCRIPTEN AND NOT IOS_IPADOS AND LIBVPX)
 	set(libvpx_configure_args
 		--disable-debug
 		--disable-debug-libs
@@ -218,7 +250,7 @@ elseif(NOT EMSCRIPTEN AND LIBVPX)
 	)
 endif()
 
-if(NOT EMSCRIPTEN AND FFMPEG)
+if(NOT EMSCRIPTEN AND NOT IOS_IPADOS AND FFMPEG)
 	set(ffmpeg_configure_args
 		# This referes to warnings in configure, not build warnings. Warnings
 		# include pretty important stuff like not including a requested encoder,

@@ -31,6 +31,10 @@ set(TARGET_ARCH "x86_64" CACHE STRING
 set(OVERRIDE_CMAKE_COMMAND "" CACHE STRING
 	"Command to use to run cmake (instead of ${CMAKE_COMMAND})")
 
+if(NOT IOS_IPADOS)
+	message(FATAL_ERROR "Not building with IOS")
+endif()
+
 # Hack to get Qt version, since its `find_package` code does not support script
 # mode and this information is needed to set up QtKeychain and the macOS version
 # minimum
@@ -76,7 +80,7 @@ if(EMSCRIPTEN)
 	if(EMSCRIPTEN_THREADS)
 		set(extra_cmake_flags -DCMAKE_C_FLAGS=-pthread)
 	endif()
-elseif(APPLE AND NOT ANDROID)
+elseif(APPLE AND NOT ANDROID AND NOT IOS_IPADOS)
 	# macdeployqt does not search rpaths correctly so give a full path of the
 	# library instead
 	set(extra_cmake_flags "-DCMAKE_INSTALL_NAME_DIR=${CMAKE_INSTALL_PREFIX}/lib")
@@ -121,7 +125,7 @@ if(ZSTD)
 	)
 endif()
 
-if(NOT ANDROID AND NOT EMSCRIPTEN AND LIBMICROHTTPD)
+if(NOT ANDROID AND NOT EMSCRIPTEN AND NOT IOS_IPADOS AND LIBMICROHTTPD)
 	if(USE_ASAN)
 		set(extra_debug_flags --enable-sanitizers=address)
 	endif()
@@ -149,7 +153,7 @@ if(NOT ANDROID AND NOT EMSCRIPTEN AND LIBMICROHTTPD)
 	)
 endif()
 
-if(NOT EMSCRIPTEN AND LIBSODIUM)
+if(NOT EMSCRIPTEN AND NOT IOS_IPADOS AND LIBSODIUM)
 	unset(libsodium_configure_args)
 	if(ANDROID)
 		list(APPEND libsodium_configure_args ac_cv_func_memset_explicit=no)
@@ -176,7 +180,7 @@ if(NOT EMSCRIPTEN AND LIBSODIUM)
 	)
 endif()
 
-if(NOT EMSCRIPTEN AND QTKEYCHAIN)
+if(NOT EMSCRIPTEN AND NOT IOS_IPADOS AND QTKEYCHAIN)
 	build_dependency(qtkeychain ${QTKEYCHAIN} ${BUILD_TYPE}
 		URL https://github.com/frankosterfeld/qtkeychain/archive/@version@.tar.gz
 		TARGET_ARCH "${TARGET_ARCH}"
@@ -192,6 +196,10 @@ if(NOT EMSCRIPTEN AND QTKEYCHAIN)
 endif()
 
 if(LIBZIP AND BUILD_WITH_QT6)
+	unset(libzip_cmake_args)
+	if(ANDROID OR IOS_IPADOS)
+		list(APPEND libzip_cmake_args -DBUILD_SHARED_LIBS=off)
+	endif()
 	build_dependency(libzip ${LIBZIP} ${BUILD_TYPE}
 		URL https://libzip.org/download/libzip-@version@.tar.xz
 		TARGET_ARCH "${TARGET_ARCH}"
@@ -205,11 +213,12 @@ if(LIBZIP AND BUILD_WITH_QT6)
 				ALL
 					-DBUILD_TOOLS=off -DBUILD_REGRESS=off
 					-DBUILD_DOC=off -DBUILD_EXAMPLES=off
+					-DBUILD_OSSFUZZ=off -DBUILD_TOOLS=off
 					-DENABLE_COMMONCRYPTO=off -DENABLE_GNUTLS=off
 					-DENABLE_MBEDTLS=off -DENABLE_OPENSSL=off
 					-DENABLE_WINDOWS_CRYPTO=off -DENABLE_BZIP2=off
 					-DENABLE_LZMA=off -DENABLE_ZSTD=off
-					${extra_cmake_flags}
+					${libzip_cmake_args} ${extra_cmake_flags}
 	)
 endif()
 

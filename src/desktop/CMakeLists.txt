@@ -539,7 +539,7 @@ if(WIN32)
 		PROPERTY CPACK_DESKTOP_SHORTCUTS Drawpile
 	)
 # https://gitlab.kitware.com/cmake/cmake/-/issues/19813
-elseif(APPLE)
+elseif(APPLE AND NOT IOS)
 	target_sources(drawpile PRIVATE
 		icons/drawpile.iconset/icon_512x512@2x.png
 		utils/macui.h
@@ -613,6 +613,15 @@ elseif(EMSCRIPTEN)
 		chat/chatlineeditmobile.h
 		scene/cursoritem.cpp
 		scene/cursoritem.h
+	)
+elseif(IOS)
+	target_compile_definitions(drawpile PRIVATE
+		HAVE_CHAT_LINE_EDIT_MOBILE=1
+		SINGLE_MAIN_WINDOW=1
+	)
+	target_sources(drawpile PRIVATE
+		chat/chatlineeditmobile.cpp
+		chat/chatlineeditmobile.h
 	)
 else()
 	target_compile_definitions(drawpile PRIVATE HAVE_VIDEO_EXPORT=1)
