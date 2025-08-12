@@ -228,6 +228,7 @@ struct DP_BrushEngine {
         void *buffer;
     } dabs;
     struct {
+        bool snap;
         bool perfect;
         bool have_last;
         bool have_tentative;
@@ -1858,7 +1859,7 @@ DP_brush_engine_new(DP_MaskSync *ms_or_null,
          DP_mask_sync_incref_nullable(ms_or_null), NULL, 0, NULL, NULL},
         {0},
         {0, 0, 0, 0, NULL},
-        {false, false, false, 0, 0, 0, 0, {0}},
+        {false, false, false, false, 0, 0, 0, 0, {0}},
         push_message,
         poll_control_or_null,
         sync_or_null,
@@ -1926,10 +1927,12 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
     case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
     case DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE:
         be->active = DP_BRUSH_ENGINE_ACTIVE_PIXEL;
+        be->pixel.snap = brush->pixel_art_input;
         be->pixel.perfect = besp->allow_pixel_perfect && brush->pixel_perfect;
         break;
     default:
         be->active = DP_BRUSH_ENGINE_ACTIVE_SOFT;
+        be->pixel.snap = false;
         be->pixel.perfect = false;
         break;
     }
@@ -2075,6 +2078,7 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     }
 
     bool pixel_perfect = brush->pixel_perfect;
+    be->pixel.snap = false;
     be->pixel.perfect = besp->allow_pixel_perfect && pixel_perfect;
     if (pixel_perfect) {
         disable_mypaint_setting(mb, MYPAINT_BRUSH_SETTING_HARDNESS, 1.0f);
@@ -2700,6 +2704,11 @@ static void stroke_to_classic(
     void (*stroke)(DP_BrushEngine *, DP_ClassicBrush *, float, float, float,
                    float))
 {
+    if (be->pixel.snap) {
+        x = floorf(x);
+        y = floorf(y);
+    }
+
     DP_ClassicBrush *cb = &be->classic.brush;
     if (be->stroke.in_progress) {
         float delta_sec = DP_max_float(

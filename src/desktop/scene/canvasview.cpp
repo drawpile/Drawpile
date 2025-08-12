@@ -1418,7 +1418,8 @@ void CanvasView::penMoveEvent(
 		moveDrag(pos.toPoint());
 
 	} else {
-		if(toolFractional() || !m_prevpoint.intSame(point)) {
+		if(m_prevpoint.isDifferent(
+			   point, toolFractional(), toolSnapsToPixel())) {
 			CanvasShortcuts::ConstraintMatch match =
 				m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 			if(m_pendown) {

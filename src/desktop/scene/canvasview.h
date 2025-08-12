@@ -410,6 +410,11 @@ private:
 		return m_toolCapabilities.testFlag(tools::Capability::Fractional);
 	}
 
+	bool toolSnapsToPixel() const
+	{
+		return m_toolCapabilities.testFlag(tools::Capability::SnapsToPixel);
+	}
+
 	bool toolSendsNoMessages() const
 	{
 		return m_toolCapabilities.testFlag(tools::Capability::SendsNoMessages);

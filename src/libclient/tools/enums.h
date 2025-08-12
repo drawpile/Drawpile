@@ -13,12 +13,13 @@ enum class Capability : unsigned int {
 	AllowColorPick = (1u << 0u),
 	HandlesRightClick = (1u << 1u),
 	Fractional = (1u << 2u),
-	SupportsPressure = (1u << 3u),
-	IgnoresSelections = (1u << 4u),
-	SendsNoMessages = (1u << 5u),
-	AllowToolAdjust1 = (1u << 6u),
-	AllowToolAdjust2 = (1u << 7u),
-	AllowToolAdjust3 = (1u << 8u),
+	SnapsToPixel = (1u << 3u),
+	SupportsPressure = (1u << 4u),
+	IgnoresSelections = (1u << 5u),
+	SendsNoMessages = (1u << 6u),
+	AllowToolAdjust1 = (1u << 7u),
+	AllowToolAdjust2 = (1u << 8u),
+	AllowToolAdjust3 = (1u << 9u),
 };
 Q_DECLARE_FLAGS(Capabilities, Capability)
 

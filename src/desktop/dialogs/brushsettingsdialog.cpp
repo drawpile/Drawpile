@@ -301,6 +301,7 @@ struct BrushSettingsDialog::Private {
 	QCheckBox *eraseModeBox;
 	QCheckBox *colorPickBox;
 	QCheckBox *pixelPerfectBox;
+	QCheckBox *pixelArtInputBox;
 	QCheckBox *preserveAlphaBox;
 	KisSliderSpinBox *spacingSpinner;
 	QComboBox *stabilizationModeCombo;
@@ -747,6 +748,18 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 		d->pixelPerfectBox, &QCheckBox::clicked,
 		makeBrushChangeCallbackArg<bool>([this](bool checked) {
 			d->brush.setPixelPerfect(checked);
+			emitChange();
+		}));
+
+	d->pixelArtInputBox = new QCheckBox(tr("Pixel art input"));
+	d->pixelArtInputBox->setIcon(QIcon::fromTheme("input-mouse"));
+	d->pixelArtInputBox->setToolTip(tr(
+		"Disables all smoothing and stabilization for instant pixel drawing."));
+	layout->addRow(d->pixelArtInputBox);
+	connect(
+		d->pixelArtInputBox, &QCheckBox::clicked,
+		makeBrushChangeCallbackArg<bool>([this](bool checked) {
+			d->brush.setPixelArtInput(checked);
 			emitChange();
 		}));
 
@@ -1533,6 +1546,10 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->pixelPerfectBox->setEnabled(isPixelBrush);
 	d->pixelPerfectBox->setVisible(isPixelBrush);
 
+	d->pixelArtInputBox->setChecked(classic.pixel_art_input);
+	d->pixelArtInputBox->setEnabled(isPixelBrush);
+	d->pixelArtInputBox->setVisible(isPixelBrush);
+
 	bool forceDirectMode =
 		canvas::blendmode::directOnly(brushMode) || classic.smudge.max > 0.0f;
 	setComboBoxIndexByData(
@@ -1621,8 +1638,11 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 {
 	const DP_MyPaintBrush &brush = d->brush.myPaint().constBrush();
 	d->colorPickBox->setVisible(false);
+	d->pixelPerfectBox->setEnabled(true);
 	d->pixelPerfectBox->setVisible(true);
 	d->pixelPerfectBox->setChecked(brush.pixel_perfect);
+	d->pixelArtInputBox->setEnabled(false);
+	d->pixelArtInputBox->setVisible(false);
 	d->spacingSpinner->setVisible(false);
 
 	int brushMode = DP_mypaint_brush_blend_mode(&brush);

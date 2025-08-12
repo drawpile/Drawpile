@@ -46,6 +46,7 @@ ClassicBrush::ClassicBrush()
 		  true,
 		  true,
 		  false,
+		  false,
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
@@ -245,6 +246,7 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 
 	b.erase = o["erase"].toBool();
 	b.pixel_perfect = o.value(QStringLiteral("pixelperfect")).toBool();
+	b.pixel_art_input = o.value(QStringLiteral("pixelartinput")).toBool();
 
 	b.stabilizationMode =
 		o["stabilizationmode"].toInt() == Smoothing ? Smoothing : Stabilizer;
@@ -383,6 +385,7 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 
 	erase = settings["erase"].toBool();
 	pixel_perfect = settings.value(QStringLiteral("pixelperfect")).toBool();
+	pixel_art_input = settings.value(QStringLiteral("pixelartinput")).toBool();
 
 	stabilizationMode = settings["stabilizationmode"].toInt() == Smoothing
 							? Smoothing
@@ -1355,6 +1358,24 @@ void ActiveBrush::setPixelPerfect(bool pixelPerfect)
 		m_myPaint.setPixelPerfect(pixelPerfect);
 	} else {
 		m_classic.pixel_perfect = pixelPerfect;
+	}
+}
+
+bool ActiveBrush::isPixelArtInput() const
+{
+	if(m_activeType == MYPAINT) {
+		return false;
+	} else {
+		return m_classic.pixel_art_input;
+	}
+}
+
+void ActiveBrush::setPixelArtInput(bool pixelArtInput)
+{
+	if(m_activeType == MYPAINT) {
+		qWarning("Attempt to set pixel art input on MyPaint brush");
+	} else {
+		m_classic.pixel_art_input = pixelArtInput;
 	}
 }
 

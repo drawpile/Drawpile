@@ -53,6 +53,10 @@ void Freehand::begin(const BeginParams &params)
 		return;
 	}
 
+	const brushes::ActiveBrush &brush = m_owner.activeBrush();
+	bool pixelArtInput = brush.isPixelArtInput();
+	setCapability(Capability::SnapsToPixel, pixelArtInput);
+
 	m_drawing = true;
 	m_firstPoint = true;
 
@@ -66,27 +70,36 @@ void Freehand::begin(const BeginParams &params)
 	m_angle = params.angle;
 	m_mirror = params.mirror;
 	m_flip = params.flip;
+
+	if(m_owner.activeBrush().isPixelArtInput()) {
+		strokeTo(params.point);
+	}
 }
 
 void Freehand::motion(const MotionParams &params)
 {
 	if(m_drawing) {
-		drawdance::CanvasState canvasState =
-			m_owner.model()->paintEngine()->sampleCanvasState();
-
-		if(m_firstPoint) {
-			m_firstPoint = false;
-			m_strokeWorker.beginStroke(
-				localUserId(), canvasState, isCompatibilityMode(), true,
-				m_mirror, m_flip, m_zoom, m_angle);
-			m_start.setPressure(
-				qMin(m_start.pressure(), params.point.pressure()));
-			m_strokeWorker.strokeTo(m_start, canvasState);
-		}
-
-		m_strokeWorker.strokeTo(params.point, canvasState);
-		m_strokeWorker.flushDabs();
+		strokeTo(params.point);
 	}
+}
+
+void Freehand::strokeTo(const canvas::Point &point)
+{
+	Q_ASSERT(m_drawing);
+	drawdance::CanvasState canvasState =
+		m_owner.model()->paintEngine()->sampleCanvasState();
+
+	if(m_firstPoint) {
+		m_firstPoint = false;
+		m_strokeWorker.beginStroke(
+			localUserId(), canvasState, isCompatibilityMode(), true, m_mirror,
+			m_flip, m_zoom, m_angle);
+		m_start.setPressure(qMin(m_start.pressure(), point.pressure()));
+		m_strokeWorker.strokeTo(m_start, canvasState);
+	}
+
+	m_strokeWorker.strokeTo(point, canvasState);
+	m_strokeWorker.flushDabs();
 }
 
 void Freehand::end(const EndParams &)

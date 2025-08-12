@@ -780,14 +780,16 @@ const brushes::ActiveBrush &ToolController::fillBrushEngineStrokeParams(
 	Tool::Type source, DP_BrushEngineStrokeParams &outStroke) const
 {
 	const brushes::ActiveBrush &brush = activeBrush();
+	bool pixelArtInput = brush.isPixelArtInput();
 	bool freehand = source == Tool::Type::FREEHAND;
 	DP_BrushEngineStrokeParams stroke = {
 		{
 			0,
 			0,
 			false,
-			m_stabilizationMode != brushes::Smoothing || m_finishStrokes,
-			m_finishStrokes,
+			!pixelArtInput &&
+				(m_stabilizationMode != brushes::Smoothing || m_finishStrokes),
+			!pixelArtInput && m_finishStrokes,
 		},
 		activeLayerOrSelection(),
 		m_selectionEditActive || !m_selectionMaskingEnabled
@@ -797,7 +799,8 @@ const brushes::ActiveBrush &ToolController::fillBrushEngineStrokeParams(
 		freehand && brush.shouldSyncSamples(),
 		source != Tool::Type::RECTANGLE && source != Tool::Type::ELLIPSE,
 	};
-	if(freehand) {
+
+	if(!pixelArtInput && freehand) {
 		stroke.se.interpolate = m_interpolateInputs;
 		stroke.se.smoothing =
 			m_applyGlobalSmoothing || m_stabilizationMode == brushes::Smoothing
@@ -812,6 +815,7 @@ const brushes::ActiveBrush &ToolController::fillBrushEngineStrokeParams(
 			stroke.se.stabilizer_sample_count = m_stabilizerSampleCount;
 		}
 	}
+
 	outStroke = stroke;
 	return brush;
 }

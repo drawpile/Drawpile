@@ -36,6 +36,7 @@ public:
 	void dispose() override;
 
 private:
+	void strokeTo(const canvas::Point &point);
 	void cancelStroke();
 	void pushMessage(DP_Message *msg);
 	void flushMessages();

@@ -432,6 +432,19 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QLabel" name="stabilizationLabel">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::RichText</enum>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </item>
@@ -505,6 +518,7 @@
   <tabstop>gainBox</tabstop>
   <tabstop>stabilizerBox</tabstop>
   <tabstop>smoothingBox</tabstop>
+  <tabstop>stabilizationLabel</tabstop>
   <tabstop>stabilizerButton</tabstop>
  </tabstops>
  <resources/>

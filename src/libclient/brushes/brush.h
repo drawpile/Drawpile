@@ -383,6 +383,9 @@ public:
 	bool isPixelPerfect() const;
 	void setPixelPerfect(bool pixelPerfect);
 
+	bool isPixelArtInput() const;
+	void setPixelArtInput(bool pixelArtInput);
+
 	StabilizationMode stabilizationMode() const;
 	void setStabilizationMode(StabilizationMode stabilizationMode);
 

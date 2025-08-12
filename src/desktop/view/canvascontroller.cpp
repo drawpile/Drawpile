@@ -1446,7 +1446,8 @@ void CanvasController::penMoveEvent(
 	if(m_dragMode == ViewDragMode::Started) {
 		moveDrag(posf.toPoint());
 	} else {
-		if(toolFractional() || !m_prevPoint.intSame(point)) {
+		if(m_prevPoint.isDifferent(
+			   point, toolFractional(), toolSnapsToPixel())) {
 			if(m_penState == PenState::Up) {
 				CanvasShortcuts::ConstraintMatch match =
 					m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);

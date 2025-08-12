@@ -166,6 +166,7 @@ struct BrushSettings::Private {
 	QAction *smudgeAlphaAction;
 	QAction *syncSamplesAction;
 	QAction *pixelPerfectAction;
+	QAction *pixelArtInputAction;
 
 	QActionGroup *stabilizationModeGroup;
 	QAction *stabilizerAction;
@@ -493,6 +494,10 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 		QCoreApplication::translate(
 			"dialogs::BrushSettingsDialog", "Pixel-perfect"));
 	d->pixelPerfectAction->setCheckable(true);
+	d->pixelArtInputAction = paintModeMenu->addAction(
+		QCoreApplication::translate(
+			"dialogs::BrushSettingsDialog", "Pixel art input"));
+	d->pixelArtInputAction->setCheckable(true);
 	d->ui.paintMode->setMenu(paintModeMenu);
 	setPaintModeInUi(int(DP_PAINT_MODE_DIRECT), false);
 
@@ -523,6 +528,15 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 		"independent setting, like in Krita."));
 	d->useBrushSampleCountAction->setCheckable(true);
 	d->ui.stabilizerButton->setMenu(stabilizerMenu);
+	utils::setWidgetRetainSizeWhenHidden(d->ui.stabilizerButton, true);
+	d->ui.stabilizationLabel->setText(
+		QStringLiteral("<a href=\"#\">%1</a>")
+			.arg(tr("Click to disable pixel art input")));
+	connect(d->ui.stabilizationLabel, &QLabel::linkActivated, this, [this] {
+		d->pixelArtInputAction->setChecked(false);
+		updateFromUi();
+		updateUi();
+	});
 
 	connect(
 		d->ui.preview, &widgets::BrushPreview::requestEditor, this,
@@ -1373,11 +1387,14 @@ void BrushSettings::updateUi()
 			d->ui.hardnessBox, myPaintSettings, MYPAINT_BRUSH_SETTING_HARDNESS);
 		d->pixelPerfectAction->setChecked(myPaint.isPixelPerfect());
 		d->pixelPerfectAction->setEnabled(true);
+		d->pixelArtInputAction->setEnabled(false);
 	} else {
 		d->ui.opacityBox->setValue(qRound(classic.opacity.max * 100.0));
 		d->ui.hardnessBox->setValue(qRound(classic.hardness.max * 100.0));
 		d->pixelPerfectAction->setChecked(classic.pixel_perfect);
 		d->pixelPerfectAction->setEnabled(!softmode);
+		d->pixelArtInputAction->setChecked(classic.pixel_art_input);
+		d->pixelArtInputAction->setEnabled(!softmode);
 		// Smudging only works right in incremental mode
 		if(classic.smudge.max != 0.0) {
 			canChangePaintMode = false;
@@ -1528,6 +1545,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			}
 			classic.smudge_alpha = d->smudgeAlphaAction->isChecked();
 			classic.pixel_perfect = d->pixelPerfectAction->isChecked();
+			classic.pixel_art_input = d->pixelArtInputAction->isChecked();
 			// Smudging only works right in incremental mode
 			if(classic.smudge.max != 0.0) {
 				canChangePaintMode = false;
@@ -1591,11 +1609,24 @@ void BrushSettings::updateChangesInBrushPresetInSlot(int i)
 
 void BrushSettings::updateStabilizationSettingVisibility()
 {
-	brushes::StabilizationMode stabilizationMode = d->stabilizationMode();
 	d->ui.stabilizerBox->setVisible(false);
 	d->ui.smoothingBox->setVisible(false);
-	d->ui.stabilizerBox->setVisible(stabilizationMode == brushes::Stabilizer);
-	d->ui.smoothingBox->setVisible(stabilizationMode == brushes::Smoothing);
+	d->ui.stabilizationLabel->setVisible(false);
+	if(d->currentBrush().isPixelArtInput()) {
+		d->ui.stabilizationLabel->show();
+		d->ui.stabilizerButton->hide();
+	} else {
+		brushes::StabilizationMode stabilizationMode = d->stabilizationMode();
+		switch(stabilizationMode) {
+		case brushes::Stabilizer:
+			d->ui.stabilizerBox->show();
+			break;
+		case brushes::Smoothing:
+			d->ui.smoothingBox->show();
+			break;
+		}
+		d->ui.stabilizerButton->show();
+	}
 }
 
 void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)

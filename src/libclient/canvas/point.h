@@ -88,6 +88,36 @@ public:
 	}
 	bool intSame(const QPointF &point) const { return intSame(*this, point); }
 
+	static bool onSamePixel(const QPointF &p1, const QPointF &p2)
+	{
+		return qFloor(p1.x()) == qFloor(p2.x()) &&
+			   qFloor(p1.y()) == qFloor(p2.y());
+	}
+
+	bool onSamePixel(const QPointF &point) const
+	{
+		return onSamePixel(*this, point);
+	}
+
+	static bool isDifferent(
+		const QPointF &p1, const QPointF &p2, bool fractional,
+		bool snapsToPixel)
+	{
+		if(snapsToPixel) {
+			return !onSamePixel(p1, p2);
+		} else if(fractional) {
+			return p1 != p2;
+		} else {
+			return !intSame(p1, p2);
+		}
+	}
+
+	bool
+	isDifferent(const QPointF &point, bool fractional, bool snapsToPixel) const
+	{
+		return isDifferent(*this, point, fractional, snapsToPixel);
+	}
+
 	static float distance(const QPointF &p1, const QPointF &p2)
 	{
 		return hypot(p1.x()-p2.x(), p1.y()-p2.y());
