@@ -1635,10 +1635,13 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 	Lock lock = getLock();
 	bool locked = lock != Lock::None;
 	bool eraseMode = d->blendModeManager->isEraseMode();
+	bool eraserSlot = isCurrentEraserSlot();
 	QPair<QWidget *, bool> widgetVisibilities[] = {
 		{d->ui.modeColorpick, !locked && !mypaintmode},
-		{d->ui.alphaPreserve, !locked || lock == Lock::SlowModesPermission},
-		{d->ui.modeEraser, !locked || lock == Lock::SlowModesPermission},
+		{d->ui.alphaPreserve,
+		 !eraserSlot && (!locked || lock == Lock::SlowModesPermission)},
+		{d->ui.modeEraser,
+		 !eraserSlot && (!locked || lock == Lock::SlowModesPermission)},
 		{d->ui.paintMode, !locked},
 		{d->ui.blendmode,
 		 (!locked || lock == Lock::SlowModesPermission) && !eraseMode},

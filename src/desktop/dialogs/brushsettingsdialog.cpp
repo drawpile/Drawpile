@@ -425,6 +425,7 @@ void BrushSettingsDialog::setPresetShortcut(const QKeySequence &presetShortcut)
 void BrushSettingsDialog::setForceEraseMode(bool forceEraseMode)
 {
 	d->eraseModeBox->setEnabled(!forceEraseMode);
+	d->preserveAlphaBox->setEnabled(!forceEraseMode);
 	if(forceEraseMode) {
 		QScopedValueRollback<bool> rollback(d->updating, true);
 		d->blendModeManager->setEraseMode(true);
