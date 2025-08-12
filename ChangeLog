@@ -1,4 +1,5 @@
 Unrelased Version 2.3.0-pre
+ * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.
 
 2025-08-08 Version 2.3.0-beta.2
  * Fix: Make start dialog not flicker briefly on some systems.

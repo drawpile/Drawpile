@@ -254,6 +254,10 @@ void BrushPresetForm::renderPresetThumbnail()
 QPixmap BrushPresetForm::applyPresetThumbnailLabel(const QString &label)
 {
 	QPixmap thumbnail = m_scaledPresetThumbnail;
+	if(thumbnail.isNull() || thumbnail.size().isEmpty()) {
+		thumbnail = QPixmap(64, 64);
+		thumbnail.fill(Qt::transparent);
+	}
 	QPainter painter(&thumbnail);
 	qreal h = thumbnail.height();
 	qreal y = h * 3.0 / 4.0;
