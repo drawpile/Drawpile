@@ -473,6 +473,10 @@ QJsonObject ClassicBrush::settingsToJson() const
 		o.insert(QStringLiteral("pixelperfect"), true);
 	}
 
+	if(pixel_art_input) {
+		o.insert(QStringLiteral("pixelartinput"), true);
+	}
+
 	o["stabilizationmode"] = stabilizationMode;
 	o["stabilizer"] = stabilizerSampleCount;
 	o["smoothing"] = smoothing;
