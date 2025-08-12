@@ -821,10 +821,12 @@ private:
 		preset.originalDescription = query.columnText16(2);
 
 		QPixmap pixmap;
-		if(pixmap.loadFromData(query.columnBlob(3))) {
-			preset.originalThumbnail = pixmap;
-		} else {
-			qWarning("Error loading thumbnail for preset %d", preset.id);
+		if(!query.columnNull(3)) {
+			if(pixmap.loadFromData(query.columnBlob(3))) {
+				preset.originalThumbnail = pixmap;
+			} else {
+				qWarning("Error loading thumbnail for preset %d", preset.id);
+			}
 		}
 
 		preset.originalBrush = loadBrush(preset.id, query.columnBlob(4));
