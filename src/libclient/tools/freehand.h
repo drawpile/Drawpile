@@ -13,12 +13,19 @@ struct DP_Semaphore;
 
 namespace tools {
 
-class Freehand final : public Tool {
+class SnapToPixelToggle {
+public:
+	virtual ~SnapToPixelToggle() = default;
+	virtual void setSnapToPixel(bool snapToPixel) = 0;
+};
+
+class Freehand final : public Tool, public SnapToPixelToggle {
 public:
 	Freehand(ToolController &owner, DP_MaskSync *ms);
 	~Freehand() override;
 
 	void begin(const BeginParams &params) override;
+	void beginStroke(const BeginParams &params, SnapToPixelToggle *target);
 	void motion(const MotionParams &params) override;
 	void end(const EndParams &params) override;
 
@@ -34,6 +41,8 @@ public:
 
 	void finish() override;
 	void dispose() override;
+
+	void setSnapToPixel(bool snapToPixel) override;
 
 private:
 	void strokeTo(const canvas::Point &point);
@@ -63,7 +72,7 @@ private:
 	QAtomicInt m_cancelling = 0;
 };
 
-class FreehandEraser final : public Tool {
+class FreehandEraser final : public Tool, public SnapToPixelToggle {
 public:
 	FreehandEraser(ToolController &owner, Freehand *freehand);
 
@@ -78,6 +87,8 @@ public:
 	void offsetActiveTool(int x, int y) override;
 
 	void finish() override;
+
+	void setSnapToPixel(bool snapToPixel) override;
 
 private:
 	Freehand *m_freehand;

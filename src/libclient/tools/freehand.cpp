@@ -48,6 +48,11 @@ Freehand::~Freehand()
 
 void Freehand::begin(const BeginParams &params)
 {
+	beginStroke(params, this);
+}
+
+void Freehand::beginStroke(const BeginParams &params, SnapToPixelToggle *target)
+{
 	Q_ASSERT(!m_drawing);
 	if(params.right) {
 		return;
@@ -55,7 +60,7 @@ void Freehand::begin(const BeginParams &params)
 
 	const brushes::ActiveBrush &brush = m_owner.activeBrush();
 	bool pixelArtInput = brush.isPixelArtInput();
-	setCapability(Capability::SnapsToPixel, pixelArtInput);
+	target->setSnapToPixel(pixelArtInput);
 
 	m_drawing = true;
 	m_firstPoint = true;
@@ -160,6 +165,11 @@ void Freehand::dispose()
 	cancelStroke();
 	DP_SEMAPHORE_MUST_POST(m_sem);
 	m_strokeWorker.finishThread();
+}
+
+void Freehand::setSnapToPixel(bool snapToPixel)
+{
+	setCapability(Capability::SnapsToPixel, snapToPixel);
 }
 
 void Freehand::cancelStroke()
@@ -280,7 +290,7 @@ FreehandEraser::FreehandEraser(ToolController &owner, Freehand *freehand)
 
 void FreehandEraser::begin(const BeginParams &params)
 {
-	m_freehand->begin(params);
+	m_freehand->beginStroke(params, this);
 }
 
 void FreehandEraser::motion(const MotionParams &params)
@@ -306,6 +316,11 @@ void FreehandEraser::offsetActiveTool(int x, int y)
 void FreehandEraser::finish()
 {
 	m_freehand->finish();
+}
+
+void FreehandEraser::setSnapToPixel(bool snapToPixel)
+{
+	setCapability(Capability::SnapsToPixel, snapToPixel);
 }
 
 }
