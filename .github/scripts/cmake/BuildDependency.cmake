@@ -360,7 +360,7 @@ function(_build_cmake build_type target_arch source_dir)
 		endif()
 
 		if(ANDROID_SDK_ROOT)
-			list(APPEND default_flags "-DANDROID_SDK=${ANDROID_SDK_ROOT}")
+			list(APPEND default_flags "-DANDROID_SDK=${ANDROID_SDK_ROOT}" "-G" "Ninja")
 		endif()
 	endif()
 
@@ -393,6 +393,20 @@ function(_build_cmake build_type target_arch source_dir)
 		WORKING_DIRECTORY "${binary_dir}"
 		COMMAND_ERROR_IS_FATAL ANY
 	)
+
+	# I don't know where this nonsensical -version argument comes from. It
+	# seems to emerge from something Qt6-related, since it only shows up when
+	# building Qt6 itself and qtkeychain for Qt6.
+	if(ANDROID_SDK_ROOT)
+		message(STATUS "HACK: purge garbage '-version' argument from build.ninja")
+		execute_process(
+			COMMAND perl -pi -e "s/ -version / /g" build.ninja
+			COMMAND_ECHO STDOUT
+			WORKING_DIRECTORY "${binary_dir}"
+			COMMAND_ERROR_IS_FATAL ANY
+		)
+	endif()
+
 	execute_process(
 		COMMAND "${CMAKE_COMMAND}" --build . ${make_flags}
 		COMMAND_ECHO STDOUT
