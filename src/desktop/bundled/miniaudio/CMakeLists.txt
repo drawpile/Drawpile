@@ -9,6 +9,7 @@ target_compile_definitions(miniaudio PUBLIC
     MA_NO_FLAC=1
     MA_NO_MP3=1
     MA_NO_GENERATION=1
+    MA_NO_WASAPI=1 # WASAPI on Windows causes hangs and crashes.
 )
 
 # Some platforms need extra flags.

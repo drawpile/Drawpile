@@ -2,6 +2,7 @@ Unrelased Version 2.3.0-pre
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.
  * Feature: Pixel art input for pixel brushes, turns off all smoothing and makes the inputs apply immediately. Thanks Ben, dAVePAGE and Nilifin for reporting.
  * Fix: Remove alpha lock and erase toggle buttons when using the eraser tool.
+ * Fix: Disable the "modern" WASAPI audio backend, because on some devices it causes crashes in the depths of Windows, makes drag and drop stop working or other strange effects. Thanks Ben, CrustStuff, dAVePAGE and Momo for reporting various different incarnations of this problem.
 
 2025-08-08 Version 2.3.0-beta.2
  * Fix: Make start dialog not flicker briefly on some systems.
