@@ -1,4 +1,6 @@
-Unrelased Version 2.3.0-pre
+Unreleased Version 2.3.0-pre
+
+2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.
  * Feature: Pixel art input for pixel brushes, turns off all smoothing and makes the inputs apply immediately. Thanks Ben, dAVePAGE and Nilifin for reporting.
  * Fix: Remove alpha lock and erase toggle buttons when using the eraser tool.
