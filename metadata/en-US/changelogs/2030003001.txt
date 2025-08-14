@@ -1,0 +1,1 @@
+Small bugfix release for the 2.3 beta released because of a Windows-specific issue, with the only new feature being pixel art input. See the website for a full changelog and an illustrated guide to all the changes in 2.3.
