@@ -25,6 +25,18 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.3.0-beta.3" type="development" date="2025-08-14">
+      <url>https://drawpile.net/news/release-2.3.0-beta.3/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.</li>
+          <li>Feature: Pixel art input for pixel brushes, turns off all smoothing and makes the inputs apply immediately. Thanks Ben, dAVePAGE and Nilifin for reporting.</li>
+          <li>Fix: Remove alpha lock and erase toggle buttons when using the eraser tool.</li>
+          <li>Fix: Disable the "modern" WASAPI audio backend, because on some devices it causes crashes in the depths of Windows, makes drag and drop stop working or other strange effects. Thanks Ben, CrustStuff, dAVePAGE and Momo for reporting various different incarnations of this problem.</li>
+        </ul>
+      </description>
+    </release>
     <release version="2.3.0-beta.2" type="development" date="2025-08-08">
       <url>https://drawpile.net/news/release-2.3.0-beta.2/</url>
       <description>
