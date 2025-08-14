@@ -1,0 +1,17 @@
+19da5b93c353a6db550087dceff9df5af02594909223f4f5efcdb3f34f0354bd  Drawpile-2.3.0-beta.3-23-23-arm64-v8a.apk
+01fbd4d21ab2d310d9f6b84e5dcf00239f102790b950ef3d1d5c958c24aa2699  Drawpile-2.3.0-beta.3-23-23-armeabi-v7a.apk
+6c527e29a334d474b7ad19e3def664a76729c8e7a17164221fde406dcccaf9c0  Drawpile-2.3.0-beta.3-30-34-arm64-v8a.apk
+6e41d7dc8f6e3e2e798d20a6c14205b3d147984869f777d0f9286be9146562d6  Drawpile-2.3.0-beta.3-arm64.dmg
+a16fa3a7fa6f642d11908898feb7403c5e1d4ec569a8eab59b9fabaae3c2731c  Drawpile-2.3.0-beta.3-arm64.msi
+9392383c450cef6fd4cc74bf4fc16ec87a010b9b1666bdf43bf0e75683ebebce  Drawpile-2.3.0-beta.3-arm64.zip
+8ea91cced7be66ab101f71f5ea1c32b49b6400b5533d3d42706843bb103fb825  Drawpile-2.3.0-beta.3-Qt5-x86_64.dmg
+62450b0d41bcbcdeba713c8f846abae84c7b1fa096c335a35210e55eb092cc15  Drawpile-2.3.0-beta.3.tar.gz
+cc47262d0c720b3142c5ae0adfa8bea0f4ec06d51ab978379c66c37719143b72  Drawpile-2.3.0-beta.3-x86_64.AppImage
+008cf2ec54a3181c462feca038ba2d465a2bca913aadf5e3f85f35e77dc97e40  Drawpile-2.3.0-beta.3-x86_64.dmg
+0dfa47c8da48ef647b4f2eedffd72cb58fb0db1384e4cbd95036a2571e35e71c  Drawpile-2.3.0-beta.3-x86_64.msi
+837cd9421e072454607379237a9c94f3ff6dcab12651a6567aee8e6734ffb90b  Drawpile-2.3.0-beta.3-x86_64.zip
+896c8578fdc8409d2e07e8053426d6ba588ba6bce7aea5f5f3e6f58ad9a26877  Drawpile-2.3.0-beta.3-x86.msi
+37ea86f81a4ff4f1a914936c60520dabf823f8f17fcd351cd51a39c10434babe  Drawpile-2.3.0-beta.3-x86.zip
+5e6391e07efecd6b379374a21ed5b9e9ba621abaa9b565aa8401d85940dc3dc0  Drawpile-2.3.0-beta.3.zip
+d499626da2859eebb9966ebedbc5a81571a2b831bde16bad3e748add11ee3209  DrawpileSymbols-2.3.0-beta.3-x86_64.zip
+f182d1bdd78cf67a0e8101eeb9eb6ed388e362056ab96628bdbdddc69c530e34  Drawpile-Tools-2.3.0-beta.3-x86_64.zip
