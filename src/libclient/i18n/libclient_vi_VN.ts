@@ -1156,7 +1156,7 @@ Hãy chọn một lớp thông thường thay vào đó.</translation>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1245"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1247"/>
         <source>Default</source>
         <translation type="unfinished">Mặc định</translation>
     </message>

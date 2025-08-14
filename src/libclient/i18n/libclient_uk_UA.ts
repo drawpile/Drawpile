@@ -1162,7 +1162,7 @@ Select a regular layer instead.</source>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1245"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1247"/>
         <source>Default</source>
         <translation>За замовчуванням</translation>
     </message>

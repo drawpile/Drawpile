@@ -1082,7 +1082,7 @@ Podzakres: [%3, %4]</translation>
 <context>
     <name>LinkCheck</name>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1263"/>
+        <location filename="../utils/widgetutils.cpp" line="+1270"/>
         <source>Open Link</source>
         <translation>Otwórz link</translation>
     </message>
@@ -1370,12 +1370,12 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="-2271"/>
-        <location line="+4096"/>
+        <location line="+4095"/>
         <source>Export Again</source>
         <translation>Eksportuj ponownie</translation>
     </message>
     <message>
-        <location line="-4092"/>
+        <location line="-4091"/>
         <source>Export Again to %1</source>
         <translation>Eksportuj ponownie do %1</translation>
     </message>
@@ -1565,12 +1565,12 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2412"/>
+        <location line="+2411"/>
         <source>Record...</source>
         <translation>Nagraj...</translation>
     </message>
     <message>
-        <location line="-2370"/>
+        <location line="-2369"/>
         <source>Unsupported format.</source>
         <translation>Niewspierany format.</translation>
     </message>
@@ -1615,7 +1615,7 @@ zatrzymaj nagrywanie</translation>
         <translation>Błąd przy otwieraniu dziennika zdarzeń tabletu.</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+188"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>Jesteś już połączony z sesją! Najpierw rozłącz się, aby ją zorganizować.</translation>
     </message>
@@ -1635,7 +1635,7 @@ zatrzymaj nagrywanie</translation>
         <translation>Rozpocznij sesję</translation>
     </message>
     <message>
-        <location line="+157"/>
+        <location line="+158"/>
         <source>Reconnect</source>
         <translation>Połącz ponownie</translation>
     </message>
@@ -1676,12 +1676,12 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3110"/>
+        <location line="+3108"/>
         <source>Terminate</source>
         <translation>Przerwij</translation>
     </message>
     <message>
-        <location line="-3096"/>
+        <location line="-3094"/>
         <source>Join Session</source>
         <translation>Dołącz do sesji</translation>
     </message>
@@ -1742,29 +1742,29 @@ zatrzymaj nagrywanie</translation>
         <translation>Zmiana wyboru…</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+42"/>
         <source>Stop Tablet Event Log</source>
         <translation>Zatrzymaj dziennik zdarzeń tabletu</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1927"/>
+        <location line="+1926"/>
         <source>Tablet Event Log...</source>
         <translation>Dziennik zdarzeń tabletu...</translation>
     </message>
     <message>
-        <location line="-1923"/>
+        <location line="-1922"/>
         <source>Stop Profile</source>
         <translation>Zatrzymaj profil</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1924"/>
+        <location line="+1923"/>
         <source>Profile...</source>
         <translation>Profil...</translation>
     </message>
     <message>
-        <location line="-1913"/>
+        <location line="-1912"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Ustaw sztuczne opóźnienie... (obecnie %1 ms)</translation>
     </message>
@@ -1790,12 +1790,12 @@ zatrzymaj nagrywanie</translation>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1871"/>
+        <location line="+1870"/>
         <source>Record Debug Dumps</source>
         <translation>Nagrywanie zrzutów debugowania</translation>
     </message>
     <message>
-        <location line="-1870"/>
+        <location line="-1869"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2339,13 +2339,13 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>&amp;Odznacz</translation>
     </message>
     <message>
-        <location line="+1540"/>
+        <location line="+1539"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
         <translation>[Kliknij tutaj], aby zgłosić błąd lub spytać o nową funkcjonalność.</translation>
     </message>
     <message>
-        <location line="-2166"/>
+        <location line="-2165"/>
         <source>Delete</source>
         <translation>Usuń</translation>
     </message>
@@ -2370,7 +2370,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>&amp;Edytuj</translation>
     </message>
     <message>
-        <location line="-3932"/>
+        <location line="-3931"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2430,12 +2430,12 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+512"/>
+        <location line="+511"/>
         <source>Canvas size too large to host.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+195"/>
+        <location line="+196"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2460,7 +2460,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Nie można nawiązać&#xa0;połączenia z serwerem RDP „%s”.</translation>
     </message>
     <message>
-        <location line="+1522"/>
+        <location line="+1521"/>
         <source>Arrange Docks</source>
         <translation>Ułóż doki</translation>
     </message>
@@ -2746,7 +2746,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Przekształć zaznaczenie</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation>Przekształć tylko samą maskę wyboru, a następnie przełącz narzędzia z powrotem</translation>
     </message>
@@ -3229,17 +3229,17 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>&amp;Dołączyć...</translation>
     </message>
     <message>
-        <location line="-3994"/>
+        <location line="-3992"/>
         <source>Joined the session!</source>
         <translation>Dołączyłem do sesji!</translation>
     </message>
     <message>
-        <location line="+605"/>
+        <location line="+604"/>
         <source>Hosting on this computer is not available</source>
         <translation>Hosting na tym komputerze jest niedostępny</translation>
     </message>
     <message>
-        <location line="+169"/>
+        <location line="+170"/>
         <source>Really leave and terminate the session?</source>
         <translation>Naprawdę opuścić i zakończyć sesję?</translation>
     </message>
@@ -3289,7 +3289,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Narzędzie pędzla odręcznego (tryb blokady alfa)</translation>
     </message>
     <message>
-        <location line="+926"/>
+        <location line="+925"/>
         <source>Export Image…</source>
         <translation>Eksportuj obraz</translation>
     </message>
@@ -3340,7 +3340,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Właściwości warstwy…</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+525"/>
+        <location filename="../mainwindow.cpp" line="+524"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>Dołącz do sesji rysowania innego użytkownika</translation>
     </message>
@@ -3706,7 +3706,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
         <translation>Okienko</translation>
     </message>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="-162"/>
+        <location filename="../utils/widgetutils.cpp" line="-169"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
         <translation>%1 (%2)</translation>
@@ -3715,7 +3715,7 @@ Czy na pewno chcesz rozpocząć nagrywanie zrzutów debugowania?</translation>
 <context>
     <name>MarkerColors</name>
     <message>
-        <location line="+207"/>
+        <location line="+214"/>
         <source>None</source>
         <translation type="unfinished">Brak</translation>
     </message>
@@ -5370,12 +5370,12 @@ do 64x64 pikseli.</translation>
 <context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location line="+151"/>
+        <location line="+156"/>
         <source>Brush Editor</source>
         <translation>Edytor Ikon Pędzli</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+122"/>
         <source>Brush</source>
         <translation>Pędzel</translation>
     </message>
@@ -5411,7 +5411,7 @@ do 64x64 pikseli.</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+441"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+442"/>
         <source>Round Pixel Brush</source>
         <translation>Okrągły pędzel pikselowy</translation>
     </message>
@@ -5478,7 +5478,18 @@ do 64x64 pikseli.</translation>
         <translation>Wybierz początkowy kolor z warstwy</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+19"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+20"/>
+        <source>Pixel art input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Disables all smoothing and stabilization for instant pixel drawing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Spacing: </source>
         <translation>Odstęp: </translation>
     </message>
@@ -5585,7 +5596,7 @@ do 64x64 pikseli.</translation>
     </message>
     <message>
         <location line="-451"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="-12"/>
         <source>Smudge with transparency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5704,33 +5715,33 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+78"/>
         <source>Smudging: </source>
         <translation>Rozmazywanie: </translation>
     </message>
     <message>
-        <location line="-495"/>
+        <location line="-499"/>
         <source>Color Pickup: 1/</source>
         <translation>Pobieranie koloru: 1/</translation>
     </message>
     <message>
-        <location line="-353"/>
+        <location line="-365"/>
         <source>Preserve alpha</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+857"/>
+        <location line="+873"/>
         <source>Minimum Smudging: </source>
         <translation>Minimalne rozmazywanie: </translation>
     </message>
     <message>
-        <location line="-86"/>
-        <location line="+90"/>
+        <location line="-90"/>
+        <location line="+94"/>
         <source>Smudging</source>
         <translation>Rozmazywanie:</translation>
     </message>
     <message>
-        <location line="-342"/>
+        <location line="-346"/>
         <location line="+20"/>
         <location line="+37"/>
         <source>Apply to All</source>
@@ -5777,7 +5788,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>Mieszanie kolorów na warstwie, na której rysujesz.</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+81"/>
         <source>Blending: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -5792,7 +5803,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+138"/>
+        <location line="+141"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
         <translation>Spowalnia ruch, aby ustabilizować go w czasie. Wysokie wartości dają bardzo gładkie linie, ale będą rysowane powoli. Gdy przestaniesz się poruszać, linia dogoni kursor. Wygładzanie tabletu z preferencji wprowadzania danych również ma zastosowanie.</translation>
     </message>
@@ -7558,7 +7569,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation>Przekaz do aplikacji</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1043"/>
+        <location filename="../mainwindow.cpp" line="-1042"/>
         <source>Blend alpha</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8963,7 +8974,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
 <context>
     <name>dialogs::settingsdialog::General</name>
     <message>
-        <location filename="../dialogs/settingsdialog/general.cpp" line="+53"/>
+        <location filename="../dialogs/settingsdialog/general.cpp" line="+52"/>
         <location line="+145"/>
         <location line="+15"/>
         <source>System</source>
@@ -11280,7 +11291,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation>Sesje muszą być zgodne z zasadami, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;kliknij tutaj, aby je zobaczyć&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+40"/>
         <source>Hosting on your own computer requires additional setup!</source>
         <translation>Hosting na własnym komputerze wymaga dodatkowej konfiguracji!</translation>
     </message>
@@ -12320,14 +12331,14 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-32"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation>[♥ Przekaż darowiznę dla Drawpile], aby wesprzeć działanie serwerów.</translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1409"/>
+        <location filename="../mainwindow.cpp" line="+1408"/>
         <source>Donate</source>
         <translation>Wesprzyj</translation>
     </message>
@@ -12393,7 +12404,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
 <context>
     <name>tools::AnnotationSettings</name>
     <message>
-        <location filename="../toolwidgets/annotationsettings.cpp" line="+66"/>
+        <location filename="../toolwidgets/annotationsettings.cpp" line="+69"/>
         <source>Protect</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12454,7 +12465,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+85"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
         <translation>Adnotacje są ukryte. </translation>
@@ -12514,7 +12525,7 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation>Odłącz Pędzel</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+119"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+42"/>
         <source>Time-Based Stabilizer</source>
         <translation type="unfinished">Stabilizator oparty na czasie</translation>
@@ -12558,7 +12569,12 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+143"/>
+        <location line="+8"/>
+        <source>Click to disable pixel art input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+144"/>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12584,13 +12600,13 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+738"/>
+        <location line="+758"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1425"/>
+        <location line="-1445"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13247,8 +13263,8 @@ Wartości powyżej 0,5 mogą nie być zauważalne.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1956"/>
-        <location filename="../view/canvascontroller.cpp" line="+2098"/>
+        <location line="+1957"/>
+        <location filename="../view/canvascontroller.cpp" line="+2099"/>
         <source>Zoom: %1%</source>
         <translation type="unfinished"></translation>
     </message>

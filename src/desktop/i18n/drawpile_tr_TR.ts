@@ -1082,7 +1082,7 @@ Alt aralık: [%3, %4]</translation>
 <context>
     <name>LinkCheck</name>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1263"/>
+        <location filename="../utils/widgetutils.cpp" line="+1270"/>
         <source>Open Link</source>
         <translation>Bağlantıyı Aç</translation>
     </message>
@@ -1365,12 +1365,12 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     </message>
     <message>
         <location line="-2271"/>
-        <location line="+4096"/>
+        <location line="+4095"/>
         <source>Export Again</source>
         <translation>Tekrardan Dışa Aktar</translation>
     </message>
     <message>
-        <location line="-4092"/>
+        <location line="-4091"/>
         <source>Export Again to %1</source>
         <translation>Tekrardan %1&apos;e Dışa Aktar</translation>
     </message>
@@ -1560,12 +1560,12 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2412"/>
+        <location line="+2411"/>
         <source>Record...</source>
         <translation>Kayda Al...</translation>
     </message>
     <message>
-        <location line="-2370"/>
+        <location line="-2369"/>
         <source>Unsupported format.</source>
         <translation>Desteklenmeyen format.</translation>
     </message>
@@ -1610,7 +1610,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation>Tablet olay kaydını açarken hata oluştu.</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+188"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>Çoktan bir oturuma bağlısınız! Başka bir oturuma ev sahipliği yapmak için bağlantınızı kesin.</translation>
     </message>
@@ -1630,7 +1630,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation>Oturum Hostla</translation>
     </message>
     <message>
-        <location line="+157"/>
+        <location line="+158"/>
         <source>Reconnect</source>
         <translation>Yeniden Bağlan</translation>
     </message>
@@ -1671,12 +1671,12 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3110"/>
+        <location line="+3108"/>
         <source>Terminate</source>
         <translation>Evet</translation>
     </message>
     <message>
-        <location line="-3096"/>
+        <location line="-3094"/>
         <source>Join Session</source>
         <translation>Oturuma Katıl</translation>
     </message>
@@ -1737,29 +1737,29 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <translation>Seçim değiştiriliyor…</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+42"/>
         <source>Stop Tablet Event Log</source>
         <translation>Tablet Olay Kaydını Durdur</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1927"/>
+        <location line="+1926"/>
         <source>Tablet Event Log...</source>
         <translation>Tablet Olay Kaydı...</translation>
     </message>
     <message>
-        <location line="-1923"/>
+        <location line="-1922"/>
         <source>Stop Profile</source>
         <translation>Profili durdur</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1924"/>
+        <location line="+1923"/>
         <source>Profile...</source>
         <translation>Profil...</translation>
     </message>
     <message>
-        <location line="-1913"/>
+        <location line="-1912"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Yapay Gecikme Kur... (şu an %1 ms)</translation>
     </message>
@@ -1785,12 +1785,12 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1871"/>
+        <location line="+1870"/>
         <source>Record Debug Dumps</source>
         <translation>Hata Ayıklama Çöplüklerini Kaydet</translation>
     </message>
     <message>
-        <location line="-1870"/>
+        <location line="-1869"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2344,7 +2344,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+16"/>
         <source>Mirror the transformed image horizontally</source>
         <translation>Dönüştürülmüş resmi yatay olarak aynala</translation>
     </message>
@@ -2410,7 +2410,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2166"/>
+        <location line="-2165"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
@@ -2435,7 +2435,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>&amp;Düzenle</translation>
     </message>
     <message>
-        <location line="-3932"/>
+        <location line="-3931"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2495,12 +2495,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+512"/>
+        <location line="+511"/>
         <source>Canvas size too large to host.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+195"/>
+        <location line="+196"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2525,7 +2525,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Sunucuya bağlantı sağlanamadı.</translation>
     </message>
     <message>
-        <location line="+1522"/>
+        <location line="+1521"/>
         <source>Arrange Docks</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2801,7 +2801,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3244,17 +3244,17 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>&amp;Katıl...</translation>
     </message>
     <message>
-        <location line="-3994"/>
+        <location line="-3992"/>
         <source>Joined the session!</source>
         <translation>Oturuma katılındı!</translation>
     </message>
     <message>
-        <location line="+605"/>
+        <location line="+604"/>
         <source>Hosting on this computer is not available</source>
         <translation>Bu bilgisayarda hostlamak mevcut değil</translation>
     </message>
     <message>
-        <location line="+169"/>
+        <location line="+170"/>
         <source>Really leave and terminate the session?</source>
         <translation>Oturumdan ayrılıp oturmu sonlandırmak istediğinize emin misiniz?</translation>
     </message>
@@ -3304,7 +3304,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Serbest çizim fırça aracı (alfa kilit modu, sıfırlamak için tıklayın)</translation>
     </message>
     <message>
-        <location line="+926"/>
+        <location line="+925"/>
         <source>Export Image…</source>
         <translation>Görseli Dışa Aktar…</translation>
     </message>
@@ -3355,7 +3355,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Katman Özellikleri…</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+525"/>
+        <location filename="../mainwindow.cpp" line="+524"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>Başka bir kullanıcının çizim oturumuna katıl</translation>
     </message>
@@ -3701,7 +3701,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Pencere</translation>
     </message>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="-162"/>
+        <location filename="../utils/widgetutils.cpp" line="-169"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
         <translation>%1 (%2)</translation>
@@ -3710,7 +3710,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
 <context>
     <name>MarkerColors</name>
     <message>
-        <location line="+207"/>
+        <location line="+214"/>
         <source>None</source>
         <translation type="unfinished">Yok</translation>
     </message>
@@ -5358,12 +5358,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
 <context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location line="+151"/>
+        <location line="+156"/>
         <source>Brush Editor</source>
         <translation>Fırça Düzenleyici</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+122"/>
         <source>Brush</source>
         <translation>Fırça</translation>
     </message>
@@ -5399,7 +5399,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     </message>
     <message>
         <location line="+2"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+441"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+442"/>
         <source>Round Pixel Brush</source>
         <translation>Yuvarlak Piksel Fırça</translation>
     </message>
@@ -5466,7 +5466,18 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <translation>Rengi Katmandan Seç</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+19"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+20"/>
+        <source>Pixel art input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Disables all smoothing and stabilization for instant pixel drawing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Spacing: </source>
         <translation>Mesafelendirme: </translation>
     </message>
@@ -5573,7 +5584,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     </message>
     <message>
         <location line="-451"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="-12"/>
         <source>Smudge with transparency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5692,33 +5703,33 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+78"/>
         <source>Smudging: </source>
         <translation>Bulaşma: </translation>
     </message>
     <message>
-        <location line="-495"/>
+        <location line="-499"/>
         <source>Color Pickup: 1/</source>
         <translation>Renk Alımı: 1/</translation>
     </message>
     <message>
-        <location line="-353"/>
+        <location line="-365"/>
         <source>Preserve alpha</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+857"/>
+        <location line="+873"/>
         <source>Minimum Smudging: </source>
         <translation>Minimum Bulaşma: </translation>
     </message>
     <message>
-        <location line="-86"/>
-        <location line="+90"/>
+        <location line="-90"/>
+        <location line="+94"/>
         <source>Smudging</source>
         <translation>Bulaşma</translation>
     </message>
     <message>
-        <location line="-342"/>
+        <location line="-346"/>
         <location line="+20"/>
         <location line="+37"/>
         <source>Apply to All</source>
@@ -5765,7 +5776,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>Renklerin çizildikleri katmanda karışmaları.</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+81"/>
         <source>Blending: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -5780,7 +5791,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+138"/>
+        <location line="+141"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
         <translation>Çizginizi düzleştirmek için çizgi çekme hızını yavaşlatır. Yüksek değerler çok düz ve pürüzsüz çigiler oluşturur ama yavaş çizmenize sebep olur. Çizmeyi bıraktığınızda, çektiğiniz çizgi fare imlecinize yetişir. Girdi tercihlerindeki tablet yumuşatması da buna dahildir.</translation>
     </message>
@@ -7544,7 +7555,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>İçinden Geç</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1043"/>
+        <location filename="../mainwindow.cpp" line="-1042"/>
         <source>Blend alpha</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8935,7 +8946,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::General</name>
     <message>
-        <location filename="../dialogs/settingsdialog/general.cpp" line="+53"/>
+        <location filename="../dialogs/settingsdialog/general.cpp" line="+52"/>
         <location line="+145"/>
         <location line="+15"/>
         <source>System</source>
@@ -11240,7 +11251,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+40"/>
         <source>Hosting on your own computer requires additional setup!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12270,14 +12281,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-32"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1409"/>
+        <location filename="../mainwindow.cpp" line="+1408"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12343,7 +12354,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::AnnotationSettings</name>
     <message>
-        <location filename="../toolwidgets/annotationsettings.cpp" line="+66"/>
+        <location filename="../toolwidgets/annotationsettings.cpp" line="+69"/>
         <source>Protect</source>
         <translation>Koru</translation>
     </message>
@@ -12404,7 +12415,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+85"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
         <translation type="unfinished"></translation>
@@ -12464,7 +12475,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+119"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+42"/>
         <source>Time-Based Stabilizer</source>
         <translation>Zaman-Bazlı Dengeleyici</translation>
@@ -12508,7 +12519,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Dengeleyiciyi Krita&apos;daki gibi ayrı bir seçenek yapmaktansa, MyPaint&apos;teki gibi fırça ayarı yapar.</translation>
     </message>
     <message>
-        <location line="+143"/>
+        <location line="+8"/>
+        <source>Click to disable pixel art input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+144"/>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12534,13 +12550,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+738"/>
+        <location line="+758"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1425"/>
+        <location line="-1445"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
         <translation>MyPaint fırçalarını kullanmaya izniniz yok.</translation>
     </message>
@@ -13197,8 +13213,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Yatay aynalama: KAPALI</translation>
     </message>
     <message>
-        <location line="+1956"/>
-        <location filename="../view/canvascontroller.cpp" line="+2098"/>
+        <location line="+1957"/>
+        <location filename="../view/canvascontroller.cpp" line="+2099"/>
         <source>Zoom: %1%</source>
         <translation>Yakınlaştırma: %1%</translation>
     </message>

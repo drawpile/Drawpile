@@ -1159,7 +1159,7 @@ Veuillez sélectionner un autre calque.</translation>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1245"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1247"/>
         <source>Default</source>
         <translation type="unfinished">Défaut</translation>
     </message>

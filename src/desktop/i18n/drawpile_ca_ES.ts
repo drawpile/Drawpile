@@ -1082,7 +1082,7 @@ Subinterval: [%3,%4]</translation>
 <context>
     <name>LinkCheck</name>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1263"/>
+        <location filename="../utils/widgetutils.cpp" line="+1270"/>
         <source>Open Link</source>
         <translation>Obre l&apos;enllaç</translation>
     </message>
@@ -1366,12 +1366,12 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     </message>
     <message>
         <location line="-2271"/>
-        <location line="+4096"/>
+        <location line="+4095"/>
         <source>Export Again</source>
         <translation>Expotar de nou</translation>
     </message>
     <message>
-        <location line="-4092"/>
+        <location line="-4091"/>
         <source>Export Again to %1</source>
         <translation>Exportar de nou a %1</translation>
     </message>
@@ -1561,12 +1561,12 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2412"/>
+        <location line="+2411"/>
         <source>Record...</source>
         <translation>Enregistra...</translation>
     </message>
     <message>
-        <location line="-2370"/>
+        <location line="-2369"/>
         <source>Unsupported format.</source>
         <translation>Format no suportat.</translation>
     </message>
@@ -1611,7 +1611,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
         <translation>Error obrint el registre d&apos;esdeveniments de la tauleta.</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+188"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>Ja esteu connectat a una sessió! Desconnecteu-vos primer per poder allotjar-ne una.</translation>
     </message>
@@ -1631,7 +1631,7 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
         <translation>Allotjar sessió</translation>
     </message>
     <message>
-        <location line="+157"/>
+        <location line="+158"/>
         <source>Reconnect</source>
         <translation>Reconnecta</translation>
     </message>
@@ -1672,12 +1672,12 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3110"/>
+        <location line="+3108"/>
         <source>Terminate</source>
         <translation>Finalitza</translation>
     </message>
     <message>
-        <location line="-3096"/>
+        <location line="-3094"/>
         <source>Join Session</source>
         <translation>Unir-se a la sessió</translation>
     </message>
@@ -1738,29 +1738,29 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
         <translation>Alterant la selecció…</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+42"/>
         <source>Stop Tablet Event Log</source>
         <translation>Atura el registre d&apos;esdeveniments de la tauleta</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1927"/>
+        <location line="+1926"/>
         <source>Tablet Event Log...</source>
         <translation>Registre d&apos;esdeveniments de la tauleta...</translation>
     </message>
     <message>
-        <location line="-1923"/>
+        <location line="-1922"/>
         <source>Stop Profile</source>
         <translation>Atura el perfil</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1924"/>
+        <location line="+1923"/>
         <source>Profile...</source>
         <translation>Perfil...</translation>
     </message>
     <message>
-        <location line="-1913"/>
+        <location line="-1912"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Estableix retard artificial... (actualment %1ms)</translation>
     </message>
@@ -1786,12 +1786,12 @@ Simplifiqueu el llenç i reinicialitzeu manualment abans que es quedi sense espa
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1871"/>
+        <location line="+1870"/>
         <source>Record Debug Dumps</source>
         <translation>Enregistra bolcats de depuració</translation>
     </message>
     <message>
-        <location line="-1870"/>
+        <location line="-1869"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2345,7 +2345,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+16"/>
         <source>Mirror the transformed image horizontally</source>
         <translation>Emmiralla la imatge transformada horitzontalment</translation>
     </message>
@@ -2411,7 +2411,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2166"/>
+        <location line="-2165"/>
         <source>Delete</source>
         <translation>Suprimeix</translation>
     </message>
@@ -2436,7 +2436,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation>&amp;Edita</translation>
     </message>
     <message>
-        <location line="-3932"/>
+        <location line="-3931"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2496,12 +2496,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+512"/>
+        <location line="+511"/>
         <source>Canvas size too large to host.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+195"/>
+        <location line="+196"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
         <translation>Esteu a punt de reconnectar a la sessió i tancar aquesta finestra.</translation>
     </message>
@@ -2526,7 +2526,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation>No s&apos;ha pogut establir la connexió amb el servidor.</translation>
     </message>
     <message>
-        <location line="+1522"/>
+        <location line="+1521"/>
         <source>Arrange Docks</source>
         <translation>Arranja els acobladors</translation>
     </message>
@@ -2802,7 +2802,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation>Transforma la &amp;Mascara de selecció</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation>Transforma només la màscara de selecció, torna a l&apos;eina anterior en acabat</translation>
     </message>
@@ -3245,17 +3245,17 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation>&amp;Unir-se</translation>
     </message>
     <message>
-        <location line="-3994"/>
+        <location line="-3992"/>
         <source>Joined the session!</source>
         <translation>Us heu unit a la sessió!</translation>
     </message>
     <message>
-        <location line="+605"/>
+        <location line="+604"/>
         <source>Hosting on this computer is not available</source>
         <translation>Allotjar en aquest ordinador no està disponible</translation>
     </message>
     <message>
-        <location line="+169"/>
+        <location line="+170"/>
         <source>Really leave and terminate the session?</source>
         <translation>Realment voleu sortir i finalitzar la sessió?</translation>
     </message>
@@ -3305,7 +3305,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation>Eina pinzell a ma alçada (mode bloqueig d&apos;alfa)</translation>
     </message>
     <message>
-        <location line="+926"/>
+        <location line="+925"/>
         <source>Export Image…</source>
         <translation>Exportar Imatge…</translation>
     </message>
@@ -3356,7 +3356,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation>Propietats de la capa…</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+525"/>
+        <location filename="../mainwindow.cpp" line="+524"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>Unir-se a la sessió de dibuix d&apos;un altre usuari</translation>
     </message>
@@ -3702,7 +3702,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation>Finestra</translation>
     </message>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="-162"/>
+        <location filename="../utils/widgetutils.cpp" line="-169"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
         <translation>%1 (%2)</translation>
@@ -3711,7 +3711,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
 <context>
     <name>MarkerColors</name>
     <message>
-        <location line="+207"/>
+        <location line="+214"/>
         <source>None</source>
         <translation type="unfinished">Cap</translation>
     </message>
@@ -5362,12 +5362,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
 <context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location line="+151"/>
+        <location line="+156"/>
         <source>Brush Editor</source>
         <translation>Editor de pinzell</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+122"/>
         <source>Brush</source>
         <translation>Pinzell</translation>
     </message>
@@ -5403,7 +5403,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     </message>
     <message>
         <location line="+2"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+441"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+442"/>
         <source>Round Pixel Brush</source>
         <translation>Pinzell de píxels rodó</translation>
     </message>
@@ -5470,7 +5470,18 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <translation>Tria el color inicial des de la capa</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+19"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+20"/>
+        <source>Pixel art input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Disables all smoothing and stabilization for instant pixel drawing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Spacing: </source>
         <translation>Espaiat: </translation>
     </message>
@@ -5577,7 +5588,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     </message>
     <message>
         <location line="-451"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="-12"/>
         <source>Smudge with transparency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5696,33 +5707,33 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+78"/>
         <source>Smudging: </source>
         <translation>Difuminat: </translation>
     </message>
     <message>
-        <location line="-495"/>
+        <location line="-499"/>
         <source>Color Pickup: 1/</source>
         <translation type="unfinished">Selecció de color: 1/</translation>
     </message>
     <message>
-        <location line="-353"/>
+        <location line="-365"/>
         <source>Preserve alpha</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+857"/>
+        <location line="+873"/>
         <source>Minimum Smudging: </source>
         <translation>Difuminat mínim: </translation>
     </message>
     <message>
-        <location line="-86"/>
-        <location line="+90"/>
+        <location line="-90"/>
+        <location line="+94"/>
         <source>Smudging</source>
         <translation>Difuminat</translation>
     </message>
     <message>
-        <location line="-342"/>
+        <location line="-346"/>
         <location line="+20"/>
         <location line="+37"/>
         <source>Apply to All</source>
@@ -5769,7 +5780,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>Barreja de colors en la capa on s&apos;està dibuixant.</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+81"/>
         <source>Blending: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -5784,7 +5795,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+138"/>
+        <location line="+141"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
         <translation>Alenteix el traç per tal d&apos;estabilitzar-lo durant el temps. Els valors alts donen línies molt suaus, però es dibuixaran lentament. Quan deixeu de moure, la línia agafarà el cursor. També s&apos;aplica el suavitzat de tauleta de les preferències d&apos;entrada.</translation>
     </message>
@@ -7480,7 +7491,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1043"/>
+        <location filename="../mainwindow.cpp" line="-1042"/>
         <source>Blend alpha</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8878,7 +8889,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::General</name>
     <message>
-        <location filename="../dialogs/settingsdialog/general.cpp" line="+53"/>
+        <location filename="../dialogs/settingsdialog/general.cpp" line="+52"/>
         <location line="+145"/>
         <location line="+15"/>
         <source>System</source>
@@ -11189,7 +11200,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Les sessions han de complir amb les normes, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;cliqueu aquí per a veure-les&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+40"/>
         <source>Hosting on your own computer requires additional setup!</source>
         <translation>Allotjar en el vostre ordinador requereix configuració addicional!</translation>
     </message>
@@ -12224,14 +12235,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-32"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1409"/>
+        <location filename="../mainwindow.cpp" line="+1408"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12297,7 +12308,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::AnnotationSettings</name>
     <message>
-        <location filename="../toolwidgets/annotationsettings.cpp" line="+66"/>
+        <location filename="../toolwidgets/annotationsettings.cpp" line="+69"/>
         <source>Protect</source>
         <translation>Protegeix</translation>
     </message>
@@ -12358,7 +12369,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+85"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
         <translation type="unfinished"></translation>
@@ -12418,7 +12429,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+119"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+42"/>
         <source>Time-Based Stabilizer</source>
         <translation type="unfinished"></translation>
@@ -12462,7 +12473,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Fa l&apos;estabilitzador un arranjament del pinzell, com MyPaint, en comptes d&apos;un arranjament independent, com a Krita.</translation>
     </message>
     <message>
-        <location line="+143"/>
+        <location line="+8"/>
+        <source>Click to disable pixel art input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+144"/>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12488,13 +12504,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+738"/>
+        <location line="+758"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1425"/>
+        <location line="-1445"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13151,8 +13167,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Emmirallament horitzontal: Desactivat</translation>
     </message>
     <message>
-        <location line="+1956"/>
-        <location filename="../view/canvascontroller.cpp" line="+2098"/>
+        <location line="+1957"/>
+        <location filename="../view/canvascontroller.cpp" line="+2099"/>
         <source>Zoom: %1%</source>
         <translation>Zoom: %1%</translation>
     </message>

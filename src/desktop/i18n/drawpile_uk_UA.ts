@@ -1082,7 +1082,7 @@ Subrange: [%3, %4]</source>
 <context>
     <name>LinkCheck</name>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1263"/>
+        <location filename="../utils/widgetutils.cpp" line="+1270"/>
         <source>Open Link</source>
         <translation>Відкрити посилання</translation>
     </message>
@@ -1397,7 +1397,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2412"/>
+        <location line="+2411"/>
         <source>Record...</source>
         <translation>Записати…</translation>
     </message>
@@ -1412,7 +1412,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Запуск сеансу</translation>
     </message>
     <message>
-        <location line="+184"/>
+        <location line="+185"/>
         <source>Really leave the session?</source>
         <translation>Справді хочете полишити сеанс?</translation>
     </message>
@@ -1448,12 +1448,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3110"/>
+        <location line="+3108"/>
         <source>Terminate</source>
         <translation>Перервати</translation>
     </message>
     <message>
-        <location line="-2951"/>
+        <location line="-2949"/>
         <source>Would you like to join the session instead?</source>
         <translation>Хочете замість цього долучитися до сеансу?</translation>
     </message>
@@ -1473,7 +1473,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Не вдалося завантажити зображення</translation>
     </message>
     <message>
-        <location line="+462"/>
+        <location line="+461"/>
         <source>About Drawpile</source>
         <translation>Про Drawpile</translation>
     </message>
@@ -1520,7 +1520,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Автозбереження</translation>
     </message>
     <message>
-        <location line="-2478"/>
+        <location line="-2477"/>
         <source>Saving animation...</source>
         <translation>Зберігаємо анімацію...</translation>
     </message>
@@ -1585,7 +1585,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Цей сеанс було проведено за допомогою старішої версії Drawpile. Деякі функції, такі як обрізання шарів, деякі режими накладання та малювання в масці виділення, будуть недоступні.</translation>
     </message>
     <message>
-        <location line="+507"/>
+        <location line="+506"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>Немає полотна для розгортання! Створіть нове або відкрийте файл.</translation>
     </message>
@@ -1595,12 +1595,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Розмір полотна занадто великий для розміщення.</translation>
     </message>
     <message>
-        <location line="+195"/>
+        <location line="+196"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
         <translation>Ви збираєтеся знову підключитися до сеансу та закрити це вікно.</translation>
     </message>
     <message>
-        <location line="+1807"/>
+        <location line="+1806"/>
         <source>Arrange Docks</source>
         <translation>Організувати доки</translation>
     </message>
@@ -1949,7 +1949,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Нова група шарів</translation>
     </message>
     <message>
-        <location line="+340"/>
+        <location line="+339"/>
         <source>Flipbook</source>
         <translation>Кінеограф</translation>
     </message>
@@ -1959,12 +1959,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Показати вікно попереднього перегляду анімації</translation>
     </message>
     <message>
-        <location line="-634"/>
+        <location line="-633"/>
         <source>Zoom &amp;In</source>
         <translation>З&amp;більшити</translation>
     </message>
     <message>
-        <location line="-2270"/>
+        <location line="-2269"/>
         <source>Reason:</source>
         <translation>Причина:</translation>
     </message>
@@ -1999,7 +1999,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Інструмент пензля від руки (режим альфа-блокування)</translation>
     </message>
     <message>
-        <location line="+926"/>
+        <location line="+925"/>
         <source>Export Image…</source>
         <translation>Експортувати зображення…</translation>
     </message>
@@ -2123,7 +2123,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Увімкнути режим шару &amp;ескізу</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+353"/>
+        <location filename="../mainwindow.cpp" line="+352"/>
         <source>Next Frame</source>
         <translation>Наступний кадр</translation>
     </message>
@@ -2313,12 +2313,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Фокусне полотно</translation>
     </message>
     <message>
-        <location line="-1153"/>
+        <location line="-1152"/>
         <source>Show Censored Layers</source>
         <translation>Показати цензуровані шари</translation>
     </message>
     <message>
-        <location line="-4425"/>
+        <location line="-4424"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;Комбінація клавіш &quot;%1&quot; неоднозначна, вона відповідає:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -2384,12 +2384,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+114"/>
-        <location line="+4096"/>
+        <location line="+4095"/>
         <source>Export Again</source>
         <translation>Знову експорт</translation>
     </message>
     <message>
-        <location line="-4092"/>
+        <location line="-4091"/>
         <source>Export Again to %1</source>
         <translation>Знову експортуйте до %1</translation>
     </message>
@@ -2530,7 +2530,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Помилка відкриття журналу подій планшета.</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+188"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>Ви вже підключилися до сеансу! Спершу відключіться, щоб розмістити один.</translation>
     </message>
@@ -2540,7 +2540,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Хостинг на цьому комп&apos;ютері недоступний</translation>
     </message>
     <message>
-        <location line="+143"/>
+        <location line="+144"/>
         <source>Reconnect</source>
         <translation>Повторне підключення</translation>
     </message>
@@ -2621,29 +2621,29 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Зміна вибору…</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+42"/>
         <source>Stop Tablet Event Log</source>
         <translation>Зупинка журналу подій планшета</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1927"/>
+        <location line="+1926"/>
         <source>Tablet Event Log...</source>
         <translation>Журнал подій планшета...</translation>
     </message>
     <message>
-        <location line="-1923"/>
+        <location line="-1922"/>
         <source>Stop Profile</source>
         <translation>Зупинити профіль</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1924"/>
+        <location line="+1923"/>
         <source>Profile...</source>
         <translation>Профіль...</translation>
     </message>
     <message>
-        <location line="-1913"/>
+        <location line="-1912"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Встановити штучну затримку... (наразі %1 мс)</translation>
     </message>
@@ -2669,12 +2669,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1871"/>
+        <location line="+1870"/>
         <source>Record Debug Dumps</source>
         <translation>Записуйте дампи налагодження</translation>
     </message>
     <message>
-        <location line="-1870"/>
+        <location line="-1869"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -3050,7 +3050,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Трансформувати виділення та маску</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation>Трансформуйте лише саму маску виділення, потім увімкніть інструменти назад</translation>
     </message>
@@ -3705,7 +3705,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Вікно</translation>
     </message>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="-162"/>
+        <location filename="../utils/widgetutils.cpp" line="-169"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
         <translation>%1 (%2)</translation>
@@ -3714,7 +3714,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>MarkerColors</name>
     <message>
-        <location line="+207"/>
+        <location line="+214"/>
         <source>None</source>
         <translation>Жоден</translation>
     </message>
@@ -5368,12 +5368,12 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location line="+151"/>
+        <location line="+156"/>
         <source>Brush Editor</source>
         <translation>Редактор пензля</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+122"/>
         <source>Brush</source>
         <translation>Кисть</translation>
     </message>
@@ -5409,7 +5409,7 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+2"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+441"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+442"/>
         <source>Round Pixel Brush</source>
         <translation>Кругла піксельна кисть</translation>
     </message>
@@ -5476,7 +5476,18 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Виберіть початковий колір із шару</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+19"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+20"/>
+        <source>Pixel art input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Disables all smoothing and stabilization for instant pixel drawing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Spacing: </source>
         <translation>Інтервал: </translation>
     </message>
@@ -5583,7 +5594,7 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="-451"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="-12"/>
         <source>Smudge with transparency</source>
         <translation>Розмазування з прозорістю</translation>
     </message>
@@ -5704,33 +5715,33 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>Випадкові зміщення в центрі штриха.</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+78"/>
         <source>Smudging: </source>
         <translation>Розмазування: </translation>
     </message>
     <message>
-        <location line="-495"/>
+        <location line="-499"/>
         <source>Color Pickup: 1/</source>
         <translation>Збір кольору: 1/</translation>
     </message>
     <message>
-        <location line="-353"/>
+        <location line="-365"/>
         <source>Preserve alpha</source>
         <translation>Зберегти альфа-версію</translation>
     </message>
     <message>
-        <location line="+857"/>
+        <location line="+873"/>
         <source>Minimum Smudging: </source>
         <translation>Мінімум розмазування: </translation>
     </message>
     <message>
-        <location line="-86"/>
-        <location line="+90"/>
+        <location line="-90"/>
+        <location line="+94"/>
         <source>Smudging</source>
         <translation>Розмазування</translation>
     </message>
     <message>
-        <location line="-342"/>
+        <location line="-346"/>
         <location line="+20"/>
         <location line="+37"/>
         <source>Apply to All</source>
@@ -5777,7 +5788,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>Змішування кольорів на шарі, на якому малюється.</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+81"/>
         <source>Blending: </source>
         <translation>Змішування: </translation>
     </message>
@@ -5792,7 +5803,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <translation>Змішування</translation>
     </message>
     <message>
-        <location line="+138"/>
+        <location line="+141"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
         <translation>Уповільнює інсульт, щоб стабілізувати його з часом. Високі значення дають дуже плавні лінії, але малювати вони будуть повільно. Коли ви зупините рух, лінія наздожене ваш курсор. Також застосовується згладжування планшета з налаштувань введення.</translation>
     </message>
@@ -7559,7 +7570,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Пройти через</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1039"/>
+        <location filename="../mainwindow.cpp" line="-1038"/>
         <source>Blend alpha</source>
         <translation>Змішати альфа</translation>
     </message>
@@ -8964,7 +8975,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::General</name>
     <message>
-        <location filename="../dialogs/settingsdialog/general.cpp" line="+53"/>
+        <location filename="../dialogs/settingsdialog/general.cpp" line="+52"/>
         <location line="+145"/>
         <location line="+15"/>
         <source>System</source>
@@ -11281,7 +11292,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Сеанси мають відповідати правилам, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;натисніть тут, щоб переглянути їх&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+40"/>
         <source>Hosting on your own computer requires additional setup!</source>
         <translation>Хостинг на власному комп&apos;ютері вимагає додаткового налаштування!</translation>
     </message>
@@ -12321,14 +12332,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-32"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation>[♥ Зробіть пожертву Drawpile], щоб допомогти підтримувати роботу публічного сервера.</translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1409"/>
+        <location filename="../mainwindow.cpp" line="+1408"/>
         <source>Donate</source>
         <translation>Пожертвувати</translation>
     </message>
@@ -12394,7 +12405,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::AnnotationSettings</name>
     <message>
-        <location filename="../toolwidgets/annotationsettings.cpp" line="+66"/>
+        <location filename="../toolwidgets/annotationsettings.cpp" line="+69"/>
         <source>Protect</source>
         <translation>Захищати</translation>
     </message>
@@ -12455,7 +12466,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Піксель</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+85"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
         <translation>Анотації приховані. </translation>
@@ -12515,7 +12526,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Від&apos;єднати пензлик</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+119"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+42"/>
         <source>Time-Based Stabilizer</source>
         <translation>Стабілізатор на основі часу</translation>
@@ -12559,7 +12570,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Робить стабілізатор параметром пензля, як у MyPaint, а не незалежним параметром, як у Krita.</translation>
     </message>
     <message>
-        <location line="+143"/>
+        <location line="+8"/>
+        <source>Click to disable pixel art input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+144"/>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
         <translation>У вас немає дозволу використовувати пензлі в режимі OKLAB або Пігмент.</translation>
     </message>
@@ -12585,13 +12601,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Змішування: </translation>
     </message>
     <message>
-        <location line="+738"/>
+        <location line="+758"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
         <translation>/%1</translation>
     </message>
     <message>
-        <location line="-1425"/>
+        <location line="-1445"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
         <translation>Ви не маєте дозволу на використання пензлів MyPaint.</translation>
     </message>
@@ -13248,8 +13264,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Горизонтальне дзеркало: ВИМК</translation>
     </message>
     <message>
-        <location line="+1956"/>
-        <location filename="../view/canvascontroller.cpp" line="+2098"/>
+        <location line="+1957"/>
+        <location filename="../view/canvascontroller.cpp" line="+2099"/>
         <source>Zoom: %1%</source>
         <translation>Збільшити: %1%</translation>
     </message>

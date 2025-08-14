@@ -1082,7 +1082,7 @@ Subintervalo: [%3,%4]</translation>
 <context>
     <name>LinkCheck</name>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1263"/>
+        <location filename="../utils/widgetutils.cpp" line="+1270"/>
         <source>Open Link</source>
         <translation>Abrir Link</translation>
     </message>
@@ -1366,12 +1366,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     </message>
     <message>
         <location line="-2271"/>
-        <location line="+4096"/>
+        <location line="+4095"/>
         <source>Export Again</source>
         <translation>Exportar novamente</translation>
     </message>
     <message>
-        <location line="-4092"/>
+        <location line="-4091"/>
         <source>Export Again to %1</source>
         <translation>Exportar novamente para %1</translation>
     </message>
@@ -1561,12 +1561,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     </message>
     <message>
         <location line="+3"/>
-        <location line="+2412"/>
+        <location line="+2411"/>
         <source>Record...</source>
         <translation>Gravar...</translation>
     </message>
     <message>
-        <location line="-2370"/>
+        <location line="-2369"/>
         <source>Unsupported format.</source>
         <translation>Formato sem suporte.</translation>
     </message>
@@ -1611,7 +1611,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Erro ao abrir o registo de eventos da mesa digitalizadora.</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+188"/>
         <source>You&apos;re already connected to a session! Disconnect first to host one.</source>
         <translation>Já está conectado a uma sessão! Desligue-se dessa para iniciar uma.</translation>
     </message>
@@ -1631,7 +1631,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Hospedar sessão</translation>
     </message>
     <message>
-        <location line="+157"/>
+        <location line="+158"/>
         <source>Reconnect</source>
         <translation>Restabelecer ligação</translation>
     </message>
@@ -1672,12 +1672,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3110"/>
+        <location line="+3108"/>
         <source>Terminate</source>
         <translation>Terminar</translation>
     </message>
     <message>
-        <location line="-3096"/>
+        <location line="-3094"/>
         <source>Join Session</source>
         <translation>Entrar na Sessão</translation>
     </message>
@@ -1738,29 +1738,29 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Alterando a seleção…</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+42"/>
         <source>Stop Tablet Event Log</source>
         <translation>Parar Registo de Eventos da Mesa Digitalizadora</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1927"/>
+        <location line="+1926"/>
         <source>Tablet Event Log...</source>
         <translation>Registo de Eventos da Mesa Digitalizadora...</translation>
     </message>
     <message>
-        <location line="-1923"/>
+        <location line="-1922"/>
         <source>Stop Profile</source>
         <translation>Parar Perfil</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1924"/>
+        <location line="+1923"/>
         <source>Profile...</source>
         <translation>Perfil...</translation>
     </message>
     <message>
-        <location line="-1913"/>
+        <location line="-1912"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Definir Latência Artificial (atualmente %1 ms)</translation>
     </message>
@@ -1786,12 +1786,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1871"/>
+        <location line="+1870"/>
         <source>Record Debug Dumps</source>
         <translation>Gravar Dump de Depuração</translation>
     </message>
     <message>
-        <location line="-1870"/>
+        <location line="-1869"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2345,7 +2345,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>Escuro da Seleção para Alfa</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+16"/>
         <source>Mirror the transformed image horizontally</source>
         <translation>Inverter transformação horizontalmente</translation>
     </message>
@@ -2411,7 +2411,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2166"/>
+        <location line="-2165"/>
         <source>Delete</source>
         <translation>Apagar</translation>
     </message>
@@ -2436,7 +2436,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>&amp;Editar</translation>
     </message>
     <message>
-        <location line="-3932"/>
+        <location line="-3931"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation>O pincel solicitado não pode ser usado por outros.</translation>
     </message>
@@ -2496,12 +2496,12 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>Esta sessão foi hospedada numa versão antiga do Drawpile. Várias funcionalidades ficarão indisponíveis, tais como montagem de camadas, alguns modos de mistura, e desenho limitado à seleção.</translation>
     </message>
     <message>
-        <location line="+512"/>
+        <location line="+511"/>
         <source>Canvas size too large to host.</source>
         <translation>O ecrã de pintura é grande demais para hospedar.</translation>
     </message>
     <message>
-        <location line="+195"/>
+        <location line="+196"/>
         <source>You&apos;re about to reconnect to the session and close this window.</source>
         <translation>Está a reconectar à sessão e a fechar esta janela.</translation>
     </message>
@@ -2526,7 +2526,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>Não foi possível estabelecer uma ligação ao servidor.</translation>
     </message>
     <message>
-        <location line="+1522"/>
+        <location line="+1521"/>
         <source>Arrange Docks</source>
         <translation>Arrastar Painéis</translation>
     </message>
@@ -2802,7 +2802,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>Transformar &amp;Máscara de Seleção</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>Transform only the selection mask itself, switch back tools afterwards</source>
         <translation>Transformar somente a máscara de seleção, retorna depois às ferramentas anteriores</translation>
     </message>
@@ -3245,17 +3245,17 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>&amp;Entrar numa sessão...</translation>
     </message>
     <message>
-        <location line="-3994"/>
+        <location line="-3992"/>
         <source>Joined the session!</source>
         <translation>Entrou na sessão!</translation>
     </message>
     <message>
-        <location line="+605"/>
+        <location line="+604"/>
         <source>Hosting on this computer is not available</source>
         <translation>Não é possível hospedar neste computador</translation>
     </message>
     <message>
-        <location line="+169"/>
+        <location line="+170"/>
         <source>Really leave and terminate the session?</source>
         <translation>Deseja mesmo sair e terminar a sessão?</translation>
     </message>
@@ -3305,7 +3305,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>À mão livre (canal alfa bloqueado)</translation>
     </message>
     <message>
-        <location line="+926"/>
+        <location line="+925"/>
         <source>Export Image…</source>
         <translation>Exportar Imagem…</translation>
     </message>
@@ -3356,7 +3356,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>Propriedades da Camada…</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+525"/>
+        <location filename="../mainwindow.cpp" line="+524"/>
         <source>Join another user&apos;s drawing session</source>
         <translation>Entrar na sessão de desenho de outro utilizador</translation>
     </message>
@@ -3702,7 +3702,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>Janela</translation>
     </message>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="-162"/>
+        <location filename="../utils/widgetutils.cpp" line="-169"/>
         <source>%1 (%2)</source>
         <extracomment>This makes an action and a keyboard shortcut, like &quot;Undo (Ctrl+Z)&quot;. %1 is the action, %2 is the shortcut. You only need to change this if your language uses different spaces or parentheses, otherwise just leave it as-is.</extracomment>
         <translation>%1 (%2)</translation>
@@ -3711,7 +3711,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
 <context>
     <name>MarkerColors</name>
     <message>
-        <location line="+207"/>
+        <location line="+214"/>
         <source>None</source>
         <translation>Nenhum</translation>
     </message>
@@ -5362,12 +5362,12 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
 <context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location line="+151"/>
+        <location line="+156"/>
         <source>Brush Editor</source>
         <translation>Editor de Pincéis</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+122"/>
         <source>Brush</source>
         <translation>Pincel</translation>
     </message>
@@ -5403,7 +5403,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     </message>
     <message>
         <location line="+2"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+441"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+442"/>
         <source>Round Pixel Brush</source>
         <translation>Pincel Circular</translation>
     </message>
@@ -5470,7 +5470,18 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>Obter Cor Inicialmente da Camada</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+19"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+20"/>
+        <source>Pixel art input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Disables all smoothing and stabilization for instant pixel drawing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Spacing: </source>
         <translation>Espaçamento: </translation>
     </message>
@@ -5577,7 +5588,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
     </message>
     <message>
         <location line="-451"/>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+8"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="-12"/>
         <source>Smudge with transparency</source>
         <translation>Misturar com transparência</translation>
     </message>
@@ -5698,33 +5709,33 @@ Se pinceladas rápidas causarem defeitos na hora de misturar, esta opção pode 
         <translation>Deslocamentos aleatórios no centro do traçado.</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+78"/>
         <source>Smudging: </source>
         <translation>Mistura de Cores </translation>
     </message>
     <message>
-        <location line="-495"/>
+        <location line="-499"/>
         <source>Color Pickup: 1/</source>
         <translation>Razão de Mistura: 1/</translation>
     </message>
     <message>
-        <location line="-353"/>
+        <location line="-365"/>
         <source>Preserve alpha</source>
         <translation>Preservar alfa</translation>
     </message>
     <message>
-        <location line="+857"/>
+        <location line="+873"/>
         <source>Minimum Smudging: </source>
         <translation>Mínimo Valor da Mistura de Cores: </translation>
     </message>
     <message>
-        <location line="-86"/>
-        <location line="+90"/>
+        <location line="-90"/>
+        <location line="+94"/>
         <source>Smudging</source>
         <translation>Mistura de Cores</translation>
     </message>
     <message>
-        <location line="-342"/>
+        <location line="-346"/>
         <location line="+20"/>
         <location line="+37"/>
         <source>Apply to All</source>
@@ -5771,7 +5782,7 @@ Se pinceladas rápidas causarem defeitos na hora de misturar, esta opção pode 
         <translation>Mistura das cores da camada onde o pincel desenha.</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+81"/>
         <source>Blending: </source>
         <translation>Mistura: </translation>
     </message>
@@ -5786,7 +5797,7 @@ Se pinceladas rápidas causarem defeitos na hora de misturar, esta opção pode 
         <translation>Mistura</translation>
     </message>
     <message>
-        <location line="+138"/>
+        <location line="+141"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
         <translation>Desacelera o desenho da linha para estabilizá-la conforme o tempo. Maiores valores dão linhas muito suaves, mas desenhadas muito devagar. Quando para de mover, a linha alcançará o seu cursor. A suavização de mesa digitalizadora das preferências de entrada também se aplicam.</translation>
     </message>
@@ -7551,7 +7562,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Ignorar Grupo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1043"/>
+        <location filename="../mainwindow.cpp" line="-1042"/>
         <source>Blend alpha</source>
         <translation>Misturar Alfa</translation>
     </message>
@@ -8949,7 +8960,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::settingsdialog::General</name>
     <message>
-        <location filename="../dialogs/settingsdialog/general.cpp" line="+53"/>
+        <location filename="../dialogs/settingsdialog/general.cpp" line="+52"/>
         <location line="+145"/>
         <location line="+15"/>
         <source>System</source>
@@ -11260,7 +11271,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>As sessões devem consentir com as regras, &lt;a href=&quot;https://drawpile.net/pubrules&quot;&gt;clique aqui para vê-las&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+40"/>
         <source>Hosting on your own computer requires additional setup!</source>
         <translation>Hospedar no próprio computador requer configuração adicional!</translation>
     </message>
@@ -12295,14 +12306,14 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>donations</name>
     <message>
-        <location filename="../dialogs/startdialog/host/session.cpp" line="-33"/>
+        <location filename="../dialogs/startdialog/host/session.cpp" line="-32"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+1409"/>
+        <location filename="../mainwindow.cpp" line="+1408"/>
         <source>Donate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12368,7 +12379,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>tools::AnnotationSettings</name>
     <message>
-        <location filename="../toolwidgets/annotationsettings.cpp" line="+66"/>
+        <location filename="../toolwidgets/annotationsettings.cpp" line="+69"/>
         <source>Protect</source>
         <translation>Proteger</translation>
     </message>
@@ -12429,7 +12440,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Pixel</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+85"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
         <translation>Anotações estão escondidas. </translation>
@@ -12489,7 +12500,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Des&amp;tacar Pincel</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+119"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+42"/>
         <source>Time-Based Stabilizer</source>
         <translation>Estabilizador à Base de Tempo</translation>
@@ -12533,7 +12544,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Faz o estabilizador uma configuração do pincel como no MyPaint, ao invés de uma configuração independente como no Krita.</translation>
     </message>
     <message>
-        <location line="+143"/>
+        <location line="+8"/>
+        <source>Click to disable pixel art input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+144"/>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
         <translation>Não tem permissão para usar pincéis no modo OKLAB ou Pigmento.</translation>
     </message>
@@ -12559,13 +12575,13 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Mistura: </translation>
     </message>
     <message>
-        <location line="+738"/>
+        <location line="+758"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
         <translation>/%1</translation>
     </message>
     <message>
-        <location line="-1425"/>
+        <location line="-1445"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
         <translation>Não tem permissão para usar os pincéis MyPaint.</translation>
     </message>
@@ -13222,8 +13238,8 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Espelhamento horizontal: DESLIGADO</translation>
     </message>
     <message>
-        <location line="+1956"/>
-        <location filename="../view/canvascontroller.cpp" line="+2098"/>
+        <location line="+1957"/>
+        <location filename="../view/canvascontroller.cpp" line="+2099"/>
         <source>Zoom: %1%</source>
         <translation>Zoom: %1%</translation>
     </message>
