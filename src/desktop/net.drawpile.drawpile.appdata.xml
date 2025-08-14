@@ -36,6 +36,53 @@
           <li>Fix: Disable the "modern" WASAPI audio backend, because on some devices it causes crashes in the depths of Windows, makes drag and drop stop working or other strange effects. Thanks Ben, CrustStuff, dAVePAGE and Momo for reporting various different incarnations of this problem.</li>
         </ul>
       </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-x86_64.msi</location>
+          <checksum type="sha256">0dfa47c8da48ef647b4f2eedffd72cb58fb0db1384e4cbd95036a2571e35e71c</checksum>
+          <size type="download">23830528</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-x86.msi</location>
+          <checksum type="sha256">896c8578fdc8409d2e07e8053426d6ba588ba6bce7aea5f5f3e6f58ad9a26877</checksum>
+          <size type="download">20549632</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-arm64.msi</location>
+          <checksum type="sha256">a16fa3a7fa6f642d11908898feb7403c5e1d4ec569a8eab59b9fabaae3c2731c</checksum>
+          <size type="download">21692416</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-x86_64.dmg</location>
+          <checksum type="sha256">008cf2ec54a3181c462feca038ba2d465a2bca913aadf5e3f85f35e77dc97e40</checksum>
+          <size type="download">34095299</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-arm64.dmg</location>
+          <checksum type="sha256">6e41d7dc8f6e3e2e798d20a6c14205b3d147984869f777d0f9286be9146562d6</checksum>
+          <size type="download">30705228</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-x86_64.AppImage</location>
+          <checksum type="sha256">cc47262d0c720b3142c5ae0adfa8bea0f4ec06d51ab978379c66c37719143b72</checksum>
+          <size type="download">55284928</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-30-34-arm64-v8a.apk</location>
+          <checksum type="sha256">6c527e29a334d474b7ad19e3def664a76729c8e7a17164221fde406dcccaf9c0</checksum>
+          <size type="download">23557135</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.3/Drawpile-2.3.0-beta.3-23-23-armeabi-v7a.apk</location>
+          <checksum type="sha256">01fbd4d21ab2d310d9f6b84e5dcf00239f102790b950ef3d1d5c958c24aa2699</checksum>
+          <size type="download">20161711</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.3.0-beta.3.tar.gz</location>
+          <checksum type="sha256">62450b0d41bcbcdeba713c8f846abae84c7b1fa096c335a35210e55eb092cc15</checksum>
+          <size type="download">10638158</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.3.0-beta.2" type="development" date="2025-08-08">
       <url>https://drawpile.net/news/release-2.3.0-beta.2/</url>
