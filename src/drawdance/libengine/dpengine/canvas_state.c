@@ -1913,6 +1913,20 @@ static void into_flat_image_to_buffer(void *buffer, DP_TransientTile *tt,
     }
 }
 
+static void into_flat_image_to_buffer_unpremultiply(void *buffer,
+                                                    DP_TransientTile *tt,
+                                                    DP_TileIterator *ti)
+{
+    DP_Image *img = buffer;
+    DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(ti);
+    while (DP_tile_into_dst_iterator_next(&tidi)) {
+        DP_UPixel8 pixel = DP_upixel15_to_8(DP_pixel15_unpremultiply(
+            DP_transient_tile_pixel_at(tt, tidi.tile_x, tidi.tile_y)));
+        DP_image_pixel_at_set(img, tidi.dst_x, tidi.dst_y,
+                              (DP_Pixel8){pixel.color});
+    }
+}
+
 static void into_flat_image_to_buffer_one_bit_alpha(void *buffer,
                                                     DP_TransientTile *tt,
                                                     DP_TileIterator *ti)
@@ -1954,6 +1968,8 @@ DP_Image *DP_canvas_state_into_flat_image(DP_CanvasState *cs,
                           into_flat_image_get_buffer,
                           flags & DP_FLAT_IMAGE_ONE_BIT_ALPHA
                               ? into_flat_image_to_buffer_one_bit_alpha
+                          : flags & DP_FLAT_IMAGE_UNPREMULTIPLY
+                              ? into_flat_image_to_buffer_unpremultiply
                               : into_flat_image_to_buffer,
                           inout_img_or_null);
 }

@@ -98,6 +98,8 @@ DP_Pixel8 DP_image_pixel_at(DP_Image *img, int x, int y);
 
 void DP_image_pixel_at_set(DP_Image *img, int x, int y, DP_Pixel8 pixel);
 
+void DP_image_upixel_at_set(DP_Image *img, int x, int y, DP_UPixel8 pixel);
+
 
 DP_Image *DP_image_transform_pixels(int src_width, int src_height,
                                     const DP_Pixel8 *src_pixels,

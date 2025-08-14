@@ -281,6 +281,8 @@ static unsigned int get_format_flat_image_flags(int format)
     case DP_SAVE_VIDEO_FORMAT_PALETTE:
     case DP_SAVE_VIDEO_FORMAT_GIF:
         return DP_FLAT_IMAGE_RENDER_FLAGS | DP_FLAT_IMAGE_ONE_BIT_ALPHA;
+    case DP_SAVE_VIDEO_FORMAT_WEBP:
+        return DP_FLAT_IMAGE_RENDER_FLAGS | DP_FLAT_IMAGE_UNPREMULTIPLY;
     default:
         return DP_FLAT_IMAGE_RENDER_FLAGS;
     }
