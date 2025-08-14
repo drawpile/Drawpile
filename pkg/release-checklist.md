@@ -34,6 +34,12 @@ Yes, this can be automated to a large degree, but it currently happens infrequen
     * Push the tag: `git push origin "$VERSION"`
     * Let it build.
     * Once built, uninstall Signpath again.
+* Build old macOS version (requires a Mac):
+    * Clean up `pkg/macos/buildrelease` and run `pkg/macos/build.bash setup` unless you already did so before and no libraries need updating.
+    * Clean up any previous builds and run `pkg/macos/build.bash configure -DBUILD_VERSION=$VERSION && pkg/macos/build.bash build && pkg/macos/build.bash package` (may trigger permission popups.)
+    * Rename the packaged disk image to `Drawpile-$VERSION-Qt5-x86_64.dmg`.
+    * Wait for CI to generate the release if it hasn't yet.
+    * Run `gh release upload $VERSION "Drawpile-$VERSION-Qt5-x86_64.dmg#macOS Disk Image for Intel older than Monterey"` to upload the disk image to the release.
 * Update Docker:
     * Change directories pkg/docker, build and push drawpile-srv for the version you're releasing. If you're releasing for a stable version, also add a tag with the last segment chopped off (e.g. 2.2.0 and 2.2) for x86_64 and ARM64. `docker buildx build -t drawpile/drawpile-srv:$VERSION -t drawpile/drawpile-srv:"$(echo "$VERSION" | sed 's/\.[0-9+]$//')" --platform linux/amd64,linux/arm64 --build-arg version=$VERSION --push .`
     * Let it build. It'll automatically push.
@@ -73,7 +79,7 @@ Yes, this can be automated to a large degree, but it currently happens infrequen
 * Website:
     * For a stable release, update the version with `./manage.py templatevar VERSION $VERSION`. For a beta, use BETAVERSION instead of VERSION.
     * Write a news post and publish it.
-    * Upload `net.drawpile.drawpile.appdata.xml` to the website, chown it to webfiles:webfiles and move it to `/home/webfiles/www/metadata`
+    * Upload `src/desktop/net.drawpile.drawpile.appdata.xml` to the website, chown it to webfiles:webfiles and move it to `/home/webfiles/www/metadata`
 * Update news.json:
     * News post about the update.
     * Entry in the updates section.
