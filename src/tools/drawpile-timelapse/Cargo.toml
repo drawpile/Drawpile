@@ -1,6 +1,6 @@
 [package]
 name = "drawpiletimelapse"
-version = "2.3.0-pre"
+version = "2.3.0-beta.3"
 rust-version = "1.66.1"
 edition = "2021"
 
