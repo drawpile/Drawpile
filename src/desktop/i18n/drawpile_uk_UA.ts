@@ -10212,7 +10212,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"></location>
         <source>Pan canvas</source>
-        <translation>Полотняний хліб</translation>
+        <translation>Рухати полотно</translation>
     </message>
     <message>
         <location line="+2"></location>
