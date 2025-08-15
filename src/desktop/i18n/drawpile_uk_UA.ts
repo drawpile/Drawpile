@@ -3551,7 +3551,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"></location>
         <source>Reset All Brush &amp;Slots</source>
-        <translation>Скинути всі щітки &amp;слоти</translation>
+        <translation>Скинути всі слоти &amp;пензлів</translation>
     </message>
     <message>
         <location line="+3"></location>
@@ -5390,7 +5390,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"></location>
         <source>Core brush settings.</source>
-        <translation>Налаштування основної щітки.</translation>
+        <translation>Основні налаштування пензля.</translation>
     </message>
     <message>
         <location line="+62"></location>
@@ -8261,9 +8261,9 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+61"></location>
         <source>%n role(s) imported.</source>
         <translation>
-            <numerusform>%n імпортована роль.</numerusform>
-            <numerusform>%n імпортованих ролей.</numerusform>
-            <numerusform>%n імпортованих ролей.</numerusform>
+            <numerusform>імпортовано %n роль.</numerusform>
+            <numerusform>імпортовано %n ролі.</numerusform>
+            <numerusform>імпортовано %n ролей.</numerusform>
         </translation>
     </message>
     <message>
@@ -8345,7 +8345,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"></location>
         <source>Shortcuts</source>
-        <translation>Ярлики</translation>
+        <translation>Скорочення</translation>
     </message>
     <message>
         <location line="+2"></location>
@@ -9788,7 +9788,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"></location>
         <source>Brushes</source>
-        <translation>Щітки</translation>
+        <translation>Пензлі</translation>
     </message>
     <message>
         <location line="+5"></location>
@@ -10187,7 +10187,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"></location>
         <source>Three-finger tap:</source>
-        <translation>Натискання трьома пальцями:</translation>
+        <translation>Дотик трьома пальцями:</translation>
     </message>
     <message>
         <location line="+1"></location>
@@ -10247,7 +10247,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"></location>
         <source>Ratchet rotate canvas</source>
-        <translation>Храповий поворот полотна</translation>
+        <translation>Крокове обертання полотна</translation>
     </message>
     <message>
         <location line="+3"></location>
@@ -11335,7 +11335,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/brushpalettedock.cpp" line="+101"></location>
         <source>Brushes</source>
-        <translation>Щітки</translation>
+        <translation>Пензлі</translation>
     </message>
     <message>
         <location line="+28"></location>
@@ -12498,7 +12498,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"></location>
         <source>Reset All Brush &amp;Slots</source>
-        <translation>Скинути всі щітки &amp;слоти</translation>
+        <translation>Скинути всі слоти &amp;пензлів</translation>
     </message>
     <message>
         <location line="+1"></location>
@@ -13962,7 +13962,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+2"></location>
         <source>Request Current &amp;Brush</source>
-        <translation>Запит струму та щітки</translation>
+        <translation>Запитати поточний пензель</translation>
     </message>
     <message>
         <location line="+102"></location>
