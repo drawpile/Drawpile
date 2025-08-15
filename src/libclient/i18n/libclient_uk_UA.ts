@@ -214,7 +214,7 @@
     <message>
         <location line="+1"></location>
         <source>Start Anyway</source>
-        <translation>Почати все одно</translation>
+        <translation>Всеодно запустити</translation>
     </message>
     <message>
         <location line="+1"></location>
