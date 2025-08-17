@@ -14,6 +14,7 @@ public:
 		: m_action(action)
 	{
 		Q_ASSERT(m_action);
+		menuRole(QAction::NoRole);
 	}
 
 	QAction *get()
