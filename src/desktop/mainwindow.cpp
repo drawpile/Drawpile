@@ -4820,8 +4820,11 @@ void MainWindow::setupActions()
 #ifndef __EMSCRIPTEN__
 	QAction *quit = makeAction("exitprogram", tr("&Quit"))
 						.icon("application-exit")
-						.shortcut("Ctrl+Q")
-						.menuRole(QAction::QuitRole);
+						.shortcut("Ctrl+Q");
+#endif
+#ifdef Q_OS_MACOS
+	QAction *macQuit =
+		makeAction("macexitprogram", tr("&Quit")).menuRole(QAction::QuitRole);
 #endif
 
 #ifdef Q_OS_MACOS
@@ -4895,6 +4898,7 @@ void MainWindow::setupActions()
 #	ifdef Q_OS_MACOS
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
 	connect(quit, SIGNAL(triggered()), MacMenu::instance(), SLOT(quitAll()));
+	connect(macQuit, SIGNAL(triggered()), MacMenu::instance(), SLOT(quitAll()));
 #	else
 	connect(quit, SIGNAL(triggered()), this, SLOT(close()));
 #	endif
@@ -4952,6 +4956,9 @@ void MainWindow::setupActions()
 	filemenu->addAction(start);
 #ifndef __EMSCRIPTEN__
 	filemenu->addAction(quit);
+#endif
+#ifdef Q_OS_MACOS
+	filemenu->addAction(macQuit);
 #endif
 
 	m_toolBarFile = new QToolBar(tr("File Tools"));
@@ -5070,8 +5077,11 @@ void MainWindow::setupActions()
 								 .shortcut("F7");
 	QAction *preferences = makeAction("preferences", tr("Prefere&nces"))
 							   .icon("configure")
-							   .noDefaultShortcut()
-							   .menuRole(QAction::PreferencesRole);
+							   .noDefaultShortcut();
+#ifdef Q_OS_MACOS
+	QAction *macPreferences = makeAction("macpreferences", tr("Prefere&nces"))
+								  .menuRole(QAction::PreferencesRole);
+#endif
 
 #ifdef Q_OS_WIN32
 	QVector<QAction *> drivers;
@@ -5205,6 +5215,9 @@ void MainWindow::setupActions()
 	connect(clearLocalBackground, &QAction::triggered, this, &MainWindow::clearLocalCanvasBackground);
 	connect(brushSettings, &QAction::triggered, this, &MainWindow::showBrushSettingsDialogBrush);
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
+#ifdef Q_OS_MACOS
+	connect(macPreferences, SIGNAL(triggered()), this, SLOT(showSettings()));
+#endif
 #ifdef Q_OS_WIN32
 	for(QAction *driver : drivers) {
 		connect(driver, &QAction::triggered, this, [this, driver](bool checked) {
@@ -5285,6 +5298,9 @@ void MainWindow::setupActions()
 	});
 #endif
 	editmenu->addAction(preferences);
+#ifdef Q_OS_MACOS
+	editmenu->addAction(macPreferences);
+#endif
 
 	m_toolBarEdit = new QToolBar(tr("Edit Tools"));
 	m_toolBarEdit->setObjectName("edittoolsbar");
@@ -5989,7 +6005,7 @@ void MainWindow::setupActions()
 	QAction *logout = makeAction("leavesession", tr("&Leave")).statusTip(tr("Leave this drawing session")).noDefaultShortcut().icon("network-disconnect").disabled();
 
 	QAction *serverlog = makeAction("viewserverlog", tr("Event Log")).noDefaultShortcut();
-	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).statusTip(tr("Change session settings, permissions, announcements and bans")).icon("configure").noDefaultShortcut().menuRole(QAction::NoRole).disabled();
+	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).statusTip(tr("Change session settings, permissions, announcements and bans")).icon("configure").noDefaultShortcut().disabled();
 	QAction *sessionUndoDepthLimit = makeAction("sessionundodepthlimit", tr("Undo Limit…")).noDefaultShortcut().disabled();
 
 	QAction *gainop = makeAction("gainop", tr("Become Operator...")).noDefaultShortcut().disabled();
@@ -6286,8 +6302,18 @@ void MainWindow::setupActions()
 	QAction *tablettester = makeAction("tablettester", tr("Tablet Tester")).icon("input-tablet").noDefaultShortcut();
 	QAction *touchtester = makeAction("touchtester", tr("Touch Tester")).icon("input-touchscreen").noDefaultShortcut();
 	QAction *showlogfile = makeAction("showlogfile", tr("Log File")).noDefaultShortcut();
-	QAction *about = makeAction("dpabout", tr("&About Drawpile")).menuRole(QAction::AboutRole).noDefaultShortcut();
-	QAction *aboutqt = makeAction("aboutqt", tr("About &Qt")).menuRole(QAction::AboutQtRole).noDefaultShortcut();
+	// clang-format on
+	QAction *about =
+		makeAction("dpabout", tr("&About Drawpile")).noDefaultShortcut();
+	QAction *aboutqt =
+		makeAction("aboutqt", tr("About &Qt")).noDefaultShortcut();
+#ifdef Q_OS_MACOS
+	QAction *macabout = makeAction("macdpabout", tr("&About Drawpile"))
+							.menuRole(QAction::AboutRole);
+	QAction *macaboutqt = makeAction("macaboutqt", tr("About &Qt"))
+							  .menuRole(QAction::AboutQtRole);
+	// clang-format off
+#endif
 #ifndef __EMSCRIPTEN__
 	QAction *versioncheck = makeAction("versioncheck", tr("Check For Updates")).noDefaultShortcut();
 #endif
@@ -6297,6 +6323,10 @@ void MainWindow::setupActions()
 	connect(donate, &QAction::triggered, &MainWindow::donate);
 	connect(about, &QAction::triggered, &MainWindow::about);
 	connect(aboutqt, &QAction::triggered, &QApplication::aboutQt);
+#ifdef Q_OS_MACOS
+	connect(macabout, &QAction::triggered, &MainWindow::about);
+	connect(macaboutqt, &QAction::triggered, &QApplication::aboutQt);
+#endif
 
 #ifndef __EMSCRIPTEN__
 	connect(
@@ -6351,13 +6381,13 @@ void MainWindow::setupActions()
 	helpmenu->addAction(tablettester);
 	helpmenu->addAction(touchtester);
 	helpmenu->addAction(showlogfile);
-#ifndef Q_OS_MACOS
-	// Qt shunts the About menus into the Application menu on macOS, so this
-	// would cause two separators to be placed instead of one
 	helpmenu->addSeparator();
-#endif
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);
+#ifdef Q_OS_MACOS
+	helpmenu->addAction(macabout);
+	helpmenu->addAction(macaboutqt);
+#endif
 	helpmenu->addSeparator();
 #ifndef __EMSCRIPTEN__
 	helpmenu->addAction(versioncheck);
