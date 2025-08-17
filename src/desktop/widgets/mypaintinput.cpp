@@ -41,7 +41,7 @@ MyPaintInput::MyPaintInput(
 	m_box->setToolTip(inputDescription);
 	connect(
 		m_box, COMPAT_CHECKBOX_STATE_CHANGED_SIGNAL(QCheckBox), this,
-		&MyPaintInput::changeBoxState);
+		&MyPaintInput::changeBoxState, Qt::QueuedConnection);
 
 	// Constructing these widgets in large volumes is slow and make the brush
 	// setting dialog take a long time to appear, so we lazily initialize them.
