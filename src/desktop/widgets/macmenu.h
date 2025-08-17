@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef MACMENU_H
-#define MACMENU_H
-
+#ifndef DESKTOP_WIDGETS_MACMENU_H
+#define DESKTOP_WIDGETS_MACMENU_H
 #include <QMenuBar>
 
 class MainWindow;
@@ -11,8 +9,7 @@ namespace dialogs {
 class StartDialog;
 }
 
-class MacMenu final : public QMenuBar
-{
+class MacMenu final : public QMenuBar {
 	Q_OBJECT
 public:
 	static MacMenu *instance();
@@ -21,9 +18,7 @@ public:
 	void removeWindow(MainWindow *win);
 	void updateWindow(MainWindow *win);
 
-	QMenu *windowMenu() { return _windows; }
-
-signals:
+	QMenu *windowMenu() { return m_windows; }
 
 public slots:
 	void newDocument();
@@ -41,11 +36,13 @@ private slots:
 
 private:
 	MacMenu();
-	QAction *makeAction(QMenu *menu, const char *name, const QString &text, const QKeySequence &shortcut);
+	QAction *makeAction(
+		QMenu *menu, const char *name, const QString &text,
+		const QKeySequence &shortcut);
 	dialogs::StartDialog *showStartDialog();
 
-	QMenu *_recent;
-	QMenu *_windows;
+	QMenu *m_recent;
+	QMenu *m_windows;
 };
 
-#endif // MACMENU_H
+#endif
