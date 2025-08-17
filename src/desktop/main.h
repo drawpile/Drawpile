@@ -45,6 +45,7 @@ public:
 	void openBlank(
 		int width, int height, QColor backgroundColor,
 		bool restoreWindowPosition);
+	MainWindow *openDefault(bool restoreWindowPosition);
 	void openStart(const QString &page, bool restoreWindowPosition);
 
 	void deleteAllMainWindowsExcept(MainWindow *win);

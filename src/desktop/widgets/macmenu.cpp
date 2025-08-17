@@ -5,7 +5,6 @@
 #include "desktop/mainwindow.h"
 #include "desktop/utils/recents.h"
 #include "desktop/utils/widgetutils.h"
-#include <QAction>
 #include <QMessageBox>
 #include <QUrl>
 
@@ -27,37 +26,52 @@ MacMenu::MacMenu()
 		filemenu, "newdocument", MainWindow::tr("&New"), QKeySequence::New);
 	QAction *open = makeAction(
 		filemenu, "opendocument", MainWindow::tr("&Open…"), QKeySequence::Open);
+	m_recent = filemenu->addMenu(MainWindow::tr("Open &Recent"));
+	filemenu->addSeparator();
+	QAction *start = makeAction(filemenu, "start", MainWindow::tr("&Start…"));
 
 	connect(newdocument, &QAction::triggered, this, &MacMenu::newDocument);
 	connect(open, &QAction::triggered, this, &MacMenu::openDocument);
-
-	m_recent = filemenu->addMenu(MainWindow::tr("Open &Recent"));
 	connect(m_recent, &QMenu::triggered, this, &MacMenu::openRecent);
+	connect(start, &QAction::triggered, this, &MacMenu::startDocument);
 
 	// Relocated menu items
-	QAction *quit = makeAction(
-		filemenu, "exitprogram", MainWindow::tr("&Quit"),
-		QKeySequence("Ctrl+Q"));
-	quit->setMenuRole(QAction::QuitRole);
+	QAction *quit =
+		makeAction(filemenu, "exitprogram", MainWindow::tr("&Quit"));
+	QAction *macquit = makeAction(
+		filemenu, "macexitprogram", MainWindow::tr("&Quit"),
+		QKeySequence("Ctrl+Q"), QAction::QuitRole);
 	connect(quit, &QAction::triggered, this, &MacMenu::quitAll);
+	connect(macquit, &QAction::triggered, this, &MacMenu::quitAll);
 
-	QAction *preferences = makeAction(
-		filemenu, nullptr, MainWindow::tr("Prefere&nces"), QKeySequence());
-	preferences->setMenuRole(QAction::PreferencesRole);
+	//
+	// Edit menu
+	//
+
+	QMenu *editmenu = addMenu(MainWindow::tr("&Edit"));
+	QAction *preferences =
+		makeAction(editmenu, nullptr, MainWindow::tr("Prefere&nces"));
+	QAction *macpreferences = makeAction(
+		editmenu, nullptr, MainWindow::tr("Prefere&nces"),
+		QAction::PreferencesRole);
 	connect(preferences, &QAction::triggered, this, &MacMenu::showSettings);
+	connect(macpreferences, &QAction::triggered, this, &MacMenu::showSettings);
 
 	//
 	// Session menu
 	//
 
 	QMenu *sessionmenu = addMenu(MainWindow::tr("&Session"));
-	QAction *host = makeAction(
-		sessionmenu, "hostsession", MainWindow::tr("&Host…"), QKeySequence());
-	QAction *join = makeAction(
-		sessionmenu, "joinsession", MainWindow::tr("&Join…"), QKeySequence());
+	QAction *host =
+		makeAction(sessionmenu, "hostsession", MainWindow::tr("&Host…"));
+	QAction *join =
+		makeAction(sessionmenu, "joinsession", MainWindow::tr("&Join…"));
+	QAction *browse =
+		makeAction(sessionmenu, "browsesession", MainWindow::tr("&Browse…"));
 
-	host->setEnabled(false);
+	connect(host, &QAction::triggered, this, &MacMenu::hostSession);
 	connect(join, &QAction::triggered, this, &MacMenu::joinSession);
+	connect(browse, &QAction::triggered, this, &MacMenu::browseSessions);
 
 	//
 	// Window menu (Mac specific)
@@ -78,28 +92,44 @@ MacMenu::MacMenu()
 	//
 	QMenu *helpmenu = addMenu(MainWindow::tr("&Help"));
 
-	QAction *homepage = makeAction(
-		helpmenu, "dphomepage", MainWindow::tr("&Homepage"), QKeySequence());
-	QAction *about = makeAction(
-		helpmenu, "dpabout", MainWindow::tr("&About Drawpile"), QKeySequence());
-	about->setMenuRole(QAction::AboutRole);
-	QAction *aboutqt = makeAction(
-		helpmenu, "aboutqt", MainWindow::tr("About &Qt"), QKeySequence());
-	aboutqt->setMenuRole(QAction::AboutQtRole);
+	QAction *homepage =
+		makeAction(helpmenu, "dphomepage", MainWindow::tr("&Homepage"));
+	QAction *donate = makeAction(
+		helpmenu, "dpdonate",
+		QCoreApplication::translate("donations", "Donate"));
+	helpmenu->addSeparator();
+	QAction *about =
+		makeAction(helpmenu, "dpabout", MainWindow::tr("&About Drawpile"));
+	QAction *macabout = makeAction(
+		helpmenu, "macdpabout", MainWindow::tr("&About Drawpile"),
+		QAction::AboutRole);
+	QAction *aboutqt =
+		makeAction(helpmenu, "aboutqt", MainWindow::tr("About &Qt"));
+	QAction *macaboutqt = makeAction(
+		helpmenu, "macaboutqt", MainWindow::tr("About &Qt"),
+		QAction::AboutQtRole);
+	helpmenu->addSeparator();
+	QAction *versioncheck = makeAction(
+		helpmenu, "versioncheck", MainWindow::tr("Check For Updates"));
 
 	connect(homepage, &QAction::triggered, &MainWindow::homepage);
+	connect(donate, &QAction::triggered, &MainWindow::donate);
 	connect(about, &QAction::triggered, &MainWindow::about);
+	connect(macabout, &QAction::triggered, &MainWindow::about);
 	connect(aboutqt, &QAction::triggered, &QApplication::aboutQt);
+	connect(macaboutqt, &QAction::triggered, &QApplication::aboutQt);
+	connect(versioncheck, &QAction::triggered, this, &MacMenu::checkForUpdates);
 
 	dpApp().recents().bindFileMenu(m_recent);
 }
 
 QAction *MacMenu::makeAction(
 	QMenu *menu, const char *name, const QString &text,
-	const QKeySequence &shortcut)
+	const QKeySequence &shortcut, QAction::MenuRole menuRole)
 {
 	QAction *act;
 	act = new QAction(text, this);
+	act->setMenuRole(menuRole);
 
 	if(name) {
 		act->setObjectName(name);
@@ -113,6 +143,13 @@ QAction *MacMenu::makeAction(
 	return act;
 }
 
+QAction *MacMenu::makeAction(
+	QMenu *menu, const char *name, const QString &text,
+	QAction::MenuRole menuRole)
+{
+	return makeAction(menu, name, text, QKeySequence(), menuRole);
+}
+
 void MacMenu::newDocument()
 {
 	dialogs::StartDialog *dlg = showStartDialog();
@@ -121,7 +158,7 @@ void MacMenu::newDocument()
 
 void MacMenu::openDocument()
 {
-	MainWindow *mw = new MainWindow;
+	MainWindow *mw = dpApp().openDefault(false);
 	mw->open();
 }
 
@@ -129,12 +166,18 @@ void MacMenu::openRecent(QAction *action)
 {
 	QVariant filepath = action->property("filepath");
 	if(filepath.isValid()) {
-		MainWindow *mw = new MainWindow;
+		MainWindow *mw = dpApp().openDefault(false);
 		mw->openPath(filepath.toString());
 	} else {
 		dialogs::StartDialog *dlg = showStartDialog();
 		dlg->showPage(dialogs::StartDialog::Recent);
 	}
+}
+
+void MacMenu::startDocument()
+{
+	dialogs::StartDialog *dlg = showStartDialog();
+	dlg->showPage(dialogs::StartDialog::Welcome);
 }
 
 void MacMenu::showSettings()
@@ -148,10 +191,18 @@ void MacMenu::showSettings()
 			}
 		}
 	}
-	if(!mw) {
-		mw = new MainWindow();
+	if(mw) {
+		mw->showSettings();
+	} else {
+		dialogs::StartDialog *dlg = showStartDialog();
+		dlg->showPage(dialogs::StartDialog::Preferences);
 	}
-	mw->showSettings();
+}
+
+void MacMenu::hostSession()
+{
+	dialogs::StartDialog *dlg = showStartDialog();
+	dlg->showPage(dialogs::StartDialog::Host);
 }
 
 void MacMenu::joinSession()
@@ -166,9 +217,16 @@ void MacMenu::browseSessions()
 	dlg->showPage(dialogs::StartDialog::Browse);
 }
 
+void MacMenu::checkForUpdates()
+{
+	dialogs::StartDialog *dlg = showStartDialog();
+	dlg->showPage(dialogs::StartDialog::Welcome);
+	dlg->checkForUpdates();
+}
+
 dialogs::StartDialog *MacMenu::showStartDialog()
 {
-	MainWindow *mw = new MainWindow;
+	MainWindow *mw = dpApp().openDefault(false);
 	return mw->showStartDialog();
 }
 

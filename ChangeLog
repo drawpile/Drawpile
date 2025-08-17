@@ -38,6 +38,7 @@ Unreleased Version 2.2.3-pre
  * Fix: Make click detection more sensitive, to avoid accidentally creating tiny selections when trying to just click to deselect. Thanks Bluestrings for reporting.
  * Feature: Donation and feedback links. They don't cause any extra pop-ups, but if they annoy you regardless, they can be summarily disabled in the preferences.
  * Fix: Make the hardware renderer work on macOS.
+ * Feature: Clean up the Mac menu. Menu items that were missing when no window were added, items that went into the application menu are now also in the place where they are on every other system and newly opened windows don't start with a missing canvas.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.
