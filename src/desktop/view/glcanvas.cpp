@@ -6,6 +6,7 @@
 #include "libclient/canvas/tilecache.h"
 #include "libclient/drawdance/perf.h"
 #include <QMetaEnum>
+#include <QOpenGLExtraFunctions>
 #include <QOpenGLFunctions>
 #include <QPaintEvent>
 #include <QPainter>
@@ -35,6 +36,7 @@ struct GlCanvas::Private {
 
 	struct CanvasShader {
 		GLuint program = 0;
+		GLuint vao = 0;
 		GLint rectLocation = 0;
 		GLint viewLocation = 0;
 		GLint translationLocation = 0;
@@ -47,6 +49,7 @@ struct GlCanvas::Private {
 
 	struct OutlineShader {
 		GLuint program = 0;
+		GLuint vao = 0;
 		GLint viewLocation = 0;
 		GLint posLocation = 0;
 		GLint translationLocation = 0;
@@ -56,7 +59,7 @@ struct GlCanvas::Private {
 		GLint shapeLocation = 0;
 	};
 
-	void dispose(QOpenGLFunctions *f)
+	void dispose(QOpenGLFunctions *f, QOpenGLExtraFunctions *e)
 	{
 		Q_ASSERT(initialized);
 		initialized = false;
@@ -79,8 +82,20 @@ struct GlCanvas::Private {
 		qCDebug(lcDpGlCanvas, "Delete checker texture");
 		f->glDeleteTextures(1, &checkerTexture);
 
-		qCDebug(lcDpGlCanvas, "Delete program");
+		qCDebug(lcDpGlCanvas, "Delete canvas program");
 		f->glDeleteProgram(canvasShader.program);
+
+		qCDebug(lcDpGlCanvas, "Delete outline program");
+		f->glDeleteProgram(outlineShader.program);
+
+		if(!haveGles2) {
+			qCDebug(lcDpGlCanvas, "Delete canvas vertex array object");
+			e->glDeleteVertexArrays(1, &canvasShader.vao);
+
+			qCDebug(lcDpGlCanvas, "Delete outline vertex array object");
+			e->glDeleteVertexArrays(1, &outlineShader.vao);
+		}
+
 		canvasShader = CanvasShader();
 	}
 
@@ -197,19 +212,46 @@ struct GlCanvas::Private {
 		return linkStatus;
 	}
 
-	static CanvasShader initCanvasShader(QOpenGLFunctions *f, bool highp)
+	static const char *getShaderVersionCode(bool haveGles2)
+	{
+		if(haveGles2) {
+			return "#version 100\n"
+				   "#define DP_VERTEX_IN attribute\n"
+				   "#define DP_VERTEX_OUT varying\n"
+				   "#define DP_FRAGMENT_IN varying\n"
+				   "#define DP_FRAG_COLOR gl_FragColor\n"
+				   "#define DP_TEXTURE2D texture2D\n";
+		} else {
+			return "#version 150\n"
+				   "#define DP_VERTEX_IN in\n"
+				   "#define DP_VERTEX_OUT out\n"
+				   "#define DP_FRAGMENT_IN in\n"
+				   "#define DP_FRAGMENT_OUT out\n"
+				   "#define DP_FRAG_COLOR o_frag_color\n"
+				   "#define DP_TEXTURE2D texture\n";
+		}
+	}
+
+	static const char *getShaderHighpCode(bool highp)
+	{
+		return highp ? "#define DP_HAVE_HIGHP 1\n" : "";
+	}
+
+	static CanvasShader initCanvasShader(
+		QOpenGLFunctions *f, QOpenGLExtraFunctions *e, bool haveGles2,
+		bool highp)
 	{
 		static constexpr char canvasVertexCode[] = R"""(
 uniform vec4 u_rect;
 uniform vec2 u_view;
 uniform vec2 u_translation;
 uniform mat3 u_transform;
-attribute mediump vec2 v_uv;
+DP_VERTEX_IN mediump vec2 v_uv;
 #ifdef DP_HAVE_HIGHP
-varying highp vec2 f_pos;
+DP_VERTEX_OUT highp vec2 f_pos;
 #endif
-varying vec2 f_uv;
-varying vec2 f_uvChecker;
+DP_VERTEX_OUT vec2 f_uv;
+DP_VERTEX_OUT vec2 f_uvChecker;
 
 void main()
 {
@@ -235,10 +277,13 @@ uniform sampler2D u_checker;
 uniform highp vec4 u_rect;
 uniform float u_smooth;
 uniform highp float u_gridScale;
-varying highp vec2 f_pos;
+DP_FRAGMENT_IN highp vec2 f_pos;
 #endif
-varying vec2 f_uv;
-varying vec2 f_uvChecker;
+DP_FRAGMENT_IN vec2 f_uv;
+DP_FRAGMENT_IN vec2 f_uvChecker;
+#ifdef DP_FRAGMENT_OUT
+DP_FRAGMENT_OUT vec4 DP_FRAG_COLOR;
+#endif
 
 void main()
 {
@@ -246,12 +291,12 @@ void main()
 #ifdef DP_HAVE_HIGHP
 	if(u_smooth < 0.5) {
 		highp vec2 p = floor(f_pos) + vec2(0.5, 0.5);
-		canvasColor = texture2D(
+		canvasColor = DP_TEXTURE2D(
 			u_canvas,
 			vec2((p.x - u_rect.x) / u_rect.z, (p.y - u_rect.y) / u_rect.w));
 	} else {
 #endif
-		canvasColor = texture2D(u_canvas, f_uv);
+		canvasColor = DP_TEXTURE2D(u_canvas, f_uv);
 #ifdef DP_HAVE_HIGHP
 	}
 #endif
@@ -260,7 +305,7 @@ void main()
 	if(canvasColor.a >= 1.0) {
 		c = canvasColor.bgr;
 	} else {
-		c = texture2D(u_checker, f_uvChecker).rgb * (1.0 - canvasColor.a)
+		c = DP_TEXTURE2D(u_checker, f_uvChecker).rgb * (1.0 - canvasColor.a)
 			+ canvasColor.bgr;
 	}
 
@@ -274,24 +319,30 @@ void main()
 	}
 #endif
 
-	gl_FragColor = vec4(c, 1.0);
+	DP_FRAG_COLOR = vec4(c, 1.0);
 }
 	)""";
 
-		const char *prefix = highp ? "#version 100\n#define DP_HAVE_HIGHP 1\n"
-								   : "#version 100\n";
+		const char *versionCode = getShaderVersionCode(haveGles2);
+		const char *highpCode = getShaderHighpCode(highp);
 
 		qCDebug(lcDpGlCanvas, "Create canvas shader program");
 		CanvasShader canvasShader;
 		canvasShader.program = f->glCreateProgram();
 
+		if(!haveGles2) {
+			qCDebug(lcDpGlCanvas, "Create canvas shader vertex array object");
+			e->glGenVertexArrays(1, &canvasShader.vao);
+		}
+
 		qCDebug(lcDpGlCanvas, "Compile canvas vertex shader");
 		GLuint canvasVertexShader = Private::compileShader(
-			f, GL_VERTEX_SHADER, {prefix, canvasVertexCode});
+			f, GL_VERTEX_SHADER, {versionCode, highpCode, canvasVertexCode});
 
 		qCDebug(lcDpGlCanvas, "Compile canvas fragment shader");
 		GLuint canvasFragmentShader = Private::compileShader(
-			f, GL_FRAGMENT_SHADER, {prefix, canvasFragmentCode});
+			f, GL_FRAGMENT_SHADER,
+			{versionCode, highpCode, canvasFragmentCode});
 
 		qCDebug(lcDpGlCanvas, "Attach canvas vertex shader");
 		f->glAttachShader(canvasShader.program, canvasVertexShader);
@@ -349,18 +400,20 @@ void main()
 		return canvasShader;
 	}
 
-	static OutlineShader initOutlineShader(QOpenGLFunctions *f, bool highp)
+	static OutlineShader initOutlineShader(
+		QOpenGLFunctions *f, QOpenGLExtraFunctions *e, bool haveGles2,
+		bool highp)
 	{
 		static constexpr char outlineVertexCode[] = R"""(
 uniform vec2 u_view;
 uniform vec2 u_pos;
 uniform vec2 u_translation;
 uniform mat3 u_transform;
-attribute mediump vec2 v_pos;
+DP_VERTEX_IN mediump vec2 v_pos;
 #ifdef DP_HAVE_HIGHP
-varying highp vec2 f_pos;
+DP_VERTEX_OUT highp vec2 f_pos;
 #else
-varying vec2 f_pos;
+DP_VERTEX_OUT vec2 f_pos;
 #endif
 
 void main()
@@ -381,12 +434,15 @@ precision mediump float;
 uniform highp float u_size;
 uniform highp float u_width;
 uniform highp float u_shape;
-varying highp vec2 f_pos;
+DP_FRAGMENT_IN highp vec2 f_pos;
 #else
 uniform float u_size;
 uniform float u_width;
 uniform float u_shape;
-varying vec2 f_pos;
+DP_FRAGMENT_IN vec2 f_pos;
+#endif
+#ifdef DP_FRAGMENT_OUT
+DP_FRAGMENT_OUT vec4 DP_FRAG_COLOR;
 #endif
 
 void main()
@@ -400,31 +456,37 @@ void main()
 		? abs(length(f_pos) - u_size + u_width) // Circle
 		: abs(max(abs(f_pos.x), abs(f_pos.y)) - u_size + u_width); // Square
 	if(distance <= u_width * 0.5) {
-		gl_FragColor = vec4(0.5, 1.0, 0.5, 1.0);
+		DP_FRAG_COLOR = vec4(0.5, 1.0, 0.5, 1.0);
 	} else {
 		discard;
 	}
 }
 	)""";
 
-		const char *prefix = highp ? "#version 100\n#define DP_HAVE_HIGHP 1\n"
-								   : "#version 100\n";
+		const char *versionCode = getShaderVersionCode(haveGles2);
+		const char *highpCode = getShaderHighpCode(highp);
 
 		qCDebug(lcDpGlCanvas, "Create outline shader program");
 		OutlineShader outlineShader;
 		outlineShader.program = f->glCreateProgram();
 
+		if(!haveGles2) {
+			qCDebug(lcDpGlCanvas, "Create outline shader vertex array object");
+			e->glGenVertexArrays(1, &outlineShader.vao);
+		}
+
 		qCDebug(
 			lcDpGlCanvas, "Compile outline vertex shader: %s",
 			outlineVertexCode);
 		GLuint outlineVertexShader = Private::compileShader(
-			f, GL_VERTEX_SHADER, {prefix, outlineVertexCode});
+			f, GL_VERTEX_SHADER, {versionCode, highpCode, outlineVertexCode});
 
 		qCDebug(
 			lcDpGlCanvas, "Compile outline fragment shader: %s",
 			outlineFragmentCode);
 		GLuint outlineFragmentShader = Private::compileShader(
-			f, GL_FRAGMENT_SHADER, {prefix, outlineFragmentCode});
+			f, GL_FRAGMENT_SHADER,
+			{versionCode, highpCode, outlineFragmentCode});
 
 		qCDebug(lcDpGlCanvas, "Attach outline vertex shader");
 		f->glAttachShader(outlineShader.program, outlineVertexShader);
@@ -587,7 +649,7 @@ void main()
 		}
 	}
 
-	void setUpCanvasShader(QOpenGLFunctions *f)
+	void setUpCanvasShader(QOpenGLFunctions *f, QOpenGLExtraFunctions *e)
 	{
 		f->glUseProgram(canvasShader.program);
 
@@ -611,6 +673,10 @@ void main()
 			f->glUniform1f(
 				canvasShader.gridScaleLocation,
 				pixelGridScale > 0.0 ? 1.0 / pixelGridScale : 0.0);
+		}
+
+		if(!haveGles2) {
+			e->glBindVertexArray(canvasShader.vao);
 		}
 
 		f->glEnableVertexAttribArray(0);
@@ -754,12 +820,13 @@ void main()
 		}
 	}
 
-	void
-	renderCanvasDirtyTextures(QOpenGLFunctions *f, canvas::TileCache &tileCache)
+	void renderCanvasDirtyTextures(
+		QOpenGLFunctions *f, QOpenGLExtraFunctions *e,
+		canvas::TileCache &tileCache)
 	{
 		DP_PERF_SCOPE("paint_gl:canvas_dirty:textures");
 		qCDebug(lcDpGlCanvas, "renderCanvasDirtyTexture");
-		setUpCanvasShader(f);
+		setUpCanvasShader(f, e);
 		updateCanvasTextureFilter(f);
 
 		QSize size = tileCache.size();
@@ -777,7 +844,7 @@ void main()
 		}
 	}
 
-	void renderCanvasDirty(QOpenGLFunctions *f)
+	void renderCanvasDirty(QOpenGLFunctions *f, QOpenGLExtraFunctions *e)
 	{
 		DP_PERF_SCOPE("paint_gl:canvas_dirty");
 		// The loop is necessary because the canvas size may change
@@ -788,7 +855,7 @@ void main()
 			controller->withTileCache([&](canvas::TileCache &tileCache) {
 				wasResized = tileCache.getResizeReset(resize);
 				if(!wasResized) {
-					renderCanvasDirtyTextures(f, tileCache);
+					renderCanvasDirtyTextures(f, e, tileCache);
 				}
 			});
 			if(wasResized) {
@@ -801,10 +868,10 @@ void main()
 		}
 	}
 
-	void renderCanvasClean(QOpenGLFunctions *f)
+	void renderCanvasClean(QOpenGLFunctions *f, QOpenGLExtraFunctions *e)
 	{
 		DP_PERF_SCOPE("paint_gl:canvas_clean");
-		setUpCanvasShader(f);
+		setUpCanvasShader(f, e);
 		updateCanvasTextureFilter(f);
 		int textureCount = canvasTextures.size();
 		for(int i = 0; i < textureCount; ++i) {
@@ -813,7 +880,7 @@ void main()
 		}
 	}
 
-	void renderCanvas(QOpenGLFunctions *f)
+	void renderCanvas(QOpenGLFunctions *f, QOpenGLExtraFunctions *e)
 	{
 		// Rendering the canvas has three paths, to avoid state changes as much
 		// as possible. When nothing changed since last time, we just render the
@@ -823,16 +890,15 @@ void main()
 		// textures entirely, rendering out each one along the way.
 		if(dirty.texture) {
 			dirty.texture = false;
-			renderCanvasDirty(f);
+			renderCanvasDirty(f, e);
 		} else {
-			renderCanvasClean(f);
+			renderCanvasClean(f, e);
 		}
 	}
 
-	void renderOutline(QOpenGLFunctions *f, qreal dpr)
+	void renderOutline(QOpenGLFunctions *f, QOpenGLExtraFunctions *e, qreal dpr)
 	{
 		DP_PERF_SCOPE("paint_gl:outline");
-		// Called after renderCanvas, assumes vertex attribute 0 is enabled.
 		f->glEnable(GL_BLEND);
 		f->glBlendFuncSeparate(GL_ONE, GL_SRC_COLOR, GL_ONE, GL_ONE);
 		f->glBlendEquationSeparate(GL_FUNC_SUBTRACT, GL_FUNC_ADD);
@@ -857,6 +923,13 @@ void main()
 		f->glUniform1f(
 			outlineShader.shapeLocation,
 			controller->isSquareOutline() ? 1.0f : 0.0f);
+
+		if(haveGles2) {
+			// Called after renderCanvas, assumes vertex attribute 0 is enabled.
+		} else {
+			e->glBindVertexArray(outlineShader.vao);
+			f->glEnableVertexAttribArray(0);
+		}
 
 		f->glBindBuffer(
 			GL_ARRAY_BUFFER, buffers[Private::OUTLINE_VERTEX_BUFFER_INDEX]);
@@ -883,6 +956,7 @@ void main()
 	QColor checkerColor2;
 	Dirty dirty;
 	bool initialized = false;
+	bool haveGles2 = false;
 	bool haveFragmentHighp;
 	GLint maxTextureSize;
 	CanvasShader canvasShader;
@@ -947,7 +1021,10 @@ GlCanvas::~GlCanvas()
 {
 	if(d->initialized) {
 		makeCurrent();
-		d->dispose(QOpenGLContext::currentContext()->functions());
+		QOpenGLContext *context = QOpenGLContext::currentContext();
+		d->dispose(
+			context->functions(),
+			d->haveGles2 ? nullptr : context->extraFunctions());
 		doneCurrent();
 	}
 	delete d;
@@ -1022,7 +1099,11 @@ void GlCanvas::initializeGL()
 	QOpenGLContext *context = QOpenGLContext::currentContext();
 	QOpenGLFunctions *f = context->functions();
 
-	d->haveFragmentHighp = !context->isOpenGLES() ||
+	d->haveGles2 = context->isOpenGLES();
+	QOpenGLExtraFunctions *e =
+		d->haveGles2 ? nullptr : context->extraFunctions();
+
+	d->haveFragmentHighp = !d->haveGles2 ||
 						   context->format().majorVersion() > 2 ||
 						   Private::supportsFragmentHighp(f);
 
@@ -1096,8 +1177,10 @@ void GlCanvas::initializeGL()
 		}
 	}
 
-	d->canvasShader = Private::initCanvasShader(f, d->haveFragmentHighp);
-	d->outlineShader = Private::initOutlineShader(f, d->haveFragmentHighp);
+	d->canvasShader =
+		Private::initCanvasShader(f, e, d->haveGles2, d->haveFragmentHighp);
+	d->outlineShader =
+		Private::initOutlineShader(f, e, d->haveGles2, d->haveFragmentHighp);
 
 	qCDebug(lcDpGlCanvas, "Generate buffers");
 	f->glGenBuffers(Private::BUFFER_COUNT, d->buffers);
@@ -1140,20 +1223,26 @@ void GlCanvas::paintGL()
 
 		CanvasController *controller = d->controller;
 		const QColor &clearColor = controller->clearColor();
-		QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
+		QOpenGLContext *context = QOpenGLContext::currentContext();
+		QOpenGLFunctions *f = context->functions();
+		QOpenGLExtraFunctions *e =
+			d->haveGles2 ? nullptr : context->extraFunctions();
 		f->glClearColor(
 			clearColor.redF(), clearColor.greenF(), clearColor.blueF(), 1.0);
 		f->glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		bool haveCanvas = controller->isCanvasVisible();
 		if(haveCanvas) {
-			d->renderCanvas(f);
+			d->renderCanvas(f, e);
 			if(d->controller->isOutlineVisible()) {
-				d->renderOutline(f, devicePixelRatioF());
+				d->renderOutline(f, e, devicePixelRatioF());
 			}
 			// Qt5 doesn't reset these in endNativePainting.
 			f->glDisableVertexAttribArray(0);
 			f->glBindBuffer(GL_ARRAY_BUFFER, 0);
+			if(!d->haveGles2) {
+				e->glBindVertexArray(0);
+			}
 		}
 
 		painter.endNativePainting();
