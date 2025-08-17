@@ -626,10 +626,16 @@ dialogs::StartDialog::Entry getStartDialogEntry(const QString &page)
 	return dialogs::StartDialog::Entry::Guess;
 }
 
-void DrawpileApp::openStart(const QString &page, bool restoreWindowPosition)
+MainWindow *DrawpileApp::openDefault(bool restoreWindowPosition)
 {
 	MainWindow *win = new MainWindow(restoreWindowPosition);
 	win->newDocument(safeNewCanvasSize(), m_settings->newCanvasBackColor());
+	return win;
+}
+
+void DrawpileApp::openStart(const QString &page, bool restoreWindowPosition)
+{
+	MainWindow *win = openDefault(restoreWindowPosition);
 	// Importing an animation is not actually a start dialog page, it's just
 	// here as an internal option to let us start a new process if the user
 	// requests an animation import on a dirty canvas.

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_WIDGETS_MACMENU_H
 #define DESKTOP_WIDGETS_MACMENU_H
+#include <QAction>
 #include <QMenuBar>
 
 class MainWindow;
@@ -23,8 +24,11 @@ public:
 public slots:
 	void newDocument();
 	void openDocument();
+	void startDocument();
+	void hostSession();
 	void joinSession();
 	void browseSessions();
+	void checkForUpdates();
 	void quitAll();
 
 private slots:
@@ -38,7 +42,11 @@ private:
 	MacMenu();
 	QAction *makeAction(
 		QMenu *menu, const char *name, const QString &text,
-		const QKeySequence &shortcut);
+		const QKeySequence &shortcut = QKeySequence(),
+		QAction::MenuRole menuRole = QAction::NoRole);
+	QAction *makeAction(
+		QMenu *menu, const char *name, const QString &text,
+		QAction::MenuRole menuRole);
 	dialogs::StartDialog *showStartDialog();
 
 	QMenu *m_recent;
