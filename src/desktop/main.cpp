@@ -1188,6 +1188,14 @@ extern "C" void drawpileMain(int argc, char **argv)
 	format.setAlphaBufferSize(0);
 	format.setDepthBufferSize(0);
 	format.setStencilBufferSize(8);
+#ifdef Q_OS_MACOS
+	// No support for OpenGL ES 2.0 or the compatibility profile on macOS.
+	format.setMajorVersion(3);
+	format.setMinorVersion(2);
+	format.setRenderableType(QSurfaceFormat::OpenGL);
+	format.setProfile(QSurfaceFormat::CoreProfile);
+	format.setOption(QSurfaceFormat::DeprecatedFunctions, false);
+#endif
 	QSurfaceFormat::setDefaultFormat(format);
 
 #ifdef __EMSCRIPTEN__
