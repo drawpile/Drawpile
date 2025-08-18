@@ -8240,7 +8240,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"></location>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Fitxers</translation>
     </message>
     <message>
         <location line="+2"></location>
