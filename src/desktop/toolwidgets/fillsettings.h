@@ -33,9 +33,9 @@ public:
 	bool affectsLayer() override { return true; }
 	bool isLocked() override;
 
-	void quickAdjust1(qreal adjustment) override;
-	void quickAdjust2(qreal adjustment) override;
-	void quickAdjust3(qreal adjustment) override;
+	void quickAdjust1(qreal adjustment, bool wheel) override;
+	void quickAdjust2(qreal adjustment, bool wheel) override;
+	void quickAdjust3(qreal adjustment, bool wheel) override;
 	void stepAdjust1(bool increase) override;
 	void stepAdjust2(bool increase) override;
 	void stepAdjust3(bool increase) override;

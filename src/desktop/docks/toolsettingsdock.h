@@ -93,7 +93,7 @@ public slots:
 	void toggleBlendMode(int blendMode);
 
 	//! Quick adjust the parameter specified by the type.
-	void quickAdjust(int type, qreal adjustment);
+	void quickAdjust(int type, qreal adjustment, bool wheel);
 
 	//! Increase or decrease size for current tool by one step
 	void stepAdjustCurrent1(bool increase);
@@ -169,9 +169,9 @@ private:
 	void startSelection(int type);
 	void startTransformMove(bool onlyMask, bool startMove, bool quickMove);
 	void clearTemporaryTransform();
-	void quickAdjustCurrent1(qreal adjustment);
-	void quickAdjustCurrent2(qreal adjustment);
-	void quickAdjustCurrent3(qreal adjustment);
+	void quickAdjustCurrent1(qreal adjustment, bool wheel);
+	void quickAdjustCurrent2(qreal adjustment, bool wheel);
+	void quickAdjustCurrent3(qreal adjustment, bool wheel);
 	void requestColorAdjustment(int channel, qreal adjustment, qreal max);
 	static bool hasBrushCursor(tools::Tool::Type tool);
 

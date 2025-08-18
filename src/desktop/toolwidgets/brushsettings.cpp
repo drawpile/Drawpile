@@ -1908,33 +1908,41 @@ void BrushSettings::setCompatibilityMode(bool compatibilityMode)
 	}
 }
 
-void BrushSettings::quickAdjust1(qreal adjustment)
+void BrushSettings::quickAdjust1(qreal adjustment, bool wheel)
 {
 	// Adjust the currently visible box. Classic brush size gets increased
 	// exponentially, MyPaint brush size is already logarithmic.
 	if(d->currentIsMyPaint()) {
 		quickAdjustOn(
-			d->ui.radiusLogarithmicBox, adjustment * 2.0, d->quickAdjust1);
+			d->ui.radiusLogarithmicBox, adjustment * 2.0, wheel,
+			d->quickAdjust1);
 	} else {
 		KisSliderSpinBox *brushsizeBox = d->ui.brushsizeBox;
+		int currentValue = brushsizeBox->value();
+		// Having small values skip around from spinning the wheel is
+		// unpredictable, so it feels really random and causes users to have to
+		// jigger their wheel up and down repeatedly. So only use logarithmic
+		// adjustment if we're above a reasonable threshold.
+		qreal effectiveAdjustment =
+			wheel && currentValue <= 30
+				? adjustment
+				: qMax(1.0, std::cbrt(currentValue)) * adjustment;
 		quickAdjustOn(
-			brushsizeBox,
-			qMax(1.0, std::cbrt(brushsizeBox->value())) * adjustment,
-			d->quickAdjust1);
+			brushsizeBox, effectiveAdjustment, wheel, d->quickAdjust1);
 	}
 }
 
-void BrushSettings::quickAdjust2(qreal adjustment)
+void BrushSettings::quickAdjust2(qreal adjustment, bool wheel)
 {
 	KisSliderSpinBox *opacityBox = d->ui.opacityBox;
-	quickAdjustOn(opacityBox, adjustment, d->quickAdjust2);
+	quickAdjustOn(opacityBox, adjustment, wheel, d->quickAdjust2);
 }
 
-void BrushSettings::quickAdjust3(qreal adjustment)
+void BrushSettings::quickAdjust3(qreal adjustment, bool wheel)
 {
 	if(d->currentBrush().hasHardness()) {
 		KisSliderSpinBox *hardnessBox = d->ui.hardnessBox;
-		quickAdjustOn(hardnessBox, adjustment, d->quickAdjust3);
+		quickAdjustOn(hardnessBox, adjustment, wheel, d->quickAdjust3);
 	}
 }
 
@@ -1967,18 +1975,6 @@ void BrushSettings::stepAdjust3(bool increase)
 	if(d->currentBrush().hasHardness()) {
 		KisSliderSpinBox *hardnessBox = d->ui.hardnessBox;
 		adjustSlider(hardnessBox, hardnessBox->value() + (increase ? 1 : -1));
-	}
-}
-
-void BrushSettings::quickAdjustOn(
-	KisSliderSpinBox *box, qreal adjustment, qreal &quickAdjustN)
-{
-	quickAdjustN += adjustment;
-	qreal i;
-	qreal f = modf(quickAdjustN, &i);
-	if(int(i)) {
-		quickAdjustN = f;
-		adjustSlider(box, box->value() + int(i));
 	}
 }
 
@@ -2119,16 +2115,6 @@ void BrushSettings::updateRadiusLogarithmicLimit()
 		//: it will look something like "200/400". Unless your language uses a
 		//: different slash symbol or something, leave this unchanged.
 		radiusLogarithmicBox->setSuffix(tr("/%1").arg(radiusLogarithmicLimit));
-	}
-}
-
-void BrushSettings::adjustSlider(KisSliderSpinBox *slider, int value)
-{
-	if(slider->isSoftRangeActive()) {
-		slider->setValue(
-			qBound(slider->softMinimum(), value, slider->softMaximum()));
-	} else {
-		slider->setValue(value);
 	}
 }
 

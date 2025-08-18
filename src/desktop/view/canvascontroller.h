@@ -192,7 +192,7 @@ signals:
 		bool constrain, bool center);
 	void penUp(bool constrain, bool center);
 	void coordinatesChanged(const QPointF &coordinates);
-	void quickAdjust(int type, qreal value);
+	void quickAdjust(int type, qreal value, bool wheel);
 	void cursorChanged(const QCursor &cursor);
 	void toggleActionActivated(int action);
 	void touchTapActionActivated(int action);

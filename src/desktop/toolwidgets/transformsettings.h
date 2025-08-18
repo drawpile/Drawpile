@@ -55,7 +55,7 @@ public:
 	void toggleAlphaPreserve() override;
 	void toggleBlendMode(int blendMode) override;
 
-	void quickAdjust2(qreal adjustment) override;
+	void quickAdjust2(qreal adjustment, bool wheel) override;
 	void stepAdjust2(bool increase) override;
 
 	QWidget *getHeaderWidget() override { return m_headerWidget; }

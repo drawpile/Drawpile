@@ -48,8 +48,8 @@ public:
 	void toggleAlphaPreserve() override;
 	void toggleBlendMode(int blendMode) override;
 
-	void quickAdjust2(qreal adjustment) override;
-	void quickAdjust3(qreal adjustment) override;
+	void quickAdjust2(qreal adjustment, bool wheel) override;
+	void quickAdjust3(qreal adjustment, bool wheel) override;
 	void stepAdjust2(bool increase) override;
 	void stepAdjust3(bool increase) override;
 

@@ -106,15 +106,9 @@ void LassoFillSettings::toggleBlendMode(int blendMode)
 	m_blendModeManager->toggleBlendMode(blendMode);
 }
 
-void LassoFillSettings::quickAdjust2(qreal adjustment)
+void LassoFillSettings::quickAdjust2(qreal adjustment, bool wheel)
 {
-	m_quickAdjust2 += adjustment;
-	qreal i;
-	qreal f = modf(m_quickAdjust2, &i);
-	if(int(i)) {
-		m_quickAdjust2 = f;
-		m_opacitySpinner->setValue(m_opacitySpinner->value() + i);
-	}
+	quickAdjustOn(m_opacitySpinner, adjustment, wheel, m_quickAdjust2);
 }
 
 void LassoFillSettings::stepAdjust2(bool increase)

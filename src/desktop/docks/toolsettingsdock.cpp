@@ -759,17 +759,17 @@ void ToolSettings::changeBackgroundColor()
 	d->backgroundColorDialog->showColor(d->backgroundColor);
 }
 
-void ToolSettings::quickAdjust(int type, qreal adjustment)
+void ToolSettings::quickAdjust(int type, qreal adjustment, bool wheel)
 {
 	switch(type) {
 	case int(tools::QuickAdjustType::Tool1):
-		quickAdjustCurrent1(adjustment);
+		quickAdjustCurrent1(adjustment, wheel);
 		break;
 	case int(tools::QuickAdjustType::Tool2):
-		quickAdjustCurrent2(adjustment);
+		quickAdjustCurrent2(adjustment, wheel);
 		break;
 	case int(tools::QuickAdjustType::Tool3):
-		quickAdjustCurrent3(adjustment);
+		quickAdjustCurrent3(adjustment, wheel);
 		break;
 	case int(tools::QuickAdjustType::ColorH):
 		requestColorAdjustment(0, adjustment, 360.0);
@@ -797,19 +797,19 @@ void ToolSettings::requestColorAdjustment(
 	}
 }
 
-void ToolSettings::quickAdjustCurrent1(qreal adjustment)
+void ToolSettings::quickAdjustCurrent1(qreal adjustment, bool wheel)
 {
-	d->currentSettings()->quickAdjust1(adjustment);
+	d->currentSettings()->quickAdjust1(adjustment, wheel);
 }
 
-void ToolSettings::quickAdjustCurrent2(qreal adjustment)
+void ToolSettings::quickAdjustCurrent2(qreal adjustment, bool wheel)
 {
-	d->currentSettings()->quickAdjust2(adjustment);
+	d->currentSettings()->quickAdjust2(adjustment, wheel);
 }
 
-void ToolSettings::quickAdjustCurrent3(qreal adjustment)
+void ToolSettings::quickAdjustCurrent3(qreal adjustment, bool wheel)
 {
-	d->currentSettings()->quickAdjust3(adjustment);
+	d->currentSettings()->quickAdjust3(adjustment, wheel);
 }
 
 void ToolSettings::stepAdjustCurrent1(bool increase)

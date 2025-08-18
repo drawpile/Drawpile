@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/toolsettings.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/tools/toolproperties.h"
 #include <QAbstractButton>
 #include <QButtonGroup>
@@ -62,6 +63,44 @@ void ToolSettings::checkGroupButton(QButtonGroup *group, int id)
 	QAbstractButton *button = group->button(id);
 	if(button) {
 		button->setChecked(true);
+	}
+}
+
+void ToolSettings::quickAdjustOn(
+	KisSliderSpinBox *slider, qreal adjustment, bool wheel, qreal &quickAdjustN)
+{
+	if(slider && slider->isEnabled()) {
+		if(wheel) {
+			int i;
+			if(adjustment < 0.0) {
+				i = qMin(-1, qRound(adjustment));
+			} else if(adjustment > 0.0) {
+				i = qMax(1, qRound(adjustment));
+			} else {
+				return;
+			}
+			quickAdjustN = 0.0;
+			adjustSlider(slider, slider->value() + i);
+		} else {
+			quickAdjustN += adjustment;
+			qreal i;
+			qreal f = modf(quickAdjustN, &i);
+			int delta = int(i);
+			if(delta != 0) {
+				quickAdjustN = f;
+				adjustSlider(slider, slider->value() + delta);
+			}
+		}
+	}
+}
+
+void ToolSettings::adjustSlider(KisSliderSpinBox *slider, int value)
+{
+	if(slider->isSoftRangeActive()) {
+		slider->setValue(
+			qBound(slider->softMinimum(), value, slider->softMaximum()));
+	} else {
+		slider->setValue(value);
 	}
 }
 

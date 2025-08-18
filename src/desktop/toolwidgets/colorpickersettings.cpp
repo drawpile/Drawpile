@@ -172,15 +172,9 @@ int ColorPickerSettings::getSize() const
 	return m_size->value();
 }
 
-void ColorPickerSettings::quickAdjust1(qreal adjustment)
+void ColorPickerSettings::quickAdjust1(qreal adjustment, bool wheel)
 {
-	m_quickAdjust1 += adjustment;
-	qreal i;
-	qreal f = modf(m_quickAdjust1, &i);
-	if(int(i)) {
-		m_quickAdjust1 = f;
-		m_size->setValue(m_size->value() + int(i));
-	}
+	quickAdjustOn(m_size, adjustment, wheel, m_quickAdjust1);
 }
 
 void ColorPickerSettings::stepAdjust1(bool increase)

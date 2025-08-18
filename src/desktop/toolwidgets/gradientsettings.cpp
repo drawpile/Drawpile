@@ -157,28 +157,14 @@ void GradientSettings::toggleBlendMode(int blendMode)
 	m_blendModeManager->toggleBlendMode(blendMode);
 }
 
-void GradientSettings::quickAdjust2(qreal adjustment)
+void GradientSettings::quickAdjust2(qreal adjustment, bool wheel)
 {
-	m_quickAdjust2 += adjustment;
-	qreal i;
-	qreal f = modf(m_quickAdjust2, &i);
-	if(int(i)) {
-		m_quickAdjust2 = f;
-		m_fgOpacitySpinner->setValue(m_fgOpacitySpinner->value() + i);
-	}
+	quickAdjustOn(m_fgOpacitySpinner, adjustment, wheel, m_quickAdjust2);
 }
 
-void GradientSettings::quickAdjust3(qreal adjustment)
+void GradientSettings::quickAdjust3(qreal adjustment, bool wheel)
 {
-	if(m_bgOpacitySpinner->isEnabled()) {
-		m_quickAdjust3 += adjustment;
-		qreal i;
-		qreal f = modf(m_quickAdjust3, &i);
-		if(int(i)) {
-			m_quickAdjust3 = f;
-			m_bgOpacitySpinner->setValue(m_bgOpacitySpinner->value() + i);
-		}
-	}
+	quickAdjustOn(m_bgOpacitySpinner, adjustment, wheel, m_quickAdjust3);
 }
 
 void GradientSettings::stepAdjust2(bool increase)

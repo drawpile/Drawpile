@@ -127,17 +127,9 @@ void TransformSettings::toggleBlendMode(int blendMode)
 	}
 }
 
-void TransformSettings::quickAdjust2(qreal adjustment)
+void TransformSettings::quickAdjust2(qreal adjustment, bool wheel)
 {
-	if(m_opacitySlider->isEnabled()) {
-		m_quickAdjust2 += adjustment;
-		qreal i;
-		qreal f = modf(m_quickAdjust2, &i);
-		if(int(i)) {
-			m_quickAdjust2 = f;
-			m_opacitySlider->setValue(m_opacitySlider->value() + i);
-		}
-	}
+	quickAdjustOn(m_opacitySlider, adjustment, wheel, m_quickAdjust2);
 }
 
 void TransformSettings::stepAdjust2(bool increase)

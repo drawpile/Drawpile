@@ -1764,7 +1764,7 @@ void CanvasView::wheelAdjust(
 {
 	event->accept();
 	if(allowed) {
-		emit quickAdjust(param, qreal(delta) / 120.0);
+		emit quickAdjust(param, qreal(delta) / 120.0, true);
 	}
 }
 
@@ -2398,7 +2398,7 @@ void CanvasView::dragAdjust(int type, int delta, qreal acceleration)
 	if(acceleration != -1) {
 		d = std::copysign(std::pow(std::abs(d), acceleration), d);
 	}
-	emit quickAdjust(type, d * 0.1);
+	emit quickAdjust(type, d * 0.1, false);
 }
 
 void CanvasView::moveDrag(const QPoint &point)

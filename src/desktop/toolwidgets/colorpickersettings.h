@@ -7,7 +7,7 @@
 #include <QWidget>
 
 class QCheckBox;
-class QSpinBox;
+class KisSliderSpinBox;
 
 namespace widgets {
 class GroupedToolButton;
@@ -56,7 +56,7 @@ public:
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
 	void setForeground(const QColor &color) override { Q_UNUSED(color); }
-	void quickAdjust1(qreal adjustment) override;
+	void quickAdjust1(qreal adjustment, bool wheel) override;
 	void stepAdjust1(bool increase) override;
 
 	int getSize() const override;
@@ -84,7 +84,7 @@ private:
 	widgets::GroupedToolButton *m_pickButton = nullptr;
 	widgets::PaletteWidget *m_palettewidget;
 	QCheckBox *m_layerpick;
-	QSpinBox *m_size;
+	KisSliderSpinBox *m_size;
 	qreal m_quickAdjust1 = 0.0;
 	bool m_pickingFromScreen = false;
 };

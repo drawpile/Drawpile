@@ -385,40 +385,19 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 	pushSettings();
 }
 
-void FillSettings::quickAdjust1(qreal adjustment)
+void FillSettings::quickAdjust1(qreal adjustment, bool wheel)
 {
-	KisSliderSpinBox *size = m_ui->size;
-	if(size->isEnabled()) {
-		m_quickAdjust1 += adjustment * 10.0;
-		qreal i;
-		qreal f = modf(m_quickAdjust1, &i);
-		if(int(i)) {
-			m_quickAdjust1 = f;
-			size->setValue(size->value() + i);
-		}
-	}
+	quickAdjustOn(m_ui->size, adjustment * 10.0, wheel, m_quickAdjust1);
 }
 
-void FillSettings::quickAdjust2(qreal adjustment)
+void FillSettings::quickAdjust2(qreal adjustment, bool wheel)
 {
-	m_quickAdjust2 += adjustment;
-	qreal i;
-	qreal f = modf(m_quickAdjust2, &i);
-	if(int(i)) {
-		m_quickAdjust2 = f;
-		m_ui->opacity->setValue(m_ui->opacity->value() + i);
-	}
+	quickAdjustOn(m_ui->opacity, adjustment, wheel, m_quickAdjust2);
 }
 
-void FillSettings::quickAdjust3(qreal adjustment)
+void FillSettings::quickAdjust3(qreal adjustment, bool wheel)
 {
-	m_quickAdjust3 += adjustment;
-	qreal i;
-	qreal f = modf(m_quickAdjust3, &i);
-	if(int(i)) {
-		m_quickAdjust3 = f;
-		m_ui->feather->setValue(m_ui->feather->value() + i);
-	}
+	quickAdjustOn(m_ui->feather, adjustment, wheel, m_quickAdjust3);
 }
 
 void FillSettings::stepAdjust1(bool increase)

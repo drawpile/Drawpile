@@ -24,7 +24,7 @@ public:
 	bool pointerTracking() const;
 
 	void setForeground(const QColor &color) override;
-	void quickAdjust1(qreal adjustment) override;
+	void quickAdjust1(qreal adjustment, bool wheel) override;
 	void stepAdjust1(bool increase) override;
 
 	virtual ToolProperties saveToolSettings() override;

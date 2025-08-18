@@ -5,6 +5,7 @@
 #include "libclient/tools/toolproperties.h"
 #include <QObject>
 
+class KisSliderSpinBox;
 class QButtonGroup;
 
 namespace tools {
@@ -78,10 +79,24 @@ public:
 	 * This is a shortcut for adjusting a tool parameter.
 	 * For brush based tools, this adjust the size.
 	 * @param adjustment how much to adjust by (-1/1 is the normal rate)
+	 * @param wheel whether this came from a mouse wheel, the tool should not
+	 * remember partial values in this case
 	 */
-	virtual void quickAdjust1(qreal adjustment) { Q_UNUSED(adjustment) }
-	virtual void quickAdjust2(qreal adjustment) { Q_UNUSED(adjustment) }
-	virtual void quickAdjust3(qreal adjustment) { Q_UNUSED(adjustment) }
+	virtual void quickAdjust1(qreal adjustment, bool wheel)
+	{
+		Q_UNUSED(adjustment);
+		Q_UNUSED(wheel);
+	}
+	virtual void quickAdjust2(qreal adjustment, bool wheel)
+	{
+		Q_UNUSED(adjustment);
+		Q_UNUSED(wheel);
+	}
+	virtual void quickAdjust3(qreal adjustment, bool wheel)
+	{
+		Q_UNUSED(adjustment);
+		Q_UNUSED(wheel);
+	}
 
 	/**
 	 * @brief Increase or decrease tool parameter by one "step".
@@ -172,6 +187,12 @@ protected:
 	ToolController *controller() { return m_ctrl; }
 
 	static void checkGroupButton(QButtonGroup *group, int id);
+
+	static void quickAdjustOn(
+		KisSliderSpinBox *slider, qreal adjustment, bool wheel,
+		qreal &inOutQuickAdjustN);
+
+	static void adjustSlider(KisSliderSpinBox *slider, int value);
 
 private:
 	ToolController *m_ctrl;

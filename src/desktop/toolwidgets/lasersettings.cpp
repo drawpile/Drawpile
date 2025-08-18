@@ -195,15 +195,9 @@ void LaserPointerSettings::setForeground(const QColor &color)
 	pushSettings();
 }
 
-void LaserPointerSettings::quickAdjust1(qreal adjustment)
+void LaserPointerSettings::quickAdjust1(qreal adjustment, bool wheel)
 {
-	m_quickAdjust1 += adjustment;
-	qreal i;
-	qreal f = modf(m_quickAdjust1, &i);
-	if(int(i)) {
-		m_quickAdjust1 = f;
-		m_ui->persistence->setValue(m_ui->persistence->value() + int(i));
-	}
+	quickAdjustOn(m_ui->persistence, adjustment, wheel, m_quickAdjust1);
 }
 
 void LaserPointerSettings::stepAdjust1(bool increase)
