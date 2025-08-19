@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef TOOLS_ZOOM_H
-#define TOOLS_ZOOM_H
-
+#ifndef LIBCLIENT_TOOLS_ZOOM_H
+#define LIBCLIENT_TOOLS_ZOOM_H
 #include "libclient/tools/tool.h"
 
 namespace tools {
@@ -25,9 +23,10 @@ private:
 	void removePreview() const;
 	QRect getRect() const;
 
-	QPoint m_start, m_end;
 	bool m_reverse = false;
 	bool m_zooming = false;
+	QPoint m_start;
+	QPoint m_end;
 };
 
 }
