@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef LIBCLIENT_TOOLS_ZOOM_H
 #define LIBCLIENT_TOOLS_ZOOM_H
+#include "libclient/tools/clickdetector.h"
 #include "libclient/tools/tool.h"
 
 namespace tools {
@@ -22,11 +23,13 @@ private:
 	void updatePreview() const;
 	void removePreview() const;
 	QRect getRect() const;
+	QRect getCenterRect() const;
 
 	bool m_reverse = false;
 	bool m_zooming = false;
 	QPoint m_start;
 	QPoint m_end;
+	ClickDetector m_clickDetector;
 };
 
 }

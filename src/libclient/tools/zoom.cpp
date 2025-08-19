@@ -16,6 +16,7 @@ ZoomTool::ZoomTool(ToolController &owner)
 
 void ZoomTool::begin(const BeginParams &params)
 {
+	m_clickDetector.begin(params.viewPos, params.deviceType);
 	m_start = params.point.toPoint();
 	m_end = m_start;
 	m_reverse = params.right;
@@ -24,16 +25,20 @@ void ZoomTool::begin(const BeginParams &params)
 
 void ZoomTool::motion(const MotionParams &params)
 {
+	m_clickDetector.motion(params.viewPos);
 	m_end = params.point.toPoint();
 	updatePreview();
 }
 
 void ZoomTool::end(const EndParams &)
 {
+	m_clickDetector.end();
 	removePreview();
 	if(m_zooming) {
 		constexpr int STEPS = 3;
-		emit m_owner.zoomRequested(getRect(), m_reverse ? -STEPS : STEPS);
+		emit m_owner.zoomRequested(
+			m_clickDetector.isClick() ? getCenterRect() : getRect(),
+			m_reverse ? -STEPS : STEPS);
 		m_zooming = false;
 	}
 }
@@ -64,6 +69,12 @@ QRect ZoomTool::getRect() const
 			QPoint(qMin(m_start.x(), m_end.x()), qMin(m_start.y(), m_end.y())),
 			QPoint(qMax(m_start.x(), m_end.x()), qMax(m_start.y(), m_end.y())));
 	}
+}
+
+QRect ZoomTool::getCenterRect() const
+{
+	QPoint center = getRect().center();
+	return QRect(center, center);
 }
 
 }
