@@ -9,6 +9,7 @@ extern "C" {
 }
 #include "cmake-config/config.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/tilecache.h"
 #include "libclient/drawdance/image.h"
 #include "libclient/drawdance/layercontent.h"
 #include "libclient/drawdance/layerpropslist.h"
@@ -67,9 +68,6 @@ PaintEngine::PaintEngine(
 		  this)
 	, m_fps{fps}
 	, m_timerId{0}
-	, m_cache{}
-	, m_painter{}
-	, m_tileCache(canvasImplementation)
 	, m_cacheMutex{nullptr}
 	, m_viewSem{nullptr}
 	, m_sampleColorLastDiameter(-1)
@@ -77,6 +75,11 @@ PaintEngine::PaintEngine(
 	, m_selectionColor(selectionColor)
 	, m_updateLayersVisibleInFrame{false}
 {
+	if(m_useTileCache) {
+		m_cache.tile = new TileCache(canvasImplementation);
+	} else {
+		m_cache.pixmap = new PixmapCache;
+	}
 	m_cacheMutex = DP_mutex_new();
 	m_viewSem = DP_semaphore_new(0);
 	start();
@@ -87,6 +90,11 @@ PaintEngine::~PaintEngine()
 	DP_free_simd(m_sampleColorStampBuffer);
 	DP_semaphore_free(m_viewSem);
 	DP_mutex_free(m_cacheMutex);
+	if(m_useTileCache) {
+		delete m_cache.tile;
+	} else {
+		delete m_cache.pixmap;
+	}
 }
 
 void PaintEngine::setFps(int fps)
@@ -137,9 +145,9 @@ void PaintEngine::reset(
 		this, canvasState, player);
 	DP_mutex_lock(m_cacheMutex);
 	if(m_useTileCache) {
-		m_tileCache.clear();
+		m_cache.tile->clear();
 	} else {
-		m_cache = QPixmap{};
+		m_cache.pixmap->clear();
 	}
 	DP_mutex_unlock(m_cacheMutex);
 	m_undoDepthLimit = DP_UNDO_DEPTH_DEFAULT;
@@ -164,7 +172,7 @@ void PaintEngine::timerEvent(QTimerEvent *)
 		&PaintEngine::onCursorMoved, &PaintEngine::onDefaultLayer,
 		&PaintEngine::onUndoDepthLimitSet,
 		&PaintEngine::onCensoredLayerRevealed, this);
-	if(m_tileCacheDirtyCheckOnTick && m_tileCache.needsDirtyCheck()) {
+	if(m_tileCacheDirtyCheckOnTick && m_cache.tile->needsDirtyCheck()) {
 		emit tileCacheDirtyCheckNeeded();
 	}
 	if(m_updateLayersVisibleInFrame) {
@@ -526,9 +534,9 @@ QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 		QImage img;
 		DP_mutex_lock(m_cacheMutex);
 		if(m_useTileCache) {
-			img = m_tileCache.toSubImage(rect);
-		} else if(rect.intersects(m_cache.rect())) {
-			img = m_cache.copy(rect).toImage();
+			img = m_cache.tile->toSubImage(rect);
+		} else {
+			img = m_cache.pixmap->toSubImage(rect);
 		}
 		DP_mutex_unlock(m_cacheMutex);
 
@@ -757,30 +765,31 @@ void PaintEngine::clearFillPreview()
 	m_paintEngine.clearFillPreview();
 }
 
-void PaintEngine::withPixmap(
-	const std::function<void(const QPixmap &)> &fn) const
-{
-	Q_ASSERT(!m_useTileCache);
-	DP_mutex_lock(m_cacheMutex);
-	fn(m_cache);
-	DP_mutex_unlock(m_cacheMutex);
-}
-
 QImage PaintEngine::renderPixmap()
 {
 	DP_paint_engine_render_everything(m_paintEngine.get());
 	DP_SEMAPHORE_MUST_WAIT(m_viewSem);
 	DP_mutex_lock(m_cacheMutex);
-	QImage img = m_useTileCache ? m_tileCache.toImage() : m_cache.toImage();
+	QImage img =
+		m_useTileCache ? m_cache.tile->toImage() : m_cache.pixmap->toImage();
 	DP_mutex_unlock(m_cacheMutex);
 	return img;
+}
+
+void PaintEngine::withPixmapCache(
+	const std::function<void(PixmapCache &)> &fn) const
+{
+	Q_ASSERT(!m_useTileCache);
+	DP_mutex_lock(m_cacheMutex);
+	fn(*m_cache.pixmap);
+	DP_mutex_unlock(m_cacheMutex);
 }
 
 void PaintEngine::withTileCache(const std::function<void(TileCache &)> &fn)
 {
 	Q_ASSERT(m_useTileCache);
 	DP_mutex_lock(m_cacheMutex);
-	fn(m_tileCache);
+	fn(*m_cache.tile);
 	DP_mutex_unlock(m_cacheMutex);
 }
 
@@ -998,16 +1007,8 @@ void PaintEngine::onRenderTileToPixmap(
 	void *user, int tileX, int tileY, DP_Pixel8 *pixels)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
-	QRect area(
-		tileX * DP_TILE_SIZE, tileY * DP_TILE_SIZE, DP_TILE_SIZE, DP_TILE_SIZE);
-	QImage image(
-		reinterpret_cast<unsigned char *>(pixels), DP_TILE_SIZE, DP_TILE_SIZE,
-		QImage::Format_RGB32);
 	DP_mutex_lock(pe->m_cacheMutex);
-	QPainter &painter = pe->m_painter;
-	painter.begin(&pe->m_cache);
-	painter.drawImage(area.x(), area.y(), image);
-	painter.end();
+	QRect area = pe->m_cache.pixmap->render(tileX, tileY, pixels);
 	DP_mutex_unlock(pe->m_cacheMutex);
 	emit pe->areaChanged(area);
 }
@@ -1018,7 +1019,7 @@ void PaintEngine::onRenderTileToTileCache(
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	DP_mutex_lock(pe->m_cacheMutex);
 	TileCache::RenderResult result =
-		pe->m_tileCache.render(tileX, tileY, pixels);
+		pe->m_cache.tile->render(tileX, tileY, pixels);
 	if(result.dirtyCheck && !pe->m_tileCacheDirtyCheckOnTick) {
 		emit pe->tileCacheDirtyCheckNeeded();
 	}
@@ -1039,23 +1040,13 @@ void PaintEngine::onRenderResizePixmap(
 	int offsetX, int offsetY)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
-	QSize size(width, height);
+
 	DP_mutex_lock(pe->m_cacheMutex);
-	QSize cacheSize = pe->m_cache.size();
-	if(cacheSize != size) {
-		QPixmap pixmap(size);
-		pixmap.fill(QColor(100, 100, 100));
-		QPainter &painter = pe->m_painter;
-		painter.begin(&pixmap);
-		painter.drawPixmap(
-			QRect{QPoint{offsetX, offsetY}, cacheSize}, pe->m_cache,
-			QRect{QPoint{0, 0}, cacheSize});
-		painter.end();
-		pe->m_cache = std::move(pixmap);
-	}
+	pe->m_cache.pixmap->resize(width, height);
 	DP_mutex_unlock(pe->m_cacheMutex);
 	emit pe->resized(
-		size, QPoint(offsetX, offsetY), QSize(prevWidth, prevHeight));
+		QSize(width, height), QPoint(offsetX, offsetY),
+		QSize(prevWidth, prevHeight));
 }
 
 void PaintEngine::onRenderResizeTileCache(
@@ -1065,9 +1056,8 @@ void PaintEngine::onRenderResizeTileCache(
 	Q_UNUSED(prevWidth);
 	Q_UNUSED(prevHeight);
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
-	QSize size(width, height);
 	DP_mutex_lock(pe->m_cacheMutex);
-	pe->m_tileCache.resize(width, height, offsetX, offsetY);
+	pe->m_cache.tile->resize(width, height, offsetX, offsetY);
 	if(!pe->m_tileCacheDirtyCheckOnTick) {
 		emit pe->tileCacheDirtyCheckNeeded();
 	}

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
+#include <dpengine/pixels.h>
 #include <dpengine/tile.h>
 #include <dpengine/tile_iterator.h>
 }
@@ -11,6 +12,142 @@ extern "C" {
 #include <QtMath>
 
 namespace canvas {
+
+void PixmapGrid::clear()
+{
+	m_cells.clear();
+}
+
+void PixmapGrid::resize(int prevWidth, int prevHeight, int width, int height)
+{
+	if(prevWidth != width || prevHeight != height) {
+		m_cells.clear();
+		for(int y = 0; y < height; y += MAX_SIZE) {
+			int h = qMin(MAX_SIZE, height - y);
+			for(int x = 0; x < width; x += MAX_SIZE) {
+				int w = qMin(MAX_SIZE, width - x);
+				m_cells.append({QRect(x, y, w, h), QPixmap(w, h)});
+			}
+		}
+	}
+
+	for(Cell &cell : m_cells) {
+		cell.pixmap.fill(Qt::transparent);
+	}
+}
+
+void PixmapGrid::renderTile(const QRect &rect, const DP_Pixel8 *src)
+{
+	Q_ASSERT(rect.x() % DP_TILE_SIZE == 0);
+	Q_ASSERT(rect.y() % DP_TILE_SIZE == 0);
+	Q_ASSERT(rect.width() <= DP_TILE_SIZE);
+	Q_ASSERT(rect.height() <= DP_TILE_SIZE);
+	Q_ASSERT(src);
+	QPoint point = rect.topLeft();
+	for(Cell &cell : m_cells) {
+		if(cell.rect.contains(point)) {
+			QPainter painter(&cell.pixmap);
+			painter.setCompositionMode(QPainter::CompositionMode_Source);
+			painter.drawImage(
+				rect.translated(-cell.rect.topLeft()),
+				QImage(
+					reinterpret_cast<const uchar *>(src), DP_TILE_SIZE,
+					DP_TILE_SIZE, QImage::Format_ARGB32_Premultiplied),
+				QRect(0, 0, rect.width(), rect.height()));
+			break;
+		}
+	}
+}
+
+QImage PixmapGrid::toImage(int width, int height) const
+{
+	switch(m_cells.size()) {
+	case 0:
+		return QImage();
+	case 1:
+		return m_cells[0].pixmap.toImage().convertToFormat(
+			QImage::Format_ARGB32_Premultiplied);
+	default: {
+		QImage img(width, height, QImage::Format_ARGB32_Premultiplied);
+		QPainter painter(&img);
+		painter.setCompositionMode(QPainter::CompositionMode_Source);
+		for(const Cell &cell : m_cells) {
+			painter.drawPixmap(cell.rect, cell.pixmap);
+		}
+		return img;
+	}
+	}
+}
+
+QImage PixmapGrid::toSubImage(int width, int height, const QRect &rect)
+{
+	QRect r = rect.intersected(QRect(0, 0, width, height));
+	if(r.isEmpty() || m_cells.isEmpty()) {
+		return QImage();
+	} else if(m_cells.size() == 1) {
+		return m_cells[0].pixmap.copy(r).toImage().convertToFormat(
+			QImage::Format_ARGB32_Premultiplied);
+	} else {
+		QImage img(r.size(), QImage::Format_ARGB32_Premultiplied);
+		QPainter painter(&img);
+		painter.setCompositionMode(QPainter::CompositionMode_Source);
+		for(const Cell &cell : m_cells) {
+			QRect cr = r.intersected(cell.rect);
+			if(!cr.isEmpty()) {
+				painter.drawPixmap(
+					cr.translated(-r.topLeft()), cell.pixmap,
+					cr.translated(-cell.rect.topLeft()));
+			}
+		}
+		return img;
+	}
+}
+
+
+void PixmapCache::clear()
+{
+	m_grid.clear();
+	m_width = 0;
+	m_height = 0;
+	m_lastWidth = 0;
+	m_lastHeight = 0;
+	m_lastTileX = -1;
+	m_lastTileY = -1;
+}
+
+void PixmapCache::resize(int width, int height)
+{
+	int prevWidth = m_width;
+	int prevHeight = m_height;
+	DP_TileCounts tc = DP_tile_counts_round(width, height);
+	m_width = width;
+	m_height = height;
+	m_lastWidth = width % DP_TILE_SIZE;
+	m_lastHeight = height % DP_TILE_SIZE;
+	m_lastTileX = m_lastWidth == 0 ? tc.x : tc.x - 1;
+	m_lastTileY = m_lastHeight == 0 ? tc.y : tc.y - 1;
+	m_grid.resize(prevWidth, prevHeight, width, height);
+}
+
+QRect PixmapCache::render(int tileX, int tileY, const DP_Pixel8 *src)
+{
+	int w = tileX < m_lastTileX ? DP_TILE_SIZE : m_lastWidth;
+	int h = tileY < m_lastTileY ? DP_TILE_SIZE : m_lastHeight;
+	QRect rect(tileX * DP_TILE_SIZE, tileY * DP_TILE_SIZE, w, h);
+	m_grid.renderTile(rect, src);
+	return rect;
+}
+
+QImage PixmapCache::toImage() const
+{
+	return m_grid.toImage(m_width, m_height);
+}
+
+QImage PixmapCache::toSubImage(const QRect &rect)
+{
+	return m_grid.toSubImage(m_width, m_height, rect);
+}
+
 
 class TileCache::BaseImpl {
 public:
@@ -40,6 +177,8 @@ public:
 
 	void resize(int width, int height, int offsetX, int offsetY)
 	{
+		int prevWidth = m_width;
+		int prevHeight = m_height;
 		DP_TileCounts tc = DP_tile_counts_round(width, height);
 		int tileTotal = tc.x * tc.y;
 		m_dirtyTiles.fill(true, tileTotal);
@@ -57,7 +196,7 @@ public:
 		m_ytiles = tc.y;
 		m_offsetX += offsetX;
 		m_offsetY += offsetY;
-		resizeImpl(width, height, tileTotal);
+		resizeImpl(prevWidth, prevHeight, width, height, tileTotal);
 	}
 
 	bool getResizeReset(Resize &outResize)
@@ -107,7 +246,7 @@ public:
 		return changed;
 	}
 
-	virtual const QPixmap *pixmap() { return nullptr; }
+	virtual const QVector<PixmapGrid::Cell> *pixmapCells() { return nullptr; }
 
 	virtual RenderResult render(int tileX, int tileY, const DP_Pixel8 *src) = 0;
 	virtual QImage toImage() = 0;
@@ -130,7 +269,9 @@ protected:
 	}
 
 	virtual void clearImpl() = 0;
-	virtual void resizeImpl(int width, int height, int tileTotal) = 0;
+	virtual void resizeImpl(
+		int prevWidth, int prevHeight, int width, int height,
+		int tileTotal) = 0;
 	virtual void paintNavigatorTileImpl(
 		QPainter &painter, int i, const QRect &sourceRect,
 		const QRect &targetRect) = 0;
@@ -273,8 +414,12 @@ protected:
 		m_capacity = 0;
 	}
 
-	void resizeImpl(int width, int height, int tileTotal) override
+	void resizeImpl(
+		int prevWidth, int prevHeight, int width, int height,
+		int tileTotal) override
 	{
+		Q_UNUSED(prevWidth);
+		Q_UNUSED(prevHeight);
 		Q_UNUSED(width);
 		Q_UNUSED(height);
 		size_t requiredCapacity =
@@ -315,16 +460,8 @@ public:
 	{
 		int w = tileX < m_lastTileX ? DP_TILE_SIZE : m_lastWidth;
 		int h = tileY < m_lastTileY ? DP_TILE_SIZE : m_lastHeight;
-		{
-			QPainter painter(&m_pixmap);
-			painter.setCompositionMode(QPainter::CompositionMode_Source);
-			painter.drawImage(
-				QRect(tileX * DP_TILE_SIZE, tileY * DP_TILE_SIZE, w, h),
-				QImage(
-					reinterpret_cast<const uchar *>(src), DP_TILE_SIZE,
-					DP_TILE_SIZE, QImage::Format_ARGB32_Premultiplied),
-				QRect(0, 0, w, h));
-		}
+		QRect rect(tileX * DP_TILE_SIZE, tileY * DP_TILE_SIZE, w, h);
+		m_grid.renderTile(rect, src);
 
 		RenderResult result;
 		int i = tileIndex(tileX, tileY);
@@ -349,18 +486,11 @@ public:
 		return result;
 	}
 
-	QImage toImage() override
-	{
-		return m_pixmap.toImage().convertToFormat(
-			QImage::Format_ARGB32_Premultiplied);
-	}
+	QImage toImage() override { return m_grid.toImage(m_width, m_height); }
 
 	QImage toSubImage(const QRect &rect) override
 	{
-		QRect r = rect.intersected(QRect(0, 0, m_width, m_height));
-		return r.isEmpty() ? QImage()
-						   : m_pixmap.copy(r).toImage().convertToFormat(
-								 QImage::Format_ARGB32_Premultiplied);
+		return m_grid.toSubImage(m_width, m_height, rect);
 	}
 
 	void eachDirtyTileReset(const QRect &tileArea, const OnTileFn &fn) override
@@ -380,18 +510,20 @@ public:
 		m_needsDirtyCheck = false;
 	}
 
-	const QPixmap *pixmap() override { return &m_pixmap; }
+	const QVector<PixmapGrid::Cell> *pixmapCells() override
+	{
+		return &m_grid.cells();
+	}
 
 protected:
-	void clearImpl() override { m_pixmap = QPixmap(); }
+	void clearImpl() override { m_grid.clear(); }
 
-	void resizeImpl(int width, int height, int tileTotal) override
+	void resizeImpl(
+		int prevWidth, int prevHeight, int width, int height,
+		int tileTotal) override
 	{
 		Q_UNUSED(tileTotal);
-		if(width != m_pixmap.width() || height != m_pixmap.height()) {
-			m_pixmap = QPixmap(width, height);
-		}
-		m_pixmap.fill(Qt::transparent);
+		m_grid.resize(prevWidth, prevHeight, width, height);
 	}
 
 	void paintNavigatorTileImpl(
@@ -399,11 +531,18 @@ protected:
 		const QRect &targetRect) override
 	{
 		Q_UNUSED(i);
-		painter.drawPixmap(targetRect, m_pixmap, sourceRect);
+		for(const PixmapGrid::Cell &cell : m_grid.cells()) {
+			if(cell.rect.intersects(sourceRect)) {
+				painter.drawPixmap(
+					targetRect, cell.pixmap,
+					sourceRect.translated(-cell.rect.topLeft()));
+				break;
+			}
+		}
 	}
 
 private:
-	QPixmap m_pixmap;
+	PixmapGrid m_grid;
 };
 
 TileCache::TileCache(int canvasImplementation)
@@ -482,9 +621,9 @@ TileCache::BaseImpl *TileCache::instantiateImpl(int canvasImplementation)
 	}
 }
 
-const QPixmap *TileCache::softwareCanvasPixmap() const
+const QVector<PixmapGrid::Cell> *TileCache::pixmapCells() const
 {
-	return d->pixmap();
+	return d->pixmapCells();
 }
 
 }

@@ -7,6 +7,7 @@
 #include "desktop/widgets/zoomslider.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/tilecache.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/settings.h"
 #include "desktop/docks/titlewidget.h"
@@ -267,19 +268,50 @@ void NavigatorView::refreshCache()
 
 void NavigatorView::refreshFromPixmap(canvas::PaintEngine *pe)
 {
-	pe->withPixmap([this](const QPixmap &pixmap) {
-		if(!pixmap.isNull()) {
-			QSize canvasSize = pixmap.size();
+	pe->withPixmapCache([this](canvas::PixmapCache &pixmapCache) {
+		using Cell = canvas::PixmapGrid::Cell;
+		QSize canvasSize = pixmapCache.size();
+		if(!canvasSize.isEmpty()) {
 			if(refreshCacheSize(canvasSize) || m_refreshAll) {
+				qreal ratioX =
+					qreal(m_cache.width()) / qreal(canvasSize.width());
+				qreal ratioY =
+					qreal(m_cache.height()) / qreal(canvasSize.height());
+
 				QPainter painter(&m_cache);
-				painter.drawPixmap(m_cache.rect(), pixmap);
+				for(const Cell &cell : pixmapCache.cells()) {
+					QRect cacheRect(
+						qCeil(cell.rect.x() * ratioX),
+						qCeil(cell.rect.y() * ratioY),
+						qCeil(cell.rect.width() * ratioX),
+						qCeil(cell.rect.height() * ratioY));
+					painter.drawPixmap(cacheRect, cell.pixmap);
+				}
+
 				m_refreshAll = false;
 				m_refreshArea = QRect();
+
 			} else if(m_refreshArea.isValid()) {
-				QRectF sourceArea, targetArea;
-				getRefreshArea(canvasSize, sourceArea, targetArea);
+				qreal ratioX =
+					qreal(m_cache.width()) / qreal(canvasSize.width());
+				qreal ratioY =
+					qreal(m_cache.height()) / qreal(canvasSize.height());
+
 				QPainter painter(&m_cache);
-				painter.drawPixmap(targetArea, pixmap, sourceArea);
+				for(const Cell &cell : pixmapCache.cells()) {
+					QRect cellRect = m_refreshArea.intersected(cell.rect);
+					if(!cellRect.isEmpty()) {
+						QRect cacheRect(
+							qCeil(cellRect.x() * ratioX),
+							qCeil(cellRect.y() * ratioY),
+							qCeil(cellRect.width() * ratioX),
+							qCeil(cellRect.height() * ratioY));
+						painter.drawPixmap(
+							cacheRect, cell.pixmap,
+							cellRect.translated(-cell.rect.topLeft()));
+					}
+				}
+
 				m_refreshArea = QRect();
 			}
 		}

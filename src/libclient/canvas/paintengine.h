@@ -4,7 +4,6 @@
 extern "C" {
 #include <dpengine/draw_context.h>
 }
-#include "libclient/canvas/tilecache.h"
 #include "libclient/drawdance/aclstate.h"
 #include "libclient/drawdance/canvashistory.h"
 #include "libclient/drawdance/canvasstate.h"
@@ -31,6 +30,9 @@ class BuiltinServer;
 }
 
 namespace canvas {
+
+class PixmapCache;
+class TileCache;
 
 class PaintEngine final : public QObject {
 	Q_OBJECT
@@ -62,14 +64,10 @@ public:
 			drawdance::CanvasState::null(),
 		DP_Player *player = nullptr);
 
-	// Do something with the currently rendered canvas pixmap. This is what the
-	// user currently sees, but may have "unfinished" parts. If you need the
-	// full, proper canvas at the current time, use renderPixmap instead.
-	void withPixmap(const std::function<void(const QPixmap &)> &fn) const;
-
 	// Renders the whole canvas and returns it as an image. A slow operation!
 	QImage renderPixmap();
 
+	void withPixmapCache(const std::function<void(PixmapCache &)> &fn) const;
 	void withTileCache(const std::function<void(TileCache &)> &fn);
 
 	void setCanvasViewArea(const QRect &area);
@@ -366,9 +364,10 @@ private:
 	int m_fps;
 	int m_timerId;
 	QSet<int> m_revealedLayers;
-	QPixmap m_cache;
-	QPainter m_painter;
-	TileCache m_tileCache;
+	union {
+		PixmapCache *pixmap;
+		TileCache *tile;
+	} m_cache;
 	DP_Mutex *m_cacheMutex;
 	DP_Semaphore *m_viewSem;
 	QRect m_canvasViewTileArea;

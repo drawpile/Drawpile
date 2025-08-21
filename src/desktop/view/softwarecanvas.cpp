@@ -114,11 +114,13 @@ struct SoftwareCanvas::Private {
 			bool checkersVisible = isCheckersVisible();
 			bool pixelGridVisible = controller->pixelGridScale() > 0.0;
 			controller->withTileCache([&](canvas::TileCache &tileCache) {
-				const QPixmap *pixmap = tileCache.softwareCanvasPixmap();
-				if(pixmap) {
+				using Cell = canvas::PixmapGrid::Cell;
+				const QVector<Cell> *cells = tileCache.pixmapCells();
+				if(cells && !cells->isEmpty()) {
 					painter->save();
 					const QTransform &tf = controller->transform();
-					QRectF canvasRect = QRectF(pixmap->rect());
+					QRectF canvasRect =
+						QRectF(QPointF(0.0, 0.0), QSizeF(tileCache.size()));
 
 					if(checkersVisible) {
 						painter->setBrush(getCheckerBrush());
@@ -129,12 +131,18 @@ struct SoftwareCanvas::Private {
 					}
 
 					painter->setTransform(tf);
-					QRect exposed = controller->invertedTransform()
-										.map(QRectF(rect))
-										.boundingRect()
-										.intersected(canvasRect)
-										.toAlignedRect();
-					painter->drawPixmap(exposed, *pixmap, exposed);
+					QRectF exposedBase = controller->invertedTransform()
+											 .map(QRectF(rect))
+											 .boundingRect();
+
+					for(const Cell &cell : *cells) {
+						QRect exposed =
+							exposedBase.intersected(QRectF(cell.rect))
+								.toAlignedRect();
+						painter->drawPixmap(
+							exposed, cell.pixmap,
+							exposed.translated(-cell.rect.topLeft()));
+					}
 
 					if(pixelGridVisible) {
 						QPen pen;
@@ -151,6 +159,8 @@ struct SoftwareCanvas::Private {
 						pen.setCosmetic(true);
 						painter->setPen(pen);
 
+						QRect exposed =
+							exposedBase.intersected(canvasRect).toAlignedRect();
 						int left = exposed.left();
 						int right = exposed.right() + 1;
 						int top = exposed.top();

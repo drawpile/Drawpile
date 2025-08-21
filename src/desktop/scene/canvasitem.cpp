@@ -3,6 +3,7 @@
 #include "desktop/scene/canvasitem.h"
 
 #include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/tilecache.h"
 
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
@@ -75,8 +76,15 @@ void CanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 {
 	if(m_image) {
 		QRect exposed = option->exposedRect.toAlignedRect();
-		m_image->withPixmap([&](const QPixmap &pixmap) {
-			painter->drawPixmap(exposed, pixmap, exposed);
+		m_image->withPixmapCache([&](canvas::PixmapCache &pixmapCache) {
+			using Cell = canvas::PixmapGrid::Cell;
+			for(const Cell &cell : pixmapCache.cells()) {
+				QRect r = exposed.intersected(cell.rect);
+				if(!r.isEmpty()) {
+					painter->drawPixmap(
+						r, cell.pixmap, r.translated(-cell.rect.topLeft()));
+				}
+			}
 		});
 		if(m_pixelGrid) {
 			QPen pen(QColor(160, 160, 160));
