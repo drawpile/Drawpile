@@ -613,6 +613,12 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_updateIntendedDockStateDebounce.stop();
 	m_restoreIntendedDockStateDebounce.stop();
 	QTimer::singleShot(DEBOUNCE_MS, this, &MainWindow::updateIntendedDockState);
+
+	int brushMode = int(m_dockToolSettings->brushSettings()->getBrushMode());
+	updateFreehandToolButton(
+		brushMode == int(tools::BrushSettings::UnknownMode)
+			? int(tools::BrushSettings::NormalMode)
+			: brushMode);
 }
 
 MainWindow::~MainWindow()
