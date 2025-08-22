@@ -276,6 +276,9 @@ SETTING(onionSkinsWrap            , OnionSkinsWrap            , "onionskins/wrap
 SETTING(promptLayerCreate         , PromptLayerCreate         , "settings/promptlayercreate"            , false)
 SETTING(preferredExportFormat     , PreferredExportFormat     , "settings/preferredexportformat"        , QString())
 SETTING(preferredSaveFormat       , PreferredSaveFormat       , "settings/preferredsaveformat"          , QString())
+#ifdef Q_OS_MACOS
+SETTING(quitOnLastWindowClosed    , QuitOnLastWindowClosed    , "settings/quitonlastwindowclosed"       , false)
+#endif
 SETTING(recentFiles               , RecentFiles               , "history/recentfiles"                   , QStringList())
 SETTING(recentHosts               , RecentHosts               , "history/recenthosts"                   , QStringList())
 SETTING(recentRemoteHosts         , RecentRemoteHosts         , "history/recentremotehosts"             , QStringList())

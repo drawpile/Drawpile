@@ -10,6 +10,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Allow "blocking" of layers. It works like censoring a layer, but the censor is only visible to you. It lets you hide stuff you don't want to see, but still be aware that it's there so you don't draw over other people's art.
  * Fix: Make layer clipping onto pass-through groups work the same as it does in other programs (that is, make it not clip.)
  * Feature: Anti-overflow fill for brushes. Thanks Ausjamcian, Axocrat and Null for suggesting.
+ * Feature: Add a macOS-specific setting in the user interface preferences to close Drawpile when the last window is closed.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

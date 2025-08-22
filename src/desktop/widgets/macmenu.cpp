@@ -3,6 +3,7 @@
 #include "desktop/dialogs/startdialog.h"
 #include "desktop/main.h"
 #include "desktop/mainwindow.h"
+#include "desktop/settings.h"
 #include "desktop/utils/recents.h"
 #include "desktop/utils/widgetutils.h"
 #include <QMessageBox>
@@ -278,7 +279,8 @@ void MacMenu::quitAll()
 		}
 	}
 
-	qApp->setQuitOnLastWindowClosed(true);
+	DrawpileApp &app = dpApp();
+	app.setQuitOnLastWindowClosed(true);
 
 	if(forceDiscard) {
 		for(QWidget *widget : qApp->topLevelWidgets()) {
@@ -300,7 +302,7 @@ void MacMenu::quitAll()
 		}
 		if(!allClosed) {
 			// user cancelled quit
-			qApp->setQuitOnLastWindowClosed(false);
+			app.setQuitOnLastWindowClosed(app.settings().quitOnLastWindowClosed());
 		}
 	}
 }

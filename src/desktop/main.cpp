@@ -915,7 +915,7 @@ static StartupOptions initApp(DrawpileApp &app)
 #ifdef Q_OS_MACOS
 	// Mac specific settings
 	app.setAttribute(Qt::AA_DontShowIconsInMenus);
-	app.setQuitOnLastWindowClosed(false);
+	settings.bindQuitOnLastWindowClosed(&app, &QApplication::setQuitOnLastWindowClosed);
 
 	// Global menu bar that is shown when no windows are open
 	MacMenu::instance();
