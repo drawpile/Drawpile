@@ -166,6 +166,12 @@ void UserInterface::initMiscellaneous(
 		tr("Automatically inherit and preserve alpha based on blend mode"));
 	settings.bindAutomaticAlphaPreserve(automaticAlphaPreserve);
 	form->addRow(nullptr, automaticAlphaPreserve);
+
+#ifdef Q_OS_MACOS
+	QCheckBox *quitOnClose = new QCheckBox(tr("Quit when last window is closed"));
+	settings.bindQuitOnLastWindowClosed(quitOnClose);
+	form->addRow(tr("macOS:"), quitOnClose);
+#endif
 }
 
 void UserInterface::initRequiringRestart(
