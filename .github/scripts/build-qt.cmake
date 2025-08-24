@@ -317,6 +317,7 @@ if(BASE)
 				patches/noasyncify.diff
 				patches/android_no_build_id.diff
 				patches/browser_keyboard_input.diff
+				patches/browser_file_accept.diff
 				patches/kineticscrollfilter-qt6.diff
 			6.8.3
 				patches/qtbug-113394.diff
@@ -331,6 +332,7 @@ if(BASE)
 				# TODO: make these patches work.
 				# patches/noasyncify.diff
 				# patches/browser_keyboard_input.diff
+				# patches/browser_file_accept.diff
 				patches/android_no_build_id.diff
 				patches/kineticscrollfilter-qt6.diff
 	)

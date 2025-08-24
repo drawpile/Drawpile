@@ -133,6 +133,7 @@ Unreleased Version 2.2.3-pre
  * Fix: Make the hardware renderer work on macOS.
  * Feature: Clean up the Mac menu. Menu items that were missing when no window were added, items that went into the application menu are now also in the place where they are on every other system and newly opened windows don't start with a missing canvas.
  * Fix: Don't crash on Android when toggling MyPaint brush parameters via touch. Thanks Manuart for reporting.
+ * Fix: Work around iPads and iPhones refusing to let you pick ORA, PSD and other file types that it doesn't know by just allowing you to pick all file types. Thanks DevonJP for reporting, Axocrat and Scruff for testing.
 
 2025-03-26 Version 2.2.2
  * Fix: Make annotations not cause glitches when moving them around when using the software renderer. Thanks Meru for reporting.

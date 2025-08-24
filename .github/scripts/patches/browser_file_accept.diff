@@ -1,0 +1,27 @@
+Description: Safari on iOS/iPadOS doesn't handle the accept property of file
+pickers properly it seems, not allowing the user to choose files like .ora or
+.psd despite them having extensions that are specified in the attribute.
+
+To fix that, we just jam a */* mimetype in there to allow all files and that
+seems to work fine. We also separate it with a comma and a space because that's
+what MDN has in its examples, not sure if that matters or not.
+
+--- a/src/gui/platform/wasm/qlocalfileapi.cpp
++++ b/src/gui/platform/wasm/qlocalfileapi.cpp
+@@ -11,6 +11,7 @@
+ std::string qtFilterListToFileInputAccept(const QStringList &filterList)
+ {
+     QStringList transformed;
++    transformed.append(QStringLiteral("*/*"));
+     for (const auto &filter : filterList) {
+         const auto type = Type::fromQt(filter);
+         if (type && type->accept()) {
+@@ -21,7 +22,7 @@
+                            });
+         }
+     }
+-    return transformed.join(QStringLiteral(",")).toStdString();
++    return transformed.join(QStringLiteral(", ")).toStdString();
+ }
+
+ std::optional<emscripten::val> qtFilterListToTypes(const QStringList &filterList)
