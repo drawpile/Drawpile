@@ -324,13 +324,13 @@ static bool ora_handle_image(DP_ReadOraContext *c, DP_XmlElement *element)
     }
 
     int width;
-    if (!ora_read_int_attribute(element, NULL, "w", 1, INT16_MAX, &width)) {
+    if (!ora_read_int_attribute(element, NULL, "w", 1, INT_MAX, &width)) {
         DP_error_set("Invalid width");
         return false;
     }
 
     int height;
-    if (!ora_read_int_attribute(element, NULL, "h", 1, INT16_MAX, &height)) {
+    if (!ora_read_int_attribute(element, NULL, "h", 1, INT_MAX, &height)) {
         DP_error_set("Invalid height");
         return false;
     }

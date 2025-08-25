@@ -5,6 +5,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Make zoom tool detect clicks properly, rather than detecting tiny motions as a rectangle to zoom into. Thanks Scruff for reporting.
  * Fix: Make freehand tool icon appear again if starting up with the eraser selected. Thanks Meiren for reporting.
  * Fix: Make software renderers handle canvas sizes with dimensions beyond 32767 pixels properly. Thanks Ben for reporting.
+ * Fix: Open ORA files with width or height greater than 32767 pixels. Thanks Nimono for reporting.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.
