@@ -4282,7 +4282,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-178"></location>
         <source>Pigment &amp; OKLAB Brushes:</source>
-        <translation>颜料和感知笔刷:</translation>
+        <translation>颜料和OKLAB笔刷:</translation>
     </message>
     <message>
         <location line="+17"></location>
@@ -11029,7 +11029,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"></location>
         <source>Pigment and OKLAB brushes:</source>
-        <translation>颜料和感知笔刷:</translation>
+        <translation>颜料和OKLAB笔刷:</translation>
     </message>
     <message>
         <location line="+3"></location>
@@ -12530,7 +12530,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+144"></location>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
-        <translation>你没有权限使用颜料或者感知模式下的笔刷.</translation>
+        <translation>你没有权限使用颜料或者OKLAB模式下的笔刷.</translation>
     </message>
     <message>
         <location line="+28"></location>
