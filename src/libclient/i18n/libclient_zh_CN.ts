@@ -4,12 +4,12 @@
 <context>
     <name>AvatarListModel</name>
     <message>
-        <location filename="../utils/avatarlistmodel.cpp" line="+114"/>
+        <location filename="../utils/avatarlistmodel.cpp" line="+114"></location>
         <source>No avatar</source>
         <translation>无头像</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+19"></location>
         <source>Add avatar…</source>
         <translation>添加头像…</translation>
     </message>
@@ -17,222 +17,222 @@
 <context>
     <name>BrowserStartPage</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="+259"/>
+        <location filename="../wasmsupport.cpp" line="+259"></location>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
         <translation>内存分配失败. 某些浏览器在刷新时会出现这种情况. 请完全关闭此页面和浏览器, 然后再试一次.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
         <translation>内存分配不是共享数据缓冲区, 尽管你的浏览器支持它. 你可能需要更改设置.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Drawpile logo</source>
         <translation>Drawpile 图标</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>drawpile.net login</source>
         <translation>drawpile.net 登录</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Loading application</source>
         <translation>加载程序</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Starting up…</source>
         <translation>启动中…</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Starting, this should only take a moment…</source>
         <translation>启动中, 这应该只需要一会儿…</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Loading assets</source>
         <translation>加载设备</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Loading, this may take a while…</source>
         <translation>加载中, 这可能需要一些时间…</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Preparing</source>
         <translation>准备中</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Initializing, this may take a while…</source>
         <translation>初始化中, 这可能需要一些时间…</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Failed to start Drawpile: %1</source>
         <translation>启动 Drawpile 失败: %1</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Setting up…</source>
         <translation>设置中…</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Fatal error:</source>
         <translation>严重错误:</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
         <translation>这通常是因为你的浏览器并不是最新版本或者你是通过某种嵌入式的浏览器来查看页面的, 比如聊天程序的浏览器, 因此你需要正确的打开它. 如需了解更多信息, 请查看 &lt;a href=&quot;#&quot;&gt;此帮助页面&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Invalid session link.</source>
         <translation>无效房间链接.</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
         <translation>无论如何你都不是通过有效链接来到房间的.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
         <translation>&lt;strong&gt;内置浏览器:&lt;/strong&gt; 看起来你是在一个内置浏览器中打开Drawpile的.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in %1&apos;s in-app browser.</source>
         <translation>&lt;strong&gt;内置浏览器:&lt;/strong&gt; 看起来你是在 %1 的内置浏览器中打开Drawpile的.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
         <translation>这通常无法正常运作, 请在一个真正的浏览器中打开此页面.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Possibly incompatible browser:</source>
         <translation>可能不兼容的浏览器:</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
         <translation>&lt;strong&gt;可能不兼容的浏览器:&lt;/strong&gt; Linux上的Firefox并非在所有系统上都支持笔压. 如果你没有笔压, 请考虑使用其他的浏览器或者 &lt;a href=&quot;#&quot;&gt;本机 Linux 程序&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
         <translation>&lt;strong&gt;不兼容的浏览器:&lt;/strong&gt; Windows上的Firefox在运行Drawpile时会遇到一些问题. 比如输入文本/或者按 Ctrl+Z 撤销时可能无法正常工作. 请考虑使用其他的浏览器或者 &lt;a href=&quot;#&quot;&gt;本机 Windows 程序&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Chrome on %1 has some trouble running Drawpile. It&apos;s really just the system browser (Safari) in a different shell, which causes problems with controls ending up off-screen. Consider using the system browser (Safari) directly instead.</source>
         <translation>&lt;strong&gt;不兼容的浏览器:&lt;/strong&gt; %1 上的Chrome在运行Drawpile时会遇到一些问题. 这实际上只是另一个shell中的 (Safari) 系统浏览器, 这会导致控件最终出现在屏幕外的问题. 请考虑直接使用 (Safari) 系统浏览器.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Language:</source>
         <translation>语言:</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Test your pen pressure here</source>
         <translation>在此处测试你的笔压</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Detected mouse input, not a pen</source>
         <translation>检测到鼠标输入, 而不是笔</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Detected touch input, not a pen</source>
         <translation>检测到触控输入, 而不是笔</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Detected input, but not a pen</source>
         <translation>检测到输入, 但不是笔</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Pen pressure detected</source>
         <translation>检测到笔压</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Pen detected, but no pressure variance</source>
         <translation>检测到笔, 但没有压力变化</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Checking for updates…</source>
         <translation>检查更新…</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Update check blocked</source>
         <translation>检查更新已被阻止</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
         <translation>&lt;strong&gt;警告:&lt;/strong&gt; 此安装是 &lt;strong&gt;过时的&lt;/strong&gt; 版本 &lt;code&gt;%1&lt;/code&gt;, 而不是最新版本 &lt;code&gt;%2&lt;/code&gt;.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
         <translation>请尝试刷新页面. 如果没有任何变化, 请通知服务器主人进行更新.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
         <translation>&lt;strong&gt;警告:&lt;/strong&gt; 无法确定安装是否为最新版本. 可能 &lt;code&gt;%1&lt;/code&gt; 版本已经过时.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
         <translation>请尝试刷新页面. 如果没有任何变化, 请咨询服务器主人或者查看 &lt;a href=&quot;#&quot;&gt; drawpile.net 上的帮助页面&lt;/a&gt; 关于如何与可以检查相关事项的人取得联系.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>You can continue regardless, but things may not work properly.</source>
         <translation>无论如何你都可以继续, 但可能无法正常运作.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Start</source>
         <translation>启动</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Start Anyway</source>
         <translation>仍然启动</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Version:</source>
         <translation>版本:</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Stable (%1)</source>
         <translation>稳定版本 (%1)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Beta (%1)</source>
         <translation>测试版本 (%1)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>The session you are trying to join requires the beta version of Drawpile.</source>
         <translation>你尝试要加入的房间需要使用测试版本的Drawpile.</translation>
     </message>
@@ -240,24 +240,24 @@
 <context>
     <name>BrushShortcutModel</name>
     <message>
-        <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
+        <location filename="../utils/brushshortcutmodel.cpp" line="+65"></location>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>冲突</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
         <translation>%1 (冲突)</translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+85"></location>
         <source>Brush</source>
         <translation>笔刷预设</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Shortcut</source>
         <translation>快捷键</translation>
     </message>
@@ -265,42 +265,42 @@
 <context>
     <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../export/canvassaverrunnable.cpp" line="+89"/>
+        <location filename="../export/canvassaverrunnable.cpp" line="+89"></location>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>糟糕的争论, 这可能是Drawpile的一个bug.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Unsupported format.</source>
         <translation>不支持的格式.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
         <translation>无法将画布合并成一个平面图像.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Couldn&apos;t open file for writing.</source>
         <translation>无法打开文件进行写入.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Save operation failed, but the file might have been partially written.</source>
         <translation>保存操作失败, 但文件可能被部分写入.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Internal error during saving.</source>
         <translation>保存时出现内部错误.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Unknown error.</source>
         <translation>未知错误.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>Canvas size out of bounds, width and height must be between 1 and %1 for %2.</source>
         <extracomment>%1 is a number and %2 is a file format. For example, the message will say &quot;…must be between 1 and 65535 for JPEG.&quot;</extracomment>
         <translation>画布尺寸超出范围, %2 格式下的宽度和高度必须介于 1 和 %1 之间.</translation>
@@ -309,199 +309,199 @@
 <context>
     <name>CanvasShortcutsModel</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="+79"></location>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>冲突</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
         <translation>%1 (冲突)</translation>
     </message>
     <message>
-        <location line="+76"/>
+        <location line="+76"></location>
         <source>Shortcut</source>
         <translation>快捷键</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Action</source>
         <translation>动作</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Modifiers</source>
         <translation>修饰键</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+66"></location>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
         <translation>%1</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>%1: %2 (%3)</source>
         <extracomment>Example: &quot;Space: Pan Canvas (Inverted)&quot;</extracomment>
         <translation>%1: %2 (%3)</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+48"></location>
         <source>Mouse Wheel</source>
         <translation>鼠标滚轮</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
         <translation>+</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+40"></location>
         <source>Unset</source>
         <translation>未设置</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Left Click</source>
         <translation>左键点击</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Right Click</source>
         <translation>右键点击</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Middle Click</source>
         <translation>中键点击</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+16"></location>
         <source>Unknown Button 0x%1</source>
         <translation>未知按钮 0x%1</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Button %1</source>
         <translation>按钮 %1</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>Pan Canvas</source>
         <translation>移动画布</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Rotate Canvas</source>
         <translation>旋转画布</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Zoom Canvas</source>
         <translation>缩放画布</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Pick Color</source>
         <translation>拾色</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Pick Layer</source>
         <translation>选择图层</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Change Brush Size</source>
         <translation>改变笔刷大小</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Change Brush Opacity</source>
         <translation>改变笔刷不透明度</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Change Brush Hardness</source>
         <translation>改变笔刷硬度</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Constrain Tool</source>
         <translation>约束工具</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Center Tool</source>
         <translation>居中工具</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Constrain and Center Tool</source>
         <translation>约束和居中工具</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Unknown Constraint 0x%1</source>
         <translation>未知约束0x%1</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Ratchet Rotate Canvas</source>
         <translation>15度增量旋转画布</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Free Rotate Canvas</source>
         <translation>自由旋转画布</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Change Color Hue</source>
         <translation>更改色相</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Change Color Saturation</source>
         <translation>更改饱和度</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Change Color Value</source>
         <translation>更改明度</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Unknown Action %1</source>
         <translation>未知动作%1</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>Inverted, Swap Axes</source>
         <translation>反转, 切换轴向</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Inverted</source>
         <translation>反转</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Swap Axes</source>
         <translation>切换轴向</translation>
     </message>
@@ -509,47 +509,47 @@
 <context>
     <name>CertificateStoreModel</name>
     <message>
-        <location filename="../utils/certificatestoremodel.cpp" line="+25"/>
+        <location filename="../utils/certificatestoremodel.cpp" line="+25"></location>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
         <translation>&apos;%1&apos; 不包含任何有效的服务器证书.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</source>
         <translation>&apos;%1&apos; 包含多个服务器证书, 目前不支持.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+10"></location>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
         <translation>&apos;%1&apos; 包含一个无效的证书.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
         <translation>&apos;%1&apos; 包含一个有多个服务器名的证书, 目前不支持.</translation>
     </message>
     <message>
-        <location line="+140"/>
+        <location line="+140"></location>
         <source>Could not read certificate from &apos;%1&apos;.</source>
         <translation>无法从&apos;%1&apos;读取证书.</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+12"></location>
         <source>Could not open &apos;%1&apos; for writing: %2.</source>
         <translation>无法打开 &apos;%1&apos; 进行写入: %2.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>Could not write &apos;%1&apos;: %2.</source>
         <translation>无法写入 &apos;%1&apos;: %2.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
         <translation>无法将 &apos;%1&apos; 移动到 &apos;%2&apos;: %3.</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+16"></location>
         <source>Could not delete &apos;%1&apos;: %2.</source>
         <translation>无法删除 &apos;%1&apos;: %2.</translation>
     </message>
@@ -557,34 +557,34 @@
 <context>
     <name>CustomShortcutModel</name>
     <message>
-        <location filename="../utils/customshortcutmodel.cpp" line="+57"/>
+        <location filename="../utils/customshortcutmodel.cpp" line="+57"></location>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>冲突</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>%1 (conflict)</source>
         <extracomment>Tooltip for a keyboard shortcut conflict, %1 is the name or key sequence of the shortcut in question.</extracomment>
         <translation>%1 (冲突)</translation>
     </message>
     <message>
-        <location line="+126"/>
+        <location line="+126"></location>
         <source>Action</source>
         <translation>动作</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Shortcut</source>
         <translation>快捷键</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Alternate</source>
         <translation>备选</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Default</source>
         <translation>默认</translation>
     </message>
@@ -592,32 +592,32 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1044"/>
+        <location filename="../document.cpp" line="+1044"></location>
         <source>Unknown format.</source>
         <translation>未知格式.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Header error.</source>
         <translation>标题错误.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Error opening file.</source>
         <translation>打开文件时出现错误.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Error starting recorder.</source>
         <translation>启动录制时出现错误.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Unknown error.</source>
         <translation>未知错误.</translation>
     </message>
     <message>
-        <location line="+689"/>
+        <location line="+689"></location>
         <source>Error saving image</source>
         <translation>保存图片时出现错误</translation>
     </message>
@@ -625,33 +625,33 @@
 <context>
     <name>FfmpegExporter</name>
     <message>
-        <location filename="../export/ffmpegexporter.cpp" line="+62"/>
+        <location filename="../export/ffmpegexporter.cpp" line="+62"></location>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
         <translation>你可以从&lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;中下载Windows版本的ffmpeg. 然后在路径里选择解压出来的 ffmpeg.exe 程序.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>You can install ffmpeg through Homebrew.</source>
         <translation>你可以通过 Homebrew 安装 ffmpeg.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>You can probably install ffmpeg through your package manager.</source>
         <translation>你可以通过 package manager 安装 ffmpeg.</translation>
     </message>
     <message>
-        <location line="+98"/>
+        <location line="+98"></location>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
         <translation>使用 &apos;%1&apos; 启动 ffmpeg 失败. %2</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Ffmpeg crashed!</source>
         <translation>ffmpeg崩溃了!</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Ffmpeg process error</source>
         <translation>ffmpeg进程错误</translation>
     </message>
@@ -659,17 +659,17 @@
 <context>
     <name>FillSettings</name>
     <message>
-        <location filename="../tools/floodfill.cpp" line="+332"/>
+        <location filename="../tools/floodfill.cpp" line="+332"></location>
         <source>Filling…</source>
         <translation>填充…</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+74"></location>
         <source>No layer selected.</source>
         <translation>未选择图层.</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+15"></location>
         <source>Can&apos;t fill layer group %1.
 Select a regular layer instead.</source>
         <translation>无法填充图层组 %1.
@@ -679,17 +679,17 @@ Select a regular layer instead.</source>
 <context>
     <name>KeyFrameLayerModel</name>
     <message>
-        <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
+        <location filename="../utils/keyframelayermodel.cpp" line="+23"></location>
         <source>Visibility: Hidden</source>
         <translation>可见性: 隐藏</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Visibility: Revealed</source>
         <translation>可见性: 揭示</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Visibility: Parent</source>
         <translation>可见性: 限制</translation>
     </message>
@@ -697,7 +697,7 @@ Select a regular layer instead.</source>
 <context>
     <name>MagicWandSettings</name>
     <message>
-        <location filename="../tools/magicwand.cpp" line="+292"/>
+        <location filename="../tools/magicwand.cpp" line="+292"></location>
         <source>Selecting…</source>
         <translation>选择…</translation>
     </message>
@@ -705,82 +705,82 @@ Select a regular layer instead.</source>
 <context>
     <name>QGuiApplication</name>
     <message>
-        <location filename="../utils/images.cpp" line="+72"/>
+        <location filename="../utils/images.cpp" line="+72"></location>
         <source>Images (%1)</source>
         <translation>图像 (%1)</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>GIF (%1)</source>
         <translation>GIF (%1)</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>Binary Recordings (%1)</source>
         <translation>二进制录像 (%1)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+1"></location>
         <source>Text Recordings (%1)</source>
         <translation>文本录像 (%1)</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>Recordings (%1)</source>
         <translation>录像 (%1)</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>Performance Profile (%1)</source>
         <translation>性能概况 (%1)</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+10"></location>
         <source>Debug Dumps (%1)</source>
         <translation>调试数据 (%1)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Tablet Event Log (%1)</source>
         <translation>数位板事件日志 (%1)</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>MP4 Video (%1)</source>
         <translation>MP4 视频 (%1)</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>WebM Video (%1)</source>
         <translation>WebM 视频 (%1)</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>Text File (%1)</source>
         <translation>文本文件 (%1)</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>Brush Pack (%1)</source>
         <translation>笔刷包 (%1)</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Session Bans (%1)</source>
         <translation>被禁的用户 (%1)</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Roles (%1)</source>
         <translation>角色 (%1)</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>All Supported Files (%1)</source>
         <translation>所有支持的文件 (%1)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>All Files (*)</source>
         <translation>所有文件(*)</translation>
     </message>
@@ -788,7 +788,7 @@ Select a regular layer instead.</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+121"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+121"></location>
         <source>Layer %1</source>
         <translation>图层 %1</translation>
     </message>
@@ -796,22 +796,22 @@ Select a regular layer instead.</source>
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="-143"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="-143"></location>
         <source>Shift</source>
         <translation>Shift键</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Alt</source>
         <translation>Alt键</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Ctrl</source>
         <translation>Ctrl键</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Meta</source>
         <translation>Windows键</translation>
     </message>
@@ -819,133 +819,133 @@ Select a regular layer instead.</source>
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+522"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+522"></location>
         <source>(untitled)</source>
         <translation>(未命名)</translation>
     </message>
     <message>
-        <location line="-446"/>
+        <location line="-446"></location>
         <source>%1d%2h%3m</source>
         <translation>%1d%2h%3m</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>%1h%2m</source>
         <translation>%1h%2m</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>%1m</source>
         <translation>%1m</translation>
     </message>
     <message numerus="yes">
-        <location line="+106"/>
+        <location line="+106"></location>
         <source>%1/%n users</source>
         <translation>
             <numerusform>%1/%n 用户</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>%n users</source>
         <translation>
             <numerusform>%n 用户</numerusform>
         </translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+9"></location>
         <source>Unknown number of actively drawing users</source>
         <translation>未知活跃用户数量</translation>
     </message>
     <message numerus="yes">
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>%n actively drawing user(s)</source>
         <translation>
             <numerusform>%n 个活跃用户</numerusform>
         </translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+20"></location>
         <source>Compatible</source>
         <translation>兼容的</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Requires compatibility mode (%1)</source>
         <translation>需要兼容模式 (%1)</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Requires newer client (%1)</source>
         <translation>需要新的客户端版本 (%1)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Incompatible (%1)</source>
         <translation>不兼容 (%1)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>unknown version</source>
         <translation>未知版本</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+113"></location>
         <source>Compatibility</source>
         <translation>兼容性</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>Title</source>
         <translation>标题</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Server</source>
         <translation>服务器</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Users</source>
         <translation>用户</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Active</source>
         <translation>活跃</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Age</source>
         <translation>存在时长</translation>
     </message>
     <message>
-        <location line="+169"/>
+        <location line="+169"></location>
         <source>incompatible</source>
         <translation>不兼容的</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>joining from web not allowed</source>
         <translation>不允许通过网页加入</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>closed</source>
         <translation>已关闭的</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>password-protected</source>
         <translation>受密码保护的</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>NSFM</source>
         <translation>不适于未成年人的</translation>
     </message>
@@ -953,202 +953,202 @@ Select a regular layer instead.</source>
 <context>
     <name>blendmode</name>
     <message>
-        <location filename="../canvas/blendmodes.cpp" line="+44"/>
+        <location filename="../canvas/blendmodes.cpp" line="+44"></location>
         <source>Normal</source>
         <translation>正常</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Recolor</source>
         <translation>重新着色</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Behind</source>
         <translation>覆盖</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Greater Density</source>
         <translation>比较 (浓度)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Marker</source>
         <translation>马克笔</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>OKLAB</source>
-        <translation>感知</translation>
+        <translation>OKLAB</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Pigment</source>
         <translation>颜料</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+18"></location>
         <source>Multiply</source>
         <translation>正片叠底</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Screen</source>
         <translation>滤色</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Overlay</source>
         <translation>叠加</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+12"></location>
         <source>Linear Dodge/Add</source>
         <translation>线性减淡 (添加)</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+12"></location>
         <source>Color Burn</source>
         <translation>颜色加深</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Color Dodge</source>
         <translation>颜色减淡</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Vivid Light</source>
         <translation>亮光</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+18"></location>
         <source>Pin Light</source>
         <translation>点光</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+18"></location>
         <source>Darker Color</source>
         <translation>深色</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Lighter Color</source>
         <translation>浅色</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Difference</source>
         <translation>差值</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+12"></location>
         <source>Divide</source>
         <translation>划分</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+30"></location>
         <source>Shade (SAI)</source>
         <translation>阴影 (SAI)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Shine (SAI)</source>
         <translation>发光 (SAI)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Shade/Shine (SAI)</source>
         <translation>明暗 (SAI)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Burn (SAI)</source>
         <translation>加深 (SAI)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Dodge (SAI)</source>
         <translation>减淡 (SAI)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Burn/Dodge (SAI)</source>
         <translation>加深/减淡 (SAI)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Hard Mix (SAI)</source>
         <translation>实色混合 (SAI)</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Difference (SAI)</source>
         <translation>差值 (SAI)</translation>
     </message>
     <message>
-        <location line="-108"/>
+        <location line="-108"></location>
         <source>Darken</source>
         <translation>变暗</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Lighten</source>
         <translation>变亮</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+24"></location>
         <source>Subtract</source>
         <translation>减去</translation>
     </message>
     <message>
-        <location line="-114"/>
+        <location line="-114"></location>
         <source>Erase</source>
         <translation>擦除</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Color Erase</source>
         <translation>颜色擦除</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+66"></location>
         <source>Hard Light</source>
         <translation>强光</translation>
     </message>
     <message>
-        <location line="-6"/>
+        <location line="-6"></location>
         <source>Soft Light</source>
         <translation>柔光</translation>
     </message>
     <message>
-        <location line="-36"/>
+        <location line="-36"></location>
         <source>Linear Burn</source>
         <translation>线性加深</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+12"></location>
         <source>Linear Light</source>
         <translation>线性光</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+84"></location>
         <source>Hue</source>
         <translation>色相</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Saturation</source>
         <translation>饱和度</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Luminosity</source>
         <translation>明度</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Color</source>
         <translation>颜色</translation>
     </message>
@@ -1156,7 +1156,7 @@ Select a regular layer instead.</source>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1247"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1247"></location>
         <source>Default</source>
         <translation>Default</translation>
     </message>
@@ -1164,148 +1164,148 @@ Select a regular layer instead.</source>
 <context>
     <name>brushes::BrushPresetTagModel</name>
     <message>
-        <location line="-128"/>
+        <location line="-128"></location>
         <source>All</source>
         <translation>全部</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Untagged</source>
         <translation>未添加标签的</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>Show all brushes, regardless of tagging.</source>
         <translation>显示全部笔刷, 不管是否添加标签.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Show brushes not assigned to any tag.</source>
         <translation>显示未添加标签的笔刷.</translation>
     </message>
     <message>
-        <location line="+198"/>
+        <location line="+198"></location>
         <source>Default</source>
         <translation>Default</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+18"></location>
         <source>Classic Brush %1</source>
         <translation>Classic Brush %1</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Converted from %1.</source>
         <translation>Converted from %1.</translation>
     </message>
     <message>
-        <location line="+16"/>
-        <location line="+457"/>
+        <location line="+16"></location>
+        <location line="+457"></location>
         <source>Can&apos;t open &apos;%1&apos;.</source>
         <translation>无法打开 &apos;%1&apos;.</translation>
     </message>
     <message>
-        <location line="-423"/>
+        <location line="-423"></location>
         <source>Invalid brush pack: order.conf not found inside</source>
         <translation>无效笔刷包: 里面未找到order.conf</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Uncategorized %1</source>
         <translation>未分类 %1</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+23"></location>
         <source>Invalid brush pack: order.conf contains no brushes</source>
         <translation>无效笔刷包: order.conf 未包含笔刷</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+71"></location>
         <source>Could not create brush preset &apos;%1&apos;.</source>
         <translation>无法创建笔刷预设&apos;%1&apos;.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</source>
         <translation>无法将笔刷&apos;%1&apos;分配给标签&apos;%2&apos;.</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+34"></location>
         <source>Unknown brush format in file &apos;%1&apos;</source>
         <translation>文件 &apos;%1&apos; 中的未知笔刷格式</translation>
     </message>
     <message>
-        <location line="+72"/>
+        <location line="+72"></location>
         <source>Brush file &apos;%1&apos; does not contain a JSON object</source>
         <translation>笔刷文件 &apos;%1&apos; 不包含 JSON 对象</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+34"></location>
         <source>Brush file &apos;%1&apos; has invalid version %d</source>
         <translation>笔刷文件 &apos;%1&apos; 中有无效版本 %d</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+49"></location>
         <source>Brush file &apos;%1&apos; contains invalid &apos;color&apos; setting</source>
         <translation>笔刷文件 &apos;%1&apos; 包含无效 &apos;颜色&apos; 设置</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>Brush file &apos;%1&apos; contains obsolete &apos;%2&apos; setting</source>
         <translation>笔刷文件 &apos;%1&apos; 包含旧的 &apos;%2&apos; 设置</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+133"></location>
         <source>No brushes exported</source>
         <translation>没有笔刷导出</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Can&apos;t export order.conf</source>
         <translation>无法导出 order.conf</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>Error writing &apos;%1&apos;: %2</source>
         <translation>错误写入 &apos;%1&apos;: %2</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+15"></location>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
         <translation>无法导出标签 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+20"></location>
         <source>Missing preset %1</source>
         <translation>缺少预设 %1</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+18"></location>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
         <translation>无法导出预设 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+11"></location>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
         <translation>无法导出预设图标 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="-433"/>
+        <location line="-433"></location>
         <source>Could not create tag &apos;%1&apos;.</source>
         <translation>无法创建标签&apos;%1&apos;.</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+44"></location>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
         <translation>无法读取笔刷文件 &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+81"></location>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
         <translation>笔刷文件 &apos;%1&apos; 不包含有效的 JSON: %1</translation>
     </message>
     <message>
-        <location line="-55"/>
+        <location line="-55"></location>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
         <translation>无法从笔刷文件&apos;%1&apos;中加载笔刷</translation>
     </message>
@@ -1313,7 +1313,7 @@ Select a regular layer instead.</source>
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+208"/>
+        <location filename="../canvas/paintengine.cpp" line="+208"></location>
         <source>Layer %1</source>
         <translation>图层 %1</translation>
     </message>
@@ -1321,57 +1321,57 @@ Select a regular layer instead.</source>
 <context>
     <name>canvas::UserListModel</name>
     <message>
-        <location filename="../canvas/userlist.cpp" line="+64"/>
+        <location filename="../canvas/userlist.cpp" line="+64"></location>
         <source>Moderator</source>
         <translation>服务器管理员</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Operator</source>
         <translation>房间管理员</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Trusted</source>
         <translation>信任用户</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Registered</source>
         <translation>注册用户</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>Online</source>
         <translation>在线</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+0"></location>
         <source>Offline</source>
         <translation>离线</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+34"></location>
         <source>User</source>
         <translation>用户</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Status</source>
         <translation>状态</translation>
     </message>
     <message>
-        <location line="+182"/>
+        <location line="+182"></location>
         <source>Server</source>
         <translation>服务器</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>User #%1</source>
         <translation>用户 #%1</translation>
     </message>
@@ -1379,13 +1379,13 @@ Select a regular layer instead.</source>
 <context>
     <name>impex::AnimationImporter</name>
     <message>
-        <location filename="../import/animationimporter.cpp" line="+30"/>
+        <location filename="../import/animationimporter.cpp" line="+30"></location>
         <source>Frame %1</source>
         <extracomment>Title for imported animation layers.</extracomment>
         <translation>帧 %1</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+19"></location>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
         <translation>帧数 %1</translation>
@@ -1394,27 +1394,27 @@ Select a regular layer instead.</source>
 <context>
     <name>net::AuthListModel</name>
     <message>
-        <location filename="../net/authlistmodel.cpp" line="+37"/>
+        <location filename="../net/authlistmodel.cpp" line="+37"></location>
         <source>Moderator</source>
         <translation>服务器管理员</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Operator</source>
         <translation>房间管理员</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Trusted</source>
         <translation>信任用户</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+26"></location>
         <source>User</source>
         <translation>用户</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Roles</source>
         <translation>角色</translation>
     </message>
@@ -1422,30 +1422,30 @@ Select a regular layer instead.</source>
 <context>
     <name>net::BanlistModel</name>
     <message>
-        <location filename="../net/banlistmodel.cpp" line="+69"/>
-        <location line="+15"/>
+        <location filename="../net/banlistmodel.cpp" line="+69"></location>
+        <location line="+15"></location>
         <source>ID</source>
         <translation>ID</translation>
     </message>
     <message>
-        <location line="-13"/>
-        <location line="+15"/>
+        <location line="-13"></location>
+        <location line="+15"></location>
         <source>User</source>
         <translation>用户</translation>
     </message>
     <message>
-        <location line="-13"/>
+        <location line="-13"></location>
         <source>IP address</source>
         <translation>IP地址</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Client info</source>
         <translation>客户端信息</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <location line="+11"/>
+        <location line="+2"></location>
+        <location line="+11"></location>
         <source>Banned by</source>
         <translation>操作员</translation>
     </message>
@@ -1453,226 +1453,226 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+580"/>
+        <location filename="../net/client.cpp" line="+580"></location>
         <source>%1 banned by %2.</source>
         <translation>%1 已被 %2 禁止IP.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>%1 kicked by %2.</source>
         <translation>%1 已被 %2 踢除.</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+20"></location>
         <source>%1 made operator by the server.</source>
         <translation>%1 被服务器赋予了房间管理员身份.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>%1 made operator by %2.</source>
         <translation>%1 被 %2 赋予了房间管理员身份.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>%1 made operator via invite created by a server administrator.</source>
         <translation>%1 通过服务器管理员创建的邀请代码获得了房间管理员身份.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>%1 made operator via invite created by %2.</source>
         <translation>%1 通过 %2 创建的邀请代码获得了房间管理员身份.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>Operator status revoked from %1 by the server.</source>
         <translation>%1 的房间管理员身份已被服务器移除.</translation>
     </message>
     <message>
-        <location line="-527"/>
+        <location line="-527"></location>
         <source>You have been kicked.</source>
         <translation>你已被踢除.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>You have been kicked by %1.</source>
         <translation>你已被 %1 踢除.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>A server error occurred.</source>
         <translation>服务器发生错误.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>A server error occurred: %1</source>
         <translation>服务器发生错误: %1</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>The server is shutting down.</source>
         <translation>服务器正在关闭.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>The session has been shut down: %1</source>
         <translation>房间已被关闭: %1</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>Disconnected.</source>
         <translation>断开连接.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Disconnected: %1</source>
         <translation>断开连接: %1</translation>
     </message>
     <message>
-        <location line="+436"/>
+        <location line="+436"></location>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>只有服务器管理员可以导出普通的被禁的用户.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Server error.</source>
         <translation>服务器错误.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Exporting encrypted bans not configured on this server.</source>
         <translation>导出未在此服务器上配置的加密的被禁的用户.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Exporting encrypted bans not supported by this server.</source>
         <translation>该服务器不支持导出加密的被禁的用户.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
         <translation>服务器无法读取导入的数据. 这可能是因为数据是从其他服务器导出的. 你只能将被禁的用户导入导出在同一个服务器里.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>Invalid import data.</source>
         <translation>导入数据无效.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Malformed import data.</source>
         <translation>导入数据出错.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Importing encrypted bans not configured on this server.</source>
         <translation>导入未在此服务器上配置的加密的被禁的用户.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Importing encrypted bans not supported by this server.</source>
         <translation>该服务器不支持导入加密的被禁的用户.</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+14"></location>
         <source>Session password removed by a server administrator. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
         <translation>房间密码已被服务器管理员移除. 此服务器不允许通过浏览器加入公共房间, 它们将被断开连接.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
         <translation>房间密码已被 %1 移除. 此服务器不允许通过浏览器加入公共房间, 它们将被断开连接.</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+93"></location>
         <source>%1 trusted via invite created by a server administrator.</source>
         <translation>%1 通过服务器管理员创建的邀请代码获得了信任用户身份.</translation>
     </message>
     <message>
-        <location line="-62"/>
+        <location line="-62"></location>
         <source>Operator status revoked from %1 by %2.</source>
         <translation>%1 的房间管理员身份已被 %2 移除.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Session is out of space! To continue drawing, an operator must reset it to bring it down to a smaller size. This can be done via Session &gt; Reset.</source>
         <translation>房间缓存空间不足! 要想继续绘制, 房间管理员必须将房间重置到一个较小的大小. 这可以通过菜单中的 房间&gt;重置... 来完成.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
         <translation>房间重置已取消! 房间管理员必须解锁画布并手动重置房间.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
         <translation>房间重置失败! 房间管理员必须解锁画布并手动重置房间.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
         <translation>准备重置房间! 请稍等, 房间应该很快可以重新使用…</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
         <translation>准备由 %1 重置房间! 请稍等, 房间应该很快可以重新使用…</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>%1 is compressing the canvas! Please wait, the session should be available again shortly…</source>
         <translation>%1 正在压缩画布! 请稍等, 房间应该很快可以重新使用…</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>%1 is replacing the canvas! Please wait, the session should be available again shortly…</source>
         <translation>%1 正在替换画布! 请稍等, 房间应该很快可以重新使用…</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>%1 is reverting the canvas to a previous state! Please wait, the session should be available again shortly…</source>
         <translation>%1 正在将画布还原到之前的状态! 请稍等, 房间应该很快可以重新使用…</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
         <translation>房间已被服务器管理员 (%1) 终止.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
         <translation>房间已被管理员终止: %1</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
         <translation>房间已被服务器管理员 (%1) 终止: %2</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>%1 trusted by the server.</source>
         <translation>%1 被服务器赋予了信任用户身份.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>%1 trusted by %2.</source>
         <translation>%1 被 %2 赋予了信任用户身份.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+10"></location>
         <source>%1 trusted via invite created by %2.</source>
         <translation>%1 通过 %2 创建的邀请代码获得了信任用户身份.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>%1 untrusted by the server.</source>
         <translation>%1 的信任用户身份已被服务器移除.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>%1 untrusted by %2.</source>
         <translation>%1 的信任用户身份已被 %2 移除.</translation>
     </message>
@@ -1680,60 +1680,60 @@ Select a regular layer instead.</source>
 <context>
     <name>net::InviteListModel</name>
     <message>
-        <location filename="../net/invitelistmodel.cpp" line="+119"/>
+        <location filename="../net/invitelistmodel.cpp" line="+119"></location>
         <source>No invite codes, click Create to add one.</source>
         <translation>没有邀请代码, 请点击创建来添加一个.</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+16"></location>
         <source>Used %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username.</extracomment>
         <translation>%1 由 %2 使用</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+24"></location>
         <source>Created %1 by %2</source>
         <extracomment>%1 is a date and time, %2 is a username</extracomment>
         <translation>%1 由 %2 创建</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+10"></location>
         <source>Operator and Trusted</source>
         <translation>房间管理员和信任用户</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Operator</source>
         <translation>房间管理员</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Trusted</source>
         <translation>信任用户</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>%1/%2</source>
         <extracomment>This is the &quot;uses&quot; column in the invite code table. %1 is how often the invite has been used, %2 is how many there are total.</extracomment>
         <translation>%1/%2</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+22"></location>
         <source>Code</source>
         <translation>代码</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Creator</source>
         <translation>创建者</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Role</source>
         <translation>角色</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Uses</source>
         <translation>使用</translation>
     </message>
@@ -1741,253 +1741,253 @@ Select a regular layer instead.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+111"/>
-        <location line="+663"/>
+        <location filename="../net/login.cpp" line="+111"></location>
+        <location line="+663"></location>
         <source>Invalid state</source>
         <translation>无效状态</translation>
     </message>
     <message>
-        <location line="-606"/>
-        <location line="+8"/>
-        <location line="+145"/>
-        <location line="+118"/>
-        <location line="+33"/>
-        <location line="+338"/>
-        <location line="+192"/>
-        <location line="+80"/>
+        <location line="-606"></location>
+        <location line="+8"></location>
+        <location line="+145"></location>
+        <location line="+118"></location>
+        <location line="+33"></location>
+        <location line="+338"></location>
+        <location line="+192"></location>
+        <location line="+80"></location>
         <source>Incompatible server</source>
         <translation>服务器不兼容</translation>
     </message>
     <message>
-        <location line="-899"/>
+        <location line="-899"></location>
         <source>Server is for a different Drawpile version!</source>
         <translation>服务器不支持当前的Drawpile版本！</translation>
     </message>
     <message>
-        <location line="+1149"/>
+        <location line="+1149"></location>
         <source>Username already taken!</source>
         <translation>用户名已被使用!</translation>
     </message>
     <message>
-        <location line="-810"/>
+        <location line="-810"></location>
         <source>This server does not allow guest logins</source>
         <translation>此服务器不支持非注册用户登录</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Password needed to log in as &quot;%1&quot;</source>
         <translation>请使用 &quot;%1&quot; 的账号密码来登录</translation>
     </message>
     <message>
-        <location line="+74"/>
-        <location line="+7"/>
+        <location line="+74"></location>
+        <location line="+7"></location>
         <source>Auth server error: %1</source>
         <translation>认证服务器错误: %1</translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+130"></location>
         <source>Server misconfiguration: invalid ext-auth URL</source>
         <translation>服务器配置错误：ext-auth URL无效</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>Unsupported ext-auth URL scheme</source>
         <translation>不支持ext-auth的URL方案</translation>
     </message>
     <message>
-        <location line="+196"/>
+        <location line="+196"></location>
         <source>New version</source>
         <translation>新版本</translation>
     </message>
     <message>
-        <location line="-41"/>
+        <location line="-41"></location>
         <source>Session not yet started!</source>
         <translation>房间还未创建!</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+10"></location>
         <source>Blocked by parental controls</source>
         <translation>已被控制面板屏蔽</translation>
     </message>
     <message>
-        <location line="+324"/>
-        <location line="+21"/>
+        <location line="+324"></location>
+        <location line="+21"></location>
         <source>Invalid SSL certificate for host %1</source>
         <translation>服务器 %1 证书无效</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+82"></location>
         <source>Server is full!</source>
         <translation>服务器已满!</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Hosting not authorized</source>
         <translation>主机未被授权</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>You have been banned from this session!</source>
         <translation>你已被禁止访问该房间!</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Session alias is reserved!</source>
         <translation>房间别名已保留!</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
         <translation>这通常说明你的Drawpile版本太旧. 你需要更新吗?</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Session not found, it may have ended or its invite link has changed</source>
         <translation>房间未找到, 可能已关闭或者其邀请链接已更改</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>This server only allows joining sessions through a direct link.</source>
         <translation>此服务器只允许通过直接链接加入房间.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Invalid host name.</source>
         <translation>无效服务器名.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
         <translation>你不能在这里创建公共房间, 只有私人房间允许被创建. 你可以在房间栏中切换到私人房间来重新创建.</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+41"></location>
         <source>Client failed to serialize command</source>
         <translation>客户端序列化命令失败</translation>
     </message>
     <message>
-        <location line="-98"/>
+        <location line="-98"></location>
         <source>Cancelled</source>
         <translation>已取消</translation>
     </message>
     <message>
-        <location line="-1066"/>
+        <location line="-1066"></location>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
         <translation>已重新定向到一个不接受重新定向的服务器: %1</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+49"></location>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>此服务器没有提供登录方式来加入房间!</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
         <translation>此服务器没有提供登录方式来创建房间!</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+13"></location>
         <source>Server expects STARTTLS on unsupported socket.</source>
         <translation>服务器期望在不支持的socket上使用 STARTTLS.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation>未在有固定证书的服务器上启用安全模式!</translation>
     </message>
     <message>
-        <location line="+59"/>
+        <location line="+59"></location>
         <source>Failed to retrieve server info</source>
         <translation>读取服务器信息失败</translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+69"></location>
         <source>Session lookup failed</source>
         <translation>房间查找失败</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+20"></location>
         <source>Incompatible redirect</source>
         <translation>不兼容的重新定向</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Circular redirect</source>
         <translation>循环重新定向</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>Too many redirects</source>
         <translation>太多重新定向</translation>
     </message>
     <message>
-        <location line="+159"/>
+        <location line="+159"></location>
         <source>Group membership needed</source>
         <translation>需要群组成员资格</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Unexpected ext-auth response: %1</source>
         <translation>意外的ext-auth响应: %1</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+86"></location>
         <source>Invalid ident intent response.</source>
         <translation>无效标识意图响应.</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+39"></location>
         <source>Server reported two different ext-auth URLs</source>
         <translation>服务器报告了两个不同的外部认证 URLs</translation>
     </message>
     <message>
-        <location line="+125"/>
+        <location line="+125"></location>
         <source>Got multiple sessions when only one was expected</source>
         <translation>在预期只有一个房间的情况下出现了多个房间</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+40"></location>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation>不同Drawpile版本（%1）的房间正在进行中!</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+28"></location>
         <source>Unknown version %1</source>
         <translation>未知版本 %1</translation>
     </message>
     <message>
-        <location line="+192"/>
-        <location line="+8"/>
+        <location line="+192"></location>
+        <location line="+8"></location>
         <source>TLS is not supported via this kind of socket</source>
         <translation>此类socket不支持 TLS</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+55"></location>
         <source>Unable to set TLS error ignore state</source>
         <translation>无法设置 TLS 错误忽略状态</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+35"></location>
         <source>Pinned certificate has changed!</source>
         <translation>固定证书已更改!</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+78"></location>
         <source>Session not found!</source>
         <translation>未找到房间!</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+15"></location>
         <source>Invalid username!</source>
         <translation>用户名无效!</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>This username has been locked</source>
         <translation>该用户名已被锁定</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Session is closed!</source>
         <translation>房间已关闭!</translation>
     </message>
@@ -1995,135 +1995,135 @@ Select a regular layer instead.</source>
 <context>
     <name>net::LoginSessionModel</name>
     <message>
-        <location filename="../net/loginsessions.cpp" line="+48"/>
+        <location filename="../net/loginsessions.cpp" line="+48"></location>
         <source>(untitled)</source>
         <translation>(未命名)</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+55"></location>
         <source>%1 (incompatible)</source>
         <translation>%1 (不兼容)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Drawpile 2.2 (compatibility mode)</source>
         <translation>Drawpile 2.2 (兼容模式)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Drawpile 2.3 (fully compatible)</source>
         <translation>Drawpile 2.3 (完全兼容)</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>Unlisted</source>
         <translation>未公开列表的</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Incompatible version</source>
         <translation>不兼容的版本</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Closed (not allowed to join from the web browser)</source>
         <translation>已关闭 (不允许通过网页浏览器加入)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Closed (not allowed to join via WebSocket)</source>
         <translation>已关闭 (不允许通过 WebSocket 加入)</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>Closed (guest logins blocked)</source>
         <translation>已关闭 (禁止非注册用户加入)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Closed (new logins blocked)</source>
         <translation>已关闭 (禁止新用户加入)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Session password required</source>
         <translation>需要房间密码</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>Not suitable for minors (NSFM)</source>
         <translation>不适于未成年人的</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>Unknown number of actively drawing users</source>
         <translation>未知活跃用户数量</translation>
     </message>
     <message numerus="yes">
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>%n actively drawing user(s)</source>
         <translation>
             <numerusform>%n 个活跃用户</numerusform>
         </translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+68"></location>
         <source>Title</source>
         <translation>标题</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Started by</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Users</source>
         <translation>用户</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Active</source>
         <translation>活跃</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+42"></location>
         <source>It is full or closed.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
         <translation>房间已满人或者已关闭.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>It requires an account.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
         <translation>房间需要账号加入.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+5"></location>
         <source>It does not allow joining via web browser.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
         <translation>房间不允许通过网页浏览器加入.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+3"></location>
         <source>It does not allow joining via WebSockets.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
         <translation>房间不允许通过 WebSockets 加入.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>It is hosted with a newer version of Drawpile, you have to update. If there is no update available, it may be hosted with a development version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
         <translation>房间是由一个较新的 Drawpile 版本创建的, 因此你必须更新. 如果没有可用的更新, 则可能是由一个开发中的 Drawpile 版本创建的.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>It is hosted with an old, incompatible version of Drawpile.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
         <translation>房间是由一个旧的不兼容的 Drawpile 版本创建的.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>It is hosted with an incompatible protocol.</source>
         <extracomment>&quot;It&quot; refers to a session that can&apos;t be joined.</extracomment>
         <translation>房间是由一个不兼容的协议创建的.</translation>
@@ -2132,48 +2132,48 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+273"/>
+        <location filename="../net/server.cpp" line="+273"></location>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation>如果你不打算使用代理, 你可以在首选项的网络页面中禁用网络代理.</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+23"></location>
         <source>Network read error</source>
         <translation>网络读取错误</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Network read error: %1</source>
         <translation>网络读取错误: %1</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+11"></location>
         <source>Network write error</source>
         <translation>网络写入错误</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>Network write error: %1</source>
         <translation>网络写入错误: %1</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+9"></location>
         <source>Network connection timed out</source>
         <translation>网络连接超时</translation>
     </message>
     <message>
-        <location line="+97"/>
+        <location line="+97"></location>
         <source>Received invalid data</source>
         <translation>接收数据无效</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+51"></location>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
         <translation>Socket 错误 %1: %2</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+4"></location>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
         <translation>%1 (错误 %2)</translation>
@@ -2182,7 +2182,7 @@ Select a regular layer instead.</source>
 <context>
     <name>tools::GradientSettings</name>
     <message>
-        <location filename="../tools/gradient.cpp" line="+135"/>
+        <location filename="../tools/gradient.cpp" line="+135"></location>
         <source>You need to drag to create a gradient.</source>
         <translation>你需要拖动来创建一个渐变.</translation>
     </message>
@@ -2190,27 +2190,27 @@ Select a regular layer instead.</source>
 <context>
     <name>tools::TransformSettings</name>
     <message>
-        <location filename="../tools/transform.cpp" line="+423"/>
+        <location filename="../tools/transform.cpp" line="+423"></location>
         <source>You don&apos;t have permission to transform selections.</source>
         <translation>你没有权限变换选区.</translation>
     </message>
     <message>
-        <location line="-7"/>
+        <location line="-7"></location>
         <source>No canvas present.</source>
         <translation>无画布.</translation>
     </message>
     <message>
-        <location line="-253"/>
+        <location line="-253"></location>
         <source>You don&apos;t have permission for that transformation.</source>
         <translation>你没有权限进行这种变换.</translation>
     </message>
     <message>
-        <location line="+206"/>
+        <location line="+206"></location>
         <source>You don&apos;t have permission to stamp selections.</source>
         <translation>你没有权限进行图章变换.</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+63"></location>
         <source>Nothing selected that could be transformed.</source>
         <translation>未选中有东西可以被变换.</translation>
     </message>
@@ -2218,7 +2218,7 @@ Select a regular layer instead.</source>
 <context>
     <name>utils::HostPresetModel</name>
     <message>
-        <location filename="../utils/hostpresetmodel.cpp" line="+57"/>
+        <location filename="../utils/hostpresetmodel.cpp" line="+57"></location>
         <source>Defaults</source>
         <translation>默认</translation>
     </message>
@@ -2226,53 +2226,53 @@ Select a regular layer instead.</source>
 <context>
     <name>utils::News</name>
     <message>
-        <location filename="../utils/news.cpp" line="+282"/>
-        <location line="+41"/>
+        <location filename="../utils/news.cpp" line="+282"></location>
+        <location line="+41"></location>
         <source>Checking for updates…</source>
         <translation>检查更新…</translation>
     </message>
     <message>
-        <location line="-23"/>
+        <location line="-23"></location>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
         <translation>自动检查更新已禁用, &lt;a href=&quot;#autoupdate&quot;&gt;请点击这里来启用&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+2"></location>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
         <translation>如果你不想要自动检查更新, &lt;a href=&quot;#checkupdates&quot;&gt;请点击这里来手动检查&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+60"></location>
         <source>Network error: %1</source>
         <translation>网络错误: %1</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+12"></location>
         <source>Couldn&apos;t make sense of the fetched data.</source>
         <translation>无法理解获取的数据.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>Couldn&apos;t make sense of fetched updates.</source>
         <translation>无法理解获取的更新.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>Couldn&apos;t save updates.</source>
         <translation>无法保存更新.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+10"></location>
         <source>Couldn&apos;t make sense of fetched news.</source>
         <translation>无法理解获取的新闻.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>Couldn&apos;t save news.</source>
         <translation>无法保存新闻.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+8"></location>
         <source>No news available.</source>
         <translation>暂无新闻.</translation>
     </message>
@@ -2280,22 +2280,22 @@ Select a regular layer instead.</source>
 <context>
     <name>wasmsupport</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="-198"/>
+        <location filename="../wasmsupport.cpp" line="-198"></location>
         <source>You&apos;re not using the official client on web.drawpile.net. Most servers do not allow connections from elsewhere.</source>
         <translation>你使用的不是 web.drawpile.net 上的官方客户端. 大多数服务器不允许从其他地方连接.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>The session address does not look like a valid WebSocket URL.</source>
         <translation>房间地址看起来不像一个有效的 WebSocket URL.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+6"></location>
         <source>You&apos;re trying to connect to an IP address instead of a proper domain name. This usually doesn&apos;t work unless you&apos;ve configured your browser to allow this first.</source>
         <translation>你正在尝试连接一个IP地址, 而不是一个正确的域名. 这通常是行不通的, 除非你先将浏览器配置为允许这样做.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+7"></location>
         <source>The server may not support joining via web browser.</source>
         <translation>服务器可能不支持通过网页浏览器加入.</translation>
     </message>
