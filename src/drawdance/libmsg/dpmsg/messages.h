@@ -525,11 +525,13 @@ const char *DP_msg_chat_tflags_flag_name(unsigned int value);
 #define DP_MSG_CHAT_OFLAGS_ACTION 0x2
 #define DP_MSG_CHAT_OFLAGS_PIN    0x4
 #define DP_MSG_CHAT_OFLAGS_ALERT  0x8
+#define DP_MSG_CHAT_OFLAGS_ROLL   0x10
 
-#define DP_MSG_CHAT_NUM_OFLAGS 4
-#define DP_MSG_CHAT_ALL_OFLAGS                           \
-    DP_MSG_CHAT_OFLAGS_SHOUT, DP_MSG_CHAT_OFLAGS_ACTION, \
-        DP_MSG_CHAT_OFLAGS_PIN, DP_MSG_CHAT_OFLAGS_ALERT
+#define DP_MSG_CHAT_NUM_OFLAGS 5
+#define DP_MSG_CHAT_ALL_OFLAGS                            \
+    DP_MSG_CHAT_OFLAGS_SHOUT, DP_MSG_CHAT_OFLAGS_ACTION,  \
+        DP_MSG_CHAT_OFLAGS_PIN, DP_MSG_CHAT_OFLAGS_ALERT, \
+        DP_MSG_CHAT_OFLAGS_ROLL
 
 const char *DP_msg_chat_oflags_flag_name(unsigned int value);
 

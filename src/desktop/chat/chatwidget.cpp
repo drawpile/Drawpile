@@ -57,6 +57,7 @@ struct Chat {
 			".shout { background: #34292c }"
 			".shout .tab { background: #da4453 }"
 			".action { font-style: italic }"
+			".roll { background: #1d3a55 }"
 			".username { font-weight: bold }"
 			".trusted { color: #27ae60 }"
 			".registered { color: #16a085 }"
@@ -76,6 +77,7 @@ struct Chat {
 		int userId, const QString &usernameSpan, const QString &message,
 		bool shout, bool alert);
 	void appendAction(const QString &usernameSpan, const QString &message);
+	void appendRoll(const QString &message);
 	void appendNotification(const QString &message);
 };
 
@@ -543,6 +545,26 @@ void Chat::appendAction(const QString &usernameSpan, const QString &message)
 						  .arg(usernameSpan, message, timestamp()));
 }
 
+void Chat::appendRoll(const QString &message)
+{
+	QTextCursor cursor(doc);
+	cursor.movePosition(QTextCursor::End);
+
+	if(lastAppendedId != -1) {
+		appendSeparator(cursor);
+		lastAppendedId = -1;
+	}
+	cursor.insertHtml(QStringLiteral(
+						  "<table width=\"100%\" class=\"message roll\">"
+						  "<tr>"
+						  "<td width=3 class=tab></td>"
+						  "<td><span class=action>%1</span></td>"
+						  "<td class=timestamp align=right>%3</td>"
+						  "</tr>"
+						  "</table>")
+						  .arg(message, timestamp()));
+}
+
 void Chat::appendNotification(const QString &message)
 {
 	QTextCursor cursor(doc);
@@ -659,16 +681,33 @@ void ChatWidget::receiveMessage(
 	bool isOp = d->userlist && d->userlist->isOperator(sender);
 	bool isValidAlert = isOp && oflags & DP_MSG_CHAT_OFLAGS_ALERT;
 	bool isValidShout = isOp && oflags & DP_MSG_CHAT_OFLAGS_SHOUT;
-	if(oflags & DP_MSG_CHAT_OFLAGS_ACTION) {
-		chat.appendAction(d->usernameSpan(sender), safetext);
+	QString usernameSpan = d->usernameSpan(sender);
+	if(oflags & DP_MSG_CHAT_OFLAGS_ROLL) {
+		static QRegularExpression rollRe(
+			QStringLiteral("\\Arolls\\s+(.+?)\\s*\\z"),
+			QRegularExpression::DotMatchesEverythingOption |
+				QRegularExpression::CaseInsensitiveOption);
+		QRegularExpressionMatch match = rollRe.match(safetext);
+		QString rollMessage;
+		if(match.hasMatch()) {
+			rollMessage =
+				//: This refers to a dice roll.
+				tr("%1 rolls %2").arg(usernameSpan, match.captured(1));
+		} else {
+			rollMessage = QStringLiteral("%1 %2").arg(usernameSpan, safetext);
+		}
+		chat.appendRoll(rollMessage);
+
+	} else if(oflags & DP_MSG_CHAT_OFLAGS_ACTION) {
+		chat.appendAction(usernameSpan, safetext);
+
 	} else if(d->compactMode) {
 		chat.appendMessageCompact(
-			sender, d->usernameSpan(sender), safetext, isValidShout,
-			isValidAlert);
+			sender, usernameSpan, safetext, isValidShout, isValidAlert);
+
 	} else {
 		chat.appendMessage(
-			sender, d->usernameSpan(sender), safetext, isValidShout,
-			isValidAlert);
+			sender, usernameSpan, safetext, isValidShout, isValidAlert);
 	}
 
 	if(isValidAlert) {
@@ -850,7 +889,7 @@ void ChatWidget::sendMessage(QString chatMessage)
 			utils::DiceRoll result = utils::diceRoll(
 				params.isEmpty() ? QStringLiteral("1d6") : params);
 			if(result.number > 0) {
-				oflags = DP_MSG_CHAT_OFLAGS_ACTION;
+				oflags = DP_MSG_CHAT_OFLAGS_ACTION | DP_MSG_CHAT_OFLAGS_ROLL;
 				effectiveMessage = "rolls " + result.toString();
 			} else {
 				systemMessage(tr("/roll: invalid dice roll description."));

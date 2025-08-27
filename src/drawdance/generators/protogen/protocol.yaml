@@ -129,7 +129,7 @@ Chat:
              is used for those messages that must be stored in the session history.)
     fields:
         - tflags flags: [bypass]
-        - oflags flags: [shout, action, pin, alert]
+        - oflags flags: [shout, action, pin, alert, roll]
         - message utf8
 
 TrustedUsers:

@@ -2586,6 +2586,8 @@ const char *DP_msg_chat_oflags_flag_name(unsigned int value)
         return "pin";
     case DP_MSG_CHAT_OFLAGS_ALERT:
         return "alert";
+    case DP_MSG_CHAT_OFLAGS_ROLL:
+        return "roll";
     default:
         return NULL;
     }
@@ -2620,11 +2622,12 @@ static bool msg_chat_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
     DP_MsgChat *mc = DP_message_internal(msg);
     return DP_text_writer_write_string(writer, "message", mc->message)
         && DP_text_writer_write_flags(
-               writer, "oflags", mc->oflags, 4,
-               (const char *[]){"shout", "action", "pin", "alert"},
+               writer, "oflags", mc->oflags, 5,
+               (const char *[]){"shout", "action", "pin", "alert", "roll"},
                (unsigned int[]){
                    DP_MSG_CHAT_OFLAGS_SHOUT, DP_MSG_CHAT_OFLAGS_ACTION,
-                   DP_MSG_CHAT_OFLAGS_PIN, DP_MSG_CHAT_OFLAGS_ALERT})
+                   DP_MSG_CHAT_OFLAGS_PIN, DP_MSG_CHAT_OFLAGS_ALERT,
+                   DP_MSG_CHAT_OFLAGS_ROLL})
         && DP_text_writer_write_flags(
                writer, "tflags", mc->tflags, 1, (const char *[]){"bypass"},
                (unsigned int[]){DP_MSG_CHAT_TFLAGS_BYPASS});
@@ -2694,10 +2697,11 @@ DP_Message *DP_msg_chat_parse(unsigned int context_id, DP_TextReader *reader)
         reader, "tflags", 1, (const char *[]){"bypass"},
         (unsigned int[]){DP_MSG_CHAT_TFLAGS_BYPASS});
     uint8_t oflags = (uint8_t)DP_text_reader_get_flags(
-        reader, "oflags", 4,
-        (const char *[]){"shout", "action", "pin", "alert"},
+        reader, "oflags", 5,
+        (const char *[]){"shout", "action", "pin", "alert", "roll"},
         (unsigned int[]){DP_MSG_CHAT_OFLAGS_SHOUT, DP_MSG_CHAT_OFLAGS_ACTION,
-                         DP_MSG_CHAT_OFLAGS_PIN, DP_MSG_CHAT_OFLAGS_ALERT});
+                         DP_MSG_CHAT_OFLAGS_PIN, DP_MSG_CHAT_OFLAGS_ALERT,
+                         DP_MSG_CHAT_OFLAGS_ROLL});
     uint16_t message_len;
     const char *message =
         DP_text_reader_get_string(reader, "message", &message_len);
