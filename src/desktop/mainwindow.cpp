@@ -3067,8 +3067,9 @@ void MainWindow::host()
 void MainWindow::hostSession(const HostParams &params)
 {
 	if(m_doc->client()->isConnected()) {
-		showErrorMessage(tr("You're already connected to a session! Disconnect "
-							"first to host one."));
+		showErrorMessage(
+			tr("You're already connected to a session! Disconnect "
+			   "first to host one."));
 		return;
 	}
 
@@ -4723,8 +4724,9 @@ void MainWindow::changeUndoDepthLimit()
 		[this, previousUndoDepthLimit, dlg] {
 			int undoDepthLimit = dlg->undoDepthLimit();
 			if(undoDepthLimit != previousUndoDepthLimit) {
-				m_doc->client()->sendMessage(net::makeUndoDepthMessage(
-					m_doc->canvas()->localUserId(), undoDepthLimit));
+				m_doc->client()->sendMessage(
+					net::makeUndoDepthMessage(
+						m_doc->canvas()->localUserId(), undoDepthLimit));
 			}
 		});
 	dlg->show();
@@ -6183,8 +6185,9 @@ void MainWindow::setupActions()
 	QAction *starttransformmask =
 		makeAction("starttransformmask", tr("Transform Selection &Mask"))
 			.icon("transform-crop-and-resize")
-			.statusTip(tr("Transform only the selection mask itself, switch "
-						  "back tools afterwards"));
+			.statusTip(
+				tr("Transform only the selection mask itself, switch "
+				   "back tools afterwards"));
 	QAction *transformmirror =
 		makeAction("transformmirror", tr("&Mirror Transform"))
 			.icon("drawpile_mirror")
