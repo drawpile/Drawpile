@@ -46,25 +46,26 @@ struct Chat {
 	explicit Chat(QObject *parent)
 		: doc(new QTextDocument(parent))
 	{
-		doc->setDefaultStyleSheet(".sep { background: #4d4d4d }"
-								  ".notification { background: #232629 }"
-								  ".message, .notification {"
-								  "color: #eff0f1;"
-								  "margin: 1px 0 1px 0"
-								  "}"
-								  ".alert { background: #66da4453 }"
-								  ".shout { background: #34292c }"
-								  ".shout .tab { background: #da4453 }"
-								  ".action { font-style: italic }"
-								  ".username { font-weight: bold }"
-								  ".trusted { color: #27ae60 }"
-								  ".registered { color: #16a085 }"
-								  ".op { color: #f47750 }"
-								  ".mod { color: #ed1515 }"
-								  ".timestamp { color: #8d8d8d }"
-								  ".alert .timestamp { color: #eff0f1 }"
-								  "a:link { color: #1d99f3 }"
-								  ".emoji { font-size: xx-large; }");
+		doc->setDefaultStyleSheet(
+			".sep { background: #4d4d4d }"
+			".notification { background: #232629 }"
+			".message, .notification {"
+			"color: #eff0f1;"
+			"margin: 1px 0 1px 0"
+			"}"
+			".alert { background: #66da4453 }"
+			".shout { background: #34292c }"
+			".shout .tab { background: #da4453 }"
+			".action { font-style: italic }"
+			".username { font-weight: bold }"
+			".trusted { color: #27ae60 }"
+			".registered { color: #16a085 }"
+			".op { color: #f47750 }"
+			".mod { color: #ed1515 }"
+			".timestamp { color: #8d8d8d }"
+			".alert .timestamp { color: #eff0f1 }"
+			"a:link { color: #1d99f3 }"
+			".emoji { font-size: xx-large; }");
 	}
 
 	void appendSeparator(QTextCursor &cursor);
@@ -288,17 +289,17 @@ void ChatWidget::Private::updatePreserveModeUi()
 	// Set placeholder text and window style based on the mode
 	myline->setPlaceholderText(placeholder);
 
-	chatbox->setStyleSheet(
-		QStringLiteral("QTextEdit, QPlainTextEdit, QLineEdit {"
-					   "background-color: #232629;"
-					   "border: none;"
-					   "color: #eff0f1"
-					   "}"
-					   "QPlainTextEdit, QLineEdit {"
-					   "border-top: 1px solid %1;"
-					   "padding: 4px"
-					   "}")
-			.arg(color));
+	chatbox->setStyleSheet(QStringLiteral(
+							   "QTextEdit, QPlainTextEdit, QLineEdit {"
+							   "background-color: #232629;"
+							   "border: none;"
+							   "color: #eff0f1"
+							   "}"
+							   "QPlainTextEdit, QLineEdit {"
+							   "border-top: 1px solid %1;"
+							   "padding: 4px"
+							   "}")
+							   .arg(color));
 }
 void ChatWidget::setPreserveMode(bool preservechat)
 {
@@ -451,13 +452,14 @@ void Chat::appendMessageCompact(
 						  ? message
 						  : QStringLiteral("%1: %2").arg(usernameSpan, message);
 
-	cursor.insertHtml(QStringLiteral("<table width=\"100%\" class=\"%1\">"
-									 "<tr>"
-									 "<td width=3 class=tab></td>"
-									 "<td>%2</td>"
-									 "<td class=timestamp align=right>%3</td>"
-									 "</tr>"
-									 "</table>")
+	cursor.insertHtml(QStringLiteral(
+						  "<table width=\"100%\" class=\"%1\">"
+						  "<tr>"
+						  "<td width=3 class=tab></td>"
+						  "<td>%2</td>"
+						  "<td class=timestamp align=right>%3</td>"
+						  "</tr>"
+						  "</table>")
 						  .arg(
 							  alert	  ? " alert"
 							  : shout ? " shout"
@@ -500,17 +502,18 @@ void Chat::appendMessage(
 	// Embedding a whole browser engine just to render the chat widget would
 	// be excessive.
 	cursor.insertHtml(
-		QStringLiteral("<table width=\"100%\" class=\"message%1\">"
-					   "<tr>"
-					   "<td width=3 rowspan=2 class=tab></td>"
-					   "<td width=40 rowspan=2><img src=\"avatar://%2\"></td>"
-					   "<td>%3</td>"
-					   "<td class=timestamp align=right>%4</td>"
-					   "</tr>"
-					   "<tr>"
-					   "<td colspan=2>%5</td>"
-					   "</tr>"
-					   "</table>")
+		QStringLiteral(
+			"<table width=\"100%\" class=\"message%1\">"
+			"<tr>"
+			"<td width=3 rowspan=2 class=tab></td>"
+			"<td width=40 rowspan=2><img src=\"avatar://%2\"></td>"
+			"<td>%3</td>"
+			"<td class=timestamp align=right>%4</td>"
+			"</tr>"
+			"<tr>"
+			"<td colspan=2>%5</td>"
+			"</tr>"
+			"</table>")
 			.arg(
 				alert	? " alert"
 				: shout ? " shout"
@@ -529,13 +532,14 @@ void Chat::appendAction(const QString &usernameSpan, const QString &message)
 		appendSeparator(cursor);
 		lastAppendedId = -1;
 	}
-	cursor.insertHtml(QStringLiteral("<table width=\"100%\" class=message>"
-									 "<tr>"
-									 "<td width=3 class=tab></td>"
-									 "<td><span class=action>%1 %2</span></td>"
-									 "<td class=timestamp align=right>%3</td>"
-									 "</tr>"
-									 "</table>")
+	cursor.insertHtml(QStringLiteral(
+						  "<table width=\"100%\" class=message>"
+						  "<tr>"
+						  "<td width=3 class=tab></td>"
+						  "<td><span class=action>%1 %2</span></td>"
+						  "<td class=timestamp align=right>%3</td>"
+						  "</tr>"
+						  "</table>")
 						  .arg(usernameSpan, message, timestamp()));
 }
 
@@ -549,13 +553,13 @@ void Chat::appendNotification(const QString &message)
 		lastAppendedId = 0;
 	}
 
-	cursor.insertHtml(
-		QStringLiteral("<table width=\"100%\" class=notification><tr>"
-					   "<td width=3 class=tab></td>"
-					   "<td>%1</td>"
-					   "<td align=right class=timestamp>%2</td>"
-					   "</tr></table>")
-			.arg(htmlutils::newlineToBr(message), timestamp()));
+	cursor.insertHtml(QStringLiteral(
+						  "<table width=\"100%\" class=notification><tr>"
+						  "<td width=3 class=tab></td>"
+						  "<td>%1</td>"
+						  "<td align=right class=timestamp>%2</td>"
+						  "</tr></table>")
+						  .arg(htmlutils::newlineToBr(message), timestamp()));
 }
 
 void ChatWidget::userJoined(int id, const QString &name)
@@ -879,9 +883,9 @@ void ChatWidget::sendMessage(QString chatMessage)
 			if(d->userlist && d->userlist->isOperator(d->myId)) {
 				emit message(net::makeTrustedUsersMessage(d->myId, {}));
 			} else {
-				systemMessage(
-					QStringLiteral("/untrust-all-users: only operators can "
-								   "untrust other users."));
+				systemMessage(QStringLiteral(
+					"/untrust-all-users: only operators can "
+					"untrust other users."));
 			}
 			return;
 
@@ -890,9 +894,9 @@ void ChatWidget::sendMessage(QString chatMessage)
 				systemMessage(QStringLiteral("/set-layer-acl-tiers: %1")
 								  .arg(changeLayerAclTiers(params)));
 			} else {
-				systemMessage(
-					QStringLiteral("/set-layer-acl-tiers: only operators "
-								   "can change all layer tiers."));
+				systemMessage(QStringLiteral(
+					"/set-layer-acl-tiers: only operators "
+					"can change all layer tiers."));
 			}
 			return;
 
@@ -1132,8 +1136,9 @@ QString ChatWidget::changeLayerAclTiers(const QString &params)
 	}
 
 	if(invalid) {
-		return QStringLiteral("invalid parameter(s), usage: [raise] "
-							  "[exclusive] all|current %1")
+		return QStringLiteral(
+				   "invalid parameter(s), usage: [raise] "
+				   "[exclusive] all|current %1")
 			.arg(tierNames.join("|"));
 	} else if(tierIndex == -1 || scope == ScopeMissing) {
 		return QStringLiteral(
@@ -1191,10 +1196,12 @@ bool ChatWidget::changeLayerAclTier(
 	bool shouldChange = (raiseOnly ? layerTier > tier : layerTier != tier) &&
 						(includeExclusive || layerAcl.exclusive.isEmpty());
 	if(shouldChange) {
-		emit message(net::makeLayerAclMessage(
-			d->myId, layerId,
-			(layerAcl.contentLocked ? DP_ACL_ALL_LOCKED_BIT : 0) | uint8_t(tier),
-			layerAcl.exclusive));
+		emit message(
+			net::makeLayerAclMessage(
+				d->myId, layerId,
+				(layerAcl.contentLocked ? DP_ACL_ALL_LOCKED_BIT : 0) |
+					uint8_t(tier),
+				layerAcl.exclusive));
 	}
 	return shouldChange;
 }
