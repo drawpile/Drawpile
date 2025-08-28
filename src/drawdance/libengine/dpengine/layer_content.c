@@ -262,8 +262,8 @@ void DP_layer_content_diff(DP_LayerContent *lc, DP_LayerProps *lp,
                 layer_content_diff_mark_both(lc, prev_lc, diff);
             }
             else {
-                layer_content_diff(lc, DP_layer_props_censored(lp), prev_lc,
-                                   DP_layer_props_censored(prev_lp), diff);
+                layer_content_diff(lc, DP_layer_props_censored_any(lp), prev_lc,
+                                   DP_layer_props_censored_any(prev_lp), diff);
             }
         }
         else {

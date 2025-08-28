@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>467</height>
+    <height>504</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -75,21 +75,21 @@
      </property>
     </widget>
    </item>
-   <item row="12" column="1">
+   <item row="13" column="1">
     <widget class="QCheckBox" name="sketchMode">
      <property name="text">
       <string>Sketch mode for you</string>
      </property>
     </widget>
    </item>
-   <item row="13" column="0">
+   <item row="14" column="0">
     <widget class="QLabel" name="sketchOpacityLabel">
      <property name="text">
       <string>Sketch Opacity:</string>
      </property>
     </widget>
    </item>
-   <item row="13" column="1">
+   <item row="14" column="1">
     <widget class="KisSliderSpinBox" name="sketchOpacitySlider">
      <property name="suffix">
       <string>%</string>
@@ -102,35 +102,35 @@
      </property>
     </widget>
    </item>
-   <item row="14" column="0">
+   <item row="15" column="0">
     <widget class="QLabel" name="sketchTintLabel">
      <property name="text">
       <string>Sketch Tint:</string>
      </property>
     </widget>
    </item>
-   <item row="16" column="0">
+   <item row="17" column="0">
     <widget class="QLabel" name="collaborationLabel">
      <property name="text">
       <string>Collaboration:</string>
      </property>
     </widget>
    </item>
-   <item row="16" column="1">
+   <item row="17" column="1">
     <widget class="QCheckBox" name="defaultLayer">
      <property name="text">
       <string>Default for new users</string>
      </property>
     </widget>
    </item>
-   <item row="18" column="0">
+   <item row="19" column="0">
     <widget class="QLabel" name="createdByLabel">
      <property name="text">
       <string>Created by:</string>
      </property>
     </widget>
    </item>
-   <item row="18" column="1">
+   <item row="19" column="1">
     <widget class="QLabel" name="createdBy">
      <property name="text">
       <string notr="true">#0</string>
@@ -140,7 +140,7 @@
      </property>
     </widget>
    </item>
-   <item row="20" column="0">
+   <item row="21" column="0">
     <spacer name="buttonsSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -153,14 +153,14 @@
      </property>
     </spacer>
    </item>
-   <item row="21" column="0" colspan="2">
+   <item row="22" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
-   <item row="14" column="1">
+   <item row="15" column="1">
     <widget class="QWidget" name="sketchTintWidget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
@@ -285,6 +285,13 @@
       <number>0</number>
      </property>
     </layout>
+   </item>
+   <item row="12" column="1">
+    <widget class="QCheckBox" name="censoredLocal">
+     <property name="text">
+      <string>Block content (censor for you)</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

@@ -34,16 +34,17 @@
 #define DP_PROJECT_STR(X)  #X
 #define DP_PROJECT_XSTR(X) DP_PROJECT_STR(X)
 
-#define DP_PROJECT_SNAPSHOT_LAYER_FLAG_GROUP          (1u << 0u)
-#define DP_PROJECT_SNAPSHOT_LAYER_FLAG_HIDDEN         (1u << 1u)
-#define DP_PROJECT_SNAPSHOT_LAYER_FLAG_CENSORED       (1u << 2u)
-#define DP_PROJECT_SNAPSHOT_LAYER_FLAG_PASS_THROUGH   (1u << 3u)
-#define DP_PROJECT_SNAPSHOT_LAYER_FLAG_CLIP           (1u << 4u)
-#define DP_PROJECT_SNAPSHOT_ANNOTATION_FLAG_PROTECTED (1u << 0u)
-#define DP_PROJECT_SNAPSHOT_ANNOTATION_FLAG_ALIAS     (1u << 1u)
-#define DP_PROJECT_SNAPSHOT_ANNOTATION_FLAG_RASTERIZE (1u << 2u)
-#define DP_PROJECT_SNAPSHOT_TRACK_FLAG_HIDDEN         (1u << 0u)
-#define DP_PROJECT_SNAPSHOT_TRACK_FLAG_ONION_SKIN     (1u << 1u)
+#define DP_PROJECT_SNAPSHOT_LAYER_FLAG_GROUP           (1u << 0u)
+#define DP_PROJECT_SNAPSHOT_LAYER_FLAG_HIDDEN          (1u << 1u)
+#define DP_PROJECT_SNAPSHOT_LAYER_FLAG_CENSORED_REMOTE (1u << 2u)
+#define DP_PROJECT_SNAPSHOT_LAYER_FLAG_PASS_THROUGH    (1u << 3u)
+#define DP_PROJECT_SNAPSHOT_LAYER_FLAG_CLIP            (1u << 4u)
+#define DP_PROJECT_SNAPSHOT_LAYER_FLAG_CENSORED_LOCAL  (1u << 5u)
+#define DP_PROJECT_SNAPSHOT_ANNOTATION_FLAG_PROTECTED  (1u << 0u)
+#define DP_PROJECT_SNAPSHOT_ANNOTATION_FLAG_ALIAS      (1u << 1u)
+#define DP_PROJECT_SNAPSHOT_ANNOTATION_FLAG_RASTERIZE  (1u << 2u)
+#define DP_PROJECT_SNAPSHOT_TRACK_FLAG_HIDDEN          (1u << 0u)
+#define DP_PROJECT_SNAPSHOT_TRACK_FLAG_ONION_SKIN      (1u << 1u)
 
 
 typedef enum DP_ProjectPersistentStatement {
@@ -1564,12 +1565,14 @@ static bool snapshot_handle_layer(DP_Project *prj,
         DP_flag_uint(child_lpl, DP_PROJECT_SNAPSHOT_LAYER_FLAG_GROUP)
         | DP_flag_uint(DP_layer_props_hidden(lp),
                        DP_PROJECT_SNAPSHOT_LAYER_FLAG_HIDDEN)
-        | DP_flag_uint(DP_layer_props_censored(lp),
-                       DP_PROJECT_SNAPSHOT_LAYER_FLAG_CENSORED)
+        | DP_flag_uint(DP_layer_props_censored_remote(lp),
+                       DP_PROJECT_SNAPSHOT_LAYER_FLAG_CENSORED_REMOTE)
         | DP_flag_uint(child_lpl && !DP_layer_props_isolated(lp),
                        DP_PROJECT_SNAPSHOT_LAYER_FLAG_PASS_THROUGH)
         | DP_flag_uint(DP_layer_props_clip(lp),
-                       DP_PROJECT_SNAPSHOT_LAYER_FLAG_CLIP);
+                       DP_PROJECT_SNAPSHOT_LAYER_FLAG_CLIP)
+        | DP_flag_uint(DP_layer_props_censored_local(lp),
+                       DP_PROJECT_SNAPSHOT_LAYER_FLAG_CENSORED_LOCAL);
     return ps_bind_int(prj, stmt, 2, rel->layer_index)
         && ps_bind_int(prj, stmt, 3, rel->parent_index)
         && ps_bind_int(prj, stmt, 4, rel->layer_id)
@@ -2145,8 +2148,12 @@ static bool cfs_read_layer(DP_ProjectCanvasFromSnapshotContext *c,
         DP_transient_layer_props_hidden_set(layer->tlp, true);
     }
 
-    if (flags & DP_PROJECT_SNAPSHOT_LAYER_FLAG_CENSORED) {
-        DP_transient_layer_props_censored_set(layer->tlp, true);
+    if (flags & DP_PROJECT_SNAPSHOT_LAYER_FLAG_CENSORED_REMOTE) {
+        DP_transient_layer_props_censored_remote_set(layer->tlp, true);
+    }
+
+    if (flags & DP_PROJECT_SNAPSHOT_LAYER_FLAG_CENSORED_LOCAL) {
+        DP_transient_layer_props_censored_local_set(layer->tlp, true);
     }
 
     if (flags & DP_PROJECT_SNAPSHOT_LAYER_FLAG_PASS_THROUGH) {

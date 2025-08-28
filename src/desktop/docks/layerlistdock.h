@@ -80,6 +80,7 @@ public:
 		QAction *layerLockProps = nullptr;
 		QAction *layerLockMove = nullptr;
 		QAction *layerCensor = nullptr;
+		QAction *layerCensorLocal = nullptr;
 	};
 
 	LayerList(QWidget *parent = nullptr);
@@ -148,10 +149,12 @@ private:
 	void changeLayersAclWith(
 		const std::function<bool(canvas::AclState::Layer &)> &fn);
 	void changeLayersCensor(bool censor);
+	void changeLayersCensorLocal(bool censor);
 	void disableAutoselectAny();
 	void toggleLayerVisibility();
 	void toggleLayerSketch();
 	void setLayerVisibility(int layerId, bool visible);
+	void setLayerCensoredLocal(int layerId, bool censored);
 	void setLayerSketch(int layerId, int opacityPercent, const QColor &tint);
 	void toggleSelection(const QModelIndex &idx);
 	void

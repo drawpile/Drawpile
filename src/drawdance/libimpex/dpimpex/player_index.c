@@ -355,7 +355,7 @@ static struct DP_BuildIndexLayerProps to_index_layer_props(DP_LayerProps *lp)
         DP_channel15_to_8(DP_layer_props_opacity(lp)),
         DP_int_to_uint8(DP_layer_props_blend_mode(lp)),
         DP_layer_props_hidden(lp) ? 1 : 0,
-        DP_layer_props_censored(lp) ? 1 : 0,
+        DP_layer_props_censored_remote(lp) ? 1 : 0,
         DP_layer_props_isolated(lp) ? 1 : 0,
         DP_layer_props_children_noinc(lp) ? 1 : 0};
 }
@@ -1604,7 +1604,7 @@ to_transient_layer_props(struct DP_BuildIndexLayerProps *bilp,
         DP_transient_layer_props_blend_mode_set(tlp, bilp->blend_mode);
     }
     DP_transient_layer_props_hidden_set(tlp, bilp->hidden != 0);
-    DP_transient_layer_props_censored_set(tlp, bilp->censored != 0);
+    DP_transient_layer_props_censored_remote_set(tlp, bilp->censored != 0);
     DP_transient_layer_props_isolated_set(tlp, bilp->isolated != 0);
     return tlp;
 }

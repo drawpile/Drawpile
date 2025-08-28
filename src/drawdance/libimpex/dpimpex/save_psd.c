@@ -687,13 +687,13 @@ static bool write_layer_pixel_data_recursive(
                      DP_layer_group_children_noinc(
                          DP_layer_list_group_at_noinc(ll, i)),
                      child_lpl, dc, out, layer_offsets,
-                     DP_layer_props_censored(lp))
+                     DP_layer_props_censored_any(lp))
               && write_pixel_data(dc, out, 0, NULL, 0, 0, 0, 0);
         }
         else {
             ok = write_layer_content_pixel_data(
                 DP_layer_list_content_at_noinc(ll, i),
-                parent_censored || DP_layer_props_censored(lp), dc, out,
+                parent_censored || DP_layer_props_censored_any(lp), dc, out,
                 get_layer_offset(layer_offsets, lp));
         }
     }

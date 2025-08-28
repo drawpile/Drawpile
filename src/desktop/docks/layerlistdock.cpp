@@ -409,6 +409,7 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	m_contextMenu->addSeparator();
 	m_contextMenu->addMenu(m_actions.layerLockMenu);
 	m_contextMenu->addAction(m_actions.layerCensor);
+	m_contextMenu->addAction(m_actions.layerCensorLocal);
 	m_contextMenu->addSeparator();
 	m_contextMenu->addAction(m_actions.setFillSource);
 	m_contextMenu->addAction(m_actions.clearFillSource);
@@ -518,6 +519,9 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	connect(
 		m_aclmenu, &LayerAclMenu::layerCensoredChange, this,
 		&LayerList::changeLayersCensor);
+	connect(
+		m_aclmenu, &LayerAclMenu::layerCensoredLocalChange, this,
+		&LayerList::changeLayersCensorLocal);
 
 	updateActionLabels();
 	updateLockedControls();
@@ -869,8 +873,9 @@ void LayerList::changeLayersAclWith(
 	for(int layerId : m_selectedIds) {
 		canvas::AclState::Layer acl = aclState->layerAcl(layerId);
 		if(fn(acl)) {
-			msgs.append(net::makeLayerAclMessage(
-				contextId, layerId, acl.flags(), acl.exclusive));
+			msgs.append(
+				net::makeLayerAclMessage(
+					contextId, layerId, acl.flags(), acl.exclusive));
 		}
 	}
 
@@ -898,14 +903,24 @@ void LayerList::changeLayersCensor(bool censor)
 			} else {
 				flags &= ~uint8_t(DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR);
 			}
-			msgs.append(net::makeLayerAttributesMessage(
-				contextId, layer.id, 0, flags, layer.opacity * 255,
-				layer.blend));
+			msgs.append(
+				net::makeLayerAttributesMessage(
+					contextId, layer.id, 0, flags, layer.opacity * 255,
+					layer.blend));
 		}
 	}
 
 	if(msgs.size() > 1) {
 		emit layerCommands(msgs.size(), msgs.constData());
+	}
+}
+
+void LayerList::changeLayersCensorLocal(bool censor)
+{
+	if(m_canvas) {
+		for(int layerId : m_selectedIds) {
+			m_canvas->paintEngine()->setLayerCensoredLocal(layerId, censor);
+		}
 	}
 }
 
@@ -949,6 +964,13 @@ void LayerList::toggleLayerSketch()
 void LayerList::setLayerVisibility(int layerId, bool visible)
 {
 	m_canvas->paintEngine()->setLayerVisibility(layerId, !visible);
+}
+
+void LayerList::setLayerCensoredLocal(int layerId, bool censored)
+{
+	if(m_canvas) {
+		m_canvas->paintEngine()->setLayerCensoredLocal(layerId, censored);
+	}
 }
 
 void LayerList::setLayerSketch(
@@ -1032,9 +1054,10 @@ void LayerList::addLayerOrGroupFromPrompt(
 				(censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
 				(!compatibilityMode && clip ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP
 											: 0);
-			msgs.append(net::makeLayerAttributesMessage(
-				contextId, layerId, 0, flags,
-				qRound(opacityPercent / 100.0 * 255), blendMode));
+			msgs.append(
+				net::makeLayerAttributesMessage(
+					contextId, layerId, 0, flags,
+					qRound(opacityPercent / 100.0 * 255), blendMode));
 		}
 		if(defaultLayer) {
 			msgs.append(net::makeDefaultLayerMessage(contextId, layerId));
@@ -1163,17 +1186,20 @@ int LayerList::makeAddLayerOrGroupCommands(
 		effectiveTitle = title;
 	}
 
-	msgs.append(net::makeLayerTreeCreateMessage(
-		contextId, firstId, sourceId, qMax(0, targetId), 0, flags,
-		effectiveTitle));
+	msgs.append(
+		net::makeLayerTreeCreateMessage(
+			contextId, firstId, sourceId, qMax(0, targetId), 0, flags,
+			effectiveTitle));
 	if(targetFrame >= 0) {
-		msgs.append(net::makeKeyFrameSetMessage(
-			contextId, m_trackId, targetFrame, firstId, 0,
-			DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
+		msgs.append(
+			net::makeKeyFrameSetMessage(
+				contextId, m_trackId, targetFrame, firstId, 0,
+				DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
 	}
 	if(moveId != -1) {
-		msgs.append(net::makeLayerTreeMoveMessage(
-			contextId, firstId, targetId, moveId));
+		msgs.append(
+			net::makeLayerTreeMoveMessage(
+				contextId, firstId, targetId, moveId));
 	}
 
 	if(referenceIdx.isValid()) {
@@ -1192,8 +1218,9 @@ int LayerList::makeAddLayerOrGroupCommands(
 			it != end; ++it) {
 			int layerId = it->id;
 			if(layerIdsToGroup.contains(layerId)) {
-				msgs.append(net::makeLayerTreeMoveMessage(
-					contextId, layerId, firstId, 0));
+				msgs.append(
+					net::makeLayerTreeMoveMessage(
+						contextId, layerId, firstId, 0));
 			};
 		}
 	}
@@ -1339,9 +1366,10 @@ void LayerList::makeKeyFrameReferenceAddCommands(
 			bool group = idx.data(canvas::LayerListModel::IsGroupRole).toBool();
 			uint8_t flags = DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO |
 							(group ? DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP : 0);
-			msgs.append(net::makeLayerTreeCreateMessage(
-				contextId, id, 0, parentId, 0, flags,
-				idx.data(canvas::LayerListModel::TitleRole).toString()));
+			msgs.append(
+				net::makeLayerTreeCreateMessage(
+					contextId, id, 0, parentId, 0, flags,
+					idx.data(canvas::LayerListModel::TitleRole).toString()));
 			makeKeyFrameReferenceEditCommands(msgs, contextId, idx, id);
 			if(group) {
 				makeKeyFrameReferenceAddCommands(
@@ -1358,15 +1386,16 @@ void LayerList::makeKeyFrameReferenceEditCommands(
 	const canvas::LayerListItem &layer =
 		idx.data().value<canvas::LayerListItem>();
 	if(layer.opacity != 1.0f || layer.blend != DP_BLEND_MODE_NORMAL ||
-	   layer.censored || (layer.group && !layer.isolated)) {
+	   layer.censoredRemote || (layer.group && !layer.isolated)) {
 		uint8_t flags =
-			(layer.censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
+			(layer.censoredRemote ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
 			(layer.group && layer.isolated
 				 ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED
 				 : 0);
-		msgs.append(net::makeLayerAttributesMessage(
-			contextId, id, 0, flags, uint8_t(layer.opacity * 255.0f),
-			uint8_t(layer.blend)));
+		msgs.append(
+			net::makeLayerAttributesMessage(
+				contextId, id, 0, flags, uint8_t(layer.opacity * 255.0f),
+				uint8_t(layer.blend)));
 	}
 }
 
@@ -1519,8 +1548,9 @@ void LayerList::mergeSelected()
 			QModelIndex below = targetIndex.sibling(targetIndex.row() + 1, 0);
 			int belowId = below.data(canvas::LayerListModel::IdRole).toInt();
 			if(below.data(canvas::LayerListModel::IsGroupRole).toBool()) {
-				msgs.append(net::makeLayerTreeDeleteMessage(
-					contextId, belowId, belowId));
+				msgs.append(
+					net::makeLayerTreeDeleteMessage(
+						contextId, belowId, belowId));
 			}
 			msgs.append(
 				net::makeLayerTreeDeleteMessage(contextId, targetId, belowId));
@@ -1539,8 +1569,9 @@ void LayerList::mergeSelected()
 			it != end; ++it) {
 			int sourceId = it->id;
 			if(sourceId != targetId && topLevelIds.contains(sourceId)) {
-				msgs.append(net::makeLayerTreeDeleteMessage(
-					contextId, sourceId, targetId));
+				msgs.append(
+					net::makeLayerTreeDeleteMessage(
+						contextId, sourceId, targetId));
 			}
 		}
 	}
@@ -1609,11 +1640,12 @@ void LayerList::setLayerColor(QAction *action)
 		if(color !=
 			   idx.data(canvas::LayerListModel::ColorRole).value<QColor>() &&
 		   canEditLayer(idx)) {
-			msgs.append(net::makeLayerRetitleMessage(
-				contextId, idx.data(canvas::LayerListModel::IdRole).toInt(),
-				canvas::LayerListItem::makeTitleWithColor(
-					idx.data(canvas::LayerListModel::TitleRole).toString(),
-					color)));
+			msgs.append(
+				net::makeLayerRetitleMessage(
+					contextId, idx.data(canvas::LayerListModel::IdRole).toInt(),
+					canvas::LayerListItem::makeTitleWithColor(
+						idx.data(canvas::LayerListModel::TitleRole).toString(),
+						color)));
 		}
 	}
 
@@ -1701,6 +1733,9 @@ dialogs::LayerProperties *LayerList::makeLayerPropertiesDialog(
 		connect(
 			dlg, &dialogs::LayerProperties::visibilityChanged, this,
 			&LayerList::setLayerVisibility);
+		connect(
+			dlg, &dialogs::LayerProperties::censoredLocalChanged, this,
+			&LayerList::setLayerCensoredLocal);
 		connect(
 			dlg, &dialogs::LayerProperties::sketchModeChanged, this,
 			&LayerList::setLayerSketch);
@@ -1978,9 +2013,13 @@ QFlags<view::Lock::Reason> LayerList::currentLayerLock() const
 			if(idx.data(canvas::LayerListModel::IsHiddenInFrameRole).toBool()) {
 				reasons.setFlag(Reason::LayerHiddenInFrame);
 			}
-			if(idx.data(canvas::LayerListModel::IsCensoredInTreeRole)
+			if(idx.data(canvas::LayerListModel::IsCensoredRemoteInTreeRole)
 				   .toBool()) {
-				reasons.setFlag(Reason::LayerCensored);
+				reasons.setFlag(Reason::LayerCensoredRemote);
+			}
+			if(idx.data(canvas::LayerListModel::IsCensoredLocalInTreeRole)
+				   .toBool()) {
+				reasons.setFlag(Reason::LayerCensoredLocal);
 			}
 		} else {
 			reasons.setFlag(Reason::NoLayer);
@@ -2089,7 +2128,8 @@ void LayerList::updateUiFromCurrent()
 	}
 
 	if(m_aclmenu) {
-		m_aclmenu->setCensored(layer.actuallyCensored());
+		m_aclmenu->setCensored(layer.actuallyCensoredRemote());
+		m_aclmenu->setCensoredLocal(layer.censoredLocal);
 		m_aclmenu->setAlphaLock(layer.alphaLock);
 	}
 
@@ -2316,7 +2356,7 @@ void LayerList::triggerUpdate()
 					haveOpacityUpdate ? targetOpacity : layer.opacity;
 
 				uint8_t flags =
-					(layer.actuallyCensored()
+					(layer.actuallyCensoredRemote()
 						 ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR
 						 : 0) |
 					(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0) |
@@ -2324,9 +2364,10 @@ void LayerList::triggerUpdate()
 						 ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP
 						 : 0);
 
-				msgs.append(net::makeLayerAttributesMessage(
-					contextId, layer.id, 0, flags, opacity * 255.0f + 0.5f,
-					mode));
+				msgs.append(
+					net::makeLayerAttributesMessage(
+						contextId, layer.id, 0, flags, opacity * 255.0f + 0.5f,
+						mode));
 			}
 
 			if(haveAnySketchUpdate && layer.sketchOpacity > 0.0f) {

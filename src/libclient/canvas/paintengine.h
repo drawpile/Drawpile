@@ -151,6 +151,7 @@ public:
 	void setLayerVisibility(int layerId, bool hidden);
 	void setLayerSketch(int layerId, uint16_t opacity, const QColor &tint);
 	void setLayerAlphaLock(int layerId, bool alphaLock);
+	void setLayerCensoredLocal(int layerId, bool censored);
 	void setTrackVisibility(int trackId, bool hidden);
 	void setTrackOnionSkin(int trackId, bool onionSkin);
 

@@ -390,7 +390,7 @@ LayerSearchResult CanvasState::searchLayer(int layerId, bool showCensored) const
 	DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layerId);
 	DP_LayerProps *lp =
 		lre ? DP_layer_routes_entry_props(lre, m_data) : nullptr;
-	if(lp && (showCensored || !DP_layer_props_censored(lp))) {
+	if(lp && (showCensored || !DP_layer_props_censored_any(lp))) {
 		if(DP_layer_routes_entry_is_group(lre)) {
 			return {
 				LayerProps::inc(lp),

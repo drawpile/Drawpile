@@ -365,7 +365,7 @@ void DP_layer_group_merge_to_flat_image(DP_LayerGroup *lg, DP_LayerProps *lp,
     DP_ASSERT(parent_opacity <= DP_BIT15);
     DP_LayerPropsList *lpl = DP_layer_props_children_noinc(lp);
     uint16_t opacity = DP_fix15_mul(parent_opacity, DP_layer_props_opacity(lp));
-    bool censored = pass_through_censored || DP_layer_props_censored(lp);
+    bool censored = pass_through_censored || DP_layer_props_censored_any(lp);
     if (DP_layer_props_isolated(lp)) {
         // Flatten the group into a temporary layer with full opacity, then
         // merge the result with the group's blend mode and opacity.
@@ -425,7 +425,7 @@ DP_TransientTile *DP_layer_group_flatten_tile_to(
     }
 
     DP_LayerPropsList *lpl = DP_layer_props_children_noinc(lp);
-    bool censored = pass_through_censored || DP_layer_props_censored(lp);
+    bool censored = pass_through_censored || DP_layer_props_censored_any(lp);
     if (vmr.isolated) {
         // Flatten the group into a temporary layer with full opacity, then
         // merge the result with the group's blend mode and opacity.
@@ -485,7 +485,7 @@ void DP_layer_group_flatten_pixel(DP_LayerGroup *lg, DP_LayerProps *lp, int x,
     }
 
     DP_LayerPropsList *lpl = DP_layer_props_children_noinc(lp);
-    bool censored = pass_through_censored || DP_layer_props_censored(lp);
+    bool censored = pass_through_censored || DP_layer_props_censored_any(lp);
     if (vmr.isolated) {
         // Flatten the group into a temporary pixel with full opacity, then
         // merge the result with the group's blend mode and opacity.

@@ -368,7 +368,7 @@ DP_CanvasState *DP_ops_layer_attributes(DP_CanvasState *cs, int layer_id,
 
     DP_transient_layer_props_opacity_set(tlp, opacity);
     DP_transient_layer_props_blend_mode_set(tlp, blend_mode);
-    DP_transient_layer_props_censored_set(tlp, censored);
+    DP_transient_layer_props_censored_remote_set(tlp, censored);
     DP_transient_layer_props_isolated_set(tlp, isolated);
     DP_transient_layer_props_clip_set(tlp, clip);
 

@@ -6058,6 +6058,10 @@ void MainWindow::setupActions()
 	QAction *layerCensor = makeAction("layercensor", tr("Censor layer"))
 							   .checkable()
 							   .noDefaultShortcut();
+	QAction *layerCensorLocal =
+		makeAction("layercensorlocal", tr("Block layer (censor for you)"))
+			.checkable()
+			.noDefaultShortcut();
 	QAction *layerLockAll =
 		makeAction("layerlockall", tr("Lock layer entirely"))
 			.checkable()
@@ -6123,6 +6127,7 @@ void MainWindow::setupActions()
 	layerLockMenu->addAction(layerLockProps);
 	layerLockMenu->addAction(layerLockMove);
 	layerMenu->addAction(layerCensor);
+	layerMenu->addAction(layerCensorLocal);
 
 	layerMenu->addSeparator();
 	layerMenu->addAction(layerUpAct);
@@ -6484,6 +6489,7 @@ void MainWindow::setupActions()
 		layerLockProps,
 		layerLockMove,
 		layerCensor,
+		layerCensorLocal,
 	});
 	m_dockTimeline->setActions(
 		{

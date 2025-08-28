@@ -90,7 +90,7 @@ static void dump_layer(DP_Output *output, DP_LayerListEntry *lle,
     format_indent(output, indent, "hidden: %s\n",
                   DP_layer_props_hidden(lp) ? "true" : "false");
     format_indent(output, indent, "censored: %s\n",
-                  DP_layer_props_censored(lp) ? "true" : "false");
+                  DP_layer_props_censored_remote(lp) ? "true" : "false");
     format_indent(output, indent, "isolated: %s\n",
                   DP_layer_props_isolated(lp) ? "true" : "false");
     if (is_group) {

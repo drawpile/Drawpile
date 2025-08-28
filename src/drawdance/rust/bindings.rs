@@ -17,6 +17,7 @@ pub const DP_CANVAS_STATE_MAX_PIXELS: u32 = 1073676289;
 pub const DP_FLAT_IMAGE_INCLUDE_BACKGROUND: u32 = 1;
 pub const DP_FLAT_IMAGE_INCLUDE_SUBLAYERS: u32 = 2;
 pub const DP_FLAT_IMAGE_ONE_BIT_ALPHA: u32 = 4;
+pub const DP_FLAT_IMAGE_UNPREMULTIPLY: u32 = 8;
 pub const DP_FLAT_IMAGE_RENDER_FLAGS: u32 = 3;
 pub const DP_DOCUMENT_METADATA_DPIX_DEFAULT: u32 = 72;
 pub const DP_DOCUMENT_METADATA_DPIY_DEFAULT: u32 = 72;
@@ -121,7 +122,8 @@ pub const DP_MSG_CHAT_OFLAGS_SHOUT: u32 = 1;
 pub const DP_MSG_CHAT_OFLAGS_ACTION: u32 = 2;
 pub const DP_MSG_CHAT_OFLAGS_PIN: u32 = 4;
 pub const DP_MSG_CHAT_OFLAGS_ALERT: u32 = 8;
-pub const DP_MSG_CHAT_NUM_OFLAGS: u32 = 4;
+pub const DP_MSG_CHAT_OFLAGS_ROLL: u32 = 16;
+pub const DP_MSG_CHAT_NUM_OFLAGS: u32 = 5;
 pub const DP_MSG_CHAT_MESSAGE_MIN_LEN: u32 = 0;
 pub const DP_MSG_CHAT_MESSAGE_MAX_LEN: u32 = 65533;
 pub const DP_MSG_TRUSTED_USERS_STATIC_LENGTH: u32 = 0;
@@ -179,7 +181,8 @@ pub const DP_MSG_LOCAL_CHANGE_TYPE_TRACK_VISIBILITY: u32 = 6;
 pub const DP_MSG_LOCAL_CHANGE_TYPE_TRACK_ONION_SKIN: u32 = 7;
 pub const DP_MSG_LOCAL_CHANGE_TYPE_LAYER_SKETCH: u32 = 8;
 pub const DP_MSG_LOCAL_CHANGE_TYPE_LAYER_ALPHA_LOCK: u32 = 9;
-pub const DP_MSG_LOCAL_CHANGE_NUM_TYPE: u32 = 10;
+pub const DP_MSG_LOCAL_CHANGE_TYPE_LAYER_CENSORED: u32 = 10;
+pub const DP_MSG_LOCAL_CHANGE_NUM_TYPE: u32 = 11;
 pub const DP_MSG_LOCAL_CHANGE_BODY_MIN_SIZE: u32 = 0;
 pub const DP_MSG_LOCAL_CHANGE_BODY_MAX_SIZE: u32 = 65534;
 pub const DP_MSG_FEATURE_LIMITS_STATIC_LENGTH: u32 = 0;
@@ -2804,6 +2807,14 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_image_upixel_at_set(
+        img: *mut DP_Image,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        pixel: DP_UPixel8,
+    );
+}
+extern "C" {
     pub fn DP_image_transform_pixels(
         src_width: ::std::os::raw::c_int,
         src_height: ::std::os::raw::c_int,
@@ -4194,7 +4205,10 @@ extern "C" {
     pub fn DP_layer_props_hidden(lp: *mut DP_LayerProps) -> bool;
 }
 extern "C" {
-    pub fn DP_layer_props_censored(lp: *mut DP_LayerProps) -> bool;
+    pub fn DP_layer_props_censored_remote(lp: *mut DP_LayerProps) -> bool;
+}
+extern "C" {
+    pub fn DP_layer_props_censored_local(lp: *mut DP_LayerProps) -> bool;
 }
 extern "C" {
     pub fn DP_layer_props_isolated(lp: *mut DP_LayerProps) -> bool;
@@ -4207,6 +4221,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_layer_props_visible(lp: *mut DP_LayerProps) -> bool;
+}
+extern "C" {
+    pub fn DP_layer_props_censored_any(lp: *mut DP_LayerProps) -> bool;
 }
 extern "C" {
     pub fn DP_layer_props_title(
@@ -4284,7 +4301,10 @@ extern "C" {
     pub fn DP_transient_layer_props_hidden(tlp: *mut DP_TransientLayerProps) -> bool;
 }
 extern "C" {
-    pub fn DP_transient_layer_props_censored(tlp: *mut DP_TransientLayerProps) -> bool;
+    pub fn DP_transient_layer_props_censored_remote(tlp: *mut DP_TransientLayerProps) -> bool;
+}
+extern "C" {
+    pub fn DP_transient_layer_props_censored_local(tlp: *mut DP_TransientLayerProps) -> bool;
 }
 extern "C" {
     pub fn DP_transient_layer_props_isolated(tlp: *mut DP_TransientLayerProps) -> bool;
@@ -4343,7 +4363,16 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn DP_transient_layer_props_censored_set(tlp: *mut DP_TransientLayerProps, censored: bool);
+    pub fn DP_transient_layer_props_censored_remote_set(
+        tlp: *mut DP_TransientLayerProps,
+        censored_remote: bool,
+    );
+}
+extern "C" {
+    pub fn DP_transient_layer_props_censored_local_set(
+        tlp: *mut DP_TransientLayerProps,
+        censored_local: bool,
+    );
 }
 extern "C" {
     pub fn DP_transient_layer_props_hidden_set(tlp: *mut DP_TransientLayerProps, hidden: bool);
@@ -6535,6 +6564,7 @@ pub struct DP_LocalLayerState {
     pub layer_id: ::std::os::raw::c_int,
     pub hidden: bool,
     pub alpha_lock: bool,
+    pub censored: bool,
     pub sketch_opacity: u16,
     pub sketch_tint: u32,
 }
@@ -6544,7 +6574,7 @@ fn bindgen_test_layout_DP_LocalLayerState() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<DP_LocalLayerState>(),
-        12usize,
+        16usize,
         concat!("Size of: ", stringify!(DP_LocalLayerState))
     );
     assert_eq!(
@@ -6583,8 +6613,18 @@ fn bindgen_test_layout_DP_LocalLayerState() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).sketch_opacity) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).censored) as usize - ptr as usize },
         6usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_LocalLayerState),
+            "::",
+            stringify!(censored)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).sketch_opacity) as usize - ptr as usize },
+        8usize,
         concat!(
             "Offset of field: ",
             stringify!(DP_LocalLayerState),
@@ -6594,7 +6634,7 @@ fn bindgen_test_layout_DP_LocalLayerState() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).sketch_tint) as usize - ptr as usize },
-        8usize,
+        12usize,
         concat!(
             "Offset of field: ",
             stringify!(DP_LocalLayerState),
@@ -6782,6 +6822,12 @@ extern "C" {
     pub fn DP_local_state_msg_layer_alpha_lock_new(
         layer_id: ::std::os::raw::c_int,
         alpha_lock: bool,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_local_state_msg_layer_censored_new(
+        layer_id: ::std::os::raw::c_int,
+        censored: bool,
     ) -> *mut DP_Message;
 }
 pub const DP_LOAD_RESULT_SUCCESS: DP_LoadResult = 0;
@@ -13962,6 +14008,26 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_msg_draw_dabs_mypaint_blend_mask_selection_id(
+        mddmpb: *mut DP_MsgDrawDabsMyPaintBlend,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_msg_draw_dabs_classic_flood_selection_id(
+        mddc: *mut DP_MsgDrawDabsClassic,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_msg_draw_dabs_pixel_flood_selection_id(
+        mddp: *mut DP_MsgDrawDabsPixel,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_msg_draw_dabs_mypaint_flood_selection_id(
+        mddmp: *mut DP_MsgDrawDabsMyPaint,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_msg_draw_dabs_mypaint_blend_flood_selection_id(
         mddmpb: *mut DP_MsgDrawDabsMyPaintBlend,
     ) -> ::std::os::raw::c_int;
 }

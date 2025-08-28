@@ -49,7 +49,7 @@ void LayerListDelegate::paint(
 		glyphRect, painter, layer.opacity, layer.hidden,
 		!passThroughGroup &&
 			canvas::blendmode::presentsAsAlphaPreserving(layer.blend),
-		layer.actuallyCensored(), layer.group);
+		layer.actuallyCensoredRemote() || layer.censoredLocal, layer.group);
 
 	if(!passThroughGroup &&
 	   index.data(canvas::LayerListModel::IsClipRole).toBool()) {

@@ -136,12 +136,40 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 			return false;
 		}
 	case IsCensoredInTreeRole:
-		if(item.censored) {
+		if(item.censoredAny()) {
 			return true;
 		} else {
 			QModelIndex current = index.parent();
 			while(current.isValid()) {
-				if(m_items.at(current.internalId()).censored) {
+				if(m_items.at(current.internalId()).censoredAny()) {
+					return true;
+				} else {
+					current = current.parent();
+				}
+			}
+			return false;
+		}
+	case IsCensoredRemoteInTreeRole:
+		if(item.censoredRemote) {
+			return true;
+		} else {
+			QModelIndex current = index.parent();
+			while(current.isValid()) {
+				if(m_items.at(current.internalId()).censoredRemote) {
+					return true;
+				} else {
+					current = current.parent();
+				}
+			}
+			return false;
+		}
+	case IsCensoredLocalInTreeRole:
+		if(item.censoredLocal) {
+			return true;
+		} else {
+			QModelIndex current = index.parent();
+			while(current.isValid()) {
+				if(m_items.at(current.internalId()).censoredLocal) {
 					return true;
 				} else {
 					current = current.parent();
@@ -457,7 +485,8 @@ static LayerListItem makeItem(
 		float(lp.sketchOpacity()) / float(DP_BIT15),
 		QColor::fromRgba(lp.sketchTint()),
 		lp.hidden(),
-		lp.censored(),
+		lp.censoredRemote(),
+		lp.censoredLocal(),
 		revealedLayers.contains(id),
 		lp.isolated(),
 		lp.clip(),
@@ -498,7 +527,7 @@ LayerListModel::CheckState LayerListModel::flattenLayerList(
 				newItems.append(
 					makeItem(lp, revealedLayers, true, children, i, index, -1));
 				++index;
-				bool censored = parentCensored || newItems[pos].censored;
+				bool censored = parentCensored || newItems[pos].censoredAny();
 				checkState = flattenLayerList(
 					newItems, checkStates, index, children, revealedLayers,
 					censored);
@@ -510,7 +539,7 @@ LayerListModel::CheckState LayerListModel::flattenLayerList(
 					lp, revealedLayers, false, children, i, index, index + 1));
 				index += 2;
 
-				if(parentCensored || newItems[pos].censored ||
+				if(parentCensored || newItems[pos].censoredAny() ||
 				   (m_aclstate && m_aclstate->isLayerLocked(id))) {
 					checkState = NotCheckable;
 				} else if(m_checkStates.value(id, Unchecked) == Checked) {
@@ -1256,14 +1285,15 @@ LayerListItem LayerListItem::null()
 	return LayerListItem{
 		0,	   QString(), QColor(), 1.0f,  DP_BLEND_MODE_NORMAL,
 		0.0f,  QColor(),  false,	false, false,
-		false, false,	  false,	false, 0,
-		0,	   0,		  0,
+		false, false,	  false,	false, false,
+		0,	   0,		  0,		0,
 	};
 }
 
 uint8_t LayerListItem::attributeFlags() const
 {
-	return (actuallyCensored() ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
+	return (actuallyCensoredRemote() ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR
+									 : 0) |
 		   (isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
 }
 

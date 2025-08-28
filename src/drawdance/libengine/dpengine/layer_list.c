@@ -427,7 +427,7 @@ static void layer_list_entry_merge_to_flat_image(
         int blend_mode =
             DP_blend_mode_clip(DP_layer_props_blend_mode(lp), clip);
         bool censored = pass_through_censored
-                     || (!reveal_censored && DP_layer_props_censored(lp));
+                     || (!reveal_censored && DP_layer_props_censored_any(lp));
         if (include_sublayers) {
             DP_LayerContent *sub_lc = DP_layer_content_merge_sublayers(lc);
             DP_transient_layer_content_merge(tlc, 0, sub_lc, opacity,
@@ -445,7 +445,8 @@ static DP_TransientLayerProps *make_clip_properties(DP_LayerProps *lp)
 {
     DP_TransientLayerProps *clip_tlp = DP_transient_layer_props_new(lp);
     DP_transient_layer_props_blend_mode_set(clip_tlp, DP_BLEND_MODE_NORMAL);
-    DP_transient_layer_props_censored_set(clip_tlp, false);
+    DP_transient_layer_props_censored_remote_set(clip_tlp, false);
+    DP_transient_layer_props_censored_local_set(clip_tlp, false);
     DP_transient_layer_props_opacity_set(clip_tlp, DP_BIT15);
     DP_transient_layer_props_sketch_opacity_set(clip_tlp, 0);
     DP_transient_layer_props_sketch_tint_set(clip_tlp, 0);
@@ -483,7 +484,7 @@ static void layer_list_entry_merge_clipping_to_flat_image(
         DP_fix15_mul(parent_opacity, DP_layer_props_opacity(lp)),
         DP_blend_mode_clip(DP_layer_props_blend_mode(lp), clip),
         pass_through_censored
-            || (!reveal_censored && DP_layer_props_censored(lp)));
+            || (!reveal_censored && DP_layer_props_censored_any(lp)));
 
     DP_transient_layer_content_decref(clip_tlc);
 }
@@ -538,7 +539,7 @@ DP_TransientTile *DP_layer_list_entry_flatten_tile_to(
             DP_view_mode_context_apply(vmc, lp, parent_opacity);
         if (vmr.visible) {
             bool censored =
-                pass_through_censored || DP_layer_props_censored(lp);
+                pass_through_censored || DP_layer_props_censored_any(lp);
             return DP_layer_content_flatten_tile_to(
                 lle->content, tile_index, tt, vmr.opacity,
                 DP_blend_mode_clip(vmr.blend_mode, clip),
@@ -596,7 +597,7 @@ DP_TransientTile *DP_layer_list_flatten_clipping_tile_to(
         DP_ViewModeResult vmr =
             DP_view_mode_context_apply(vmc, lp, parent_opacity);
         if (vmr.visible) {
-            if (DP_layer_props_censored(lp)) {
+            if (DP_layer_props_censored_any(lp)) {
                 tt_or_null = DP_transient_tile_merge_nullable(
                     tt_or_null, DP_tile_censored_noinc(), vmr.opacity,
                     vmr.blend_mode);
@@ -679,7 +680,7 @@ void DP_layer_list_entry_flatten_pixel(
             DP_view_mode_context_apply(vmc, lp, parent_opacity);
         if (vmr.visible) {
             bool censored =
-                pass_through_censored || DP_layer_props_censored(lp);
+                pass_through_censored || DP_layer_props_censored_any(lp);
             DP_layer_content_flatten_pixel(
                 lle->content, x, y, pixel, vmr.opacity, vmr.blend_mode,
                 vmr.tint.a == 0 ? parent_tint : vmr.tint, censored);
@@ -733,7 +734,7 @@ void DP_layer_list_flatten_clipping_pixel(
         DP_ViewModeResult vmr =
             DP_view_mode_context_apply(vmc, lp, parent_opacity);
         if (vmr.visible) {
-            if (DP_layer_props_censored(lp)) {
+            if (DP_layer_props_censored_any(lp)) {
                 clip_pixel =
                     DP_tile_pixel_at(DP_tile_censored_noinc(), x % DP_TILE_SIZE,
                                      y % DP_TILE_SIZE);

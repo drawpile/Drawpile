@@ -22,6 +22,7 @@ public:
 		bool contentLock, bool propsLock, bool moveLock, int tier,
 		const QVector<uint8_t> exclusive);
 	void setCensored(bool censor);
+	void setCensoredLocal(bool censor);
 	void setAlphaLock(bool alphaLock);
 	void setAlphaLockEnabled(bool alphaLockEnabled);
 	void setCanEdit(bool canEdit, bool compatibilityMode);
@@ -35,6 +36,7 @@ signals:
 	void layerAccessTierChange(int tier);
 	void layerUserAccessChanged(int userId, bool access);
 	void layerCensoredChange(bool censor);
+	void layerCensoredLocalChange(bool censor);
 
 protected:
 	void showEvent(QShowEvent *e) override;
@@ -46,6 +48,7 @@ private:
 	QVector<uint8_t> m_exclusive;
 	QAction *m_alphaLock;
 	QAction *m_censored;
+	QAction *m_censoredLocal;
 	QAction *m_lockAll;
 	QAction *m_contentLock;
 	QAction *m_propsLock;

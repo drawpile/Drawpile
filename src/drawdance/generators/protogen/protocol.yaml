@@ -371,6 +371,7 @@ LocalChange:
               - TrackOnionSkin
               - LayerSketch
               - LayerAlphaLock
+              - LayerCensored
         - body bytes
 
 FeatureLimits:

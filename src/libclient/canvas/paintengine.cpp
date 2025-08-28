@@ -355,6 +355,12 @@ void PaintEngine::setLayerAlphaLock(int layerId, bool alphaLock)
 	receiveMessages(false, 1, &msg);
 }
 
+void PaintEngine::setLayerCensoredLocal(int layerId, bool censor)
+{
+	net::Message msg = net::makeLocalChangeLayerCensoredMessage(layerId, censor);
+	receiveMessages(false, 1, &msg);
+}
+
 void PaintEngine::setTrackVisibility(int trackId, bool hidden)
 {
 	net::Message msg =
@@ -897,8 +903,9 @@ void PaintEngine::onStreamResetStart(
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	emit pe->streamResetStarted(
 		drawdance::CanvasState::noinc(cs),
-		correlator ? QString::fromUtf8(QByteArray::fromRawData(
-						 correlator, compat::sizetype(correlatorLength)))
+		correlator ? QString::fromUtf8(
+						 QByteArray::fromRawData(
+							 correlator, compat::sizetype(correlatorLength)))
 				   : QString());
 }
 

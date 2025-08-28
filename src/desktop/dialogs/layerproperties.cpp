@@ -114,8 +114,8 @@ void LayerProperties::setNewLayerItem(
 	m_item = {
 		0,	   QString(), QColor(), 1.0f,  DP_BLEND_MODE_NORMAL,
 		0.0f,  QColor(),  false,	false, false,
-		group, false,	  false,	group, 0,
-		0,	   0,		  0,
+		false, group,	  false,	false, group,
+		0,	   0,		  0,		0,
 	};
 	m_selectedId = selectedId;
 	m_wasDefault = false;
@@ -126,6 +126,9 @@ void LayerProperties::setNewLayerItem(
 	m_ui->alphaBlend->setChecked(true);
 	m_ui->visible->setChecked(true);
 	m_ui->censored->setChecked(false);
+	m_ui->censoredLocal->setChecked(false);
+	m_ui->censoredLocal->setEnabled(false);
+	m_ui->censoredLocal->setVisible(false);
 	setSketchParamsFromSettings();
 	m_ui->defaultLayer->setChecked(false);
 	m_ui->createdBy->setToolTip(QString());
@@ -166,7 +169,10 @@ void LayerProperties::setLayerItem(
 		m_ui->alphaBlend->setChecked(true);
 	}
 	m_ui->visible->setChecked(!item.hidden);
-	m_ui->censored->setChecked(item.actuallyCensored());
+	m_ui->censored->setChecked(item.actuallyCensoredRemote());
+	m_ui->censoredLocal->setChecked(item.censoredLocal);
+	m_ui->censoredLocal->setEnabled(true);
+	m_ui->censoredLocal->setVisible(true);
 	if(item.sketchOpacity <= 0.0f) {
 		setSketchParamsFromSettings();
 	} else {
@@ -427,7 +433,8 @@ void LayerProperties::emitChanges()
 	}
 
 	if(m_ui->opacitySlider->value() != oldOpacity ||
-	   newBlendmode != m_item.blend || censored != m_item.actuallyCensored() ||
+	   newBlendmode != m_item.blend ||
+	   censored != m_item.actuallyCensoredRemote() ||
 	   isolated != m_item.isolated || clip != m_item.clip) {
 		uint8_t flags =
 			(censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
@@ -435,12 +442,18 @@ void LayerProperties::emitChanges()
 			(clip && !m_compatibilityMode ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CLIP
 										  : 0);
 		uint8_t opacity = qRound(m_ui->opacitySlider->value() / 100.0 * 255);
-		messages.append(net::makeLayerAttributesMessage(
-			m_user, m_item.id, 0, flags, opacity, newBlendmode));
+		messages.append(
+			net::makeLayerAttributesMessage(
+				m_user, m_item.id, 0, flags, opacity, newBlendmode));
 	}
 
 	if(m_ui->visible->isChecked() != (!m_item.hidden)) {
 		emit visibilityChanged(m_item.id, m_ui->visible->isChecked());
+	}
+
+	bool censoredLocal = m_ui->censoredLocal->isChecked();
+	if(censoredLocal != m_item.censoredLocal) {
+		emit censoredLocalChanged(m_item.id, censoredLocal);
 	}
 
 	int oldSketchOpacity = qRound(m_item.sketchOpacity * 100.0);

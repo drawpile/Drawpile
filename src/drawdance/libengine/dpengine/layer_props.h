@@ -65,7 +65,9 @@ int DP_layer_props_blend_mode(DP_LayerProps *lp);
 
 bool DP_layer_props_hidden(DP_LayerProps *lp);
 
-bool DP_layer_props_censored(DP_LayerProps *lp);
+bool DP_layer_props_censored_remote(DP_LayerProps *lp);
+
+bool DP_layer_props_censored_local(DP_LayerProps *lp);
 
 bool DP_layer_props_isolated(DP_LayerProps *lp);
 
@@ -74,6 +76,8 @@ bool DP_layer_props_clip(DP_LayerProps *lp);
 bool DP_layer_props_alpha_lock(DP_LayerProps *lp);
 
 bool DP_layer_props_visible(DP_LayerProps *lp);
+
+bool DP_layer_props_censored_any(DP_LayerProps *lp);
 
 const char *DP_layer_props_title(DP_LayerProps *lp, size_t *out_length);
 
@@ -118,7 +122,9 @@ int DP_transient_layer_props_blend_mode(DP_TransientLayerProps *tlp);
 
 bool DP_transient_layer_props_hidden(DP_TransientLayerProps *tlp);
 
-bool DP_transient_layer_props_censored(DP_TransientLayerProps *tlp);
+bool DP_transient_layer_props_censored_remote(DP_TransientLayerProps *tlp);
+
+bool DP_transient_layer_props_censored_local(DP_TransientLayerProps *tlp);
 
 bool DP_transient_layer_props_isolated(DP_TransientLayerProps *tlp);
 
@@ -153,8 +159,11 @@ void DP_transient_layer_props_sketch_tint_set(DP_TransientLayerProps *tlp,
 void DP_transient_layer_props_blend_mode_set(DP_TransientLayerProps *tlp,
                                              int blend_mode);
 
-void DP_transient_layer_props_censored_set(DP_TransientLayerProps *tlp,
-                                           bool censored);
+void DP_transient_layer_props_censored_remote_set(DP_TransientLayerProps *tlp,
+                                                  bool censored_remote);
+
+void DP_transient_layer_props_censored_local_set(DP_TransientLayerProps *tlp,
+                                                 bool censored_local);
 
 void DP_transient_layer_props_hidden_set(DP_TransientLayerProps *tlp,
                                          bool hidden);

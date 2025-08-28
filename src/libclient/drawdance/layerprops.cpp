@@ -93,9 +93,19 @@ bool LayerProps::hidden() const
     return DP_layer_props_hidden(m_data);
 }
 
-bool LayerProps::censored() const
+bool LayerProps::censoredRemote() const
 {
-    return DP_layer_props_censored(m_data);
+    return DP_layer_props_censored_remote(m_data);
+}
+
+bool LayerProps::censoredLocal() const
+{
+    return DP_layer_props_censored_local(m_data);
+}
+
+bool LayerProps::censoredAny() const
+{
+    return DP_layer_props_censored_any(m_data);
 }
 
 bool LayerProps::isolated() const

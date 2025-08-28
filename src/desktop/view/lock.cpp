@@ -45,8 +45,14 @@ QString Lock::buildDescription() const
 		lines.append(tr("Layer is a group"));
 	} else if(hasReason(Reason::LayerLocked)) {
 		lines.append(tr("Layer is locked"));
-	} else if(hasReason(Reason::LayerCensored)) {
-		lines.append(tr("Layer is censored"));
+	} else if(hasReason(Reason::LayerCensoredRemote)) {
+		if(hasReason(Reason::LayerCensoredLocal)) {
+			lines.append(tr("Layer is censored and blocked"));
+		} else {
+			lines.append(tr("Layer is censored"));
+		}
+	} else if(hasReason(Reason::LayerCensoredLocal)) {
+		lines.append(tr("Layer is blocked"));
 	} else if(hasReason(Reason::LayerHidden)) {
 		lines.append(tr("Layer is hidden"));
 	} else if(hasReason(Reason::LayerHiddenInFrame)) {

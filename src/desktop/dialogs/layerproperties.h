@@ -49,6 +49,7 @@ signals:
 		const QColor &sketchTint);
 	void layerCommands(int count, const net::Message *msgs);
 	void visibilityChanged(int layerId, bool visible);
+	void censoredLocalChanged(int layerId, bool censored);
 	void sketchModeChanged(int layerId, int opacityPercent, const QColor &tint);
 
 protected:

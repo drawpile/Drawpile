@@ -430,7 +430,12 @@ static DP_TransientLayerProps *ora_make_layer_props(DP_XmlElement *element,
     DP_transient_layer_props_blend_mode_set(tlp, (int)blend_mode);
 
     if (ora_read_bool_attribute(element, DRAWPILE_NAMESPACE, "censored")) {
-        DP_transient_layer_props_censored_set(tlp, true);
+        DP_transient_layer_props_censored_remote_set(tlp, true);
+    }
+
+    if (ora_read_bool_attribute(element, DRAWPILE_NAMESPACE,
+                                "censored-local")) {
+        DP_transient_layer_props_censored_local_set(tlp, true);
     }
 
     float sketch_opacity;
@@ -691,8 +696,10 @@ static void ora_handle_stack_end(DP_ReadOraContext *c)
             base_tlp, DP_transient_layer_props_sketch_tint(rog->tlp));
         DP_transient_layer_props_blend_mode_set(
             base_tlp, DP_transient_layer_props_blend_mode(rog->tlp));
-        DP_transient_layer_props_censored_set(
-            base_tlp, DP_transient_layer_props_censored(rog->tlp));
+        DP_transient_layer_props_censored_remote_set(
+            base_tlp, DP_transient_layer_props_censored_remote(rog->tlp));
+        DP_transient_layer_props_censored_local_set(
+            base_tlp, DP_transient_layer_props_censored_local(rog->tlp));
         DP_transient_layer_props_hidden_set(
             base_tlp, DP_transient_layer_props_hidden(rog->tlp));
         if (rog->clip_bottom) {

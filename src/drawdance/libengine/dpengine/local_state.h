@@ -18,6 +18,7 @@ typedef struct DP_LocalLayerState {
     int layer_id;
     bool hidden;
     bool alpha_lock;
+    bool censored;
     uint16_t sketch_opacity;
     uint32_t sketch_tint;
 } DP_LocalLayerState;
@@ -95,5 +96,6 @@ DP_Message *DP_local_state_msg_layer_sketch_new(int layer_id, uint16_t opacity,
 DP_Message *DP_local_state_msg_layer_alpha_lock_new(int layer_id,
                                                     bool alpha_lock);
 
+DP_Message *DP_local_state_msg_layer_censored_new(int layer_id, bool censored);
 
 #endif

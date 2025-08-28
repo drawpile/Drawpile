@@ -971,7 +971,7 @@ static void reset_entry_layer_to_message(struct DP_ResetImageMessageContext *c,
                    DP_layer_id_to_protocol(rel->parent_id), rel->fill,
                    create_flags, title, title_length));
     }
-    uint8_t attr_flags = DP_flag_uint8(DP_layer_props_censored(lp),
+    uint8_t attr_flags = DP_flag_uint8(DP_layer_props_censored_remote(lp),
                                        DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR)
                        | DP_flag_uint8(group && DP_layer_props_isolated(lp),
                                        DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED)

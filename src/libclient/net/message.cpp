@@ -859,6 +859,12 @@ Message makeLocalChangeLayerAlphaLockMessage(int layerId, bool alphaLock)
 		DP_local_state_msg_layer_alpha_lock_new(layerId, alphaLock));
 }
 
+Message makeLocalChangeLayerCensoredMessage(int layerId, bool censored)
+{
+	return Message::noinc(
+		DP_local_state_msg_layer_censored_new(layerId, censored));
+}
+
 DP_Message *makeLocalMatchMessage(const Message &msg, bool disguiseAsPutImage)
 {
 	return DP_msg_local_match_make(msg.get(), disguiseAsPutImage);

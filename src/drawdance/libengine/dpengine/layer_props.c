@@ -34,7 +34,8 @@ struct DP_LayerProps {
     DP_Atomic refcount;
     const bool transient;
     const bool hidden;
-    const bool censored;
+    const bool censored_remote;
+    const bool censored_local;
     const bool isolated;
     const bool clip;
     const bool alpha_lock;
@@ -53,7 +54,8 @@ struct DP_TransientLayerProps {
     DP_Atomic refcount;
     bool transient;
     bool hidden;
-    bool censored;
+    bool censored_remote;
+    bool censored_local;
     bool isolated;
     bool clip;
     bool alpha_lock;
@@ -75,7 +77,8 @@ struct DP_LayerProps {
     DP_Atomic refcount;
     bool transient;
     bool hidden;
-    bool censored;
+    bool censored_remote;
+    bool censored_local;
     bool isolated;
     bool clip;
     bool alpha_lock;
@@ -196,11 +199,18 @@ bool DP_layer_props_hidden(DP_LayerProps *lp)
     return lp->hidden;
 }
 
-bool DP_layer_props_censored(DP_LayerProps *lp)
+bool DP_layer_props_censored_remote(DP_LayerProps *lp)
 {
     DP_ASSERT(lp);
     DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
-    return lp->censored;
+    return lp->censored_remote;
+}
+
+bool DP_layer_props_censored_local(DP_LayerProps *lp)
+{
+    DP_ASSERT(lp);
+    DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
+    return lp->censored_local;
 }
 
 bool DP_layer_props_isolated(DP_LayerProps *lp)
@@ -231,6 +241,13 @@ bool DP_layer_props_visible(DP_LayerProps *lp)
     return (lp->sketch_opacity > 0 || lp->opacity > 0) && !lp->hidden;
 }
 
+bool DP_layer_props_censored_any(DP_LayerProps *lp)
+{
+    DP_ASSERT(lp);
+    DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
+    return lp->censored_remote || lp->censored_local;
+}
+
 const char *DP_layer_props_title(DP_LayerProps *lp, size_t *out_length)
 {
     DP_ASSERT(lp);
@@ -251,7 +268,8 @@ bool DP_layer_props_differ(DP_LayerProps *lp, DP_LayerProps *prev_lp)
         && (lp->opacity != prev_lp->opacity
             || lp->blend_mode != prev_lp->blend_mode
             || lp->hidden != prev_lp->hidden
-            || lp->censored != prev_lp->censored
+            || DP_layer_props_censored_any(lp)
+                   != DP_layer_props_censored_any(prev_lp)
             || lp->isolated != prev_lp->isolated || lp->clip != prev_lp->clip
             || lp->sketch_opacity != prev_lp->sketch_opacity
             || lp->sketch_tint != prev_lp->sketch_tint);
@@ -265,7 +283,8 @@ static DP_TransientLayerProps *alloc_transient_layer_props(DP_LayerProps *lp)
         DP_ATOMIC_INIT(1),
         true,
         lp->hidden,
-        lp->censored,
+        lp->censored_remote,
+        lp->censored_local,
         lp->isolated,
         lp->clip,
         lp->alpha_lock,
@@ -329,6 +348,7 @@ DP_transient_layer_props_new_init_with_transient_children_noinc(
     *tlp = (DP_TransientLayerProps){
         DP_ATOMIC_INIT(1),
         true,
+        false,
         false,
         false,
         tlpl_or_null != NULL,
@@ -432,12 +452,20 @@ bool DP_transient_layer_props_hidden(DP_TransientLayerProps *tlp)
     return DP_layer_props_hidden((DP_LayerProps *)tlp);
 }
 
-bool DP_transient_layer_props_censored(DP_TransientLayerProps *tlp)
+bool DP_transient_layer_props_censored_remote(DP_TransientLayerProps *tlp)
 {
     DP_ASSERT(tlp);
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
     DP_ASSERT(tlp->transient);
-    return DP_layer_props_censored((DP_LayerProps *)tlp);
+    return DP_layer_props_censored_remote((DP_LayerProps *)tlp);
+}
+
+bool DP_transient_layer_props_censored_local(DP_TransientLayerProps *tlp)
+{
+    DP_ASSERT(tlp);
+    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
+    DP_ASSERT(tlp->transient);
+    return DP_layer_props_censored_local((DP_LayerProps *)tlp);
 }
 
 bool DP_transient_layer_props_isolated(DP_TransientLayerProps *tlp)
@@ -555,13 +583,22 @@ void DP_transient_layer_props_blend_mode_set(DP_TransientLayerProps *tlp,
     tlp->blend_mode = blend_mode;
 }
 
-void DP_transient_layer_props_censored_set(DP_TransientLayerProps *tlp,
-                                           bool censored)
+void DP_transient_layer_props_censored_remote_set(DP_TransientLayerProps *tlp,
+                                                  bool censored_remote)
 {
     DP_ASSERT(tlp);
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
     DP_ASSERT(tlp->transient);
-    tlp->censored = censored;
+    tlp->censored_remote = censored_remote;
+}
+
+void DP_transient_layer_props_censored_local_set(DP_TransientLayerProps *tlp,
+                                                 bool censored_local)
+{
+    DP_ASSERT(tlp);
+    DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
+    DP_ASSERT(tlp->transient);
+    tlp->censored_local = censored_local;
 }
 
 void DP_transient_layer_props_hidden_set(DP_TransientLayerProps *tlp,

@@ -1561,7 +1561,8 @@ static void set_local_layer_props_recursive(
         // state gives us hidden layers, we unhide them first. That may get
         // undone by the hidden layers processing that comes after this step.
         bool needs_show = DP_layer_props_hidden(lp);
-        bool needs_reveal = reveal_censored && DP_layer_props_censored(lp);
+        bool needs_reveal =
+            reveal_censored && DP_layer_props_censored_remote(lp);
         bool needs_unsketch = DP_layer_props_sketch_opacity(lp) != 0;
         if (needs_show || needs_reveal || needs_unsketch) {
             int index_count;
@@ -1573,7 +1574,7 @@ static void set_local_layer_props_recursive(
                 DP_transient_layer_props_hidden_set(tlp, false);
             }
             if (needs_reveal) {
-                DP_transient_layer_props_censored_set(tlp, false);
+                DP_transient_layer_props_censored_remote_set(tlp, false);
                 censored_layer_revealed(user, DP_layer_props_id(lp));
             }
             if (needs_unsketch) {
@@ -1606,6 +1607,7 @@ static void set_local_layer_states(DP_LocalState *ls,
                     DP_layer_routes_entry_transient_props(lre, tcs);
                 DP_transient_layer_props_hidden_set(tlp, lls->hidden);
                 DP_transient_layer_props_alpha_lock_set(tlp, lls->alpha_lock);
+                DP_transient_layer_props_censored_local_set(tlp, lls->censored);
                 DP_transient_layer_props_sketch_opacity_set(
                     tlp, lls->sketch_opacity);
                 DP_transient_layer_props_sketch_tint_set(tlp, lls->sketch_tint);

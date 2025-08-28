@@ -24,6 +24,12 @@ LayerAclMenu::LayerAclMenu(const LayerList::Actions &actions, QWidget *parent)
 		m_censored, &QAction::triggered, this,
 		&LayerAclMenu::layerCensoredChange);
 
+	m_censoredLocal = actions.layerCensorLocal;
+	addAction(m_censoredLocal);
+	connect(
+		m_censoredLocal, &QAction::triggered, this,
+		&LayerAclMenu::layerCensoredLocalChange);
+
 	addSection(tr("Locks:"));
 
 	m_lockAll = actions.layerLockAll;
@@ -136,6 +142,11 @@ void LayerAclMenu::setAcl(
 void LayerAclMenu::setCensored(bool censor)
 {
 	m_censored->setChecked(censor);
+}
+
+void LayerAclMenu::setCensoredLocal(bool censor)
+{
+	m_censoredLocal->setChecked(censor);
 }
 
 void LayerAclMenu::setAlphaLock(bool alphaLock)

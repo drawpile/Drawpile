@@ -34,7 +34,9 @@ public:
     uint16_t opacity() const;
     int blendMode() const;
     bool hidden() const;
-    bool censored() const;
+    bool censoredRemote() const;
+    bool censoredLocal() const;
+    bool censoredAny() const;
     bool isolated() const;
     bool clip() const;
     bool alphaLock() const;

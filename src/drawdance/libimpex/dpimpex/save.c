@@ -548,8 +548,12 @@ static void ora_write_layer_props_xml(DP_SaveOraContext *c, DP_Output *output,
         DP_OUTPUT_PRINT_LITERAL(output, " alpha-preserve=\"true\"");
     }
 
-    if (DP_layer_props_censored(lp)) {
+    if (DP_layer_props_censored_remote(lp)) {
         DP_OUTPUT_PRINT_LITERAL(output, " drawpile:censored=\"true\"");
+    }
+
+    if (DP_layer_props_censored_local(lp)) {
+        DP_OUTPUT_PRINT_LITERAL(output, " drawpile:censored-local=\"true\"");
     }
 
     uint16_t sketch_opacity = DP_layer_props_sketch_opacity(lp);
@@ -1110,7 +1114,8 @@ DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc,
 #if defined(_WIN32)
 #    define PREFERRED_PATH_SEPARATOR "\\"
 #    define POSSIBLE_PATH_SEPARATORS "\\/"
-#elif defined(__EMSCRIPTEN__) || defined(__APPLE__) || defined(__linux__) || defined(__Haiku__)
+#elif defined(__EMSCRIPTEN__) || defined(__APPLE__) || defined(__linux__) \
+    || defined(__Haiku__)
 #    define PREFERRED_PATH_SEPARATOR "/"
 #    define POSSIBLE_PATH_SEPARATORS "/"
 #else

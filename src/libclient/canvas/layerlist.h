@@ -50,7 +50,8 @@ struct LayerListItem {
 	bool hidden;
 
 	//! Layer contents are censored
-	bool censored;
+	bool censoredRemote;
+	bool censoredLocal;
 
 	//! Layer is actually censored, but was revealed anyway
 	bool revealed;
@@ -91,7 +92,8 @@ struct LayerListItem {
 	//! Get the layer element ID, without creator ID
 	int elementId() const;
 
-	bool actuallyCensored() const { return censored || revealed; }
+	bool censoredAny() const { return censoredRemote || censoredLocal; }
+	bool actuallyCensoredRemote() const { return censoredRemote || revealed; }
 
 	QString titleWithColor() const { return makeTitleWithColor(title, color); }
 
@@ -131,6 +133,8 @@ public:
 		IsClipRole,
 		IsAtBottomRole,
 		IsAlphaLockedRole,
+		IsCensoredRemoteInTreeRole,
+		IsCensoredLocalInTreeRole,
 	};
 
 	enum CheckState {
