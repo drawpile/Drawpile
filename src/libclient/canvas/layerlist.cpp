@@ -193,8 +193,19 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 		return item.color;
 	case IsClipRole:
 		return item.clip;
-	case IsAtBottomRole:
-		return item.relIndex == rowCount(index.parent()) - 1;
+	case IsUnclippableRole: {
+		QModelIndex below = index.siblingAtRow(index.row() + 1);
+		while(below.isValid()) {
+			const LayerListItem &itemBelow = m_items.at(below.internalId());
+			if(itemBelow.group && !itemBelow.isolated) {
+				return true; // Can't clip to a pass-through group.
+			} else if(!itemBelow.clip) {
+				return false; // This is a valid item to clip to.
+			}
+			below = below.siblingAtRow(below.row() + 1);
+		}
+		return true; // Reached the bottom, nothing to clip to.
+	}
 	case IsAlphaLockedRole:
 		return !item.group && item.alphaLock;
 	}

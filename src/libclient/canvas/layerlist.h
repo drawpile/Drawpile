@@ -131,7 +131,7 @@ public:
 		OwnerIdRole,
 		ColorRole,
 		IsClipRole,
-		IsAtBottomRole,
+		IsUnclippableRole,
 		IsAlphaLockedRole,
 		IsCensoredRemoteInTreeRole,
 		IsCensoredLocalInTreeRole,

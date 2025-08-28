@@ -469,15 +469,22 @@ bool DP_view_mode_context_excludes_everything(const DP_ViewModeContext *vmc)
     return vmc->internal_type == TYPE_NOTHING;
 }
 
-static int count_clipping_layers(DP_LayerPropsList *lpl, int i, int count)
+static int count_clipping_layers(DP_LayerProps *lp, DP_LayerPropsList *lpl,
+                                 int i, int count)
 {
-    int clip_count = 0;
-    for (int j = i + 1;
-         j < count && DP_layer_props_clip(DP_layer_props_list_at_noinc(lpl, j));
-         ++j) {
-        ++clip_count;
+    if (DP_layer_props_children_noinc(lp) && !DP_layer_props_isolated(lp)) {
+        return 0; // Can't clip through a pass-through group.
     }
-    return clip_count;
+    else {
+        int clip_count = 0;
+        for (int j = i + 1;
+             j < count
+             && DP_layer_props_clip(DP_layer_props_list_at_noinc(lpl, j));
+             ++j) {
+            ++clip_count;
+        }
+        return clip_count;
+    }
 }
 
 DP_ViewModeContext DP_view_mode_context_root_at(
@@ -533,7 +540,7 @@ DP_ViewModeContext DP_view_mode_context_root_at(
         *out_parent_opacity = DP_BIT15;
         *out_parent_tint = (DP_UPixel8){0};
         *out_clip_count = index == 0 || !DP_layer_props_clip(lp)
-                            ? count_clipping_layers(lpl, index, vmcr->count)
+                            ? count_clipping_layers(lp, lpl, index, vmcr->count)
                             : 0;
         DP_ViewModeContext vmc;
         vmc.internal_type = internal_type;

@@ -59,7 +59,7 @@ void LayerListDelegate::paint(
 			originalRect.height() - 1);
 		painter->setPen(Qt::NoPen);
 
-		if(index.data(canvas::LayerListModel::IsAtBottomRole).toBool()) {
+		if(index.data(canvas::LayerListModel::IsUnclippableRole).toBool()) {
 			QBrush brush = opt.palette.text();
 			brush.setStyle(Qt::Dense5Pattern);
 			painter->setBrush(brush);

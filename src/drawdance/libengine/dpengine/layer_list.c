@@ -250,6 +250,8 @@ static void diff_layers(DP_LayerList *ll, DP_LayerPropsList *lpl,
 {
     int clip = 0;
     int prev_clip = 0;
+    bool on_pass_through = false;
+    bool prev_on_pass_through = false;
     for (int i = 0; i < count; ++i) {
         DP_LayerListEntry *lle = &ll->elements[i];
         bool is_group = lle->is_group;
@@ -259,14 +261,14 @@ static void diff_layers(DP_LayerList *ll, DP_LayerPropsList *lpl,
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
         DP_LayerProps *prev_lp = DP_layer_props_list_at_noinc(prev_lpl, i);
         if (i != 0) {
-            if (DP_layer_props_clip(lp)) {
+            if (!on_pass_through && DP_layer_props_clip(lp)) {
                 ++clip;
             }
             else {
                 clip = 0;
             }
 
-            if (DP_layer_props_clip(prev_lp)) {
+            if (!prev_on_pass_through && DP_layer_props_clip(prev_lp)) {
                 ++prev_clip;
             }
             else {
@@ -294,6 +296,10 @@ static void diff_layers(DP_LayerList *ll, DP_LayerPropsList *lpl,
             DP_layer_content_diff_mark(lle->content, diff);
             DP_layer_group_diff_mark(prev_lle->group, diff);
         }
+
+        on_pass_through = clip == 0 && is_group && !DP_layer_props_isolated(lp);
+        prev_on_pass_through = prev_clip == 0 && prev_is_group
+                            && !DP_layer_props_isolated(prev_lp);
     }
 }
 
@@ -399,15 +405,22 @@ DP_TransientLayerList *DP_layer_list_resize(DP_LayerList *ll,
     return tll;
 }
 
-static int count_clipping_layers(DP_LayerPropsList *lpl, int i, int count)
+static int count_clipping_layers(DP_LayerProps *lp, DP_LayerPropsList *lpl,
+                                 int i, int count)
 {
-    int clip_count = 0;
-    for (int j = i + 1;
-         j < count && DP_layer_props_clip(DP_layer_props_list_at_noinc(lpl, j));
-         ++j) {
-        ++clip_count;
+    if (DP_layer_props_children_noinc(lp) && !DP_layer_props_isolated(lp)) {
+        return 0; // Can't clip through a pass-through group.
     }
-    return clip_count;
+    else {
+        int clip_count = 0;
+        for (int j = i + 1;
+             j < count
+             && DP_layer_props_clip(DP_layer_props_list_at_noinc(lpl, j));
+             ++j) {
+            ++clip_count;
+        }
+        return clip_count;
+    }
 }
 
 static void layer_list_entry_merge_to_flat_image(
@@ -504,7 +517,7 @@ void DP_layer_list_merge_to_flat_image(DP_LayerList *ll, DP_LayerPropsList *lpl,
     int count = ll->count;
     for (int i = 0; i < count; ++i) {
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        int clip_count = count_clipping_layers(lpl, i, count);
+        int clip_count = count_clipping_layers(lp, lpl, i, count);
         if (DP_layer_props_visible(lp)) {
             if (clip_count == 0) {
                 layer_list_entry_merge_to_flat_image(
@@ -645,7 +658,7 @@ DP_TransientTile *DP_layer_list_flatten_tile_to(
     for (int i = 0; i < count; ++i) {
         DP_LayerListEntry *lle = &ll->elements[i];
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        int clip_count = count_clipping_layers(lpl, i, count);
+        int clip_count = count_clipping_layers(lp, lpl, i, count);
         if (clip_count == 0) {
             tt = DP_layer_list_entry_flatten_tile_to(
                 lle, lp, tile_index, tt, parent_opacity, parent_tint,
@@ -764,7 +777,7 @@ void DP_layer_list_flatten_pixel(DP_LayerList *ll, DP_LayerPropsList *lpl,
     for (int i = 0; i < count; ++i) {
         DP_LayerListEntry *lle = &ll->elements[i];
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        int clip_count = count_clipping_layers(lpl, i, count);
+        int clip_count = count_clipping_layers(lp, lpl, i, count);
         if (clip_count == 0) {
             DP_layer_list_entry_flatten_pixel(lle, lp, x, y, pixel,
                                               parent_opacity, parent_tint,
