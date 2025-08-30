@@ -46,6 +46,11 @@ private:
 
 bool androidHasStylusInput();
 
+#ifdef DRAWPILE_USE_CONNECT_SERVICE
+bool createConnectionNotificationChannel();
+bool shoulShowPostNotificationsRationale();
+#endif
+
 void startConnectService();
 void stopConnectService();
 

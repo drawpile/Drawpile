@@ -30,10 +30,59 @@ Notifications::Notifications(
 void Notifications::setUp(
 	desktop::settings::Settings &settings, QVBoxLayout *layout)
 {
+#if defined(Q_OS_ANDROID) && defined(DRAWPILE_USE_CONNECT_SERVICE)
+	initAndroid(settings, utils::addFormSection(layout));
+	utils::addFormSeparator(layout);
+#endif
 	initGrid(settings, layout);
 	utils::addFormSeparator(layout);
 	initOptions(settings, utils::addFormSection(layout));
 }
+
+#if defined(Q_OS_ANDROID) && defined(DRAWPILE_USE_CONNECT_SERVICE)
+void Notifications::initAndroid(
+	desktop::settings::Settings &settings, QFormLayout *form)
+{
+	QCheckBox *connectionNotification =
+		new QCheckBox(tr("Display notification while connected to a session"));
+	form->addRow(tr("Network:"), connectionNotification);
+	connectionNotification->setChecked(settings.connectionNotification());
+	connect(
+		connectionNotification, &QCheckBox::clicked, this,
+		[this, connectionNotification, &settings](bool checked) {
+			if(checked) {
+				connectionNotification->setEnabled(false);
+
+				bool shoudlShowRationale =
+					utils::shoulShowPostNotificationsRationale();
+				qDebug("Should show rationale %d", int(shoudlShowRationale));
+
+				QMessageBox *box = utils::showQuestion(
+					this, tr("Notification"),
+					tr("Do you want to grant Drawpile permission to show "
+					   "you a connection notification?"));
+				connect(
+					box, &QMessageBox::finished, this,
+					[connectionNotification, &settings](int result) {
+						if(result == int(QMessageBox::Yes)) {
+							if(!utils::createConnectionNotificationChannel()) {
+								qWarning(
+									"Failed to create connection notification "
+									"channel");
+							}
+							settings.setConnectionNotification(true);
+							connectionNotification->setChecked(true);
+						} else {
+							connectionNotification->setChecked(false);
+						}
+						connectionNotification->setEnabled(true);
+					});
+			} else {
+				settings.setConnectionNotification(false);
+			}
+		});
+}
+#endif
 
 void Notifications::initGrid(
 	desktop::settings::Settings &settings, QVBoxLayout *layout)

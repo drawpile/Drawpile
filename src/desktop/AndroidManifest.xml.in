@@ -21,6 +21,11 @@
     <!-- Foreground service isn't working yet, so turn this off for now. -->
     <!-- FOREGROUND_SERVICE is used to keep connected in the background. -->
     <!-- <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> -->
+    <!-- POST_NOTIFICATIONS is used to show a persistent notification while
+         connected to a session. This is a setting explicitly turned on by the
+         user if they don't want the notification hidden away in in the
+         "background processes" section. -->
+    <!-- <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> -->
     <!-- %%INSERT_FEATURES -->
     <supports-screens
         android:anyDensity="true"

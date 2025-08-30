@@ -198,6 +198,43 @@ bool androidHasStylusInput()
 	return stylusFound;
 }
 
+#ifdef DRAWPILE_USE_CONNECT_SERVICE
+bool createConnectionNotificationChannel()
+{
+	QJniEnvironment env;
+	QJniObject activity = QJniObject::callStaticObjectMethod(
+		"org/qtproject/qt5/android/QtNative", "activity",
+		"()Landroid/app/Activity;");
+	if(clearException(env) || !checkValid("activity", activity)) {
+		return false;
+	}
+
+	jboolean created = activity.callMethod<jboolean>(
+		"createConnectionNotificationChannel", "()Z");
+	if(clearException(env)) {
+		return false;
+	}
+
+	activity.callMethod<void>("showTestConnectionNotification", "()V");
+	if(clearException(env)) {
+		return false;
+	}
+
+	return created != 0;
+}
+
+bool shoulShowPostNotificationsRationale()
+{
+	QString permission =
+		QStringLiteral("android.permission.POST_NOTIFICATIONS");
+#	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#		error "shoulShowPostNotificationsRationale not implemented for Qt6"
+#	else
+	return QtAndroid::shouldShowRequestPermissionRationale(permission);
+#	endif
+}
+#endif
+
 void startConnectService()
 {
 	QJniEnvironment env;

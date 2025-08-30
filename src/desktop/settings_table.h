@@ -142,6 +142,9 @@ SETTING(colorWheelShape           , ColorWheelShape           , "settings/colorw
 SETTING(colorWheelSpace           , ColorWheelSpace           , "settings/colorwheel/space"             , color_widgets::ColorWheel::ColorSpaceEnum::ColorHSV)
 SETTING(compactChat               , CompactChat               , "history/compactchat"                   , false)
 SETTING(confirmLayerDelete        , ConfirmLayerDelete        , "settings/confirmlayerdelete"           , false)
+#if defined(Q_OS_ANDROID) && defined(DRAWPILE_USE_CONNECT_SERVICE)
+SETTING(connectionNotification    , ConnectionNotification    , "settings/android/connectionnotif"      , false)
+#endif
 SETTING_GETSET(debounceDelayMs    , DebounceDelayMs           , "settings/debouncedelayms"              , DEBOUNCE_DELAY_MS_DEFAULT
 	, &debounceDelayMs::get, &debounceDelayMs::set)
 SETTING(donationLinksEnabled      , DonationLinksEnabled      , "settings/donationlinksenabled"         , true)
