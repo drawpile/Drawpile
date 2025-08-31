@@ -2818,10 +2818,10 @@ cfs_context_dispose(DP_ProjectCanvasFromSnapshotContext *c,
 {
     DP_PERF_BEGIN(fn, "load:dispose");
     if (c->worker) {
+        int thread_count = DP_worker_thread_count(c->worker);
         DP_PERF_BEGIN(join, "load:dispose:join");
         DP_worker_free_join(c->worker);
         DP_PERF_END(join);
-        int thread_count = DP_worker_thread_count(c->worker);
         for (int i = 0; i < thread_count; ++i) {
             DP_decompress_zstd_free(&c->zstd_contexts[i]);
             DP_free(c->split_buffers[i]);
