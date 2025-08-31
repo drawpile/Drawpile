@@ -556,13 +556,14 @@ void ClassicBrush::dynamicToJson(
 
 
 MyPaintBrush::MyPaintBrush()
-	: m_brush(
-		  {{0.0f, 0.0f, 0.0f, 1.0f},
-		   DP_PAINT_MODE_DIRECT,
-		   DP_BLEND_MODE_NORMAL,
-		   DP_BLEND_MODE_ERASE,
-		   false,
-		   false})
+	: m_brush({
+		  {0.0f, 0.0f, 0.0f, 1.0f},
+		  DP_PAINT_MODE_DIRECT,
+		  DP_BLEND_MODE_NORMAL,
+		  DP_BLEND_MODE_ERASE,
+		  false,
+		  false,
+	  })
 	, m_settings(nullptr)
 	, m_stabilizationMode(Stabilizer)
 	, m_stabilizerSampleCount(0)
@@ -1018,10 +1019,11 @@ QJsonObject MyPaintBrush::mappingToJson() const
 				if(cps.n) {
 					QJsonArray points;
 					for(int k = 0; k < cps.n; ++k) {
-						points.append(QJsonArray{
-							cps.xvalues[k],
-							cps.yvalues[k],
-						});
+						points.append(
+							QJsonArray{
+								cps.xvalues[k],
+								cps.yvalues[k],
+							});
 					}
 					inputs[inputKey] = points;
 				}
@@ -1538,8 +1540,9 @@ ActiveBrush::fromJson(const QJsonObject &json, bool includeSlotProperties)
 		brush.setActiveType(MYPAINT);
 		brush.setMyPaint(MyPaintBrush::fromJson(json));
 	} else {
-		qWarning("ActiveBrush::fromJson: type is neither dp-active, dp-classic "
-				 "nor dp-mypaint!");
+		qWarning(
+			"ActiveBrush::fromJson: type is neither dp-active, dp-classic "
+			"nor dp-mypaint!");
 	}
 
 	if(includeSlotProperties) {
