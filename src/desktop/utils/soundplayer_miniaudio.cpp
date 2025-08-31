@@ -335,6 +335,7 @@ SoundPlayer::SoundPlayer()
 SoundPlayer::~SoundPlayer()
 {
 	d->dispose();
+	delete d;
 }
 
 void SoundPlayer::playSound(const QString &path, int volume)
