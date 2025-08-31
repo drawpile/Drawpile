@@ -25,6 +25,14 @@ QRectF NoticeItem::boundingRect() const
 	return m_bounds;
 }
 
+void NoticeItem::setAlignment(Qt::Alignment alignment)
+{
+	if(alignment != m_alignment) {
+		m_alignment = alignment;
+		refresh();
+	}
+}
+
 bool NoticeItem::setText(const QString &text)
 {
 	if(text != m_text) {
@@ -92,7 +100,7 @@ void NoticeItem::paint(
 	if(m_opacity < 1.0) {
 		painter->setOpacity(1.0);
 	}
-	painter->drawText(m_textBounds, Qt::AlignLeft | Qt::AlignVCenter, m_text);
+	painter->drawText(m_textBounds, m_alignment, m_text);
 }
 
 void NoticeItem::updateBounds()

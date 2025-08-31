@@ -262,6 +262,7 @@ void CanvasScene::showPopupNotice(const QString &text)
 			m_popupNotice->setText(text);
 		} else {
 			m_popupNotice = new NoticeItem(text, POPUP_PERSIST);
+			m_popupNotice->setAlignment(Qt::AlignCenter);
 			addItem(m_popupNotice);
 		}
 		setPopupNoticePosition();

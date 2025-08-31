@@ -16,6 +16,8 @@ public:
 
 	QRectF boundingRect() const override;
 
+	void setAlignment(Qt::Alignment alignment);
+
 	bool setText(const QString &text);
 
 	qreal persist() const { return m_persist; }
@@ -40,6 +42,7 @@ private:
 	QString m_text;
 	qreal m_persist;
 	qreal m_opacity = 1.0;
+	Qt::Alignment m_alignment = Qt::AlignLeft | Qt::AlignVCenter;
 };
 
 }
