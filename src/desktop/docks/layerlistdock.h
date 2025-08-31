@@ -90,12 +90,6 @@ public:
 	//! These actions are shown in a menu outside this dock
 	void setLayerEditActions(const Actions &actions);
 
-	/**
-	 * Is the currently selected layer locked for editing?
-	 *
-	 * This may be because it is actually locked or because it is hidden or a
-	 * non-editable (group) layer.
-	 */
 	QFlags<view::Lock::Reason> currentLayerLock() const;
 
 	int currentId() const { return m_currentId; }
