@@ -26,6 +26,8 @@ public:
 
     ~LayerGroup();
 
+    DP_LayerGroup *get() const;
+
     bool isNull() const;
 
     QImage toImage(const LayerProps &layerProps, const QRect &rect) const;

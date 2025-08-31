@@ -308,6 +308,10 @@ struct BrushSettingsDialog::Private {
 	KisSliderSpinBox *stabilizerSpinner;
 	KisSliderSpinBox *smoothingSpinner;
 	QLabel *stabilizerExplanationLabel;
+	QCheckBox *antiOverflowBox;
+	QLabel *antiOverflowExplanationLabel;
+	KisSliderSpinBox *antiOverflowToleranceSpinner;
+	KisSliderSpinBox *antiOverflowExpandSpinner;
 	KisSliderSpinBox *classicSizeSpinner;
 	Dynamics classicSizeDynamics;
 	KisSliderSpinBox *classicSizeMinSpinner;
@@ -335,6 +339,7 @@ struct BrushSettingsDialog::Private {
 	BlendModeManager *blendModeManager;
 	int presetPageIndex;
 	int generalPageIndex;
+	int antiOverflowPageIndex;
 	int classicSizePageIndex;
 	int classicOpacityPageIndex;
 	int classicHardnessPageIndex;
@@ -456,6 +461,7 @@ void BrushSettingsDialog::setCompatibilityMode(bool compatibilityMode)
 		d->compatibilityMode = compatibilityMode;
 		d->paintModeIndirectWash->setEnabled(!compatibilityMode);
 		d->paintModeIndirectNormal->setEnabled(!compatibilityMode);
+		updateAntiOverflowExplanationText();
 		updateUiFromActiveBrush(d->brush);
 	}
 }
@@ -480,6 +486,9 @@ void BrushSettingsDialog::updateUiFromActiveBrush(
 			tr("Brush"), tr("Brush metadata settings."), d->presetPageIndex);
 		addCategory(
 			tr("General"), tr("Core brush settings."), d->generalPageIndex);
+		addCategory(
+			tr("Anti-overflow"), tr("Anti-overflow fill settings."),
+			d->antiOverflowPageIndex);
 		setComboBoxIndexByData(d->brushTypeCombo, int(shape));
 	}
 
@@ -505,10 +514,25 @@ void BrushSettingsDialog::updateUiFromActiveBrush(
 	if(shapeChanged) {
 		if(prevStackIndex == d->presetPageIndex) {
 			showPresetPage();
+		} else if(prevStackIndex == d->antiOverflowPageIndex) {
+			d->categoryWidget->setCurrentRow(2);
+			d->stackedWidget->setCurrentIndex(d->antiOverflowPageIndex);
 		} else {
 			showGeneralPage();
 		}
 	}
+
+	const DP_AntiOverflow &antiOverflow = brush.constAntiOverflow();
+	bool antiOverflowEnabled = antiOverflow.enabled && !d->compatibilityMode;
+	d->antiOverflowBox->setEnabled(!d->compatibilityMode);
+	d->antiOverflowBox->setVisible(!d->compatibilityMode);
+	d->antiOverflowBox->setChecked(antiOverflowEnabled);
+	d->antiOverflowToleranceSpinner->setEnabled(antiOverflowEnabled);
+	d->antiOverflowToleranceSpinner->setVisible(antiOverflowEnabled);
+	d->antiOverflowToleranceSpinner->setValue(antiOverflow.tolerance);
+	d->antiOverflowExpandSpinner->setEnabled(antiOverflowEnabled);
+	d->antiOverflowExpandSpinner->setVisible(antiOverflowEnabled);
+	d->antiOverflowExpandSpinner->setValue(antiOverflow.expand);
 
 	brushes::StabilizationMode stabilizationMode = brush.stabilizationMode();
 	setComboBoxIndexByData(d->stabilizationModeCombo, int(stabilizationMode));
@@ -577,6 +601,8 @@ void BrushSettingsDialog::buildDialogUi()
 
 	d->presetPageIndex = d->stackedWidget->addWidget(buildPresetPageUi());
 	d->generalPageIndex = d->stackedWidget->addWidget(buildGeneralPageUi());
+	d->antiOverflowPageIndex =
+		d->stackedWidget->addWidget(buildAntiOverflowPageUi());
 	d->classicSizePageIndex =
 		d->stackedWidget->addWidget(buildClassicSizePageUi());
 	d->classicOpacityPageIndex =
@@ -842,6 +868,67 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 				emitChange();
 			}
 		});
+
+	return scroll;
+}
+
+QWidget *BrushSettingsDialog::buildAntiOverflowPageUi()
+{
+	QScrollArea *scroll = new QScrollArea(this);
+	QWidget *widget = new QWidget(scroll);
+	scroll->setWidget(widget);
+	scroll->setWidgetResizable(true);
+	utils::KineticScroller *kineticScroller =
+		utils::bindKineticScrolling(scroll);
+
+	QFormLayout *layout = new QFormLayout;
+	widget->setLayout(layout);
+
+	d->antiOverflowBox = new QCheckBox(tr("Enable anti-overflow"));
+	d->antiOverflowBox->setIcon(QIcon::fromTheme("drawpile_antioverflow"));
+	layout->addRow(d->antiOverflowBox);
+	connect(
+		d->antiOverflowBox, &QCheckBox::clicked, this, [this](bool checked) {
+			d->brush.antiOverflow().enabled = checked;
+			emitChange();
+		});
+
+	d->antiOverflowExplanationLabel = new QLabel;
+	d->antiOverflowExplanationLabel->setTextFormat(Qt::PlainText);
+	d->antiOverflowExplanationLabel->setWordWrap(true);
+	updateAntiOverflowExplanationText();
+	layout->addRow(d->antiOverflowExplanationLabel);
+
+	d->antiOverflowToleranceSpinner = new KisSliderSpinBox;
+	layout->addRow(d->antiOverflowToleranceSpinner);
+	d->antiOverflowToleranceSpinner->setRange(0, 255);
+	d->antiOverflowToleranceSpinner->setPrefix(tr("Tolerance: "));
+	d->antiOverflowToleranceSpinner->setBlockUpdateSignalOnDrag(true);
+	kineticScroller->disableKineticScrollingOnWidget(
+		d->antiOverflowToleranceSpinner);
+	connect(
+		d->antiOverflowToleranceSpinner,
+		QOverload<int>::of(&QSpinBox::valueChanged),
+		makeBrushChangeCallbackArg<int>([this](int value) {
+			d->brush.antiOverflow().tolerance = value;
+			emitChange();
+		}));
+
+	d->antiOverflowExpandSpinner = new KisSliderSpinBox;
+	layout->addRow(d->antiOverflowExpandSpinner);
+	d->antiOverflowExpandSpinner->setRange(0, DP_ANTI_OVERFLOW_EXPAND_MAX);
+	d->antiOverflowExpandSpinner->setPrefix(tr("Expand: "));
+	d->antiOverflowExpandSpinner->setSuffix(tr("px"));
+	d->antiOverflowExpandSpinner->setBlockUpdateSignalOnDrag(true);
+	kineticScroller->disableKineticScrollingOnWidget(
+		d->antiOverflowExpandSpinner);
+	connect(
+		d->antiOverflowExpandSpinner,
+		QOverload<int>::of(&QSpinBox::valueChanged),
+		makeBrushChangeCallbackArg<int>([this](int value) {
+			d->brush.antiOverflow().expand = value;
+			emitChange();
+		}));
 
 	return scroll;
 }
@@ -1765,6 +1852,17 @@ void BrushSettingsDialog::updateStabilizerExplanationText()
 			"Synchronizing stabilization settings with brushes is disabled.");
 	}
 	d->stabilizerExplanationLabel->setText(text);
+}
+
+void BrushSettingsDialog::updateAntiOverflowExplanationText()
+{
+	d->antiOverflowExplanationLabel->setText(
+		d->compatibilityMode
+			? tr("The session you're in is hosted with an older version of "
+				 "Drawpile, anti-overflow is unavailable.")
+			: tr("Anti-overflow makes brush strokes stay inside of lines "
+				 "automatically. Set your lines layer as the fill source "
+				 "and then draw on another layer."));
 }
 
 void BrushSettingsDialog::emitChange()

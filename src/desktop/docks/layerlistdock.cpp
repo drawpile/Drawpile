@@ -2028,6 +2028,31 @@ QFlags<view::Lock::Reason> LayerList::currentLayerLock() const
 	return reasons;
 }
 
+QFlags<view::Lock::Reason> LayerList::currentFillSourceLock() const
+{
+	using Reason = view::Lock::Reason;
+	if(m_canvas) {
+		const canvas::LayerListModel *layerlist = m_canvas->layerlist();
+
+		int fillSourceLayerId = layerlist->fillSourceLayerId();
+		if(fillSourceLayerId <= 0) {
+			return Reason::NoFillSource;
+		}
+
+		QModelIndex fillSourceIndex = layerlist->layerIndex(fillSourceLayerId);
+		if(!fillSourceIndex.isValid()) {
+			return Reason::NoFillSource;
+		}
+
+		QModelIndex currentIndex = currentSelection();
+		if(currentIndex.isValid() &&
+		   layerlist->isInSameTree(fillSourceIndex, currentIndex)) {
+			return Reason::OverlappingFillSource;
+		}
+	}
+	return Reason::None;
+}
+
 bool LayerList::isExpanded(const QModelIndex &index) const
 {
 	return m_view->isExpanded(index);

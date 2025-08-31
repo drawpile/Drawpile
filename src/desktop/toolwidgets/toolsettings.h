@@ -173,6 +173,7 @@ public:
 	virtual bool affectsCanvas() = 0;
 	virtual bool affectsLayer() = 0;
 	virtual bool requiresSelection() { return false; }
+	virtual bool requiresFillSource() { return false; }
 	virtual bool isLocked() { return false; }
 
 	//! Toggle tool eraser mode (if it has one)

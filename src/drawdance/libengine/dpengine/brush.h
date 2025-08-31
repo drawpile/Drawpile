@@ -30,6 +30,7 @@
 #define DP_BRUSH_SIZE_MAX_COMPAT           255
 #define DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT 256
 #define DP_MYPAINT_CONTROL_POINTS_COUNT    64
+#define DP_ANTI_OVERFLOW_EXPAND_MAX        20
 
 
 typedef enum DP_BrushShape {
@@ -39,6 +40,12 @@ typedef enum DP_BrushShape {
     DP_BRUSH_SHAPE_MYPAINT,
     DP_BRUSH_SHAPE_COUNT,
 } DP_BrushShape;
+
+typedef struct DP_AntiOverflow {
+    bool enabled;
+    int tolerance;
+    int expand;
+} DP_AntiOverflow;
 
 typedef struct DP_ClassicBrushCurve {
     float values[DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT];
@@ -86,6 +93,7 @@ typedef struct DP_ClassicBrush {
     DP_ClassicBrushDynamic opacity_dynamic;
     DP_ClassicBrushDynamic smudge_dynamic;
     DP_ClassicBrushDynamic jitter_dynamic;
+    DP_AntiOverflow anti_overflow;
 } DP_ClassicBrush;
 
 
@@ -111,8 +119,12 @@ typedef struct DP_MyPaintBrush {
     DP_BlendMode erase_mode;
     bool erase;
     bool pixel_perfect;
+    DP_AntiOverflow anti_overflow;
 } DP_MyPaintBrush;
 
+DP_AntiOverflow DP_anti_overflow_null(void);
+
+bool DP_anti_overflow_equal(const DP_AntiOverflow *a, DP_AntiOverflow *b);
 
 DP_INLINE float DP_brush_size_maxf(bool compatibility_mode)
 {
@@ -185,5 +197,7 @@ bool DP_mypaint_brush_equal_preset(const DP_MyPaintBrush *a,
                                    bool in_eraser_slot);
 
 DP_BlendMode DP_mypaint_brush_blend_mode(const DP_MyPaintBrush *mb);
+
+float DP_mypaint_brush_aspect_ratio_from_uint8(uint8_t aspect_ratio);
 
 #endif

@@ -3,6 +3,7 @@
 #include "brush.h"
 #include "canvas_state.h"
 #include "compress.h"
+#include "flood_fill.h"
 #include "layer_content.h"
 #include "layer_routes.h"
 #include "selection.h"
@@ -56,6 +57,12 @@ typedef enum DP_BrushEngineActiveType {
     DP_BRUSH_ENGINE_ACTIVE_MYPAINT,
 } DP_BrushEngineActiveType;
 
+typedef enum DP_BrushEngineFloodTarget {
+    DP_BRUSH_ENGINE_FLOOD_TARGET_NONE,
+    DP_BRUSH_ENGINE_FLOOD_TARGET_LAYER,
+    DP_BRUSH_ENGINE_FLOOD_TARGET_SELECTION,
+} DP_BrushEngineFloodTarget;
+
 typedef struct DP_BrushEnginePixelDab {
     int8_t x;
     int8_t y;
@@ -95,6 +102,16 @@ typedef struct DP_PixelDabParams {
     int32_t y;
     uint32_t color;
 } DP_PixelDabParams;
+
+typedef struct DP_ClassicDabParams {
+    uint8_t flags;
+    uint8_t opacity;
+    uint8_t hardness;
+    int32_t x;
+    int32_t y;
+    uint32_t size;
+    uint32_t color;
+} DP_ClassicDabParams;
 
 typedef struct DP_MyPaintDabParams {
     uint8_t flags;
@@ -183,6 +200,23 @@ struct DP_BrushEngine {
         bool *map;
         ZSTD_CCtx *zstd_cctx;
     } mask;
+    struct {
+        DP_LayerContent *lc;
+        DP_TransientLayerContent *state;
+        double tolerance;
+        int expand;
+        DP_BrushEngineFloodTarget target;
+        struct {
+            int x;
+            int y;
+            int shape;
+            int size;
+            int size_available;
+            uint8_t aspect_ratio;
+            uint8_t angle;
+            unsigned char *buffer;
+        } mask;
+    } flood;
     union {        // Active type decides which of these is relevant.
         int dummy; // Make this initializable without the compiler whining.
         struct {
@@ -1059,20 +1093,38 @@ static void set_mask(size_t size, unsigned char *out, void *user)
     }
 }
 
-static void push_selection_sync(DP_BrushEngine *be, int col, int row,
-                                size_t mask_size, unsigned char *mask)
+static void push_selection_sync(DP_BrushEngine *be, uint8_t remote_selection_id,
+                                int col, int row, size_t mask_size,
+                                unsigned char *mask)
+{
+    unsigned int context_id = be->stroke.context_id;
+    be->push_message(be->user,
+                     DP_msg_sync_selection_tile_new(
+                         context_id, DP_uint_to_uint8(context_id),
+                         remote_selection_id, DP_int_to_uint16(col),
+                         DP_int_to_uint16(row), set_mask, mask_size, mask));
+}
+
+static void push_selection_sync_clear(DP_BrushEngine *be,
+                                      uint8_t remote_selection_id)
+{
+    push_selection_sync(be, remote_selection_id, 0xffff, 0xffff, 0, NULL);
+}
+
+static void push_mask_selection_sync(DP_BrushEngine *be, int col, int row,
+                                     size_t mask_size, unsigned char *mask)
 {
     int selection_id = be->mask.current_selection_id;
     if (selection_id > 0) {
-        unsigned int context_id = be->stroke.context_id;
-        be->push_message(be->user,
-                         DP_msg_sync_selection_tile_new(
-                             context_id, DP_uint_to_uint8(context_id),
-                             DP_int_to_uint8(selection_id - 1
-                                             + DP_SELECTION_ID_FIRST_REMOTE),
-                             DP_int_to_uint16(col), DP_int_to_uint16(row),
-                             set_mask, mask_size, mask));
+        uint8_t remote_selection_id =
+            DP_int_to_uint8(selection_id - 1 + DP_SELECTION_ID_FIRST_REMOTE);
+        push_selection_sync(be, remote_selection_id, col, row, mask_size, mask);
     }
+}
+
+static void push_mask_selection_sync_clear(DP_BrushEngine *be)
+{
+    push_mask_selection_sync(be, 0xffff, 0xffff, 0, NULL);
 }
 
 static bool sync_mask_state(DP_BrushEngine *be, DP_LayerContent *mask_lc,
@@ -1103,7 +1155,7 @@ static bool sync_mask_state(DP_BrushEngine *be, DP_LayerContent *mask_lc,
                 mask = NULL;
             }
 
-            push_selection_sync(be, ti.col, ti.row, mask_size, mask);
+            push_mask_selection_sync(be, ti.col, ti.row, mask_size, mask);
             be->mask.map[index] = true;
         }
     }
@@ -1150,6 +1202,380 @@ static bool handle_selection_mask(DP_BrushEngine *be, DP_PaintMode paint_mode,
 }
 
 
+static bool in_dab_mask(void *user, int x, int y)
+{
+    DP_BrushEngine *be = user;
+    int diameter = be->flood.mask.size;
+    int radius = diameter / 2;
+    int mask_x = x - be->flood.mask.x + radius;
+    int mask_y = y - be->flood.mask.y + radius;
+    if (mask_x >= 0 && mask_x < diameter && mask_y >= 0 && mask_y < diameter) {
+        int i = mask_y * diameter + mask_x;
+        return be->flood.mask.buffer[i];
+    }
+    else {
+        return false;
+    }
+}
+
+static unsigned char *allocate_flood_dab_mask(DP_BrushEngine *be, int diameter)
+{
+    if (be->flood.mask.size_available < diameter) {
+        be->flood.mask.size_available = diameter;
+        free(be->flood.mask.buffer);
+        be->flood.mask.buffer =
+            malloc(DP_square_size(DP_int_to_size(diameter)));
+    }
+    return be->flood.mask.buffer;
+}
+
+static void dilate_flood_mask_buffer(unsigned char *buffer, int diameter)
+{
+    int full_diameter = diameter + 2;
+    int last_index = full_diameter - 1;
+
+#define DILATE_AT(X, Y)      (buffer[(Y) * full_diameter + (X)])
+#define DILATE_TEST(X, Y)    (DILATE_AT((X), (Y)) & 1)
+#define DILATE_TEST_N(X, Y)  DILATE_TEST((X), (Y) - 1)
+#define DILATE_TEST_E(X, Y)  DILATE_TEST((X) + 1, (Y))
+#define DILATE_TEST_S(X, Y)  DILATE_TEST((X), (Y) + 1)
+#define DILATE_TEST_W(X, Y)  DILATE_TEST((X) - 1, (Y))
+#define DILATE_TEST_NE(X, Y) DILATE_TEST((X) + 1, (Y) - 1)
+#define DILATE_TEST_NW(X, Y) DILATE_TEST((X) - 1, (Y) - 1)
+#define DILATE_TEST_SE(X, Y) DILATE_TEST((X) + 1, (Y) + 1)
+#define DILATE_TEST_SW(X, Y) DILATE_TEST((X) - 1, (Y) + 1)
+#define DILATE_OR(X, Y, COND)     \
+    do {                          \
+        if ((COND)) {             \
+            DILATE_AT(X, Y) |= 2; \
+        }                         \
+    } while (0)
+#define DILATE_SET(X, Y, COND)            \
+    do {                                  \
+        DILATE_AT(X, Y) = (COND) ? 2 : 0; \
+    } while (0)
+#define DILATE_SET2(X, Y, P1, P2) \
+    DILATE_SET((X), (Y),          \
+               DILATE_TEST_##P1((X), (Y)) || DILATE_TEST_##P2((X), (Y)))
+#define DILATE_SET3(X, Y, P1, P2, P3)                                   \
+    DILATE_SET((X), (Y),                                                \
+               DILATE_TEST_##P1((X), (Y)) || DILATE_TEST_##P2((X), (Y)) \
+                   || DILATE_TEST_##P3((X), (Y)))
+#define DILATE_APPLY(X, Y)                                                   \
+    DILATE_OR((X), (Y),                                                      \
+              DILATE_AT((X), (Y)) == 0                                       \
+                  && (DILATE_TEST_NW((X), (Y)) || DILATE_TEST_N((X), (Y))    \
+                      || DILATE_TEST_NE((X), (Y)) || DILATE_TEST_W((X), (Y)) \
+                      || DILATE_TEST_E((X), (Y)) || DILATE_TEST_SW((X), (Y)) \
+                      || DILATE_TEST_S((X), (Y)) || DILATE_TEST_SE((X), (Y))))
+
+    // Corners are always blank.
+    DILATE_AT(0, 0) = 0;
+    DILATE_AT(last_index, 0) = 0;
+    DILATE_AT(0, last_index) = 0;
+    DILATE_AT(last_index, last_index) = 0;
+
+    // Corner-adjacent pixels can only check inwards.
+    DILATE_SET2(0, 1, E, SE);
+    DILATE_SET2(1, 0, S, SE);
+    DILATE_SET2(last_index, 1, W, SW);
+    DILATE_SET2(last_index - 1, 0, S, SW);
+    DILATE_SET2(0, last_index - 1, E, NE);
+    DILATE_SET2(1, last_index, N, NE);
+    DILATE_SET2(last_index, last_index - 1, W, NW);
+    DILATE_SET2(last_index - 1, last_index, N, NW);
+
+    // Top and bottom rows.
+    for (int x = 2; x < last_index; ++x) {
+        DILATE_SET3(x, 0, SW, S, SE);
+        DILATE_SET3(x, last_index, NW, N, NE);
+    }
+
+    // Left and right sides.
+    for (int y = 2; y < last_index; ++y) {
+        DILATE_SET3(0, y, NE, E, SE);
+        DILATE_SET3(last_index, y, NW, W, SW);
+    }
+
+    // Dilate the rest of the owl.
+    for (int y = 1; y < last_index; ++y) {
+        for (int x = 1; x < last_index; ++x) {
+            DILATE_APPLY(x, y);
+        }
+    }
+}
+
+static int make_pixel_round_flood_mask_buffer(DP_BrushEngine *be, int diameter)
+{
+    unsigned char *buffer = allocate_flood_dab_mask(be, diameter);
+    float r = DP_int_to_float(diameter) / 2.0f;
+    float rr = DP_square_float(r);
+    int i = 0;
+    for (int y = 0; y < diameter; ++y) {
+        float yy = DP_square_float(DP_int_to_float(y) - r + 0.5f);
+        for (int x = 0; x < diameter; ++x) {
+            float xx = DP_square_float(DP_int_to_float(x) - r + 0.5f);
+            buffer[i++] = xx + yy <= rr ? 1 : 0;
+        }
+    }
+    return diameter;
+}
+
+static int make_soft_round_flood_mask_buffer(DP_BrushEngine *be, int diameter)
+{
+    int full_diameter = diameter + 2;
+    unsigned char *buffer = allocate_flood_dab_mask(be, full_diameter);
+    float r = DP_int_to_float(diameter) / 2.0f;
+    float rr = DP_square_float(r);
+
+    int i = full_diameter;
+    for (int y = 0; y < diameter; ++y) {
+        float yy = DP_square_float(DP_int_to_float(y) - r + 0.5f);
+        ++i;
+        for (int x = 0; x < diameter; ++x) {
+            float xx = DP_square_float(DP_int_to_float(x) - r + 0.5f);
+            buffer[i++] = xx + yy <= rr ? 1 : 0;
+        }
+        ++i;
+    }
+
+    dilate_flood_mask_buffer(buffer, diameter);
+    return full_diameter;
+}
+
+static int make_mypaint_flood_mask_buffer(DP_BrushEngine *be, int diameter,
+                                          float aspect_ratio, float angle_rad)
+{
+    int full_diameter = diameter + 2;
+    unsigned char *buffer = allocate_flood_dab_mask(be, full_diameter);
+    float cs = cosf(angle_rad);
+    float sn = sinf(angle_rad);
+    float radius = DP_int_to_float(diameter) / 2.0f;
+    float one_over_radius2 = 1.0f / (radius * radius);
+
+    int i = full_diameter;
+    for (int y = 0; y < diameter; ++y) {
+        ++i;
+        for (int x = 0; x < diameter; ++x) {
+            float yy = DP_int_to_float(y) + 0.5f - radius;
+            float xx = DP_int_to_float(x) + 0.5f - radius;
+            float yyr = (yy * cs - xx * sn) * aspect_ratio;
+            float xxr = yy * sn + xx * cs;
+            float rr = (yyr * yyr + xxr * xxr) * one_over_radius2;
+            buffer[i++] = rr <= 1.0f ? 1 : 0;
+        }
+        ++i;
+    }
+
+    dilate_flood_mask_buffer(buffer, diameter);
+    return full_diameter;
+}
+
+static DP_FloodInDabFn
+make_flood_dab_mask_pixel_square(DP_BrushEngine *be,
+                                 const DP_PixelDabParams *dab)
+{
+    int diameter = dab->size;
+    bool needs_new_mask =
+        be->flood.mask.shape != DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE
+        || be->flood.mask.size < diameter;
+    if (needs_new_mask) {
+        unsigned char *buffer = allocate_flood_dab_mask(be, diameter);
+        be->flood.mask.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE;
+        be->flood.mask.size = diameter;
+        int count = DP_square_int(diameter);
+        for (int i = 0; i < count; ++i) {
+            buffer[i] = 1;
+        }
+    }
+    be->flood.mask.x = dab->x;
+    be->flood.mask.y = dab->y;
+    return in_dab_mask;
+}
+
+static DP_FloodInDabFn
+make_flood_dab_mask_pixel_round(DP_BrushEngine *be,
+                                const DP_PixelDabParams *dab)
+{
+    int diameter = dab->size;
+    bool needs_new_mask =
+        be->flood.mask.shape != DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND
+        || be->flood.mask.size != diameter;
+    if (needs_new_mask) {
+        be->flood.mask.shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND;
+        be->flood.mask.size = make_soft_round_flood_mask_buffer(be, diameter);
+    }
+    be->flood.mask.x = dab->x;
+    be->flood.mask.y = dab->y;
+    return in_dab_mask;
+}
+
+static DP_FloodInDabFn make_flood_dab_mask_soft(DP_BrushEngine *be,
+                                                const DP_ClassicDabParams *dab)
+{
+    be->flood.mask.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
+
+    // Fudge the diameter to actually cover the entire dab.
+    int diameter = DP_uint_to_int(dab->size / 256u);
+    if (diameter < 20) {
+        diameter += 4;
+    }
+    else if (diameter < 50) {
+        diameter += 5;
+    }
+    else {
+        diameter += 4 + diameter / 50;
+    }
+
+    bool needs_new_mask =
+        be->flood.mask.shape != DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND
+        || be->flood.mask.size != diameter;
+    if (needs_new_mask) {
+        be->flood.mask.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
+        be->flood.mask.size = make_pixel_round_flood_mask_buffer(be, diameter);
+    }
+    be->flood.mask.x = (dab->x + 1) / 4;
+    be->flood.mask.y = (dab->y + 1) / 4;
+    return in_dab_mask;
+}
+
+static DP_FloodInDabFn
+make_flood_dab_mask_mypaint(DP_BrushEngine *be, const DP_MyPaintDabParams *dab)
+{
+    be->flood.mask.shape = DP_BRUSH_SHAPE_MYPAINT;
+    int diameter = DP_uint_to_int(dab->size / 256u) + 4;
+    uint8_t angle = dab->angle;
+    uint8_t aspect_ratio = dab->aspect_ratio;
+    uint8_t aspect_ratio_fudge = 64;
+    if (aspect_ratio <= aspect_ratio_fudge) {
+        aspect_ratio = 0;
+    }
+    else {
+        aspect_ratio -= aspect_ratio_fudge;
+    }
+
+    bool needs_new_mask = be->flood.mask.shape != DP_BRUSH_SHAPE_MYPAINT
+                       || be->flood.mask.size != diameter
+                       || be->flood.mask.aspect_ratio != aspect_ratio
+                       || be->flood.mask.angle != angle;
+    if (needs_new_mask) {
+        be->flood.mask.shape = DP_BRUSH_SHAPE_MYPAINT;
+        be->flood.mask.aspect_ratio = aspect_ratio;
+        be->flood.mask.angle = angle;
+        be->flood.mask.size = make_mypaint_flood_mask_buffer(
+            be, diameter,
+            DP_mypaint_brush_aspect_ratio_from_uint8(aspect_ratio),
+            DP_uint8_to_float(angle) / 255.0f * (((float)M_PI) * 2.0f));
+    }
+    be->flood.mask.x = (dab->x + 2) / 4;
+    be->flood.mask.y = (dab->y + 2) / 4;
+    return in_dab_mask;
+}
+
+static DP_FloodInDabFn make_flood_dab_mask(DP_BrushEngine *be, void *dab)
+{
+    switch (be->active) {
+    case DP_BRUSH_ENGINE_ACTIVE_PIXEL:
+        if (be->classic.brush.shape == DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE) {
+            return make_flood_dab_mask_pixel_square(be, dab);
+        }
+        else {
+            return make_flood_dab_mask_pixel_round(be, dab);
+        }
+    case DP_BRUSH_ENGINE_ACTIVE_SOFT:
+        return make_flood_dab_mask_soft(be, dab);
+    case DP_BRUSH_ENGINE_ACTIVE_MYPAINT:
+        return make_flood_dab_mask_mypaint(be, dab);
+    }
+    DP_UNREACHABLE();
+}
+
+static void flood_mask_flush(void *user)
+{
+    DP_BrushEngine *be = user;
+    DP_brush_engine_dabs_flush(be);
+}
+
+static void flood_mask_clear(void *user)
+{
+    DP_BrushEngine *be = user;
+    push_selection_sync_clear(be, DP_SELECTION_ID_FIRST_FLOOD_REMOTE);
+}
+
+static bool flood_mask_put(void *user, int col, int row, DP_Tile *t)
+{
+    DP_BrushEngine *be = user;
+
+    size_t mask_size;
+    unsigned char *mask;
+    if (t) {
+        unsigned char *buffer = get_mask_buffer(be);
+        mask = buffer + DP_TILE_LENGTH;
+        if (DP_tile_opaque(t)) {
+            mask_size = DP_tile_compress_mask_delta_zstd8le_opaque(
+                get_mask_compress_buffer, mask);
+            DP_ASSERT(mask_size == 1);
+        }
+        else {
+            mask_size = DP_tile_compress_mask_delta_zstd8le_normal(
+                t, &be->mask.zstd_cctx, (uint8_t *)buffer,
+                get_mask_compress_buffer, mask);
+            if (mask_size == 0) {
+                DP_warn("Error compressing anti overflow tile: %s", DP_error());
+                return false;
+            }
+        }
+    }
+    else {
+        mask_size = 0;
+        mask = NULL;
+    }
+
+    push_selection_sync(be, DP_SELECTION_ID_FIRST_FLOOD_REMOTE, col, row,
+                        mask_size, mask);
+    return true;
+}
+
+static bool handle_flood_mask(DP_BrushEngine *be, int origin_x, int origin_y,
+                              DP_Rect bounds, void *dab,
+                              uint8_t *out_flood_flags)
+{
+    if (be->stroke.compatibility_mode || !be->flood.lc) {
+        *out_flood_flags = 0;
+        return true;
+    }
+
+    DP_BrushEngineFloodTarget target =
+        DP_layer_id_selection(be->layer_id)
+            ? DP_BRUSH_ENGINE_FLOOD_TARGET_SELECTION
+            : DP_BRUSH_ENGINE_FLOOD_TARGET_LAYER;
+    if (be->flood.target != target) {
+        if (be->flood.state) {
+            flood_mask_clear(be);
+            be->flood.state = NULL;
+        }
+        be->flood.target = target;
+    }
+
+    DP_FloodInDabFn in_dab = make_flood_dab_mask(be, dab);
+    bool should_mask;
+    if (!DP_flood_fill_dab(
+            &be->flood.state, origin_x, origin_y, be->flood.tolerance,
+            be->flood.expand, &bounds, be->flood.lc, in_dab, flood_mask_flush,
+            flood_mask_clear, flood_mask_put, be, &should_mask)) {
+        return false;
+    }
+
+    if (should_mask) {
+        *out_flood_flags = DP_int_to_uint8(1 << 6);
+    }
+    else {
+        *out_flood_flags = 0;
+    }
+    return true;
+}
+
+
 static bool is_tentative_pixel(int x1, int y1, int x2, int y2)
 {
     return abs(x2 - x1) <= 1 && abs(y2 - y1) <= 1;
@@ -1166,7 +1592,7 @@ static void pixel_perfect_apply(DP_BrushEngine *be, int x, int y,
     // one pixel away from the previous dab. For that, we hold onto at most one
     // tentative dab and clobber it if the subsequent pixel would again only be
     // one pixel from the previous one.
-    if (be->pixel.perfect) {
+    if (be->pixel.perfect && !be->flood.lc) {
         if (be->pixel.have_last) {
             // Check if we need to flush a currently stashed tentative dab.
             bool last_tentative =
@@ -1255,8 +1681,9 @@ static void pixel_perfect_assign_tentative_pixel(DP_BrushEngine *be, void *user)
     be->pixel.tentative_dab.pixel = *dab;
 }
 
-static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
-                          float pressure, float velocity, float distance)
+static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int origin_x,
+                          int origin_y, float pressure, float velocity,
+                          float distance)
 {
     DP_PixelDabParams dab;
     dab.size = DP_classic_brush_pixel_dab_size_at(
@@ -1264,6 +1691,8 @@ static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
     dab.opacity =
         DP_classic_brush_dab_opacity_at(cb, pressure, velocity, distance);
 
+    int x = origin_x;
+    int y = origin_y;
     float jitter = DP_classic_brush_jitter_at(cb, pressure, velocity, distance);
     if (jitter > 0.0f) {
         float length = brush_engine_randf(be) * DP_uint16_to_float(dab.size)
@@ -1272,15 +1701,18 @@ static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
         x += DP_float_to_int(roundf(length * cosf(angle)));
         y += DP_float_to_int(roundf(length * sinf(angle)));
     }
+    dab.x = DP_int_to_int32(x);
+    dab.y = DP_int_to_int32(y);
 
     uint8_t mask_flags;
+    uint8_t flood_flags;
     DP_PaintMode paint_mode = get_classic_brush_paint_mode(be, cb);
+    DP_Rect bounds = pixel_dab_bounds(x, y, dab.size);
     if (dab.size > 0 && dab.opacity > 0
-        && handle_selection_mask(
-            be, paint_mode, pixel_dab_bounds(x, y, dab.size), &mask_flags)) {
-        dab.flags = (uint8_t)paint_mode | mask_flags;
-        dab.x = DP_int_to_int32(x);
-        dab.y = DP_int_to_int32(y);
+        && handle_selection_mask(be, paint_mode, bounds, &mask_flags)
+        && handle_flood_mask(be, origin_x, origin_y, bounds, &dab,
+                             &flood_flags)) {
+        dab.flags = (uint8_t)paint_mode | mask_flags | flood_flags;
         dab.color = combine_upixel_float(
             blend_classic_color(be, cb, pressure, velocity, distance));
 
@@ -1299,16 +1731,19 @@ static DP_Rect subpixel_dab_bounds(float x, float y, float diameter)
     return (DP_Rect){xi - radius, yi - radius, xi + radius, yi + radius};
 }
 
-static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
-                         float y, float pressure, float velocity,
-                         float distance, bool left, bool up)
+static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
+                         float origin_x, float origin_y, float pressure,
+                         float velocity, float distance, bool left, bool up)
 {
-    uint32_t dab_size = DP_classic_brush_soft_dab_size_at(
+    DP_ClassicDabParams dab;
+    dab.size = DP_classic_brush_soft_dab_size_at(
         cb, pressure, velocity, distance, be->stroke.compatibility_mode);
-    uint8_t dab_opacity =
+    dab.opacity =
         DP_classic_brush_dab_opacity_at(cb, pressure, velocity, distance);
-    float diameter = DP_uint32_to_float(dab_size) / 256.0f;
+    float diameter = DP_uint32_to_float(dab.size) / 256.0f;
 
+    float x = origin_x;
+    float y = origin_y;
     float jitter = DP_classic_brush_jitter_at(cb, pressure, velocity, distance);
     if (jitter > 0.0f) {
         float length = brush_engine_randf(be) * diameter * jitter;
@@ -1317,70 +1752,75 @@ static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
         y += length * sinf(angle);
     }
 
+    // The brush mask rendering has some unsightly discontinuities between
+    // fractions of a radius and the next full step, causing an unsightly
+    // jagged look between them. We can't fix the brush rendering directly
+    // because that would break compatibility, so instead we fudge the
+    // positioning to compensate.
+    float rrem = fmodf(diameter, 1.0f);
+    if (rrem < 0.00001f) {
+        rrem = 1.0f;
+    }
+
+    float full_fudge = -0.72f;
+    float half_fudge = -0.36f;
+    float fudge_x, fudge_y;
+    if (left && up) {
+        fudge_x = fudge_y = rrem * full_fudge;
+    }
+    else if (!left && up) {
+        fudge_x = rrem * half_fudge;
+        fudge_y = rrem * full_fudge;
+    }
+    else if (!left && !up) {
+        fudge_x = rrem * full_fudge;
+        fudge_y = rrem * half_fudge;
+    }
+    else {
+        fudge_x = fudge_y = rrem * half_fudge;
+    }
+
+    dab.x = DP_float_to_int32((x + fudge_x) * 4.0f) + (int32_t)3;
+    dab.y = DP_float_to_int32((y + fudge_y) * 4.0f) + (int32_t)2;
+
     uint8_t mask_flags;
+    uint8_t flood_flags;
     DP_PaintMode paint_mode = get_classic_brush_paint_mode(be, cb);
+    DP_Rect bounds = subpixel_dab_bounds(x, y, diameter);
     // Disregard infinitesimal or fully transparent dabs. 26 is a radius of 0.1.
-    if (dab_size >= 26 && dab_opacity > 0
-        && handle_selection_mask(
-            be, paint_mode, subpixel_dab_bounds(x, y, diameter), &mask_flags)) {
-        // The brush mask rendering has some unsightly discontinuities between
-        // fractions of a radius and the next full step, causing an unsightly
-        // jagged look between them. We can't fix the brush rendering directly
-        // because that would break compatibility, so instead we fudge the
-        // positioning to compensate.
-        float rrem = fmodf(diameter, 1.0f);
-        if (rrem < 0.00001f) {
-            rrem = 1.0f;
-        }
-
-        float full_fudge = -0.72f;
-        float half_fudge = -0.36f;
-        float fudge_x, fudge_y;
-        if (left && up) {
-            fudge_x = fudge_y = rrem * full_fudge;
-        }
-        else if (!left && up) {
-            fudge_x = rrem * half_fudge;
-            fudge_y = rrem * full_fudge;
-        }
-        else if (!left && !up) {
-            fudge_x = rrem * full_fudge;
-            fudge_y = rrem * half_fudge;
-        }
-        else {
-            fudge_x = fudge_y = rrem * half_fudge;
-        }
-
-        uint8_t dab_flags = (uint8_t)paint_mode | mask_flags;
-        int32_t dab_x = DP_float_to_int32((x + fudge_x) * 4.0f) + (int32_t)3;
-        int32_t dab_y = DP_float_to_int32((y + fudge_y) * 4.0f) + (int32_t)2;
-        uint32_t dab_color = combine_upixel_float(
+    if (dab.size >= 26 && dab.opacity > 0
+        && handle_selection_mask(be, paint_mode, bounds, &mask_flags)
+        && handle_flood_mask(be, DP_float_to_int(origin_x + 0.5f),
+                             DP_float_to_int(origin_y + 0.5f), bounds, &dab,
+                             &flood_flags)) {
+        dab.flags = (uint8_t)paint_mode | mask_flags | flood_flags;
+        dab.color = combine_upixel_float(
             blend_classic_color(be, cb, pressure, velocity, distance));
 
         int used = be->dabs.used;
         int8_t dx, dy;
         bool can_append = used != 0 && used < DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX
-                       && be->classic.dab_flags == dab_flags
-                       && be->classic.dab_color == dab_color
-                       && delta_xy(be, dab_x, dab_y, &dx, &dy);
-        be->dabs.last_x = dab_x;
-        be->dabs.last_y = dab_y;
+                       && be->classic.dab_flags == dab.flags
+                       && be->classic.dab_color == dab.color
+                       && delta_xy(be, dab.x, dab.y, &dx, &dy);
+        be->dabs.last_x = dab.x;
+        be->dabs.last_y = dab.y;
 
         if (!can_append) {
             DP_brush_engine_dabs_flush(be);
-            be->classic.dab_flags = dab_flags;
-            be->classic.dab_x = dab_x;
-            be->classic.dab_y = dab_y;
-            be->classic.dab_color = dab_color;
+            be->classic.dab_flags = dab.flags;
+            be->classic.dab_x = dab.x;
+            be->classic.dab_y = dab.y;
+            be->classic.dab_color = dab.color;
             dx = 0;
             dy = 0;
         }
 
         DP_BrushEngineClassicDab *dabs = get_dab_buffer(be, sizeof(*dabs));
         dabs[be->dabs.used++] = (DP_BrushEngineClassicDab){
-            dx, dy, dab_size,
+            dx, dy, dab.size,
             DP_classic_brush_dab_hardness_at(cb, pressure, velocity, distance),
-            dab_opacity};
+            dab.opacity};
     }
 }
 
@@ -1591,16 +2031,31 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
 
     DP_MyPaintDabParams dab;
     dab.size = get_mypaint_dab_size(radius, be->stroke.compatibility_mode);
+
+    DP_Rect bounds =
+        subpixel_dab_bounds(x, y, DP_uint32_to_float(dab.size) / 256.0f);
     uint8_t mask_flags;
-    if (!handle_selection_mask(
-            be, paint_mode,
-            subpixel_dab_bounds(x, y, DP_uint32_to_float(dab.size) / 256.0f),
-            &mask_flags)) {
+    if (!handle_selection_mask(be, paint_mode, bounds, &mask_flags)) {
         return 0;
     }
 
     dab.x = DP_float_to_int32(x * 4.0f);
     dab.y = DP_float_to_int32(y * 4.0f);
+    dab.size = get_mypaint_dab_size(radius, be->stroke.compatibility_mode);
+    dab.angle = get_mypaint_dab_angle(angle);
+    dab.aspect_ratio = get_mypaint_dab_aspect_ratio(aspect_ratio);
+
+    float origin_x = mypaint_brush_get_state(be->mypaint_brush,
+                                             MYPAINT_BRUSH_STATE_ACTUAL_X);
+    float origin_y = mypaint_brush_get_state(be->mypaint_brush,
+                                             MYPAINT_BRUSH_STATE_ACTUAL_Y);
+    uint8_t flood_flags;
+    if (!handle_flood_mask(be, DP_float_to_int(origin_x + 0.5f),
+                           DP_float_to_int(origin_y + 0.5f), bounds, &dab,
+                           &flood_flags)) {
+        return 0;
+    }
+
     if (be->stroke.compatibility_mode) {
         if (paint_mode == DP_PAINT_MODE_DIRECT) {
             dab.flags = 0;
@@ -1655,7 +2110,8 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
              && is_normal_mypaint_mode(blend_mode)) {
         dab.color =
             get_mypaint_dab_color(color_r, color_g, color_b, alpha_eraser);
-        dab.flags = get_mypaint_dab_blend_mode_flag(blend_mode) | mask_flags;
+        dab.flags = get_mypaint_dab_blend_mode_flag(blend_mode) | mask_flags
+                  | flood_flags;
         dab.lock_alpha = get_mypaint_dab_lock_alpha(lock_alpha);
         dab.colorize = get_mypaint_dab_colorize(colorize);
         dab.posterize = get_mypaint_dab_posterize(posterize);
@@ -1663,18 +2119,15 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
     }
     else {
         dab.color = get_mypaint_dab_color(color_r, color_g, color_b, 1.0f);
-        dab.flags = (uint8_t)paint_mode | mask_flags;
+        dab.flags = (uint8_t)paint_mode | mask_flags | flood_flags;
         dab.lock_alpha = 0;
         dab.colorize = 0;
         dab.posterize = 0;
         dab.mode = 0;
     }
 
-    dab.size = get_mypaint_dab_size(radius, be->stroke.compatibility_mode);
     dab.hardness = get_uint8(hardness);
     dab.opacity = get_uint8(opaque);
-    dab.angle = get_mypaint_dab_angle(angle);
-    dab.aspect_ratio = get_mypaint_dab_aspect_ratio(aspect_ratio);
     pixel_perfect_apply(be, dab.x / 4, dab.y / 4, pixel_perfect_append_mypaint,
                         pixel_perfect_append_tentative_mypaint,
                         pixel_perfect_assign_tentative_mypaint, &dab);
@@ -1857,6 +2310,12 @@ DP_brush_engine_new(DP_MaskSync *ms_or_null,
         {0, 1.0f, 0.0f, false, false, false, false, false, false, 0},
         {false, false, 0, 0, ms_or_null ? ++ms_or_null->last_sync_id : 0,
          DP_mask_sync_incref_nullable(ms_or_null), NULL, 0, NULL, NULL},
+        {NULL,
+         NULL,
+         0.0,
+         0,
+         DP_BRUSH_ENGINE_FLOOD_TARGET_NONE,
+         {0, 0, -1, 0, 0, 0, 0, NULL}},
         {0},
         {0, 0, 0, 0, NULL},
         {false, false, false, false, 0, 0, 0, 0, {0}},
@@ -1874,6 +2333,9 @@ void DP_brush_engine_free(DP_BrushEngine *be)
         DP_free(be->dabs.buffer);
         mypaint_brush_unref(be->mypaint_brush);
         DP_compress_zstd_free(&be->mask.zstd_cctx);
+        DP_free(be->flood.mask.buffer);
+        DP_transient_layer_content_decref_nullable(be->flood.state);
+        DP_layer_content_decref_nullable(be->flood.lc);
         DP_free(be->mask.map);
         DP_layer_content_decref_nullable(be->mask.lc);
         DP_mask_sync_decref_nullable(be->mask.ms);
@@ -1898,6 +2360,11 @@ static void set_common_stroke_params(DP_BrushEngine *be,
     DP_stroke_engine_params_set(&be->se, &besp->se);
     DP_ASSERT(besp->selection_id < 32); // Only have 5 bits for the id.
     be->mask.next_selection_id = besp->selection_id;
+    DP_layer_content_decref_nullable(be->flood.lc);
+    be->flood.lc = DP_layer_content_incref_nullable(besp->flood_lc);
+    be->flood.tolerance = DP_max_double(besp->flood_tolerance, 0.0);
+    be->flood.expand =
+        DP_clamp_int(besp->flood_expand, 0, DP_ANTI_OVERFLOW_EXPAND_MAX);
 }
 
 static void apply_layer_alpha_lock(DP_BlendMode *in_out_blend_mode,
@@ -2349,11 +2816,6 @@ static DP_LayerContent *search_sel_lc(DP_CanvasState *cs_or_null,
     return NULL;
 }
 
-static void push_selection_sync_clear(DP_BrushEngine *be)
-{
-    push_selection_sync(be, 0xffff, 0xffff, 0, NULL);
-}
-
 static bool update_mask_sync_id(DP_BrushEngine *be)
 {
     if (be->mask.ms) {
@@ -2421,10 +2883,10 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
             bool clear_next =
                 sync_id_changed
                 && be->mask.current_selection_id != next_selection_id;
-            push_selection_sync_clear(be);
+            push_mask_selection_sync_clear(be);
             be->mask.current_selection_id = next_selection_id;
             if (clear_next) {
-                push_selection_sync_clear(be);
+                push_mask_selection_sync_clear(be);
             }
             DP_layer_content_decref_nullable(be->mask.lc);
             be->mask.lc = DP_layer_content_incref(mask_lc);
@@ -2445,7 +2907,7 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
     else {
         be->mask.active = false;
         if (push_undo_point && (update_mask_sync_id(be) || be->mask.lc)) {
-            push_selection_sync_clear(be);
+            push_mask_selection_sync_clear(be);
             be->mask.current_selection_id = 0;
             DP_layer_content_decref_nullable(be->mask.lc);
             be->mask.lc = NULL;

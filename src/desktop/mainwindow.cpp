@@ -740,6 +740,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		m_dockToolSettings->fillSettings(),
 		&tools::FillSettings::updateFillSourceLayerId);
 	connect(
+		canvas->layerlist(), &canvas::LayerListModel::fillSourceSet, this,
+		&MainWindow::triggerUpdateLockWidget);
+	connect(
 		canvas->selection(), &canvas::SelectionModel::selectionChanged, this,
 		&MainWindow::updateSelectTransformActions);
 	connect(
@@ -3739,6 +3742,10 @@ void MainWindow::updateLockWidget()
 
 	if(m_dockToolSettings->currentToolAffectsLayer()) {
 		reasons |= m_dockLayers->currentLayerLock();
+	}
+
+	if(m_dockToolSettings->currentToolRequiresFillSource()) {
+		reasons |= m_dockLayers->currentFillSourceLock();
 	}
 
 	if(m_dockToolSettings->currentToolRequiresSelection() &&
@@ -6896,7 +6903,8 @@ void MainWindow::setupActions()
 
 	m_dockToolSettings->brushSettings()->setActions(
 		reloadPreset, reloadPresetSlots, reloadAllPresets, nextSlot,
-		previousSlot, layerAutomaticAlphaPreserve, maskselection);
+		previousSlot, layerAutomaticAlphaPreserve, maskselection,
+		layerSetFillSource);
 	m_dockToolSettings->lassoFillSettings()->setActions(
 		layerAutomaticAlphaPreserve, maskselection);
 	m_dockToolSettings->gradientSettings()->setActions(

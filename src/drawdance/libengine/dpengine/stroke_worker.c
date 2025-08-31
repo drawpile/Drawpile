@@ -3,6 +3,7 @@
 #include "brush.h"
 #include "brush_engine.h"
 #include "canvas_state.h"
+#include "layer_content.h"
 #include <dpcommon/common.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
@@ -123,6 +124,7 @@ static void run_stroke_worker_thread(void *data)
                         ? &job.classic->color_override
                         : NULL,
                     job.classic->eraser_override);
+                DP_layer_content_decref_nullable(job.classic->besp.flood_lc);
                 DP_free(job.classic);
                 continue;
             case DP_STROKE_WORKER_JOB_MYPAINT_BRUSH_SET:
@@ -134,6 +136,7 @@ static void run_stroke_worker_thread(void *data)
                         ? &job.mypaint->color_override
                         : NULL,
                     job.mypaint->eraser_override);
+                DP_layer_content_decref_nullable(job.mypaint->besp.flood_lc);
                 DP_free(job.mypaint);
                 continue;
             case DP_STROKE_WORKER_JOB_DABS_FLUSH:
@@ -294,9 +297,10 @@ void DP_stroke_worker_size_limit_set(DP_StrokeWorker *sw, int size_limit)
     }
 }
 
-static void start_or_stop_thread(DP_StrokeWorker *sw, bool sync_samples)
+static void start_or_stop_thread(DP_StrokeWorker *sw, bool sync_samples,
+                                 DP_LayerContent *flood_lc_or_null)
 {
-    if (sync_samples) {
+    if (sync_samples || flood_lc_or_null) {
         if (!sw->thread) {
             bool started = DP_stroke_worker_thread_start(sw);
             if (!started) {
@@ -319,10 +323,11 @@ void DP_stroke_worker_classic_brush_set(DP_StrokeWorker *sw,
     DP_ASSERT(brush);
     DP_ASSERT(besp);
 
-    start_or_stop_thread(sw, besp->sync_samples);
+    start_or_stop_thread(sw, besp->sync_samples, besp->flood_lc);
 
     if (sw->thread) {
         DP_StrokeWorkerJobClassic *classic = DP_malloc(sizeof(*classic));
+        DP_layer_content_incref_nullable(besp->flood_lc);
         *classic = (DP_StrokeWorkerJobClassic){
             *brush,
             *besp,
@@ -352,10 +357,11 @@ void DP_stroke_worker_mypaint_brush_set(DP_StrokeWorker *sw,
     DP_ASSERT(settings);
     DP_ASSERT(besp);
 
-    start_or_stop_thread(sw, besp->sync_samples);
+    start_or_stop_thread(sw, besp->sync_samples, besp->flood_lc);
 
     if (sw->thread) {
         DP_StrokeWorkerJobMyPaint *mypaint = DP_malloc(sizeof(*mypaint));
+        DP_layer_content_incref_nullable(besp->flood_lc);
         *mypaint = (DP_StrokeWorkerJobMyPaint){
             *brush,
             *settings,

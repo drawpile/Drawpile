@@ -306,7 +306,8 @@ static void set_preview_classic_brush(void *user, DP_BrushEngine *be,
                                       bool allow_pixel_perfect)
 {
     DP_BrushEngineStrokeParams besp = {
-        {0, 0, false, false, false}, 1, 0, false, false, allow_pixel_perfect};
+        {0, 0, false, false, false}, NULL, 0.0, 0, 1, 0, false, false,
+        allow_pixel_perfect};
     DP_brush_engine_classic_brush_set(be, user, &besp, &color, false);
 }
 
@@ -329,7 +330,8 @@ static void set_preview_mypaint_brush(void *user, DP_BrushEngine *be,
     const DP_MyPaintBrush *brush = ((void **)user)[0];
     const DP_MyPaintSettings *settings = ((void **)user)[1];
     DP_BrushEngineStrokeParams besp = {
-        {0, 0, false, false, false}, 1, 0, false, false, allow_pixel_perfect};
+        {0, 0, false, false, false}, NULL, 0.0, 0, 1, 0, false, false,
+        allow_pixel_perfect};
     DP_brush_engine_mypaint_brush_set(be, brush, settings, &besp, &color,
                                       false);
 }

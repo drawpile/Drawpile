@@ -23,6 +23,8 @@ public:
 		Tool = 1u << 10u,
 		OutOfSpace = 1u << 11u,
 		NoSelection = 1u << 12u,
+		NoFillSource = 1u << 13u,
+		OverlappingFillSource = 1u << 14u,
 	};
 	Q_ENUM(Reason)
 

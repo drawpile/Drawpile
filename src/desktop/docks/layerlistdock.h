@@ -91,6 +91,7 @@ public:
 	void setLayerEditActions(const Actions &actions);
 
 	QFlags<view::Lock::Reason> currentLayerLock() const;
+	QFlags<view::Lock::Reason> currentFillSourceLock() const;
 
 	int currentId() const { return m_currentId; }
 

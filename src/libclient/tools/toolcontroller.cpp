@@ -655,16 +655,17 @@ void ToolController::setBrushEngineBrush(
 {
 	DP_BrushEngineStrokeParams stroke;
 	const brushes::ActiveBrush &brush =
-		fillBrushEngineStrokeParams(source, stroke);
+		fillBrushEngineStrokeParams(source, nullptr, 0.0, 0, stroke);
 	brush.setInBrushEngine(be, stroke);
 }
 
 void ToolController::setStrokeWorkerBrush(
-	drawdance::StrokeWorker &sw, Tool::Type source)
+	drawdance::StrokeWorker &sw, Tool::Type source,
+	DP_LayerContent *floodLcOrNull, double floodTolerance, int floodExpand)
 {
 	DP_BrushEngineStrokeParams stroke;
-	const brushes::ActiveBrush &brush =
-		fillBrushEngineStrokeParams(source, stroke);
+	const brushes::ActiveBrush &brush = fillBrushEngineStrokeParams(
+		source, floodLcOrNull, floodTolerance, floodExpand, stroke);
 	brush.setInStrokeWorker(sw, stroke);
 }
 
@@ -777,7 +778,8 @@ void ToolController::updateSelectionMaskingEnabled(bool compatibilityMode)
 }
 
 const brushes::ActiveBrush &ToolController::fillBrushEngineStrokeParams(
-	Tool::Type source, DP_BrushEngineStrokeParams &outStroke) const
+	Tool::Type source, DP_LayerContent *floodLcOrNull, double floodTolerance,
+	int floodExpand, DP_BrushEngineStrokeParams &outStroke) const
 {
 	const brushes::ActiveBrush &brush = activeBrush();
 	bool pixelArtInput = brush.isPixelArtInput();
@@ -791,6 +793,9 @@ const brushes::ActiveBrush &ToolController::fillBrushEngineStrokeParams(
 				(m_stabilizationMode != brushes::Smoothing || m_finishStrokes),
 			!pixelArtInput && m_finishStrokes,
 		},
+		floodLcOrNull,
+		floodTolerance,
+		floodExpand,
 		activeLayerOrSelection(),
 		m_selectionEditActive || !m_selectionMaskingEnabled
 			? 0

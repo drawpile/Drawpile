@@ -26,6 +26,7 @@
 
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_ClassicBrush DP_ClassicBrush;
+typedef struct DP_LayerContent DP_LayerContent;
 typedef struct DP_Message DP_Message;
 typedef struct DP_MyPaintBrush DP_MyPaintBrush;
 typedef struct DP_MyPaintSettings DP_MyPaintSettings;
@@ -48,6 +49,9 @@ typedef struct DP_StrokeEngineStrokeParams {
 
 typedef struct DP_BrushEngineStrokeParams {
     DP_StrokeEngineStrokeParams se;
+    DP_LayerContent *flood_lc;
+    double flood_tolerance;
+    int flood_expand;
     int layer_id;
     int selection_id;
     bool layer_alpha_lock;

@@ -322,6 +322,11 @@ bool ToolSettings::currentToolRequiresSelection() const
 	return d->pages[d->currentTool].settings->requiresSelection();
 }
 
+bool ToolSettings::currentToolRequiresFillSource() const
+{
+	return d->pages[d->currentTool].settings->requiresFillSource();
+}
+
 bool ToolSettings::isCurrentToolLocked() const
 {
 	return d->pages[d->currentTool].settings->isLocked();

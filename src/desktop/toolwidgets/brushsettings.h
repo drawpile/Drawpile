@@ -29,13 +29,15 @@ public:
 	void setActions(
 		QAction *reloadPreset, QAction *reloadPresetSlots,
 		QAction *reloadAllPresets, QAction *nextSlot, QAction *previousSlot,
-		QAction *automaticAlphaPreserve, QAction *maskSelection);
+		QAction *automaticAlphaPreserve, QAction *maskSelection,
+		QAction *setFillSource);
 	void connectBrushPresets(brushes::BrushPresetModel *brushPresets);
 
 	QString toolType() const override { return QStringLiteral("brush"); }
 
 	bool affectsCanvas() override { return true; }
 	bool affectsLayer() override { return true; }
+	bool requiresFillSource() override;
 
 	void setActiveTool(tools::Tool::Type tool) override;
 	void setForeground(const QColor &color) override;

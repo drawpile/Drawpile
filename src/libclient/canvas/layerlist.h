@@ -251,6 +251,8 @@ public:
 	QSet<int> checkedLayers() const;
 
 	bool isLayerCheckStateToggleable(const QModelIndex &idx) const;
+	bool isInSameTree(
+		const QModelIndex &layerIndex, const QModelIndex &otherIndex) const;
 
 public slots:
 	void setLayers(

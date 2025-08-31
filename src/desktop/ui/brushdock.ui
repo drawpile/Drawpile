@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>325</width>
-    <height>370</height>
+    <height>450</height>
    </rect>
   </property>
   <layout class="QVBoxLayout">
@@ -146,20 +146,6 @@
       </widget>
      </item>
      <item>
-      <widget class="widgets::GroupedToolButton" name="modeColorpick">
-       <property name="toolTip">
-        <string>Pick initial color from layer</string>
-       </property>
-       <property name="icon">
-        <iconset theme="color-picker">
-         <normaloff>theme:color-picker.svg</normaloff>theme:color-picker.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="widgets::GroupedToolButton" name="modeEraser">
        <property name="toolTip">
         <string>Eraser mode</string>
@@ -167,6 +153,20 @@
        <property name="icon">
         <iconset theme="drawpile_brusherase">
          <normaloff>theme:drawpile_brusherase.svg</normaloff>theme:drawpile_brusherase.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="widgets::GroupedToolButton" name="antiOverflow">
+       <property name="toolTip">
+        <string>Anti-overflow</string>
+       </property>
+       <property name="icon">
+        <iconset theme="drawpile_antioverflow">
+         <normaloff>theme:drawpile_antioverflow.svg</normaloff>theme:drawpile_antioverflow.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -193,25 +193,6 @@
      <property name="verticalSpacing">
       <number>0</number>
      </property>
-     <item row="7" column="0">
-      <widget class="KisSliderSpinBox" name="gainBox">
-       <property name="suffix">
-        <string/>
-       </property>
-       <property name="prefix">
-        <string>Gain: </string>
-       </property>
-       <property name="minimum">
-        <number>-180</number>
-       </property>
-       <property name="maximum">
-        <number>180</number>
-       </property>
-       <property name="value">
-        <number>0</number>
-       </property>
-      </widget>
-     </item>
      <item row="3" column="0">
       <widget class="KisSliderSpinBox" name="hardnessBox">
        <property name="suffix">
@@ -228,53 +209,6 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="widgets::GroupedToolButton" name="pressureHardness">
-       <property name="toolTip">
-        <string>Pressure sensitivity</string>
-       </property>
-       <property name="icon">
-        <iconset theme="pathshape">
-         <normaloff>theme:pathshape.svg</normaloff>theme:pathshape.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="KisSliderSpinBox" name="brushspacingBox">
-       <property name="suffix">
-        <string notr="true">%</string>
-       </property>
-       <property name="prefix">
-        <string>Spacing: </string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>999</number>
-       </property>
-       <property name="singleStep">
-        <number>1</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="widgets::GroupedToolButton" name="pressureSize">
-       <property name="toolTip">
-        <string>Pressure sensitivity</string>
-       </property>
-       <property name="icon">
-        <iconset theme="pathshape">
-         <normaloff>theme:pathshape.svg</normaloff>theme:pathshape.svg</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
      <item row="5" column="0">
       <widget class="KisSliderSpinBox" name="colorpickupBox">
        <property name="prefix">
@@ -285,51 +219,6 @@
        </property>
        <property name="maximum">
         <number>32</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="KisSliderSpinBox" name="opacityBox">
-       <property name="suffix">
-        <string notr="true">%</string>
-       </property>
-       <property name="prefix">
-        <string>Opacity: </string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="KisSliderSpinBox" name="radiusLogarithmicBox">
-       <property name="prefix">
-        <string>Radius: </string>
-       </property>
-       <property name="maximum">
-        <number>800</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="KisSliderSpinBox" name="brushsizeBox">
-       <property name="suffix">
-        <string>px</string>
-       </property>
-       <property name="prefix">
-        <string>Size: </string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>1000</number>
-       </property>
-       <property name="singleStep">
-        <number>1</number>
        </property>
       </widget>
      </item>
@@ -352,33 +241,75 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <widget class="widgets::GroupedToolButton" name="pressureSmudging">
-       <property name="toolTip">
-        <string>Pressure sensitivity</string>
+     <item row="6" column="0">
+      <widget class="KisSliderSpinBox" name="brushspacingBox">
+       <property name="suffix">
+        <string notr="true">%</string>
        </property>
-       <property name="icon">
-        <iconset theme="pathshape">
-         <normaloff>theme:pathshape.svg</normaloff>theme:pathshape.svg</iconset>
+       <property name="prefix">
+        <string>Spacing: </string>
        </property>
-       <property name="checkable">
-        <bool>true</bool>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>999</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="KisSliderSpinBox" name="opacityBox">
+       <property name="suffix">
+        <string notr="true">%</string>
+       </property>
+       <property name="prefix">
+        <string>Opacity: </string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
        </property>
       </widget>
      </item>
      <item row="9" column="1">
-      <widget class="widgets::GroupedToolButton" name="stabilizerButton">
-       <property name="icon">
-        <iconset theme="application-menu">
-         <normaloff>theme:application-menu.svg</normaloff>theme:application-menu.svg</iconset>
-       </property>
-       <property name="popupMode">
-        <enum>QToolButton::InstantPopup</enum>
-       </property>
+      <widget class="QWidget" name="stabilizerButtonWrapper" native="true">
+       <layout class="QVBoxLayout" name="stabilizerButtonWrapperLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="widgets::GroupedToolButton" name="stabilizerButton">
+          <property name="icon">
+           <iconset theme="application-menu">
+            <normaloff>theme:application-menu.svg</normaloff>theme:application-menu.svg</iconset>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="widgets::GroupedToolButton" name="pressureOpacity">
+     <item row="4" column="1">
+      <widget class="widgets::GroupedToolButton" name="pressureSmudging">
        <property name="toolTip">
         <string>Pressure sensitivity</string>
        </property>
@@ -434,14 +365,238 @@
         </item>
         <item>
          <widget class="QLabel" name="stabilizationLabel">
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
           <property name="textFormat">
            <enum>Qt::RichText</enum>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="wordWrap">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="KisSliderSpinBox" name="gainBox">
+       <property name="suffix">
+        <string/>
+       </property>
+       <property name="prefix">
+        <string>Gain: </string>
+       </property>
+       <property name="minimum">
+        <number>-180</number>
+       </property>
+       <property name="maximum">
+        <number>180</number>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="widgets::GroupedToolButton" name="pressureSize">
+       <property name="toolTip">
+        <string>Pressure sensitivity</string>
+       </property>
+       <property name="icon">
+        <iconset theme="pathshape">
+         <normaloff>theme:pathshape.svg</normaloff>theme:pathshape.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="widgets::GroupedToolButton" name="pressureOpacity">
+       <property name="toolTip">
+        <string>Pressure sensitivity</string>
+       </property>
+       <property name="icon">
+        <iconset theme="pathshape">
+         <normaloff>theme:pathshape.svg</normaloff>theme:pathshape.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="widgets::GroupedToolButton" name="pressureHardness">
+       <property name="toolTip">
+        <string>Pressure sensitivity</string>
+       </property>
+       <property name="icon">
+        <iconset theme="pathshape">
+         <normaloff>theme:pathshape.svg</normaloff>theme:pathshape.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QWidget" name="sizeWrapper" native="true">
+       <layout class="QHBoxLayout" name="sizeWrapperLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="KisSliderSpinBox" name="brushsizeBox">
+          <property name="suffix">
+           <string>px</string>
+          </property>
+          <property name="prefix">
+           <string>Size: </string>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>1000</number>
+          </property>
+          <property name="singleStep">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="KisSliderSpinBox" name="radiusLogarithmicBox">
+          <property name="prefix">
+           <string>Radius: </string>
+          </property>
+          <property name="maximum">
+           <number>800</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="10" column="0" colspan="2">
+      <widget class="QWidget" name="antiOverflowWrapper" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <spacer name="antiOverflowSpacerTop">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>4</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="antiOverflowLabel">
+          <property name="text">
+           <string>Anti-Overflow:</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::PlainText</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="antiOverflowSpacerMiddle">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>4</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="KisSliderSpinBox" name="fillTolerance">
+          <property name="prefix">
+           <string>Tolerance: </string>
+          </property>
+          <property name="maximum">
+           <number>255</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="KisSliderSpinBox" name="fillExpand">
+          <property name="suffix">
+           <string>px</string>
+          </property>
+          <property name="prefix">
+           <string>Expand: </string>
+          </property>
+          <property name="maximum">
+           <number>20</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="antiOverflowSpacerBottom">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>6</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="fillSourceButton">
+          <property name="text">
+           <string>Set fill source</string>
+          </property>
+          <property name="icon">
+           <iconset theme="tag">
+            <normaloff>theme:tag.svg</normaloff>theme:tag.svg</iconset>
           </property>
          </widget>
         </item>
@@ -501,12 +656,13 @@
   <tabstop>brushTypeButton</tabstop>
   <tabstop>alphaPreserve</tabstop>
   <tabstop>blendmode</tabstop>
-  <tabstop>modeColorpick</tabstop>
+  <tabstop>erasemode</tabstop>
   <tabstop>modeEraser</tabstop>
+  <tabstop>antiOverflow</tabstop>
   <tabstop>paintMode</tabstop>
   <tabstop>brushsizeBox</tabstop>
-  <tabstop>pressureSize</tabstop>
   <tabstop>radiusLogarithmicBox</tabstop>
+  <tabstop>pressureSize</tabstop>
   <tabstop>opacityBox</tabstop>
   <tabstop>pressureOpacity</tabstop>
   <tabstop>hardnessBox</tabstop>
@@ -518,8 +674,10 @@
   <tabstop>gainBox</tabstop>
   <tabstop>stabilizerBox</tabstop>
   <tabstop>smoothingBox</tabstop>
-  <tabstop>stabilizationLabel</tabstop>
   <tabstop>stabilizerButton</tabstop>
+  <tabstop>fillTolerance</tabstop>
+  <tabstop>fillExpand</tabstop>
+  <tabstop>fillSourceButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

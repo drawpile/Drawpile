@@ -41,6 +41,10 @@ QString Lock::buildDescription() const
 		lines.append(tr("User is locked"));
 	}
 
+	if(hasReason(Reason::NoFillSource)) {
+		lines.append(tr("You need to set a layer as the fill source"));
+	}
+
 	if(hasReason(Reason::LayerGroup)) {
 		lines.append(tr("Layer is a group"));
 	} else if(hasReason(Reason::LayerLocked)) {
@@ -59,6 +63,8 @@ QString Lock::buildDescription() const
 		lines.append(tr("Layer is not visible in this frame"));
 	} else if(hasReason(Reason::NoLayer)) {
 		lines.append(tr("No layer selected"));
+	} else if(hasReason(Reason::OverlappingFillSource)) {
+		lines.append(tr("Choose a different layer to fill on"));
 	}
 
 	if(hasReason(Reason::Tool)) {

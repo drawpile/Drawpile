@@ -182,6 +182,15 @@ size_t DP_tile_compress_split_delta_zstd8le(
     DP_Tile *t, ZSTD_CCtx **in_out_ctx_or_null, DP_SplitTile8 *split_buffer,
     unsigned char *(*get_output_buffer)(size_t, void *), void *user);
 
+size_t DP_tile_compress_mask_delta_zstd8le_opaque(
+    unsigned char *(*get_output_buffer)(size_t, void *), void *user);
+
+size_t DP_tile_compress_mask_delta_zstd8le_normal(
+    DP_Tile *t, ZSTD_CCtx **in_out_ctx_or_null, uint8_t *channel_buffer,
+    unsigned char *(*get_output_buffer)(size_t, void *), void *user);
+
+// Calls *_opaque on tiles where DP_tile_opaque_ident returns true, otherwise
+// calls *_normal. For a full opaqueness check, call the above manually.
 size_t DP_tile_compress_mask_delta_zstd8le(
     DP_Tile *t, ZSTD_CCtx **in_out_ctx_or_null, uint8_t *channel_buffer,
     unsigned char *(*get_output_buffer)(size_t, void *), void *user);

@@ -128,6 +128,7 @@ private:
 	void buildDialogUi();
 	QWidget *buildPresetPageUi();
 	QWidget *buildGeneralPageUi();
+	QWidget *buildAntiOverflowPageUi();
 	QWidget *buildClassicSizePageUi();
 	QWidget *buildClassicOpacityPageUi();
 	QWidget *buildClassicHardnessPageUi();
@@ -160,6 +161,7 @@ private:
 	void updateUiFromMyPaintBrush();
 	void updateMyPaintSettingPage(int setting);
 	void updateStabilizerExplanationText();
+	void updateAntiOverflowExplanationText();
 	void emitChange();
 
 	std::function<void()>

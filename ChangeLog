@@ -9,6 +9,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Make true /roll messages in chat have a blue tint to make cheating more difficult. They're also translatable now, rather than always being in English. Thanks KosmonautKat, lambda20xx and Potete for suggesting.
  * Feature: Allow "blocking" of layers. It works like censoring a layer, but the censor is only visible to you. It lets you hide stuff you don't want to see, but still be aware that it's there so you don't draw over other people's art.
  * Fix: Make layer clipping onto pass-through groups work the same as it does in other programs (that is, make it not clip.)
+ * Feature: Anti-overflow fill for brushes. Thanks Ausjamcian, Axocrat and Null for suggesting.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

@@ -217,6 +217,12 @@ static DP_UPixelFloat source_to_color(DP_Pixel15 pixel)
     return DP_upixel15_to_float_round8(DP_pixel15_unpremultiply(pixel));
 }
 
+static bool source_should_flood_transparent(uint16_t a, float tolerance_squared)
+{
+    float af = DP_channel15_to_float_round8(a);
+    return af * af <= tolerance_squared;
+}
+
 static bool source_should_flood(DP_Pixel15 pixel,
                                 DP_UPixelFloat reference_color,
                                 float tolerance_squared)
@@ -224,8 +230,7 @@ static bool source_should_flood(DP_Pixel15 pixel,
     // TODO: we could use better functions for color distance than this.
     // Guess if we're supposed to fill a transparent-ish pixel.
     if (reference_color.a < 0.05f) {
-        float a = DP_channel15_to_float_round8(pixel.a);
-        return a * a <= tolerance_squared;
+        return source_should_flood_transparent(pixel.a, tolerance_squared);
     }
     else {
         DP_UPixelFloat color = source_to_color(pixel);
@@ -1597,4 +1602,465 @@ DP_selection_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
 
     return finish_fill(&c, mask, img_x, img_y, img_width, img_height,
                        fill_color, out_img, out_x, out_y);
+}
+
+
+#define INSIDE_DAB   (1 << 0)
+#define FLOODED_DAB  (1 << 1)
+#define FILLED_DAB   (1 << 2)
+#define FLOODED_TILE (1 << 3)
+#define FILLED_TILE  (1 << 4)
+#define EXPANDED     (1 << 5)
+
+typedef struct DP_FloodFillDabContext {
+    uint8_t *output;
+    DP_LayerContent *flood_lc;
+    DP_TransientLayerContent *state;
+    DP_Queue queue;
+    DP_Rect dab_on_canvas_area;
+    DP_Rect tile_on_canvas_area;
+    float tolerance_squared;
+    DP_FloodInDabFn in_dab;
+    void *user;
+} DP_FloodFillDabContext;
+
+typedef bool(DP_FloodFillDabInsideFn)(DP_FloodFillDabContext *c, int x, int y);
+
+static bool
+flood_fill_dab_need_new_state(DP_TransientLayerContent **in_out_state,
+                              int canvas_width, int canvas_height)
+{
+    if (!*in_out_state) {
+        return true;
+    }
+
+    bool dimensions_changed =
+        DP_transient_layer_content_width(*in_out_state) != canvas_width
+        || DP_transient_layer_content_height(*in_out_state) != canvas_height;
+    if (dimensions_changed) {
+        DP_transient_layer_content_decref(*in_out_state);
+        return true;
+    }
+
+    return false;
+}
+
+uint8_t *flood_fill_dab_buffer_at(DP_FloodFillDabContext *c, int x, int y)
+{
+    return buffer_at(c->output, c->tile_on_canvas_area, x, y);
+}
+
+static void flood_fill_dab_flood(DP_FloodFillDabContext *c)
+{
+    int left = DP_rect_left(c->tile_on_canvas_area);
+    int top = DP_rect_top(c->tile_on_canvas_area);
+    int right = DP_rect_right(c->tile_on_canvas_area);
+    int bottom = DP_rect_bottom(c->tile_on_canvas_area);
+    DP_LayerContent *flood_lc = c->flood_lc;
+    float tolerance_squared = c->tolerance_squared;
+    int i = 0;
+    for (int y = top; y <= bottom; ++y) {
+        for (int x = left; x <= right; ++x) {
+            bool in_dab = DP_rect_contains(c->dab_on_canvas_area, x, y)
+                       && c->in_dab(c->user, x, y);
+            bool should_flood = source_should_flood_transparent(
+                DP_layer_content_pixel_at(flood_lc, x, y).a, tolerance_squared);
+            if (should_flood) {
+                if (in_dab) {
+                    c->output[i] = INSIDE_DAB | FLOODED_DAB | FLOODED_TILE;
+                }
+                else {
+                    c->output[i] = FLOODED_TILE;
+                }
+            }
+            else if (in_dab) {
+                c->output[i] = INSIDE_DAB;
+            }
+            ++i;
+        }
+    }
+}
+
+static bool flood_fill_dab_inside_dab(DP_FloodFillDabContext *c, int x, int y)
+{
+    return DP_rect_contains(c->dab_on_canvas_area, x, y)
+        && (*flood_fill_dab_buffer_at(c, x, y) & (FLOODED_DAB | FILLED_DAB))
+               == FLOODED_DAB;
+}
+
+static bool flood_fill_dab_inside_tile(DP_FloodFillDabContext *c, int x, int y)
+{
+    if (DP_rect_contains(c->tile_on_canvas_area, x, y)) {
+        uint8_t flags = *flood_fill_dab_buffer_at(c, x, y);
+        return (flags & FLOODED_TILE) && !(flags & FILLED_TILE)
+            && ((flags & FILLED_DAB) || !(flags & FLOODED_DAB));
+    }
+    else {
+        return false;
+    }
+}
+
+static void flood_fill_dab_scan(DP_FloodFillDabContext *c,
+                                DP_FloodFillDabInsideFn inside_fn, DP_Queue *s,
+                                int lx, int rx, int y)
+{
+    bool added = false;
+    for (int x = lx; x <= rx; ++x) {
+        if (!inside_fn(c, x, y)) {
+            added = false;
+        }
+        else if (!added) {
+            add_seed(s, x, y);
+            added = true;
+        }
+    }
+}
+
+static void flood_fill_dab_fill(DP_FloodFillDabContext *c,
+                                DP_FloodFillDabInsideFn inside_fn, int x0,
+                                int y0, uint8_t fill_flag)
+{
+    DP_Queue *s = &c->queue;
+    add_seed(s, x0, y0);
+    while (s->used != 0) {
+        int x, y;
+        shift_seed(s, &x, &y);
+        int lx = x;
+        while (inside_fn(c, lx - 1, y)) {
+            *flood_fill_dab_buffer_at(c, lx - 1, y) |= fill_flag;
+            lx = lx - 1;
+        }
+        while (inside_fn(c, x, y)) {
+            *flood_fill_dab_buffer_at(c, x, y) |= fill_flag;
+            x = x + 1;
+        }
+        flood_fill_dab_scan(c, inside_fn, s, lx, x - 1, y + 1);
+        flood_fill_dab_scan(c, inside_fn, s, lx, x - 1, y - 1);
+    }
+}
+
+static bool flood_fill_dab_all_filled(DP_FloodFillDabContext *c, int left,
+                                      int top, int right, int bottom)
+{
+    for (int y = top; y <= bottom; ++y) {
+        for (int x = left; x <= right; ++x) {
+            uint8_t flags = *flood_fill_dab_buffer_at(c, x, y);
+            if ((flags & INSIDE_DAB)
+                && (!(flags & FLOODED_DAB) || !(flags & FILLED_DAB))) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+static bool flood_fill_dab_is_filled(DP_FloodFillDabContext *c, int x, int y)
+{
+    return *flood_fill_dab_buffer_at(c, x, y) & (FILLED_TILE | EXPANDED);
+}
+
+static bool flood_fill_dab_sync_tile_from_transient_continue(
+    DP_FloodFillDabContext *c, DP_TileIterator *ti,
+    DP_TileIntoDstIterator *tidi, int base_x, int base_y, bool first_filled,
+    DP_TransientTile *tt, DP_Tile **out_t)
+{
+    DP_transient_tile_pixel_at_set(
+        tt, tidi->tile_x, tidi->tile_y,
+        (DP_Pixel15){0, 0, 0, first_filled ? DP_BIT15 : 0});
+
+    bool any_filled = first_filled;
+    while (DP_tile_into_dst_iterator_next(tidi)) {
+        int x = base_x + tidi->dst_x;
+        int y = base_y + tidi->dst_y;
+        bool filled = flood_fill_dab_is_filled(c, x, y);
+        if (filled) {
+            any_filled = true;
+            DP_transient_tile_pixel_at_set(tt, tidi->tile_x, tidi->tile_y,
+                                           (DP_Pixel15){0, 0, 0, DP_BIT15});
+        }
+        else {
+            DP_transient_tile_pixel_at_set(tt, tidi->tile_x, tidi->tile_y,
+                                           (DP_Pixel15){0, 0, 0, 0});
+        }
+    }
+
+    if (!any_filled && DP_transient_tile_blank(tt)) {
+        DP_transient_layer_content_transient_tile_at_set_noinc(
+            c->state, ti->col, ti->row, NULL);
+        *out_t = NULL;
+    }
+    else {
+        *out_t = (DP_Tile *)tt;
+    }
+
+    return true;
+}
+
+static bool flood_fill_dab_sync_tile_from_blank_continue(
+    DP_FloodFillDabContext *c, DP_TileIntoDstIterator *tidi, int base_x,
+    int base_y, DP_TransientTile *tt, DP_Tile **out_tile)
+{
+    DP_transient_tile_pixel_at_set(tt, tidi->tile_x, tidi->tile_y,
+                                   (DP_Pixel15){0, 0, 0, DP_BIT15});
+
+    while (DP_tile_into_dst_iterator_next(tidi)) {
+        int x = base_x + tidi->dst_x;
+        int y = base_y + tidi->dst_y;
+        bool filled = flood_fill_dab_is_filled(c, x, y);
+        if (filled) {
+            DP_transient_tile_pixel_at_set(tt, tidi->tile_x, tidi->tile_y,
+                                           (DP_Pixel15){0, 0, 0, DP_BIT15});
+        }
+    }
+
+    *out_tile = (DP_Tile *)tt;
+    return true;
+}
+
+static bool flood_fill_dab_sync_tile_from_transient(DP_FloodFillDabContext *c,
+                                                    DP_TileIterator *ti,
+                                                    int base_x, int base_y,
+                                                    DP_TransientTile *tt,
+                                                    DP_Tile **out_tile)
+{
+    DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(ti);
+    while (DP_tile_into_dst_iterator_next(&tidi)) {
+        int x = base_x + tidi.dst_x;
+        int y = base_y + tidi.dst_y;
+        bool filled = flood_fill_dab_is_filled(c, x, y);
+        bool prev_filled =
+            DP_transient_tile_pixel_at(tt, tidi.tile_x, tidi.tile_y).a != 0;
+        if ((filled && !prev_filled) || (!filled && prev_filled)) {
+            return flood_fill_dab_sync_tile_from_transient_continue(
+                c, ti, &tidi, base_x, base_y, filled, tt, out_tile);
+        }
+    }
+    return false;
+}
+
+static bool flood_fill_dab_sync_tile_from_blank(DP_FloodFillDabContext *c,
+                                                DP_TileIterator *ti, int base_x,
+                                                int base_y, DP_Tile **out_tile)
+{
+    DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(ti);
+    while (DP_tile_into_dst_iterator_next(&tidi)) {
+        int x = base_x + tidi.dst_x;
+        int y = base_y + tidi.dst_y;
+        bool filled = flood_fill_dab_is_filled(c, x, y);
+        if (filled) {
+            DP_TransientTile *tt = DP_transient_tile_new_blank(0);
+            DP_transient_layer_content_transient_tile_at_set_noinc(
+                c->state, ti->col, ti->row, tt);
+            return flood_fill_dab_sync_tile_from_blank_continue(
+                c, &tidi, base_x, base_y, tt, out_tile);
+        }
+    }
+    return false;
+}
+
+static bool flood_fill_dab_sync_tile(DP_FloodFillDabContext *c,
+                                     DP_TileIterator *ti, int base_x,
+                                     int base_y, DP_Tile **out_tile)
+{
+    DP_Tile *t =
+        DP_transient_layer_content_tile_at_noinc(c->state, ti->col, ti->row);
+    if (t) {
+        return flood_fill_dab_sync_tile_from_transient(
+            c, ti, base_x, base_y, (DP_TransientTile *)t, out_tile);
+    }
+    else {
+        return flood_fill_dab_sync_tile_from_blank(c, ti, base_x, base_y,
+                                                   out_tile);
+    }
+}
+
+static bool flood_fill_dab_push(DP_FloodFillDabContext *c, int canvas_width,
+                                int canvas_height, bool flushed,
+                                DP_FloodFillDabFlushFn flush,
+                                DP_FloodFillDabPutFn put, void *user)
+{
+    DP_Rect tile_on_canvas_area = c->tile_on_canvas_area;
+    int base_x = DP_rect_left(tile_on_canvas_area);
+    int base_y = DP_rect_top(tile_on_canvas_area);
+    DP_TileIterator ti =
+        DP_tile_iterator_make(canvas_width, canvas_height, tile_on_canvas_area);
+    while (DP_tile_iterator_next(&ti)) {
+        DP_Tile *t;
+        if (flood_fill_dab_sync_tile(c, &ti, base_x, base_y, &t)) {
+            if (!flushed) {
+                flushed = true;
+                flush(user);
+            }
+            if (!put(user, ti.col, ti.row, t)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+static bool flood_fill_should_expand_into(unsigned char flags)
+{
+    return !(flags & FLOODED_TILE)
+        && (!(flags & FLOODED_DAB) || (flags & FILLED_DAB));
+}
+
+static bool flood_fill_dab_expand_pixel(DP_FloodFillDabContext *c, int width,
+                                        int height, int expand, int x0, int y0)
+{
+    unsigned char *output = c->output;
+    int left = DP_max_int(x0 - expand, 0);
+    int top = DP_max_int(y0 - expand, 0);
+    int right = DP_min_int(x0 + expand, width - 1);
+    int bottom = DP_min_int(y0 + expand, height - 1);
+    for (int y = top; y <= bottom; ++y) {
+        for (int x = left; x <= right; ++x) {
+            if (output[y * width + x] & FILLED_TILE) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+static void flood_fill_dab_expand(DP_FloodFillDabContext *c, int expand)
+{
+    unsigned char *output = c->output;
+    int width = DP_rect_width(c->tile_on_canvas_area);
+    int height = DP_rect_height(c->tile_on_canvas_area);
+
+    int i = 0;
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x, ++i) {
+            unsigned char flags = output[i];
+            if (!(flags & FILLED_TILE) && flood_fill_should_expand_into(flags)
+                && flood_fill_dab_expand_pixel(c, width, height, expand, x,
+                                               y)) {
+                output[i] = flags | EXPANDED;
+            }
+        }
+    }
+}
+
+bool DP_flood_fill_dab(DP_TransientLayerContent **in_out_state, int origin_x,
+                       int origin_y, double tolerance, int expand,
+                       const DP_Rect *dab_area, DP_LayerContent *flood_lc,
+                       DP_FloodInDabFn in_dab, DP_FloodFillDabFlushFn flush,
+                       DP_FloodFillDabClearFn clear, DP_FloodFillDabPutFn put,
+                       void *user, bool *out_should_mask)
+{
+    DP_ASSERT(in_out_state);
+    DP_ASSERT(dab_area);
+    DP_ASSERT(flood_lc);
+    DP_ASSERT(in_dab);
+    DP_ASSERT(flush);
+    DP_ASSERT(clear);
+    DP_ASSERT(put);
+    DP_ASSERT(out_should_mask);
+
+    if (DP_rect_empty(*dab_area)) {
+        return false;
+    }
+
+    int canvas_width = DP_layer_content_width(flood_lc);
+    int canvas_height = DP_layer_content_height(flood_lc);
+    DP_Rect canvas_area = DP_rect_make(0, 0, canvas_width, canvas_height);
+    if (DP_rect_empty(canvas_area)) {
+        return false;
+    }
+
+    DP_Rect dab_on_canvas_area = DP_rect_intersection(*dab_area, canvas_area);
+    if (DP_rect_empty(dab_on_canvas_area)) {
+        return false;
+    }
+
+    if (!DP_rect_contains(dab_on_canvas_area, origin_x, origin_y)
+        || !in_dab(user, origin_x, origin_y)) {
+        return false;
+    }
+
+    // Since we sync entire selection tiles, we expand the fill accordingly.
+    int padding = DP_max_int(expand, 0);
+    int left = DP_rect_left(dab_on_canvas_area) - padding;
+    int top = DP_rect_top(dab_on_canvas_area) - padding;
+    int right = DP_rect_right(dab_on_canvas_area) + padding;
+    int bottom = DP_rect_bottom(dab_on_canvas_area) + padding;
+    DP_Rect tile_on_canvas_area = {
+        DP_max_int(DP_tile_size_round_down(left), 0),
+        DP_max_int(DP_tile_size_round_down(top), 0),
+        DP_min_int(DP_tile_size_round_down(right) + (DP_TILE_SIZE - 1),
+                   canvas_width - 1),
+        DP_min_int(DP_tile_size_round_down(bottom) + (DP_TILE_SIZE - 1),
+                   canvas_height - 1),
+    };
+    DP_ASSERT(tile_on_canvas_area.x1 <= dab_on_canvas_area.x1);
+    DP_ASSERT(tile_on_canvas_area.y1 <= dab_on_canvas_area.y1);
+    DP_ASSERT(tile_on_canvas_area.x2 >= dab_on_canvas_area.x2);
+    DP_ASSERT(tile_on_canvas_area.y2 >= dab_on_canvas_area.y2);
+
+    float tolerance_squared =
+        DP_double_to_float(DP_square_double(DP_max_double(tolerance, 0.0)));
+    if (!source_should_flood_transparent(
+            DP_layer_content_pixel_at(flood_lc, origin_x, origin_y).a,
+            tolerance_squared)) {
+        return false;
+    }
+
+    bool needs_new_state = flood_fill_dab_need_new_state(
+        in_out_state, canvas_width, canvas_height);
+    if (needs_new_state) {
+        *in_out_state = DP_transient_layer_content_new_init(
+            canvas_width, canvas_height, NULL);
+        flush(user);
+        clear(user);
+    }
+
+    int count = DP_rect_width(tile_on_canvas_area)
+              * DP_rect_height(tile_on_canvas_area);
+    DP_FloodFillDabContext c = {
+        DP_malloc_zeroed(DP_int_to_size(count)),
+        flood_lc,
+        *in_out_state,
+        DP_QUEUE_NULL,
+        dab_on_canvas_area,
+        tile_on_canvas_area,
+        tolerance_squared,
+        in_dab,
+        user,
+    };
+
+    flood_fill_dab_flood(&c);
+    DP_ASSERT(*flood_fill_dab_buffer_at(&c, origin_x, origin_y) & FLOODED_DAB);
+    DP_ASSERT(*flood_fill_dab_buffer_at(&c, origin_x, origin_y) & FLOODED_TILE);
+
+    DP_queue_init(&c.queue, 1024, sizeof(DP_FillSeed));
+    flood_fill_dab_fill(&c, flood_fill_dab_inside_dab, origin_x, origin_y,
+                        FILLED_DAB);
+
+    if (flood_fill_dab_all_filled(&c, left, top, right, bottom)) {
+        *out_should_mask = false;
+        return true;
+    }
+
+    DP_ASSERT(c.queue.used == 0);
+    flood_fill_dab_fill(&c, flood_fill_dab_inside_tile, origin_x, origin_y,
+                        FILLED_TILE);
+    DP_queue_dispose(&c.queue);
+
+    if (expand > 0) {
+        flood_fill_dab_expand(&c, expand);
+    }
+
+    bool ok = flood_fill_dab_push(&c, canvas_width, canvas_height,
+                                  needs_new_state, flush, put, user);
+    DP_free(c.output);
+    if (ok) {
+        *out_should_mask = true;
+        return true;
+    }
+    else {
+        DP_transient_layer_content_decref(c.state);
+        *in_out_state = NULL;
+        return false;
+    }
 }

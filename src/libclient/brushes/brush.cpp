@@ -7,7 +7,6 @@
 #include "libshared/util/qtcompat.h"
 #include <QJsonArray>
 #include <QJsonDocument>
-#include <cmath>
 #include <mypaint-brush.h>
 
 namespace {
@@ -22,6 +21,56 @@ void setDrawdanceColorToQColor(DP_UPixelFloat &r, const QColor &q)
 QColor drawdanceColorToQColor(const DP_UPixelFloat &color)
 {
 	return QColor::fromRgbF(color.r, color.g, color.b, color.a);
+}
+
+static bool antiOverflowIsNull(const DP_AntiOverflow &antiOverflow)
+{
+	DP_AntiOverflow nullAntiOverflow = DP_anti_overflow_null();
+	return DP_anti_overflow_equal(&antiOverflow, &nullAntiOverflow);
+}
+
+QJsonObject antiOverflowToJson(const DP_AntiOverflow &antiOverflow)
+{
+	QJsonObject o;
+	if(antiOverflow.enabled) {
+		o.insert(QStringLiteral("enabled"), true);
+	}
+	if(antiOverflow.tolerance != 0) {
+		o.insert(QStringLiteral("tolerance"), antiOverflow.tolerance);
+	}
+	if(antiOverflow.expand != 0) {
+		o.insert(QStringLiteral("expand"), antiOverflow.expand);
+	}
+	return o;
+}
+
+DP_AntiOverflow antiOverflowFromJson(const QJsonObject &o)
+{
+	DP_AntiOverflow antiOverflow = {
+		o.value(QStringLiteral("enabled")).toBool(),
+		o.value(QStringLiteral("tolerance")).toInt(),
+		o.value(QStringLiteral("expand")).toInt(),
+	};
+	return antiOverflow;
+}
+
+void saveAntiOverflowSetting(
+	QJsonObject &settings, const DP_AntiOverflow &antiOverflow)
+{
+	if(!antiOverflowIsNull(antiOverflow)) {
+		settings.insert(
+			QStringLiteral("antioverflow"), antiOverflowToJson(antiOverflow));
+	}
+}
+
+DP_AntiOverflow loadAntiOverflowSetting(const QJsonObject &settings)
+{
+	QJsonValue value = settings.value(QStringLiteral("antioverflow"));
+	if(value.isObject()) {
+		return antiOverflowFromJson(value.toObject());
+	} else {
+		return DP_anti_overflow_null();
+	}
 }
 
 }
@@ -52,6 +101,7 @@ ClassicBrush::ClassicBrush()
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 		  {DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
+		  DP_anti_overflow_null(),
 	  })
 {
 	updateCurve(m_sizeCurve, size.curve);
@@ -247,6 +297,7 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.erase = o["erase"].toBool();
 	b.pixel_perfect = o.value(QStringLiteral("pixelperfect")).toBool();
 	b.pixel_art_input = o.value(QStringLiteral("pixelartinput")).toBool();
+	b.anti_overflow = loadAntiOverflowSetting(o);
 
 	b.stabilizationMode =
 		o["stabilizationmode"].toInt() == Smoothing ? Smoothing : Stabilizer;
@@ -386,6 +437,7 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 	erase = settings["erase"].toBool();
 	pixel_perfect = settings.value(QStringLiteral("pixelperfect")).toBool();
 	pixel_art_input = settings.value(QStringLiteral("pixelartinput")).toBool();
+	anti_overflow = loadAntiOverflowSetting(settings);
 
 	stabilizationMode = settings["stabilizationmode"].toInt() == Smoothing
 							? Smoothing
@@ -477,6 +529,8 @@ QJsonObject ClassicBrush::settingsToJson() const
 		o.insert(QStringLiteral("pixelartinput"), true);
 	}
 
+	saveAntiOverflowSetting(o, anti_overflow);
+
 	o["stabilizationmode"] = stabilizationMode;
 	o["stabilizer"] = stabilizerSampleCount;
 	o["smoothing"] = smoothing;
@@ -563,6 +617,7 @@ MyPaintBrush::MyPaintBrush()
 		  DP_BLEND_MODE_ERASE,
 		  false,
 		  false,
+		  DP_anti_overflow_null(),
 	  })
 	, m_settings(nullptr)
 	, m_stabilizationMode(Stabilizer)
@@ -787,6 +842,8 @@ QJsonObject MyPaintBrush::toJson() const
 			 {QStringLiteral("syncsamples"), m_syncSamples},
 			 {QStringLiteral("confidential"), m_confidential},
 			 {QStringLiteral("pixelperfect"), m_brush.pixel_perfect},
+			 {QStringLiteral("antioverflow"),
+			  antiOverflowToJson(m_brush.anti_overflow)},
 			 {"mapping", mappingToJson()},
 			 // Backward-compatibility.
 			 {"lock_alpha", m_brush.brush_mode == DP_BLEND_MODE_RECOLOR},
@@ -811,6 +868,8 @@ void MyPaintBrush::exportToJson(QJsonObject &json) const
 		{QStringLiteral("syncsamples"), m_syncSamples},
 		{QStringLiteral("confidential"), m_confidential},
 		{QStringLiteral("pixelperfect"), m_brush.pixel_perfect},
+		{QStringLiteral("antioverflow"),
+		 antiOverflowToJson(m_brush.anti_overflow)},
 		// Backward-compatibility.
 		{"lock_alpha", m_brush.brush_mode == DP_BLEND_MODE_RECOLOR},
 		{"indirect", m_brush.paint_mode != DP_PAINT_MODE_DIRECT},
@@ -863,6 +922,7 @@ MyPaintBrush MyPaintBrush::fromJson(const QJsonObject &json)
 
 	b.m_brush.erase = o["erase"].toBool();
 	b.m_brush.pixel_perfect = o.value(QStringLiteral("pixelperfect")).toBool();
+	b.m_brush.anti_overflow = loadAntiOverflowSetting(o);
 	b.loadJsonSettings(o["mapping"].toObject());
 
 	// If there's no Drawpile stabilizer defined, we get a sensible default
@@ -1382,6 +1442,24 @@ void ActiveBrush::setPixelArtInput(bool pixelArtInput)
 		qWarning("Attempt to set pixel art input on MyPaint brush");
 	} else {
 		m_classic.pixel_art_input = pixelArtInput;
+	}
+}
+
+DP_AntiOverflow &ActiveBrush::antiOverflow()
+{
+	if(m_activeType == MYPAINT) {
+		return m_myPaint.antiOverflow();
+	} else {
+		return m_classic.anti_overflow;
+	}
+}
+
+const DP_AntiOverflow &ActiveBrush::constAntiOverflow() const
+{
+	if(m_activeType == MYPAINT) {
+		return m_myPaint.constAntiOverflow();
+	} else {
+		return m_classic.anti_overflow;
 	}
 }
 

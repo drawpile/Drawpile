@@ -630,17 +630,6 @@ static void draw_dabs_pixel(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
     }
 }
 
-
-static float aspect_ratio_from_uint8(uint8_t aspect_ratio)
-{
-    if (aspect_ratio == 0) {
-        return 1.0f; // Fudged to be a perfectly round dab.
-    }
-    else {
-        return DP_uint8_to_float(aspect_ratio) / 28.333f + 1.0f;
-    }
-}
-
 // The following code is based on libmypaint, see license above.
 
 #define AA_BORDER                    1.0f
@@ -1058,7 +1047,8 @@ static float get_mypaint_brush_stamp(DP_BrushStamp *stamp, uint16_t *mask,
     float y = DP_int_to_float(raw_y) / 4.0f;
     float diameter = DP_uint32_to_float(raw_diameter) / 256.0f;
     float hardness = DP_uint8_to_float(raw_hardness) / 255.0f;
-    float aspect_ratio = aspect_ratio_from_uint8(raw_aspect_ratio);
+    float aspect_ratio =
+        DP_mypaint_brush_aspect_ratio_from_uint8(raw_aspect_ratio);
     float angle = DP_uint8_to_float(raw_angle) / 255.0f;
 
     float segment1_offset = 1.0f;

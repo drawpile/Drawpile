@@ -69,6 +69,7 @@ public:
 	bool currentToolAffectsCanvas() const;
 	bool currentToolAffectsLayer() const;
 	bool currentToolRequiresSelection() const;
+	bool currentToolRequiresFillSource() const;
 	bool isCurrentToolLocked() const;
 
 	void triggerUpdate();

@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
 #include <dpcommon/threading.h>
+#include <dpengine/layer_content.h>
+#include <dpengine/layer_group.h>
 #include <dpmsg/msg_internal.h>
 }
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/freehand.h"
@@ -15,6 +18,76 @@ extern "C" {
 using std::placeholders::_1;
 
 namespace tools {
+
+AntiOverflowSource::~AntiOverflowSource()
+{
+	clear();
+}
+
+DP_LayerContent *AntiOverflowSource::get(ToolController &owner)
+{
+	canvas::CanvasModel *canvas = owner.model();
+	if(!canvas) {
+		clear();
+		return nullptr;
+	}
+
+	canvas::LayerListModel *layerlist = canvas->layerlist();
+	int fillSourceLayerId = layerlist->fillSourceLayerId();
+	if(fillSourceLayerId <= 0) {
+		clear();
+		return nullptr;
+	}
+
+	drawdance::LayerSearchResult lsr =
+		canvas->paintEngine()->viewCanvasState().searchLayer(
+			fillSourceLayerId, true);
+	if(drawdance::LayerContent *layerContent =
+		   std::get_if<drawdance::LayerContent>(&lsr.data)) {
+		return setLayerContentSource(layerContent->get());
+	} else if(
+		drawdance::LayerGroup *layerGroup =
+			std::get_if<drawdance::LayerGroup>(&lsr.data)) {
+		return setLayerGroupSource(layerGroup->get(), lsr.props.get());
+	} else {
+		qWarning("Anti-overflow source %d not found", fillSourceLayerId);
+		clear();
+		return nullptr;
+	}
+}
+
+void AntiOverflowSource::clear()
+{
+	DP_layer_group_decref_nullable(m_sourceLg);
+	DP_layer_content_decref_nullable(m_sourceLc);
+	m_sourceLg = nullptr;
+	m_sourceLc = nullptr;
+}
+
+DP_LayerContent *AntiOverflowSource::setLayerContentSource(DP_LayerContent *lc)
+{
+	Q_ASSERT(lc);
+	if(m_sourceLg || m_sourceLc != lc) {
+		clear();
+		m_sourceLc = DP_layer_content_incref(lc);
+	}
+	return m_sourceLc;
+}
+
+DP_LayerContent *
+AntiOverflowSource::setLayerGroupSource(DP_LayerGroup *lg, DP_LayerProps *lp)
+{
+	Q_ASSERT(lg);
+	Q_ASSERT(lp);
+	if(m_sourceLg != lg) {
+		clear();
+		m_sourceLg = DP_layer_group_incref(lg);
+		m_sourceLc = DP_transient_layer_content_persist(
+			DP_layer_group_merge(lg, lp, false));
+	}
+	return m_sourceLc;
+}
+
 
 Freehand::Freehand(ToolController &owner, DP_MaskSync *ms)
 	: Tool(
@@ -62,10 +135,32 @@ void Freehand::beginStroke(const BeginParams &params, SnapToPixelToggle *target)
 	bool pixelArtInput = brush.isPixelArtInput();
 	target->setSnapToPixel(pixelArtInput);
 
+	const DP_AntiOverflow &antiOverflow = brush.constAntiOverflow();
+	DP_LayerContent *floodLc;
+	double floodTolerance;
+	int floodExpand;
+	if(antiOverflow.enabled && !isCompatibilityMode()) {
+		floodLc = m_antiOverflowSource.get(m_owner);
+		if(!floodLc) {
+			emit m_owner.showMessageRequested(
+				QCoreApplication::translate(
+					"tools::FreehandSettings",
+					"Anti-overflow requires a fill source layer."));
+			return;
+		}
+		floodTolerance = double(antiOverflow.tolerance) / 255.0;
+		floodExpand = antiOverflow.expand;
+	} else {
+		floodLc = nullptr;
+		floodTolerance = 0.0;
+		floodExpand = 0;
+	}
+
 	m_drawing = true;
 	m_firstPoint = true;
 
-	m_owner.setStrokeWorkerBrush(m_strokeWorker, type());
+	m_owner.setStrokeWorkerBrush(
+		m_strokeWorker, type(), floodLc, floodTolerance, floodExpand);
 
 	// The pressure value of the first point is unreliable
 	// because it is (or was?) possible to get a synthetic MousePress event

@@ -27,6 +27,23 @@
 #include <helpers.h> // CLAMP
 
 
+DP_AntiOverflow DP_anti_overflow_null(void)
+{
+    return (DP_AntiOverflow){false, 0, 0};
+}
+
+static bool anti_overflow_equal(const DP_AntiOverflow *a,
+                                const DP_AntiOverflow *b)
+{
+    return a->enabled == b->enabled && a->tolerance == b->tolerance
+        && a->expand == b->expand;
+}
+
+bool DP_anti_overflow_equal(const DP_AntiOverflow *a, DP_AntiOverflow *b)
+{
+    return a == b || (a && b && anti_overflow_equal(a, b));
+}
+
 static bool preset_equal_classic_brush_curve(const DP_ClassicBrushCurve *a,
                                              const DP_ClassicBrushCurve *b)
 {
@@ -77,7 +94,8 @@ static bool preset_equal_classic_brush(const DP_ClassicBrush *a,
         && preset_equal_classic_brush_dynamic(&a->smudge_dynamic,
                                               &b->smudge_dynamic)
         && preset_equal_classic_brush_dynamic(&a->jitter_dynamic,
-                                              &b->jitter_dynamic);
+                                              &b->jitter_dynamic)
+        && anti_overflow_equal(&a->anti_overflow, &b->anti_overflow);
 }
 
 bool DP_classic_brush_equal_preset(const DP_ClassicBrush *a,
@@ -430,7 +448,8 @@ static bool preset_equal_mypaint_brush(const DP_MyPaintBrush *a,
     return a->paint_mode == b->paint_mode && a->brush_mode == b->brush_mode
         && a->erase_mode == b->erase_mode
         && (in_eraser_slot || a->erase == b->erase)
-        && a->pixel_perfect == b->pixel_perfect;
+        && a->pixel_perfect == b->pixel_perfect
+        && anti_overflow_equal(&a->anti_overflow, &b->anti_overflow);
 }
 
 bool DP_mypaint_brush_equal_preset(const DP_MyPaintBrush *a,
@@ -445,4 +464,14 @@ DP_BlendMode DP_mypaint_brush_blend_mode(const DP_MyPaintBrush *mb)
 {
     DP_ASSERT(mb);
     return mb->erase ? mb->erase_mode : mb->brush_mode;
+}
+
+float DP_mypaint_brush_aspect_ratio_from_uint8(uint8_t aspect_ratio)
+{
+    if (aspect_ratio == 0) {
+        return 1.0f; // Fudged to be a perfectly round dab.
+    }
+    else {
+        return DP_uint8_to_float(aspect_ratio) / 28.333f + 1.0f;
+    }
 }

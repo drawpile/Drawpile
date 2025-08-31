@@ -7,6 +7,9 @@
 #include <QAtomicInt>
 #include <QTimer>
 
+struct DP_LayerContent;
+struct DP_LayerGroup;
+struct DP_LayerProps;
 struct DP_MaskSync;
 struct DP_Mutex;
 struct DP_Semaphore;
@@ -17,6 +20,20 @@ class SnapToPixelToggle {
 public:
 	virtual ~SnapToPixelToggle() = default;
 	virtual void setSnapToPixel(bool snapToPixel) = 0;
+};
+
+class AntiOverflowSource final {
+public:
+	~AntiOverflowSource();
+	DP_LayerContent *get(ToolController &owner);
+	void clear();
+
+private:
+	DP_LayerContent *setLayerContentSource(DP_LayerContent *lc);
+	DP_LayerContent *setLayerGroupSource(DP_LayerGroup *lg, DP_LayerProps *lp);
+
+	DP_LayerContent *m_sourceLc = nullptr;
+	DP_LayerGroup *m_sourceLg = nullptr;
 };
 
 class Freehand final : public Tool, public SnapToPixelToggle {
@@ -59,6 +76,7 @@ private:
 
 	QTimer m_pollTimer;
 	drawdance::StrokeWorker m_strokeWorker;
+	AntiOverflowSource m_antiOverflowSource;
 	DP_Mutex *m_mutex;
 	DP_Semaphore *m_sem;
 	net::MessageList m_messages;
@@ -91,7 +109,7 @@ public:
 	void setSnapToPixel(bool snapToPixel) override;
 
 private:
-	Freehand *m_freehand;
+	Freehand *const m_freehand;
 };
 
 }

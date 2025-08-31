@@ -12,6 +12,7 @@
 
 class QCursor;
 struct DP_BrushEngineStrokeParams;
+struct DP_LayerContent;
 
 namespace canvas {
 class CanvasModel;
@@ -179,7 +180,9 @@ public:
 	 * interference when drawing previews, shapes, lines and curves.
 	 */
 	void setBrushEngineBrush(drawdance::BrushEngine &be, Tool::Type source);
-	void setStrokeWorkerBrush(drawdance::StrokeWorker &sw, Tool::Type source);
+	void setStrokeWorkerBrush(
+		drawdance::StrokeWorker &sw, Tool::Type source,
+		DP_LayerContent *floodLcOrNull, double floodTolerance, int floodExpand);
 	void setStrokeEngineParams(
 		drawdance::StrokeEngine &se, int stabilizerSampleCount = 0,
 		int smoothing = 0);
@@ -308,7 +311,9 @@ private:
 	void startDrawingFromHotSwapParams();
 	void updateSelectionMaskingEnabled(bool compatibilityMode);
 	const brushes::ActiveBrush &fillBrushEngineStrokeParams(
-		Tool::Type source, DP_BrushEngineStrokeParams &outStroke) const;
+		Tool::Type source, DP_LayerContent *floodLcOrNull,
+		double floodTolerance, int floodExpand,
+		DP_BrushEngineStrokeParams &outStroke) const;
 
 	Tool *m_toolbox[Tool::_LASTTOOL];
 	net::Client *m_client;

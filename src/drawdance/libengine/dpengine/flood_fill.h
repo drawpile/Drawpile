@@ -27,6 +27,9 @@
 
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_Image DP_Image;
+typedef struct DP_Rect DP_Rect;
+typedef struct DP_Tile DP_Tile;
+DP_TYPEDEF_PERSISTENT(LayerContent);
 
 typedef enum DP_FloodFillKernel {
     DP_FLOOD_FILL_KERNEL_ROUND,
@@ -41,7 +44,13 @@ typedef enum DP_FloodFillResult {
     DP_FLOOD_FILL_CANCELLED,
 } DP_FloodFillResult;
 
+typedef struct DP_FloodFillDabState DP_FloodFillDabState;
+
 typedef bool (*DP_FloodFillShouldCancelFn)(void *user);
+typedef void (*DP_FloodFillDabFlushFn)(void *user);
+typedef void (*DP_FloodFillDabClearFn)(void *user);
+typedef bool (*DP_FloodFillDabPutFn)(void *user, int col, int row, DP_Tile *t);
+typedef bool (*DP_FloodInDabFn)(void *user, int x, int y);
 
 DP_FloodFillResult
 DP_flood_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
@@ -59,6 +68,14 @@ DP_selection_fill(DP_CanvasState *cs, unsigned int context_id, int selection_id,
                   DP_FloodFillKernel kernel_shape, int feather_radius,
                   bool from_edge, DP_Image **out_img, int *out_x, int *out_y,
                   DP_FloodFillShouldCancelFn should_cancel, void *user);
+
+
+bool DP_flood_fill_dab(DP_TransientLayerContent **in_out_state, int origin_x,
+                       int origin_y, double tolerance, int expand,
+                       const DP_Rect *dab_area, DP_LayerContent *flood_lc,
+                       DP_FloodInDabFn in_dab, DP_FloodFillDabFlushFn flush,
+                       DP_FloodFillDabClearFn clear, DP_FloodFillDabPutFn put,
+                       void *user, bool *out_should_mask);
 
 
 #endif

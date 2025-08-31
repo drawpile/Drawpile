@@ -831,6 +831,18 @@ bool LayerListModel::isLayerCheckStateToggleable(const QModelIndex &idx) const
 	return false;
 }
 
+bool LayerListModel::isInSameTree(
+	const QModelIndex &layerIndex, const QModelIndex &otherIndex) const
+{
+	int otherId = otherIndex.data(IdRole).toInt();
+	for(QModelIndex idx = layerIndex; idx.isValid(); idx = idx.parent()) {
+		if(idx.data(IdRole).toInt() == otherId) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void LayerListModel::setLayerChecked(int layerId, bool checked)
 {
 	if(m_checkMode) {

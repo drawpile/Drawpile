@@ -183,7 +183,13 @@ DP_transient_layer_content_new_init_with_transient_sublayers_noinc(
 DP_TransientLayerContent *
 DP_transient_layer_content_incref(DP_TransientLayerContent *tlc);
 
+DP_TransientLayerContent *DP_transient_layer_content_incref_nullable(
+    DP_TransientLayerContent *tlc_or_null);
+
 void DP_transient_layer_content_decref(DP_TransientLayerContent *tlc);
+
+void DP_transient_layer_content_decref_nullable(
+    DP_TransientLayerContent *tlc_or_null);
 
 int DP_transient_layer_content_refcount(DP_TransientLayerContent *tlc);
 

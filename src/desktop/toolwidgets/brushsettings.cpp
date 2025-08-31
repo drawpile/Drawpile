@@ -196,6 +196,7 @@ struct BrushSettings::Private {
 	bool myPaintAllowed = true;
 	bool slowModesAllowed = true;
 	bool compatibilityMode = false;
+	bool freehand = true;
 
 	Slot &slotAt(int i)
 	{
@@ -269,7 +270,8 @@ BrushSettings::~BrushSettings()
 void BrushSettings::setActions(
 	QAction *reloadPreset, QAction *reloadPresetSlots,
 	QAction *reloadAllPresets, QAction *nextSlot, QAction *previousSlot,
-	QAction *automaticAlphaPreserve, QAction *maskSelection)
+	QAction *automaticAlphaPreserve, QAction *maskSelection,
+	QAction *setFillSource)
 {
 	d->ui.reloadButton->setDefaultAction(reloadPreset);
 	d->menu->addSeparator();
@@ -289,6 +291,20 @@ void BrushSettings::setActions(
 	connect(
 		previousSlot, &QAction::triggered, this,
 		&BrushSettings::selectPreviousSlot);
+	connect(
+		d->ui.fillSourceButton, &QPushButton::clicked, setFillSource,
+		&QAction::trigger);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	connect(
+		setFillSource, &QAction::enabledChanged, d->ui.fillSourceButton,
+		&QPushButton::setEnabled);
+#else
+	connect(
+		setFillSource, &QAction::changed, d->ui.fillSourceButton,
+		[this, setFillSource] {
+			d->ui.fillSourceButton->setEnabled(setFillSource->isEnabled());
+		});
+#endif
 }
 
 void BrushSettings::connectBrushPresets(brushes::BrushPresetModel *brushPresets)
@@ -434,6 +450,8 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->ui.brushsizeBox->setExponentRatio(3.0);
 	d->ui.brushspacingBox->setExponentRatio(3.0);
 	d->ui.stabilizerBox->setExponentRatio(3.0);
+	d->ui.fillExpand->setRange(0, DP_ANTI_OVERFLOW_EXPAND_MAX);
+	utils::setWidgetRetainSizeWhenHidden(d->ui.pressureSize, true);
 
 	QMenu *brushTypeMenu = new QMenu(d->ui.brushTypeButton);
 	d->brushTypeGroup = new QActionGroup(brushTypeMenu);
@@ -610,8 +628,15 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 		&BrushSettings::updateFromUi);
 
 	connect(
-		d->ui.modeColorpick, &QToolButton::clicked, this,
+		d->ui.antiOverflow, &QToolButton::clicked, this,
 		&BrushSettings::updateFromUi);
+	connect(
+		d->ui.fillTolerance,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+		&BrushSettings::updateFromUi);
+	connect(
+		d->ui.fillExpand, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &BrushSettings::updateFromUi);
 
 	connect(
 		d->stabilizerAction, &QAction::triggered, this,
@@ -1344,9 +1369,6 @@ void BrushSettings::updateUi()
 		mypaintmode ? !myPaint.isPixelPerfect() : softmode, mypaintmode);
 
 	d->ui.modeEraser->setEnabled(!isCurrentEraserSlot());
-	d->ui.modeColorpick->setEnabled(
-		blendMode != DP_BLEND_MODE_ERASE &&
-		blendMode != DP_BLEND_MODE_ERASE_PRESERVE);
 	bool blendModeDirectOnly = canvas::blendmode::directOnly(blendMode);
 	setPaintModeInUi(int(brush.paintMode()), blendModeDirectOnly);
 
@@ -1367,7 +1389,6 @@ void BrushSettings::updateUi()
 		classic.smudge_dynamic.type != DP_CLASSIC_BRUSH_DYNAMIC_NONE);
 	d->ui.colorpickupBox->setValue(classic.resmudge);
 	d->ui.brushspacingBox->setValue(qRound(classic.spacing * 100.0));
-	d->ui.modeColorpick->setChecked(classic.colorpick);
 	if(softmode) {
 		d->ui.pressureHardness->setChecked(
 			classic.hardness_dynamic.type != DP_CLASSIC_BRUSH_DYNAMIC_NONE);
@@ -1402,6 +1423,15 @@ void BrushSettings::updateUi()
 			canChangePaintMode = false;
 		}
 	}
+
+	const DP_AntiOverflow &antiOverflow = brush.constAntiOverflow();
+	bool antiOverflowAvailable = !d->compatibilityMode && d->freehand;
+	d->ui.antiOverflow->setEnabled(antiOverflowAvailable);
+	d->ui.antiOverflow->setChecked(antiOverflow.enabled);
+	d->ui.fillTolerance->setEnabled(antiOverflowAvailable);
+	d->ui.fillTolerance->setValue(antiOverflow.tolerance);
+	d->ui.fillExpand->setEnabled(antiOverflowAvailable);
+	d->ui.fillExpand->setValue(antiOverflow.expand);
 
 	d->paintModeDirectAction->setEnabled(canChangePaintMode);
 	d->paintModeIndirectWashAction->setEnabled(
@@ -1504,7 +1534,6 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	classic.resmudge = d->ui.colorpickupBox->value();
 
 	classic.spacing = d->ui.brushspacingBox->value() / 100.0;
-	classic.colorpick = d->ui.modeColorpick->isChecked();
 
 	DP_MyPaintSettings &myPaintSettings = myPaint.settings();
 	setMyPaintSettingFromSlider(
@@ -1560,6 +1589,11 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 		d->paintModeIndirectSoftAction->setEnabled(canChangePaintMode);
 		d->paintModeIndirectNormalAction->setEnabled(
 			canChangePaintMode && !d->compatibilityMode);
+
+		DP_AntiOverflow &antiOverflow = brush.antiOverflow();
+		antiOverflow.enabled = d->ui.antiOverflow->isChecked();
+		antiOverflow.tolerance = d->ui.fillTolerance->value();
+		antiOverflow.expand = d->ui.fillExpand->value();
 	}
 
 	if(d->useBrushSampleCount) {
@@ -1638,8 +1672,10 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 	bool locked = lock != Lock::None;
 	bool eraseMode = d->blendModeManager->isEraseMode();
 	bool eraserSlot = isCurrentEraserSlot();
+	bool antiOverflow = !d->compatibilityMode && d->freehand &&
+						d->currentBrush().constAntiOverflow().enabled;
 	QPair<QWidget *, bool> widgetVisibilities[] = {
-		{d->ui.modeColorpick, !locked && !mypaintmode},
+		{d->ui.antiOverflow, !locked && !d->compatibilityMode && d->freehand},
 		{d->ui.alphaPreserve,
 		 !eraserSlot && (!locked || lock == Lock::SlowModesPermission)},
 		{d->ui.modeEraser,
@@ -1649,20 +1685,23 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		 (!locked || lock == Lock::SlowModesPermission) && !eraseMode},
 		{d->ui.erasemode,
 		 (!locked || lock == Lock::SlowModesPermission) && eraseMode},
-		{d->ui.pressureHardness, !locked && softmode && !mypaintmode},
-		{d->ui.hardnessBox, !locked && softmode},
-		{d->ui.brushsizeBox, !locked && !mypaintmode},
+		{d->ui.pressureHardness,
+		 !locked && !antiOverflow && softmode && !mypaintmode},
+		{d->ui.hardnessBox, !locked && !antiOverflow && softmode},
+		{d->ui.sizeWrapper, !locked},
+		{d->ui.brushsizeBox, !mypaintmode},
 		{d->ui.pressureSize, !locked && !mypaintmode},
-		{d->ui.radiusLogarithmicBox, !locked && mypaintmode},
-		{d->ui.opacityBox, !locked},
-		{d->ui.pressureOpacity, !mypaintmode && !locked},
-		{d->ui.smudgingBox, !locked && !mypaintmode},
-		{d->ui.pressureSmudging, !locked && !mypaintmode},
-		{d->ui.colorpickupBox, !locked && !mypaintmode},
-		{d->ui.brushspacingBox, !locked && !mypaintmode},
-		{d->ui.gainBox, !locked && mypaintmode},
-		{d->ui.stabilizationWrapper, !locked},
-		{d->ui.stabilizerButton, !locked},
+		{d->ui.radiusLogarithmicBox, mypaintmode},
+		{d->ui.opacityBox, !locked && !antiOverflow},
+		{d->ui.pressureOpacity, !mypaintmode && !locked && !antiOverflow},
+		{d->ui.smudgingBox, !locked && !antiOverflow && !mypaintmode},
+		{d->ui.pressureSmudging, !locked && !antiOverflow && !mypaintmode},
+		{d->ui.colorpickupBox, !locked && !antiOverflow && !mypaintmode},
+		{d->ui.brushspacingBox, !locked && !antiOverflow && !mypaintmode},
+		{d->ui.gainBox, !locked && !antiOverflow && mypaintmode},
+		{d->ui.stabilizationWrapper, !locked && !antiOverflow},
+		{d->ui.stabilizerButtonWrapper, !locked && !antiOverflow},
+		{d->ui.antiOverflowWrapper, !locked && antiOverflow},
 	};
 
 	d->ui.preview->setDisabled(locked);
@@ -1847,6 +1886,12 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 	}
 }
 
+bool BrushSettings::requiresFillSource()
+{
+	return !d->compatibilityMode && d->freehand &&
+		   d->currentBrush().constAntiOverflow().enabled;
+}
+
 void BrushSettings::setActiveTool(const tools::Tool::Type tool)
 {
 	switch(tool) {
@@ -1869,6 +1914,9 @@ void BrushSettings::setActiveTool(const tools::Tool::Type tool)
 	} else {
 		selectEraserSlot(false);
 	}
+
+	d->freehand = tool == tools::Tool::FREEHAND || tool == tools::Tool::ERASER;
+	updateUi();
 }
 
 void BrushSettings::setForeground(const QColor &color)
@@ -1941,15 +1989,20 @@ void BrushSettings::quickAdjust1(qreal adjustment, bool wheel)
 
 void BrushSettings::quickAdjust2(qreal adjustment, bool wheel)
 {
-	KisSliderSpinBox *opacityBox = d->ui.opacityBox;
-	quickAdjustOn(opacityBox, adjustment, wheel, d->quickAdjust2);
+	if(d->currentBrush().constAntiOverflow().enabled) {
+		quickAdjustOn(d->ui.fillTolerance, adjustment, wheel, d->quickAdjust2);
+	} else {
+		quickAdjustOn(d->ui.opacityBox, adjustment, wheel, d->quickAdjust2);
+	}
 }
 
 void BrushSettings::quickAdjust3(qreal adjustment, bool wheel)
 {
-	if(d->currentBrush().hasHardness()) {
-		KisSliderSpinBox *hardnessBox = d->ui.hardnessBox;
-		quickAdjustOn(hardnessBox, adjustment, wheel, d->quickAdjust3);
+	const brushes::ActiveBrush &brush = d->currentBrush();
+	if(brush.constAntiOverflow().enabled) {
+		quickAdjustOn(d->ui.fillExpand, adjustment, wheel, d->quickAdjust3);
+	} else if(brush.hasHardness()) {
+		quickAdjustOn(d->ui.hardnessBox, adjustment, wheel, d->quickAdjust3);
 	}
 }
 
@@ -1973,13 +2026,23 @@ void BrushSettings::stepAdjust1(bool increase)
 
 void BrushSettings::stepAdjust2(bool increase)
 {
-	KisSliderSpinBox *opacityBox = d->ui.opacityBox;
-	adjustSlider(opacityBox, opacityBox->value() + (increase ? 1 : -1));
+	if(d->currentBrush().constAntiOverflow().enabled) {
+		KisSliderSpinBox *fillTolerance = d->ui.fillTolerance;
+		adjustSlider(
+			fillTolerance, fillTolerance->value() + (increase ? 1 : -1));
+	} else {
+		KisSliderSpinBox *opacityBox = d->ui.opacityBox;
+		adjustSlider(opacityBox, opacityBox->value() + (increase ? 1 : -1));
+	}
 }
 
 void BrushSettings::stepAdjust3(bool increase)
 {
-	if(d->currentBrush().hasHardness()) {
+	const brushes::ActiveBrush &brush = d->currentBrush();
+	if(brush.constAntiOverflow().enabled) {
+		KisSliderSpinBox *fillExpand = d->ui.fillExpand;
+		adjustSlider(fillExpand, fillExpand->value() + (increase ? 1 : -1));
+	} else if(brush.hasHardness()) {
 		KisSliderSpinBox *hardnessBox = d->ui.hardnessBox;
 		adjustSlider(hardnessBox, hardnessBox->value() + (increase ? 1 : -1));
 	}

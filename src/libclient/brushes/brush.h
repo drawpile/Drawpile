@@ -266,6 +266,12 @@ public:
 		m_brush.pixel_perfect = pixelPerfect;
 	}
 
+	DP_AntiOverflow &antiOverflow() { return m_brush.anti_overflow; }
+	const DP_AntiOverflow &constAntiOverflow() const
+	{
+		return m_brush.anti_overflow;
+	}
+
 	StabilizationMode stabilizationMode() const { return m_stabilizationMode; }
 	void setStabilizationMode(StabilizationMode stabilizationMode)
 	{
@@ -385,6 +391,9 @@ public:
 
 	bool isPixelArtInput() const;
 	void setPixelArtInput(bool pixelArtInput);
+
+	DP_AntiOverflow &antiOverflow();
+	const DP_AntiOverflow &constAntiOverflow() const;
 
 	StabilizationMode stabilizationMode() const;
 	void setStabilizationMode(StabilizationMode stabilizationMode);
