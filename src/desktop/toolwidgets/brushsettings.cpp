@@ -483,11 +483,13 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->paintModeGroup->addAction(d->paintModeIndirectSoftAction);
 	d->paintModeGroup->addAction(d->paintModeIndirectNormalAction);
 	paintModeMenu->addSeparator();
-	d->smudgeAlphaAction = paintModeMenu->addAction(QCoreApplication::translate(
-		"dialogs::BrushSettingsDialog", "Smudge with transparency"));
+	d->smudgeAlphaAction = paintModeMenu->addAction(
+		QCoreApplication::translate(
+			"dialogs::BrushSettingsDialog", "Smudge with transparency"));
 	d->smudgeAlphaAction->setCheckable(true);
-	d->syncSamplesAction = paintModeMenu->addAction(QCoreApplication::translate(
-		"dialogs::BrushSettingsDialog", "Synchronize smudging"));
+	d->syncSamplesAction = paintModeMenu->addAction(
+		QCoreApplication::translate(
+			"dialogs::BrushSettingsDialog", "Synchronize smudging"));
 	d->syncSamplesAction->setCheckable(true);
 	paintModeMenu->addSeparator();
 	d->pixelPerfectAction = paintModeMenu->addAction(
@@ -1786,8 +1788,9 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 		QColor &backgroundColor = d->backgroundColorAt(i);
 
 		int cfgIndex = translateBrushSlotConfigIndex(i);
-		QByteArray brushData = cfg.value(ToolProperties::Value<QByteArray>{
-			QStringLiteral("brush%1").arg(cfgIndex), QByteArray()});
+		QByteArray brushData = cfg.value(
+			ToolProperties::Value<QByteArray>{
+				QStringLiteral("brush%1").arg(cfgIndex), QByteArray()});
 
 		const QJsonObject o =
 			QJsonDocument::fromJson(
@@ -1796,23 +1799,27 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 		brush = brushes::ActiveBrush::fromJson(o, true);
 
 		const QJsonObject lo =
-			QJsonDocument::fromJson(cfg.value(ToolProperties::Value<QByteArray>{
-										QStringLiteral("last%1").arg(cfgIndex),
-										getDefaultBrushForSlot(i)}))
+			QJsonDocument::fromJson(
+				cfg.value(
+					ToolProperties::Value<QByteArray>{
+						QStringLiteral("last%1").arg(cfgIndex),
+						getDefaultBrushForSlot(i)}))
 				.object();
 		if(!lo.isEmpty()) {
 			preset = Preset::makeDetached(brushes::ActiveBrush::fromJson(lo));
 		}
 
-		preset.id = cfg.value(ToolProperties::Value<int>{
-			QStringLiteral("preset%1").arg(cfgIndex), 0});
+		preset.id = cfg.value(
+			ToolProperties::Value<int>{
+				QStringLiteral("preset%1").arg(cfgIndex), 0});
 		if(brushData.isEmpty() && preset.id == 0) {
 			preset.id = getDefaultPresetIdForSlot(i);
 			preset.overwrite = true;
 		}
 
-		backgroundColor = cfg.value(ToolProperties::Value<QColor>{
-			QStringLiteral("bg%1").arg(cfgIndex), QColor(Qt::white)});
+		backgroundColor = cfg.value(
+			ToolProperties::Value<QColor>{
+				QStringLiteral("bg%1").arg(cfgIndex), QColor(Qt::white)});
 
 		if(!d->shareBrushSlotColor) {
 			d->buttonAt(i)->setColorSwatch(brush.qColor());
