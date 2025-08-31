@@ -789,8 +789,9 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 		d->stabilizationModeCombo,
 		QOverload<int>::of(&QComboBox::currentIndexChanged),
 		makeBrushChangeCallbackArg<int>([this](int index) {
-			d->brush.setStabilizationMode(brushes::StabilizationMode(
-				d->stabilizationModeCombo->itemData(index).toInt()));
+			d->brush.setStabilizationMode(
+				brushes::StabilizationMode(
+					d->stabilizationModeCombo->itemData(index).toInt()));
 			emitChange();
 		}));
 
@@ -1392,14 +1393,14 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 			new QLabel(tr("Not available in indirect paint modes."));
 		break;
 	case MyPaintCondition::BlendOrIndirectDisabled:
-		page.disabledLabel =
-			new QLabel(tr("Not available in indirect paint modes or when using "
-						  "a blend mode other than Normal."));
+		page.disabledLabel = new QLabel(
+			tr("Not available in indirect paint modes or when using "
+			   "a blend mode other than Normal."));
 		break;
 	case MyPaintCondition::ComparesAlphaOrIndirectDisabled:
-		page.disabledLabel =
-			new QLabel(tr("Not available in indirect paint modes or when using "
-						  "the Marker or Greater Density blend modes."));
+		page.disabledLabel = new QLabel(
+			tr("Not available in indirect paint modes or when using "
+			   "the Marker or Greater Density blend modes."));
 		break;
 	default:
 		page.disabledLabel = nullptr;
@@ -1749,10 +1750,11 @@ void BrushSettingsDialog::updateStabilizerExplanationText()
 				"smoothing from the input preferences applies as well.");
 			break;
 		case brushes::Smoothing:
-			text = tr("Simply averages a number of inputs. Feels faster than "
-					  "the time-based stabilizer, but not as smooth and won't "
-					  "catch up to your cursor when you stop moving. Overrides "
-					  "tablet smoothing from the input preferences.");
+			text =
+				tr("Simply averages a number of inputs. Feels faster than "
+				   "the time-based stabilizer, but not as smooth and won't "
+				   "catch up to your cursor when you stop moving. Overrides "
+				   "tablet smoothing from the input preferences.");
 			break;
 		default:
 			text = tr("Unknown stabilization mode.");
