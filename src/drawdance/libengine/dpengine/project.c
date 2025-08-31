@@ -2844,6 +2844,20 @@ cfs_context_dispose(DP_ProjectCanvasFromSnapshotContext *c,
     return cs;
 }
 
+static size_t get_tile_job_size_alignment(size_t max_pixel_size)
+{
+    size_t job_size = DP_FLEX_SIZEOF(DP_ProjectCanvasFromSnapshotTileJob, data,
+                                     max_pixel_size);
+    size_t alignment = alignof(DP_ProjectCanvasFromSnapshotTileJob);
+    size_t offset = job_size % alignment;
+    if (offset == 0) {
+        return job_size;
+    }
+    else {
+        return job_size + (alignment - (job_size % alignment));
+    }
+}
+
 DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
                                                 DP_DrawContext *dc,
                                                 long long snapshot_id)
@@ -2864,8 +2878,7 @@ DP_CanvasState *DP_project_canvas_from_snapshot(DP_Project *prj,
     }
 
     size_t max_pixel_size = DP_compress_zstd_bounds(DP_TILE_COMPRESSED_BYTES);
-    size_t job_size = DP_FLEX_SIZEOF(DP_ProjectCanvasFromSnapshotTileJob, data,
-                                     max_pixel_size);
+    size_t job_size = get_tile_job_size_alignment(max_pixel_size);
     int thread_count = DP_worker_cpu_count(32);
     c.worker = DP_worker_new(1024, job_size, thread_count, cfs_tile_job);
     if (!c.worker) {
