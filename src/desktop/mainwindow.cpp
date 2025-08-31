@@ -354,11 +354,11 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_canvasView->connectViewStatusBar(m_viewStatusBar);
 	m_canvasView->connectToolSettings(m_dockToolSettings);
 
-	connect(m_dockLayers, &docks::LayerList::layerSelected, this, &MainWindow::updateLockWidget);
-	connect(m_dockLayers, &docks::LayerList::activeLayerVisibilityChanged, this, &MainWindow::updateLockWidget);
+	connect(m_dockLayers, &docks::LayerList::layerSelected, this, &MainWindow::triggerUpdateLockWidget);
+	connect(m_dockLayers, &docks::LayerList::activeLayerVisibilityChanged, this, &MainWindow::triggerUpdateLockWidget);
 
 	connect(m_dockToolSettings, &docks::ToolSettings::toolChanged, this, &MainWindow::toolChanged);
-	connect(m_dockToolSettings, &docks::ToolSettings::activeBrushChanged, this, &MainWindow::updateLockWidget);
+	connect(m_dockToolSettings, &docks::ToolSettings::activeBrushChanged, this, &MainWindow::triggerUpdateLockWidget);
 	connect(
 		m_dockToolSettings, &docks::ToolSettings::showMessageRequested, this,
 		[this](const QString &message) {
@@ -519,10 +519,13 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		&widgets::NetStatus::setJoinPassword);
 	connect(
 		m_doc, &Document::sessionOutOfSpaceChanged, this,
-		&MainWindow::updateLockWidget);
+		&MainWindow::triggerUpdateLockWidget);
 	connect(
 		m_doc, &Document::preparingResetChanged, this,
-		&MainWindow::updateLockWidget);
+		&MainWindow::triggerUpdateLockWidget);
+	connect(
+		this, &MainWindow::lockWidgetUpdateRequested, this,
+		&MainWindow::updateLockWidget, Qt::QueuedConnection);
 	// clang-format off
 
 	connect(m_doc->client(), SIGNAL(bytesReceived(int)), m_netstatus, SLOT(bytesReceived(int)));
@@ -680,10 +683,10 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		&MainWindow::onOperatorModeChange);
 	connect(
 		aclState, &canvas::AclState::localLockChanged, this,
-		&MainWindow::updateLockWidget);
+		&MainWindow::triggerUpdateLockWidget);
 	connect(
 		aclState, &canvas::AclState::resetLockChanged, this,
-		&MainWindow::updateLockWidget);
+		&MainWindow::triggerUpdateLockWidget);
 	connect(
 		aclState, &canvas::AclState::featureAccessChanged, this,
 		&MainWindow::onFeatureAccessChange);
@@ -741,7 +744,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		&MainWindow::updateSelectTransformActions);
 	connect(
 		canvas->selection(), &canvas::SelectionModel::selectionChanged, this,
-		&MainWindow::updateLockWidgetOnSelectionChange);
+		&MainWindow::triggerUpdateLockWidgetOnSelectionChange);
 	connect(
 		canvas->transform(), &canvas::TransformModel::transformChanged, this,
 		&MainWindow::updateSelectTransformActions);
@@ -1203,7 +1206,7 @@ void MainWindow::updateLayerViewMode()
 	m_lastLayerViewMode = action;
 
 	m_doc->canvas()->paintEngine()->setViewMode(mode, censor);
-	updateLockWidget();
+	triggerUpdateLockWidget();
 }
 
 /**
@@ -3679,6 +3682,21 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 }
 
 // clang-format on
+void MainWindow::triggerUpdateLockWidget()
+{
+	if(!m_lockWidgetUpdatePending) {
+		m_lockWidgetUpdatePending = true;
+		emit lockWidgetUpdateRequested();
+	}
+}
+
+void MainWindow::triggerUpdateLockWidgetOnSelectionChange()
+{
+	if(m_dockToolSettings->currentToolRequiresSelection()) {
+		triggerUpdateLockWidget();
+	}
+}
+
 void MainWindow::updateLockWidget()
 {
 	using Reason = view::Lock::Reason;
@@ -3736,13 +3754,8 @@ void MainWindow::updateLockWidget()
 	m_lockstatus->setToolTip(m_viewLock->description());
 	m_lockstatus->setPixmap(
 		reasons ? QIcon::fromTheme("object-locked").pixmap(16, 16) : QPixmap());
-}
 
-void MainWindow::updateLockWidgetOnSelectionChange()
-{
-	if(m_dockToolSettings->currentToolRequiresSelection()) {
-		updateLockWidget();
-	}
+	m_lockWidgetUpdatePending = false;
 }
 // clang-format off
 
@@ -3784,7 +3797,7 @@ void MainWindow::onFeatureAccessChange(DP_Feature feature, bool canUse)
 		break;
 	default: break;
 	}
-	updateLockWidget();
+	triggerUpdateLockWidget();
 }
 
 // clang-format on
@@ -3873,14 +3886,14 @@ void MainWindow::setShowAnnotations(bool show)
 {
 	m_canvasView->setShowAnnotations(show);
 	m_dockToolSettings->annotationSettings()->setAnnotationsShown(show);
-	updateLockWidget();
+	triggerUpdateLockWidget();
 }
 
 void MainWindow::setShowLaserTrails(bool show)
 {
 	m_canvasView->setShowLaserTrails(show);
 	m_dockToolSettings->laserPointerSettings()->setLaserTrailsShown(show);
-	updateLockWidget();
+	triggerUpdateLockWidget();
 }
 // clang-format off
 
@@ -4174,7 +4187,7 @@ void MainWindow::toolChanged(tools::Tool::Type tool)
 		m_doc->toolCtrl()->setActiveAnnotation(0);
 
 	m_doc->toolCtrl()->setActiveTool(tool);
-	updateLockWidget();
+	triggerUpdateLockWidget();
 }
 
 // clang-format on

@@ -138,6 +138,7 @@ signals:
 	void dockTabUpdateRequested();
 	void intendedDockStateRestoreRequested();
 	void resizeReactionRequested();
+	void lockWidgetUpdateRequested();
 	void selectionMaskVisibilityChanged(bool visible);
 
 public slots:
@@ -229,8 +230,9 @@ private slots:
 	void onCompatibilityModeChanged(bool compatibilityMode);
 	void onNsfmChanged(bool nsfm);
 
+	void triggerUpdateLockWidget();
+	void triggerUpdateLockWidgetOnSelectionChange();
 	void updateLockWidget();
-	void updateLockWidgetOnSelectionChange();
 	void setRecorderStatus(bool on);
 
 	void loadShortcuts(const QVariantMap &shortcuts);
@@ -536,6 +538,7 @@ private:
 	bool m_dockTabUpdatePending = false;
 	bool m_updatingDockState = false;
 	bool m_resizeReactionPending = false;
+	bool m_lockWidgetUpdatePending = false;
 
 	Document *m_doc;
 	MainActions *m_ma;
