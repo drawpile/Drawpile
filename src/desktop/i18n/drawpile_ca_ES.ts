@@ -5967,7 +5967,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Igual que la velocitat baixa però canvia més lentament. També bloqueja el paràmetre «Filtre de velocitat gran/alta».</translation>
     </message>
     <message>
         <location line="+3"/>
