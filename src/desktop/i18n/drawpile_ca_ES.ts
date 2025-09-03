@@ -5933,7 +5933,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <source>Barrel Rotation</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Gir</translation>
+        <translation type="unfinished">Gir</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5967,7 +5967,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Igual que la velocitat baixa però canvia més lentament. També bloqueja el paràmetre «Filtre de velocitat gran/alta».</translation>
+        <translation>Igual que la velocitat baixa, però canvia més lentament. També bloqueja el paràmetre «Filtre de velocitat alta».</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6029,9 +6029,9 @@ The range is +/-180.0.
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>La diferència, en graus, entre l&apos;angle en què el llapis apunta i l&apos;angle del moviment del traç.
 L&apos;interval és +/- 180.0.
-0.0 vol dir que l&apos;angle del traç correspon a l&apos;angle del llapis.
-90 vol dir que l&apos;angle del traç és perpendicular a l&apos;angle del llapis.
-180 vol dir que l&apos;angle del traç és directament oposat a l&apos;angle del llapis.</translation>
+0.0 significa que l&apos;angle del traç correspon a l&apos;angle del llapis.
+90 significa que l&apos;angle del traç és perpendicular a l&apos;angle del llapis.
+180 significa que l&apos;angle del traç és directament oposat a l&apos;angle del llapis.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11914,7 +11914,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Locks and permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloqueigs i permisos</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11924,12 +11924,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Hereta l&apos;alfa</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Toggle sketch mode (only visible to you)</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta el mode esbós (només visible per a vosaltres)</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11975,7 +11975,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Commuta el mode esbós del grup de capes</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12000,7 +12000,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1033"/>
         <source>Layer Limit Reached</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;ha arribat al límit de capes</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
@@ -12014,14 +12014,14 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>The layer limit in sessions hosted with Drawpile 2.2 is 256 per user.</source>
-        <translation type="unfinished"></translation>
+        <translation>El límit de capes en sessions allotjades amb Drawpile 2.2 és de 256 per usuari.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>The layer limit for you is %n layer(s), session operators can change this in the session settings.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>El límit de capes per vosaltres és de %n capa, els operadors de sessió poden canviar aquest límit en les opcions de sessió.</numerusform>
+            <numerusform>El límit de capes per vosaltres és de %n capes, els operadors de sessió poden canviar aquest límit en les opcions de sessió.</numerusform>
         </translation>
     </message>
     <message>
@@ -12073,7 +12073,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/onionskins.cpp" line="+118"/>
         <source>Onion Skins</source>
-        <translation type="unfinished"></translation>
+        <translation>Pells de ceba</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -12098,12 +12098,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+109"/>
         <source>-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>-%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>+%1</source>
-        <translation type="unfinished"></translation>
+        <translation>+%1</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -12156,7 +12156,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Pan image</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplaça la imatge</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -12358,7 +12358,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Vector</source>
-        <translation type="unfinished"></translation>
+        <translation>Vector</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12368,13 +12368,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Pixel</source>
-        <translation type="unfinished"></translation>
+        <translation>Píxel</translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Les anotacions estan amagades. </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12385,7 +12385,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+385"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>No teniu permís per enganxar anotacions fusionades.</translation>
     </message>
 </context>
 <context>
@@ -12467,7 +12467,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Synchronize With Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Sincronitza amb el pinzell</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12477,12 +12477,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Click to disable pixel art input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cliqueu per a deshabilitar l&apos;entrada del pinzell de píxels.</translation>
     </message>
     <message>
         <location line="+144"/>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>No teniu permís per utilitzar pinzells en el mode OKLAB o Pigment.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -12493,7 +12493,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+7"/>
         <source>/%1px</source>
         <extracomment>Limit suffix for the brush size slider, %1 is the size limit. So it will look something like &quot;100/255px&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1px</translation>
     </message>
     <message>
         <location line="+649"/>
@@ -12503,18 +12503,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Barreja: </translation>
     </message>
     <message>
         <location line="+758"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">/%1</translation>
     </message>
     <message>
         <location line="-1445"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
-        <translation type="unfinished"></translation>
+        <translation>No teniu permís per a utilitzar els pinzells de MyPaint.</translation>
     </message>
 </context>
 <context>
