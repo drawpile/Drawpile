@@ -1,7 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "zip_archive.h"
 #include <dpcommon/common.h>
+// On some macOS systems this header spews warnings about _Nullable and
+// _Nonnull despite being a system header. Just shut it up I guess.
+#ifdef __clang__
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wnullability-extension"
+#endif
 #include <zip.h>
+#ifdef __clang__
+#    pragma clang diagnostic pop
+#endif
 
 
 #define INITIAL_READ_CAPACITY 4098
