@@ -134,7 +134,7 @@
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+340"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Preserva l&apos;alfa</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -179,7 +179,7 @@
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-23"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -596,7 +596,7 @@
     <message>
         <location line="+39"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>El format PSD no permet anotacions, la línia temporal d&apos;animació i alguns modes de mescla. Per a conservar-los correctament, heu de desar en un format diferent.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1038,7 +1038,7 @@ Subinterval: [%3,%4]</translation>
     <message>
         <location line="+13"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Hereta l&apos;alfa</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1048,7 +1048,7 @@ Subinterval: [%3,%4]</translation>
     <message>
         <location line="+14"/>
         <source>Blend alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Barreja alfa</translation>
     </message>
 </context>
 <context>
@@ -1215,7 +1215,9 @@ Subinterval: [%3,%4]</translation>
         <source>This session is hosted on another server, you will be redirected.
 
 To avoid this extra step in the future, use the Browse page or a direct link to a session instead.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aquesta sessió s&apos;allotja en un altre servidor, sereu redirigit.
+
+Per evitar aquest pas extra en el futur, utilitzeu la pàgina Navega o un enllaç directe a una sessió.</translation>
     </message>
     <message>
         <location line="-612"/>
@@ -2087,17 +2089,17 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+7"/>
         <source>Always show side toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra sempre la barra d&apos;eines lateral</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Always show bottom toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra sempre la barra d&apos;eines inferior</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Left-handed mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode per a esquerrans</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2197,7 +2199,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+5"/>
         <source>Set Selection Mask &amp;Color…</source>
-        <translation type="unfinished"></translation>
+        <translation>Estableix el &amp;color de la màscara de selecció…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2222,7 +2224,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+32"/>
         <source>Stay Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Temps d&apos;estada</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2262,12 +2264,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+29"/>
         <source>Automatically inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Hereta l&apos;alfa automàticament</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Hereta i preserva l&apos;alfa segons el mode de barreja</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2277,17 +2279,17 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+3"/>
         <source>Censor layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Censura la capa</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer entirely</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloqueja la capa completament</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Lock layer content</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloqueja el contingut de la capa</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2297,7 +2299,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+4"/>
         <source>Lock layer position</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloqueja la posició de la capa</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2307,7 +2309,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+3"/>
         <source>&amp;Check All</source>
-        <translation>Marca-ho tot (&amp;C)</translation>
+        <translation>&amp;Marca-ho tot</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2317,7 +2319,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+13"/>
         <source>Layer Color Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Marcador de color de la capa</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2455,23 +2457,23 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+17"/>
         <source>Animation export failed</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;exportació de l&apos;animació ha fallat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export animation</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;ha pogut exportar l&apos;animació</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Animation exported</source>
-        <translation type="unfinished"></translation>
+        <translation>Animación exportada</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Animation exported in %1:%2.%3</source>
         <extracomment>%1 is minutes, %2 is seconds, %3 is milliseconds.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Animació exportada en %1:%2.%3</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2493,12 +2495,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+68"/>
         <source>This session was hosted with an older version of Drawpile. Several features – such as layer clipping, some blend modes and drawing within a selection mask – will be unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aquesta sessió s&apos;ha allotjat amb una versió més antiga de Drawpile. Diverses característiques, com el retall de capes, algunes modes de barreja i dibuixar dins la màscara de selecció, no estaran disponibles.</translation>
     </message>
     <message>
         <location line="+511"/>
         <source>Canvas size too large to host.</source>
-        <translation type="unfinished"></translation>
+        <translation>La mida del llenç és massa gran per ser allotjat.</translation>
     </message>
     <message>
         <location line="+196"/>
@@ -2533,7 +2535,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+520"/>
         <source>&amp;Expand Canvas</source>
-        <translation>&amp;Expandeix el llenç</translation>
+        <translation>E&amp;xpandeix el llenç</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2553,7 +2555,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+13"/>
         <source>&amp;Layouts...</source>
-        <translation>Disposicions (&amp;L)...</translation>
+        <translation>&amp;Disposicions...</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2839,7 +2841,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+87"/>
         <source>Selectio&amp;n</source>
-        <translation type="unfinished">Selecció</translation>
+        <translation>Se&amp;lecció</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -3050,7 +3052,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+0"/>
         <source>Create a gradient inside selected areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea un degradat dins les àrees seleccionades</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3554,7 +3556,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+44"/>
         <source>&amp;Tools</source>
-        <translation>&amp;Eines</translation>
+        <translation>E&amp;ines</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3718,7 +3720,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Unmark layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Desmarca la capa</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3733,7 +3735,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Mark layer blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca la capa de blau</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3748,7 +3750,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Mark layer green</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca la capa de verd</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3763,7 +3765,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Mark layer yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca la capa de groc</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3778,7 +3780,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Mark layer orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca la capa de taronja</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3793,7 +3795,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Mark layer brown</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca la capa de marró</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3808,7 +3810,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Mark layer red</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca la capa de vermell</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3823,7 +3825,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Mark layer purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca la capa de lila</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3838,7 +3840,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Mark layer gray</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca la capa de gris</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4747,7 +4749,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+1"/>
         <source>Palette Image (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Imatge de paleta (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4903,7 +4905,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+2"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Suavitzat</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5196,7 +5198,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="+54"/>
         <source>Atmosphere with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Atmosfera amb accent</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5214,7 +5216,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="+5"/>
         <source>Dominant hue with accent</source>
         <extracomment>This is the name for a gamut mask, a shape on a color circle.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>To dominant amb accent</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5346,12 +5348,12 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
     <message>
         <location line="+8"/>
         <source>Allow others in a session to use this brush</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Permet als altres en una sessió utilitzar aquest pinzell</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Sharing:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Compartir:</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -5429,7 +5431,7 @@ Esteu segur que voleu començar a enregistrar el bolcat de depuració?</translat
         <location line="+30"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+12"/>
         <source>Direct Build-Up</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Acumulació directa</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5622,22 +5624,22 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinàmiques de pressió</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinàmiques de velocitat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinàmiques de distància</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Velocitat màxima: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -5652,7 +5654,7 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="+14"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocitat màxima establerta per a tots els paràmetres d&apos;aquest pinzell.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5662,27 +5664,27 @@ Disabling it reverts the behavior to how it was before Drawpile 2.3.</source>
     <message>
         <location line="+14"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Distància màxima establerta per a tots els paràmetres d&apos;aquest pinzell.</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>Not available in indirect paint modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>No disponible en modes de pintura indirecta.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Not available in indirect paint modes or when using a blend mode other than Normal.</source>
-        <translation type="unfinished"></translation>
+        <translation>No disponible en modes de pintura indirecta o quan s&apos;utilitza un mode de barreja diferent de Normal.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not available in indirect paint modes or when using the Marker or Greater Density blend modes.</source>
-        <translation type="unfinished"></translation>
+        <translation>No disponible en modes de pintura indirecta o quan s&apos;utilitzen els modes de barreja Marcador o Major densitat.</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Synchronize smudging (slower, but more accurate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sincronitza el difuminat (més lent, però més precís)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5699,7 +5701,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+3"/>
         <source>Prevents L-shaped curves, mostly useful for small pixel brushes.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Evita corbes amb forma L, habitualment útil per a pinzells de petits pinzells.</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -5719,7 +5721,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="-365"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Preserva l&apos;alfa</translation>
     </message>
     <message>
         <location line="+873"/>
@@ -5747,7 +5749,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+6"/>
         <source>Curve set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Corba establerta per tots els paràmetres d&apos;aquest pinzell.</translation>
     </message>
     <message>
         <location line="+44"/>
@@ -5782,17 +5784,17 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+81"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Barreja: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Minimum Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Barreja mínima: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending</source>
-        <translation type="unfinished"></translation>
+        <translation>Barreja</translation>
     </message>
     <message>
         <location line="+141"/>
@@ -5931,7 +5933,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <source>Barrel Rotation</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation>Gir</translation>
+        <translation type="unfinished">Gir</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5965,7 +5967,7 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Igual que la velocitat baixa, però canvia més lentament. També bloqueja el paràmetre «Filtre de velocitat alta».</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6027,9 +6029,9 @@ The range is +/-180.0.
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
         <translation>La diferència, en graus, entre l&apos;angle en què el llapis apunta i l&apos;angle del moviment del traç.
 L&apos;interval és +/- 180.0.
-0.0 vol dir que l&apos;angle del traç correspon a l&apos;angle del llapis.
-90 vol dir que l&apos;angle del traç és perpendicular a l&apos;angle del llapis.
-180 vol dir que l&apos;angle del traç és directament oposat a l&apos;angle del llapis.</translation>
+0.0 significa que l&apos;angle del traç correspon a l&apos;angle del llapis.
+90 significa que l&apos;angle del traç és perpendicular a l&apos;angle del llapis.
+180 significa que l&apos;angle del traç és directament oposat a l&apos;angle del llapis.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8240,7 +8242,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Fitxers</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8815,7 +8817,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Use system file picker dialogs</source>
-        <translation type="unfinished"></translation>
+        <translation>Usa el diàleg de selecció de fitxers del sistema</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8838,7 +8840,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-12"/>
         <location line="+14"/>
         <source>Drawpile Canvas (.dpcs)</source>
-        <translation type="unfinished"></translation>
+        <translation>Llenç de Drawpile (.dpcs)</translation>
     </message>
     <message>
         <location line="-12"/>
@@ -8858,22 +8860,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>QOI (.qoi)</source>
-        <translation type="unfinished"></translation>
+        <translation>QOI (.qoi)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>WEBP (.webp)</source>
-        <translation type="unfinished"></translation>
+        <translation>WEBP (.webp)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Photoshop Document (.psd)</source>
-        <translation type="unfinished"></translation>
+        <translation>Document de Photoshop (.psd)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preferred export format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Format d&apos;exportació preferit:</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -10111,7 +10113,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>One-finger tap and hold:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Toc d&apos;un dit mantingut:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -10131,7 +10133,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>One-finger touch:</source>
-        <translation type="unfinished"></translation>
+        <translation>Toc amb un dit:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10161,7 +10163,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Two-finger twist:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gir amb dos dits:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -10230,7 +10232,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>On touch drag</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arrossegar en tocar</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10310,7 +10312,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Automatically inherit and preserve alpha based on blend mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Hereta i preserva l&apos;alfa automàticament segons el mode de barreja</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -10543,12 +10545,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+55"/>
         <source>Failed to read file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;ha pogut llegir el fitxer: %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No file or content received.</source>
-        <translation type="unfinished"></translation>
+        <translation>No s&apos;ha rebut cap fitxer o contingut.</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -10594,7 +10596,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Obre la pàgina de configuració de la tauleta gràfica i de solució de problemes de Drawpile</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -10830,7 +10832,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>ID alias:</source>
-        <translation type="unfinished"></translation>
+        <translation>Àlies d&apos;ID:</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -10860,7 +10862,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Listing: the ID alias is inappropriate.</source>
-        <translation type="unfinished"></translation>
+        <translation>Llistat: l&apos;àlies d&apos;ID és inapropiat.</translation>
     </message>
 </context>
 <context>
@@ -10999,18 +11001,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Maximum brush size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mida màxima de pinzell:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Maximum amount of layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre màxim de capes:</translation>
     </message>
     <message>
         <location line="+171"/>
         <source>%1: </source>
         <extracomment>%1 is an acccess tier, like &quot;Operator&quot; or &quot;Everyone&quot;. Unless your language uses something other than a colon, leave this as it is.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: </translation>
     </message>
     <message>
         <location line="+296"/>
@@ -11127,7 +11129,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Public session, anyone can freely join</source>
-        <translation>Sessió públic, qualsevol pot unir-se lliurement</translation>
+        <translation>Sessió pública, qualsevol pot unir-se lliurement</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11293,7 +11295,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Brush &amp;Tags</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Etiquetes de pinzell</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -11912,7 +11914,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Locks and permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloqueigs i permisos</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11922,12 +11924,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Inherit alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Hereta l&apos;alfa</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Toggle sketch mode (only visible to you)</source>
-        <translation type="unfinished"></translation>
+        <translation>Commuta el mode esbós (només visible per a vosaltres)</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -11973,7 +11975,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Toggle Layer Group &amp;Sketch Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Commuta el mode esbós del grup de capes</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11998,7 +12000,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1033"/>
         <source>Layer Limit Reached</source>
-        <translation type="unfinished"></translation>
+        <translation>S&apos;ha arribat al límit de capes</translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
@@ -12012,14 +12014,14 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>The layer limit in sessions hosted with Drawpile 2.2 is 256 per user.</source>
-        <translation type="unfinished"></translation>
+        <translation>El límit de capes en sessions allotjades amb Drawpile 2.2 és de 256 per usuari.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>The layer limit for you is %n layer(s), session operators can change this in the session settings.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>El límit de capes per vosaltres és de %n capa, els operadors de sessió poden canviar aquest límit en les opcions de sessió.</numerusform>
+            <numerusform>El límit de capes per vosaltres és de %n capes, els operadors de sessió poden canviar aquest límit en les opcions de sessió.</numerusform>
         </translation>
     </message>
     <message>
@@ -12071,7 +12073,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/onionskins.cpp" line="+118"/>
         <source>Onion Skins</source>
-        <translation type="unfinished"></translation>
+        <translation>Pells de ceba</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -12096,12 +12098,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+109"/>
         <source>-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>-%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>+%1</source>
-        <translation type="unfinished"></translation>
+        <translation>+%1</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -12154,7 +12156,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Pan image</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplaça la imatge</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -12238,7 +12240,7 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/startdialog/host/session.cpp" line="-32"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[♥ Doneu a Drawpile] per a ajudar a mantenir el servidor públic en funcionament.</translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
@@ -12356,7 +12358,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Vector</source>
-        <translation type="unfinished"></translation>
+        <translation>Vector</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12366,13 +12368,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Pixel</source>
-        <translation type="unfinished"></translation>
+        <translation>Píxel</translation>
     </message>
     <message>
         <location line="+85"/>
         <source>Annotations are hidden. </source>
         <extracomment>This is part of the sentence &quot;Annotations are hidden. _Show_&quot;. The latter is a clickable link.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Les anotacions estan amagades. </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12383,7 +12385,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+385"/>
         <source>You don&apos;t have permission to paste merged annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>No teniu permís per enganxar anotacions fusionades.</translation>
     </message>
 </context>
 <context>
@@ -12465,7 +12467,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Synchronize With Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Sincronitza amb el pinzell</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -12475,12 +12477,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Click to disable pixel art input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cliqueu per a deshabilitar l&apos;entrada del pinzell de píxels.</translation>
     </message>
     <message>
         <location line="+144"/>
         <source>You don&apos;t have permission to use brushes in OKLAB or Pigment mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>No teniu permís per utilitzar pinzells en el mode OKLAB o Pigment.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -12491,7 +12493,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+7"/>
         <source>/%1px</source>
         <extracomment>Limit suffix for the brush size slider, %1 is the size limit. So it will look something like &quot;100/255px&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>/%1px</translation>
     </message>
     <message>
         <location line="+649"/>
@@ -12501,18 +12503,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Blending: </source>
-        <translation type="unfinished"></translation>
+        <translation>Barreja: </translation>
     </message>
     <message>
         <location line="+758"/>
         <source>/%1</source>
         <extracomment>Limit suffix for the brush radius slider, %1 is the size limit. So it will look something like &quot;200/400&quot;. Unless your language uses a different slash symbol or something, leave this unchanged.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">/%1</translation>
     </message>
     <message>
         <location line="-1445"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
-        <translation type="unfinished"></translation>
+        <translation>No teniu permís per a utilitzar els pinzells de MyPaint.</translation>
     </message>
 </context>
 <context>
@@ -12643,7 +12645,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+17"/>
         <source>Shape:</source>
-        <translation type="unfinished"></translation>
+        <translation>Forma:</translation>
     </message>
     <message>
         <location line="+7"/>
