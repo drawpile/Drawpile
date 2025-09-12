@@ -119,8 +119,8 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 	m_touchRotating = false;
 	m_touchHeld = false;
 	m_tapTimer.setRemainingTime(TAP_MAX_DELAY_MS);
-	if(isTouchDrawEnabled() && m_touchState.isSingleTouch() &&
-	   !compat::isTouchPad(event)) {
+	bool isTouchPad = compat::isTouchPad(event);
+	if(!isTouchPad && isTouchDrawEnabled() && m_touchState.isSingleTouch()) {
 		QPointF posf = m_touchState.currentCenter();
 		qreal pressure = touchPressure(event);
 		DP_EVENT_LOG(
@@ -159,7 +159,8 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 		m_touchMode = TouchMode::Moving;
 	}
 
-	if(m_touchState.isSingleTouch() && m_touchMode != TouchMode::Drawing &&
+	if(!isTouchPad && m_touchState.isSingleTouch() &&
+	   m_touchMode != TouchMode::Drawing &&
 	   m_oneFingerTapAndHoldAction !=
 		   int(desktop::settings::TouchTapAndHoldAction::Nothing)) {
 		m_tapAndHoldTimer->start();
