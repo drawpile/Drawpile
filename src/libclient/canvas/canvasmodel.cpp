@@ -345,17 +345,19 @@ int CanvasModel::amendSnapshotMetadata(
 	const QHash<int, QHash<int, int>> *overrideLimits) const
 {
 	int prepended = 1;
-	snapshot.prepend(net::makeUndoDepthMessage(
-		0, qBound(
-			   DP_CANVAS_HISTORY_UNDO_DEPTH_MIN,
-			   overrideUndoLimit < 0 ? m_paintengine->undoDepthLimit()
-									 : overrideUndoLimit,
-			   DP_CANVAS_HISTORY_UNDO_DEPTH_MAX)));
+	snapshot.prepend(
+		net::makeUndoDepthMessage(
+			0, qBound(
+				   DP_CANVAS_HISTORY_UNDO_DEPTH_MIN,
+				   overrideUndoLimit < 0 ? m_paintengine->undoDepthLimit()
+										 : overrideUndoLimit,
+				   DP_CANVAS_HISTORY_UNDO_DEPTH_MAX)));
 
 	if(includePinnedMessage && !m_pinnedMessage.isEmpty()) {
 		++prepended;
-		snapshot.prepend(net::makeChatMessage(
-			m_localUserId, 0, DP_MSG_CHAT_OFLAGS_PIN, m_pinnedMessage));
+		snapshot.prepend(
+			net::makeChatMessage(
+				m_localUserId, 0, DP_MSG_CHAT_OFLAGS_PIN, m_pinnedMessage));
 	}
 
 	int defaultLayerId = m_layerlist->defaultLayer();
