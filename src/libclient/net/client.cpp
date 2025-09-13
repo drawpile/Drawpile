@@ -601,9 +601,10 @@ Client::translateMessage(const QJsonObject &reply, const QString &fallbackKey)
 		} else if(key == net::ServerReply::KEY_KICK_WEB_USERS) {
 			QString by = params[QStringLiteral("by")].toString();
 			if(by.isEmpty()) {
-				return tr("Session password removed by a server administrator. "
-						  "This server doesn't allow web browsers in public "
-						  "sessions, they will be disconnected.");
+				return tr(
+					"Session password removed by a server administrator. "
+					"This server doesn't allow web browsers in public "
+					"sessions, they will be disconnected.");
 			} else {
 				return tr("Session password removed by %1. This server doesn't "
 						  "allow web browsers in public sessions, they will be "
@@ -640,18 +641,22 @@ Client::translateMessage(const QJsonObject &reply, const QString &fallbackKey)
 					.arg(target, by);
 			}
 		} else if(key == net::ServerReply::KEY_OUT_OF_SPACE) {
-			return tr("Session is out of space! To continue drawing, an "
-					  "operator must reset it to bring it down to a smaller "
-					  "size. This can be done via Session > Reset.");
+			return tr(
+				"Session is out of space! To continue drawing, an "
+				"operator must reset it to bring it down to a smaller "
+				"size. This can be done via Session > Reset.");
 		} else if(key == net::ServerReply::KEY_RESET_CANCEL) {
-			return tr("Session reset cancelled! An operator must unlock the "
-					  "canvas and reset the session manually.");
+			return tr(
+				"Session reset cancelled! An operator must unlock the "
+				"canvas and reset the session manually.");
 		} else if(key == net::ServerReply::KEY_RESET_FAILED) {
-			return tr("Session reset failed! An operator must unlock the "
-					  "canvas and reset the session manually.");
+			return tr(
+				"Session reset failed! An operator must unlock the "
+				"canvas and reset the session manually.");
 		} else if(key == net::ServerReply::KEY_RESET_PREPARE) {
-			return tr("Preparing for session reset! Please wait, the session "
-					  "should be available again shortly…");
+			return tr(
+				"Preparing for session reset! Please wait, the session "
+				"should be available again shortly…");
 		} else if(key == net::ServerReply::KEY_RESET_PREPARE_BY) {
 			// %1 is the name of the operator resetting the canvas.
 			return tr("Preparing for session reset by %1! Please wait, the "
