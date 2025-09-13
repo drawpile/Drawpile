@@ -543,16 +543,18 @@ void Document::onAutoresetQueried(int maxSize, const QString &payload)
 				{QStringLiteral("net"), serverAutoReset ? 100.0 : 0.0},
 				{QStringLiteral("pings"), pings},
 			};
-			m_client->sendMessage(net::ServerCommand::make(
-				QStringLiteral("ready-to-autoreset"), {}, kwargs));
+			m_client->sendMessage(
+				net::ServerCommand::make(
+					QStringLiteral("ready-to-autoreset"), {}, kwargs));
 		} else if(serverAutoReset) {
 			m_client->sendMessage(
 				net::ServerCommand::make(QStringLiteral("ready-to-autoreset")));
 		} else {
 			QTimer::singleShot(10000, Qt::VeryCoarseTimer, this, [this] {
 				if(m_client->isConnected()) {
-					m_client->sendMessage(net::ServerCommand::make(
-						QStringLiteral("ready-to-autoreset")));
+					m_client->sendMessage(
+						net::ServerCommand::make(
+							QStringLiteral("ready-to-autoreset")));
 				}
 			});
 		}
@@ -572,18 +574,21 @@ void Document::onAutoresetRequested(
 			// Streamed autoreset. Keep going as normal, send reset messages in
 			// the background so the server can swap out its state on the fly.
 			qDebug("Send stream-reset-start");
-			m_client->sendMessage(net::ServerCommand::make(
-				QStringLiteral("stream-reset-start"), {m_autoResetCorrelator}));
+			m_client->sendMessage(
+				net::ServerCommand::make(
+					QStringLiteral("stream-reset-start"),
+					{m_autoResetCorrelator}));
 		} else {
 			// Interrupting autoreset. Stop everything and send a reset image.
 			// TODO: There seems to be a race condition in the server where
 			// it will fail to actually send this command out to the clients
 			// if the subsequent server command comes in too fast.
 			sendLockSession(true);
-			m_client->sendMessage(net::makeChatMessage(
-				m_client->myId(), DP_MSG_CHAT_TFLAGS_BYPASS,
-				DP_MSG_CHAT_OFLAGS_ACTION,
-				QStringLiteral("beginning session autoreset...")));
+			m_client->sendMessage(
+				net::makeChatMessage(
+					m_client->myId(), DP_MSG_CHAT_TFLAGS_BYPASS,
+					DP_MSG_CHAT_OFLAGS_ACTION,
+					QStringLiteral("beginning session autoreset...")));
 			sendResetSession();
 		}
 	}
@@ -615,8 +620,9 @@ void Document::onStreamResetProgressed(bool cancel)
 			qWarning("Stream reset cancelled while generating the reset image");
 			setStreamResetState(StreamResetState::None);
 		} else {
-			qWarning("Stream reset progress requested, but we're still "
-					 "generating the reset image");
+			qWarning(
+				"Stream reset progress requested, but we're still "
+				"generating the reset image");
 		}
 		break;
 	default:
@@ -1099,8 +1105,9 @@ bool Document::isDirty() const
 
 void Document::sendPointerMove(const QPointF &point)
 {
-	m_client->sendMessage(net::makeMovePointerMessage(
-		m_client->myId(), point.x() * 4, point.y() * 4));
+	m_client->sendMessage(
+		net::makeMovePointerMessage(
+			m_client->myId(), point.x() * 4, point.y() * 4));
 }
 
 void Document::sendSessionConf(const QJsonObject &sessionconf)
@@ -1123,8 +1130,9 @@ void Document::sendFeatureLimitsChange(const QVector<int32_t> &limits)
 
 void Document::sendLockSession(bool lock)
 {
-	m_client->sendMessage(net::makeLayerAclMessage(
-		m_client->myId(), 0, lock ? DP_ACL_ALL_LOCKED_BIT : 0, {}));
+	m_client->sendMessage(
+		net::makeLayerAclMessage(
+			m_client->myId(), 0, lock ? DP_ACL_ALL_LOCKED_BIT : 0, {}));
 }
 
 void Document::sendOpword(const QString &opword)
@@ -1147,8 +1155,9 @@ void Document::sendResetSession(
 {
 	if(!m_client->isConnected()) {
 		if(resetImage.isEmpty()) {
-			qWarning("Tried to do an offline session reset with a blank reset "
-					 "image");
+			qWarning(
+				"Tried to do an offline session reset with a blank reset "
+				"image");
 			return;
 		}
 		// Not connected? Do a local reset
@@ -1235,19 +1244,21 @@ void Document::sendAbuseReport(int userId, const QString &message)
 
 void Document::sendCreateInviteCode(int maxUses, bool op, bool trust)
 {
-	m_client->sendMessage(net::ServerCommand::make(
-		QStringLiteral("invite-create"), {},
-		{
-			{QStringLiteral("maxUses"), maxUses},
-			{QStringLiteral("op"), op},
-			{QStringLiteral("trust"), trust},
-		}));
+	m_client->sendMessage(
+		net::ServerCommand::make(
+			QStringLiteral("invite-create"), {},
+			{
+				{QStringLiteral("maxUses"), maxUses},
+				{QStringLiteral("op"), op},
+				{QStringLiteral("trust"), trust},
+			}));
 }
 
 void Document::sendRemoveInviteCode(const QString &secret)
 {
-	m_client->sendMessage(net::ServerCommand::make(
-		QStringLiteral("invite-remove"), {secret}, {}));
+	m_client->sendMessage(
+		net::ServerCommand::make(
+			QStringLiteral("invite-remove"), {secret}, {}));
 }
 
 void Document::sendInviteCodesEnabled(bool enabled)
@@ -1435,9 +1446,10 @@ void Document::sendNextStreamResetMessage()
 	if(m_streamResetState == StreamResetState::Streaming) {
 		if(m_streamResetImage.isEmpty()) {
 			qDebug("Send stream-reset-finish");
-			m_client->sendMessage(net::ServerCommand::make(
-				QStringLiteral("stream-reset-finish"),
-				{m_streamResetMessageCount}));
+			m_client->sendMessage(
+				net::ServerCommand::make(
+					QStringLiteral("stream-reset-finish"),
+					{m_streamResetMessageCount}));
 			setStreamResetState(StreamResetState::None);
 		} else {
 			m_client->sendMessage(m_streamResetImage.takeFirst());
