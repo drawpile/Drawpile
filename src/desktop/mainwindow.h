@@ -341,7 +341,10 @@ private:
 
 	void showBrushSettingsDialog(bool openOnPresetPage);
 
-	void connectToSession(const QUrl &url, const QString &autoRecordFilename);
+	void reconnectToSession(bool forceSameWindow);
+	void connectToSession(
+		const QUrl &url, const QString &autoRecordFilename,
+		bool forceSameWindow);
 	void importAnimation(int source);
 	void showAnimationExportDialog(bool fromFlipbook);
 	void exportAnimation(
@@ -539,6 +542,7 @@ private:
 	bool m_updatingDockState = false;
 	bool m_resizeReactionPending = false;
 	bool m_lockWidgetUpdatePending = false;
+	bool m_reconnectAfterSave = false;
 
 	Document *m_doc;
 	MainActions *m_ma;

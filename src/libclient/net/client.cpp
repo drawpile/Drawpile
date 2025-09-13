@@ -166,26 +166,25 @@ QUrl Client::sessionUrl(bool includeUser) const
 	return url;
 }
 
-void Client::handleConnect(
-	const QUrl &url, uint8_t userid, bool join, bool auth,
-	const QStringList &userFlags, bool supportsAutoReset,
-	bool compatibilityMode, const QString &joinPassword, const QString &authId)
+void Client::handleConnect(const LoggedInParams &params)
 {
-	m_lastUrl = url;
-	m_myId = userid;
+	m_lastUrl = params.url;
+	m_myId = params.userId;
 	m_userFlags = UserFlag::None;
-	for(const QString &userFlag : userFlags) {
+	for(const QString &userFlag : params.userFlags) {
 		if(userFlag == QStringLiteral("MOD")) {
 			m_userFlags.setFlag(UserFlag::Mod);
 		} else if(userFlag == QStringLiteral("WEBSESSION")) {
 			m_userFlags.setFlag(UserFlag::WebSession);
 		}
 	}
-	m_isAuthenticated = auth;
-	m_supportsAutoReset = supportsAutoReset;
-	m_compatibilityMode = compatibilityMode;
+	m_isAuthenticated = params.auth;
+	m_supportsAutoReset = params.supportsAutoReset;
+	m_supportsSkipCatchup = params.supportsSkipCatchup;
+	m_compatibilityMode = params.compatibilityMode;
+	m_historyIndex.clear();
 
-	emit serverLoggedIn(join, compatibilityMode, joinPassword, authId);
+	emit serverLoggedIn(params);
 }
 
 void Client::handleDisconnect(
@@ -377,6 +376,11 @@ void Client::handleMessages(int count, net::Message *msgs)
 	int handled = 0;
 	for(int i = 0; i < count; ++i) {
 		net::Message &msg = msgs[i];
+
+		if(m_supportsSkipCatchup && msg.isAddedToHistory()) {
+			m_historyIndex.incrementHistoryPos();
+		}
+
 		switch(msg.type()) {
 		case DP_MSG_SERVER_COMMAND: {
 			int handleCount = i - handled;
@@ -425,6 +429,28 @@ void Client::handleMessages(int count, net::Message *msgs)
 void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 {
 	const QJsonObject &reply = msg.reply;
+
+	if(m_supportsSkipCatchup) {
+		HistoryIndex hi = HistoryIndex::fromString(
+			msg.reply.value(QStringLiteral("hidx")).toString());
+		if(hi.isValid()) {
+			if(m_historyIndex.isValid() &&
+			   m_historyIndex.sessionId() == hi.sessionId() &&
+			   m_historyIndex.startId() == hi.startId()) {
+				long long prevHistoryPos = m_historyIndex.historyPos();
+				long long nextHistoryPos = hi.historyPos();
+				if(prevHistoryPos + 1LL != nextHistoryPos) {
+					// Miscounted messages somewhere, this would lead to a
+					// desync when reconnecting and skipping catchup.
+					qWarning(
+						"Unexpected history position %lld after %lld",
+						nextHistoryPos, prevHistoryPos);
+				}
+			}
+			m_historyIndex = hi;
+		}
+	}
+
 	switch(msg.type) {
 	case ServerReply::ReplyType::Unknown:
 		qWarning() << "Unknown server reply:" << msg.message << reply;

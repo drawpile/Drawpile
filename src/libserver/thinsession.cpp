@@ -546,14 +546,22 @@ void ThinSession::onSessionReset()
 		net::ServerReply::makeCatchup(
 			history()->lastIndex() - history()->firstIndex(), 0));
 	sendStatusUpdate();
-	history()->addMessage(net::ServerReply::makeCaughtUp(0));
+	history()->addMessage(net::ServerReply::makeCaughtUp(0, getHistoryIndex()));
 }
 
-void ThinSession::onClientJoin(Client *client, bool host)
+void ThinSession::onClientJoin(Client *client, bool host, long long historyPos)
 {
+	ThinServerClient *tsc = static_cast<ThinServerClient *>(client);
+	if(!host && historyPos > 0LL) {
+		tsc->log(
+			Log()
+				.about(Log::Level::Debug, Log::Topic::Status)
+				.message(QStringLiteral("Skip to history position %1")
+							 .arg(historyPos)));
+		tsc->setHistoryPosition(historyPos);
+	}
 	connect(
-		history(), &SessionHistory::newMessagesAvailable,
-		static_cast<ThinServerClient *>(client),
+		history(), &SessionHistory::newMessagesAvailable, tsc,
 		&ThinServerClient::sendNextHistoryBatch);
 
 	if(!host) {
@@ -561,11 +569,12 @@ void ThinSession::onClientJoin(Client *client, bool host)
 		// The client can use this information to display a progress bar during
 		// the login phase
 		int catchupKey = history()->nextCatchupKey();
-		bool caughtUpAdded =
-			history()->addMessage(net::ServerReply::makeCaughtUp(catchupKey));
+		bool caughtUpAdded = history()->addMessage(
+			net::ServerReply::makeCaughtUp(catchupKey, getHistoryIndex()));
 		client->sendDirectMessage(
 			net::ServerReply::makeCatchup(
-				history()->lastIndex() - history()->firstIndex(),
+				history()->lastIndex() -
+					(historyPos > 0LL ? historyPos : history()->firstIndex()),
 				caughtUpAdded ? catchupKey : -1));
 		client->sendDirectMessage(
 			net::ServerReply::makeStatusUpdate(int(history()->sizeInBytes())));

@@ -112,6 +112,7 @@ public:
 	 *  Does this session support autoresetting?
 	 */
 	virtual bool supportsAutoReset() const = 0;
+	virtual bool supportsSkipCatchup() const = 0;
 
 	//! Set session attributes
 	void setSessionConfig(const QJsonObject &conf, Client *changedBy);
@@ -121,8 +122,11 @@ public:
 	 * @param user the client to add
 	 * @param host is this the hosting user
 	 * @param invite the invite used, if any
+	 * @param historyPos history index to start catchup at
 	 */
-	void joinUser(Client *user, bool host, const Invite *invite = nullptr);
+	void joinUser(
+		Client *user, bool host, const Invite *invite = nullptr,
+		long long historyPos = 0LL);
 
 	/**
 	 * @brief Assign an ID for this user
@@ -447,7 +451,8 @@ protected:
 	virtual void onSessionReset() = 0;
 
 	//! A regular (non-hosting) client just joined
-	virtual void onClientJoin(Client *client, bool host) = 0;
+	virtual void
+	onClientJoin(Client *client, bool host, long long historyPos) = 0;
 
 	//! A client just left, clean up reset states and similar
 	virtual void onClientLeave(Client *client);
@@ -472,6 +477,8 @@ protected:
 	net::MessageList serverSideStateMessages() const;
 
 	void sendUpdatedSessionProperties();
+
+	QString getHistoryIndex() const;
 
 private:
 	class AdminChat;

@@ -78,6 +78,7 @@ public:
 
 	//! Get all users (includes logged out users)
 	const QVector<User> &users() const { return m_users; }
+	void setUsers(const QVector<User> &users);
 
 	//! Get a shared instance of a filtered model that only lists online users
 	OnlineUserListModel *onlineUsers() const { return m_onlineUsers; }

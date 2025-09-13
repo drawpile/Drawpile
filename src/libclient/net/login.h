@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DP_CLIENT_NET_LOGINHANDLER_H
 #define DP_CLIENT_NET_LOGINHANDLER_H
+#include "libclient/canvas/reconnectstate.h"
 #include "libclient/net/message.h"
 #include <QByteArray>
 #include <QFileInfo>
@@ -8,6 +9,7 @@
 #include <QJsonObject>
 #include <QObject>
 #include <QPixmap>
+#include <QPointer>
 #include <QSharedPointer>
 #include <QSslError>
 #include <QString>
@@ -50,6 +52,12 @@ public:
 #ifdef __EMSCRIPTEN__
 	~LoginHandler() override;
 #endif
+
+	void setReconnectState(canvas::ReconnectState *reconnectState)
+	{
+		m_reconnectState = reconnectState;
+	}
+
 	/**
 	 * @brief Set the server we're communicating with
 	 * @param server
@@ -113,9 +121,13 @@ public:
 	/**
 	 * Get the session flags
 	 */
-	QStringList sessionFlags() const { return m_sessionFlags; }
+	const QStringList &sessionFlags() const { return m_sessionFlags; }
 
-	QString joinPassword() const { return m_joinPassword; }
+	const QString &joinPassword() const { return m_joinPassword; }
+
+	bool skipCatchup() const { return m_skipCatchup; }
+
+	const HistoryIndex &historyIndex() const { return m_historyIndex; }
 
 public slots:
 	void acceptRules();
@@ -447,6 +459,7 @@ private:
 
 	// Process state
 	Server *m_server;
+	QPointer<canvas::ReconnectState> m_reconnectState;
 	State m_state = EXPECT_HELLO;
 	State m_passwordState = WAIT_FOR_LOGIN_PASSWORD;
 	LoginSessionModel *m_sessions = nullptr;
@@ -478,6 +491,8 @@ private:
 	bool m_compatibilityMode = false;
 	bool m_needSessionPassword = false;
 	bool m_isGuest = true;
+	bool m_skipCatchup = false;
+	HistoryIndex m_historyIndex;
 
 	quint64 m_redirectNonce = 0;
 	QStringList m_redirectHistory;

@@ -23,11 +23,13 @@ public:
 	AclState &operator=(const AclState &) = delete;
 	AclState &operator=(AclState &&) = delete;
 
-	DP_AclState *get();
+	DP_AclState *get() const;
 
 	AclState clone(uint8_t localUserId) const;
 
 	void reset(uint8_t localUserId);
+
+	void supplant(DP_AclState *acls);
 
 	char *dump() const;
 

@@ -54,8 +54,10 @@ public:
 
 	bool isControl() const;
 	bool isServerMeta() const;
+	bool isInControlRange() const;
 	bool isInCommandRange() const;
 	bool isAllowedInResetImage() const;
+	bool isAddedToHistory() const;
 	bool dirtiesCanvas() const;
 
 	// Returns user joins without the avatar; leaves and session owners as-is.

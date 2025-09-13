@@ -364,6 +364,20 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
     case DP_MSG_INTERNAL_TYPE_PAINT_SYNC:
         DP_msg_internal_paint_sync_call(mi);
         break;
+    case DP_MSG_INTERNAL_TYPE_RECONNECT_STATE_MAKE:
+        DP_msg_internal_reconnect_state_make_call(
+            mi, DP_canvas_history_reconnect_state_new(pe->ch));
+        break;
+    case DP_MSG_INTERNAL_TYPE_RECONNECT_STATE_APPLY: {
+        DP_CanvasHistoryReconnectState *chrs =
+            DP_msg_internal_reconnect_state_apply_get(mi);
+        if (!DP_canvas_history_reconnect_state_apply(chrs, pe->ch, dc)) {
+            DP_warn("Failed to apply canvas history reconnect state: %s",
+                    DP_error());
+        }
+        DP_canvas_history_reconnect_state_free(chrs);
+        break;
+    }
     default:
         DP_warn("Unhandled internal message type %d", (int)type);
         break;
@@ -826,6 +840,16 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
                     decref_messages(count, msgs);
                     break;
                 }
+                case DP_MSG_INTERNAL_TYPE_PAINT_SYNC:
+                    DP_msg_internal_paint_sync_call(mi);
+                    break;
+                case DP_MSG_INTERNAL_TYPE_RECONNECT_STATE_MAKE:
+                    DP_msg_internal_reconnect_state_make_call(mi, NULL);
+                    break;
+                case DP_MSG_INTERNAL_TYPE_RECONNECT_STATE_APPLY:
+                    DP_canvas_history_reconnect_state_free(
+                        DP_msg_internal_reconnect_state_apply_get(mi));
+                    break;
                 default:
                     break;
                 }

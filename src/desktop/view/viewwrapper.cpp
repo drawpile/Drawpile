@@ -283,6 +283,9 @@ void ViewWrapper::connectDocument(Document *doc)
 	connect(
 		m_controller, &CanvasController::pointerMove, doc,
 		&Document::sendPointerMove);
+	connect(
+		m_view, &CanvasView::reconnectDismissed, doc,
+		&Document::clearReconnectState);
 
 	tools::ToolController *toolCtrl = doc->toolCtrl();
 	connect(

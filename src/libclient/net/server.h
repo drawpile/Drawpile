@@ -3,8 +3,12 @@
 #define DP_NET_SERVER_H
 #include "libshared/net/messagequeue.h"
 #include <QList>
+#include <QMetaType>
 #include <QObject>
 #include <QSslError>
+#include <QString>
+#include <QStringList>
+#include <QUrl>
 
 class QSslCertificate;
 class QUrl;
@@ -15,6 +19,20 @@ class Client;
 class LoginHandler;
 class Message;
 class MessageQueue;
+
+struct LoggedInParams {
+	bool join;
+	bool auth;
+	bool supportsAutoReset;
+	bool supportsSkipCatchup;
+	bool skipCatchup;
+	bool compatibilityMode;
+	uint8_t userId;
+	QUrl url;
+	QString joinPassword;
+	QString authId;
+	QStringList userFlags;
+};
 
 /**
  * \brief Abstract base class for servers interfaces
@@ -115,10 +133,7 @@ public:
 signals:
 	void initiatingConnection(const QUrl &url);
 
-	void loggedIn(
-		const QUrl &url, uint8_t userid, bool join, bool auth,
-		const QStringList &userFlags, bool hasAutoreset, bool compatibilityMode,
-		const QString &joinPassword, const QString &authId);
+	void loggedIn(const LoggedInParams &params);
 
 	void loggingOut();
 
@@ -188,7 +203,8 @@ private:
 	bool m_handlingError = false;
 };
 
-
 }
+
+Q_DECLARE_METATYPE(net::LoggedInParams)
 
 #endif

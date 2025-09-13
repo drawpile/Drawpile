@@ -31,6 +31,7 @@ public:
 	BuiltinSession &operator=(BuiltinSession &&) = delete;
 
 	bool supportsAutoReset() const override;
+	bool supportsSkipCatchup() const override;
 	void readyToAutoReset(
 		const AutoResetResponseParams &params, const QString &payload) override;
 
@@ -48,7 +49,8 @@ protected:
 	void addToHistory(const net::Message &msg) override;
 	void onSessionInitialized() override;
 	void onSessionReset() override;
-	void onClientJoin(Client *client, bool host) override;
+	void
+	onClientJoin(Client *client, bool host, long long historyPos) override;
 	void onClientDeop(Client *client) override;
 	void onResetStream(Client &client, const net::Message &msg) override;
 	void onStateChanged() override;

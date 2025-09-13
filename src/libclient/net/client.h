@@ -2,6 +2,7 @@
 #ifndef DP_NET_CLIENT_H
 #define DP_NET_CLIENT_H
 #include "libclient/net/server.h"
+#include "libshared/util/historyindex.h"
 #include <QMetaObject>
 #include <QObject>
 #include <QSslCertificate>
@@ -74,6 +75,8 @@ public:
 	 */
 	QUrl sessionUrl(bool includeUser = false) const;
 	void setSessionUrl(const QUrl &url) { m_lastUrl = url; }
+
+	const HistoryIndex &historyIndex() const { return m_historyIndex; }
 
 	const QUrl &connectionUrl() const { return m_connectionUrl; }
 
@@ -165,6 +168,7 @@ public:
 	}
 
 	bool sessionSupportsAutoReset() const { return m_supportsAutoReset; }
+	bool sessionSupportsSkipCatchup() const { return m_supportsSkipCatchup; }
 
 	bool isCompatibilityMode() const { return m_compatibilityMode; }
 
@@ -266,9 +270,7 @@ signals:
 
 	void serverConnected(const QUrl &url);
 	void serverRedirected(const QUrl &url);
-	void serverLoggedIn(
-		bool join, bool compatibilityMode, const QString &joinPassword,
-		const QString &authId);
+	void serverLoggedIn(const LoggedInParams &params);
 	void serverDisconnecting();
 	void serverDisconnected(
 		const QString &message, const QString &errorcode, bool localDisconnect,
@@ -299,11 +301,7 @@ signals:
 
 private slots:
 	void setConnectionUrl(const QUrl &url);
-	void handleConnect(
-		const QUrl &url, uint8_t userid, bool join, bool auth,
-		const QStringList &userFlags, bool supportsAutoReset,
-		bool compatibilityMode, const QString &joinPassword,
-		const QString &authId);
+	void handleConnect(const net::LoggedInParams &params);
 	void handleDisconnect(
 		const QString &message, const QString &errorcode, bool localDisconnect,
 		bool anyMessageReceived);
@@ -361,6 +359,7 @@ private:
 	UserFlags m_userFlags = UserFlag::None;
 	bool m_isAuthenticated = false;
 	bool m_supportsAutoReset = false;
+	bool m_supportsSkipCatchup = false;
 	bool m_compatibilityMode = false;
 
 	int m_timeoutSecs = 0;
@@ -372,6 +371,7 @@ private:
 	QTimer *m_catchupTimer;
 
 	int m_smoothDrainRate = 0;
+	HistoryIndex m_historyIndex;
 };
 
 }

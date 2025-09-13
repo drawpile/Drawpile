@@ -13,7 +13,7 @@ AclState::~AclState()
 	DP_acl_state_free(m_data);
 }
 
-DP_AclState *AclState::get()
+DP_AclState *AclState::get() const
 {
 	return m_data;
 }
@@ -26,6 +26,11 @@ AclState AclState::clone(uint8_t localUserId) const
 void AclState::reset(uint8_t localUserId)
 {
 	DP_acl_state_reset(m_data, localUserId);
+}
+
+void AclState::supplant(DP_AclState *acls)
+{
+	DP_acl_state_supplant(m_data, acls);
 }
 
 char *AclState::dump() const

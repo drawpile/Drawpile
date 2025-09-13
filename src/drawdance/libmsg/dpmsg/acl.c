@@ -419,6 +419,18 @@ void DP_acl_state_reset(DP_AclState *acls, uint8_t local_user_id)
     }
 }
 
+void DP_acl_state_supplant(DP_AclState *dst, DP_AclState *src)
+{
+    DP_ASSERT(dst);
+    DP_ASSERT(src);
+    clear_layers(dst);
+    clear_annotations(dst);
+    uint8_t local_user_id = dst->local_user_id;
+    *dst = *src;
+    dst->local_user_id = local_user_id;
+    DP_free(src);
+}
+
 static void dump_user_bits(DP_Output *output, const char *title,
                            const uint8_t *users)
 {

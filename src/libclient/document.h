@@ -27,11 +27,13 @@ class QTimer;
 
 namespace canvas {
 class CanvasModel;
+class ReconnectState;
 }
 namespace net {
 class AnnouncementListModel;
 class BanlistModel;
 class InviteListModel;
+class LoginHandler;
 }
 namespace libclient {
 namespace settings {
@@ -168,6 +170,10 @@ public:
 		m_recordOnConnect = filename;
 	}
 
+	void connectToServer(
+		int timeoutSecs, int proxyMode, net::LoginHandler *loginhandler,
+		bool builtin);
+
 	qulonglong pasteId() const { return reinterpret_cast<uintptr_t>(this); }
 
 	bool isCompatibilityMode() const;
@@ -176,6 +182,8 @@ public:
 	void handleLocalCommands(int count, const net::Message *msgs) override;
 
 	bool checkPermission(int feature);
+
+	void clearReconnectState();
 
 signals:
 	//! Connection opened, but not yet logged in
@@ -291,10 +299,10 @@ public slots:
 	static QImage getClipboardImageData(const QMimeData *mimeData);
 
 private slots:
-	void onServerLogin(
-		bool join, bool compatibilityMode, const QString &joinPassword,
-		const QString &authId);
-	void onServerDisconnect();
+	void onServerLogin(const net::LoggedInParams &params);
+	void onServerDisconnect(
+		const QString &message, const QString &errorcode, bool localDisconnect,
+		bool anyMessageReceived);
 	void setPreparingReset(bool preparing);
 	void onSessionResetted();
 	void onSessionOutOfSpace();
@@ -399,6 +407,7 @@ private:
 	net::AuthListModel *m_authList;
 	net::AnnouncementListModel *m_announcementlist;
 	net::InviteListModel *m_inviteList;
+	canvas::ReconnectState *m_reconnectState = nullptr;
 	QStringListModel *m_serverLog;
 	libclient::settings::Settings &m_settings;
 

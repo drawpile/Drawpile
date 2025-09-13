@@ -1014,6 +1014,9 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 				m_sessionFlags << val.toString();
 		}
 
+		m_skipCatchup =
+			m_mode == Mode::Join && join.value(QStringLiteral("skip")).toBool();
+
 		m_server->loginSuccess();
 
 		// If in host mode, send initial session settings
@@ -1122,6 +1125,11 @@ void LoginHandler::sendJoinCommand()
 	QJsonObject kwargs = makeClientInfo();
 	if(!m_joinPassword.isEmpty()) {
 		kwargs["password"] = m_joinPassword;
+	}
+
+	if(m_reconnectState && m_reconnectState->historyState()) {
+		m_historyIndex = m_reconnectState->historyIndex();
+		kwargs.insert(QStringLiteral("hidx"), m_historyIndex.toString());
 	}
 
 	send("join", {m_selectedId}, kwargs);

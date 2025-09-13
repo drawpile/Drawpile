@@ -661,7 +661,7 @@ void MainWindow::autoJoin(const QUrl &url, const QString &autoRecordPath)
 {
 	if(m_singleSession) {
 		m_doc->client()->setSessionUrl(url);
-		connectToSession(url, autoRecordPath);
+		connectToSession(url, autoRecordPath, false);
 	} else {
 		dialogs::StartDialog *dlg = showStartDialog();
 		dlg->autoJoin(url, autoRecordPath);
@@ -2287,6 +2287,9 @@ bool MainWindow::save()
 {
 	QString result = FileWrangler{this}.saveImage(m_doc, false);
 	if(result.isEmpty()) {
+		if(m_reconnectAfterSave) {
+			reconnect();
+		}
 		return false;
 	} else {
 		addRecentFile(result);
@@ -2434,6 +2437,7 @@ void MainWindow::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
 	if(!errorMessage.isEmpty()) {
 		m_viewStatusBar->showMessage(tr("Image saving failed"), 1000);
 		showErrorMessageWithDetails(tr("Couldn't save image"), errorMessage);
+		m_reconnectAfterSave = false;
 	} else if(elapsedMsec <= 0LL) {
 		m_viewStatusBar->showMessage(tr("Image saved"), 1000);
 	} else {
@@ -2444,12 +2448,18 @@ void MainWindow::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
 
 #ifndef __EMSCRIPTEN__
 	// Cancel exit if canvas is modified while it was being saved
-	if(m_doc->isDirty())
+	if(m_doc->isDirty() || m_reconnectAfterSave) {
 		m_exitAction = RUNNING;
+	}
 
-	if(m_exitAction == SAVING)
+	if(m_exitAction == SAVING) {
 		close();
+	}
 #endif
+
+	if(m_reconnectAfterSave) {
+		reconnect();
+	}
 }
 
 void MainWindow::onAnimationExported(
@@ -3212,7 +3222,7 @@ void MainWindow::hostSession(const HostParams &params)
 		new dialogs::LoginDialog(login, getStartDialogOrThis()),
 		shouldShowDialogMaximized());
 
-	m_doc->client()->connectToServer(
+	m_doc->connectToServer(
 		settings.serverTimeout(), settings.networkProxyMode(), login,
 		!useremote);
 }
@@ -3280,15 +3290,55 @@ void MainWindow::join()
 
 void MainWindow::reconnect()
 {
-	questionWindowReplacement(
-		tr("Reconnect"),
-		tr("You're about to reconnect to the session and close this window."),
-		[this](bool ok) {
-			if(ok) {
-				connectToSession(
-					m_doc->client()->sessionUrl(canReplace()), QString());
-			}
-		});
+	m_reconnectAfterSave = false;
+	if(getReplacementCriteria().testFlag(ReplacementCriterion::Dirty)) {
+		QWidget *parent = getStartDialogOrThis();
+		QMessageBox *box = utils::makeMessage(
+			parent, tr("Reconnect"),
+#ifdef SINGLE_MAIN_WINDOW
+			tr("You have unsaved changes, do you want to save them before "
+			   "reconnecting?"),
+#else
+			tr("You have unsaved changes, do you want to save them before "
+			   "reconnecting or reconnect in a new window?"),
+#endif
+			QString(), QMessageBox::Question,
+			QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+#ifndef SINGLE_MAIN_WINDOW
+		QPushButton *newWindowButton =
+			//: Button to reconnect in a new window instead of the current one.
+			//: Is shown next to Save, Discard and Cancel buttons.
+			box->addButton(tr("New Window"), QMessageBox::ActionRole);
+		if(box->style()->styleHint(
+			   QStyle::SH_DialogButtonBox_ButtonsHaveIcons)) {
+			newWindowButton->setIcon(QIcon::fromTheme("window_"));
+		}
+#endif
+
+		connect(
+			box, &QMessageBox::buttonClicked, this,
+			[=](QAbstractButton *button) {
+				if(button == box->button(QMessageBox::Save)) {
+					m_reconnectAfterSave = true;
+					QTimer::singleShot(0, this, [this] {
+						if(!m_doc->isSaveInProgress()) {
+							save();
+						}
+					});
+				} else if(button == box->button(QMessageBox::Discard)) {
+					reconnectToSession(true);
+#ifndef SINGLE_MAIN_WINDOW
+				} else if(button == newWindowButton) {
+					reconnectToSession(false);
+#endif
+				}
+			});
+
+		box->show();
+	} else {
+		reconnectToSession(true);
+	}
 }
 
 void MainWindow::browse()
@@ -3445,16 +3495,25 @@ void MainWindow::joinSession(const QUrl &url, const QString &autoRecordFile)
 		tr("You're about to connect to a new session and close this window."),
 		[this, url, autoRecordFile](bool ok) {
 			if(ok) {
-				connectToSession(url, autoRecordFile);
+				connectToSession(url, autoRecordFile, false);
 			}
 		});
 }
 
+void MainWindow::reconnectToSession(bool forceSameWindow)
+{
+	connectToSession(
+		m_doc->client()->sessionUrl(forceSameWindow || canReplace()), QString(),
+		forceSameWindow);
+}
+
 void MainWindow::connectToSession(
-	const QUrl &url, const QString &autoRecordFile)
+	const QUrl &url, const QString &autoRecordFile, bool forceSameWindow)
 {
 	m_canvasView->hideDisconnectedWarning();
-	if(!canReplace()) {
+
+	if(!forceSameWindow && !canReplace()) {
+		m_doc->clearReconnectState();
 		prepareWindowReplacement();
 
 		QStringList args;
@@ -3478,7 +3537,7 @@ void MainWindow::connectToSession(
 				if(m_singleSession) {
 					win->m_doc->client()->setSessionUrl(url);
 				}
-				win->connectToSession(url, autoRecordFile);
+				win->connectToSession(url, autoRecordFile, true);
 			});
 		}
 		return;
@@ -3506,7 +3565,7 @@ void MainWindow::connectToSession(
 	dlg->show();
 	m_doc->setRecordOnConnect(autoRecordFile);
 	const desktop::settings::Settings &settings = dpApp().settings();
-	m_doc->client()->connectToServer(
+	m_doc->connectToServer(
 		settings.serverTimeout(), settings.networkProxyMode(), login, false);
 }
 
@@ -3596,7 +3655,7 @@ void MainWindow::onServerDisconnected(
 			QUrl url = m_doc->client()->sessionUrl(true);
 
 			connect(joinbutton, &QAbstractButton::clicked, this, [this, url]() {
-				connectToSession(url, QString{});
+				connectToSession(url, QString(), false);
 			});
 
 		}

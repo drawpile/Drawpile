@@ -34,6 +34,8 @@ target_sources(dpclient PRIVATE
 	canvas/paintengine.cpp
 	canvas/paintengine.h
 	canvas/point.h
+	canvas/reconnectstate.cpp
+	canvas/reconnectstate.h
 	canvas/selectionmodel.cpp
 	canvas/selectionmodel.h
 	canvas/tilecache.cpp

@@ -231,6 +231,12 @@ void PaintEngine::resetAcl(uint8_t localUserId)
 	emit aclsChanged(m_acls, DP_ACL_STATE_CHANGE_MASK, true);
 }
 
+void PaintEngine::supplantAcl(DP_AclState *acls)
+{
+	m_acls.supplant(acls);
+	emit aclsChanged(m_acls, DP_ACL_STATE_CHANGE_MASK, true);
+}
+
 void PaintEngine::cleanup()
 {
 	net::Message msg = net::makeInternalCleanupMessage(0);

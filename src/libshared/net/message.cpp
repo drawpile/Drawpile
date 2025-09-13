@@ -136,6 +136,11 @@ bool Message::isServerMeta() const
 	return DP_message_type_server_meta(type());
 }
 
+bool Message::isInControlRange() const
+{
+	return type() < 32;
+}
+
 bool Message::isInCommandRange() const
 {
 	return type() >= 128;
@@ -145,6 +150,19 @@ bool Message::isAllowedInResetImage() const
 {
 	DP_MessageType t = type();
 	return int(t) >= 64 || t == DP_MSG_CHAT;
+}
+
+bool Message::isAddedToHistory() const
+{
+	switch(type()) {
+	case DP_MSG_CHAT:
+		return !(DP_msg_chat_tflags(toChat()) & DP_MSG_CHAT_TFLAGS_BYPASS);
+	case DP_MSG_PRIVATE_CHAT:
+	case DP_MSG_RESET_STREAM:
+		return false;
+	default:
+		return !isInControlRange();
+	}
 }
 
 bool Message::dirtiesCanvas() const

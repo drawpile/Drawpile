@@ -38,6 +38,7 @@ signals:
 	void imageDropped(const QImage &image);
 	void urlDropped(const QUrl &url);
 	void reconnectRequested();
+	void reconnectDismissed();
 	void savePreResetStateRequested();
 	void savePreResetStateDismissed();
 

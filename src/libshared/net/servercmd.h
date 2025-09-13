@@ -154,7 +154,8 @@ struct ServerReply {
 	// messages are stored in the session history. Key 0 stands for a reset, -1
 	// means no key, other keys are for joining clients catching up.
 	static net::Message makeCatchup(int count, int key);
-	static net::Message makeCaughtUp(int key);
+	static net::Message
+	makeCaughtUp(int key, const QString &historyIndex = QString());
 
 	static net::Message makeLog(const QString &message, QJsonObject data);
 
@@ -218,7 +219,8 @@ struct ServerReply {
 
 	static net::Message makeResultGarbage();
 
-	static net::Message makeSessionConf(const QJsonObject &config);
+	static net::Message makeSessionConf(
+		const QJsonObject &config, const QString &historyIndex = QString());
 
 	static net::Message makePasswordChange(const QString &password);
 

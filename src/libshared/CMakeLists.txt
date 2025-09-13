@@ -28,6 +28,8 @@ target_sources(dpshared PRIVATE
 	util/filename.h
 	util/functionrunnable.cpp
 	util/functionrunnable.h
+	util/historyindex.cpp
+	util/historyindex.h
 	util/networkaccess.cpp
 	util/networkaccess.h
 	util/passwordhash.cpp

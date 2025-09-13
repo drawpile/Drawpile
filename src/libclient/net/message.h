@@ -13,6 +13,7 @@ class QColor;
 class QImage;
 class QJsonDocument;
 class QString;
+struct DP_CanvasHistoryReconnectState;
 struct DP_OnionSkins;
 
 namespace net {
@@ -57,6 +58,13 @@ Message makeInternalPaintSyncMessage(
 	uint8_t contextId, void (*callback)(void *), void *user);
 
 Message makeInternalResetMessage(uint8_t contextId);
+
+Message makeInternalReconnectStateApplyMessage(
+	uint8_t contextId, DP_CanvasHistoryReconnectState *chrs);
+
+Message makeInternalReconnectStateMakeMessage(
+	uint8_t contextId,
+	void (*callback)(void *, DP_CanvasHistoryReconnectState *), void *user);
 
 Message makeInternalStreamResetStartMessage(
 	uint8_t contextId, const QString &correlator);

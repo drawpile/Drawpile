@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef CANVASMODEL_H
 #define CANVASMODEL_H
+#include "libclient/canvas/reconnectstate.h"
 #include "libclient/drawdance/paintengine.h"
 #include "libclient/net/message.h"
 #include <QHash>
+#include <QMetaType>
 #include <QObject>
 #include <QPointer>
 
@@ -20,16 +22,27 @@ class Settings;
 }
 }
 
+// Qt5 is very picky about types passed to QMetaType::invokeMethod, namespaces
+// confuse it and fail to invoke at runtime. So keep this at top-level.
+struct CanvasModelSetReconnectStateHistoryParams {
+	QPointer<canvas::ReconnectState> reconnectState;
+	DP_CanvasHistoryReconnectState *chrs;
+};
+
+Q_DECLARE_METATYPE(CanvasModelSetReconnectStateHistoryParams)
+
 namespace canvas {
 
 class AclState;
-class UserListModel;
-class LayerListModel;
-class TimelineModel;
-class SelectionModel;
-class TransformModel;
 class DocumentMetadata;
+class LayerListModel;
+class MakeReconnectStateContext;
 class PaintEngine;
+class ReconnectState;
+class SelectionModel;
+class TimelineModel;
+class TransformModel;
+class UserListModel;
 
 class CanvasModel final : public QObject {
 	Q_OBJECT
@@ -89,7 +102,11 @@ public:
 	QRect getPasteBounds(
 		const QSize &imageSize, const QPoint &defaultPoint, bool forceDefault);
 
-	void connectedToServer(uint8_t myUserId, bool join, bool compatibilityMode);
+	ReconnectState *makeReconnectState(QObject *parent, const HistoryIndex &hi);
+
+	void connectedToServer(
+		uint8_t myUserId, bool join, bool compatibilityMode,
+		ReconnectState *reconnectState);
 	void disconnectedFromServer();
 
 	AclState *aclState() const { return m_aclstate; }
@@ -177,7 +194,12 @@ signals:
 private slots:
 	void onLaserTrail(int userId, int persistence, uint32_t color);
 
+	void setReconnectStateHistory(
+		const CanvasModelSetReconnectStateHistoryParams &params);
+
 private:
+	struct MakeReconnectStateParams;
+
 	void handleMetaMessages(int count, const net::Message *msgs);
 	void handleJoin(const net::Message &msg);
 	void handleLeave(const net::Message &msg);
@@ -185,6 +207,9 @@ private:
 	void handlePrivateChat(const net::Message &msg);
 
 	void updatePaintEngineTransform();
+
+	static void reconnectStateMakeCallback(
+		void *user, DP_CanvasHistoryReconnectState *chrs);
 
 	AclState *m_aclstate;
 	UserListModel *m_userlist;

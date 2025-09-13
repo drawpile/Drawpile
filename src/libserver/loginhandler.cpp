@@ -1002,8 +1002,12 @@ static QJsonArray sessionFlags(const Session *session)
 	QJsonArray flags;
 	// Note: this is "NOAUTORESET" for backward compatibility. In 3.0, we should
 	// change it to "AUTORESET"
-	if(!session->supportsAutoReset())
-		flags << "NOAUTORESET";
+	if(!session->supportsAutoReset()) {
+		flags.append(QStringLiteral("NOAUTORESET"));
+	}
+	if(session->supportsSkipCatchup()) {
+		flags.append(QStringLiteral("SKIP"));
+	}
 	// TODO for version 3.0: PERSIST should be a session specific flag
 
 	return flags;
@@ -1165,6 +1169,7 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 			QStringLiteral("Starting new session!"), QStringLiteral("host"),
 			{{QStringLiteral("id"),
 			  sessionAlias.isEmpty() ? session->id() : sessionAlias},
+			 {QStringLiteral("uniqueId"), session->id()},
 			 {QStringLiteral("user"), userId},
 			 {QStringLiteral("flags"), sessionFlags(session)},
 			 {QStringLiteral("authId"), m_client->authId()}}));
@@ -1358,18 +1363,26 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		session->assignId(m_client);
 	}
 
+	HistoryIndex hi;
+	bool skip =
+		session->supportsSkipCatchup() &&
+		hi.setFromString(cmd.kwargs.value(QStringLiteral("hidx")).toString()) &&
+		session->history()->canSkipToHistoryIndex(hi);
+
 	send(
 		net::ServerReply::makeResultJoinHost(
 			QStringLiteral("Joining a session!"), QStringLiteral("join"),
 			{{QStringLiteral("id"), session->aliasOrId()},
+			 {QStringLiteral("uniqueId"), session->id()},
 			 {QStringLiteral("user"), m_client->id()},
 			 {QStringLiteral("flags"), sessionFlags(session)},
-			 {QStringLiteral("authId"), m_client->authId()}}));
+			 {QStringLiteral("authId"), m_client->authId()},
+			 {QStringLiteral("skip"), skip}}));
 
 	checkClientCapabilities(cmd);
 
 	m_complete = true;
-	session->joinUser(m_client, false, invite);
+	session->joinUser(m_client, false, invite, skip ? hi.historyPos() : 0LL);
 
 	deleteLater();
 }

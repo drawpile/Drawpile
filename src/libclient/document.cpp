@@ -7,6 +7,7 @@ extern "C" {
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/reconnectstate.h"
 #include "libclient/canvas/selectionmodel.h"
 #include "libclient/canvas/transformmodel.h"
 #include "libclient/canvas/userlist.h"
@@ -14,6 +15,7 @@ extern "C" {
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/export/thumbnailerrunnable.h"
 #include "libclient/net/invitelistmodel.h"
+#include "libclient/net/login.h"
 #include "libclient/settings.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/toolcontroller.h"
@@ -337,18 +339,28 @@ DP_LoadResult Document::loadRecording(
 	return result;
 }
 
-void Document::onServerLogin(
-	bool join, bool compatibilityMode, const QString &joinPassword,
-	const QString &authId)
+void Document::onServerLogin(const net::LoggedInParams &params)
 {
-	if(join)
+	canvas::ReconnectState *reconnectState = nullptr;
+	if(params.join) {
 		initCanvas();
+		if(params.skipCatchup) {
+			reconnectState = m_reconnectState;
+			m_reconnectState = nullptr;
+		} else {
+			clearReconnectState();
+		}
+	} else {
+		clearReconnectState();
+	}
 
 	Q_ASSERT(m_canvas);
 
-	m_canvas->connectedToServer(m_client->myId(), join, compatibilityMode);
+	m_canvas->connectedToServer(
+		m_client->myId(), params.join, params.compatibilityMode,
+		reconnectState);
 	m_banlist->setShowSensitive(m_client->isModerator());
-	m_authList->setOwnAuthId(authId);
+	m_authList->setOwnAuthId(params.authId);
 
 	if(!m_recordOnConnect.isEmpty()) {
 		m_originalRecordingFilename = m_recordOnConnect;
@@ -358,16 +370,30 @@ void Document::onServerLogin(
 
 	m_sessionHistoryMaxSize = 0;
 	m_baseResetThreshold = 0;
-	emit serverLoggedIn(join, joinPassword);
-	emit compatibilityModeChanged(compatibilityMode);
+	emit serverLoggedIn(params.join, params.joinPassword);
+	emit compatibilityModeChanged(params.compatibilityMode);
 }
 
-void Document::onServerDisconnect()
+void Document::onServerDisconnect(
+	const QString &message, const QString &errorcode, bool localDisconnect,
+	bool anyMessageReceived)
 {
+	Q_UNUSED(message);
+	Q_UNUSED(errorcode);
+	Q_UNUSED(anyMessageReceived);
+
 	if(m_canvas) {
+		clearReconnectState();
+		if(!localDisconnect && m_client->sessionSupportsSkipCatchup()) {
+			const HistoryIndex &hi = m_client->historyIndex();
+			if(hi.isValid()) {
+				m_reconnectState = m_canvas->makeReconnectState(this, hi);
+			}
+		}
 		m_canvas->disconnectedFromServer();
 		m_canvas->setTitle(QString());
 	}
+
 	m_banlist->clear();
 	m_authList->clear();
 	m_announcementlist->clear();
@@ -952,6 +978,14 @@ void Document::setDownloadName(const QString &downloadName)
 	m_downloadName = downloadName;
 }
 
+void Document::connectToServer(
+	int timeoutSecs, int proxyMode, net::LoginHandler *loginhandler,
+	bool builtin)
+{
+	loginhandler->setReconnectState(m_reconnectState);
+	m_client->connectToServer(timeoutSecs, proxyMode, loginhandler, builtin);
+}
+
 bool Document::isCompatibilityMode() const
 {
 	return m_client->isCompatibilityMode();
@@ -974,6 +1008,12 @@ void Document::handleLocalCommands(int count, const net::Message *msgs)
 bool Document::checkPermission(int feature)
 {
 	return m_canvas && m_canvas->checkPermission(feature);
+}
+
+void Document::clearReconnectState()
+{
+	delete m_reconnectState;
+	m_reconnectState = nullptr;
 }
 
 void Document::autosave()

@@ -293,6 +293,9 @@ void SceneWrapper::connectCanvasFrame(widgets::CanvasFrame *canvasFrame)
 void SceneWrapper::connectDocument(Document *doc)
 {
 	connect(m_view, &CanvasView::pointerMoved, doc, &Document::sendPointerMove);
+	connect(
+		m_view, &CanvasView::reconnectDismissed, doc,
+		&Document::clearReconnectState);
 
 	tools::ToolController *toolCtrl = doc->toolCtrl();
 	connect(

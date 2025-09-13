@@ -108,6 +108,21 @@ Message makeInternalPaintSyncMessage(
 		DP_msg_internal_paint_sync_new(contextId, callback, user));
 }
 
+Message makeInternalReconnectStateApplyMessage(
+	uint8_t contextId, DP_CanvasHistoryReconnectState *chrs)
+{
+	return Message::noinc(
+		DP_msg_internal_reconnect_state_apply_new(contextId, chrs));
+}
+
+Message makeInternalReconnectStateMakeMessage(
+	uint8_t contextId,
+	void (*callback)(void *, DP_CanvasHistoryReconnectState *), void *user)
+{
+	return Message::noinc(
+		DP_msg_internal_reconnect_state_make_new(contextId, callback, user));
+}
+
 Message makeInternalResetMessage(uint8_t contextId)
 {
 	return Message::noinc(DP_msg_internal_reset_new(contextId));

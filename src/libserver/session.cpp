@@ -11,6 +11,7 @@ extern "C" {
 #include "libserver/session.h"
 #include "libshared/net/servercmd.h"
 #include "libshared/util/filename.h"
+#include "libshared/util/historyindex.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/passwordhash.h"
 #include "libshared/util/qtcompat.h"
@@ -280,7 +281,8 @@ void Session::assignId(Client *user)
 	user->setId(id);
 }
 
-void Session::joinUser(Client *user, bool host, const Invite *invite)
+void Session::joinUser(
+	Client *user, bool host, const Invite *invite, long long historyPos)
 {
 	Client *existingUser = getClientById(user->id());
 	user->setSession(this);
@@ -306,7 +308,7 @@ void Session::joinUser(Client *user, bool host, const Invite *invite)
 			user->setHoldLocked(true);
 	}
 
-	onClientJoin(user, host);
+	onClientJoin(user, host, historyPos);
 
 	const QString &authId = user->authId();
 	bool isGhost = user->isGhost();
@@ -1194,7 +1196,7 @@ void Session::sendUpdatedSessionProperties()
 			m_config->getConfigBool(config::PreferWebSockets);
 	}
 #endif
-	addToHistory(net::ServerReply::makeSessionConf(config));
+	addToHistory(net::ServerReply::makeSessionConf(config, getHistoryIndex()));
 	emit sessionAttributeChanged(this);
 }
 
@@ -1575,6 +1577,15 @@ void Session::handleClientMessage(Client &client, const net::Message &msg)
 
 	// Rest of the messages are added to session history
 	addClientMessage(client, msg);
+}
+
+QString Session::getHistoryIndex() const
+{
+	if(supportsSkipCatchup()) {
+		return history()->historyIndex().toString();
+	} else {
+		return QString();
+	}
 }
 
 void Session::addClientMessage(const Client &client, const net::Message &msg)

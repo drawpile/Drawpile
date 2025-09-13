@@ -175,6 +175,10 @@ void DP_acl_state_free(DP_AclState *acls);
 
 void DP_acl_state_reset(DP_AclState *acls, uint8_t local_user_id);
 
+// Replaces dst's contents with that from src and frees src. The local user id
+// is not modified.
+void DP_acl_state_supplant(DP_AclState *dst, DP_AclState *src);
+
 // Dumps a textural description of the ACL state to a DP_malloc'd string.
 char *DP_acl_state_dump(DP_AclState *acls);
 

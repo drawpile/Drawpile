@@ -187,6 +187,13 @@ void UserListModel::reset()
 	}
 }
 
+void UserListModel::setUsers(const QVector<User> &users)
+{
+	beginResetModel();
+	m_users = users;
+	endResetModel();
+}
+
 void UserListModel::updateAclState(const AclState *acl)
 {
 	for(int i = 0; i < m_users.size(); ++i) {

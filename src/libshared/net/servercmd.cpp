@@ -311,11 +311,15 @@ net::Message ServerReply::makeCatchup(int count, int key)
 	return make(data);
 }
 
-net::Message ServerReply::makeCaughtUp(int key)
+net::Message ServerReply::makeCaughtUp(int key, const QString &historyIndex)
 {
-	return make(
-		{{QStringLiteral("type"), QStringLiteral("caughtup")},
-		 {QStringLiteral("key"), key}});
+	QJsonObject data = {
+		{QStringLiteral("type"), QStringLiteral("caughtup")},
+		{QStringLiteral("key"), key}};
+	if(!historyIndex.isEmpty()) {
+		data.insert(QStringLiteral("hidx"), historyIndex);
+	}
+	return make(data);
 }
 
 net::Message ServerReply::makeLog(const QString &message, QJsonObject data)
@@ -550,11 +554,16 @@ net::Message ServerReply::makeResultGarbage()
 		 {QStringLiteral("state"), QStringLiteral("checkauth")}});
 }
 
-net::Message ServerReply::makeSessionConf(const QJsonObject &config)
+net::Message ServerReply::makeSessionConf(
+	const QJsonObject &config, const QString &historyIndex)
 {
-	return make(
-		{{QStringLiteral("type"), QStringLiteral("sessionconf")},
-		 {QStringLiteral("config"), config}});
+	QJsonObject data = {
+		{QStringLiteral("type"), QStringLiteral("sessionconf")},
+		{QStringLiteral("config"), config}};
+	if(!historyIndex.isEmpty()) {
+		data.insert(QStringLiteral("hidx"), historyIndex);
+	}
+	return make(data);
 }
 
 net::Message ServerReply::makePasswordChange(const QString &password)

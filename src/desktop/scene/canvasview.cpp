@@ -400,7 +400,9 @@ void CanvasView::dismissNotificationBar()
 	m_notificationBarState = NotificationBarState::None;
 	switch(state) {
 	case NotificationBarState::None:
+		break;
 	case NotificationBarState::Reconnect:
+		emit reconnectDismissed();
 		break;
 	case NotificationBarState::Reset:
 		emit savePreResetStateDismissed();

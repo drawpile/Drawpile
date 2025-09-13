@@ -32,6 +32,11 @@ bool BuiltinSession::supportsAutoReset() const
 	return false;
 }
 
+bool BuiltinSession::supportsSkipCatchup() const
+{
+	return false;
+}
+
 void BuiltinSession::readyToAutoReset(
 	const AutoResetResponseParams &params, const QString &payload)
 {
@@ -167,8 +172,10 @@ void BuiltinSession::onSessionReset()
 	}
 }
 
-void BuiltinSession::onClientJoin(Client *client, bool host)
+void BuiltinSession::onClientJoin(
+	Client *client, bool host, long long historyPos)
 {
+	Q_UNUSED(historyPos);
 	if(host) {
 		switchState(State::Running);
 	} else {

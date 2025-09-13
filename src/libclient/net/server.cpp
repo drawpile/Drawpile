@@ -164,6 +164,7 @@ Server::Server(Client *client)
 	: QObject(client)
 	, m_client(client)
 {
+	qRegisterMetaType<LoggedInParams>();
 }
 
 void Server::sendMessage(const net::Message &msg)
@@ -433,13 +434,21 @@ void Server::loginSuccess()
 	m_supportsAbuseReports = m_loginstate->supportsAbuseReports();
 	messageQueue()->setContextId(m_loginstate->userId());
 
-	emit loggedIn(
-		m_loginstate->url(), m_loginstate->userId(),
+	const QStringList &sessionFlags = m_loginstate->sessionFlags();
+	LoggedInParams params = {
 		m_loginstate->mode() == LoginHandler::Mode::Join,
-		m_loginstate->isAuthenticated(), m_loginstate->userFlags(),
-		!m_loginstate->sessionFlags().contains(QStringLiteral("NOAUTORESET")),
-		m_loginstate->compatibilityMode(), m_loginstate->joinPassword(),
-		m_loginstate->authId());
+		m_loginstate->isAuthenticated(),
+		!sessionFlags.contains(QStringLiteral("NOAUTORESET")),
+		sessionFlags.contains(QStringLiteral("SKIP")),
+		m_loginstate->skipCatchup(),
+		m_loginstate->compatibilityMode(),
+		m_loginstate->userId(),
+		m_loginstate->url(),
+		m_loginstate->joinPassword(),
+		m_loginstate->authId(),
+		m_loginstate->userFlags(),
+	};
+	emit loggedIn(params);
 
 	m_loginstate->deleteLater();
 	m_loginstate = nullptr;

@@ -106,6 +106,15 @@ struct DP_CanvasHistorySnapshot {
     } fork;
 };
 
+struct DP_CanvasHistoryReconnectState {
+    bool mark_command_done;
+    int undo_depth_limit;
+    int offset;
+    int used;
+    DP_AffectedIndirectAreas aia;
+    DP_CanvasHistoryEntry entries[];
+};
+
 
 // History debug is very noisy, only enable it when requested.
 #if defined(NDEBUG) || !defined(DRAWDANCE_HISTORY_DEBUG)
@@ -1005,15 +1014,35 @@ static bool handle_internal(DP_CanvasHistory *ch, DP_MsgInternal *mi)
 }
 
 
+static void resize_capacity(DP_CanvasHistory *ch, int new_capacity)
+{
+    DP_ASSERT(new_capacity > ch->capacity);
+    size_t new_size = sizeof(*ch->entries) * DP_int_to_size(new_capacity);
+    ch->entries = DP_realloc(ch->entries, new_size);
+    ch->capacity = new_capacity;
+}
+
 static void ensure_append_capacity(DP_CanvasHistory *ch)
 {
     int old_capacity = ch->capacity;
     if (ch->used == old_capacity) {
         int new_capacity = EXPAND_CAPACITY(old_capacity);
-        size_t new_size = sizeof(*ch->entries) * DP_int_to_size(new_capacity);
-        HISTORY_DEBUG("Resize history capacity to %d entries", ch->capacity);
-        ch->entries = DP_realloc(ch->entries, new_size);
-        ch->capacity = new_capacity;
+        resize_capacity(ch, new_capacity);
+        HISTORY_DEBUG("Resize history capacity to %d entries", new_capacity);
+    }
+}
+
+static void ensure_capacity_for(DP_CanvasHistory *ch, int count)
+{
+    int old_capacity = ch->capacity;
+    int new_capacity = old_capacity;
+    while (new_capacity < count) {
+        new_capacity = EXPAND_CAPACITY(new_capacity);
+    }
+
+    if (new_capacity > old_capacity) {
+        resize_capacity(ch, new_capacity);
+        HISTORY_DEBUG("Fit history capacity for %d entries", ch->capacity);
     }
 }
 
@@ -1793,6 +1822,98 @@ DP_Recorder *DP_canvas_history_recorder_new(
         DP_recorder_free_join(params.r, NULL);
         return NULL;
     }
+}
+
+
+DP_CanvasHistoryReconnectState *
+DP_canvas_history_reconnect_state_new(DP_CanvasHistory *ch)
+{
+    DP_ASSERT(ch);
+    int count = ch->used;
+    DP_CanvasHistoryReconnectState *chrs = DP_malloc(DP_FLEX_SIZEOF(
+        DP_CanvasHistoryReconnectState, entries, DP_int_to_size(count)));
+
+    chrs->mark_command_done = ch->mark_command_done;
+    chrs->undo_depth_limit = ch->undo_depth_limit;
+    chrs->offset = ch->offset;
+    chrs->used = ch->used;
+    chrs->aia = ch->aia;
+
+    for (int i = 0; i < count; ++i) {
+        DP_CanvasHistoryEntry *entry = &ch->entries[i];
+        chrs->entries[i] = (DP_CanvasHistoryEntry){
+            entry->undo,
+            DP_message_incref_nullable(entry->msg),
+            DP_canvas_state_incref_nullable(entry->state),
+        };
+    }
+
+    return chrs;
+}
+
+void DP_canvas_history_reconnect_state_free(
+    DP_CanvasHistoryReconnectState *chrs)
+{
+    if (chrs) {
+        int count = chrs->used;
+        for (int i = 0; i < count; ++i) {
+            dispose_entry(&chrs->entries[i]);
+        }
+        DP_free(chrs);
+    }
+}
+
+bool DP_canvas_history_reconnect_state_apply(
+    DP_CanvasHistoryReconnectState *chrs, DP_CanvasHistory *ch,
+    DP_DrawContext *dc)
+{
+    DP_ASSERT(ch);
+    if (!chrs) {
+        DP_error_set("No reconnect state given");
+        return false;
+    }
+
+    HISTORY_DEBUG("Reset to reconnect state");
+    dump_internal(ch, DP_DUMP_RESET);
+
+    int count = chrs->used;
+    int state_index = count - 1;
+    while (state_index >= 0) {
+        DP_CanvasHistoryEntry *entry = &chrs->entries[state_index];
+        if (entry->undo == DP_UNDO_DONE && entry->state) {
+            break;
+        }
+        else {
+            --state_index;
+        }
+    }
+
+    if (state_index < 0) {
+        DP_error_set("No canvas state in reconnect states");
+        return false;
+    }
+
+    clear_fork_entries(ch);
+    truncate_history_without_fork_check(ch, ch->used);
+    ensure_capacity_for(ch, count);
+    for (int i = 0; i < count; ++i) {
+        DP_CanvasHistoryEntry *entry = &chrs->entries[i];
+        ch->entries[i] = (DP_CanvasHistoryEntry){
+            entry->undo,
+            DP_message_incref_nullable(entry->msg),
+            DP_canvas_state_incref_nullable(entry->state),
+        };
+    }
+
+    ch->mark_command_done = chrs->mark_command_done;
+    ch->undo_depth_limit = chrs->undo_depth_limit;
+    ch->offset = chrs->offset;
+    ch->used = chrs->used;
+    ch->aia = chrs->aia;
+
+    replay_from_inc(ch, dc, state_index + 1, chrs->entries[state_index].state,
+                    true);
+    return true;
 }
 
 

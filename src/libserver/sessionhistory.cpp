@@ -62,6 +62,7 @@ SessionHistory::SessionHistory(const QString &id, QObject *parent)
 	, m_sizeInBytes(0)
 	, m_sizeLimit(0)
 	, m_autoResetBaseSize(0)
+	, m_lastResetTime(QDateTime::currentSecsSinceEpoch())
 	, m_firstIndex(0)
 	, m_lastIndex(-1)
 {
@@ -70,6 +71,22 @@ SessionHistory::SessionHistory(const QString &id, QObject *parent)
 bool SessionHistory::hasSpaceFor(size_t bytes, size_t extra) const
 {
 	return m_sizeLimit <= 0 || m_sizeInBytes + bytes <= m_sizeLimit + extra;
+}
+
+HistoryIndex SessionHistory::historyIndex() const
+{
+	return HistoryIndex(m_id, m_lastResetTime, m_lastIndex);
+}
+
+bool SessionHistory::canSkipToHistoryIndex(const HistoryIndex &hi) const
+{
+	if(hi.isValid() && hi.sessionId() == m_id &&
+	   hi.startId() == m_lastResetTime) {
+		long long historyPos = hi.historyPos();
+		return historyPos >= m_firstIndex && historyPos <= m_lastIndex;
+	} else {
+		return false;
+	}
 }
 
 bool SessionHistory::addBan(
@@ -175,6 +192,7 @@ bool SessionHistory::reset(const net::MessageList &newHistory)
 
 	abortStreamedReset();
 	m_sizeInBytes = newSize;
+	m_lastResetTime = QDateTime::currentMSecsSinceEpoch();
 	m_firstIndex = m_lastIndex + 1LL;
 	m_lastIndex += newHistory.size();
 	resetAutoResetThresholdBase();

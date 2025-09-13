@@ -41,6 +41,8 @@ typedef struct DP_CanvasHistory DP_CanvasHistory;
 
 typedef struct DP_CanvasHistorySnapshot DP_CanvasHistorySnapshot;
 
+typedef struct DP_CanvasHistoryReconnectState DP_CanvasHistoryReconnectState;
+
 typedef enum DP_Undo {
     DP_UNDO_DONE,
     DP_UNDO_UNDONE,
@@ -124,6 +126,9 @@ void DP_canvas_history_undo_depth_limit_set(DP_CanvasHistory *ch,
 
 bool DP_canvas_history_save_point_make(DP_CanvasHistory *ch);
 
+bool DP_canvas_history_reconnect_restore(DP_CanvasHistory *ch,
+                                         DP_DrawContext *dc);
+
 // Cleans up after disconnecting from a remote session: the local fork is merged
 // into the mainline history and all sublayers are merged into their parents.
 // The messages are appended to the remote queue so they can be recorded.
@@ -157,6 +162,17 @@ bool DP_canvas_history_reset_image_new(
 DP_Recorder *DP_canvas_history_recorder_new(
     DP_CanvasHistory *ch, DP_RecorderType type, JSON_Value *header,
     DP_RecorderGetTimeMsFn get_time_fn, void *get_time_user, DP_Output *output);
+
+
+DP_CanvasHistoryReconnectState *
+DP_canvas_history_reconnect_state_new(DP_CanvasHistory *ch);
+
+void DP_canvas_history_reconnect_state_free(
+    DP_CanvasHistoryReconnectState *chrs);
+
+bool DP_canvas_history_reconnect_state_apply(
+    DP_CanvasHistoryReconnectState *chrs, DP_CanvasHistory *ch,
+    DP_DrawContext *dc);
 
 
 DP_CanvasHistorySnapshot *DP_canvas_history_snapshot_new(DP_CanvasHistory *ch);

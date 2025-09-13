@@ -21,12 +21,19 @@ extern "C" {
 
 namespace canvas {
 
+struct CanvasModel::MakeReconnectStateParams {
+	QPointer<CanvasModel> canvas;
+	QPointer<ReconnectState> reconnectState;
+};
+
 CanvasModel::CanvasModel(
 	libclient::settings::Settings &settings, uint8_t localUserId,
 	int canvasImplementation, int fps, int snapshotMaxCount,
 	long long snapshotMinDelayMs, bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
 {
+	qRegisterMetaType<CanvasModelSetReconnectStateHistoryParams>();
+
 	m_paintengine = new PaintEngine(
 		canvasImplementation, settings.checkerColor1(),
 		settings.checkerColor2(), settings.selectionColor(), fps,
@@ -137,8 +144,24 @@ void CanvasModel::previewAnnotation(int id, const QRect &shape)
 	emit previewAnnotationRequested(id, shape);
 }
 
+ReconnectState *
+CanvasModel::makeReconnectState(QObject *parent, const HistoryIndex &hi)
+{
+	ReconnectState *reconnectState = new ReconnectState(
+		hi, m_userlist->users(), m_paintengine->aclState(), parent);
+
+	MakeReconnectStateParams *params = new MakeReconnectStateParams{
+		QPointer<CanvasModel>(this), QPointer<ReconnectState>(reconnectState)};
+	net::Message msg = net::makeInternalReconnectStateMakeMessage(
+		0, &CanvasModel::reconnectStateMakeCallback, params);
+	m_paintengine->receiveMessages(false, 1, &msg);
+
+	return reconnectState;
+}
+
 void CanvasModel::connectedToServer(
-	uint8_t myUserId, bool join, bool compatibilityMode)
+	uint8_t myUserId, bool join, bool compatibilityMode,
+	ReconnectState *reconnectState)
 {
 	if(myUserId == 0) {
 		// Zero is a reserved "null" user ID
@@ -151,12 +174,22 @@ void CanvasModel::connectedToServer(
 
 	m_aclstate->setLocalUserId(myUserId);
 	m_selection->setLocalUserId(myUserId);
+	m_userlist->reset();
 
 	if(join) {
 		m_paintengine->resetAcl(m_localUserId);
+		if(reconnectState) {
+			qDebug("Apply reconnect state");
+			m_userlist->setUsers(reconnectState->users());
+			m_paintengine->supplantAcl(reconnectState->aclState());
+			net::Message msg = net::makeInternalReconnectStateApplyMessage(
+				0, reconnectState->historyState());
+			m_paintengine->receiveMessages(false, 1, &msg);
+			reconnectState->clearDetach();
+		}
 	}
+	delete reconnectState;
 
-	m_userlist->reset();
 	emit compatibilityModeChanged(m_compatibilityMode);
 }
 
@@ -166,7 +199,6 @@ void CanvasModel::disconnectedFromServer()
 	m_paintengine->cleanup();
 	m_userlist->allLogout();
 	m_paintengine->resetAcl(m_localUserId);
-	m_paintengine->cleanup();
 	emit compatibilityModeChanged(m_compatibilityMode);
 }
 
@@ -322,6 +354,17 @@ void CanvasModel::onLaserTrail(int userId, int persistence, uint32_t color)
 {
 	emit laserTrail(
 		userId, qMin(15, persistence) * 1000, QColor::fromRgb(color));
+}
+
+void CanvasModel::setReconnectStateHistory(
+	const CanvasModelSetReconnectStateHistoryParams &params)
+{
+	if(params.reconnectState.isNull()) {
+		qWarning("setReconnectStateHistory: target is null");
+		DP_canvas_history_reconnect_state_free(params.chrs);
+	} else {
+		params.reconnectState->setHistoryState(params.chrs);
+	}
 }
 
 net::MessageList CanvasModel::generateSnapshot(
@@ -524,6 +567,25 @@ bool CanvasModel::isRecording() const
 void CanvasModel::updatePaintEngineTransform()
 {
 	m_paintengine->setTransformActive(m_transform->isActive());
+}
+
+void CanvasModel::reconnectStateMakeCallback(
+	void *user, DP_CanvasHistoryReconnectState *chrs)
+{
+	MakeReconnectStateParams *params =
+		static_cast<MakeReconnectStateParams *>(user);
+	if(params->canvas.isNull() || params->reconnectState.isNull()) {
+		qWarning("reconnectStateMakeCallback: target is null");
+		DP_canvas_history_reconnect_state_free(chrs);
+	} else if(chrs) {
+		CanvasModelSetReconnectStateHistoryParams invokeParams = {
+			params->reconnectState, chrs};
+		QMetaObject::invokeMethod(
+			params->canvas.data(), "setReconnectStateHistory",
+			Qt::QueuedConnection,
+			Q_ARG(CanvasModelSetReconnectStateHistoryParams, invokeParams));
+	}
+	delete params;
 }
 
 }

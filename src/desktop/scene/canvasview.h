@@ -163,6 +163,7 @@ signals:
 	void rightClicked(const QPoint &p);
 
 	void reconnectRequested();
+	void reconnectDismissed();
 	void savePreResetStateRequested();
 	void savePreResetStateDismissed();
 

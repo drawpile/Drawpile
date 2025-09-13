@@ -113,6 +113,10 @@ public:
 
 	void resetAcl(uint8_t localUserId);
 
+	//! Replaces the ACL state contents with the ones from the given state and
+	//! frees that. The local user id is not modified.
+	void supplantAcl(DP_AclState *acls);
+
 	//! Clean up dangling state after disconnecting from a remote session
 	void cleanup();
 

@@ -4,6 +4,7 @@
 #include "libserver/idqueue.h"
 #include "libserver/sessionban.h"
 #include "libshared/net/message.h"
+#include "libshared/util/historyindex.h"
 #include "libshared/util/passwordhash.h"
 #include <QDateTime>
 #include <QJsonValue>
@@ -404,6 +405,14 @@ public:
 	long long lastIndex() const { return m_lastIndex; }
 
 	/**
+	 * @brief Get the history index for server command messages
+	 *
+	 * Used to update the history index for fast catchups.
+	 */
+	HistoryIndex historyIndex() const;
+	bool canSkipToHistoryIndex(const HistoryIndex &hi) const;
+
+	/**
 	 * @brief Get the list of in-session IP bans
 	 */
 	const SessionBanList &banlist() const { return m_banlist; }
@@ -595,6 +604,7 @@ private:
 	size_t m_sizeInBytes;
 	size_t m_sizeLimit;
 	size_t m_autoResetBaseSize;
+	long long m_lastResetTime;
 	long long m_firstIndex;
 	long long m_lastIndex;
 
