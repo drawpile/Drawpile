@@ -61,9 +61,10 @@ public:
 	void addAdminMessage(Session *session, const QString &message)
 	{
 		limitMessages();
-		m_messages.append(QJsonObject{
-			{QStringLiteral("m"), message},
-		});
+		m_messages.append(
+			QJsonObject{
+				{QStringLiteral("m"), message},
+			});
 		session->m_config->logger()->logMessage(
 			Log()
 				.about(Log::Level::Info, Log::Topic::AdminChat)
@@ -204,8 +205,9 @@ void Session::switchState(State newstate)
 			log(Log()
 					.about(Log::Level::Info, Log::Topic::Status)
 					.message(QStringLiteral("Session initialized with size %1")
-								 .arg(QLocale::c().formattedDataSize(
-									 m_history->sizeInBytes()))));
+								 .arg(
+									 QLocale::c().formattedDataSize(
+										 m_history->sizeInBytes()))));
 			onSessionInitialized();
 
 		} else if(m_state == State::Reset && !m_resetstream.isEmpty()) {
@@ -218,15 +220,18 @@ void Session::switchState(State newstate)
 			if(!m_history->reset(resetImage)) {
 				// This shouldn't normally happen, as the size limit should be
 				// caught while still uploading the reset.
-				directToAll(net::ServerReply::makeKeyAlertReset(
-					QStringLiteral("Session reset failed!"),
-					QStringLiteral("failed"),
-					net::ServerReply::KEY_RESET_FAILED));
+				directToAll(
+					net::ServerReply::makeKeyAlertReset(
+						QStringLiteral("Session reset failed!"),
+						QStringLiteral("failed"),
+						net::ServerReply::KEY_RESET_FAILED));
 				success = false;
 
 			} else {
-				directToAll(net::ServerReply::makeReset(
-					QStringLiteral("Session reset!"), QStringLiteral("reset")));
+				directToAll(
+					net::ServerReply::makeReset(
+						QStringLiteral("Session reset!"),
+						QStringLiteral("reset")));
 
 				onSessionReset();
 
@@ -354,9 +359,10 @@ void Session::joinUser(Client *user, bool host, const Invite *invite)
 	const QString welcomeMessage =
 		m_config->getConfigString(config::WelcomeMessage);
 	if(!welcomeMessage.isEmpty() && !user->sendSystemChat(welcomeMessage)) {
-		user->log(Log()
-					  .about(Log::Level::Error, Log::Topic::Status)
-					  .message(QStringLiteral("Welcome message too long")));
+		user->log(
+			Log()
+				.about(Log::Level::Error, Log::Topic::Status)
+				.message(QStringLiteral("Welcome message too long")));
 	}
 
 	// Make sure everyone is up to date
@@ -368,12 +374,13 @@ void Session::joinUser(Client *user, bool host, const Invite *invite)
 
 	m_history->joinUser(user->id(), username);
 
-	user->log(Log()
-				  .about(Log::Level::Info, Log::Topic::Join)
-				  .message(
-					  isGhost ? QStringLiteral(
-									"Moderator in ghost mode joined session")
-							  : QStringLiteral("Joined session")));
+	user->log(
+		Log()
+			.about(Log::Level::Info, Log::Topic::Join)
+			.message(
+				isGhost
+					? QStringLiteral("Moderator in ghost mode joined session")
+					: QStringLiteral("Joined session")));
 	emit sessionAttributeChanged(this);
 }
 
@@ -433,9 +440,10 @@ void Session::abortReset()
 	m_resetstream.clear();
 	m_resetstreamsize = 0;
 	switchState(State::Running);
-	directToAll(net::ServerReply::makeKeyAlertReset(
-		QStringLiteral("Session reset cancelled."), QStringLiteral("cancel"),
-		net::ServerReply::KEY_RESET_CANCEL));
+	directToAll(
+		net::ServerReply::makeKeyAlertReset(
+			QStringLiteral("Session reset cancelled."),
+			QStringLiteral("cancel"), net::ServerReply::KEY_RESET_CANCEL));
 }
 
 Client *Session::getClientById(uint8_t id)
@@ -477,9 +485,10 @@ bool Session::addBan(
 	if(m_history->addBan(
 		   target->username(), target->peerAddress(), target->authId(),
 		   target->sid(), bannedBy, client)) {
-		target->log(Log()
-						.about(Log::Level::Info, Log::Topic::Ban)
-						.message("Banned by " + bannedBy));
+		target->log(
+			Log()
+				.about(Log::Level::Info, Log::Topic::Ban)
+				.message("Banned by " + bannedBy));
 		sendUpdatedBanlist();
 		return true;
 	} else {
@@ -1003,8 +1012,9 @@ CheckInviteResult Session::checkInvite(
 				.about(Log::Level::Info, Log::Topic::Invite)
 				.message(
 					creator.isEmpty()
-						? QStringLiteral("Used invite created by a server "
-										 "administrator")
+						? QStringLiteral(
+							  "Used invite created by a server "
+							  "administrator")
 						: QStringLiteral("Used invite created by %1")
 							  .arg(creator))));
 	}
@@ -1254,12 +1264,14 @@ void Session::sendUpdatedAnnouncementList()
 	QJsonArray announcements;
 	for(const sessionlisting::Announcement &a :
 		m_announcements->getAnnouncements(this)) {
-		announcements.append(QJsonObject{
-			{QStringLiteral("url"), a.apiUrl.toString()},
-		});
+		announcements.append(
+			QJsonObject{
+				{QStringLiteral("url"), a.apiUrl.toString()},
+			});
 	}
-	directToAll(net::ServerReply::makeSessionConf(
-		{{QStringLiteral("announcements"), announcements}}));
+	directToAll(
+		net::ServerReply::makeSessionConf(
+			{{QStringLiteral("announcements"), announcements}}));
 }
 
 void Session::sendUpdatedMuteList()
@@ -1352,8 +1364,9 @@ void Session::sendUpdatedAuthList()
 void Session::sendUpdatedInviteList()
 {
 	while(true) {
-		net::Message msg = net::ServerReply::makeSessionConf(QJsonObject{
-			{QStringLiteral("invitelist"), getInvitesDescription()}});
+		net::Message msg = net::ServerReply::makeSessionConf(
+			QJsonObject{
+				{QStringLiteral("invitelist"), getInvitesDescription()}});
 		if(!msg.isNull()) {
 			for(Client *c : m_clients) {
 				if(c->isOperator()) {
@@ -1368,8 +1381,9 @@ void Session::sendUpdatedInviteList()
 		if(m_history->removeOldestInvite(&oldestSecret)) {
 			log(Log()
 					.about(Log::Level::Warn, Log::Topic::Invite)
-					.message(QStringLiteral("Removed oldest invite %1 to fit "
-											"them into a message")
+					.message(QStringLiteral(
+								 "Removed oldest invite %1 to fit "
+								 "them into a message")
 								 .arg(oldestSecret)));
 		} else {
 			log(Log()
@@ -1460,9 +1474,10 @@ void Session::handleClientMessage(Client &client, const net::Message &msg)
 	}
 	case DP_MSG_SESSION_OWNER: {
 		if(!client.isOperator()) {
-			client.log(Log()
-						   .about(Log::Level::Warn, Log::Topic::RuleBreak)
-						   .message("Tried to change session ownership"));
+			client.log(
+				Log()
+					.about(Log::Level::Warn, Log::Topic::RuleBreak)
+					.message("Tried to change session ownership"));
 			return;
 		}
 
@@ -1519,9 +1534,11 @@ void Session::handleClientMessage(Client &client, const net::Message &msg)
 		DP_MsgPrivateChat *mpc = msg.toPrivateChat();
 		uint8_t targetId = DP_msg_private_chat_target(mpc);
 		if(client.isGhost()) {
-			client.sendDirectMessage(net::makePrivateChatMessage(
-				msg.contextId(), targetId, 0,
-				QStringLiteral("Can't send private messages in ghost mode.")));
+			client.sendDirectMessage(
+				net::makePrivateChatMessage(
+					msg.contextId(), targetId, 0,
+					QStringLiteral(
+						"Can't send private messages in ghost mode.")));
 		} else if(targetId > 0) {
 			Client *target = getClientById(targetId);
 			if(target && !target->isAwaitingReset()) {
@@ -1607,16 +1624,18 @@ void Session::handleInitBegin(int ctxId)
 	}
 
 	if(ctxId != m_initUser) {
-		c->log(Log()
-				   .about(Log::Level::Warn, Log::Topic::RuleBreak)
-				   .message(QString("Sent init-begin, but init user is #%1")
-								.arg(m_initUser)));
+		c->log(
+			Log()
+				.about(Log::Level::Warn, Log::Topic::RuleBreak)
+				.message(QString("Sent init-begin, but init user is #%1")
+							 .arg(m_initUser)));
 		return;
 	}
 
-	c->log(Log()
-			   .about(Log::Level::Debug, Log::Topic::Status)
-			   .message("init-begin"));
+	c->log(
+		Log()
+			.about(Log::Level::Debug, Log::Topic::Status)
+			.message("init-begin"));
 
 	// It's possible that regular non-reset commands were still in the upload
 	// buffer when the client started sending the reset snapshot. The init-begin
@@ -1624,11 +1643,12 @@ void Session::handleInitBegin(int ctxId)
 	// buffer here. For backward-compatibility, sending the init-begin command
 	// is optional.
 	if(m_resetstreamsize > 0) {
-		c->log(Log()
-				   .about(Log::Level::Debug, Log::Topic::Status)
-				   .message(
-					   QStringLiteral("%1 extra messages cleared by init-begin")
-						   .arg(m_resetstream.size())));
+		c->log(
+			Log()
+				.about(Log::Level::Debug, Log::Topic::Status)
+				.message(
+					QStringLiteral("%1 extra messages cleared by init-begin")
+						.arg(m_resetstream.size())));
 		m_resetstream.clear();
 		m_resetstreamsize = 0;
 	}
@@ -1647,16 +1667,18 @@ void Session::handleInitComplete(int ctxId)
 	}
 
 	if(ctxId != m_initUser) {
-		c->log(Log()
-				   .about(Log::Level::Warn, Log::Topic::RuleBreak)
-				   .message(QString("Sent init-complete, but init user is #%1")
-								.arg(m_initUser)));
+		c->log(
+			Log()
+				.about(Log::Level::Warn, Log::Topic::RuleBreak)
+				.message(QString("Sent init-complete, but init user is #%1")
+							 .arg(m_initUser)));
 		return;
 	}
 
-	c->log(Log()
-			   .about(Log::Level::Debug, Log::Topic::Status)
-			   .message("init-complete"));
+	c->log(
+		Log()
+			.about(Log::Level::Debug, Log::Topic::Status)
+			.message("init-complete"));
 
 	switchState(State::Running);
 }
@@ -1675,16 +1697,18 @@ void Session::handleInitCancel(int ctxId)
 	}
 
 	if(ctxId != m_initUser) {
-		c->log(Log()
-				   .about(Log::Level::Warn, Log::Topic::RuleBreak)
-				   .message(QString("Sent init-cancel, but init user is #%1")
-								.arg(m_initUser)));
+		c->log(
+			Log()
+				.about(Log::Level::Warn, Log::Topic::RuleBreak)
+				.message(QString("Sent init-cancel, but init user is #%1")
+							 .arg(m_initUser)));
 		return;
 	}
 
-	c->log(Log()
-			   .about(Log::Level::Debug, Log::Topic::Status)
-			   .message("init-cancel"));
+	c->log(
+		Log()
+			.about(Log::Level::Debug, Log::Topic::Status)
+			.message("init-cancel"));
 	abortReset();
 }
 
@@ -1699,39 +1723,48 @@ void Session::resetSession(int resetter, const QString &type)
 	QString name = client->username();
 	QJsonObject params = {{QStringLiteral("name"), name}};
 	if(type == QStringLiteral("current")) {
-		directToAll(net::ServerReply::makeKeyAlertReset(
-			QStringLiteral("%1 is compressing the canvas! Please wait, the "
-						   "session should be available again shortly…")
-				.arg(name),
-			QStringLiteral("prepare"),
-			net::ServerReply::KEY_RESET_PREPARE_CURRENT, params));
+		directToAll(
+			net::ServerReply::makeKeyAlertReset(
+				QStringLiteral(
+					"%1 is compressing the canvas! Please wait, the "
+					"session should be available again shortly…")
+					.arg(name),
+				QStringLiteral("prepare"),
+				net::ServerReply::KEY_RESET_PREPARE_CURRENT, params));
 	} else if(type == QStringLiteral("past")) {
-		directToAll(net::ServerReply::makeKeyAlertReset(
-			QStringLiteral(
-				"%1 is reverting the canvas to a previous state! Please wait, "
-				"the session should be available again shortly…")
-				.arg(name),
-			QStringLiteral("prepare"), net::ServerReply::KEY_RESET_PREPARE_PAST,
-			params));
+		directToAll(
+			net::ServerReply::makeKeyAlertReset(
+				QStringLiteral(
+					"%1 is reverting the canvas to a previous state! Please "
+					"wait, "
+					"the session should be available again shortly…")
+					.arg(name),
+				QStringLiteral("prepare"),
+				net::ServerReply::KEY_RESET_PREPARE_PAST, params));
 	} else if(type == QStringLiteral("external")) {
-		directToAll(net::ServerReply::makeKeyAlertReset(
-			QStringLiteral("%1 is replacing the canvas! Please wait, the "
-						   "session should be available again shortly…")
-				.arg(name),
-			QStringLiteral("prepare"),
-			net::ServerReply::KEY_RESET_PREPARE_EXTERNAL, params));
+		directToAll(
+			net::ServerReply::makeKeyAlertReset(
+				QStringLiteral(
+					"%1 is replacing the canvas! Please wait, the "
+					"session should be available again shortly…")
+					.arg(name),
+				QStringLiteral("prepare"),
+				net::ServerReply::KEY_RESET_PREPARE_EXTERNAL, params));
 	} else {
-		directToAll(net::ServerReply::makeKeyAlertReset(
-			QStringLiteral("Preparing for session reset by %1! Please wait, "
-						   "the session should be available again shortly…")
-				.arg(name),
-			QStringLiteral("prepare"), net::ServerReply::KEY_RESET_PREPARE_BY,
-			params));
+		directToAll(
+			net::ServerReply::makeKeyAlertReset(
+				QStringLiteral(
+					"Preparing for session reset by %1! Please wait, "
+					"the session should be available again shortly…")
+					.arg(name),
+				QStringLiteral("prepare"),
+				net::ServerReply::KEY_RESET_PREPARE_BY, params));
 	}
 
-	client->sendDirectMessage(net::ServerReply::makeReset(
-		QStringLiteral("Prepared to receive session data"),
-		QStringLiteral("init")));
+	client->sendDirectMessage(
+		net::ServerReply::makeReset(
+			QStringLiteral("Prepared to receive session data"),
+			QStringLiteral("init")));
 }
 
 void Session::killSession(const QString &message, bool terminate, bool quiet)
@@ -1855,8 +1888,9 @@ void Session::kickWebUsers(Client *by)
 			   : QJsonObject());
 
 		QString message =
-			QStringLiteral("Web browser clients are only allowed on sessions "
-						   "with a password, but %1 removed it.")
+			QStringLiteral(
+				"Web browser clients are only allowed on sessions "
+				"with a password, but %1 removed it.")
 				.arg(
 					by ? by->username()
 					   : QStringLiteral("a server administrator"));
@@ -2533,10 +2567,11 @@ JsonApiResult Session::callChatJsonApi(
 
 		QJsonArray messages = m_adminChat->getMessages(&offset);
 		return JsonApiResult{
-			JsonApiResult::Ok, QJsonDocument(QJsonObject{
-								   {QStringLiteral("offset"), offset},
-								   {QStringLiteral("messages"), messages},
-							   })};
+			JsonApiResult::Ok, QJsonDocument(
+								   QJsonObject{
+									   {QStringLiteral("offset"), offset},
+									   {QStringLiteral("messages"), messages},
+								   })};
 
 	} else if(method == JsonApiMethod::Create) {
 		if(m_adminChat) {
@@ -2585,10 +2620,11 @@ JsonApiResult Session::callChatJsonApi(
 		int offset = 0;
 		QJsonArray messages = m_adminChat->getMessages(&offset);
 		return JsonApiResult{
-			JsonApiResult::Ok, QJsonDocument(QJsonObject{
-								   {QStringLiteral("offset"), offset},
-								   {QStringLiteral("messages"), messages},
-							   })};
+			JsonApiResult::Ok, QJsonDocument(
+								   QJsonObject{
+									   {QStringLiteral("offset"), offset},
+									   {QStringLiteral("messages"), messages},
+								   })};
 
 	} else if(method == JsonApiMethod::Update) {
 		if(!m_adminChat) {
@@ -2621,10 +2657,11 @@ JsonApiResult Session::callChatJsonApi(
 
 		QJsonArray messages = m_adminChat->getMessages(&offset);
 		return JsonApiResult{
-			JsonApiResult::Ok, QJsonDocument(QJsonObject{
-								   {QStringLiteral("offset"), offset},
-								   {QStringLiteral("messages"), messages},
-							   })};
+			JsonApiResult::Ok, QJsonDocument(
+								   QJsonObject{
+									   {QStringLiteral("offset"), offset},
+									   {QStringLiteral("messages"), messages},
+								   })};
 
 	} else if(method == JsonApiMethod::Delete) {
 		if(!m_adminChat) {
@@ -2659,10 +2696,11 @@ JsonApiResult Session::callChatJsonApi(
 		m_adminChat = nullptr;
 
 		return JsonApiResult{
-			JsonApiResult::Ok, QJsonDocument(QJsonObject{
-								   {QStringLiteral("offset"), offset},
-								   {QStringLiteral("messages"), messages},
-							   })};
+			JsonApiResult::Ok, QJsonDocument(
+								   QJsonObject{
+									   {QStringLiteral("offset"), offset},
+									   {QStringLiteral("messages"), messages},
+								   })};
 
 	} else {
 		return JsonApiBadMethod();
@@ -2676,9 +2714,10 @@ JsonApiResult Session::callInvitesJsonApi(
 	if(pathCount == 0) {
 		if(method == JsonApiMethod::Get) {
 			return JsonApiResult{
-				JsonApiResult::Ok,
-				QJsonDocument(QJsonObject{
-					{QStringLiteral("invites"), getInvitesDescription(true)}})};
+				JsonApiResult::Ok, QJsonDocument(
+									   QJsonObject{
+										   {QStringLiteral("invites"),
+											getInvitesDescription(true)}})};
 		} else if(method == JsonApiMethod::Create) {
 			int maxUses =
 				parseRequestInt(request, QStringLiteral("maxUses"), 0, 0);
@@ -2720,8 +2759,9 @@ JsonApiResult Session::callInvitesJsonApi(
 			if(removeInvite(nullptr, secret)) {
 				return JsonApiResult{
 					JsonApiResult::Ok,
-					QJsonDocument(QJsonObject{
-						{QStringLiteral("status"), QStringLiteral("ok")}})};
+					QJsonDocument(
+						QJsonObject{
+							{QStringLiteral("status"), QStringLiteral("ok")}})};
 			} else {
 				return JsonApiNotFound();
 			}

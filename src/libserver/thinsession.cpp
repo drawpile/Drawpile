@@ -180,8 +180,9 @@ void ThinSession::readyToAutoReset(
 		c->setResetFlags(Client::ResetFlag::None);
 		log(Log()
 				.about(Log::Level::Warn, Log::Topic::RuleBreak)
-				.message(QStringLiteral("User %1 is not an operator, but sent "
-										"ready-to-autoreset")
+				.message(QStringLiteral(
+							 "User %1 is not an operator, but sent "
+							 "ready-to-autoreset")
 							 .arg(params.ctxId)));
 		return;
 	}
@@ -189,8 +190,9 @@ void ThinSession::readyToAutoReset(
 	if(!c->resetFlags().testFlag(Client::ResetFlag::Queried)) {
 		log(Log()
 				.about(Log::Level::Warn, Log::Topic::RuleBreak)
-				.message(QStringLiteral("User %1 responded to an autoreset "
-										"request without being in query state")
+				.message(QStringLiteral(
+							 "User %1 responded to an autoreset "
+							 "request without being in query state")
 							 .arg(params.ctxId)));
 		return;
 	}
@@ -211,8 +213,9 @@ void ThinSession::readyToAutoReset(
 	if(!payload.isEmpty() && payload != m_autoResetPayload) {
 		log(Log()
 				.about(Log::Level::Warn, Log::Topic::RuleBreak)
-				.message(QStringLiteral("User %1 responded with incorrect "
-										"autoreset payload")
+				.message(QStringLiteral(
+							 "User %1 responded with incorrect "
+							 "autoreset payload")
 							 .arg(params.ctxId)));
 		return;
 	}
@@ -220,9 +223,10 @@ void ThinSession::readyToAutoReset(
 	int responseRank = m_autoResetCandidates.isEmpty()
 						   ? 1
 						   : m_autoResetCandidates.last().responseRank + 1;
-	m_autoResetCandidates.append(AutoResetCandidate{
-		responseRank, params.ctxId, params.capabilities, params.osQuality,
-		params.netQuality, params.averagePing});
+	m_autoResetCandidates.append(
+		AutoResetCandidate{
+			responseRank, params.ctxId, params.capabilities, params.osQuality,
+			params.netQuality, params.averagePing});
 
 	c->setResetFlags(Client::ResetFlag::Responded);
 
@@ -246,8 +250,9 @@ ThinSession::handleStreamResetStart(int ctxId, const QString &correlator)
 	if(m_autoResetRequestStatus != AutoResetState::Requested) {
 		log(Log()
 				.about(Log::Level::Warn, Log::Topic::RuleBreak)
-				.message(QStringLiteral("User %1 tried to start stream reset, "
-										"but session is in state %2")
+				.message(QStringLiteral(
+							 "User %1 tried to start stream reset, "
+							 "but session is in state %2")
 							 .arg(ctxId)
 							 .arg(int(m_autoResetRequestStatus))));
 		return StreamResetStartResult::InvalidSessionState;
@@ -257,8 +262,9 @@ ThinSession::handleStreamResetStart(int ctxId, const QString &correlator)
 	if(!c) {
 		log(Log()
 				.about(Log::Level::Warn, Log::Topic::RuleBreak)
-				.message(QStringLiteral("User %1 tried to start stream reset, "
-										"but doesn't exist")
+				.message(QStringLiteral(
+							 "User %1 tried to start stream reset, "
+							 "but doesn't exist")
 							 .arg(ctxId)));
 		return StreamResetStartResult::InvalidUser;
 	}
@@ -278,8 +284,9 @@ ThinSession::handleStreamResetStart(int ctxId, const QString &correlator)
 	if(!c->isOperator() || c->isGhost()) {
 		log(Log()
 				.about(Log::Level::Warn, Log::Topic::RuleBreak)
-				.message(QStringLiteral("User %1 tried to start stream reset, "
-										"but isn't an operator")
+				.message(QStringLiteral(
+							 "User %1 tried to start stream reset, "
+							 "but isn't an operator")
 							 .arg(ctxId)));
 		clearAutoReset(AUTORESET_FAILURE_RETRY_MSECS);
 		return StreamResetStartResult::InvalidUser;
@@ -288,10 +295,10 @@ ThinSession::handleStreamResetStart(int ctxId, const QString &correlator)
 	if(correlator != m_autoResetPayload) {
 		log(Log()
 				.about(Log::Level::Warn, Log::Topic::RuleBreak)
-				.message(
-					QStringLiteral("User %1 tried to start stream reset, with "
-								   "a correlator not matching payload")
-						.arg(ctxId)));
+				.message(QStringLiteral(
+							 "User %1 tried to start stream reset, with "
+							 "a correlator not matching payload")
+							 .arg(ctxId)));
 		clearAutoReset(AUTORESET_FAILURE_RETRY_MSECS);
 		return StreamResetStartResult::InvalidCorrelator;
 	}
@@ -309,8 +316,9 @@ ThinSession::handleStreamResetStart(int ctxId, const QString &correlator)
 												 : Client::ResetFlag::None);
 		log(Log()
 				.about(Log::Level::Info, Log::Topic::Status)
-				.message(QStringLiteral("User %1 started stream reset (fork "
-										"pos %2, stream pos %3)")
+				.message(QStringLiteral(
+							 "User %1 started stream reset (fork "
+							 "pos %2, stream pos %3)")
 							 .arg(ctxId)
 							 .arg(hist->resetStreamForkPos())
 							 .arg(hist->resetStreamHeaderPos())));
@@ -361,8 +369,9 @@ StreamResetAbortResult ThinSession::handleStreamResetAbort(int ctxId)
 	if(!c) {
 		log(Log()
 				.about(Log::Level::Warn, Log::Topic::RuleBreak)
-				.message(QStringLiteral("User %1 tried to abort stream reset, "
-										"but doesn't exist")
+				.message(QStringLiteral(
+							 "User %1 tried to abort stream reset, "
+							 "but doesn't exist")
 							 .arg(ctxId)));
 		return StreamResetAbortResult::InvalidUser;
 	}
@@ -409,8 +418,9 @@ ThinSession::handleStreamResetFinish(int ctxId, int expectedMessageCount)
 	if(!c) {
 		log(Log()
 				.about(Log::Level::Warn, Log::Topic::RuleBreak)
-				.message(QStringLiteral("User %1 tried to finish stream reset "
-										"with %2 messages but doesn't exist")
+				.message(QStringLiteral(
+							 "User %1 tried to finish stream reset "
+							 "with %2 messages but doesn't exist")
 							 .arg(ctxId)
 							 .arg(expectedMessageCount)));
 		return StreamResetPrepareResult::InvalidUser;
@@ -465,8 +475,9 @@ ThinSession::handleStreamResetFinish(int ctxId, int expectedMessageCount)
 
 	log(Log()
 			.about(Log::Level::Warn, Log::Topic::Status)
-			.message(QStringLiteral("User %1 tried to finish stream reset with "
-									"%2 messages, but %3")
+			.message(QStringLiteral(
+						 "User %1 tried to finish stream reset with "
+						 "%2 messages, but %3")
 						 .arg(ctxId)
 						 .arg(expectedMessageCount)
 						 .arg(error)));
@@ -492,9 +503,10 @@ void ThinSession::resolvePendingStreamedReset(const QString &cause)
 			log(Log()
 					.about(Log::Level::Info, Log::Topic::Status)
 					.message(
-						QStringLiteral("Resolved streamed reset after %1 with "
-									   "offset %2 (size %3 => %4, autoreset "
-									   "threshold base %5 => %6)")
+						QStringLiteral(
+							"Resolved streamed reset after %1 with "
+							"offset %2 (size %3 => %4, autoreset "
+							"threshold base %5 => %6)")
 							.arg(
 								cause, QString::number(offset),
 								locale.formattedDataSize(prevSizeInBytes),
@@ -530,8 +542,9 @@ void ThinSession::onSessionInitialized()
 void ThinSession::onSessionReset()
 {
 	clearAutoReset();
-	directToAll(net::ServerReply::makeCatchup(
-		history()->lastIndex() - history()->firstIndex(), 0));
+	directToAll(
+		net::ServerReply::makeCatchup(
+			history()->lastIndex() - history()->firstIndex(), 0));
 	sendStatusUpdate();
 	history()->addMessage(net::ServerReply::makeCaughtUp(0));
 }
@@ -550,9 +563,10 @@ void ThinSession::onClientJoin(Client *client, bool host)
 		int catchupKey = history()->nextCatchupKey();
 		bool caughtUpAdded =
 			history()->addMessage(net::ServerReply::makeCaughtUp(catchupKey));
-		client->sendDirectMessage(net::ServerReply::makeCatchup(
-			history()->lastIndex() - history()->firstIndex(),
-			caughtUpAdded ? catchupKey : -1));
+		client->sendDirectMessage(
+			net::ServerReply::makeCatchup(
+				history()->lastIndex() - history()->firstIndex(),
+				caughtUpAdded ? catchupKey : -1));
 		client->sendDirectMessage(
 			net::ServerReply::makeStatusUpdate(int(history()->sizeInBytes())));
 	}
@@ -694,8 +708,9 @@ void ThinSession::checkAutoResetQuery()
 					.arg(locale.formattedDataSize(autoResetThreshold))));
 
 	// Legacy alert for Drawpile 2.0.x versions
-	directToAll(net::ServerReply::makeSizeLimitWarning(
-		int(history()->sizeInBytes()), int(autoResetThreshold)));
+	directToAll(
+		net::ServerReply::makeSizeLimitWarning(
+			int(history()->sizeInBytes()), int(autoResetThreshold)));
 
 	// New style for Drawpile 2.1.0 and newer
 	// Autoreset request: send an autoreset query to each logged in
@@ -822,10 +837,10 @@ void ThinSession::triggerAutoReset()
 			} else if(!candidate->isOperator() || candidate->isGhost()) {
 				log(Log()
 						.about(Log::Level::Warn, Log::Topic::Status)
-						.message(
-							QStringLiteral("User %1 is not an operator, can't "
-										   "autoreset with them")
-								.arg(ctxId)));
+						.message(QStringLiteral(
+									 "User %1 is not an operator, can't "
+									 "autoreset with them")
+									 .arg(ctxId)));
 			} else {
 				c = candidate;
 				stream = it->capabilities.testFlag(ResetCapability::GzipStream);
@@ -837,8 +852,9 @@ void ThinSession::triggerAutoReset()
 	if(!c) {
 		log(Log()
 				.about(Log::Level::Warn, Log::Topic::Status)
-				.message(QStringLiteral("Autoreset triggered, but no user "
-										"available to execute it with")));
+				.message(QStringLiteral(
+					"Autoreset triggered, but no user "
+					"available to execute it with")));
 		clearAutoReset(AUTORESET_FAILURE_RETRY_MSECS);
 		return;
 	}
@@ -849,9 +865,10 @@ void ThinSession::triggerAutoReset()
 	if(stream) {
 		c->setResetFlags(
 			Client::ResetFlag::Awaiting | Client::ResetFlag::Streaming);
-		c->sendDirectMessage(net::ServerReply::makeStreamedResetRequest(
-			int(history()->sizeLimit()), m_autoResetPayload,
-			QStringLiteral("gzip1")));
+		c->sendDirectMessage(
+			net::ServerReply::makeStreamedResetRequest(
+				int(history()->sizeLimit()), m_autoResetPayload,
+				QStringLiteral("gzip1")));
 	} else {
 		c->setResetFlags(Client::ResetFlag::Awaiting);
 		c->sendDirectMessage(
