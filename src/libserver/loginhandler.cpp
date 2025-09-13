@@ -198,12 +198,13 @@ void LoginHandler::startLoginProcess()
 	}
 
 	// Start by telling who we are and what we can do
-	send(net::ServerReply::makeLoginGreeting(
-		QStringLiteral("Drawpile server %1").arg(cmake_config::version()),
-		cmake_config::proto::server(), flags, methods,
-		m_config->getConfigString(config::LoginInfoUrl),
-		m_config->getConfigString(config::RuleText).trimmed(),
-		m_config->preferWebSockets()));
+	send(
+		net::ServerReply::makeLoginGreeting(
+			QStringLiteral("Drawpile server %1").arg(cmake_config::version()),
+			cmake_config::proto::server(), flags, methods,
+			m_config->getConfigString(config::LoginInfoUrl),
+			m_config->getConfigString(config::RuleText).trimmed(),
+			m_config->preferWebSockets()));
 
 	// Client should disconnect upon receiving the above if the version number
 	// does not match
@@ -246,8 +247,9 @@ void LoginHandler::announceSession(const QJsonObject &session)
 			announceSessionEnd(id);
 		} else {
 			m_listedSessionIds.insert(id);
-			send(net::ServerReply::makeLoginSessions(
-				QStringLiteral("New session"), {session}));
+			send(
+				net::ServerReply::makeLoginSessions(
+					QStringLiteral("New session"), {session}));
 		}
 	}
 }
@@ -256,8 +258,9 @@ void LoginHandler::announceSessionEnd(const QString &id)
 {
 	if(m_state == State::WaitForLogin && !m_mandatoryLookup &&
 	   m_listedSessionIds.remove(id)) {
-		send(net::ServerReply::makeLoginRemoveSessions(
-			QStringLiteral("Session ended"), {id}));
+		send(
+			net::ServerReply::makeLoginRemoveSessions(
+				QStringLiteral("Session ended"), {id}));
 	}
 }
 
@@ -281,9 +284,10 @@ void LoginHandler::handleLoginMessage(const net::Message &msg)
 		if(cmd.cmd == "startTls") {
 			handleStarttls();
 		} else {
-			m_client->log(Log()
-							  .about(Log::Level::Error, Log::Topic::RuleBreak)
-							  .message("Client did not upgrade to TLS mode!"));
+			m_client->log(
+				Log()
+					.about(Log::Level::Error, Log::Topic::RuleBreak)
+					.message("Client did not upgrade to TLS mode!"));
 			sendError("tlsRequired", "TLS required");
 		}
 
@@ -338,12 +342,13 @@ void LoginHandler::handleLoginMessage(const net::Message &msg)
 		} else if(cmd.cmd == "report") {
 			handleAbuseReport(cmd);
 		} else {
-			m_client->log(Log()
-							  .about(Log::Level::Error, Log::Topic::RuleBreak)
-							  .message(
-								  "Invalid login command (while waiting for "
-								  "join/host): " +
-								  cmd.cmd));
+			m_client->log(
+				Log()
+					.about(Log::Level::Error, Log::Topic::RuleBreak)
+					.message(
+						"Invalid login command (while waiting for "
+						"join/host): " +
+						cmd.cmd));
 			m_state = State::Ignore;
 			m_client->disconnectClient(
 				Client::DisconnectionReason::Error, "invalid message", cmd.cmd);
@@ -426,8 +431,9 @@ void LoginHandler::handleClientInfoMessage(const net::ServerCommand &cmd)
 	}
 
 	m_clientInfo = clientInfoLogGuard.info();
-	send(net::ServerReply::makeResultClientInfo(
-		QStringLiteral("Client info OK!"), m_client->isBrowser()));
+	send(
+		net::ServerReply::makeResultClientInfo(
+			QStringLiteral("Client info OK!"), m_client->isBrowser()));
 }
 
 void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
@@ -472,8 +478,9 @@ void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
 			if(m_mandatoryLookup) {
 				sendError(
 					QStringLiteral("lookupRequired"),
-					QStringLiteral("This server only allows joining sessions "
-								   "through a direct link."));
+					QStringLiteral(
+						"This server only allows joining sessions "
+						"through a direct link."));
 				return;
 			}
 			m_lookup = QStringLiteral("");
@@ -547,11 +554,12 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 	}
 
 	if(m_config->isNameBanned(username)) {
-		m_client->log(Log()
-						  .about(Log::Level::Warn, Log::Topic::RuleBreak)
-						  .message(QStringLiteral(
-									   "Attempt to use forbidden username '%1'")
-									   .arg(username)));
+		m_client->log(
+			Log()
+				.about(Log::Level::Warn, Log::Topic::RuleBreak)
+				.message(
+					QStringLiteral("Attempt to use forbidden username '%1'")
+						.arg(username)));
 		sendError(
 			QStringLiteral("forbiddenUsername"),
 			QStringLiteral("Forbidden username"));
@@ -697,9 +705,10 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 			// No password: tell client that guest login is not possible (for
 			// this username)
 			m_state = State::WaitForIdent;
-			send(net::ServerReply::makeResultPasswordNeeded(
-				QStringLiteral("Password needed"),
-				QStringLiteral("needPassword")));
+			send(
+				net::ServerReply::makeResultPasswordNeeded(
+					QStringLiteral("Password needed"),
+					QStringLiteral("needPassword")));
 
 		} else {
 			++m_authPasswordAttempts;
@@ -822,9 +831,11 @@ void LoginHandler::authLoginOk(
 		m_state = State::WaitForLogin;
 	}
 
-	send(net::ServerReply::makeResultLoginOk(
-		QStringLiteral("Authenticated login OK!"), QStringLiteral("identOk"),
-		flagSetToJson(effectiveFlags), m_client->username(), false));
+	send(
+		net::ServerReply::makeResultLoginOk(
+			QStringLiteral("Authenticated login OK!"),
+			QStringLiteral("identOk"), flagSetToJson(effectiveFlags),
+			m_client->username(), false));
 	announceServerInfo();
 }
 
@@ -851,10 +862,11 @@ void LoginHandler::extAuthGuestLogin(
 	if(!authGroup.isEmpty())
 		o["group"] = authGroup;
 
-	m_client->log(Log()
-					  .about(Log::Level::Info, Log::Topic::Status)
-					  .message(QStringLiteral("Querying auth server for %1...")
-								   .arg(username)));
+	m_client->log(
+		Log()
+			.about(Log::Level::Info, Log::Topic::Status)
+			.message(QStringLiteral("Querying auth server for %1...")
+						 .arg(username)));
 	QNetworkReply *reply =
 		networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
 	connect(reply, &QNetworkReply::finished, this, [=]() {
@@ -881,11 +893,12 @@ void LoginHandler::extAuthGuestLogin(
 			doc = QJsonDocument::fromJson(reply->readAll(), &error);
 			if(error.error != QJsonParseError::NoError) {
 				fail = true;
-				m_client->log(Log()
-								  .about(Log::Level::Warn, Log::Topic::Status)
-								  .message(
-									  "Auth server JSON parse error: " +
-									  error.errorString()));
+				m_client->log(
+					Log()
+						.about(Log::Level::Warn, Log::Topic::Status)
+						.message(
+							"Auth server JSON parse error: " +
+							error.errorString()));
 			}
 		}
 
@@ -930,17 +943,19 @@ void LoginHandler::requestExtAuth()
 {
 #ifdef HAVE_LIBSODIUM
 	m_extauth_nonce = AuthToken::generateNonce();
-	send(net::ServerReply::makeResultExtAuthNeeded(
-		QStringLiteral("External authentication needed"),
-		QStringLiteral("needExtAuth"),
-		m_config->internalConfig().extAuthUrl.toString(),
-		QString::number(m_extauth_nonce, 16),
-		m_config->getConfigString(config::ExtAuthGroup),
-		m_client->avatar().isEmpty() &&
-			m_config->getConfigBool(config::ExtAuthAvatars)));
+	send(
+		net::ServerReply::makeResultExtAuthNeeded(
+			QStringLiteral("External authentication needed"),
+			QStringLiteral("needExtAuth"),
+			m_config->internalConfig().extAuthUrl.toString(),
+			QString::number(m_extauth_nonce, 16),
+			m_config->getConfigString(config::ExtAuthGroup),
+			m_client->avatar().isEmpty() &&
+				m_config->getConfigBool(config::ExtAuthAvatars)));
 #else
-	qFatal("Bug: requestExtAuth() called, even though libsodium is not "
-		   "compiled in!");
+	qFatal(
+		"Bug: requestExtAuth() called, even though libsodium is not "
+		"compiled in!");
 #endif
 }
 
@@ -975,9 +990,10 @@ void LoginHandler::guestLogin(
 		jsonFlags.append(flag);
 	}
 
-	send(net::ServerReply::makeResultLoginOk(
-		QStringLiteral("Guest login OK!"), QStringLiteral("identOk"), jsonFlags,
-		m_client->username(), true));
+	send(
+		net::ServerReply::makeResultLoginOk(
+			QStringLiteral("Guest login OK!"), QStringLiteral("identOk"),
+			jsonFlags, m_client->username(), true));
 	announceServerInfo();
 }
 
@@ -1019,8 +1035,9 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 		if(password.isEmpty()) {
 			sendError(
 				QStringLiteral("passwordedHost"),
-				QStringLiteral("You're not allowed to host sessions without a "
-							   "session password"));
+				QStringLiteral(
+					"You're not allowed to host sessions without a "
+					"session password"));
 			return;
 		}
 		break;
@@ -1050,8 +1067,9 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 		if(protocolVersion.ns() != m_minimumProtocolVersion.ns()) {
 			sendError(
 				QStringLiteral("protoverns"),
-				QStringLiteral("Mismatched protocol namespace, minimum "
-							   "protocol version is %1")
+				QStringLiteral(
+					"Mismatched protocol namespace, minimum "
+					"protocol version is %1")
 					.arg(m_minimumProtocolVersionString));
 			return;
 		} else if(!protocolVersion.isGreaterOrEqual(m_minimumProtocolVersion)) {
@@ -1142,13 +1160,14 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 
 	// Mark login phase as complete.
 	// No more login messages will be sent to this user.
-	send(net::ServerReply::makeResultJoinHost(
-		QStringLiteral("Starting new session!"), QStringLiteral("host"),
-		{{QStringLiteral("id"),
-		  sessionAlias.isEmpty() ? session->id() : sessionAlias},
-		 {QStringLiteral("user"), userId},
-		 {QStringLiteral("flags"), sessionFlags(session)},
-		 {QStringLiteral("authId"), m_client->authId()}}));
+	send(
+		net::ServerReply::makeResultJoinHost(
+			QStringLiteral("Starting new session!"), QStringLiteral("host"),
+			{{QStringLiteral("id"),
+			  sessionAlias.isEmpty() ? session->id() : sessionAlias},
+			 {QStringLiteral("user"), userId},
+			 {QStringLiteral("flags"), sessionFlags(session)},
+			 {QStringLiteral("authId"), m_client->authId()}}));
 
 	checkClientCapabilities(cmd);
 
@@ -1339,12 +1358,13 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		session->assignId(m_client);
 	}
 
-	send(net::ServerReply::makeResultJoinHost(
-		QStringLiteral("Joining a session!"), QStringLiteral("join"),
-		{{QStringLiteral("id"), session->aliasOrId()},
-		 {QStringLiteral("user"), m_client->id()},
-		 {QStringLiteral("flags"), sessionFlags(session)},
-		 {QStringLiteral("authId"), m_client->authId()}}));
+	send(
+		net::ServerReply::makeResultJoinHost(
+			QStringLiteral("Joining a session!"), QStringLiteral("join"),
+			{{QStringLiteral("id"), session->aliasOrId()},
+			 {QStringLiteral("user"), m_client->id()},
+			 {QStringLiteral("flags"), sessionFlags(session)},
+			 {QStringLiteral("authId"), m_client->authId()}}));
 
 	checkClientCapabilities(cmd);
 
@@ -1428,10 +1448,11 @@ void LoginHandler::logClientInfo(const QJsonObject &info)
 	}
 
 	if(infoChanged || sessionChanged) {
-		m_client->log(Log()
-						  .about(Log::Level::Info, Log::Topic::ClientInfo)
-						  .message(QJsonDocument(m_lastLoggedClientInfo)
-									   .toJson(QJsonDocument::Compact)));
+		m_client->log(
+			Log()
+				.about(Log::Level::Info, Log::Topic::ClientInfo)
+				.message(QJsonDocument(m_lastLoggedClientInfo)
+							 .toJson(QJsonDocument::Compact)));
 	}
 }
 
@@ -1464,8 +1485,9 @@ void LoginHandler::handleStarttls()
 		return;
 	}
 
-	send(net::ServerReply::makeResultStartTls(
-		QStringLiteral("Start TLS now!"), true));
+	send(
+		net::ServerReply::makeResultStartTls(
+			QStringLiteral("Start TLS now!"), true));
 
 	m_client->startTls();
 	m_state = m_requireMatchingHost ? State::WaitForClientInfo
@@ -1543,9 +1565,10 @@ bool LoginHandler::checkIdentIntent(
 	if(intent == IdentIntent::Unknown || intent == actual) {
 		return true;
 	} else {
-		send(net::ServerReply::makeResultIdentIntentMismatch(
-			QStringLiteral("Intent mismatch"), identIntentToString(intent),
-			identIntentToString(actual), extAuthFallback));
+		send(
+			net::ServerReply::makeResultIdentIntentMismatch(
+				QStringLiteral("Intent mismatch"), identIntentToString(intent),
+				identIntentToString(actual), extAuthFallback));
 		return false;
 	}
 }
@@ -1555,9 +1578,10 @@ bool LoginHandler::verifySystemId(const QString &sid, bool required)
 	m_client->setSid(sid);
 	if(sid.isEmpty()) {
 		if(required) {
-			m_client->log(Log()
-							  .about(Log::Level::Error, Log::Topic::RuleBreak)
-							  .message(QStringLiteral("Missing required sid")));
+			m_client->log(
+				Log()
+					.about(Log::Level::Error, Log::Topic::RuleBreak)
+					.message(QStringLiteral("Missing required sid")));
 			m_state = State::Ignore;
 			m_client->disconnectClient(
 				Client::DisconnectionReason::Error, "invalid message",
@@ -1565,9 +1589,10 @@ bool LoginHandler::verifySystemId(const QString &sid, bool required)
 			return false;
 		}
 	} else if(!isValidSid(sid)) {
-		m_client->log(Log()
-						  .about(Log::Level::Error, Log::Topic::RuleBreak)
-						  .message(QStringLiteral("Invalid sid %1").arg(sid)));
+		m_client->log(
+			Log()
+				.about(Log::Level::Error, Log::Topic::RuleBreak)
+				.message(QStringLiteral("Invalid sid %1").arg(sid)));
 		m_state = State::Ignore;
 		m_client->disconnectClient(
 			Client::DisconnectionReason::Error, "invalid message",

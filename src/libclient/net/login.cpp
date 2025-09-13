@@ -279,11 +279,13 @@ void LoginHandler::expectHello(const ServerReply &msg)
 
 		if(m_loginMethods.isEmpty()) {
 			if(m_mode == Mode::Join) {
-				failLogin(tr("This server doesn't provide a way to log in for "
-							 "joining a session!"));
+				failLogin(
+					tr("This server doesn't provide a way to log in for "
+					   "joining a session!"));
 			} else {
-				failLogin(tr("This server doesn't provide a way to log in for "
-							 "hosting a session!"));
+				failLogin(
+					tr("This server doesn't provide a way to log in for "
+					   "hosting a session!"));
 			}
 			return;
 		}
@@ -1345,17 +1347,19 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 						msg, tr("This usually means that your Drawpile version "
 								"is too old. Do you need to update?"));
 	} else if(code == QStringLiteral("lookupFailed")) {
-		error = tr("Session not found, it may have ended or its invite link "
-				   "has changed");
+		error =
+			tr("Session not found, it may have ended or its invite link "
+			   "has changed");
 	} else if(code == QStringLiteral("lookupRequired")) {
 		error = tr(
 			"This server only allows joining sessions through a direct link.");
 	} else if(code == QStringLiteral("mismatchedHostName")) {
 		error = tr("Invalid host name.");
 	} else if(code == QStringLiteral("passwordedHost")) {
-		error = tr("You're not allowed to host public sessions here, only "
-				   "personal sessions are allowed. You can switch from public "
-				   "to personal in the Session tab.");
+		error =
+			tr("You're not allowed to host public sessions here, only "
+			   "personal sessions are allowed. You can switch from public "
+			   "to personal in the Session tab.");
 	} else {
 		error = msg;
 	}
