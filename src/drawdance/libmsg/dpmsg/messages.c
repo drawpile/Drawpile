@@ -11490,7 +11490,7 @@ static size_t
 msg_key_frame_layer_attributes_payload_length_compat(DP_Message *msg)
 {
     DP_MsgKeyFrameLayerAttributes *mkfla = DP_message_internal(msg);
-    return ((size_t)4) + DP_int_to_size(mkfla->layer_flags_count) * 2;
+    return ((size_t)4) + DP_int_to_size(mkfla->layer_flags_count) * 4;
 }
 
 static size_t
@@ -11513,7 +11513,8 @@ msg_key_frame_layer_attributes_serialize_payload_compat(DP_Message *msg,
 {
     DP_MsgKeyFrameLayerAttributes *mkfla = DP_message_internal(msg);
     size_t written = 0;
-    written += DP_write_bigendian_uint16(mkfla->track_id, data + written);
+    written += DP_write_bigendian_uint16(
+        convert_other_id_compat(mkfla->track_id), data + written);
     written += DP_write_bigendian_uint16(mkfla->frame_index, data + written);
     written += write_key_frame_layer_flags_compat(
         mkfla->layer_flags, mkfla->layer_flags_count, data + written);
@@ -11626,8 +11627,9 @@ DP_Message *DP_msg_key_frame_layer_attributes_deserialize_compat(
     uint16_t layer_flags_count = DP_size_to_uint16(layer_flags_bytes / 2);
     void *layer_flags_user = (void *)(buffer + read);
     DP_Message *msg = DP_msg_key_frame_layer_attributes_new(
-        context_id, track_id, frame_index, read_key_frame_layer_flags_compat,
-        layer_flags_count / 2, layer_flags_user);
+        context_id, convert_other_id_compat(track_id), frame_index,
+        read_key_frame_layer_flags_compat, layer_flags_count / 2,
+        layer_flags_user);
     DP_message_compat_set(msg);
     return msg;
 }

@@ -1097,6 +1097,7 @@ class DrawdanceCompat:
         self.deserialize_fields = compat.deserialize_fields
         self.min_length = compat.min_len
         self.max_length = compat.max_len
+        self.dynamic_payload_length_override = compat.dynamic_payload_length_override
         array_fields = [f for f in self.fields if f.type.is_array]
         if len(array_fields) == 0:
             self.array_field = None
@@ -1244,7 +1245,10 @@ class DrawdanceMessage:
     @property
     def dynamic_payload_length_compat(self):
         if self.compat:
-            return self.compat.dynamic_payload_length
+            if self.compat.dynamic_payload_length_override:
+                return self.compat.dynamic_payload_length_override
+            else:
+                return self.compat.dynamic_payload_length
         else:
             return self.dynamic_payload_length
 

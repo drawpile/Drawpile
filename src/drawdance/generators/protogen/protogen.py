@@ -51,6 +51,7 @@ class Compat:
         self.fields = []
         self.min_len = 0
         self.max_len = 0
+        self.dynamic_payload_length_override = desc.get('dynamic_payload_length_override')
         self.deserialize_fields = desc.get('deserialize_fields')
         _collect_fields(self, desc['fields'])
 

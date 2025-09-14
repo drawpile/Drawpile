@@ -1349,8 +1349,10 @@ KeyFrameLayerAttributes:
         - frame_index u16
         - layer_flags vec_u32
     compat:
+        dynamic_payload_length_override: 'DP_int_to_size(mkfla->layer_flags_count) * 4'
         fields:
-            - track_id u16
+            - track_id u16:
+              convert: track_id
             - frame_index u16
             - layer_flags vec_u16:
               convert: key_frame_layer_attributes_layer_flags
