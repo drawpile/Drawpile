@@ -327,7 +327,7 @@ void SessionSettingsDialog::setCompatibilityMode(bool compatibilityMode)
 		m_ui->permLayerCountOperator,
 	};
 	for(QWidget *widget : widgets) {
-		widget->setEnabled(!compatibilityMode);
+		widget->setVisible(!compatibilityMode);
 	}
 }
 
@@ -444,6 +444,12 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 
 	for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
 		featureBox(DP_Feature(i))->setEnabled(op);
+	}
+
+	for(int i = 0; i < DP_FEATURE_LIMIT_COUNT; ++i) {
+		for(int j = 0; j < DP_ACCESS_TIER_COUNT; ++j) {
+			limitSlider(DP_FeatureLimit(i), DP_AccessTier(j))->setEnabled(op);
+		}
 	}
 
 	m_ui->persistent->setEnabled(m_canPersist && op);
