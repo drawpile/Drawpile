@@ -1,0 +1,14 @@
+--- a/src/widgets/dialogs/qmessagebox.cpp
++++ b/src/widgets/dialogs/qmessagebox.cpp
+@@ -285,6 +285,10 @@
+     label->setFont(f);
+ #endif
+     icon = QMessageBox::NoIcon;
++
++    // Drawpile patch: we don't want native message boxes, they're a pointles:
++    // frill that has broken on Android and macOS before.
++    q->setOption(QMessageBox::Option::DontUseNativeDialog);
+ }
+ 
+ void QMessageBoxPrivate::setupLayout()
+

@@ -444,6 +444,7 @@ else()
 					# patches/browser_file_accept.diff
 					patches/android_no_build_id.diff
 					patches/kineticscrollfilter-qt6.diff
+					patches/nonativemessagebox.diff
 		)
 	endif()
 
