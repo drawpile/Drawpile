@@ -220,6 +220,8 @@ QCheckBox *addCheckable(
 
 QLabel *makeIconLabel(const QIcon &icon, QWidget *parent = nullptr);
 
+void disableNativeMessageBox(QMessageBox &msgbox);
+
 QMessageBox *makeMessage(
 	QWidget *parent, const QString &title, const QString &text,
 	const QString &informativeText, QMessageBox::Icon icon,

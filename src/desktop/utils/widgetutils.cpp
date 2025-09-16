@@ -1007,12 +1007,23 @@ QLabel *makeIconLabel(const QIcon &icon, QWidget *parent)
 	return label;
 }
 
+void disableNativeMessageBox(QMessageBox &msgbox)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+	// Native dialogs have broken on Android and macOS before.
+	msgbox.setOption(QMessageBox::Option::DontUseNativeDialog);
+#else
+	Q_UNUSED(msgbox);
+#endif
+}
+
 QMessageBox *makeMessage(
 	QWidget *parent, const QString &title, const QString &text,
 	const QString &informativeText, QMessageBox::Icon icon,
 	QMessageBox::StandardButtons buttons)
 {
 	QMessageBox *msgbox = new QMessageBox(parent);
+	disableNativeMessageBox(*msgbox);
 	msgbox->setAttribute(Qt::WA_DeleteOnClose);
 	msgbox->setWindowModality(Qt::ApplicationModal);
 	msgbox->setIcon(icon);

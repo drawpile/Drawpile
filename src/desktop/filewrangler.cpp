@@ -2,6 +2,7 @@
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
 #include "desktop/settings.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/document.h"
@@ -535,6 +536,7 @@ bool FileWrangler::confirmFlatten(
 				 "retain layers, annotations and the animation timeline, you "
 				 "must save a different format."),
 		QMessageBox::Cancel, parentWidget());
+	utils::disableNativeMessageBox(box);
 
 	QString format;
 	switch(type) {

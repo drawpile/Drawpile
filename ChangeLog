@@ -16,6 +16,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Make key frame visibility attributes work properly in compatibility mode.
  * Server Feature: Fast reconnects. Clients now remember the state of the history when they got disconnected and skip ahead in the catchup sequence if possible.
  * Server Fix: Don't restrict binary (.dprec) templates to the current version.
+ * Fix: Disable native message boxes, they're broken on macOS Tahoe and don't add anything except an inconsistent appearance.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

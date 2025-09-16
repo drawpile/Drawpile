@@ -1791,6 +1791,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 				tr("Exit Drawpile"),
 				tr("You are still connected to a drawing session."),
 				QMessageBox::NoButton, this);
+			utils::disableNativeMessageBox(box);
 #ifndef SINGLE_MAIN_WINDOW
 			box.setWindowModality(Qt::WindowModal);
 #endif
@@ -1819,6 +1820,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			QMessageBox box(QMessageBox::Question, tr("Exit Drawpile"),
 					tr("There are unsaved changes. Save them before exiting?"),
 					QMessageBox::NoButton, this);
+			utils::disableNativeMessageBox(box);
 			box.setInformativeText(makeContributionInfoText());
 #ifndef SINGLE_MAIN_WINDOW
 			box.setWindowModality(Qt::WindowModal);

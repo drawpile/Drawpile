@@ -5,6 +5,7 @@
 #include "desktop/dialogs/netstats.h"
 #include "desktop/main.h"
 #include "desktop/settings.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/popupmessage.h"
 #include "libshared/util/whatismyip.h"
 
@@ -452,7 +453,7 @@ void NetStatus::showCGNAlert()
 			   "This makes it impossible for others to connect to you "
 			   "directly. See Drawpile's help page for workarounds."),
 			QMessageBox::Ok);
-
+		utils::disableNativeMessageBox(box);
 		box.setCheckBox(new QCheckBox(tr("Don't show this again")));
 		box.exec();
 

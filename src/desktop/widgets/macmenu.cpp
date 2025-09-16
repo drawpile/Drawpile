@@ -265,6 +265,7 @@ void MacMenu::quitAll()
 			tr("You have %n images with unsaved changes. Do you want to review "
 			   "these changes before quitting?",
 			   "", dirty));
+		utils::disableNativeMessageBox(box);
 		box.setInformativeText(tr(
 			"If you don't review your documents, all changes will be lost."));
 		box.addButton(tr("Review changes…"), QMessageBox::AcceptRole);
