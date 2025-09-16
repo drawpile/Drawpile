@@ -76,10 +76,7 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 	setWindowTitle(tr("Start"));
 	setWindowModality(Qt::WindowModal);
 
-#ifdef Q_OS_MACOS
-	bool vertical = false;
-	bool menuFirst = true;
-#elif defined(Q_OS_ANDROID)
+#if defined(Q_OS_ANDROID)
 	bool vertical = false;
 	bool menuFirst = false;
 #else

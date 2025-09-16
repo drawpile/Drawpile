@@ -37,11 +37,7 @@ SettingsDialog::SettingsDialog(
 
 	setWindowModality(Qt::ApplicationModal);
 
-#ifdef Q_OS_MACOS
-	Q_UNUSED(smallScreenMode);
-	bool vertical = false;
-	bool menuFirst = true;
-#elif defined(Q_OS_ANDROID)
+#if defined(Q_OS_ANDROID)
 	Q_UNUSED(smallScreenMode);
 	bool vertical = false;
 	bool menuFirst = false;
