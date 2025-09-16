@@ -45,7 +45,9 @@ add_library(bundled_sqlite3 OBJECT
     sqlite3/sqlite3recover.h
 )
 # These settings are recommended by SQLite. The exception is THREADSAFE,
-# which we can't set to 0 because we need a little multithreading support.
+# which we can't set to 0 because we need a little multithreading support and
+# OMIT_LOAD_EXTENSION because we don't need to load extensions and not
+# specifying this requires linking additional libraries on some systems.
 target_compile_definitions(bundled_sqlite3 PUBLIC
     SQLITE_DQS=0
     SQLITE_THREADSAFE=2
@@ -61,6 +63,7 @@ target_compile_definitions(bundled_sqlite3 PUBLIC
     SQLITE_OMIT_AUTOINIT=1
     SQLITE_STRICT_SUBTYPE=1
     SQLITE_TRUSTED_SCHEMA=0
+    SQLITE_OMIT_LOAD_EXTENSION=1
 )
 target_include_directories(
     bundled_sqlite3 SYSTEM PUBLIC ${CMAKE_CURRENT_LIST_DIR}/sqlite3)
