@@ -120,7 +120,7 @@ impl Player {
 
     pub fn step(&mut self) -> Result<Option<Message>> {
         let mut msg: *mut DP_Message = ptr::null_mut();
-        let result = unsafe { DP_player_step(self.player, &mut msg) };
+        let result = unsafe { DP_player_step(self.player, true, &mut msg) };
         if result == DP_PLAYER_SUCCESS {
             Ok(Some(Message::new_noinc(msg)))
         } else if result == DP_PLAYER_RECORDING_END {

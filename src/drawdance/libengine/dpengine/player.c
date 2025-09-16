@@ -400,6 +400,19 @@ bool DP_player_compatible(DP_Player *player)
     }
 }
 
+bool DP_player_compatible_opaque(DP_Player *player)
+{
+    DP_ASSERT(player);
+    DP_ASSERT(player->type != DP_PLAYER_TYPE_DEBUG_DUMP);
+    DP_ProtocolVersion *protover = player->protover;
+    if (player->type == DP_PLAYER_TYPE_BINARY) {
+        return DP_protocol_version_is_opaque_compatible(protover);
+    }
+    else {
+        return DP_protocol_version_is_current(protover);
+    }
+}
+
 void DP_player_acl_override_set(DP_Player *player, bool override)
 {
     DP_ASSERT(player);
@@ -480,7 +493,8 @@ long long DP_player_position(DP_Player *player)
 }
 
 
-static DP_PlayerResult step_binary(DP_Player *player, DP_Message **out_msg)
+static DP_PlayerResult step_binary(DP_Player *player, bool decode_opaque,
+                                   DP_Message **out_msg)
 {
     DP_BinaryReaderResult (*read_fn)(DP_BinaryReader *reader,
                                      bool decode_opaque, DP_Message **out_msg);
@@ -490,7 +504,7 @@ static DP_PlayerResult step_binary(DP_Player *player, DP_Message **out_msg)
 #else
     read_fn = DP_binary_reader_read_message;
 #endif
-    switch (read_fn(player->reader.binary, true, out_msg)) {
+    switch (read_fn(player->reader.binary, decode_opaque, out_msg)) {
     case DP_BINARY_READER_SUCCESS:
         return DP_PLAYER_SUCCESS;
     case DP_BINARY_READER_INPUT_END:
@@ -522,12 +536,13 @@ static DP_PlayerResult step_text(DP_Player *player, DP_Message **out_msg)
     }
 }
 
-static DP_PlayerResult step_message(DP_Player *player, DP_Message **out_msg)
+static DP_PlayerResult step_message(DP_Player *player, bool decode_opaque,
+                                    DP_Message **out_msg)
 {
     DP_PlayerResult result;
     switch (player->type) {
     case DP_PLAYER_TYPE_BINARY:
-        result = step_binary(player, out_msg);
+        result = step_binary(player, decode_opaque, out_msg);
         break;
     case DP_PLAYER_TYPE_TEXT:
         result = step_text(player, out_msg);
@@ -599,16 +614,17 @@ static bool emit_message(DP_Message *msg, DP_Message **out_msg,
     return true;
 }
 
-static DP_PlayerResult step_valid_message(DP_Player *player,
+static DP_PlayerResult step_valid_message(DP_Player *player, bool decode_opaque,
                                           DP_Message **out_msg)
 {
     while (true) {
         DP_Message *msg;
-        DP_PlayerResult result = step_message(player, &msg);
+        DP_PlayerResult result = step_message(player, decode_opaque, &msg);
         if (result == DP_PLAYER_SUCCESS) {
             bool filtered =
-                DP_acl_state_handle(player->acls, msg, player->acl_override)
-                & DP_ACL_STATE_FILTERED_BIT;
+                decode_opaque
+                && (DP_acl_state_handle(player->acls, msg, player->acl_override)
+                    & DP_ACL_STATE_FILTERED_BIT);
             if (filtered) {
                 DP_debug(
                     "ACL filtered recorded %s message from user %u",
@@ -629,7 +645,8 @@ static DP_PlayerResult step_valid_message(DP_Player *player,
     }
 }
 
-DP_PlayerResult DP_player_step(DP_Player *player, DP_Message **out_msg)
+DP_PlayerResult DP_player_step(DP_Player *player, bool decode_opaque,
+                               DP_Message **out_msg)
 {
     DP_ASSERT(player);
     DP_ASSERT(out_msg);
@@ -641,7 +658,7 @@ DP_PlayerResult DP_player_step(DP_Player *player, DP_Message **out_msg)
         return DP_PLAYER_RECORDING_END;
     }
     else {
-        return step_valid_message(player, out_msg);
+        return step_valid_message(player, decode_opaque, out_msg);
     }
 }
 

@@ -3365,7 +3365,15 @@ extern "C" {
     ) -> *mut DP_TransientLayerContent;
 }
 extern "C" {
+    pub fn DP_transient_layer_content_incref_nullable(
+        tlc_or_null: *mut DP_TransientLayerContent,
+    ) -> *mut DP_TransientLayerContent;
+}
+extern "C" {
     pub fn DP_transient_layer_content_decref(tlc: *mut DP_TransientLayerContent);
+}
+extern "C" {
+    pub fn DP_transient_layer_content_decref_nullable(tlc_or_null: *mut DP_TransientLayerContent);
 }
 extern "C" {
     pub fn DP_transient_layer_content_refcount(
@@ -5498,6 +5506,11 @@ pub struct DP_CanvasHistory {
 pub struct DP_CanvasHistorySnapshot {
     _unused: [u8; 0],
 }
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_CanvasHistoryReconnectState {
+    _unused: [u8; 0],
+}
 pub const DP_UNDO_DONE: DP_Undo = 0;
 pub const DP_UNDO_UNDONE: DP_Undo = 1;
 pub const DP_UNDO_GONE: DP_Undo = 2;
@@ -5706,6 +5719,12 @@ extern "C" {
     pub fn DP_canvas_history_save_point_make(ch: *mut DP_CanvasHistory) -> bool;
 }
 extern "C" {
+    pub fn DP_canvas_history_reconnect_restore(
+        ch: *mut DP_CanvasHistory,
+        dc: *mut DP_DrawContext,
+    ) -> bool;
+}
+extern "C" {
     pub fn DP_canvas_history_cleanup(
         ch: *mut DP_CanvasHistory,
         dc: *mut DP_DrawContext,
@@ -5768,6 +5787,21 @@ extern "C" {
         get_time_user: *mut ::std::os::raw::c_void,
         output: *mut DP_Output,
     ) -> *mut DP_Recorder;
+}
+extern "C" {
+    pub fn DP_canvas_history_reconnect_state_new(
+        ch: *mut DP_CanvasHistory,
+    ) -> *mut DP_CanvasHistoryReconnectState;
+}
+extern "C" {
+    pub fn DP_canvas_history_reconnect_state_free(chrs: *mut DP_CanvasHistoryReconnectState);
+}
+extern "C" {
+    pub fn DP_canvas_history_reconnect_state_apply(
+        chrs: *mut DP_CanvasHistoryReconnectState,
+        ch: *mut DP_CanvasHistory,
+        dc: *mut DP_DrawContext,
+    ) -> bool;
 }
 extern "C" {
     pub fn DP_canvas_history_snapshot_new(
@@ -7023,6 +7057,9 @@ extern "C" {
     pub fn DP_player_compatible(player: *mut DP_Player) -> bool;
 }
 extern "C" {
+    pub fn DP_player_compatible_opaque(player: *mut DP_Player) -> bool;
+}
+extern "C" {
     pub fn DP_player_acl_override_set(player: *mut DP_Player, override_: bool);
 }
 extern "C" {
@@ -7053,8 +7090,11 @@ extern "C" {
     pub fn DP_player_position(player: *mut DP_Player) -> ::std::os::raw::c_longlong;
 }
 extern "C" {
-    pub fn DP_player_step(player: *mut DP_Player, out_msg: *mut *mut DP_Message)
-        -> DP_PlayerResult;
+    pub fn DP_player_step(
+        player: *mut DP_Player,
+        decode_opaque: bool,
+        out_msg: *mut *mut DP_Message,
+    ) -> DP_PlayerResult;
 }
 extern "C" {
     pub fn DP_player_step_dump(
@@ -8200,6 +8240,31 @@ extern "C" {
         t: *mut DP_Tile,
         in_out_ctx_or_null: *mut *mut ZSTD_CCtx,
         split_buffer: *mut DP_SplitTile8,
+        get_output_buffer: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: usize,
+                arg2: *mut ::std::os::raw::c_void,
+            ) -> *mut ::std::os::raw::c_uchar,
+        >,
+        user: *mut ::std::os::raw::c_void,
+    ) -> usize;
+}
+extern "C" {
+    pub fn DP_tile_compress_mask_delta_zstd8le_opaque(
+        get_output_buffer: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: usize,
+                arg2: *mut ::std::os::raw::c_void,
+            ) -> *mut ::std::os::raw::c_uchar,
+        >,
+        user: *mut ::std::os::raw::c_void,
+    ) -> usize;
+}
+extern "C" {
+    pub fn DP_tile_compress_mask_delta_zstd8le_normal(
+        t: *mut DP_Tile,
+        in_out_ctx_or_null: *mut *mut ZSTD_CCtx,
+        channel_buffer: *mut u8,
         get_output_buffer: ::std::option::Option<
             unsafe extern "C" fn(
                 arg1: usize,
@@ -9534,6 +9599,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_acl_state_reset(acls: *mut DP_AclState, local_user_id: u8);
+}
+extern "C" {
+    pub fn DP_acl_state_supplant(dst: *mut DP_AclState, src: *mut DP_AclState);
 }
 extern "C" {
     pub fn DP_acl_state_dump(acls: *mut DP_AclState) -> *mut ::std::os::raw::c_char;

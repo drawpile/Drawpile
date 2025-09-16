@@ -943,7 +943,7 @@ static bool write_index_messages(DP_BuildIndexContext *c)
     while (true) {
         size_t message_offset = DP_player_tell(player);
         DP_Message *msg;
-        DP_PlayerResult result = DP_player_step(player, &msg);
+        DP_PlayerResult result = DP_player_step(player, true, &msg);
         if (result == DP_PLAYER_SUCCESS) {
             bool filtered = DP_acl_state_handle(acls, msg, false)
                           & DP_ACL_STATE_FILTERED_BIT;

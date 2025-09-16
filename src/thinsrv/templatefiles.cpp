@@ -143,7 +143,7 @@ QJsonObject TemplateFiles::templateFileDescription(
 			"Error loading template '%s': %s", qUtf8Printable(path),
 			DP_error());
 		return QJsonObject{};
-	} else if(!DP_player_compatible(player)) {
+	} else if(!DP_player_compatible_opaque(player)) {
 		qWarning("Incompatible recording '%s'", qUtf8Printable(path));
 		DP_player_free(player);
 		return QJsonObject{};
@@ -191,7 +191,7 @@ bool TemplateFiles::init(SessionHistory *session) const
 			"Error loading template '%s': %s", qUtf8Printable(path),
 			DP_error());
 		return false;
-	} else if(!DP_player_compatible(player)) {
+	} else if(!DP_player_compatible_opaque(player)) {
 		qWarning("Incompatible recording '%s'", qUtf8Printable(path));
 		DP_player_free(player);
 		return false;
@@ -261,7 +261,7 @@ bool TemplateFiles::init(SessionHistory *session) const
 	bool keepReading = true;
 	do {
 		DP_Message *msg;
-		DP_PlayerResult result = DP_player_step(player, &msg);
+		DP_PlayerResult result = DP_player_step(player, false, &msg);
 		switch(result) {
 		case DP_PLAYER_SUCCESS:
 			session->addMessage(net::Message::noinc(msg));

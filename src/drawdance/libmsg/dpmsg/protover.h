@@ -41,6 +41,8 @@ bool DP_protocol_version_is_past_compatible(const DP_ProtocolVersion *protover);
 
 bool DP_protocol_version_is_compatible(DP_ProtocolVersion *protover);
 
+bool DP_protocol_version_is_opaque_compatible(DP_ProtocolVersion *protover);
+
 bool DP_protocol_version_should_have_system_id(
     const DP_ProtocolVersion *protover);
 

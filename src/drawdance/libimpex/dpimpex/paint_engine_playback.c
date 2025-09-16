@@ -91,7 +91,7 @@ skip_playback_forward(DP_PaintEngine *pe, long long steps, int what,
 
     while (done < steps) {
         DP_Message *msg;
-        DP_PlayerResult result = DP_player_step(player, &msg);
+        DP_PlayerResult result = DP_player_step(player, true, &msg);
         if (result == DP_PLAYER_SUCCESS) {
             bool should_time = true;
             if (filter_message_or_null) {
@@ -576,7 +576,7 @@ bool DP_paint_engine_playback_flush(DP_PaintEngine *pe,
     if (player) {
         while (true) {
             DP_Message *msg;
-            DP_PlayerResult result = DP_player_step(player, &msg);
+            DP_PlayerResult result = DP_player_step(player, true, &msg);
             if (result == DP_PLAYER_SUCCESS) {
                 DP_MessageType type = DP_message_type(msg);
                 if (type == DP_MSG_INTERVAL) {

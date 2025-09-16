@@ -95,6 +95,8 @@ DP_PlayerCompatibility DP_player_compatibility(DP_Player *player);
 
 bool DP_player_compatible(DP_Player *player);
 
+bool DP_player_compatible_opaque(DP_Player *player);
+
 void DP_player_acl_override_set(DP_Player *player, bool override);
 
 void DP_player_pass_set(DP_Player *player, DP_PlayerPass pass);
@@ -116,7 +118,8 @@ double DP_player_progress(DP_Player *player);
 long long DP_player_position(DP_Player *player);
 
 
-DP_PlayerResult DP_player_step(DP_Player *player, DP_Message **out_msg);
+DP_PlayerResult DP_player_step(DP_Player *player, bool decode_opaque,
+                               DP_Message **out_msg);
 
 DP_PlayerResult DP_player_step_dump(DP_Player *player, DP_DumpType *out_type,
                                     int *out_count, DP_Message ***out_msgs);
