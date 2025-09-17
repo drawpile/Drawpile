@@ -1218,10 +1218,11 @@ void TimelineWidget::copyKeyFrame()
 	using LayersIt = QHash<int, bool>::const_iterator;
 	const LayersIt end = keyFrame->layerVisibility.constEnd();
 	for(LayersIt it = keyFrame->layerVisibility.constBegin(); it != end; ++it) {
-		layerVisibilityJson.append(QJsonObject{
-			{"layerId", it.key()},
-			{"visible", it.value()},
-		});
+		layerVisibilityJson.append(
+			QJsonObject{
+				{"layerId", it.key()},
+				{"visible", it.value()},
+			});
 	}
 
 	QJsonDocument doc{QJsonObject{
@@ -1770,9 +1771,10 @@ void TimelineWidget::changeFrameExposure(int direction)
 	messages.reserve(frameIndexes.size() + 1);
 	messages.append(net::makeUndoPointMessage(contextId));
 	for(int frameIndex : frameIndexes) {
-		messages.append(net::makeKeyFrameDeleteMessage(
-			contextId, d->currentTrackId, frameIndex, d->currentTrackId,
-			frameIndex + direction));
+		messages.append(
+			net::makeKeyFrameDeleteMessage(
+				contextId, d->currentTrackId, frameIndex, d->currentTrackId,
+				frameIndex + direction));
 	}
 	emit timelineEditCommands(messages.size(), messages.constData());
 }

@@ -70,8 +70,7 @@ public:
 	void setCurrentTrack(int trackId);
 	void setCurrentLayer(int layerId);
 
-	void
-	updateControlsEnabled(bool access, bool locked);
+	void updateControlsEnabled(bool access, bool locked);
 	void updateKeyFrameColorMenuIcon();
 
 	canvas::CanvasModel *canvas() const;
