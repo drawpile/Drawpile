@@ -1013,6 +1013,19 @@ void makeModal(QWidget *widget, Modality modality)
 		widget->setWindowModality(
 			modality == Modality::Application ? Qt::ApplicationModal
 											  : Qt::WindowModal);
+#ifdef Q_OS_MACOS
+		QString quitActionName = QStringLiteral("drawpile_quit_modal");
+		QAction *quitAction = widget->findChild<QAction *>(
+			quitActionName, Qt::FindDirectChildrenOnly);
+		if(!quitAction) {
+			quitAction = new QAction(
+				QCoreApplication::translate("MainWindow", "Close"), widget);
+			quitAction->setShortcut(QStringLiteral("Ctrl+Q"));
+			QObject::connect(
+				quitAction, &QAction::triggered, widget, &QWidget::close);
+			widget->addAction(quitAction);
+		}
+#endif
 	}
 }
 

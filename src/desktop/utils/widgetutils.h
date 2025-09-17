@@ -233,6 +233,8 @@ enum class Modality {
 #endif
 };
 
+// Makes the dialog modal according to the given modality and on macOS also
+// adds a close action bound to Command+Q for convenience.
 void makeModal(QWidget *widget, Modality modality = Modality::Default);
 
 void disableNativeMessageBox(QMessageBox &msgbox);
