@@ -277,7 +277,7 @@ SETTING(promptLayerCreate         , PromptLayerCreate         , "settings/prompt
 SETTING(preferredExportFormat     , PreferredExportFormat     , "settings/preferredexportformat"        , QString())
 SETTING(preferredSaveFormat       , PreferredSaveFormat       , "settings/preferredsaveformat"          , QString())
 #ifdef Q_OS_MACOS
-SETTING(quitOnLastWindowClosed    , QuitOnLastWindowClosed    , "settings/quitonlastwindowclosed"       , false)
+SETTING(quitOnLastWindowClosed    , QuitOnLastWindowClosed    , "settings/quitonlastwindowclosed"       , true)
 #endif
 SETTING(recentFiles               , RecentFiles               , "history/recentfiles"                   , QStringList())
 SETTING(recentHosts               , RecentHosts               , "history/recenthosts"                   , QStringList())
