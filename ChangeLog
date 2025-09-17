@@ -19,6 +19,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Disable native message boxes, they're broken on macOS Tahoe and don't add anything except an inconsistent appearance.
  * Fix: Make start, login, invite and numerous other dialogs have proper title bars on macOS, rather than being those weird sheets. Thanks Axocrat for reporting.
  * Fix: Don't show duplicate full screen action in view menu on macOS.
+ * Fix: Make window maximized when leaving full screen on macOS, rather than crumpling it down to a small size and messing up the docks arrangement.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

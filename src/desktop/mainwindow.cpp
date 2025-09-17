@@ -191,9 +191,6 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	  m_drawingtools(nullptr),
 	  m_brushSlots(nullptr),
 	  m_dockToggles(nullptr),
-#ifndef SINGLE_MAIN_WINDOW
-	  m_fullscreenOldMaximized(false),
-#endif
 	  m_tempToolSwitchShortcut(nullptr),
 	  m_wasSessionLocked(false),
 	  m_notificationsMuted(false),
@@ -3977,18 +3974,25 @@ void MainWindow::toggleFullscreen()
 	browser::toggleFullscreen();
 #elif !defined(SINGLE_MAIN_WINDOW)
 	if(windowState().testFlag(Qt::WindowFullScreen)==false) {
-		// Save windowed mode state
+		// Save windowed mode state. On macOS, full screen may be triggered
+		// behind our backs by the system, so we don't do it for consistency.
+#	ifndef Q_OS_MACOS
 		m_fullscreenOldGeometry = geometry();
 		m_fullscreenOldMaximized = isMaximized();
+#	endif
 		showFullScreen();
 	} else {
-		// Restore old state
+		// Restore old state, or just maximize on macOS.
+#	ifdef Q_OS_MACOS
+		showMaximized();
+#	else
 		if(m_fullscreenOldMaximized) {
 			showMaximized();
 		} else {
 			showNormal();
 			setGeometry(m_fullscreenOldGeometry);
 		}
+#	endif
 	}
 #endif
 }

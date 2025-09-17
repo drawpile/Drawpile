@@ -524,10 +524,10 @@ private:
 
 	QMetaObject::Connection m_textCopyConnection;
 
-#ifndef Q_OS_ANDROID
+#if !defined(SINGLE_MAIN_WINDOW) && !defined(Q_OS_MACOS)
 	// Remember window state to return from fullscreen mode
 	QRect m_fullscreenOldGeometry;
-	bool m_fullscreenOldMaximized;
+	bool m_fullscreenOldMaximized = false;
 #endif
 
 	int m_temporaryToolSwitchMs = -1;
