@@ -5859,7 +5859,8 @@ void MainWindow::setupActions()
 	QAction *fittoscreen =
 		makeAction("fittoscreen", tr("&Fit to Screen")).noDefaultShortcut();
 #endif
-#if !defined(SINGLE_MAIN_WINDOW) || defined(__EMSCRIPTEN__)
+#if (!defined(Q_OS_MACOS) && !defined(SINGLE_MAIN_WINDOW)) ||                  \
+	defined(__EMSCRIPTEN__)
 #	ifdef __EMSCRIPTEN__
 #		define FULLSCREEN_SHORTCUT                                            \
 			QKeySequence(Qt::ALT | Qt::Key_Return),                            \
@@ -5944,7 +5945,8 @@ void MainWindow::setupActions()
 #ifdef SINGLE_MAIN_WINDOW
 	connect(fittoscreen, &QAction::triggered, this, &MainWindow::refitWindow);
 #endif
-#if !defined(SINGLE_MAIN_WINDOW) || defined(__EMSCRIPTEN__)
+#if (!defined(Q_OS_MACOS) && !defined(SINGLE_MAIN_WINDOW)) ||                  \
+	defined(__EMSCRIPTEN__)
 	connect(
 		fullscreen, &QAction::triggered, this, &MainWindow::toggleFullscreen);
 #endif
@@ -6060,7 +6062,8 @@ void MainWindow::setupActions()
 #ifdef SINGLE_MAIN_WINDOW
 	viewmenu->addAction(fittoscreen);
 #endif
-#if !defined(SINGLE_MAIN_WINDOW) || defined(__EMSCRIPTEN__)
+#if (!defined(Q_OS_MACOS) && !defined(SINGLE_MAIN_WINDOW)) ||                  \
+	defined(__EMSCRIPTEN__)
 	viewmenu->addAction(fullscreen);
 #	ifdef __EMSCRIPTEN__
 	connect(viewmenu, &QMenu::aboutToShow, this, [fullscreen] {
