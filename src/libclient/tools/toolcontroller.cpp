@@ -519,10 +519,12 @@ void ToolController::startDrawing(
 		m_applyGlobalSmoothing =
 			deviceType != int(DeviceType::Mouse) || m_mouseSmoothing;
 		m_activebrush.setEraserOverride(eraserOverride);
-		m_activeTool->begin(Tool::BeginParams{
-			canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation),
-			viewPos, angle, zoom, DeviceType(deviceType), mirror, flip, right,
-			constrain, center});
+		m_activeTool->begin(
+			Tool::BeginParams{
+				canvas::Point(
+					timeMsec, point, pressure, xtilt, ytilt, rotation),
+				viewPos, angle, zoom, DeviceType(deviceType), mirror, flip,
+				right, constrain, center});
 
 		if(!m_activeTool->isMultipart()) {
 			m_model->paintEngine()->setLocalDrawingInProgress(true);
@@ -542,9 +544,11 @@ void ToolController::continueDrawing(
 {
 	Q_ASSERT(m_activeTool);
 	if(m_model && m_drawing) {
-		m_activeTool->motion(Tool::MotionParams{
-			canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation),
-			viewPos, constrain, center});
+		m_activeTool->motion(
+			Tool::MotionParams{
+				canvas::Point(
+					timeMsec, point, pressure, xtilt, ytilt, rotation),
+				viewPos, constrain, center});
 	}
 }
 
@@ -562,8 +566,9 @@ void ToolController::hoverDrawing(
 {
 	Q_ASSERT(m_activeTool);
 	if(m_model) {
-		m_activeTool->hover(Tool::HoverParams{
-			point, angle, zoom, mirror, flip, constrain, center});
+		m_activeTool->hover(
+			Tool::HoverParams{
+				point, angle, zoom, mirror, flip, constrain, center});
 	}
 }
 

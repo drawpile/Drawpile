@@ -37,16 +37,21 @@ class TransformTool;
  * @brief The ToolController dispatches user input to the currently active tool
  */
 class ToolController final : public QObject {
-	Q_PROPERTY(QCursor activeToolCursor READ activeToolCursor()
-				   NOTIFY toolCursorChanged)
-	Q_PROPERTY(int activeLayer READ activeLayer WRITE setActiveLayer NOTIFY
-				   activeLayerChanged)
-	Q_PROPERTY(int activeAnnotation READ activeAnnotation WRITE
-				   setActiveAnnotation NOTIFY activeAnnotationChanged)
-	Q_PROPERTY(brushes::ActiveBrush activeBrush READ activeBrush WRITE
-				   setActiveBrush NOTIFY activeBrushChanged)
-	Q_PROPERTY(canvas::CanvasModel *model READ model WRITE setModel NOTIFY
-				   modelChanged)
+	Q_PROPERTY(
+		QCursor activeToolCursor READ activeToolCursor()
+			NOTIFY toolCursorChanged)
+	Q_PROPERTY(
+		int activeLayer READ activeLayer WRITE setActiveLayer NOTIFY
+			activeLayerChanged)
+	Q_PROPERTY(
+		int activeAnnotation READ activeAnnotation WRITE setActiveAnnotation
+			NOTIFY activeAnnotationChanged)
+	Q_PROPERTY(
+		brushes::ActiveBrush activeBrush READ activeBrush WRITE setActiveBrush
+			NOTIFY activeBrushChanged)
+	Q_PROPERTY(
+		canvas::CanvasModel *model READ model WRITE setModel NOTIFY
+			modelChanged)
 
 	Q_OBJECT
 public:
