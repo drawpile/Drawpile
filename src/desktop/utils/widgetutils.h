@@ -220,6 +220,21 @@ QCheckBox *addCheckable(
 
 QLabel *makeIconLabel(const QIcon &icon, QWidget *parent = nullptr);
 
+enum class Modality {
+	Window,
+	Application,
+	// On macOS, window modal dialogs get turned into these ridiculous sheets
+	// that don't have a title bar and dim the parent window, so we default to
+	// application modal ones there.
+#ifdef Q_OS_MACOS
+	Default = Modality::Application,
+#else
+	Default = Modality::Window,
+#endif
+};
+
+void makeModal(QWidget *widget, Modality modality = Modality::Default);
+
 void disableNativeMessageBox(QMessageBox &msgbox);
 
 QMessageBox *makeMessage(

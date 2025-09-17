@@ -19,7 +19,7 @@ ToolBarConfigDialog::ToolBarConfigDialog(
 	, m_drawActions(drawActions)
 {
 	setWindowTitle(tr("Configure Toolbar"));
-	setWindowModality(Qt::WindowModal);
+	utils::makeModal(this);
 	resize(400, 600);
 
 	QVBoxLayout *layout = new QVBoxLayout(this);

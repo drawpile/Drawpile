@@ -475,7 +475,7 @@ CreateInviteCodeDialog::CreateInviteCodeDialog(QWidget *parent)
 	: QDialog(parent)
 {
 	setWindowTitle(tr("Create Invite Code"));
-	setWindowModality(Qt::WindowModal);
+	utils::makeModal(this);
 	resize(300, 250);
 
 	QVBoxLayout *layout = new QVBoxLayout(this);

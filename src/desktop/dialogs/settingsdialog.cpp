@@ -35,7 +35,7 @@ SettingsDialog::SettingsDialog(
 	setWindowTitle(tr("Preferences"));
 	resize(800, 600);
 
-	setWindowModality(Qt::ApplicationModal);
+	makeModal(this, utils::Modality::Application);
 
 #if defined(Q_OS_ANDROID)
 	Q_UNUSED(smallScreenMode);

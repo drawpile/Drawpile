@@ -315,7 +315,7 @@ void PlaybackDialog::onVideoExportClicked()
 {
 	VideoExportDialog *dlg = new VideoExportDialog(this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	dlg->setWindowModality(Qt::WindowModal);
+	utils::makeModal(dlg);
 	connect(dlg, &QDialog::accepted, this, [this, dlg]() {
 		VideoExporter *exporter = dlg->getExporter();
 		if(exporter) {

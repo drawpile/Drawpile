@@ -550,7 +550,7 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 	: QDialog(parent)
 	, d(new Private(login, this))
 {
-	setWindowModality(Qt::WindowModal);
+	utils::makeModal(this);
 	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowTitle(d->originalUrl.host());
 

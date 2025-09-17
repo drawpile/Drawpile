@@ -3049,7 +3049,7 @@ dialogs::TabletTestDialog *MainWindow::showTabletTestDialog(QWidget *parent)
 		ttd->raise();
 	} else {
 		ttd = new dialogs::TabletTestDialog(parent);
-		ttd->setWindowModality(Qt::WindowModal);
+		utils::makeModal(ttd);
 		ttd->setAttribute(Qt::WA_DeleteOnClose);
 		ttd->setObjectName(name);
 		utils::showWindow(ttd, shouldShowDialogMaximized());
@@ -3068,7 +3068,7 @@ dialogs::TouchTestDialog *MainWindow::showTouchTestDialog(QWidget *parent)
 		ttd->raise();
 	} else {
 		ttd = new dialogs::TouchTestDialog(parent);
-		ttd->setWindowModality(Qt::WindowModal);
+		utils::makeModal(ttd);
 		ttd->setAttribute(Qt::WA_DeleteOnClose);
 		ttd->setObjectName(name);
 		utils::showWindow(ttd, shouldShowDialogMaximized());
@@ -3424,7 +3424,7 @@ void MainWindow::resetSession()
 	utils::ScopedOverrideCursor waitCursor;
 	dialogs::ResetDialog *dlg = new dialogs::ResetDialog(
 		m_doc->canvas()->paintEngine(), m_singleSession, this);
-	dlg->setWindowModality(Qt::WindowModal);
+	utils::makeModal(dlg);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
 #ifndef SINGLE_MAIN_WINDOW
@@ -4771,7 +4771,7 @@ void MainWindow::alterSelection(
 			sa, &SelectionAlteration::success, m_doc, &Document::selectMask);
 
 		QProgressDialog *progressDialog = new QProgressDialog(this);
-		progressDialog->setWindowModality(Qt::WindowModal);
+		utils::makeModal(progressDialog, utils::Modality::Window);
 		progressDialog->setRange(0, 0);
 		progressDialog->setMinimumDuration(0);
 		progressDialog->setLabelText(tr("Altering selection…"));

@@ -42,7 +42,7 @@ BrushExportDialog::BrushExportDialog(
 	, m_tagModel{tagModel}
 	, m_presetModel{presetModel}
 {
-	setWindowModality(Qt::ApplicationModal);
+	makeModal(this, utils::Modality::Application);
 	setWindowTitle(tr("Export Brushes"));
 
 	QVBoxLayout *layout = new QVBoxLayout;

@@ -18,7 +18,7 @@ namespace dialogs {
 SelectionAlterDialog::SelectionAlterDialog(QWidget *parent)
 	: QDialog(parent)
 {
-	setWindowModality(Qt::WindowModal);
+	utils::makeModal(this);
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
 	m_expandShrinkSpinner = new widgets::ExpandShrinkSpinner(false);

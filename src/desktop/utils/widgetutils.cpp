@@ -1007,6 +1007,15 @@ QLabel *makeIconLabel(const QIcon &icon, QWidget *parent)
 	return label;
 }
 
+void makeModal(QWidget *widget, Modality modality)
+{
+	if(widget) {
+		widget->setWindowModality(
+			modality == Modality::Application ? Qt::ApplicationModal
+											  : Qt::WindowModal);
+	}
+}
+
 void disableNativeMessageBox(QMessageBox &msgbox)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)

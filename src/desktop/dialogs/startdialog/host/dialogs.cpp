@@ -35,7 +35,7 @@ static void migrateOldHostPresets(utils::StateDatabase &state)
 ResetDialog::ResetDialog(QWidget *parent)
 	: QDialog(parent)
 {
-	setWindowModality(Qt::WindowModal);
+	utils::makeModal(this);
 	setWindowTitle(tr("Reset"));
 	resize(400, 300);
 
@@ -81,7 +81,7 @@ void ResetDialog::emitResetRequests()
 LoadDialog::LoadDialog(QWidget *parent)
 	: QDialog(parent)
 {
-	setWindowModality(Qt::WindowModal);
+	utils::makeModal(this);
 	setWindowTitle(tr("Load Settings"));
 	resize(400, 350);
 
@@ -323,7 +323,7 @@ SaveDialog::SaveDialog(
 	: QDialog(parent)
 	, m_categoryData({session, listing, permissions, roles, bans})
 {
-	setWindowModality(Qt::WindowModal);
+	utils::makeModal(this);
 	setWindowTitle(tr("Load Settings"));
 	resize(400, 400);
 
@@ -428,7 +428,7 @@ ImportDialog::ImportDialog(const QJsonObject &importData, QWidget *parent)
 	: QDialog(parent)
 	, m_importData(importData)
 {
-	setWindowModality(Qt::WindowModal);
+	utils::makeModal(this);
 	setWindowTitle(tr("Import Settings"));
 	resize(400, 300);
 
@@ -497,7 +497,7 @@ ExportDialog::ExportDialog(
 	: QDialog(parent)
 	, m_categoryData({session, listing, permissions, roles, bans})
 {
-	setWindowModality(Qt::WindowModal);
+	utils::makeModal(this);
 	setWindowTitle(tr("Export Settings"));
 	resize(400, 300);
 

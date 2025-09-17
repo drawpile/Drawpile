@@ -22,7 +22,7 @@ ArtisticColorWheelDialog::ArtisticColorWheelDialog(QWidget *parent)
 	: QDialog(parent)
 {
 	setWindowTitle(tr("Color Circle Settings"));
-	setWindowModality(Qt::WindowModal);
+	utils::makeModal(this);
 	resize(350, 600);
 
 	QVBoxLayout *layout = new QVBoxLayout(this);

@@ -278,7 +278,7 @@ static void execCanvasShortcutDialog(
 		new dialogs::CanvasShortcutsDialog(shortcut, *model, parent);
 	editor->setAttribute(Qt::WA_DeleteOnClose);
 	editor->setWindowTitle(title);
-	editor->setWindowModality(Qt::WindowModal);
+	utils::makeModal(editor);
 	QObject::connect(
 		editor, &dialogs::CanvasShortcutsDialog::accepted, view,
 		[editor, view, callback] {

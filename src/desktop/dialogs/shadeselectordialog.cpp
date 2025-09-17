@@ -24,7 +24,7 @@ ShadeSelectorDialog::ShadeSelectorDialog(const QColor &color, QWidget *parent)
 	: QDialog(parent)
 {
 	setWindowTitle(tr("Color Harmonies"));
-	setWindowModality(Qt::WindowModal);
+	utils::makeModal(this);
 	resize(400, 600);
 
 	const desktop::settings::Settings &settings = dpApp().settings();
@@ -512,7 +512,7 @@ void ShadeSelectorDialog::pickColor()
 	color_widgets::ColorDialog *dlg =
 		newDeleteOnCloseColorDialog(m_shadeSelector->color(), this);
 	dlg->setAlphaEnabled(false);
-	dlg->setWindowModality(Qt::WindowModal);
+	utils::makeModal(dlg);
 	connect(
 		dlg, &color_widgets::ColorDialog::colorSelected, m_shadeSelector,
 		&widgets::ShadeSelector::forceSetColor);

@@ -71,7 +71,7 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 #endif
 {
 	setWindowTitle(tr("Start"));
-	setWindowModality(Qt::WindowModal);
+	utils::makeModal(this);
 
 #if defined(Q_OS_ANDROID)
 	bool vertical = false;
