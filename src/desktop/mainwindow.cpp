@@ -4753,7 +4753,8 @@ void MainWindow::showAlterSelectionDialog()
 	} else {
 		dlg = new dialogs::SelectionAlterDialog(this);
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
-		dlg->setWindowTitle(getAction("selectalter")->text());
+		dlg->setWindowTitle(
+			utils::scrubAccelerators(getAction("selectalter")->text()));
 		connect(
 			dlg, &dialogs::SelectionAlterDialog::alterSelectionRequested, this,
 			&MainWindow::alterSelection, Qt::QueuedConnection);
