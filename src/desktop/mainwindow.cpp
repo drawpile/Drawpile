@@ -6454,8 +6454,30 @@ void MainWindow::setupActions()
 	// clang-format off
 	QAction *keyFrameProperties = makeAction("key-frame-properties", tr("Key Frame Properties...")).icon("configure").shortcut("Ctrl+Shift+P");
 	QAction *keyFrameDelete = makeAction("key-frame-delete", tr("Delete Key Frame")).icon("keyframe-remove").shortcut("Ctrl+Shift+G");
-	QAction *keyFrameExposureIncrease = makeAction("key-frame-exposure-increase", tr("Increase Key Frame Exposure")).icon("sidebar-expand-left").shortcut("Ctrl+Shift++");
-	QAction *keyFrameExposureDecrease = makeAction("key-frame-exposure-decrease", tr("Decrease Key Frame Exposure")).icon("sidebar-collapse-left").shortcut("Ctrl+Shift+-");
+	// clang-format on
+	QAction *keyFrameExposureIncrease =
+		makeAction(
+			"key-frame-exposure-increase",
+			tr("Increase Exposure on Current Track"))
+			.icon("sidebar-expand-left")
+			.shortcut("Ctrl+Shift++");
+	QAction *keyFrameExposureIncreaseVisible =
+		makeAction(
+			"key-frame-exposure-increase-visible",
+			tr("Increase Exposure on All Visible Tracks"))
+			.shortcut("Ctrl+Shift+Alt++");
+	QAction *keyFrameExposureDecrease =
+		makeAction(
+			"key-frame-exposure-decrease",
+			tr("Decrease Exposure on Current Track"))
+			.icon("sidebar-collapse-left")
+			.shortcut("Ctrl+Shift+-");
+	QAction *keyFrameExposureDecreaseVisible =
+		makeAction(
+			"key-frame-exposure-decrease-visible",
+			tr("Decrease Exposure on All Visible Tracks"))
+			.shortcut("Ctrl+Shift+Alt+-");
+	// clang-format off
 	QAction *trackAdd = makeAction("track-add", tr("New Track")).icon("list-add").noDefaultShortcut();
 	QAction *trackVisible = makeAction("track-visible", tr("Track Visible")).checkable().noDefaultShortcut();
 	QAction *trackOnionSkin = makeAction("track-onion-skin", tr("Track Onion Skin")).checkable().shortcut("Ctrl+Shift+O");
@@ -6509,7 +6531,9 @@ void MainWindow::setupActions()
 	animationMenu->addAction(keyFrameDelete);
 	animationMenu->addSeparator();
 	animationMenu->addAction(keyFrameExposureIncrease);
+	animationMenu->addAction(keyFrameExposureDecreaseVisible);
 	animationMenu->addAction(keyFrameExposureDecrease);
+	animationMenu->addAction(keyFrameExposureDecreaseVisible);
 	animationMenu->addSeparator();
 	QMenu *animationLayerMenu = animationMenu->addMenu(
 		QIcon::fromTheme("layer-visible-on"), tr("Create Layers on Key Frame"));
@@ -6598,7 +6622,9 @@ void MainWindow::setupActions()
 			keyFrameProperties,
 			keyFrameDelete,
 			keyFrameExposureIncrease,
+			keyFrameExposureIncreaseVisible,
 			keyFrameExposureDecrease,
+			keyFrameExposureDecreaseVisible,
 			trackAdd,
 			trackVisible,
 			trackOnionSkin,

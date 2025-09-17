@@ -46,6 +46,13 @@ struct Exposure {
 	bool hasFrameAtEnd;
 
 	bool isValid() const { return start != -1 && length != -1; }
+	bool canIncrease() const { return isValid() && !hasFrameAtEnd; }
+	bool canDecrease() const { return isValid() && length > 1; }
+
+	bool canChangeInDirection(bool forward) const
+	{
+		return forward ? canIncrease() : canDecrease();
+	}
 };
 
 struct TimelineWidget::Private {
@@ -213,9 +220,9 @@ struct TimelineWidget::Private {
 		return nullptr;
 	}
 
-	Exposure currentExposure()
+	Exposure currentExposureByTrackId(int trackId)
 	{
-		const canvas::TimelineTrack *track = trackById(currentTrackId);
+		const canvas::TimelineTrack *track = trackById(trackId);
 		if(!track) {
 			return {-1, -1, false};
 		}
@@ -247,14 +254,18 @@ struct TimelineWidget::Private {
 		}
 
 		int length = lastIndex - start;
-		bool hasFrameAtEnd =
-			keyFrameBy(currentTrackId, invalidIndex - 1) != nullptr;
+		bool hasFrameAtEnd = keyFrameBy(trackId, invalidIndex - 1) != nullptr;
 		return {start, length, hasFrameAtEnd};
 	}
 
-	QVector<int> gatherCurrentExposureFrames(int start)
+	Exposure currentExposure()
 	{
-		const canvas::TimelineTrack *track = trackById(currentTrackId);
+		return currentExposureByTrackId(currentTrackId);
+	}
+
+	QVector<int> gatherCurrentExposureFramesByTrackId(int trackId, int start)
+	{
+		const canvas::TimelineTrack *track = trackById(trackId);
 		QVector<int> frameIndexes;
 		if(track) {
 			const QVector<canvas::TimelineKeyFrame> &keyFrames =
@@ -268,6 +279,11 @@ struct TimelineWidget::Private {
 			}
 		}
 		return frameIndexes;
+	}
+
+	QVector<int> gatherCurrentExposureFrames(int start)
+	{
+		return gatherCurrentExposureFramesByTrackId(currentTrackId, start);
 	}
 
 	QModelIndex layerIndexById(int layerId) const
@@ -417,7 +433,9 @@ void TimelineWidget::setActions(const Actions &actions)
 	d->frameMenu->addAction(actions.keyFrameDelete);
 	d->frameMenu->addSeparator();
 	d->frameMenu->addAction(actions.keyFrameExposureIncrease);
+	d->frameMenu->addAction(actions.keyFrameExposureIncreaseVisible);
 	d->frameMenu->addAction(actions.keyFrameExposureDecrease);
+	d->frameMenu->addAction(actions.keyFrameExposureDecreaseVisible);
 	d->frameMenu->addSeparator();
 	d->frameMenu->addMenu(actions.animationLayerMenu);
 	d->frameMenu->addMenu(actions.animationGroupMenu);
@@ -473,8 +491,14 @@ void TimelineWidget::setActions(const Actions &actions)
 		actions.keyFrameExposureIncrease, &QAction::triggered, this,
 		&TimelineWidget::increaseKeyFrameExposure);
 	connect(
+		actions.keyFrameExposureIncreaseVisible, &QAction::triggered, this,
+		&TimelineWidget::increaseKeyFrameExposureVisible);
+	connect(
 		actions.keyFrameExposureDecrease, &QAction::triggered, this,
 		&TimelineWidget::decreaseKeyFrameExposure);
+	connect(
+		actions.keyFrameExposureDecreaseVisible, &QAction::triggered, this,
+		&TimelineWidget::decreaseKeyFrameExposureVisible);
 	connect(
 		actions.trackAdd, &QAction::triggered, this, &TimelineWidget::addTrack);
 	connect(
@@ -1373,12 +1397,22 @@ void TimelineWidget::deleteKeyFrame()
 
 void TimelineWidget::increaseKeyFrameExposure()
 {
-	changeFrameExposure(1);
+	changeFrameExposure(1, false);
+}
+
+void TimelineWidget::increaseKeyFrameExposureVisible()
+{
+	changeFrameExposure(1, true);
 }
 
 void TimelineWidget::decreaseKeyFrameExposure()
 {
-	changeFrameExposure(-1);
+	changeFrameExposure(-1, false);
+}
+
+void TimelineWidget::decreaseKeyFrameExposureVisible()
+{
+	changeFrameExposure(-1, true);
 }
 
 void TimelineWidget::addTrack()
@@ -1737,46 +1771,87 @@ void TimelineWidget::setKeyFrameProperties(
 	}
 }
 
-void TimelineWidget::changeFrameExposure(int direction)
+void TimelineWidget::changeFrameExposure(int direction, bool visible)
 {
 	Q_ASSERT(direction == -1 || direction == 1);
 	if(!d->editable) {
 		return;
 	}
 
-	Exposure exposure = d->currentExposure();
-	if(!exposure.isValid()) {
-		return;
-	}
-
+	QVector<QPair<int, QVector<int>>> trackFrameIndexes;
 	bool forward = direction == 1;
-	if(forward ? exposure.hasFrameAtEnd : exposure.length <= 1) {
+	if(visible) {
+		for(const canvas::TimelineTrack &track : d->getTracks()) {
+			if(!track.hidden &&
+			   !collectFrameExposure(trackFrameIndexes, forward, track.id)) {
+				return;
+			}
+		}
+	} else if(!collectFrameExposure(
+				  trackFrameIndexes, forward, d->currentTrackId)) {
 		return;
 	}
 
-	QVector<int> frameIndexes = d->gatherCurrentExposureFrames(exposure.start);
-	if(frameIndexes.isEmpty()) {
+	if(trackFrameIndexes.isEmpty()) {
 		return;
 	}
 
-	// Order these correctly so we don't move frames over each other.
-	if(forward) {
-		std::sort(frameIndexes.rbegin(), frameIndexes.rend());
-	} else {
-		std::sort(frameIndexes.begin(), frameIndexes.end());
+	compat::sizetype reserve = 1;
+	for(const QPair<int, QVector<int>> &p : trackFrameIndexes) {
+		reserve += p.second.size();
 	}
 
 	uint8_t contextId = d->canvas->localUserId();
 	QVector<net::Message> messages;
-	messages.reserve(frameIndexes.size() + 1);
+	messages.reserve(reserve);
 	messages.append(net::makeUndoPointMessage(contextId));
-	for(int frameIndex : frameIndexes) {
-		messages.append(
-			net::makeKeyFrameDeleteMessage(
-				contextId, d->currentTrackId, frameIndex, d->currentTrackId,
-				frameIndex + direction));
+	for(QPair<int, QVector<int>> &p : trackFrameIndexes) {
+		// Order these correctly so we don't move frames over each other.
+		QVector<int> &frameIndexes = p.second;
+		if(forward) {
+			std::sort(frameIndexes.rbegin(), frameIndexes.rend());
+		} else {
+			std::sort(frameIndexes.begin(), frameIndexes.end());
+		}
+
+		int trackId = p.first;
+		for(int frameIndex : frameIndexes) {
+			messages.append(
+				net::makeKeyFrameDeleteMessage(
+					contextId, trackId, frameIndex, trackId,
+					frameIndex + direction));
+		}
 	}
 	emit timelineEditCommands(messages.size(), messages.constData());
+}
+
+bool TimelineWidget::collectFrameExposure(
+	QVector<QPair<int, QVector<int>>> &trackFrameIndexes, bool forward,
+	int trackId)
+{
+	Exposure exposure = d->currentExposureByTrackId(trackId);
+	if(!exposure.isValid()) {
+		return true;
+	}
+
+	// Blocking case: user is trying to increase exposure, but we're at the end
+	// of the timeline. This operation would mess things up potentially far out
+	// of view, so we don't allow it on any tracks in the set.
+	if(forward && exposure.hasFrameAtEnd) {
+		return false;
+	}
+
+	if(!exposure.canChangeInDirection(forward)) {
+		return true;
+	}
+
+	QPair<int, QVector<int>> p = {trackId, {}};
+	p.second = d->gatherCurrentExposureFramesByTrackId(trackId, exposure.start);
+	if(!p.second.isEmpty()) {
+		trackFrameIndexes.append(std::move(p));
+	}
+
+	return true;
 }
 
 void TimelineWidget::updateActions()
@@ -1888,13 +1963,47 @@ void TimelineWidget::updateActions()
 	bool canDecreaseExposure = false;
 	if(timelineEditable && track) {
 		Exposure exposure = d->currentExposure();
-		if(exposure.isValid()) {
-			canIncreaseExposure = !exposure.hasFrameAtEnd;
-			canDecreaseExposure = exposure.length > 1;
-		}
+		canIncreaseExposure = exposure.canIncrease();
+		canDecreaseExposure = exposure.canDecrease();
 	}
 	d->actions.keyFrameExposureIncrease->setEnabled(canIncreaseExposure);
 	d->actions.keyFrameExposureDecrease->setEnabled(canDecreaseExposure);
+
+	bool canIncreaseExposureVisible = false;
+	bool canDecreaseExposureVisible = false;
+	if(timelineEditable) {
+		bool blockIncrease = false;
+		for(const canvas::TimelineTrack &exposureTrack : d->getTracks()) {
+			if(!exposureTrack.hidden) {
+				Exposure exposure =
+					d->currentExposureByTrackId(exposureTrack.id);
+				if(exposure.isValid()) {
+					if(!blockIncrease) {
+						// Blocking case: user is trying to increase exposure,
+						// but we're at the end of the timeline. This operation
+						// would mess things up potentially far out of view, so
+						// we don't allow it on any tracks in the set.
+						if(exposure.hasFrameAtEnd) {
+							canIncreaseExposureVisible = false;
+							blockIncrease = true;
+						} else if(
+							!canIncreaseExposureVisible &&
+							exposure.canIncrease()) {
+							canIncreaseExposureVisible = true;
+						}
+					}
+
+					if(!canDecreaseExposureVisible && exposure.canDecrease()) {
+						canDecreaseExposureVisible = true;
+					}
+				}
+			}
+		}
+	}
+	d->actions.keyFrameExposureIncreaseVisible->setEnabled(
+		canIncreaseExposureVisible);
+	d->actions.keyFrameExposureDecreaseVisible->setEnabled(
+		canDecreaseExposureVisible);
 
 	updatePasteAction();
 }
