@@ -348,6 +348,15 @@ bool start()
 	}
 #endif
 
+	if(int listenFdCount = initsys::getListenFds().size()) {
+		qCritical(
+			"Got %d file descriptor(s), but socket activation is no longer "
+			"supported. Uninstall %s from %s and try again.",
+			listenFdCount, qUtf8Printable(initsys::name()),
+			qUtf8Printable(initsys::socketActivationName()));
+		::exit(1);
+	}
+
 	// Set server configuration file or database
 	std::unique_ptr<ServerConfig> serverconfig;
 	if(parser.isSet(dbFileOption)) {
@@ -576,85 +585,20 @@ bool start()
 		&MultiServer::stop);
 #endif
 
-	// Start
-	{
-		QList<int> listenfds = initsys::getListenFds();
-		if(listenfds.isEmpty()) {
-			// socket activation not used
-			if(!server->start(port, address, webSocketPort, webSocketAddress)) {
-				return false;
-			}
-
-#ifdef HAVE_WEBADMIN
-			if(webadminPort > 0) {
-				webadmin->setSessions(server.get());
-				QString webadminDirectory =
-					utils::paths::locateDataFile("webadmin/");
-				if(!webadminDirectory.isEmpty()) {
-					webadmin->setStaticFileRoot(QDir(webadminDirectory));
-				}
-				webadmin->start(webadminPort);
-			}
-#endif
-
-		} else {
-			const QCommandLineOption *potentiallyIgnoredOptions[] = {
-				&portOption,
-#ifdef HAVE_WEBADMIN
-				&webadminPortOption,
-#endif
-#ifdef HAVE_WEBSOCKETS
-				&webSocketPortOption,
-				&webSocketListenOption,
-#endif
-			};
-			QStringList ignoredOptions;
-			for(const QCommandLineOption *option : potentiallyIgnoredOptions) {
-				if(parser.isSet(*option)) {
-					QStringList optionNames;
-					for(const QString &optionName : option->names()) {
-						QString prefix = optionName.length() == 1
-											 ? QStringLiteral("-")
-											 : QStringLiteral("--");
-						optionNames.append(prefix + optionName);
-					}
-					ignoredOptions.append(optionNames.join('/'));
-				}
-			}
-
-			// listening socket passed to us by the init system
-			int fdCount = listenfds.size();
-			if(fdCount > 3) {
-				qCritical("Too many file descriptors received");
-				return false;
-			}
-
-			int fdTcp = listenfds[0];
-			int fdWebAdmin = fdCount < 2 ? -1 : listenfds[1];
-			int fdWebSocket = fdCount < 3 ? -1 : listenfds[2];
-
-			server->setAutoStop(true);
-
-#ifndef HAVE_WEBSOCKETS
-			if(fdWebSocket > 0) {
-				qCritical("WebSocket passed, but support not built in!");
-			}
-#endif
-			if(!server->startFd(fdTcp, fdWebSocket, ignoredOptions)) {
-				return false;
-			}
-
-			if(fdWebAdmin > 0) {
-#ifdef HAVE_WEBADMIN
-				webadmin->setSessions(server.get());
-				webadmin->startFd(listenfds[1]);
-#else
-				qCritical("Web admin socket passed, but web admin support not "
-						  "built in!");
-#endif
-			}
-		}
+	if(!server->start(port, address, webSocketPort, webSocketAddress)) {
+		return false;
 	}
+
+#ifdef HAVE_WEBADMIN
+	if(webadminPort > 0) {
+		webadmin->setSessions(server.get());
+		QString webadminDirectory = utils::paths::locateDataFile("webadmin/");
+		if(!webadminDirectory.isEmpty()) {
+			webadmin->setStaticFileRoot(QDir(webadminDirectory));
+		}
+		webadmin->start(webadminPort);
+	}
+#endif
 
 	server->connect(
 		server.get(), &MultiServer::serverStopped, server.get(),

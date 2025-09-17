@@ -12,5 +12,4 @@ WatchdogSec=60s
 User=nobody
 
 [Install]
-Also=@srvname@.socket
 WantedBy=multi-user.target

@@ -20,6 +20,12 @@ namespace initsys {
 QString name();
 
 /**
+ * @brief Name of the socket activation file, only used to tell the user to
+ * uninstall it.
+ */
+QString socketActivationName();
+
+/**
  * @brief Send the "server ready" notification
  */
 void notifyReady();
@@ -33,9 +39,8 @@ void notifyStatus(const QString &status);
 /**
  * @brief Get file descriptors passed by the init system
  *
- * Currently, we expect either 0 or 1 inet socket.
- * If a socket is passed, we use that instead of opening
- * one ourselves.
+ * No longer supported, only here so we can detect it and tell the user to turn
+ * it off.
  *
  * @return list of socket file descriptors
  */

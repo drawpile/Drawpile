@@ -12,6 +12,11 @@ QString name()
 	return QStringLiteral("systemd");
 }
 
+QString socketActivationName()
+{
+	return QStringLiteral("drawpile-srv.socket");
+}
+
 void notifyReady()
 {
 	sd_notify(0, "READY=1");

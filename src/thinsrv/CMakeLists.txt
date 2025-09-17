@@ -138,17 +138,9 @@ if(TARGET PkgConfig::libsystemd)
 	)
 	target_link_libraries(${srvlib} PRIVATE PkgConfig::libsystemd)
 
-	if(TARGET libmicrohttpd::libmicrohttpd)
-		set(webadmin_stream ListenStream=${DRAWPILE_WEBADMIN_DEFAULT_PORT})
-	endif()
-	if(TARGET "${QT_PACKAGE_NAME}::WebSockets")
-		set(websocket_stream ListenStream=${DRAWPILE_WEBSOCKET_DEFAULT_PORT})
-	endif()
 	configure_file(systemd/service.in ${srvname}.service @ONLY)
-	configure_file(systemd/socket.in ${srvname}.socket @ONLY)
 	install(FILES
 		"${CMAKE_CURRENT_BINARY_DIR}/${srvname}.service"
-		"${CMAKE_CURRENT_BINARY_DIR}/${srvname}.socket"
 		DESTINATION "${CMAKE_INSTALL_LIBDIR}/systemd/system/"
 	)
 else()

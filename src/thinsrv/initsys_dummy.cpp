@@ -9,6 +9,11 @@ QString name()
 	return QStringLiteral("dummy");
 }
 
+QString socketActivationName()
+{
+	return QStringLiteral("dummy");
+}
+
 void notifyReady()
 {
 	// dummy
