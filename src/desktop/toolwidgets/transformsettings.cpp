@@ -179,8 +179,9 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
 	m_fastButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
 	m_fastButton->setText(tr("Fast"));
-	m_fastButton->setStatusTip(tr("Quick preview not taking into account "
-								  "layering, opacity or anything else"));
+	m_fastButton->setStatusTip(
+		tr("Quick preview not taking into account "
+		   "layering, opacity or anything else"));
 	m_fastButton->setToolTip(m_fastButton->statusTip());
 	m_fastButton->setCheckable(true);
 
