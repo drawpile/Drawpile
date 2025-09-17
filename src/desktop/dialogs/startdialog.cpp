@@ -47,9 +47,6 @@ namespace dialogs {
 
 namespace {
 
-static constexpr QFlags<Qt::WindowType> WINDOW_HINTS =
-	Qt::CustomizeWindowHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
-
 struct EntryDefinition {
 	QString icon;
 	QString title;
@@ -67,7 +64,7 @@ struct LinkDefinition {
 }
 
 StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
-	: QDialog{parent, WINDOW_HINTS}
+	: QDialog(parent)
 #ifndef __EMSCRIPTEN__
 	, m_initialUpdateDelayTimer{new QTimer{this}}
 	, m_news{dpApp().state(), this}
