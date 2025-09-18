@@ -279,19 +279,21 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 		msgs.reserve(1 + (moveContents ? 1 : 0) + (alterSelection ? 1 : 0));
 
 		if(alterSelection && !moveSelection) {
-			msgs.append(net::makeSelectionClearMessage(
-				contextId, canvas::CanvasModel::MAIN_SELECTION_ID));
+			msgs.append(
+				net::makeSelectionClearMessage(
+					contextId, canvas::CanvasModel::MAIN_SELECTION_ID));
 		}
 
 		if(moveIsOnlyTranslated()) {
 			if(moveSelection && !identity) {
 				int selectionId = DP_selection_id_make(
 					contextId, canvas::CanvasModel::MAIN_SELECTION_ID);
-				msgs.append(net::makeMoveRectMessageCompat(
-					contextId, selectionId, selectionId, srcX, srcY,
-					dstTopLeftX, dstTopLeftY, srcW, srcH,
-					uint8_t(DP_BLEND_MODE_NORMAL), 255, QImage(),
-					compatibilityMode));
+				msgs.append(
+					net::makeMoveRectMessageCompat(
+						contextId, selectionId, selectionId, srcX, srcY,
+						dstTopLeftX, dstTopLeftY, srcW, srcH,
+						uint8_t(DP_BLEND_MODE_NORMAL), 255, QImage(),
+						compatibilityMode));
 			}
 			if(moveContents) {
 				if(singleLayerSourceId > 0) {
@@ -414,10 +416,12 @@ void TransformModel::applyMoveRect(
 				dstTopLeftY, img, m_canvas->isCompatibilityMode());
 		}
 	} else {
-		msgs.append(net::makeMoveRectMessageCompat(
-			contextId, layerId, sourceId, srcX, srcY, dstTopLeftX, dstTopLeftY,
-			srcW, srcH, uint8_t(getEffectiveBlendModeForLayer(layerId)),
-			getUint8Opacity(), mask, m_canvas->isCompatibilityMode()));
+		msgs.append(
+			net::makeMoveRectMessageCompat(
+				contextId, layerId, sourceId, srcX, srcY, dstTopLeftX,
+				dstTopLeftY, srcW, srcH,
+				uint8_t(getEffectiveBlendModeForLayer(layerId)),
+				getUint8Opacity(), mask, m_canvas->isCompatibilityMode()));
 	}
 }
 
@@ -448,13 +452,14 @@ void TransformModel::applyTransformRegion(
 				offset.y(), img, m_canvas->isCompatibilityMode());
 		}
 	} else {
-		msgs.append(net::makeTransformRegionMessageCompat(
-			contextId, layerId, sourceId, srcX, srcY, srcW, srcH, dstTopLeftX,
-			dstTopLeftY, dstTopRightX, dstTopRightY, dstBottomRightX,
-			dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
-			getEffectiveInterpolation(interpolation),
-			uint8_t(getEffectiveBlendModeForLayer(layerId)), getUint8Opacity(),
-			mask, m_canvas->isCompatibilityMode()));
+		msgs.append(
+			net::makeTransformRegionMessageCompat(
+				contextId, layerId, sourceId, srcX, srcY, srcW, srcH,
+				dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
+				dstBottomRightX, dstBottomRightY, dstBottomLeftX,
+				dstBottomLeftY, getEffectiveInterpolation(interpolation),
+				uint8_t(getEffectiveBlendModeForLayer(layerId)),
+				getUint8Opacity(), mask, m_canvas->isCompatibilityMode()));
 	}
 }
 
@@ -485,19 +490,21 @@ void TransformModel::applyTransformRegionSelection(
 					isImageOpaque(img) ? QImage() : img);
 			}
 		} else {
-			qWarning("TransformModel::applyTransformRegionSelection: no valid "
-					 "selection");
+			qWarning(
+				"TransformModel::applyTransformRegionSelection: no valid "
+				"selection");
 		}
 	} else {
 		int selectionId = DP_selection_id_make(
 			contextId, canvas::CanvasModel::MAIN_SELECTION_ID);
-		msgs.append(net::makeTransformRegionMessageCompat(
-			contextId, selectionId, selectionId, srcX, srcY, srcW, srcH,
-			dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
-			dstBottomRightX, dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
-			getEffectiveInterpolation(interpolation),
-			uint8_t(DP_BLEND_MODE_NORMAL), 255, QImage(),
-			m_canvas->isCompatibilityMode()));
+		msgs.append(
+			net::makeTransformRegionMessageCompat(
+				contextId, selectionId, selectionId, srcX, srcY, srcW, srcH,
+				dstTopLeftX, dstTopLeftY, dstTopRightX, dstTopRightY,
+				dstBottomRightX, dstBottomRightY, dstBottomLeftX,
+				dstBottomLeftY, getEffectiveInterpolation(interpolation),
+				uint8_t(DP_BLEND_MODE_NORMAL), 255, QImage(),
+				m_canvas->isCompatibilityMode()));
 	}
 }
 
@@ -515,9 +522,10 @@ void TransformModel::applyCut(
 	int srcY, int srcW, int srcH, const QImage &mask) const
 {
 	if(mask.isNull()) {
-		msgs.append(net::makeFillRectMessage(
-			contextId, sourceId, DP_BLEND_MODE_ERASE, srcX, srcY, srcW, srcH,
-			Qt::black));
+		msgs.append(
+			net::makeFillRectMessage(
+				contextId, sourceId, DP_BLEND_MODE_ERASE, srcX, srcY, srcW,
+				srcH, Qt::black));
 	} else {
 		net::makePutImageMessagesCompat(
 			msgs, contextId, sourceId, DP_BLEND_MODE_ERASE, srcX, srcY, mask,
