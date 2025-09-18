@@ -6305,21 +6305,27 @@ void DP_blend_pixels8(DP_Pixel8 *DP_RESTRICT dst,
                       const DP_Pixel8 *DP_RESTRICT src, int pixel_count,
                       uint8_t opacity)
 {
-    for (int i = 0; i < pixel_count; ++i) {
-        DP_Pixel8 s = src[i];
-        DP_Pixel8 d = dst[i];
-        unsigned int sa1 = 255u - DP_pixel8_mul(s.a, opacity);
-        if (sa1 != 255u) {
-            dst[i] = (DP_Pixel8){
-                .b = (uint8_t)(DP_pixel8_mul(s.b, opacity)
-                               + DP_pixel8_mul(d.b, sa1)),
-                .g = (uint8_t)(DP_pixel8_mul(s.g, opacity)
-                               + DP_pixel8_mul(d.g, sa1)),
-                .r = (uint8_t)(DP_pixel8_mul(s.r, opacity)
-                               + DP_pixel8_mul(d.r, sa1)),
-                .a = (uint8_t)(DP_pixel8_mul(s.a, opacity)
-                               + DP_pixel8_mul(d.a, sa1)),
-            };
+    if (opacity != 0) {
+        for (int i = 0; i < pixel_count; ++i) {
+            DP_Pixel8 s = src[i];
+            uint8_t sa = DP_pixel8_mul(s.a, opacity);
+            if (sa == (uint8_t)255) {
+                dst[i] = s;
+            }
+            else if (sa != 0) {
+                unsigned int sa1 = 255u - DP_pixel8_mul(s.a, opacity);
+                DP_Pixel8 d = dst[i];
+                dst[i] = (DP_Pixel8){
+                    .b = (uint8_t)(DP_pixel8_mul(s.b, opacity)
+                                   + DP_pixel8_mul(d.b, sa1)),
+                    .g = (uint8_t)(DP_pixel8_mul(s.g, opacity)
+                                   + DP_pixel8_mul(d.g, sa1)),
+                    .r = (uint8_t)(DP_pixel8_mul(s.r, opacity)
+                                   + DP_pixel8_mul(d.r, sa1)),
+                    .a = (uint8_t)(DP_pixel8_mul(s.a, opacity)
+                                   + DP_pixel8_mul(d.a, sa1)),
+                };
+            }
         }
     }
 }
