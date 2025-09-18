@@ -291,7 +291,8 @@ pub const DP_MSG_TRANSFORM_REGION_STATIC_LENGTH_COMPAT: u32 = 53;
 pub const DP_MSG_TRANSFORM_REGION_MATCH_LENGTH: u32 = 59;
 pub const DP_MSG_TRANSFORM_REGION_MODE_NEAREST: u32 = 0;
 pub const DP_MSG_TRANSFORM_REGION_MODE_BILINEAR: u32 = 1;
-pub const DP_MSG_TRANSFORM_REGION_NUM_MODE: u32 = 2;
+pub const DP_MSG_TRANSFORM_REGION_MODE_BINARY: u32 = 2;
+pub const DP_MSG_TRANSFORM_REGION_NUM_MODE: u32 = 3;
 pub const DP_MSG_TRANSFORM_REGION_MASK_MIN_SIZE: u32 = 0;
 pub const DP_MSG_TRANSFORM_REGION_MASK_MAX_SIZE: u32 = 65478;
 pub const DP_MSG_TRACK_CREATE_STATIC_LENGTH: u32 = 6;
@@ -1478,6 +1479,69 @@ fn bindgen_test_layout_DP_Pixel15() {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct DP_PixelFloat {
+    pub b: f32,
+    pub g: f32,
+    pub r: f32,
+    pub a: f32,
+}
+#[test]
+fn bindgen_test_layout_DP_PixelFloat() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_PixelFloat> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_PixelFloat>(),
+        16usize,
+        concat!("Size of: ", stringify!(DP_PixelFloat))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_PixelFloat>(),
+        4usize,
+        concat!("Alignment of ", stringify!(DP_PixelFloat))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).b) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_PixelFloat),
+            "::",
+            stringify!(b)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).g) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_PixelFloat),
+            "::",
+            stringify!(g)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).r) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_PixelFloat),
+            "::",
+            stringify!(r)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).a) as usize - ptr as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_PixelFloat),
+            "::",
+            stringify!(a)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct DP_UPixel15 {
     pub b: u16,
     pub g: u16,
@@ -1723,7 +1787,13 @@ extern "C" {
     pub fn DP_pixel8_to_15(pixel: DP_Pixel8) -> DP_Pixel15;
 }
 extern "C" {
+    pub fn DP_pixel8_to_float(pixel: DP_Pixel8) -> DP_PixelFloat;
+}
+extern "C" {
     pub fn DP_pixel15_to_8(pixel: DP_Pixel15) -> DP_Pixel8;
+}
+extern "C" {
+    pub fn DP_pixel_float_to_8(pixel: DP_PixelFloat) -> DP_Pixel8;
 }
 extern "C" {
     pub fn DP_upixel8_to_15(pixel: DP_UPixel8) -> DP_UPixel15;
@@ -1830,10 +1900,16 @@ extern "C" {
     pub fn DP_pixel15_unpremultiply(pixel: DP_Pixel15) -> DP_UPixel15;
 }
 extern "C" {
+    pub fn DP_pixel_float_unpremultiply(pixel: DP_PixelFloat) -> DP_UPixelFloat;
+}
+extern "C" {
     pub fn DP_pixel8_premultiply(pixel: DP_UPixel8) -> DP_Pixel8;
 }
 extern "C" {
     pub fn DP_pixel15_premultiply(pixel: DP_UPixel15) -> DP_Pixel15;
+}
+extern "C" {
+    pub fn DP_pixel_float_premultiply(pixel: DP_UPixelFloat) -> DP_PixelFloat;
 }
 extern "C" {
     pub fn DP_blend_mask(

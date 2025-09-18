@@ -575,6 +575,16 @@ DP_Pixel15 DP_pixel8_to_15(DP_Pixel8 pixel)
     };
 }
 
+DP_PixelFloat DP_pixel8_to_float(DP_Pixel8 pixel)
+{
+    return (DP_PixelFloat){
+        .b = DP_channel8_to_float(pixel.b),
+        .g = DP_channel8_to_float(pixel.g),
+        .r = DP_channel8_to_float(pixel.r),
+        .a = DP_channel8_to_float(pixel.a),
+    };
+}
+
 DP_Pixel8 DP_pixel15_to_8(DP_Pixel15 pixel)
 {
     return (DP_Pixel8){
@@ -582,6 +592,16 @@ DP_Pixel8 DP_pixel15_to_8(DP_Pixel15 pixel)
         .g = DP_channel15_to_8(pixel.g),
         .r = DP_channel15_to_8(pixel.r),
         .a = DP_channel15_to_8(pixel.a),
+    };
+}
+
+DP_Pixel8 DP_pixel_float_to_8(DP_PixelFloat pixel)
+{
+    return (DP_Pixel8){
+        .b = DP_channel_float_to_8(pixel.b),
+        .g = DP_channel_float_to_8(pixel.g),
+        .r = DP_channel_float_to_8(pixel.r),
+        .a = DP_channel_float_to_8(pixel.a),
     };
 }
 
@@ -1145,6 +1165,39 @@ DP_UPixel15 DP_pixel15_unpremultiply(DP_Pixel15 pixel)
     }
 }
 
+static float clampf(float x)
+{
+    return x < 0.0f ? 0.0f : x > 1.0f ? 1.0f : x;
+}
+
+static float clampf_alpha(float x, float a)
+{
+    return x < 0.0f ? 0.0f : x > a ? a : x;
+}
+
+DP_UPixelFloat DP_pixel_float_unpremultiply(DP_PixelFloat pixel)
+{
+    if (pixel.a >= 1.0f) {
+        return (DP_UPixelFloat){
+            .b = clampf(pixel.b),
+            .g = clampf(pixel.g),
+            .r = clampf(pixel.r),
+            .a = 1.0f,
+        };
+    }
+    else if (pixel.a <= 0.0f) {
+        return DP_upixel_float_zero();
+    }
+    else {
+        return (DP_UPixelFloat){
+            .b = clampf(pixel.b / pixel.a),
+            .g = clampf(pixel.g / pixel.a),
+            .r = clampf(pixel.r / pixel.a),
+            .a = pixel.a,
+        };
+    }
+}
+
 // Adapted from the Qt framework, see license above.
 DP_Pixel8 DP_pixel8_premultiply(DP_UPixel8 pixel)
 {
@@ -1177,6 +1230,29 @@ DP_Pixel15 DP_pixel15_premultiply(DP_UPixel15 pixel)
             .b = from_fix(to_fix(pixel.b) * a / BIT15_FIX),
             .g = from_fix(to_fix(pixel.g) * a / BIT15_FIX),
             .r = from_fix(to_fix(pixel.r) * a / BIT15_FIX),
+            .a = pixel.a,
+        };
+    }
+}
+
+DP_PixelFloat DP_pixel_float_premultiply(DP_UPixelFloat pixel)
+{
+    if (pixel.a >= 1.0f) {
+        return (DP_PixelFloat){
+            .b = clampf(pixel.b),
+            .g = clampf(pixel.g),
+            .r = clampf(pixel.r),
+            .a = 1.0f,
+        };
+    }
+    else if (pixel.a <= 0.0f) {
+        return DP_pixel_float_zero();
+    }
+    else {
+        return (DP_PixelFloat){
+            .b = clampf_alpha(pixel.b * pixel.a, pixel.a),
+            .g = clampf_alpha(pixel.g * pixel.a, pixel.a),
+            .r = clampf_alpha(pixel.r * pixel.a, pixel.a),
             .a = pixel.a,
         };
     }
@@ -3589,11 +3665,6 @@ static DP_Spectral pixel15_to_spectral(DP_Pixel15 p)
     float a = (float)p.a;
     BGRf bgr = {(float)p.b / a, (float)p.g / a, (float)p.r / a};
     return rgb_to_spectral(bgr);
-}
-
-static float clampf(float x)
-{
-    return x < 0.0f ? 0.0f : x > 1.0f ? 1.0f : x;
 }
 
 static BGRf spectral_to_rgb(const float *spectral)

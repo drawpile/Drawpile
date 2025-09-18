@@ -1170,6 +1170,7 @@ TransformRegion:
           variants:
               - Nearest
               - Bilinear
+              - Binary
         - blend blendmode
         - opacity u8
         - mask bytes

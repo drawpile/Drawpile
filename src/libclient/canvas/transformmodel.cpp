@@ -321,12 +321,17 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 			int dstBottomRightY = qRound(m_dstQuad.bottomRight().y());
 			int dstBottomLeftX = qRound(m_dstQuad.bottomLeft().x());
 			int dstBottomLeftY = qRound(m_dstQuad.bottomLeft().y());
+			int effectiveInterpolation =
+				getEffectiveInterpolation(interpolation);
+			bool needsCutAndPaste =
+				sizeOutOfBounds ||
+				effectiveInterpolation == DP_MSG_TRANSFORM_REGION_MODE_BINARY;
 			if(moveSelection && !identity) {
 				applyTransformRegionSelection(
 					msgs, contextId, srcX, srcY, srcW, srcH, dstTopLeftX,
 					dstTopLeftY, dstTopRightX, dstTopRightY, dstBottomRightX,
 					dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
-					getEffectiveInterpolation(interpolation), sizeOutOfBounds);
+					effectiveInterpolation, needsCutAndPaste);
 			}
 			if(moveContents) {
 				if(singleLayerSourceId > 0) {
@@ -336,9 +341,9 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 							srcY, srcW, srcH, dstTopLeftX, dstTopLeftY,
 							dstTopRightX, dstTopRightY, dstBottomRightX,
 							dstBottomRightY, dstBottomLeftX, dstBottomLeftY,
-							getEffectiveInterpolation(interpolation),
+							effectiveInterpolation,
 							needsMask ? m_mask : QImage(),
-							sizeOutOfBounds ||
+							needsCutAndPaste ||
 								(compatibilityMode && adjustsImage));
 					}
 				} else {
@@ -350,9 +355,9 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 								dstTopLeftY, dstTopRightX, dstTopRightY,
 								dstBottomRightX, dstBottomRightY,
 								dstBottomLeftX, dstBottomLeftY,
-								getEffectiveInterpolation(interpolation),
+								effectiveInterpolation,
 								needsMask ? m_mask : QImage(),
-								sizeOutOfBounds ||
+								needsCutAndPaste ||
 									(compatibilityMode && adjustsImage));
 						}
 					}

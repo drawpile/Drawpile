@@ -93,15 +93,13 @@ static uint32_t interpolate_4_pixels(uint32_t tl, uint32_t tr, uint32_t bl,
     return interpolate_pixel(xtop, idisty, xbot, disty);
 }
 
-static uint32_t fetch_transformed_pixel_bilinear(int width, int height,
-                                                 const DP_Pixel8 *pixels,
-                                                 double px, double py)
+static void get_bilinear_params(int width, int height, const DP_Pixel8 *pixels,
+                                double px, double py, int *out_x1, int *out_y1,
+                                DP_Pixel8 *out_tl, DP_Pixel8 *out_tr,
+                                DP_Pixel8 *out_bl, DP_Pixel8 *out_br)
 {
     int x1 = DP_double_to_int(px) - (px < 0 ? 1 : 0);
     int y1 = DP_double_to_int(py) - (py < 0 ? 1 : 0);
-
-    uint32_t distx = DP_double_to_uint32((px - DP_int_to_double(x1)) * 256.0);
-    uint32_t disty = DP_double_to_uint32((py - DP_int_to_double(y1)) * 256.0);
 
     int x2, y2;
     fetch_transformed_bilinear_pixel_bounds(0, width - 1, x1, &x1, &x2);
@@ -109,8 +107,130 @@ static uint32_t fetch_transformed_pixel_bilinear(int width, int height,
 
     const DP_Pixel8 *s1 = pixels + y1 * width;
     const DP_Pixel8 *s2 = pixels + y2 * width;
-    return interpolate_4_pixels(s1[x1].color, s1[x2].color, s2[x1].color,
-                                s2[x2].color, distx, disty);
+
+    *out_x1 = x1;
+    *out_y1 = y1;
+    *out_tl = s1[x1];
+    *out_tr = s1[x2];
+    *out_bl = s2[x1];
+    *out_br = s2[x2];
+}
+
+static uint32_t fetch_transformed_pixel_bilinear(int width, int height,
+                                                 const DP_Pixel8 *pixels,
+                                                 double px, double py)
+{
+    int x1, y1;
+    DP_Pixel8 tl, tr, bl, br;
+    get_bilinear_params(width, height, pixels, px, py, &x1, &y1, &tl, &tr, &bl,
+                        &br);
+
+    uint32_t distx = DP_double_to_uint32((px - DP_int_to_double(x1)) * 256.0);
+    uint32_t disty = DP_double_to_uint32((py - DP_int_to_double(y1)) * 256.0);
+
+    return interpolate_4_pixels(tl.color, tr.color, bl.color, br.color, distx,
+                                disty);
+}
+
+static float lerpf(float a, float b, float t)
+{
+    return a + t * (b - a);
+}
+
+static DP_UPixelFloat interpolate_pixel_binary(DP_UPixelFloat x,
+                                               DP_UPixelFloat y, float t)
+{
+    DP_UPixelFloat p;
+    if (x.a > 0.0f) {
+        if (y.a > 0.0f) {
+            p.b = lerpf(x.b, y.b, t);
+            p.g = lerpf(x.g, y.g, t);
+            p.r = lerpf(x.r, y.r, t);
+        }
+        else {
+            p = x;
+        }
+    }
+    else if (y.a > 0.0f) {
+        p = y;
+    }
+    else {
+        return DP_upixel_float_zero();
+    }
+    p.a = lerpf(x.a, y.a, t);
+    return p;
+}
+
+static DP_UPixelFloat interpolate_4_pixels_binary(DP_UPixelFloat utl,
+                                                  DP_UPixelFloat utr,
+                                                  DP_UPixelFloat ubl,
+                                                  DP_UPixelFloat ubr,
+                                                  float distx, float disty)
+{
+    DP_UPixelFloat uxtop = interpolate_pixel_binary(utl, utr, distx);
+    DP_UPixelFloat uxbot = interpolate_pixel_binary(ubl, ubr, distx);
+    return interpolate_pixel_binary(uxtop, uxbot, disty);
+}
+
+static void find_closest_color(DP_UPixelFloat candidate, DP_UPixelFloat ip,
+                               float *in_out_alpha_distance,
+                               float *in_out_color_distance,
+                               DP_UPixelFloat *in_out_result)
+{
+    if (candidate.a > 0.0f) {
+        float alpha_distance = DP_square_float(candidate.a - in_out_result->a);
+        if (alpha_distance <= *in_out_alpha_distance) {
+            float color_distance = DP_square_float(candidate.b - ip.b)
+                                 + DP_square_float(candidate.g - ip.g)
+                                 + DP_square_float(candidate.r - ip.r);
+            if (alpha_distance < *in_out_alpha_distance
+                || color_distance < *in_out_color_distance) {
+                *in_out_alpha_distance = alpha_distance;
+                *in_out_color_distance = color_distance;
+                in_out_result->b = candidate.b;
+                in_out_result->g = candidate.g;
+                in_out_result->r = candidate.r;
+            }
+        }
+    }
+}
+
+static uint32_t fetch_transformed_pixel_binary(int width, int height,
+                                               const DP_Pixel8 *pixels,
+                                               double px, double py)
+{
+    int x1, y1;
+    DP_Pixel8 tl, tr, bl, br;
+    get_bilinear_params(width, height, pixels, px, py, &x1, &y1, &tl, &tr, &bl,
+                        &br);
+
+    float distx = DP_double_to_float(px) - DP_int_to_float(x1);
+    float disty = DP_double_to_float(py) - DP_int_to_float(y1);
+
+    DP_UPixelFloat utl = DP_pixel_float_unpremultiply(DP_pixel8_to_float(tl));
+    DP_UPixelFloat utr = DP_pixel_float_unpremultiply(DP_pixel8_to_float(tr));
+    DP_UPixelFloat ubl = DP_pixel_float_unpremultiply(DP_pixel8_to_float(bl));
+    DP_UPixelFloat ubr = DP_pixel_float_unpremultiply(DP_pixel8_to_float(br));
+    DP_UPixelFloat ip =
+        interpolate_4_pixels_binary(utl, utr, ubl, ubr, distx, disty);
+
+    float threshold = 1.0f / 3.0f;
+    float max_a =
+        DP_max_float(utl.a, DP_max_float(utr.a, DP_max_float(ubl.a, ubr.a)));
+    if (ip.a >= threshold * max_a) {
+        float alpha_distance = HUGE_VALF;
+        float color_distance = HUGE_VALF;
+        DP_UPixelFloat result = ip;
+        result.a = max_a;
+        find_closest_color(utl, ip, &alpha_distance, &color_distance, &result);
+        find_closest_color(utr, ip, &alpha_distance, &color_distance, &result);
+        find_closest_color(ubl, ip, &alpha_distance, &color_distance, &result);
+        find_closest_color(ubr, ip, &alpha_distance, &color_distance, &result);
+        return DP_pixel_float_to_8(DP_pixel_float_premultiply(result)).color;
+    }
+    else {
+        return 0;
+    }
 }
 
 static uint32_t fetch_transformed_pixel(int interpolation, int width,
@@ -120,6 +240,8 @@ static uint32_t fetch_transformed_pixel(int interpolation, int width,
     switch (interpolation) {
     case DP_MSG_TRANSFORM_REGION_MODE_NEAREST:
         return fetch_transformed_pixel_nearest(width, height, pixels, px, py);
+    case DP_MSG_TRANSFORM_REGION_MODE_BINARY:
+        return fetch_transformed_pixel_binary(width, height, pixels, px, py);
     default:
         return fetch_transformed_pixel_bilinear(width, height, pixels, px, py);
     }
@@ -167,6 +289,7 @@ static uint8_t get_span_opacity(int interpolation, int coverage)
 {
     switch (interpolation) {
     case DP_MSG_TRANSFORM_REGION_MODE_NEAREST:
+    case DP_MSG_TRANSFORM_REGION_MODE_BINARY:
         return coverage < 128 ? 0u : 255u;
     default:
         return DP_int_to_uint8(CLAMP(coverage, 0, 255));
@@ -219,8 +342,9 @@ static void render_spans(int count, const DP_FT_Span *spans, void *user)
 
                 int pr = spans->x + spans->len;
                 int pl = DP_min_int(l, pr - x);
-                DP_blend_pixels8(dst + offset, src + offset, pl,
-                                 get_span_opacity(interpolation, coverage));
+                uint8_t span_opacity =
+                    get_span_opacity(interpolation, coverage);
+                DP_blend_pixels8(dst + offset, src + offset, pl, span_opacity);
 
                 l -= pl;
                 x += pl;

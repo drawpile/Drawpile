@@ -1224,6 +1224,17 @@ static DP_CanvasState *handle_transform_region(
         return NULL;
     }
 
+    int interpolation = DP_msg_transform_region_mode(mtr);
+    switch (interpolation) {
+    case DP_MSG_TRANSFORM_REGION_MODE_NEAREST:
+    case DP_MSG_TRANSFORM_REGION_MODE_BILINEAR:
+        break;
+    default:
+        DP_warn("Transform region: unknown interpolation %d", interpolation);
+        interpolation = DP_MSG_TRANSFORM_REGION_MODE_BILINEAR;
+        break;
+    }
+
     size_t in_mask_size;
     const unsigned char *in_mask =
         DP_msg_transform_region_mask(mtr, &in_mask_size);
@@ -1240,8 +1251,7 @@ static DP_CanvasState *handle_transform_region(
 
     DP_CanvasState *next_cs = DP_ops_transform_region(
         cs, dc, ucs_or_null, context_id, src_layer_id, dst_layer_id, &src_rect,
-        &dst_quad, DP_msg_transform_region_mode(mtr), blend_mode, opacity,
-        mask);
+        &dst_quad, interpolation, blend_mode, opacity, mask);
     DP_free(mask);
     return next_cs;
 }

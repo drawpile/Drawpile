@@ -69,6 +69,11 @@ typedef struct DP_Pixel15 {
     uint16_t b, g, r, a;
 } DP_Pixel15;
 
+// Premultiplied float pixel
+typedef struct DP_PixelFloat {
+    float b, g, r, a;
+} DP_PixelFloat;
+
 // Unpremultiplied 15 bit pixel
 typedef struct DP_UPixel15 {
     uint16_t b, g, r, a;
@@ -103,7 +108,9 @@ uint8_t DP_channel_float_to_8(float c);
 uint16_t DP_channel_float_to_15(float c);
 
 DP_Pixel15 DP_pixel8_to_15(DP_Pixel8 pixel);
+DP_PixelFloat DP_pixel8_to_float(DP_Pixel8 pixel);
 DP_Pixel8 DP_pixel15_to_8(DP_Pixel15 pixel);
+DP_Pixel8 DP_pixel_float_to_8(DP_PixelFloat pixel);
 DP_UPixel15 DP_upixel8_to_15(DP_UPixel8 pixel);
 DP_UPixel8 DP_upixel15_to_8(DP_UPixel15 pixel);
 DP_UPixelFloat DP_upixel8_to_float(DP_UPixel8 pixel);
@@ -160,14 +167,22 @@ void DP_alpha_delta_to_pixels8(DP_Pixel8 *DP_RESTRICT dst,
 
 DP_UPixel8 DP_pixel8_unpremultiply(DP_Pixel8 pixel);
 DP_UPixel15 DP_pixel15_unpremultiply(DP_Pixel15 pixel);
+DP_UPixelFloat DP_pixel_float_unpremultiply(DP_PixelFloat pixel);
 
 DP_Pixel8 DP_pixel8_premultiply(DP_UPixel8 pixel);
 DP_Pixel15 DP_pixel15_premultiply(DP_UPixel15 pixel);
+DP_PixelFloat DP_pixel_float_premultiply(DP_UPixelFloat pixel);
 
 
 DP_INLINE DP_Pixel15 DP_pixel15_zero(void)
 {
     DP_Pixel15 pixel = {0, 0, 0, 0};
+    return pixel;
+}
+
+DP_INLINE DP_PixelFloat DP_pixel_float_zero(void)
+{
+    DP_PixelFloat pixel = {0.0f, 0.0f, 0.0f, 0.0f};
     return pixel;
 }
 

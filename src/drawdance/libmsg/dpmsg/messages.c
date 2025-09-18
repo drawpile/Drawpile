@@ -9970,6 +9970,8 @@ const char *DP_msg_transform_region_mode_variant_name(unsigned int value)
         return "Nearest";
     case DP_MSG_TRANSFORM_REGION_MODE_BILINEAR:
         return "Bilinear";
+    case DP_MSG_TRANSFORM_REGION_MODE_BINARY:
+        return "Binary";
     default:
         return NULL;
     }

@@ -31,7 +31,7 @@ namespace props {
 static const ToolProperties::Value<bool> accuratepreview{
 	QStringLiteral("accuratepreview"), true};
 static const ToolProperties::RangedValue<int> interpolation{
-	QStringLiteral("interpolation"), 1, 0, 1};
+	QStringLiteral("interpolation"), 1, 0, 2};
 }
 
 TransformSettings::TransformSettings(ToolController *ctrl, QObject *parent)
@@ -234,6 +234,15 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 	nearestButton->setToolTip(nearestButton->statusTip());
 	nearestButton->setCheckable(true);
 
+	widgets::GroupedToolButton *binaryButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
+	binaryButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+	binaryButton->setText(tr("Binary"));
+	binaryButton->setStatusTip(
+		tr("Smoothed interpolation while retaining hard edges"));
+	binaryButton->setToolTip(binaryButton->statusTip());
+	binaryButton->setCheckable(true);
+
 	widgets::GroupedToolButton *bilinearButton =
 		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
 	bilinearButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
@@ -247,6 +256,7 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 	interpolationLayout->setContentsMargins(0, 0, 0, 0);
 	interpolationLayout->setSpacing(0);
 	interpolationLayout->addWidget(nearestButton);
+	interpolationLayout->addWidget(binaryButton);
 	interpolationLayout->addWidget(bilinearButton);
 	//: Refers to the transform interpolation, but "interpolation" is
 	//: uncomfortably long in English, it causes a lot of blank space and the
@@ -257,6 +267,8 @@ QWidget *TransformSettings::createUiWidget(QWidget *parent)
 	m_interpolationGroup = new QButtonGroup(this);
 	m_interpolationGroup->addButton(
 		nearestButton, DP_MSG_TRANSFORM_REGION_MODE_NEAREST);
+	m_interpolationGroup->addButton(
+		binaryButton, DP_MSG_TRANSFORM_REGION_MODE_BINARY);
 	m_interpolationGroup->addButton(
 		bilinearButton, DP_MSG_TRANSFORM_REGION_MODE_BILINEAR);
 	connect(
