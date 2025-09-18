@@ -363,7 +363,8 @@ void PaintEngine::setLayerAlphaLock(int layerId, bool alphaLock)
 
 void PaintEngine::setLayerCensoredLocal(int layerId, bool censor)
 {
-	net::Message msg = net::makeLocalChangeLayerCensoredMessage(layerId, censor);
+	net::Message msg =
+		net::makeLocalChangeLayerCensoredMessage(layerId, censor);
 	receiveMessages(false, 1, &msg);
 }
 
