@@ -25,6 +25,7 @@ Unreleased Version 2.3.0-pre
  * Removed Server Feature: Socket activation. Attempting to pass sockets via systemd now just raises an error and tells you to uninstall drawpile-srv.socket. This was a pretty obscure feature that apparently wasn't working properly anyway and only ever seems to get used unintentionally. Thanks Bluestrings for reporting.
  * Feature: Binary interpolation mode for transforms. Works like Bilinear, but tries to keep the opacity of pixels the same so that you can scale stuff drawn with a binary brush without making it all blurry. Thanks TGS for suggesting.
  * Fix: Properly reconnect to sessions when using an invite code, rather than asking for a password the second time around.
+ * Fix: Properly reconnect when using a WebSocket URL, rather than replacing the path inappropriately.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

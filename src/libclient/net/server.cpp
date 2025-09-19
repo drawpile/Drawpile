@@ -220,6 +220,19 @@ bool Server::stripInviteCodeFromPath(QString &path, QString *outInviteCode)
 	return true;
 }
 
+void Server::setSessionIdOnUrl(QUrl &url, QString &sessionId)
+{
+	QUrlQuery query(url);
+	QString key = QStringLiteral("session");
+	query.removeAllQueryItems(key);
+	if(url.scheme().startsWith(QStringLiteral("ws"), Qt::CaseInsensitive)) {
+		query.addQueryItem(key, sessionId);
+	} else {
+		url.setPath(QStringLiteral("/") + sessionId);
+	}
+	url.setQuery(query);
+}
+
 Server::Server(Client *client)
 	: QObject(client)
 	, m_client(client)

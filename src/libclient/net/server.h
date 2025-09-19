@@ -60,6 +60,7 @@ public:
 	stripInviteCodeFromUrl(const QUrl &url, QString *outInviteCode = nullptr);
 	static bool
 	stripInviteCodeFromPath(QString &path, QString *outInviteCode = nullptr);
+	static void setSessionIdOnUrl(QUrl &url, QString &sessionId);
 
 	explicit Server(Client *client);
 

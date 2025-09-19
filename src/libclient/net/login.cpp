@@ -1004,7 +1004,7 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 				sessionId.append(inviteCode);
 			}
 		}
-		m_address.setPath(QStringLiteral("/") + sessionId);
+		Server::setSessionIdOnUrl(m_address, sessionId);
 
 		int userid = join["user"].toInt();
 		if(userid < 1 || userid > 254) {
