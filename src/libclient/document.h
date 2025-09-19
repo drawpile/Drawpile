@@ -328,6 +328,8 @@ private slots:
 	void onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec);
 
 private:
+	void clearConfig();
+
 	void saveCanvasState(
 		const drawdance::CanvasState &canvasState, bool isCurrentState,
 		bool exported, const QString &path, DP_SaveImageType type);
@@ -400,7 +402,7 @@ private:
 	net::MessageList m_messageBuffer;
 	QQueue<qint64> m_pingHistory;
 
-	canvas::CanvasModel *m_canvas;
+	canvas::CanvasModel *m_canvas = nullptr;
 	tools::ToolController *m_toolctrl;
 	net::Client *m_client;
 	net::BanlistModel *m_banlist;
@@ -415,40 +417,40 @@ private:
 	QString m_recordOnConnect;
 	QString m_autoResetCorrelator;
 
-	bool m_autosave;
-	bool m_canAutosave;
-	bool m_saveInProgress;
-	bool m_wantCanvasHistoryDump;
+	bool m_autosave = false;
+	bool m_canAutosave = false;
+	bool m_saveInProgress = false;
+	bool m_wantCanvasHistoryDump = false;
 	bool m_generatingThumbnail = false;
 	QTimer *m_autosaveTimer;
 
-	bool m_sessionPersistent;
-	bool m_sessionClosed;
-	bool m_sessionAuthOnly;
+	bool m_sessionPersistent = false;
+	bool m_sessionClosed = false;
+	bool m_sessionAuthOnly = false;
 	bool m_sessionWebSupported = false;
-	bool m_sessionAllowWeb;
-	bool m_sessionPreserveChat;
-	bool m_sessionPasswordProtected;
-	bool m_sessionOpword;
-	bool m_sessionNsfm;
-	bool m_sessionForceNsfm;
-	bool m_sessionDeputies;
-	bool m_sessionIdleOverride;
-	bool m_sessionAllowIdleOverride;
+	bool m_sessionAllowWeb = false;
+	bool m_sessionPreserveChat = false;
+	bool m_sessionPasswordProtected = false;
+	bool m_sessionOpword = false;
+	bool m_sessionNsfm = false;
+	bool m_sessionForceNsfm = false;
+	bool m_sessionDeputies = false;
+	bool m_sessionIdleOverride = false;
+	bool m_sessionAllowIdleOverride = false;
 	bool m_sessionPreferWebSockets = false;
 	bool m_sessionInviteCodesEnabled = false;
-	int m_sessionMaxUserCount;
-	int m_sessionHistoryMaxSize;
-	int m_sessionResetThreshold;
-	int m_baseResetThreshold;
-	int m_sessionIdleTimeLimit;
+	int m_sessionMaxUserCount = 0;
+	int m_sessionHistoryMaxSize = 0;
+	int m_sessionResetThreshold = 0;
+	int m_baseResetThreshold = 0;
+	int m_sessionIdleTimeLimit = 0;
 	bool m_serverSupportsInviteCodes = false;
 	int m_streamResetMessageCount = 0;
 	int m_streamResetImageOriginalCount = 0;
 	StreamResetState m_streamResetState = StreamResetState::None;
 
-	bool m_sessionOutOfSpace;
-	bool m_preparingReset;
+	bool m_sessionOutOfSpace = false;
+	bool m_preparingReset = false;
 
 #ifdef HAVE_CLIPBOARD_EMULATION
 	static QMimeData clipboardData;

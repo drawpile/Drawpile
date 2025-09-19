@@ -47,33 +47,7 @@ Document::Document(
 	QObject *parent)
 	: QObject(parent)
 	, m_canvasImplementation(canvasImplementation)
-	, m_resetstate()
-	, m_messageBuffer()
-	, m_canvas(nullptr)
 	, m_settings(settings)
-	, m_autosave(false)
-	, m_canAutosave(false)
-	, m_saveInProgress(false)
-	, m_wantCanvasHistoryDump(false)
-	, m_sessionPersistent(false)
-	, m_sessionClosed(false)
-	, m_sessionAuthOnly(false)
-	, m_sessionAllowWeb(false)
-	, m_sessionPreserveChat(false)
-	, m_sessionPasswordProtected(false)
-	, m_sessionOpword(false)
-	, m_sessionNsfm(false)
-	, m_sessionForceNsfm(false)
-	, m_sessionDeputies(false)
-	, m_sessionIdleOverride(false)
-	, m_sessionAllowIdleOverride(false)
-	, m_sessionMaxUserCount(0)
-	, m_sessionHistoryMaxSize(0)
-	, m_sessionResetThreshold(0)
-	, m_baseResetThreshold(0)
-	, m_sessionIdleTimeLimit(0)
-	, m_sessionOutOfSpace(false)
-	, m_preparingReset(false)
 {
 	// Initialize
 	m_client = new net::Client(this, this);
@@ -394,21 +368,7 @@ void Document::onServerDisconnect(
 		m_canvas->setTitle(QString());
 	}
 
-	m_banlist->clear();
-	m_authList->clear();
-	m_announcementlist->clear();
-	m_inviteList->clear();
-	setSessionOpword(false);
-	setSessionOutOfSpace(false);
-	setSessionWebSupported(false);
-	setSessionPreferWebSockets(false);
-	setSessionInviteCodesEnabled(false);
-	setServerSupportsInviteCodes(false);
-	emit compatibilityModeChanged(false);
-	setPreparingReset(false);
-	m_autoResetCorrelator = QString();
-	setStreamResetState(StreamResetState::None);
-	m_pingHistory.clear();
+	clearConfig();
 }
 
 void Document::setPreparingReset(bool preparing)
@@ -1033,6 +993,44 @@ void Document::autosaveNow()
 	saveCanvasState(
 		m_canvas->paintEngine()->viewCanvasState(), true, false, currentPath(),
 		currentType());
+}
+
+void Document::clearConfig()
+{
+	setServerSupportsInviteCodes(false);
+	setSessionAllowIdleOverride(false);
+	setSessionAllowWeb(false);
+	setSessionAuthOnly(false);
+	setSessionClosed(false);
+	setSessionDeputies(false);
+	setSessionForceNsfm(false);
+	setSessionIdleOverride(false);
+	setSessionIdleTimeLimit(0);
+	setSessionInviteCodesEnabled(false);
+	setSessionMaxUserCount(0);
+	setSessionNsfm(false);
+	setSessionOpword(false);
+	setSessionOutOfSpace(false);
+	setSessionPasswordProtected(false);
+	setSessionPersistent(false);
+	setSessionPreferWebSockets(false);
+	setSessionPreserveChat(false);
+	setSessionResetThreshold(0);
+	setSessionWebSupported(false);
+
+	m_autoResetCorrelator = QString();
+	setBaseResetThreshold(0);
+	setPreparingReset(false);
+	setStreamResetState(StreamResetState::None);
+
+	m_authList->clear();
+	m_announcementlist->clear();
+	m_banlist->clear();
+	m_inviteList->clear();
+	m_pingHistory.clear();
+
+	emit compatibilityModeChanged(false);
+	emit sessionIdleChanged(0, false, false);
 }
 
 void Document::saveCanvasAs(
