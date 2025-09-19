@@ -994,10 +994,19 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 		m_mode == Mode::Join ? QStringLiteral("join") : QStringLiteral("host");
 	if(state == expectedState) {
 		QJsonObject join = msg.reply[QStringLiteral("join")].toObject();
-		QString sessionId = join[QStringLiteral("id")].toString();
-		m_address.setPath(QStringLiteral("/") + sessionId);
-		int userid = join["user"].toInt();
 
+		QString sessionId = join.value(QStringLiteral("id")).toString();
+		if(m_mode == Mode::Join) {
+			QString inviteCode;
+			Server::stripInviteCodeFromUrl(m_address, &inviteCode);
+			if(!inviteCode.isEmpty()) {
+				sessionId.append(QStringLiteral(":"));
+				sessionId.append(inviteCode);
+			}
+		}
+		m_address.setPath(QStringLiteral("/") + sessionId);
+
+		int userid = join["user"].toInt();
 		if(userid < 1 || userid > 254) {
 			qCWarning(lcDpLogin) << "Login error. User ID" << userid
 								 << "out of supported range.";

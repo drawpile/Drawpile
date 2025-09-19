@@ -56,6 +56,10 @@ public:
 	static QUrl fixUpAddress(const QUrl &originalUrl, bool join);
 	static QString extractAutoJoinIdFromUrl(const QUrl &url);
 	static QString extractAutoJoinId(const QString &path);
+	static QUrl
+	stripInviteCodeFromUrl(const QUrl &url, QString *outInviteCode = nullptr);
+	static bool
+	stripInviteCodeFromPath(QString &path, QString *outInviteCode = nullptr);
 
 	explicit Server(Client *client);
 

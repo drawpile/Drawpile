@@ -160,6 +160,66 @@ QString Server::extractAutoJoinId(const QString &path)
 	return QString();
 }
 
+QUrl Server::stripInviteCodeFromUrl(const QUrl &url, QString *outInviteCode)
+{
+	if(!url.scheme().startsWith(QStringLiteral("ws"), Qt::CaseInsensitive)) {
+		QString path = url.path();
+		if(!path.isEmpty()) {
+			if(stripInviteCodeFromPath(path, outInviteCode)) {
+				QUrl newUrl = url;
+				newUrl.setPath(path);
+				return newUrl;
+			} else {
+				return url;
+			}
+		}
+	}
+
+	QString key = QStringLiteral("session");
+	QString path = QUrlQuery(url).queryItemValue(key, QUrl::FullyDecoded);
+	if(!path.isEmpty() && stripInviteCodeFromPath(path, outInviteCode)) {
+		QUrlQuery query(url);
+		query.removeAllQueryItems(key);
+		query.addQueryItem(key, path);
+		QUrl newUrl = url;
+		newUrl.setQuery(query);
+		return newUrl;
+	}
+
+	if(outInviteCode) {
+		outInviteCode->clear();
+	}
+	return url;
+}
+
+bool Server::stripInviteCodeFromPath(QString &path, QString *outInviteCode)
+{
+	QString sessionId = extractAutoJoinId(path);
+	if(sessionId.isEmpty()) {
+		return false;
+	}
+
+	int index = sessionId.lastIndexOf(':');
+	if(index == -1) {
+		return false;
+	}
+
+	QString inviteCode = sessionId.mid(index + 1);
+	if(inviteCode.isEmpty()) {
+		return false;
+	}
+
+	path.replace(
+		QRegularExpression(QStringLiteral(":%1(/?)\\z")
+							   .arg(QRegularExpression::escape(inviteCode))),
+		QStringLiteral("\\1"));
+
+	if(outInviteCode) {
+		*outInviteCode = inviteCode;
+	}
+	return true;
+}
+
 Server::Server(Client *client)
 	: QObject(client)
 	, m_client(client)

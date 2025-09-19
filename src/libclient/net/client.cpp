@@ -160,10 +160,13 @@ void Client::disconnectFromServer()
 
 QUrl Client::sessionUrl(bool includeUser) const
 {
-	QUrl url = m_lastUrl;
-	if(!includeUser)
+	if(includeUser) {
+		return m_lastUrl;
+	} else {
+		QUrl url = Server::stripInviteCodeFromUrl(m_lastUrl);
 		url.setUserInfo(QString());
-	return url;
+		return url;
+	}
 }
 
 void Client::handleConnect(const LoggedInParams &params)
