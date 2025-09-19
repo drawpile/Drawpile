@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
+#include "desktop/chat/chatlineeditmobile.h"
 #include <QKeyEvent>
 
-#include "desktop/chat/chatlineeditmobile.h"
-
 ChatLineEdit::ChatLineEdit(QWidget *parent)
-	: QLineEdit{parent}
+	: QLineEdit(parent)
 {
 	connect(this, &QLineEdit::returnPressed, this, &ChatLineEdit::sendMessage);
 }
@@ -15,6 +13,6 @@ void ChatLineEdit::sendMessage()
 	QString str = text();
 	if(!str.trimmed().isEmpty()) {
 		emit messageSent(str);
-		setText(QString{});
+		setText(QString());
 	}
 }
