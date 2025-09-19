@@ -4,6 +4,9 @@ extern "C" {
 }
 #include "libclient/canvas/acl.h"
 #include <QHash>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(lcDpAclState, "net.drawpile.aclstate", QtWarningMsg)
 
 namespace canvas {
 
@@ -80,14 +83,14 @@ void AclState::aclsChanged(
 	bool features = aclChangeFlags & DP_ACL_STATE_CHANGE_FEATURE_TIERS_BIT;
 	bool limits = aclChangeFlags & DP_ACL_STATE_CHANGE_FEATURE_LIMITS_BIT;
 
-#ifdef QT_DEBUG
-	char *dump = acls.dump();
-	qDebug(
-		"Acls %s:%s%s%s%s %s", reset ? "reset" : "changed",
-		users ? " users" : "", layers ? " layers" : "",
-		features ? " features" : "", limits ? " limits" : "", dump);
-	DP_free(dump);
-#endif
+	if(lcDpAclState().isDebugEnabled()) {
+		char *dump = acls.dump();
+		qCDebug(
+			lcDpAclState, "Acls %s:%s%s%s%s %s", reset ? "reset" : "changed",
+			users ? " users" : "", layers ? " layers" : "",
+			features ? " features" : "", limits ? " limits" : "", dump);
+		DP_free(dump);
+	}
 
 	if(users || reset) {
 		updateUserBits(acls, reset);
@@ -104,7 +107,7 @@ void AclState::aclsChanged(
 
 void AclState::resetLockSet(bool locked)
 {
-	qDebug("Reset lock %d", locked);
+	qCDebug(lcDpAclState, "Reset lock %d", locked);
 	d->resetLocked = locked;
 	emit resetLockChanged(locked);
 	emit localLockChanged(amLocked());
