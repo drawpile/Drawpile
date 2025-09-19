@@ -9,9 +9,11 @@ extern "C" {
 namespace canvas {
 
 ReconnectState::ReconnectState(
-	const HistoryIndex &hi, const QVector<User> &users,
-	const drawdance::AclState &aclState, QObject *parent)
+	const QJsonObject &sessionConfig, const HistoryIndex &hi,
+	const QVector<User> &users, const drawdance::AclState &aclState,
+	QObject *parent)
 	: QObject(parent)
+	, m_sessionConfig(sessionConfig)
 	, m_historyIndex(hi)
 	, m_users(users)
 	, m_aclState(DP_acl_state_new_clone(aclState.get(), aclState.localUserId()))

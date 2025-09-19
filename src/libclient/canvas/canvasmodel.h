@@ -9,6 +9,7 @@
 #include <QObject>
 #include <QPointer>
 
+class QJsonObject;
 struct DP_Player;
 
 namespace drawdance {
@@ -102,7 +103,9 @@ public:
 	QRect getPasteBounds(
 		const QSize &imageSize, const QPoint &defaultPoint, bool forceDefault);
 
-	ReconnectState *makeReconnectState(QObject *parent, const HistoryIndex &hi);
+	ReconnectState *makeReconnectState(
+		QObject *parent, const QJsonObject &sessionConfig,
+		const HistoryIndex &hi);
 
 	void connectedToServer(
 		uint8_t myUserId, bool join, bool compatibilityMode,

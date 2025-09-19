@@ -144,11 +144,12 @@ void CanvasModel::previewAnnotation(int id, const QRect &shape)
 	emit previewAnnotationRequested(id, shape);
 }
 
-ReconnectState *
-CanvasModel::makeReconnectState(QObject *parent, const HistoryIndex &hi)
+ReconnectState *CanvasModel::makeReconnectState(
+	QObject *parent, const QJsonObject &sessionConfig, const HistoryIndex &hi)
 {
 	ReconnectState *reconnectState = new ReconnectState(
-		hi, m_userlist->users(), m_paintengine->aclState(), parent);
+		sessionConfig, hi, m_userlist->users(), m_paintengine->aclState(),
+		parent);
 
 	MakeReconnectStateParams *params = new MakeReconnectStateParams{
 		QPointer<CanvasModel>(this), QPointer<ReconnectState>(reconnectState)};

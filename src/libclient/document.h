@@ -13,6 +13,7 @@ extern "C" {
 #include "libclient/net/banlistmodel.h"
 #include "libclient/net/client.h"
 #include "libclient/net/message.h"
+#include <QJsonObject>
 #include <QObject>
 #include <QQueue>
 #include <QStringListModel>
@@ -424,6 +425,7 @@ private:
 	bool m_generatingThumbnail = false;
 	QTimer *m_autosaveTimer;
 
+	QJsonObject m_cumulativeConfig;
 	bool m_sessionPersistent = false;
 	bool m_sessionClosed = false;
 	bool m_sessionAuthOnly = false;

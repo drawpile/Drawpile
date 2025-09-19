@@ -315,24 +315,27 @@ DP_LoadResult Document::loadRecording(
 
 void Document::onServerLogin(const net::LoggedInParams &params)
 {
-	canvas::ReconnectState *reconnectState = nullptr;
-	if(params.join) {
-		initCanvas();
-		if(params.skipCatchup) {
-			reconnectState = m_reconnectState;
-			m_reconnectState = nullptr;
+	QJsonObject sessionConfig;
+	{
+		canvas::ReconnectState *reconnectState = nullptr;
+		if(params.join) {
+			initCanvas();
+			if(params.skipCatchup) {
+				reconnectState = m_reconnectState;
+				m_reconnectState = nullptr;
+				sessionConfig = reconnectState->takeSessionConfig();
+			} else {
+				clearReconnectState();
+			}
 		} else {
 			clearReconnectState();
 		}
-	} else {
-		clearReconnectState();
+
+		Q_ASSERT(m_canvas);
+		m_canvas->connectedToServer(
+			m_client->myId(), params.join, params.compatibilityMode,
+			reconnectState);
 	}
-
-	Q_ASSERT(m_canvas);
-
-	m_canvas->connectedToServer(
-		m_client->myId(), params.join, params.compatibilityMode,
-		reconnectState);
 	m_banlist->setShowSensitive(m_client->isModerator());
 	m_authList->setOwnAuthId(params.authId);
 
@@ -346,6 +349,10 @@ void Document::onServerLogin(const net::LoggedInParams &params)
 	m_baseResetThreshold = 0;
 	emit serverLoggedIn(params.join, params.joinPassword);
 	emit compatibilityModeChanged(params.compatibilityMode);
+
+	if(!sessionConfig.isEmpty()) {
+		onSessionConfChanged(sessionConfig);
+	}
 }
 
 void Document::onServerDisconnect(
@@ -361,7 +368,8 @@ void Document::onServerDisconnect(
 		if(!localDisconnect && m_client->sessionSupportsSkipCatchup()) {
 			const HistoryIndex &hi = m_client->historyIndex();
 			if(hi.isValid()) {
-				m_reconnectState = m_canvas->makeReconnectState(this, hi);
+				m_reconnectState =
+					m_canvas->makeReconnectState(this, m_cumulativeConfig, hi);
 			}
 		}
 		m_canvas->disconnectedFromServer();
@@ -391,6 +399,12 @@ void Document::onLagMeasured(qint64 msec)
 
 void Document::onSessionConfChanged(const QJsonObject &config)
 {
+	for(QJsonObject::const_iterator it = config.constBegin(),
+									end = config.constEnd();
+		it != end; ++it) {
+		m_cumulativeConfig.insert(it.key(), it.value());
+	}
+
 	if(config.contains("persistent"))
 		setSessionPersistent(config["persistent"].toBool());
 
@@ -997,6 +1011,8 @@ void Document::autosaveNow()
 
 void Document::clearConfig()
 {
+	m_cumulativeConfig = QJsonObject();
+
 	setServerSupportsInviteCodes(false);
 	setSessionAllowIdleOverride(false);
 	setSessionAllowWeb(false);

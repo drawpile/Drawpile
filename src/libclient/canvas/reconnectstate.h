@@ -4,6 +4,7 @@
 #include "libclient/canvas/userlist.h"
 #include "libshared/util/historyindex.h"
 #include "libshared/util/qtcompat.h"
+#include <QJsonObject>
 #include <QObject>
 
 struct DP_AclState;
@@ -20,10 +21,14 @@ class ReconnectState : public QObject {
 	COMPAT_DISABLE_COPY_MOVE(ReconnectState)
 public:
 	ReconnectState(
-		const HistoryIndex &hi, const QVector<User> &users,
-		const drawdance::AclState &aclState, QObject *parent = nullptr);
+		const QJsonObject &sessionConfig, const HistoryIndex &hi,
+		const QVector<User> &users, const drawdance::AclState &aclState,
+		QObject *parent = nullptr);
 
 	~ReconnectState() override;
+
+	const QJsonObject &sessionConfig() const { return m_sessionConfig; }
+	QJsonObject &&takeSessionConfig() { return std::move(m_sessionConfig); }
 
 	const HistoryIndex &historyIndex() const { return m_historyIndex; }
 
@@ -41,6 +46,7 @@ public:
 	void clearDetach();
 
 private:
+	QJsonObject m_sessionConfig;
 	HistoryIndex m_historyIndex;
 	QVector<User> m_users;
 	DP_AclState *m_aclState;
