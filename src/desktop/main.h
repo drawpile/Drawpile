@@ -2,7 +2,9 @@
 #ifndef DRAWPILEAPP_H
 #define DRAWPILEAPP_H
 #include <QApplication>
+#include <QPair>
 #include <QPalette>
+#include <QVector>
 
 class MainWindow;
 class QCommandLineOption;
@@ -91,7 +93,9 @@ public:
 	// Runs a new Drawpile process with the given arguments. Returns if that
 	// succeeded. Depending on the platform, this may always fail, e.g. Android
 	// or the browser can't run stuff in new processes.
-	bool runInNewProcess(const QStringList &args);
+	bool runInNewProcess(
+		const QStringList &args,
+		const QVector<QPair<QString, QString>> &envVars = {});
 
 	// Checks if the given environment variable is set, non-empty and not set to
 	// an integer value that evalues to zero.

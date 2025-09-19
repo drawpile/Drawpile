@@ -3515,6 +3515,7 @@ void MainWindow::connectToSession(
 		prepareWindowReplacement();
 
 		QStringList args;
+		QVector<QPair<QString, QString>> envVars;
 		args.reserve(6);
 		args.append(QStringLiteral("--no-restore-window-position"));
 		if(m_singleSession) {
@@ -3530,6 +3531,8 @@ void MainWindow::connectToSession(
 			QUrl joinUrl = url;
 			joinUrl.setUserInfo(QString());
 			args.append(joinUrl.toString(QUrl::FullyEncoded));
+			envVars.append({QStringLiteral("DRAWPILE_JOIN_USER"), username});
+			envVars.append({QStringLiteral("DRAWPILE_JOIN_PASS"), password});
 		}
 
 		if(!autoRecordFile.isEmpty()) {
@@ -3537,7 +3540,7 @@ void MainWindow::connectToSession(
 			args.append(autoRecordFile);
 		}
 
-		bool newProcessStarted = dpApp().runInNewProcess(args);
+		bool newProcessStarted = dpApp().runInNewProcess(args, envVars);
 		if(newProcessStarted) {
 			emit windowReplacementFailed(nullptr);
 		} else {

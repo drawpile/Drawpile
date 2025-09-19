@@ -452,7 +452,15 @@ void StartDialog::autoJoin(const QUrl &url, const QString &autoRecordPath)
 		m_recordButton->setChecked(!autoRecordPath.isEmpty());
 		m_recordingFilename = autoRecordPath;
 	}
-	emit joinAddressSet(url.toString());
+
+	if(url.userInfo().isEmpty()) {
+		emit joinAddressSet(url.toString());
+	} else {
+		QUrl joinUrl = url;
+		joinUrl.setUserInfo(QString());
+		emit joinAddressSet(url.toString());
+	}
+
 	showPage(Entry::Join);
 	emit joinRequested(url);
 }

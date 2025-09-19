@@ -479,7 +479,8 @@ void DrawpileApp::setNewProcessArgs(
 #endif
 }
 
-bool DrawpileApp::runInNewProcess(const QStringList &args)
+bool DrawpileApp::runInNewProcess(
+	const QStringList &args, const QVector<QPair<QString, QString>> &envVars)
 {
 #ifdef HAVE_RUN_IN_NEW_PROCESS
 	// Escape hatch for testing and unexpected environments.
@@ -527,8 +528,25 @@ bool DrawpileApp::runInNewProcess(const QStringList &args)
 	combinedArgs.append(m_newProcessArgs);
 	combinedArgs.append(args);
 	qDebug() << "runInNewProcess:" << path << combinedArgs;
+
+	QProcess process;
+	process.setProgram(path);
+	process.setArguments(combinedArgs);
+
+	if(!envVars.isEmpty()) {
+		QProcessEnvironment pe = QProcessEnvironment::systemEnvironment();
+		for(const QPair<QString, QString> &p : envVars) {
+			if(p.second.isEmpty()) {
+				pe.remove(p.second);
+			} else {
+				pe.insert(p.first, p.second);
+			}
+		}
+		process.setProcessEnvironment(pe);
+	}
+
 	setOverrideCursor(Qt::WaitCursor);
-	bool started = QProcess::startDetached(path, combinedArgs);
+	bool started = process.startDetached();
 	if(started) {
 		// Give the user some kind of indication that there's another instance
 		// of Drawpile booting up. 3 seconds should be long enough to cover it
@@ -542,6 +560,7 @@ bool DrawpileApp::runInNewProcess(const QStringList &args)
 	}
 #else
 	Q_UNUSED(args);
+	Q_UNUSED(envVars);
 	return false;
 #endif
 }
@@ -1090,12 +1109,24 @@ static void applyRenderSettings(
 	}
 }
 
+static QUrl buildJoinUrl(const QString &address)
+{
+	QUrl url(address);
+	if(url.userName().isEmpty()) {
+		url.setUserName(QString::fromUtf8(qgetenv("DRAWPILE_JOIN_USER")));
+	}
+	if(url.password().isEmpty()) {
+		url.setPassword(QString::fromUtf8(qgetenv("DRAWPILE_JOIN_PASS")));
+	}
+	return url;
+}
+
 static void startApplication(DrawpileApp *app)
 {
 	StartupOptions startupOptions = initApp(*app);
 	if(!startupOptions.joinUrl.isEmpty()) {
 		app->joinUrl(
-			QUrl(startupOptions.joinUrl), startupOptions.autoRecordPath,
+			buildJoinUrl(startupOptions.joinUrl), startupOptions.autoRecordPath,
 			startupOptions.restoreWindowPosition, startupOptions.singleSession);
 	} else if(!startupOptions.openPath.isEmpty()) {
 		app->openPath(
@@ -1112,7 +1143,7 @@ static void startApplication(DrawpileApp *app)
 			arg.startsWith("wss://", Qt::CaseInsensitive);
 		if(looksLikeSessionUrl) {
 			app->joinUrl(
-				QUrl(arg), startupOptions.autoRecordPath,
+				buildJoinUrl(arg), startupOptions.autoRecordPath,
 				startupOptions.restoreWindowPosition,
 				startupOptions.singleSession);
 		} else {
