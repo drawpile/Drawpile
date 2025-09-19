@@ -1911,7 +1911,7 @@ bool DP_canvas_history_reconnect_state_apply(
     ch->used = chrs->used;
     ch->aia = chrs->aia;
 
-    replay_from_inc(ch, dc, state_index + 1, chrs->entries[state_index].state,
+    replay_from_inc(ch, dc, state_index, chrs->entries[state_index].state,
                     true);
     return true;
 }
