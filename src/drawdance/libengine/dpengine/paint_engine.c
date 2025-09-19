@@ -290,6 +290,10 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
         // a 100% progress message, we can use that to clear the flag.
         if (progress >= 100) {
             DP_atomic_set(&pe->just_reset, false);
+            if (!DP_canvas_history_save_point_make(pe->ch)) {
+                DP_warn("Error requesting snapshot after catchup: %s",
+                        DP_error());
+            }
         }
         break;
     }
