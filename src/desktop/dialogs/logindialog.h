@@ -68,7 +68,8 @@ private slots:
 		const QString &forUsername, const QString &prompt, const QString &host,
 		net::LoginHandler::LoginMethod intent);
 	void onExtAuthNeeded(
-		const QString &forUsername, const QUrl &url, const QString &host,
+		const QString &forUsername, const QString &withPassword,
+		const QUrl &url, const QString &host,
 		net::LoginHandler::LoginMethod intent);
 	void onExtAuthComplete(
 		bool success, net::LoginHandler::LoginMethod intent,

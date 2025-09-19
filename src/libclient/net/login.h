@@ -298,8 +298,8 @@ signals:
 	 * @param url ext auth server URL
 	 */
 	void extAuthNeeded(
-		const QString &currentUsername, const QUrl &url, const QString &host,
-		LoginMethod intent);
+		const QString &currentUsername, const QString &currentPassword,
+		const QUrl &url, const QString &host, LoginMethod intent);
 
 	/**
 	 * @brief External authentication request completed
@@ -373,6 +373,8 @@ private:
 		EXPECT_STARTTLS,
 		EXPECT_CLIENT_INFO_OK,
 		EXPECT_LOOKUP_OK,
+		WAIT_FOR_RULE_ACCEPTANCE,
+		WAIT_FOR_LOGIN_METHOD,
 		WAIT_FOR_LOGIN_PASSWORD,
 		WAIT_FOR_EXTAUTH,
 		EXPECT_IDENTIFIED,
@@ -401,6 +403,7 @@ private:
 	void handleRedirect(const QJsonObject &reply, bool late);
 	void presentRules();
 	void chooseLoginMethod();
+	void requestLoginMethodChoice();
 	void prepareToSendIdentity();
 	void sendIdentity();
 	void expectIdentified(const ServerReply &msg);
@@ -419,6 +422,9 @@ private:
 	void handleError(const QString &code, const QString &message);
 
 	QString takeAvatar();
+
+	void updateAddressSessionId(QString sessionId);
+	void updateAddressLoginMethod(LoginMethod loginMethod);
 
 	static LoginMethod parseLoginMethod(const QString &method);
 	static QString loginMethodToString(LoginMethod method);
@@ -503,6 +509,7 @@ private:
 	QVector<LoginMethod> m_loginMethods;
 	QUrl m_loginExtAuthUrl;
 	LoginMethod m_loginIntent = LoginHandler::LoginMethod::Unknown;
+	bool m_loginFromUrl = false;
 
 	// User flags
 	QStringList m_userFlags;

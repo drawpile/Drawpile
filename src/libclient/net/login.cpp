@@ -126,6 +126,8 @@ bool LoginHandler::receiveMessage(const ServerReply &msg)
 	case EXPECT_LOOKUP_OK:
 		expectLookupOk(msg);
 		break;
+	case WAIT_FOR_RULE_ACCEPTANCE:
+	case WAIT_FOR_LOGIN_METHOD:
 	case WAIT_FOR_LOGIN_PASSWORD:
 	case WAIT_FOR_EXTAUTH:
 	case REDIRECTING:
@@ -491,6 +493,7 @@ void LoginHandler::presentRules()
 	if(m_ruleText.isEmpty()) {
 		acceptRules(); // Nothing to present, skip.
 	} else {
+		setState(WAIT_FOR_RULE_ACCEPTANCE);
 		emit ruleAcceptanceNeeded(m_ruleText);
 	}
 }
@@ -503,11 +506,30 @@ void LoginHandler::acceptRules()
 void LoginHandler::chooseLoginMethod()
 {
 	if(m_loginMethods.isEmpty()) {
+		m_loginFromUrl = false;
 		prepareToSendIdentity();
 	} else {
-		emit loginMethodChoiceNeeded(
-			m_loginMethods, m_address, m_loginExtAuthUrl, m_loginInfo);
+		LoginMethod intendedMethod = parseLoginMethod(
+			QUrlQuery(m_address).queryItemValue(QStringLiteral("loginmethod")));
+		m_loginFromUrl = intendedMethod != LoginMethod::Unknown &&
+						 m_loginMethods.contains(intendedMethod) &&
+						 !m_address.userName().isEmpty() &&
+						 (intendedMethod == LoginMethod::Guest ||
+						  !m_address.password().isEmpty());
+		if(m_loginFromUrl) {
+			selectIdentity(
+				m_address.userName(), m_address.password(), intendedMethod);
+		} else {
+			requestLoginMethodChoice();
+		}
 	}
+}
+
+void LoginHandler::requestLoginMethodChoice()
+{
+	setState(WAIT_FOR_LOGIN_METHOD);
+	emit loginMethodChoiceNeeded(
+		m_loginMethods, m_address, m_loginExtAuthUrl, m_loginInfo);
 }
 
 void LoginHandler::prepareToSendIdentity()
@@ -545,6 +567,7 @@ void LoginHandler::selectIdentity(
 {
 	m_address.setUserName(username);
 	m_address.setPassword(password);
+	updateAddressLoginMethod(LoginMethod::Unknown);
 	m_loginIntent = intendedMethod;
 	sendIdentity();
 }
@@ -593,7 +616,7 @@ void LoginHandler::requestExtAuth(
 
 	QNetworkReply *reply =
 		networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
-	connect(reply, &QNetworkReply::finished, this, [reply, this]() {
+	connect(reply, &QNetworkReply::finished, this, [this, reply, password]() {
 		reply->deleteLater();
 
 		if(reply->error() != QNetworkReply::NoError) {
@@ -613,13 +636,19 @@ void LoginHandler::requestExtAuth(
 		if(status == "auth") {
 			setState(EXPECT_IDENTIFIED);
 			send("ident", {m_address.userName()}, {{"extauth", obj["token"]}});
+			m_address.setPassword(password);
 			emit extAuthComplete(
 				true, m_loginIntent, m_address.host(), m_address.userName());
 
 		} else if(status == "badpass") {
 			qCWarning(lcDpLogin, "Incorrect ext-auth password");
-			emit extAuthComplete(
-				false, m_loginIntent, m_address.host(), m_address.userName());
+			if(m_loginFromUrl) {
+				requestLoginMethodChoice();
+			} else {
+				emit extAuthComplete(
+					false, m_loginIntent, m_address.host(),
+					m_address.userName());
+			}
 
 		} else if(status == "outgroup") {
 			qCWarning(lcDpLogin, "Ext-auth error: group membership needed");
@@ -710,7 +739,11 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 					   (!extAuthFallback || intent == LoginMethod::ExtAuth) &&
 					   !inBrowserAuth();
 		if(isValid) {
-			emit loginMethodMismatch(intent, method, extAuthFallback);
+			if(m_loginFromUrl) {
+				requestLoginMethodChoice();
+			} else {
+				emit loginMethodMismatch(intent, method, extAuthFallback);
+			}
 		} else {
 			failLogin(tr("Invalid ident intent response."));
 		}
@@ -719,8 +752,12 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 
 	if(state == QStringLiteral("needPassword") && !inBrowserAuth()) {
 		// Looks like guest logins are not possible
-		m_needUserPassword = true;
-		prepareToSendIdentity();
+		if(m_loginFromUrl) {
+			requestLoginMethodChoice();
+		} else {
+			m_needUserPassword = true;
+			prepareToSendIdentity();
+		}
 		return;
 	}
 
@@ -766,8 +803,9 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 #endif
 
 		emit extAuthNeeded(
-			m_address.userName(), m_extAuthUrl, m_address.host(),
-			m_loginIntent);
+			m_address.userName(),
+			m_loginFromUrl ? m_address.password() : QString(), m_extAuthUrl,
+			m_address.host(), m_loginIntent);
 		return;
 	}
 
@@ -994,17 +1032,8 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 		m_mode == Mode::Join ? QStringLiteral("join") : QStringLiteral("host");
 	if(state == expectedState) {
 		QJsonObject join = msg.reply[QStringLiteral("join")].toObject();
-
-		QString sessionId = join.value(QStringLiteral("id")).toString();
-		if(m_mode == Mode::Join) {
-			QString inviteCode;
-			Server::stripInviteCodeFromUrl(m_address, &inviteCode);
-			if(!inviteCode.isEmpty()) {
-				sessionId.append(QStringLiteral(":"));
-				sessionId.append(inviteCode);
-			}
-		}
-		Server::setSessionIdOnUrl(m_address, sessionId);
+		updateAddressSessionId(join.value(QStringLiteral("id")).toString());
+		updateAddressLoginMethod(m_loginIntent);
 
 		int userid = join["user"].toInt();
 		if(userid < 1 || userid > 254) {
@@ -1464,6 +1493,30 @@ QString LoginHandler::takeAvatar()
 		m_avatar = QPixmap();
 	}
 	return result;
+}
+
+void LoginHandler::updateAddressSessionId(QString sessionId)
+{
+	if(m_mode == Mode::Join) {
+		QString inviteCode;
+		Server::stripInviteCodeFromUrl(m_address, &inviteCode);
+		if(!inviteCode.isEmpty()) {
+			sessionId.append(QStringLiteral(":"));
+			sessionId.append(inviteCode);
+		}
+	}
+	Server::setSessionIdOnUrl(m_address, sessionId);
+}
+
+void LoginHandler::updateAddressLoginMethod(LoginMethod loginMethod)
+{
+	QUrlQuery query(m_address);
+	QString key = QStringLiteral("loginmethod");
+	query.removeAllQueryItems(key);
+	if(m_loginIntent != LoginMethod::Unknown) {
+		query.addQueryItem(key, loginMethodToString(loginMethod));
+	}
+	m_address.setQuery(query);
 }
 
 LoginHandler::LoginMethod LoginHandler::parseLoginMethod(const QString &method)

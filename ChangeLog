@@ -27,6 +27,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Properly reconnect to sessions when using an invite code, rather than asking for a password the second time around.
  * Fix: Properly reconnect when using a WebSocket URL, rather than replacing the path inappropriately.
  * Fix: Don't incorrectly redo already gone undone commands after a series of undos and redos. Thanks Sinamer for reporting.
+ * Feature: Don't ask for login method, username and password again when reconnecting. Thanks Meru for reporting.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

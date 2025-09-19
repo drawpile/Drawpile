@@ -1061,8 +1061,8 @@ void LoginDialog::onLoginNeeded(
 }
 
 void LoginDialog::onExtAuthNeeded(
-	const QString &forUsername, const QUrl &url, const QString &host,
-	net::LoginHandler::LoginMethod intent)
+	const QString &forUsername, const QString &withPassword, const QUrl &url,
+	const QString &host, net::LoginHandler::LoginMethod intent)
 {
 	Q_ASSERT(url.isValid());
 	if(!forUsername.isEmpty()) {
@@ -1071,7 +1071,8 @@ void LoginDialog::onExtAuthNeeded(
 
 	if(intent == net::LoginHandler::LoginMethod::ExtAuth) {
 		d->loginHandler->requestExtAuth(
-			d->ui->username->text(), d->ui->password->text());
+			d->ui->username->text(),
+			withPassword.isEmpty() ? d->ui->password->text() : withPassword);
 	} else {
 		delayUpdate();
 		d->extauthurl = url;
