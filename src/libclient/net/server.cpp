@@ -147,7 +147,7 @@ QString Server::extractAutoJoinIdFromUrl(const QUrl &url)
 QString Server::extractAutoJoinId(const QString &path)
 {
 	if(path.length() > 1) {
-		QRegularExpression idre("\\A/?([a-zA-Z0-9:-]{1,64})/?\\z");
+		static QRegularExpression idre("\\A/?([a-zA-Z0-9:-]{1,64})/?\\z");
 		QRegularExpressionMatch m = idre.match(path);
 		if(m.hasMatch()) {
 			return m.captured(1);
