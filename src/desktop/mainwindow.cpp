@@ -3502,8 +3502,7 @@ void MainWindow::joinSession(const QUrl &url, const QString &autoRecordFile)
 void MainWindow::reconnectToSession(bool forceSameWindow)
 {
 	connectToSession(
-		m_doc->client()->sessionUrl(forceSameWindow || canReplace()), QString(),
-		forceSameWindow);
+		m_doc->client()->sessionUrl(true), QString(), forceSameWindow);
 }
 
 void MainWindow::connectToSession(
@@ -3522,7 +3521,17 @@ void MainWindow::connectToSession(
 			args.append(QStringLiteral("--single-session"));
 		}
 		args.append(QStringLiteral("--join"));
-		args.append(url.toString(QUrl::FullyEncoded));
+
+		QString username = url.userName();
+		QString password = url.password();
+		if(username.isEmpty() && password.isEmpty()) {
+			args.append(url.toString(QUrl::FullyEncoded));
+		} else {
+			QUrl joinUrl = url;
+			joinUrl.setUserInfo(QString());
+			args.append(joinUrl.toString(QUrl::FullyEncoded));
+		}
+
 		if(!autoRecordFile.isEmpty()) {
 			args.append(QStringLiteral("--auto-record"));
 			args.append(autoRecordFile);
