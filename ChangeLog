@@ -29,6 +29,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Don't incorrectly redo already gone undone commands after a series of undos and redos. Thanks Sinamer for reporting.
  * Feature: Don't ask for login method, username and password again when reconnecting. Thanks Meru for reporting.
  * Feature: Don't show chat until connecting to a session and remember the size of it even when it was hidden.
+ * Feature: Send button in chat, for virtual keyboards where hitting return is inconvenient.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

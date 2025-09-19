@@ -11,8 +11,22 @@ ChatLineEdit::ChatLineEdit(QWidget *parent)
 	m_kineticScroller = utils::bindKineticScrollingWith(
 		this, Qt::ScrollBarAlwaysOff, Qt::ScrollBarAlwaysOff);
 	connect(
+		this, &ChatLineEdit::textChanged, this,
+		&ChatLineEdit::updateMessageAvailable);
+	connect(
 		verticalScrollBar(), &QAbstractSlider::valueChanged, this,
 		&ChatLineEdit::fixScroll);
+}
+
+void ChatLineEdit::sendMessage()
+{
+	QString txt = toPlainText();
+	if(!txt.trimmed().isEmpty()) {
+		pushHistory(txt);
+		m_historypos = m_history.count();
+		setPlainText(QString());
+		emit messageSent(txt);
+	}
 }
 
 void ChatLineEdit::pushHistory(const QString &text)
@@ -51,13 +65,7 @@ void ChatLineEdit::keyPressEvent(QKeyEvent *event)
 	} else if(
 		(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) &&
 		!(event->modifiers() & Qt::ShiftModifier)) {
-		QString txt = toPlainText();
-		if(!txt.trimmed().isEmpty()) {
-			pushHistory(txt);
-			m_historypos = m_history.count();
-			setPlainText(QString());
-			emit messageSent(txt);
-		}
+		sendMessage();
 	} else {
 		QPlainTextEdit::keyPressEvent(event);
 	}
@@ -70,6 +78,15 @@ void ChatLineEdit::resizeEvent(QResizeEvent *)
 	// Line height depends on widget margins, which change after constructor is
 	// called.
 	resizeBasedOnLines();
+}
+
+void ChatLineEdit::updateMessageAvailable()
+{
+	bool available = !toPlainText().trimmed().isEmpty();
+	if(available != m_wasMessageAvailable) {
+		m_wasMessageAvailable = available;
+		emit messageAvailable(available);
+	}
 }
 
 void ChatLineEdit::fixScroll(int value)

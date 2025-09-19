@@ -12,9 +12,11 @@
 #include "libclient/utils/html.h"
 #include "libshared/net/servercmd.h"
 #include <QDateTime>
+#include <QHBoxLayout>
 #include <QIcon>
 #include <QLabel>
 #include <QMenu>
+#include <QPushButton>
 #include <QRegularExpression>
 #include <QResizeEvent>
 #include <QScrollBar>
@@ -90,6 +92,7 @@ struct ChatWidget::Private {
 	ChatWidget *const chatbox;
 	QTextBrowser *view = nullptr;
 	ChatLineEdit *myline = nullptr;
+	QPushButton *sendButton = nullptr;
 	ChatWidgetPinnedArea *pinned = nullptr;
 	QTabBar *tabs = nullptr;
 	QMenu *externalMenu = nullptr;
@@ -205,13 +208,32 @@ ChatWidget::ChatWidget(bool smallScreenMode, QWidget *parent)
 
 	layout->addWidget(d->view, 1);
 
+	QHBoxLayout *inputLayout = new QHBoxLayout;
+	inputLayout->setContentsMargins(0, 0, 0, 0);
+	inputLayout->setSpacing(0);
+	layout->addLayout(inputLayout);
+
 	d->myline = new ChatLineEdit(this);
-	layout->addWidget(d->myline);
+	inputLayout->addWidget(d->myline, 1);
+
+	d->sendButton =
+		new QPushButton(QIcon::fromTheme("drawpile_chat_send"), tr("Send"));
+	d->sendButton->setFlat(true);
+	d->sendButton->setEnabled(false);
+	d->sendButton->setSizePolicy(
+		{QSizePolicy::Preferred, QSizePolicy::Expanding});
+	inputLayout->addWidget(d->sendButton);
 
 	setLayout(layout);
 
 	connect(
 		d->myline, &ChatLineEdit::messageSent, this, &ChatWidget::sendMessage);
+	connect(
+		d->myline, &ChatLineEdit::messageAvailable, d->sendButton,
+		&QPushButton::setEnabled);
+	connect(
+		d->sendButton, &QPushButton::clicked, d->myline,
+		&ChatLineEdit::sendMessage);
 
 	d->chats[0] = Chat(this);
 	d->view->setDocument(d->chats[0].doc);
@@ -279,29 +301,50 @@ void ChatWidget::Private::updatePreserveModeUi()
 {
 	const bool preserve = preserveChat && currentChat == 0;
 
-	QString placeholder, color;
+	QString placeholder, color, hoverColor, pressedColor;
 	if(preserve) {
 		placeholder = tr("Chat (recorded)...");
 		color = "#da4453";
+		hoverColor = "#50191e";
+		pressedColor = "#78262e";
 	} else {
 		placeholder = tr("Chat...");
 		color = "#1d99f3";
+		hoverColor = "#062032";
+		pressedColor = "#093350";
 	}
 
 	// Set placeholder text and window style based on the mode
 	myline->setPlaceholderText(placeholder);
 
-	chatbox->setStyleSheet(QStringLiteral(
-							   "QTextEdit, QPlainTextEdit, QLineEdit {"
-							   "background-color: #232629;"
-							   "border: none;"
-							   "color: #eff0f1"
-							   "}"
-							   "QPlainTextEdit, QLineEdit {"
-							   "border-top: 1px solid %1;"
-							   "padding: 4px"
-							   "}")
-							   .arg(color));
+	chatbox->setStyleSheet(
+		QStringLiteral(
+			"QTextEdit, QPlainTextEdit, QLineEdit, QPushButton {\n"
+			"	background-color: #232629;\n"
+			"	border: none;\n"
+			"	color: #eff0f1;\n"
+			"}\n"
+			"QPlainTextEdit, QLineEdit, QPushButton {\n"
+			"	border-top: 1px solid %1;\n"
+			"}\n"
+			"QPlainTextEdit, QLineEdit {\n"
+			"	padding: 4px;\n"
+			"}\n"
+			"QPushButton {\n"
+			"	border-left: 1px solid %1;\n"
+			"	padding-left: 4px;\n"
+			"	padding-right: 4px;\n"
+			"}\n"
+			"QPushButton:enabled:hover {\n"
+			"	background-color: %2;\n"
+			"}\n"
+			"QPushButton:enabled:pressed {\n"
+			"	background-color: %3;\n"
+			"}\n"
+			"QPushButton:disabled {\n"
+			"	color: #50eff0f1;\n"
+			"}\n")
+			.arg(color, hoverColor, pressedColor));
 }
 void ChatWidget::setPreserveMode(bool preservechat)
 {
