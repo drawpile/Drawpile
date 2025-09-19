@@ -619,6 +619,10 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		brushMode == int(tools::BrushSettings::UnknownMode)
 			? int(tools::BrushSettings::NormalMode)
 			: brushMode);
+
+	if(!m_smallScreenMode && !m_chatbox->isCollapsed()) {
+		getAction("togglechat")->trigger();
+	}
 }
 
 MainWindow::~MainWindow()
@@ -1529,7 +1533,7 @@ void MainWindow::saveSplitterState()
 		return;
 	}
 	m_saveSplitterDebounce.stop();
-	if(!m_smallScreenMode) {
+	if(!m_smallScreenMode && !m_chatbox->isCollapsed()) {
 		dpApp().settings().setLastWindowViewState(m_splitter->saveState());
 	}
 }
@@ -5899,42 +5903,50 @@ void MainWindow::setupActions()
 	connect(
 		m_statusChatButton, &QToolButton::clicked, toggleChat,
 		&QAction::trigger);
-	// clang-format off
 
-	connect(m_chatbox, &widgets::ChatBox::requestUserInfo, this, &MainWindow::showUserInfoDialog);
-	connect(m_chatbox, &widgets::ChatBox::requestCurrentBrush, this, &MainWindow::requestCurrentBrush);
-	connect(m_chatbox, &widgets::ChatBox::expandedChanged, toggleChat, &QAction::setChecked);
-	connect(m_chatbox, &widgets::ChatBox::expandedChanged, m_statusChatButton, &QToolButton::hide);
-	connect(m_chatbox, &widgets::ChatBox::expandPlease, toggleChat, &QAction::trigger);
+	connect(
+		m_chatbox, &widgets::ChatBox::requestUserInfo, this,
+		&MainWindow::showUserInfoDialog);
+	connect(
+		m_chatbox, &widgets::ChatBox::requestCurrentBrush, this,
+		&MainWindow::requestCurrentBrush);
+	connect(
+		m_chatbox, &widgets::ChatBox::expandedChanged, toggleChat,
+		&QAction::setChecked);
+	connect(
+		m_chatbox, &widgets::ChatBox::expandedChanged, m_statusChatButton,
+		&QToolButton::hide);
+	connect(
+		m_chatbox, &widgets::ChatBox::expandPlease, toggleChat,
+		&QAction::trigger);
+
 	connect(toggleChat, &QAction::triggered, this, [this](bool show) {
 		if(m_smallScreenMode) {
 			handleToggleAction(int(drawingboard::ToggleItem::Action::Bottom));
 		} else {
-			QList<int> sizes;
 			if(show) {
-				QVariant oldHeight = m_chatbox->property("oldheight");
-				if(oldHeight.isNull()) {
-					const int h = height();
-					sizes << h * 2 / 3;
-					sizes << h / 3;
-				} else {
-					const int oh = oldHeight.toInt();
-					sizes << height() - oh;
-					sizes << oh;
+				QByteArray state = dpApp().settings().lastWindowViewState();
+				if(!state.isEmpty()) {
+					m_splitter->restoreState(state);
 				}
+
+				if(m_chatbox->isCollapsed()) {
+					int h = height();
+					m_splitter->setSizes({h * 2 / 3, h / 3});
+				}
+
 				m_chatbox->focusInput();
+				m_saveSplitterDebounce.start();
 			} else {
-				m_chatbox->setProperty("oldheight", m_chatbox->height());
-				sizes << 1;
-				sizes << 0;
+				saveSplitterState();
+				m_splitter->setSizes({1, 0});
 			}
-			m_splitter->setSizes(sizes);
-			m_saveSplitterDebounce.start();
 		}
 	});
-	connect(m_chatbox, &widgets::ChatBox::muteChanged, this, &MainWindow::setNotificationsMuted);
+	connect(
+		m_chatbox, &widgets::ChatBox::muteChanged, this,
+		&MainWindow::setNotificationsMuted);
 
-	// clang-format on
 	connect(
 		smallScreenSideToolbar, &QAction::triggered, this,
 		&MainWindow::updateSmallScreenToolBarVisibility);
