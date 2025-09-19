@@ -353,6 +353,10 @@ void Document::onServerLogin(const net::LoggedInParams &params)
 	if(!sessionConfig.isEmpty()) {
 		onSessionConfChanged(sessionConfig);
 	}
+
+	if(params.join) {
+		markDirty();
+	}
 }
 
 void Document::onServerDisconnect(
