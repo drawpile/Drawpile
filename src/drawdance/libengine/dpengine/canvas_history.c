@@ -1083,10 +1083,7 @@ static int mark_undone_actions_gone(DP_CanvasHistory *ch, int index,
         DP_Message *msg = entry->msg;
         if (DP_message_context_id(msg) == context_id) {
             DP_Undo undo = entry->undo;
-            if (undo == DP_UNDO_GONE) {
-                break; // Everything beyond this point is already gone.
-            }
-            else if (undo == DP_UNDO_UNDONE) {
+            if (undo == DP_UNDO_UNDONE) {
                 entry->undo = DP_UNDO_GONE;
                 // Undone undo points still have a state for redo purposes.
                 DP_CanvasState *cs = entry->state;
