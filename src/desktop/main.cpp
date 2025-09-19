@@ -809,16 +809,17 @@ static StartupOptions initApp(DrawpileApp &app)
 
 	QCommandLineOption blank(
 		QStringLiteral("blank"),
-		QStringLiteral("Start Drawpile with a blank canvas of the given width, "
-					   "height and background color in (a)rgb format without "
-					   "'#', separated by 'x'. Each element is may be left "
-					   "blank to use the default instead."),
+		QStringLiteral(
+			"Start Drawpile with a blank canvas of the given width, height and "
+			"background color in (a)rgb format without '#', separated by 'x'. "
+			"Each element is may be left blank to use the default instead."),
 		QStringLiteral("widthxheightxcolor"));
 	parser.addOption(blank);
 
 	QString startPageDescription =
-		QStringLiteral("Which page to show on the start dialog: guess (the "
-					   "default), %1 or none.")
+		QStringLiteral(
+			"Which page to show on the start dialog: guess (the default), %1 "
+			"or none.")
 			.arg(getStartPages().join(", "));
 	QCommandLineOption startPage(
 		"start-page", startPageDescription, "page", "guess");
@@ -826,9 +827,9 @@ static StartupOptions initApp(DrawpileApp &app)
 
 	QCommandLineOption singleSession(
 		"single-session",
-		QStringLiteral("Run in single-session mode, allowing only the joining "
-					   "of the given session. Intended for the browser version "
-					   "of Drawpile."));
+		QStringLiteral(
+			"Run in single-session mode, allowing only the joining of the "
+			"given session. Intended for the browser version of Drawpile."));
 	parser.addOption(singleSession);
 
 	QCommandLineOption noRestoreWindowPosition(
@@ -838,8 +839,9 @@ static StartupOptions initApp(DrawpileApp &app)
 
 	QCommandLineOption autoRecord(
 		QStringLiteral("auto-record"),
-		QStringLiteral("Automatically record to the given file. Only used if a "
-					   "session URL to join is also given."),
+		QStringLiteral(
+			"Automatically record to the given file. Only used if a session "
+			"URL to join is also given."),
 		QStringLiteral("path"));
 	parser.addOption(autoRecord);
 
@@ -874,8 +876,9 @@ static StartupOptions initApp(DrawpileApp &app)
 
 	if(parser.isSet(portableDataDir)) {
 		utils::paths::setWritablePath(parser.value(portableDataDir));
-		app.settings().reset(utils::paths::writablePath(
-			QStandardPaths::AppConfigLocation, "drawpile.ini"));
+		app.settings().reset(
+			utils::paths::writablePath(
+				QStandardPaths::AppConfigLocation, "drawpile.ini"));
 	}
 #ifdef Q_OS_WIN
 	else {
@@ -934,7 +937,8 @@ static StartupOptions initApp(DrawpileApp &app)
 #ifdef Q_OS_MACOS
 	// Mac specific settings
 	app.setAttribute(Qt::AA_DontShowIconsInMenus);
-	settings.bindQuitOnLastWindowClosed(&app, &QApplication::setQuitOnLastWindowClosed);
+	settings.bindQuitOnLastWindowClosed(
+		&app, &QApplication::setQuitOnLastWindowClosed);
 
 	// Global menu bar that is shown when no windows are open
 	MacMenu::instance();
@@ -980,8 +984,9 @@ static StartupOptions initApp(DrawpileApp &app)
 	startupOptions.blank = parser.isSet(blank);
 	if(startupOptions.blank) {
 		QRegularExpression blankRe(
-			QStringLiteral("\\A\\s*([0-9]*)(?:\\s*x\\s*([0-9]*)\\s*"
-						   "(?:x\\s*#?([0-9a-f]*))?)?\\s*\\z"),
+			QStringLiteral(
+				"\\A\\s*([0-9]*)(?:\\s*x\\s*([0-9]*)\\s*"
+				"(?:x\\s*#?([0-9a-f]*))?)?\\s*\\z"),
 			QRegularExpression::CaseInsensitiveOption);
 		QRegularExpressionMatch match = blankRe.match(parser.value(blank));
 		if(match.hasMatch()) {
