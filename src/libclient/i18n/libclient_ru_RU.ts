@@ -433,7 +433,7 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Изменить прозрачность</translation>
     </message>
     <message>
         <location line="+2"/>
