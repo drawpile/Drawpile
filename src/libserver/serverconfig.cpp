@@ -140,18 +140,20 @@ QJsonArray ServerConfig::getExternalBans() const
 {
 	QJsonArray bans;
 	for(const ExtBan &ban : m_extBans) {
-		bans.append(QJsonObject{
-			{QStringLiteral("id"), ban.id},
-			{QStringLiteral("ips"), banIpRangesToJson(ban.ips, true)},
-			{QStringLiteral("ipsexcluded"),
-			 banIpRangesToJson(ban.ipsExcluded, false)},
-			{QStringLiteral("system"), banSystemToJson(ban.system)},
-			{QStringLiteral("users"), banUsersToJson(ban.users)},
-			{QStringLiteral("expires"), formatDateTime(ban.expires)},
-			{QStringLiteral("comment"), ban.comment},
-			{QStringLiteral("reason"), ban.reason},
-			{QStringLiteral("enabled"), !m_disabledExtBanIds.contains(ban.id)},
-		});
+		bans.append(
+			QJsonObject{
+				{QStringLiteral("id"), ban.id},
+				{QStringLiteral("ips"), banIpRangesToJson(ban.ips, true)},
+				{QStringLiteral("ipsexcluded"),
+				 banIpRangesToJson(ban.ipsExcluded, false)},
+				{QStringLiteral("system"), banSystemToJson(ban.system)},
+				{QStringLiteral("users"), banUsersToJson(ban.users)},
+				{QStringLiteral("expires"), formatDateTime(ban.expires)},
+				{QStringLiteral("comment"), ban.comment},
+				{QStringLiteral("reason"), ban.reason},
+				{QStringLiteral("enabled"),
+				 !m_disabledExtBanIds.contains(ban.id)},
+			});
 	}
 	return bans;
 }
@@ -485,10 +487,11 @@ ServerConfig::banSystemToJson(const QVector<BanSystemIdentifier> &system)
 		for(const QString &sid : s.sids) {
 			sids.append(sid);
 		}
-		json.append(QJsonObject{
-			{QStringLiteral("sids"), sids},
-			{QStringLiteral("reaction"), reactionToString(s.reaction)},
-		});
+		json.append(
+			QJsonObject{
+				{QStringLiteral("sids"), sids},
+				{QStringLiteral("reaction"), reactionToString(s.reaction)},
+			});
 	}
 	return json;
 }
@@ -501,10 +504,11 @@ QJsonArray ServerConfig::banUsersToJson(const QVector<BanUser> &users)
 		for(long long id : u.ids) {
 			ids.append(id);
 		}
-		json.append(QJsonObject{
-			{QStringLiteral("ids"), ids},
-			{QStringLiteral("reaction"), reactionToString(u.reaction)},
-		});
+		json.append(
+			QJsonObject{
+				{QStringLiteral("ids"), ids},
+				{QStringLiteral("reaction"), reactionToString(u.reaction)},
+			});
 	}
 	return json;
 }
