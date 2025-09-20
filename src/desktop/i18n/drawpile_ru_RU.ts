@@ -62,7 +62,7 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation>Введите URL-адрес списка серверов</translation>
+        <translation type="unfinished">Введите URL-адрес списка серверов:</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -114,7 +114,7 @@
         <location line="-13"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+164"/>
         <source>Opacity: </source>
-        <translation>Прозрачность: </translation>
+        <translation type="unfinished">Непрозрачность: </translation>
     </message>
     <message>
         <location line="-76"/>
@@ -129,7 +129,7 @@
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+340"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сохранить альфу</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -147,7 +147,7 @@
     <message>
         <location line="-61"/>
         <source>Color Pickup: 1/</source>
-        <translation>Захват цвета: 1/</translation>
+        <translation>Смешивание цвета: 1/</translation>
     </message>
     <message>
         <location line="-30"/>
@@ -163,7 +163,7 @@
         <location line="+213"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-71"/>
         <source>Stabilizer: </source>
-        <translation>Стабилизация: </translation>
+        <translation>Стабилизатор: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -470,7 +470,7 @@
     <message>
         <location line="-262"/>
         <source>Add Avatar</source>
-        <translation>Добавить аватар…</translation>
+        <translation>Добавить аватар</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -500,7 +500,7 @@
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation>Импортировать кисти…</translation>
+        <translation>Импортировать кисти</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -7077,7 +7077,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Колесо мыши</translation>
     </message>
     <message>
         <location line="+2"/>
