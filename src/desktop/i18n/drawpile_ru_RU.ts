@@ -500,7 +500,7 @@
     <message>
         <location line="+15"/>
         <source>Import Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортировать кисти…</translation>
     </message>
     <message>
         <location line="+23"/>
