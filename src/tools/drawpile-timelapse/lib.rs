@@ -787,7 +787,8 @@ fn timelapse_recording(
 
         pe.render();
         match to_image(&mut pe, width, height, crop, interpolation) {
-            Ok((img, area)) => {
+            Ok((mut img, area)) => {
+                img.add_background(pe.effective_background_color());
                 last_area = area;
                 ctx.push(img)?;
                 initial = false;

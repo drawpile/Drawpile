@@ -263,6 +263,9 @@ void DP_blend_color8_to(DP_Pixel8 *DP_RESTRICT out,
                         const DP_Pixel8 *DP_RESTRICT dst, DP_UPixel8 color,
                         int pixel_count, uint8_t opacity);
 
+void DP_blend_color8_background(DP_Pixel8 *DP_RESTRICT dst, DP_UPixel8 color,
+                                int pixel_count);
+
 void DP_blend_pixels8(DP_Pixel8 *DP_RESTRICT dst,
                       const DP_Pixel8 *DP_RESTRICT src, int pixel_count,
                       uint8_t opacity);

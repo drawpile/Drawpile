@@ -1,14 +1,16 @@
 use super::{AclState, DrawContext, Image, Player};
 use crate::{
     dp_error_anyhow, msg::Message, DP_AnnotationList, DP_CanvasState, DP_DocumentMetadata,
-    DP_ImageScaleInterpolation, DP_LayerPropsList, DP_Message, DP_PaintEngine, DP_Pixel8,
-    DP_PlayerResult, DP_Rect, DP_SaveImageType, DP_SelectionSet, DP_Timeline,
-    DP_affected_area_in_bounds, DP_affected_area_make, DP_canvas_state_decref, DP_message_decref,
-    DP_message_type, DP_msg_local_change_new, DP_paint_engine_free_join,
-    DP_paint_engine_handle_inc, DP_paint_engine_new_inc, DP_paint_engine_playback_begin,
-    DP_paint_engine_playback_play, DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
+    DP_ImageScaleInterpolation, DP_LayerPropsList, DP_Message, DP_PaintEngine, DP_Pixel15,
+    DP_Pixel8, DP_PlayerResult, DP_Rect, DP_SaveImageType, DP_SelectionSet, DP_Timeline,
+    DP_affected_area_in_bounds, DP_affected_area_make, DP_canvas_state_background_tile_noinc,
+    DP_canvas_state_decref, DP_message_decref, DP_message_type, DP_msg_local_change_new,
+    DP_paint_engine_free_join, DP_paint_engine_handle_inc, DP_paint_engine_new_inc,
+    DP_paint_engine_playback_begin, DP_paint_engine_playback_play,
+    DP_paint_engine_playback_skip_by, DP_paint_engine_playback_step,
     DP_paint_engine_render_everything, DP_paint_engine_reveal_censored_set, DP_paint_engine_tick,
-    DP_paint_engine_view_canvas_state_inc, DP_save, DP_write_bigendian_uint32, DP_MSG_INTERVAL,
+    DP_paint_engine_view_canvas_state_inc, DP_pixel15_unpremultiply, DP_save, DP_tile_same_pixel,
+    DP_upixel15_to_8, DP_write_bigendian_uint32, DP_MSG_INTERVAL,
     DP_MSG_LOCAL_CHANGE_TYPE_BACKGROUND_TILE, DP_MSG_UNDO,
     DP_PAINT_ENGINE_FILTER_MESSAGE_FLAG_NO_TIME, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS,
     DP_SAVE_RESULT_SUCCESS, DP_TILE_SIZE,
@@ -108,6 +110,27 @@ impl PaintEngine {
 
     pub fn set_reveal_censored(&self, reveal_censored: bool) {
         unsafe { DP_paint_engine_reveal_censored_set(self.paint_engine, reveal_censored) }
+    }
+
+    pub fn effective_background_color(&self) -> u32 {
+        let mut color = 0u32;
+        unsafe {
+            let cs = DP_paint_engine_view_canvas_state_inc(self.paint_engine);
+            if !cs.is_null() {
+                let background_tile = DP_canvas_state_background_tile_noinc(cs);
+                let mut pixel = DP_Pixel15 {
+                    b: 0,
+                    g: 0,
+                    r: 0,
+                    a: 0,
+                };
+                if DP_tile_same_pixel(background_tile, &mut pixel) {
+                    color = DP_upixel15_to_8(DP_pixel15_unpremultiply(pixel)).color;
+                }
+                DP_canvas_state_decref(cs);
+            }
+        }
+        color
     }
 
     pub fn set_local_background_color(&self, background_color: u32) {

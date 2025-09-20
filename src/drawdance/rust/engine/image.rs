@@ -1,9 +1,10 @@
 use crate::{
     dp_error_anyhow, DP_CanvasState, DP_Image, DP_ImageScaleInterpolation, DP_Output, DP_UPixel8,
-    DP_blend_color8_to, DP_canvas_state_to_flat_image, DP_file_output_new_from_path, DP_image_free,
-    DP_image_height, DP_image_new, DP_image_new_subimage, DP_image_pixels, DP_image_scale_pixels,
-    DP_image_width, DP_image_write_jpeg, DP_image_write_png, DP_image_write_qoi,
-    DP_image_write_webp, DP_output_free, DP_FLAT_IMAGE_RENDER_FLAGS,
+    DP_blend_color8_background, DP_blend_color8_to, DP_canvas_state_to_flat_image,
+    DP_file_output_new_from_path, DP_image_free, DP_image_height, DP_image_new,
+    DP_image_new_subimage, DP_image_pixels, DP_image_scale_pixels, DP_image_width,
+    DP_image_write_jpeg, DP_image_write_png, DP_image_write_qoi, DP_image_write_webp,
+    DP_output_free, DP_FLAT_IMAGE_RENDER_FLAGS,
 };
 use anyhow::{anyhow, Result};
 use core::slice;
@@ -244,11 +245,22 @@ impl Image {
                 DP_image_pixels(self.image),
                 DP_image_pixels(src.image),
                 color,
-                (w * h) as i32,
+                (w * h) as c_int,
                 opacity,
             );
         }
         Ok(())
+    }
+
+    pub fn add_background(&mut self, color: u32) {
+        let color = DP_UPixel8 { color };
+        unsafe {
+            DP_blend_color8_background(
+                DP_image_pixels(self.image),
+                color,
+                (self.width() * self.height()) as c_int,
+            );
+        }
     }
 }
 

@@ -6372,6 +6372,33 @@ void DP_blend_color8_to(DP_Pixel8 *DP_RESTRICT out,
     }
 }
 
+void DP_blend_color8_background(DP_Pixel8 *DP_RESTRICT dst, DP_UPixel8 color,
+                                int pixel_count)
+{
+    if (color.a != 0) {
+        DP_Pixel8 src = DP_pixel8_premultiply(color);
+        for (int i = 0; i < pixel_count; ++i) {
+            DP_Pixel8 d = dst[i];
+            switch (d.a) {
+            case 0:
+                dst[i] = src;
+                break;
+            case 255:
+                break;
+            default: {
+                uint8_t sb1 = 255 - d.a;
+                dst[i] = (DP_Pixel8){
+                    .b = (uint8_t)(d.b + DP_pixel8_mul(src.b, sb1)),
+                    .g = (uint8_t)(d.g + DP_pixel8_mul(src.g, sb1)),
+                    .r = (uint8_t)(d.r + DP_pixel8_mul(src.r, sb1)),
+                    .a = (uint8_t)(d.a + DP_pixel8_mul(src.a, sb1)),
+                };
+            }
+            }
+        }
+    }
+}
+
 void DP_blend_pixels8(DP_Pixel8 *DP_RESTRICT dst,
                       const DP_Pixel8 *DP_RESTRICT src, int pixel_count,
                       uint8_t opacity)

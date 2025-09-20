@@ -1987,6 +1987,13 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_blend_color8_background(
+        dst: *mut DP_Pixel8,
+        color: DP_UPixel8,
+        pixel_count: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
     pub fn DP_blend_pixels8(
         dst: *mut DP_Pixel8,
         src: *const DP_Pixel8,
