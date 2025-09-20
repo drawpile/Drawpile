@@ -54,12 +54,12 @@
     <message>
         <location line="+2"/>
         <source>Loading assets</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка ресурсов</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Это может занять некоторое время…</translation>
     </message>
     <message>
         <location line="+1"/>
