@@ -157,7 +157,7 @@
     <message>
         <location line="-49"/>
         <source>Gain: </source>
-        <translation>Усиление: </translation>
+        <translation>Чувствительность: </translation>
     </message>
     <message>
         <location line="+213"/>
