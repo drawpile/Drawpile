@@ -79,7 +79,7 @@
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Настройка</translation>
     </message>
     <message>
         <location line="+1"/>
