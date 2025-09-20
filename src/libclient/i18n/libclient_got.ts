@@ -6,12 +6,12 @@
     <message>
         <location filename="../utils/avatarlistmodel.cpp" line="+114"/>
         <source>No avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌰𐌱𐌰𐍄𐌰𐍂</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐌱𐌰𐍄𐌰𐍂 𐌱𐌹𐌰𐌿𐌺𐌰𐌽…</translation>
     </message>
 </context>
 <context>
@@ -277,7 +277,7 @@
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐍆𐌰𐌽𐌰𐌽 𐌱𐌻𐌰𐌽𐌳𐌰𐌽 𐌹𐌽 𐍆𐍂𐌹𐍃𐌰𐌷𐍄𐌰𐌹 𐍆𐌻𐌰𐍄𐌰𐌹.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -418,12 +418,12 @@
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation>𐍆𐌰𐍂𐍅𐌰 𐌽𐌹𐌼𐌰𐌽</translation>
+        <translation>𐍆𐌰𐌹𐌷𐌴𐌹𐌽 𐌽𐌹𐌼𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation>𐌻𐌰𐌲𐌾𐍉𐌽 𐌽𐌹𐌼𐌰𐌽</translation>
+        <translation>𐌻𐌰𐌲 𐌽𐌹𐌼𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -483,7 +483,7 @@
     <message>
         <location line="+2"/>
         <source>Change Color Value</source>
-        <translation>𐍅𐌰𐌹𐍂𐌸 𐍆𐌰𐍂𐍅𐍉𐍃 𐌹𐌽𐌼𐌰𐌹𐌳𐌾𐌰𐌽</translation>
+        <translation>𐍅𐌰𐌹𐍂𐌸 𐍆𐌰𐌹𐌷𐌴𐌹𐌽𐍃 𐌹𐌽𐌼𐌰𐌹𐌳𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -742,7 +742,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Tablet Event Log (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐍀𐌹𐌻𐌳𐍉𐍃 𐍅𐌰𐌹𐌷𐍄𐌴 𐍅𐌰𐌿𐍂𐌸𐌰𐌽𐌰𐌹𐌶𐌴 𐌻𐌰𐌿𐌲 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1018,7 +1018,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Color Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐌹𐌷𐌴𐌹𐌽 𐌼𐌴𐌹𐌸𐌰𐌽</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1073,7 +1073,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌼𐌴𐌹𐌸𐌰𐌽 (𐍃𐌰𐌹)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1108,12 +1108,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="-114"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌰𐍆𐌷𐍂𐌰𐌹𐌽𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍆𐌰𐌹𐌷𐌴𐌹𐌽 𐌰𐍆𐌷𐍂𐌰𐌹𐌽𐌾𐌰𐌽</translation>
     </message>
     <message>
         <location line="+66"/>
@@ -1235,7 +1235,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐌱𐍂𐌿𐍃𐌺 &apos;%1&apos; 𐌲𐌰𐍃𐌰𐍄𐌾𐌰𐌽 𐌳𐌿 𐍃𐍉𐌺𐌽𐌹𐍅𐌰𐌿𐍂𐌳𐌰 &apos;%2&apos;.</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1310,7 +1310,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+11"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌽𐌹 𐌼𐌰𐌷𐍄𐌰 𐌱𐍂𐌿𐍃𐌺𐌹𐍃 𐌸𐌿𐌼𐌰𐌽𐌰𐌲𐌻 &apos;%1&apos; 𐌿𐍄𐌱𐌰𐌹𐍂𐌰𐌽</translation>
     </message>
 </context>
 <context>
@@ -1318,7 +1318,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/paintengine.cpp" line="+208"/>
         <source>Layer %1</source>
-        <translation>𐌻𐌰𐌲𐌾𐍉 %1</translation>
+        <translation>𐌻𐌰𐌲 %1</translation>
     </message>
 </context>
 <context>
@@ -1385,13 +1385,13 @@ Select a regular layer instead.</source>
         <location filename="../import/animationimporter.cpp" line="+30"/>
         <source>Frame %1</source>
         <extracomment>Title for imported animation layers.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐍄𐍂𐌰𐌼𐌰 %1</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>𐍄𐍂𐌰𐌼𐍉𐍃 %1</translation>
     </message>
 </context>
 <context>
@@ -1444,7 +1444,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation type="unfinished"></translation>
+        <translation>𐌲𐌰𐍃𐍄𐌹𐍃 𐌹𐌽𐍆𐌰𐌿𐍂𐌼𐌰𐍄𐍃𐌾𐍉</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1493,12 +1493,12 @@ Select a regular layer instead.</source>
     <message>
         <location line="-527"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐍀𐌰𐌿𐍂𐌽𐌰𐌶𐌰 𐍅𐌰𐍂𐍃𐍄.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>𐍃𐍀𐌰𐌿𐍂𐌽𐌰𐌶𐌰 𐍅𐌰𐍂𐍃𐍄 𐍆𐍂𐌰𐌼 %1.</translation>
     </message>
     <message>
         <location line="+5"/>
