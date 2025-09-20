@@ -510,7 +510,7 @@
     <message>
         <location line="+1"/>
         <source>All Supported Files (%1)</source>
-        <translation>Все Поддерживаемые Файлы (%1)</translation>
+        <translation>Все поддерживаемые файлы (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
