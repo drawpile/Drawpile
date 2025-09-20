@@ -19,27 +19,27 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+259"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не удалось распределить память. Это может произойти в некоторых браузерах при обновлении. Закройте эту страницу и браузер полностью, а затем повторите попытку.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выделенная память не является буфером SharedArrayBuffer, хотя ваш браузер поддерживает его. Возможно, вам нужно изменить настройки.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Логотип Drawpile</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Войти на drawpile.net</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка приложения</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -49,7 +49,7 @@
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation>Это должно занять всего несколько минут.</translation>
+        <translation>Запускается, это займёт немного времени…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -59,7 +59,7 @@
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished">Это может занять некоторое время…</translation>
+        <translation type="unfinished">Загрузка, это может занять некоторое время…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -69,42 +69,42 @@
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Инициализация, это может занять некоторое время…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: %1</source>
-        <translation>Ошибка запуска: %1</translation>
+        <translation>Ошибка запуска Drawpile: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished">Настройка</translation>
+        <translation type="unfinished">Настройка…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation>Критическая ошибка</translation>
+        <translation>Критическая ошибка:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Обычно это происходит потому, что ваш браузер устарел или вы просматриваете страницу через какой-либо встроенный браузер, например браузер чат-приложения, и вам нужно открыть ее правильно. Для получения дополнительной информации ознакомьтесь с &lt;a href=&quot;#&quot;&gt;этой страницей помощи&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Неверная ссылка на сеанс.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Однако вы попали сюда не по действительной ссылке на сессию Drawpile.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;In-app browser:&lt;/strong&gt; it looks like you opened Drawpile in an in-app browser.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;strong&gt;Браузер в приложении:&lt;/strong&gt; похоже, что вы открыли Drawpile в браузере в приложении.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -114,22 +114,22 @@
     <message>
         <location line="+3"/>
         <source>That usually doesn&apos;t work properly, please open this page in a real web browser instead.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Обычно это не работает должным образом, поэтому откройте эту страницу в настоящем веб-браузере.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Possibly incompatible browser:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Возможно, несовместимый браузер:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Possibly incompatible browser:&lt;/strong&gt; Firefox on Linux doesn&apos;t have support for pressure-sensitive pens on all systems. If you don&apos;t get pressure, consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Linux application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;strong&gt;Возможно, несовместимый браузер:&lt;/strong&gt; Firefox в Linux поддерживает чувствительные к нажатию ручки не на всех системах. Если у вас не получается нажимать, попробуйте использовать другой браузер или &lt;a href=&quot;#&quot;&gt;родное приложение Linux&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;strong&gt;Несовместимый браузер:&lt;/strong&gt; Firefox на Windows имеет некоторые проблемы с запуском Drawpile. Ввод текста и/или нажатие Ctrl+Z для отмены могут работать некорректно. Попробуйте использовать другой браузер или &lt;a href=&quot;#&quot;&gt;нативное приложение для Windows.&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -139,7 +139,7 @@
     <message>
         <location line="+6"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation>Язык:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -209,12 +209,12 @@
     <message>
         <location line="+3"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Запуск</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Start Anyway</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Запустить в любом случае</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -272,7 +272,7 @@
     <message>
         <location line="+6"/>
         <source>Unsupported format.</source>
-        <translation>Формат не поддерживается.</translation>
+        <translation>Неподдреживаемый формат.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -282,7 +282,7 @@
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation>Не удалось открыть файл для изменения.</translation>
+        <translation type="unfinished">Не удалось открыть файл для записи.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -292,7 +292,7 @@
     <message>
         <location line="+3"/>
         <source>Internal error during saving.</source>
-        <translation>Внутренняя ошибка при сохранении.</translation>
+        <translation>Внутренняя ошибка во время сохранения.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -362,7 +362,7 @@
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation>Колесико мыши</translation>
+        <translation>Колесо мыши</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -433,7 +433,7 @@
     <message>
         <location line="+2"/>
         <source>Change Brush Opacity</source>
-        <translation type="unfinished">Изменить прозрачность</translation>
+        <translation type="unfinished">Изменить непрозрачность кисти</translation>
     </message>
     <message>
         <location line="+2"/>
