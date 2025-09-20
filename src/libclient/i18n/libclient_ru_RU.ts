@@ -44,12 +44,12 @@
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Запуск…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>Это должно занять всего несколько минут.</translation>
     </message>
     <message>
         <location line="+2"/>
