@@ -6,6 +6,7 @@
 #include "desktop/widgets/netstatus.h"
 #include "desktop/widgets/toolmessage.h"
 #include "libclient/net/invitelistmodel.h"
+#include "libclient/net/server.h"
 #include "ui_invitedialog.h"
 #include <QAction>
 #include <QButtonGroup>
@@ -219,10 +220,13 @@ QString InviteDialog::buildWebInviteLink(
 	QString mangledHost =
 		host.contains(':') ? QStringLiteral("[%1]").arg(host) : host;
 
-	int port = url.port();
-	QString portSuffix = port > 0 && port != cmake_config::proto::port()
-							 ? QStringLiteral(":%1").arg(port)
-							 : QString{};
+	QString portSuffix;
+	if(!net::Server::looksLikeWebSocketUrl(url)) {
+		int port = url.port();
+		if(port > 0 && port != cmake_config::proto::port()) {
+			portSuffix = QStringLiteral(":%1").arg(port);
+		}
+	}
 
 	QStringList queryParams;
 	queryParams.append(
@@ -243,9 +247,11 @@ QString InviteDialog::buildWebInviteLink(
 	}
 
 	QUrl inviteUrl(
-		QStringLiteral("https://drawpile.net/invites/%1%2%3%4")
+		QStringLiteral("https://drawpile.net/invites/%1%2/%3%4")
 			.arg(
-				mangledHost, portSuffix, buildPath(url.path(), secret), query));
+				mangledHost, portSuffix,
+				buildPath(net::Server::extractSessionIdFromUrl(url), secret),
+				query));
 	if(includePassword) {
 		inviteUrl.setFragment(d->joinPassword);
 	}

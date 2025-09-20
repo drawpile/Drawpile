@@ -133,21 +133,14 @@ QString Server::extractAutoJoinIdFromUrl(const QUrl &url)
 	// Automatically join a session if the ID is included in the URL, either in
 	// the path or in the "session" query parameter. WebSocket URLs only support
 	// the latter, since they need the path to actually make a connection.
-	QString path;
-	if(!url.scheme().startsWith(QStringLiteral("ws"), Qt::CaseInsensitive)) {
-		path = url.path();
-	}
-	if(path.isEmpty()) {
-		path = QUrlQuery(url).queryItemValue(
-			QStringLiteral("session"), QUrl::FullyDecoded);
-	}
+	QString path = extractSessionIdFromUrl(url);
 	return extractAutoJoinId(path);
 }
 
 QString Server::extractAutoJoinId(const QString &path)
 {
 	if(path.length() > 1) {
-		static QRegularExpression idre("\\A/?([a-zA-Z0-9:-]{1,64})/?\\z");
+		static QRegularExpression idre("\\A/+([a-zA-Z0-9:-]{1,64})/+\\z");
 		QRegularExpressionMatch m = idre.match(path);
 		if(m.hasMatch()) {
 			return m.captured(1);
@@ -158,6 +151,23 @@ QString Server::extractAutoJoinId(const QString &path)
 		}
 	}
 	return QString();
+}
+
+QString Server::extractSessionIdFromUrl(const QUrl &url)
+{
+	QString path;
+	if(!looksLikeWebSocketUrl(url)) {
+		path = url.path();
+	}
+
+	if(path.isEmpty()) {
+		path = QUrlQuery(url).queryItemValue(
+			QStringLiteral("session"), QUrl::FullyDecoded);
+	}
+
+	static QRegularExpression re(QStringLiteral("\\A/+|/+\\z"));
+	path.replace(re, QString());
+	return path;
 }
 
 QUrl Server::stripInviteCodeFromUrl(const QUrl &url, QString *outInviteCode)
@@ -225,12 +235,17 @@ void Server::setSessionIdOnUrl(QUrl &url, QString &sessionId)
 	QUrlQuery query(url);
 	QString key = QStringLiteral("session");
 	query.removeAllQueryItems(key);
-	if(url.scheme().startsWith(QStringLiteral("ws"), Qt::CaseInsensitive)) {
+	if(looksLikeWebSocketUrl(url)) {
 		query.addQueryItem(key, sessionId);
 	} else {
 		url.setPath(QStringLiteral("/") + sessionId);
 	}
 	url.setQuery(query);
+}
+
+bool Server::looksLikeWebSocketUrl(const QUrl &url)
+{
+	return url.scheme().startsWith(QStringLiteral("ws"), Qt::CaseInsensitive);
 }
 
 Server::Server(Client *client)
