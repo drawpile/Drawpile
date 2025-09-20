@@ -64,7 +64,7 @@
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>Подготовка</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -174,7 +174,7 @@
     <message>
         <location line="+1"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверка обновлений…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -219,7 +219,7 @@
     <message>
         <location line="+1"/>
         <source>Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Версия:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -503,7 +503,7 @@
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Переключить оси</translation>
     </message>
 </context>
 <context>
