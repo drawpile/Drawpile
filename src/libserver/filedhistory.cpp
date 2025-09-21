@@ -281,7 +281,7 @@ void FiledHistory::flushJournal()
 void FiledHistory::removeOrArchive(QFile *f) const
 {
 	if(f) {
-		if(m_sessionServer && m_sessionServer->shouldArchive()) {
+		if(shouldArchive()) {
 			QString fileName = f->fileName();
 			if(!f->rename(fileName + QStringLiteral(".archived"))) {
 				qWarning(
@@ -293,6 +293,18 @@ void FiledHistory::removeOrArchive(QFile *f) const
 				"Error removing '%s': %s", qUtf8Printable(f->fileName()),
 				qUtf8Printable(f->errorString()));
 		}
+	}
+}
+
+bool FiledHistory::shouldArchive() const
+{
+	switch(m_archiveMode) {
+	case ArchiveMode::Disabled:
+		return false;
+	case ArchiveMode::Enabled:
+		return true;
+	default:
+		return m_sessionServer && m_sessionServer->shouldArchive();
 	}
 }
 
@@ -348,6 +360,18 @@ bool FiledHistory::load()
 
 		} else if(cmd == QByteArrayLiteral("TITLE")) {
 			m_title = params;
+
+		} else if(cmd == QByteArrayLiteral("ARCHIVE")) {
+			if(params.isEmpty()) {
+				m_archiveMode = ArchiveMode::Default;
+			} else if(params == QByteArrayLiteral("0")) {
+				m_archiveMode = ArchiveMode::Disabled;
+			} else if(params == QByteArrayLiteral("1")) {
+				m_archiveMode = ArchiveMode::Enabled;
+			} else {
+				qWarning() << id() << "unknown archive mode:"
+						   << QString::fromUtf8(params);
+			}
 
 		} else if(cmd == QByteArrayLiteral("FLAGS")) {
 			Flags flags;
@@ -718,6 +742,28 @@ bool FiledHistory::setTitle(const QString &title)
 		return true;
 	} else {
 		return false;
+	}
+}
+
+void FiledHistory::setArchiveMode(ArchiveMode archiveMode)
+{
+	if(archiveMode != m_archiveMode) {
+		QString suffix;
+		switch(archiveMode) {
+		case ArchiveMode::Default:
+			break;
+		case ArchiveMode::Disabled:
+			suffix = QStringLiteral(" 0");
+			break;
+		case ArchiveMode::Enabled:
+			suffix = QStringLiteral(" 1");
+			break;
+		default:
+			qWarning("Unhandled archive mode %d", int(archiveMode));
+			return;
+		}
+		m_archiveMode = archiveMode;
+		writeStringToJournal(QStringLiteral("ARCHIVE%1\n").arg(suffix));
 	}
 }
 

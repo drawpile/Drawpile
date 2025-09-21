@@ -66,6 +66,7 @@ public:
 	QByteArray opwordHash() const override { return m_opword; }
 	int maxUsers() const override { return m_maxUsers; }
 	QString title() const override { return m_title; }
+	ArchiveMode archiveMode() const override { return m_archiveMode; }
 	size_t autoResetThreshold() const override { return m_autoResetThreshold; }
 	Flags flags() const override { return m_flags; }
 
@@ -74,6 +75,7 @@ public:
 	void setOpwordHash(const QByteArray &opword) override;
 	void setMaxUsers(int max) override;
 	bool setTitle(const QString &title) override;
+	void setArchiveMode(ArchiveMode archiveMode) override;
 	void setFlags(Flags f) override;
 	void setAutoResetThreshold(size_t limit) override;
 	int nextCatchupKey() override;
@@ -201,6 +203,7 @@ private:
 	void flushRecording();
 	void flushJournal();
 	void removeOrArchive(QFile *f) const;
+	bool shouldArchive() const;
 
 	bool copyForkMessagesToResetStream(QString &outError);
 
@@ -224,6 +227,7 @@ private:
 	mutable QDateTime m_thumbnailGeneratedAt;
 	int m_maxUsers;
 	size_t m_autoResetThreshold;
+	ArchiveMode m_archiveMode = ArchiveMode::Default;
 	Flags m_flags;
 	int m_nextCatchupKey;
 	QStringList m_announcements;

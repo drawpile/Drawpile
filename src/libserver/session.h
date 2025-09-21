@@ -560,6 +560,7 @@ private:
 	QJsonArray getListingsDescription() const;
 	QJsonObject getUserDescription(const Client *user) const;
 	QJsonArray getInvitesDescription(bool full = false) const;
+	QJsonValue getArchiveDescription() const;
 
 	SessionHistory *m_history;
 	ServerConfig *m_config;

@@ -56,6 +56,14 @@ public:
 	void setMaxUsers(int max) override { m_maxUsers = qBound(1, max, 254); }
 	QString title() const override { return m_title; }
 	bool setTitle(const QString &title) override;
+	ArchiveMode archiveMode() const override
+	{
+		return ArchiveMode::Unsupported;
+	}
+	void setArchiveMode(ArchiveMode archiveMode) override
+	{
+		Q_UNUSED(archiveMode); // Can't archive in memory.
+	}
 	Flags flags() const override { return m_flags; }
 	void setFlags(Flags f) override { m_flags = f; }
 	void setAutoResetThreshold(size_t limit) override

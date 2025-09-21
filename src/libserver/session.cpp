@@ -829,6 +829,27 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		changes << QStringLiteral("changed password");
 	}
 
+	if(changedByModeratorOrAdmin && conf.contains(QStringLiteral("archive")) &&
+	   m_history->archiveMode() != SessionHistory::ArchiveMode::Unsupported) {
+		QJsonValue archiveValue = conf.value(QStringLiteral("archive"));
+		SessionHistory::ArchiveMode archiveMode;
+		QString archiveName;
+		if(archiveValue.isBool()) {
+			if(archiveValue.toBool()) {
+				archiveMode = SessionHistory::ArchiveMode::Enabled;
+				archiveName = QStringLiteral("enabled");
+			} else {
+				archiveMode = SessionHistory::ArchiveMode::Disabled;
+				archiveName = QStringLiteral("disabled");
+			}
+		} else {
+			archiveMode = SessionHistory::ArchiveMode::Default;
+			archiveName = QStringLiteral("default");
+		}
+		m_history->setArchiveMode(archiveMode);
+		changes.append(QStringLiteral("set archive mode %1").arg(archiveName));
+	}
+
 	m_history->setFlags(flags);
 
 	if(!changes.isEmpty()) {
@@ -2311,6 +2332,11 @@ QJsonObject Session::getDescription(bool full, bool invite) const
 
 		o.insert(
 			QStringLiteral("thumbnail"), m_history->getThumbnailDescription());
+
+		if(QJsonValue archive = getArchiveDescription();
+		   !archive.isUndefined()) {
+			o.insert(QStringLiteral("archive"), archive);
+		}
 	}
 
 	return o;
@@ -2366,6 +2392,20 @@ QJsonArray Session::getInvitesDescription(bool full) const
 		invites.append(it->toJson(full));
 	}
 	return invites;
+}
+
+QJsonValue Session::getArchiveDescription() const
+{
+	switch(m_history->archiveMode()) {
+	case SessionHistory::ArchiveMode::Default:
+		return QJsonValue(QJsonValue::Null);
+	case SessionHistory::ArchiveMode::Disabled:
+		return QJsonValue(false);
+	case SessionHistory::ArchiveMode::Enabled:
+		return QJsonValue(true);
+	default:
+		return QJsonValue(QJsonValue::Undefined);
+	}
 }
 
 QJsonObject Session::getExportBanList() const
