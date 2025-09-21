@@ -507,6 +507,11 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 		m_inviteList->update(
 			config.value(QStringLiteral("invitelist")).toArray());
 	}
+
+	if(config.contains(QStringLiteral("maxSize"))) {
+		m_sessionHistoryMaxSize =
+			config.value(QStringLiteral("maxSize")).toInt();
+	}
 }
 
 void Document::onAutoresetQueried(int maxSize, const QString &payload)

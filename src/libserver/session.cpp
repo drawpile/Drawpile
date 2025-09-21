@@ -1244,6 +1244,10 @@ void Session::sendUpdatedSessionProperties()
 			QStringLiteral("resetThresholdMin"),
 			m_config->getConfigSize(config::MinimumAutoresetThreshold));
 	}
+	if(supportsSizeLimit()) {
+		config.insert(
+			QStringLiteral("maxSize"), int(m_history->currentSizeLimit()));
+	}
 	addToHistory(net::ServerReply::makeSessionConf(config, getHistoryIndex()));
 	emit sessionAttributeChanged(this);
 }
