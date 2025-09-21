@@ -74,7 +74,7 @@ private:
 		bool operator<(const AutoResetCandidate &other) const;
 	};
 
-	void sendStatusUpdate();
+	void sendStatusUpdate(bool forceHistoryIndex);
 	void resetLastStatusUpdate() { m_lastStatusUpdate.setRemainingTime(10000); }
 
 	void checkAutoResetQuery();

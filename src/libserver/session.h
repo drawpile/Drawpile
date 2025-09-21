@@ -479,7 +479,7 @@ protected:
 
 	void sendUpdatedSessionProperties();
 
-	QString getHistoryIndex() const;
+	QString getHistoryIndex(bool force = false, bool decrement = false) const;
 
 private:
 	class AdminChat;

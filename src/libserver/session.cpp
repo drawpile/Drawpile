@@ -1631,10 +1631,14 @@ void Session::handleClientMessage(Client &client, const net::Message &msg)
 	addClientMessage(client, msg);
 }
 
-QString Session::getHistoryIndex() const
+QString Session::getHistoryIndex(bool force, bool decrement) const
 {
-	if(supportsSkipCatchup()) {
-		return history()->historyIndex().toString();
+	if((force || m_state == State::Running) && supportsSkipCatchup()) {
+		HistoryIndex hi = history()->historyIndex();
+		if(decrement) {
+			hi.decrementHistoryPos(); // For messages not added to the history.
+		}
+		return hi.toString();
 	} else {
 		return QString();
 	}

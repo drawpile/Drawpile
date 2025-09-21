@@ -228,7 +228,8 @@ struct ServerReply {
 
 	static net::Message makeOutOfSpace();
 
-	static net::Message makeStatusUpdate(int size);
+	static net::Message
+	makeStatusUpdate(int size, const QString &historyIndex = QString());
 
 	static net::Message makeInviteCreated(const QString &secret);
 

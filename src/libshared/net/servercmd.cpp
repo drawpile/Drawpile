@@ -586,11 +586,17 @@ net::Message ServerReply::makeOutOfSpace()
 	return make({{QStringLiteral("type"), QStringLiteral("outofspace")}});
 }
 
-net::Message ServerReply::makeStatusUpdate(int size)
+net::Message
+ServerReply::makeStatusUpdate(int size, const QString &historyIndex)
 {
-	return make(
-		{{QStringLiteral("type"), QStringLiteral("status")},
-		 {QStringLiteral("size"), size}});
+	QJsonObject data = {
+		{QStringLiteral("type"), QStringLiteral("status")},
+		{QStringLiteral("size"), size}};
+	if(!historyIndex.isEmpty()) {
+		// Status updates aren't added to the history, so this doesn't use hidx.
+		data.insert(QStringLiteral("hid*"), historyIndex);
+	}
+	return make(data);
 }
 
 net::Message ServerReply::makeInviteCreated(const QString &secret)

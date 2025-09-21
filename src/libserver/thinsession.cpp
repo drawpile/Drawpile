@@ -80,7 +80,7 @@ void ThinSession::addToHistory(const net::Message &msg)
 
 	// Regular history size status updates
 	if(m_lastStatusUpdate.hasExpired()) {
-		sendStatusUpdate();
+		sendStatusUpdate(false);
 	}
 }
 
@@ -520,7 +520,7 @@ void ThinSession::resolvePendingStreamedReset(const QString &cause)
 				tsc->addToHistoryPosition(offset);
 			}
 			clearAutoReset();
-			sendStatusUpdate();
+			sendStatusUpdate(false);
 			sendUpdatedSessionProperties();
 		} else {
 			log(Log()
@@ -536,7 +536,7 @@ void ThinSession::resolvePendingStreamedReset(const QString &cause)
 void ThinSession::onSessionInitialized()
 {
 	clearAutoReset();
-	sendStatusUpdate();
+	sendStatusUpdate(true);
 }
 
 void ThinSession::onSessionReset()
@@ -545,8 +545,9 @@ void ThinSession::onSessionReset()
 	directToAll(
 		net::ServerReply::makeCatchup(
 			history()->lastIndex() - history()->firstIndex(), 0));
-	sendStatusUpdate();
-	history()->addMessage(net::ServerReply::makeCaughtUp(0, getHistoryIndex()));
+	sendStatusUpdate(false);
+	history()->addMessage(
+		net::ServerReply::makeCaughtUp(0, getHistoryIndex(true)));
 }
 
 void ThinSession::onClientJoin(Client *client, bool host, long long historyPos)
@@ -684,10 +685,13 @@ void ThinSession::onStateChanged()
 	clearAutoReset();
 }
 
-void ThinSession::sendStatusUpdate()
+void ThinSession::sendStatusUpdate(bool forceHistoryIndex)
 {
+	SessionHistory *hist = history();
 	directToAll(
-		net::ServerReply::makeStatusUpdate(int(history()->sizeInBytes())));
+		net::ServerReply::makeStatusUpdate(
+			int(hist->sizeInBytes()),
+			getHistoryIndex(forceHistoryIndex, true)));
 	resetLastStatusUpdate();
 }
 

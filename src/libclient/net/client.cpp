@@ -434,20 +434,30 @@ void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 	const QJsonObject &reply = msg.reply;
 
 	if(m_supportsSkipCatchup) {
+		// hidx is in messages that get added to the history.
+		long long delta = 1LL;
 		HistoryIndex hi = HistoryIndex::fromString(
 			msg.reply.value(QStringLiteral("hidx")).toString());
+
+		if(!hi.isValid()) {
+			// hid* is in messages that not added to the history.
+			delta = 0LL;
+			hi = HistoryIndex::fromString(
+				msg.reply.value(QStringLiteral("hid*")).toString());
+		}
+
 		if(hi.isValid()) {
 			if(m_historyIndex.isValid() &&
 			   m_historyIndex.sessionId() == hi.sessionId() &&
 			   m_historyIndex.startId() == hi.startId()) {
 				long long prevHistoryPos = m_historyIndex.historyPos();
 				long long nextHistoryPos = hi.historyPos();
-				if(prevHistoryPos + 1LL != nextHistoryPos) {
+				if(prevHistoryPos + delta != nextHistoryPos) {
 					// Miscounted messages somewhere, this would lead to a
 					// desync when reconnecting and skipping catchup.
 					qWarning(
-						"Unexpected history position %lld after %lld",
-						nextHistoryPos, prevHistoryPos);
+						"Unexpected history position %lld at %lld (+%lld)",
+						nextHistoryPos, prevHistoryPos, delta);
 				}
 			}
 			m_historyIndex = hi;

@@ -23,6 +23,7 @@ public:
 	long long historyPos() const { return m_historyPos; }
 
 	void incrementHistoryPos() { ++m_historyPos; }
+	void decrementHistoryPos() { --m_historyPos; }
 
 private:
 	QString m_sessionId;
