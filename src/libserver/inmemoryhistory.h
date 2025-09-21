@@ -64,15 +64,14 @@ public:
 	{
 		Q_UNUSED(archiveMode); // Can't archive in memory.
 	}
+	size_t overrideSizeLimit() const override { return m_overrideSizeLimit; }
+	void setOverrideSizeLimit(size_t overrideSizeLimit) override
+	{
+		m_overrideSizeLimit = clampSizeLimit(overrideSizeLimit);
+	}
 	Flags flags() const override { return m_flags; }
 	void setFlags(Flags f) override { m_flags = f; }
-	void setAutoResetThreshold(size_t limit) override
-	{
-		if(sizeLimit() == 0)
-			m_autoReset = limit;
-		else
-			m_autoReset = qMin(size_t(sizeLimit() * 0.9), limit);
-	}
+	void setAutoResetThreshold(size_t limit) override { m_autoReset = limit; }
 	size_t autoResetThreshold() const override { return m_autoReset; }
 	int nextCatchupKey() override;
 
@@ -126,6 +125,7 @@ private:
 	QByteArray m_thumbnail;
 	QDateTime m_thumbnailGeneratedAt;
 	int m_maxUsers;
+	size_t m_overrideSizeLimit = 0;
 	size_t m_autoReset;
 	Flags m_flags;
 	int m_nextCatchupKey;

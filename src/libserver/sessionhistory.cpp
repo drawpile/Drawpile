@@ -66,14 +66,28 @@ SessionHistory::SessionHistory(const QString &id, QObject *parent)
 
 bool SessionHistory::hasSpaceFor(size_t bytes, size_t extra) const
 {
-	return m_sizeLimit <= 0 || m_sizeInBytes + bytes <= m_sizeLimit + extra;
+	size_t sizeLimit = currentSizeLimit();
+	return sizeLimit <= 0 || m_sizeInBytes + bytes <= sizeLimit + extra;
 }
 
-void SessionHistory::setSizeLimit(size_t limit)
+void SessionHistory::setBaseSizeLimit(size_t baseSizeLimit)
 {
-	// The network protocol requires conversions to int, but values over 4GiB
-	// are totally out of whack for a session size limit anyway.
-	m_sizeLimit = qMin(limit, size_t(std::numeric_limits<int>::max()));
+	m_baseSizeLimit = clampSizeLimit(baseSizeLimit);
+}
+
+size_t SessionHistory::currentSizeLimit() const
+{
+	size_t overrideLimit = overrideSizeLimit();
+	if(overrideLimit == 0) {
+		return m_baseSizeLimit;
+	} else {
+		return overrideLimit;
+	}
+}
+
+size_t SessionHistory::clampSizeLimit(size_t sizeLimit)
+{
+	return qMin(sizeLimit, size_t(std::numeric_limits<int>::max()));
 }
 
 HistoryIndex SessionHistory::historyIndex() const
@@ -189,7 +203,9 @@ bool SessionHistory::reset(const net::MessageList &newHistory)
 	for(const net::Message &msg : newHistory) {
 		newSize += msg.length();
 	}
-	if(m_sizeLimit > 0 && newSize > m_sizeLimit) {
+
+	size_t sizeLimit = currentSizeLimit();
+	if(sizeLimit > 0 && newSize > sizeLimit) {
 		return false;
 	}
 
@@ -253,7 +269,8 @@ bool SessionHistory::receiveResetStreamMessage(net::Message &msg)
 	}
 
 	size_t newSize = m_resetStreamSize + msg.length();
-	if(m_sizeLimit > 0 && newSize > m_sizeLimit) {
+	size_t sizeLimit = currentSizeLimit();
+	if(sizeLimit > 0 && newSize > sizeLimit) {
 		m_resetStreamAddError = StreamResetAddResult::OutOfSpace;
 		return false;
 	}
@@ -415,8 +432,9 @@ size_t SessionHistory::effectiveAutoResetThreshold() const
 	// Zero means autoreset is not enabled
 	if(t > 0) {
 		t += m_autoResetBaseSize;
-		if(m_sizeLimit > 0) {
-			t = qMin(t, size_t(m_sizeLimit * 0.9));
+		size_t sizeLimit = currentSizeLimit();
+		if(sizeLimit > 0) {
+			t = qMin(t, size_t(sizeLimit * 0.9));
 		}
 	}
 	return t;

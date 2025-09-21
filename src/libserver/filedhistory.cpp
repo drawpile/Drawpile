@@ -373,6 +373,9 @@ bool FiledHistory::load()
 						   << QString::fromUtf8(params);
 			}
 
+		} else if(cmd == QByteArrayLiteral("LIMIT")) {
+			m_overrideSizeLimit = clampSizeLimit(size_t(params.toULongLong()));
+
 		} else if(cmd == QByteArrayLiteral("FLAGS")) {
 			Flags flags;
 			for(const QByteArray &f : params.split(' ')) {
@@ -719,11 +722,9 @@ void FiledHistory::setMaxUsers(int max)
 
 void FiledHistory::setAutoResetThreshold(size_t limit)
 {
-	const size_t newLimit =
-		sizeLimit() == 0 ? limit : qMin(size_t(sizeLimit() * 0.9), limit);
-	if(newLimit != m_autoResetThreshold) {
-		m_autoResetThreshold = newLimit;
-		writeStringToJournal(QStringLiteral("AUTORESET %1\n").arg(newLimit));
+	if(limit != m_autoResetThreshold) {
+		m_autoResetThreshold = limit;
+		writeStringToJournal(QStringLiteral("AUTORESET %1\n").arg(limit));
 	}
 }
 
@@ -764,6 +765,15 @@ void FiledHistory::setArchiveMode(ArchiveMode archiveMode)
 		}
 		m_archiveMode = archiveMode;
 		writeStringToJournal(QStringLiteral("ARCHIVE%1\n").arg(suffix));
+	}
+}
+
+void FiledHistory::setOverrideSizeLimit(size_t overrideSizeLimit)
+{
+	size_t clampedLimit = clampSizeLimit(overrideSizeLimit);
+	if(clampedLimit != m_overrideSizeLimit) {
+		m_overrideSizeLimit = clampedLimit;
+		writeStringToJournal(QStringLiteral("LIMIT %1\n").arg(clampedLimit));
 	}
 }
 
@@ -1005,7 +1015,7 @@ bool FiledHistory::resolveResetStream(
 		return false;
 	}
 
-	size_t sizeLimitInBytes = sizeLimit();
+	size_t sizeLimitInBytes = currentSizeLimit();
 	if(sizeLimitInBytes != 0) {
 		size_t sizeInBytes = (endPos - m_resetStreamForkPos) +
 							 (streamPos - m_resetStreamHeaderPos);

@@ -111,7 +111,7 @@ bool InMemoryHistory::resolveResetStream(
 	}
 	outSizeInBytes = sizeInBytes;
 
-	size_t sizeLimitInBytes = sizeLimit();
+	size_t sizeLimitInBytes = currentSizeLimit();
 	if(sizeLimitInBytes == 0 || sizeInBytes <= sizeLimitInBytes) {
 		for(int i = m_resetStreamIndex; i < end; ++i) {
 			m_resetStream.append(m_history[i]);

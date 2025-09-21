@@ -856,6 +856,22 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		changes.append(QStringLiteral("set archive mode %1").arg(archiveName));
 	}
 
+	if(changedByModeratorOrAdmin &&
+	   conf.contains(QStringLiteral("overrideSize"))) {
+		QJsonValue overrideSizeValue =
+			conf.value(QStringLiteral("overrideSize"));
+		int overrideSize = -1;
+		if(overrideSizeValue.isDouble()) {
+			overrideSize = overrideSizeValue.toInt();
+		} else if(overrideSizeValue.isString()) {
+			overrideSize =
+				ServerConfig::parseSizeString(overrideSizeValue.toString());
+		}
+
+		m_history->setOverrideSizeLimit(qMax(0, overrideSize));
+		changes.append(QStringLiteral("changed override size limit"));
+	}
+
 	m_history->setFlags(flags);
 
 	if(!changes.isEmpty()) {
@@ -1643,8 +1659,8 @@ void Session::addToInitStream(const net::Message &msg)
 		// Well behaved clients should be aware of the history limit and not
 		// exceed it. Except when the size limit gets changed to a lower value
 		// while a reset is in progress, but not really worth handling that.
-		if(m_history->sizeLimit() > 0 &&
-		   m_resetstreamsize > m_history->sizeLimit()) {
+		size_t sizeLimit = m_history->currentSizeLimit();
+		if(sizeLimit > 0 && m_resetstreamsize > sizeLimit) {
 			Client *resetter = getClientById(m_initUser);
 			if(resetter)
 				resetter->disconnectClient(
@@ -2140,9 +2156,11 @@ void Session::onConfigValueChanged(const ConfigKey &key)
 		sendUpdatedSessionProperties();
 	} else if(
 		key.index == config::SessionSizeLimit.index && supportsSizeLimit()) {
-		m_history->setSizeLimit(
+		m_history->setBaseSizeLimit(
 			m_config->getConfigSize(config::SessionSizeLimit));
-		sendUpdatedSessionProperties();
+		if(!m_history->hasOverrideSizeLimit()) {
+			sendUpdatedSessionProperties();
+		}
 	}
 }
 
@@ -2319,7 +2337,12 @@ QJsonObject Session::getDescription(bool full, bool invite) const
 
 	if(full) {
 		// Full descriptions includes detailed info for server admins.
-		o[QStringLiteral("maxSize")] = int(m_history->sizeLimit());
+		o.insert(QStringLiteral("maxSize"), int(m_history->currentSizeLimit()));
+		o.insert(QStringLiteral("baseSize"), int(m_history->baseSizeLimit()));
+		o.insert(
+			QStringLiteral("overrideSize"),
+			int(m_history->overrideSizeLimit()));
+
 		o[QStringLiteral("resetThreshold")] =
 			int(m_history->autoResetThreshold());
 		o[QStringLiteral("effectiveResetThreshold")] =

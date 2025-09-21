@@ -35,6 +35,7 @@ Unreleased Version 2.3.0-pre
  * Server Feature: Allow toggling archive mode on individual sessions instead of using server default. Thanks Bluestrings for suggesting.
  * Server Fix: Properly treat autoreset threshold with zero value as no autoreset.
  * Server Feature: Add server setting for a minimum autoreset threshold, to avoid users setting it to a too low value and causing excessive resets. Thanks Bluestrings for suggesting.
+ * Server Feature: Allow overriding session size limit for individual sessions. Thanks Bluestrings for suggesting.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

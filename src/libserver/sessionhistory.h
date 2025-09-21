@@ -203,6 +203,9 @@ public:
 	virtual ArchiveMode archiveMode() const = 0;
 	virtual void setArchiveMode(ArchiveMode archiveMode) = 0;
 
+	virtual size_t overrideSizeLimit() const = 0;
+	virtual void setOverrideSizeLimit(size_t overrideSizeLimit) = 0;
+
 	//! Get the persistent session flags
 	virtual Flags flags() const = 0;
 	bool hasFlag(Flag flag) const { return flags().testFlag(flag); }
@@ -366,22 +369,33 @@ public:
 	virtual void terminate() = 0;
 
 	/**
-	 * @brief Set the hard size limit for the history.
+	 * @brief Get the base size limit, disregarding the override size limit.
+	 */
+	size_t baseSizeLimit() const { return m_baseSizeLimit; }
+
+	/**
+	 * @brief Set the base size limit for the history.
 	 *
-	 * The size limit is checked when new messages are added to the session.
+	 * May be overriden by the override size limit. It is checked when new
+	 * messages are added to the session.
 	 *
 	 * See also the autoreset threshold.
 	 *
 	 * @param limit maximum size in bytes or 0 for no limit
 	 */
-	void setSizeLimit(size_t limit);
+	void setBaseSizeLimit(size_t baseSizeLimit);
 
 	/**
-	 * @brief Get the session size limit
+	 * @brief Get the session size limit.
 	 *
-	 * If zero, the size is not limited.
+	 * This is either the override size limit if non-zero or the base size
+	 * limit. If that is zero, the size is not limited.
 	 */
-	size_t sizeLimit() const { return m_sizeLimit; }
+	size_t currentSizeLimit() const;
+
+	bool hasOverrideSizeLimit() const { return overrideSizeLimit() != 0; }
+
+	static size_t clampSizeLimit(size_t sizeLimit);
 
 	/**
 	 * @brief Get the size of the history in bytes
@@ -612,7 +626,7 @@ private:
 	QDateTime m_startTime;
 
 	size_t m_sizeInBytes = 0;
-	size_t m_sizeLimit = 0;
+	size_t m_baseSizeLimit = 0;
 	size_t m_autoResetBaseSize = 0;
 	long long m_lastResetTime;
 	long long m_firstIndex = 0;

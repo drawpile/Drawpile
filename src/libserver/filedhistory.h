@@ -67,6 +67,7 @@ public:
 	int maxUsers() const override { return m_maxUsers; }
 	QString title() const override { return m_title; }
 	ArchiveMode archiveMode() const override { return m_archiveMode; }
+	size_t overrideSizeLimit() const override { return m_overrideSizeLimit; }
 	size_t autoResetThreshold() const override { return m_autoResetThreshold; }
 	Flags flags() const override { return m_flags; }
 
@@ -76,6 +77,7 @@ public:
 	void setMaxUsers(int max) override;
 	bool setTitle(const QString &title) override;
 	void setArchiveMode(ArchiveMode archiveMode) override;
+	void setOverrideSizeLimit(size_t overrideSizeLimit) override;
 	void setFlags(Flags f) override;
 	void setAutoResetThreshold(size_t limit) override;
 	int nextCatchupKey() override;
@@ -226,6 +228,7 @@ private:
 	mutable QByteArray m_thumbnail;
 	mutable QDateTime m_thumbnailGeneratedAt;
 	int m_maxUsers;
+	size_t m_overrideSizeLimit = 0;
 	size_t m_autoResetThreshold;
 	ArchiveMode m_archiveMode = ArchiveMode::Default;
 	Flags m_flags;

@@ -16,7 +16,7 @@ ThinSession::ThinSession(
 	: Session(history, config, announcements, parent)
 	, m_autoResetTimer(new QTimer(this))
 {
-	history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
+	history->setBaseSizeLimit(config->getConfigSize(config::SessionSizeLimit));
 	history->setAutoResetThreshold(
 		config->getConfigSize(config::AutoresetThreshold));
 	sendUpdatedSessionProperties();
@@ -737,7 +737,7 @@ void ThinSession::checkAutoResetQuery()
 	// autoreset capabilities for candidate picking and streamed autoresets.
 	m_autoResetPayload = generateAutoResetPayload();
 	net::Message reqMsg = net::ServerReply::makeResetQuery(
-		int(history()->sizeLimit()), m_autoResetPayload);
+		int(history()->currentSizeLimit()), m_autoResetPayload);
 
 	for(Client *c : clients()) {
 		if(c->isOperator() && !c->isGhost()) {
@@ -885,12 +885,13 @@ void ThinSession::triggerAutoReset()
 			Client::ResetFlag::Awaiting | Client::ResetFlag::Streaming);
 		c->sendDirectMessage(
 			net::ServerReply::makeStreamedResetRequest(
-				int(history()->sizeLimit()), m_autoResetPayload,
+				int(history()->currentSizeLimit()), m_autoResetPayload,
 				QStringLiteral("gzip1")));
 	} else {
 		c->setResetFlags(Client::ResetFlag::Awaiting);
 		c->sendDirectMessage(
-			net::ServerReply::makeResetRequest(int(history()->sizeLimit())));
+			net::ServerReply::makeResetRequest(
+				int(history()->currentSizeLimit())));
 	}
 }
 
