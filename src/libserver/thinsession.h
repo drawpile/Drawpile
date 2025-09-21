@@ -36,6 +36,7 @@ public:
 
 	bool supportsAutoReset() const override { return true; }
 	bool supportsSkipCatchup() const override { return true; }
+	bool supportsSizeLimit() const override { return true; }
 
 	QJsonObject
 	getDescription(bool full = false, bool invite = false) const override;

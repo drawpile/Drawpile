@@ -32,6 +32,7 @@ public:
 
 	bool supportsAutoReset() const override;
 	bool supportsSkipCatchup() const override;
+	bool supportsSizeLimit() const override;
 	void readyToAutoReset(
 		const AutoResetResponseParams &params, const QString &payload) override;
 

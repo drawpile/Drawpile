@@ -1641,7 +1641,8 @@ void Session::addToInitStream(const net::Message &msg)
 		m_resetstream.append(msg);
 
 		// Well behaved clients should be aware of the history limit and not
-		// exceed it.
+		// exceed it. Except when the size limit gets changed to a lower value
+		// while a reset is in progress, but not really worth handling that.
 		if(m_history->sizeLimit() > 0 &&
 		   m_resetstreamsize > m_history->sizeLimit()) {
 			Client *resetter = getClientById(m_initUser);
@@ -2136,6 +2137,11 @@ void Session::onConfigValueChanged(const ConfigKey &key)
 	} else if(
 		key.index == config::MinimumAutoresetThreshold.index &&
 		supportsAutoReset()) {
+		sendUpdatedSessionProperties();
+	} else if(
+		key.index == config::SessionSizeLimit.index && supportsSizeLimit()) {
+		m_history->setSizeLimit(
+			m_config->getConfigSize(config::SessionSizeLimit));
 		sendUpdatedSessionProperties();
 	}
 }

@@ -37,6 +37,11 @@ bool BuiltinSession::supportsSkipCatchup() const
 	return false;
 }
 
+bool BuiltinSession::supportsSizeLimit() const
+{
+	return false;
+}
+
 void BuiltinSession::readyToAutoReset(
 	const AutoResetResponseParams &params, const QString &payload)
 {

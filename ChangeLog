@@ -31,7 +31,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Don't show chat until connecting to a session and remember the size of it even when it was hidden.
  * Feature: Send button in chat, for virtual keyboards where hitting return is inconvenient.
  * Feature: Make drawpile-timelapse command-line tool fill the background with the canvas background color instead of black.
- * Server Fix: Apply archive setting immediately, not when a session is started.
+ * Server Fix: Apply archive and size limit setting immediately, not only when a session is started.
  * Server Feature: Allow toggling archive mode on individual sessions instead of using server default. Thanks Bluestrings for suggesting.
  * Server Fix: Properly treat autoreset threshold with zero value as no autoreset.
  * Server Feature: Add server setting for a minimum autoreset threshold, to avoid users setting it to a too low value and causing excessive resets. Thanks Bluestrings for suggesting.
