@@ -611,12 +611,12 @@ private:
 	IdQueue m_idqueue;
 	QDateTime m_startTime;
 
-	size_t m_sizeInBytes;
-	size_t m_sizeLimit;
-	size_t m_autoResetBaseSize;
+	size_t m_sizeInBytes = 0;
+	size_t m_sizeLimit = 0;
+	size_t m_autoResetBaseSize = 0;
 	long long m_lastResetTime;
-	long long m_firstIndex;
-	long long m_lastIndex;
+	long long m_firstIndex = 0;
+	long long m_lastIndex = -1;
 
 	ResetStreamState m_resetStreamState = ResetStreamState::None;
 	uint8_t m_resetStreamCtxId = 0;
