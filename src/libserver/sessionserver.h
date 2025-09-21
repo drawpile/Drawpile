@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+#ifndef LIBSERVER_SESSIONSERVER_H
+#define LIBSERVER_SESSIONSERVER_H
 #include "libserver/jsonapi.h"
 #include "libserver/sessions.h"
 #include "libshared/net/protover.h"
@@ -200,3 +202,5 @@ private:
 };
 
 }
+
+#endif
