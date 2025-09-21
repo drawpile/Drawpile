@@ -703,7 +703,8 @@ void ThinSession::checkAutoResetQuery()
 
 	// Only query for an autoreset if the threshold has been reached.
 	size_t autoResetThreshold = history()->effectiveAutoResetThreshold();
-	if(history()->sizeInBytes() <= autoResetThreshold) {
+	if(autoResetThreshold > 0 &&
+	   history()->sizeInBytes() <= autoResetThreshold) {
 		return;
 	}
 

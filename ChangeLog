@@ -33,6 +33,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Make drawpile-timelapse command-line tool fill the background with the canvas background color instead of black.
  * Server Fix: Apply archive setting immediately, not when a session is started.
  * Server Feature: Allow toggling archive mode on individual sessions instead of using server default. Thanks Bluestrings for suggesting.
+ * Server Fix: Properly treat autoreset threshold with zero value as no autoreset.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.
