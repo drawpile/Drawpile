@@ -947,15 +947,15 @@ bool FiledHistory::resolveResetStream(
 	qint64 streamEnd = m_resetStreamRecording->size();
 	if(prevPos != endPos || endPos < m_resetStreamForkPos ||
 	   streamPos != streamEnd || streamPos < m_resetStreamHeaderPos) {
-		outError =
-			QStringLiteral("invalid stream offsets, recording pos %1 size %2 "
-						   "fork %3, stream pos %4 size %5 fork %6")
-				.arg(prevPos)
-				.arg(endPos)
-				.arg(m_resetStreamForkPos)
-				.arg(streamPos)
-				.arg(streamEnd)
-				.arg(m_resetStreamHeaderPos);
+		outError = QStringLiteral(
+					   "invalid stream offsets, recording pos %1 size %2 "
+					   "fork %3, stream pos %4 size %5 fork %6")
+					   .arg(prevPos)
+					   .arg(endPos)
+					   .arg(m_resetStreamForkPos)
+					   .arg(streamPos)
+					   .arg(streamEnd)
+					   .arg(m_resetStreamHeaderPos);
 		return false;
 	}
 
