@@ -2,9 +2,11 @@
 #ifndef DP_SERVER_FILEDHISTORY_H
 #define DP_SERVER_FILEDHISTORY_H
 #include "libserver/sessionhistory.h"
+#include "libserver/sessionserver.h"
 #include "libshared/net/protover.h"
 #include "libshared/util/qtcompat.h"
 #include <QDir>
+#include <QPointer>
 #include <QVector>
 
 struct DP_BinaryReader;
@@ -24,36 +26,32 @@ public:
 	 * @param alias ID alias
 	 * @param version full protocol version
 	 * @param founder name of the session founder
+	 * @param sessionServer optional session server to figure out whether to
+	 * archive the session
 	 * @param parent
 	 * @return FiledHistory object or nullptr on error
 	 */
 	static FiledHistory *startNew(
 		const QDir &dir, const QString &id, const QString &alias,
 		const protocol::ProtocolVersion &version, const QString &founder,
+		const QPointer<SessionServer> &sessionServer,
 		QObject *parent = nullptr);
 
 	/**
 	 * @brief Load a session from file
 	 * @param path
+	 * @param sessionServer dito to ::startNew
 	 * @param parent
 	 * @return
 	 */
-	static FiledHistory *load(const QString &path, QObject *parent = nullptr);
+	static FiledHistory *load(
+		const QString &path, const QPointer<SessionServer> &sessionServer,
+		QObject *parent = nullptr);
 
 	/**
 	 * @brief Close the currently open block (if any) and start a new one
 	 */
 	void closeBlock();
-
-	/**
-	 * @brief Enable archival mode
-	 *
-	 * In archive mode, files are not deleted when session ends or is reset.
-	 * Instead, ".archived" is appended to the end of the journal file on
-	 * termination.
-	 * @param archive
-	 */
-	void setArchive(bool archive) { m_archive = archive; }
 
 	//! Get the metadata journal file name for the given session ID
 	static QString journalFilename(const QString &id);
@@ -183,9 +181,11 @@ private:
 	FiledHistory(
 		const QDir &dir, QFile *journal, const QString &id,
 		const QString &alias, const protocol::ProtocolVersion &version,
-		const QString &founder, QObject *parent);
+		const QString &founder, const QPointer<SessionServer> &sessionServer,
+		QObject *parent);
 	FiledHistory(
-		const QDir &dir, QFile *journal, const QString &id, QObject *parent);
+		const QDir &dir, QFile *journal, const QString &id,
+		const QPointer<SessionServer> &sessionServer, QObject *parent);
 
 	bool create();
 	bool load();
@@ -211,6 +211,7 @@ private:
 	QFile *m_recording;
 	DP_BinaryReader *m_reader;
 	DP_BinaryWriter *m_writer;
+	QPointer<SessionServer> m_sessionServer;
 
 	// Current state:
 	QString m_alias;
@@ -229,7 +230,6 @@ private:
 
 	mutable BlockCache m_blockCache;
 	int m_fileCount;
-	bool m_archive;
 	mutable bool m_thumbnailValid = false;
 
 	QString m_resetStreamFileName;

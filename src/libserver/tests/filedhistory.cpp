@@ -45,7 +45,7 @@ private slots:
 		auto testId = Ulid::make().toString();
 		{
 			std::unique_ptr<FiledHistory> fh{FiledHistory::startNew(
-				m_dir, testId, idAlias, protover, founder)};
+				m_dir, testId, idAlias, protover, founder, nullptr)};
 			QVERIFY(fh.get());
 			fh->setPasswordHash(passwordhash::hash(password));
 			fh->setOpwordHash(passwordhash::hash(opword));
@@ -89,7 +89,8 @@ private slots:
 
 		{
 			std::unique_ptr<FiledHistory> fh{FiledHistory::load(
-				m_dir.absoluteFilePath(FiledHistory::journalFilename(testId)))};
+				m_dir.absoluteFilePath(FiledHistory::journalFilename(testId)),
+				nullptr)};
 			QVERIFY(fh.get());
 
 			QCOMPARE(fh->id(), testId);
@@ -157,7 +158,7 @@ private slots:
 	{
 		QString file = makeTestRecording();
 		std::unique_ptr<FiledHistory> fh{
-			FiledHistory::load(m_dir.absoluteFilePath(file))};
+			FiledHistory::load(m_dir.absoluteFilePath(file), nullptr)};
 
 		net::MessageList msgs;
 		int lastIdx;
@@ -192,7 +193,7 @@ private slots:
 	{
 		QString file = makeTestRecording();
 		std::unique_ptr<FiledHistory> fh{
-			FiledHistory::load(m_dir.absoluteFilePath(file))};
+			FiledHistory::load(m_dir.absoluteFilePath(file), nullptr)};
 
 		// Read the whole recording to load it into the cache
 		fh->getBatch(-1);
@@ -227,7 +228,7 @@ private slots:
 
 		// The first two messages should still be readable
 		std::unique_ptr<FiledHistory> fh{
-			FiledHistory::load(m_dir.absoluteFilePath(file))};
+			FiledHistory::load(m_dir.absoluteFilePath(file), nullptr)};
 
 		net::MessageList msgs;
 		int lastIdx;
@@ -245,7 +246,7 @@ private slots:
 	{
 		QString file = makeTestRecording();
 		std::unique_ptr<FiledHistory> fh{
-			FiledHistory::load(m_dir.absoluteFilePath(file))};
+			FiledHistory::load(m_dir.absoluteFilePath(file), nullptr)};
 
 		auto testMsg = net::makeChatMessage(1, 0, 0, QStringLiteral("test0"));
 
@@ -283,7 +284,7 @@ private slots:
 	{
 		QString file = makeTestRecording();
 		std::unique_ptr<FiledHistory> fh{
-			FiledHistory::load(m_dir.absoluteFilePath(file))};
+			FiledHistory::load(m_dir.absoluteFilePath(file), nullptr)};
 
 		QCOMPARE(fh->lastIndex(), 2);
 
@@ -337,7 +338,7 @@ private slots:
 		{
 			std::unique_ptr<FiledHistory> fh{FiledHistory::startNew(
 				m_dir, id, QString(), protocol::ProtocolVersion::current(),
-				"test")};
+				"test", nullptr)};
 
 			fh->addMessage(
 				net::makeJoinMessage(1, 0, QStringLiteral("u1"), QByteArray()));
@@ -349,7 +350,8 @@ private slots:
 		}
 		{
 			std::unique_ptr<FiledHistory> fh{FiledHistory::load(
-				m_dir.absoluteFilePath(FiledHistory::journalFilename(id)))};
+				m_dir.absoluteFilePath(FiledHistory::journalFilename(id)),
+				nullptr)};
 			QVERIFY(fh.get());
 
 			net::MessageList msgs;
@@ -371,7 +373,7 @@ private:
 		auto id = Ulid::make().toString();
 		std::unique_ptr<FiledHistory> fh{FiledHistory::startNew(
 			m_dir, id, QString(), protocol::ProtocolVersion::current(),
-			"test")};
+			"test", nullptr)};
 
 		fh->addMessage(net::makeChatMessage(1, 0, 0, QStringLiteral("test1")));
 		fh->addMessage(net::makeChatMessage(1, 0, 0, QStringLiteral("test2")));

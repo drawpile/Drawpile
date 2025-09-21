@@ -27,13 +27,14 @@ static const qint64 MAX_BLOCK_SIZE = 0xffff * 10;
 FiledHistory::FiledHistory(
 	const QDir &dir, QFile *journal, const QString &id, const QString &alias,
 	const protocol::ProtocolVersion &version, const QString &founder,
-	QObject *parent)
+	const QPointer<SessionServer> &sessionServer, QObject *parent)
 	: SessionHistory(id, parent)
 	, m_dir(dir)
 	, m_journal(journal)
 	, m_recording(nullptr)
 	, m_reader(nullptr)
 	, m_writer(nullptr)
+	, m_sessionServer(sessionServer)
 	, m_alias(alias)
 	, m_founder(founder)
 	, m_version(version)
@@ -41,7 +42,6 @@ FiledHistory::FiledHistory(
 	, m_flags()
 	, m_nextCatchupKey(INITIAL_CATCHUP_KEY)
 	, m_fileCount(0)
-	, m_archive(false)
 {
 	Q_ASSERT(journal);
 
@@ -50,10 +50,11 @@ FiledHistory::FiledHistory(
 }
 
 FiledHistory::FiledHistory(
-	const QDir &dir, QFile *journal, const QString &id, QObject *parent)
+	const QDir &dir, QFile *journal, const QString &id,
+	const QPointer<SessionServer> &sessionServer, QObject *parent)
 	: FiledHistory(
 		  dir, journal, id, QString(), protocol::ProtocolVersion(), QString(),
-		  parent)
+		  sessionServer, parent)
 {
 }
 
@@ -84,13 +85,13 @@ uniqueRecordingFilename(const QDir &dir, const QString &id, int idx)
 FiledHistory *FiledHistory::startNew(
 	const QDir &dir, const QString &id, const QString &alias,
 	const protocol::ProtocolVersion &version, const QString &founder,
-	QObject *parent)
+	const QPointer<SessionServer> &sessionServer, QObject *parent)
 {
 	QFile *journal =
 		new QFile(QFileInfo(dir, journalFilename(id)).absoluteFilePath());
 
-	FiledHistory *fh =
-		new FiledHistory(dir, journal, id, alias, version, founder, parent);
+	FiledHistory *fh = new FiledHistory(
+		dir, journal, id, alias, version, founder, sessionServer, parent);
 	journal->setParent(fh);
 
 	if(!fh->create()) {
@@ -101,7 +102,9 @@ FiledHistory *FiledHistory::startNew(
 	return fh;
 }
 
-FiledHistory *FiledHistory::load(const QString &path, QObject *parent)
+FiledHistory *FiledHistory::load(
+	const QString &path, const QPointer<SessionServer> &sessionServer,
+	QObject *parent)
 {
 	const QString filename = QFileInfo(path).baseName();
 	const QDir dir = QFileInfo(path).dir();
@@ -114,7 +117,8 @@ FiledHistory *FiledHistory::load(const QString &path, QObject *parent)
 		return nullptr;
 	}
 
-	FiledHistory *fh = new FiledHistory(dir, journal, filename, parent);
+	FiledHistory *fh =
+		new FiledHistory(dir, journal, filename, sessionServer, parent);
 	journal->setParent(fh);
 	if(!fh->load()) {
 		delete fh;
@@ -277,7 +281,7 @@ void FiledHistory::flushJournal()
 void FiledHistory::removeOrArchive(QFile *f) const
 {
 	if(f) {
-		if(m_archive) {
+		if(m_sessionServer && m_sessionServer->shouldArchive()) {
 			QString fileName = f->fileName();
 			if(!f->rename(fileName + QStringLiteral(".archived"))) {
 				qWarning(

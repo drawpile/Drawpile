@@ -54,6 +54,8 @@ public:
 	 */
 	const ServerConfig *config() const { return m_config; }
 
+	bool shouldArchive() const;
+
 	/**
 	 * @brief Add a new client
 	 *

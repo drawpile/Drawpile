@@ -53,9 +53,8 @@ void SessionServer::loadNewSessions()
 			continue;
 		}
 
-		FiledHistory *fh = FiledHistory::load(f.absoluteFilePath());
+		FiledHistory *fh = FiledHistory::load(f.absoluteFilePath(), this);
 		if(fh) {
-			fh->setArchive(m_config->getConfigBool(config::ArchiveMode));
 			Session *session =
 				new ThinSession(fh, m_config, m_announcements, this);
 			initSession(session);
@@ -64,6 +63,11 @@ void SessionServer::loadNewSessions()
 							 .message(QStringLiteral("Loaded from file.")));
 		}
 	}
+}
+
+bool SessionServer::shouldArchive() const
+{
+	return m_config->getConfigBool(config::ArchiveMode);
 }
 
 QJsonArray SessionServer::sessionDescriptions(bool includeUnlisted) const
@@ -112,8 +116,7 @@ SessionHistory *SessionServer::initHistory(
 {
 	if(m_useFiledSessions) {
 		FiledHistory *fh = FiledHistory::startNew(
-			m_sessiondir, id, alias, protocolVersion, founder);
-		fh->setArchive(m_config->getConfigBool(config::ArchiveMode));
+			m_sessiondir, id, alias, protocolVersion, founder, this);
 		return fh;
 	} else {
 		return new InMemoryHistory(id, alias, protocolVersion, founder);
