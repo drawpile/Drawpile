@@ -58,9 +58,10 @@ void SessionServer::loadNewSessions()
 			Session *session =
 				new ThinSession(fh, m_config, m_announcements, this);
 			initSession(session);
-			session->log(Log()
-							 .about(Log::Level::Debug, Log::Topic::Status)
-							 .message(QStringLiteral("Loaded from file.")));
+			session->log(
+				Log()
+					.about(Log::Level::Debug, Log::Topic::Status)
+					.message(QStringLiteral("Loaded from file.")));
 		}
 	}
 }
@@ -365,19 +366,21 @@ void SessionServer::onSessionAttributeChanged(Session *session)
 
 	if(session->isEffectivelyEmpty() &&
 	   session->state() != Session::State::Shutdown) {
-		session->log(Log()
-						 .about(Log::Level::Info, Log::Topic::Status)
-						 .message(QStringLiteral("Last user left.")));
+		session->log(
+			Log()
+				.about(Log::Level::Info, Log::Topic::Status)
+				.message(QStringLiteral("Last user left.")));
 
 		// A non-persistent session is deleted when the last user leaves
 		// A persistent session can also be deleted if it doesn't contain a
 		// snapshot point.
 		if(!session->history()->hasFlag(SessionHistory::Persistent) &&
 		   m_config->getConfigTime(config::EmptySessionLingerTime) <= 0) {
-			session->log(Log()
-							 .about(Log::Level::Info, Log::Topic::Status)
-							 .message(QStringLiteral(
-								 "Closing non-persistent session.")));
+			session->log(
+				Log()
+					.about(Log::Level::Info, Log::Topic::Status)
+					.message(
+						QStringLiteral("Closing non-persistent session.")));
 			delSession = true;
 		}
 	}
@@ -403,19 +406,21 @@ void SessionServer::cleanupSessions()
 		qint64 lastEventTime = s->lastEventTime();
 		if(!s->history()->hasFlag(SessionHistory::Persistent) &&
 		   s->isEffectivelyEmpty() && lastEventTime > emptySessionLingerTime) {
-			s->log(Log()
-					   .about(Log::Level::Info, Log::Topic::Status)
-					   .message(QStringLiteral(
-						   "Closing lingering non-persistent session.")));
+			s->log(
+				Log()
+					.about(Log::Level::Info, Log::Topic::Status)
+					.message(QStringLiteral(
+						"Closing lingering non-persistent session.")));
 			s->killSession(QStringLiteral(
 				"Session terminated due to being empty too long"));
 		} else if(
 			expirationTime > 0 && lastEventTime > expirationTime &&
 			(!allowIdleOverride ||
 			 !s->history()->hasFlag(SessionHistory::IdleOverride))) {
-			s->log(Log()
-					   .about(Log::Level::Info, Log::Topic::Status)
-					   .message(QStringLiteral("Idle session expired.")));
+			s->log(
+				Log()
+					.about(Log::Level::Info, Log::Topic::Status)
+					.message(QStringLiteral("Idle session expired.")));
 			s->killSession(QStringLiteral(
 				"Session terminated due to being idle too long"));
 		}
