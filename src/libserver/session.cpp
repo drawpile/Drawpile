@@ -1211,6 +1211,8 @@ void Session::sendUpdatedSessionProperties()
 		 int(m_history->autoResetThreshold())},
 		{QStringLiteral("resetThresholdBase"),
 		 int(m_history->autoResetThresholdBase())},
+		{QStringLiteral("resetThresholdMin"),
+		 int(m_history->minimumAutoResetThreshold())},
 		{QStringLiteral("preserveChat"),
 		 m_history->hasFlag(SessionHistory::PreserveChat)},
 		{QStringLiteral("nsfm"), m_history->hasFlag(SessionHistory::Nsfm)},
@@ -2353,10 +2355,16 @@ QJsonObject Session::getDescription(bool full, bool invite) const
 			QStringLiteral("overrideSize"),
 			int(m_history->overrideSizeLimit()));
 
-		o[QStringLiteral("resetThreshold")] =
-			int(m_history->autoResetThreshold());
-		o[QStringLiteral("effectiveResetThreshold")] =
-			int(m_history->effectiveAutoResetThreshold());
+		o.insert(
+			QStringLiteral("resetThreshold"),
+			int(m_history->autoResetThreshold()));
+		o.insert(
+			QStringLiteral("effectiveResetThreshold"),
+			int(m_history->effectiveAutoResetThreshold()));
+		o.insert(
+			QStringLiteral("minResetThreshold"),
+			int(m_history->minimumAutoResetThreshold()));
+
 		o[QStringLiteral("deputies")] =
 			m_history->hasFlag(SessionHistory::Deputies);
 		o[QStringLiteral("hasOpword")] = !m_history->opwordHash().isEmpty();
