@@ -530,6 +530,7 @@ JsonApiResult MultiServer::serverJsonApi(
 		config::ForbiddenNameRegex,
 		config::FilterNameRegex,
 		config::UnlistedHostPolicy,
+		config::MinimumAutoresetThreshold,
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 

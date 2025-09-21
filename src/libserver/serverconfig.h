@@ -171,7 +171,12 @@ static const ConfigKey
 	// What sessions to set the Unlisted session history flag on when they are
 	// hosted. "WEB" will set it on sessions, hosted via web browser, "ALL" will
 	// set it on all sessions, any other value sets it on no session.
-	UnlistedHostPolicy(53, "unlistedHostPolicy", "", ConfigKey::STRING);
+	UnlistedHostPolicy(53, "unlistedHostPolicy", "", ConfigKey::STRING),
+	// Minimum autoreset threshold to actually act on. Any values smaller than
+	// this that the user sets (other than 0, which means disabled) are clamped
+	// to the minimum instead.
+	MinimumAutoresetThreshold(
+		54, "minimumAutoResetThreshold", "0", ConfigKey::SIZE);
 }
 
 //! Settings that are not adjustable after the server has started

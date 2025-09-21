@@ -1223,6 +1223,11 @@ void Session::sendUpdatedSessionProperties()
 			m_config->getConfigBool(config::PreferWebSockets);
 	}
 #endif
+	if(supportsAutoReset()) {
+		config.insert(
+			QStringLiteral("resetThresholdMin"),
+			m_config->getConfigSize(config::MinimumAutoresetThreshold));
+	}
 	addToHistory(net::ServerReply::makeSessionConf(config, getHistoryIndex()));
 	emit sessionAttributeChanged(this);
 }
@@ -2127,6 +2132,10 @@ void Session::onConfigValueChanged(const ConfigKey &key)
 		if(!m_config->getConfigBool(config::AllowIdleOverride)) {
 			m_history->setFlag(SessionHistory::IdleOverride, false);
 		}
+		sendUpdatedSessionProperties();
+	} else if(
+		key.index == config::MinimumAutoresetThreshold.index &&
+		supportsAutoReset()) {
 		sendUpdatedSessionProperties();
 	}
 }

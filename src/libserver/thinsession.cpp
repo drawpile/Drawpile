@@ -703,9 +703,17 @@ void ThinSession::checkAutoResetQuery()
 
 	// Only query for an autoreset if the threshold has been reached.
 	size_t autoResetThreshold = history()->effectiveAutoResetThreshold();
-	if(autoResetThreshold > 0 &&
-	   history()->sizeInBytes() <= autoResetThreshold) {
-		return;
+	if(autoResetThreshold > 0) {
+		int minimumAutoResetThreshold =
+			config()->getConfigSize(config::MinimumAutoresetThreshold);
+		if(minimumAutoResetThreshold > 0) {
+			autoResetThreshold =
+				qMax(size_t(minimumAutoResetThreshold), autoResetThreshold);
+		}
+
+		if(history()->sizeInBytes() <= autoResetThreshold) {
+			return;
+		}
 	}
 
 	QLocale locale = QLocale::c();
