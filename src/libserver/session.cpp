@@ -702,15 +702,21 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		changes << "changed max. user count";
 	}
 
-	if(conf.contains("resetThreshold")) {
-		int val;
-		if(conf["resetThreshold"].isDouble())
-			val = conf["resetThreshold"].toInt();
-		else
-			val = ServerConfig::parseSizeString(
-				conf["resetThreshold"].toString());
-		m_history->setAutoResetThreshold(val);
-		changes << "changed autoreset threshold";
+	if(conf.contains(QStringLiteral("resetThreshold"))) {
+		QJsonValue resetThresholdValue =
+			conf.value(QStringLiteral("resetThreshold"));
+		int resetThresholdSize = -1;
+		if(resetThresholdValue.isDouble()) {
+			resetThresholdSize = resetThresholdValue.toInt();
+		} else if(resetThresholdValue.isString()) {
+			resetThresholdSize =
+				ServerConfig::parseSizeString(resetThresholdValue.toString());
+		}
+
+		if(resetThresholdSize >= 0) {
+			m_history->setAutoResetThreshold(resetThresholdSize);
+			changes << "changed autoreset threshold";
+		}
 	}
 
 	bool changePassword = conf.contains(QStringLiteral("password"));
