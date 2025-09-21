@@ -19,6 +19,8 @@ ThinSession::ThinSession(
 	history->setBaseSizeLimit(config->getConfigSize(config::SessionSizeLimit));
 	history->setAutoResetThreshold(
 		config->getConfigSize(config::AutoresetThreshold));
+	history->setMinimumAutoResetThreshold(
+		config->getConfigSize(config::MinimumAutoresetThreshold));
 	sendUpdatedSessionProperties();
 	resetLastStatusUpdate();
 	m_autoResetTimer->setTimerType(Qt::VeryCoarseTimer);
@@ -708,13 +710,6 @@ void ThinSession::checkAutoResetQuery()
 	// Only query for an autoreset if the threshold has been reached.
 	size_t autoResetThreshold = history()->effectiveAutoResetThreshold();
 	if(autoResetThreshold > 0) {
-		int minimumAutoResetThreshold =
-			config()->getConfigSize(config::MinimumAutoresetThreshold);
-		if(minimumAutoResetThreshold > 0) {
-			autoResetThreshold =
-				qMax(size_t(minimumAutoResetThreshold), autoResetThreshold);
-		}
-
 		if(history()->sizeInBytes() <= autoResetThreshold) {
 			return;
 		}

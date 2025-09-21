@@ -2161,6 +2161,8 @@ void Session::onConfigValueChanged(const ConfigKey &key)
 	} else if(
 		key.index == config::MinimumAutoresetThreshold.index &&
 		supportsAutoReset()) {
+		m_history->setMinimumAutoResetThreshold(
+			m_config->getConfigSize(config::MinimumAutoresetThreshold));
 		sendUpdatedSessionProperties();
 	} else if(
 		key.index == config::SessionSizeLimit.index && supportsSizeLimit()) {

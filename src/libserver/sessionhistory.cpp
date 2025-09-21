@@ -431,6 +431,9 @@ size_t SessionHistory::effectiveAutoResetThreshold() const
 	size_t t = autoResetThreshold();
 	// Zero means autoreset is not enabled
 	if(t > 0) {
+		if(t < m_minimumAutoResetThreshold) {
+			t = m_minimumAutoResetThreshold;
+		}
 		t += m_autoResetBaseSize;
 		size_t sizeLimit = currentSizeLimit();
 		if(sizeLimit > 0) {
@@ -443,6 +446,16 @@ size_t SessionHistory::effectiveAutoResetThreshold() const
 void SessionHistory::resetAutoResetThresholdBase()
 {
 	m_autoResetBaseSize = m_sizeInBytes;
+}
+
+void SessionHistory::setMinimumAutoResetThreshold(
+	size_t minimumAutoResetThreshold)
+{
+	m_minimumAutoResetThreshold = minimumAutoResetThreshold;
+	size_t t = autoResetThreshold();
+	if(t != 0 && t < minimumAutoResetThreshold) {
+		setAutoResetThreshold(minimumAutoResetThreshold);
+	}
 }
 
 void SessionHistory::setAuthenticatedOperator(const QString &authId, bool op)

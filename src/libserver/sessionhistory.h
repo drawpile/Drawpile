@@ -241,6 +241,13 @@ public:
 	//! Set the autoreset threshold base to the current size in bytes
 	void resetAutoResetThresholdBase();
 
+	size_t minimumAutoResetThreshold() const
+	{
+		return m_minimumAutoResetThreshold;
+	}
+
+	void setMinimumAutoResetThreshold(size_t minimumAutoResetThreshold);
+
 	virtual int nextCatchupKey() = 0;
 
 	/**
@@ -628,6 +635,7 @@ private:
 	size_t m_sizeInBytes = 0;
 	size_t m_baseSizeLimit = 0;
 	size_t m_autoResetBaseSize = 0;
+	size_t m_minimumAutoResetThreshold = 0;
 	long long m_lastResetTime;
 	long long m_firstIndex = 0;
 	long long m_lastIndex = -1;

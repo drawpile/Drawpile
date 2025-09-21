@@ -722,9 +722,10 @@ void FiledHistory::setMaxUsers(int max)
 
 void FiledHistory::setAutoResetThreshold(size_t limit)
 {
-	if(limit != m_autoResetThreshold) {
-		m_autoResetThreshold = limit;
-		writeStringToJournal(QStringLiteral("AUTORESET %1\n").arg(limit));
+	size_t t = limit > 0 ? qMax(limit, minimumAutoResetThreshold()) : limit;
+	if(t != m_autoResetThreshold) {
+		m_autoResetThreshold = t;
+		writeStringToJournal(QStringLiteral("AUTORESET %1\n").arg(t));
 	}
 }
 

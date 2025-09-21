@@ -29,6 +29,11 @@ bool InMemoryHistory::setTitle(const QString &title)
 	}
 }
 
+void InMemoryHistory::setAutoResetThreshold(size_t limit)
+{
+	m_autoReset = limit > 0 ? qMax(limit, minimumAutoResetThreshold()) : limit;
+}
+
 int InMemoryHistory::nextCatchupKey()
 {
 	return incrementNextCatchupKey(m_nextCatchupKey);

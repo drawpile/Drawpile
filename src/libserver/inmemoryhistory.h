@@ -71,7 +71,7 @@ public:
 	}
 	Flags flags() const override { return m_flags; }
 	void setFlags(Flags f) override { m_flags = f; }
-	void setAutoResetThreshold(size_t limit) override { m_autoReset = limit; }
+	void setAutoResetThreshold(size_t limit) override;
 	size_t autoResetThreshold() const override { return m_autoReset; }
 	int nextCatchupKey() override;
 
