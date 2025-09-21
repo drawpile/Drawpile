@@ -322,22 +322,14 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 #endif
 	connect(m_doc, &Document::recorderStateChanged, this, &MainWindow::setRecorderStatus);
 	connect(m_doc, &Document::sessionResetState, this, &MainWindow::showResetNoticeDialog, Qt::QueuedConnection);
+	// clang-format on
 	connect(
 		m_doc, &Document::permissionDenied, this,
 		&MainWindow::showPermissionDeniedMessage);
 
-	connect(m_doc, &Document::autoResetTooLarge, this, [this](int maxSize) {
-		m_doc->sendLockSession(true);
-		auto *msgbox = new QMessageBox(
-					QMessageBox::Warning,
-					tr("Server out of space"),
-					tr("Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)\nSimplify the canvas and reset manually before space runs out.")
-						.arg(maxSize / double(1024*1024), 0, 'f', 2),
-					QMessageBox::Ok,
-					this
-					);
-		msgbox->show();
-	});
+	connect(
+		m_doc, &Document::resetImageTooLarge, this,
+		&MainWindow::showResetImageTooLargeErrorMessage, Qt::QueuedConnection);
 
 	// Tool dock connections
 	m_tempToolSwitchShortcut = new ShortcutDetector(this);
@@ -350,6 +342,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_canvasView->connectViewStatus(m_viewstatus);
 	m_canvasView->connectViewStatusBar(m_viewStatusBar);
 	m_canvasView->connectToolSettings(m_dockToolSettings);
+	// clang-format off
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, this, &MainWindow::triggerUpdateLockWidget);
 	connect(m_dockLayers, &docks::LayerList::activeLayerVisibilityChanged, this, &MainWindow::triggerUpdateLockWidget);
@@ -3961,6 +3954,22 @@ void MainWindow::showLoadResultMessage(DP_LoadResult result)
 			showErrorMessage(message);
 		}
 	}
+}
+
+void MainWindow::showResetImageTooLargeErrorMessage(int maxSize, bool autoReset)
+{
+	if(autoReset) {
+		m_doc->sendLockSession(true);
+	}
+	QString message =
+		autoReset
+			? tr("Your canvas contains too much data, the server limit is %1 "
+				 "MB. Merge or delete some layers to simplify the canvas.")
+			: tr("The canvas you tried to reset to contains too much data, the "
+				 "server limit is %1 MB.");
+	utils::showWarning(
+		this, tr("Reset image too large"),
+		message.arg(maxSize / double(1024 * 1024), 0, 'f', 2));
 }
 
 void MainWindow::setShowAnnotations(bool show)

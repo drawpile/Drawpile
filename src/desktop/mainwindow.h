@@ -382,6 +382,7 @@ private:
 	showErrorMessageWithDetails(const QString &message, const QString &details);
 	void showElapsedStatusMessage(const QString &message, qint64 elapsedMsec);
 	void showLoadResultMessage(DP_LoadResult result);
+	void showResetImageTooLargeErrorMessage(int maxSize, bool autoReset);
 	void handleAmbiguousShortcut(QShortcutEvent *shortcutEvent);
 
 	void showSelectionMaskColorPicker();

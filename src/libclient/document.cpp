@@ -1340,7 +1340,7 @@ void Document::snapshotNeeded()
 			});
 			QThreadPool::globalInstance()->start(runnable);
 		} else {
-			sendResetSnapshot();
+			sendResetSnapshot(false);
 		}
 	} else {
 		qWarning(
@@ -1368,11 +1368,11 @@ void Document::generateJustInTimeSnapshot()
 		qWarning("Just-in-time snapshot has zero size!");
 		m_client->sendMessage(net::ServerCommand::make("init-cancel"));
 	} else {
-		emit justInTimeSnapshotGenerated();
+		emit justInTimeSnapshotGenerated(true);
 	}
 }
 
-void Document::sendResetSnapshot()
+void Document::sendResetSnapshot(bool autoReset)
 {
 	// Size limit check. The server will kick us if we send an oversized reset.
 	if(isResetStateSizeInLimit()) {
@@ -1382,8 +1382,8 @@ void Document::sendResetSnapshot()
 			m_resetstate.count(), m_resetstate.constData());
 		m_client->sendResetMessage(net::ServerCommand::make("init-complete"));
 	} else {
-		emit autoResetTooLarge(m_sessionHistoryMaxSize);
 		m_client->sendMessage(net::ServerCommand::make("init-cancel"));
+		emit resetImageTooLarge(m_sessionHistoryMaxSize, autoReset);
 	}
 	m_resetstate.clear();
 }

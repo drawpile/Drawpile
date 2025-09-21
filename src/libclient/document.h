@@ -223,7 +223,7 @@ signals:
 	void sessionMaxUserCountChanged(int count);
 	void sessionResetThresholdChanged(double threshold);
 	void baseResetThresholdChanged(double threshold);
-	void autoResetTooLarge(int maxSize);
+	void resetImageTooLarge(int maxSize, bool autoReset);
 	void sessionOutOfSpaceChanged(bool outOfSpace);
 	void sessionPreferWebSocketsChanged(bool preferWebSockets);
 	void sessionInviteCodesEnabledChanged(bool inviteCodesEnabled);
@@ -243,7 +243,7 @@ signals:
 	void canvasDownloadError(const QString &error);
 	void templateExported(const QString &errorMessage);
 
-	void justInTimeSnapshotGenerated();
+	void justInTimeSnapshotGenerated(bool autoReset);
 	void buildStreamResetImageFinished(
 		const net::MessageList &image, int messageCount,
 		const QString &correlator);
@@ -369,7 +369,7 @@ private:
 
 	bool shouldRespondToAutoReset() const;
 	void generateJustInTimeSnapshot();
-	void sendResetSnapshot();
+	void sendResetSnapshot(bool autoReset);
 	bool isResetStateSizeInLimit() const;
 	unsigned long long resetStateSize() const;
 

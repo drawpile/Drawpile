@@ -37,6 +37,7 @@ Unreleased Version 2.3.0-pre
  * Server Feature: Add server setting for a minimum autoreset threshold, to avoid users setting it to a too low value and causing excessive resets. Thanks Bluestrings for suggesting.
  * Server Feature: Allow overriding session size limit for individual sessions. Thanks Bluestrings for suggesting.
  * Fix: Properly check for session reset size so that oversized resets don't end up in disconnects.
+ * Fix: Show a proper error message when a manual reset fails, rather than claiming that an auto-reset failed.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.
