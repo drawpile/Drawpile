@@ -374,7 +374,7 @@ public:
 	 *
 	 * @param limit maximum size in bytes or 0 for no limit
 	 */
-	void setSizeLimit(size_t limit) { m_sizeLimit = limit; }
+	void setSizeLimit(size_t limit);
 
 	/**
 	 * @brief Get the session size limit

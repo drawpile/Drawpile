@@ -7,6 +7,7 @@ extern "C" {
 #include "libshared/net/servercmd.h"
 #include "libshared/util/ulid.h"
 #include <QJsonObject>
+#include <limits>
 
 namespace server {
 
@@ -66,6 +67,13 @@ SessionHistory::SessionHistory(const QString &id, QObject *parent)
 bool SessionHistory::hasSpaceFor(size_t bytes, size_t extra) const
 {
 	return m_sizeLimit <= 0 || m_sizeInBytes + bytes <= m_sizeLimit + extra;
+}
+
+void SessionHistory::setSizeLimit(size_t limit)
+{
+	// The network protocol requires conversions to int, but values over 4GiB
+	// are totally out of whack for a session size limit anyway.
+	m_sizeLimit = qMin(limit, size_t(std::numeric_limits<int>::max()));
 }
 
 HistoryIndex SessionHistory::historyIndex() const
