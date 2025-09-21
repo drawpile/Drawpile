@@ -370,6 +370,8 @@ private:
 	bool shouldRespondToAutoReset() const;
 	void generateJustInTimeSnapshot();
 	void sendResetSnapshot();
+	bool isResetStateSizeInLimit() const;
+	unsigned long long resetStateSize() const;
 
 	net::MessageList generateStreamSnapshot(
 		const drawdance::CanvasState &canvasState,

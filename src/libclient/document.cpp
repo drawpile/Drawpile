@@ -1233,7 +1233,7 @@ void Document::sendResetSession(
 		qInfo("Sending session reset request. (Just in time snapshot)");
 	} else {
 		qInfo(
-			"Sending session reset request. (Snapshot size is %lld bytes)",
+			"Sending session reset request. (Snapshot size is %lld messages)",
 			compat::cast<long long>(resetImage.length()));
 	}
 
@@ -1375,22 +1375,45 @@ void Document::generateJustInTimeSnapshot()
 void Document::sendResetSnapshot()
 {
 	// Size limit check. The server will kick us if we send an oversized reset.
-	if(m_sessionHistoryMaxSize > 0 &&
-	   m_resetstate.length() > m_sessionHistoryMaxSize) {
-		qWarning(
-			"Reset snapshot (%lld) is larger than the size limit (%d)!",
-			compat::cast<long long>(m_resetstate.length()),
-			m_sessionHistoryMaxSize);
-		emit autoResetTooLarge(m_sessionHistoryMaxSize);
-		m_client->sendMessage(net::ServerCommand::make("init-cancel"));
-	} else {
+	if(isResetStateSizeInLimit()) {
 		// Send the reset command+image
 		m_client->sendResetMessage(net::ServerCommand::make("init-begin"));
 		m_client->sendResetMessages(
 			m_resetstate.count(), m_resetstate.constData());
 		m_client->sendResetMessage(net::ServerCommand::make("init-complete"));
+	} else {
+		emit autoResetTooLarge(m_sessionHistoryMaxSize);
+		m_client->sendMessage(net::ServerCommand::make("init-cancel"));
 	}
 	m_resetstate.clear();
+}
+
+bool Document::isResetStateSizeInLimit() const
+{
+	if(m_sessionHistoryMaxSize <= 0) {
+		return true; // No limit or we don't know what it is.
+	} else {
+		unsigned long long size = resetStateSize();
+		unsigned long long limit = m_sessionHistoryMaxSize;
+		if(size <= limit) {
+			return true;
+		} else {
+			qWarning(
+				"Reset snapshot (%llu) is larger than the size limit (%llu)!",
+				size, limit);
+			return false;
+		}
+	}
+}
+
+unsigned long long Document::resetStateSize() const
+{
+	unsigned long long total = 0ULL;
+	for(const net::Message &msg : m_resetstate) {
+		unsigned long long len = msg.length();
+		total += len;
+	}
+	return total;
 }
 
 namespace {
