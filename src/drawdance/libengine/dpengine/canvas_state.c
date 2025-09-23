@@ -1001,9 +1001,9 @@ static void truncate_tracks(DP_TransientCanvasState *tcs, int frame_count)
     DP_Timeline *tl = tcs->timeline;
     DP_TransientTimeline *ttl =
         DP_timeline_transient(tl) ? (DP_TransientTimeline *)tl : NULL;
-    int track_count = DP_timeline_count(tl);
+    int track_count = DP_timeline_track_count(tl);
     for (int t_index = 0; t_index < track_count; ++t_index) {
-        DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+        DP_Track *t = DP_timeline_track_at_noinc(tl, t_index);
         int kf_index =
             DP_track_key_frame_search_at_or_after(t, frame_count, NULL);
         if (kf_index != -1) {
@@ -1012,7 +1012,7 @@ static void truncate_tracks(DP_TransientCanvasState *tcs, int frame_count)
                 tl = (DP_Timeline *)ttl;
             }
             DP_TransientTrack *tt =
-                DP_transient_timeline_transient_at_noinc(ttl, t_index, 0);
+                DP_transient_timeline_transient_track_at_noinc(ttl, t_index, 0);
             DP_transient_track_truncate(tt, kf_index);
         }
     }
@@ -2412,7 +2412,8 @@ static void timeline_cleanup_make_transient(
     }
 
     if (!*ptt) {
-        *ptt = DP_transient_timeline_transient_at_noinc(*pttl, t_index, 0);
+        *ptt =
+            DP_transient_timeline_transient_track_at_noinc(*pttl, t_index, 0);
         *pt = (DP_Track *)*ptt;
     }
 
@@ -2429,9 +2430,9 @@ void DP_transient_canvas_state_timeline_cleanup(DP_TransientCanvasState *tcs)
     DP_TransientTimeline *ttl =
         DP_timeline_transient(tl) ? (DP_TransientTimeline *)tl : NULL;
 
-    int t_count = DP_timeline_count(tl);
+    int t_count = DP_timeline_track_count(tl);
     for (int t_index = 0; t_index < t_count; ++t_index) {
-        DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+        DP_Track *t = DP_timeline_track_at_noinc(tl, t_index);
         DP_TransientTrack *tt =
             DP_track_transient(t) ? (DP_TransientTrack *)t : NULL;
 

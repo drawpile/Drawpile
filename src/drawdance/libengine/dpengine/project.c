@@ -2796,7 +2796,7 @@ static bool cfs_read_timeline(DP_ProjectCanvasFromSnapshotContext *c,
         if (used >= count) {
             ttl = DP_transient_canvas_state_transient_timeline(tcs, 1);
         }
-        DP_transient_timeline_set_transient_noinc(ttl, tt, used);
+        DP_transient_timeline_set_transient_track_noinc(ttl, tt, used);
         ++used;
 
         if (key_frame_count != 0

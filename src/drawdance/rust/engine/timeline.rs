@@ -3,7 +3,7 @@ use super::{Attached, CArc, Detached, DetachedTransientTrack};
 use crate::{
     DP_Timeline, DP_TransientTimeline, DP_timeline_transient, DP_transient_timeline_decref,
     DP_transient_timeline_incref, DP_transient_timeline_new_init,
-    DP_transient_timeline_set_transient_noinc,
+    DP_transient_timeline_set_transient_track_noinc,
 };
 use std::ffi::c_int;
 
@@ -28,9 +28,9 @@ impl TransientTimeline {
         Detached::new_noinc(Self { data })
     }
 
-    pub fn set_transient_at_noinc(&mut self, tt: DetachedTransientTrack, index: c_int) {
+    pub fn set_transient_track_at_noinc(&mut self, tt: DetachedTransientTrack, index: c_int) {
         unsafe {
-            DP_transient_timeline_set_transient_noinc(self.data, tt.leak(), index);
+            DP_transient_timeline_set_transient_track_noinc(self.data, tt.leak(), index);
         }
     }
 }

@@ -1489,12 +1489,12 @@ DP_CanvasState *DP_ops_track_create(DP_CanvasState *cs, int new_id,
                                     const char *title, size_t title_length)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int track_count = DP_timeline_count(tl);
+    int track_count = DP_timeline_track_count(tl);
 
     int index = 0;
     DP_Track *source = NULL;
     for (int i = 0; i < track_count; ++i) {
-        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        DP_Track *t = DP_timeline_track_at_noinc(tl, i);
         int track_id = DP_track_id(t);
         if (track_id == new_id) {
             DP_error_set("Track create: id %d already exists", new_id);
@@ -1526,7 +1526,7 @@ DP_CanvasState *DP_ops_track_create(DP_CanvasState *cs, int new_id,
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientTimeline *ttl =
         DP_transient_canvas_state_transient_timeline(tcs, 1);
-    DP_transient_timeline_insert_transient_noinc(ttl, tt, index);
+    DP_transient_timeline_insert_transient_track_noinc(ttl, tt, index);
     return DP_transient_canvas_state_persist(tcs);
 }
 
@@ -1538,7 +1538,7 @@ static DP_CanvasState *retitle_track(DP_CanvasState *cs, int index,
     DP_TransientTimeline *ttl =
         DP_transient_canvas_state_transient_timeline(tcs, 0);
     DP_TransientTrack *tt =
-        DP_transient_timeline_transient_at_noinc(ttl, index, 0);
+        DP_transient_timeline_transient_track_at_noinc(ttl, index, 0);
     DP_transient_track_title_set(tt, title, title_length);
     return DP_transient_canvas_state_persist(tcs);
 }
@@ -1547,10 +1547,10 @@ DP_CanvasState *DP_ops_track_retitle(DP_CanvasState *cs, int track_id,
                                      const char *title, size_t title_length)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int track_count = DP_timeline_count(tl);
+    int track_count = DP_timeline_track_count(tl);
 
     for (int i = 0; i < track_count; ++i) {
-        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        DP_Track *t = DP_timeline_track_at_noinc(tl, i);
         if (DP_track_id(t) == track_id) {
             return retitle_track(cs, i, title, title_length);
         }
@@ -1566,17 +1566,17 @@ static DP_CanvasState *delete_track(DP_CanvasState *cs, int index)
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientTimeline *ttl =
         DP_transient_canvas_state_transient_timeline(tcs, 0);
-    DP_transient_timeline_delete_at(ttl, index);
+    DP_transient_timeline_delete_track_at(ttl, index);
     return DP_transient_canvas_state_persist(tcs);
 }
 
 DP_CanvasState *DP_ops_track_delete(DP_CanvasState *cs, int track_id)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int track_count = DP_timeline_count(tl);
+    int track_count = DP_timeline_track_count(tl);
 
     for (int i = 0; i < track_count; ++i) {
-        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        DP_Track *t = DP_timeline_track_at_noinc(tl, i);
         if (DP_track_id(t) == track_id) {
             return delete_track(cs, i);
         }
@@ -1590,7 +1590,7 @@ DP_CanvasState *DP_ops_track_order(DP_CanvasState *cs, int track_id_count,
                                    int (*get_track_id)(void *, int), void *user)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int track_count = DP_timeline_count(tl);
+    int track_count = DP_timeline_track_count(tl);
 
     DP_TransientTimeline *ttl = DP_transient_timeline_new_init(track_count);
     DP_TransientCanvasState *tcs =
@@ -1599,11 +1599,11 @@ DP_CanvasState *DP_ops_track_order(DP_CanvasState *cs, int track_id_count,
     int fill = 0;
     for (int i = 0; i < track_id_count; ++i) {
         int track_id = get_track_id(user, i);
-        if (DP_transient_timeline_index_by_id(ttl, track_id) == -1) {
-            int from_index = DP_timeline_index_by_id(tl, track_id);
+        if (DP_transient_timeline_track_index_by_id(ttl, track_id) == -1) {
+            int from_index = DP_timeline_track_index_by_id(tl, track_id);
             if (from_index != -1) {
-                DP_Track *t = DP_timeline_at_noinc(tl, from_index);
-                DP_transient_timeline_set_inc(ttl, t, fill);
+                DP_Track *t = DP_timeline_track_at_noinc(tl, from_index);
+                DP_transient_timeline_set_track_inc(ttl, t, fill);
                 ++fill;
             }
             else {
@@ -1617,10 +1617,10 @@ DP_CanvasState *DP_ops_track_order(DP_CanvasState *cs, int track_id_count,
 
     // If further tracks remain, just move them over in the order they appear.
     for (int i = 0; fill < track_count && i < track_count; ++i) {
-        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        DP_Track *t = DP_timeline_track_at_noinc(tl, i);
         int track_id = DP_track_id(t);
-        if (DP_transient_timeline_index_by_id(ttl, track_id) == -1) {
-            DP_transient_timeline_set_inc(ttl, t, fill);
+        if (DP_transient_timeline_track_index_by_id(ttl, track_id) == -1) {
+            DP_transient_timeline_set_track_inc(ttl, t, fill);
             ++fill;
         }
     }
@@ -1636,12 +1636,12 @@ static void insert_or_replace_key_frame(DP_TransientTimeline *ttl, int t_index,
 {
     if (replace) {
         DP_TransientTrack *tt =
-            DP_transient_timeline_transient_at_noinc(ttl, t_index, 0);
+            DP_transient_timeline_transient_track_at_noinc(ttl, t_index, 0);
         DP_transient_track_replace_noinc(tt, frame_index, kf, kf_index);
     }
     else {
         DP_TransientTrack *tt =
-            DP_transient_timeline_transient_at_noinc(ttl, t_index, 1);
+            DP_transient_timeline_transient_track_at_noinc(ttl, t_index, 1);
         DP_transient_track_insert_noinc(
             tt, frame_index, kf,
             kf_index == -1 ? DP_track_key_frame_count(t) : kf_index);
@@ -1662,13 +1662,13 @@ set_key_frame(const char *what, DP_CanvasState *cs, int track_id,
     }
 
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int t_index = DP_timeline_index_by_id(tl, track_id);
+    int t_index = DP_timeline_track_index_by_id(tl, track_id);
     if (t_index == -1) {
         DP_error_set("Key frame %s: track id %d not found", what, track_id);
         return NULL;
     }
 
-    DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+    DP_Track *t = DP_timeline_track_at_noinc(tl, t_index);
     bool replace;
     int kf_index =
         DP_track_key_frame_search_at_or_after(t, frame_index, &replace);
@@ -1721,13 +1721,13 @@ static DP_KeyFrame *get_key_frame_copy(void *user,
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(params->cs);
 
     int track_id = params->source_track_id;
-    int t_index = DP_timeline_index_by_id(tl, track_id);
+    int t_index = DP_timeline_track_index_by_id(tl, track_id);
     if (t_index == -1) {
         DP_error_set("Key frame copy: source track id %d not found", track_id);
         return NULL;
     }
 
-    DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+    DP_Track *t = DP_timeline_track_at_noinc(tl, t_index);
     int frame_index = params->source_frame_index;
     int kf_index = DP_track_key_frame_search_at(t, frame_index);
     if (kf_index == -1) {
@@ -1754,13 +1754,13 @@ DP_CanvasState *DP_ops_key_frame_retitle(DP_CanvasState *cs, int track_id,
                                          size_t title_length)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int t_index = DP_timeline_index_by_id(tl, track_id);
+    int t_index = DP_timeline_track_index_by_id(tl, track_id);
     if (t_index == -1) {
         DP_error_set("Key frame retitle: track id %d not found", track_id);
         return NULL;
     }
 
-    DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+    DP_Track *t = DP_timeline_track_at_noinc(tl, t_index);
     int kf_index = DP_track_key_frame_search_at(t, frame_index);
     if (kf_index == -1) {
         DP_error_set("Key frame retitle: no frame at index %d", frame_index);
@@ -1771,7 +1771,7 @@ DP_CanvasState *DP_ops_key_frame_retitle(DP_CanvasState *cs, int track_id,
     DP_TransientTimeline *ttl =
         DP_transient_canvas_state_transient_timeline(tcs, 0);
     DP_TransientTrack *tt =
-        DP_transient_timeline_transient_at_noinc(ttl, t_index, 0);
+        DP_transient_timeline_transient_track_at_noinc(ttl, t_index, 0);
     DP_TransientKeyFrame *tkf =
         DP_transient_track_transient_at_noinc(tt, kf_index);
 
@@ -1811,14 +1811,14 @@ DP_CanvasState *DP_ops_key_frame_layer_attributes(
     int count, struct DP_KeyFrameLayer (*get_layer)(void *, int), void *user)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int t_index = DP_timeline_index_by_id(tl, track_id);
+    int t_index = DP_timeline_track_index_by_id(tl, track_id);
     if (t_index == -1) {
         DP_error_set("Key frame layer attributes: track id %d not found",
                      track_id);
         return NULL;
     }
 
-    DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+    DP_Track *t = DP_timeline_track_at_noinc(tl, t_index);
     int kf_index = DP_track_key_frame_search_at(t, frame_index);
     if (kf_index == -1) {
         DP_error_set("Key frame layer attributes: no frame at index %d",
@@ -1842,7 +1842,7 @@ DP_CanvasState *DP_ops_key_frame_layer_attributes(
     DP_TransientTimeline *ttl =
         DP_transient_canvas_state_transient_timeline(tcs, 0);
     DP_TransientTrack *tt =
-        DP_transient_timeline_transient_at_noinc(ttl, t_index, 0);
+        DP_transient_timeline_transient_track_at_noinc(ttl, t_index, 0);
 
     DP_KeyFrame *kf = DP_transient_track_key_frame_at_noinc(tt, kf_index);
     DP_TransientKeyFrame *tkf =
@@ -1857,13 +1857,13 @@ DP_CanvasState *DP_ops_key_frame_delete(DP_CanvasState *cs, int track_id,
                                         int move_frame_index)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int t_index = DP_timeline_index_by_id(tl, track_id);
+    int t_index = DP_timeline_track_index_by_id(tl, track_id);
     if (t_index == -1) {
         DP_error_set("Key frame delete: track id %d not found", track_id);
         return NULL;
     }
 
-    DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+    DP_Track *t = DP_timeline_track_at_noinc(tl, t_index);
     int kf_index = DP_track_key_frame_search_at(t, frame_index);
     if (kf_index == -1) {
         DP_error_set("Key frame delete: no frame at index %d", frame_index);
@@ -1875,7 +1875,7 @@ DP_CanvasState *DP_ops_key_frame_delete(DP_CanvasState *cs, int track_id,
         move_t_index = -1;
     }
     else {
-        move_t_index = DP_timeline_index_by_id(tl, move_track_id);
+        move_t_index = DP_timeline_track_index_by_id(tl, move_track_id);
         if (move_t_index == -1) {
             DP_error_set("Key frame delete: move track id %d not found",
                          track_id);
@@ -1897,7 +1897,8 @@ DP_CanvasState *DP_ops_key_frame_delete(DP_CanvasState *cs, int track_id,
         DP_transient_canvas_state_transient_timeline(tcs, 0);
 
     if (move_t_index != -1) {
-        DP_Track *move_t = DP_transient_timeline_at_noinc(ttl, move_t_index);
+        DP_Track *move_t =
+            DP_transient_timeline_track_at_noinc(ttl, move_t_index);
         bool replace;
         int move_kf_index = DP_track_key_frame_search_at_or_after(
             move_t, move_frame_index, &replace);
@@ -1907,7 +1908,7 @@ DP_CanvasState *DP_ops_key_frame_delete(DP_CanvasState *cs, int track_id,
     }
 
     DP_TransientTrack *tt =
-        DP_transient_timeline_transient_at_noinc(ttl, t_index, 0);
+        DP_transient_timeline_transient_track_at_noinc(ttl, t_index, 0);
     DP_transient_track_delete_at(
         tt, DP_transient_track_key_frame_search_at(tt, frame_index));
 

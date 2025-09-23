@@ -8660,16 +8660,16 @@ extern "C" {
     pub fn DP_timeline_transient(tl: *mut DP_Timeline) -> bool;
 }
 extern "C" {
-    pub fn DP_timeline_count(tl: *mut DP_Timeline) -> ::std::os::raw::c_int;
+    pub fn DP_timeline_track_count(tl: *mut DP_Timeline) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn DP_timeline_at_noinc(
+    pub fn DP_timeline_track_at_noinc(
         tl: *mut DP_Timeline,
         index: ::std::os::raw::c_int,
     ) -> *mut DP_Track;
 }
 extern "C" {
-    pub fn DP_timeline_index_by_id(
+    pub fn DP_timeline_track_index_by_id(
         tl: *mut DP_Timeline,
         track_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
@@ -8726,41 +8726,41 @@ extern "C" {
     ) -> *mut DP_TransientTrack;
 }
 extern "C" {
-    pub fn DP_transient_timeline_index_by_id(
+    pub fn DP_transient_timeline_track_index_by_id(
         ttl: *mut DP_TransientTimeline,
         track_id: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn DP_transient_timeline_set_noinc(
+    pub fn DP_transient_timeline_set_track_noinc(
         ttl: *mut DP_TransientTimeline,
         t: *mut DP_Track,
         index: ::std::os::raw::c_int,
     );
 }
 extern "C" {
-    pub fn DP_transient_timeline_set_inc(
+    pub fn DP_transient_timeline_set_track_inc(
         ttl: *mut DP_TransientTimeline,
         t: *mut DP_Track,
         index: ::std::os::raw::c_int,
     );
 }
 extern "C" {
-    pub fn DP_transient_timeline_set_transient_noinc(
+    pub fn DP_transient_timeline_set_transient_track_noinc(
         ttl: *mut DP_TransientTimeline,
         tt: *mut DP_TransientTrack,
         index: ::std::os::raw::c_int,
     );
 }
 extern "C" {
-    pub fn DP_transient_timeline_insert_transient_noinc(
+    pub fn DP_transient_timeline_insert_transient_track_noinc(
         ttl: *mut DP_TransientTimeline,
         tt: *mut DP_TransientTrack,
         index: ::std::os::raw::c_int,
     );
 }
 extern "C" {
-    pub fn DP_transient_timeline_delete_at(
+    pub fn DP_transient_timeline_delete_track_at(
         ttl: *mut DP_TransientTimeline,
         index: ::std::os::raw::c_int,
     );
@@ -8768,7 +8768,7 @@ extern "C" {
 extern "C" {
     pub fn DP_transient_timeline_clamp(
         ttl: *mut DP_TransientTimeline,
-        count: ::std::os::raw::c_int,
+        track_count: ::std::os::raw::c_int,
     );
 }
 extern "C" {

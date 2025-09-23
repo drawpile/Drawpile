@@ -42,11 +42,11 @@ static void dump_timeline(DP_Output *output, DP_CanvasHistory *ch,
                      DP_document_metadata_frame_count(dm));
 
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int track_count = DP_timeline_count(tl);
+    int track_count = DP_timeline_track_count(tl);
     DP_output_format(output, "%d track(s)\n", track_count);
 
     for (int i = 0; i < track_count; ++i) {
-        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        DP_Track *t = DP_timeline_track_at_noinc(tl, i);
         int kf_count = DP_track_key_frame_count(t);
         format_indent(output, 1, "[%d] %d \"%s\" %d key frame(s):\n", i,
                       DP_track_id(t), DP_track_title(t, NULL), kf_count);
