@@ -715,13 +715,13 @@ static bool write_index_timeline(DP_BuildIndexEntryContext *e)
         return false;
     }
 
-    int track_count = DP_timeline_count(tl);
+    int track_count = DP_timeline_track_count(tl);
     if (!DP_OUTPUT_WRITE_LITTLEENDIAN(output, DP_OUTPUT_UINT16(track_count))) {
         return false;
     }
 
     for (int i = 0; i < track_count; ++i) {
-        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        DP_Track *t = DP_timeline_track_at_noinc(tl, i);
         if (!write_index_track(output, t)) {
             return false;
         }
@@ -1550,7 +1550,7 @@ static bool read_index_timeline(DP_ReadSnapshotContext *c, size_t offset)
         if (!tt) {
             return false;
         }
-        DP_transient_timeline_set_transient_noinc(ttl, tt, i);
+        DP_transient_timeline_set_transient_track_noinc(ttl, tt, i);
     }
     return true;
 }

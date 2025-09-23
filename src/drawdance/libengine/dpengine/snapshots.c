@@ -770,9 +770,9 @@ static void track_to_reset_image(struct DP_ResetImageContext *c,
 static void timeline_to_reset_image(struct DP_ResetImageContext *c,
                                     DP_Timeline *tl)
 {
-    int track_count = DP_timeline_count(tl);
+    int track_count = DP_timeline_track_count(tl);
     for (int i = track_count - 1; i >= 0; --i) {
-        track_to_reset_image(c, i, DP_timeline_at_noinc(tl, i));
+        track_to_reset_image(c, i, DP_timeline_track_at_noinc(tl, i));
     }
 }
 

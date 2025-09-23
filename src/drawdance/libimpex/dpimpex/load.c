@@ -1022,7 +1022,7 @@ static void ora_fill_timeline(DP_ReadOraContext *c)
         DP_ReadOraTrack *rot =
             &DP_VECTOR_AT_TYPE(&c->tracks, DP_ReadOraTrack, i);
         DP_TransientTrack *tt = ora_fill_track(rot);
-        DP_transient_timeline_set_transient_noinc(ttl, tt, i);
+        DP_transient_timeline_set_transient_track_noinc(ttl, tt, i);
     }
     DP_transient_canvas_state_timeline_cleanup(c->tcs);
 }

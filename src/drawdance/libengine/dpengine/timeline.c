@@ -11,7 +11,7 @@
 struct DP_Timeline {
     DP_Atomic refcount;
     const bool transient;
-    const int count;
+    const int track_count;
     struct {
         DP_Track *const track;
     } elements[];
@@ -20,7 +20,7 @@ struct DP_Timeline {
 struct DP_TransientTimeline {
     DP_Atomic refcount;
     bool transient;
-    int count;
+    int track_count;
     union {
         DP_Track *track;
         DP_TransientTrack *transient_track;
@@ -32,7 +32,7 @@ struct DP_TransientTimeline {
 struct DP_Timeline {
     DP_Atomic refcount;
     bool transient;
-    int count;
+    int track_count;
     union {
         DP_Track *track;
         DP_TransientTrack *transient_track;
@@ -42,17 +42,17 @@ struct DP_Timeline {
 #endif
 
 
-static size_t timeline_size(int count)
+static size_t timeline_size(int track_count)
 {
-    return DP_FLEX_SIZEOF(DP_Timeline, elements, DP_int_to_size(count));
+    return DP_FLEX_SIZEOF(DP_Timeline, elements, DP_int_to_size(track_count));
 }
 
-static void *allocate_timeline(bool transient, int count)
+static void *allocate_timeline(bool transient, int track_count)
 {
-    DP_TransientTimeline *ttl = DP_malloc(timeline_size(count));
+    DP_TransientTimeline *ttl = DP_malloc(timeline_size(track_count));
     DP_atomic_set(&ttl->refcount, 1);
     ttl->transient = transient;
-    ttl->count = count;
+    ttl->track_count = track_count;
     return ttl;
 }
 
@@ -80,8 +80,8 @@ void DP_timeline_decref(DP_Timeline *tl)
     DP_ASSERT(tl);
     DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
     if (DP_atomic_dec(&tl->refcount)) {
-        int count = tl->count;
-        for (int i = 0; i < count; ++i) {
+        int track_count = tl->track_count;
+        for (int i = 0; i < track_count; ++i) {
             DP_track_decref_nullable(tl->elements[i].track);
         }
         DP_free(tl);
@@ -109,28 +109,28 @@ bool DP_timeline_transient(DP_Timeline *tl)
     return tl->transient;
 }
 
-int DP_timeline_count(DP_Timeline *tl)
+int DP_timeline_track_count(DP_Timeline *tl)
 {
     DP_ASSERT(tl);
     DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
-    return tl->count;
+    return tl->track_count;
 }
 
-DP_Track *DP_timeline_at_noinc(DP_Timeline *tl, int index)
+DP_Track *DP_timeline_track_at_noinc(DP_Timeline *tl, int index)
 {
     DP_ASSERT(tl);
     DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
     DP_ASSERT(index >= 0);
-    DP_ASSERT(index < tl->count);
+    DP_ASSERT(index < tl->track_count);
     return tl->elements[index].track;
 }
 
-int DP_timeline_index_by_id(DP_Timeline *tl, int track_id)
+int DP_timeline_track_index_by_id(DP_Timeline *tl, int track_id)
 {
     DP_ASSERT(tl);
     DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
-    int count = tl->count;
-    for (int i = 0; i < count; ++i) {
+    int track_count = tl->track_count;
+    for (int i = 0; i < track_count; ++i) {
         DP_Track *t = tl->elements[i].track;
         if (t && DP_track_id(t) == track_id) {
             return i;
@@ -145,7 +145,7 @@ bool DP_timeline_same_frame(DP_Timeline *tl, int frame_index_a,
     DP_ASSERT(tl);
     DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
     if (frame_index_a != frame_index_b) {
-        int track_count = tl->count;
+        int track_count = tl->track_count;
         for (int i = 0; i < track_count; ++i) {
             DP_Track *t = tl->elements[i].track;
             if (!DP_track_same_frame(t, frame_index_a, frame_index_b)) {
@@ -157,46 +157,48 @@ bool DP_timeline_same_frame(DP_Timeline *tl, int frame_index_a,
 }
 
 
-DP_TransientTimeline *DP_transient_timeline_new(DP_Timeline *tl, int reserve)
+DP_TransientTimeline *DP_transient_timeline_new(DP_Timeline *tl,
+                                                int track_reserve)
 {
     DP_ASSERT(tl);
     DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
     DP_ASSERT(!tl->transient);
-    DP_ASSERT(reserve >= 0);
-    int count = tl->count;
-    DP_TransientTimeline *ttl = allocate_timeline(true, count + reserve);
-    for (int i = 0; i < count; ++i) {
+    DP_ASSERT(track_reserve >= 0);
+    int track_count = tl->track_count;
+    DP_TransientTimeline *ttl =
+        allocate_timeline(true, track_count + track_reserve);
+    for (int i = 0; i < track_count; ++i) {
         ttl->elements[i].track = DP_track_incref(tl->elements[i].track);
     }
-    for (int i = 0; i < reserve; ++i) {
-        ttl->elements[count + i].track = NULL;
+    for (int i = 0; i < track_reserve; ++i) {
+        ttl->elements[track_count + i].track = NULL;
     }
     return ttl;
 }
 
-DP_TransientTimeline *DP_transient_timeline_new_init(int reserve)
+DP_TransientTimeline *DP_transient_timeline_new_init(int track_reserve)
 {
-    DP_ASSERT(reserve >= 0);
-    DP_TransientTimeline *ttl = allocate_timeline(true, reserve);
-    for (int i = 0; i < reserve; ++i) {
+    DP_ASSERT(track_reserve >= 0);
+    DP_TransientTimeline *ttl = allocate_timeline(true, track_reserve);
+    for (int i = 0; i < track_reserve; ++i) {
         ttl->elements[i].track = NULL;
     }
     return ttl;
 }
 
 DP_TransientTimeline *DP_transient_timeline_reserve(DP_TransientTimeline *ttl,
-                                                    int reserve)
+                                                    int track_reserve)
 {
     DP_ASSERT(ttl);
     DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
     DP_ASSERT(ttl->transient);
-    DP_ASSERT(reserve >= 0);
-    DP_debug("Reserve %d elements in timeline", reserve);
-    if (reserve > 0) {
-        int old_count = ttl->count;
-        int new_count = old_count + reserve;
+    DP_ASSERT(track_reserve >= 0);
+    DP_debug("Reserve %d elements in timeline", track_reserve);
+    if (track_reserve > 0) {
+        int old_count = ttl->track_count;
+        int new_count = old_count + track_reserve;
         ttl = DP_realloc(ttl, timeline_size(new_count));
-        ttl->count = new_count;
+        ttl->track_count = new_count;
         for (int i = old_count; i < new_count; ++i) {
             ttl->elements[i].track = NULL;
         }
@@ -225,7 +227,7 @@ DP_Timeline *DP_transient_timeline_persist(DP_TransientTimeline *ttl)
     DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
     DP_ASSERT(ttl->transient);
     ttl->transient = false;
-    int count = ttl->count;
+    int count = ttl->track_count;
     for (int i = 0; i < count; ++i) {
         DP_ASSERT(ttl->elements[i].track);
         if (DP_track_transient(ttl->elements[i].track)) {
@@ -235,23 +237,24 @@ DP_Timeline *DP_transient_timeline_persist(DP_TransientTimeline *ttl)
     return (DP_Timeline *)ttl;
 }
 
-DP_Track *DP_transient_timeline_at_noinc(DP_TransientTimeline *ttl, int index)
+DP_Track *DP_transient_timeline_track_at_noinc(DP_TransientTimeline *ttl,
+                                               int index)
 {
     DP_ASSERT(ttl);
     DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
     DP_ASSERT(ttl->transient);
-    return DP_timeline_at_noinc((DP_Timeline *)ttl, index);
+    return DP_timeline_track_at_noinc((DP_Timeline *)ttl, index);
 }
 
 DP_TransientTrack *
-DP_transient_timeline_transient_at_noinc(DP_TransientTimeline *ttl, int index,
-                                         int reserve)
+DP_transient_timeline_transient_track_at_noinc(DP_TransientTimeline *ttl,
+                                               int index, int reserve)
 {
     DP_ASSERT(ttl);
     DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
     DP_ASSERT(ttl->transient);
     DP_ASSERT(index >= 0);
-    DP_ASSERT(index < ttl->count);
+    DP_ASSERT(index < ttl->track_count);
     DP_Track *t = ttl->elements[index].track;
     DP_TransientTrack *tt;
     if (DP_track_transient(t)) {
@@ -266,79 +269,81 @@ DP_transient_timeline_transient_at_noinc(DP_TransientTimeline *ttl, int index,
     return tt;
 }
 
-int DP_transient_timeline_index_by_id(DP_TransientTimeline *ttl, int track_id)
+int DP_transient_timeline_track_index_by_id(DP_TransientTimeline *ttl,
+                                            int track_id)
 {
     DP_ASSERT(ttl);
     DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
     DP_ASSERT(ttl->transient);
-    return DP_timeline_index_by_id((DP_Timeline *)ttl, track_id);
+    return DP_timeline_track_index_by_id((DP_Timeline *)ttl, track_id);
 }
 
-void DP_transient_timeline_set_noinc(DP_TransientTimeline *ttl, DP_Track *t,
-                                     int index)
+void DP_transient_timeline_set_track_noinc(DP_TransientTimeline *ttl,
+                                           DP_Track *t, int index)
 {
     DP_ASSERT(ttl);
     DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
     DP_ASSERT(ttl->transient);
     DP_ASSERT(t);
     DP_ASSERT(index >= 0);
-    DP_ASSERT(index < ttl->count);
+    DP_ASSERT(index < ttl->track_count);
     DP_ASSERT(!ttl->elements[index].track);
     ttl->elements[index].track = t;
 }
 
-void DP_transient_timeline_set_inc(DP_TransientTimeline *ttl, DP_Track *t,
-                                   int index)
+void DP_transient_timeline_set_track_inc(DP_TransientTimeline *ttl, DP_Track *t,
+                                         int index)
 {
-    DP_transient_timeline_set_noinc(ttl, DP_track_incref(t), index);
+    DP_transient_timeline_set_track_noinc(ttl, DP_track_incref(t), index);
 }
 
-void DP_transient_timeline_set_transient_noinc(DP_TransientTimeline *ttl,
-                                               DP_TransientTrack *tt, int index)
+void DP_transient_timeline_set_transient_track_noinc(DP_TransientTimeline *ttl,
+                                                     DP_TransientTrack *tt,
+                                                     int index)
 {
-    DP_transient_timeline_set_noinc(ttl, (DP_Track *)tt, index);
+    DP_transient_timeline_set_track_noinc(ttl, (DP_Track *)tt, index);
 }
 
-void DP_transient_timeline_insert_transient_noinc(DP_TransientTimeline *ttl,
-                                                  DP_TransientTrack *tt,
-                                                  int index)
+void DP_transient_timeline_insert_transient_track_noinc(
+    DP_TransientTimeline *ttl, DP_TransientTrack *tt, int index)
 {
     DP_ASSERT(ttl);
     DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
     DP_ASSERT(ttl->transient);
-    DP_ASSERT(!ttl->elements[ttl->count - 1].track);
+    DP_ASSERT(!ttl->elements[ttl->track_count - 1].track);
     DP_ASSERT(tt);
     DP_ASSERT(index >= 0);
-    DP_ASSERT(index < ttl->count);
+    DP_ASSERT(index < ttl->track_count);
     memmove(&ttl->elements[index + 1], &ttl->elements[index],
-            sizeof(*ttl->elements) * DP_int_to_size(ttl->count - index - 1));
+            sizeof(*ttl->elements)
+                * DP_int_to_size(ttl->track_count - index - 1));
     ttl->elements[index].transient_track = tt;
 }
 
-void DP_transient_timeline_delete_at(DP_TransientTimeline *ttl, int index)
+void DP_transient_timeline_delete_track_at(DP_TransientTimeline *ttl, int index)
 {
     DP_ASSERT(ttl);
     DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
     DP_ASSERT(ttl->transient);
     DP_ASSERT(index >= 0);
-    DP_ASSERT(index < ttl->count);
+    DP_ASSERT(index < ttl->track_count);
     DP_ASSERT(ttl->elements[index].track);
-    int new_count = --ttl->count;
+    int new_count = --ttl->track_count;
     DP_track_decref(ttl->elements[index].track);
     memmove(&ttl->elements[index], &ttl->elements[index + 1],
             DP_int_to_size(new_count - index) * sizeof(ttl->elements[0]));
 }
 
-void DP_transient_timeline_clamp(DP_TransientTimeline *ttl, int count)
+void DP_transient_timeline_clamp(DP_TransientTimeline *ttl, int track_count)
 {
     DP_ASSERT(ttl);
     DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
     DP_ASSERT(ttl->transient);
-    DP_ASSERT(count >= 0);
-    DP_ASSERT(count <= ttl->count);
-    int old_count = ttl->count;
-    for (int i = count; i < old_count; ++i) {
+    DP_ASSERT(track_count >= 0);
+    DP_ASSERT(track_count <= ttl->track_count);
+    int old_count = ttl->track_count;
+    for (int i = track_count; i < old_count; ++i) {
         DP_track_decref_nullable(ttl->elements[i].track);
     }
-    ttl->count = count;
+    ttl->track_count = track_count;
 }

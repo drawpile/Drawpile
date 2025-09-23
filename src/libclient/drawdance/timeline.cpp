@@ -61,12 +61,12 @@ bool Timeline::isNull() const
 
 int Timeline::trackCount() const
 {
-	return DP_timeline_count(m_data);
+	return DP_timeline_track_count(m_data);
 }
 
 Track Timeline::trackAt(int index) const
 {
-	return Track::inc(DP_timeline_at_noinc(m_data, index));
+	return Track::inc(DP_timeline_track_at_noinc(m_data, index));
 }
 
 Timeline::Timeline(DP_Timeline *tl)

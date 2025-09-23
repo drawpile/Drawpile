@@ -141,7 +141,7 @@ DP_CanvasState *DP_load_animation_frames(
 
     DP_TransientTimeline *ttl =
         DP_transient_canvas_state_transient_timeline(tcs, 1);
-    DP_transient_timeline_insert_transient_noinc(ttl, tt, 0);
+    DP_transient_timeline_insert_transient_track_noinc(ttl, tt, 0);
 
     DP_TransientDocumentMetadata *tdm =
         DP_transient_canvas_state_transient_metadata(tcs);
@@ -272,7 +272,8 @@ static DP_CanvasState *convert_animation(
             DP_transient_track_title_set(tt, title, title_length);
             DP_transient_track_set_transient_noinc(
                 tt, 0, DP_transient_key_frame_new_init(layer_id, 0), 0);
-            DP_transient_timeline_set_transient_noinc(ttl, tt, track_index);
+            DP_transient_timeline_set_transient_track_noinc(ttl, tt,
+                                                            track_index);
 
             ++layer_index;
         }
@@ -330,7 +331,8 @@ static DP_CanvasState *convert_animation(
                     tt, key_frame_index * hold_time,
                     DP_transient_key_frame_new_init(0, 0), frame_run);
             }
-            DP_transient_timeline_set_transient_noinc(ttl, tt, track_index);
+            DP_transient_timeline_set_transient_track_noinc(ttl, tt,
+                                                            track_index);
 
             ++group_index;
         }
