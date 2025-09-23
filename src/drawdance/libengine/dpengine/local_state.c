@@ -63,9 +63,9 @@ static void apply_layer_states_recursive(DP_Vector *layer_states,
 
 static void apply_track_states(DP_Vector *track_states, DP_Timeline *tl)
 {
-    int track_count = DP_timeline_count(tl);
+    int track_count = DP_timeline_track_count(tl);
     for (int i = 0; i < track_count; ++i) {
-        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        DP_Track *t = DP_timeline_track_at_noinc(tl, i);
         bool hidden = DP_track_hidden(t);
         bool onion_skin = DP_track_onion_skin(t);
         if (hidden || onion_skin) {

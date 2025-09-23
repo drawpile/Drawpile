@@ -1752,9 +1752,9 @@ static DP_CanvasState *apply_local_track_state(DP_PaintEngine *pe,
             DP_local_state_track_states(pe->local_state, &lts_count);
         DP_TransientCanvasState *tcs = NULL;
         DP_TransientTimeline *ttl = NULL;
-        int track_count = DP_timeline_count(tl);
+        int track_count = DP_timeline_track_count(tl);
         for (int i = 0; i < track_count; ++i) {
-            DP_Track *t = DP_timeline_at_noinc(tl, i);
+            DP_Track *t = DP_timeline_track_at_noinc(tl, i);
             bool hidden, onion_skin;
             get_local_track_state(track_states, lts_count, DP_track_id(t),
                                   &hidden, &onion_skin);
@@ -1766,7 +1766,7 @@ static DP_CanvasState *apply_local_track_state(DP_PaintEngine *pe,
                     ttl = DP_transient_canvas_state_transient_timeline(tcs, 0);
                 }
                 DP_TransientTrack *tt =
-                    DP_transient_timeline_transient_at_noinc(ttl, i, 0);
+                    DP_transient_timeline_transient_track_at_noinc(ttl, i, 0);
                 DP_transient_track_hidden_set(tt, hidden);
                 DP_transient_track_onion_skin_set(tt, onion_skin);
             }

@@ -293,10 +293,10 @@ static DP_ViewModeFilter make_frame_filter(DP_ViewModeBuffer *vmb,
                                            int internal_type)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int track_count = DP_timeline_count(tl);
+    int track_count = DP_timeline_track_count(tl);
     vmb->count = 0;
     for (int i = 0; i < track_count; ++i) {
-        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        DP_Track *t = DP_timeline_track_at_noinc(tl, i);
         if (!DP_track_hidden(t)) {
             build_track(vmb, cs, t, frame_index, oss);
         }
@@ -653,10 +653,10 @@ static void get_layers_visible_in_frame_with(DP_CanvasState *cs,
                                              void *user)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int track_count = DP_timeline_count(tl);
+    int track_count = DP_timeline_track_count(tl);
     int frame_index = DP_local_state_active_frame_index(ls);
     for (int i = 0; i < track_count; ++i) {
-        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        DP_Track *t = DP_timeline_track_at_noinc(tl, i);
         if (DP_local_state_track_visible(ls, DP_track_id(t))) {
             get_track_layers_visible_in_frame(cs, t, frame_index,
                                               check_layer_visibility, fn, user);
@@ -679,9 +679,9 @@ void DP_view_mode_get_layers_visible_in_track_frame(DP_CanvasState *cs,
                                                     void *user)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int index = DP_timeline_index_by_id(tl, track_id);
+    int index = DP_timeline_track_index_by_id(tl, track_id);
     if (index != -1) {
-        DP_Track *t = DP_timeline_at_noinc(tl, index);
+        DP_Track *t = DP_timeline_track_at_noinc(tl, index);
         get_track_layers_visible_in_frame(cs, t, frame_index, false, fn, user);
     }
 }
