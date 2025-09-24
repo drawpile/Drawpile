@@ -330,11 +330,7 @@ QPixmap ClassicBrush::presetThumbnail() const
 void ClassicBrush::updateCurve(
 	const KisCubicCurve &src, DP_ClassicBrushCurve &dst)
 {
-	const QVector<qreal> &values =
-		src.floatTransfer(DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT);
-	for(int i = 0; i < DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT; ++i) {
-		dst.values[i] = values[i];
-	}
+	src.transferIntoFloat(dst.values, DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT);
 }
 
 void ClassicBrush::setDynamicType(
