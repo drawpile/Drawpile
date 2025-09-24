@@ -134,7 +134,7 @@
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
         <location filename="../toolwidgets/transformsettings.cpp" line="+340"/>
         <source>Preserve alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>الحفاظ على ألفا</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -179,7 +179,7 @@
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-23"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>٪</translation>
     </message>
 </context>
 <context>
@@ -495,7 +495,7 @@
     <message>
         <location line="+2"/>
         <source>Layered Images</source>
-        <translation type="unfinished">صور الطبقات</translation>
+        <translation>الصور الطبقية</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -541,7 +541,7 @@
     <message>
         <location line="+7"/>
         <source>Set Brush Preset Thumbnail</source>
-        <translation type="unfinished">ضبط الصورة المصغرة للفرشاة مسبقًا</translation>
+        <translation>تعيين الصورة المصغرة للفرشاة مسبقًا</translation>
     </message>
     <message>
         <location line="+5"/>
