@@ -43,6 +43,9 @@ typedef struct DP_DocumentMetadata DP_TransientDocumentMetadata;
 #endif
 
 
+double DP_document_metadata_effective_framerate_combine(int framerate,
+                                                        int framerate_fraction);
+
 void DP_document_metadata_effective_framerate_split(double effective_framerate,
                                                     int *out_whole,
                                                     int *out_fraction);

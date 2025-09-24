@@ -14,6 +14,7 @@ extern "C" {
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/drawdance/documentmetadata.h"
 #include "libclient/net/message.h"
+#include <QActionGroup>
 #include <QApplication>
 #include <QClipboard>
 #include <QDrag>
@@ -33,7 +34,13 @@ extern "C" {
 
 namespace widgets {
 
-enum class TrackAction { None, ToggleVisible, ToggleOnionSkin };
+enum class TargetAction {
+	None,
+	ToggleVisible,
+	ToggleOnionSkin,
+	ToggleCamera,
+	CameraMenu,
+};
 
 enum class TargetHeader { None, Header, RangeFirst, RangeLast };
 
@@ -41,8 +48,9 @@ struct TimelineWidget::Target {
 	int uiTrackIndex;
 	int trackId;
 	int frameIndex;
+	bool onCamera;
 	TargetHeader header;
-	TrackAction action;
+	TargetAction action;
 };
 
 struct Exposure {
@@ -68,21 +76,28 @@ struct TimelineWidget::Private {
 	Actions actions;
 	QMenu *trackMenu = nullptr;
 	QMenu *frameMenu = nullptr;
+	QActionGroup *cameraActionGroup = nullptr;
 
 	QIcon visibleIcon;
 	QIcon hiddenIcon;
 	QIcon onionSkinOnIcon;
 	QIcon onionSkinOffIcon;
 	QIcon uselessIcon;
+	QIcon cameraIcon;
+	QIcon noCameraIcon;
+	QIcon ellipsisIcon;
 	int headerWidth = 64;
 	int rowHeight = 10;
 	int columnWidth = 10;
 	int xScroll = 0;
 	int yScroll = 0;
 	int currentTrackId = 0;
+	int currentCameraId = 0;
 	int currentFrame = 0;
 	int nextTrackId = 0;
-	Target hoverTarget = {-1, 0, -1, TargetHeader::None, TrackAction::None};
+	int nextCameraId = 0;
+	Target hoverTarget = {
+		-1, 0, -1, false, TargetHeader::None, TargetAction::None};
 	TargetHeader pressedHeader = TargetHeader::None;
 	bool editable = false;
 	Drag drag = Drag::None;
@@ -113,6 +128,18 @@ struct TimelineWidget::Private {
 	}
 
 	int trackCount() const { return getTracks().size(); }
+
+	const QVector<canvas::TimelineCamera> &getCameras() const
+	{
+		if(canvas) {
+			return canvas->timeline()->cameras();
+		} else {
+			static const QVector<canvas::TimelineCamera> emptyCameras;
+			return emptyCameras;
+		}
+	}
+
+	int cameraCount() const { return getCameras().size(); }
 
 	int frameCount() const
 	{
@@ -197,11 +224,27 @@ struct TimelineWidget::Private {
 
 	int trackIndexById(int trackId) const
 	{
-		const QVector<canvas::TimelineTrack> &tracks = getTracks();
-		int trackCount = tracks.size();
-		for(int i = 0; i < trackCount; ++i) {
-			if(tracks[i].id == trackId) {
-				return i;
+		if(trackId > 0) {
+			const QVector<canvas::TimelineTrack> &tracks = getTracks();
+			int trackCount = tracks.size();
+			for(int i = 0; i < trackCount; ++i) {
+				if(tracks[i].id == trackId) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+
+	int cameraIndexById(int cameraId) const
+	{
+		if(cameraId > 0) {
+			const QVector<canvas::TimelineCamera> &cameras = getCameras();
+			int cameraCount = cameras.size();
+			for(int i = 0; i < cameraCount; ++i) {
+				if(cameras[i].id() == cameraId) {
+					return i;
+				}
 			}
 		}
 		return -1;
@@ -213,6 +256,12 @@ struct TimelineWidget::Private {
 		return i == -1 ? nullptr : &getTracks()[i];
 	}
 
+	const canvas::TimelineCamera *cameraById(int cameraId) const
+	{
+		int i = cameraIndexById(cameraId);
+		return i == -1 ? nullptr : &getCameras()[i];
+	}
+
 	const canvas::TimelineTrack *currentTrack() const
 	{
 		return trackById(currentTrackId);
@@ -221,6 +270,11 @@ struct TimelineWidget::Private {
 	const canvas::TimelineTrack *hoverTrack() const
 	{
 		return trackById(hoverTarget.trackId);
+	}
+
+	const canvas::TimelineCamera *currentCamera() const
+	{
+		return cameraById(currentCameraId);
 	}
 
 	const canvas::TimelineKeyFrame *keyFrameBy(int trackId, int frame) const
@@ -424,9 +478,17 @@ struct TimelineWidget::Private {
 		return QRect(headerWidth, 0, bodyWidth() + 1, rowHeight);
 	}
 
+	QRect cameraSidebarRect() const
+	{
+		return QRect{
+			0, currentCameraId == 0 ? 0 : rowHeight, headerWidth, rowHeight};
+	}
+
 	QRect trackSidebarRect() const
 	{
-		return QRect{0, rowHeight, headerWidth, bodyHeight() + 1};
+		return QRect{
+			0, currentCameraId == 0 ? rowHeight : rowHeight * 2, headerWidth,
+			bodyHeight() + 1};
 	}
 
 	qreal rangeHandleInsetX() const { return qreal(columnWidth) / 6.0; }
@@ -437,14 +499,19 @@ struct TimelineWidget::Private {
 			0, (y + rowHeight / 2 + yScroll) / rowHeight - 1, trackCount());
 	}
 
-	const QIcon &getVisibilityIcon(const canvas::TimelineTrack &track)
+	const QIcon &getVisibilityIcon(bool hidden)
 	{
-		return track.hidden ? hiddenIcon : visibleIcon;
+		return hidden ? hiddenIcon : visibleIcon;
 	}
 
-	const QIcon &getOnionSkinIcon(const canvas::TimelineTrack &track)
+	const QIcon &getOnionSkinIcon(bool onionSkin)
 	{
-		return track.onionSkin ? onionSkinOnIcon : onionSkinOffIcon;
+		return onionSkin ? onionSkinOnIcon : onionSkinOffIcon;
+	}
+
+	const QIcon &getCameraIcon(bool camera)
+	{
+		return camera ? cameraIcon : noCameraIcon;
 	}
 };
 
@@ -460,6 +527,9 @@ TimelineWidget::TimelineWidget(QWidget *parent)
 	d->onionSkinOnIcon = QIcon::fromTheme("onion-on");
 	d->onionSkinOffIcon = QIcon::fromTheme("onion-off");
 	d->uselessIcon = QIcon::fromTheme("edit-delete");
+	d->cameraIcon = QIcon::fromTheme("camera-video");
+	d->noCameraIcon = QIcon::fromTheme("drawpile_nocamera");
+	d->ellipsisIcon = QIcon::fromTheme("drawpile_ellipsis_vertical");
 	d->verticalScroll = new QScrollBar(Qt::Vertical, this);
 	d->horizontalScroll = new QScrollBar(Qt::Horizontal, this);
 	connect(
@@ -483,7 +553,7 @@ void TimelineWidget::setCanvas(canvas::CanvasModel *canvas)
 {
 	d->canvas = canvas;
 	connect(
-		canvas->timeline(), &canvas::TimelineModel::tracksChanged, this,
+		canvas->timeline(), &canvas::TimelineModel::modelChanged, this,
 		&TimelineWidget::updateTracks);
 	connect(
 		canvas->metadata(), &canvas::DocumentMetadata::frameCountChanged, this,
@@ -501,8 +571,8 @@ void TimelineWidget::setActions(const Actions &actions)
 	d->haveActions = true;
 	d->actions = actions;
 
-	d->trackMenu = new QMenu{this};
-	d->frameMenu = new QMenu{this};
+	d->trackMenu = new QMenu(this);
+	d->frameMenu = new QMenu(this);
 	d->frameMenu->addAction(actions.keyFrameSetLayer);
 	d->frameMenu->addAction(actions.keyFrameSetEmpty);
 	d->frameMenu->addAction(actions.keyFrameCut);
@@ -595,6 +665,15 @@ void TimelineWidget::setActions(const Actions &actions)
 	connect(
 		actions.trackDelete, &QAction::triggered, this,
 		&TimelineWidget::deleteTrack);
+	connect(
+		actions.cameraAdd, &QAction::triggered, this,
+		&TimelineWidget::addCamera);
+	connect(
+		actions.cameraDuplicate, &QAction::triggered, this,
+		&TimelineWidget::duplicateCamera);
+	connect(
+		actions.cameraDelete, &QAction::triggered, this,
+		&TimelineWidget::deleteCamera);
 	connect(
 		actions.animationProperties, &QAction::triggered, this,
 		&TimelineWidget::showAnimationProperties);
@@ -732,10 +811,23 @@ bool TimelineWidget::event(QEvent *event)
 									.arg(layerTitle);
 				}
 			}
-		} else if(d->hoverTarget.action == TrackAction::ToggleVisible) {
-			tip = tr("Toggle visibility");
-		} else if(d->hoverTarget.action == TrackAction::ToggleOnionSkin) {
-			tip = tr("Toggle onion skin");
+		} else {
+			switch(d->hoverTarget.action) {
+			case TargetAction::ToggleVisible:
+				tip = tr("Toggle visibility");
+				break;
+			case TargetAction::ToggleOnionSkin:
+				tip = tr("Toggle onion skin");
+				break;
+			case TargetAction::ToggleCamera:
+				tip = tr("Toggle camera visibility on canvas");
+				break;
+			case TargetAction::CameraMenu:
+				tip = tr("Camera menu");
+				break;
+			case TargetAction::None:
+				break;
+			}
 		}
 		setToolTip(tip);
 	}
@@ -808,11 +900,16 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		}
 	}
 
+	// Camera.
+	const canvas::TimelineCamera *currentCamera = d->currentCamera();
+	QRect cameraSidebarRect = d->cameraSidebarRect();
+	int cameraOffsetY = cameraSidebarRect.y();
+
 	// Key frames.
 	const canvas::TimelineKeyFrame *currentVisibleKeyFrame =
 		d->currentVisibleKeyFrame();
 	for(int i = 0; i < trackCount; ++i) {
-		int y = rowHeight + i * rowHeight - yScroll;
+		int y = cameraOffsetY + rowHeight + i * rowHeight - yScroll;
 		const canvas::TimelineTrack &track = tracks[trackCount - i - 1];
 		painter.setOpacity(track.hidden ? 0.5 : 1.0);
 		const QVector<canvas::TimelineKeyFrame> &keyFrames = track.keyFrames;
@@ -920,10 +1017,37 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		}
 	}
 
-	// Tracks along the side.
+	// Camera and tracks along the side.
+	painter.setClipRect(cameraSidebarRect);
+	{
+		int y = cameraOffsetY - yScroll;
+		int x = TRACK_PADDING;
+		int yIcon = y + qRound(qreal(rowHeight - ICON_SIZE) / 2.0);
+		qreal visibilityOpacity = 1.0;
+		qreal cameraOpacity = 1.0;
+		painter.setPen(textColor);
+		painter.setOpacity(cameraOpacity);
+		d->getCameraIcon(currentCamera)
+			.paint(&painter, x, yIcon, ICON_SIZE, ICON_SIZE);
+
+		x += TRACK_PADDING + ICON_SIZE;
+		painter.setOpacity(visibilityOpacity);
+		painter.drawText(
+			x, y, headerWidth - x - TRACK_PADDING, rowHeight, Qt::AlignVCenter,
+			currentCamera ? currentCamera->title() : noCameraTitle());
+
+		painter.setOpacity(1.0);
+		d->ellipsisIcon.paint(
+			&painter, cameraSidebarRect.right() - TRACK_PADDING - ICON_SIZE,
+			yIcon, ICON_SIZE, ICON_SIZE);
+
+		painter.setPen(outlineColor);
+		painter.drawLine(0, y + rowHeight, headerWidth, y + rowHeight);
+	}
+
 	painter.setClipRect(d->trackSidebarRect());
 	for(int i = 0; i < trackCount; ++i) {
-		int y = rowHeight + i * rowHeight - yScroll;
+		int y = cameraOffsetY + rowHeight + i * rowHeight - yScroll;
 		const canvas::TimelineTrack &track = tracks[trackCount - i - 1];
 		bool isSelected = track.id == d->currentTrackId;
 		if(isSelected) {
@@ -933,18 +1057,18 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		}
 
 		int x = TRACK_PADDING;
-		int yIcon = y + (rowHeight - ICON_SIZE) / 2;
+		int yIcon = y + qRound(qreal(rowHeight - ICON_SIZE) / 2.0);
 		qreal opacity = track.hidden ? 0.3 : 1.0;
 		qreal onionSkinOpacity = opacity * (track.onionSkin ? 1.0 : 0.3);
 		painter.setPen(isSelected ? highlightedTextColor : textColor);
 		painter.setOpacity(opacity);
-		d->getVisibilityIcon(track).paint(
-			&painter, x, yIcon, ICON_SIZE, ICON_SIZE);
+		d->getVisibilityIcon(track.hidden)
+			.paint(&painter, x, yIcon, ICON_SIZE, ICON_SIZE);
 
 		x += TRACK_PADDING + ICON_SIZE;
 		painter.setOpacity(onionSkinOpacity);
-		d->getOnionSkinIcon(track).paint(
-			&painter, x, yIcon, ICON_SIZE, ICON_SIZE);
+		d->getOnionSkinIcon(track.onionSkin)
+			.paint(&painter, x, yIcon, ICON_SIZE, ICON_SIZE);
 
 		x += TRACK_PADDING + ICON_SIZE;
 		painter.setOpacity(opacity);
@@ -956,8 +1080,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		painter.setPen(outlineColor);
 		painter.drawLine(0, y + rowHeight, headerWidth, y + rowHeight);
 	}
-	painter.setOpacity(1.0);
-	painter.setClipRect(QRect{}, Qt::NoClip);
+	painter.setClipRect(QRect(), Qt::NoClip);
 
 	if(d->dragHover == Drag::Track) {
 		painter.setPen(textColor);
@@ -1155,15 +1278,16 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 
 void TimelineWidget::mousePressEvent(QMouseEvent *event)
 {
-	Target target = getMouseTarget(compat::mousePos(*event));
+	QPoint pos = compat::mousePos(*event);
+	Target target = getMouseTarget(pos);
 	applyMouseTarget(event, target, true);
 
 	Qt::MouseButton button = event->button();
 	Drag drag = Drag::None;
 	Qt::DropAction dropAction = Qt::MoveAction;
 	if(button == Qt::LeftButton) {
-		if(target.action != TrackAction::None) {
-			executeTargetAction(target);
+		if(target.action != TargetAction::None) {
+			executeTargetAction(target, pos);
 			event->accept();
 		} else if(target.trackId != 0 && target.frameIndex == -1) {
 			drag = Drag::Track;
@@ -1198,12 +1322,13 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 
 void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-	Target target = getMouseTarget(compat::mousePos(*event));
+	QPoint pos = compat::mousePos(*event);
+	Target target = getMouseTarget(pos);
 	applyMouseTarget(event, target, true);
 
 	if(event->button() == Qt::LeftButton) {
-		if(target.action != TrackAction::None) {
-			executeTargetAction(target);
+		if(target.action != TargetAction::None) {
+			executeTargetAction(target, pos);
 		} else if(target.frameIndex == -1 && target.trackId != 0) {
 			retitleTrack();
 		} else if(target.frameIndex != -1 && target.trackId != 0) {
@@ -1390,11 +1515,10 @@ void TimelineWidget::copyKeyFrame()
 	using LayersIt = QHash<int, bool>::const_iterator;
 	const LayersIt end = keyFrame->layerVisibility.constEnd();
 	for(LayersIt it = keyFrame->layerVisibility.constBegin(); it != end; ++it) {
-		layerVisibilityJson.append(
-			QJsonObject{
-				{"layerId", it.key()},
-				{"visible", it.value()},
-			});
+		layerVisibilityJson.append(QJsonObject{
+			{"layerId", it.key()},
+			{"visible", it.value()},
+		});
 	}
 
 	QJsonDocument doc{QJsonObject{
@@ -1667,6 +1791,66 @@ void TimelineWidget::deleteTrack()
 	});
 }
 
+void TimelineWidget::addCamera()
+{
+	if(!d->editable) {
+		return;
+	}
+
+	const canvas::TimelineModel *timeline = d->canvas->timeline();
+	int cameraId = timeline->getAvailableCameraId();
+	if(cameraId == 0) {
+		qWarning("Couldn't find a free ID for a new camera");
+		return;
+	}
+
+	d->nextCameraId = cameraId;
+	emitCommand([&](uint8_t contextId) {
+		return net::makeCameraCreateMessage(
+			contextId, cameraId, 0,
+			timeline->getAvailableCameraName(tr("Camera")));
+	});
+}
+
+void TimelineWidget::duplicateCamera()
+{
+	if(!d->editable) {
+		return;
+	}
+
+	const canvas::TimelineCamera *source = d->currentCamera();
+	if(!source) {
+		return;
+	}
+
+	const canvas::TimelineModel *timeline = d->canvas->timeline();
+	int cameraId = timeline->getAvailableCameraId();
+	if(cameraId == 0) {
+		qWarning("Couldn't find a free ID for a duplicate camera");
+		return;
+	}
+
+	d->nextCameraId = cameraId;
+	emitCommand([&](uint8_t contextId) {
+		return net::makeCameraCreateMessage(
+			contextId, cameraId, source->id(),
+			timeline->getAvailableCameraName(source->title()));
+	});
+}
+
+void TimelineWidget::deleteCamera()
+{
+	int cameraId = d->currentCameraId;
+	if(cameraId == 0) {
+		return;
+	}
+
+	d->nextCameraId = 0;
+	emitCommand([&](uint8_t contextId) {
+		return net::makeCameraDeleteMessage(contextId, cameraId);
+	});
+}
+
 void TimelineWidget::showAnimationProperties()
 {
 	if(d->editable && d->canvas) {
@@ -1749,47 +1933,39 @@ void TimelineWidget::setAnimationProperties(
 
 			if(framerateChanged) {
 				if(compatibilityMode) {
-					msgs.append(
-						net::makeSetMetadataIntMessage(
-							contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE,
-							qMax(1, qRound(framerate))));
+					msgs.append(net::makeSetMetadataIntMessage(
+						contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE,
+						qMax(1, qRound(framerate))));
 				} else {
 					int whole, fraction;
 					drawdance::DocumentMetadata::splitEffectiveFramerate(
 						framerate, whole, fraction);
-					msgs.append(
-						net::makeSetMetadataIntMessage(
-							contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE,
-							whole));
-					msgs.append(
-						net::makeSetMetadataIntMessage(
-							contextId,
-							DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE_FRACTION,
-							fraction));
+					msgs.append(net::makeSetMetadataIntMessage(
+						contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE,
+						whole));
+					msgs.append(net::makeSetMetadataIntMessage(
+						contextId,
+						DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE_FRACTION,
+						fraction));
 				}
 			}
 
 			if(frameCountChanged) {
-				msgs.append(
-					net::makeSetMetadataIntMessage(
-						contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT,
-						frameCount));
+				msgs.append(net::makeSetMetadataIntMessage(
+					contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT,
+					frameCount));
 			}
 
 			if(frameRangeFirstChanged) {
-				msgs.append(
-					net::makeSetMetadataIntMessage(
-						contextId,
-						DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_FIRST,
-						frameRangeFirst));
+				msgs.append(net::makeSetMetadataIntMessage(
+					contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_FIRST,
+					frameRangeFirst));
 			}
 
 			if(frameRangeLastChanged) {
-				msgs.append(
-					net::makeSetMetadataIntMessage(
-						contextId,
-						DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_LAST,
-						frameRangeLast));
+				msgs.append(net::makeSetMetadataIntMessage(
+					contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_LAST,
+					frameRangeLast));
 			}
 
 			emit timelineEditCommands(msgs.size(), msgs.constData());
@@ -1882,14 +2058,14 @@ void TimelineWidget::updateTracks()
 	d->verticalScroll->setSingleStep(d->rowHeight);
 	d->horizontalScroll->setSingleStep(d->columnWidth);
 
-	int maxTrackAdvance = 0;
+	int maxTitleAdvance = 0;
 	int nextTrackId = 0;
 	int currentTrackId = 0;
 	int anyTrackId = 0;
 	for(const canvas::TimelineTrack &track : d->getTracks()) {
-		int trackAdvance = fm.horizontalAdvance(track.title);
-		if(trackAdvance > maxTrackAdvance) {
-			maxTrackAdvance = trackAdvance;
+		int titleAdvance = fm.horizontalAdvance(track.title);
+		if(titleAdvance > maxTitleAdvance) {
+			maxTitleAdvance = titleAdvance;
 		}
 
 		if(d->nextTrackId != 0 && track.id == d->nextTrackId) {
@@ -1903,10 +2079,41 @@ void TimelineWidget::updateTracks()
 			anyTrackId = track.id;
 		}
 	}
-	d->headerWidth = maxTrackAdvance + TRACK_PADDING * 4 + ICON_SIZE * 2;
 	int effectiveTrackId = nextTrackId != 0		 ? nextTrackId
 						   : currentTrackId != 0 ? currentTrackId
 												 : anyTrackId;
+
+	int nextCameraId = 0;
+	int currentCameraId = 0;
+	for(const canvas::TimelineCamera &camera : d->getCameras()) {
+		int cameraId = camera.id();
+		if(d->nextCameraId != 0 && cameraId == d->nextCameraId) {
+			nextCameraId = d->nextCameraId;
+			d->nextCameraId = 0;
+		}
+		if(d->currentCameraId == cameraId) {
+			currentCameraId = d->currentCameraId;
+		}
+	}
+	int effectiveCameraId = nextCameraId != 0	   ? nextCameraId
+							: currentCameraId != 0 ? currentCameraId
+												   : 0;
+	d->currentCameraId = effectiveCameraId;
+
+	QString cameraTitle;
+	if(const canvas::TimelineCamera *camera = d->cameraById(effectiveCameraId);
+	   camera) {
+		cameraTitle = camera->title();
+	} else {
+		cameraTitle = noCameraTitle();
+	}
+
+	int titleAdvance = fm.horizontalAdvance(cameraTitle);
+	if(titleAdvance > maxTitleAdvance) {
+		maxTitleAdvance = titleAdvance;
+	}
+
+	d->headerWidth = maxTitleAdvance + TRACK_PADDING * 4 + ICON_SIZE * 2;
 	setMinimumHeight(
 		d->rowHeight * 3 + d->horizontalScroll->sizeHint().height());
 	setCurrent(effectiveTrackId, d->currentFrame, false, false);
@@ -1948,6 +2155,54 @@ void TimelineWidget::updatePasteAction()
 			d->editable && d->frameCount() > 0 && d->currentTrack() &&
 			d->currentFrame != -1 && mimeData &&
 			mimeData->hasFormat(KEY_FRAME_MIME_TYPE));
+	}
+}
+
+void TimelineWidget::showCameraMenu(const QPoint &pos)
+{
+	QMenu *cameraMenu = new QMenu(this);
+
+	const QVector<canvas::TimelineCamera> &cameras = d->getCameras();
+	if(!cameras.isEmpty()) {
+		QActionGroup *cameraActionGroup = new QActionGroup(cameraMenu);
+
+		QAction *noCameraAction = cameraMenu->addAction(noCameraTitle());
+		noCameraAction->setCheckable(true);
+		noCameraAction->setChecked(d->currentCameraId == 0);
+		cameraActionGroup->addAction(noCameraAction);
+		connect(
+			noCameraAction, &QAction::triggered, this,
+			std::bind(&TimelineWidget::setActiveCamera, this, 0));
+
+		for(const canvas::TimelineCamera &camera : cameras) {
+			QAction *cameraAction = cameraMenu->addAction(camera.title());
+			cameraAction->setCheckable(true);
+			int id = camera.id();
+			cameraAction->setChecked(d->currentCameraId == id);
+			cameraActionGroup->addAction(cameraAction);
+			connect(
+				cameraAction, &QAction::triggered, this,
+				std::bind(&TimelineWidget::setActiveCamera, this, id));
+		}
+
+		cameraMenu->addSeparator();
+	}
+
+	cameraMenu->addAction(d->actions.cameraAdd);
+	cameraMenu->addAction(d->actions.cameraDuplicate);
+	cameraMenu->addAction(d->actions.cameraProperties);
+	cameraMenu->addAction(d->actions.cameraDelete);
+
+	cameraMenu->popup(mapToGlobal(pos));
+	cameraMenu->setAttribute(Qt::WA_DeleteOnClose);
+}
+
+void TimelineWidget::setActiveCamera(int cameraId)
+{
+	d->nextCameraId = 0;
+	if(cameraId != d->currentCameraId) {
+		d->currentCameraId = cameraId;
+		updateTracks();
 	}
 }
 
@@ -2076,10 +2331,9 @@ void TimelineWidget::changeFrameExposure(int direction, bool visible)
 
 		int trackId = p.first;
 		for(int frameIndex : frameIndexes) {
-			messages.append(
-				net::makeKeyFrameDeleteMessage(
-					contextId, trackId, frameIndex, trackId,
-					frameIndex + direction));
+			messages.append(net::makeKeyFrameDeleteMessage(
+				contextId, trackId, frameIndex, trackId,
+				frameIndex + direction));
 		}
 	}
 	emit timelineEditCommands(messages.size(), messages.constData());
@@ -2134,6 +2388,13 @@ void TimelineWidget::updateActions()
 	d->actions.trackDuplicate->setEnabled(trackEditable);
 	d->actions.trackRetitle->setEnabled(trackEditable);
 	d->actions.trackDelete->setEnabled(trackEditable);
+
+	const canvas::TimelineCamera *camera = d->currentCamera();
+	bool cameraEditable = timelineEditable && camera;
+	d->actions.cameraAdd->setEnabled(timelineEditable);
+	d->actions.cameraDuplicate->setEnabled(cameraEditable);
+	d->actions.cameraProperties->setEnabled(cameraEditable);
+	d->actions.cameraDelete->setEnabled(cameraEditable);
 
 	int visibleFrameCount = d->visibleFrameCount();
 	bool haveMultipleFrames = visibleFrameCount > 1;
@@ -2286,7 +2547,7 @@ void TimelineWidget::updateScrollbars()
 
 TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 {
-	Target target{-1, 0, -1, TargetHeader::None, TrackAction::None};
+	Target target{-1, 0, -1, false, TargetHeader::None, TargetAction::None};
 	if(d->canvas) {
 		int x = pos.x();
 		int headerWidth = d->headerWidth;
@@ -2299,33 +2560,44 @@ TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 
 		int y = pos.y();
 		int rowHeight = d->rowHeight;
-		if(y > rowHeight) {
-			target.uiTrackIndex = (y - rowHeight + d->yScroll) / rowHeight;
+		bool haveCamera = d->currentCameraId != 0;
+		int trackOffsetY = haveCamera ? rowHeight * 2 : rowHeight;
+		if(y > trackOffsetY) {
+			target.uiTrackIndex = (y - trackOffsetY + d->yScroll) / rowHeight;
 			target.trackId = d->trackIdByUiIndex(target.uiTrackIndex);
 			int tp = TRACK_PADDING;
 			int tph = TRACK_PADDING / 2;
 			int mid = tph + ICON_SIZE + tp;
 			if(x >= tph && x < mid) {
-				target.action = TrackAction::ToggleVisible;
+				target.action = TargetAction::ToggleVisible;
 			} else if(x >= mid && x < tp * 3 + ICON_SIZE * 2) {
-				target.action = TrackAction::ToggleOnionSkin;
+				target.action = TargetAction::ToggleOnionSkin;
+			}
+		} else if(haveCamera && y > rowHeight) {
+			target.onCamera = true;
+			if(x < TRACK_PADDING + ICON_SIZE + TRACK_PADDING / 2) {
+				target.action = TargetAction::ToggleCamera;
+			} else if(x <= headerWidth) {
+				target.action = TargetAction::CameraMenu;
 			}
 		} else {
 			target.header = TargetHeader::Header;
 			if(d->editable && !d->canvas->isCompatibilityMode()) {
-				qreal frameX = qreal(
-					(x - headerWidth + d->xScroll) -
-					(target.frameIndex * d->columnWidth));
-				qreal handleInsetX = d->rangeHandleInsetX();
-				if(frameX <= handleInsetX &&
-				   target.frameIndex == d->frameRangeFirst()) {
-					target.header = TargetHeader::RangeFirst;
-				} else if(
-					frameX >= qreal(d->columnWidth - 1) - handleInsetX &&
-					target.frameIndex == d->frameRangeLast()) {
-					target.header = TargetHeader::RangeLast;
+				if(!haveCamera && x <= headerWidth && y <= rowHeight) {
+					target.action = TargetAction::CameraMenu;
 				} else {
-					target.header = TargetHeader::Header;
+					qreal frameX = qreal(
+						(x - headerWidth + d->xScroll) -
+						(target.frameIndex * d->columnWidth));
+					qreal handleInsetX = d->rangeHandleInsetX();
+					if(frameX <= handleInsetX &&
+					   target.frameIndex == d->frameRangeFirst()) {
+						target.header = TargetHeader::RangeFirst;
+					} else if(
+						frameX >= qreal(d->columnWidth - 1) - handleInsetX &&
+						target.frameIndex == d->frameRangeLast()) {
+						target.header = TargetHeader::RangeLast;
+					}
 				}
 			}
 		}
@@ -2336,7 +2608,7 @@ TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 void TimelineWidget::applyMouseTarget(
 	QMouseEvent *event, const Target &target, bool press)
 {
-	bool action = press && target.action != TrackAction::None;
+	bool action = press && target.action != TargetAction::None;
 	if(event && ((target.trackId != 0 && target.frameIndex != -1) || action)) {
 		event->accept();
 	}
@@ -2350,17 +2622,37 @@ void TimelineWidget::applyMouseTarget(
 	}
 }
 
-void TimelineWidget::executeTargetAction(const Target &target)
+void TimelineWidget::executeTargetAction(
+	const Target &target, const QPoint &pos)
 {
-	const canvas::TimelineTrack *track = d->trackById(target.trackId);
-	if(track) {
-		if(target.action == TrackAction::ToggleVisible) {
+	switch(target.action) {
+	case TargetAction::None:
+		break;
+	case TargetAction::ToggleVisible: {
+		const canvas::TimelineTrack *track = d->trackById(target.trackId);
+		if(track) {
 			emit trackHidden(track->id, !track->hidden);
-		} else if(target.action == TrackAction::ToggleOnionSkin) {
-			emit trackOnionSkinEnabled(track->id, !track->onionSkin);
-		} else {
-			qWarning("Unknown track action %d", int(target.action));
 		}
+		return;
+	}
+	case TargetAction::ToggleOnionSkin: {
+		const canvas::TimelineTrack *track = d->trackById(target.trackId);
+		if(track) {
+			emit trackOnionSkinEnabled(track->id, !track->onionSkin);
+		}
+		return;
+	}
+	case TargetAction::ToggleCamera: {
+		const canvas::TimelineCamera *camera = d->currentCamera();
+		if(camera) {
+			emit cameraHidden(camera->id(), !camera->hidden());
+		}
+		return;
+	}
+	case TargetAction::CameraMenu: {
+		showCameraMenu(pos);
+		return;
+	}
 	}
 }
 
@@ -2381,6 +2673,11 @@ void TimelineWidget::setCheckedSignalBlocked(QAction *action, bool checked)
 {
 	QSignalBlocker blocker{action};
 	action->setChecked(checked);
+}
+
+QString TimelineWidget::noCameraTitle()
+{
+	return tr("No camera");
 }
 
 }

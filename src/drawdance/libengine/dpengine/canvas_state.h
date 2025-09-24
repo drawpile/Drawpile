@@ -303,9 +303,8 @@ DP_TransientAnnotationList *
 DP_transient_canvas_state_transient_annotations(DP_TransientCanvasState *tcs,
                                                 int reserve);
 
-DP_TransientTimeline *
-DP_transient_canvas_state_transient_timeline(DP_TransientCanvasState *tcs,
-                                             int reserve);
+DP_TransientTimeline *DP_transient_canvas_state_transient_timeline(
+    DP_TransientCanvasState *tcs, int track_reserve, int camera_reserve);
 
 void DP_transient_canvas_state_timeline_set_inc(DP_TransientCanvasState *tcs,
                                                 DP_Timeline *tl);

@@ -32,6 +32,11 @@ Message makeAnnotationReshapeMessage(
 	uint8_t contextId, uint16_t id, int32_t x, int32_t y, uint16_t w,
 	uint16_t h);
 
+Message makeCameraCreateMessage(
+	uint8_t contextId, uint16_t id, uint16_t sourceId, const QString &title);
+
+Message makeCameraDeleteMessage(uint8_t contextId, uint16_t id);
+
 Message makeCanvasBackgroundMessage(uint8_t contextId, const QColor &color);
 
 Message makeCanvasResizeMessage(

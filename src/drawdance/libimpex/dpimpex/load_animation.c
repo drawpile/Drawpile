@@ -140,7 +140,7 @@ DP_CanvasState *DP_load_animation_frames(
                                                          0);
 
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(tcs, 1);
+        DP_transient_canvas_state_transient_timeline(tcs, 1, 0);
     DP_transient_timeline_insert_transient_track_noinc(ttl, tt, 0);
 
     DP_TransientDocumentMetadata *tdm =
@@ -241,7 +241,7 @@ static DP_CanvasState *convert_animation(
     DP_TransientLayerList *tll = DP_transient_layer_list_new_init(track_count);
     DP_TransientLayerPropsList *tlpl =
         DP_transient_layer_props_list_new_init(track_count);
-    DP_TransientTimeline *ttl = DP_transient_timeline_new_init(track_count);
+    DP_TransientTimeline *ttl = DP_transient_timeline_new_init(track_count, 0);
 
     int layer_index = 0;
     int group_index = 0;

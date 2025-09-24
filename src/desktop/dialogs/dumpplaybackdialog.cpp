@@ -64,11 +64,13 @@ struct DumpPlaybackDialog::Private {
 			return QStringLiteral("document metadata type %1")
 				.arg(aa->affected_id);
 		case DP_AFFECTED_DOMAIN_TIMELINE:
-			return QStringLiteral("timeline frame %1").arg(aa->affected_id);
+			return QStringLiteral("timeline track %1").arg(aa->affected_id);
 		case DP_AFFECTED_DOMAIN_SELECTIONS:
 			return QStringLiteral("selection %1 of user %2")
 				.arg(aa->affected_id & 0xff)
 				.arg((aa->affected_id >> 8) & 0xff);
+		case DP_AFFECTED_DOMAIN_CAMERAS:
+			return QStringLiteral("camera %1").arg(aa->affected_id);
 		case DP_AFFECTED_DOMAIN_EVERYTHING:
 			return QStringLiteral("everything");
 		default:

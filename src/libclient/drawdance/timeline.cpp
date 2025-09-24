@@ -69,6 +69,16 @@ Track Timeline::trackAt(int index) const
 	return Track::inc(DP_timeline_track_at_noinc(m_data, index));
 }
 
+int Timeline::cameraCount() const
+{
+	return DP_timeline_camera_count(m_data);
+}
+
+Camera Timeline::cameraAt(int index) const
+{
+	return Camera::inc(DP_timeline_camera_at_noinc(m_data, index));
+}
+
 Timeline::Timeline(DP_Timeline *tl)
 	: m_data{tl}
 {
