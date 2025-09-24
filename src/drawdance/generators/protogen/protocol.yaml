@@ -1514,6 +1514,131 @@ TransformRegionZstd:
     alias: TransformRegion
     incompatible: true
 
+CameraCreate:
+    id: 183
+    dirties_canvas: true
+    comment: |
+        Create or copy an animation camera.
+
+        The camera id must be prefixed by the user's context id, like layer,
+        annotation and track ids. Operators are exempt from this restriction.
+    fields:
+        - id u16
+        - source_id u16
+        - title utf8
+
+CameraRetitle:
+    id: 184
+    dirties_canvas: true
+    comment: |
+        Rename an animation camera.
+    fields:
+        - id u16
+        - title utf8
+
+CameraAttributes:
+    id: 185
+    dirties_canvas: true
+    comment: |
+        Set attributes on an animation camera.
+
+        If range_last < range_first, they are cleared (set to -1).
+    fields:
+        - id u16
+        - flags u8
+        - interpolation u8
+        - framerate i32
+        - framerate_fraction i32
+        - range_first u16
+        - range_last u16
+        - output_width u16
+        - output_height u16
+        - viewport_left i32
+        - viewport_top i32
+        - viewport_right i32
+        - viewport_bottom i32
+
+CameraDelete:
+    id: 186
+    dirties_canvas: true
+    comment: |
+        Delete an animation camera.
+    fields:
+        - id u16
+
+CameraKeyFrameSet:
+    id: 187
+    dirties_canvas: true
+    comment: |
+        Create, modify or delete a camera key frame.
+
+        If source_id and source_index are both zero, a new camera key frame is
+        created or an existing one is clobbered with a default frame.
+
+        If source_id and source_index refer to another camera key frame, it is
+        copied and inserted or clobbered.
+
+        If source_id and source_index are identical to camera_id and
+        frame_index, that camera key frame is deleted.
+    fields:
+        - camera_id u16
+        - frame_index u16
+        - source_id u16
+        - source_index u16
+
+CameraKeyFrameRetitle:
+    id: 188
+    dirties_canvas: true
+    comment: |
+        Rename a camera key frame.
+    fields:
+        - camera_id u16
+        - frame_index u16
+        - title utf8
+
+CameraKeyFrameValueSet:
+    id: 189
+    dirties_canvas: true
+    comment: |
+        Set a camera key frame property value. The value is divided by 10 **
+        (divisor - 1). A divisor of 0 deletes the value.
+    incompatible: true
+    fields:
+        - camera_id u16
+        - frame_index u16
+        - prop u8
+        - divisor u8
+        - value i32
+
+CameraKeyFrameCurveSet:
+    id: 190
+    dirties_canvas: true
+    comment: |
+        Set a camera key frame property curve. Curve point values are between 0
+        and 1, encoded as a 16 bit unsigned integer. Passing no values deletes
+        the curve. Passing 1 value is taken as the ID of one of the default
+        easing functions. Passing an even number of values will construct a
+        cubic curve. Passing an odd number means that the first value is the
+        type of the curve and the remaining pairs are the points. Passing less
+        than two points for a curve is invalid.
+    incompatible: true
+    fields:
+        - camera_id u16
+        - frame_index u16
+        - prop u8
+        - values vec_u16
+
+TrackAssign:
+    id: 191
+    dirties_canvas: true
+    comment: |
+        Assign a track to a set of cameras. A track assigned to nothing will be
+        assigned to the null camera, as will be a track assigned to camera 0.
+    incompatible: true
+    fields:
+        - track_id u16
+        - camera_ids vec_u16
+
 Undo:
     id: 255
     dirties_canvas: true

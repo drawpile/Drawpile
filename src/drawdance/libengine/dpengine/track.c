@@ -5,7 +5,14 @@
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpmsg/ids.h>
 
+
+typedef struct DP_TrackAssignment {
+    DP_Atomic refcount;
+    int count;
+    int camera_ids[];
+} DP_TrackAssignment;
 
 typedef struct DP_TrackEntry {
     int frame_index;
@@ -24,6 +31,7 @@ struct DP_Track {
     const bool onion_skin;
     const int id;
     DP_Text *const title;
+    DP_TrackAssignment *const assignment;
     const int count;
     DP_TrackEntry elements[];
 };
@@ -35,6 +43,7 @@ struct DP_TransientTrack {
     bool onion_skin;
     int id;
     DP_Text *title;
+    DP_TrackAssignment *assignment;
     int count;
     DP_TrackEntry elements[];
 };
@@ -48,11 +57,53 @@ struct DP_Track {
     bool onion_skin;
     int id;
     DP_Text *title;
+    DP_TrackAssignment *assignment;
     int count;
     DP_TrackEntry elements[];
 };
 
 #endif
+
+
+static DP_TrackAssignment *track_assignment_new(const int *camera_ids,
+                                                int count)
+{
+    DP_ASSERT(count > 0);
+    DP_ASSERT(camera_ids);
+    DP_TrackAssignment *assignment = DP_malloc(
+        DP_FLEX_SIZEOF(DP_TrackAssignment, camera_ids, DP_int_to_size(count)));
+    DP_atomic_set(&assignment->refcount, 1);
+    assignment->count = count;
+
+    for (int i = 0; i < count; ++i) {
+        int camera_id = camera_ids[i];
+        DP_ASSERT(camera_id >= 0);
+        DP_ASSERT(camera_id <= DP_CAMERA_ID_MAX);
+        DP_ASSERT(i == 0 || assignment->camera_ids[i - 1] < camera_id);
+        assignment->camera_ids[i] = camera_id;
+    }
+
+    return assignment;
+}
+
+static DP_TrackAssignment *
+track_assignment_incref_nullable(DP_TrackAssignment *assignment)
+{
+    if (assignment) {
+        DP_atomic_inc(&assignment->refcount);
+        return assignment;
+    }
+    else {
+        return NULL;
+    }
+}
+
+static void track_assignment_decref_nullable(DP_TrackAssignment *assignment)
+{
+    if (assignment && DP_atomic_dec(&assignment->refcount)) {
+        DP_free(assignment);
+    }
+}
 
 
 static size_t track_size(int count)
@@ -92,6 +143,7 @@ void DP_track_decref(DP_Track *t)
         for (int i = 0; i < count; ++i) {
             DP_key_frame_decref_nullable(t->elements[i].key_frame);
         }
+        track_assignment_decref_nullable(t->assignment);
         DP_text_decref_nullable(t->title);
         DP_free(t);
     }
@@ -262,6 +314,7 @@ DP_TransientTrack *DP_transient_track_new_init(int reserve)
     tt->onion_skin = false;
     tt->id = 0;
     tt->title = NULL;
+    tt->assignment = NULL;
     for (int i = 0; i < reserve; ++i) {
         tt->elements[i] = (DP_TrackEntry){-1, {NULL}};
     }
@@ -280,6 +333,7 @@ DP_TransientTrack *DP_transient_track_new(DP_Track *t, int reserve)
     tt->onion_skin = t->onion_skin;
     tt->id = t->id;
     tt->title = DP_text_incref_nullable(t->title);
+    tt->assignment = track_assignment_incref_nullable(t->assignment);
     for (int i = 0; i < count; ++i) {
         DP_TrackEntry *te = &t->elements[i];
         tt->elements[i] = (DP_TrackEntry){te->frame_index,
@@ -379,6 +433,21 @@ void DP_transient_track_title_set(DP_TransientTrack *tt, const char *title,
     DP_ASSERT(tt->transient);
     DP_text_decref_nullable(tt->title);
     tt->title = DP_text_new(title, length);
+}
+
+void DP_transient_track_assignment_set(DP_TransientTrack *tt,
+                                       const int *camera_ids, int count)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    track_assignment_decref_nullable(tt->assignment);
+    if (count > 0) {
+        tt->assignment = track_assignment_new(camera_ids, count);
+    }
+    else {
+        tt->assignment = NULL;
+    }
 }
 
 void DP_transient_track_hidden_set(DP_TransientTrack *tt, bool hidden)

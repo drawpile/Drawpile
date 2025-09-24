@@ -48,6 +48,19 @@ Message makeAnnotationReshapeMessage(
 		DP_msg_annotation_reshape_new(contextId, id, x, y, w, h));
 }
 
+Message makeCameraCreateMessage(
+	uint8_t contextId, uint16_t id, uint16_t sourceId, const QString &title)
+{
+	QByteArray bytes = title.toUtf8();
+	return Message::noinc(DP_msg_camera_create_new(
+		contextId, id, sourceId, bytes.constData(), bytes.length()));
+}
+
+Message makeCameraDeleteMessage(uint8_t contextId, uint16_t id)
+{
+	return Message::noinc(DP_msg_camera_delete_new(contextId, id));
+}
+
 Message makeCanvasBackgroundMessage(uint8_t contextId, const QColor &color)
 {
 	uint32_t c = qToBigEndian(color.rgba());

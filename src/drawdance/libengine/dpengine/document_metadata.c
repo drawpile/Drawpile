@@ -68,6 +68,14 @@ struct DP_DocumentMetadata {
 #endif
 
 
+double DP_document_metadata_effective_framerate_combine(int framerate,
+                                                        int framerate_fraction)
+{
+    return DP_int_to_double(DP_max_int(0, framerate))
+         + (DP_int_to_double(DP_max_int(0, framerate_fraction))
+            / DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_MULTIPLIER);
+}
+
 void DP_document_metadata_effective_framerate_split(double effective_framerate,
                                                     int *out_whole,
                                                     int *out_fraction)
@@ -203,10 +211,10 @@ double DP_document_metadata_effective_framerate(DP_DocumentMetadata *dm)
 {
     DP_ASSERT(dm);
     DP_ASSERT(DP_atomic_get(&dm->refcount) > 0);
-    double multiplier = DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_MULTIPLIER;
-    double fps = DP_int_to_double(dm->framerate)
-               + (DP_int_to_double(dm->framerate_fraction) / multiplier);
-    return DP_max_double(1.0 / multiplier, fps);
+    return DP_max_double(
+        1.0 / DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_MULTIPLIER,
+        DP_document_metadata_effective_framerate_combine(
+            dm->framerate, dm->framerate_fraction));
 }
 
 int DP_document_metadata_frame_count(DP_DocumentMetadata *dm)

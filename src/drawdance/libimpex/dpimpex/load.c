@@ -1029,7 +1029,7 @@ static void ora_fill_timeline(DP_ReadOraContext *c)
 {
     int track_count = DP_size_to_int(c->tracks.used);
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(c->tcs, track_count);
+        DP_transient_canvas_state_transient_timeline(c->tcs, track_count, 0);
     for (int i = 0; i < track_count; ++i) {
         DP_ReadOraTrack *rot =
             &DP_VECTOR_AT_TYPE(&c->tracks, DP_ReadOraTrack, i);

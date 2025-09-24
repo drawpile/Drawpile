@@ -1214,6 +1214,18 @@ static bool handle_track_create(DP_AclState *acls, int track_id,
         && DP_acl_state_can_use_feature(acls, DP_FEATURE_TIMELINE, user_id);
 }
 
+static bool handle_camera_create(DP_AclState *acls, int camera_id,
+                                 uint8_t user_id, bool override)
+{
+    if (override) {
+        return true;
+    }
+    // Only operators can create cameras under a different owner.
+    return (DP_camera_id_owner(camera_id, user_id)
+            || DP_acl_state_is_op(acls, user_id))
+        && DP_acl_state_can_use_feature(acls, DP_FEATURE_TIMELINE, user_id);
+}
+
 static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
                                    DP_MessageType type, uint8_t user_id,
                                    bool override)
@@ -1321,6 +1333,10 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
         return handle_track_create(
             acls, DP_msg_track_create_id(DP_message_internal(msg)), user_id,
             override);
+    case DP_MSG_CAMERA_CREATE:
+        return handle_camera_create(
+            acls, DP_msg_camera_create_id(DP_message_internal(msg)), user_id,
+            override);
     case DP_MSG_TRACK_RETITLE:
     case DP_MSG_TRACK_DELETE:
     case DP_MSG_TRACK_ORDER:
@@ -1328,6 +1344,14 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
     case DP_MSG_KEY_FRAME_RETITLE:
     case DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES:
     case DP_MSG_KEY_FRAME_DELETE:
+    case DP_MSG_CAMERA_RETITLE:
+    case DP_MSG_CAMERA_ATTRIBUTES:
+    case DP_MSG_CAMERA_DELETE:
+    case DP_MSG_CAMERA_KEY_FRAME_SET:
+    case DP_MSG_CAMERA_KEY_FRAME_RETITLE:
+    case DP_MSG_CAMERA_KEY_FRAME_VALUE_SET:
+    case DP_MSG_CAMERA_KEY_FRAME_CURVE_SET:
+    case DP_MSG_TRACK_ASSIGN:
         return override
             || DP_acl_state_can_use_feature(acls, DP_FEATURE_TIMELINE, user_id);
     case DP_MSG_SELECTION_PUT:

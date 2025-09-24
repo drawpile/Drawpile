@@ -1008,7 +1008,7 @@ static void truncate_tracks(DP_TransientCanvasState *tcs, int frame_count)
             DP_track_key_frame_search_at_or_after(t, frame_count, NULL);
         if (kf_index != -1) {
             if (!ttl) {
-                ttl = DP_transient_canvas_state_transient_timeline(tcs, 0);
+                ttl = DP_transient_canvas_state_transient_timeline(tcs, 0, 0);
                 tl = (DP_Timeline *)ttl;
             }
             DP_TransientTrack *tt =
@@ -1502,6 +1502,100 @@ static DP_CanvasState *handle_sync_selection_tile(DP_CanvasState *cs,
     return DP_ops_sync_selection_tile(cs, context_id, selection_id, index, t);
 }
 
+static DP_CanvasState *handle_camera_create(DP_CanvasState *cs,
+                                            DP_MsgCameraCreate *mcc)
+{
+    int camera_id = DP_msg_camera_create_id(mcc);
+    if (camera_id == 0) {
+        DP_error_set("Camera create: camera id 0 is invalid");
+        return NULL;
+    }
+
+    int source_id = DP_msg_camera_create_source_id(mcc);
+    if (source_id == camera_id) {
+        DP_error_set("Camera create: camera and source id are both %d",
+                     camera_id);
+        return NULL;
+    }
+
+    size_t title_length;
+    const char *title = DP_msg_camera_create_title(mcc, &title_length);
+
+    return DP_ops_camera_create(cs, camera_id, source_id, title, title_length);
+}
+
+static DP_CanvasState *handle_camera_retitle(DP_CanvasState *cs,
+                                             DP_MsgCameraRetitle *mcr)
+{
+    int camera_id = DP_msg_camera_retitle_id(mcr);
+    if (camera_id == 0) {
+        DP_error_set("Camera retitle: camera id 0 is invalid");
+        return NULL;
+    }
+
+    size_t title_length;
+    const char *title = DP_msg_camera_retitle_title(mcr, &title_length);
+
+    return DP_ops_camera_retitle(cs, camera_id, title, title_length);
+}
+
+static DP_CanvasState *handle_camera_attributes(DP_CanvasState *cs,
+                                                DP_MsgCameraAttributes *mca)
+{
+    int camera_id = DP_msg_camera_attributes_id(mca);
+    if (camera_id == 0) {
+        DP_error_set("Camera retitle: camera id 0 is invalid");
+        return NULL;
+    }
+
+    int range_first = DP_msg_camera_attributes_range_first(mca);
+    int range_last = DP_msg_camera_attributes_range_last(mca);
+    if (range_last < range_first) {
+        range_first = -1;
+        range_last = -1;
+    }
+
+    DP_Rect viewport = {DP_msg_camera_attributes_viewport_left(mca),
+                        DP_msg_camera_attributes_viewport_top(mca),
+                        DP_msg_camera_attributes_viewport_right(mca),
+                        DP_msg_camera_attributes_viewport_bottom(mca)};
+
+    return DP_ops_camera_attributes(
+        cs, camera_id, DP_msg_camera_attributes_flags(mca),
+        DP_msg_camera_attributes_interpolation(mca),
+        DP_msg_camera_attributes_framerate(mca),
+        DP_msg_camera_attributes_framerate_fraction(mca), range_first,
+        range_last, DP_msg_camera_attributes_output_width(mca),
+        DP_msg_camera_attributes_output_height(mca), &viewport);
+}
+
+static DP_CanvasState *handle_camera_delete(DP_CanvasState *cs,
+                                            DP_MsgCameraDelete *mcd)
+{
+    int camera_id = DP_msg_camera_delete_id(mcd);
+    if (camera_id == 0) {
+        DP_error_set("Camera delete: camera id 0 is invalid");
+        return NULL;
+    }
+
+    return DP_ops_camera_delete(cs, camera_id);
+}
+
+static DP_CanvasState *handle_track_assign(DP_CanvasState *cs,
+                                           DP_DrawContext *dc,
+                                           DP_MsgTrackAssign *mta)
+{
+    int track_id = DP_msg_track_assign_track_id(mta);
+    if (track_id == 0) {
+        DP_error_set("Track assign: track id 0 is invalid");
+        return NULL;
+    }
+
+    int count;
+    const uint16_t *raw_ids = DP_msg_track_assign_camera_ids(mta, &count);
+    return DP_ops_track_assign(cs, dc, track_id, raw_ids, count);
+}
+
 static DP_CanvasState *handle(DP_CanvasState *cs, DP_DrawContext *dc,
                               DP_UserCursors *ucs_or_null, DP_Message *msg,
                               DP_MessageType type)
@@ -1612,6 +1706,16 @@ static DP_CanvasState *handle(DP_CanvasState *cs, DP_DrawContext *dc,
             cs, dc, ucs_or_null, DP_message_context_id(msg),
             DP_message_internal(msg),
             DP_image_new_from_alpha_mask_delta_zstd8le);
+    case DP_MSG_CAMERA_CREATE:
+        return handle_camera_create(cs, DP_message_internal(msg));
+    case DP_MSG_CAMERA_RETITLE:
+        return handle_camera_retitle(cs, DP_message_internal(msg));
+    case DP_MSG_CAMERA_ATTRIBUTES:
+        return handle_camera_attributes(cs, DP_message_internal(msg));
+    case DP_MSG_CAMERA_DELETE:
+        return handle_camera_delete(cs, DP_message_internal(msg));
+    case DP_MSG_TRACK_ASSIGN:
+        return handle_track_assign(cs, dc, DP_message_internal(msg));
     default:
         DP_error_set("Unhandled draw message type %d", (int)type);
         return NULL;
@@ -2413,7 +2517,7 @@ static void timeline_cleanup_make_transient(
     DP_KeyFrame **pkf, DP_TransientKeyFrame **ptkf, int t_index, int kf_index)
 {
     if (!*pttl) {
-        *pttl = DP_transient_canvas_state_transient_timeline(tcs, 0);
+        *pttl = DP_transient_canvas_state_transient_timeline(tcs, 0, 0);
         *ptl = (DP_Timeline *)*pttl;
     }
 
@@ -2658,21 +2762,21 @@ DP_transient_canvas_state_transient_annotations(DP_TransientCanvasState *tcs,
     return tcs->transient_annotations;
 }
 
-DP_TransientTimeline *
-DP_transient_canvas_state_transient_timeline(DP_TransientCanvasState *tcs,
-                                             int reserve)
+DP_TransientTimeline *DP_transient_canvas_state_transient_timeline(
+    DP_TransientCanvasState *tcs, int track_reserve, int camera_reserve)
 {
     DP_ASSERT(tcs);
     DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
     DP_ASSERT(tcs->transient);
     DP_Timeline *tl = tcs->timeline;
     if (!DP_timeline_transient(tl)) {
-        tcs->transient_timeline = DP_transient_timeline_new(tl, reserve);
+        tcs->transient_timeline =
+            DP_transient_timeline_new(tl, track_reserve, camera_reserve);
         DP_timeline_decref(tl);
     }
-    else if (reserve > 0) {
-        tcs->transient_timeline =
-            DP_transient_timeline_reserve(tcs->transient_timeline, reserve);
+    else if (track_reserve > 0 || camera_reserve > 0) {
+        tcs->transient_timeline = DP_transient_timeline_reserve(
+            tcs->transient_timeline, track_reserve, camera_reserve);
     }
     return tcs->transient_timeline;
 }

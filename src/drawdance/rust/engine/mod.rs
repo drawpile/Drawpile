@@ -16,7 +16,6 @@ mod pixels;
 mod player;
 mod recorder;
 mod tile;
-mod timeline;
 mod track;
 mod types;
 
@@ -62,8 +61,5 @@ pub use pixels::UPixels8;
 pub use player::Player;
 pub use recorder::Recorder;
 pub use tile::{AttachedTile, BaseTile, DetachedTile, Tile};
-pub use timeline::{
-    AttachedTransientTimeline, BaseTimeline, DetachedTransientTimeline, TransientTimeline,
-};
 pub use track::{AttachedTransientTrack, BaseTrack, DetachedTransientTrack, TransientTrack};
 pub use types::{Attached, CArc, Detached, Persister};

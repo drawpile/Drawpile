@@ -79,6 +79,9 @@ void DP_transient_track_id_set(DP_TransientTrack *tt, int id);
 void DP_transient_track_title_set(DP_TransientTrack *tt, const char *title,
                                   size_t length);
 
+void DP_transient_track_assignment_set(DP_TransientTrack *tt,
+                                       const int *camera_ids, int count);
+
 void DP_transient_track_hidden_set(DP_TransientTrack *tt, bool hidden);
 
 void DP_transient_track_onion_skin_set(DP_TransientTrack *tt, bool onion_skin);

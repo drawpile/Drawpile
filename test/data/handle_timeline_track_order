@@ -3,6 +3,7 @@ begin testing
 -- initial timeline
 frame_count: 24
 0 track(s)
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_ORDER ok - 0 error(s)
@@ -10,6 +11,7 @@ frame_count: 24
 -- ordering empty tracks does nothing
 frame_count: 24
 0 track(s)
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_ORDER ok - 0 error(s)
@@ -17,6 +19,7 @@ frame_count: 24
 -- ordering empty tracks with invalid ids does nothing
 frame_count: 24
 0 track(s)
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_CREATE ok - 0 error(s)
@@ -33,6 +36,7 @@ frame_count: 24
     [2] 300 "Track 3" 0 key frame(s):
     [3] 200 "Track 2" 0 key frame(s):
     [4] 100 "Track 1" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_ORDER ok - 0 error(s)
@@ -45,6 +49,7 @@ frame_count: 24
     [2] 300 "Track 3" 0 key frame(s):
     [3] 400 "Track 4" 0 key frame(s):
     [4] 500 "Track 5" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_ORDER ok - 0 error(s)
@@ -57,6 +62,7 @@ frame_count: 24
     [2] 400 "Track 4" 0 key frame(s):
     [3] 300 "Track 3" 0 key frame(s):
     [4] 200 "Track 2" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_ORDER ok - 0 error(s)
@@ -69,6 +75,7 @@ frame_count: 24
     [2] 400 "Track 4" 0 key frame(s):
     [3] 300 "Track 3" 0 key frame(s):
     [4] 200 "Track 2" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_ORDER ok - 0 error(s)
@@ -81,6 +88,7 @@ frame_count: 24
     [2] 300 "Track 3" 0 key frame(s):
     [3] 400 "Track 4" 0 key frame(s):
     [4] 500 "Track 5" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_ORDER ok - 0 error(s)
@@ -93,5 +101,6 @@ frame_count: 24
     [2] 100 "Track 1" 0 key frame(s):
     [3] 200 "Track 2" 0 key frame(s):
     [4] 400 "Track 4" 0 key frame(s):
+0 camera(s)
 
 done testing

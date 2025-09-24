@@ -1544,8 +1544,9 @@ static bool read_index_timeline(DP_ReadSnapshotContext *c, size_t offset)
         return false;
     }
 
+    // FIXME: cameras
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(c->tcs, track_count);
+        DP_transient_canvas_state_transient_timeline(c->tcs, track_count, 0);
     DP_debug("Read %d timeline track(s)", track_count);
     for (int i = 0; i < track_count; ++i) {
         DP_TransientTrack *tt = read_index_track(c);

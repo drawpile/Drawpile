@@ -13,6 +13,8 @@
 #define DP_ANNOTATION_ELEMENT_ID_MAX UINT8_MAX
 #define DP_TRACK_ID_MAX              UINT16_MAX
 #define DP_TRACK_ELEMENT_ID_MAX      UINT8_MAX
+#define DP_CAMERA_ID_MAX             UINT16_MAX
+#define DP_CAMERA_ELEMENT_ID_MAX     UINT8_MAX
 
 #define DP_LAYER_ID_SELECTION_FLAG (1 << 23)
 
@@ -115,57 +117,47 @@ DP_INLINE int DP_layer_id_make(unsigned int context_id, int element_id)
 }
 
 
-DP_INLINE unsigned int DP_annotation_id_context_id(int annotation_id)
-{
-    return DP_CAST(unsigned int, annotation_id & 0xff);
-}
+// Annotation, camera and track ids all have the same shape.
+#define DP_DEFINE_ID_FUNCS(NAME)                                               \
+    DP_INLINE int DP_protocol_to_##NAME##_id(uint16_t protocol_element_id)     \
+    {                                                                          \
+        return protocol_element_id;                                            \
+    }                                                                          \
+                                                                               \
+    DP_INLINE int DP_##NAME##_id_to_protocol(int element_id)                   \
+    {                                                                          \
+        DP_ASSERT(element_id <= UINT16_MAX);                                   \
+        return DP_CAST(uint16_t, element_id);                                  \
+    }                                                                          \
+                                                                               \
+    DP_INLINE bool DP_##NAME##_id_normal(int element_id)                       \
+    {                                                                          \
+        return element_id > 0 && element_id <= UINT16_MAX;                     \
+    }                                                                          \
+                                                                               \
+    DP_INLINE unsigned int DP_##NAME##_id_context_id(int element_id)           \
+    {                                                                          \
+        return DP_CAST(unsigned int, element_id & 0xff);                       \
+    }                                                                          \
+                                                                               \
+    DP_INLINE bool DP_##NAME##_id_owner(int element_id,                        \
+                                        unsigned int context_id)               \
+    {                                                                          \
+        return DP_##NAME##_id_context_id(element_id) == context_id;            \
+    }                                                                          \
+                                                                               \
+    DP_INLINE int DP_##NAME##_id_make(unsigned int context_id, int element_id) \
+    {                                                                          \
+        DP_ASSERT(context_id <= UINT8_MAX);                                    \
+        DP_ASSERT(element_id <= UINT8_MAX);                                    \
+        return ((element_id & 0xff) << 8) | DP_CAST(int, context_id & 0xffu);  \
+    }
 
-DP_INLINE bool DP_annotation_id_owner(int annotation_id,
-                                      unsigned int context_id)
-{
-    return DP_annotation_id_context_id(annotation_id) == context_id;
-}
+DP_DEFINE_ID_FUNCS(annotation)
+DP_DEFINE_ID_FUNCS(camera)
+DP_DEFINE_ID_FUNCS(track)
 
-DP_INLINE int DP_annotation_id_make(unsigned int context_id, int element_id)
-{
-    DP_ASSERT(context_id <= UINT8_MAX);
-    DP_ASSERT(element_id <= UINT8_MAX);
-    return ((element_id & 0xff) << 8) | DP_CAST(int, context_id & 0xffu);
-}
-
-
-DP_INLINE int DP_protocol_to_track_id(uint16_t protocol_track_id)
-{
-    return protocol_track_id;
-}
-
-DP_INLINE int DP_track_id_to_protocol(int track_id)
-{
-    DP_ASSERT(track_id <= DP_TRACK_ID_MAX);
-    return DP_CAST(uint16_t, track_id);
-}
-
-DP_INLINE bool DP_track_id_normal(int track_id)
-{
-    return track_id > 0 && track_id <= DP_TRACK_ID_MAX;
-}
-
-DP_INLINE unsigned int DP_track_id_context_id(int track_id)
-{
-    return DP_CAST(unsigned int, track_id & 0xff);
-}
-
-DP_INLINE bool DP_track_id_owner(int track_id, unsigned int context_id)
-{
-    return DP_track_id_context_id(track_id) == context_id;
-}
-
-DP_INLINE int DP_track_id_make(unsigned int context_id, int element_id)
-{
-    DP_ASSERT(context_id <= UINT8_MAX);
-    DP_ASSERT(element_id <= UINT8_MAX);
-    return ((element_id & 0xff) << 8) | DP_CAST(int, context_id & 0xffu);
-}
+#undef DP_DEFINE_ID_FUNCS
 
 
 #endif

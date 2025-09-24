@@ -58,6 +58,8 @@ target_sources(dpclient PRIVATE
 	drawdance/brushengine.h
 	drawdance/brushpreview.cpp
 	drawdance/brushpreview.h
+	drawdance/camera.cpp
+	drawdance/camera.h
 	drawdance/canvashistory.cpp
 	drawdance/canvashistory.h
 	drawdance/canvasstate.cpp

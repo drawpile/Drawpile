@@ -189,5 +189,24 @@ DP_CanvasState *DP_ops_sync_selection_tile(DP_CanvasState *cs,
                                            int selection_id, int index,
                                            DP_Tile *tile_or_null);
 
+DP_CanvasState *DP_ops_camera_create(DP_CanvasState *cs, int camera_id,
+                                     int source_id, const char *title,
+                                     size_t title_length);
+
+DP_CanvasState *DP_ops_camera_retitle(DP_CanvasState *cs, int camera_id,
+                                      const char *title, size_t title_length);
+
+DP_CanvasState *DP_ops_camera_attributes(DP_CanvasState *cs, int camera_id,
+                                         unsigned int flags, int interpolation,
+                                         int framerate, int framerate_fraction,
+                                         int range_first, int range_last,
+                                         int output_width, int output_height,
+                                         const DP_Rect *viewport);
+
+DP_CanvasState *DP_ops_camera_delete(DP_CanvasState *cs, int camera_id);
+
+DP_CanvasState *DP_ops_track_assign(DP_CanvasState *cs, DP_DrawContext *dc,
+                                    int track_id, const uint16_t *raw_ids,
+                                    int count);
 
 #endif

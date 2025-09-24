@@ -22,6 +22,7 @@
 #include "ops.h"
 #include "annotation.h"
 #include "annotation_list.h"
+#include "camera.h"
 #include "canvas_state.h"
 #include "document_metadata.h"
 #include "draw_context.h"
@@ -1525,7 +1526,7 @@ DP_CanvasState *DP_ops_track_create(DP_CanvasState *cs, int new_id,
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(tcs, 1);
+        DP_transient_canvas_state_transient_timeline(tcs, 1, 0);
     DP_transient_timeline_insert_transient_track_noinc(ttl, tt, index);
     return DP_transient_canvas_state_persist(tcs);
 }
@@ -1536,7 +1537,7 @@ static DP_CanvasState *retitle_track(DP_CanvasState *cs, int index,
 {
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(tcs, 0);
+        DP_transient_canvas_state_transient_timeline(tcs, 0, 0);
     DP_TransientTrack *tt =
         DP_transient_timeline_transient_track_at_noinc(ttl, index, 0);
     DP_transient_track_title_set(tt, title, title_length);
@@ -1565,7 +1566,7 @@ static DP_CanvasState *delete_track(DP_CanvasState *cs, int index)
 {
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(tcs, 0);
+        DP_transient_canvas_state_transient_timeline(tcs, 0, 0);
     DP_transient_timeline_delete_track_at(ttl, index);
     return DP_transient_canvas_state_persist(tcs);
 }
@@ -1591,8 +1592,10 @@ DP_CanvasState *DP_ops_track_order(DP_CanvasState *cs, int track_id_count,
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
     int track_count = DP_timeline_track_count(tl);
+    int camera_count = DP_timeline_camera_count(tl);
 
-    DP_TransientTimeline *ttl = DP_transient_timeline_new_init(track_count);
+    DP_TransientTimeline *ttl =
+        DP_transient_timeline_new_init(track_count, camera_count);
     DP_TransientCanvasState *tcs =
         DP_transient_canvas_state_new_with_timeline_noinc(cs, ttl);
 
@@ -1623,6 +1626,12 @@ DP_CanvasState *DP_ops_track_order(DP_CanvasState *cs, int track_id_count,
             DP_transient_timeline_set_track_inc(ttl, t, fill);
             ++fill;
         }
+    }
+
+    // Add back the cameras.
+    for (int i = 0; i < camera_count; ++i) {
+        DP_transient_timeline_set_camera_inc(
+            ttl, DP_timeline_camera_at_noinc(tl, i), i);
     }
 
     return DP_transient_canvas_state_persist(tcs);
@@ -1681,7 +1690,7 @@ set_key_frame(const char *what, DP_CanvasState *cs, int track_id,
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(tcs, 0);
+        DP_transient_canvas_state_transient_timeline(tcs, 0, 0);
     insert_or_replace_key_frame(ttl, t_index, kf_index, frame_index, t, kf,
                                 replace);
 
@@ -1769,7 +1778,7 @@ DP_CanvasState *DP_ops_key_frame_retitle(DP_CanvasState *cs, int track_id,
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(tcs, 0);
+        DP_transient_canvas_state_transient_timeline(tcs, 0, 0);
     DP_TransientTrack *tt =
         DP_transient_timeline_transient_track_at_noinc(ttl, t_index, 0);
     DP_TransientKeyFrame *tkf =
@@ -1840,7 +1849,7 @@ DP_CanvasState *DP_ops_key_frame_layer_attributes(
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(tcs, 0);
+        DP_transient_canvas_state_transient_timeline(tcs, 0, 0);
     DP_TransientTrack *tt =
         DP_transient_timeline_transient_track_at_noinc(ttl, t_index, 0);
 
@@ -1894,7 +1903,7 @@ DP_CanvasState *DP_ops_key_frame_delete(DP_CanvasState *cs, int track_id,
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(tcs, 0);
+        DP_transient_canvas_state_transient_timeline(tcs, 0, 0);
 
     if (move_t_index != -1) {
         DP_Track *move_t =
@@ -2153,5 +2162,217 @@ DP_CanvasState *DP_ops_sync_selection_tile(DP_CanvasState *cs,
     DP_TransientLayerContent *tlc =
         DP_layer_routes_sel_entry_transient_content(&lrse, tcs);
     DP_transient_layer_content_tile_set_noinc(tlc, tile_or_null, index);
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+DP_CanvasState *DP_ops_camera_create(DP_CanvasState *cs, int camera_id,
+                                     int source_id, const char *title,
+                                     size_t title_length)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    if (DP_timeline_camera_index_by_id(tl, camera_id) != -1) {
+        DP_error_set("Camera create: id %d already exists", camera_id);
+        return NULL;
+    }
+
+    DP_TransientCamera *tc;
+    if (source_id == 0) {
+        tc = DP_transient_camera_new_init(camera_id, 0);
+
+        DP_DocumentMetadata *dm = DP_canvas_state_metadata_noinc(cs);
+        int frame_count = DP_document_metadata_frame_count(dm);
+        DP_transient_camera_range_first_set(tc, 0);
+        DP_transient_camera_range_last_set(tc, DP_min_int(23, frame_count - 1));
+        DP_transient_camera_framerate_set(tc, 24);
+    }
+    else {
+        int source_index = DP_timeline_camera_index_by_id(tl, source_id);
+        if (source_index == -1) {
+            DP_error_set("Camera create: source id %d not found", source_id);
+            return NULL;
+        }
+        tc = DP_transient_camera_new(
+            DP_timeline_camera_at_noinc(tl, source_index), 0);
+        DP_transient_camera_id_set(tc, camera_id);
+    }
+    DP_transient_camera_title_set(tc, title, title_length);
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientTimeline *ttl =
+        DP_transient_canvas_state_transient_timeline(tcs, 0, 1);
+
+    int index = DP_timeline_camera_count(tl);
+    DP_transient_timeline_set_transient_camera_noinc(ttl, tc, index);
+
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+DP_CanvasState *DP_ops_camera_retitle(DP_CanvasState *cs, int camera_id,
+                                      const char *title, size_t title_length)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int index = DP_timeline_camera_index_by_id(tl, camera_id);
+    if (index == -1) {
+        DP_error_set("Camera retitle: id %d not found", camera_id);
+        return NULL;
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientTimeline *ttl =
+        DP_transient_canvas_state_transient_timeline(tcs, 0, 0);
+    DP_TransientCamera *tc =
+        DP_transient_timeline_transient_camera_at_noinc(ttl, index, 0);
+
+    DP_transient_camera_title_set(tc, title, title_length);
+
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+DP_CanvasState *DP_ops_camera_attributes(DP_CanvasState *cs, int camera_id,
+                                         unsigned int flags, int interpolation,
+                                         int framerate, int framerate_fraction,
+                                         int range_first, int range_last,
+                                         int output_width, int output_height,
+                                         const DP_Rect *viewport)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int index = DP_timeline_camera_index_by_id(tl, camera_id);
+    if (index == -1) {
+        DP_error_set("Camera attributes: id %d not found", camera_id);
+        return NULL;
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientTimeline *ttl =
+        DP_transient_canvas_state_transient_timeline(tcs, 0, 0);
+    DP_TransientCamera *tc =
+        DP_transient_timeline_transient_camera_at_noinc(ttl, index, 0);
+
+    DP_transient_camera_flags_set(tc, flags);
+    DP_transient_camera_interpolation_set(tc, interpolation);
+    DP_transient_camera_framerate_set(tc, framerate);
+    DP_transient_camera_framerate_fraction_set(tc, framerate_fraction);
+    DP_transient_camera_range_first_set(tc, range_first);
+    DP_transient_camera_range_last_set(tc, range_last);
+    DP_transient_camera_output_width_set(tc, output_width);
+    DP_transient_camera_output_height_set(tc, output_height);
+    DP_transient_camera_viewport_set(tc, viewport);
+
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+DP_CanvasState *DP_ops_camera_delete(DP_CanvasState *cs, int camera_id)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int index = DP_timeline_camera_index_by_id(tl, camera_id);
+    if (index == -1) {
+        DP_error_set("Camera delete: id %d not found", camera_id);
+        return NULL;
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientTimeline *ttl =
+        DP_transient_canvas_state_transient_timeline(tcs, 0, 0);
+
+    DP_transient_timeline_delete_camera_at(ttl, index);
+
+    return DP_transient_canvas_state_persist(tcs);
+}
+
+
+static int compare_camera_ids(const void *a, const void *b)
+{
+    int ai = *(int *)a;
+    int bi = *(int *)b;
+    if (ai < bi) {
+        return -1;
+    }
+    else if (ai > bi) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+static bool should_append_camera_id(int camera_id, const int *available_ids,
+                                    int *in_out_index, int available_count)
+{
+    int index = *in_out_index;
+    bool found = false;
+    while (index < available_count) {
+        int candidate_id = available_ids[index];
+        if (candidate_id < camera_id) {
+            ++index;
+        }
+        else {
+            found = camera_id == candidate_id;
+            break;
+        }
+    }
+    *in_out_index = index;
+    return found;
+}
+
+DP_CanvasState *DP_ops_track_assign(DP_CanvasState *cs, DP_DrawContext *dc,
+                                    int track_id, const uint16_t *raw_ids,
+                                    int count)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int track_index = DP_timeline_track_index_by_id(tl, track_id);
+    if (track_index == -1) {
+        DP_error_set("Track assign: id %d not found", track_id);
+        return NULL;
+    }
+
+    int *ids;
+    int fill = 0;
+    if (count == 0) {
+        ids = NULL;
+    }
+    else {
+        int camera_count = DP_timeline_camera_count(tl);
+        int available_count = camera_count + 1;
+        int *available_ids = DP_draw_context_pool_require(
+            dc,
+            sizeof(*available_ids)
+                * (DP_int_to_size(available_count) + DP_int_to_size(count)));
+
+        available_ids[0] = 0;
+        for (int i = 0; i < camera_count; ++i) {
+            DP_Camera *c = DP_timeline_camera_at_noinc(tl, i);
+            available_ids[i + 1] = DP_camera_id(c);
+        }
+        qsort(available_ids, DP_int_to_size(available_count),
+              sizeof(*available_ids), compare_camera_ids);
+
+        int available_index = 0;
+        int last_id = INT_MIN;
+        ids = available_ids + available_count;
+        for (int i = 1; i < count; ++i) {
+            int camera_id = raw_ids[i];
+            if (last_id < camera_id) {
+                last_id = camera_id;
+                if (should_append_camera_id(camera_id, available_ids,
+                                            &available_index,
+                                            available_count)) {
+                    ids[fill++] = camera_id;
+                }
+            }
+            else {
+                DP_error_set("Track assign: ids not in order");
+                return NULL;
+            }
+        }
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    DP_TransientTimeline *ttl =
+        DP_transient_canvas_state_transient_timeline(tcs, 0, 0);
+    DP_TransientTrack *tt =
+        DP_transient_timeline_transient_track_at_noinc(ttl, track_index, 0);
+
+    DP_transient_track_assignment_set(tt, ids, fill);
+
     return DP_transient_canvas_state_persist(tcs);
 }

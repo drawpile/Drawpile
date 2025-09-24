@@ -3,6 +3,7 @@
 #ifndef DRAWDANCE_TIMELINE_H
 #define DRAWDANCE_TIMELINE_H
 
+#include "libclient/drawdance/camera.h"
 #include "libclient/drawdance/track.h"
 
 struct DP_Timeline;
@@ -29,6 +30,10 @@ public:
 	int trackCount() const;
 
 	Track trackAt(int index) const;
+
+	int cameraCount() const;
+
+	Camera cameraAt(int index) const;
 
 private:
 	explicit Timeline(DP_Timeline *tl);

@@ -86,6 +86,12 @@ static DP_AffectedArea make_selections(uint8_t context_id, uint8_t selection_id)
                              (context_id << 8) | selection_id, INVALID_BOUNDS};
 }
 
+static DP_AffectedArea make_cameras(int camera_id)
+{
+    return (DP_AffectedArea){DP_AFFECTED_DOMAIN_CAMERAS, camera_id,
+                             INVALID_BOUNDS};
+}
+
 static DP_AffectedArea make_everything(void)
 {
     return (DP_AffectedArea){DP_AFFECTED_DOMAIN_EVERYTHING, 0, INVALID_BOUNDS};
@@ -487,6 +493,7 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     case DP_MSG_TRACK_DELETE:
         return make_timeline(DP_msg_track_delete_id(DP_message_internal(msg)));
     case DP_MSG_TRACK_ORDER:
+    case DP_MSG_TRACK_ASSIGN:
         return make_timeline(ALL_IDS);
     case DP_MSG_KEY_FRAME_SET: {
         DP_MsgKeyFrameSet *mkfs = DP_message_internal(msg);
@@ -526,6 +533,24 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         return make_selections(
             DP_uint_to_uint8(DP_message_context_id(msg)),
             DP_msg_sync_selection_tile_selection_id(DP_message_internal(msg)));
+    case DP_MSG_CAMERA_CREATE:
+        return make_cameras(DP_msg_camera_create_id(DP_message_internal(msg)));
+    case DP_MSG_CAMERA_RETITLE:
+        return make_cameras(DP_msg_camera_retitle_id(DP_message_internal(msg)));
+    case DP_MSG_CAMERA_ATTRIBUTES:
+        return make_cameras(
+            DP_msg_camera_attributes_id(DP_message_internal(msg)));
+    case DP_MSG_CAMERA_DELETE:
+        return make_cameras(DP_msg_camera_delete_id(DP_message_internal(msg)));
+    case DP_MSG_CAMERA_KEY_FRAME_SET:
+        return make_cameras(
+            DP_msg_camera_key_frame_set_camera_id(DP_message_internal(msg)));
+    case DP_MSG_CAMERA_KEY_FRAME_VALUE_SET:
+        return make_cameras(DP_msg_camera_key_frame_value_set_camera_id(
+            DP_message_internal(msg)));
+    case DP_MSG_CAMERA_KEY_FRAME_CURVE_SET:
+        return make_cameras(DP_msg_camera_key_frame_curve_set_camera_id(
+            DP_message_internal(msg)));
     case DP_MSG_UNDO:
         return make_user_attrs();
     default:
@@ -535,18 +560,40 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     }
 }
 
-static bool domains_conflict(DP_AffectedDomain a, DP_AffectedDomain b)
+static bool timeline_conflicts(const DP_AffectedArea *timeline_aa,
+                               const DP_AffectedArea *other_aa)
+{
+    DP_ASSERT(timeline_aa->domain == DP_AFFECTED_DOMAIN_TIMELINE);
+    switch (other_aa->domain) {
+    case DP_AFFECTED_DOMAIN_LAYER_ATTRS:
+        return true;
+    case DP_AFFECTED_DOMAIN_CAMERAS:
+        return timeline_aa->affected_id == ALL_IDS;
+    default:
+        return false;
+    }
+}
+
+static bool domains_conflict(const DP_AffectedArea *a, const DP_AffectedArea *b)
 {
     // Affecting everything means being concurrent with nothing. The timeline
     // refers to layers, so to be safe, we make those domains always conflict
     // with each other too. It may work without this, but layer and timeline
     // operations are so rare that it ain't worth the desync risk.
-    return a == DP_AFFECTED_DOMAIN_EVERYTHING
-        || b == DP_AFFECTED_DOMAIN_EVERYTHING
-        || (a == DP_AFFECTED_DOMAIN_LAYER_ATTRS
-            && b == DP_AFFECTED_DOMAIN_TIMELINE)
-        || (a == DP_AFFECTED_DOMAIN_TIMELINE
-            && b == DP_AFFECTED_DOMAIN_LAYER_ATTRS);
+    DP_AffectedDomain a_domain = a->domain, b_domain = b->domain;
+    if (a_domain == DP_AFFECTED_DOMAIN_EVERYTHING
+        || b_domain == DP_AFFECTED_DOMAIN_EVERYTHING) {
+        return true;
+    }
+    else if (a_domain == DP_AFFECTED_DOMAIN_TIMELINE) {
+        return timeline_conflicts(a, b);
+    }
+    else if (b_domain == DP_AFFECTED_DOMAIN_TIMELINE) {
+        return timeline_conflicts(b, a);
+    }
+    else {
+        return false;
+    }
 }
 
 static bool affected_ids_differ(int a, int b)
@@ -559,17 +606,22 @@ bool DP_affected_area_concurrent_with(const DP_AffectedArea *a,
 {
     DP_ASSERT(a);
     DP_ASSERT(b);
-    DP_AffectedDomain a_domain = a->domain, b_domain = b->domain;
-    return !domains_conflict(a_domain, b_domain)
-        && ( // The local user's changes are always concurrent.
-            a_domain == DP_AFFECTED_DOMAIN_USER_ATTRS
+    if (domains_conflict(a, b)) {
+        return false;
+    }
+    else {
+        DP_AffectedDomain a_domain = a->domain;
+        DP_AffectedDomain b_domain = b->domain;
+        // The local user's changes are always concurrent.
+        return a_domain == DP_AFFECTED_DOMAIN_USER_ATTRS
             // Affecting different domains is generally concurrent.
             || a_domain != b_domain
             // Affecting different layers, annotations etc. is concurrent.
             || affected_ids_differ(a->affected_id, b->affected_id)
             // Affecting different pixels on the same layer is concurrent.
             || (a_domain == DP_AFFECTED_DOMAIN_PIXELS
-                && !DP_rect_intersects(a->bounds, b->bounds)));
+                && !DP_rect_intersects(a->bounds, b->bounds));
+    }
 }
 
 bool DP_affected_area_in_bounds(const DP_AffectedArea *aa, int x, int y,

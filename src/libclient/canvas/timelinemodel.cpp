@@ -22,6 +22,24 @@ TimelineKeyFrame::makeTitleWithColor(const QString &title, const QColor &color)
 	}
 }
 
+
+TimelineCamera::TimelineCamera(const drawdance::Camera &camera)
+	: m_camera(camera)
+	, m_title(camera.title())
+{
+}
+
+bool TimelineCamera::operator<(const TimelineCamera &other) const
+{
+	int result = m_title.compare(other.m_title);
+	if(result == 0) {
+		return id() < other.id();
+	} else {
+		return result < 0;
+	}
+}
+
+
 TimelineModel::TimelineModel(CanvasModel *canvas)
 	: QObject{canvas}
 	, m_tracks{}
@@ -46,49 +64,33 @@ int TimelineModel::getAvailableTrackId() const
 	for(const TimelineTrack &track : m_tracks) {
 		takenIds.insert(track.id);
 	}
-
-	unsigned int localUserId = m_aclState ? m_aclState->localUserId() : 0u;
-	int trackId = searchAvailableTrackId(takenIds, localUserId);
-	if(trackId != 0) {
-		return trackId;
-	}
-
-	if(m_aclState->amOperator()) {
-		trackId = searchAvailableTrackId(takenIds, 0);
-		if(trackId != 0) {
-			return trackId;
-		}
-
-		for(unsigned int i = 255; i > 0; --i) {
-			if(i != localUserId) {
-				trackId = searchAvailableTrackId(takenIds, i);
-				if(trackId != 0) {
-					return trackId;
-				}
-			}
-		}
-	}
-
-	return 0;
+	return searchAvailableIds(
+		takenIds, DP_TRACK_ELEMENT_ID_MAX, DP_track_id_make);
 }
 
-QString TimelineModel::getAvailableTrackName(QString basename) const
+int TimelineModel::getAvailableCameraId() const
 {
-	static QRegularExpression suffixNumRe{QStringLiteral("\\s*([0-9])+\\z")};
-	QRegularExpressionMatch suffixNumMatch = suffixNumRe.match(basename);
-	if(suffixNumMatch.hasMatch()) {
-		basename = basename.mid(0, suffixNumMatch.capturedStart());
+	QSet<int> takenIds;
+	takenIds.insert(0);
+	for(const TimelineCamera &camera : m_cameras) {
+		takenIds.insert(camera.id());
 	}
+	return searchAvailableIds(
+		takenIds, DP_CAMERA_ELEMENT_ID_MAX, DP_camera_id_make);
+}
 
-	QRegularExpression re{QStringLiteral("\\A%1\\s*([0-9]+)\\z").arg(basename)};
-	int maxFound = 0;
-	for(const TimelineTrack &track : m_tracks) {
-		QRegularExpressionMatch match = re.match(track.title);
-		if(match.hasMatch()) {
-			maxFound = qMax(maxFound, match.captured(1).toInt());
-		}
-	}
-	return QStringLiteral("%1 %2").arg(basename).arg(maxFound + 1);
+QString TimelineModel::getAvailableTrackName(const QString &basename) const
+{
+	return searchAvailableName(basename, m_tracks.size(), [this](int i) {
+		return std::ref(m_tracks[i].title);
+	});
+}
+
+QString TimelineModel::getAvailableCameraName(const QString &basename) const
+{
+	return searchAvailableName(basename, m_cameras.size(), [this](int i) {
+		return std::ref(m_cameras[i].title());
+	});
 }
 
 void TimelineModel::setTimeline(const drawdance::Timeline &tl)
@@ -104,19 +106,79 @@ void TimelineModel::setTimeline(const drawdance::Timeline &tl)
 			m_lastFrameIndex = trackLastFrameIndex;
 		}
 	}
-	emit tracksChanged();
+
+	m_cameras.clear();
+	int cameraCount = tl.cameraCount();
+	m_cameras.reserve(cameraCount);
+	for(int i = 0; i < cameraCount; ++i) {
+		m_cameras.append(TimelineCamera(tl.cameraAt(i)));
+	}
+	std::sort(m_cameras.begin(), m_cameras.end());
+
+	emit modelChanged();
 }
 
-int TimelineModel::searchAvailableTrackId(
-	const QSet<int> &takenIds, unsigned int contextId)
+int TimelineModel::searchAvailableIds(
+	const QSet<int> &takenIds, int maxElementId,
+	const std::function<int(unsigned int, int)> &makeId) const
 {
-	for(int i = 0; i < DP_TRACK_ELEMENT_ID_MAX; ++i) {
-		int id = DP_track_id_make(contextId, i);
+	unsigned int localUserId = m_aclState ? m_aclState->localUserId() : 0u;
+	int id = searchAvailableId(takenIds, localUserId, maxElementId, makeId);
+	if(id != 0) {
+		return id;
+	}
+
+	if(m_aclState && m_aclState->amOperator()) {
+		id = searchAvailableId(takenIds, 0, maxElementId, makeId);
+		if(id != 0) {
+			return id;
+		}
+
+		for(unsigned int i = 255; i > 0; --i) {
+			if(i != localUserId) {
+				id = searchAvailableId(takenIds, i, maxElementId, makeId);
+				if(id != 0) {
+					return id;
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+int TimelineModel::searchAvailableId(
+	const QSet<int> &takenIds, unsigned int contextId, int maxElementId,
+	const std::function<int(unsigned int, int)> &makeId)
+{
+	for(int i = 0; i < maxElementId; ++i) {
+		int id = makeId(contextId, i);
 		if(!takenIds.contains(id)) {
 			return id;
 		}
 	}
 	return 0;
+}
+
+QString TimelineModel::searchAvailableName(
+	QString basename, int elementCount,
+	const std::function<const QString &(int)> &getElementTitleAt) const
+{
+	static QRegularExpression suffixNumRe(QStringLiteral("\\s*([0-9])+\\z"));
+	QRegularExpressionMatch suffixNumMatch = suffixNumRe.match(basename);
+	if(suffixNumMatch.hasMatch()) {
+		basename = basename.mid(0, suffixNumMatch.capturedStart());
+	}
+
+	QRegularExpression re{QStringLiteral("\\A%1\\s*([0-9]+)\\z").arg(basename)};
+	int maxFound = 0;
+	for(int i = 0; i < elementCount; ++i) {
+		QRegularExpressionMatch match = re.match(getElementTitleAt(i));
+		if(match.hasMatch()) {
+			maxFound = qMax(maxFound, match.captured(1).toInt());
+		}
+	}
+	return QStringLiteral("%1 %2").arg(basename).arg(maxFound + 1);
 }
 
 TimelineTrack TimelineModel::trackToModel(const drawdance::Track &t)

@@ -47,6 +47,10 @@ public:
 		QAction *trackDuplicate = nullptr;
 		QAction *trackRetitle = nullptr;
 		QAction *trackDelete = nullptr;
+		QAction *cameraAdd = nullptr;
+		QAction *cameraDuplicate = nullptr;
+		QAction *cameraProperties = nullptr;
+		QAction *cameraDelete = nullptr;
 		QAction *animationProperties = nullptr;
 		QAction *frameNext = nullptr;
 		QAction *framePrev = nullptr;
@@ -88,6 +92,7 @@ signals:
 	void blankLayerSelected();
 	void trackHidden(int trackId, bool hidden);
 	void trackOnionSkinEnabled(int trackId, bool onionSkin);
+	void cameraHidden(int cameraId, bool hidden);
 
 protected:
 	bool event(QEvent *event) override;
@@ -134,6 +139,9 @@ private:
 	void duplicateTrack();
 	void retitleTrack();
 	void deleteTrack();
+	void addCamera();
+	void duplicateCamera();
+	void deleteCamera();
 	void showAnimationProperties();
 	void setAnimationProperties(
 		double framerate, int frameRangeFirst, int frameRangeLast);
@@ -149,6 +157,9 @@ private:
 	void setHorizontalScroll(int pos);
 	void setVerticalScroll(int pos);
 	void updatePasteAction();
+
+	void showCameraMenu(const QPoint &pos);
+	void setActiveCamera(int cameraId);
 
 	void
 	setCurrent(int trackId, int frame, bool triggerUpdate, bool selectLayer);
@@ -168,11 +179,12 @@ private:
 	struct Target;
 	Target getMouseTarget(const QPoint &pos) const;
 	void applyMouseTarget(QMouseEvent *event, const Target &target, bool press);
-	void executeTargetAction(const Target &target);
+	void executeTargetAction(const Target &target, const QPoint &pos);
 
 	void emitCommand(std::function<net::Message(uint8_t)> getMessage);
 
 	static void setCheckedSignalBlocked(QAction *action, bool checked);
+	static QString noCameraTitle();
 
 	struct Private;
 	Private *d;

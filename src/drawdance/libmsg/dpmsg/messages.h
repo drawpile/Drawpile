@@ -127,6 +127,15 @@ typedef enum DP_MessageType {
     DP_MSG_CANVAS_BACKGROUND_ZSTD = 180,
     DP_MSG_MOVE_RECT_ZSTD = 181,
     DP_MSG_TRANSFORM_REGION_ZSTD = 182,
+    DP_MSG_CAMERA_CREATE = 183,
+    DP_MSG_CAMERA_RETITLE = 184,
+    DP_MSG_CAMERA_ATTRIBUTES = 185,
+    DP_MSG_CAMERA_DELETE = 186,
+    DP_MSG_CAMERA_KEY_FRAME_SET = 187,
+    DP_MSG_CAMERA_KEY_FRAME_RETITLE = 188,
+    DP_MSG_CAMERA_KEY_FRAME_VALUE_SET = 189,
+    DP_MSG_CAMERA_KEY_FRAME_CURVE_SET = 190,
+    DP_MSG_TRACK_ASSIGN = 191,
     DP_MSG_UNDO = 255,
     DP_MSG_TYPE_COUNT,
 } DP_MessageType;
@@ -3375,6 +3384,409 @@ DP_Message *DP_msg_transform_region_zstd_parse(unsigned int context_id,
                                                DP_TextReader *reader);
 
 DP_MsgTransformRegion *DP_msg_transform_region_zstd_cast(DP_Message *msg);
+
+
+/*
+ * DP_MSG_CAMERA_CREATE
+ *
+ * Create or copy an animation camera.
+ *
+ * The camera id must be prefixed by the user's context id, like layer,
+ * annotation and track ids. Operators are exempt from this restriction.
+ */
+
+#define DP_MSG_CAMERA_CREATE_STATIC_LENGTH        4
+#define DP_MSG_CAMERA_CREATE_STATIC_LENGTH_COMPAT 4
+
+#define DP_MSG_CAMERA_CREATE_TITLE_MIN_LEN 0
+#define DP_MSG_CAMERA_CREATE_TITLE_MAX_LEN 65531
+
+typedef struct DP_MsgCameraCreate DP_MsgCameraCreate;
+
+DP_Message *DP_msg_camera_create_new(unsigned int context_id, uint16_t id,
+                                     uint16_t source_id,
+                                     const char *title_value, size_t title_len);
+
+DP_Message *DP_msg_camera_create_deserialize(unsigned int context_id,
+                                             const unsigned char *buffer,
+                                             size_t length);
+
+DP_Message *DP_msg_camera_create_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length);
+
+DP_Message *DP_msg_camera_create_parse(unsigned int context_id,
+                                       DP_TextReader *reader);
+
+DP_MsgCameraCreate *DP_msg_camera_create_cast(DP_Message *msg);
+
+uint16_t DP_msg_camera_create_id(const DP_MsgCameraCreate *mcc);
+
+uint16_t DP_msg_camera_create_source_id(const DP_MsgCameraCreate *mcc);
+
+const char *DP_msg_camera_create_title(const DP_MsgCameraCreate *mcc,
+                                       size_t *out_len);
+
+size_t DP_msg_camera_create_title_len(const DP_MsgCameraCreate *mcc);
+
+
+/*
+ * DP_MSG_CAMERA_RETITLE
+ *
+ * Rename an animation camera.
+ */
+
+#define DP_MSG_CAMERA_RETITLE_STATIC_LENGTH        2
+#define DP_MSG_CAMERA_RETITLE_STATIC_LENGTH_COMPAT 2
+
+#define DP_MSG_CAMERA_RETITLE_TITLE_MIN_LEN 0
+#define DP_MSG_CAMERA_RETITLE_TITLE_MAX_LEN 65533
+
+typedef struct DP_MsgCameraRetitle DP_MsgCameraRetitle;
+
+DP_Message *DP_msg_camera_retitle_new(unsigned int context_id, uint16_t id,
+                                      const char *title_value,
+                                      size_t title_len);
+
+DP_Message *DP_msg_camera_retitle_deserialize(unsigned int context_id,
+                                              const unsigned char *buffer,
+                                              size_t length);
+
+DP_Message *DP_msg_camera_retitle_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_camera_retitle_parse(unsigned int context_id,
+                                        DP_TextReader *reader);
+
+DP_MsgCameraRetitle *DP_msg_camera_retitle_cast(DP_Message *msg);
+
+uint16_t DP_msg_camera_retitle_id(const DP_MsgCameraRetitle *mcr);
+
+const char *DP_msg_camera_retitle_title(const DP_MsgCameraRetitle *mcr,
+                                        size_t *out_len);
+
+size_t DP_msg_camera_retitle_title_len(const DP_MsgCameraRetitle *mcr);
+
+
+/*
+ * DP_MSG_CAMERA_ATTRIBUTES
+ *
+ * Set attributes on an animation camera.
+ *
+ * If range_last < range_first, they are cleared (set to -1).
+ */
+
+#define DP_MSG_CAMERA_ATTRIBUTES_STATIC_LENGTH        36
+#define DP_MSG_CAMERA_ATTRIBUTES_STATIC_LENGTH_COMPAT 36
+
+typedef struct DP_MsgCameraAttributes DP_MsgCameraAttributes;
+
+DP_Message *DP_msg_camera_attributes_new(
+    unsigned int context_id, uint16_t id, uint8_t flags, uint8_t interpolation,
+    int32_t framerate, int32_t framerate_fraction, uint16_t range_first,
+    uint16_t range_last, uint16_t output_width, uint16_t output_height,
+    int32_t viewport_left, int32_t viewport_top, int32_t viewport_right,
+    int32_t viewport_bottom);
+
+DP_Message *DP_msg_camera_attributes_deserialize(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length);
+
+DP_Message *DP_msg_camera_attributes_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_camera_attributes_parse(unsigned int context_id,
+                                           DP_TextReader *reader);
+
+DP_MsgCameraAttributes *DP_msg_camera_attributes_cast(DP_Message *msg);
+
+uint16_t DP_msg_camera_attributes_id(const DP_MsgCameraAttributes *mca);
+
+uint8_t DP_msg_camera_attributes_flags(const DP_MsgCameraAttributes *mca);
+
+uint8_t
+DP_msg_camera_attributes_interpolation(const DP_MsgCameraAttributes *mca);
+
+int32_t DP_msg_camera_attributes_framerate(const DP_MsgCameraAttributes *mca);
+
+int32_t
+DP_msg_camera_attributes_framerate_fraction(const DP_MsgCameraAttributes *mca);
+
+uint16_t
+DP_msg_camera_attributes_range_first(const DP_MsgCameraAttributes *mca);
+
+uint16_t DP_msg_camera_attributes_range_last(const DP_MsgCameraAttributes *mca);
+
+uint16_t
+DP_msg_camera_attributes_output_width(const DP_MsgCameraAttributes *mca);
+
+uint16_t
+DP_msg_camera_attributes_output_height(const DP_MsgCameraAttributes *mca);
+
+int32_t
+DP_msg_camera_attributes_viewport_left(const DP_MsgCameraAttributes *mca);
+
+int32_t
+DP_msg_camera_attributes_viewport_top(const DP_MsgCameraAttributes *mca);
+
+int32_t
+DP_msg_camera_attributes_viewport_right(const DP_MsgCameraAttributes *mca);
+
+int32_t
+DP_msg_camera_attributes_viewport_bottom(const DP_MsgCameraAttributes *mca);
+
+
+/*
+ * DP_MSG_CAMERA_DELETE
+ *
+ * Delete an animation camera.
+ */
+
+#define DP_MSG_CAMERA_DELETE_STATIC_LENGTH        2
+#define DP_MSG_CAMERA_DELETE_STATIC_LENGTH_COMPAT 2
+
+typedef struct DP_MsgCameraDelete DP_MsgCameraDelete;
+
+DP_Message *DP_msg_camera_delete_new(unsigned int context_id, uint16_t id);
+
+DP_Message *DP_msg_camera_delete_deserialize(unsigned int context_id,
+                                             const unsigned char *buffer,
+                                             size_t length);
+
+DP_Message *DP_msg_camera_delete_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length);
+
+DP_Message *DP_msg_camera_delete_parse(unsigned int context_id,
+                                       DP_TextReader *reader);
+
+DP_MsgCameraDelete *DP_msg_camera_delete_cast(DP_Message *msg);
+
+uint16_t DP_msg_camera_delete_id(const DP_MsgCameraDelete *mcd);
+
+
+/*
+ * DP_MSG_CAMERA_KEY_FRAME_SET
+ *
+ * Create, modify or delete a camera key frame.
+ *
+ * If source_id and source_index are both zero, a new camera key frame is
+ * created or an existing one is clobbered with a default frame.
+ *
+ * If source_id and source_index refer to another camera key frame, it is
+ * copied and inserted or clobbered.
+ *
+ * If source_id and source_index are identical to camera_id and
+ * frame_index, that camera key frame is deleted.
+ */
+
+#define DP_MSG_CAMERA_KEY_FRAME_SET_STATIC_LENGTH        8
+#define DP_MSG_CAMERA_KEY_FRAME_SET_STATIC_LENGTH_COMPAT 8
+
+typedef struct DP_MsgCameraKeyFrameSet DP_MsgCameraKeyFrameSet;
+
+DP_Message *DP_msg_camera_key_frame_set_new(unsigned int context_id,
+                                            uint16_t camera_id,
+                                            uint16_t frame_index,
+                                            uint16_t source_id,
+                                            uint16_t source_index);
+
+DP_Message *DP_msg_camera_key_frame_set_deserialize(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length);
+
+DP_Message *DP_msg_camera_key_frame_set_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_camera_key_frame_set_parse(unsigned int context_id,
+                                              DP_TextReader *reader);
+
+DP_MsgCameraKeyFrameSet *DP_msg_camera_key_frame_set_cast(DP_Message *msg);
+
+uint16_t
+DP_msg_camera_key_frame_set_camera_id(const DP_MsgCameraKeyFrameSet *mckfs);
+
+uint16_t
+DP_msg_camera_key_frame_set_frame_index(const DP_MsgCameraKeyFrameSet *mckfs);
+
+uint16_t
+DP_msg_camera_key_frame_set_source_id(const DP_MsgCameraKeyFrameSet *mckfs);
+
+uint16_t
+DP_msg_camera_key_frame_set_source_index(const DP_MsgCameraKeyFrameSet *mckfs);
+
+
+/*
+ * DP_MSG_CAMERA_KEY_FRAME_RETITLE
+ *
+ * Rename a camera key frame.
+ */
+
+#define DP_MSG_CAMERA_KEY_FRAME_RETITLE_STATIC_LENGTH        4
+#define DP_MSG_CAMERA_KEY_FRAME_RETITLE_STATIC_LENGTH_COMPAT 4
+
+#define DP_MSG_CAMERA_KEY_FRAME_RETITLE_TITLE_MIN_LEN 0
+#define DP_MSG_CAMERA_KEY_FRAME_RETITLE_TITLE_MAX_LEN 65531
+
+typedef struct DP_MsgCameraKeyFrameRetitle DP_MsgCameraKeyFrameRetitle;
+
+DP_Message *DP_msg_camera_key_frame_retitle_new(unsigned int context_id,
+                                                uint16_t camera_id,
+                                                uint16_t frame_index,
+                                                const char *title_value,
+                                                size_t title_len);
+
+DP_Message *DP_msg_camera_key_frame_retitle_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_camera_key_frame_retitle_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_camera_key_frame_retitle_parse(unsigned int context_id,
+                                                  DP_TextReader *reader);
+
+DP_MsgCameraKeyFrameRetitle *
+DP_msg_camera_key_frame_retitle_cast(DP_Message *msg);
+
+uint16_t DP_msg_camera_key_frame_retitle_camera_id(
+    const DP_MsgCameraKeyFrameRetitle *mckfr);
+
+uint16_t DP_msg_camera_key_frame_retitle_frame_index(
+    const DP_MsgCameraKeyFrameRetitle *mckfr);
+
+const char *
+DP_msg_camera_key_frame_retitle_title(const DP_MsgCameraKeyFrameRetitle *mckfr,
+                                      size_t *out_len);
+
+size_t DP_msg_camera_key_frame_retitle_title_len(
+    const DP_MsgCameraKeyFrameRetitle *mckfr);
+
+
+/*
+ * DP_MSG_CAMERA_KEY_FRAME_VALUE_SET
+ *
+ * Set a camera key frame property value. The value is divided by 10 **
+ * (divisor - 1). A divisor of 0 deletes the value.
+ */
+
+#define DP_MSG_CAMERA_KEY_FRAME_VALUE_SET_STATIC_LENGTH 10
+
+typedef struct DP_MsgCameraKeyFrameValueSet DP_MsgCameraKeyFrameValueSet;
+
+DP_Message *DP_msg_camera_key_frame_value_set_new(unsigned int context_id,
+                                                  uint16_t camera_id,
+                                                  uint16_t frame_index,
+                                                  uint8_t prop, uint8_t divisor,
+                                                  int32_t value);
+
+DP_Message *DP_msg_camera_key_frame_value_set_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_camera_key_frame_value_set_parse(unsigned int context_id,
+                                                    DP_TextReader *reader);
+
+DP_MsgCameraKeyFrameValueSet *
+DP_msg_camera_key_frame_value_set_cast(DP_Message *msg);
+
+uint16_t DP_msg_camera_key_frame_value_set_camera_id(
+    const DP_MsgCameraKeyFrameValueSet *mckfvs);
+
+uint16_t DP_msg_camera_key_frame_value_set_frame_index(
+    const DP_MsgCameraKeyFrameValueSet *mckfvs);
+
+uint8_t DP_msg_camera_key_frame_value_set_prop(
+    const DP_MsgCameraKeyFrameValueSet *mckfvs);
+
+uint8_t DP_msg_camera_key_frame_value_set_divisor(
+    const DP_MsgCameraKeyFrameValueSet *mckfvs);
+
+int32_t DP_msg_camera_key_frame_value_set_value(
+    const DP_MsgCameraKeyFrameValueSet *mckfvs);
+
+
+/*
+ * DP_MSG_CAMERA_KEY_FRAME_CURVE_SET
+ *
+ * Set a camera key frame property curve. Curve point values are between 0
+ * and 1, encoded as a 16 bit unsigned integer. Passing no values deletes
+ * the curve. Passing 1 value is taken as the ID of one of the default
+ * easing functions. Passing an even number of values will construct a
+ * cubic curve. Passing an odd number means that the first value is the
+ * type of the curve and the remaining pairs are the points. Passing less
+ * than two points for a curve is invalid.
+ */
+
+#define DP_MSG_CAMERA_KEY_FRAME_CURVE_SET_STATIC_LENGTH 5
+
+#define DP_MSG_CAMERA_KEY_FRAME_CURVE_SET_VALUES_MIN_COUNT 0
+#define DP_MSG_CAMERA_KEY_FRAME_CURVE_SET_VALUES_MAX_COUNT 32765
+
+typedef struct DP_MsgCameraKeyFrameCurveSet DP_MsgCameraKeyFrameCurveSet;
+
+DP_Message *DP_msg_camera_key_frame_curve_set_new(
+    unsigned int context_id, uint16_t camera_id, uint16_t frame_index,
+    uint8_t prop, void (*set_values)(int, uint16_t *, void *), int values_count,
+    void *values_user);
+
+DP_Message *DP_msg_camera_key_frame_curve_set_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length);
+
+DP_Message *DP_msg_camera_key_frame_curve_set_parse(unsigned int context_id,
+                                                    DP_TextReader *reader);
+
+DP_MsgCameraKeyFrameCurveSet *
+DP_msg_camera_key_frame_curve_set_cast(DP_Message *msg);
+
+uint16_t DP_msg_camera_key_frame_curve_set_camera_id(
+    const DP_MsgCameraKeyFrameCurveSet *mckfcs);
+
+uint16_t DP_msg_camera_key_frame_curve_set_frame_index(
+    const DP_MsgCameraKeyFrameCurveSet *mckfcs);
+
+uint8_t DP_msg_camera_key_frame_curve_set_prop(
+    const DP_MsgCameraKeyFrameCurveSet *mckfcs);
+
+const uint16_t *DP_msg_camera_key_frame_curve_set_values(
+    const DP_MsgCameraKeyFrameCurveSet *mckfcs, int *out_count);
+
+int DP_msg_camera_key_frame_curve_set_values_count(
+    const DP_MsgCameraKeyFrameCurveSet *mckfcs);
+
+
+/*
+ * DP_MSG_TRACK_ASSIGN
+ *
+ * Assign a track to a set of cameras. A track assigned to nothing will be
+ * assigned to the null camera, as will be a track assigned to camera 0.
+ */
+
+#define DP_MSG_TRACK_ASSIGN_STATIC_LENGTH 2
+
+#define DP_MSG_TRACK_ASSIGN_CAMERA_IDS_MIN_COUNT 0
+#define DP_MSG_TRACK_ASSIGN_CAMERA_IDS_MAX_COUNT 32766
+
+typedef struct DP_MsgTrackAssign DP_MsgTrackAssign;
+
+DP_Message *
+DP_msg_track_assign_new(unsigned int context_id, uint16_t track_id,
+                        void (*set_camera_ids)(int, uint16_t *, void *),
+                        int camera_ids_count, void *camera_ids_user);
+
+DP_Message *DP_msg_track_assign_deserialize(unsigned int context_id,
+                                            const unsigned char *buffer,
+                                            size_t length);
+
+DP_Message *DP_msg_track_assign_parse(unsigned int context_id,
+                                      DP_TextReader *reader);
+
+DP_MsgTrackAssign *DP_msg_track_assign_cast(DP_Message *msg);
+
+uint16_t DP_msg_track_assign_track_id(const DP_MsgTrackAssign *mta);
+
+const uint16_t *DP_msg_track_assign_camera_ids(const DP_MsgTrackAssign *mta,
+                                               int *out_count);
+
+int DP_msg_track_assign_camera_ids_count(const DP_MsgTrackAssign *mta);
 
 
 /*

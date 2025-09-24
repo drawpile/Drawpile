@@ -2758,18 +2758,18 @@ static bool cfs_read_timeline(DP_ProjectCanvasFromSnapshotContext *c,
         return false;
     }
 
-    int count = c->track_count;
+    int track_count = c->track_count;
     DP_TransientCanvasState *tcs = c->tcs;
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(tcs, count);
+        DP_transient_canvas_state_transient_timeline(tcs, track_count, 0);
 
     int frame_count = DP_document_metadata_frame_count(
         DP_transient_canvas_state_metadata_noinc(tcs));
-    int used = 0;
+    int tracks_used = 0;
     bool error;
     while (ps_exec_step(prj, track_stmt, &error)) {
         int track_index = sqlite3_column_int(track_stmt, 0);
-        if (track_index < 0 || track_index >= count) {
+        if (track_index < 0 || track_index >= track_count) {
             DP_warn("Track index %d out of bounds", track_index);
             continue;
         }
@@ -2811,11 +2811,11 @@ static bool cfs_read_timeline(DP_ProjectCanvasFromSnapshotContext *c,
         DP_transient_track_onion_skin_set(
             tt, flags & DP_PROJECT_SNAPSHOT_TRACK_FLAG_ONION_SKIN);
 
-        if (used >= count) {
-            ttl = DP_transient_canvas_state_transient_timeline(tcs, 1);
+        if (tracks_used >= track_count) {
+            ttl = DP_transient_canvas_state_transient_timeline(tcs, 1, 0);
         }
-        DP_transient_timeline_set_transient_track_noinc(ttl, tt, used);
-        ++used;
+        DP_transient_timeline_set_transient_track_noinc(ttl, tt, tracks_used);
+        ++tracks_used;
 
         if (key_frame_count != 0
             && !cfs_read_key_frames(c, frame_stmt, layer_stmt, track_index,
@@ -2828,12 +2828,12 @@ static bool cfs_read_timeline(DP_ProjectCanvasFromSnapshotContext *c,
     sqlite3_finalize(frame_stmt);
     sqlite3_finalize(track_stmt);
 
-    if (used < count) {
-        DP_transient_timeline_clamp(ttl, used);
-        DP_warn("Had to clamp %d track(s)", count - used);
+    if (tracks_used < track_count) {
+        DP_transient_timeline_clamp(ttl, tracks_used, 0);
+        DP_warn("Had to clamp %d track(s)", track_count - tracks_used);
     }
-    else if (used > count) {
-        DP_warn("Had %d excess track(s)", used - count);
+    else if (tracks_used > track_count) {
+        DP_warn("Had %d excess track(s)", tracks_used - track_count);
     }
 
     return !error;

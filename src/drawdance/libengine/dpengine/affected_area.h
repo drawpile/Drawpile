@@ -67,6 +67,9 @@ typedef struct DP_Message DP_Message;
             PRINT("%s affects selection %d of user %d", (TITLE),              \
                   _aa->affected_id & 0xff, (_aa->affected_id >> 8) & 0xff);   \
             break;                                                            \
+        case DP_AFFECTED_DOMAIN_CAMERAS:                                      \
+            PRINT("%s affects camera %d", (TITLE), _aa->affected_id);         \
+            break;                                                            \
         case DP_AFFECTED_DOMAIN_EVERYTHING:                                   \
             PRINT("%s affects everything", (TITLE));                          \
             break;                                                            \
@@ -85,6 +88,7 @@ typedef enum DP_AffectedDomain {
     DP_AFFECTED_DOMAIN_DOCUMENT_METADATA,
     DP_AFFECTED_DOMAIN_TIMELINE,
     DP_AFFECTED_DOMAIN_SELECTIONS,
+    DP_AFFECTED_DOMAIN_CAMERAS,
     DP_AFFECTED_DOMAIN_EVERYTHING,
 } DP_AffectedDomain;
 

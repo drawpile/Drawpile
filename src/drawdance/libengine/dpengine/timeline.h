@@ -1,18 +1,11 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DPENGINE_TIMELINE_H
 #define DPENGINE_TIMELINE_H
 #include <dpcommon/common.h>
 
-typedef struct DP_Track DP_Track;
-typedef struct DP_Timeline DP_Timeline;
-
-#ifdef DP_NO_STRICT_ALIASING
-typedef struct DP_TransientTrack DP_TransientTrack;
-typedef struct DP_TransientTimeline DP_TransientTimeline;
-#else
-typedef struct DP_Track DP_TransientTrack;
-typedef struct DP_Timeline DP_TransientTimeline;
-#endif
+DP_TYPEDEF_PERSISTENT(Camera);
+DP_TYPEDEF_PERSISTENT(Track);
+DP_TYPEDEF_PERSISTENT(Timeline);
 
 
 DP_Timeline *DP_timeline_new(void);
@@ -31,21 +24,30 @@ bool DP_timeline_transient(DP_Timeline *tl);
 
 int DP_timeline_track_count(DP_Timeline *tl);
 
+int DP_timeline_camera_count(DP_Timeline *tl);
+
 DP_Track *DP_timeline_track_at_noinc(DP_Timeline *tl, int index);
 
 int DP_timeline_track_index_by_id(DP_Timeline *tl, int track_id);
+
+DP_Camera *DP_timeline_camera_at_noinc(DP_Timeline *tl, int index);
+
+int DP_timeline_camera_index_by_id(DP_Timeline *tl, int camera_id);
 
 bool DP_timeline_same_frame(DP_Timeline *tl, int frame_index_a,
                             int frame_index_b);
 
 
 DP_TransientTimeline *DP_transient_timeline_new(DP_Timeline *tl,
-                                                int track_reserve);
+                                                int track_reserve,
+                                                int camera_reserve);
 
-DP_TransientTimeline *DP_transient_timeline_new_init(int track_reserve);
+DP_TransientTimeline *DP_transient_timeline_new_init(int track_reserve,
+                                                     int camera_reserve);
 
 DP_TransientTimeline *DP_transient_timeline_reserve(DP_TransientTimeline *ttl,
-                                                    int track_reserve);
+                                                    int track_reserve,
+                                                    int camera_reserve);
 
 DP_TransientTimeline *DP_transient_timeline_incref(DP_TransientTimeline *ttl);
 
@@ -55,7 +57,8 @@ int DP_transient_timeline_refcount(DP_TransientTimeline *ttl);
 
 DP_Timeline *DP_transient_timeline_persist(DP_TransientTimeline *ttl);
 
-DP_Track *DP_transient_timeline_track_at_noinc(DP_TransientTimeline *ttl, int index);
+DP_Track *DP_transient_timeline_track_at_noinc(DP_TransientTimeline *ttl,
+                                               int index);
 
 DP_TransientTrack *
 DP_transient_timeline_transient_track_at_noinc(DP_TransientTimeline *ttl,
@@ -80,7 +83,25 @@ void DP_transient_timeline_insert_transient_track_noinc(
 void DP_transient_timeline_delete_track_at(DP_TransientTimeline *ttl,
                                            int index);
 
-void DP_transient_timeline_clamp(DP_TransientTimeline *ttl, int track_count);
+DP_TransientCamera *
+DP_transient_timeline_transient_camera_at_noinc(DP_TransientTimeline *ttl,
+                                                int index, int reserve);
+
+void DP_transient_timeline_set_camera_noinc(DP_TransientTimeline *ttl,
+                                            DP_Camera *c, int index);
+
+void DP_transient_timeline_set_camera_inc(DP_TransientTimeline *ttl,
+                                          DP_Camera *c, int index);
+
+void DP_transient_timeline_set_transient_camera_noinc(DP_TransientTimeline *ttl,
+                                                      DP_TransientCamera *tc,
+                                                      int index);
+
+void DP_transient_timeline_delete_camera_at(DP_TransientTimeline *ttl,
+                                           int index);
+
+void DP_transient_timeline_clamp(DP_TransientTimeline *ttl, int track_count,
+                                 int camera_count);
 
 
 #endif

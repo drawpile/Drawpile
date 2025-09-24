@@ -137,6 +137,15 @@ bool DP_message_type_command(DP_MessageType type)
     case DP_MSG_CANVAS_BACKGROUND_ZSTD:
     case DP_MSG_MOVE_RECT_ZSTD:
     case DP_MSG_TRANSFORM_REGION_ZSTD:
+    case DP_MSG_CAMERA_CREATE:
+    case DP_MSG_CAMERA_RETITLE:
+    case DP_MSG_CAMERA_ATTRIBUTES:
+    case DP_MSG_CAMERA_DELETE:
+    case DP_MSG_CAMERA_KEY_FRAME_SET:
+    case DP_MSG_CAMERA_KEY_FRAME_RETITLE:
+    case DP_MSG_CAMERA_KEY_FRAME_VALUE_SET:
+    case DP_MSG_CAMERA_KEY_FRAME_CURVE_SET:
+    case DP_MSG_TRACK_ASSIGN:
     case DP_MSG_UNDO:
         return true;
     default:
@@ -213,6 +222,12 @@ bool DP_message_type_compatible(DP_MessageType type)
     case DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES:
     case DP_MSG_KEY_FRAME_DELETE:
     case DP_MSG_LOCAL_MATCH:
+    case DP_MSG_CAMERA_CREATE:
+    case DP_MSG_CAMERA_RETITLE:
+    case DP_MSG_CAMERA_ATTRIBUTES:
+    case DP_MSG_CAMERA_DELETE:
+    case DP_MSG_CAMERA_KEY_FRAME_SET:
+    case DP_MSG_CAMERA_KEY_FRAME_RETITLE:
     case DP_MSG_UNDO:
         return true;
     default:
@@ -375,6 +390,24 @@ const char *DP_message_type_name(DP_MessageType type)
         return "moverectzstd";
     case DP_MSG_TRANSFORM_REGION_ZSTD:
         return "transformregionzstd";
+    case DP_MSG_CAMERA_CREATE:
+        return "cameracreate";
+    case DP_MSG_CAMERA_RETITLE:
+        return "cameraretitle";
+    case DP_MSG_CAMERA_ATTRIBUTES:
+        return "cameraattributes";
+    case DP_MSG_CAMERA_DELETE:
+        return "cameradelete";
+    case DP_MSG_CAMERA_KEY_FRAME_SET:
+        return "camerakeyframeset";
+    case DP_MSG_CAMERA_KEY_FRAME_RETITLE:
+        return "camerakeyframeretitle";
+    case DP_MSG_CAMERA_KEY_FRAME_VALUE_SET:
+        return "camerakeyframevalueset";
+    case DP_MSG_CAMERA_KEY_FRAME_CURVE_SET:
+        return "camerakeyframecurveset";
+    case DP_MSG_TRACK_ASSIGN:
+        return "trackassign";
     case DP_MSG_UNDO:
         return "undo";
     default:
@@ -537,6 +570,24 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_MOVE_RECT_ZSTD";
     case DP_MSG_TRANSFORM_REGION_ZSTD:
         return "DP_MSG_TRANSFORM_REGION_ZSTD";
+    case DP_MSG_CAMERA_CREATE:
+        return "DP_MSG_CAMERA_CREATE";
+    case DP_MSG_CAMERA_RETITLE:
+        return "DP_MSG_CAMERA_RETITLE";
+    case DP_MSG_CAMERA_ATTRIBUTES:
+        return "DP_MSG_CAMERA_ATTRIBUTES";
+    case DP_MSG_CAMERA_DELETE:
+        return "DP_MSG_CAMERA_DELETE";
+    case DP_MSG_CAMERA_KEY_FRAME_SET:
+        return "DP_MSG_CAMERA_KEY_FRAME_SET";
+    case DP_MSG_CAMERA_KEY_FRAME_RETITLE:
+        return "DP_MSG_CAMERA_KEY_FRAME_RETITLE";
+    case DP_MSG_CAMERA_KEY_FRAME_VALUE_SET:
+        return "DP_MSG_CAMERA_KEY_FRAME_VALUE_SET";
+    case DP_MSG_CAMERA_KEY_FRAME_CURVE_SET:
+        return "DP_MSG_CAMERA_KEY_FRAME_CURVE_SET";
+    case DP_MSG_TRACK_ASSIGN:
+        return "DP_MSG_TRACK_ASSIGN";
     case DP_MSG_UNDO:
         return "DP_MSG_UNDO";
     default:
@@ -747,6 +798,33 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     else if (DP_str_equal(type_name, "transformregionzstd")) {
         return DP_MSG_TRANSFORM_REGION_ZSTD;
     }
+    else if (DP_str_equal(type_name, "cameracreate")) {
+        return DP_MSG_CAMERA_CREATE;
+    }
+    else if (DP_str_equal(type_name, "cameraretitle")) {
+        return DP_MSG_CAMERA_RETITLE;
+    }
+    else if (DP_str_equal(type_name, "cameraattributes")) {
+        return DP_MSG_CAMERA_ATTRIBUTES;
+    }
+    else if (DP_str_equal(type_name, "cameradelete")) {
+        return DP_MSG_CAMERA_DELETE;
+    }
+    else if (DP_str_equal(type_name, "camerakeyframeset")) {
+        return DP_MSG_CAMERA_KEY_FRAME_SET;
+    }
+    else if (DP_str_equal(type_name, "camerakeyframeretitle")) {
+        return DP_MSG_CAMERA_KEY_FRAME_RETITLE;
+    }
+    else if (DP_str_equal(type_name, "camerakeyframevalueset")) {
+        return DP_MSG_CAMERA_KEY_FRAME_VALUE_SET;
+    }
+    else if (DP_str_equal(type_name, "camerakeyframecurveset")) {
+        return DP_MSG_CAMERA_KEY_FRAME_CURVE_SET;
+    }
+    else if (DP_str_equal(type_name, "trackassign")) {
+        return DP_MSG_TRACK_ASSIGN;
+    }
     else if (DP_str_equal(type_name, "undo")) {
         return DP_MSG_UNDO;
     }
@@ -805,6 +883,15 @@ bool DP_message_dirties_canvas(DP_Message *msg)
     case DP_MSG_CANVAS_BACKGROUND_ZSTD:
     case DP_MSG_MOVE_RECT_ZSTD:
     case DP_MSG_TRANSFORM_REGION_ZSTD:
+    case DP_MSG_CAMERA_CREATE:
+    case DP_MSG_CAMERA_RETITLE:
+    case DP_MSG_CAMERA_ATTRIBUTES:
+    case DP_MSG_CAMERA_DELETE:
+    case DP_MSG_CAMERA_KEY_FRAME_SET:
+    case DP_MSG_CAMERA_KEY_FRAME_RETITLE:
+    case DP_MSG_CAMERA_KEY_FRAME_VALUE_SET:
+    case DP_MSG_CAMERA_KEY_FRAME_CURVE_SET:
+    case DP_MSG_TRACK_ASSIGN:
     case DP_MSG_UNDO:
         return true;
     default:
@@ -1008,6 +1095,29 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
         case DP_MSG_TRANSFORM_REGION_ZSTD:
             return DP_msg_transform_region_zstd_deserialize(context_id, buf,
                                                             length);
+        case DP_MSG_CAMERA_CREATE:
+            return DP_msg_camera_create_deserialize(context_id, buf, length);
+        case DP_MSG_CAMERA_RETITLE:
+            return DP_msg_camera_retitle_deserialize(context_id, buf, length);
+        case DP_MSG_CAMERA_ATTRIBUTES:
+            return DP_msg_camera_attributes_deserialize(context_id, buf,
+                                                        length);
+        case DP_MSG_CAMERA_DELETE:
+            return DP_msg_camera_delete_deserialize(context_id, buf, length);
+        case DP_MSG_CAMERA_KEY_FRAME_SET:
+            return DP_msg_camera_key_frame_set_deserialize(context_id, buf,
+                                                           length);
+        case DP_MSG_CAMERA_KEY_FRAME_RETITLE:
+            return DP_msg_camera_key_frame_retitle_deserialize(context_id, buf,
+                                                               length);
+        case DP_MSG_CAMERA_KEY_FRAME_VALUE_SET:
+            return DP_msg_camera_key_frame_value_set_deserialize(context_id,
+                                                                 buf, length);
+        case DP_MSG_CAMERA_KEY_FRAME_CURVE_SET:
+            return DP_msg_camera_key_frame_curve_set_deserialize(context_id,
+                                                                 buf, length);
+        case DP_MSG_TRACK_ASSIGN:
+            return DP_msg_track_assign_deserialize(context_id, buf, length);
         case DP_MSG_UNDO:
             return DP_msg_undo_deserialize(context_id, buf, length);
         default:
@@ -1264,6 +1374,36 @@ DP_Message *DP_message_deserialize_body_compat(int type,
             DP_error_set("Can't deserialize incompatible message type 182 "
                          "DP_MSG_TRANSFORM_REGION_ZSTD");
             return NULL;
+        case DP_MSG_CAMERA_CREATE:
+            return DP_msg_camera_create_deserialize_compat(context_id, buf,
+                                                           length);
+        case DP_MSG_CAMERA_RETITLE:
+            return DP_msg_camera_retitle_deserialize_compat(context_id, buf,
+                                                            length);
+        case DP_MSG_CAMERA_ATTRIBUTES:
+            return DP_msg_camera_attributes_deserialize_compat(context_id, buf,
+                                                               length);
+        case DP_MSG_CAMERA_DELETE:
+            return DP_msg_camera_delete_deserialize_compat(context_id, buf,
+                                                           length);
+        case DP_MSG_CAMERA_KEY_FRAME_SET:
+            return DP_msg_camera_key_frame_set_deserialize_compat(context_id,
+                                                                  buf, length);
+        case DP_MSG_CAMERA_KEY_FRAME_RETITLE:
+            return DP_msg_camera_key_frame_retitle_deserialize_compat(
+                context_id, buf, length);
+        case DP_MSG_CAMERA_KEY_FRAME_VALUE_SET:
+            DP_error_set("Can't deserialize incompatible message type 189 "
+                         "DP_MSG_CAMERA_KEY_FRAME_VALUE_SET");
+            return NULL;
+        case DP_MSG_CAMERA_KEY_FRAME_CURVE_SET:
+            DP_error_set("Can't deserialize incompatible message type 190 "
+                         "DP_MSG_CAMERA_KEY_FRAME_CURVE_SET");
+            return NULL;
+        case DP_MSG_TRACK_ASSIGN:
+            DP_error_set("Can't deserialize incompatible message type 191 "
+                         "DP_MSG_TRACK_ASSIGN");
+            return NULL;
         case DP_MSG_UNDO:
             return DP_msg_undo_deserialize_compat(context_id, buf, length);
         default:
@@ -1453,6 +1593,24 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_move_rect_zstd_parse(context_id, reader);
     case DP_MSG_TRANSFORM_REGION_ZSTD:
         return DP_msg_transform_region_zstd_parse(context_id, reader);
+    case DP_MSG_CAMERA_CREATE:
+        return DP_msg_camera_create_parse(context_id, reader);
+    case DP_MSG_CAMERA_RETITLE:
+        return DP_msg_camera_retitle_parse(context_id, reader);
+    case DP_MSG_CAMERA_ATTRIBUTES:
+        return DP_msg_camera_attributes_parse(context_id, reader);
+    case DP_MSG_CAMERA_DELETE:
+        return DP_msg_camera_delete_parse(context_id, reader);
+    case DP_MSG_CAMERA_KEY_FRAME_SET:
+        return DP_msg_camera_key_frame_set_parse(context_id, reader);
+    case DP_MSG_CAMERA_KEY_FRAME_RETITLE:
+        return DP_msg_camera_key_frame_retitle_parse(context_id, reader);
+    case DP_MSG_CAMERA_KEY_FRAME_VALUE_SET:
+        return DP_msg_camera_key_frame_value_set_parse(context_id, reader);
+    case DP_MSG_CAMERA_KEY_FRAME_CURVE_SET:
+        return DP_msg_camera_key_frame_curve_set_parse(context_id, reader);
+    case DP_MSG_TRACK_ASSIGN:
+        return DP_msg_track_assign_parse(context_id, reader);
     case DP_MSG_UNDO:
         return DP_msg_undo_parse(context_id, reader);
     default:
@@ -12949,6 +13107,1427 @@ DP_Message *DP_msg_transform_region_zstd_parse(unsigned int context_id,
 DP_MsgTransformRegion *DP_msg_transform_region_zstd_cast(DP_Message *msg)
 {
     return DP_message_cast(msg, DP_MSG_TRANSFORM_REGION_ZSTD);
+}
+
+
+/* DP_MSG_CAMERA_CREATE */
+
+struct DP_MsgCameraCreate {
+    uint16_t id;
+    uint16_t source_id;
+    uint16_t title_len;
+    char title[];
+};
+
+static size_t msg_camera_create_payload_length(DP_Message *msg)
+{
+    DP_MsgCameraCreate *mcc = DP_message_internal(msg);
+    return ((size_t)4) + DP_uint16_to_size(mcc->title_len);
+}
+
+static size_t msg_camera_create_serialize_payload(DP_Message *msg,
+                                                  unsigned char *data)
+{
+    DP_MsgCameraCreate *mcc = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mcc->id, data + written);
+    written += DP_write_bigendian_uint16(mcc->source_id, data + written);
+    written += DP_write_bytes(mcc->title, 1, mcc->title_len, data + written);
+    DP_ASSERT(written == msg_camera_create_payload_length(msg));
+    return written;
+}
+
+static bool msg_camera_create_write_payload_text(DP_Message *msg,
+                                                 DP_TextWriter *writer)
+{
+    DP_MsgCameraCreate *mcc = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "id", mcc->id)
+        && DP_text_writer_write_uint(writer, "source_id", mcc->source_id)
+        && DP_text_writer_write_string(writer, "title", mcc->title);
+}
+
+static bool msg_camera_create_equals(DP_Message *DP_RESTRICT msg,
+                                     DP_Message *DP_RESTRICT other)
+{
+    DP_MsgCameraCreate *a = DP_message_internal(msg);
+    DP_MsgCameraCreate *b = DP_message_internal(other);
+    return a->id == b->id && a->source_id == b->source_id
+        && a->title_len == b->title_len
+        && memcmp(a->title, b->title, a->title_len) == 0;
+}
+
+static const DP_MessageMethods msg_camera_create_methods = {
+    msg_camera_create_payload_length,     msg_camera_create_serialize_payload,
+    msg_camera_create_payload_length,     msg_camera_create_serialize_payload,
+    msg_camera_create_write_payload_text, msg_camera_create_equals,
+};
+
+DP_Message *DP_msg_camera_create_new(unsigned int context_id, uint16_t id,
+                                     uint16_t source_id,
+                                     const char *title_value, size_t title_len)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_CAMERA_CREATE, context_id, &msg_camera_create_methods,
+        DP_FLEX_SIZEOF(DP_MsgCameraCreate, title, title_len + 1));
+    DP_MsgCameraCreate *mcc = DP_message_internal(msg);
+    mcc->id = id;
+    mcc->source_id = source_id;
+    mcc->title_len = DP_size_to_uint16(title_len);
+    assign_string(mcc->title, title_value, mcc->title_len);
+    return msg;
+}
+
+DP_Message *DP_msg_camera_create_deserialize(unsigned int context_id,
+                                             const unsigned char *buffer,
+                                             size_t length)
+{
+    if (length < 4 || length > 65535) {
+        DP_error_set("Wrong length for cameracreate message; "
+                     "expected between 4 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    uint16_t source_id = read_uint16(buffer + read, &read);
+    size_t title_bytes = length - read;
+    uint16_t title_len = DP_size_to_uint16(title_bytes);
+    const char *title = (const char *)buffer + read;
+    return DP_msg_camera_create_new(context_id, id, source_id, title,
+                                    title_len);
+}
+
+DP_Message *DP_msg_camera_create_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length)
+{
+    DP_Message *msg =
+        DP_msg_camera_create_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
+}
+
+DP_Message *DP_msg_camera_create_parse(unsigned int context_id,
+                                       DP_TextReader *reader)
+{
+    uint16_t id = (uint16_t)DP_text_reader_get_ulong(reader, "id", UINT16_MAX);
+    uint16_t source_id =
+        (uint16_t)DP_text_reader_get_ulong(reader, "source_id", UINT16_MAX);
+    uint16_t title_len;
+    const char *title = DP_text_reader_get_string(reader, "title", &title_len);
+    return DP_msg_camera_create_new(context_id, id, source_id, title,
+                                    title_len);
+}
+
+DP_MsgCameraCreate *DP_msg_camera_create_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_CAMERA_CREATE);
+}
+
+uint16_t DP_msg_camera_create_id(const DP_MsgCameraCreate *mcc)
+{
+    DP_ASSERT(mcc);
+    return mcc->id;
+}
+
+uint16_t DP_msg_camera_create_source_id(const DP_MsgCameraCreate *mcc)
+{
+    DP_ASSERT(mcc);
+    return mcc->source_id;
+}
+
+const char *DP_msg_camera_create_title(const DP_MsgCameraCreate *mcc,
+                                       size_t *out_len)
+{
+    DP_ASSERT(mcc);
+    if (out_len) {
+        *out_len = mcc->title_len;
+    }
+    return mcc->title;
+}
+
+size_t DP_msg_camera_create_title_len(const DP_MsgCameraCreate *mcc)
+{
+    return mcc->title_len;
+}
+
+
+/* DP_MSG_CAMERA_RETITLE */
+
+struct DP_MsgCameraRetitle {
+    uint16_t id;
+    uint16_t title_len;
+    char title[];
+};
+
+static size_t msg_camera_retitle_payload_length(DP_Message *msg)
+{
+    DP_MsgCameraRetitle *mcr = DP_message_internal(msg);
+    return ((size_t)2) + DP_uint16_to_size(mcr->title_len);
+}
+
+static size_t msg_camera_retitle_serialize_payload(DP_Message *msg,
+                                                   unsigned char *data)
+{
+    DP_MsgCameraRetitle *mcr = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mcr->id, data + written);
+    written += DP_write_bytes(mcr->title, 1, mcr->title_len, data + written);
+    DP_ASSERT(written == msg_camera_retitle_payload_length(msg));
+    return written;
+}
+
+static bool msg_camera_retitle_write_payload_text(DP_Message *msg,
+                                                  DP_TextWriter *writer)
+{
+    DP_MsgCameraRetitle *mcr = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "id", mcr->id)
+        && DP_text_writer_write_string(writer, "title", mcr->title);
+}
+
+static bool msg_camera_retitle_equals(DP_Message *DP_RESTRICT msg,
+                                      DP_Message *DP_RESTRICT other)
+{
+    DP_MsgCameraRetitle *a = DP_message_internal(msg);
+    DP_MsgCameraRetitle *b = DP_message_internal(other);
+    return a->id == b->id && a->title_len == b->title_len
+        && memcmp(a->title, b->title, a->title_len) == 0;
+}
+
+static const DP_MessageMethods msg_camera_retitle_methods = {
+    msg_camera_retitle_payload_length,     msg_camera_retitle_serialize_payload,
+    msg_camera_retitle_payload_length,     msg_camera_retitle_serialize_payload,
+    msg_camera_retitle_write_payload_text, msg_camera_retitle_equals,
+};
+
+DP_Message *DP_msg_camera_retitle_new(unsigned int context_id, uint16_t id,
+                                      const char *title_value, size_t title_len)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_CAMERA_RETITLE, context_id, &msg_camera_retitle_methods,
+        DP_FLEX_SIZEOF(DP_MsgCameraRetitle, title, title_len + 1));
+    DP_MsgCameraRetitle *mcr = DP_message_internal(msg);
+    mcr->id = id;
+    mcr->title_len = DP_size_to_uint16(title_len);
+    assign_string(mcr->title, title_value, mcr->title_len);
+    return msg;
+}
+
+DP_Message *DP_msg_camera_retitle_deserialize(unsigned int context_id,
+                                              const unsigned char *buffer,
+                                              size_t length)
+{
+    if (length < 2 || length > 65535) {
+        DP_error_set("Wrong length for cameraretitle message; "
+                     "expected between 2 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    size_t title_bytes = length - read;
+    uint16_t title_len = DP_size_to_uint16(title_bytes);
+    const char *title = (const char *)buffer + read;
+    return DP_msg_camera_retitle_new(context_id, id, title, title_len);
+}
+
+DP_Message *DP_msg_camera_retitle_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    DP_Message *msg =
+        DP_msg_camera_retitle_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
+}
+
+DP_Message *DP_msg_camera_retitle_parse(unsigned int context_id,
+                                        DP_TextReader *reader)
+{
+    uint16_t id = (uint16_t)DP_text_reader_get_ulong(reader, "id", UINT16_MAX);
+    uint16_t title_len;
+    const char *title = DP_text_reader_get_string(reader, "title", &title_len);
+    return DP_msg_camera_retitle_new(context_id, id, title, title_len);
+}
+
+DP_MsgCameraRetitle *DP_msg_camera_retitle_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_CAMERA_RETITLE);
+}
+
+uint16_t DP_msg_camera_retitle_id(const DP_MsgCameraRetitle *mcr)
+{
+    DP_ASSERT(mcr);
+    return mcr->id;
+}
+
+const char *DP_msg_camera_retitle_title(const DP_MsgCameraRetitle *mcr,
+                                        size_t *out_len)
+{
+    DP_ASSERT(mcr);
+    if (out_len) {
+        *out_len = mcr->title_len;
+    }
+    return mcr->title;
+}
+
+size_t DP_msg_camera_retitle_title_len(const DP_MsgCameraRetitle *mcr)
+{
+    return mcr->title_len;
+}
+
+
+/* DP_MSG_CAMERA_ATTRIBUTES */
+
+struct DP_MsgCameraAttributes {
+    uint16_t id;
+    uint8_t flags;
+    uint8_t interpolation;
+    int32_t framerate;
+    int32_t framerate_fraction;
+    uint16_t range_first;
+    uint16_t range_last;
+    uint16_t output_width;
+    uint16_t output_height;
+    int32_t viewport_left;
+    int32_t viewport_top;
+    int32_t viewport_right;
+    int32_t viewport_bottom;
+};
+
+static size_t msg_camera_attributes_payload_length(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)36);
+}
+
+static size_t msg_camera_attributes_serialize_payload(DP_Message *msg,
+                                                      unsigned char *data)
+{
+    DP_MsgCameraAttributes *mca = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mca->id, data + written);
+    written += DP_write_bigendian_uint8(mca->flags, data + written);
+    written += DP_write_bigendian_uint8(mca->interpolation, data + written);
+    written += DP_write_bigendian_int32(mca->framerate, data + written);
+    written +=
+        DP_write_bigendian_int32(mca->framerate_fraction, data + written);
+    written += DP_write_bigendian_uint16(mca->range_first, data + written);
+    written += DP_write_bigendian_uint16(mca->range_last, data + written);
+    written += DP_write_bigendian_uint16(mca->output_width, data + written);
+    written += DP_write_bigendian_uint16(mca->output_height, data + written);
+    written += DP_write_bigendian_int32(mca->viewport_left, data + written);
+    written += DP_write_bigendian_int32(mca->viewport_top, data + written);
+    written += DP_write_bigendian_int32(mca->viewport_right, data + written);
+    written += DP_write_bigendian_int32(mca->viewport_bottom, data + written);
+    DP_ASSERT(written == msg_camera_attributes_payload_length(msg));
+    return written;
+}
+
+static bool msg_camera_attributes_write_payload_text(DP_Message *msg,
+                                                     DP_TextWriter *writer)
+{
+    DP_MsgCameraAttributes *mca = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "flags", mca->flags)
+        && DP_text_writer_write_int(writer, "framerate", mca->framerate)
+        && DP_text_writer_write_int(writer, "framerate_fraction",
+                                    mca->framerate_fraction)
+        && DP_text_writer_write_uint(writer, "id", mca->id)
+        && DP_text_writer_write_uint(writer, "interpolation",
+                                     mca->interpolation)
+        && DP_text_writer_write_uint(writer, "output_height",
+                                     mca->output_height)
+        && DP_text_writer_write_uint(writer, "output_width", mca->output_width)
+        && DP_text_writer_write_uint(writer, "range_first", mca->range_first)
+        && DP_text_writer_write_uint(writer, "range_last", mca->range_last)
+        && DP_text_writer_write_int(writer, "viewport_bottom",
+                                    mca->viewport_bottom)
+        && DP_text_writer_write_int(writer, "viewport_left", mca->viewport_left)
+        && DP_text_writer_write_int(writer, "viewport_right",
+                                    mca->viewport_right)
+        && DP_text_writer_write_int(writer, "viewport_top", mca->viewport_top);
+}
+
+static bool msg_camera_attributes_equals(DP_Message *DP_RESTRICT msg,
+                                         DP_Message *DP_RESTRICT other)
+{
+    DP_MsgCameraAttributes *a = DP_message_internal(msg);
+    DP_MsgCameraAttributes *b = DP_message_internal(other);
+    return a->id == b->id && a->flags == b->flags
+        && a->interpolation == b->interpolation && a->framerate == b->framerate
+        && a->framerate_fraction == b->framerate_fraction
+        && a->range_first == b->range_first && a->range_last == b->range_last
+        && a->output_width == b->output_width
+        && a->output_height == b->output_height
+        && a->viewport_left == b->viewport_left
+        && a->viewport_top == b->viewport_top
+        && a->viewport_right == b->viewport_right
+        && a->viewport_bottom == b->viewport_bottom;
+}
+
+static const DP_MessageMethods msg_camera_attributes_methods = {
+    msg_camera_attributes_payload_length,
+    msg_camera_attributes_serialize_payload,
+    msg_camera_attributes_payload_length,
+    msg_camera_attributes_serialize_payload,
+    msg_camera_attributes_write_payload_text,
+    msg_camera_attributes_equals,
+};
+
+DP_Message *DP_msg_camera_attributes_new(
+    unsigned int context_id, uint16_t id, uint8_t flags, uint8_t interpolation,
+    int32_t framerate, int32_t framerate_fraction, uint16_t range_first,
+    uint16_t range_last, uint16_t output_width, uint16_t output_height,
+    int32_t viewport_left, int32_t viewport_top, int32_t viewport_right,
+    int32_t viewport_bottom)
+{
+    DP_Message *msg = DP_message_new(DP_MSG_CAMERA_ATTRIBUTES, context_id,
+                                     &msg_camera_attributes_methods,
+                                     sizeof(DP_MsgCameraAttributes));
+    DP_MsgCameraAttributes *mca = DP_message_internal(msg);
+    mca->id = id;
+    mca->flags = flags;
+    mca->interpolation = interpolation;
+    mca->framerate = framerate;
+    mca->framerate_fraction = framerate_fraction;
+    mca->range_first = range_first;
+    mca->range_last = range_last;
+    mca->output_width = output_width;
+    mca->output_height = output_height;
+    mca->viewport_left = viewport_left;
+    mca->viewport_top = viewport_top;
+    mca->viewport_right = viewport_right;
+    mca->viewport_bottom = viewport_bottom;
+    return msg;
+}
+
+DP_Message *DP_msg_camera_attributes_deserialize(unsigned int context_id,
+                                                 const unsigned char *buffer,
+                                                 size_t length)
+{
+    if (length != 36) {
+        DP_error_set("Wrong length for cameraattributes message; "
+                     "expected 36, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    uint8_t flags = read_uint8(buffer + read, &read);
+    uint8_t interpolation = read_uint8(buffer + read, &read);
+    int32_t framerate = read_int32(buffer + read, &read);
+    int32_t framerate_fraction = read_int32(buffer + read, &read);
+    uint16_t range_first = read_uint16(buffer + read, &read);
+    uint16_t range_last = read_uint16(buffer + read, &read);
+    uint16_t output_width = read_uint16(buffer + read, &read);
+    uint16_t output_height = read_uint16(buffer + read, &read);
+    int32_t viewport_left = read_int32(buffer + read, &read);
+    int32_t viewport_top = read_int32(buffer + read, &read);
+    int32_t viewport_right = read_int32(buffer + read, &read);
+    int32_t viewport_bottom = read_int32(buffer + read, &read);
+    return DP_msg_camera_attributes_new(
+        context_id, id, flags, interpolation, framerate, framerate_fraction,
+        range_first, range_last, output_width, output_height, viewport_left,
+        viewport_top, viewport_right, viewport_bottom);
+}
+
+DP_Message *DP_msg_camera_attributes_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    DP_Message *msg =
+        DP_msg_camera_attributes_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
+}
+
+DP_Message *DP_msg_camera_attributes_parse(unsigned int context_id,
+                                           DP_TextReader *reader)
+{
+    uint16_t id = (uint16_t)DP_text_reader_get_ulong(reader, "id", UINT16_MAX);
+    uint8_t flags =
+        (uint8_t)DP_text_reader_get_ulong(reader, "flags", UINT8_MAX);
+    uint8_t interpolation =
+        (uint8_t)DP_text_reader_get_ulong(reader, "interpolation", UINT8_MAX);
+    int32_t framerate = (int32_t)DP_text_reader_get_long(reader, "framerate",
+                                                         INT32_MIN, INT32_MAX);
+    int32_t framerate_fraction = (int32_t)DP_text_reader_get_long(
+        reader, "framerate_fraction", INT32_MIN, INT32_MAX);
+    uint16_t range_first =
+        (uint16_t)DP_text_reader_get_ulong(reader, "range_first", UINT16_MAX);
+    uint16_t range_last =
+        (uint16_t)DP_text_reader_get_ulong(reader, "range_last", UINT16_MAX);
+    uint16_t output_width =
+        (uint16_t)DP_text_reader_get_ulong(reader, "output_width", UINT16_MAX);
+    uint16_t output_height =
+        (uint16_t)DP_text_reader_get_ulong(reader, "output_height", UINT16_MAX);
+    int32_t viewport_left = (int32_t)DP_text_reader_get_long(
+        reader, "viewport_left", INT32_MIN, INT32_MAX);
+    int32_t viewport_top = (int32_t)DP_text_reader_get_long(
+        reader, "viewport_top", INT32_MIN, INT32_MAX);
+    int32_t viewport_right = (int32_t)DP_text_reader_get_long(
+        reader, "viewport_right", INT32_MIN, INT32_MAX);
+    int32_t viewport_bottom = (int32_t)DP_text_reader_get_long(
+        reader, "viewport_bottom", INT32_MIN, INT32_MAX);
+    return DP_msg_camera_attributes_new(
+        context_id, id, flags, interpolation, framerate, framerate_fraction,
+        range_first, range_last, output_width, output_height, viewport_left,
+        viewport_top, viewport_right, viewport_bottom);
+}
+
+DP_MsgCameraAttributes *DP_msg_camera_attributes_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_CAMERA_ATTRIBUTES);
+}
+
+uint16_t DP_msg_camera_attributes_id(const DP_MsgCameraAttributes *mca)
+{
+    DP_ASSERT(mca);
+    return mca->id;
+}
+
+uint8_t DP_msg_camera_attributes_flags(const DP_MsgCameraAttributes *mca)
+{
+    DP_ASSERT(mca);
+    return mca->flags;
+}
+
+uint8_t
+DP_msg_camera_attributes_interpolation(const DP_MsgCameraAttributes *mca)
+{
+    DP_ASSERT(mca);
+    return mca->interpolation;
+}
+
+int32_t DP_msg_camera_attributes_framerate(const DP_MsgCameraAttributes *mca)
+{
+    DP_ASSERT(mca);
+    return mca->framerate;
+}
+
+int32_t
+DP_msg_camera_attributes_framerate_fraction(const DP_MsgCameraAttributes *mca)
+{
+    DP_ASSERT(mca);
+    return mca->framerate_fraction;
+}
+
+uint16_t DP_msg_camera_attributes_range_first(const DP_MsgCameraAttributes *mca)
+{
+    DP_ASSERT(mca);
+    return mca->range_first;
+}
+
+uint16_t DP_msg_camera_attributes_range_last(const DP_MsgCameraAttributes *mca)
+{
+    DP_ASSERT(mca);
+    return mca->range_last;
+}
+
+uint16_t
+DP_msg_camera_attributes_output_width(const DP_MsgCameraAttributes *mca)
+{
+    DP_ASSERT(mca);
+    return mca->output_width;
+}
+
+uint16_t
+DP_msg_camera_attributes_output_height(const DP_MsgCameraAttributes *mca)
+{
+    DP_ASSERT(mca);
+    return mca->output_height;
+}
+
+int32_t
+DP_msg_camera_attributes_viewport_left(const DP_MsgCameraAttributes *mca)
+{
+    DP_ASSERT(mca);
+    return mca->viewport_left;
+}
+
+int32_t DP_msg_camera_attributes_viewport_top(const DP_MsgCameraAttributes *mca)
+{
+    DP_ASSERT(mca);
+    return mca->viewport_top;
+}
+
+int32_t
+DP_msg_camera_attributes_viewport_right(const DP_MsgCameraAttributes *mca)
+{
+    DP_ASSERT(mca);
+    return mca->viewport_right;
+}
+
+int32_t
+DP_msg_camera_attributes_viewport_bottom(const DP_MsgCameraAttributes *mca)
+{
+    DP_ASSERT(mca);
+    return mca->viewport_bottom;
+}
+
+
+/* DP_MSG_CAMERA_DELETE */
+
+struct DP_MsgCameraDelete {
+    uint16_t id;
+};
+
+static size_t msg_camera_delete_payload_length(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)2);
+}
+
+static size_t msg_camera_delete_serialize_payload(DP_Message *msg,
+                                                  unsigned char *data)
+{
+    DP_MsgCameraDelete *mcd = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mcd->id, data + written);
+    DP_ASSERT(written == msg_camera_delete_payload_length(msg));
+    return written;
+}
+
+static bool msg_camera_delete_write_payload_text(DP_Message *msg,
+                                                 DP_TextWriter *writer)
+{
+    DP_MsgCameraDelete *mcd = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "id", mcd->id);
+}
+
+static bool msg_camera_delete_equals(DP_Message *DP_RESTRICT msg,
+                                     DP_Message *DP_RESTRICT other)
+{
+    DP_MsgCameraDelete *a = DP_message_internal(msg);
+    DP_MsgCameraDelete *b = DP_message_internal(other);
+    return a->id == b->id;
+}
+
+static const DP_MessageMethods msg_camera_delete_methods = {
+    msg_camera_delete_payload_length,     msg_camera_delete_serialize_payload,
+    msg_camera_delete_payload_length,     msg_camera_delete_serialize_payload,
+    msg_camera_delete_write_payload_text, msg_camera_delete_equals,
+};
+
+DP_Message *DP_msg_camera_delete_new(unsigned int context_id, uint16_t id)
+{
+    DP_Message *msg =
+        DP_message_new(DP_MSG_CAMERA_DELETE, context_id,
+                       &msg_camera_delete_methods, sizeof(DP_MsgCameraDelete));
+    DP_MsgCameraDelete *mcd = DP_message_internal(msg);
+    mcd->id = id;
+    return msg;
+}
+
+DP_Message *DP_msg_camera_delete_deserialize(unsigned int context_id,
+                                             const unsigned char *buffer,
+                                             size_t length)
+{
+    if (length != 2) {
+        DP_error_set("Wrong length for cameradelete message; "
+                     "expected 2, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t id = read_uint16(buffer + read, &read);
+    return DP_msg_camera_delete_new(context_id, id);
+}
+
+DP_Message *DP_msg_camera_delete_deserialize_compat(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length)
+{
+    DP_Message *msg =
+        DP_msg_camera_delete_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
+}
+
+DP_Message *DP_msg_camera_delete_parse(unsigned int context_id,
+                                       DP_TextReader *reader)
+{
+    uint16_t id = (uint16_t)DP_text_reader_get_ulong(reader, "id", UINT16_MAX);
+    return DP_msg_camera_delete_new(context_id, id);
+}
+
+DP_MsgCameraDelete *DP_msg_camera_delete_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_CAMERA_DELETE);
+}
+
+uint16_t DP_msg_camera_delete_id(const DP_MsgCameraDelete *mcd)
+{
+    DP_ASSERT(mcd);
+    return mcd->id;
+}
+
+
+/* DP_MSG_CAMERA_KEY_FRAME_SET */
+
+struct DP_MsgCameraKeyFrameSet {
+    uint16_t camera_id;
+    uint16_t frame_index;
+    uint16_t source_id;
+    uint16_t source_index;
+};
+
+static size_t msg_camera_key_frame_set_payload_length(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)8);
+}
+
+static size_t msg_camera_key_frame_set_serialize_payload(DP_Message *msg,
+                                                         unsigned char *data)
+{
+    DP_MsgCameraKeyFrameSet *mckfs = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mckfs->camera_id, data + written);
+    written += DP_write_bigendian_uint16(mckfs->frame_index, data + written);
+    written += DP_write_bigendian_uint16(mckfs->source_id, data + written);
+    written += DP_write_bigendian_uint16(mckfs->source_index, data + written);
+    DP_ASSERT(written == msg_camera_key_frame_set_payload_length(msg));
+    return written;
+}
+
+static bool msg_camera_key_frame_set_write_payload_text(DP_Message *msg,
+                                                        DP_TextWriter *writer)
+{
+    DP_MsgCameraKeyFrameSet *mckfs = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "camera_id", mckfs->camera_id)
+        && DP_text_writer_write_uint(writer, "frame_index", mckfs->frame_index)
+        && DP_text_writer_write_uint(writer, "source_id", mckfs->source_id)
+        && DP_text_writer_write_uint(writer, "source_index",
+                                     mckfs->source_index);
+}
+
+static bool msg_camera_key_frame_set_equals(DP_Message *DP_RESTRICT msg,
+                                            DP_Message *DP_RESTRICT other)
+{
+    DP_MsgCameraKeyFrameSet *a = DP_message_internal(msg);
+    DP_MsgCameraKeyFrameSet *b = DP_message_internal(other);
+    return a->camera_id == b->camera_id && a->frame_index == b->frame_index
+        && a->source_id == b->source_id && a->source_index == b->source_index;
+}
+
+static const DP_MessageMethods msg_camera_key_frame_set_methods = {
+    msg_camera_key_frame_set_payload_length,
+    msg_camera_key_frame_set_serialize_payload,
+    msg_camera_key_frame_set_payload_length,
+    msg_camera_key_frame_set_serialize_payload,
+    msg_camera_key_frame_set_write_payload_text,
+    msg_camera_key_frame_set_equals,
+};
+
+DP_Message *DP_msg_camera_key_frame_set_new(unsigned int context_id,
+                                            uint16_t camera_id,
+                                            uint16_t frame_index,
+                                            uint16_t source_id,
+                                            uint16_t source_index)
+{
+    DP_Message *msg = DP_message_new(DP_MSG_CAMERA_KEY_FRAME_SET, context_id,
+                                     &msg_camera_key_frame_set_methods,
+                                     sizeof(DP_MsgCameraKeyFrameSet));
+    DP_MsgCameraKeyFrameSet *mckfs = DP_message_internal(msg);
+    mckfs->camera_id = camera_id;
+    mckfs->frame_index = frame_index;
+    mckfs->source_id = source_id;
+    mckfs->source_index = source_index;
+    return msg;
+}
+
+DP_Message *DP_msg_camera_key_frame_set_deserialize(unsigned int context_id,
+                                                    const unsigned char *buffer,
+                                                    size_t length)
+{
+    if (length != 8) {
+        DP_error_set("Wrong length for camerakeyframeset message; "
+                     "expected 8, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t camera_id = read_uint16(buffer + read, &read);
+    uint16_t frame_index = read_uint16(buffer + read, &read);
+    uint16_t source_id = read_uint16(buffer + read, &read);
+    uint16_t source_index = read_uint16(buffer + read, &read);
+    return DP_msg_camera_key_frame_set_new(context_id, camera_id, frame_index,
+                                           source_id, source_index);
+}
+
+DP_Message *DP_msg_camera_key_frame_set_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    DP_Message *msg =
+        DP_msg_camera_key_frame_set_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
+}
+
+DP_Message *DP_msg_camera_key_frame_set_parse(unsigned int context_id,
+                                              DP_TextReader *reader)
+{
+    uint16_t camera_id =
+        (uint16_t)DP_text_reader_get_ulong(reader, "camera_id", UINT16_MAX);
+    uint16_t frame_index =
+        (uint16_t)DP_text_reader_get_ulong(reader, "frame_index", UINT16_MAX);
+    uint16_t source_id =
+        (uint16_t)DP_text_reader_get_ulong(reader, "source_id", UINT16_MAX);
+    uint16_t source_index =
+        (uint16_t)DP_text_reader_get_ulong(reader, "source_index", UINT16_MAX);
+    return DP_msg_camera_key_frame_set_new(context_id, camera_id, frame_index,
+                                           source_id, source_index);
+}
+
+DP_MsgCameraKeyFrameSet *DP_msg_camera_key_frame_set_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_CAMERA_KEY_FRAME_SET);
+}
+
+uint16_t
+DP_msg_camera_key_frame_set_camera_id(const DP_MsgCameraKeyFrameSet *mckfs)
+{
+    DP_ASSERT(mckfs);
+    return mckfs->camera_id;
+}
+
+uint16_t
+DP_msg_camera_key_frame_set_frame_index(const DP_MsgCameraKeyFrameSet *mckfs)
+{
+    DP_ASSERT(mckfs);
+    return mckfs->frame_index;
+}
+
+uint16_t
+DP_msg_camera_key_frame_set_source_id(const DP_MsgCameraKeyFrameSet *mckfs)
+{
+    DP_ASSERT(mckfs);
+    return mckfs->source_id;
+}
+
+uint16_t
+DP_msg_camera_key_frame_set_source_index(const DP_MsgCameraKeyFrameSet *mckfs)
+{
+    DP_ASSERT(mckfs);
+    return mckfs->source_index;
+}
+
+
+/* DP_MSG_CAMERA_KEY_FRAME_RETITLE */
+
+struct DP_MsgCameraKeyFrameRetitle {
+    uint16_t camera_id;
+    uint16_t frame_index;
+    uint16_t title_len;
+    char title[];
+};
+
+static size_t msg_camera_key_frame_retitle_payload_length(DP_Message *msg)
+{
+    DP_MsgCameraKeyFrameRetitle *mckfr = DP_message_internal(msg);
+    return ((size_t)4) + DP_uint16_to_size(mckfr->title_len);
+}
+
+static size_t
+msg_camera_key_frame_retitle_serialize_payload(DP_Message *msg,
+                                               unsigned char *data)
+{
+    DP_MsgCameraKeyFrameRetitle *mckfr = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mckfr->camera_id, data + written);
+    written += DP_write_bigendian_uint16(mckfr->frame_index, data + written);
+    written +=
+        DP_write_bytes(mckfr->title, 1, mckfr->title_len, data + written);
+    DP_ASSERT(written == msg_camera_key_frame_retitle_payload_length(msg));
+    return written;
+}
+
+static bool
+msg_camera_key_frame_retitle_write_payload_text(DP_Message *msg,
+                                                DP_TextWriter *writer)
+{
+    DP_MsgCameraKeyFrameRetitle *mckfr = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "camera_id", mckfr->camera_id)
+        && DP_text_writer_write_uint(writer, "frame_index", mckfr->frame_index)
+        && DP_text_writer_write_string(writer, "title", mckfr->title);
+}
+
+static bool msg_camera_key_frame_retitle_equals(DP_Message *DP_RESTRICT msg,
+                                                DP_Message *DP_RESTRICT other)
+{
+    DP_MsgCameraKeyFrameRetitle *a = DP_message_internal(msg);
+    DP_MsgCameraKeyFrameRetitle *b = DP_message_internal(other);
+    return a->camera_id == b->camera_id && a->frame_index == b->frame_index
+        && a->title_len == b->title_len
+        && memcmp(a->title, b->title, a->title_len) == 0;
+}
+
+static const DP_MessageMethods msg_camera_key_frame_retitle_methods = {
+    msg_camera_key_frame_retitle_payload_length,
+    msg_camera_key_frame_retitle_serialize_payload,
+    msg_camera_key_frame_retitle_payload_length,
+    msg_camera_key_frame_retitle_serialize_payload,
+    msg_camera_key_frame_retitle_write_payload_text,
+    msg_camera_key_frame_retitle_equals,
+};
+
+DP_Message *DP_msg_camera_key_frame_retitle_new(unsigned int context_id,
+                                                uint16_t camera_id,
+                                                uint16_t frame_index,
+                                                const char *title_value,
+                                                size_t title_len)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_CAMERA_KEY_FRAME_RETITLE, context_id,
+        &msg_camera_key_frame_retitle_methods,
+        DP_FLEX_SIZEOF(DP_MsgCameraKeyFrameRetitle, title, title_len + 1));
+    DP_MsgCameraKeyFrameRetitle *mckfr = DP_message_internal(msg);
+    mckfr->camera_id = camera_id;
+    mckfr->frame_index = frame_index;
+    mckfr->title_len = DP_size_to_uint16(title_len);
+    assign_string(mckfr->title, title_value, mckfr->title_len);
+    return msg;
+}
+
+DP_Message *DP_msg_camera_key_frame_retitle_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length < 4 || length > 65535) {
+        DP_error_set("Wrong length for camerakeyframeretitle message; "
+                     "expected between 4 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t camera_id = read_uint16(buffer + read, &read);
+    uint16_t frame_index = read_uint16(buffer + read, &read);
+    size_t title_bytes = length - read;
+    uint16_t title_len = DP_size_to_uint16(title_bytes);
+    const char *title = (const char *)buffer + read;
+    return DP_msg_camera_key_frame_retitle_new(context_id, camera_id,
+                                               frame_index, title, title_len);
+}
+
+DP_Message *DP_msg_camera_key_frame_retitle_deserialize_compat(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    DP_Message *msg =
+        DP_msg_camera_key_frame_retitle_deserialize(context_id, buffer, length);
+    DP_message_compat_set(msg);
+    return msg;
+}
+
+DP_Message *DP_msg_camera_key_frame_retitle_parse(unsigned int context_id,
+                                                  DP_TextReader *reader)
+{
+    uint16_t camera_id =
+        (uint16_t)DP_text_reader_get_ulong(reader, "camera_id", UINT16_MAX);
+    uint16_t frame_index =
+        (uint16_t)DP_text_reader_get_ulong(reader, "frame_index", UINT16_MAX);
+    uint16_t title_len;
+    const char *title = DP_text_reader_get_string(reader, "title", &title_len);
+    return DP_msg_camera_key_frame_retitle_new(context_id, camera_id,
+                                               frame_index, title, title_len);
+}
+
+DP_MsgCameraKeyFrameRetitle *
+DP_msg_camera_key_frame_retitle_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_CAMERA_KEY_FRAME_RETITLE);
+}
+
+uint16_t DP_msg_camera_key_frame_retitle_camera_id(
+    const DP_MsgCameraKeyFrameRetitle *mckfr)
+{
+    DP_ASSERT(mckfr);
+    return mckfr->camera_id;
+}
+
+uint16_t DP_msg_camera_key_frame_retitle_frame_index(
+    const DP_MsgCameraKeyFrameRetitle *mckfr)
+{
+    DP_ASSERT(mckfr);
+    return mckfr->frame_index;
+}
+
+const char *
+DP_msg_camera_key_frame_retitle_title(const DP_MsgCameraKeyFrameRetitle *mckfr,
+                                      size_t *out_len)
+{
+    DP_ASSERT(mckfr);
+    if (out_len) {
+        *out_len = mckfr->title_len;
+    }
+    return mckfr->title;
+}
+
+size_t DP_msg_camera_key_frame_retitle_title_len(
+    const DP_MsgCameraKeyFrameRetitle *mckfr)
+{
+    return mckfr->title_len;
+}
+
+
+/* DP_MSG_CAMERA_KEY_FRAME_VALUE_SET */
+
+struct DP_MsgCameraKeyFrameValueSet {
+    uint16_t camera_id;
+    uint16_t frame_index;
+    uint8_t prop;
+    uint8_t divisor;
+    int32_t value;
+};
+
+static size_t
+msg_camera_key_frame_value_set_payload_length(DP_UNUSED DP_Message *msg)
+{
+    return ((size_t)10);
+}
+
+static size_t
+msg_camera_key_frame_value_set_serialize_payload(DP_Message *msg,
+                                                 unsigned char *data)
+{
+    DP_MsgCameraKeyFrameValueSet *mckfvs = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mckfvs->camera_id, data + written);
+    written += DP_write_bigendian_uint16(mckfvs->frame_index, data + written);
+    written += DP_write_bigendian_uint8(mckfvs->prop, data + written);
+    written += DP_write_bigendian_uint8(mckfvs->divisor, data + written);
+    written += DP_write_bigendian_int32(mckfvs->value, data + written);
+    DP_ASSERT(written == msg_camera_key_frame_value_set_payload_length(msg));
+    return written;
+}
+
+static bool
+msg_camera_key_frame_value_set_write_payload_text(DP_Message *msg,
+                                                  DP_TextWriter *writer)
+{
+    DP_MsgCameraKeyFrameValueSet *mckfvs = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "camera_id", mckfvs->camera_id)
+        && DP_text_writer_write_uint(writer, "divisor", mckfvs->divisor)
+        && DP_text_writer_write_uint(writer, "frame_index", mckfvs->frame_index)
+        && DP_text_writer_write_uint(writer, "prop", mckfvs->prop)
+        && DP_text_writer_write_int(writer, "value", mckfvs->value);
+}
+
+static bool msg_camera_key_frame_value_set_equals(DP_Message *DP_RESTRICT msg,
+                                                  DP_Message *DP_RESTRICT other)
+{
+    DP_MsgCameraKeyFrameValueSet *a = DP_message_internal(msg);
+    DP_MsgCameraKeyFrameValueSet *b = DP_message_internal(other);
+    return a->camera_id == b->camera_id && a->frame_index == b->frame_index
+        && a->prop == b->prop && a->divisor == b->divisor
+        && a->value == b->value;
+}
+
+static const DP_MessageMethods msg_camera_key_frame_value_set_methods = {
+    msg_camera_key_frame_value_set_payload_length,
+    msg_camera_key_frame_value_set_serialize_payload,
+    msg_camera_key_frame_value_set_payload_length,
+    msg_camera_key_frame_value_set_serialize_payload,
+    msg_camera_key_frame_value_set_write_payload_text,
+    msg_camera_key_frame_value_set_equals,
+};
+
+DP_Message *DP_msg_camera_key_frame_value_set_new(unsigned int context_id,
+                                                  uint16_t camera_id,
+                                                  uint16_t frame_index,
+                                                  uint8_t prop, uint8_t divisor,
+                                                  int32_t value)
+{
+    DP_Message *msg =
+        DP_message_new(DP_MSG_CAMERA_KEY_FRAME_VALUE_SET, context_id,
+                       &msg_camera_key_frame_value_set_methods,
+                       sizeof(DP_MsgCameraKeyFrameValueSet));
+    DP_MsgCameraKeyFrameValueSet *mckfvs = DP_message_internal(msg);
+    mckfvs->camera_id = camera_id;
+    mckfvs->frame_index = frame_index;
+    mckfvs->prop = prop;
+    mckfvs->divisor = divisor;
+    mckfvs->value = value;
+    return msg;
+}
+
+DP_Message *DP_msg_camera_key_frame_value_set_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length != 10) {
+        DP_error_set("Wrong length for camerakeyframevalueset message; "
+                     "expected 10, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t camera_id = read_uint16(buffer + read, &read);
+    uint16_t frame_index = read_uint16(buffer + read, &read);
+    uint8_t prop = read_uint8(buffer + read, &read);
+    uint8_t divisor = read_uint8(buffer + read, &read);
+    int32_t value = read_int32(buffer + read, &read);
+    return DP_msg_camera_key_frame_value_set_new(
+        context_id, camera_id, frame_index, prop, divisor, value);
+}
+
+DP_Message *DP_msg_camera_key_frame_value_set_parse(unsigned int context_id,
+                                                    DP_TextReader *reader)
+{
+    uint16_t camera_id =
+        (uint16_t)DP_text_reader_get_ulong(reader, "camera_id", UINT16_MAX);
+    uint16_t frame_index =
+        (uint16_t)DP_text_reader_get_ulong(reader, "frame_index", UINT16_MAX);
+    uint8_t prop = (uint8_t)DP_text_reader_get_ulong(reader, "prop", UINT8_MAX);
+    uint8_t divisor =
+        (uint8_t)DP_text_reader_get_ulong(reader, "divisor", UINT8_MAX);
+    int32_t value =
+        (int32_t)DP_text_reader_get_long(reader, "value", INT32_MIN, INT32_MAX);
+    return DP_msg_camera_key_frame_value_set_new(
+        context_id, camera_id, frame_index, prop, divisor, value);
+}
+
+DP_MsgCameraKeyFrameValueSet *
+DP_msg_camera_key_frame_value_set_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_CAMERA_KEY_FRAME_VALUE_SET);
+}
+
+uint16_t DP_msg_camera_key_frame_value_set_camera_id(
+    const DP_MsgCameraKeyFrameValueSet *mckfvs)
+{
+    DP_ASSERT(mckfvs);
+    return mckfvs->camera_id;
+}
+
+uint16_t DP_msg_camera_key_frame_value_set_frame_index(
+    const DP_MsgCameraKeyFrameValueSet *mckfvs)
+{
+    DP_ASSERT(mckfvs);
+    return mckfvs->frame_index;
+}
+
+uint8_t DP_msg_camera_key_frame_value_set_prop(
+    const DP_MsgCameraKeyFrameValueSet *mckfvs)
+{
+    DP_ASSERT(mckfvs);
+    return mckfvs->prop;
+}
+
+uint8_t DP_msg_camera_key_frame_value_set_divisor(
+    const DP_MsgCameraKeyFrameValueSet *mckfvs)
+{
+    DP_ASSERT(mckfvs);
+    return mckfvs->divisor;
+}
+
+int32_t DP_msg_camera_key_frame_value_set_value(
+    const DP_MsgCameraKeyFrameValueSet *mckfvs)
+{
+    DP_ASSERT(mckfvs);
+    return mckfvs->value;
+}
+
+
+/* DP_MSG_CAMERA_KEY_FRAME_CURVE_SET */
+
+struct DP_MsgCameraKeyFrameCurveSet {
+    uint16_t camera_id;
+    uint16_t frame_index;
+    uint8_t prop;
+    uint16_t values_count;
+    uint16_t values[];
+};
+
+static size_t msg_camera_key_frame_curve_set_payload_length(DP_Message *msg)
+{
+    DP_MsgCameraKeyFrameCurveSet *mckfcs = DP_message_internal(msg);
+    return ((size_t)5) + DP_int_to_size(mckfcs->values_count) * 2;
+}
+
+static size_t
+msg_camera_key_frame_curve_set_serialize_payload(DP_Message *msg,
+                                                 unsigned char *data)
+{
+    DP_MsgCameraKeyFrameCurveSet *mckfcs = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mckfcs->camera_id, data + written);
+    written += DP_write_bigendian_uint16(mckfcs->frame_index, data + written);
+    written += DP_write_bigendian_uint8(mckfcs->prop, data + written);
+    written += DP_write_bigendian_uint16_array(
+        mckfcs->values, mckfcs->values_count, data + written);
+    DP_ASSERT(written == msg_camera_key_frame_curve_set_payload_length(msg));
+    return written;
+}
+
+static bool
+msg_camera_key_frame_curve_set_write_payload_text(DP_Message *msg,
+                                                  DP_TextWriter *writer)
+{
+    DP_MsgCameraKeyFrameCurveSet *mckfcs = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "camera_id", mckfcs->camera_id)
+        && DP_text_writer_write_uint(writer, "frame_index", mckfcs->frame_index)
+        && DP_text_writer_write_uint(writer, "prop", mckfcs->prop)
+        && DP_text_writer_write_uint16_list(writer, "values", mckfcs->values,
+                                            mckfcs->values_count);
+}
+
+static bool msg_camera_key_frame_curve_set_equals(DP_Message *DP_RESTRICT msg,
+                                                  DP_Message *DP_RESTRICT other)
+{
+    DP_MsgCameraKeyFrameCurveSet *a = DP_message_internal(msg);
+    DP_MsgCameraKeyFrameCurveSet *b = DP_message_internal(other);
+    return a->camera_id == b->camera_id && a->frame_index == b->frame_index
+        && a->prop == b->prop && a->values_count == b->values_count
+        && memcmp(a->values, b->values, DP_uint16_to_size(a->values_count) * 2)
+               == 0;
+}
+
+static const DP_MessageMethods msg_camera_key_frame_curve_set_methods = {
+    msg_camera_key_frame_curve_set_payload_length,
+    msg_camera_key_frame_curve_set_serialize_payload,
+    msg_camera_key_frame_curve_set_payload_length,
+    msg_camera_key_frame_curve_set_serialize_payload,
+    msg_camera_key_frame_curve_set_write_payload_text,
+    msg_camera_key_frame_curve_set_equals,
+};
+
+DP_Message *DP_msg_camera_key_frame_curve_set_new(
+    unsigned int context_id, uint16_t camera_id, uint16_t frame_index,
+    uint8_t prop, void (*set_values)(int, uint16_t *, void *), int values_count,
+    void *values_user)
+{
+    DP_Message *msg =
+        DP_message_new(DP_MSG_CAMERA_KEY_FRAME_CURVE_SET, context_id,
+                       &msg_camera_key_frame_curve_set_methods,
+                       DP_FLEX_SIZEOF(DP_MsgCameraKeyFrameCurveSet, values,
+                                      DP_int_to_size(values_count) * 2));
+    DP_MsgCameraKeyFrameCurveSet *mckfcs = DP_message_internal(msg);
+    mckfcs->camera_id = camera_id;
+    mckfcs->frame_index = frame_index;
+    mckfcs->prop = prop;
+    mckfcs->values_count = DP_int_to_uint16(values_count);
+    if (set_values) {
+        set_values(mckfcs->values_count, mckfcs->values, values_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_camera_key_frame_curve_set_deserialize(
+    unsigned int context_id, const unsigned char *buffer, size_t length)
+{
+    if (length < 5 || length > 65535) {
+        DP_error_set("Wrong length for camerakeyframecurveset message; "
+                     "expected between 5 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t camera_id = read_uint16(buffer + read, &read);
+    uint16_t frame_index = read_uint16(buffer + read, &read);
+    uint8_t prop = read_uint8(buffer + read, &read);
+    size_t values_bytes = length - read;
+    if ((values_bytes % 2) != 0) {
+        DP_error_set(
+            "Wrong length for values field in camerakeyframecurveset message; "
+            "%zu not divisible by 2",
+            values_bytes);
+        return NULL;
+    }
+    uint16_t values_count = DP_size_to_uint16(values_bytes / 2);
+    void *values_user = (void *)(buffer + read);
+    return DP_msg_camera_key_frame_curve_set_new(
+        context_id, camera_id, frame_index, prop, read_uint16_array,
+        values_count, values_user);
+}
+
+DP_Message *DP_msg_camera_key_frame_curve_set_parse(unsigned int context_id,
+                                                    DP_TextReader *reader)
+{
+    uint16_t camera_id =
+        (uint16_t)DP_text_reader_get_ulong(reader, "camera_id", UINT16_MAX);
+    uint16_t frame_index =
+        (uint16_t)DP_text_reader_get_ulong(reader, "frame_index", UINT16_MAX);
+    uint8_t prop = (uint8_t)DP_text_reader_get_ulong(reader, "prop", UINT8_MAX);
+    int values_count;
+    DP_TextReaderParseParams values_params =
+        DP_text_reader_get_array(reader, "values", &values_count);
+    return DP_msg_camera_key_frame_curve_set_new(
+        context_id, camera_id, frame_index, prop,
+        DP_text_reader_parse_uint16_array, values_count, &values_params);
+}
+
+DP_MsgCameraKeyFrameCurveSet *
+DP_msg_camera_key_frame_curve_set_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_CAMERA_KEY_FRAME_CURVE_SET);
+}
+
+uint16_t DP_msg_camera_key_frame_curve_set_camera_id(
+    const DP_MsgCameraKeyFrameCurveSet *mckfcs)
+{
+    DP_ASSERT(mckfcs);
+    return mckfcs->camera_id;
+}
+
+uint16_t DP_msg_camera_key_frame_curve_set_frame_index(
+    const DP_MsgCameraKeyFrameCurveSet *mckfcs)
+{
+    DP_ASSERT(mckfcs);
+    return mckfcs->frame_index;
+}
+
+uint8_t DP_msg_camera_key_frame_curve_set_prop(
+    const DP_MsgCameraKeyFrameCurveSet *mckfcs)
+{
+    DP_ASSERT(mckfcs);
+    return mckfcs->prop;
+}
+
+const uint16_t *DP_msg_camera_key_frame_curve_set_values(
+    const DP_MsgCameraKeyFrameCurveSet *mckfcs, int *out_count)
+{
+    DP_ASSERT(mckfcs);
+    if (out_count) {
+        *out_count = mckfcs->values_count;
+    }
+    return mckfcs->values;
+}
+
+int DP_msg_camera_key_frame_curve_set_values_count(
+    const DP_MsgCameraKeyFrameCurveSet *mckfcs)
+{
+    return mckfcs->values_count;
+}
+
+
+/* DP_MSG_TRACK_ASSIGN */
+
+struct DP_MsgTrackAssign {
+    uint16_t track_id;
+    uint16_t camera_ids_count;
+    uint16_t camera_ids[];
+};
+
+static size_t msg_track_assign_payload_length(DP_Message *msg)
+{
+    DP_MsgTrackAssign *mta = DP_message_internal(msg);
+    return ((size_t)2) + DP_int_to_size(mta->camera_ids_count) * 2;
+}
+
+static size_t msg_track_assign_serialize_payload(DP_Message *msg,
+                                                 unsigned char *data)
+{
+    DP_MsgTrackAssign *mta = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint16(mta->track_id, data + written);
+    written += DP_write_bigendian_uint16_array(
+        mta->camera_ids, mta->camera_ids_count, data + written);
+    DP_ASSERT(written == msg_track_assign_payload_length(msg));
+    return written;
+}
+
+static bool msg_track_assign_write_payload_text(DP_Message *msg,
+                                                DP_TextWriter *writer)
+{
+    DP_MsgTrackAssign *mta = DP_message_internal(msg);
+    return DP_text_writer_write_uint16_list(
+               writer, "camera_ids", mta->camera_ids, mta->camera_ids_count)
+        && DP_text_writer_write_uint(writer, "track_id", mta->track_id);
+}
+
+static bool msg_track_assign_equals(DP_Message *DP_RESTRICT msg,
+                                    DP_Message *DP_RESTRICT other)
+{
+    DP_MsgTrackAssign *a = DP_message_internal(msg);
+    DP_MsgTrackAssign *b = DP_message_internal(other);
+    return a->track_id == b->track_id
+        && a->camera_ids_count == b->camera_ids_count
+        && memcmp(a->camera_ids, b->camera_ids,
+                  DP_uint16_to_size(a->camera_ids_count) * 2)
+               == 0;
+}
+
+static const DP_MessageMethods msg_track_assign_methods = {
+    msg_track_assign_payload_length,     msg_track_assign_serialize_payload,
+    msg_track_assign_payload_length,     msg_track_assign_serialize_payload,
+    msg_track_assign_write_payload_text, msg_track_assign_equals,
+};
+
+DP_Message *DP_msg_track_assign_new(unsigned int context_id, uint16_t track_id,
+                                    void (*set_camera_ids)(int, uint16_t *,
+                                                           void *),
+                                    int camera_ids_count, void *camera_ids_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_TRACK_ASSIGN, context_id, &msg_track_assign_methods,
+        DP_FLEX_SIZEOF(DP_MsgTrackAssign, camera_ids,
+                       DP_int_to_size(camera_ids_count) * 2));
+    DP_MsgTrackAssign *mta = DP_message_internal(msg);
+    mta->track_id = track_id;
+    mta->camera_ids_count = DP_int_to_uint16(camera_ids_count);
+    if (set_camera_ids) {
+        set_camera_ids(mta->camera_ids_count, mta->camera_ids, camera_ids_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_track_assign_deserialize(unsigned int context_id,
+                                            const unsigned char *buffer,
+                                            size_t length)
+{
+    if (length < 2 || length > 65535) {
+        DP_error_set("Wrong length for trackassign message; "
+                     "expected between 2 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint16_t track_id = read_uint16(buffer + read, &read);
+    size_t camera_ids_bytes = length - read;
+    if ((camera_ids_bytes % 2) != 0) {
+        DP_error_set(
+            "Wrong length for camera_ids field in trackassign message; "
+            "%zu not divisible by 2",
+            camera_ids_bytes);
+        return NULL;
+    }
+    uint16_t camera_ids_count = DP_size_to_uint16(camera_ids_bytes / 2);
+    void *camera_ids_user = (void *)(buffer + read);
+    return DP_msg_track_assign_new(context_id, track_id, read_uint16_array,
+                                   camera_ids_count, camera_ids_user);
+}
+
+DP_Message *DP_msg_track_assign_parse(unsigned int context_id,
+                                      DP_TextReader *reader)
+{
+    uint16_t track_id =
+        (uint16_t)DP_text_reader_get_ulong(reader, "track_id", UINT16_MAX);
+    int camera_ids_count;
+    DP_TextReaderParseParams camera_ids_params =
+        DP_text_reader_get_array(reader, "camera_ids", &camera_ids_count);
+    return DP_msg_track_assign_new(context_id, track_id,
+                                   DP_text_reader_parse_uint16_array,
+                                   camera_ids_count, &camera_ids_params);
+}
+
+DP_MsgTrackAssign *DP_msg_track_assign_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_TRACK_ASSIGN);
+}
+
+uint16_t DP_msg_track_assign_track_id(const DP_MsgTrackAssign *mta)
+{
+    DP_ASSERT(mta);
+    return mta->track_id;
+}
+
+const uint16_t *DP_msg_track_assign_camera_ids(const DP_MsgTrackAssign *mta,
+                                               int *out_count)
+{
+    DP_ASSERT(mta);
+    if (out_count) {
+        *out_count = mta->camera_ids_count;
+    }
+    return mta->camera_ids;
+}
+
+int DP_msg_track_assign_camera_ids_count(const DP_MsgTrackAssign *mta)
+{
+    return mta->camera_ids_count;
 }
 
 

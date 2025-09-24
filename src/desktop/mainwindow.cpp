@@ -6541,7 +6541,21 @@ void MainWindow::setupActions()
 	QAction *keyFrameDuplicateNext = makeAction("key-frame-duplicate-next", tr("Duplicate to Next Key Frame")).icon("keyframe-next").shortcut("Ctrl+Alt+Shift+T");
 	QAction *keyFrameDuplicatePrev = makeAction("key-frame-duplicate-prev", tr("Duplicate to Previous Key Frame")).icon("keyframe-previous").shortcut("Ctrl+Alt+Shift+E");
 
-	QActionGroup *layerKeyFrameGroup = new QActionGroup{this};
+	// clang-format on
+	QAction *cameraAdd = makeAction("camera-add", tr("New Camera"))
+							 .icon("camera-video")
+							 .noDefaultShortcut();
+	QAction *cameraDuplicate =
+		makeAction("camera-duplicate", tr("Duplicate Camera"))
+			.noDefaultShortcut();
+	QAction *cameraProperties =
+		makeAction("camera-properties", tr("Camera Properties"))
+			.noDefaultShortcut();
+	QAction *cameraDelete = makeAction("camera-delete", tr("Delete Camera"))
+								.icon("drawpile_nocamera")
+								.noDefaultShortcut();
+
+	QActionGroup *layerKeyFrameGroup = new QActionGroup(this);
 	layerKeyFrameGroup->addAction(keyFrameCreateLayer);
 	layerKeyFrameGroup->addAction(keyFrameCreateLayerNext);
 	layerKeyFrameGroup->addAction(keyFrameCreateLayerPrev);
@@ -6551,7 +6565,6 @@ void MainWindow::setupActions()
 	layerKeyFrameGroup->addAction(keyFrameDuplicateNext);
 	layerKeyFrameGroup->addAction(keyFrameDuplicatePrev);
 
-	// clang-format on
 	QMenu *animationMenu = menuBar()->addMenu(tr("&Animation"));
 	animationMenu->addAction(showFlipbook);
 	animationMenu->addAction(animationProperties);
@@ -6571,7 +6584,7 @@ void MainWindow::setupActions()
 	animationMenu->addAction(keyFrameDelete);
 	animationMenu->addSeparator();
 	animationMenu->addAction(keyFrameExposureIncrease);
-	animationMenu->addAction(keyFrameExposureDecreaseVisible);
+	animationMenu->addAction(keyFrameExposureIncreaseVisible);
 	animationMenu->addAction(keyFrameExposureDecrease);
 	animationMenu->addAction(keyFrameExposureDecreaseVisible);
 	animationMenu->addSeparator();
@@ -6596,6 +6609,11 @@ void MainWindow::setupActions()
 	animationMenu->addAction(trackDelete);
 	animationMenu->addAction(trackVisible);
 	animationMenu->addAction(trackOnionSkin);
+	animationMenu->addSeparator();
+	animationMenu->addAction(cameraAdd);
+	animationMenu->addAction(cameraDuplicate);
+	animationMenu->addAction(cameraProperties);
+	animationMenu->addAction(cameraDelete);
 	animationMenu->addSeparator();
 	animationMenu->addAction(frameNext);
 	animationMenu->addAction(framePrev);
@@ -6671,6 +6689,10 @@ void MainWindow::setupActions()
 			trackDuplicate,
 			trackRetitle,
 			trackDelete,
+			cameraAdd,
+			cameraDuplicate,
+			cameraProperties,
+			cameraDelete,
 			animationProperties,
 			frameNext,
 			framePrev,
