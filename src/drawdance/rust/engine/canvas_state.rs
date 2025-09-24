@@ -2,9 +2,8 @@
 use super::{
     types::Persistable, Attached, AttachedDocumentMetadata, AttachedLayerList,
     AttachedLayerPropsList, AttachedTile, AttachedTransientDocumentMetadata, BaseTile, CArc,
-    Detached, DetachedTransientLayerList, DetachedTransientLayerPropsList,
-    DetachedTransientTimeline, DocumentMetadata, DrawContext, Image, LayerList, LayerPropsList,
-    Tile, TransientDocumentMetadata,
+    Detached, DetachedTransientLayerList, DetachedTransientLayerPropsList, DocumentMetadata,
+    DrawContext, Image, LayerList, LayerPropsList, Tile, TransientDocumentMetadata,
 };
 use crate::{
     dp_error_anyhow, DP_CanvasState, DP_DrawContext, DP_SaveImageType, DP_TransientCanvasState,
@@ -18,8 +17,7 @@ use crate::{
     DP_transient_canvas_state_layer_routes_reindex, DP_transient_canvas_state_new,
     DP_transient_canvas_state_persist, DP_transient_canvas_state_transient_layer_props_set_noinc,
     DP_transient_canvas_state_transient_layers_set_noinc,
-    DP_transient_canvas_state_transient_metadata,
-    DP_transient_canvas_state_transient_timeline_set_noinc, DP_transient_canvas_state_width_set,
+    DP_transient_canvas_state_transient_metadata, DP_transient_canvas_state_width_set,
     DP_FLAT_IMAGE_RENDER_FLAGS, DP_SAVE_RESULT_SUCCESS,
 };
 use anyhow::Result;
@@ -238,12 +236,6 @@ impl TransientCanvasState {
     pub fn set_transient_layer_props_noinc(&mut self, tlpl: DetachedTransientLayerPropsList) {
         unsafe {
             DP_transient_canvas_state_transient_layer_props_set_noinc(self.data, tlpl.leak());
-        }
-    }
-
-    pub fn set_transient_timeline_noinc(&mut self, ttl: DetachedTransientTimeline) {
-        unsafe {
-            DP_transient_canvas_state_transient_timeline_set_noinc(self.data, ttl.leak());
         }
     }
 

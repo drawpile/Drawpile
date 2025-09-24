@@ -3,6 +3,7 @@ begin testing
 -- initial timeline
 frame_count: 24
 0 track(s)
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_LAYER_TREE_CREATE ok - 0 error(s)
@@ -20,6 +21,7 @@ frame_count: 24
 -- layer setup
 frame_count: 30
 0 track(s)
+0 camera(s)
 layers:
     layer 257 L1
     group 258 G2
@@ -38,6 +40,7 @@ layers:
 frame_count: 30
 1 track(s)
     [0] 300 "Track 1" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
@@ -47,6 +50,7 @@ frame_count: 30
 1 track(s)
     [0] 300 "Track 1" 1 key frame(s):
         [0] key on layer 257 at 0
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
@@ -57,6 +61,7 @@ frame_count: 30
     [0] 300 "Track 1" 2 key frame(s):
         [0] key on layer 257 at 0
         [1] key on layer 0 at 20
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
@@ -68,6 +73,7 @@ frame_count: 30
         [0] key on layer 257 at 0
         [1] key on layer 258 at 10
         [2] key on layer 0 at 20
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_SET fail - 1 error(s): Key frame set: frame index 30 beyond frame count 30
@@ -79,6 +85,7 @@ frame_count: 30
         [0] key on layer 257 at 0
         [1] key on layer 258 at 10
         [2] key on layer 0 at 20
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
@@ -91,6 +98,7 @@ frame_count: 30
         [1] key on layer 258 at 10
         [2] key on layer 0 at 20
         [3] key on layer 265 at 29
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
@@ -103,6 +111,7 @@ frame_count: 30
         [1] key on layer 258 at 10
         [2] key on layer 265 at 20
         [3] key on layer 265 at 29
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_RETITLE ok - 0 error(s)
@@ -115,6 +124,7 @@ frame_count: 30
         [1] key on layer 258 at 10
         [2] key on layer 265 at 20 "T1 K20"
         [3] key on layer 265 at 29
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_RETITLE ok - 0 error(s)
@@ -127,6 +137,7 @@ frame_count: 30
         [1] key on layer 258 at 10
         [2] key on layer 265 at 20 "Key 20"
         [3] key on layer 265 at 29
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
@@ -139,6 +150,7 @@ frame_count: 30
         [1] key on layer 258 at 10
         [2] key on layer 258 at 20 "Key 20"
         [3] key on layer 265 at 29
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES ok - 0 error(s)
@@ -154,6 +166,7 @@ frame_count: 30
             [1] layer 261 flags 0x2
             [2] layer 263 flags 0x1
         [3] key on layer 265 at 29
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES ok - 0 error(s)
@@ -169,6 +182,7 @@ frame_count: 30
             [1] layer 263 flags 0x2
             [2] layer 257 flags 0x1
         [3] key on layer 265 at 29
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_CREATE ok - 0 error(s)
@@ -192,6 +206,7 @@ frame_count: 30
             [1] layer 263 flags 0x2
             [2] layer 257 flags 0x1
         [3] key on layer 265 at 29
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_CREATE ok - 0 error(s)
@@ -216,6 +231,7 @@ frame_count: 30
             [2] layer 257 flags 0x1
         [3] key on layer 265 at 29
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_RETITLE ok - 0 error(s)
@@ -240,6 +256,7 @@ frame_count: 30
             [2] layer 257 flags 0x1
         [3] key on layer 265 at 29
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_DELETE ok - 0 error(s)
@@ -260,6 +277,7 @@ frame_count: 30
         [1] key on layer 258 at 10
         [2] key on layer 265 at 29
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_DELETE fail - 1 error(s): Key frame delete: no frame at index 20
@@ -280,6 +298,7 @@ frame_count: 30
         [1] key on layer 258 at 10
         [2] key on layer 265 at 29
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_DELETE ok - 0 error(s)
@@ -299,6 +318,7 @@ frame_count: 30
         [0] key on layer 257 at 0
         [1] key on layer 258 at 10
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_DELETE ok - 0 error(s)
@@ -317,6 +337,7 @@ frame_count: 30
     [1] 300 "Track 1" 1 key frame(s):
         [0] key on layer 258 at 10
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_DELETE ok - 0 error(s)
@@ -334,6 +355,7 @@ frame_count: 30
         [3] key on layer 265 at 29
     [1] 300 "Track 1" 0 key frame(s):
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_CREATE ok - 0 error(s)
@@ -359,6 +381,7 @@ frame_count: 30
             [2] layer 257 flags 0x1
         [3] key on layer 265 at 29
     [3] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_RETITLE ok - 0 error(s)
@@ -384,6 +407,7 @@ frame_count: 30
             [2] layer 257 flags 0x1
         [3] key on layer 265 at 29
     [3] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
@@ -411,6 +435,7 @@ frame_count: 30
             [2] layer 257 flags 0x1
         [3] key on layer 261 at 29
     [3] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 layers:
     layer 257 L1
     group 258 G2
@@ -444,6 +469,7 @@ frame_count: 30
             [1] layer 257 flags 0x1
         [3] key on layer 261 at 29
     [3] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 layers:
     layer 257 L1
     group 258 G2
@@ -474,6 +500,7 @@ frame_count: 30
             [0] layer 257 flags 0x1
         [3] key on layer 0 at 29
     [3] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 layers:
     layer 257 L1
     layer 264 L3
@@ -493,6 +520,7 @@ frame_count: 30
         [3] key on layer 265 at 29
     [1] 300 "Track 1" 0 key frame(s):
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
@@ -510,6 +538,7 @@ frame_count: 30
         [4] key on layer 265 at 29
     [1] 300 "Track 1" 0 key frame(s):
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_DELETE ok - 0 error(s)
@@ -527,6 +556,7 @@ frame_count: 30
         [0] key on layer 0 at 3 "Key 20" 1 layer flag(s):
             [0] layer 257 flags 0x1
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_DELETE ok - 0 error(s)
@@ -544,6 +574,7 @@ frame_count: 30
         [0] key on layer 0 at 0 "Key 20" 1 layer flag(s):
             [0] layer 257 flags 0x1
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_KEY_FRAME_SET ok - 0 error(s)
@@ -562,6 +593,7 @@ frame_count: 30
         [0] key on layer 0 at 0 "Key 20" 1 layer flag(s):
             [0] layer 257 flags 0x1
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_SET_METADATA_INT ok - 0 error(s)
@@ -577,6 +609,7 @@ frame_count: 20
         [0] key on layer 0 at 0 "Key 20" 1 layer flag(s):
             [0] layer 257 flags 0x1
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_SET_METADATA_INT ok - 0 error(s)
@@ -592,6 +625,7 @@ frame_count: 60
         [0] key on layer 0 at 0 "Key 20" 1 layer flag(s):
             [0] layer 257 flags 0x1
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_SET_METADATA_INT ok - 0 error(s)
@@ -602,6 +636,7 @@ frame_count: 1
     [0] 301 "Track 2" 0 key frame(s):
     [1] 300 "Track 1" 0 key frame(s):
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_SET_METADATA_INT ok - 0 error(s)
@@ -612,6 +647,7 @@ frame_count: 1
     [0] 301 "Track 2" 0 key frame(s):
     [1] 300 "Track 1" 0 key frame(s):
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_DELETE fail - 1 error(s): Track delete: track 404 not found
@@ -622,6 +658,7 @@ frame_count: 1
     [0] 301 "Track 2" 0 key frame(s):
     [1] 300 "Track 1" 0 key frame(s):
     [2] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_DELETE ok - 0 error(s)
@@ -631,6 +668,7 @@ frame_count: 1
 2 track(s)
     [0] 301 "Track 2" 0 key frame(s):
     [1] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_DELETE ok - 0 error(s)
@@ -639,6 +677,7 @@ frame_count: 1
 frame_count: 1
 1 track(s)
     [0] 302 "Track 0" 0 key frame(s):
+0 camera(s)
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_TRACK_DELETE ok - 0 error(s)
@@ -646,6 +685,7 @@ frame_count: 1
 -- delete track 0
 frame_count: 1
 0 track(s)
+0 camera(s)
 layers:
     layer 257 L1
     layer 264 L3

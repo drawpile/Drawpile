@@ -47,6 +47,10 @@ public:
 		QAction *trackDuplicate = nullptr;
 		QAction *trackRetitle = nullptr;
 		QAction *trackDelete = nullptr;
+		QAction *cameraAdd = nullptr;
+		QAction *cameraDuplicate = nullptr;
+		QAction *cameraProperties = nullptr;
+		QAction *cameraDelete = nullptr;
 		QAction *frameCountSet = nullptr;
 		QAction *framerateSet = nullptr;
 		QAction *frameNext = nullptr;
@@ -130,6 +134,9 @@ private slots:
 	void duplicateTrack();
 	void retitleTrack();
 	void deleteTrack();
+	void addCamera();
+	void duplicateCamera();
+	void deleteCamera();
 	void setFrameCount();
 	void setFramerate();
 	void nextFrame();
@@ -173,6 +180,7 @@ private:
 	void emitCommand(std::function<net::Message(uint8_t)> getMessage);
 
 	static void setCheckedSignalBlocked(QAction *action, bool checked);
+	static QString noCameraTitle();
 
 	struct Private;
 	Private *d;

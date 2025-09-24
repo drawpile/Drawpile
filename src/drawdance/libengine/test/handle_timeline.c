@@ -78,6 +78,10 @@ static void dump_timeline(DP_Output *output, DP_CanvasHistory *ch,
         }
     }
 
+    int camera_count = DP_timeline_camera_count(tl);
+    DP_output_format(output, "%d camera(s)\n", camera_count);
+    // TODO
+
     if (dump_layers) {
         DP_OUTPUT_PRINT_LITERAL(output, "layers:\n");
         dump_layer_list(output, DP_canvas_state_layer_props_noinc(cs), 1);

@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0-or-later
 #include "timeline.h"
+#include "camera.h"
 #include "track.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
@@ -12,8 +13,10 @@ struct DP_Timeline {
     DP_Atomic refcount;
     const bool transient;
     const int track_count;
-    struct {
+    int camera_count;
+    union {
         DP_Track *const track;
+        DP_Camera *const camera;
     } elements[];
 };
 
@@ -21,9 +24,12 @@ struct DP_TransientTimeline {
     DP_Atomic refcount;
     bool transient;
     int track_count;
+    int camera_count;
     union {
         DP_Track *track;
         DP_TransientTrack *transient_track;
+        DP_Camera *camera;
+        DP_TransientCamera *transient_camera;
     } elements[];
 };
 
@@ -33,33 +39,40 @@ struct DP_Timeline {
     DP_Atomic refcount;
     bool transient;
     int track_count;
+    int camera_count;
     union {
         DP_Track *track;
         DP_TransientTrack *transient_track;
+        DP_Camera *camera;
+        DP_TransientCamera *transient_camera;
     } elements[];
 };
 
 #endif
 
 
-static size_t timeline_size(int track_count)
+static size_t timeline_size(int track_count, int camera_count)
 {
-    return DP_FLEX_SIZEOF(DP_Timeline, elements, DP_int_to_size(track_count));
+    return DP_FLEX_SIZEOF(DP_Timeline, elements,
+                          DP_int_to_size(track_count + camera_count));
 }
 
-static void *allocate_timeline(bool transient, int track_count)
+static void *allocate_timeline(bool transient, int track_count,
+                               int camera_count)
 {
-    DP_TransientTimeline *ttl = DP_malloc(timeline_size(track_count));
+    DP_TransientTimeline *ttl =
+        DP_malloc(timeline_size(track_count, camera_count));
     DP_atomic_set(&ttl->refcount, 1);
     ttl->transient = transient;
     ttl->track_count = track_count;
+    ttl->camera_count = camera_count;
     return ttl;
 }
 
 
 DP_Timeline *DP_timeline_new(void)
 {
-    return allocate_timeline(false, 0);
+    return allocate_timeline(false, 0, 0);
 }
 
 DP_Timeline *DP_timeline_incref(DP_Timeline *tl)
@@ -83,6 +96,10 @@ void DP_timeline_decref(DP_Timeline *tl)
         int track_count = tl->track_count;
         for (int i = 0; i < track_count; ++i) {
             DP_track_decref_nullable(tl->elements[i].track);
+        }
+        int camera_end = track_count + tl->camera_count;
+        for (int i = track_count; i < camera_end; ++i) {
+            DP_camera_decref_nullable(tl->elements[i].camera);
         }
         DP_free(tl);
     }
@@ -116,6 +133,13 @@ int DP_timeline_track_count(DP_Timeline *tl)
     return tl->track_count;
 }
 
+int DP_timeline_camera_count(DP_Timeline *tl)
+{
+    DP_ASSERT(tl);
+    DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
+    return tl->camera_count;
+}
+
 DP_Track *DP_timeline_track_at_noinc(DP_Timeline *tl, int index)
 {
     DP_ASSERT(tl);
@@ -134,6 +158,30 @@ int DP_timeline_track_index_by_id(DP_Timeline *tl, int track_id)
         DP_Track *t = tl->elements[i].track;
         if (t && DP_track_id(t) == track_id) {
             return i;
+        }
+    }
+    return -1;
+}
+
+DP_Camera *DP_timeline_camera_at_noinc(DP_Timeline *tl, int index)
+{
+    DP_ASSERT(tl);
+    DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < tl->camera_count);
+    return tl->elements[tl->track_count + index].camera;
+}
+
+int DP_timeline_camera_index_by_id(DP_Timeline *tl, int camera_id)
+{
+    DP_ASSERT(tl);
+    DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
+    int track_count = tl->track_count;
+    int camera_end = track_count + tl->camera_count;
+    for (int i = track_count; i < camera_end; ++i) {
+        DP_Camera *c = tl->elements[i].camera;
+        if (c && DP_camera_id(c) == camera_id) {
+            return i - track_count;
         }
     }
     return -1;
@@ -158,48 +206,86 @@ bool DP_timeline_same_frame(DP_Timeline *tl, int frame_index_a,
 
 
 DP_TransientTimeline *DP_transient_timeline_new(DP_Timeline *tl,
-                                                int track_reserve)
+                                                int track_reserve,
+                                                int camera_reserve)
 {
     DP_ASSERT(tl);
     DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
     DP_ASSERT(!tl->transient);
     DP_ASSERT(track_reserve >= 0);
+    DP_ASSERT(camera_reserve >= 0);
     int track_count = tl->track_count;
-    DP_TransientTimeline *ttl =
-        allocate_timeline(true, track_count + track_reserve);
+    int camera_count = tl->camera_count;
+    DP_TransientTimeline *ttl = allocate_timeline(
+        true, track_count + track_reserve, camera_count + camera_reserve);
     for (int i = 0; i < track_count; ++i) {
         ttl->elements[i].track = DP_track_incref(tl->elements[i].track);
     }
     for (int i = 0; i < track_reserve; ++i) {
         ttl->elements[track_count + i].track = NULL;
     }
-    return ttl;
-}
-
-DP_TransientTimeline *DP_transient_timeline_new_init(int track_reserve)
-{
-    DP_ASSERT(track_reserve >= 0);
-    DP_TransientTimeline *ttl = allocate_timeline(true, track_reserve);
-    for (int i = 0; i < track_reserve; ++i) {
-        ttl->elements[i].track = NULL;
+    for (int i = 0; i < camera_count; ++i) {
+        ttl->elements[track_count + track_reserve + i].camera =
+            DP_camera_incref(tl->elements[track_count + i].camera);
+    }
+    for (int i = 0; i < camera_reserve; ++i) {
+        ttl->elements[track_count + track_reserve + camera_count + i].camera =
+            NULL;
     }
     return ttl;
 }
 
+DP_TransientTimeline *DP_transient_timeline_new_init(int track_reserve,
+                                                     int camera_reserve)
+{
+    DP_ASSERT(track_reserve >= 0);
+    DP_TransientTimeline *ttl =
+        allocate_timeline(true, track_reserve, camera_reserve);
+
+    for (int i = 0; i < track_reserve; ++i) {
+        ttl->elements[i].track = NULL;
+    }
+
+    int camera_end = track_reserve + camera_reserve;
+    for (int i = track_reserve; i < camera_end; ++i) {
+        ttl->elements[i].camera = NULL;
+    }
+
+    return ttl;
+}
+
 DP_TransientTimeline *DP_transient_timeline_reserve(DP_TransientTimeline *ttl,
-                                                    int track_reserve)
+                                                    int track_reserve,
+                                                    int camera_reserve)
 {
     DP_ASSERT(ttl);
     DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
     DP_ASSERT(ttl->transient);
     DP_ASSERT(track_reserve >= 0);
-    DP_debug("Reserve %d elements in timeline", track_reserve);
-    if (track_reserve > 0) {
-        int old_count = ttl->track_count;
-        int new_count = old_count + track_reserve;
-        ttl = DP_realloc(ttl, timeline_size(new_count));
-        ttl->track_count = new_count;
-        for (int i = old_count; i < new_count; ++i) {
+    DP_ASSERT(camera_reserve >= 0);
+    DP_debug("Reserve %d tracks %d cameras in timeline", track_reserve,
+             camera_reserve);
+    if (track_reserve > 0 || camera_reserve > 0) {
+        int old_track_count = ttl->track_count;
+        int old_camera_count = ttl->camera_count;
+        int new_track_count = old_track_count + track_reserve;
+        int new_camera_count = old_camera_count + camera_reserve;
+        ttl = DP_realloc(ttl, timeline_size(new_track_count, new_camera_count));
+        ttl->track_count = new_track_count;
+        ttl->camera_count = new_camera_count;
+
+        for (int i = old_camera_count; i < new_camera_count; ++i) {
+            ttl->elements[new_track_count + i].camera = NULL;
+        }
+
+        if (new_track_count > old_track_count) {
+            for (int i = old_camera_count - 1; i >= 0; --i) {
+                ttl->elements[new_track_count + i] =
+                    ttl->elements[old_track_count + i];
+            }
+        }
+
+        for (int i = old_track_count; i < new_track_count; ++i) {
             ttl->elements[i].track = NULL;
         }
     }
@@ -227,13 +313,23 @@ DP_Timeline *DP_transient_timeline_persist(DP_TransientTimeline *ttl)
     DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
     DP_ASSERT(ttl->transient);
     ttl->transient = false;
-    int count = ttl->track_count;
-    for (int i = 0; i < count; ++i) {
+
+    int track_count = ttl->track_count;
+    for (int i = 0; i < track_count; ++i) {
         DP_ASSERT(ttl->elements[i].track);
         if (DP_track_transient(ttl->elements[i].track)) {
             DP_transient_track_persist(ttl->elements[i].transient_track);
         }
     }
+
+    int camera_end = track_count + ttl->camera_count;
+    for (int i = track_count; i < camera_end; ++i) {
+        DP_ASSERT(ttl->elements[i].camera);
+        if (DP_camera_transient(ttl->elements[i].camera)) {
+            DP_transient_camera_persist(ttl->elements[i].transient_camera);
+        }
+    }
+
     return (DP_Timeline *)ttl;
 }
 
@@ -328,22 +424,111 @@ void DP_transient_timeline_delete_track_at(DP_TransientTimeline *ttl, int index)
     DP_ASSERT(index >= 0);
     DP_ASSERT(index < ttl->track_count);
     DP_ASSERT(ttl->elements[index].track);
-    int new_count = --ttl->track_count;
+    int new_track_count = --ttl->track_count;
     DP_track_decref(ttl->elements[index].track);
     memmove(&ttl->elements[index], &ttl->elements[index + 1],
-            DP_int_to_size(new_count - index) * sizeof(ttl->elements[0]));
+            DP_int_to_size(new_track_count - index + ttl->camera_count)
+                * sizeof(ttl->elements[0]));
 }
 
-void DP_transient_timeline_clamp(DP_TransientTimeline *ttl, int track_count)
+DP_TransientCamera *
+DP_transient_timeline_transient_camera_at_noinc(DP_TransientTimeline *ttl,
+                                                int index, int reserve)
+{
+    DP_ASSERT(ttl);
+    DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
+    DP_ASSERT(ttl->transient);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < ttl->camera_count);
+    int element_index = ttl->track_count + index;
+    DP_Camera *c = ttl->elements[element_index].camera;
+    DP_TransientCamera *tc;
+    if (DP_camera_transient(c)) {
+        tc = ttl->elements[element_index].transient_camera;
+        DP_transient_camera_reserve(tc, reserve);
+    }
+    else {
+        tc = DP_transient_camera_new(c, reserve);
+        ttl->elements[element_index].transient_camera = tc;
+        DP_camera_decref(c);
+    }
+    return tc;
+}
+
+void DP_transient_timeline_set_camera_noinc(DP_TransientTimeline *ttl,
+                                            DP_Camera *c, int index)
+{
+    DP_ASSERT(ttl);
+    DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
+    DP_ASSERT(ttl->transient);
+    DP_ASSERT(c);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < ttl->camera_count);
+    int element_index = ttl->track_count + index;
+    DP_ASSERT(!ttl->elements[element_index].camera);
+    ttl->elements[element_index].camera = c;
+}
+
+void DP_transient_timeline_set_camera_inc(DP_TransientTimeline *ttl,
+                                          DP_Camera *c, int index)
+{
+    DP_transient_timeline_set_camera_noinc(ttl, DP_camera_incref(c), index);
+}
+
+void DP_transient_timeline_set_transient_camera_noinc(DP_TransientTimeline *ttl,
+                                                      DP_TransientCamera *tc,
+                                                      int index)
+{
+    DP_transient_timeline_set_camera_noinc(ttl, (DP_Camera *)tc, index);
+}
+
+void DP_transient_timeline_delete_camera_at(DP_TransientTimeline *ttl,
+                                            int index)
+{
+    DP_ASSERT(ttl);
+    DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
+    DP_ASSERT(ttl->transient);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < ttl->camera_count);
+
+    int track_count = ttl->track_count;
+    int element_index = track_count + index;
+    DP_ASSERT(ttl->elements[element_index].camera);
+
+    int new_camera_count = --ttl->camera_count;
+    DP_camera_decref(ttl->elements[element_index].camera);
+    memmove(&ttl->elements[element_index], &ttl->elements[element_index + 1],
+            DP_int_to_size(new_camera_count - index)
+                * sizeof(ttl->elements[0]));
+}
+
+void DP_transient_timeline_clamp(DP_TransientTimeline *ttl, int track_count,
+                                 int camera_count)
 {
     DP_ASSERT(ttl);
     DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
     DP_ASSERT(ttl->transient);
     DP_ASSERT(track_count >= 0);
     DP_ASSERT(track_count <= ttl->track_count);
-    int old_count = ttl->track_count;
-    for (int i = track_count; i < old_count; ++i) {
+    DP_ASSERT(camera_count >= 0);
+    DP_ASSERT(camera_count <= ttl->camera_count);
+
+    int old_track_count = ttl->track_count;
+    for (int i = track_count; i < old_track_count; ++i) {
         DP_track_decref_nullable(ttl->elements[i].track);
     }
+
+    int old_camera_count = ttl->camera_count;
+    for (int i = camera_count; i < old_camera_count; ++i) {
+        DP_camera_decref_nullable(ttl->elements[old_track_count + i].camera);
+    }
+
+    if (track_count < old_track_count) {
+        for (int i = 0; i < camera_count; ++i) {
+            ttl->elements[track_count + i] = ttl->elements[old_track_count + i];
+        }
+    }
+
     ttl->track_count = track_count;
+    ttl->camera_count = camera_count;
 }

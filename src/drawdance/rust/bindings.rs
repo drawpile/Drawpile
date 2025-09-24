@@ -348,6 +348,28 @@ pub const DP_MSG_PUT_TILE_ZSTD_STATIC_LENGTH: u32 = 0;
 pub const DP_MSG_CANVAS_BACKGROUND_ZSTD_STATIC_LENGTH: u32 = 0;
 pub const DP_MSG_MOVE_RECT_ZSTD_STATIC_LENGTH: u32 = 0;
 pub const DP_MSG_TRANSFORM_REGION_ZSTD_STATIC_LENGTH: u32 = 0;
+pub const DP_MSG_CAMERA_CREATE_STATIC_LENGTH: u32 = 4;
+pub const DP_MSG_CAMERA_CREATE_STATIC_LENGTH_COMPAT: u32 = 4;
+pub const DP_MSG_CAMERA_CREATE_TITLE_MIN_LEN: u32 = 0;
+pub const DP_MSG_CAMERA_CREATE_TITLE_MAX_LEN: u32 = 65531;
+pub const DP_MSG_CAMERA_RETITLE_STATIC_LENGTH: u32 = 2;
+pub const DP_MSG_CAMERA_RETITLE_STATIC_LENGTH_COMPAT: u32 = 2;
+pub const DP_MSG_CAMERA_RETITLE_TITLE_MIN_LEN: u32 = 0;
+pub const DP_MSG_CAMERA_RETITLE_TITLE_MAX_LEN: u32 = 65533;
+pub const DP_MSG_CAMERA_ATTRIBUTES_STATIC_LENGTH: u32 = 32;
+pub const DP_MSG_CAMERA_ATTRIBUTES_STATIC_LENGTH_COMPAT: u32 = 32;
+pub const DP_MSG_CAMERA_DELETE_STATIC_LENGTH: u32 = 2;
+pub const DP_MSG_CAMERA_DELETE_STATIC_LENGTH_COMPAT: u32 = 2;
+pub const DP_MSG_CAMERA_KEY_FRAME_SET_STATIC_LENGTH: u32 = 8;
+pub const DP_MSG_CAMERA_KEY_FRAME_SET_STATIC_LENGTH_COMPAT: u32 = 8;
+pub const DP_MSG_CAMERA_KEY_FRAME_RETITLE_STATIC_LENGTH: u32 = 4;
+pub const DP_MSG_CAMERA_KEY_FRAME_RETITLE_STATIC_LENGTH_COMPAT: u32 = 4;
+pub const DP_MSG_CAMERA_KEY_FRAME_RETITLE_TITLE_MIN_LEN: u32 = 0;
+pub const DP_MSG_CAMERA_KEY_FRAME_RETITLE_TITLE_MAX_LEN: u32 = 65531;
+pub const DP_MSG_CAMERA_KEY_FRAME_VALUE_SET_STATIC_LENGTH: u32 = 10;
+pub const DP_MSG_CAMERA_KEY_FRAME_CURVE_SET_STATIC_LENGTH: u32 = 5;
+pub const DP_MSG_CAMERA_KEY_FRAME_CURVE_SET_VALUES_MIN_COUNT: u32 = 0;
+pub const DP_MSG_CAMERA_KEY_FRAME_CURVE_SET_VALUES_MAX_COUNT: u32 = 32765;
 pub const DP_MSG_UNDO_STATIC_LENGTH: u32 = 2;
 pub const DP_MSG_UNDO_STATIC_LENGTH_COMPAT: u32 = 2;
 pub const DP_MESSAGE_MAX: u32 = 255;
@@ -2492,7 +2514,8 @@ extern "C" {
 extern "C" {
     pub fn DP_transient_canvas_state_transient_timeline(
         tcs: *mut DP_TransientCanvasState,
-        reserve: ::std::os::raw::c_int,
+        track_reserve: ::std::os::raw::c_int,
+        camera_reserve: ::std::os::raw::c_int,
     ) -> *mut DP_TransientTimeline;
 }
 extern "C" {
@@ -4936,7 +4959,8 @@ pub const DP_AFFECTED_DOMAIN_CANVAS_BACKGROUND: DP_AffectedDomain = 4;
 pub const DP_AFFECTED_DOMAIN_DOCUMENT_METADATA: DP_AffectedDomain = 5;
 pub const DP_AFFECTED_DOMAIN_TIMELINE: DP_AffectedDomain = 6;
 pub const DP_AFFECTED_DOMAIN_SELECTIONS: DP_AffectedDomain = 7;
-pub const DP_AFFECTED_DOMAIN_EVERYTHING: DP_AffectedDomain = 8;
+pub const DP_AFFECTED_DOMAIN_CAMERAS: DP_AffectedDomain = 8;
+pub const DP_AFFECTED_DOMAIN_EVERYTHING: DP_AffectedDomain = 9;
 pub type DP_AffectedDomain = ::std::os::raw::c_uint;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -8592,12 +8616,6 @@ extern "C" {
 extern "C" {
     pub fn DP_transient_tile_tint(tt: *mut DP_TransientTile, tint: DP_UPixel8);
 }
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct DP_Track {
-    _unused: [u8; 0],
-}
-pub type DP_TransientTrack = DP_Track;
 extern "C" {
     pub fn DP_timeline_new() -> *mut DP_Timeline;
 }
@@ -8623,6 +8641,9 @@ extern "C" {
     pub fn DP_timeline_track_count(tl: *mut DP_Timeline) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn DP_timeline_camera_count(tl: *mut DP_Timeline) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn DP_timeline_track_at_noinc(
         tl: *mut DP_Timeline,
         index: ::std::os::raw::c_int,
@@ -8635,6 +8656,18 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn DP_timeline_camera_at_noinc(
+        tl: *mut DP_Timeline,
+        index: ::std::os::raw::c_int,
+    ) -> *mut DP_Camera;
+}
+extern "C" {
+    pub fn DP_timeline_camera_index_by_id(
+        tl: *mut DP_Timeline,
+        camera_id: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
     pub fn DP_timeline_same_frame(
         tl: *mut DP_Timeline,
         frame_index_a: ::std::os::raw::c_int,
@@ -8644,18 +8677,21 @@ extern "C" {
 extern "C" {
     pub fn DP_transient_timeline_new(
         tl: *mut DP_Timeline,
-        reserve: ::std::os::raw::c_int,
+        track_reserve: ::std::os::raw::c_int,
+        camera_reserve: ::std::os::raw::c_int,
     ) -> *mut DP_TransientTimeline;
 }
 extern "C" {
     pub fn DP_transient_timeline_new_init(
-        reserve: ::std::os::raw::c_int,
+        track_reserve: ::std::os::raw::c_int,
+        camera_reserve: ::std::os::raw::c_int,
     ) -> *mut DP_TransientTimeline;
 }
 extern "C" {
     pub fn DP_transient_timeline_reserve(
         ttl: *mut DP_TransientTimeline,
-        reserve: ::std::os::raw::c_int,
+        track_reserve: ::std::os::raw::c_int,
+        camera_reserve: ::std::os::raw::c_int,
     ) -> *mut DP_TransientTimeline;
 }
 extern "C" {
@@ -8673,13 +8709,13 @@ extern "C" {
     pub fn DP_transient_timeline_persist(ttl: *mut DP_TransientTimeline) -> *mut DP_Timeline;
 }
 extern "C" {
-    pub fn DP_transient_timeline_at_noinc(
+    pub fn DP_transient_timeline_track_at_noinc(
         ttl: *mut DP_TransientTimeline,
         index: ::std::os::raw::c_int,
     ) -> *mut DP_Track;
 }
 extern "C" {
-    pub fn DP_transient_timeline_transient_at_noinc(
+    pub fn DP_transient_timeline_transient_track_at_noinc(
         ttl: *mut DP_TransientTimeline,
         index: ::std::os::raw::c_int,
         reserve: ::std::os::raw::c_int,
@@ -8726,11 +8762,47 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_transient_timeline_transient_camera_at_noinc(
+        ttl: *mut DP_TransientTimeline,
+        index: ::std::os::raw::c_int,
+        reserve: ::std::os::raw::c_int,
+    ) -> *mut DP_TransientCamera;
+}
+extern "C" {
+    pub fn DP_transient_timeline_set_camera_noinc(
+        ttl: *mut DP_TransientTimeline,
+        c: *mut DP_Camera,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_timeline_set_camera_inc(
+        ttl: *mut DP_TransientTimeline,
+        c: *mut DP_Camera,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_timeline_set_transient_camera_noinc(
+        ttl: *mut DP_TransientTimeline,
+        tc: *mut DP_TransientCamera,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_timeline_delete_camera_at(
+        ttl: *mut DP_TransientTimeline,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
     pub fn DP_transient_timeline_clamp(
         ttl: *mut DP_TransientTimeline,
         track_count: ::std::os::raw::c_int,
+        camera_count: ::std::os::raw::c_int,
     );
 }
+pub type DP_TransientTrack = DP_Track;
 extern "C" {
     pub fn DP_track_incref(t: *mut DP_Track) -> *mut DP_Track;
 }
@@ -10184,6 +10256,14 @@ pub const DP_MSG_PUT_TILE_ZSTD: DP_MessageType = 179;
 pub const DP_MSG_CANVAS_BACKGROUND_ZSTD: DP_MessageType = 180;
 pub const DP_MSG_MOVE_RECT_ZSTD: DP_MessageType = 181;
 pub const DP_MSG_TRANSFORM_REGION_ZSTD: DP_MessageType = 182;
+pub const DP_MSG_CAMERA_CREATE: DP_MessageType = 183;
+pub const DP_MSG_CAMERA_RETITLE: DP_MessageType = 184;
+pub const DP_MSG_CAMERA_ATTRIBUTES: DP_MessageType = 185;
+pub const DP_MSG_CAMERA_DELETE: DP_MessageType = 186;
+pub const DP_MSG_CAMERA_KEY_FRAME_SET: DP_MessageType = 187;
+pub const DP_MSG_CAMERA_KEY_FRAME_RETITLE: DP_MessageType = 188;
+pub const DP_MSG_CAMERA_KEY_FRAME_VALUE_SET: DP_MessageType = 189;
+pub const DP_MSG_CAMERA_KEY_FRAME_CURVE_SET: DP_MessageType = 190;
 pub const DP_MSG_UNDO: DP_MessageType = 255;
 pub const DP_MSG_TYPE_COUNT: DP_MessageType = 256;
 pub type DP_MessageType = ::std::os::raw::c_uint;
@@ -13935,6 +14015,455 @@ extern "C" {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct DP_MsgCameraCreate {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn DP_msg_camera_create_new(
+        context_id: ::std::os::raw::c_uint,
+        id: u16,
+        source_id: u16,
+        title_value: *const ::std::os::raw::c_char,
+        title_len: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_create_deserialize(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_create_deserialize_compat(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_create_parse(
+        context_id: ::std::os::raw::c_uint,
+        reader: *mut DP_TextReader,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_create_cast(msg: *mut DP_Message) -> *mut DP_MsgCameraCreate;
+}
+extern "C" {
+    pub fn DP_msg_camera_create_id(mcc: *const DP_MsgCameraCreate) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_create_source_id(mcc: *const DP_MsgCameraCreate) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_create_title(
+        mcc: *const DP_MsgCameraCreate,
+        out_len: *mut usize,
+    ) -> *const ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn DP_msg_camera_create_title_len(mcc: *const DP_MsgCameraCreate) -> usize;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MsgCameraRetitle {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn DP_msg_camera_retitle_new(
+        context_id: ::std::os::raw::c_uint,
+        id: u16,
+        title_value: *const ::std::os::raw::c_char,
+        title_len: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_retitle_deserialize(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_retitle_deserialize_compat(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_retitle_parse(
+        context_id: ::std::os::raw::c_uint,
+        reader: *mut DP_TextReader,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_retitle_cast(msg: *mut DP_Message) -> *mut DP_MsgCameraRetitle;
+}
+extern "C" {
+    pub fn DP_msg_camera_retitle_id(mcr: *const DP_MsgCameraRetitle) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_retitle_title(
+        mcr: *const DP_MsgCameraRetitle,
+        out_len: *mut usize,
+    ) -> *const ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn DP_msg_camera_retitle_title_len(mcr: *const DP_MsgCameraRetitle) -> usize;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MsgCameraAttributes {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_new(
+        context_id: ::std::os::raw::c_uint,
+        id: u16,
+        flags: u8,
+        interpolation: u8,
+        fpms: i32,
+        range_first: u16,
+        range_last: u16,
+        output_width: u16,
+        output_height: u16,
+        viewport_left: i32,
+        viewport_top: i32,
+        viewport_right: i32,
+        viewport_bottom: i32,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_deserialize(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_deserialize_compat(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_parse(
+        context_id: ::std::os::raw::c_uint,
+        reader: *mut DP_TextReader,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_cast(msg: *mut DP_Message) -> *mut DP_MsgCameraAttributes;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_id(mca: *const DP_MsgCameraAttributes) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_flags(mca: *const DP_MsgCameraAttributes) -> u8;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_interpolation(mca: *const DP_MsgCameraAttributes) -> u8;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_fpms(mca: *const DP_MsgCameraAttributes) -> i32;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_range_first(mca: *const DP_MsgCameraAttributes) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_range_last(mca: *const DP_MsgCameraAttributes) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_output_width(mca: *const DP_MsgCameraAttributes) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_output_height(mca: *const DP_MsgCameraAttributes) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_viewport_left(mca: *const DP_MsgCameraAttributes) -> i32;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_viewport_top(mca: *const DP_MsgCameraAttributes) -> i32;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_viewport_right(mca: *const DP_MsgCameraAttributes) -> i32;
+}
+extern "C" {
+    pub fn DP_msg_camera_attributes_viewport_bottom(mca: *const DP_MsgCameraAttributes) -> i32;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MsgCameraDelete {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn DP_msg_camera_delete_new(context_id: ::std::os::raw::c_uint, id: u16)
+        -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_delete_deserialize(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_delete_deserialize_compat(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_delete_parse(
+        context_id: ::std::os::raw::c_uint,
+        reader: *mut DP_TextReader,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_delete_cast(msg: *mut DP_Message) -> *mut DP_MsgCameraDelete;
+}
+extern "C" {
+    pub fn DP_msg_camera_delete_id(mcd: *const DP_MsgCameraDelete) -> u16;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MsgCameraKeyFrameSet {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_set_new(
+        context_id: ::std::os::raw::c_uint,
+        camera_id: u16,
+        frame_index: u16,
+        source_id: u16,
+        source_index: u16,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_set_deserialize(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_set_deserialize_compat(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_set_parse(
+        context_id: ::std::os::raw::c_uint,
+        reader: *mut DP_TextReader,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_set_cast(msg: *mut DP_Message) -> *mut DP_MsgCameraKeyFrameSet;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_set_camera_id(mckfs: *const DP_MsgCameraKeyFrameSet) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_set_frame_index(mckfs: *const DP_MsgCameraKeyFrameSet) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_set_source_id(mckfs: *const DP_MsgCameraKeyFrameSet) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_set_source_index(mckfs: *const DP_MsgCameraKeyFrameSet) -> u16;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MsgCameraKeyFrameRetitle {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_retitle_new(
+        context_id: ::std::os::raw::c_uint,
+        camera_id: u16,
+        frame_index: u16,
+        title_value: *const ::std::os::raw::c_char,
+        title_len: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_retitle_deserialize(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_retitle_deserialize_compat(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_retitle_parse(
+        context_id: ::std::os::raw::c_uint,
+        reader: *mut DP_TextReader,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_retitle_cast(
+        msg: *mut DP_Message,
+    ) -> *mut DP_MsgCameraKeyFrameRetitle;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_retitle_camera_id(
+        mckfr: *const DP_MsgCameraKeyFrameRetitle,
+    ) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_retitle_frame_index(
+        mckfr: *const DP_MsgCameraKeyFrameRetitle,
+    ) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_retitle_title(
+        mckfr: *const DP_MsgCameraKeyFrameRetitle,
+        out_len: *mut usize,
+    ) -> *const ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_retitle_title_len(
+        mckfr: *const DP_MsgCameraKeyFrameRetitle,
+    ) -> usize;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MsgCameraKeyFrameValueSet {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_value_set_new(
+        context_id: ::std::os::raw::c_uint,
+        camera_id: u16,
+        frame_index: u16,
+        prop: u8,
+        divisor: u8,
+        value: i32,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_value_set_deserialize(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_value_set_parse(
+        context_id: ::std::os::raw::c_uint,
+        reader: *mut DP_TextReader,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_value_set_cast(
+        msg: *mut DP_Message,
+    ) -> *mut DP_MsgCameraKeyFrameValueSet;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_value_set_camera_id(
+        mckfvs: *const DP_MsgCameraKeyFrameValueSet,
+    ) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_value_set_frame_index(
+        mckfvs: *const DP_MsgCameraKeyFrameValueSet,
+    ) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_value_set_prop(
+        mckfvs: *const DP_MsgCameraKeyFrameValueSet,
+    ) -> u8;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_value_set_divisor(
+        mckfvs: *const DP_MsgCameraKeyFrameValueSet,
+    ) -> u8;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_value_set_value(
+        mckfvs: *const DP_MsgCameraKeyFrameValueSet,
+    ) -> i32;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MsgCameraKeyFrameCurveSet {
+    _unused: [u8; 0],
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_curve_set_new(
+        context_id: ::std::os::raw::c_uint,
+        camera_id: u16,
+        frame_index: u16,
+        prop: u8,
+        set_values: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: ::std::os::raw::c_int,
+                arg2: *mut u16,
+                arg3: *mut ::std::os::raw::c_void,
+            ),
+        >,
+        values_count: ::std::os::raw::c_int,
+        values_user: *mut ::std::os::raw::c_void,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_curve_set_deserialize(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_curve_set_parse(
+        context_id: ::std::os::raw::c_uint,
+        reader: *mut DP_TextReader,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_curve_set_cast(
+        msg: *mut DP_Message,
+    ) -> *mut DP_MsgCameraKeyFrameCurveSet;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_curve_set_camera_id(
+        mckfcs: *const DP_MsgCameraKeyFrameCurveSet,
+    ) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_curve_set_frame_index(
+        mckfcs: *const DP_MsgCameraKeyFrameCurveSet,
+    ) -> u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_curve_set_prop(
+        mckfcs: *const DP_MsgCameraKeyFrameCurveSet,
+    ) -> u8;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_curve_set_values(
+        mckfcs: *const DP_MsgCameraKeyFrameCurveSet,
+        out_count: *mut ::std::os::raw::c_int,
+    ) -> *const u16;
+}
+extern "C" {
+    pub fn DP_msg_camera_key_frame_curve_set_values_count(
+        mckfcs: *const DP_MsgCameraKeyFrameCurveSet,
+    ) -> ::std::os::raw::c_int;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct DP_MsgUndo {
     _unused: [u8; 0],
 }
@@ -14744,4 +15273,15 @@ fn bindgen_test_layout___va_list_tag() {
             stringify!(reg_save_area)
         )
     );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_Camera {
+    pub _address: u8,
+}
+pub type DP_TransientCamera = DP_Camera;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_Track {
+    pub _address: u8,
 }

@@ -1763,7 +1763,8 @@ static DP_CanvasState *apply_local_track_state(DP_PaintEngine *pe,
             if (local_state_changed) {
                 if (!tcs) {
                     tcs = get_or_make_transient_canvas_state(cs);
-                    ttl = DP_transient_canvas_state_transient_timeline(tcs, 0);
+                    ttl =
+                        DP_transient_canvas_state_transient_timeline(tcs, 0, 0);
                 }
                 DP_TransientTrack *tt =
                     DP_transient_timeline_transient_track_at_noinc(ttl, i, 0);

@@ -17,7 +17,7 @@ update_icons() {
 			folder.svg | network-server.svg | network-server-database.svg)
 				category=places
 				;;
-			input-keyboard.svg | input-mouse.svg | input-tablet.svg | input-touchscreen.svg | monitor.svg | network-modem.svg)
+			camera-video.svg | input-keyboard.svg | input-mouse.svg | input-tablet.svg | input-touchscreen.svg | monitor.svg | network-modem.svg)
 				category=devices
 				;;
 			dialog-input-devices.svg)

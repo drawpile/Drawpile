@@ -8,6 +8,8 @@ dp_target_sources(dpengine
     dpengine/brush.c
     dpengine/brush_engine.c
     dpengine/brush_preview.c
+    dpengine/camera.c
+    dpengine/camera_key_frame.c
     dpengine/canvas_diff.c
     dpengine/canvas_history.c
     dpengine/canvas_state.c
@@ -53,6 +55,8 @@ dp_target_sources(dpengine
     dpengine/brush.h
     dpengine/brush_engine.h
     dpengine/brush_preview.h
+    dpengine/camera.h
+    dpengine/camera_key_frame.h
     dpengine/canvas_diff.h
     dpengine/canvas_history.h
     dpengine/canvas_state.h
