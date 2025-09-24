@@ -240,6 +240,11 @@ DP_INLINE uint64_t DP_clamp_uint64(uint64_t x, uint64_t min, uint64_t max)
     return x < min ? min : x > max ? max : x;
 }
 
+DP_INLINE double DP_clamp_double(double x, double min, double max)
+{
+    return x < min ? min : x > max ? max : x;
+}
+
 DP_INLINE float DP_min_float(float x, float y)
 {
     return x < y ? x : y;
@@ -288,6 +293,11 @@ DP_INLINE uint8_t DP_min_uint8(uint8_t x, uint8_t y)
 DP_INLINE uint8_t DP_max_uint8(uint8_t x, uint8_t y)
 {
     return x < y ? y : x;
+}
+
+DP_INLINE double DP_lerp_double(double a, double b, double t)
+{
+    return a + (t * (b - a));
 }
 
 DP_INLINE size_t DP_flex_size(size_t type_size, size_t flex_offset,
