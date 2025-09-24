@@ -1,55 +1,51 @@
 // Copyright (c) 2010 Cyrille Berger <cberger@cberger.net>
 // SPDX-License-Identifier: GPL-2.0-or-later
-
-#ifndef _KIS_CUBIC_CURVE_H_
-#define _KIS_CUBIC_CURVE_H_
-
+#ifndef LIBCLIENT_UTILS_KIS_CUBIC_CURVE_H
+#define LIBCLIENT_UTILS_KIS_CUBIC_CURVE_H
 #include <QList>
-#include <QVector>
+#include <QPointF>
 #include <QVariant>
 
-class QPointF;
 struct DP_Curve;
 
-const QString DEFAULT_CURVE_STRING = "0,0;1,1;";
+class KisCubicCurve {
+public:
+	KisCubicCurve();
+	KisCubicCurve(const QList<QPointF> &points);
+	KisCubicCurve(const KisCubicCurve &other);
+	KisCubicCurve(KisCubicCurve &&other);
+	KisCubicCurve &operator=(const KisCubicCurve &other);
+	KisCubicCurve &operator=(KisCubicCurve &&other);
+	~KisCubicCurve();
 
-/**
- * Hold the data for a cubic curve.
- */
-class KisCubicCurve
-{
-public:
-    KisCubicCurve();
-    KisCubicCurve(const QList<QPointF>& points);
-    KisCubicCurve(const KisCubicCurve& curve);
-    ~KisCubicCurve();
-    KisCubicCurve& operator=(const KisCubicCurve& curve);
-    bool operator==(const KisCubicCurve& curve) const;
-public:
-    qreal value(qreal x) const;
-    QList<QPointF> points() const;
-    void setPoints(const QList<QPointF>& points);
-    void setPoint(int idx, const QPointF& point);
-    /**
-     * Add a point to the curve, the list of point is always sorted.
-     * @return the index of the inserted point
-     */
-    int addPoint(const QPointF& point);
-    void removePoint(int idx);
-public:
-    const QVector<quint16> uint16Transfer(int size = 256) const;
-    const QVector<qreal> floatTransfer(int size = 256) const;
-public:
-    QString toString() const;
-    void fromString(const QString&);
+	bool operator==(const KisCubicCurve &curve) const;
+
+	qreal value(qreal x) const;
+	QList<QPointF> points() const { return m_points; }
+	void setPoints(const QList<QPointF> &points);
+	void setPoint(int idx, const QPointF &point);
+	/**
+	 * Add a point to the curve, the list of point is always sorted.
+	 * @return the index of the inserted point
+	 */
+	int addPoint(const QPointF &point);
+	void removePoint(int idx);
+
+	void transferIntoFloat(float *out, int size) const;
+	QString toString() const;
+	void fromString(const QString &);
+
     static DP_Curve *makeCurve(const QList<QPointF> &points);
+
 private:
+	void keepSorted();
+	void invalidate();
+
 	static void
 	getPointCallback(void *user, int i, double *out_x, double *out_y);
 
-    struct Data;
-    struct Private;
-    Private* const d;
+	QList<QPointF> m_points;
+	mutable DP_Curve *m_curve = nullptr;
 };
 
 Q_DECLARE_METATYPE(KisCubicCurve)
