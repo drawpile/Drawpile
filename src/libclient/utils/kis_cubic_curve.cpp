@@ -2,7 +2,9 @@
 // Copyright (c) 2009 Dmitry Kazakov <dimula73@gmail.com>
 // Copyright (c) 2010 Cyrille Berger <cberger@cberger.net>
 // SPDX-License-Identifier: GPL-2.0-or-later
-
+extern "C" {
+#include <dpcommon/curve.h>
+}
 #include "libclient/utils/kis_cubic_curve.h"
 #include "libshared/util/qtcompat.h"
 
@@ -270,7 +272,7 @@ void KisCubicCurve::Data::invalidate()
 
 void KisCubicCurve::Data::keepSorted()
 {
-	std::sort(points.begin(), points.end(), pointLessThan);
+	std::stable_sort(points.begin(), points.end(), pointLessThan);
 }
 
 qreal KisCubicCurve::Data::value(qreal x)
@@ -427,6 +429,13 @@ void KisCubicCurve::fromString(const QString& string)
     setPoints(points);
 }
 
+DP_Curve *KisCubicCurve::makeCurve(const QList<QPointF> &points)
+{
+	return DP_curve_new(
+		DP_CURVE_TYPE_CUBIC, points.size(), &KisCubicCurve::getPointCallback,
+		const_cast<QList<QPointF> *>(&points));
+}
+
 const QVector<quint16> KisCubicCurve::uint16Transfer(int size) const
 {
     d->data->updateTransfer<quint16, int>(&d->data->u16Transfer, d->data->validU16Transfer, 0x0, 0xFFFF, size);
@@ -437,4 +446,13 @@ const QVector<qreal> KisCubicCurve::floatTransfer(int size) const
 {
     d->data->updateTransfer<qreal, qreal>(&d->data->fTransfer, d->data->validFTransfer, 0.0, 1.0, size);
     return d->data->fTransfer;
+}
+
+void KisCubicCurve::getPointCallback(
+	void *user, int i, double *out_x, double *out_y)
+{
+	const QList<QPointF> &points = *static_cast<const QList<QPointF> *>(user);
+	QPointF point = points[i];
+	*out_x = point.x();
+	*out_y = point.y();
 }

@@ -14,6 +14,7 @@ dp_target_sources(dpcommon
     dpcommon/binary.c
     dpcommon/common.c
     dpcommon/cpu.c
+    dpcommon/curve.c
     dpcommon/endianness.c
     dpcommon/event_log.c
     dpcommon/file.c
@@ -22,6 +23,7 @@ dp_target_sources(dpcommon
     dpcommon/output.c
     dpcommon/perf.c
     dpcommon/queue.c
+    dpcommon/stable_sort.cpp
     dpcommon/threading_common.c
     dpcommon/vector.c
     dpcommon/worker.c
@@ -31,6 +33,7 @@ dp_target_sources(dpcommon
     dpcommon/common.h
     dpcommon/conversions.h
     dpcommon/cpu.h
+    dpcommon/curve.h
     dpcommon/endianness.h
     dpcommon/event_log.h
     dpcommon/file.h
@@ -40,6 +43,7 @@ dp_target_sources(dpcommon
     dpcommon/output.h
     dpcommon/perf.h
     dpcommon/queue.h
+    dpcommon/stable_sort.h
     dpcommon/threading.h
     dpcommon/vector.h
     dpcommon/worker.h

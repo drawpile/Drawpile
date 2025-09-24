@@ -9,6 +9,7 @@
 #include <QVariant>
 
 class QPointF;
+struct DP_Curve;
 
 const QString DEFAULT_CURVE_STRING = "0,0;1,1;";
 
@@ -41,7 +42,11 @@ public:
 public:
     QString toString() const;
     void fromString(const QString&);
+    static DP_Curve *makeCurve(const QList<QPointF> &points);
 private:
+	static void
+	getPointCallback(void *user, int i, double *out_x, double *out_y);
+
     struct Data;
     struct Private;
     Private* const d;
