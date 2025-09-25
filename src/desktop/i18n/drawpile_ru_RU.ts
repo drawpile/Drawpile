@@ -49,7 +49,7 @@
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation>Правонарушитель</translation>
+        <translation>Правонарушитель:</translation>
     </message>
 </context>
 <context>
