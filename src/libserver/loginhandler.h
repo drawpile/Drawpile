@@ -130,9 +130,10 @@ private:
 	bool checkIdentIntent(
 		IdentIntent intent, IdentIntent actual, bool extAuthFallback = false);
 
-	bool verifySystemId(const QString &sid, bool required);
+	bool verifyClientInfo(const QString &sid, bool required);
 
-	static bool isValidSid(const QString &sid);
+	static bool
+	isValidSid(const QString &sid, QString &outSid1, QString &outSid2);
 
 	bool verifyUserId(long long userId);
 

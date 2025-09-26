@@ -399,7 +399,7 @@ void LoginHandler::handleClientInfoMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
-	if(!verifySystemId(clientInfoLogGuard.sid(), true)) {
+	if(!verifyClientInfo(clientInfoLogGuard.sid(), true)) {
 		return;
 	}
 
@@ -1089,7 +1089,7 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 		}
 	}
 
-	if(!verifySystemId(
+	if(!verifyClientInfo(
 		   clientInfoLogGuard.sid(), protocolVersion.shouldHaveSystemId())) {
 		return;
 	}
@@ -1225,7 +1225,7 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 	// logging in and have to start the process over. The login dialog will
 	// whinge at the user appropriately. See top of file for more information.
 
-	if(!verifySystemId(
+	if(!verifyClientInfo(
 		   clientInfoLogGuard.sid(),
 		   session->history()->protocolVersion().shouldHaveSystemId())) {
 		return;
@@ -1410,7 +1410,7 @@ LoginHandler::extractClientInfo(const QJsonObject &o, bool checkAuthenticated)
 			if(value.isString()) {
 				QString s = value.toString().trimmed();
 				if(!s.isEmpty()) {
-					s.truncate(64);
+					s.truncate(65);
 					info[key] = s;
 				}
 			}
@@ -1586,7 +1586,7 @@ bool LoginHandler::checkIdentIntent(
 	}
 }
 
-bool LoginHandler::verifySystemId(const QString &sid, bool required)
+bool LoginHandler::verifyClientInfo(const QString &sid, bool required)
 {
 	m_client->setSid(sid);
 	if(sid.isEmpty()) {
@@ -1594,35 +1594,55 @@ bool LoginHandler::verifySystemId(const QString &sid, bool required)
 			m_client->log(
 				Log()
 					.about(Log::Level::Error, Log::Topic::RuleBreak)
-					.message(QStringLiteral("Missing required sid")));
+					.message(QStringLiteral("Missing required client info")));
 			m_state = State::Ignore;
 			m_client->disconnectClient(
 				Client::DisconnectionReason::Error, "invalid message",
-				QStringLiteral("missing required sid"));
+				QStringLiteral("missing required client info"));
 			return false;
 		}
-	} else if(!isValidSid(sid)) {
-		m_client->log(
-			Log()
-				.about(Log::Level::Error, Log::Topic::RuleBreak)
-				.message(QStringLiteral("Invalid sid %1").arg(sid)));
-		m_state = State::Ignore;
-		m_client->disconnectClient(
-			Client::DisconnectionReason::Error, "invalid message",
-			QStringLiteral("invalid sid"));
-		return false;
-	} else if(!m_client->isBanInProgress()) {
-		BanResult ban = m_config->isSystemBanned(sid);
-		m_client->applyBan(ban);
+	} else {
+		QString sid1, sid2;
+		bool valid = isValidSid(sid, sid1, sid2);
+		if(!valid) {
+			m_client->log(
+				Log()
+					.about(Log::Level::Error, Log::Topic::RuleBreak)
+					.message(
+						QStringLiteral("Invalid client info %1").arg(sid)));
+			m_state = State::Ignore;
+			m_client->disconnectClient(
+				Client::DisconnectionReason::Error, "invalid message",
+				QStringLiteral("invalid client info"));
+			return false;
+		} else if(!m_client->isBanInProgress()) {
+			BanResult ban = m_config->isSystemBanned(sid1);
+			if(!sid2.isEmpty() && ban.reaction == BanReaction::NotBanned) {
+				ban = m_config->isSystemBanned(sid2);
+			}
+			m_client->applyBan(ban);
+
+			if(!m_client->isBanInProgress() && sid != sid1) {
+				m_client->setSid(sid1);
+			}
+		}
 	}
 	return true;
 }
 
-bool LoginHandler::isValidSid(const QString &sid)
+bool LoginHandler::isValidSid(
+	const QString &sid, QString &outSid1, QString &outSid2)
 {
 	static QRegularExpression sidRe(
-		QStringLiteral("\\A[0-9a-fA-F]{32}(?:/[0-9a-fA-F]{32})??\\z"));
-	return sidRe.match(sid).hasMatch();
+		QStringLiteral("\\A([0-9a-fA-F]{32})(?:/([0-9a-fA-F]{32}))?\\z"));
+	QRegularExpressionMatch match = sidRe.match(sid);
+	if(match.hasMatch()) {
+		outSid1 = match.captured(1);
+		outSid2 = match.captured(2);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool LoginHandler::verifyUserId(long long userId)
