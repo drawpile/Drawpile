@@ -184,11 +184,20 @@ BanResult ServerConfig::isAddressBanned(const QHostAddress &addr) const
 BanResult ServerConfig::isSystemBanned(const QString &sid) const
 {
 	QDateTime now = QDateTime::currentDateTime();
+
+	QString sid1, sid2;
+	if(int pos = sid.indexOf('/')) {
+		sid1 = sid.mid(0, pos);
+		sid2 = sid.mid(pos + 1);
+	} else {
+		sid1 = sid;
+	}
+
 	for(const ExtBan &ban : m_extBans) {
 		BanReaction reaction = BanReaction::NotBanned;
 		bool banned = !m_disabledExtBanIds.contains(ban.id) &&
 					  ban.expires > now &&
-					  isInAnySystem(sid, ban.system, reaction);
+					  isInAnySystem(sid1, sid2, ban.system, reaction);
 		if(banned) {
 			return makeBanResult(
 				ban, sid, QStringLiteral("SID"), reaction, false);
@@ -423,11 +432,14 @@ bool ServerConfig::isAddressInRangeV6(
 }
 
 bool ServerConfig::isInAnySystem(
-	const QString &sid, const QVector<BanSystemIdentifier> &system,
-	BanReaction &outReaction)
+	const QString &sid1, const QString &sid2,
+	const QVector<BanSystemIdentifier> &system, BanReaction &outReaction)
 {
+	bool haveSid1 = !sid1.isEmpty();
+	bool haveSid2 = !sid2.isEmpty();
 	for(const BanSystemIdentifier &s : system) {
-		if(s.sids.contains(sid)) {
+		if((haveSid1 && s.sids.contains(sid1)) ||
+		   (haveSid2 && s.sids.contains(sid2))) {
 			outReaction = s.reaction;
 			return true;
 		}

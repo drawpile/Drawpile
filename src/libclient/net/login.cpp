@@ -588,12 +588,13 @@ void LoginHandler::sendIdentity()
 	}
 
 	QString avatar = takeAvatar();
-	if(!avatar.isEmpty()) {
-		kwargs["avatar"] = avatar;
+	bool haveAvatar = !avatar.isEmpty();
+	if(haveAvatar) {
+		kwargs.insert(QStringLiteral("avatar"), avatar);
 	}
 
 	setState(EXPECT_IDENTIFIED);
-	send("ident", args, kwargs, !avatar.isEmpty());
+	send("ident", args, kwargs, haveAvatar);
 }
 
 void LoginHandler::requestExtAuth(
@@ -1032,7 +1033,8 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 		m_mode == Mode::Join ? QStringLiteral("join") : QStringLiteral("host");
 	if(state == expectedState) {
 		QJsonObject join = msg.reply[QStringLiteral("join")].toObject();
-		updateAddressSessionId(join.value(QStringLiteral("id")).toString());
+		updateAddressSessionCredentials(
+			join.value(QStringLiteral("id")).toString(), m_joinPassword);
 		updateAddressLoginMethod(m_loginIntent);
 
 		int userid = join["user"].toInt();
@@ -1439,7 +1441,8 @@ void LoginHandler::send(
 	if(msg.isNull() && containsAvatar) {
 		qCWarning(
 			lcDpLogin, "Removing avatar from server command and trying again");
-		sc.kwargs.remove("avatar");
+		sc.kwargs.remove(QStringLiteral("avatar"));
+		m_usedAvatar = QPixmap();
 		msg = sc.toMessage();
 	}
 
@@ -1490,13 +1493,16 @@ QString LoginHandler::takeAvatar()
 			}
 		}
 		// Avatar only needs to be sent once.
+		m_usedAvatar = m_avatar;
 		m_avatar = QPixmap();
 	}
 	return result;
 }
 
-void LoginHandler::updateAddressSessionId(QString sessionId)
+void LoginHandler::updateAddressSessionCredentials(
+	QString sessionId, const QString &joinPassword)
 {
+	// Update session id, reappend invite code if needed.
 	if(m_mode == Mode::Join) {
 		QString inviteCode;
 		Server::stripInviteCodeFromUrl(m_address, &inviteCode);
@@ -1506,6 +1512,14 @@ void LoginHandler::updateAddressSessionId(QString sessionId)
 		}
 	}
 	Server::setSessionIdOnUrl(m_address, sessionId);
+	// Update join password.
+	QUrlQuery query(m_address);
+	QString key = QStringLiteral("p");
+	query.removeAllQueryItems(key);
+	if(!joinPassword.isEmpty()) {
+		query.addQueryItem(key, joinPassword);
+	}
+	m_address.setQuery(query);
 }
 
 void LoginHandler::updateAddressLoginMethod(LoginMethod loginMethod)
@@ -1603,7 +1617,7 @@ QString LoginHandler::getSid()
 	if(haveSid1 && haveSid2) {
 		QString sid1 = cfg1.value(key1).toString();
 		QString sid2 = cfg2.value(key2).toString();
-		return sid1 == sid2 ? sid1 : generateTamperSid();
+		return sid1 == sid2 ? sid1 : QStringLiteral("%1/%2").arg(sid1, sid2);
 	} else if(haveSid1 && !haveSid2) {
 		QString sid = cfg1.value(key1).toString();
 		cfg2.setValue(key2, sid);
@@ -1618,14 +1632,6 @@ QString LoginHandler::getSid()
 		cfg2.setValue(key2, sid);
 		return sid;
 	}
-}
-
-QString LoginHandler::generateTamperSid()
-{
-	QString sid = generateSid();
-	int pos = QRandomGenerator::global()->bounded(sid.length() - 1);
-	sid.replace(pos, 1, 'O');
-	return sid;
 }
 
 QString LoginHandler::generateSid()

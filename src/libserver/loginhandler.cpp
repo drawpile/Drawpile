@@ -1620,7 +1620,8 @@ bool LoginHandler::verifySystemId(const QString &sid, bool required)
 
 bool LoginHandler::isValidSid(const QString &sid)
 {
-	static QRegularExpression sidRe(QStringLiteral("\\A[0-9a-fA-F]{32}\\z"));
+	static QRegularExpression sidRe(
+		QStringLiteral("\\A[0-9a-fA-F]{32}(?:/[0-9a-fA-F]{32})??\\z"));
 	return sidRe.match(sid).hasMatch();
 }
 

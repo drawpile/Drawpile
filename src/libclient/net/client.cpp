@@ -172,6 +172,7 @@ QUrl Client::sessionUrl(bool includeUser) const
 void Client::handleConnect(const LoggedInParams &params)
 {
 	m_lastUrl = params.url;
+	m_usedAvatar = params.usedAvatar;
 	m_myId = params.userId;
 	m_userFlags = UserFlag::None;
 	for(const QString &userFlag : params.userFlags) {

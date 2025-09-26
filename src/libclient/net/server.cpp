@@ -535,6 +535,7 @@ void Server::loginSuccess()
 		m_loginstate->joinPassword(),
 		m_loginstate->authId(),
 		m_loginstate->userFlags(),
+		m_loginstate->usedAvatar(),
 	};
 	emit loggedIn(params);
 

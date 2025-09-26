@@ -88,6 +88,7 @@ struct LoginDialog::Private {
 	bool logInAfterPasswordRead = true;
 	bool passwordReadFromKeychain = false;
 	bool lateRedirect = false;
+	bool shouldSaveCredentials = false;
 
 	QMetaObject::Connection loginDestructConnection;
 
@@ -315,6 +316,20 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	if(!loginHandler) {
 		qWarning("LoginDialog::resetMode: login process already ended!");
 		return;
+	}
+
+	// If we hit any of these modes, this isn't just a reconnect and we should
+	// save the user's selected account credentials on successful login.
+	switch(newMode) {
+	case Mode::GuestLogin:
+	case Mode::AuthLogin:
+	case Mode::ExtAuthLogin:
+	case Mode::Identity:
+	case Mode::Authenticate:
+		shouldSaveCredentials = true;
+		break;
+	default:
+		break;
 	}
 
 	Q_ASSERT(newMode != Mode::Redirect);
@@ -1097,22 +1112,24 @@ void LoginDialog::onLoginOk(
 	net::LoginHandler::LoginMethod intent, const QString &host,
 	const QString &username)
 {
-	QString password = d->ui->rememberPassword->isChecked()
-						   ? d->ui->password->text()
-						   : QString();
-	switch(intent) {
-	case net::LoginHandler::LoginMethod::Guest:
-		d->saveGuest(username);
-		break;
-	case net::LoginHandler::LoginMethod::Auth:
-		d->saveAccount(AccountListModel::Type::Auth, username, password);
-		break;
-	case net::LoginHandler::LoginMethod::ExtAuth:
-		d->saveAccount(AccountListModel::Type::ExtAuth, username, password);
-		break;
-	case net::LoginHandler::LoginMethod::Unknown:
-		d->saveOldLogin(host, username, password);
-		break;
+	if(d->shouldSaveCredentials) {
+		QString password = d->ui->rememberPassword->isChecked()
+							   ? d->ui->password->text()
+							   : QString();
+		switch(intent) {
+		case net::LoginHandler::LoginMethod::Guest:
+			d->saveGuest(username);
+			break;
+		case net::LoginHandler::LoginMethod::Auth:
+			d->saveAccount(AccountListModel::Type::Auth, username, password);
+			break;
+		case net::LoginHandler::LoginMethod::ExtAuth:
+			d->saveAccount(AccountListModel::Type::ExtAuth, username, password);
+			break;
+		case net::LoginHandler::LoginMethod::Unknown:
+			d->saveOldLogin(host, username, password);
+			break;
+		}
 	}
 }
 

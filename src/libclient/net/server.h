@@ -5,6 +5,7 @@
 #include <QList>
 #include <QMetaType>
 #include <QObject>
+#include <QPixmap>
 #include <QSslError>
 #include <QString>
 #include <QStringList>
@@ -32,6 +33,7 @@ struct LoggedInParams {
 	QString joinPassword;
 	QString authId;
 	QStringList userFlags;
+	QPixmap usedAvatar;
 };
 
 /**

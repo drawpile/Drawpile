@@ -965,7 +965,10 @@ void Document::connectToServer(
 	int timeoutSecs, int proxyMode, net::LoginHandler *loginhandler,
 	bool builtin)
 {
-	loginhandler->setReconnectState(m_reconnectState);
+	if(m_reconnectState) {
+		loginhandler->setReconnectState(m_reconnectState);
+		loginhandler->selectAvatar(m_client->usedAvatar());
+	}
 	m_client->connectToServer(timeoutSecs, proxyMode, loginhandler, builtin);
 }
 

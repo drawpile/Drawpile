@@ -424,8 +424,8 @@ private:
 		const QHostAddress &to);
 
 	static bool isInAnySystem(
-		const QString &sid, const QVector<BanSystemIdentifier> &system,
-		BanReaction &outReaction);
+		const QString &sid1, const QString &sid2,
+		const QVector<BanSystemIdentifier> &system, BanReaction &outReaction);
 
 	static bool isInAnyUser(
 		long long userId, const QVector<BanUser> &users,

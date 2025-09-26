@@ -80,6 +80,8 @@ public:
 
 	const QUrl &connectionUrl() const { return m_connectionUrl; }
 
+	const QPixmap &usedAvatar() const { return m_usedAvatar; }
+
 	/**
 	 * @brief Is the client connected by network?
 	 * @return true if a network connection is open
@@ -354,6 +356,7 @@ private:
 
 	QUrl m_connectionUrl;
 	QUrl m_lastUrl;
+	QPixmap m_usedAvatar;
 	uint8_t m_myId = 1;
 	bool m_builtin = false;
 	UserFlags m_userFlags = UserFlag::None;

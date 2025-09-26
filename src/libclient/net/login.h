@@ -125,9 +125,9 @@ public:
 
 	const QString &joinPassword() const { return m_joinPassword; }
 
-	bool skipCatchup() const { return m_skipCatchup; }
+	const QPixmap &usedAvatar() const { return m_usedAvatar; }
 
-	const HistoryIndex &historyIndex() const { return m_historyIndex; }
+	bool skipCatchup() const { return m_skipCatchup; }
 
 public slots:
 	void acceptRules();
@@ -423,7 +423,8 @@ private:
 
 	QString takeAvatar();
 
-	void updateAddressSessionId(QString sessionId);
+	void updateAddressSessionCredentials(
+		QString sessionId, const QString &joinPassword);
 	void updateAddressLoginMethod(LoginMethod loginMethod);
 
 	static LoginMethod parseLoginMethod(const QString &method);
@@ -434,7 +435,6 @@ private:
 #endif
 	static QJsonObject makeClientInfo();
 	static QString getSid();
-	static QString generateTamperSid();
 	static QString generateSid();
 	static quint64 generateRedirectNonce();
 
@@ -450,6 +450,7 @@ private:
 
 	QUrl m_address;
 	QPixmap m_avatar;
+	QPixmap m_usedAvatar;
 
 	// Settings for hosting
 	uint8_t m_userid;
