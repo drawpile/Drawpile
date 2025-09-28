@@ -837,6 +837,8 @@ static char *ora_write_xml(DP_SaveOraContext *c, DP_CanvasState *cs,
     ORA_APPEND_ATTR(c, output, "yres", "%d", DP_document_metadata_dpiy(dm));
     ORA_APPEND_ATTR(c, output, "drawpile:framerate", "%d",
                     DP_document_metadata_framerate(dm));
+    ORA_APPEND_ATTR(c, output, "drawpile:framefrac", "%d",
+                    DP_document_metadata_framerate_fraction(dm));
     DP_OUTPUT_PRINT_LITERAL(output, ">");
 
     DP_OUTPUT_PRINT_LITERAL(output, "<stack>");

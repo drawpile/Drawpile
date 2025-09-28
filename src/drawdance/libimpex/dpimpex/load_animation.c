@@ -30,7 +30,7 @@ static void assign_load_result(DP_LoadResult *out_result, DP_LoadResult result)
 
 DP_CanvasState *DP_load_animation_frames(
     DP_DrawContext *dc, int path_count, DP_LoadAnimationFramesPathAtFn path_at,
-    void *user, uint32_t background_color, int hold_time, int framerate,
+    void *user, uint32_t background_color, int hold_time, double framerate,
     DP_LoadAnimationSetLayerTitleFn set_layer_title,
     DP_LoadAnimationSetGroupTitleFn set_group_title,
     DP_LoadAnimationSetTrackTitleFn set_track_title, DP_LoadResult *out_result)
@@ -145,7 +145,7 @@ DP_CanvasState *DP_load_animation_frames(
 
     DP_TransientDocumentMetadata *tdm =
         DP_transient_canvas_state_transient_metadata(tcs);
-    DP_transient_document_metadata_framerate_set(tdm, framerate);
+    DP_transient_document_metadata_effective_framerate_set(tdm, framerate);
     DP_transient_document_metadata_frame_count_set(tdm, path_count * hold_time);
 
     DP_transient_canvas_state_layer_routes_reindex(tcs, dc);

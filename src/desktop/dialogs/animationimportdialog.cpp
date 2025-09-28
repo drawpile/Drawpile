@@ -13,6 +13,7 @@ extern "C" {
 #include <QAction>
 #include <QApplication>
 #include <QDialogButtonBox>
+#include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QIcon>
@@ -169,9 +170,10 @@ AnimationImportDialog::AnimationImportDialog(int source, QWidget *parent)
 		m_holdTime, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&AnimationImportDialog::updateHoldTimeSuffix);
 
-	m_framerate = new QSpinBox;
-	m_framerate->setRange(1, 999);
-	m_framerate->setValue(24);
+	m_framerate = new QDoubleSpinBox;
+	m_framerate->setDecimals(2);
+	m_framerate->setRange(0.01, 999.99);
+	m_framerate->setValue(24.0);
 	m_framerate->setSuffix(tr(" FPS"));
 	form->addRow(tr("Framerate:"), m_framerate);
 
@@ -360,7 +362,7 @@ void AnimationImportDialog::runImport()
 		impex::AnimationImporter *importer;
 		int source = m_tabs->currentIndex();
 		int holdTime = m_holdTime->value();
-		int framerate = m_framerate->value();
+		double framerate = m_framerate->value();
 		switch(source) {
 #ifndef __EMSCRIPTEN__
 		case int(Source::Frames): {

@@ -7,6 +7,7 @@
 
 class QAbstractButton;
 class QDialogButtonBox;
+class QDoubleSpinBox;
 class QLineEdit;
 class QListWidget;
 class QPushButton;
@@ -69,7 +70,7 @@ private:
 	QLineEdit *m_layersPathEdit;
 	QPushButton *m_chooseButton;
 	QSpinBox *m_holdTime;
-	QSpinBox *m_framerate;
+	QDoubleSpinBox *m_framerate;
 	QDialogButtonBox *m_buttons;
 	QPushButton *m_importButton;
 	QTemporaryFile *m_tempFile = nullptr;

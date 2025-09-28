@@ -21,7 +21,7 @@ AnimationSaverRunnable::AnimationSaverRunnable(
 	const QString &path,
 #endif
 	int format, int width, int height, int loops, int start, int end,
-	int framerate, const QRect &crop, bool scaleSmooth,
+	double framerate, const QRect &crop, bool scaleSmooth,
 	const drawdance::CanvasState &canvasState, QObject *parent)
 	: QObject(parent)
 #ifndef __EMSCRIPTEN__

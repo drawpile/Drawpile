@@ -10,6 +10,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
+#include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -97,8 +98,9 @@ AnimationExportDialog::AnimationExportDialog(
 	m_endSpinner = new QSpinBox;
 	rangeLayout->addWidget(m_endSpinner, 1);
 
-	m_framerateSpinner = new QSpinBox;
-	m_framerateSpinner->setRange(1, 999);
+	m_framerateSpinner = new QDoubleSpinBox;
+	m_framerateSpinner->setDecimals(2);
+	m_framerateSpinner->setRange(0.01, 999.99);
 	m_framerateSpinner->setSuffix(tr(" FPS"));
 	inputForm->addRow(tr("Framerate:"), m_framerateSpinner);
 
@@ -412,9 +414,9 @@ void AnimationExportDialog::setCanvasFrameCount(int frameCount)
 	m_canvasFrameCount = frameCount;
 }
 
-void AnimationExportDialog::setCanvasFramerate(int framerate)
+void AnimationExportDialog::setCanvasFramerate(double framerate)
 {
-	if(m_canvasFramerate < 0) {
+	if(m_canvasFramerate < 0.0) {
 		m_framerateSpinner->setValue(framerate);
 	}
 	m_canvasFramerate = framerate;

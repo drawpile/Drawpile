@@ -22,7 +22,9 @@ pub const DP_FLAT_IMAGE_RENDER_FLAGS: u32 = 3;
 pub const DP_DOCUMENT_METADATA_DPIX_DEFAULT: u32 = 72;
 pub const DP_DOCUMENT_METADATA_DPIY_DEFAULT: u32 = 72;
 pub const DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT: u32 = 24;
+pub const DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_DEFAULT: u32 = 0;
 pub const DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT: u32 = 24;
+pub const DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_MULTIPLIER: u32 = 1000000;
 pub const DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE: u32 = 204;
 pub const DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE: u32 = 8192;
 pub const DP_DRAW_CONTEXT_RASTER_POOL_MAX_SIZE: u32 = 1048576;
@@ -274,7 +276,8 @@ pub const DP_MSG_SET_METADATA_INT_FIELD_DPIX: u32 = 0;
 pub const DP_MSG_SET_METADATA_INT_FIELD_DPIY: u32 = 1;
 pub const DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE: u32 = 2;
 pub const DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT: u32 = 3;
-pub const DP_MSG_SET_METADATA_INT_NUM_FIELD: u32 = 4;
+pub const DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE_FRACTION: u32 = 4;
+pub const DP_MSG_SET_METADATA_INT_NUM_FIELD: u32 = 5;
 pub const DP_MSG_LAYER_TREE_CREATE_STATIC_LENGTH: u32 = 14;
 pub const DP_MSG_LAYER_TREE_CREATE_STATIC_LENGTH_COMPAT: u32 = 11;
 pub const DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP: u32 = 1;
@@ -2182,7 +2185,7 @@ extern "C" {
     pub fn DP_canvas_state_frame_count(cs: *mut DP_CanvasState) -> ::std::os::raw::c_int;
 }
 extern "C" {
-    pub fn DP_canvas_state_framerate(cs: *mut DP_CanvasState) -> ::std::os::raw::c_int;
+    pub fn DP_canvas_state_effective_framerate(cs: *mut DP_CanvasState) -> f64;
 }
 extern "C" {
     pub fn DP_canvas_state_same_frame(
@@ -2531,6 +2534,13 @@ extern "C" {
     pub fn DP_transient_canvas_state_intuit_background(tcs: *mut DP_TransientCanvasState);
 }
 extern "C" {
+    pub fn DP_document_metadata_effective_framerate_split(
+        effective_framerate: f64,
+        out_whole: *mut ::std::os::raw::c_int,
+        out_fraction: *mut ::std::os::raw::c_int,
+    );
+}
+extern "C" {
     pub fn DP_document_metadata_new() -> *mut DP_DocumentMetadata;
 }
 extern "C" {
@@ -2561,6 +2571,14 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_document_metadata_framerate(dm: *mut DP_DocumentMetadata) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_document_metadata_framerate_fraction(
+        dm: *mut DP_DocumentMetadata,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_document_metadata_effective_framerate(dm: *mut DP_DocumentMetadata) -> f64;
 }
 extern "C" {
     pub fn DP_document_metadata_frame_count(dm: *mut DP_DocumentMetadata) -> ::std::os::raw::c_int;
@@ -2607,6 +2625,16 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn DP_transient_document_metadata_framerate_fraction(
+        tdm: *mut DP_TransientDocumentMetadata,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_effective_framerate(
+        tdm: *mut DP_TransientDocumentMetadata,
+    ) -> f64;
+}
+extern "C" {
     pub fn DP_transient_document_metadata_frame_count(
         tdm: *mut DP_TransientDocumentMetadata,
     ) -> ::std::os::raw::c_int;
@@ -2627,6 +2655,18 @@ extern "C" {
     pub fn DP_transient_document_metadata_framerate_set(
         tdm: *mut DP_TransientDocumentMetadata,
         framerate: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_framerate_fraction_set(
+        tdm: *mut DP_TransientDocumentMetadata,
+        framerate_fraction: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_effective_framerate_set(
+        tdm: *mut DP_TransientDocumentMetadata,
+        effective_framerate: f64,
     );
 }
 extern "C" {

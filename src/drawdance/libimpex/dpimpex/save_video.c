@@ -513,10 +513,11 @@ DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
         goto cleanup;
     }
 
-    int framerate = params.framerate <= 0 ? DP_canvas_state_framerate(params.cs)
-                                          : params.framerate;
-    if (framerate <= 0) {
-        framerate = 24;
+    double framerate = params.framerate <= 0.0 || !isfinite(params.framerate)
+                         ? DP_canvas_state_effective_framerate(params.cs)
+                         : params.framerate;
+    if (framerate <= 0.0 || !isfinite(framerate)) {
+        framerate = 24.0;
     }
 
     int loops = get_format_loops(params.format, params.loops);
@@ -548,8 +549,8 @@ DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
     codec_context->height =
         get_format_codec_dimension(params.format, output_height);
     codec_context->pix_fmt = get_format_pix_fmt(params.format, false);
-    codec_context->framerate = av_make_q(framerate, 1);
-    codec_context->time_base = av_make_q(1, framerate);
+    codec_context->framerate = av_d2q(framerate, 1000000000);
+    codec_context->time_base = av_inv_q(codec_context->framerate);
     set_format_codec_params(params.format, codec_context);
 
     int err = avformat_alloc_output_context2(

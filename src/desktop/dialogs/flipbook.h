@@ -63,10 +63,6 @@ private:
 	void updateSpeedSuffix();
 	int getTimerInterval() const;
 	void renderFrames();
-	QRect getExportRect() const;
-	int getExportStart() const;
-	int getExportEnd() const;
-	int getExportFramerate() const;
 
 	struct Private;
 	Private *d;

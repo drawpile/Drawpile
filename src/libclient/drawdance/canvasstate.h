@@ -74,7 +74,7 @@ public:
 	SelectionSet selections() const;
 
 	int frameCount() const;
-	int framerate() const;
+	double effectiveFramerate() const;
 
 	bool sameFrame(int frameIndexA, int frameIndexB) const;
 

@@ -351,7 +351,7 @@ private:
 #ifndef __EMSCRIPTEN__
 		const QString &path,
 #endif
-		int format, int loops, int start, int end, int framerate,
+		int format, int loops, int start, int end, double framerate,
 		const QRect &crop, int scalePercent, bool scaleSmooth);
 
 	ActionBuilder makeAction(const char *name, const QString &text = QString{});

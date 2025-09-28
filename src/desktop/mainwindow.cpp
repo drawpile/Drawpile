@@ -2655,8 +2655,8 @@ void MainWindow::exportAnimation(
 #ifndef __EMSCRIPTEN__
 	const QString &path,
 #endif
-	int format, int loops, int start, int end, int framerate, const QRect &crop,
-	int scalePercent, bool scaleSmooth)
+	int format, int loops, int start, int end, double framerate,
+	const QRect &crop, int scalePercent, bool scaleSmooth)
 {
 	m_animationExportLoops = loops;
 	m_animationExportScalePercent = scalePercent;

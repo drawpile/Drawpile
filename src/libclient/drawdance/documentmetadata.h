@@ -25,7 +25,12 @@ public:
     int dpix() const;
     int dpiy() const;
     int framerate() const;
+    int framerateFraction() const;
+    double effectiveFramerate() const;
     int frameCount() const;
+
+	static void splitEffectiveFramerate(
+		double effectiveFramerate, int &outWhole, int &outFraction);
 
 private:
     explicit DocumentMetadata(DP_DocumentMetadata *dm);

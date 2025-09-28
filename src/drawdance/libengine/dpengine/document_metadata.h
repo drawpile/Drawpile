@@ -24,10 +24,13 @@
 #include <dpcommon/common.h>
 
 
-#define DP_DOCUMENT_METADATA_DPIX_DEFAULT        72
-#define DP_DOCUMENT_METADATA_DPIY_DEFAULT        72
-#define DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT   24
-#define DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT 24
+#define DP_DOCUMENT_METADATA_DPIX_DEFAULT               72
+#define DP_DOCUMENT_METADATA_DPIY_DEFAULT               72
+#define DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT          24
+#define DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_DEFAULT 0
+#define DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT        24
+
+#define DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_MULTIPLIER 1000000
 
 typedef struct DP_DocumentMetadata DP_DocumentMetadata;
 
@@ -36,6 +39,11 @@ typedef struct DP_TransientDocumentMetadata DP_TransientDocumentMetadata;
 #else
 typedef struct DP_DocumentMetadata DP_TransientDocumentMetadata;
 #endif
+
+
+void DP_document_metadata_effective_framerate_split(double effective_framerate,
+                                                    int *out_whole,
+                                                    int *out_fraction);
 
 
 DP_DocumentMetadata *DP_document_metadata_new(void);
@@ -58,6 +66,10 @@ int DP_document_metadata_dpix(DP_DocumentMetadata *dm);
 int DP_document_metadata_dpiy(DP_DocumentMetadata *dm);
 
 int DP_document_metadata_framerate(DP_DocumentMetadata *dm);
+
+int DP_document_metadata_framerate_fraction(DP_DocumentMetadata *dm);
+
+double DP_document_metadata_effective_framerate(DP_DocumentMetadata *dm);
 
 int DP_document_metadata_frame_count(DP_DocumentMetadata *dm);
 
@@ -83,6 +95,12 @@ int DP_transient_document_metadata_dpiy(DP_TransientDocumentMetadata *tdm);
 
 int DP_transient_document_metadata_framerate(DP_TransientDocumentMetadata *tdm);
 
+int DP_transient_document_metadata_framerate_fraction(
+    DP_TransientDocumentMetadata *tdm);
+
+double DP_transient_document_metadata_effective_framerate(
+    DP_TransientDocumentMetadata *tdm);
+
 int DP_transient_document_metadata_frame_count(
     DP_TransientDocumentMetadata *tdm);
 
@@ -94,6 +112,12 @@ void DP_transient_document_metadata_dpiy_set(DP_TransientDocumentMetadata *tdm,
 
 void DP_transient_document_metadata_framerate_set(
     DP_TransientDocumentMetadata *tdm, int framerate);
+
+void DP_transient_document_metadata_framerate_fraction_set(
+    DP_TransientDocumentMetadata *tdm, int framerate_fraction);
+
+void DP_transient_document_metadata_effective_framerate_set(
+    DP_TransientDocumentMetadata *tdm, double effective_framerate);
 
 void DP_transient_document_metadata_frame_count_set(
     DP_TransientDocumentMetadata *tdm, int frame_count);

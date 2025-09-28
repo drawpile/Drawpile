@@ -12,18 +12,20 @@ public:
 
 	void setNone();
 	void setInt(int value);
+	void setDouble(double value);
 
 	bool stopTimer();
 
 signals:
 	void noneChanged();
 	void intChanged(int value);
+	void doubleChanged(double value);
 
 protected:
 	void timerEvent(QTimerEvent *) override;
 
 private:
-	enum class Type { None, Int };
+	enum class Type { None, Int, Double };
 	Type m_type;
 	int m_delayMs;
 	int m_timerId;
