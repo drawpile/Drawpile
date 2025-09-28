@@ -292,9 +292,9 @@ DP_Message *DP_layer_routes_layer_tree_move_make(DP_LayerRoutes *lr,
 
     DP_debug("Layer tree move: layer %d, parent %d, sibling %d", source_id,
              parent_id, sibling_id);
-    return DP_msg_layer_tree_move_new(context_id, DP_int_to_uint16(source_id),
-                                      DP_int_to_uint16(parent_id),
-                                      DP_int_to_uint16(sibling_id));
+    return DP_msg_layer_tree_move_new(context_id, DP_int_to_uint32(source_id),
+                                      DP_int_to_uint32(parent_id),
+                                      DP_int_to_uint32(sibling_id));
 }
 
 
