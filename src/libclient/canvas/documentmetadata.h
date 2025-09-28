@@ -19,11 +19,11 @@ class DocumentMetadata final : public QObject
 public:
 	explicit DocumentMetadata(PaintEngine *engine, QObject *parent = nullptr);
 
-	int framerate() const { return m_framerate; }
+	double framerate() const { return m_framerate; }
 	int frameCount() const { return m_frameCount; }
 
 signals:
-	void framerateChanged(int fps);
+	void framerateChanged(double fps);
 	void frameCountChanged(int frameCount);
 
 private slots:
@@ -31,7 +31,7 @@ private slots:
 
 private:
 	PaintEngine *m_engine;
-	int m_framerate;
+	double m_framerate;
 	int m_frameCount;
 };
 

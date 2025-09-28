@@ -261,9 +261,9 @@ int CanvasState::frameCount() const
 	return DP_canvas_state_frame_count(m_data);
 }
 
-int CanvasState::framerate() const
+double CanvasState::effectiveFramerate() const
 {
-	return DP_canvas_state_framerate(m_data);
+	return DP_canvas_state_effective_framerate(m_data);
 }
 
 bool CanvasState::sameFrame(int frameIndexA, int frameIndexB) const

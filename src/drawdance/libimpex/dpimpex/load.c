@@ -358,9 +358,18 @@ static bool ora_handle_image(DP_ReadOraContext *c, DP_XmlElement *element)
     }
 
     int framerate;
-    if (ora_read_int_attribute(element, DRAWPILE_NAMESPACE, "framerate", 1,
+    if (ora_read_int_attribute(element, DRAWPILE_NAMESPACE, "framerate", 0,
                                INT32_MAX, &framerate)) {
         DP_transient_document_metadata_framerate_set(tdm, framerate);
+    }
+
+    int framerate_fraction;
+    if (ora_read_int_attribute(
+            element, DRAWPILE_NAMESPACE, "framefrac", 0,
+            DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_MULTIPLIER - 1,
+            &framerate_fraction)) {
+        DP_transient_document_metadata_framerate_fraction_set(
+            tdm, framerate_fraction);
     }
 
     push_group(c, NULL, NULL, false, false);

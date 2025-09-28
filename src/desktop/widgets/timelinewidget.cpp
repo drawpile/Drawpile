@@ -11,6 +11,7 @@ extern "C" {
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/timelinemodel.h"
+#include "libclient/drawdance/documentmetadata.h"
 #include "libclient/net/message.h"
 #include <QApplication>
 #include <QClipboard>
@@ -108,9 +109,9 @@ struct TimelineWidget::Private {
 		return canvas ? canvas->metadata()->frameCount() : 0;
 	}
 
-	int framerate() const
+	double effectiveFramerate() const
 	{
-		return canvas ? canvas->metadata()->framerate() : 0;
+		return canvas ? canvas->metadata()->framerate() : 0.0;
 	}
 
 	int trackIdByIndex(int index) const
@@ -616,12 +617,36 @@ int TimelineWidget::currentFrame() const
 	return d->currentFrame;
 }
 
-void TimelineWidget::changeFramerate(int framerate)
+void TimelineWidget::changeFramerate(double framerate)
 {
-	emitCommand([&](uint8_t contextId) {
-		return net::makeSetMetadataIntMessage(
-			contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE, framerate);
-	});
+	if(d->editable) {
+		bool compatibilityMode = d->canvas && d->canvas->isCompatibilityMode();
+		net::MessageList msgs;
+		msgs.reserve(compatibilityMode ? 2 : 3);
+
+		uint8_t contextId = d->canvas->localUserId();
+		msgs.append(net::makeUndoPointMessage(contextId));
+
+		if(compatibilityMode) {
+			msgs.append(
+				net::makeSetMetadataIntMessage(
+					contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE,
+					qMax(1, qRound(framerate))));
+		} else {
+			int whole, fraction;
+			drawdance::DocumentMetadata::splitEffectiveFramerate(
+				framerate, whole, fraction);
+			msgs.append(
+				net::makeSetMetadataIntMessage(
+					contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE, whole));
+			msgs.append(
+				net::makeSetMetadataIntMessage(
+					contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE_FRACTION,
+					fraction));
+		}
+
+		emit timelineEditCommands(msgs.size(), msgs.constData());
+	}
 }
 
 void TimelineWidget::changeFrameCount(int frameCount)
@@ -1534,10 +1559,10 @@ void TimelineWidget::setFrameCount()
 void TimelineWidget::setFramerate()
 {
 	if(d->editable) {
-		utils::getOrRaiseInputInt(
+		utils::getOrRaiseInputDouble(
 			this, QStringLiteral("frameratedlg"), tr("Change Framerate"),
-			tr("Frames Per Second (FPS)"), d->framerate(), 1, 999,
-			[this](int framerate) {
+			tr("Frames Per Second (FPS)"), 2, d->effectiveFramerate(), 0.01,
+			999.99, [this](double framerate) {
 				changeFramerate(framerate);
 			});
 	}

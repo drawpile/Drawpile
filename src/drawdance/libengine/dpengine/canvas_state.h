@@ -133,7 +133,7 @@ DP_Selection *DP_canvas_state_selection_search_noinc(DP_CanvasState *cs,
 
 int DP_canvas_state_frame_count(DP_CanvasState *cs);
 
-int DP_canvas_state_framerate(DP_CanvasState *cs);
+double DP_canvas_state_effective_framerate(DP_CanvasState *cs);
 
 bool DP_canvas_state_same_frame(DP_CanvasState *cs, int frame_index_a,
                                 int frame_index_b);

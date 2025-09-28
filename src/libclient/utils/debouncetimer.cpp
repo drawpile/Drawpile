@@ -23,6 +23,13 @@ void DebounceTimer::setInt(int value)
 	restartTimer();
 }
 
+void DebounceTimer::setDouble(double value)
+{
+	m_type = Type::Double;
+	m_value = value;
+	restartTimer();
+}
+
 bool DebounceTimer::stopTimer()
 {
 	if(m_timerId != 0) {
@@ -43,6 +50,9 @@ void DebounceTimer::timerEvent(QTimerEvent *)
 		break;
 	case Type::Int:
 		emit intChanged(m_value.toInt());
+		break;
+	case Type::Double:
+		emit doubleChanged(m_value.toDouble());
 		break;
 	}
 	m_value.clear();

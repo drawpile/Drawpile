@@ -1023,6 +1023,7 @@ SetMetadataInt:
               - Dpiy
               - Framerate
               - FrameCount
+              - FramerateFraction
         - value i32
 
 LayerTreeCreate:

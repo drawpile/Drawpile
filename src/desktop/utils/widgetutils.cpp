@@ -1187,7 +1187,7 @@ QString toHtmlWithLink(
 #ifdef Q_OS_ANDROID
 	// Hearts don't work on Android.
 	static const QRegularExpression heartRegex(
-		QStringLiteral("♥\\s+"));
+			QStringLiteral("♥\\s+"));
 	html.replace(heartRegex, QString());
 #endif
 	html = html.toHtmlEscaped();
@@ -1298,6 +1298,40 @@ QInputDialog *getOrRaiseInputInt(
 	} else {
 		QInputDialog *dlg =
 			getInputInt(parent, title, label, value, minValue, maxValue, fn);
+		dlg->setObjectName(objectName);
+		return dlg;
+	}
+}
+
+QInputDialog *getInputDouble(
+	QWidget *parent, const QString &title, const QString &label, int decimals,
+	double value, double minValue, double maxValue,
+	const std::function<void(double)> &fn)
+{
+	QInputDialog *dlg = new QInputDialog(parent);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setWindowTitle(title);
+	dlg->setLabelText(label);
+	dlg->setInputMode(QInputDialog::DoubleInput);
+	dlg->setDoubleDecimals(decimals);
+	dlg->setDoubleMinimum(minValue);
+	dlg->setDoubleMaximum(maxValue);
+	dlg->setDoubleValue(value);
+	QObject::connect(dlg, &QInputDialog::doubleValueSelected, parent, fn);
+	dlg->show();
+	return dlg;
+}
+
+QInputDialog *getOrRaiseInputDouble(
+	QWidget *parent, const QString &objectName, const QString &title,
+	const QString &label, int decimals, double value, double minValue,
+	double maxValue, const std::function<void(double)> &fn)
+{
+	if(QInputDialog *existingDlg = raiseExistingInput(parent, objectName)) {
+		return existingDlg;
+	} else {
+		QInputDialog *dlg = getInputDouble(
+			parent, title, label, decimals, value, minValue, maxValue, fn);
 		dlg->setObjectName(objectName);
 		return dlg;
 	}

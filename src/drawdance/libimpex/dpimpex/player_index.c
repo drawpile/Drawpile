@@ -37,7 +37,7 @@
 #define DP_PERF_CONTEXT       "player"
 #define INDEX_MAGIC           "DPIDX"
 #define INDEX_MAGIC_LENGTH    6
-#define INDEX_VERSION         12
+#define INDEX_VERSION         13
 #define INDEX_VERSION_LENGTH  2
 #define INDEX_HEADER_LENGTH   (INDEX_MAGIC_LENGTH + INDEX_VERSION_LENGTH + 12)
 #define INITAL_ENTRY_CAPACITY 64
@@ -752,6 +752,7 @@ static bool write_index_metadata(DP_BuildIndexEntryContext *e)
             output, DP_OUTPUT_INT32(DP_document_metadata_dpix(dm)),
             DP_OUTPUT_INT32(DP_document_metadata_dpiy(dm)),
             DP_OUTPUT_INT32(DP_document_metadata_framerate(dm)),
+            DP_OUTPUT_INT32(DP_document_metadata_framerate_fraction(dm)),
             DP_OUTPUT_INT32(DP_document_metadata_frame_count(dm)))) {
         return false;
     }
@@ -1558,10 +1559,11 @@ static bool read_index_metadata(DP_ReadSnapshotContext *c, size_t offset)
 {
     DP_debug("Read document metadata at offset %zu", offset);
     DP_BufferedInput *input = c->input;
-    int dpix, dpiy, framerate, frame_count;
+    int dpix, dpiy, framerate, framerate_fraction, frame_count;
     bool ok = DP_buffered_input_seek(input, offset)
            && READ_INDEX(input, int32, dpix) && READ_INDEX(input, int32, dpiy)
            && READ_INDEX(input, int32, framerate)
+           && READ_INDEX(input, int32, framerate_fraction)
            && READ_INDEX(input, int32, frame_count);
     if (ok) {
         DP_TransientDocumentMetadata *tdm =
@@ -1569,6 +1571,8 @@ static bool read_index_metadata(DP_ReadSnapshotContext *c, size_t offset)
         DP_transient_document_metadata_dpix_set(tdm, dpix);
         DP_transient_document_metadata_dpiy_set(tdm, dpiy);
         DP_transient_document_metadata_framerate_set(tdm, framerate);
+        DP_transient_document_metadata_framerate_fraction_set(
+            tdm, framerate_fraction);
         DP_transient_document_metadata_frame_count_set(tdm, frame_count);
         return true;
     }

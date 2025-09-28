@@ -17,7 +17,7 @@ namespace impex {
 class AnimationImporter : public QObject, public QRunnable {
 	Q_OBJECT
 public:
-	AnimationImporter(int holdTime, int framerate);
+	AnimationImporter(int holdTime, double framerate);
 
 	void run() override;
 
@@ -29,7 +29,7 @@ protected:
 	virtual DP_CanvasState *load(DP_LoadResult *outResult) = 0;
 
 	const int m_holdTime;
-	const int m_framerate;
+	const double m_framerate;
 
 	static void setLayerTitle(DP_TransientLayerProps *tlp, int i);
 	static void setGroupTitle(DP_TransientLayerProps *tlp, int i);
@@ -41,7 +41,8 @@ protected:
 class AnimationLayersImporter final : public AnimationImporter {
 	Q_OBJECT
 public:
-	AnimationLayersImporter(const QString &path, int holdTime, int framerate);
+	AnimationLayersImporter(
+		const QString &path, int holdTime, double framerate);
 
 protected:
 	DP_CanvasState *load(DP_LoadResult *outResult) override;
@@ -56,7 +57,7 @@ class AnimationFramesImporter final : public AnimationImporter {
 public:
 	AnimationFramesImporter(
 		const QStringList &paths, const QColor &backgroundColor, int holdTime,
-		int framerate);
+		double framerate);
 
 protected:
 	DP_CanvasState *load(DP_LoadResult *outResult) override;

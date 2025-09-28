@@ -170,18 +170,18 @@
       </spacer>
      </item>
      <item>
-      <widget class="KisSliderSpinBox" name="speedSpinner">
+      <widget class="KisDoubleSliderSpinBox" name="speedSpinner">
        <property name="prefix">
         <string>Speed: </string>
        </property>
        <property name="minimum">
-        <number>1</number>
+        <double>1.000000000000000</double>
        </property>
        <property name="maximum">
-        <number>1000</number>
+        <double>1000.000000000000000</double>
        </property>
        <property name="value">
-        <number>100</number>
+        <double>100.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -234,8 +234,8 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>KisSliderSpinBox</class>
-   <extends>QSpinBox</extends>
+   <class>KisDoubleSliderSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
    <header>desktop/widgets/kis_slider_spin_box.h</header>
   </customwidget>
  </customwidgets>

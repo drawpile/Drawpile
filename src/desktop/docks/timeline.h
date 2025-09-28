@@ -7,6 +7,7 @@
 #include "libclient/utils/debouncetimer.h"
 
 class QAction;
+class QDoubleSpinBox;
 class QSpinBox;
 
 namespace canvas {
@@ -44,7 +45,7 @@ public:
 	void updateKeyFrameColorMenuIcon();
 
 public slots:
-	void setFramerate(int framerate);
+	void setFramerate(double framerate);
 	void setFrameCount(int frameCount);
 	void setCurrentLayer(int layerId);
 	void setFeatureAccess(bool access);
@@ -77,7 +78,7 @@ private:
 
 	widgets::TimelineWidget *m_widget;
 	QSpinBox *m_frameSpinner;
-	QSpinBox *m_framerateSpinner;
+	QDoubleSpinBox *m_framerateSpinner;
 	DebounceTimer m_framerateDebounce;
 	bool m_featureAccessEnabled;
 	bool m_locked;

@@ -69,9 +69,26 @@ int DocumentMetadata::framerate() const
     return DP_document_metadata_framerate(m_data);
 }
 
+int DocumentMetadata::framerateFraction() const
+{
+    return DP_document_metadata_framerate_fraction(m_data);
+}
+
+double DocumentMetadata::effectiveFramerate() const
+{
+    return DP_document_metadata_effective_framerate(m_data);
+}
+
 int DocumentMetadata::frameCount() const
 {
     return DP_document_metadata_frame_count(m_data);
+}
+
+void DocumentMetadata::splitEffectiveFramerate(
+	double effectiveFramerate, int &outWhole, int &outFraction)
+{
+	DP_document_metadata_effective_framerate_split(
+		effectiveFramerate, &outWhole, &outFraction);
 }
 
 DocumentMetadata::DocumentMetadata(DP_DocumentMetadata *dm)

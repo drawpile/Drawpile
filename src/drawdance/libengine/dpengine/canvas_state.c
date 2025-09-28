@@ -382,11 +382,11 @@ int DP_canvas_state_frame_count(DP_CanvasState *cs)
     return DP_document_metadata_frame_count(cs->metadata);
 }
 
-int DP_canvas_state_framerate(DP_CanvasState *cs)
+double DP_canvas_state_effective_framerate(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
-    return DP_document_metadata_framerate(cs->metadata);
+    return DP_document_metadata_effective_framerate(cs->metadata);
 }
 
 bool DP_canvas_state_same_frame(DP_CanvasState *cs, int frame_index_a,
@@ -1035,6 +1035,9 @@ static DP_CanvasState *handle_set_metadata_int(DP_CanvasState *cs,
         break;
     case DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT:
         set_field = DP_transient_document_metadata_frame_count_set;
+        break;
+    case DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE_FRACTION:
+        set_field = DP_transient_document_metadata_framerate_fraction_set;
         break;
     default:
         DP_error_set("Set metadata int: unknown field %d", field);

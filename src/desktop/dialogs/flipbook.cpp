@@ -88,7 +88,8 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 		d->ui.loopEnd, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&Flipbook::updateRange);
 	connect(
-		d->ui.speedSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		d->ui.speedSpinner,
+		QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
 		&Flipbook::updateSpeed);
 	connect(&d->timer, &QTimer::timeout, this, &Flipbook::nextFrame);
 	connect(d->ui.view, &FlipbookView::cropped, this, &Flipbook::setCrop);
@@ -156,7 +157,7 @@ void Flipbook::playPause()
 
 void Flipbook::updateSpeed()
 {
-	int speedPercent = d->ui.speedSpinner->value();
+	double speedPercent = d->ui.speedSpinner->value();
 	d->state.speedPercent = speedPercent;
 	emit stateChanged();
 	updateSpeedSuffix();
@@ -171,9 +172,9 @@ void Flipbook::updateSpeedSuffix()
 	if(d->canvasState.isNull()) {
 		fpsSuffix = tr("%");
 	} else {
-		qreal fps =
-			d->canvasState.framerate() * d->ui.speedSpinner->value() / 100.0;
-		fpsSuffix = tr("% (%1 FPS)").arg(qRound(fps));
+		double fps = d->canvasState.effectiveFramerate() *
+					 d->ui.speedSpinner->value() / 100.0;
+		fpsSuffix = tr("% (%1 FPS)").arg(fps, 0, 'f', 2);
 	}
 	d->ui.speedSpinner->setSuffix(fpsSuffix);
 }
@@ -299,8 +300,9 @@ void Flipbook::resetCanvas(bool refresh, const QRect &crop)
 
 int Flipbook::getTimerInterval() const
 {
-	int framerate = d->canvasState.isNull() ? 24 : d->canvasState.framerate();
-	int speedPercent = d->ui.speedSpinner->value();
+	double framerate =
+		d->canvasState.isNull() ? 24.0 : d->canvasState.effectiveFramerate();
+	double speedPercent = d->ui.speedSpinner->value();
 	return qRound((1000.0 / framerate) / (speedPercent / 100.0));
 }
 
@@ -359,39 +361,4 @@ void Flipbook::loadFrame()
 	}
 }
 
-QRect Flipbook::getExportRect() const
-{
-	Q_ASSERT(!d->canvasState.isNull());
-	if(d->crop.isValid()) {
-		QRect canvasRect = QRect{QPoint{0, 0}, d->canvasState.size()};
-		QRect exportRect = d->crop.intersected(canvasRect);
-		if(exportRect != canvasRect) {
-			return exportRect;
-		}
-	}
-	return QRect{};
-}
-
-int Flipbook::getExportStart() const
-{
-	int start = d->ui.loopStart->value() - 1;
-	int end = d->ui.loopEnd->value() - 1;
-	return start < 0 || start > end ? 0 : start;
-}
-
-int Flipbook::getExportEnd() const
-{
-	Q_ASSERT(!d->canvasState.isNull());
-	int start = d->ui.loopStart->value() - 1;
-	int end = d->ui.loopEnd->value() - 1;
-	int canvasFrameCount = d->canvasState.frameCount();
-	return end >= canvasFrameCount || start > end ? canvasFrameCount - 1 : end;
-}
-
-int Flipbook::getExportFramerate() const
-{
-	int canvasFramerate = d->canvasState.framerate();
-	double speed = d->ui.speedSpinner->value() / 100.0;
-	return qMax(1, qRound(canvasFramerate * speed));
-}
 }

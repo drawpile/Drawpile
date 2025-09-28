@@ -78,6 +78,7 @@ typedef enum DP_ProjectSnapshotMetadata {
     DP_PROJECT_SNAPSHOT_METADATA_DPIY = 5,
     DP_PROJECT_SNAPSHOT_METADATA_FRAMERATE = 6,
     DP_PROJECT_SNAPSHOT_METADATA_FRAME_COUNT = 7,
+    DP_PROJECT_SNAPSHOT_METADATA_FRAMERATE_FRACTION = 8,
 } DP_ProjectSnapshotMetadata;
 
 typedef struct DP_ProjectSnapshot {
@@ -1527,7 +1528,11 @@ static bool snapshot_write_document_metadata(DP_Project *prj,
         && snapshot_write_metadata_int_unless_default(
                prj, DP_PROJECT_SNAPSHOT_METADATA_FRAME_COUNT,
                DP_document_metadata_frame_count(dm),
-               DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT);
+               DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT)
+        && snapshot_write_metadata_int_unless_default(
+               prj, DP_PROJECT_SNAPSHOT_METADATA_FRAMERATE_FRACTION,
+               DP_document_metadata_framerate_fraction(dm),
+               DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_DEFAULT);
 }
 
 static bool snapshot_handle_canvas(DP_Project *prj,
@@ -1988,6 +1993,10 @@ static bool cfs_read_metadata(DP_ProjectCanvasFromSnapshotContext *c)
             break;
         case DP_PROJECT_SNAPSHOT_METADATA_FRAME_COUNT:
             DP_transient_document_metadata_frame_count_set(
+                tdm, sqlite3_column_int(stmt, 1));
+            break;
+        case DP_PROJECT_SNAPSHOT_METADATA_FRAMERATE_FRACTION:
+            DP_transient_document_metadata_framerate_fraction_set(
                 tdm, sqlite3_column_int(stmt, 1));
             break;
         default:

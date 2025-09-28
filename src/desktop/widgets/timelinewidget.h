@@ -82,7 +82,7 @@ public:
 	int currentFrame() const;
 
 public slots:
-	void changeFramerate(int framerate);
+	void changeFramerate(double framerate);
 	void changeFrameCount(int frameCount);
 
 signals:

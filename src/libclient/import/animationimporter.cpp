@@ -8,7 +8,7 @@ extern "C" {
 
 namespace impex {
 
-AnimationImporter::AnimationImporter(int holdTime, int framerate)
+AnimationImporter::AnimationImporter(int holdTime, double framerate)
 	: m_holdTime(holdTime)
 	, m_framerate(framerate)
 {
@@ -51,7 +51,7 @@ QByteArray AnimationImporter::getGroupOrTrackTitle(int i)
 
 
 AnimationLayersImporter::AnimationLayersImporter(
-	const QString &path, int holdTime, int framerate)
+	const QString &path, int holdTime, double framerate)
 	: AnimationImporter(holdTime, framerate)
 	, m_path(path)
 {
@@ -69,7 +69,7 @@ DP_CanvasState *AnimationLayersImporter::load(DP_LoadResult *outResult)
 
 AnimationFramesImporter::AnimationFramesImporter(
 	const QStringList &paths, const QColor &backgroundColor, int holdTime,
-	int framerate)
+	double framerate)
 	: AnimationImporter(holdTime, framerate)
 	, m_pathsBytes(pathsToUtf8(paths))
 	, m_backgroundColor(backgroundColor)

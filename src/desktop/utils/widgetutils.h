@@ -299,6 +299,16 @@ QInputDialog *getOrRaiseInputInt(
 	const QString &label, int value, int minValue, int maxValue,
 	const std::function<void(int)> &fn);
 
+QInputDialog *getInputDouble(
+	QWidget *parent, const QString &title, const QString &label, int decimals,
+	double value, double minValue, double maxValue,
+	const std::function<void(double)> &fn);
+
+QInputDialog *getOrRaiseInputDouble(
+	QWidget *parent, const QString &objectName, const QString &title,
+	const QString &label, int decimals, double value, double minValue,
+	double maxValue, const std::function<void(double)> &fn);
+
 bool openOrQuestionUrl(QWidget *parent, const QUrl &url);
 
 QString makeActionShortcutText(QString text, const QKeySequence &shortcut);

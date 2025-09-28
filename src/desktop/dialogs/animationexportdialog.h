@@ -8,6 +8,7 @@ class KisSliderSpinBox;
 class QCheckBox;
 class QComboBox;
 class QDialogButtonBox;
+class QDoubleSpinBox;
 class QLabel;
 class QLineEdit;
 class QPushButton;
@@ -44,7 +45,7 @@ signals:
 #ifndef __EMSCRIPTEN__
 		const QString &path,
 #endif
-		int format, int loops, int start, int end, int framerate,
+		int format, int loops, int start, int end, double framerate,
 		const QRect &crop, int scalePercent, bool scaleSmooth);
 
 private:
@@ -65,7 +66,7 @@ private:
 
 	void setCanvasSize(const QSize &size);
 	void setCanvasFrameCount(int frameCount);
-	void setCanvasFramerate(int framerate);
+	void setCanvasFramerate(double framerate);
 
 	void requestExport();
 
@@ -82,7 +83,7 @@ private:
 	QSpinBox *m_loopsSpinner;
 	QSpinBox *m_startSpinner;
 	QSpinBox *m_endSpinner;
-	QSpinBox *m_framerateSpinner;
+	QDoubleSpinBox *m_framerateSpinner;
 	QSpinBox *m_x1Spinner;
 	QSpinBox *m_x2Spinner;
 	QSpinBox *m_y1Spinner;
@@ -93,10 +94,10 @@ private:
 	int m_canvasWidth = -1;
 	int m_canvasHeight = -1;
 	int m_canvasFrameCount = -1;
-	int m_canvasFramerate = -1;
+	double m_canvasFramerate = -1.0;
 	int m_flipbookStart = -1;
 	int m_flipbookEnd = -1;
-	int m_flipbookFramerate = -1;
+	double m_flipbookFramerate = -1.0;
 	QRect m_flipbookCrop;
 };
 

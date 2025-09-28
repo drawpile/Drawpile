@@ -97,7 +97,7 @@ void Timeline::updateKeyFrameColorMenuIcon()
 	m_widget->updateKeyFrameColorMenuIcon();
 }
 
-void Timeline::setFramerate(int framerate)
+void Timeline::setFramerate(double framerate)
 {
 	if(m_framerateSpinner) {
 		QSignalBlocker blocker{m_framerateSpinner};
@@ -191,15 +191,16 @@ void Timeline::setUpTitleWidget(
 
 	addTitleButton(titlebar, showFlipbook, GroupedToolButton::NotGrouped);
 
-	m_framerateSpinner = new QSpinBox{titlebar};
-	m_framerateSpinner->setRange(1, 999);
+	m_framerateSpinner = new QDoubleSpinBox{titlebar};
+	m_framerateSpinner->setDecimals(2);
+	m_framerateSpinner->setRange(0.01, 999.99);
 	m_framerateSpinner->setSuffix(tr(" FPS"));
 	titlebar->addCustomWidget(m_framerateSpinner);
 	connect(
-		m_framerateSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
-		&m_framerateDebounce, &DebounceTimer::setInt);
+		m_framerateSpinner, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+		&m_framerateDebounce, &DebounceTimer::setDouble);
 	connect(
-		&m_framerateDebounce, &DebounceTimer::intChanged, m_widget,
+		&m_framerateDebounce, &DebounceTimer::doubleChanged, m_widget,
 		&widgets::TimelineWidget::changeFramerate);
 
 	titlebar->addSpace(4);

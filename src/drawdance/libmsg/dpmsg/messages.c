@@ -9296,6 +9296,8 @@ const char *DP_msg_set_metadata_int_field_variant_name(unsigned int value)
         return "Framerate";
     case DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT:
         return "FrameCount";
+    case DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE_FRACTION:
+        return "FramerateFraction";
     default:
         return NULL;
     }

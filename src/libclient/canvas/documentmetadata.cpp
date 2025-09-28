@@ -7,7 +7,7 @@
 namespace canvas {
 
 DocumentMetadata::DocumentMetadata(PaintEngine *engine, QObject *parent)
-    : QObject{parent}, m_engine(engine), m_framerate(0), m_frameCount(0)
+    : QObject{parent}, m_engine(engine), m_framerate(0.0), m_frameCount(0)
 {
 	Q_ASSERT(engine);
 	refreshMetadata(m_engine->historyCanvasState().documentMetadata());
@@ -19,7 +19,7 @@ void DocumentMetadata::refreshMetadata(const drawdance::DocumentMetadata &dm)
 	// Note: dpix and dpiy are presently not used in the GUI.
 	// To be included here when needed.
 
-	const int framerate = dm.framerate();
+	const double framerate = dm.effectiveFramerate();
 	if(framerate != m_framerate) {
 		m_framerate = framerate;
 		emit framerateChanged(framerate);

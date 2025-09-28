@@ -941,6 +941,12 @@ static void reset_entry_canvas_to_message(struct DP_ResetImageMessageContext *c,
         c, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT,
         DP_document_metadata_frame_count(dm),
         DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT);
+    if (!c->compatibility_mode) {
+        push_document_metadata_int_field_if_not_default(
+            c, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE_FRACTION,
+            DP_document_metadata_framerate_fraction(dm),
+            DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_DEFAULT);
+    }
 }
 
 static void
