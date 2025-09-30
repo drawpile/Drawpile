@@ -6241,7 +6241,8 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerAutomaticAlphaPreserve);
 
 	layerMenu->addSeparator();
-	QMenu *layerLockMenu = layerMenu->addMenu(tr("&Locks"));
+	QMenu *layerLockMenu =
+		layerMenu->addMenu(QIcon::fromTheme("object-locked"), tr("&Locks"));
 	layerLockMenu->addAction(layerAlphaLock);
 	layerLockMenu->addSeparator();
 	layerLockMenu->addAction(layerLockAll);
