@@ -13444,7 +13444,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Расширить</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13879,7 +13879,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+46"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштабировать</translation>
     </message>
 </context>
 </TS>
