@@ -874,6 +874,18 @@ static void ora_handle_timeline(DP_ReadOraContext *c, DP_XmlElement *element)
         DP_transient_document_metadata_frame_count_set(tdm, frame_count);
     }
 
+    int first;
+    if (ora_read_int_attribute(element, NULL, "first", INT32_MIN, INT32_MAX,
+                               &first)) {
+        DP_transient_document_metadata_frame_range_first_set(tdm, first);
+    }
+
+    int last;
+    if (ora_read_int_attribute(element, NULL, "last", INT32_MIN, INT32_MAX,
+                               &last)) {
+        DP_transient_document_metadata_frame_range_last_set(tdm, last);
+    }
+
     DP_VECTOR_INIT_TYPE(&c->tracks, DP_ReadOraTrack, 8);
     c->expect = DP_READ_ORA_EXPECT_TRACK;
 }
@@ -1024,6 +1036,7 @@ static void ora_fill_timeline(DP_ReadOraContext *c)
         DP_TransientTrack *tt = ora_fill_track(rot);
         DP_transient_timeline_set_transient_track_noinc(ttl, tt, i);
     }
+    DP_transient_canvas_state_post_load_fixup(c->tcs);
     DP_transient_canvas_state_timeline_cleanup(c->tcs);
 }
 
@@ -1456,6 +1469,8 @@ static DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
     DP_transient_layer_props_list_insert_transient_noinc(tlpl, tlp, 0);
 
     DP_transient_canvas_state_layer_routes_reindex(tcs, dc);
+    DP_transient_canvas_state_post_load_fixup(tcs);
+    DP_transient_canvas_state_timeline_cleanup(tcs);
 
     assign_load_result(out_result, DP_LOAD_RESULT_SUCCESS);
     return DP_transient_canvas_state_persist(tcs);

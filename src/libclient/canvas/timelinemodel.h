@@ -42,6 +42,7 @@ struct TimelineTrack final {
 	QString title;
 	bool hidden;
 	bool onionSkin;
+	int lastFrameIndex;
 	QVector<TimelineKeyFrame> keyFrames;
 };
 
@@ -53,6 +54,8 @@ public:
 	void setAclState(AclState *aclState) { m_aclState = aclState; }
 
 	const QVector<TimelineTrack> &tracks() const { return m_tracks; }
+
+	int lastFrameIndex() const { return m_lastFrameIndex; }
 
 	const TimelineTrack *getTrackById(int trackId) const;
 
@@ -66,8 +69,8 @@ signals:
 	void tracksChanged();
 
 private:
-	static int searchAvailableTrackId(
-		const QSet<int> &takenIds, unsigned int contextId);
+	static int
+	searchAvailableTrackId(const QSet<int> &takenIds, unsigned int contextId);
 
 	static TimelineTrack trackToModel(const drawdance::Track &t);
 
@@ -76,6 +79,7 @@ private:
 
 	QVector<TimelineTrack> m_tracks;
 	AclState *m_aclState;
+	int m_lastFrameIndex = -1;
 };
 
 }

@@ -28,6 +28,9 @@ public:
     int framerateFraction() const;
     double effectiveFramerate() const;
     int frameCount() const;
+    int frameRangeFirst() const;
+    int frameRangeLast() const;
+    bool effectiveFrameRange(int &frameRangeFirst, int &frameRangeLast) const;
 
 	static void splitEffectiveFramerate(
 		double effectiveFramerate, int &outWhole, int &outFraction);

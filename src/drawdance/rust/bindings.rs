@@ -24,6 +24,8 @@ pub const DP_DOCUMENT_METADATA_DPIY_DEFAULT: u32 = 72;
 pub const DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT: u32 = 24;
 pub const DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_DEFAULT: u32 = 0;
 pub const DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT: u32 = 24;
+pub const DP_DOCUMENT_METADATA_FRAME_RANGE_FIRST_DEFAULT: i32 = -1;
+pub const DP_DOCUMENT_METADATA_FRAME_RANGE_LAST_DEFAULT: i32 = -1;
 pub const DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_MULTIPLIER: u32 = 1000000;
 pub const DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE: u32 = 204;
 pub const DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE: u32 = 8192;
@@ -277,7 +279,9 @@ pub const DP_MSG_SET_METADATA_INT_FIELD_DPIY: u32 = 1;
 pub const DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE: u32 = 2;
 pub const DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT: u32 = 3;
 pub const DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE_FRACTION: u32 = 4;
-pub const DP_MSG_SET_METADATA_INT_NUM_FIELD: u32 = 5;
+pub const DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_FIRST: u32 = 5;
+pub const DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_LAST: u32 = 6;
+pub const DP_MSG_SET_METADATA_INT_NUM_FIELD: u32 = 7;
 pub const DP_MSG_LAYER_TREE_CREATE_STATIC_LENGTH: u32 = 14;
 pub const DP_MSG_LAYER_TREE_CREATE_STATIC_LENGTH_COMPAT: u32 = 11;
 pub const DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP: u32 = 1;
@@ -2421,6 +2425,9 @@ extern "C" {
     pub fn DP_transient_canvas_state_timeline_cleanup(tcs: *mut DP_TransientCanvasState);
 }
 extern "C" {
+    pub fn DP_transient_canvas_state_post_load_fixup(tcs: *mut DP_TransientCanvasState);
+}
+extern "C" {
     pub fn DP_transient_canvas_state_layers_noinc(
         tcs: *mut DP_TransientCanvasState,
     ) -> *mut DP_LayerList;
@@ -2584,6 +2591,23 @@ extern "C" {
     pub fn DP_document_metadata_frame_count(dm: *mut DP_DocumentMetadata) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn DP_document_metadata_frame_range_first(
+        dm: *mut DP_DocumentMetadata,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_document_metadata_frame_range_last(
+        dm: *mut DP_DocumentMetadata,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_document_metadata_effective_frame_range(
+        dm: *mut DP_DocumentMetadata,
+        out_first: *mut ::std::os::raw::c_int,
+        out_last: *mut ::std::os::raw::c_int,
+    ) -> bool;
+}
+extern "C" {
     pub fn DP_transient_document_metadata_new(
         dm: *mut DP_DocumentMetadata,
     ) -> *mut DP_TransientDocumentMetadata;
@@ -2640,6 +2664,23 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn DP_transient_document_metadata_frame_range_first(
+        tdm: *mut DP_TransientDocumentMetadata,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_frame_range_last(
+        tdm: *mut DP_TransientDocumentMetadata,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_effective_frame_range(
+        tdm: *mut DP_TransientDocumentMetadata,
+        out_first: *mut ::std::os::raw::c_int,
+        out_last: *mut ::std::os::raw::c_int,
+    ) -> bool;
+}
+extern "C" {
     pub fn DP_transient_document_metadata_dpix_set(
         tdm: *mut DP_TransientDocumentMetadata,
         dpix: ::std::os::raw::c_int,
@@ -2676,9 +2717,15 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn DP_transient_document_metadata_use_timeline_set(
+    pub fn DP_transient_document_metadata_frame_range_first_set(
         tdm: *mut DP_TransientDocumentMetadata,
-        use_timeline: ::std::os::raw::c_int,
+        frame_range_first: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_frame_range_last_set(
+        tdm: *mut DP_TransientDocumentMetadata,
+        frame_range_last: ::std::os::raw::c_int,
     );
 }
 #[repr(C)]
@@ -8684,18 +8731,18 @@ extern "C" {
 extern "C" {
     pub fn DP_transient_timeline_new(
         tl: *mut DP_Timeline,
-        reserve: ::std::os::raw::c_int,
+        track_reserve: ::std::os::raw::c_int,
     ) -> *mut DP_TransientTimeline;
 }
 extern "C" {
     pub fn DP_transient_timeline_new_init(
-        reserve: ::std::os::raw::c_int,
+        track_reserve: ::std::os::raw::c_int,
     ) -> *mut DP_TransientTimeline;
 }
 extern "C" {
     pub fn DP_transient_timeline_reserve(
         ttl: *mut DP_TransientTimeline,
-        reserve: ::std::os::raw::c_int,
+        track_reserve: ::std::os::raw::c_int,
     ) -> *mut DP_TransientTimeline;
 }
 extern "C" {
@@ -8713,13 +8760,13 @@ extern "C" {
     pub fn DP_transient_timeline_persist(ttl: *mut DP_TransientTimeline) -> *mut DP_Timeline;
 }
 extern "C" {
-    pub fn DP_transient_timeline_at_noinc(
+    pub fn DP_transient_timeline_track_at_noinc(
         ttl: *mut DP_TransientTimeline,
         index: ::std::os::raw::c_int,
     ) -> *mut DP_Track;
 }
 extern "C" {
-    pub fn DP_transient_timeline_transient_at_noinc(
+    pub fn DP_transient_timeline_transient_track_at_noinc(
         ttl: *mut DP_TransientTimeline,
         index: ::std::os::raw::c_int,
         reserve: ::std::os::raw::c_int,

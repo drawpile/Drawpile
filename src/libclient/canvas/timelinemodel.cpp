@@ -96,8 +96,13 @@ void TimelineModel::setTimeline(const drawdance::Timeline &tl)
 	m_tracks.clear();
 	int trackCount = tl.trackCount();
 	m_tracks.reserve(trackCount);
+	m_lastFrameIndex = -1;
 	for(int i = 0; i < trackCount; ++i) {
 		m_tracks.append(trackToModel(tl.trackAt(i)));
+		int trackLastFrameIndex = m_tracks[i].lastFrameIndex;
+		if(trackLastFrameIndex > m_lastFrameIndex) {
+			m_lastFrameIndex = trackLastFrameIndex;
+		}
 	}
 	emit tracksChanged();
 }
@@ -119,10 +124,16 @@ TimelineTrack TimelineModel::trackToModel(const drawdance::Track &t)
 	int keyFrameCount = t.keyFrameCount();
 	QVector<TimelineKeyFrame> keyFrames;
 	keyFrames.reserve(keyFrameCount);
+	int lastFrameIndex = -1;
 	for(int i = 0; i < keyFrameCount; ++i) {
-		keyFrames.append(keyFrameToModel(t.keyFrameAt(i), t.frameIndexAt(i)));
+		int frameIndex = t.frameIndexAt(i);
+		keyFrames.append(keyFrameToModel(t.keyFrameAt(i), frameIndex));
+		if(frameIndex > lastFrameIndex) {
+			lastFrameIndex = frameIndex;
+		}
 	}
-	return {t.id(), t.title(), t.hidden(), t.onionSkin(), keyFrames};
+	return {t.id(),		   t.title(),	   t.hidden(),
+			t.onionSkin(), lastFrameIndex, keyFrames};
 }
 
 TimelineKeyFrame

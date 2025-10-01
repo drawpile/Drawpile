@@ -1191,6 +1191,8 @@ static bool handle_set_metadata_int(DP_AclState *acls, DP_Message *msg,
     case DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE:
     case DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT:
     case DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE_FRACTION:
+    case DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_FIRST:
+    case DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_LAST:
         feature = DP_FEATURE_TIMELINE;
         break;
     default:

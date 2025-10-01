@@ -6470,8 +6470,10 @@ void MainWindow::setupActions()
 	// Animation menu
 	//
 	QAction *showFlipbook = makeAction("showflipbook", tr("Flipbook")).icon("media-playback-start").statusTip(tr("Show animation preview window")).shortcut("Ctrl+F");
-	QAction *frameCountSet = makeAction("frame-count-set", tr("Change Frame Count...")).icon("edit-rename").noDefaultShortcut();
-	QAction *framerateSet = makeAction("framerate-set", tr("Change Frame Rate (FPS)...")).icon("edit-rename").noDefaultShortcut();
+	QAction *animationProperties =
+		makeAction("frame-count-set", tr("Change Frame Range or FPS..."))
+			.icon("kdenlive-show-video")
+			.noDefaultShortcut();
 	QAction *keyFrameSetLayer = makeAction("key-frame-set-layer", tr("Set Key Frame to Current Layer")).icon("keyframe").shortcut("Ctrl+Shift+F");
 	QAction *keyFrameSetEmpty = makeAction("key-frame-set-empty", tr("Set Blank Key Frame")).icon("keyframe-disable").shortcut("Ctrl+Shift+B");
 	QAction *keyFrameCut = makeAction("key-frame-cut", tr("Cut Key Frame")).icon("edit-cut").noDefaultShortcut();
@@ -6548,8 +6550,7 @@ void MainWindow::setupActions()
 	// clang-format on
 	QMenu *animationMenu = menuBar()->addMenu(tr("&Animation"));
 	animationMenu->addAction(showFlipbook);
-	animationMenu->addAction(frameCountSet);
-	animationMenu->addAction(framerateSet);
+	animationMenu->addAction(animationProperties);
 	animationMenu->addAction(exportAnimation);
 	animationMenu->addSeparator();
 	animationMenu->addAction(keyFrameSetLayer);
@@ -6666,8 +6667,7 @@ void MainWindow::setupActions()
 			trackDuplicate,
 			trackRetitle,
 			trackDelete,
-			frameCountSet,
-			framerateSet,
+			animationProperties,
 			frameNext,
 			framePrev,
 			keyFrameNext,

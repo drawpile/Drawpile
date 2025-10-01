@@ -498,6 +498,8 @@ extern "C" DP_CanvasState *DP_load_psd(DP_DrawContext *dc, DP_Input *input,
         assign_load_result(out_result, DP_LOAD_RESULT_SUCCESS);
         DP_transient_canvas_state_intuit_background(tcs);
         DP_transient_canvas_state_layer_routes_reindex(tcs, dc);
+        DP_transient_canvas_state_post_load_fixup(tcs);
+        DP_transient_canvas_state_timeline_cleanup(tcs);
         return DP_transient_canvas_state_persist(tcs);
     }
     else {

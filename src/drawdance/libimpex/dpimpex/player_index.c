@@ -753,7 +753,9 @@ static bool write_index_metadata(DP_BuildIndexEntryContext *e)
             DP_OUTPUT_INT32(DP_document_metadata_dpiy(dm)),
             DP_OUTPUT_INT32(DP_document_metadata_framerate(dm)),
             DP_OUTPUT_INT32(DP_document_metadata_framerate_fraction(dm)),
-            DP_OUTPUT_INT32(DP_document_metadata_frame_count(dm)))) {
+            DP_OUTPUT_INT32(DP_document_metadata_frame_count(dm)),
+            DP_OUTPUT_INT32(DP_document_metadata_frame_range_first(dm)),
+            DP_OUTPUT_INT32(DP_document_metadata_frame_range_last(dm)))) {
         return false;
     }
 
@@ -1559,12 +1561,15 @@ static bool read_index_metadata(DP_ReadSnapshotContext *c, size_t offset)
 {
     DP_debug("Read document metadata at offset %zu", offset);
     DP_BufferedInput *input = c->input;
-    int dpix, dpiy, framerate, framerate_fraction, frame_count;
+    int dpix, dpiy, framerate, framerate_fraction, frame_count,
+        frame_range_first, frame_range_last;
     bool ok = DP_buffered_input_seek(input, offset)
            && READ_INDEX(input, int32, dpix) && READ_INDEX(input, int32, dpiy)
            && READ_INDEX(input, int32, framerate)
            && READ_INDEX(input, int32, framerate_fraction)
-           && READ_INDEX(input, int32, frame_count);
+           && READ_INDEX(input, int32, frame_count)
+           && READ_INDEX(input, int32, frame_range_first)
+           && READ_INDEX(input, int32, frame_range_last);
     if (ok) {
         DP_TransientDocumentMetadata *tdm =
             DP_transient_canvas_state_transient_metadata(c->tcs);
@@ -1574,6 +1579,10 @@ static bool read_index_metadata(DP_ReadSnapshotContext *c, size_t offset)
         DP_transient_document_metadata_framerate_fraction_set(
             tdm, framerate_fraction);
         DP_transient_document_metadata_frame_count_set(tdm, frame_count);
+        DP_transient_document_metadata_frame_range_first_set(tdm,
+                                                             frame_range_first);
+        DP_transient_document_metadata_frame_range_last_set(tdm,
+                                                            frame_range_last);
         return true;
     }
     else {

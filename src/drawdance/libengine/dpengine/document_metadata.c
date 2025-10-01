@@ -35,6 +35,8 @@ struct DP_DocumentMetadata {
     const int framerate;
     const int framerate_fraction;
     const int frame_count;
+    const int frame_range_first;
+    const int frame_range_last;
 };
 
 struct DP_TransientDocumentMetadata {
@@ -45,6 +47,8 @@ struct DP_TransientDocumentMetadata {
     int framerate;
     int framerate_fraction;
     int frame_count;
+    int frame_range_first;
+    int frame_range_last;
 };
 
 #else
@@ -57,6 +61,8 @@ struct DP_DocumentMetadata {
     int framerate;
     int framerate_fraction;
     int frame_count;
+    int frame_range_first;
+    int frame_range_last;
 };
 
 #endif
@@ -92,12 +98,14 @@ void DP_document_metadata_effective_framerate_split(double effective_framerate,
 
 static void *allocate_document_metadata(bool transient, int dpix, int dpiy,
                                         int framerate, int framerate_fraction,
-                                        int frame_count)
+                                        int frame_count, int frame_range_first,
+                                        int frame_range_last)
 {
     DP_TransientDocumentMetadata *tdm = DP_malloc(sizeof(*tdm));
     *tdm = (DP_TransientDocumentMetadata){
-        DP_ATOMIC_INIT(1), transient,          dpix,       dpiy,
-        framerate,         framerate_fraction, frame_count};
+        DP_ATOMIC_INIT(1), transient,          dpix,        dpiy,
+        framerate,         framerate_fraction, frame_count, frame_range_first,
+        frame_range_last};
     return tdm;
 }
 
@@ -108,7 +116,9 @@ static void *allocate_document_metadata_default(bool transient)
         DP_DOCUMENT_METADATA_DPIY_DEFAULT,
         DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT,
         DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_DEFAULT,
-        DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT);
+        DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT,
+        DP_DOCUMENT_METADATA_FRAME_RANGE_FIRST_DEFAULT,
+        DP_DOCUMENT_METADATA_FRAME_RANGE_LAST_DEFAULT);
 }
 
 
@@ -206,14 +216,49 @@ int DP_document_metadata_frame_count(DP_DocumentMetadata *dm)
     return dm->frame_count;
 }
 
+int DP_document_metadata_frame_range_first(DP_DocumentMetadata *dm)
+{
+    DP_ASSERT(dm);
+    DP_ASSERT(DP_atomic_get(&dm->refcount) > 0);
+    return dm->frame_range_first;
+}
+
+int DP_document_metadata_frame_range_last(DP_DocumentMetadata *dm)
+{
+    DP_ASSERT(dm);
+    DP_ASSERT(DP_atomic_get(&dm->refcount) > 0);
+    return DP_min_int(INT32_MAX - 1, dm->frame_range_last);
+}
+
+bool DP_document_metadata_effective_frame_range(DP_DocumentMetadata *dm,
+                                                int *out_first, int *out_last)
+{
+    DP_ASSERT(dm);
+    DP_ASSERT(DP_atomic_get(&dm->refcount) > 0);
+
+    int limit = DP_max_int(1, dm->frame_count) - 1;
+    int first = DP_min_int(limit, dm->frame_range_first);
+    int last = DP_min_int(limit, dm->frame_range_last);
+    bool range_valid = first >= 0 && last >= 0 && first <= last;
+
+    if (out_first) {
+        *out_first = range_valid ? first : 0;
+    }
+    if (out_last) {
+        *out_last = range_valid ? last : limit;
+    }
+    return range_valid;
+}
+
 
 DP_TransientDocumentMetadata *
 DP_transient_document_metadata_new(DP_DocumentMetadata *dm)
 {
     DP_ASSERT(dm);
     DP_ASSERT(DP_atomic_get(&dm->refcount) > 0);
-    return allocate_document_metadata(true, dm->dpix, dm->dpiy, dm->framerate,
-                                      dm->framerate_fraction, dm->frame_count);
+    return allocate_document_metadata(
+        true, dm->dpix, dm->dpiy, dm->framerate, dm->framerate_fraction,
+        dm->frame_count, dm->frame_range_first, dm->frame_range_last);
 }
 
 DP_TransientDocumentMetadata *DP_transient_document_metadata_new_init(void)
@@ -281,6 +326,25 @@ int DP_transient_document_metadata_frame_count(
     return DP_document_metadata_frame_count((DP_DocumentMetadata *)tdm);
 }
 
+int DP_transient_document_metadata_frame_range_first(
+    DP_TransientDocumentMetadata *tdm)
+{
+    return DP_document_metadata_frame_range_first((DP_DocumentMetadata *)tdm);
+}
+
+int DP_transient_document_metadata_frame_range_last(
+    DP_TransientDocumentMetadata *tdm)
+{
+    return DP_document_metadata_frame_range_last((DP_DocumentMetadata *)tdm);
+}
+
+bool DP_transient_document_metadata_effective_frame_range(
+    DP_TransientDocumentMetadata *tdm, int *out_first, int *out_last)
+{
+    return DP_document_metadata_effective_frame_range(
+        (DP_DocumentMetadata *)tdm, out_first, out_last);
+}
+
 void DP_transient_document_metadata_dpix_set(DP_TransientDocumentMetadata *tdm,
                                              int dpix)
 {
@@ -339,4 +403,22 @@ void DP_transient_document_metadata_frame_count_set(
     DP_ASSERT(DP_atomic_get(&tdm->refcount) > 0);
     DP_ASSERT(tdm->transient);
     tdm->frame_count = DP_clamp_int(frame_count, 1, INT32_MAX);
+}
+
+void DP_transient_document_metadata_frame_range_first_set(
+    DP_TransientDocumentMetadata *tdm, int frame_range_first)
+{
+    DP_ASSERT(tdm);
+    DP_ASSERT(DP_atomic_get(&tdm->refcount) > 0);
+    DP_ASSERT(tdm->transient);
+    tdm->frame_range_first = frame_range_first;
+}
+
+void DP_transient_document_metadata_frame_range_last_set(
+    DP_TransientDocumentMetadata *tdm, int frame_range_last)
+{
+    DP_ASSERT(tdm);
+    DP_ASSERT(DP_atomic_get(&tdm->refcount) > 0);
+    DP_ASSERT(tdm->transient);
+    tdm->frame_range_last = DP_min_int(INT32_MAX - 1, frame_range_last);
 }

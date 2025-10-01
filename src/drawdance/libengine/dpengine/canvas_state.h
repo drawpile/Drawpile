@@ -257,6 +257,10 @@ void DP_transient_canvas_state_layer_routes_reindex(
 
 void DP_transient_canvas_state_timeline_cleanup(DP_TransientCanvasState *tcs);
 
+// Fixes up stuff from older files after loading them. Currently, this just
+// converts canvases that don't use the timeline frame ranges into ones that do.
+void DP_transient_canvas_state_post_load_fixup(DP_TransientCanvasState *tcs);
+
 DP_LayerList *
 DP_transient_canvas_state_layers_noinc(DP_TransientCanvasState *tcs);
 

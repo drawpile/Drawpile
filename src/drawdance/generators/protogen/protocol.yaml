@@ -1024,6 +1024,8 @@ SetMetadataInt:
               - Framerate
               - FrameCount
               - FramerateFraction
+              - FrameRangeFirst
+              - FrameRangeLast
         - value i32
 
 LayerTreeCreate:

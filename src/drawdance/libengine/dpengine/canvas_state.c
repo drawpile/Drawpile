@@ -1039,6 +1039,12 @@ static DP_CanvasState *handle_set_metadata_int(DP_CanvasState *cs,
     case DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE_FRACTION:
         set_field = DP_transient_document_metadata_framerate_fraction_set;
         break;
+    case DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_FIRST:
+        set_field = DP_transient_document_metadata_frame_range_first_set;
+        break;
+    case DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_LAST:
+        set_field = DP_transient_document_metadata_frame_range_last_set;
+        break;
     default:
         DP_error_set("Set metadata int: unknown field %d", field);
         return NULL;
@@ -2463,6 +2469,33 @@ void DP_transient_canvas_state_timeline_cleanup(DP_TransientCanvasState *tcs)
                 }
             }
         }
+    }
+}
+
+void DP_transient_canvas_state_post_load_fixup(DP_TransientCanvasState *tcs)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+
+    // Older files do not use frame ranges, they always start from 1 and go to
+    // frame_count - 1. Since it's annoying in practice to not be able to move
+    // frames beyond the end of the timeline, we change the format here.
+    DP_DocumentMetadata *dm = tcs->metadata;
+    int frame_range_first, frame_range_last;
+    DP_document_metadata_effective_frame_range(dm, &frame_range_first,
+                                               &frame_range_last);
+    if (frame_range_last >= DP_document_metadata_frame_count(dm) - 1) {
+        DP_debug("Fixing up frame range from %d to %d", frame_range_first,
+                 frame_range_last);
+        DP_TransientDocumentMetadata *tdm =
+            DP_transient_canvas_state_transient_metadata(tcs);
+        DP_transient_document_metadata_frame_count_set(tdm,
+                                                       frame_range_last + 101);
+        DP_transient_document_metadata_frame_range_first_set(tdm,
+                                                             frame_range_first);
+        DP_transient_document_metadata_frame_range_last_set(tdm,
+                                                            frame_range_last);
     }
 }
 

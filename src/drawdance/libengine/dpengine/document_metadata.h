@@ -29,6 +29,8 @@
 #define DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT          24
 #define DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_DEFAULT 0
 #define DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT        24
+#define DP_DOCUMENT_METADATA_FRAME_RANGE_FIRST_DEFAULT  -1
+#define DP_DOCUMENT_METADATA_FRAME_RANGE_LAST_DEFAULT   -1
 
 #define DP_DOCUMENT_METADATA_FRAMERATE_FRACTION_MULTIPLIER 1000000
 
@@ -73,6 +75,14 @@ double DP_document_metadata_effective_framerate(DP_DocumentMetadata *dm);
 
 int DP_document_metadata_frame_count(DP_DocumentMetadata *dm);
 
+int DP_document_metadata_frame_range_first(DP_DocumentMetadata *dm);
+
+int DP_document_metadata_frame_range_last(DP_DocumentMetadata *dm);
+
+// Returns true if first and last values are valid.
+bool DP_document_metadata_effective_frame_range(DP_DocumentMetadata *dm,
+                                                int *out_first, int *out_last);
+
 
 DP_TransientDocumentMetadata *
 DP_transient_document_metadata_new(DP_DocumentMetadata *dm);
@@ -104,6 +114,15 @@ double DP_transient_document_metadata_effective_framerate(
 int DP_transient_document_metadata_frame_count(
     DP_TransientDocumentMetadata *tdm);
 
+int DP_transient_document_metadata_frame_range_first(
+    DP_TransientDocumentMetadata *tdm);
+
+int DP_transient_document_metadata_frame_range_last(
+    DP_TransientDocumentMetadata *tdm);
+
+bool DP_transient_document_metadata_effective_frame_range(
+    DP_TransientDocumentMetadata *tdm, int *out_first, int *out_last);
+
 void DP_transient_document_metadata_dpix_set(DP_TransientDocumentMetadata *tdm,
                                              int dpix);
 
@@ -122,8 +141,11 @@ void DP_transient_document_metadata_effective_framerate_set(
 void DP_transient_document_metadata_frame_count_set(
     DP_TransientDocumentMetadata *tdm, int frame_count);
 
-void DP_transient_document_metadata_use_timeline_set(
-    DP_TransientDocumentMetadata *tdm, int use_timeline);
+void DP_transient_document_metadata_frame_range_first_set(
+    DP_TransientDocumentMetadata *tdm, int frame_range_first);
+
+void DP_transient_document_metadata_frame_range_last_set(
+    DP_TransientDocumentMetadata *tdm, int frame_range_last);
 
 
 #endif

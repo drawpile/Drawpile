@@ -810,6 +810,13 @@ static void ora_write_timeline_xml(DP_SaveOraContext *c, DP_Output *output,
     if (frame_count > 0 && track_count > 0) {
         DP_OUTPUT_PRINT_LITERAL(output, "<drawpile:timeline");
         ORA_APPEND_ATTR(c, output, "frames", "%d", frame_count);
+
+        int first, last;
+        if (DP_document_metadata_effective_frame_range(dm, &first, &last)) {
+            ORA_APPEND_ATTR(c, output, "first", "%d", first);
+            ORA_APPEND_ATTR(c, output, "last", "%d", last);
+        }
+
         DP_OUTPUT_PRINT_LITERAL(output, ">");
         for (int i = 0; i < track_count; ++i) {
             ora_write_track_xml(c, output, DP_timeline_track_at_noinc(tl, i));

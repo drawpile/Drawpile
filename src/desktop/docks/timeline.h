@@ -4,11 +4,9 @@
 #include "desktop/docks/dockbase.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/timelinewidget.h"
-#include "libclient/utils/debouncetimer.h"
 
 class QAction;
-class QDoubleSpinBox;
-class QSpinBox;
+class QPushButton;
 
 namespace canvas {
 class CanvasModel;
@@ -44,9 +42,6 @@ public:
 
 	void updateKeyFrameColorMenuIcon();
 
-public slots:
-	void setFramerate(double framerate);
-	void setFrameCount(int frameCount);
 	void setCurrentLayer(int layerId);
 	void setFeatureAccess(bool access);
 
@@ -58,11 +53,8 @@ signals:
 	void trackHidden(int trackId, bool hidden);
 	void trackOnionSkinEnabled(int trackId, bool onionSkin);
 
-private slots:
-	void setCurrentFrame(int frame);
-	void setLocked(bool locked);
-
 private:
+	void setLocked(bool locked);
 	void setUpTitleWidget(
 		const widgets::TimelineWidget::Actions &actions,
 		QAction *layerViewNormal, QAction *layerViewCurrentFrame,
@@ -73,15 +65,12 @@ private:
 		widgets::GroupedToolButton::GroupPosition position);
 
 	void updateControlsEnabled(bool access, bool locked);
-
-	void updateFrame(int frame);
+	void updateFramerateText(double framerate);
 
 	widgets::TimelineWidget *m_widget;
-	QSpinBox *m_frameSpinner;
-	QDoubleSpinBox *m_framerateSpinner;
-	DebounceTimer m_framerateDebounce;
-	bool m_featureAccessEnabled;
-	bool m_locked;
+	QPushButton *m_propertiesButton = nullptr;
+	bool m_featureAccessEnabled = true;
+	bool m_locked = false;
 };
 
 }
