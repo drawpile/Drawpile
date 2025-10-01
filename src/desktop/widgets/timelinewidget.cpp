@@ -2,6 +2,7 @@
 extern "C" {
 #include <dpengine/key_frame.h>
 }
+#include "desktop/dialogs/animationpropertiesdialog.h"
 #include "desktop/dialogs/keyframepropertiesdialog.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
@@ -28,16 +29,19 @@ extern "C" {
 #include <QScrollBar>
 #include <QSignalBlocker>
 #include <algorithm>
+#include <limits>
 
 namespace widgets {
 
 enum class TrackAction { None, ToggleVisible, ToggleOnionSkin };
 
+enum class TargetHeader { None, Header, RangeFirst, RangeLast };
+
 struct TimelineWidget::Target {
 	int uiTrackIndex;
 	int trackId;
 	int frameIndex;
-	bool onHeader;
+	TargetHeader header;
 	TrackAction action;
 };
 
@@ -57,6 +61,7 @@ struct Exposure {
 };
 
 struct TimelineWidget::Private {
+	TimelineWidget *const q;
 	canvas::CanvasModel *canvas = nullptr;
 
 	bool haveActions = false;
@@ -77,8 +82,8 @@ struct TimelineWidget::Private {
 	int currentTrackId = 0;
 	int currentFrame = 0;
 	int nextTrackId = 0;
-	Target hoverTarget = {-1, 0, -1, false, TrackAction::None};
-	bool pressedOnHeader = false;
+	Target hoverTarget = {-1, 0, -1, TargetHeader::None, TrackAction::None};
+	TargetHeader pressedHeader = TargetHeader::None;
 	bool editable = false;
 	Drag drag = Drag::None;
 	Drag dragHover = Drag::None;
@@ -89,8 +94,13 @@ struct TimelineWidget::Private {
 	int selectedLayerId = 0;
 	QHash<QPair<int, int>, int> layerIdByKeyFrame;
 
-	QScrollBar *verticalScroll;
-	QScrollBar *horizontalScroll;
+	QScrollBar *verticalScroll = nullptr;
+	QScrollBar *horizontalScroll = nullptr;
+
+	Private(TimelineWidget *widget)
+		: q(widget)
+	{
+	}
 
 	const QVector<canvas::TimelineTrack> &getTracks() const
 	{
@@ -107,6 +117,64 @@ struct TimelineWidget::Private {
 	int frameCount() const
 	{
 		return canvas ? canvas->metadata()->frameCount() : 0;
+	}
+
+	int scrollableFrameCount() const
+	{
+		if(canvas) {
+			canvas::DocumentMetadata *metadata = canvas->metadata();
+			int frameCount = metadata->frameCount();
+			int lastFrame = qMax(
+				metadata->frameRangeLast(),
+				canvas->timeline()->lastFrameIndex());
+			return qMin(frameCount, lastFrame + EXTRA_VISIBLE_FRAME_COUNT);
+		} else {
+			return 0;
+		}
+	}
+
+	int visibleFrameCount(bool includeMinimumVisibleFrameCount = true) const
+	{
+		if(canvas) {
+			canvas::DocumentMetadata *metadata = canvas->metadata();
+			int frameCount = metadata->frameCount();
+			int lastFrame = qMax(
+				metadata->frameRangeLast(),
+				canvas->timeline()->lastFrameIndex());
+			int w = q->width() - verticalScroll->width() - headerWidth;
+			int minimumVisibleFrameCount = w / columnWidth + 1;
+			int softFrameCount = lastFrame + minimumVisibleFrameCount;
+			if(softFrameCount > frameCount) {
+				return frameCount;
+			}
+
+			if(includeMinimumVisibleFrameCount &&
+			   minimumVisibleFrameCount > softFrameCount) {
+				softFrameCount = minimumVisibleFrameCount;
+			}
+
+			return qMin(frameCount, softFrameCount);
+		} else {
+			return 0;
+		}
+	}
+
+	int frameRangeFirst() const
+	{
+		if(canvas) {
+			return canvas->metadata()->frameRangeFirst();
+		} else {
+			return 0;
+		}
+	}
+
+	int frameRangeLast() const
+	{
+		if(canvas) {
+			return canvas->metadata()->frameRangeLast();
+		} else {
+			return 0;
+		}
 	}
 
 	double effectiveFramerate() const
@@ -342,18 +410,26 @@ struct TimelineWidget::Private {
 		return keyFrame ? keyFrame->layerId : 0;
 	}
 
-	int bodyWidth() const { return columnWidth * frameCount() - xScroll; }
+	int bodyWidth() const
+	{
+		return columnWidth * visibleFrameCount() - xScroll;
+	}
+
+	int fullBodyWidth() const { return columnWidth * frameCount() - xScroll; }
+
 	int bodyHeight() const { return rowHeight * trackCount() - yScroll; }
 
 	QRect frameHeaderRect() const
 	{
-		return QRect{headerWidth, 0, bodyWidth() + 1, rowHeight};
+		return QRect(headerWidth, 0, bodyWidth() + 1, rowHeight);
 	}
 
 	QRect trackSidebarRect() const
 	{
 		return QRect{0, rowHeight, headerWidth, bodyHeight() + 1};
 	}
+
+	qreal rangeHandleInsetX() const { return qreal(columnWidth) / 6.0; }
 
 	int trackDropIndex(int y) const
 	{
@@ -373,8 +449,8 @@ struct TimelineWidget::Private {
 };
 
 TimelineWidget::TimelineWidget(QWidget *parent)
-	: QWidget{parent}
-	, d{new Private}
+	: QWidget(parent)
+	, d(new Private(this))
 {
 	setAcceptDrops(true);
 	setMouseTracking(true);
@@ -412,6 +488,9 @@ void TimelineWidget::setCanvas(canvas::CanvasModel *canvas)
 	connect(
 		canvas->metadata(), &canvas::DocumentMetadata::frameCountChanged, this,
 		&TimelineWidget::updateFrameCount);
+	connect(
+		canvas->metadata(), &canvas::DocumentMetadata::frameRangeChanged, this,
+		&TimelineWidget::updateFrameRange);
 	updateTracks();
 	updateFrameCount();
 }
@@ -450,15 +529,14 @@ void TimelineWidget::setActions(const Actions &actions)
 		menu->addAction(actions.trackVisible);
 		menu->addAction(actions.trackOnionSkin);
 		menu->addSeparator();
-		menu->addAction(actions.frameCountSet);
-		menu->addAction(actions.framerateSet);
-		menu->addSeparator();
 		menu->addAction(actions.frameNext);
 		menu->addAction(actions.framePrev);
 		menu->addAction(actions.keyFrameNext);
 		menu->addAction(actions.keyFramePrev);
 		menu->addAction(actions.trackAbove);
 		menu->addAction(actions.trackBelow);
+		menu->addSeparator();
+		menu->addAction(actions.animationProperties);
 	}
 
 	connect(
@@ -518,11 +596,8 @@ void TimelineWidget::setActions(const Actions &actions)
 		actions.trackDelete, &QAction::triggered, this,
 		&TimelineWidget::deleteTrack);
 	connect(
-		actions.frameCountSet, &QAction::triggered, this,
-		&TimelineWidget::setFrameCount);
-	connect(
-		actions.framerateSet, &QAction::triggered, this,
-		&TimelineWidget::setFramerate);
+		actions.animationProperties, &QAction::triggered, this,
+		&TimelineWidget::showAnimationProperties);
 	connect(
 		actions.frameNext, &QAction::triggered, this,
 		&TimelineWidget::nextFrame);
@@ -617,46 +692,6 @@ int TimelineWidget::currentFrame() const
 	return d->currentFrame;
 }
 
-void TimelineWidget::changeFramerate(double framerate)
-{
-	if(d->editable) {
-		bool compatibilityMode = d->canvas && d->canvas->isCompatibilityMode();
-		net::MessageList msgs;
-		msgs.reserve(compatibilityMode ? 2 : 3);
-
-		uint8_t contextId = d->canvas->localUserId();
-		msgs.append(net::makeUndoPointMessage(contextId));
-
-		if(compatibilityMode) {
-			msgs.append(
-				net::makeSetMetadataIntMessage(
-					contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE,
-					qMax(1, qRound(framerate))));
-		} else {
-			int whole, fraction;
-			drawdance::DocumentMetadata::splitEffectiveFramerate(
-				framerate, whole, fraction);
-			msgs.append(
-				net::makeSetMetadataIntMessage(
-					contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE, whole));
-			msgs.append(
-				net::makeSetMetadataIntMessage(
-					contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE_FRACTION,
-					fraction));
-		}
-
-		emit timelineEditCommands(msgs.size(), msgs.constData());
-	}
-}
-
-void TimelineWidget::changeFrameCount(int frameCount)
-{
-	emitCommand([&](uint8_t contextId) {
-		return net::makeSetMetadataIntMessage(
-			contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT, frameCount);
-	});
-}
-
 bool TimelineWidget::event(QEvent *event)
 {
 	if(event->type() == QEvent::ToolTip) {
@@ -715,7 +750,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 
 	const QVector<canvas::TimelineTrack> tracks = d->getTracks();
 	int trackCount = tracks.size();
-	int frameCount = d->frameCount();
+	int visibleFrameCount = d->visibleFrameCount();
 	int currentTrackIndex = d->trackIndexById(d->currentTrackId);
 	int currentFrame = d->currentFrame;
 
@@ -726,6 +761,14 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	int headerWidth = d->headerWidth;
 	int xScroll = d->xScroll;
 	int yScroll = d->yScroll;
+
+	int frameRangeFirst = d->frameRangeFirst();
+	int frameRangeLast = d->frameRangeLast();
+	if(d->pressedHeader == TargetHeader::RangeFirst) {
+		frameRangeFirst = qMin(currentFrame, frameRangeLast);
+	} else if(d->pressedHeader == TargetHeader::RangeLast) {
+		frameRangeLast = qMax(currentFrame, frameRangeFirst);
+	}
 
 	QPainter painter{this};
 	QPalette pal = palette();
@@ -812,7 +855,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 				}
 
 				int until = j < keyFrameCount - 1 ? keyFrames[j + 1].frameIndex
-												  : frameCount;
+												  : visibleFrameCount;
 				int count = until - frame - 1;
 				if(count > 0) {
 					QColor trailingColor = brush.color();
@@ -828,16 +871,8 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	}
 	painter.setOpacity(1.0);
 
-	// Body grid or no tracks message.
-	if(trackCount == 0) {
-		painter.setPen(textColor);
-		painter.drawText(
-			bodyRect,
-			tr("There's no tracks yet.\n"
-			   "Add one using the ＋ button above\n"
-			   "or via Animation ▸ New Track."),
-			Qt::AlignHCenter | Qt::AlignVCenter);
-	} else {
+	// Body grid
+	if(trackCount != 0) {
 		painter.setPen(gridColor);
 		painter.setBrush(Qt::NoBrush);
 		int firstX = columnWidth - (xScroll % columnWidth);
@@ -862,7 +897,11 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 
 	// Frame numbers along the top.
 	painter.setClipRect(d->frameHeaderRect());
-	for(int i = 0; i < frameCount; ++i) {
+	bool nextInRange = 0 >= frameRangeFirst && 0 <= frameRangeLast;
+	for(int i = 0; i < visibleFrameCount; ++i) {
+		bool currentInRange = nextInRange;
+		nextInRange = (i + 1) >= frameRangeFirst && (i + 1) <= frameRangeLast;
+
 		int x = headerWidth + i * columnWidth - xScroll;
 		bool isSelected = d->currentFrame == i;
 		if(isSelected) {
@@ -874,8 +913,11 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		painter.drawText(
 			x, 0, columnWidth, rowHeight, Qt::AlignCenter | Qt::AlignVCenter,
 			QString::number(i + 1));
-		painter.setPen(outlineColor);
-		painter.drawLine(x + columnWidth, 0, x + columnWidth, rowHeight);
+
+		if(currentInRange || nextInRange) {
+			painter.setPen(outlineColor);
+			painter.drawLine(x + columnWidth, 0, x + columnWidth, rowHeight);
+		}
 	}
 
 	// Tracks along the side.
@@ -931,6 +973,62 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		int y = rowHeight + target.uiTrackIndex * rowHeight - yScroll;
 		painter.drawRect(x, y, columnWidth, rowHeight);
 	}
+
+	if(!d->canvas->isCompatibilityMode()) {
+		QRect coverRect(headerWidth, 0, d->bodyWidth() + 1, h);
+		painter.setClipRect(coverRect);
+		painter.setPen(Qt::NoPen);
+		painter.setBrush(bodyColor);
+		painter.setOpacity(0.6);
+
+		QRect leftCoverRect(
+			coverRect.topLeft(),
+			QPoint(
+				headerWidth + frameRangeFirst * columnWidth - xScroll - 1,
+				coverRect.bottom()));
+		painter.drawRect(leftCoverRect);
+
+		QRect rightCoverRect(
+			QPoint(
+				headerWidth + (frameRangeLast + 1) * columnWidth - xScroll + 1,
+				coverRect.top()),
+			coverRect.bottomRight());
+		painter.drawRect(rightCoverRect);
+
+		painter.setBrush(pal.highlightedText());
+		painter.setOpacity(0.4);
+
+		qreal leftHandle = qreal(leftCoverRect.right()) + 1.0;
+		qreal rightHandle = qreal(rightCoverRect.left()) - 1.0;
+		qreal handleBottom = qreal(rowHeight);
+		qreal handleInsetX = d->rangeHandleInsetX();
+		qreal handleInsetY = qreal(rowHeight) / 6.0;
+		painter.drawPolygon(QPolygonF({
+			QPointF(leftHandle, 0.0),
+			QPointF(leftHandle, handleBottom),
+			QPointF(leftHandle + handleInsetX, handleBottom - handleInsetY),
+			QPointF(leftHandle + handleInsetX, handleInsetY),
+		}));
+		painter.drawPolygon(QPolygonF({
+			QPointF(rightHandle, 0.0),
+			QPointF(rightHandle, handleBottom),
+			QPointF(rightHandle - handleInsetX, handleBottom - handleInsetY),
+			QPointF(rightHandle - handleInsetX, handleInsetY),
+		}));
+	}
+
+	if(trackCount == 0) {
+		painter.setOpacity(1.0);
+		painter.setClipRect(QRect(), Qt::NoClip);
+		painter.setPen(textColor);
+		painter.setBrush(Qt::NoBrush);
+		painter.drawText(
+			bodyRect,
+			tr("There's no tracks yet.\n"
+			   "Add one using the ＋ button above\n"
+			   "or via Animation ▸ New Track."),
+			Qt::AlignHCenter | Qt::AlignVCenter);
+	}
 }
 
 void TimelineWidget::resizeEvent(QResizeEvent *event)
@@ -982,6 +1080,16 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 	d->hoverTarget = target;
 
 	Drag dragType = d->drag;
+	if((target.header == TargetHeader::RangeFirst ||
+		target.header == TargetHeader::RangeLast) &&
+	   event->buttons() == Qt::NoButton) {
+		setCursor(Qt::SizeHorCursor);
+	} else if(
+		d->pressedHeader != TargetHeader::RangeFirst &&
+		d->pressedHeader != TargetHeader::RangeLast) {
+		setCursor(Qt::ArrowCursor);
+	}
+
 	bool shouldDrag = d->editable &&
 					  ((dragType == Drag::Track && d->currentTrack()) ||
 					   (dragType == Drag::KeyFrame && d->currentKeyFrame())) &&
@@ -1039,7 +1147,8 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 #else
 		drag->exec(d->dropAction); // Qt takes ownership of the QDrag.
 #endif
-	} else if(d->pressedOnHeader && target.frameIndex != -1) {
+	} else if(
+		d->pressedHeader != TargetHeader::None && target.frameIndex != -1) {
 		setCurrent(0, target.frameIndex, true, true);
 	}
 }
@@ -1053,7 +1162,6 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 	Drag drag = Drag::None;
 	Qt::DropAction dropAction = Qt::MoveAction;
 	if(button == Qt::LeftButton) {
-		d->pressedOnHeader = target.onHeader;
 		if(target.action != TrackAction::None) {
 			executeTargetAction(target);
 			event->accept();
@@ -1061,6 +1169,12 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 			drag = Drag::Track;
 		} else if(d->keyFrameBy(target.trackId, target.frameIndex)) {
 			drag = Drag::KeyFrame;
+		} else {
+			d->pressedHeader = target.header;
+			if(target.header == TargetHeader::RangeFirst ||
+			   target.header == TargetHeader::RangeLast) {
+				setCursor(Qt::SizeHorCursor);
+			}
 		}
 	} else if(button == Qt::MiddleButton) {
 		if(d->keyFrameBy(target.trackId, target.frameIndex)) {
@@ -1101,7 +1215,16 @@ void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 void TimelineWidget::mouseReleaseEvent(QMouseEvent *event)
 {
 	if(event->button() == Qt::LeftButton) {
-		d->pressedOnHeader = false;
+		if(d->pressedHeader == TargetHeader::RangeFirst) {
+			int frameRangeFirst =
+				qBound(0, d->currentFrame, d->frameRangeLast());
+			setAnimationProperties(-1.0, frameRangeFirst, -1);
+		} else if(d->pressedHeader == TargetHeader::RangeLast) {
+			int frameRangeLast =
+				qBound(d->frameRangeFirst(), d->currentFrame, d->frameCount());
+			setAnimationProperties(-1.0, -1, frameRangeLast);
+		}
+		d->pressedHeader = TargetHeader::None;
 		d->drag = Drag::None;
 	}
 }
@@ -1151,7 +1274,7 @@ void TimelineWidget::dragMoveEvent(QDragMoveEvent *event)
 	} else if(dragType == int(Drag::KeyFrame)) {
 		QRect rect{
 			d->headerWidth, d->rowHeight,
-			qMin(width() - d->headerWidth, d->bodyWidth()),
+			qMin(width() - d->headerWidth, d->fullBodyWidth()),
 			qMin(height() - d->rowHeight, d->bodyHeight())};
 		if(event->source() == this && event->answerRect().intersects(rect)) {
 			event->accept(rect);
@@ -1544,40 +1667,147 @@ void TimelineWidget::deleteTrack()
 	});
 }
 
-void TimelineWidget::setFrameCount()
+void TimelineWidget::showAnimationProperties()
 {
-	if(d->editable) {
-		utils::getOrRaiseInputInt(
-			this, QStringLiteral("framecountdlg"), tr("Change Frame Count"),
-			tr("Frame Count (key frames beyond this point will be deleted)"),
-			d->frameCount(), 1, 9999, [this](int frameCount) {
-				changeFrameCount(frameCount);
-			});
+	if(d->editable && d->canvas) {
+		QString objectName = QStringLiteral("animationpropertiesdialog");
+		dialogs::AnimationPropertiesDialog *dlg =
+			findChild<dialogs::AnimationPropertiesDialog *>(
+				objectName, Qt::FindDirectChildrenOnly);
+		if(dlg) {
+			dlg->activateWindow();
+			dlg->raise();
+		} else {
+			canvas::DocumentMetadata *metadata = d->canvas->metadata();
+			dlg = new dialogs::AnimationPropertiesDialog(
+				metadata->framerate(), metadata->frameRangeFirst(),
+				metadata->frameRangeLast(), d->canvas->isCompatibilityMode(),
+				this);
+			dlg->setObjectName(objectName);
+			dlg->setAttribute(Qt::WA_DeleteOnClose);
+			utils::showWindow(dlg);
+			connect(
+				dlg, &dialogs::AnimationPropertiesDialog::propertiesChanged,
+				this, &TimelineWidget::setAnimationProperties);
+		}
 	}
 }
 
-void TimelineWidget::setFramerate()
+void TimelineWidget::setAnimationProperties(
+	double framerate, int frameRangeFirst, int frameRangeLast)
 {
-	if(d->editable) {
-		utils::getOrRaiseInputDouble(
-			this, QStringLiteral("frameratedlg"), tr("Change Framerate"),
-			tr("Frames Per Second (FPS)"), 2, d->effectiveFramerate(), 0.01,
-			999.99, [this](double framerate) {
-				changeFramerate(framerate);
-			});
+	if(d->editable && d->canvas) {
+		bool compatibilityMode = d->canvas->isCompatibilityMode();
+		const canvas::DocumentMetadata *metadata = d->canvas->metadata();
+
+		bool framerateChanged =
+			framerate != -1 && metadata->framerate() != framerate;
+		bool frameRangeFirstChanged =
+			!compatibilityMode && frameRangeFirst != -1 &&
+			frameRangeFirst != metadata->frameRangeFirst();
+		bool frameRangeLastChanged =
+			!compatibilityMode && frameRangeLast != -1 &&
+			frameRangeLast != metadata->frameRangeLast();
+
+		int frameCount;
+		if(compatibilityMode) {
+			frameCount = frameRangeLast + 1;
+		} else if(frameRangeLastChanged) {
+			// Set the hard frame count limit to be 100 away from the last
+			// frame to give the user some room at the end to spill into.
+			int actualLastFrame = frameRangeLast;
+			for(const canvas::TimelineTrack &track : d->getTracks()) {
+				for(const canvas::TimelineKeyFrame &keyFrame :
+					track.keyFrames) {
+					int keyFrameIndex = keyFrame.frameIndex;
+					if(actualLastFrame < keyFrameIndex) {
+						actualLastFrame = keyFrameIndex;
+					}
+				}
+			}
+
+			int maxCount = std::numeric_limits<int32_t>::max();
+			frameCount = actualLastFrame < maxCount - EXTRA_FRAME_COUNT
+							 ? actualLastFrame + EXTRA_FRAME_COUNT
+							 : maxCount;
+		} else {
+			frameCount = -1;
+		}
+
+		bool frameCountChanged =
+			frameCount > 0 && frameCount != metadata->frameCount();
+		int changes = (framerateChanged ? (compatibilityMode ? 1 : 2) : 0) +
+					  (frameRangeFirstChanged ? 1 : 0) +
+					  (frameRangeLastChanged ? 1 : 0) +
+					  (frameCountChanged ? 1 : 0);
+		if(changes != 0) {
+			net::MessageList msgs;
+			msgs.reserve(changes + 1);
+
+			uint8_t contextId = d->canvas->localUserId();
+			msgs.append(net::makeUndoPointMessage(contextId));
+
+			if(framerateChanged) {
+				if(compatibilityMode) {
+					msgs.append(
+						net::makeSetMetadataIntMessage(
+							contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE,
+							qMax(1, qRound(framerate))));
+				} else {
+					int whole, fraction;
+					drawdance::DocumentMetadata::splitEffectiveFramerate(
+						framerate, whole, fraction);
+					msgs.append(
+						net::makeSetMetadataIntMessage(
+							contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE,
+							whole));
+					msgs.append(
+						net::makeSetMetadataIntMessage(
+							contextId,
+							DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE_FRACTION,
+							fraction));
+				}
+			}
+
+			if(frameCountChanged) {
+				msgs.append(
+					net::makeSetMetadataIntMessage(
+						contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT,
+						frameCount));
+			}
+
+			if(frameRangeFirstChanged) {
+				msgs.append(
+					net::makeSetMetadataIntMessage(
+						contextId,
+						DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_FIRST,
+						frameRangeFirst));
+			}
+
+			if(frameRangeLastChanged) {
+				msgs.append(
+					net::makeSetMetadataIntMessage(
+						contextId,
+						DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_LAST,
+						frameRangeLast));
+			}
+
+			emit timelineEditCommands(msgs.size(), msgs.constData());
+		}
 	}
 }
 
 void TimelineWidget::nextFrame()
 {
 	int targetFrame = d->currentFrame + 1;
-	setCurrentFrame(targetFrame < d->frameCount() ? targetFrame : 0);
+	setCurrentFrame(targetFrame < d->visibleFrameCount() ? targetFrame : 0);
 }
 
 void TimelineWidget::prevFrame()
 {
 	int targetFrame = d->currentFrame - 1;
-	setCurrentFrame(targetFrame >= 0 ? targetFrame : d->frameCount() - 1);
+	setCurrentFrame(
+		targetFrame >= 0 ? targetFrame : d->visibleFrameCount() - 1);
 }
 
 void TimelineWidget::nextKeyFrame()
@@ -1688,6 +1918,11 @@ void TimelineWidget::updateTracks()
 void TimelineWidget::updateFrameCount()
 {
 	setCurrent(d->currentTrackId, d->currentFrame, false, false);
+	updateFrameRange();
+}
+
+void TimelineWidget::updateFrameRange()
+{
 	updateActions();
 	updateScrollbars();
 	update();
@@ -1727,7 +1962,7 @@ void TimelineWidget::setCurrent(
 		needsUpdate = true;
 	}
 
-	int actualFrame = qBound(0, frame, qMax(0, d->frameCount() - 1));
+	int actualFrame = qBound(0, frame, qMax(0, d->visibleFrameCount() - 1));
 	if(actualFrame != d->currentFrame) {
 		const canvas::TimelineKeyFrame *prevKeyFrame =
 			d->currentVisibleKeyFrame();
@@ -1886,8 +2121,7 @@ void TimelineWidget::updateActions()
 	}
 
 	bool timelineEditable = d->editable;
-	d->actions.frameCountSet->setEnabled(timelineEditable);
-	d->actions.framerateSet->setEnabled(timelineEditable);
+	d->actions.animationProperties->setEnabled(timelineEditable);
 
 	const canvas::TimelineTrack *track = d->currentTrack();
 	bool trackEditable = timelineEditable && track;
@@ -1901,7 +2135,8 @@ void TimelineWidget::updateActions()
 	d->actions.trackRetitle->setEnabled(trackEditable);
 	d->actions.trackDelete->setEnabled(trackEditable);
 
-	bool haveMultipleFrames = d->frameCount() > 1;
+	int visibleFrameCount = d->visibleFrameCount();
+	bool haveMultipleFrames = visibleFrameCount > 1;
 	d->actions.frameNext->setEnabled(haveMultipleFrames);
 	d->actions.framePrev->setEnabled(haveMultipleFrames);
 	int keyFrameCount = track ? track->keyFrames.size() : 0;
@@ -1917,7 +2152,7 @@ void TimelineWidget::updateActions()
 	d->actions.trackAbove->setEnabled(haveMultipleTracks);
 	d->actions.trackBelow->setEnabled(haveMultipleTracks);
 
-	bool keyFrameSettable = trackEditable && d->frameCount() > 0;
+	bool keyFrameSettable = trackEditable && visibleFrameCount > 0;
 
 	const canvas::TimelineKeyFrame *currentKeyFrame = d->currentKeyFrame();
 	d->actions.keyFrameSetEmpty->setEnabled(
@@ -2041,7 +2276,8 @@ void TimelineWidget::updateScrollbars()
 	QSize hsh = d->horizontalScroll->sizeHint();
 	QSize vsh = d->verticalScroll->sizeHint();
 	d->horizontalScroll->setMaximum(qMax(
-		0, (d->headerWidth + vsh.width() + d->frameCount() * d->columnWidth) -
+		0, (d->headerWidth + vsh.width() +
+			d->visibleFrameCount(false) * d->columnWidth) -
 			   width()));
 	d->verticalScroll->setMaximum(qMax(
 		0, (d->rowHeight + hsh.height() + d->trackCount() * d->rowHeight) -
@@ -2050,13 +2286,13 @@ void TimelineWidget::updateScrollbars()
 
 TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 {
-	Target target{-1, 0, -1, false, TrackAction::None};
+	Target target{-1, 0, -1, TargetHeader::None, TrackAction::None};
 	if(d->canvas) {
 		int x = pos.x();
 		int headerWidth = d->headerWidth;
 		if(x > headerWidth) {
 			int frameIndex = (x - headerWidth + d->xScroll) / d->columnWidth;
-			if(frameIndex >= 0 && frameIndex < d->frameCount()) {
+			if(frameIndex >= 0 && frameIndex < d->visibleFrameCount()) {
 				target.frameIndex = frameIndex;
 			}
 		}
@@ -2075,7 +2311,23 @@ TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 				target.action = TrackAction::ToggleOnionSkin;
 			}
 		} else {
-			target.onHeader = true;
+			target.header = TargetHeader::Header;
+			if(d->editable && !d->canvas->isCompatibilityMode()) {
+				qreal frameX = qreal(
+					(x - headerWidth + d->xScroll) -
+					(target.frameIndex * d->columnWidth));
+				qreal handleInsetX = d->rangeHandleInsetX();
+				if(frameX <= handleInsetX &&
+				   target.frameIndex == d->frameRangeFirst()) {
+					target.header = TargetHeader::RangeFirst;
+				} else if(
+					frameX >= qreal(d->columnWidth - 1) - handleInsetX &&
+					target.frameIndex == d->frameRangeLast()) {
+					target.header = TargetHeader::RangeLast;
+				} else {
+					target.header = TargetHeader::Header;
+				}
+			}
 		}
 	}
 	return target;

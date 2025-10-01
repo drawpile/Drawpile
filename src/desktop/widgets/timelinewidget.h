@@ -47,8 +47,7 @@ public:
 		QAction *trackDuplicate = nullptr;
 		QAction *trackRetitle = nullptr;
 		QAction *trackDelete = nullptr;
-		QAction *frameCountSet = nullptr;
-		QAction *framerateSet = nullptr;
+		QAction *animationProperties = nullptr;
 		QAction *frameNext = nullptr;
 		QAction *framePrev = nullptr;
 		QAction *keyFrameNext = nullptr;
@@ -81,10 +80,6 @@ public:
 	int currentTrackId() const;
 	int currentFrame() const;
 
-public slots:
-	void changeFramerate(double framerate);
-	void changeFrameCount(int frameCount);
-
 signals:
 	void timelineEditCommands(int count, const net::Message *msgs);
 	void trackSelected(int trackId);
@@ -108,7 +103,15 @@ protected:
 	void dragLeaveEvent(QDragLeaveEvent *event) override;
 	void dropEvent(QDropEvent *event) override;
 
-private slots:
+private:
+	static constexpr char KEY_FRAME_MIME_TYPE[] = "x-drawpile/keyframe";
+	static constexpr int TRACK_PADDING = 4;
+	static constexpr int ICON_SIZE = 16;
+	static constexpr int EXTRA_FRAME_COUNT = 101;
+	static constexpr int EXTRA_VISIBLE_FRAME_COUNT = 11;
+
+	enum class Drag { None, Track, KeyFrame };
+
 	void setKeyFrameLayer();
 	void setKeyFrameEmpty();
 	void cutKeyFrame();
@@ -130,8 +133,9 @@ private slots:
 	void duplicateTrack();
 	void retitleTrack();
 	void deleteTrack();
-	void setFrameCount();
-	void setFramerate();
+	void showAnimationProperties();
+	void setAnimationProperties(
+		double framerate, int frameRangeFirst, int frameRangeLast);
 	void nextFrame();
 	void prevFrame();
 	void nextKeyFrame();
@@ -140,16 +144,10 @@ private slots:
 	void trackBelow();
 	void updateTracks();
 	void updateFrameCount();
+	void updateFrameRange();
 	void setHorizontalScroll(int pos);
 	void setVerticalScroll(int pos);
 	void updatePasteAction();
-
-private:
-	static constexpr char KEY_FRAME_MIME_TYPE[] = "x-drawpile/keyframe";
-	static constexpr int TRACK_PADDING = 4;
-	static constexpr int ICON_SIZE = 16;
-
-	enum class Drag { None, Track, KeyFrame };
 
 	void
 	setCurrent(int trackId, int frame, bool triggerUpdate, bool selectLayer);
@@ -161,7 +159,8 @@ private:
 		const QHash<int, bool> layerVisibility);
 	void changeFrameExposure(int direction, bool visible);
 	bool collectFrameExposure(
-		QVector<QPair<int, QVector<int>>> &trackFrameIndexes, bool forward, int trackId);
+		QVector<QPair<int, QVector<int>>> &trackFrameIndexes, bool forward,
+		int trackId);
 	void updateActions();
 	void updateScrollbars();
 

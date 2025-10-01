@@ -132,8 +132,8 @@ void Flipbook::updateRange()
 {
 	int loopStart = d->ui.loopStart->value();
 	int loopEnd = d->ui.loopEnd->value();
-	d->ui.layerIndex->setMinimum(loopStart);
-	d->ui.layerIndex->setMaximum(loopEnd);
+	d->ui.layerIndex->setRange(loopStart, loopEnd);
+	d->ui.layerIndex->setValue(loopStart);
 	d->state.loopStart = loopStart;
 	d->state.loopEnd = loopEnd;
 	emit stateChanged();
@@ -250,9 +250,6 @@ void Flipbook::resetCanvas(bool refresh, const QRect &crop)
 		return;
 	}
 
-	int frameCount = d->canvasState.frameCount();
-	d->ui.layerIndex->setSuffix(QStringLiteral("/%1").arg(frameCount));
-
 	if(d->state.speedPercent > 0.0) {
 		d->ui.speedSpinner->setValue(d->state.speedPercent);
 	} else {
@@ -261,19 +258,28 @@ void Flipbook::resetCanvas(bool refresh, const QRect &crop)
 
 	QSignalBlocker loopStartBlocker{d->ui.loopStart};
 	QSignalBlocker loopEndBlocker{d->ui.loopEnd};
+	int frameCount = d->canvasState.frameCount();
 	d->ui.loopStart->setMaximum(frameCount);
 	d->ui.loopEnd->setMaximum(frameCount);
+
+	int frameRangeFirst, frameRangeLast;
+	d->canvasState.documentMetadata().effectiveFrameRange(
+		frameRangeFirst, frameRangeLast);
 	if(d->state.loopStart > 0 && d->state.loopEnd > 0) {
-		d->ui.loopStart->setValue(d->state.loopStart);
+		d->ui.loopStart->setValue(
+			d->ui.loopStart->value() == d->state.lastCanvasFrameRangeFirst + 1
+				? frameRangeFirst + 1
+				: d->state.loopStart);
 		d->ui.loopEnd->setValue(
-			d->ui.loopEnd->value() < d->state.lastCanvasFrameCount
-				? d->state.loopEnd
-				: frameCount);
+			d->ui.loopEnd->value() == d->state.lastCanvasFrameRangeLast + 1
+				? frameRangeLast + 1
+				: d->state.loopEnd);
 	} else {
-		d->ui.loopStart->setValue(1);
-		d->ui.loopEnd->setValue(frameCount);
+		d->ui.loopStart->setValue(frameRangeFirst + 1);
+		d->ui.loopEnd->setValue(frameRangeLast + 1);
 	}
-	d->state.lastCanvasFrameCount = frameCount;
+	d->state.lastCanvasFrameRangeFirst = frameRangeFirst;
+	d->state.lastCanvasFrameRangeLast = frameRangeLast;
 	updateRange();
 
 	if(refresh) {

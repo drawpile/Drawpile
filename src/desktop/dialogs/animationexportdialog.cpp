@@ -216,9 +216,14 @@ void AnimationExportDialog::setCanvas(canvas::CanvasModel *canvas)
 		connect(
 			metadata, &canvas::DocumentMetadata::frameCountChanged, this,
 			&AnimationExportDialog::setCanvasFrameCount);
+		connect(
+			metadata, &canvas::DocumentMetadata::frameRangeChanged, this,
+			&AnimationExportDialog::setCanvasFrameRange);
 		setCanvasSize(canvas->size());
 		setCanvasFramerate(metadata->framerate());
 		setCanvasFrameCount(metadata->frameCount());
+		setCanvasFrameRange(
+			metadata->frameRangeFirst(), metadata->frameRangeLast());
 	}
 }
 
@@ -341,8 +346,10 @@ void AnimationExportDialog::resetInputs()
 	m_y1Spinner->setValue(0);
 	m_y2Spinner->setValue(m_canvasHeight - 1);
 	m_framerateSpinner->setValue(m_canvasFramerate);
-	m_startSpinner->setValue(1);
-	m_endSpinner->setValue(m_canvasFrameCount);
+	m_startSpinner->setRange(1, m_canvasFrameCount);
+	m_endSpinner->setRange(1, m_canvasFrameCount);
+	m_startSpinner->setValue(m_canvasFrameRangeFirst + 1);
+	m_endSpinner->setValue(m_canvasFrameRangeLast + 1);
 }
 
 void AnimationExportDialog::setInputsFromFlipbook()
@@ -395,6 +402,17 @@ void AnimationExportDialog::setCanvasSize(const QSize &size)
 	m_canvasWidth = size.width();
 	m_canvasHeight = size.height();
 	updateScalingUi();
+}
+
+void AnimationExportDialog::setCanvasFrameRange(
+	int frameRangeFirst, int frameRangeLast)
+{
+	if(m_canvasFrameRangeFirst < 0 || m_canvasFrameRangeLast < 0) {
+		m_startSpinner->setValue(frameRangeFirst + 1);
+		m_endSpinner->setValue(frameRangeLast + 1);
+	}
+	m_canvasFrameRangeFirst = frameRangeFirst;
+	m_canvasFrameRangeLast = frameRangeLast;
 }
 
 void AnimationExportDialog::setCanvasFrameCount(int frameCount)

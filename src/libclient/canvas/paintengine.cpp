@@ -214,6 +214,12 @@ void PaintEngine::enqueueLoadBlank(
 			qBound(0, size.height(), int(DP_CANVAS_STATE_MAX_DIMENSION)), 0),
 		net::makeLayerTreeCreateMessage(
 			0, 1, 0, 0, 0, 0, tr("Layer %1").arg(1)),
+		net::makeSetMetadataIntMessage(
+			0, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT, 124),
+		net::makeSetMetadataIntMessage(
+			0, DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_FIRST, 0),
+		net::makeSetMetadataIntMessage(
+			0, DP_MSG_SET_METADATA_INT_FIELD_FRAME_RANGE_LAST, 23),
 		net::makeInternalSnapshotMessage(0),
 	};
 	receiveMessages(false, DP_ARRAY_LENGTH(messages), messages);

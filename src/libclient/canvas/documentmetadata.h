@@ -18,11 +18,13 @@ public:
 
 	double framerate() const { return m_framerate; }
 	int frameCount() const { return m_frameCount; }
+	int frameRangeFirst() const { return m_frameRangeFirst; }
+	int frameRangeLast() const { return m_frameRangeLast; }
 
 signals:
 	void framerateChanged(double fps);
 	void frameCountChanged(int frameCount);
-	void frameRangeChanged(int first, int last);
+	void frameRangeChanged(int frameRangeFirst, int frameRangeLast);
 
 private slots:
 	void refreshMetadata(const drawdance::DocumentMetadata &dm);
@@ -31,6 +33,8 @@ private:
 	PaintEngine *m_engine;
 	double m_framerate = 0.0;
 	int m_frameCount = 0;
+	int m_frameRangeFirst = -1;
+	int m_frameRangeLast = -1;
 };
 
 }

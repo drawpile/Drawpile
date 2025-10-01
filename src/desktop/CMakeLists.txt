@@ -88,6 +88,8 @@ target_sources(drawpile PRIVATE
 	dialogs/animationexportdialog.h
 	dialogs/animationimportdialog.cpp
 	dialogs/animationimportdialog.h
+	dialogs/animationpropertiesdialog.cpp
+	dialogs/animationpropertiesdialog.h
 	dialogs/artisticcolorwheeldialog.cpp
 	dialogs/artisticcolorwheeldialog.h
 	dialogs/avatarimport.cpp

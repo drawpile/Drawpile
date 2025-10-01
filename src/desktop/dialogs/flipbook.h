@@ -27,7 +27,8 @@ public:
 		int loopStart = -1;
 		int loopEnd = -1;
 		QRectF crop;
-		int lastCanvasFrameCount;
+		int lastCanvasFrameRangeFirst = -1;
+		int lastCanvasFrameRangeLast = -1;
 		QSize lastCanvasSize;
 		QPoint lastCanvasOffset;
 	};

@@ -1,29 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/timeline.h"
 #include "desktop/docks/titlewidget.h"
-#include "desktop/main.h"
-#include "desktop/settings.h"
 #include "desktop/widgets/timelinewidget.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/net/message.h"
+#include <QAction>
 #include <QCheckBox>
 #include <QLabel>
+#include <QPushButton>
 #include <QSpinBox>
-#include <functional>
 
 namespace docks {
 
 Timeline::Timeline(QWidget *parent)
 	: DockBase(tr("Timeline"), QString(), QIcon::fromTheme("keyframe"), parent)
-	, m_widget{new widgets::TimelineWidget{this}}
-	, m_frameSpinner{nullptr}
-	, m_framerateSpinner{nullptr}
-	, m_framerateDebounce{dpApp().settings().debounceDelayMs()}
-	, m_featureAccessEnabled{true}
-	, m_locked{false}
+	, m_widget(new widgets::TimelineWidget(this))
 {
 	m_widget->setMinimumHeight(40);
 	setWidget(m_widget);
@@ -35,7 +29,7 @@ Timeline::Timeline(QWidget *parent)
 		&Timeline::trackSelected);
 	connect(
 		m_widget, &widgets::TimelineWidget::frameSelected, this,
-		&Timeline::setCurrentFrame);
+		&Timeline::frameSelected);
 	connect(
 		m_widget, &widgets::TimelineWidget::layerSelected, this,
 		&Timeline::layerSelected);
@@ -64,13 +58,8 @@ void Timeline::setCanvas(canvas::CanvasModel *canvas)
 	const canvas::DocumentMetadata *metadata = canvas->metadata();
 	connect(
 		metadata, &canvas::DocumentMetadata::framerateChanged, this,
-		&Timeline::setFramerate);
-	connect(
-		metadata, &canvas::DocumentMetadata::frameCountChanged, this,
-		&Timeline::setFrameCount);
-
-	setFramerate(metadata->framerate());
-	setFrameCount(metadata->frameCount());
+		&Timeline::updateFramerateText);
+	updateFramerateText(metadata->framerate());
 }
 
 void Timeline::setActions(
@@ -97,24 +86,6 @@ void Timeline::updateKeyFrameColorMenuIcon()
 	m_widget->updateKeyFrameColorMenuIcon();
 }
 
-void Timeline::setFramerate(double framerate)
-{
-	if(m_framerateSpinner) {
-		QSignalBlocker blocker{m_framerateSpinner};
-		m_framerateSpinner->setValue(framerate);
-	}
-}
-
-void Timeline::setFrameCount(int frameCount)
-{
-	if(m_frameSpinner) {
-		QSignalBlocker blocker{m_frameSpinner};
-		m_frameSpinner->setRange(1, frameCount);
-		m_frameSpinner->setSuffix(QStringLiteral("/%1").arg(frameCount));
-		updateFrame(m_widget->currentFrame());
-	}
-}
-
 void Timeline::setCurrentLayer(int layerId)
 {
 	m_widget->setCurrentLayer(layerId);
@@ -124,12 +95,6 @@ void Timeline::setFeatureAccess(bool access)
 {
 	m_featureAccessEnabled = access;
 	updateControlsEnabled(access, m_locked);
-}
-
-void Timeline::setCurrentFrame(int frame)
-{
-	emit frameSelected(frame);
-	updateFrame(frame);
 }
 
 void Timeline::setLocked(bool locked)
@@ -146,17 +111,9 @@ void Timeline::setUpTitleWidget(
 	docks::TitleWidget *titlebar =
 		qobject_cast<docks::TitleWidget *>(actualTitleBarWidget());
 
-	m_frameSpinner = new QSpinBox{titlebar};
-	m_frameSpinner->setWrapping(true);
-	titlebar->addCustomWidget(m_frameSpinner);
-	connect(
-		m_frameSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		[this](int value) {
-			m_widget->setCurrentFrame(value - 1);
-		});
-
-	addTitleButton(
-		titlebar, actions.frameCountSet, GroupedToolButton::NotGrouped);
+	QPushButton *playButton = new QPushButton(showFlipbook->icon(), tr("Play"));
+	titlebar->addCustomWidget(playButton);
+	connect(playButton, &QPushButton::clicked, showFlipbook, &QAction::trigger);
 
 	titlebar->addStretch();
 
@@ -189,21 +146,21 @@ void Timeline::setUpTitleWidget(
 
 	titlebar->addStretch();
 
-	addTitleButton(titlebar, showFlipbook, GroupedToolButton::NotGrouped);
-
-	m_framerateSpinner = new QDoubleSpinBox{titlebar};
-	m_framerateSpinner->setDecimals(2);
-	m_framerateSpinner->setRange(0.01, 999.99);
-	m_framerateSpinner->setSuffix(tr(" FPS"));
-	titlebar->addCustomWidget(m_framerateSpinner);
+	m_propertiesButton = new QPushButton;
+	m_propertiesButton->setIcon(actions.animationProperties->icon());
+	m_propertiesButton->setStatusTip(actions.animationProperties->text());
+	m_propertiesButton->setToolTip(actions.animationProperties->text());
+	titlebar->addCustomWidget(m_propertiesButton);
 	connect(
-		m_framerateSpinner, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-		&m_framerateDebounce, &DebounceTimer::setDouble);
-	connect(
-		&m_framerateDebounce, &DebounceTimer::doubleChanged, m_widget,
-		&widgets::TimelineWidget::changeFramerate);
+		m_propertiesButton, &QPushButton::clicked, actions.animationProperties,
+		&QAction::trigger);
 
 	titlebar->addSpace(4);
+
+	canvas::CanvasModel *canvas = m_widget->canvas();
+	if(canvas) {
+		updateFramerateText(canvas->metadata()->framerate());
+	}
 }
 
 void Timeline::addTitleButton(
@@ -221,11 +178,17 @@ void Timeline::updateControlsEnabled(bool access, bool locked)
 	m_widget->updateControlsEnabled(access, locked);
 }
 
-void Timeline::updateFrame(int frame)
+void Timeline::updateFramerateText(double framerate)
 {
-	if(m_frameSpinner) {
-		QSignalBlocker blocker{m_frameSpinner};
-		m_frameSpinner->setValue(frame + 1);
+	if(m_propertiesButton) {
+		QLocale locale;
+		QString text = locale.toString(framerate, 'f', 2);
+		if(text.endsWith(QStringLiteral("00"))) {
+			text = locale.toString(qRound(framerate));
+		} else if(text.endsWith(QStringLiteral("0"))) {
+			text.chop(1);
+		}
+		m_propertiesButton->setText(tr("%1 FPS").arg(text));
 	}
 }
 

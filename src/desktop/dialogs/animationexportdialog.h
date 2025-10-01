@@ -65,6 +65,7 @@ private:
 	void setInputsFromFlipbook();
 
 	void setCanvasSize(const QSize &size);
+	void setCanvasFrameRange(int frameRangeFirst, int frameRangeLast);
 	void setCanvasFrameCount(int frameCount);
 	void setCanvasFramerate(double framerate);
 
@@ -94,6 +95,8 @@ private:
 	int m_canvasWidth = -1;
 	int m_canvasHeight = -1;
 	int m_canvasFrameCount = -1;
+	int m_canvasFrameRangeFirst = -1;
+	int m_canvasFrameRangeLast = -1;
 	double m_canvasFramerate = -1.0;
 	int m_flipbookStart = -1;
 	int m_flipbookEnd = -1;

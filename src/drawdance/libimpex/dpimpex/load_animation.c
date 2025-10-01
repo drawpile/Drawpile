@@ -149,6 +149,7 @@ DP_CanvasState *DP_load_animation_frames(
     DP_transient_document_metadata_frame_count_set(tdm, path_count * hold_time);
 
     DP_transient_canvas_state_layer_routes_reindex(tcs, dc);
+    DP_transient_canvas_state_post_load_fixup(tcs);
     DP_transient_canvas_state_timeline_cleanup(tcs);
     return DP_transient_canvas_state_persist(tcs);
 }

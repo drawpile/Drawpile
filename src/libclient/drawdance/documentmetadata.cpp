@@ -84,6 +84,23 @@ int DocumentMetadata::frameCount() const
     return DP_document_metadata_frame_count(m_data);
 }
 
+int DocumentMetadata::frameRangeFirst() const
+{
+	return DP_document_metadata_frame_range_first(m_data);
+}
+
+int DocumentMetadata::frameRangeLast() const
+{
+	return DP_document_metadata_frame_range_last(m_data);
+}
+
+bool DocumentMetadata::effectiveFrameRange(
+	int &frameRangeFirst, int &frameRangeLast) const
+{
+	return DP_document_metadata_effective_frame_range(
+		m_data, &frameRangeFirst, &frameRangeLast);
+}
+
 void DocumentMetadata::splitEffectiveFramerate(
 	double effectiveFramerate, int &outWhole, int &outFraction)
 {
