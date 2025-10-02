@@ -34,7 +34,7 @@
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished">Войти на drawpile.net</translation>
+        <translation>Войти на drawpile.net</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -59,7 +59,7 @@
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished">Загрузка, это может занять некоторое время…</translation>
+        <translation>Загрузка, это может занять некоторое время…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -69,7 +69,7 @@
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished">Инициализация, это может занять некоторое время…</translation>
+        <translation>Инициализация, это может занять некоторое время…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -79,7 +79,7 @@
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished">Настройка…</translation>
+        <translation>Настройка…</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -129,7 +129,7 @@
     <message>
         <location line="+6"/>
         <source>&lt;strong&gt;Incompatible browser:&lt;/strong&gt; Firefox on Windows has some trouble running Drawpile. Inputting text and/or pressing Ctrl+Z to undo may not work properly. Consider using a different browser or &lt;a href=&quot;#&quot;&gt;the native Windows application&lt;/a&gt;.</source>
-        <translation type="unfinished">&lt;strong&gt;Несовместимый браузер:&lt;/strong&gt; Firefox на Windows имеет некоторые проблемы с запуском Drawpile. Ввод текста и/или нажатие Ctrl+Z для отмены могут работать некорректно. Попробуйте использовать другой браузер или &lt;a href=&quot;#&quot;&gt;нативное приложение для Windows.&lt;/a&gt;</translation>
+        <translation>&lt;strong&gt;Несовместимый браузер:&lt;/strong&gt; Firefox на Windows имеет некоторые проблемы с запуском Drawpile. Ввод текста и/или нажатие Ctrl+Z для отмены могут работать некорректно. Попробуйте использовать другой браузер или &lt;a href=&quot;#&quot;&gt;нативное приложение для Windows&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -144,32 +144,32 @@
     <message>
         <location line="+1"/>
         <source>Test your pen pressure here</source>
-        <translation type="unfinished"></translation>
+        <translation>Протестируйте нажим пера здесь</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected mouse input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Обнаружен ввод мыши, а не пера</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected touch input, not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Обнаружен сенсорный ввод, а не перо</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Detected input, but not a pen</source>
-        <translation type="unfinished"></translation>
+        <translation>Обнаружен ввод, но не пером</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen pressure detected</source>
-        <translation type="unfinished"></translation>
+        <translation>Нажим пера обнаружен</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pen detected, but no pressure variance</source>
-        <translation type="unfinished"></translation>
+        <translation>Перо обнаружено, но нет разницы нажима</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -179,32 +179,32 @@
     <message>
         <location line="+1"/>
         <source>Update check blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Проверка обновлений заблокирована</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; this installation is &lt;strong&gt;outdated&lt;/strong&gt; at version &lt;code&gt;%1&lt;/code&gt;, which is not the most recent version &lt;code&gt;%2&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;strong&gt;Внимание:&lt;/strong&gt; эта установка&lt;strong&gt;устарела&lt;/strong&gt; до версии &lt;code&gt;%1&lt;/code&gt;, которая не является самой последней версией &lt;code&gt;%2&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, notify the server owner to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>Попробуйте обновить страницу. Если ничего не изменилось, то сообщите владельцу сервера о необходимости обновления.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&lt;strong&gt;Warning:&lt;/strong&gt; Could not determine if installation is up to date or not. It may be outdated at version &lt;code&gt;%1&lt;/code&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Внимание:&lt;/strong&gt; Не удалось определить, актуальна ли установка. Возможно, она устарела на данный момент&lt;code&gt;%1&lt;/code&gt;.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try refreshing the page. If that doesn&apos;t change anything, consult the server owner or check out &lt;a href=&quot;#&quot;&gt;the help page on drawpile.net&lt;/a&gt; on how to get in contact with someone who can check what&apos;s going on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Попробуйте обновить страницу. Если ничего не изменилось, то обратитесь к владельцу сервера или ознакомьтесь с &lt;a href=&quot;#&quot;&gt;разделом помощи на drawpile.net&lt;/a&gt; чтобы узнать, как связаться с кем-нибудь, кто может проверить, что происходит.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue regardless, but things may not work properly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы можете продолжить, но что-то может работать не так, как надо.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -224,17 +224,17 @@
     <message>
         <location line="+1"/>
         <source>Stable (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Стабильно (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Beta (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Бета (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The session you are trying to join requires the beta version of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Для сессии, к которой вы пытаетесь присоединиться, требуется бета-версия Drawpile.</translation>
     </message>
 </context>
 <context>
@@ -259,7 +259,7 @@
     <message>
         <location line="+2"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Горячие клавиши</translation>
+        <translation>Горячие клавиши</translation>
     </message>
 </context>
 <context>
@@ -272,7 +272,7 @@
     <message>
         <location line="+6"/>
         <source>Unsupported format.</source>
-        <translation>Неподдреживаемый формат.</translation>
+        <translation>Неподдерживаемый формат.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -282,7 +282,7 @@
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation type="unfinished">Не удалось открыть файл для записи.</translation>
+        <translation>Не удалось открыть файл для записи.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -323,12 +323,12 @@
     <message>
         <location line="+76"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Горячие клавиши</translation>
+        <translation>Горячие клавиши</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished">Действие</translation>
+        <translation>Действие</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -443,7 +443,7 @@
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation>Ограничить до:</translation>
+        <translation>Инструмент ограничения</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -511,7 +511,7 @@
     <message>
         <location filename="../utils/certificatestoremodel.cpp" line="+25"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
-        <translation>&apos;%1&apos; не содержит действительных сертификатов хоста</translation>
+        <translation>&apos;%1&apos; не содержит действительных сертификатов хоста.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -521,7 +521,7 @@
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation>&apos;%1&apos; имеет недействительный сертификат</translation>
+        <translation>&apos;%1&apos; имеет недействительный сертификат.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -699,7 +699,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/magicwand.cpp" line="+292"/>
         <source>Selecting…</source>
-        <translation>Выбор</translation>
+        <translation>Выделение…</translation>
     </message>
 </context>
 <context>
@@ -732,7 +732,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+7"/>
         <source>Performance Profile (%1)</source>
-        <translation>Профиль производительности</translation>
+        <translation>Профиль производительности (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -888,7 +888,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation>Несовместимое приложение</translation>
+        <translation>Несовместимое приложение (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -961,17 +961,17 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+44"/>
         <source>Normal</source>
-        <translation type="unfinished">Нормальный</translation>
+        <translation>Нормальный</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Recolor</source>
-        <translation type="unfinished">Перекрашивание</translation>
+        <translation>Перекрашивание</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Behind</source>
-        <translation type="unfinished">Позади</translation>
+        <translation>Позади</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -996,167 +996,167 @@ Select a regular layer instead.</source>
     <message>
         <location line="+18"/>
         <source>Multiply</source>
-        <translation type="unfinished">Умножение</translation>
+        <translation>Multiply</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Screen</source>
-        <translation>Экран</translation>
+        <translation>Screen</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Overlay</source>
-        <translation>Наложение</translation>
+        <translation>Overlay</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Linear Dodge/Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Linear Dodge/Add</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>Color Burn</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation>Color Dodge</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Vivid Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Vivid Light</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Pin Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Pin Light</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Darker Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Darker Color</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighter Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Lighter Color</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference</source>
-        <translation type="unfinished"></translation>
+        <translation>Difference</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Divide</source>
-        <translation type="unfinished">Деление</translation>
+        <translation>Divide</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Shade (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Shade (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Shine (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Shade/Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Shade/Shine (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Burn (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Dodge (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Burn/Dodge (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Burn/Dodge (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Hard Mix (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Hard Mix (SAI)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Difference (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Difference (SAI)</translation>
     </message>
     <message>
         <location line="-108"/>
         <source>Darken</source>
-        <translation type="unfinished">Темнее</translation>
+        <translation>Darken</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lighten</source>
-        <translation type="unfinished">Светлее</translation>
+        <translation>Lighten</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Subtract</source>
-        <translation type="unfinished">Извлечение</translation>
+        <translation>Subtract</translation>
     </message>
     <message>
         <location line="-114"/>
         <source>Erase</source>
-        <translation type="unfinished">Стирание</translation>
+        <translation>Erase</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Erase</source>
-        <translation type="unfinished">Стирание цвета</translation>
+        <translation>Color Erase</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Hard Light</source>
-        <translation>Направленный свет</translation>
+        <translation>Hard Light</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Soft Light</source>
-        <translation>Рассеянный свет</translation>
+        <translation>Soft Light</translation>
     </message>
     <message>
         <location line="-36"/>
         <source>Linear Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>Linear Burn</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Linear Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Linear Light</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>Hue</source>
-        <translation type="unfinished">Тон</translation>
+        <translation>Hue</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Saturation</source>
-        <translation type="unfinished">Насыщенность</translation>
+        <translation>Saturation</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Luminosity</source>
-        <translation>Светимость</translation>
+        <translation>Luminosity</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color</source>
-        <translation type="unfinished">Цвет</translation>
+        <translation>Color</translation>
     </message>
 </context>
 <context>
@@ -1172,7 +1172,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="-128"/>
         <source>All</source>
-        <translation>Все</translation>
+        <translation>Всё</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1192,7 +1192,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+198"/>
         <source>Default</source>
-        <translation type="unfinished">По умолчанию</translation>
+        <translation>По умолчанию</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1218,7 +1218,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation>Без категории</translation>
+        <translation>Без категории %1</translation>
     </message>
     <message>
         <location line="+23"/>
