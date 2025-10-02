@@ -678,7 +678,7 @@
         <location line="-310"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="-146"/>
         <source>Tolerance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Точность: </translation>
     </message>
     <message>
         <location line="+18"/>
