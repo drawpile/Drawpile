@@ -62,7 +62,7 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished">Введите URL-адрес списка серверов:</translation>
+        <translation>Введите URL-адрес списка серверов:</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -114,7 +114,7 @@
         <location line="-13"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+164"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Непрозрачность: </translation>
+        <translation>Непрозрачность: </translation>
     </message>
     <message>
         <location line="-76"/>
@@ -174,7 +174,7 @@
     <message>
         <location line="-108"/>
         <source>px</source>
-        <translation> пкс</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-23"/>
@@ -192,7 +192,7 @@
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation type="unfinished">Тип</translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -368,7 +368,7 @@
     <message>
         <location filename="../filewrangler.cpp" line="+170"/>
         <source>Certificates (%1)</source>
-        <translation type="unfinished">Сертификаты (%1)</translation>
+        <translation>Сертификаты (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -399,7 +399,7 @@
         <location line="+128"/>
         <location line="+302"/>
         <source>Save Image</source>
-        <translation type="unfinished">Сохранить изображение</translation>
+        <translation>Сохранить изображение</translation>
     </message>
     <message>
         <location line="-302"/>
@@ -419,7 +419,7 @@
     <message>
         <location line="+19"/>
         <source>Record Session</source>
-        <translation type="unfinished">Запись сессии</translation>
+        <translation>Запись сессии</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -444,7 +444,7 @@
     <message>
         <location line="+146"/>
         <source>Log File</source>
-        <translation type="unfinished">Файл журнала</translation>
+        <translation>Файл журнала</translation>
     </message>
     <message>
         <location line="-174"/>
@@ -551,7 +551,7 @@
     <message>
         <location line="+5"/>
         <source>Reference Image</source>
-        <translation>Референсное Изображение</translation>
+        <translation>Изображение референса</translation>
     </message>
     <message>
         <location line="+159"/>
@@ -581,7 +581,7 @@
     <message>
         <location line="+10"/>
         <source>Export Session Bans</source>
-        <translation>Экспортировать Запреты Сессии</translation>
+        <translation>Экспортировать Баны Сессии</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -591,7 +591,7 @@
     <message>
         <location line="+10"/>
         <source>Export Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт настроек сессии</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -601,7 +601,7 @@
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save a different format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранный формат сохранит изображение в объединённом виде. Если вы хотите сохранить слои, аннотации и временную шкалу анимации, необходимо сохранить файл в другом формате (ORA).</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -624,7 +624,7 @@
         <location line="+99"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation>Untitled%1</translation>
+        <translation>Без названия%1</translation>
     </message>
 </context>
 <context>
@@ -648,7 +648,7 @@
         <location line="+51"/>
         <location line="+12"/>
         <source>px</source>
-        <translation type="unfinished"> пкс</translation>
+        <translation>пкс</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -696,7 +696,7 @@
         <location line="+17"/>
         <location line="+3"/>
         <source>Fill entire selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Залить всё выделение</translation>
     </message>
     <message>
         <location line="+99"/>
@@ -717,7 +717,7 @@
         <location line="+3"/>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+15"/>
         <source>Current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущий слой</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -871,7 +871,7 @@
     <message>
         <location line="+32"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished">Получить внешний IP-адрес</translation>
+        <translation>Получить внешний IP-адрес</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -1061,7 +1061,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+16"/>
         <source>Save</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1253,7 +1253,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location filename="../widgets/macmenu.cpp" line="+66"/>
         <source>Minimize</source>
-        <translation>Свернуть</translation>
+        <translation>Минимизировать</translation>
     </message>
     <message numerus="yes">
         <location line="+129"/>
@@ -1314,8 +1314,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="-840"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation>Есть несохранённые изменения.
-Сохранить их перед выходом?</translation>
+        <translation>Есть несохранённые изменения. Сохранить их перед выходом?</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2181,7 +2180,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+804"/>
         <source>User #%1</source>
-        <translation type="unfinished">Пользователь #%1</translation>
+        <translation>Пользователь #%1</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -2659,7 +2658,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+893"/>
         <source>Reason:</source>
-        <translation type="unfinished">Причина:</translation>
+        <translation>Причина:</translation>
     </message>
     <message>
         <location line="+279"/>
@@ -2872,7 +2871,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+444"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished">Открыть Дамп Отладки</translation>
+        <translation>Открыть Отладки Дампа</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3932,12 +3931,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished">Скорость воспроизведения: </translation>
+        <translation>Скорость воспроизведения: </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+79"/>
@@ -4257,7 +4256,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+40"/>
         <location line="+125"/>
         <source>px</source>
-        <translation type="unfinished"> пкс</translation>
+        <translation>пкс</translation>
     </message>
     <message>
         <location line="-195"/>
@@ -4312,7 +4311,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+25"/>
         <location line="+82"/>
         <source>Import</source>
-        <translation type="unfinished">Импорт</translation>
+        <translation>Импорт</translation>
     </message>
     <message>
         <location line="-71"/>
@@ -4373,7 +4372,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished">Не подходит для несовершеннолетних (NSFM)</translation>
+        <translation>Не подходит для несовершеннолетних (NSFM)</translation>
     </message>
     <message>
         <location line="+113"/>
@@ -4449,7 +4448,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+72"/>
         <source>Operator</source>
-        <translation type="unfinished">Оператор</translation>
+        <translation>Оператор</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4538,7 +4537,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">Сглаживание:</translation>
+        <translation>Сглаживание:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4573,7 +4572,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Name:</source>
-        <translation type="unfinished">Название:</translation>
+        <translation>Название:</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -5065,20 +5064,20 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Частота кадров:</translation>
+        <translation>Частота кадров:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import</source>
-        <translation type="unfinished">Импорт</translation>
+        <translation>Импорт</translation>
     </message>
     <message numerus="yes">
         <location line="+88"/>
         <source> frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform> Кадр</numerusform>
+            <numerusform> Кадра</numerusform>
+            <numerusform> Кадров</numerusform>
         </translation>
     </message>
     <message>
@@ -5265,7 +5264,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/brushexportdialog.cpp" line="+46"/>
         <source>Export Brushes</source>
-        <translation type="unfinished">Экспортировать кисти</translation>
+        <translation>Экспортировать кисти</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -5281,10 +5280,10 @@ Are you sure youwant to start recording debug dumps?</source>
     <message numerus="yes">
         <location line="+10"/>
         <source>%n brush(es) exported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n кисть экспортирована.</numerusform>
+            <numerusform>%n кисти экспортировано.</numerusform>
+            <numerusform>%n кистей экспортировано.</numerusform>
         </translation>
     </message>
     <message>
@@ -5295,10 +5294,10 @@ Are you sure youwant to start recording debug dumps?</source>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n Обнаружена ошибка.</numerusform>
+            <numerusform>%n Обнаружена ошибка.</numerusform>
+            <numerusform>%n Обнаружена ошибка.</numerusform>
         </translation>
     </message>
 </context>
@@ -5424,7 +5423,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+3"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+4"/>
         <source>MyPaint Brush</source>
-        <translation type="unfinished">Кисть MyPaint</translation>
+        <translation>Кисть MyPaint</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -5453,7 +5452,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+25"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished">Режим смешивания:</translation>
+        <translation>Режим смешивания:</translation>
     </message>
     <message>
         <location line="-51"/>
@@ -5484,7 +5483,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+15"/>
         <source>Spacing: </source>
-        <translation type="unfinished">Интервал: </translation>
+        <translation>Интервал: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5497,7 +5496,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+47"/>
         <location line="+18"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="-393"/>
@@ -5517,23 +5516,23 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+13"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished">Стабилизация: </translation>
+        <translation>Стабилизация: </translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Smoothing: </source>
-        <translation type="unfinished">Сглаживание: </translation>
+        <translation>Сглаживание: </translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Size: </source>
-        <translation type="unfinished">Размер: </translation>
+        <translation>Размер: </translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+19"/>
         <source>px</source>
-        <translation type="unfinished"> пкс</translation>
+        <translation>пкс</translation>
     </message>
     <message>
         <location line="-1"/>
@@ -5558,7 +5557,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-259"/>
         <source>Opacity: </source>
-        <translation type="unfinished">Прозрачность: </translation>
+        <translation>Прозрачность: </translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5574,7 +5573,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-508"/>
         <source>Hardness: </source>
-        <translation type="unfinished">Жесткость: </translation>
+        <translation>Жесткость: </translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5710,12 +5709,12 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+78"/>
         <source>Smudging: </source>
-        <translation type="unfinished">Смазывание: </translation>
+        <translation>Смазывание: </translation>
     </message>
     <message>
         <location line="-499"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished">Захват цвета: 1/</translation>
+        <translation>Захват цвета: 1/</translation>
     </message>
     <message>
         <location line="-365"/>
@@ -6317,7 +6316,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Eraser</source>
         <comment>mypaintsetting</comment>
         <extracomment>This text comes from the MyPaint brush engine. You can skip translating it if it&apos;s too difficult.</extracomment>
-        <translation type="unfinished">Ластик</translation>
+        <translation>Ластик</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7263,13 +7262,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+71"/>
         <source>Rename</source>
-        <translation type="unfinished">Переименовать</translation>
+        <translation>Переименовать</translation>
     </message>
     <message>
         <location line="-68"/>
@@ -7279,7 +7278,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+68"/>
         <source>Save</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -7348,7 +7347,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+100"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7525,7 +7524,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-242"/>
         <source>Default</source>
-        <translation type="unfinished">По умолчанию</translation>
+        <translation>По умолчанию</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7806,7 +7805,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7826,7 +7825,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-3"/>
         <source>Reset</source>
-        <translation type="unfinished">Сброс</translation>
+        <translation>Сброс</translation>
     </message>
 </context>
 <context>
@@ -7907,13 +7906,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/selectionalterdialog.cpp" line="+40"/>
         <source>px</source>
-        <translation type="unfinished"> пкс</translation>
+        <translation>пкс</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Feather: </source>
         <extracomment>&quot;Feather&quot; is a verb here, referring to blurring the selection.</extracomment>
-        <translation type="unfinished">Перо: </translation>
+        <translation>Перо: </translation>
     </message>
     <message>
         <location line="+49"/>
@@ -7971,20 +7970,20 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="-352"/>
         <source>Imported %n session ban(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Импортирован %n бан сессии.</numerusform>
+            <numerusform>Импортировано %n бана сессии.</numerusform>
+            <numerusform>Импортировано %n банов сессии.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1%n не было импортировано, так как они были недействительными или дубликатами.</numerusform>
+            <numerusform>%1%n не было импортировано, так как они были недействительными или дубликатами.</numerusform>
+            <numerusform>%1%n не было импортировано, так как они были недействительными или дубликатами.</numerusform>
         </translation>
     </message>
     <message>
@@ -8041,30 +8040,30 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+6"/>
         <source>%n hour(s)</source>
         <extracomment>Idle timeout hours. May be joined with minutes and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n час</numerusform>
+            <numerusform>%n часа</numerusform>
+            <numerusform>%n часов</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n minute(s)</source>
         <extracomment>Idle timeout minutes. May be joined with hours and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n минута</numerusform>
+            <numerusform>%n минуты</numerusform>
+            <numerusform>%n минут</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n секунда</numerusform>
+            <numerusform>%n секунды</numerusform>
+            <numerusform>%n секунд</numerusform>
         </translation>
     </message>
     <message>
@@ -8160,10 +8159,10 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+61"/>
         <source>%n role(s) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n роль импортирована.</numerusform>
+            <numerusform>%n роли импортировано.</numerusform>
+            <numerusform>%n ролей импортировано.</numerusform>
         </translation>
     </message>
     <message>
@@ -8195,7 +8194,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="+35"/>
         <source>Preferences</source>
-        <translation type="unfinished">Параметры</translation>
+        <translation>Параметры</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -8230,7 +8229,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Network</source>
-        <translation type="unfinished">Сеть</translation>
+        <translation>Сеть</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8245,12 +8244,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Shortcuts</source>
-        <translation type="unfinished">Горячие клавиши</translation>
+        <translation>Горячие клавиши</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Parental Controls</source>
-        <translation type="unfinished">Родительский контроль</translation>
+        <translation>Родительский контроль</translation>
     </message>
 </context>
 <context>
@@ -8289,7 +8288,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>px</source>
-        <translation type="unfinished"> пкс</translation>
+        <translation>пкс</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8473,7 +8472,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Host Session</source>
-        <translation type="unfinished">Начать сессию</translation>
+        <translation>Управляющий сессии</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8523,7 +8522,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Preferences</source>
-        <translation type="unfinished">Параметры</translation>
+        <translation>Параметры</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8533,12 +8532,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+25"/>
         <source>Record</source>
-        <translation type="unfinished">Запись</translation>
+        <translation>Запись</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Add Server</source>
-        <translation type="unfinished">Добавить сервер</translation>
+        <translation>Добавить сервер</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8588,10 +8587,10 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Последняя проверка: %n день назад.</numerusform>
+            <numerusform>Последняя проверка: %n дня назад.</numerusform>
+            <numerusform>Последняя проверка: %n дней назад.</numerusform>
         </translation>
     </message>
     <message>
@@ -8602,17 +8601,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>Join</source>
-        <translation type="unfinished">Присоединиться</translation>
+        <translation>Присоединиться</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Host</source>
-        <translation type="unfinished">Начать</translation>
+        <translation>Управляющий</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Create</source>
-        <translation type="unfinished">Создать</translation>
+        <translation>Создать</translation>
     </message>
 </context>
 <context>
@@ -8687,7 +8686,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/userinfodialog.cpp" line="+31"/>
         <source>Refresh</source>
-        <translation type="unfinished">Обновить</translation>
+        <translation>Обновить</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -8884,7 +8883,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-149"/>
         <source>Language:</source>
-        <translation type="unfinished">Язык:</translation>
+        <translation>Язык:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9075,7 +9074,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Session history:</source>
-        <translation type="unfinished">История сессии:</translation>
+        <translation>История сессии:</translation>
     </message>
 </context>
 <context>
@@ -9198,10 +9197,10 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really delete %n avatar(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Действительно удалить %n аватар?</numerusform>
+            <numerusform>Действительно удалить %n аватара?</numerusform>
+            <numerusform>Действительно удалить %n аватаров?</numerusform>
         </translation>
     </message>
 </context>
@@ -9295,7 +9294,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Отключён</translation>
+        <translation>Отключён</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -9305,7 +9304,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+22"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9414,7 +9413,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+11"/>
         <location line="+28"/>
         <source>Lock</source>
-        <translation type="unfinished">Заблокировать</translation>
+        <translation>Заблокировать</translation>
     </message>
     <message>
         <location line="-23"/>
@@ -9429,7 +9428,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Unlock</source>
-        <translation type="unfinished">Разблокировать</translation>
+        <translation>Разблокировать</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -9444,12 +9443,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+17"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished">Разблокировать родительский контроль</translation>
+        <translation>Разблокировать родительский контроль</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished">Заблокировать родительский контроль</translation>
+        <translation>Заблокировать родительский контроль</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9459,7 +9458,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished">Неверный пароль.</translation>
+        <translation>Неверный пароль.</translation>
     </message>
 </context>
 <context>
@@ -9507,19 +9506,19 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+59"/>
         <source>Really remove %n known host(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Действительно удалить %n знакомого хоста?</numerusform>
+            <numerusform>Действительно удалить %n знакомых хоста?</numerusform>
+            <numerusform>Действительно удалить %n знакомых хостов?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-58"/>
         <source>Really remove %n list server(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Действительно удалить %n перечень серверов?</numerusform>
+            <numerusform>Действительно удалить %n перечня серверов?</numerusform>
+            <numerusform>Действительно удалить %n перечней серверов?</numerusform>
         </translation>
     </message>
     <message>
@@ -9884,7 +9883,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-145"/>
         <source>px</source>
-        <translation type="unfinished"> пкс</translation>
+        <translation>пкс</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9910,7 +9909,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Dot</source>
-        <translation type="unfinished">Точка</translation>
+        <translation>Точка</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -10468,7 +10467,7 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/startdialog/create.cpp" line="+29"/>
         <location line="+6"/>
         <source>px</source>
-        <translation type="unfinished"> пкс</translation>
+        <translation>пкс</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -11012,7 +11011,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>px</source>
-        <translation type="unfinished"> пкс</translation>
+        <translation type="unfinished">пкс</translation>
     </message>
     <message>
         <location line="-10"/>
@@ -12482,7 +12481,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+28"/>
         <source>px</source>
-        <translation type="unfinished"> пкс</translation>
+        <translation type="unfinished">пкс</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13440,7 +13439,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/expandshrinkspinner.cpp" line="+27"/>
         <source>px</source>
-        <translation type="unfinished"> пкс</translation>
+        <translation>пкс</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -13450,22 +13449,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Shrink</source>
-        <translation>Свернуть</translation>
+        <translation>Сжать</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Round expansion shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Круглая форма расширения</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Square kernel shape</source>
-        <translation type="unfinished"></translation>
+        <translation>Квадратная центральная форма</translation>
     </message>
     <message>
         <location line="+93"/>
         <source>Shrink: </source>
-        <translation type="unfinished"></translation>
+        <translation>Сжать: </translation>
     </message>
     <message>
         <location line="+0"/>
@@ -13478,17 +13477,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/mypaintinput.cpp" line="+137"/>
         <source>Output Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Выходной диапазон: </translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Input Minimum: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ввести минимум: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Input Maximum: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ввести максимум: </translation>
     </message>
 </context>
 <context>
@@ -13526,27 +13525,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+89"/>
         <source>Self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Самоподписанный сертификат</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Known self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Известный самоподписанный сертификат</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Pinned self-signed certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрепленный самоподписанный сертификат</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Валидный сертификат</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Pinned valid certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрепленный валидный сертификат</translation>
     </message>
     <message>
         <location line="+175"/>
@@ -13599,12 +13598,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/notifbar.cpp" line="+123"/>
         <source>Dismiss (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Отклонение (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Отклонено</translation>
     </message>
 </context>
 <context>
@@ -13627,7 +13626,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Set palette color</source>
-        <translation type="unfinished"></translation>
+        <translation>Установить цвет палитры</translation>
     </message>
     <message>
         <location line="+203"/>
@@ -13635,7 +13634,10 @@ Values above 0.5 may not be noticeable.</source>
 Green: %2
 Blue: %3
 Hex: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Красный: %1
+Зеленый: %2
+Синий: %3
+Hex: %4</translation>
     </message>
 </context>
 <context>
@@ -13771,17 +13773,17 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+1"/>
         <source>Frames Per Second (FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>Кадры в секунду (ФПС)</translation>
     </message>
     <message>
         <location line="+331"/>
         <source>Set Key Frame to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Установить ключевой кадр на %1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Установить ключевой кадр к текущему слою</translation>
     </message>
 </context>
 <context>
@@ -13819,7 +13821,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">От&amp;менить действие</translation>
+        <translation>&amp;Отменить действие</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13829,22 +13831,22 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Вышвырнуть</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>Вышвырнуть &amp;&amp; Забанить</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Приватные сообщения</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show User &amp;Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать пользовательскую &amp;информацию</translation>
     </message>
     <message>
         <location line="+2"/>
