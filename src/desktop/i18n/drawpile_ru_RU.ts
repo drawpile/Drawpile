@@ -203,7 +203,7 @@
         <location line="+16"/>
         <location line="+50"/>
         <source>Action</source>
-        <translation type="unfinished">Действие</translation>
+        <translation>Действие</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -388,7 +388,7 @@
     <message>
         <location line="+16"/>
         <source>Import Session Bans</source>
-        <translation>Импортировать Запреты Сессии</translation>
+        <translation>Импортировать Баны Сессии</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -409,7 +409,7 @@
     <message>
         <location line="+24"/>
         <source>Save Pre-Reset Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить Предварительный Сброс Изображения</translation>
     </message>
     <message>
         <location line="+17"/>
