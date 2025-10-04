@@ -39,6 +39,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Properly check for session reset size so that oversized resets don't end up in disconnects.
  * Fix: Show a proper error message when a manual reset fails, rather than claiming that an auto-reset failed.
  * Fix: Handle reordering of layers with large ids properly. This was only a problem in the UI, it does not cause desync. Thanks Bluesflying for reporting.
+ * Fix: Remove accessibility features, because they cause crashes on macOS and possibly also other operating systems even though Drawpile doesn't use them. This is a patch to Qt. Thanks kal^-^ for reporting.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

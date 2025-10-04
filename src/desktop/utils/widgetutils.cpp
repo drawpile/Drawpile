@@ -979,7 +979,11 @@ QCheckBox *addCheckable(
 	const QString &accessibleName, EncapsulatedLayout *layout, QWidget *child)
 {
 	QCheckBox *check = new QCheckBox;
+#if QT_CONFIG(accessibility)
 	check->setAccessibleName(accessibleName);
+#else
+	Q_UNUSED(accessibleName);
+#endif
 	if(layout->count() > 0) {
 		QLabel *label = qobject_cast<QLabel *>(layout->itemAt(0)->widget());
 		if(label) {
