@@ -670,6 +670,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	}
 
 	m_canvasView->setCanvas(canvas);
+	m_flipbookState = dialogs::Flipbook::State();
 
 	canvas::AclState *aclState = canvas->aclState();
 	connect(
