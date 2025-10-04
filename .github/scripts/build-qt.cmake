@@ -293,7 +293,7 @@ if(KRITA_QT)
 					-no-feature-kmap2qmap -no-feature-pixeltool
 					-no-feature-qdbus -no-feature-qev
 					-no-feature-qtattributionsscanner -no-feature-qtdiag
-					-no-feature-qtplugininfo -no-feature-accessibility
+					-no-feature-qtplugininfo
 					-skip qt3d
 					-skip qtactiveqt
 					-skip qtcanvas3d
