@@ -277,7 +277,7 @@ void ArtisticColorWheelDialog::loadGamutMasks()
 			}
 
 			QDomDocument doc;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 			QDomDocument::ParseResult parseResult = doc.setContent(&f);
 			bool parseOk = bool(parseResult);
 			QString parseError = parseResult.errorMessage;
