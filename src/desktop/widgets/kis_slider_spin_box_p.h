@@ -495,13 +495,14 @@ public:
                 }
                 return true;
             // The escape key can be used to leave the edition mode rejecting
-            // the written value
+            // the written value and unfocusing the slider.
             case Qt::Key_Escape:
                 if (isEditModeActive()) {
                     endEditing(ValueUpdateMode_UseValueBeforeEditing);
-                    return true;
+                } else {
+                    clearFocusFromLineEdit();
                 }
-                break;
+                return true;
             // If we press a number key when in slider mode, then start the edit
             // mode and resend the key event so that the key is processed again
             // in edit mode. Since entering edit mode selects all text, the new
@@ -961,6 +962,23 @@ private:
     void requestStartEditing()
     {
         QTimer::singleShot(0, this, [this] { startEditing(); });
+    }
+
+    void clearFocusFromLineEdit()
+    {
+        if (m_lineEdit->hasFocus()) {
+            QWidget *widget = m_lineEdit;
+            while (true) {
+                QWidget *parent = widget->parentWidget();
+                if (parent) {
+                    widget = parent;
+                } else {
+                    break;
+                }
+            }
+            m_lineEdit->clearFocus();
+            widget->setFocus();
+        }
     }
 };
 
