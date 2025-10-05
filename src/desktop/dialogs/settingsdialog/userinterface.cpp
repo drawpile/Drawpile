@@ -84,7 +84,9 @@ void UserInterface::initKineticScrolling(
 	settings.bindKineticScrollGesture(this, [threshold, hideBars](int gesture) {
 		bool enabled = gesture != int(KineticScrollGesture::None);
 		threshold->setEnabled(enabled);
+		threshold->setVisible(enabled);
 		hideBars->setEnabled(enabled);
+		hideBars->setVisible(enabled);
 	});
 }
 
@@ -168,7 +170,8 @@ void UserInterface::initMiscellaneous(
 	form->addRow(nullptr, automaticAlphaPreserve);
 
 #ifdef Q_OS_MACOS
-	QCheckBox *quitOnClose = new QCheckBox(tr("Quit when last window is closed"));
+	QCheckBox *quitOnClose =
+		new QCheckBox(tr("Quit when last window is closed"));
 	settings.bindQuitOnLastWindowClosed(quitOnClose);
 	form->addRow(tr("macOS:"), quitOnClose);
 #endif
@@ -213,7 +216,11 @@ void UserInterface::initRequiringRestart(
 	connect(
 		overrideScaleFactor, &QCheckBox::clicked, scaleFactor,
 		&QWidget::setEnabled);
+	connect(
+		overrideScaleFactor, &QCheckBox::clicked, scaleFactor,
+		&QWidget::setVisible);
 	scaleFactor->setEnabled(overrideScaleFactor->isChecked());
+	scaleFactor->setVisible(overrideScaleFactor->isChecked());
 
 	QCheckBox *overrideFontSize =
 		new QCheckBox(tr("Override system font size"));
@@ -226,6 +233,7 @@ void UserInterface::initRequiringRestart(
 	fontSize->setSuffix(tr("pt"));
 	settings.bindFontSize(fontSize);
 	settings.bindOverrideFontSize(fontSize, &QWidget::setEnabled);
+	settings.bindOverrideFontSize(fontSize, &QWidget::setVisible);
 	form->addRow(nullptr, fontSize);
 	disableKineticScrollingOnWidget(fontSize);
 
