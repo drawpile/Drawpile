@@ -36,4 +36,13 @@ status "Generating code from $protopath"
 generators/protogen/protogen_drawdance.py libmsg/dpmsg "$protopath"
 
 status "Formatting generated code"
-clang-format -i libmsg/dpmsg/messages.c libmsg/dpmsg/messages.h
+if ! clang-format -i libmsg/dpmsg/messages.c libmsg/dpmsg/messages.h; then
+    echo 2>&1
+    echo '### Code formatting failed!' 2>&1
+    echo '###' 2>&1
+    echo '### Install clang-format to make this work or format' 2>&1
+    echo '### src/drawdance/libmsg/dpmsg/messages.{c,h} yourself.' 2>&1
+    echo '###' 2>&1
+    echo 2>&1
+    exit 1
+fi
