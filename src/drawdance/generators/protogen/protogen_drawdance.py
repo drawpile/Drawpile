@@ -744,7 +744,7 @@ class DrawdanceStructFieldType(DrawdanceFieldType):
         return f"void *{f.name}_user = (void *)(buffer + read);"
 
     def deserialize_constructor_arg(self, f):
-        return f"{f.sub.func_name}_deserialize{"_compat" if f.message.is_compat else ""}, {f.name}_count, {f.name}_user"
+        return f"{f.sub.func_name}_deserialize{'_compat' if f.message.is_compat else ''}, {f.name}_count, {f.name}_user"
 
     def parse_field_count(self, f):
         return f'int {f.name}_count = DP_text_reader_get_sub_count(reader);'
