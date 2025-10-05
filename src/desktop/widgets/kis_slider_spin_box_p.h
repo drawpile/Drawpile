@@ -521,10 +521,37 @@ public:
     // Drawpile patch: eat shortcuts that don't have a modifier or only shift
     // held, because those are probably the user trying to type something.
     bool qShortcutOverrideEvent(QKeyEvent *e) {
-        if ((e->modifiers() & ~Qt::ShiftModifier) == Qt::NoModifier) {
+        if ((e->modifiers() & ~Qt::ShiftModifier) == Qt::NoModifier && (isEditModeActive() || isImportantKey(e->key()))) {
             e->accept();
             return true;
         } else {
+            return false;
+        }
+    }
+
+    bool isImportantKey(int key)
+    {
+        // Keys relevant to the slider's function not to be eaten by shortcuts.
+        switch(key) {
+        case Qt::Key_Return:
+        case Qt::Key_Enter:
+        case Qt::Key_Escape:
+        case Qt::Key_Left:
+        case Qt::Key_Right:
+        case Qt::Key_Up:
+        case Qt::Key_Down:
+        case Qt::Key_0:
+        case Qt::Key_1:
+        case Qt::Key_2:
+        case Qt::Key_3:
+        case Qt::Key_4:
+        case Qt::Key_5:
+        case Qt::Key_6:
+        case Qt::Key_7:
+        case Qt::Key_8:
+        case Qt::Key_9:
+            return true;
+        default:
             return false;
         }
     }
