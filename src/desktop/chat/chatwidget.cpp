@@ -197,6 +197,7 @@ ChatWidget::ChatWidget(bool smallScreenMode, QWidget *parent)
 	d->view = new QTextBrowser(this);
 	d->view->setOpenExternalLinks(true);
 	utils::bindKineticScrolling(d->view);
+	utils::setWidgetLongPressEnabled(d->view, true);
 	connect(
 		d->view->verticalScrollBar(), &QScrollBar::valueChanged, this,
 		&ChatWidget::scrollBarMoved);

@@ -169,6 +169,11 @@ void UserInterface::initMiscellaneous(
 	settings.bindAutomaticAlphaPreserve(automaticAlphaPreserve);
 	form->addRow(nullptr, automaticAlphaPreserve);
 
+	QCheckBox *longPress =
+		new QCheckBox(tr("Long-press to open context menus"));
+	settings.bindLongPressEnabled(longPress);
+	form->addRow(nullptr, longPress);
+
 #ifdef Q_OS_MACOS
 	QCheckBox *quitOnClose =
 		new QCheckBox(tr("Quit when last window is closed"));

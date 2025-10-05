@@ -171,6 +171,8 @@ void maximizeExistingWindow(QWidget *widget);
 
 void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize);
 
+void setWidgetLongPressEnabled(QWidget *widget, bool enabled);
+
 bool moveIfOnScreen(QWidget *widget, const QPoint &pos);
 bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry);
 

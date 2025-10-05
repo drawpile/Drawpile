@@ -198,6 +198,18 @@ bool androidHasStylusInput()
 	return stylusFound;
 }
 
+int androidLongPressTimeout()
+{
+	QJniEnvironment env;
+	jint value = QJniObject::callStaticMethod<jint>(
+		"net/drawpile/android/MainActivity", "getLongPressTimeout", "()");
+	if(clearException(env) || value <= 0) {
+		return 500;
+	} else {
+		return int(value);
+	}
+}
+
 #ifdef DRAWPILE_USE_CONNECT_SERVICE
 bool createConnectionNotificationChannel()
 {

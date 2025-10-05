@@ -349,6 +349,8 @@ target_sources(drawpile PRIVATE
 	utils/hostparams.h
 	utils/listserverdelegate.cpp
 	utils/listserverdelegate.h
+	utils/longpresseventfilter.cpp
+	utils/longpresseventfilter.h
 	utils/mandatoryfields.cpp
 	utils/mandatoryfields.h
 	utils/qtguicompat.cpp

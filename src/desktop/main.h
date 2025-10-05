@@ -6,6 +6,7 @@
 #include <QPalette>
 #include <QVector>
 
+class LongPressEventFilter;
 class MainWindow;
 class QCommandLineOption;
 class QCommandLineParser;
@@ -127,6 +128,7 @@ private:
 #ifdef Q_OS_WIN
 	WinEventFilter *m_winEventFilter;
 #endif
+	LongPressEventFilter *m_longPressEventFilter = nullptr;
 	bool m_wasEraserNear = false;
 #ifdef HAVE_RUN_IN_NEW_PROCESS
 	QStringList m_newProcessArgs;
@@ -141,6 +143,8 @@ private:
 #if !defined(__EMSCRIPTEN__) && !defined(Q_OS_ANDROID)
 	void updateEraserNear(bool near);
 #endif
+
+	void setLongPressEnabled(bool enabled);
 };
 
 inline DrawpileApp &dpApp()

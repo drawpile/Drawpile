@@ -302,6 +302,7 @@ ColorSpinnerDock::ColorSpinnerDock(QWidget *parent)
 	d->colorwheel = new PopupColorWheel(this);
 	d->colorwheel->setMinimumSize(64, 64);
 	d->colorwheel->setContextMenuPolicy(Qt::CustomContextMenu);
+	utils::setWidgetLongPressEnabled(d->colorwheel, false);
 	layout->addWidget(d->colorwheel, 1);
 
 	setWidget(widget);
@@ -541,6 +542,9 @@ void ColorSpinnerDock::setSwatchFlags(int flags)
 
 void ColorSpinnerDock::showContextMenu(const QPoint &pos)
 {
+#ifdef DP_COLOR_SPINNER_ENABLE_PREVIEW
+	hidePreviewPopup();
+#endif
 	d->menuButton->menu()->popup(d->colorwheel->mapToGlobal(pos));
 }
 

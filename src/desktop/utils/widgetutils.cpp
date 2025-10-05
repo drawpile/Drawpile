@@ -2,6 +2,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/main.h"
 #include "desktop/settings.h"
+#include "desktop/utils/longpresseventfilter.h"
 #include "desktop/utils/qtguicompat.h"
 #include <QAbstractItemView>
 #include <QAbstractScrollArea>
@@ -688,6 +689,11 @@ void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize)
 	QSizePolicy sp = widget->sizePolicy();
 	sp.setRetainSizeWhenHidden(retainSize);
 	widget->setSizePolicy(sp);
+}
+
+void setWidgetLongPressEnabled(QWidget *widget, bool enabled)
+{
+	widget->setProperty(LongPressEventFilter::ENABLED_PROPERTY, enabled);
 }
 
 bool moveIfOnScreen(QWidget *widget, const QPoint &pos)

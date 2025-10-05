@@ -5,16 +5,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Build;
 import android.util.Log;
+import android.view.ViewConfiguration;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
+import org.qtproject.qt5.android.QtNative;
 import org.qtproject.qt5.android.bindings.QtActivity;
 import org.qtproject.qt5.android.bindings.QtApplication;
 
 public class MainActivity extends QtActivity {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "drawpile.MainActivity";
 
     public static final String CONNECTION_NOTIFICATION_CHANNEL_ID = "net.drawpile.connection";
     public static NotificationChannel connectionNotificationChannel = null;
@@ -88,6 +90,15 @@ public class MainActivity extends QtActivity {
             startService(intent);
         } catch (Exception e) {
             Log.w(TAG, "Failed to start service", e);
+        }
+    }
+
+    public static int getLongPressTimeout() {
+        try {
+            return ViewConfiguration.get(QtNative.activity()).getLongPressTimeout();
+        } catch (Exception|UnsatisfiedLinkError e) {
+            Log.e(TAG, "Exception getting long press timeout", e);
+            return 500;
         }
     }
 }

@@ -45,6 +45,7 @@ private:
 };
 
 bool androidHasStylusInput();
+int androidLongPressTimeout();
 
 #ifdef DRAWPILE_USE_CONNECT_SERVICE
 bool createConnectionNotificationChannel();

@@ -36,6 +36,14 @@
 #	define LAYER_SKETCH_TINT_DEFAULT QColor(62, 140, 236)
 #endif
 
+#ifndef LONG_PRESS_ENABLED_DEFAULT
+#	if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
+#		define LONG_PRESS_ENABLED_DEFAULT true
+#	else
+#		define LONG_PRESS_ENABLED_DEFAULT false
+#	endif
+#endif
+
 #if !defined(NATIVE_DIALOGS_SETTING_AVAILABLE) && defined(Q_OS_WIN)
 #	define NATIVE_DIALOGS_SETTING_AVAILABLE
 #endif
@@ -220,6 +228,7 @@ SETTING(layerSketchOpacityPercent , LayerSketchOpacityPercent , "layers/sketchop
 SETTING(layerSketchTint           , LayerSketchTint           , "layers/sketchtint"                     , LAYER_SKETCH_TINT_DEFAULT)
 SETTING(layouts                   , Layouts                   , "layouts"                               , QVector<QVariantMap>())
 SETTING(leftyMode                 , LeftyMode                 , "settings/leftymode"                    , false)
+SETTING(longPressEnabled          , LongPressEnabled          , "settings/longpress/enabled"            , LONG_PRESS_ENABLED_DEFAULT)
 SETTING(mentionEnabled            , MentionEnabled            , "settings/mentions/enabled"             , true)
 SETTING(mentionTriggerList        , MentionTriggerList        , "settings/mentions/triggerlist"         , QString())
 #ifdef NATIVE_DIALOGS_SETTING_AVAILABLE

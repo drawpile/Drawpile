@@ -7,6 +7,7 @@
 #include "desktop/settings.h"
 #include "desktop/tabletinput.h"
 #include "desktop/utils/globalkeyeventfilter.h"
+#include "desktop/utils/longpresseventfilter.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/recents.h"
 #include "dpcommon/platform_qt.h"
@@ -181,6 +182,18 @@ void DrawpileApp::updateEraserNear(bool near)
 	}
 }
 #endif
+
+void DrawpileApp::setLongPressEnabled(bool enabled)
+{
+	if(enabled && !m_longPressEventFilter) {
+		m_longPressEventFilter = new LongPressEventFilter(this);
+		installEventFilter(m_longPressEventFilter);
+	} else if(!enabled && m_longPressEventFilter) {
+		removeEventFilter(m_longPressEventFilter);
+		m_longPressEventFilter->deleteLater();
+		m_longPressEventFilter = nullptr;
+	}
+}
 
 void DrawpileApp::setThemeStyle(const QString &themeStyle)
 {
@@ -411,6 +424,8 @@ void DrawpileApp::initInterface()
 		font.setPointSize(fontSize);
 		QApplication::setFont(font);
 	}
+
+	m_settings->bindLongPressEnabled(this, &DrawpileApp::setLongPressEnabled);
 }
 
 int DrawpileApp::getCanvasImplementationFor(int canvasImplementation)
