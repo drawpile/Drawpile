@@ -208,7 +208,7 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
 
     let mut format = flags.format.unwrap_or_default();
     let pre_out_pattern = if let Some(out) = flags.out {
-        if metadata(&out).map(|m| m.is_dir()).unwrap_or(false) {
+        if out != "-" && metadata(&out).map(|m| m.is_dir()).unwrap_or(false) {
             if have_image {
                 let image_path = Path::new(&image);
                 format!(
@@ -301,7 +301,9 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         let out_dir = get_dir_prefix(out_path);
         let out_stem = out_path.file_stem().unwrap_or_default().to_string_lossy();
         let out_suffix = format.suffix();
-        let out_pattern = if pre_out_pattern.contains(":idx:") {
+        let out_pattern = if pre_out_pattern == "-" {
+            pre_out_pattern
+        } else if pre_out_pattern.contains(":idx:") {
             format!("{}{}.{}", out_dir, out_stem, out_suffix)
         } else {
             format!("{}{}-:idx:.{}", out_dir, out_stem, out_suffix)
@@ -538,12 +540,19 @@ fn save_recording_flat_image(
 }
 
 fn write_image(img: &Image, format: OutputFormat, path: &str) -> Result<()> {
-    match format {
-        OutputFormat::Png => img.write_png(path)?,
-        OutputFormat::Jpg | OutputFormat::Jpeg => img.write_jpeg(path)?,
-        OutputFormat::Webp => img.write_webp(path)?,
-        OutputFormat::Qoi => img.write_qoi(path)?,
+    type WriteFileFn = fn(&Image, &str) -> Result<()>;
+    type WriteStdoutFn = fn(&Image) -> Result<()>;
+    let (write_file, write_stdout): (WriteFileFn, WriteStdoutFn) = match format {
+        OutputFormat::Png => (Image::write_png, Image::write_png_stdout),
+        OutputFormat::Jpg | OutputFormat::Jpeg => (Image::write_jpeg, Image::write_jpeg_stdout),
+        OutputFormat::Webp => (Image::write_webp, Image::write_webp_stdout),
+        OutputFormat::Qoi => (Image::write_qoi, Image::write_qoi_stdout),
         _ => panic!("Unhandled output format"),
+    };
+    if path == "-" {
+        write_stdout(img)?;
+    } else {
+        write_file(img, path)?;
     }
     Ok(())
 }
