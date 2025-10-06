@@ -288,16 +288,18 @@ DP_FRAGMENT_OUT vec4 DP_FRAG_COLOR;
 
 void main()
 {
+	float lod_bias = -0.5;
 	vec4 canvasColor;
 #ifdef DP_HAVE_HIGHP
 	if(u_smooth < 0.5) {
 		highp vec2 p = floor(f_pos) + vec2(0.5, 0.5);
 		canvasColor = DP_TEXTURE2D(
 			u_canvas,
-			vec2((p.x - u_rect.x) / u_rect.z, (p.y - u_rect.y) / u_rect.w));
+			vec2((p.x - u_rect.x) / u_rect.z, (p.y - u_rect.y) / u_rect.w),
+			lod_bias);
 	} else {
 #endif
-		canvasColor = DP_TEXTURE2D(u_canvas, f_uv);
+		canvasColor = DP_TEXTURE2D(u_canvas, f_uv, lod_bias);
 #ifdef DP_HAVE_HIGHP
 	}
 #endif
@@ -710,11 +712,15 @@ void main()
 	void
 	drawCanvasShader(QOpenGLFunctions *f, const QRect &rect, GLint &inOutFilter)
 	{
-		GLint filter = textureFilterLinear ? GL_LINEAR : GL_NEAREST;
-		if(inOutFilter != filter) {
-			inOutFilter = filter;
-			f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
-			f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+		GLint min_filter =
+			textureFilterLinear ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST;
+		GLint max_filter = textureFilterLinear ? GL_LINEAR : GL_NEAREST;
+		if(inOutFilter != max_filter) {
+			inOutFilter = max_filter;
+			f->glTexParameteri(
+				GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
+			f->glTexParameteri(
+				GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, max_filter);
 		}
 		f->glUniform4f(
 			canvasShader.rectLocation, rect.x(), rect.y(), rect.width(),
@@ -746,6 +752,7 @@ void main()
 						pixelRect.y() - rect.y(), pixelRect.width(),
 						pixelRect.height(), GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 				});
+			f->glGenerateMipmap(GL_TEXTURE_2D);
 			drawCanvasShader(f, rect, inOutFilter);
 		}
 	}
