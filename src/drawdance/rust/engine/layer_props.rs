@@ -67,7 +67,7 @@ pub trait BaseLayerProps {
         !unsafe { DP_layer_props_children_noinc(self.persistent_ptr()) }.is_null()
     }
 
-    fn children(&self) -> Option<AttachedLayerPropsList<Self>>
+    fn children(&self) -> Option<AttachedLayerPropsList<'_, Self>>
     where
         Self: Sized,
     {
@@ -88,7 +88,7 @@ pub type AttachedLayerProps<'a, P> = Attached<'a, LayerProps, P>;
 pub type DetachedLayerProps = Detached<DP_LayerProps, LayerProps>;
 
 impl LayerProps {
-    pub fn new_attached<P>(data: &mut DP_LayerProps) -> AttachedLayerProps<P> {
+    pub fn new_attached<P>(data: &mut DP_LayerProps) -> AttachedLayerProps<'_, P> {
         Attached::new(Self { data })
     }
 }

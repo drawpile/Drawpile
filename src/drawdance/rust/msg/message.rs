@@ -50,7 +50,7 @@ impl Message {
         msg
     }
 
-    pub fn to_internal(&self) -> InternalMessage {
+    pub fn to_internal(&self) -> InternalMessage<'_> {
         match self.message_type() {
             DP_MSG_JOIN => InternalMessage::Join(MsgJoin { parent: self }),
             DP_MSG_PEN_UP => InternalMessage::PenUp(),

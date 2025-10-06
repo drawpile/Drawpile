@@ -22,7 +22,7 @@ pub trait BaseLayerPropsList {
         unsafe { DP_layer_props_list_count(self.persistent_ptr()) }
     }
 
-    fn at(&self, index: c_int) -> AttachedLayerProps<Self>
+    fn at(&self, index: c_int) -> AttachedLayerProps<'_, Self>
     where
         Self: Sized,
     {
@@ -30,7 +30,7 @@ pub trait BaseLayerPropsList {
         LayerProps::new_attached(unsafe { &mut *data })
     }
 
-    fn iter(&self) -> LayerPropsListIterator<Self>
+    fn iter(&self) -> LayerPropsListIterator<'_, Self>
     where
         Self: Sized,
     {
@@ -46,7 +46,7 @@ pub type AttachedLayerPropsList<'a, P> = Attached<'a, LayerPropsList, P>;
 pub type DetachedLayerPropsList = Detached<DP_LayerPropsList, LayerPropsList>;
 
 impl LayerPropsList {
-    pub fn new_attached<P>(data: &mut DP_LayerPropsList) -> AttachedLayerPropsList<P> {
+    pub fn new_attached<P>(data: &mut DP_LayerPropsList) -> AttachedLayerPropsList<'_, P> {
         Attached::new(Self { data })
     }
 }

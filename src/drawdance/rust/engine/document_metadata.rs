@@ -24,7 +24,7 @@ pub type AttachedDocumentMetadata<'a, P> = Attached<'a, DocumentMetadata, P>;
 pub type DetachedDocumentMetadata = Detached<DP_DocumentMetadata, DocumentMetadata>;
 
 impl DocumentMetadata {
-    pub fn new_attached<P>(data: &mut DP_DocumentMetadata) -> AttachedDocumentMetadata<P> {
+    pub fn new_attached<P>(data: &mut DP_DocumentMetadata) -> AttachedDocumentMetadata<'_, P> {
         Attached::new(Self { data })
     }
 }
@@ -58,7 +58,9 @@ pub type DetachedTransientDocumentMetadata =
     Detached<DP_TransientDocumentMetadata, TransientDocumentMetadata>;
 
 impl TransientDocumentMetadata {
-    pub fn new_attached<P>(data: &mut DP_DocumentMetadata) -> AttachedTransientDocumentMetadata<P> {
+    pub fn new_attached<P>(
+        data: &mut DP_DocumentMetadata,
+    ) -> AttachedTransientDocumentMetadata<'_, P> {
         Attached::new(Self { data })
     }
 

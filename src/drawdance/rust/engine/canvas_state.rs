@@ -43,7 +43,7 @@ pub trait BaseCanvasState {
         unsafe { DP_canvas_state_height(self.persistent_ptr()) }
     }
 
-    fn background_tile(&self) -> Option<AttachedTile<Self>>
+    fn background_tile(&self) -> Option<AttachedTile<'_, Self>>
     where
         Self: Sized,
     {
@@ -55,7 +55,7 @@ pub trait BaseCanvasState {
         unsafe { DP_canvas_state_background_opaque(self.persistent_ptr()) }
     }
 
-    fn layers(&self) -> AttachedLayerList<Self>
+    fn layers(&self) -> AttachedLayerList<'_, Self>
     where
         Self: Sized,
     {
@@ -63,7 +63,7 @@ pub trait BaseCanvasState {
         LayerList::new_attached(unsafe { &mut *data })
     }
 
-    fn layer_props(&self) -> AttachedLayerPropsList<Self>
+    fn layer_props(&self) -> AttachedLayerPropsList<'_, Self>
     where
         Self: Sized,
     {
@@ -71,7 +71,7 @@ pub trait BaseCanvasState {
         LayerPropsList::new_attached(unsafe { &mut *data })
     }
 
-    fn metadata(&self) -> AttachedDocumentMetadata<Self>
+    fn metadata(&self) -> AttachedDocumentMetadata<'_, Self>
     where
         Self: Sized,
     {
@@ -130,7 +130,7 @@ pub type AttachedCanvasState<'a, P> = Attached<'a, CanvasState, P>;
 pub type DetachedCanvasState = Detached<DP_CanvasState, CanvasState>;
 
 impl CanvasState {
-    pub fn new_attached(data: &mut DP_CanvasState) -> AttachedCanvasState<()> {
+    pub fn new_attached(data: &mut DP_CanvasState) -> AttachedCanvasState<'_, ()> {
         Attached::new(Self { data })
     }
 
@@ -206,7 +206,7 @@ impl TransientCanvasState {
         Detached::new_noinc(Self { data })
     }
 
-    pub fn transient_metadata(&mut self) -> AttachedTransientDocumentMetadata<Self> {
+    pub fn transient_metadata(&mut self) -> AttachedTransientDocumentMetadata<'_, Self> {
         let data = unsafe { DP_transient_canvas_state_transient_metadata(self.data) };
         TransientDocumentMetadata::new_attached(unsafe { &mut *data })
     }

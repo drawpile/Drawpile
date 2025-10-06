@@ -15,7 +15,7 @@ pub trait BaseLayerGroup {
         unsafe { DP_layer_group_transient(self.persistent_ptr()) }
     }
 
-    fn children(&self) -> AttachedLayerList<Self>
+    fn children(&self) -> AttachedLayerList<'_, Self>
     where
         Self: Sized,
     {
@@ -32,7 +32,7 @@ pub type AttachedLayerGroup<'a, P> = Attached<'a, LayerGroup, P>;
 pub type DetachedLayerGroup = Detached<DP_LayerGroup, LayerGroup>;
 
 impl LayerGroup {
-    pub fn new_attached<P>(data: &mut DP_LayerGroup) -> AttachedLayerGroup<P> {
+    pub fn new_attached<P>(data: &mut DP_LayerGroup) -> AttachedLayerGroup<'_, P> {
         Attached::new(Self { data })
     }
 }

@@ -18,7 +18,7 @@ pub type AttachedTile<'a, P> = Attached<'a, Tile, P>;
 pub type DetachedTile = Detached<DP_Tile, Tile>;
 
 impl Tile {
-    pub fn new_attached<P>(data: &mut DP_Tile) -> AttachedTile<P> {
+    pub fn new_attached<P>(data: &mut DP_Tile) -> AttachedTile<'_, P> {
         Attached::new(Self { data })
     }
 

@@ -54,7 +54,7 @@ pub type AttachedLayerContent<'a, P> = Attached<'a, LayerContent, P>;
 pub type DetachedLayerContent = Detached<DP_LayerContent, LayerContent>;
 
 impl LayerContent {
-    pub fn new_attached<P>(data: &mut DP_LayerContent) -> AttachedLayerContent<P> {
+    pub fn new_attached<P>(data: &mut DP_LayerContent) -> AttachedLayerContent<'_, P> {
         Attached::new(Self { data })
     }
 }

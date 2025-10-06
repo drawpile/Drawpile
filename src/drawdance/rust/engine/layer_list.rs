@@ -24,7 +24,7 @@ pub struct LayerListEntry {
 pub type AttachedLayerListEntry<'a, P> = Attached<'a, LayerListEntry, P>;
 
 impl LayerListEntry {
-    fn new_attached<P>(data: &mut DP_LayerListEntry) -> AttachedLayerListEntry<P> {
+    fn new_attached<P>(data: &mut DP_LayerListEntry) -> AttachedLayerListEntry<'_, P> {
         Attached::new(LayerListEntry { data })
     }
 }
@@ -46,7 +46,7 @@ pub trait BaseLayerList {
         unsafe { DP_layer_list_count(self.persistent_ptr()) }
     }
 
-    fn at(&self, index: c_int) -> AttachedLayerListEntry<Self>
+    fn at(&self, index: c_int) -> AttachedLayerListEntry<'_, Self>
     where
         Self: Sized,
     {
@@ -54,7 +54,7 @@ pub trait BaseLayerList {
         LayerListEntry::new_attached(unsafe { &mut *data })
     }
 
-    fn content_at(&self, index: c_int) -> AttachedLayerContent<Self>
+    fn content_at(&self, index: c_int) -> AttachedLayerContent<'_, Self>
     where
         Self: Sized,
     {
@@ -62,7 +62,7 @@ pub trait BaseLayerList {
         LayerContent::new_attached(unsafe { &mut *data })
     }
 
-    fn group_at(&self, index: c_int) -> AttachedLayerGroup<Self>
+    fn group_at(&self, index: c_int) -> AttachedLayerGroup<'_, Self>
     where
         Self: Sized,
     {
@@ -79,7 +79,7 @@ pub type AttachedLayerList<'a, P> = Attached<'a, LayerList, P>;
 pub type DetachedLayerList = Detached<DP_LayerList, LayerList>;
 
 impl LayerList {
-    pub fn new_attached<P>(data: &mut DP_LayerList) -> AttachedLayerList<P> {
+    pub fn new_attached<P>(data: &mut DP_LayerList) -> AttachedLayerList<'_, P> {
         Attached::new(Self { data })
     }
 }
