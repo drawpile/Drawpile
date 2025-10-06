@@ -104,33 +104,18 @@ const QVector<qreal> &zoomLevels()
 {
 	static QVector<qreal> levels;
 	if(levels.isEmpty()) {
-		// SPDX-SnippetBegin
-		// SPDX-License-Identifier: GPL-3.0-or-later
-		// SDPX—SnippetName: zoom steps calculation from Krita
-		int steps = 2;
-		qreal k = steps / M_LN2;
+		// This set of zoom levels gives slightly nicer interpolation results for mipmaps when scroll zooming.
+		// It computes the same zoom levels as Paint Tool SAIv2.
 
-		int first = ceil(log(zoomMin) * k);
-		int size = floor(log(zoomMax) * k) - first + 1;
-		levels.resize(size);
-
-		// enforce zoom levels relating to thirds (33.33%, 66.67%, ...)
-		QVector<qreal> snap(steps);
-		if(steps > 1) {
-			qreal third = log(4.0 / 3.0) * k;
-			int i = round(third);
-			snap[(i - first) % steps] = third - i;
+		// Divisions per integer power; Also best as a power of 2.
+		const int substep = 4;
+		const int minlevel = round(log2(zoomMin) * substep);
+		const int maxlevel = round(log2(zoomMax) * substep);
+		// Set to 1 to have the same step count as SAI. Higher number makes scroll zoom faster.
+		const int step = 2;
+		for (int i = minlevel; i <= maxlevel; i += step) {
+			levels.append(pow(2, static_cast<double>(i) / substep));
 		}
-
-		k = 1.0 / k;
-		for(int i = 0; i < steps; i++) {
-			qreal f = exp((i + first + snap[i]) * k);
-			f = floor(f * 0x1p48 + 0.5) / 0x1p48; // round off inaccuracies
-			for(int j = i; j < size; j += steps, f *= 2.0) {
-				levels[j] = f;
-			}
-		}
-		// SPDX-SnippetEnd
 	}
 	return levels;
 }
