@@ -95,6 +95,7 @@ void LassoFillTool::end(const EndParams &params)
 			cancelMultipart();
 		} else {
 			setCursor(Cursors::lassoFillCheck());
+			setCapability(Capability::HandlesRightClick, true);
 			emit m_owner.lassoFillStateChanged(true);
 		}
 	}
@@ -120,6 +121,7 @@ void LassoFillTool::finishMultipart()
 		m_previewUpdatePending = false;
 		requestPendingPreviewUpdate();
 		setCursor(Cursors::lassoFill());
+		setCapability(Capability::HandlesRightClick, false);
 		emit m_owner.lassoFillStateChanged(false);
 	}
 }
@@ -131,6 +133,7 @@ void LassoFillTool::cancelMultipart()
 		m_previewUpdatePending = false;
 		requestPendingPreviewUpdate();
 		setCursor(Cursors::lassoFill());
+		setCapability(Capability::HandlesRightClick, false);
 		emit m_owner.lassoFillStateChanged(false);
 	}
 }

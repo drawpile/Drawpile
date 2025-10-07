@@ -185,6 +185,7 @@ void GradientTool::cancelMultipart()
 		updateAnchorLine();
 		previewPending();
 		updateCursor();
+		setCapability(Capability::HandlesRightClick, false);
 		emit m_owner.gradientStateChanged(false);
 	}
 }
@@ -256,6 +257,7 @@ void GradientTool::pushPoints()
 	if(m_pointsStack.isEmpty()) {
 		m_pointsStack = {m_points};
 		m_pointsStackTop = 0;
+		setCapability(Capability::HandlesRightClick, true);
 		emit m_owner.gradientStateChanged(true);
 	} else if(m_pointsStack[m_pointsStackTop] != m_points) {
 		int popCount = m_pointsStack.size() - m_pointsStackTop - 1;

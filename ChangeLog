@@ -44,6 +44,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Make sliders less annoying: double-clicking now starts editing instead of clicking and holding, hitting Escape now unfocuses the slider and sliders now no longer block shortcuts keys that wouldn't have any effect on them. Thanks Blozzom and incoheart for reporting.
  * Fix: Make drawpile-cmd actually write to stdout when passing "-" as the output file, like the help claims. Thanks incoheart for reporting.
  * Feature: Higher-quality zoom using the hardware renderer. Thanks cromachina for contributing.
+ * Fix: Allow right-clicking on the lasso fill and gradient tools to cancel them even if right-click is bound to a canvas shortcut. Thanks Blozzom for reporting.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.
