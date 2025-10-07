@@ -52,16 +52,18 @@ void OutlineItem::paint(
 {
 	if(m_actuallyVisible) {
 		painter->save();
+		painter->setRenderHint(QPainter::Antialiasing, true);
 
 		QPen pen;
 		const QPaintEngine *pe = painter->paintEngine();
-		if(pe->hasFeature(QPaintEngine::RasterOpModes)) {
-			pen.setColor(QColor(96, 191, 96));
-			painter->setCompositionMode(
-				QPainter::RasterOp_SourceXorDestination);
-		} else if(pe->hasFeature(QPaintEngine::BlendModes)) {
+		if(pe->hasFeature(QPaintEngine::BlendModes)) {
 			pen.setColor(QColor(0, 255, 0));
 			painter->setCompositionMode(QPainter::CompositionMode_Difference);
+		} else if(pe->hasFeature(QPaintEngine::RasterOpModes)) {
+			pen.setColor(QColor(96, 191, 96));
+			painter->setRenderHint(QPainter::Antialiasing, false);
+			painter->setCompositionMode(
+				QPainter::RasterOp_SourceXorDestination);
 		} else {
 			pen.setColor(QColor(191, 96, 191));
 		}
