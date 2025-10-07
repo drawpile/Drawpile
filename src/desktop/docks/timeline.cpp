@@ -34,6 +34,9 @@ Timeline::Timeline(QWidget *parent)
 		m_widget, &widgets::TimelineWidget::layerSelected, this,
 		&Timeline::layerSelected);
 	connect(
+		m_widget, &widgets::TimelineWidget::blankLayerSelected, this,
+		&Timeline::blankLayerSelected);
+	connect(
 		m_widget, &widgets::TimelineWidget::trackHidden, this,
 		&Timeline::trackHidden);
 	connect(

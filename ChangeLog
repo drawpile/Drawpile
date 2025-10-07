@@ -48,6 +48,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Allow for fractional framerates instead of only allowing whole numbers.
  * Fix: Reset flipbook crop, speed nad frame range when a different canvas is loaded.
  * Feature: Make the timeline use a frame range instead of always strictly constraining it from 1 to the maximum frame count and chomping away any frames beyond the end.
+ * Fix: Clear layer selection when selecting a blank frame. Thanks Pumpkin for reporting.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

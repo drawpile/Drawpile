@@ -393,21 +393,27 @@ struct TimelineWidget::Private {
 		}
 	}
 
-	int guessLayerIdToSelect()
+	bool guessLayerIdToSelect(int &outLayerId)
 	{
 		QPair<int, int> key = {currentTrackId, currentFrame};
 		if(isLayerVisibleInCurrentTrack(selectedLayerId)) {
 			layerIdByKeyFrame.insert(key, selectedLayerId);
-			return 0;
+			return false;
 		}
 
 		int lastLayerId = layerIdByKeyFrame.value(key, 0);
 		if(lastLayerId != 0 && isLayerVisibleInCurrentTrack(lastLayerId)) {
-			return lastLayerId;
+			outLayerId = lastLayerId;
+			return true;
 		}
 
 		const canvas::TimelineKeyFrame *keyFrame = currentVisibleKeyFrame();
-		return keyFrame ? keyFrame->layerId : 0;
+		if(keyFrame) {
+			outLayerId = keyFrame->layerId;
+			return true;
+		}
+
+		return false;
 	}
 
 	int bodyWidth() const
@@ -1976,9 +1982,13 @@ void TimelineWidget::setCurrent(
 
 	if(needsUpdate && triggerUpdate) {
 		if(selectLayer) {
-			int layerIdToSelect = d->guessLayerIdToSelect();
-			if(layerIdToSelect != 0) {
-				emit layerSelected(layerIdToSelect);
+			int layerIdToSelect;
+			if(d->guessLayerIdToSelect(layerIdToSelect)) {
+				if(layerIdToSelect == 0) {
+					emit blankLayerSelected();
+				} else {
+					emit layerSelected(layerIdToSelect);
+				}
 			}
 		}
 		updateActions();

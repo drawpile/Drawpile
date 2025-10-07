@@ -441,6 +441,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		m_doc->toolCtrl(), &tools::ToolController::setSelectedLayers);
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_dockTimeline, &docks::Timeline::setCurrentLayer);
 	connect(m_dockTimeline, &docks::Timeline::layerSelected, m_dockLayers, &docks::LayerList::selectLayer);
+	connect(
+		m_dockTimeline, &docks::Timeline::blankLayerSelected, m_dockLayers,
+		&docks::LayerList::clearLayerSelection);
 	connect(m_dockTimeline, &docks::Timeline::trackSelected, m_dockLayers, &docks::LayerList::setTrackId);
 	m_dockLayers->setTrackId(m_dockTimeline->currentTrackId());
 	connect(m_dockTimeline, &docks::Timeline::frameSelected, m_dockLayers, &docks::LayerList::setFrame);

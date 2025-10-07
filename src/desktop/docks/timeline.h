@@ -50,6 +50,7 @@ signals:
 	void trackSelected(int frame);
 	void frameSelected(int frame);
 	void layerSelected(int layerId);
+	void blankLayerSelected();
 	void trackHidden(int trackId, bool hidden);
 	void trackOnionSkinEnabled(int trackId, bool onionSkin);
 
