@@ -708,6 +708,11 @@ public:
 		return results;
 	}
 
+	static QString brushShortcutPrefix()
+	{
+		return QStringLiteral("__brushshortcut_");
+	}
+
 private:
 	static void parseGroupedTagIds(const QString &input, QSet<int> &tagIds)
 	{
@@ -855,8 +860,8 @@ private:
 
 	static QString getActionName(const QKeySequence &shortcut)
 	{
-		return QStringLiteral("__brushshortcut_%1")
-			.arg(shortcut.toString(QKeySequence::PortableText));
+		return brushShortcutPrefix() +
+			   shortcut.toString(QKeySequence::PortableText);
 	}
 
 	void refreshShortcutsInternal(drawdance::Query &query)
@@ -2378,6 +2383,13 @@ void BrushPresetModel::setIconDimension(int dimension)
 	beginResetModel();
 	d->setPresetIconSize(dimension);
 	endResetModel();
+}
+
+bool BrushPresetModel::looksLikeBrushShortcutObjectName(
+	const QString &objectName)
+{
+	return objectName.startsWith(
+		BrushPresetTagModel::Private::brushShortcutPrefix());
 }
 
 void BrushPresetModel::tagsAboutToBeReset()

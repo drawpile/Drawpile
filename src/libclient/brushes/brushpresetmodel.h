@@ -304,6 +304,8 @@ public:
 	int iconDimension() const;
 	void setIconDimension(int dimension);
 
+	static bool looksLikeBrushShortcutObjectName(const QString &objectName);
+
 public slots:
 	void tagsAboutToBeReset();
 	void tagsReset();

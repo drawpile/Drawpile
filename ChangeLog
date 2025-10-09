@@ -50,6 +50,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Make the timeline use a frame range instead of always strictly constraining it from 1 to the maximum frame count and chomping away any frames beyond the end.
  * Fix: Clear layer selection when selecting a blank frame. Thanks Pumpkin for reporting.
  * Fix: Properly persist changes to blend, alpha preserve and erase modes when they're changed on the brush dock. Thanks cromachina for reporting.
+ * Fix: Don't disconnect brush shortcuts when changing other shortcuts. Thanks cromachina for reporting.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

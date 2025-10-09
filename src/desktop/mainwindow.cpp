@@ -1052,7 +1052,8 @@ void MainWindow::loadShortcuts(const QVariantMap &cfg)
 
 	for(auto *a : findChildren<QAction*>()) {
 		const QString &name = a->objectName();
-		if(!name.isEmpty()) {
+		if(!name.isEmpty() &&
+		   !brushes::BrushPresetModel::looksLikeBrushShortcutObjectName(name)) {
 			if(cfg.contains(name)) {
 				const auto v = cfg.value(name);
 				QList<QKeySequence> shortcuts;
