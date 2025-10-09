@@ -51,6 +51,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Clear layer selection when selecting a blank frame. Thanks Pumpkin for reporting.
  * Fix: Properly persist changes to blend, alpha preserve and erase modes when they're changed on the brush dock. Thanks cromachina for reporting.
  * Fix: Don't disconnect brush shortcuts when changing other shortcuts. Thanks cromachina for reporting.
+ * Feature: Allow double-clicking on empty timeline frames to create key frames and on the header to edit the framerate and frame range. Thanks Greendyno for suggesting.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

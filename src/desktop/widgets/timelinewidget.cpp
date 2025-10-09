@@ -1213,7 +1213,14 @@ void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 		} else if(target.frameIndex == -1 && target.trackId != 0) {
 			retitleTrack();
 		} else if(target.frameIndex != -1 && target.trackId != 0) {
-			showKeyFrameProperties();
+			if(d->currentKeyFrame()) {
+				showKeyFrameProperties();
+			} else if(d->editable) {
+				d->actions.keyFrameCreateLayer->trigger();
+			}
+		} else if(
+			target.frameIndex != -1 && target.header == TargetHeader::Header) {
+			showAnimationProperties();
 		}
 	}
 }
