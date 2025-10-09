@@ -696,38 +696,56 @@ DP_SaveResult DP_save_animation_video(DP_SaveVideoParams params)
             }
         }
 
-        err =
-            avfilter_graph_create_filter(&buffersink_context, buffersink_filter,
-                                         "out", NULL, NULL, graph_context);
-        if (err < 0) {
-            DP_error_set("Error creating filter buffer sink: %s",
-                         av_err2str(err));
+        buffersink_context = avfilter_graph_alloc_filter(
+            graph_context, buffersink_filter, "out");
+        if (!buffersink_context) {
+            DP_error_set("Error allocating filter buffer sink");
             result = DP_SAVE_RESULT_INTERNAL_ERROR;
             goto cleanup;
         }
 
         const enum AVPixelFormat *pix_fmts =
             get_format_filter_pix_fmts(params.format);
+#if LIBAVUTIL_VERSION_MAJOR >= 60
+        // Option int lists and "pix_fmt" got deprecated and replaced with array
+        // options and "pixel_formats".
+        unsigned int pix_fmts_count = 0;
+        for (int i = 0; pix_fmts[i] != AV_PIX_FMT_NONE; ++i) {
+            ++pix_fmts_count;
+        }
+        err = av_opt_set_array(buffersink_context, "pixel_formats",
+                               AV_OPT_SEARCH_CHILDREN | AV_OPT_ARRAY_REPLACE, 0,
+                               pix_fmts_count, AV_OPT_TYPE_PIXEL_FMT, pix_fmts);
+#else
         // av_opt_set_int_list is a really wonky macro under the hood, relying
         // on implicit conversions that trigger various warnings in that regard.
-#if defined(__GNUC__)
-#    pragma GCC diagnostic push
-#    pragma GCC diagnostic ignored "-Wconversion"
-#    pragma GCC diagnostic ignored "-Wsign-conversion"
-#elif defined(_MSC_VER)
-#    pragma warning(push)
-#    pragma warning(disable : 4245)
-#endif
+#    if defined(__GNUC__)
+#        pragma GCC diagnostic push
+#        pragma GCC diagnostic ignored "-Wconversion"
+#        pragma GCC diagnostic ignored "-Wsign-conversion"
+#    elif defined(_MSC_VER)
+#        pragma warning(push)
+#        pragma warning(disable : 4245)
+#    endif
         err = av_opt_set_int_list(buffersink_context, "pix_fmts", pix_fmts,
                                   AV_PIX_FMT_NONE, AV_OPT_SEARCH_CHILDREN);
-#if defined(__GNUC__)
-#    pragma GCC diagnostic pop
-#elif defined(_MSC_VER)
-#    pragma warning(pop)
+#    if defined(__GNUC__)
+#        pragma GCC diagnostic pop
+#    elif defined(_MSC_VER)
+#        pragma warning(pop)
+#    endif
 #endif
         if (err < 0) {
             DP_error_set("Error setting buffersink pixel format: %s",
                          av_err2str(err));
+            goto cleanup;
+        }
+
+        err = avfilter_init_str(buffersink_context, NULL);
+        if (err < 0) {
+            DP_error_set("Error initializing filter buffer sink: %s",
+                         av_err2str(err));
+            result = DP_SAVE_RESULT_INTERNAL_ERROR;
             goto cleanup;
         }
 
