@@ -1129,6 +1129,7 @@ void BrushSettings::setEraserMode(bool erase)
 		d->blendModeManager->selectBlendMode(brush.blendMode());
 	}
 
+	changePresetBrush(brush);
 	updateUi();
 }
 
@@ -1482,6 +1483,7 @@ void BrushSettings::updateBlendMode(int blendMode, bool eraseMode)
 		brush.classic().erase = eraseMode;
 		brush.myPaint().brush().erase = eraseMode;
 		brush.setBlendMode(blendMode, eraseMode);
+		changePresetBrush(brush);
 		updateUi();
 	}
 }
@@ -2158,6 +2160,7 @@ void BrushSettings::resetBrushMode()
 	brushes::ActiveBrush &brush = d->currentBrush();
 	brush.setEraser(false);
 	brush.setBlendMode(DP_BLEND_MODE_NORMAL, false);
+	changePresetBrush(brush);
 	updateUi();
 }
 
