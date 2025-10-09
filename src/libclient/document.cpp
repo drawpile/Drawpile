@@ -981,6 +981,11 @@ bool Document::isCompatibilityMode() const
 	return m_client->isCompatibilityMode();
 }
 
+bool Document::isMinorIncompatibility() const
+{
+	return m_client->isMinorIncompatibility();
+}
+
 void Document::handleCommands(int count, const net::Message *msgs)
 {
 	if(m_canvas) {
@@ -1362,7 +1367,8 @@ bool Document::shouldRespondToAutoReset() const
 		qInfo("Ignoring autoreset request because we're not caught up yet");
 		return false;
 	} else {
-		return true;
+		// If we're not fully compatible, our canvas may be desynced.
+		return !m_client->isMinorIncompatibility();
 	}
 }
 

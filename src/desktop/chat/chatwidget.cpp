@@ -65,6 +65,7 @@ struct Chat {
 			".registered { color: #16a085 }"
 			".op { color: #f47750 }"
 			".mod { color: #ed1515 }"
+			".oldver { font-style: italic; }"
 			".timestamp { color: #8d8d8d }"
 			".alert .timestamp { color: #eff0f1 }"
 			"a:link { color: #1d99f3 }"
@@ -460,14 +461,19 @@ QString ChatWidget::Private::usernameSpan(int userId)
 		userlist ? userlist->getUserById(userId) : canvas::User();
 
 	QString userclass;
-	if(user.isMod)
+	if(user.isMod) {
 		userclass = QStringLiteral("mod");
-	else if(user.isOperator)
+	} else if(user.isOperator) {
 		userclass = QStringLiteral("op");
-	else if(user.isTrusted)
+	} else if(user.isTrusted) {
 		userclass = QStringLiteral("trusted");
-	else if(user.isAuth)
+	} else if(user.isAuth) {
 		userclass = QStringLiteral("registered");
+	}
+
+	if(user.isMinorIncompatibility) {
+		userclass += QStringLiteral("oldver");
+	}
 
 	return QStringLiteral("<span class=\"username %1\">%2</span>")
 		.arg(
@@ -662,6 +668,12 @@ void ChatWidget::userJoined(int id, const QString &name)
 
 	d->announcedUsers << id;
 	QString fmt = tr("%1 joined the session");
+	if(d->userlist && d->userlist->getUserById(id).isMinorIncompatibility) {
+		//: This is appended to the message "%1 joined the session" if the
+		//: person joining is using a slightly incompatible version of Drawpile.
+		fmt += tr(" (on an older version of Drawpile)");
+	}
+
 	QString msg = fmt.arg(d->usernameSpan(id));
 	bool wasAtEnd = d->isAtEnd();
 

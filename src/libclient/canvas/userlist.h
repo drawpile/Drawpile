@@ -30,6 +30,7 @@ struct User {
 	bool isLocked;
 	bool isMuted;
 	bool isOnline;
+	bool isMinorIncompatibility;
 };
 
 class OnlineUserListModel;
@@ -51,7 +52,8 @@ public:
 		IsBotRole,
 		IsLockedRole,
 		IsMutedRole,
-		IsOnlineRole
+		IsOnlineRole,
+		IsMinorIncompatibilityRole,
 	};
 
 	UserListModel(QObject *parent = nullptr);

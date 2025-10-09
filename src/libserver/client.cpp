@@ -161,6 +161,7 @@ struct Client::Private {
 	bool isHoldLocked = false;
 	bool isBanTriggered = false;
 	bool isGhost = false;
+	bool isMinorIncompatibility = false;
 	bool gracefulDisconnect = false;
 	bool quietDisconnect = false;
 	CapabilityFlags capabilities = CapabilityFlag::None;
@@ -239,7 +240,8 @@ net::MessageQueue *Client::messageQueue()
 net::Message Client::joinMessage() const
 {
 	uint8_t flags = (isAuthenticated() ? DP_MSG_JOIN_FLAGS_AUTH : 0) |
-					(isModerator() ? DP_MSG_JOIN_FLAGS_MOD : 0);
+					(isModerator() ? DP_MSG_JOIN_FLAGS_MOD : 0) |
+					(isMinorIncompatibility() ? DP_MSG_JOIN_FLAGS_OLD : 0);
 	return net::makeJoinMessage(id(), flags, username(), avatar());
 }
 
@@ -295,6 +297,7 @@ QJsonObject Client::description(bool includeSession) const
 			{QStringLiteral("thumbnail"),
 			 hasCapability(CapabilityFlag::Thumbnail)},
 		}));
+	u.insert(QStringLiteral("oldv"), d->isMinorIncompatibility);
 	return u;
 }
 
@@ -624,6 +627,16 @@ void Client::setMuted(bool m)
 bool Client::isMuted() const
 {
 	return d->isMuted;
+}
+
+bool Client::isMinorIncompatibility() const
+{
+	return d->isMinorIncompatibility;
+}
+
+void Client::setMinorIncompatibility(bool minorIncompatibility)
+{
+	d->isMinorIncompatibility = minorIncompatibility;
 }
 
 bool Client::canManageWebSession() const

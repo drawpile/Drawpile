@@ -385,10 +385,12 @@ size_t DP_msg_thumbnail_data_size(const DP_MsgThumbnail *mt);
 #define DP_MSG_JOIN_FLAGS_AUTH 0x1
 #define DP_MSG_JOIN_FLAGS_MOD  0x2
 #define DP_MSG_JOIN_FLAGS_BOT  0x4
+#define DP_MSG_JOIN_FLAGS_OLD  0x8
 
-#define DP_MSG_JOIN_NUM_FLAGS 3
-#define DP_MSG_JOIN_ALL_FLAGS \
-    DP_MSG_JOIN_FLAGS_AUTH, DP_MSG_JOIN_FLAGS_MOD, DP_MSG_JOIN_FLAGS_BOT
+#define DP_MSG_JOIN_NUM_FLAGS 4
+#define DP_MSG_JOIN_ALL_FLAGS                                             \
+    DP_MSG_JOIN_FLAGS_AUTH, DP_MSG_JOIN_FLAGS_MOD, DP_MSG_JOIN_FLAGS_BOT, \
+        DP_MSG_JOIN_FLAGS_OLD
 
 const char *DP_msg_join_flags_flag_name(unsigned int value);
 

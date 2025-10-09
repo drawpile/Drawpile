@@ -1785,11 +1785,28 @@ void Session::handleInitCancel(int ctxId)
 void Session::resetSession(int resetter, const QString &type)
 {
 	Q_ASSERT(m_state == State::Running);
+	Client *client = getClientById(resetter);
+	if(!client) {
+		// Shouldn't happen
+		log(Log()
+				.about(Log::Level::Error, Log::Topic::RuleBreak)
+				.message(QString("Non-existent user %1 sent reset-session")
+							 .arg(resetter)));
+		return;
+	}
+
+	if(client->isMinorIncompatibility()) {
+		// Shouldn't happen, checked in opcommands
+		client->disconnectClient(
+			Client::DisconnectionReason::Error,
+			QStringLiteral("Incompatible reset"),
+			QStringLiteral("misbehaving client with minor incompatibility"));
+		return;
+	}
+
 	m_initUser = resetter;
 	switchState(State::Reset);
 
-	Client *client = getClientById(resetter);
-	Q_ASSERT(client);
 	QString name = client->username();
 	QJsonObject params = {{QStringLiteral("name"), name}};
 	if(type == QStringLiteral("current")) {

@@ -173,6 +173,7 @@ public:
 	bool sessionSupportsSkipCatchup() const { return m_supportsSkipCatchup; }
 
 	bool isCompatibilityMode() const { return m_compatibilityMode; }
+	bool isMinorIncompatibility() const { return m_minorIncompatibility; }
 
 	/**
 	 * @brief Get the number of bytes waiting to be sent
@@ -364,6 +365,7 @@ private:
 	bool m_supportsAutoReset = false;
 	bool m_supportsSkipCatchup = false;
 	bool m_compatibilityMode = false;
+	bool m_minorIncompatibility = false;
 
 	int m_timeoutSecs = 0;
 	int m_proxyMode = 0;

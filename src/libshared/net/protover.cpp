@@ -92,6 +92,12 @@ bool ProtocolVersion::isFuture() const
 	return DP_protocol_version_is_future(m_protocolVersion);
 }
 
+bool ProtocolVersion::isFutureMinorIncompatibility() const
+{
+	return DP_protocol_version_is_future_minor_incompatibility(
+		m_protocolVersion);
+}
+
 bool ProtocolVersion::isPast() const
 {
 	return DP_protocol_version_is_past(m_protocolVersion);

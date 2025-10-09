@@ -28,6 +28,7 @@ struct LoggedInParams {
 	bool supportsSkipCatchup;
 	bool skipCatchup;
 	bool compatibilityMode;
+	bool minorIncompatibility;
 	uint8_t userId;
 	QUrl url;
 	QString joinPassword;

@@ -109,6 +109,10 @@ CmdResult readyToAutoReset(
 {
 	Q_UNUSED(args);
 
+	if(client->isMinorIncompatibility()) {
+		return CmdResult::err(QStringLiteral("Incompatible client"));
+	}
+
 	Session::ResetCapabilities capabilities;
 	// Older clients report the "net" parameter the wrong way round.
 	bool shouldTrustNetQuality = false;
@@ -409,6 +413,10 @@ CmdResult
 resetSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
 	Q_UNUSED(args);
+
+	if(client->isMinorIncompatibility()) {
+		return CmdResult::err(QStringLiteral("Incompatible client"));
+	}
 
 	if(client->session()->state() != Session::State::Running) {
 		return CmdResult::err(QStringLiteral("Unable to reset in this state"));

@@ -73,6 +73,8 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case ColumnVersion:
 			if(ls.isIncompatible()) {
 				return QIcon::fromTheme("state-error");
+			} else if(ls.isMinorIncompatibility()) {
+				return QIcon::fromTheme("state-offline");
 			} else if(ls.isCompatibilityMode()) {
 				return QIcon::fromTheme("state-warning");
 			} else {
@@ -103,6 +105,8 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 				return tr("%1 (incompatible)").arg(ls.version.description);
 			} else if(ls.isCompatibilityMode()) {
 				return tr("Drawpile 2.2 (compatibility mode)");
+			} else if(ls.isMinorIncompatibility()) {
+				return tr("Drawpile 2.3 (minor incompatibility)");
 			} else {
 				return tr("Drawpile 2.3 (fully compatible)");
 			}
@@ -179,7 +183,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case NsfmRole:
 			return isNsfm(ls);
 		case CompatibilityModeRole:
-			return ls.version.compatibilityMode;
+			return ls.isCompatibilityMode();
 		case InactiveRole:
 			return ls.activeDrawingUserCount == 0;
 		case JoinDenyReasonsRole:
@@ -188,6 +192,8 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 				!ls.version.compatible, ls.version.future, ls.version.past);
 		case JoinDenyIcon:
 			return getJoinDenyIcon(!ls.version.compatible);
+		case MinorIncompatibilityRole:
+			return ls.isMinorIncompatibility();
 		default:
 			return QVariant{};
 		}

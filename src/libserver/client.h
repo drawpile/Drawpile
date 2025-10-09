@@ -175,6 +175,9 @@ public:
 	bool isMuted() const;
 	void setMuted(bool m);
 
+	bool isMinorIncompatibility() const;
+	void setMinorIncompatibility(bool minorIncompatibility);
+
 	bool canManageWebSession() const;
 
 	bool isBanInProgress() const;

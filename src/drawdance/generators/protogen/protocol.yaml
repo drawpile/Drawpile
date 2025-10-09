@@ -87,7 +87,7 @@ Join:
              This message is sent only be the server. It associates a username
              with a context ID.
     fields:
-        - flags flags: [auth, mod, bot]
+        - flags flags: [auth, mod, bot, old]
         - name utf8
         - avatar bytes
 

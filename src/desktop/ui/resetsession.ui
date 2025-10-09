@@ -59,9 +59,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="opLabel">
+    <widget class="QLabel" name="noResetLabel">
      <property name="text">
-      <string>You must be an operator to reset the session.</string>
+      <string notr="true">No reset label goes here.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

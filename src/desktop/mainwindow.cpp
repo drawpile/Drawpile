@@ -2595,14 +2595,27 @@ void MainWindow::discardPreResetImage()
 
 void MainWindow::showCompatibilityModeWarning()
 {
-	if(m_doc->isCompatibilityMode()) {
-		QString message =
-			tr("This session was hosted with an older version of Drawpile. "
-			   "Several features – such as layer clipping, some blend modes "
-			   "and drawing within a selection mask – will be unavailable.");
+	bool compatibilityMode = m_doc->isCompatibilityMode();
+	if(compatibilityMode || m_doc->isMinorIncompatibility()) {
+		QString title, message;
+		if(compatibilityMode) {
+			title = tr("Compatibility Mode");
+			message = tr(
+				"This session was hosted with an older version of Drawpile. "
+				"Several features – such as layer clipping, some blend modes "
+				"and drawing within a selection mask – will be unavailable.");
+		} else {
+			title = tr("Outdated Version");
+			message =
+				tr("This session was hosted with a newer version of Drawpile. "
+				   "You will not see an effect when people use newer features "
+				   "that your version doesn't have yet and you won't be able "
+				   "to compress or reset the canvas. Check <a href=\"%1\">"
+				   "drawpile.net</a> for updates.")
+					.arg(cmake_config::website());
+		}
 		QMessageBox *box = new QMessageBox(
-			QMessageBox::Warning, tr("Compatibility Mode"), message,
-			QMessageBox::Ok, this);
+			QMessageBox::Warning, title, message, QMessageBox::Ok, this);
 		box->setAttribute(Qt::WA_DeleteOnClose);
 		box->setModal(false);
 		box->show();
@@ -3448,8 +3461,13 @@ void MainWindow::resetSession()
 	});
 #endif
 
-	// Session resetting is available only to session operators
-	if(m_doc->canvas()->aclState()->amOperator()) {
+	// Session resetting is available only to session operators that aren't
+	// running an outdated client.
+	if(m_doc->isMinorIncompatibility()) {
+		dlg->setReset(dialogs::ResetDialog::Reset::DisabledIncompatible);
+	} else if(!m_doc->canvas()->aclState()->amOperator()) {
+		dlg->setReset(dialogs::ResetDialog::Reset::DisabledNotOp);
+	} else {
 		connect(dlg, &dialogs::ResetDialog::resetSelected, this, [this, dlg]() {
 			utils::ScopedOverrideCursor innerWaitCursor;
 			canvas::CanvasModel *canvas = m_doc->canvas();
@@ -3470,9 +3488,6 @@ void MainWindow::resetSession()
 			}
 			dlg->deleteLater();
 		});
-
-	} else {
-		dlg->setCanReset(false);
 	}
 
 	utils::showWindow(dlg, shouldShowDialogMaximized());
@@ -4771,7 +4786,7 @@ void MainWindow::showUserInfoDialog(int userId)
 	canvas::User user = m_doc->canvas()->userlist()->getOptionalUserById(userId)
 		.value_or(canvas::User{
 			userId, tr("User #%1").arg(userId), {}, false, false, false, false,
-			false, false, false, false, false});
+			false, false, false, false, false, false});
 	dialogs::UserInfoDialog *dlg = new dialogs::UserInfoDialog{user, this};
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	connect(dlg, &dialogs::UserInfoDialog::requestUserInfo, this,

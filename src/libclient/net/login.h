@@ -110,6 +110,7 @@ public:
 	bool mustAuth() const { return m_mustAuth; }
 
 	bool compatibilityMode() const { return m_compatibilityMode; }
+	bool minorIncompatibility() const { return m_minorIncompatibility; }
 
 	const QStringList &userFlags() const { return m_userFlags; }
 
@@ -194,7 +195,8 @@ public slots:
 	 */
 	void prepareJoinSelectedSession(
 		const QString &id, bool needPassword, bool compatibilityMode,
-		const QString &title, bool nsfm, bool autoJoin);
+		bool minorIncompatibility, const QString &title, bool nsfm,
+		bool autoJoin);
 
 	/**
 	 * @brief Actually join the session that the user selected.
@@ -496,6 +498,7 @@ private:
 	bool m_mayRedirect = false;
 	bool m_acceptsRedirects = false;
 	bool m_compatibilityMode = false;
+	bool m_minorIncompatibility = false;
 	bool m_needSessionPassword = false;
 	bool m_isGuest = true;
 	bool m_skipCatchup = false;

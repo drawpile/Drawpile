@@ -63,6 +63,8 @@ public:
 	 */
 	bool isFuture() const;
 
+	bool isFutureMinorIncompatibility() const;
+
 	/**
 	 * Is this an older version than the current one?
 	 *
@@ -75,7 +77,11 @@ public:
 	/**
 	 * Is this some kind of compatible version?
 	 */
-	bool isCompatible() const { return isCurrent() || isPastCompatible(); }
+	bool isCompatible() const
+	{
+		return isCurrent() || isPastCompatible() ||
+			   isFutureMinorIncompatibility();
+	}
 
 	bool shouldHaveSystemId() const;
 	bool shouldSupportLookup() const;

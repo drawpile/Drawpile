@@ -299,7 +299,8 @@ void CanvasModel::handleJoin(const net::Message &msg)
 		bool(flags & DP_MSG_JOIN_FLAGS_AUTH),
 		false,
 		false,
-		true};
+		true,
+		bool(flags & DP_MSG_JOIN_FLAGS_OLD)};
 
 	m_userlist->userLogin(u);
 	emit userJoined(user_id, name);

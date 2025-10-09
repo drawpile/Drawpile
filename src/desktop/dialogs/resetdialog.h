@@ -17,13 +17,19 @@ namespace dialogs {
 class ResetDialog final : public QDialog {
 	Q_OBJECT
 public:
+	enum class Reset {
+		Enabled,
+		DisabledIncompatible,
+		DisabledNotOp,
+	};
+
 	ResetDialog(
 		const canvas::PaintEngine *pe, bool singleSession,
 		QWidget *parent = nullptr);
 
 	~ResetDialog() override;
 
-	void setCanReset(bool canReset);
+	void setReset(Reset reset);
 
 	net::MessageList getResetImage(bool compatibilityMode) const;
 	QString getResetImageType() const;

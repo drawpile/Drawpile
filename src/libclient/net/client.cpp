@@ -186,6 +186,7 @@ void Client::handleConnect(const LoggedInParams &params)
 	m_supportsAutoReset = params.supportsAutoReset;
 	m_supportsSkipCatchup = params.supportsSkipCatchup;
 	m_compatibilityMode = params.compatibilityMode;
+	m_minorIncompatibility = params.minorIncompatibility;
 	m_historyIndex.clear();
 
 	emit serverLoggedIn(params);
@@ -204,6 +205,7 @@ void Client::handleDisconnect(
 		emit serverDisconnected(
 			message, errorcode, localDisconnect, anyMessageReceived);
 		m_compatibilityMode = false;
+		m_minorIncompatibility = false;
 		m_server->deleteLater();
 		m_server = nullptr;
 		m_userFlags = UserFlag::None;

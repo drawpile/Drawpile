@@ -176,6 +176,15 @@ void ThinSession::readyToAutoReset(
 		return;
 	}
 
+	if(c->isMinorIncompatibility()) {
+		// Shouldn't happen, checked in opcommands
+		c->disconnectClient(
+			Client::DisconnectionReason::Error,
+			QStringLiteral("Incompatible autoreset"),
+			QStringLiteral("misbehaving client with minor incompatibility"));
+		return;
+	}
+
 	if(!c->isOperator() || c->isGhost()) {
 		// Unlikely to happen normally, but possible if connection is
 		// really slow and user is deopped at just the right moment
@@ -739,7 +748,7 @@ void ThinSession::checkAutoResetQuery()
 		int(history()->currentSizeLimit()), m_autoResetPayload);
 
 	for(Client *c : clients()) {
-		if(c->isOperator() && !c->isGhost()) {
+		if(c->isOperator() && !c->isGhost() && !c->isMinorIncompatibility()) {
 			c->setResetFlags(Client::ResetFlag::Queried);
 			c->sendDirectMessage(reqMsg);
 		} else {

@@ -1363,6 +1363,10 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		session->assignId(m_client);
 	}
 
+	if(cmd.kwargs.value(QStringLiteral("oldv")).toBool()) {
+		m_client->setMinorIncompatibility(true);
+	}
+
 	HistoryIndex hi;
 	bool skip =
 		session->supportsSkipCatchup() &&

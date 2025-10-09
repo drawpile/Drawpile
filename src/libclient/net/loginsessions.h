@@ -14,6 +14,7 @@ struct LoginSessionVersion {
 	bool future;
 	bool past;
 	bool compatibilityMode;
+	bool minorIncompatibility;
 };
 
 /**
@@ -46,6 +47,7 @@ struct LoginSession {
 
 	bool isIncompatible() const { return !version.compatible; }
 	bool isCompatibilityMode() const { return version.compatibilityMode; }
+	bool isMinorIncompatibility() const { return version.minorIncompatibility; }
 
 	bool isClosed() const
 	{
@@ -54,7 +56,8 @@ struct LoginSession {
 
 	bool isJoinable(bool mod) const
 	{
-		return (mod || !isClosed()) && version.compatible;
+		return (mod || !isClosed()) &&
+			   (version.compatible || version.minorIncompatibility);
 	}
 };
 
@@ -81,6 +84,7 @@ public:
 		InactiveRole,		   // Does this session have zero active users
 		JoinDenyReasonsRole, // Human-readable explanations why they can't join.
 		JoinDenyIcon,		 // Icon for the can't join message box.
+		MinorIncompatibilityRole, // Our client is slightly outdated.
 	};
 
 	enum Column : int {

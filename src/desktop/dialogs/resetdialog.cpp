@@ -160,7 +160,7 @@ ResetDialog::ResetDialog(
 
 	d->updateSelection();
 
-	setCanReset(true);
+	setReset(Reset::Enabled);
 }
 
 ResetDialog::~ResetDialog()
@@ -168,10 +168,26 @@ ResetDialog::~ResetDialog()
 	delete d;
 }
 
-void ResetDialog::setCanReset(bool canReset)
+void ResetDialog::setReset(Reset reset)
 {
+	bool canReset = true;
+	switch(reset) {
+	case Reset::Enabled:
+		break;
+	case Reset::DisabledIncompatible:
+		canReset = false;
+		d->ui->noResetLabel->setText(
+			tr("This session was hosted with a newer version of Drawpile. "
+			   "You are not able to reset it."));
+		break;
+	case Reset::DisabledNotOp:
+		canReset = false;
+		d->ui->noResetLabel->setText(
+			tr("You must be an operator to reset the session."));
+		break;
+	}
 	d->resetButton->setEnabled(canReset);
-	d->ui->opLabel->setVisible(!canReset);
+	d->ui->noResetLabel->setVisible(!canReset);
 }
 
 void ResetDialog::onSelectionChanged(int pos)

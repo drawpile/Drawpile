@@ -152,34 +152,39 @@ void UserItemDelegate::paint(
 		index.data(canvas::UserListModel::NameRole).toString());
 
 	// Draw user flags
-	QString flags;
+	QStringList flags;
 
 	if(index.data(canvas::UserListModel::IsModRole).toBool()) {
-		flags = tr("Moderator");
+		flags.append(tr("Moderator"));
 
 	} else {
-		if(index.data(canvas::UserListModel::IsOpRole).toBool())
-			flags = tr("Operator");
-		else if(index.data(canvas::UserListModel::IsTrustedRole).toBool())
-			flags = tr("Trusted");
-
-		if(index.data(canvas::UserListModel::IsBotRole).toBool()) {
-			if(!flags.isEmpty())
-				flags += " | ";
-			flags += tr("Bot");
-
-		} else if(index.data(canvas::UserListModel::IsAuthRole).toBool()) {
-			if(!flags.isEmpty())
-				flags += " | ";
-			flags += tr("Registered");
+		if(index.data(canvas::UserListModel::IsOpRole).toBool()) {
+			flags.append(tr("Operator"));
+		} else if(index.data(canvas::UserListModel::IsTrustedRole).toBool()) {
+			flags.append(tr("Trusted"));
 		}
+
+		if(index.data(canvas::UserListModel::IsAuthRole).toBool()) {
+			flags.append(tr("Registered"));
+		}
+	}
+
+	if(index.data(canvas::UserListModel::IsBotRole).toBool()) {
+		flags.append(tr("Bot"));
+	}
+
+	if(index.data(canvas::UserListModel::IsMinorIncompatibilityRole).toBool()) {
+		flags.append(tr("Outdated"));
 	}
 
 	if(!flags.isEmpty()) {
 		font.setPixelSize(12);
 		font.setWeight(QFont::Normal);
 		painter->setFont(font);
-		painter->drawText(usernameRect, Qt::AlignBottom, flags);
+		//: Separator for user state, shows up like "Operator | Registered".
+		//: Only change this if the vertical line is troublesome in your
+		//: language, otherwise just leave it the same.
+		painter->drawText(usernameRect, Qt::AlignBottom, flags.join(tr(" | ")));
 	}
 
 	// Draw the context menu buttons

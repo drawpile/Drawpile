@@ -896,7 +896,8 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 				if(checkSession(session, false)) {
 					prepareJoinSelectedSession(
 						m_autoJoinId, session.needPassword,
-						session.version.compatibilityMode, session.title,
+						session.isCompatibilityMode(),
+						session.isMinorIncompatibility(), session.title,
 						session.nsfm, true);
 				} else {
 					m_autoJoinId = QString();
@@ -921,7 +922,8 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 			if(checkSession(session, true)) {
 				prepareJoinSelectedSession(
 					session.id, session.needPassword,
-					session.version.compatibilityMode, session.title,
+					session.isCompatibilityMode(),
+					session.isMinorIncompatibility(), session.title,
 					session.nsfm, true);
 			}
 		}
@@ -974,14 +976,13 @@ LoginSession LoginHandler::updateSession(const QJsonObject &js)
 	version.future = protoVer.isFuture();
 	version.past = protoVer.isPast();
 	version.compatibilityMode = protoVer.isPastCompatible();
+	version.minorIncompatibility = protoVer.isFutureMinorIncompatibility();
 	version.compatible = protoVer.isCompatible();
-	if(!version.compatible) {
-		if(version.future) {
-			version.description = tr("New version");
-		} else {
-			version.description = protoVer.versionName();
-		}
 
+	if(version.future) {
+		version.description = tr("New version");
+	} else {
+		version.description = protoVer.versionName();
 		if(version.description.isEmpty()) {
 			version.description = tr("Unknown version %1").arg(protocol);
 		}
@@ -1132,11 +1133,12 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 
 void LoginHandler::prepareJoinSelectedSession(
 	const QString &id, bool needPassword, bool compatibilityMode,
-	const QString &title, bool nsfm, bool autoJoin)
+	bool minorIncompatibility, const QString &title, bool nsfm, bool autoJoin)
 {
 	Q_ASSERT(!id.isEmpty());
 	m_selectedId = id;
 	m_compatibilityMode = compatibilityMode;
+	m_minorIncompatibility = minorIncompatibility;
 	m_needSessionPassword = needPassword;
 	m_server->messageQueue()->setCompatibilityMode(m_compatibilityMode);
 	emit sessionConfirmationNeeded(title, nsfm, autoJoin);
@@ -1165,6 +1167,10 @@ void LoginHandler::sendJoinCommand()
 	QJsonObject kwargs = makeClientInfo();
 	if(!m_joinPassword.isEmpty()) {
 		kwargs["password"] = m_joinPassword;
+	}
+
+	if(m_minorIncompatibility) {
+		kwargs.insert(QStringLiteral("oldv"), true);
 	}
 
 	if(m_reconnectState && m_reconnectState->historyState()) {

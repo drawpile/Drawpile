@@ -530,6 +530,7 @@ void Server::loginSuccess()
 		sessionFlags.contains(QStringLiteral("SKIP")),
 		m_loginstate->skipCatchup(),
 		m_loginstate->compatibilityMode(),
+		m_loginstate->minorIncompatibility(),
 		m_loginstate->userId(),
 		m_loginstate->url(),
 		m_loginstate->joinPassword(),

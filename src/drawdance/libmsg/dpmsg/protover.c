@@ -207,6 +207,15 @@ bool DP_protocol_version_is_future(const DP_ProtocolVersion *protover)
                         && protover->minor > DP_PROTOCOL_VERSION_MINOR))));
 }
 
+bool DP_protocol_version_is_future_minor_incompatibility(
+    const DP_ProtocolVersion *protover)
+{
+    return protover && DP_str_equal(protover->ns, DP_PROTOCOL_VERSION_NAMESPACE)
+        && protover->server == DP_PROTOCOL_VERSION_SERVER
+        && protover->major == DP_PROTOCOL_VERSION_MAJOR
+        && protover->minor > DP_PROTOCOL_VERSION_MINOR;
+}
+
 bool DP_protocol_version_is_past(const DP_ProtocolVersion *protover)
 {
     return protover && DP_str_equal(protover->ns, DP_PROTOCOL_VERSION_NAMESPACE)

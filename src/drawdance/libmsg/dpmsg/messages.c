@@ -2225,6 +2225,8 @@ const char *DP_msg_join_flags_flag_name(unsigned int value)
         return "mod";
     case DP_MSG_JOIN_FLAGS_BOT:
         return "bot";
+    case DP_MSG_JOIN_FLAGS_OLD:
+        return "old";
     default:
         return NULL;
     }
@@ -2262,11 +2264,11 @@ static bool msg_join_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
     return DP_text_writer_write_base64(writer, "avatar",
                                        mj->name_avatar + mj->name_len + 1,
                                        mj->avatar_size)
-        && DP_text_writer_write_flags(writer, "flags", mj->flags, 3,
-                                      (const char *[]){"auth", "mod", "bot"},
-                                      (unsigned int[]){DP_MSG_JOIN_FLAGS_AUTH,
-                                                       DP_MSG_JOIN_FLAGS_MOD,
-                                                       DP_MSG_JOIN_FLAGS_BOT})
+        && DP_text_writer_write_flags(
+               writer, "flags", mj->flags, 4,
+               (const char *[]){"auth", "mod", "bot", "old"},
+               (unsigned int[]){DP_MSG_JOIN_FLAGS_AUTH, DP_MSG_JOIN_FLAGS_MOD,
+                                DP_MSG_JOIN_FLAGS_BOT, DP_MSG_JOIN_FLAGS_OLD})
         && DP_text_writer_write_string(writer, "name",
                                        ((char *)mj->name_avatar));
 }
@@ -2352,9 +2354,9 @@ DP_Message *DP_msg_join_deserialize_compat(unsigned int context_id,
 DP_Message *DP_msg_join_parse(unsigned int context_id, DP_TextReader *reader)
 {
     uint8_t flags = (uint8_t)DP_text_reader_get_flags(
-        reader, "flags", 3, (const char *[]){"auth", "mod", "bot"},
+        reader, "flags", 4, (const char *[]){"auth", "mod", "bot", "old"},
         (unsigned int[]){DP_MSG_JOIN_FLAGS_AUTH, DP_MSG_JOIN_FLAGS_MOD,
-                         DP_MSG_JOIN_FLAGS_BOT});
+                         DP_MSG_JOIN_FLAGS_BOT, DP_MSG_JOIN_FLAGS_OLD});
     uint16_t name_len;
     const char *name = DP_text_reader_get_string(reader, "name", &name_len);
     size_t avatar_size;

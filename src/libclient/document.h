@@ -180,6 +180,7 @@ public:
 	qulonglong pasteId() const { return reinterpret_cast<uintptr_t>(this); }
 
 	bool isCompatibilityMode() const;
+	bool isMinorIncompatibility() const;
 
 	void handleCommands(int count, const net::Message *msgs) override;
 	void handleLocalCommands(int count, const net::Message *msgs) override;

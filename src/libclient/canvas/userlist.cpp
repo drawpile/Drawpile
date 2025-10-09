@@ -55,6 +55,8 @@ QVariant UserListModel::data(const QModelIndex &index, int role) const
 			return u.isMuted;
 		case IsOnlineRole:
 			return u.isOnline;
+		case IsMinorIncompatibilityRole:
+			return u.isMinorIncompatibility;
 		}
 
 	} else if(role == Qt::DisplayRole) {
@@ -143,6 +145,7 @@ void UserListModel::userLogin(const User &user)
 			u.isBot = user.isBot;
 			u.isMuted = user.isMuted;
 			u.isOnline = true;
+			u.isMinorIncompatibility = user.isMinorIncompatibility;
 
 			emit dataChanged(index(i, 0), index(i, columnCount() - 1));
 			return;
