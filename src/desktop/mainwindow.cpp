@@ -579,6 +579,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	settings.bindLeftyMode(getAction("smallscreenleftymode"));
 	settings.bindDonationLinksEnabled(
 		this, &MainWindow::setDonationLinkEnabled);
+	settings.bindPreferredSaveFormat(this, &MainWindow::setPreferredSaveFormat);
 	settings.trySubmit();
 
 	m_updatingInterfaceMode = false;
@@ -2281,9 +2282,6 @@ void MainWindow::downloadSelection()
 	FileWrangler(this).downloadSelection(m_doc);
 }
 #else
-/**
- * If no file name has been selected, \a saveas is called.
- */
 bool MainWindow::save()
 {
 	QString result = FileWrangler{this}.saveImage(m_doc, false);
@@ -2298,16 +2296,19 @@ bool MainWindow::save()
 	}
 }
 
-/**
- * A standard file dialog is used to get the name of the file to save.
- * If no suffix is the suffix from the current filter is used.
- */
-void MainWindow::saveas()
+void MainWindow::saveAs()
 {
-	QString result = FileWrangler{this}.saveImageAs(m_doc, false);
-	if(!result.isEmpty()) {
-		addRecentFile(result);
-	}
+	saveAsType(int(DP_SAVE_IMAGE_UNKNOWN));
+}
+
+void MainWindow::saveAsDpcs()
+{
+	saveAsType(int(DP_SAVE_IMAGE_PROJECT_CANVAS));
+}
+
+void MainWindow::saveAsOra()
+{
+	saveAsType(int(DP_SAVE_IMAGE_ORA));
 }
 
 void MainWindow::saveSelection()
@@ -2320,7 +2321,8 @@ void MainWindow::saveSelection()
 
 void MainWindow::exportImage()
 {
-	QString result = FileWrangler(this).saveImageAs(m_doc, true);
+	QString result =
+		FileWrangler(this).saveImageAs(m_doc, true, DP_SAVE_IMAGE_UNKNOWN);
 	if(!result.isEmpty()) {
 		addRecentFile(result);
 	}
@@ -5235,6 +5237,10 @@ void MainWindow::setupActions()
 	QAction *saveas = makeAction("savedocumentas", tr("Save &As..."))
 						  .icon("document-save-as")
 						  .shortcut(QKeySequence::SaveAs);
+	QAction *saveAsDpcs = makeAction("savedocumentasdpcs", tr("Sa&ve As DPCS…"))
+							  .noDefaultShortcut();
+	QAction *saveAsOra = makeAction("savedocumentasora", tr("Sa&ve As ORA…"))
+							 .noDefaultShortcut();
 	QAction *exportDocument = makeAction("exportdocument", tr("Export Image…"))
 								  .icon("document-export")
 								  .noDefaultShortcut();
@@ -5297,6 +5303,8 @@ void MainWindow::setupActions()
 #else
 	m_currentdoctools->addAction(save);
 	m_currentdoctools->addAction(saveas);
+	m_currentdoctools->addAction(saveAsDpcs);
+	m_currentdoctools->addAction(saveAsOra);
 	m_currentdoctools->addAction(exportTemplate);
 	m_currentdoctools->addAction(savesel);
 	m_currentdoctools->addAction(exportDocument);
@@ -5314,8 +5322,10 @@ void MainWindow::setupActions()
 	connect(
 		downloadsel, &QAction::triggered, this, &MainWindow::downloadSelection);
 #else
-	connect(save, SIGNAL(triggered()), this, SLOT(save()));
-	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
+	connect(save, &QAction::triggered, this, &MainWindow::save);
+	connect(saveas, &QAction::triggered, this, &MainWindow::saveAs);
+	connect(saveAsDpcs, &QAction::triggered, this, &MainWindow::saveAsDpcs);
+	connect(saveAsOra, &QAction::triggered, this, &MainWindow::saveAsOra);
 	connect(
 		exportDocument, &QAction::triggered, this, &MainWindow::exportImage);
 #	ifndef Q_OS_ANDROID
@@ -5385,6 +5395,8 @@ void MainWindow::setupActions()
 #	endif
 	filemenu->addAction(save);
 	filemenu->addAction(saveas);
+	filemenu->addAction(saveAsDpcs);
+	filemenu->addAction(saveAsOra);
 	filemenu->addAction(savesel);
 	filemenu->addAction(exportDocument);
 #	ifndef Q_OS_ANDROID
@@ -7825,6 +7837,22 @@ void MainWindow::updateDockTabs()
 			}
 		}
 	}
+}
+
+void MainWindow::saveAsType(int saveImageType)
+{
+	QString result = FileWrangler(this).saveImageAs(
+		m_doc, false, DP_SaveImageType(saveImageType));
+	if(!result.isEmpty()) {
+		addRecentFile(result);
+	}
+}
+
+void MainWindow::setPreferredSaveFormat(const QString &format)
+{
+	bool defaultIsDpcs = format == QStringLiteral("dpcs");
+	getAction(QStringLiteral("savedocumentasdpcs"))->setVisible(!defaultIsDpcs);
+	getAction(QStringLiteral("savedocumentasora"))->setVisible(defaultIsDpcs);
 }
 
 void MainWindow::setDonationLinkEnabled(bool enabled)

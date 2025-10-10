@@ -151,7 +151,9 @@ public slots:
 	void downloadSelection();
 #else
 	bool save();
-	void saveas();
+	void saveAs();
+	void saveAsDpcs();
+	void saveAsOra();
 	void saveSelection();
 	void exportImage();
 #	ifndef Q_OS_ANDROID
@@ -436,6 +438,9 @@ private:
 	void deactivateAllDocks();
 	void prepareDockTabUpdate();
 	void updateDockTabs();
+
+	void saveAsType(int saveImageType);
+	void setPreferredSaveFormat(const QString &format);
 
 	void setDonationLinkEnabled(bool enabled);
 	QString makeContributionInfoText();

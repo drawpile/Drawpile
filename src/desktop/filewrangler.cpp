@@ -199,7 +199,7 @@ QString FileWrangler::saveImage(Document *doc, bool exported) const
 		lcDpFileWrangler, "saveImage exported=%d, path='%s', type=%d",
 		int(exported), qUtf8Printable(path), int(type));
 	if(path.isEmpty() || type == DP_SAVE_IMAGE_UNKNOWN) {
-		return saveImageAs(doc, exported);
+		return saveImageAs(doc, exported, DP_SAVE_IMAGE_UNKNOWN);
 	} else if(exported || confirmFlatten(doc, path, type)) {
 		doc->saveCanvasAs(path, type, exported);
 		return path;
@@ -208,14 +208,28 @@ QString FileWrangler::saveImage(Document *doc, bool exported) const
 	}
 }
 
-QString FileWrangler::saveImageAs(Document *doc, bool exported) const
+QString FileWrangler::saveImageAs(
+	Document *doc, bool exported, DP_SaveImageType requestedType) const
 {
-	qCDebug(lcDpFileWrangler, "saveImageAs exported=%d", int(exported));
+	qCDebug(
+		lcDpFileWrangler, "saveImageAs exported=%d requestedFormat=%d",
+		int(exported), requestedType);
 	QString selectedFilter;
 	QStringList filters =
 		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages);
-	QString extension =
-		exported ? preferredExportExtension() : preferredSaveExtension();
+
+	QString extension;
+	if(requestedType == DP_SAVE_IMAGE_UNKNOWN) {
+		if(exported) {
+			extension = preferredExportExtension();
+		} else {
+			extension = preferredSaveExtension();
+		}
+	} else if(exported) {
+		extension = preferredExportExtensionFor(requestedType);
+	} else {
+		extension = preferredSaveExtensionFor(requestedType);
+	}
 	updateSelectedFilter(selectedFilter, filters, extension);
 
 	QString lastPath = getCurrentPathOrUntitled(doc, extension);
