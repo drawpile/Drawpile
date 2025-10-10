@@ -392,7 +392,7 @@ static DP_LayerContent *search_layer(DP_CanvasState *cs, int layer_id)
             DP_layer_routes_search_sel(lr, cs, layer_id);
         if (DP_layer_routes_sel_entry_is_valid_source(&lrse)) {
             DP_LayerContent *lc = DP_layer_routes_sel_entry_content(&lrse, cs);
-            return DP_layer_content_incref(lc);
+            return lc;
         }
     }
     return NULL;
