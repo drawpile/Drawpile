@@ -953,6 +953,16 @@ void MainWindow::createNewWindow(const std::function<void(MainWindow *)> &block)
 	});
 }
 
+void MainWindow::loadBlankDocument(const QSize &size, const QColor &background)
+{
+	m_doc->loadBlank(
+		size, background,
+		QApplication::translate("docks::LayerList", "Layer") +
+			QStringLiteral(" 1"),
+		QCoreApplication::translate("widgets::TimelineWidget", "Track") +
+			QStringLiteral(" 1"));
+}
+
 /**
  * The file is added to the list of recent files and the menus on all open
  * mainwindows are updated.
@@ -2092,7 +2102,7 @@ void MainWindow::newDocument(const QSize &size, const QColor &background)
 		[this, size, background](bool ok) {
 			if(ok) {
 				if(canReplace()) {
-					m_doc->loadBlank(size, background);
+					loadBlankDocument(size, background);
 				} else {
 					prepareWindowReplacement();
 					bool newProcessStarted = dpApp().runInNewProcess(
@@ -2107,7 +2117,7 @@ void MainWindow::newDocument(const QSize &size, const QColor &background)
 						emit windowReplacementFailed(nullptr);
 					} else {
 						createNewWindow([size, background](MainWindow *win) {
-							win->m_doc->loadBlank(size, background);
+							win->loadBlankDocument(size, background);
 						});
 					}
 				}

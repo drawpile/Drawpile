@@ -335,6 +335,7 @@ private:
 		const std::function<void(bool)> &block);
 	void prepareWindowReplacement();
 	void createNewWindow(const std::function<void(MainWindow *)> &block);
+	void loadBlankDocument(const QSize &size, const QColor &background);
 
 	void connectStartDialog(dialogs::StartDialog *dlg);
 	void setStartDialogActions(dialogs::StartDialog *dlg);

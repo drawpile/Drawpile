@@ -234,13 +234,17 @@ void Document::onSessionOutOfSpace()
 	setSessionOutOfSpace(true);
 }
 
-bool Document::loadBlank(const QSize &size, const QColor &background)
+bool Document::loadBlank(
+	const QSize &size, const QColor &background,
+	const QString &initialLayerName, const QString &initialTrackName)
 {
 	setAutosave(false);
 	initCanvas();
 	unmarkDirty();
 
-	m_canvas->loadBlank(m_settings.engineUndoDepth(), size, background);
+	m_canvas->loadBlank(
+		m_settings.engineUndoDepth(), size, background, initialLayerName,
+		initialTrackName);
 	clearPaths();
 	return true;
 }

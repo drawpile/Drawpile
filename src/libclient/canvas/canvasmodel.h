@@ -59,8 +59,9 @@ public:
 	PaintEngine *paintEngine() const { return m_paintengine; }
 
 	//! Load an empty canvas
-	void
-	loadBlank(int undoDepthLimit, const QSize &size, const QColor &background);
+	void loadBlank(
+		int undoDepthLimit, const QSize &size, const QColor &background,
+		const QString &initialLayerName, const QString &initialTrackName);
 
 	void loadCanvasState(
 		int undoDepthLimit, const drawdance::CanvasState &canvasState);

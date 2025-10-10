@@ -203,7 +203,8 @@ void PaintEngine::enqueueReset()
 }
 
 void PaintEngine::enqueueLoadBlank(
-	int undoDepthLimit, const QSize &size, const QColor &backgroundColor)
+	int undoDepthLimit, const QSize &size, const QColor &backgroundColor,
+	const QString &initialLayerName, const QString &initialTrackName)
 {
 	net::Message messages[] = {
 		net::makeInternalResetMessage(0),
@@ -212,8 +213,8 @@ void PaintEngine::enqueueLoadBlank(
 		net::makeCanvasResizeMessage(
 			0, 0, qBound(0, size.width(), int(DP_CANVAS_STATE_MAX_DIMENSION)),
 			qBound(0, size.height(), int(DP_CANVAS_STATE_MAX_DIMENSION)), 0),
-		net::makeLayerTreeCreateMessage(
-			0, 1, 0, 0, 0, 0, tr("Layer %1").arg(1)),
+		net::makeLayerTreeCreateMessage(0, 1, 0, 0, 0, 0, initialLayerName),
+		net::makeTrackCreateMessage(0, 1, 0, 0, initialTrackName),
 		net::makeSetMetadataIntMessage(
 			0, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT, 124),
 		net::makeSetMetadataIntMessage(

@@ -104,7 +104,8 @@ public:
 	void enqueueReset();
 
 	void enqueueLoadBlank(
-		int undoDepthLimit, const QSize &size, const QColor &backgroundColor);
+		int undoDepthLimit, const QSize &size, const QColor &backgroundColor,
+		const QString &initialLayerName, const QString &initialTrackName);
 
 	//! Enqueue a "catchup progress" marker.
 	//! Will trigger the emission of caughtUpTo signal once the marker

@@ -114,9 +114,11 @@ CanvasModel::CanvasModel(
 }
 
 void CanvasModel::loadBlank(
-	int undoDepthLimit, const QSize &size, const QColor &background)
+	int undoDepthLimit, const QSize &size, const QColor &background,
+	const QString &initialLayerName, const QString &initialTrackName)
 {
-	m_paintengine->enqueueLoadBlank(undoDepthLimit, size, background);
+	m_paintengine->enqueueLoadBlank(
+		undoDepthLimit, size, background, initialLayerName, initialTrackName);
 }
 
 void CanvasModel::loadCanvasState(

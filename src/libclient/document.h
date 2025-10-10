@@ -73,7 +73,9 @@ public:
 	 */
 	void initCanvas();
 
-	bool loadBlank(const QSize &size, const QColor &background);
+	bool loadBlank(
+		const QSize &size, const QColor &background,
+		const QString &initialLayerName, const QString &initialTrackName);
 	void loadState(
 		const drawdance::CanvasState &canvasState, const QString &path,
 		DP_SaveImageType type, bool dirty);
