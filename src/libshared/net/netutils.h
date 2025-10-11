@@ -6,6 +6,24 @@
 
 namespace net {
 
+// Decides how connection attempts should be made.
+enum class ConnectStrategy {
+	// Whatever the user has set in their preferences.
+	Preference,
+	// Use the address as written.
+	Literal,
+	// Connect via TCP, converting WebSocket addresses.
+	ForceTcp,
+	// Connect via WebSocket, converting TCP addresses.
+	ForceWebSocket,
+};
+
+ConnectStrategy defaultConnectStrategy();
+
+ConnectStrategy resolveConnectStrategy(int input, int preference);
+
+bool isConnectStrategyAvailable(ConnectStrategy cs);
+
 QString addSchemeToUserSuppliedAddress(const QString &remoteAddress);
 
 QUrl fixUpAddress(const QUrl &originalUrl, bool join);

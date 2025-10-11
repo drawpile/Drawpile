@@ -5,6 +5,49 @@
 
 namespace net {
 
+ConnectStrategy defaultConnectStrategy()
+{
+	return ConnectStrategy::Literal;
+}
+
+ConnectStrategy resolveConnectStrategy(int input, int preference)
+{
+	switch(input) {
+	case int(ConnectStrategy::Preference):
+		break;
+	case int(ConnectStrategy::Literal):
+		return ConnectStrategy::Literal;
+#ifdef HAVE_TCPSOCKETS
+	case int(ConnectStrategy::ForceTcp):
+		return ConnectStrategy::ForceTcp;
+#endif
+	case int(ConnectStrategy::ForceWebSocket):
+		return ConnectStrategy::ForceWebSocket;
+	default:
+		qWarning("Unhandled connect strategy %d", input);
+		break;
+	}
+	return resolveConnectStrategy(preference, int(defaultConnectStrategy()));
+}
+
+bool isConnectStrategyAvailable(ConnectStrategy cs)
+{
+	switch(cs) {
+	case ConnectStrategy::Preference:
+	case ConnectStrategy::Literal:
+	case ConnectStrategy::ForceWebSocket:
+		return true;
+	case ConnectStrategy::ForceTcp:
+#ifdef HAVE_TCPSOCKETS
+		return true;
+#else
+		return false;
+#endif
+	}
+	qWarning("Unknown connect strategy %d", int(cs));
+	return false;
+}
+
 QString addSchemeToUserSuppliedAddress(const QString &remoteAddress)
 {
 	bool haveValidScheme =
