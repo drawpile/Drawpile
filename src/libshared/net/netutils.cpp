@@ -3,7 +3,81 @@
 #include <QRegularExpression>
 #include <QUrlQuery>
 
+static_assert(
+	int(net::ConnectStrategy::Preference) == 0,
+	"Preference connect strategy is 0, since that's used as a default");
+
 namespace net {
+
+int defaultConnectStrategy()
+{
+	return int(ConnectStrategy::Literal);
+}
+
+int resolveConnectStrategy(int input, int preference)
+{
+	switch(input) {
+	case int(ConnectStrategy::Preference):
+		break;
+	case int(ConnectStrategy::Literal):
+		return int(ConnectStrategy::Literal);
+	case int(ConnectStrategy::ForceWebSocket):
+		return int(ConnectStrategy::ForceWebSocket);
+#ifdef HAVE_TCPSOCKETS
+	case int(ConnectStrategy::ForceTcp):
+		return int(ConnectStrategy::ForceTcp);
+#endif
+	default:
+		qWarning("resolveConnectStrategy: unknown input %d", input);
+		break;
+	}
+	return resolveConnectStrategy(preference, defaultConnectStrategy());
+}
+
+QString connectStrategyToString(int input)
+{
+	switch(input) {
+	case int(ConnectStrategy::Preference):
+		return QStringLiteral("preference");
+	case int(ConnectStrategy::Literal):
+		return QStringLiteral("literal");
+	case int(ConnectStrategy::ForceWebSocket):
+		return QStringLiteral("ws");
+	case int(ConnectStrategy::ForceTcp):
+		return QStringLiteral("tcp");
+	}
+	qWarning("connectStrategyToString: unknown input %d", int(input));
+	return QString();
+}
+
+int connectStrategyFromString(const QString &s)
+{
+	if(s.isEmpty() ||
+	   QStringLiteral("preference").compare(s, Qt::CaseInsensitive) == 0) {
+		return int(ConnectStrategy::Preference);
+	} else if(QStringLiteral("literal").compare(s, Qt::CaseInsensitive) == 0) {
+		return int(ConnectStrategy::Literal);
+	} else if(QStringLiteral("ws").compare(s, Qt::CaseInsensitive) == 0) {
+		return int(ConnectStrategy::ForceWebSocket);
+	} else if(QStringLiteral("tcp").compare(s, Qt::CaseInsensitive) == 0) {
+		return int(ConnectStrategy::ForceTcp);
+	} else {
+		qWarning(
+			"connectStrategyFromString: unknown input '%s'", qUtf8Printable(s));
+		return int(ConnectStrategy::Preference);
+	}
+}
+
+QStringList connectStrategyStrings()
+{
+	int count = int(ConnectStrategy::Last) + 1;
+	QStringList strings;
+	strings.reserve(count);
+	for(int i = 0; i < count; ++i) {
+		strings.append(connectStrategyToString(i));
+	}
+	return strings;
+}
 
 QString addSchemeToUserSuppliedAddress(const QString &remoteAddress)
 {
@@ -77,6 +151,140 @@ QUrl fixUpAddress(const QUrl &originalUrl, bool join)
 	}
 
 	return originalUrl;
+}
+
+QUrl convertToTcpUrl(const QUrl &originalUrl, bool join)
+{
+	if(!looksLikeWebSocketUrl(originalUrl)) {
+		return originalUrl;
+	}
+
+	QUrl url = originalUrl;
+	url.setScheme(QStringLiteral("drawpile"));
+	url.setPath(QString());
+
+	QUrlQuery query(url);
+	query.removeAllQueryItems(QStringLiteral("w"));
+	query.removeAllQueryItems(QStringLiteral("W"));
+	if(join) {
+		QString autoJoinId =
+			query.queryItemValue(QStringLiteral("session"), QUrl::FullyDecoded);
+		if(!autoJoinId.isEmpty()) {
+			if(!autoJoinId.startsWith("/")) {
+				autoJoinId.prepend("/");
+			}
+			url.setPath(autoJoinId);
+		}
+	}
+	query.removeAllQueryItems(QStringLiteral("session"));
+	url.setQuery(query);
+
+	return url;
+}
+
+QUrl convertToWebSocketUrl(const QUrl &originalUrl, bool join)
+{
+	if(looksLikeWebSocketUrl(originalUrl)) {
+		return originalUrl;
+	}
+
+	QUrl url = originalUrl;
+	url.setScheme(
+		looksLikeLocalhost(url.host()) ? QStringLiteral("ws")
+									   : QStringLiteral("wss"));
+	url.setPort(-1);
+
+	QString path = url.path();
+	url.setPath(QStringLiteral("/drawpile-web/ws"));
+
+	QUrlQuery query(url);
+	query.removeAllQueryItems(QStringLiteral("w"));
+	query.removeAllQueryItems(QStringLiteral("W"));
+	if(join) {
+		QString autoJoinId = extractAutoJoinId(path);
+		if(!autoJoinId.isEmpty()) {
+			query.removeAllQueryItems(QStringLiteral("session"));
+			query.addQueryItem(QStringLiteral("session"), autoJoinId);
+		}
+	}
+	url.setQuery(query);
+
+	return url;
+}
+
+namespace {
+static bool isTcpUrlWithWebSocketParameter(const QUrl &url)
+{
+	if(!looksLikeWebSocketUrl(url)) {
+		QUrlQuery query(url);
+		if(query.hasQueryItem(QStringLiteral("w")) ||
+		   query.hasQueryItem(QStringLiteral("W"))) {
+			return true;
+		}
+	}
+	return false;
+}
+}
+
+QUrl convertUrl(const QUrl &originalUrl, bool join, int connectStrategy)
+{
+#ifdef HAVE_TCPSOCKETS
+	switch(connectStrategy) {
+	case int(ConnectStrategy::ForceWebSocket):
+		return convertToWebSocketUrl(originalUrl, join);
+	case int(ConnectStrategy::ForceTcp):
+		return convertToTcpUrl(originalUrl, join);
+	default:
+		if(isTcpUrlWithWebSocketParameter(originalUrl)) {
+			return convertToWebSocketUrl(originalUrl, join);
+		} else {
+			return originalUrl;
+		}
+	}
+#else
+	return convertToWebSocketUrl(originalUrl, join);
+#endif
+}
+
+QString censorUrlForLogging(const QUrl &originalUrl)
+{
+	QUrl url = originalUrl;
+	QString censor = QStringLiteral("***");
+
+	if(!url.fragment().isEmpty()) {
+		url.setFragment(censor);
+	}
+
+	if(!url.userName().isEmpty()) {
+		url.setUserName(censor);
+	}
+
+	if(!url.password().isEmpty()) {
+		url.setPassword(censor);
+	}
+
+	QUrlQuery query(url);
+	QList<QPair<QString, QString>> queryItems = query.queryItems();
+	for(int i = 0, count = queryItems.size(); i < count; ++i) {
+		if(QStringLiteral("p").compare(
+			   queryItems[i].first, Qt::CaseInsensitive) == 0) {
+			queryItems[i].second = censor;
+		}
+	}
+	query.setQueryItems(queryItems);
+	url.setQuery(query);
+
+	QString displayUrl = url.toDisplayString();
+
+	QString inviteCode;
+	stripInviteCodeFromUrl(url, &inviteCode);
+	if(!inviteCode.isEmpty()) {
+		inviteCode.prepend(':');
+		censor.prepend(':');
+		displayUrl.replace(inviteCode, censor);
+	}
+
+	return displayUrl;
 }
 
 QString extractAutoJoinIdFromUrl(const QUrl &url)

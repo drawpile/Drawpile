@@ -28,6 +28,7 @@ public:
 
 	void initiateFixShortcutConflicts();
 	void initiateBrushShortcutChange(int presetId);
+	void activateNetworkPanel();
 
 signals:
 	void tabletTesterRequested();

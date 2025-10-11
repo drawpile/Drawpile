@@ -43,6 +43,7 @@ public:
 	QJsonObject save() const;
 
 	bool isPersonal() const;
+	bool isBuiltin() const;
 
 	void host(
 		QStringList &outErrors, QString &outPassword, bool &outNsfm,
@@ -53,6 +54,7 @@ public:
 
 signals:
 	void personalChanged(bool personal);
+	void builtinChanged(bool builtin);
 	void requestTitleEdit();
 
 private:

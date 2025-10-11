@@ -101,13 +101,15 @@ public:
 
 	void openRecent(const QString &path, QTemporaryFile *tempFile = nullptr);
 	void openPath(const QString &path, QTemporaryFile *tempFile = nullptr);
-	void autoJoin(const QUrl &url, const QString &autoRecordPath);
+	void autoJoin(
+		const QUrl &url, const QString &autoRecordPath, int connectStrategy);
 
-	void hostSession(const HostParams &params);
+	void hostSession(const HostParams &params, int connectStrategy);
 
 	//! Connect to a host and join a session if full URL is provided.
-	void
-	joinSession(const QUrl &url, const QString &autoRecordFilename = QString());
+	void joinSession(
+		const QUrl &url, const QString &autoRecordFilename = QString(),
+		int connectStrategy = 0);
 
 	//! Check if the current board can be replaced
 	bool canReplace() const;
@@ -165,6 +167,7 @@ public slots:
 	void showFlipbook();
 
 	dialogs::SettingsDialog *showSettings();
+	void showNetworkSettings();
 	dialogs::TabletTestDialog *showTabletTestDialog(QWidget *parent);
 	dialogs::TouchTestDialog *showTouchTestDialog(QWidget *parent);
 	void reportAbuse();
@@ -346,7 +349,7 @@ private:
 
 	void reconnectToSession(bool forceSameWindow);
 	void connectToSession(
-		const QUrl &url, const QString &autoRecordFilename,
+		const QUrl &url, const QString &autoRecordFilename, int connectStrategy,
 		bool forceSameWindow);
 	void importAnimation(int source);
 	void showAnimationExportDialog(bool fromFlipbook);

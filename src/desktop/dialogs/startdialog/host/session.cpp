@@ -236,6 +236,15 @@ bool Session::isPersonal() const
 	return m_typeCombo->currentData().toInt() != int(Type::Public);
 }
 
+bool Session::isBuiltin() const
+{
+#ifdef DP_HAVE_BUILTIN_SERVER
+	return m_server == SERVER_BUILTIN;
+#else
+	return false;
+#endif
+}
+
 void Session::host(
 	QStringList &outErrors, QString &outPassword, bool &outNsfm,
 	bool &outKeepChat, QString &outAddress, bool &outRememberAddress)
@@ -360,6 +369,7 @@ void Session::showServerPub()
 	m_serverInfo->setText(text);
 	m_addressCombo->hide();
 	m_serverInfo->show();
+	emit builtinChanged(false);
 }
 
 void Session::showServerAddress()
@@ -367,6 +377,7 @@ void Session::showServerAddress()
 	m_server = SERVER_ADDRESS;
 	m_serverInfo->hide();
 	m_addressCombo->show();
+	emit builtinChanged(false);
 }
 
 #ifdef DP_HAVE_BUILTIN_SERVER
@@ -388,6 +399,7 @@ void Session::showServerBuiltin()
 				   "for instructions.</a>")));
 	m_addressCombo->hide();
 	m_serverInfo->show();
+	emit builtinChanged(true);
 }
 #endif
 

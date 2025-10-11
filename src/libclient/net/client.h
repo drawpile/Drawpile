@@ -56,8 +56,8 @@ public:
 	 * @param loginhandler the login handler to use
 	 */
 	void connectToServer(
-		int timeoutSecs, int proxyMode, LoginHandler *loginhandler,
-		bool builtin);
+		int timeoutSecs, int proxyMode, int connectStrategy,
+		LoginHandler *loginhandler, bool builtin);
 
 	/**
 	 * @brief Disconnect from the remote server
@@ -75,6 +75,8 @@ public:
 	 */
 	QUrl sessionUrl(bool includeUser = false) const;
 	void setSessionUrl(const QUrl &url) { m_lastUrl = url; }
+
+	int reconnectStrategy() const { return m_connectStrategy; }
 
 	const HistoryIndex &historyIndex() const { return m_historyIndex; }
 
@@ -367,6 +369,7 @@ private:
 	bool m_compatibilityMode = false;
 	bool m_minorIncompatibility = false;
 
+	int m_connectStrategy;
 	int m_timeoutSecs = 0;
 	int m_proxyMode = 0;
 	int m_catchupTo = 0;

@@ -48,7 +48,7 @@ public:
 
 	void openPath(const QString &path, bool restoreWindowPosition);
 	void joinUrl(
-		const QUrl &url, const QString &autoRecordPath,
+		const QUrl &url, const QString &autoRecordPath, int connectStrategy,
 		bool restoreWindowPosition, bool singleSession);
 	void openBlank(
 		int width, int height, QColor backgroundColor,

@@ -35,10 +35,12 @@ signals:
 	void hideLinks();
 	void showButtons();
 	void host(const HostParams &params);
+	void enableHost(bool ok, bool webSocket, bool tcp);
 	void switchToJoinPageRequested();
 
 private:
 	void startEditingTitle();
+	void emitEnableHost(bool builtin);
 	void loadCategory(
 		int category, const QJsonObject &json, bool replaceAnnouncements,
 		bool replaceAuth, bool replaceBans);

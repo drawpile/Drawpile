@@ -67,7 +67,7 @@ public:
 	 */
 	void sendMessages(int count, const net::Message *msgs);
 
-	void login(LoginHandler *login);
+	void login(LoginHandler *login, const QUrl &url);
 	void logout();
 
 	void replaceWithRedirect(LoginHandler *login, bool late);

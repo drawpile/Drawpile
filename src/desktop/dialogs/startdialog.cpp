@@ -14,6 +14,7 @@
 #include "desktop/settings.h"
 #include "desktop/utils/recents.h"
 #include "desktop/utils/widgetutils.h"
+#include "libshared/net/netutils.h"
 #include <QAction>
 #include <QButtonGroup>
 #include <QDate>
@@ -69,6 +70,7 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 	, m_initialUpdateDelayTimer{new QTimer{this}}
 	, m_news{dpApp().state(), this}
 #endif
+	, m_connectStrategy(int(net::ConnectStrategy::Preference))
 {
 	setWindowTitle(tr("Start"));
 	utils::makeModal(this);
@@ -236,6 +238,38 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 	m_cancelButton = buttons->addButton(QDialogButtonBox::Cancel);
 	m_closeButton = buttons->addButton(QDialogButtonBox::Close);
 
+	m_advancedButton = new QToolButton;
+	m_advancedButton->setIcon(QIcon::fromTheme("drawpile_ellipsis_vertical"));
+	m_advancedButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+	m_advancedButton->setPopupMode(QToolButton::InstantPopup);
+	m_advancedButton->setAutoRaise(true);
+	m_advancedButton->hide();
+	buttonLayout->addWidget(m_advancedButton);
+
+	m_advancedMenu = new QMenu(m_advancedButton);
+	m_advancedButton->setMenu(m_advancedMenu);
+
+	m_connectWebSocketAction = m_advancedMenu->addAction(QString());
+	connect(
+		m_connectWebSocketAction, &QAction::triggered, this,
+		std::bind(
+			&StartDialog::triggerAccept, this,
+			int(net::ConnectStrategy::ForceWebSocket)));
+
+	m_connectTcpAction = m_advancedMenu->addAction(QString());
+	connect(
+		m_connectTcpAction, &QAction::triggered, this,
+		std::bind(
+			&StartDialog::triggerAccept, this,
+			int(net::ConnectStrategy::ForceTcp)));
+
+	m_advancedMenu->addSeparator();
+	QAction *connectSettingAction = m_advancedMenu->addAction(
+		QIcon::fromTheme("configure"), tr("Show network preferences"));
+	connect(
+		connectSettingAction, &QAction::triggered, this,
+		&StartDialog::networkPreferences);
+
 	QButtonGroup *group = new QButtonGroup{this};
 	int iconSize = style()->pixelMetric(QStyle::PM_ToolBarIconSize);
 	for(int i = 0; i < Entry::Count; ++i) {
@@ -299,7 +333,10 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		&StartDialog::checkForUpdates);
 #endif
 	connect(
-		m_okButton, &QAbstractButton::clicked, this, &StartDialog::okClicked);
+		m_okButton, &QAbstractButton::clicked, this,
+		std::bind(
+			&StartDialog::triggerAccept, this,
+			int(net::ConnectStrategy::Preference)));
 
 	connect(
 		welcomePage, &startdialog::Welcome::showButtons, this,
@@ -312,8 +349,8 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		joinPage, &startdialog::Join::showButtons, this,
 		&StartDialog::showJoinButtons);
 	connect(
-		joinPage, &startdialog::Join::enableJoin, m_okButton,
-		&QWidget::setEnabled);
+		joinPage, &startdialog::Join::enableJoin, this,
+		&StartDialog::setJoinEnabled);
 	connect(
 		joinPage, &startdialog::Join::join, this, &StartDialog::joinRequested);
 	connect(
@@ -327,8 +364,8 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		browsePage, &startdialog::Browse::showButtons, this,
 		&StartDialog::showBrowseButtons);
 	connect(
-		browsePage, &startdialog::Browse::enableJoin, m_okButton,
-		&QWidget::setEnabled);
+		browsePage, &startdialog::Browse::enableJoin, this,
+		&StartDialog::setJoinEnabled);
 	connect(
 		browsePage, &startdialog::Browse::join, this,
 		&StartDialog::joinRequested);
@@ -343,6 +380,9 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 		&StartDialog::showHostButtons);
 	connect(
 		hostPage, &startdialog::Host::host, this, &StartDialog::hostRequested);
+	connect(
+		hostPage, &startdialog::Host::enableHost, this,
+		&StartDialog::setHostEnabled);
 	connect(
 		this, &StartDialog::hostPageEnabled, hostPage,
 		&startdialog::Host::setEnabled);
@@ -445,7 +485,8 @@ void StartDialog::showPage(Entry entry)
 	}
 }
 
-void StartDialog::autoJoin(const QUrl &url, const QString &autoRecordPath)
+void StartDialog::autoJoin(
+	const QUrl &url, const QString &autoRecordPath, int connectStrategy)
 {
 	{
 		QSignalBlocker blocker(m_recordButton);
@@ -462,6 +503,7 @@ void StartDialog::autoJoin(const QUrl &url, const QString &autoRecordPath)
 	}
 
 	showPage(Entry::Join);
+	m_connectStrategy = connectStrategy;
 	emit joinRequested(url);
 }
 
@@ -611,6 +653,12 @@ void StartDialog::showJoinButtons()
 #endif
 	m_okButton->setText(tr("Join"));
 	m_okButton->show();
+#ifdef HAVE_TCPSOCKETS
+	m_advancedButton->show();
+	m_advancedButton->setEnabled(true);
+	m_connectWebSocketAction->setText(tr("Join via WebSocket"));
+	m_connectTcpAction->setText(tr("Join via TCP"));
+#endif
 }
 
 void StartDialog::showBrowseButtons()
@@ -627,6 +675,12 @@ void StartDialog::showHostButtons()
 	m_okButton->setEnabled(true);
 	m_saveLoadButton->show();
 	m_saveLoadButton->setEnabled(true);
+#ifdef HAVE_TCPSOCKETS
+	m_advancedButton->show();
+	m_advancedButton->setEnabled(true);
+	m_connectWebSocketAction->setText(tr("Host via WebSocket"));
+	m_connectTcpAction->setText(tr("Host via TCP"));
+#endif
 }
 
 void StartDialog::showCreateButtons()
@@ -635,11 +689,33 @@ void StartDialog::showCreateButtons()
 	m_okButton->show();
 }
 
-void StartDialog::okClicked()
+void StartDialog::triggerAccept(int connectStrategy)
 {
+	m_connectStrategy = connectStrategy;
 	if(m_currentPage) {
 		m_currentPage->accept();
 	}
+}
+
+void StartDialog::setJoinEnabled(bool enabled)
+{
+	m_okButton->setEnabled(enabled);
+#ifdef HAVE_TCPSOCKETS
+	m_connectWebSocketAction->setEnabled(enabled);
+	m_connectTcpAction->setEnabled(enabled);
+#endif
+}
+
+void StartDialog::setHostEnabled(bool ok, bool webSocket, bool tcp)
+{
+	m_okButton->setEnabled(ok);
+#ifdef HAVE_TCPSOCKETS
+	m_connectWebSocketAction->setEnabled(webSocket);
+	m_connectTcpAction->setEnabled(tcp);
+#else
+	Q_UNUSED(webSocket);
+	Q_UNUSED(tcp);
+#endif
 }
 
 void StartDialog::followLink(const QString &fragment)
@@ -671,7 +747,7 @@ void StartDialog::joinRequested(const QUrl &url)
 	QString listServer = QUrlQuery{url}.queryItemValue("list-server");
 	if(listServer.isEmpty()) {
 		addRecentHost(url, true);
-		emit join(url, m_recordingFilename);
+		emit join(url, m_recordingFilename, m_connectStrategy);
 	} else {
 		showPage(Entry::Browse);
 		emit joinAddressSet(QString{});
@@ -684,7 +760,7 @@ void StartDialog::hostRequested(const HostParams &params)
 	if(params.rememberAddress && !params.address.isEmpty()) {
 		addRecentHost(params.address, false);
 	}
-	emit host(params);
+	emit host(params, m_connectStrategy);
 }
 
 void StartDialog::rememberLastPage(int i)
@@ -753,10 +829,12 @@ void StartDialog::entryToggled(startdialog::Page *page, bool checked)
 		m_okButton->hide();
 		m_cancelButton->show();
 		m_closeButton->hide();
+		m_advancedButton->hide();
 		m_addServerButton->setEnabled(false);
 		m_recordButton->setEnabled(false);
 		m_saveLoadButton->setEnabled(false);
 		m_okButton->setEnabled(false);
+		m_advancedButton->setEnabled(false);
 		m_currentPage = page;
 		m_stack->setCurrentWidget(page);
 		page->activate();

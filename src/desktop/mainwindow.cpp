@@ -656,14 +656,15 @@ QMenu *MainWindow::createPopupMenu()
 	return menu;
 }
 
-void MainWindow::autoJoin(const QUrl &url, const QString &autoRecordPath)
+void MainWindow::autoJoin(
+	const QUrl &url, const QString &autoRecordPath, int connectStrategy)
 {
 	if(m_singleSession) {
 		m_doc->client()->setSessionUrl(url);
-		connectToSession(url, autoRecordPath, false);
+		connectToSession(url, autoRecordPath, connectStrategy, false);
 	} else {
 		dialogs::StartDialog *dlg = showStartDialog();
-		dlg->autoJoin(url, autoRecordPath);
+		dlg->autoJoin(url, autoRecordPath, connectStrategy);
 	}
 }
 
@@ -2008,6 +2009,7 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 	connections->add(connect(dlg, &dialogs::StartDialog::openRecent, this, std::bind(&MainWindow::openRecent, this, _1, nullptr)));
 	connections->add(connect(dlg, &dialogs::StartDialog::layouts, this, &MainWindow::showLayoutsDialog));
 	connections->add(connect(dlg, &dialogs::StartDialog::preferences, this, &MainWindow::showSettings));
+	connections->add(connect(dlg, &dialogs::StartDialog::networkPreferences, this, &MainWindow::showNetworkSettings));
 	connections->add(connect(dlg, &dialogs::StartDialog::join, this, &MainWindow::joinSession));
 	connections->add(connect(dlg, &dialogs::StartDialog::host, this, &MainWindow::hostSession));
 	connections->add(connect(dlg, &dialogs::StartDialog::create, this, &MainWindow::newDocument));
@@ -3063,6 +3065,12 @@ dialogs::SettingsDialog *MainWindow::showSettings()
 	return dlg;
 }
 
+void MainWindow::showNetworkSettings()
+{
+	dialogs::SettingsDialog *dlg = showSettings();
+	dlg->activateNetworkPanel();
+}
+
 dialogs::TabletTestDialog *MainWindow::showTabletTestDialog(QWidget *parent)
 {
 	QString name = QStringLiteral("tablettestdialog");
@@ -3107,7 +3115,7 @@ void MainWindow::host()
 	dlg->showPage(dialogs::StartDialog::Entry::Host);
 }
 
-void MainWindow::hostSession(const HostParams &params)
+void MainWindow::hostSession(const HostParams &params, int connectStrategy)
 {
 	if(m_doc->client()->isConnected()) {
 		showErrorMessage(
@@ -3132,11 +3140,9 @@ void MainWindow::hostSession(const HostParams &params)
 	QUrl address;
 
 	if(useremote) {
-		address = net::fixUpAddress(
-			QUrl(
-				net::addSchemeToUserSuppliedAddress(remoteAddress),
-				QUrl::TolerantMode),
-			false);
+		address = QUrl(
+			net::addSchemeToUserSuppliedAddress(remoteAddress),
+			QUrl::TolerantMode);
 	} else {
 		address.setHost(WhatIsMyIp::guessLocalAddress());
 		address.setScheme(QStringLiteral("drawpile"));
@@ -3250,8 +3256,10 @@ void MainWindow::hostSession(const HostParams &params)
 		shouldShowDialogMaximized());
 
 	m_doc->connectToServer(
-		settings.serverTimeout(), settings.networkProxyMode(), login,
-		!useremote);
+		settings.serverTimeout(), settings.networkProxyMode(),
+		net::resolveConnectStrategy(
+			connectStrategy, net::defaultConnectStrategy()),
+		login, !useremote);
 }
 
 void MainWindow::invite()
@@ -3517,26 +3525,30 @@ void MainWindow::terminateSession()
 	}
 }
 
-void MainWindow::joinSession(const QUrl &url, const QString &autoRecordFile)
+void MainWindow::joinSession(
+	const QUrl &url, const QString &autoRecordFile, int connectStrategy)
 {
 	questionWindowReplacement(
 		tr("Join Session"),
 		tr("You're about to connect to a new session and close this window."),
-		[this, url, autoRecordFile](bool ok) {
+		[this, url, autoRecordFile, connectStrategy](bool ok) {
 			if(ok) {
-				connectToSession(url, autoRecordFile, false);
+				connectToSession(url, autoRecordFile, connectStrategy, false);
 			}
 		});
 }
 
 void MainWindow::reconnectToSession(bool forceSameWindow)
 {
+	const net::Client *client = m_doc->client();
 	connectToSession(
-		m_doc->client()->sessionUrl(true), QString(), forceSameWindow);
+		client->sessionUrl(true), QString(), client->reconnectStrategy(),
+		forceSameWindow);
 }
 
 void MainWindow::connectToSession(
-	const QUrl &url, const QString &autoRecordFile, bool forceSameWindow)
+	const QUrl &url, const QString &autoRecordFile, int connectStrategy,
+	bool forceSameWindow)
 {
 	m_canvasView->hideDisconnectedWarning();
 
@@ -3546,7 +3558,7 @@ void MainWindow::connectToSession(
 
 		QStringList args;
 		QVector<QPair<QString, QString>> envVars;
-		args.reserve(6);
+		args.reserve(8);
 		args.append(QStringLiteral("--no-restore-window-position"));
 		if(m_singleSession) {
 			args.append(QStringLiteral("--single-session"));
@@ -3570,25 +3582,31 @@ void MainWindow::connectToSession(
 			args.append(autoRecordFile);
 		}
 
+		if(connectStrategy != 0) {
+			args.append(QStringLiteral("--connect-strategy"));
+			args.append(net::connectStrategyToString(connectStrategy));
+		}
+
 		bool newProcessStarted = dpApp().runInNewProcess(args, envVars);
 		if(newProcessStarted) {
 			emit windowReplacementFailed(nullptr);
 		} else {
-			createNewWindow([this, url, autoRecordFile](MainWindow *win) {
-				if(m_singleSession) {
-					win->m_doc->client()->setSessionUrl(url);
-				}
-				win->connectToSession(url, autoRecordFile, true);
-			});
+			createNewWindow(
+				[this, url, autoRecordFile, connectStrategy](MainWindow *win) {
+					if(m_singleSession) {
+						win->m_doc->client()->setSessionUrl(url);
+					}
+					win->connectToSession(
+						url, autoRecordFile, connectStrategy, true);
+				});
 		}
 		return;
 	}
 
-	QUrl loginUrl = net::fixUpAddress(url, true);
-	QString autoJoinId = net::extractAutoJoinIdFromUrl(loginUrl);
+	QString autoJoinId = net::extractAutoJoinIdFromUrl(url);
 	net::LoginHandler *login = new net::LoginHandler(
-		QSharedPointer<const net::LoginHostParams>(nullptr), autoJoinId,
-		loginUrl, 0, QStringList(), QJsonObject(), this);
+		QSharedPointer<const net::LoginHostParams>(nullptr), autoJoinId, url, 0,
+		QStringList(), QJsonObject(), this);
 
 	dialogs::LoginDialog *dlg =
 		new dialogs::LoginDialog(login, getStartDialogOrThis());
@@ -3607,7 +3625,10 @@ void MainWindow::connectToSession(
 	m_doc->setRecordOnConnect(autoRecordFile);
 	const desktop::settings::Settings &settings = dpApp().settings();
 	m_doc->connectToServer(
-		settings.serverTimeout(), settings.networkProxyMode(), login, false);
+		settings.serverTimeout(), settings.networkProxyMode(),
+		net::resolveConnectStrategy(
+			connectStrategy, net::defaultConnectStrategy()),
+		login, false);
 }
 
 void MainWindow::onServerConnected()
@@ -3696,7 +3717,7 @@ void MainWindow::onServerDisconnected(
 			QUrl url = m_doc->client()->sessionUrl(true);
 
 			connect(joinbutton, &QAbstractButton::clicked, this, [this, url]() {
-				connectToSession(url, QString(), false);
+				connectToSession(url, QString(), m_doc->client()->reconnectStrategy(), false);
 			});
 
 		}

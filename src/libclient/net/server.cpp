@@ -46,12 +46,11 @@ void Server::sendMessages(int count, const net::Message *msgs)
 	messageQueue()->sendMultiple(count, msgs);
 }
 
-void Server::login(LoginHandler *login)
+void Server::login(LoginHandler *login, const QUrl &url)
 {
 	m_loginstate = login;
 	m_loginstate->setParent(this);
 	m_loginstate->setServer(this);
-	QUrl url = login->url();
 	emit initiatingConnection(url);
 	connectToHost(url);
 }

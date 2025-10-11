@@ -12,9 +12,11 @@ class QAbstractButton;
 class QAction;
 class QFrame;
 class QIcon;
+class QMenu;
 class QShortcut;
 class QStackedWidget;
 class QTimer;
+class QToolButton;
 class QUrl;
 
 namespace dialogs {
@@ -55,7 +57,8 @@ public:
 
 	void showPage(Entry entry);
 
-	void autoJoin(const QUrl &url, const QString &autoRecordPath);
+	void autoJoin(
+		const QUrl &url, const QString &autoRecordPath, int connectStrategy);
 
 public slots:
 #ifndef __EMSCRIPTEN__
@@ -68,8 +71,10 @@ signals:
 	void openRecent(const QString &path);
 	void layouts();
 	void preferences();
-	void join(const QUrl &url, const QString recordingFilename);
-	void host(const HostParams &params);
+	void networkPreferences();
+	void
+	join(const QUrl &url, const QString recordingFilename, int connectStrategy);
+	void host(const HostParams &params, int connectStrategy);
 	void create(const QSize &size, const QColor &backgroundColor);
 	void joinAddressSet(const QString &address);
 	void hostSessionEnabled(bool enabled);
@@ -96,7 +101,9 @@ private slots:
 	void showBrowseButtons();
 	void showHostButtons();
 	void showCreateButtons();
-	void okClicked();
+	void triggerAccept(int connectStrategy);
+	void setJoinEnabled(bool enabled);
+	void setHostEnabled(bool ok, bool webSocket, bool tcp);
 	void followLink(const QString &fragment);
 	void joinRequested(const QUrl &url);
 	void hostRequested(const HostParams &params);
@@ -133,6 +140,10 @@ private:
 	QAbstractButton *m_okButton;
 	QAbstractButton *m_cancelButton;
 	QAbstractButton *m_closeButton;
+	QToolButton *m_advancedButton;
+	QMenu *m_advancedMenu;
+	QAction *m_connectTcpAction;
+	QAction *m_connectWebSocketAction;
 	startdialog::Page *m_currentPage = nullptr;
 	QAbstractButton *m_buttons[Entry::Count];
 	QVector<QShortcut *> m_shortcuts;
@@ -142,6 +153,7 @@ private:
 	utils::News m_news;
 	utils::News::Update m_update = utils::News::Update::invalid();
 #endif
+	int m_connectStrategy;
 };
 
 }

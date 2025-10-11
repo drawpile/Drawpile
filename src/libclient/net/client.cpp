@@ -13,7 +13,7 @@
 #	include "libshared/util/androidutils.h"
 #endif
 
-Q_LOGGING_CATEGORY(lcDpClient, "net.drawpile.client", QtWarningMsg)
+Q_LOGGING_CATEGORY(lcDpClient, "net.drawpile.client", QtInfoMsg)
 
 namespace net {
 
@@ -30,25 +30,35 @@ Client::Client(CommandHandler *commandHandler, QObject *parent)
 }
 
 void Client::connectToServer(
-	int timeoutSecs, int proxyMode, LoginHandler *loginhandler, bool builtin)
+	int timeoutSecs, int proxyMode, int connectStrategy,
+	LoginHandler *loginhandler, bool builtin)
 {
 	Q_ASSERT(!isConnected());
 	m_builtin = builtin;
 	m_timeoutSecs = timeoutSecs;
 	m_proxyMode = proxyMode;
+	m_connectStrategy = connectStrategy;
 	connectToServerInternal(loginhandler, false, false);
 }
 
 void Client::connectToServerInternal(
 	net::LoginHandler *loginhandler, bool redirect, bool transparent)
 {
-	qCDebug(lcDpClient) << "Connect to" << loginhandler->url() << "redirect"
-						<< redirect << "transparent" << transparent
-						<< "connected" << isConnected();
+	QUrl originalUrl = loginhandler->url();
+	QUrl effectiveUrl = net::convertUrl(
+		originalUrl, loginhandler->mode() == LoginHandler::Mode::Join,
+		m_connectStrategy);
+	if(lcDpClient().isInfoEnabled()) {
+		qCInfo(lcDpClient) << "Connect to" << censorUrlForLogging(originalUrl)
+						   << "effective" << censorUrlForLogging(effectiveUrl)
+						   << "redirect" << redirect << "transparent"
+						   << transparent << "connected" << isConnected()
+						   << "strategy" << m_connectStrategy
+						   << connectStrategyToString(m_connectStrategy);
+	}
 	Q_ASSERT(!isConnected());
 
-	m_server =
-		Server::make(loginhandler->url(), m_timeoutSecs, m_proxyMode, this);
+	m_server = Server::make(effectiveUrl, m_timeoutSecs, m_proxyMode, this);
 	m_server->setSmoothDrainRate(m_smoothDrainRate);
 
 #ifdef Q_OS_ANDROID
@@ -138,11 +148,11 @@ void Client::connectToServerInternal(
 		&Client::handleRedirect));
 
 	if(!redirect) {
-		emit serverConnected(loginhandler->url());
+		emit serverConnected(originalUrl);
 	} else if(!transparent) {
-		emit serverRedirected(loginhandler->url());
+		emit serverRedirected(originalUrl);
 	}
-	m_server->login(loginhandler);
+	m_server->login(loginhandler, effectiveUrl);
 
 	m_catchupTo = 0;
 	m_caughtUp = 0;
@@ -502,8 +512,8 @@ void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 		m_catchupKey =
 			reply.contains("key") ? qMax(0, reply["key"].toInt()) : -1;
 		m_server->setSmoothEnabled(false);
-		qInfo(
-			"Catching up to %d messages with key %d", m_catchupTo,
+		qCInfo(
+			lcDpClient(), "Catching up to %d messages with key %d", m_catchupTo,
 			m_catchupKey);
 		m_caughtUp = 0;
 		m_catchupProgress = 0;

@@ -213,18 +213,29 @@ void SettingsDialog::initiateBrushShortcutChange(int presetId)
 	}
 }
 
-settingsdialog::Shortcuts *SettingsDialog::activateShortcutsPanel()
+namespace {
+template <typename T> static T *activatePanelByType(QButtonGroup *group)
 {
-	for(QAbstractButton *button : m_group->buttons()) {
-		QWidget *panel = button->property("panel").value<QWidget *>();
-		settingsdialog::Shortcuts *shortcuts =
-			qobject_cast<settingsdialog::Shortcuts *>(panel);
-		if(shortcuts) {
+	for(QAbstractButton *button : group->buttons()) {
+		T *panel =
+			qobject_cast<T *>(button->property("panel").value<QWidget *>());
+		if(panel) {
 			button->click();
-			return shortcuts;
+			return panel;
 		}
 	}
 	return nullptr;
+}
+}
+
+void SettingsDialog::activateNetworkPanel()
+{
+	activatePanelByType<settingsdialog::Network>(m_group);
+}
+
+settingsdialog::Shortcuts *SettingsDialog::activateShortcutsPanel()
+{
+	return activatePanelByType<settingsdialog::Shortcuts>(m_group);
 }
 
 void SettingsDialog::activatePanel(QWidget *panel, QDialogButtonBox *buttons)

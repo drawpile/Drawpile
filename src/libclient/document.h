@@ -174,8 +174,8 @@ public:
 	}
 
 	void connectToServer(
-		int timeoutSecs, int proxyMode, net::LoginHandler *loginhandler,
-		bool builtin);
+		int timeoutSecs, int proxyMode, int connectStrategy,
+		net::LoginHandler *loginhandler, bool builtin);
 
 	qulonglong pasteId() const { return reinterpret_cast<uintptr_t>(this); }
 

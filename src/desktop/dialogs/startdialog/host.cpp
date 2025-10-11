@@ -69,6 +69,9 @@ Host::Host(QWidget *parent)
 		m_sessionPage, &host::Session::requestTitleEdit, this,
 		&Host::startEditingTitle);
 	connect(
+		m_sessionPage, &host::Session::builtinChanged, this,
+		&Host::emitEnableHost);
+	connect(
 		m_listingPage, &host::Listing::requestNsfmBasedOnListing, m_sessionPage,
 		&host::Session::setNsfmBasedOnListing);
 	m_listingPage->setPersonal(m_sessionPage->isPersonal());
@@ -78,6 +81,7 @@ void Host::activate()
 {
 	emit hideLinks();
 	emit showButtons();
+	emit emitEnableHost(m_sessionPage->isBuiltin());
 }
 
 void Host::accept()
@@ -184,6 +188,16 @@ void Host::startEditingTitle()
 {
 	m_tabs->setCurrentIndex(1);
 	m_listingPage->startEditingTitle();
+}
+
+void Host::emitEnableHost(bool builtin)
+{
+	// Currently, the OK button is always enabled, the WebSocket action gets
+	// turned off for the builtin server because it doesn't have WebSockets and
+	// the TCP action is also always enabled. If the application doesn't support
+	// connecting via TCP sockets, the latter two actions don't show up in the
+	// first place, so we don't need conditional compilation here.
+	emit enableHost(true, !builtin, true);
 }
 
 void Host::loadCategory(

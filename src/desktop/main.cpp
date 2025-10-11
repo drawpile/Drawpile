@@ -16,6 +16,7 @@
 #include "libclient/utils/colorscheme.h"
 #include "libclient/utils/logging.h"
 #include "libclient/utils/statedatabase.h"
+#include "libshared/net/netutils.h"
 #include "libshared/util/paths.h"
 #include <QCommandLineParser>
 #include <QDateTime>
@@ -615,11 +616,11 @@ void DrawpileApp::openPath(const QString &path, bool restoreWindowPosition)
 }
 
 void DrawpileApp::joinUrl(
-	const QUrl &url, const QString &autoRecordPath, bool restoreWindowPosition,
-	bool singleSession)
+	const QUrl &url, const QString &autoRecordPath, int connectStrategy,
+	bool restoreWindowPosition, bool singleSession)
 {
 	acquireWindow(restoreWindowPosition, singleSession)
-		->autoJoin(url, autoRecordPath);
+		->autoJoin(url, autoRecordPath, connectStrategy);
 }
 
 void DrawpileApp::openBlank(
@@ -754,6 +755,7 @@ struct StartupOptions {
 	bool restoreWindowPosition = false;
 	bool playTestSound = false;
 	QString autoRecordPath;
+	QString connectStrategy;
 	QString joinUrl;
 	QString openPath;
 	bool blank = false;
@@ -859,6 +861,15 @@ static StartupOptions initApp(DrawpileApp &app)
 			"URL to join is also given."),
 		QStringLiteral("path"));
 	parser.addOption(autoRecord);
+
+	QCommandLineOption connectStrategy(
+		QStringLiteral("connect-strategy"),
+		QStringLiteral(
+			"How to connect to a session, one of %1. Only used if a "
+			"session URL to join is also given.")
+			.arg(net::connectStrategyStrings().join(QStringLiteral(", "))),
+		QStringLiteral("path"));
+	parser.addOption(connectStrategy);
 
 	QCommandLineOption renderer(
 		"renderer",
@@ -994,6 +1005,7 @@ static StartupOptions initApp(DrawpileApp &app)
 	startupOptions.restoreWindowPosition =
 		!parser.isSet(noRestoreWindowPosition);
 	startupOptions.autoRecordPath = parser.value(autoRecord);
+	startupOptions.connectStrategy = parser.value(connectStrategy);
 	startupOptions.openPath = parser.value(open);
 	startupOptions.joinUrl = parser.value(join);
 	startupOptions.blank = parser.isSet(blank);
@@ -1147,6 +1159,7 @@ static void startApplication(DrawpileApp *app)
 	if(!startupOptions.joinUrl.isEmpty()) {
 		app->joinUrl(
 			buildJoinUrl(startupOptions.joinUrl), startupOptions.autoRecordPath,
+			net::connectStrategyFromString(startupOptions.connectStrategy),
 			startupOptions.restoreWindowPosition, startupOptions.singleSession);
 	} else if(!startupOptions.openPath.isEmpty()) {
 		app->openPath(
@@ -1164,6 +1177,7 @@ static void startApplication(DrawpileApp *app)
 		if(looksLikeSessionUrl) {
 			app->joinUrl(
 				buildJoinUrl(arg), startupOptions.autoRecordPath,
+				net::connectStrategyFromString(startupOptions.connectStrategy),
 				startupOptions.restoreWindowPosition,
 				startupOptions.singleSession);
 		} else {
