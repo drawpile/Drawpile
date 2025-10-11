@@ -55,8 +55,6 @@ public:
 	 */
 	static QString guessLocalAddress();
 
-	static bool looksLikeLocalhost(const QString &host);
-
 signals:
 	//! External IP lookup finished
 	void myAddressIs(const QString &ip);

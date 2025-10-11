@@ -3,6 +3,7 @@
 #include "libclient/net/login.h"
 #include "libclient/net/message.h"
 #include "libclient/net/server.h"
+#include "libshared/net/netutils.h"
 #include "libshared/net/servercmd.h"
 #include "libshared/util/qtcompat.h"
 #include <QDebug>
@@ -163,7 +164,7 @@ QUrl Client::sessionUrl(bool includeUser) const
 	if(includeUser) {
 		return m_lastUrl;
 	} else {
-		QUrl url = Server::stripInviteCodeFromUrl(m_lastUrl);
+		QUrl url = stripInviteCodeFromUrl(m_lastUrl);
 		url.setUserInfo(QString());
 		return url;
 	}

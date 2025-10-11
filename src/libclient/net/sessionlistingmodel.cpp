@@ -13,7 +13,7 @@
 #ifdef HAVE_TCPSOCKETS
 #	include "cmake-config/config.h"
 #else
-#	include "libshared/util/whatismyip.h"
+#	include "libshared/net/netutils.h"
 #endif
 
 using sessionlisting::Session;
@@ -99,8 +99,8 @@ static QUrl sessionUrl(const Session &s)
 	url.setPath(QStringLiteral("/") + id);
 #else
 	url.setScheme(
-		WhatIsMyIp::looksLikeLocalhost(s.host) ? QStringLiteral("ws")
-											   : QStringLiteral("wss"));
+		net::looksLikeLocalhost(s.host) ? QStringLiteral("ws")
+										: QStringLiteral("wss"));
 	url.setPath(QStringLiteral("/drawpile-web/ws"));
 	url.setQuery(QStringLiteral("session=") + id);
 #endif

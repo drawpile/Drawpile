@@ -4,6 +4,7 @@
 #include "libclient/net/loginsessions.h"
 #include "libclient/net/server.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
+#include "libshared/net/netutils.h"
 #include "libshared/net/protover.h"
 #include "libshared/net/servercmd.h"
 #include "libshared/util/networkaccess.h"
@@ -477,7 +478,7 @@ void LoginHandler::handleRedirect(const QJsonObject &reply, bool late)
 		return;
 	}
 
-	QString autoJoinId = Server::extractAutoJoinIdFromUrl(url);
+	QString autoJoinId = extractAutoJoinIdFromUrl(url);
 	if(autoJoinId.isEmpty()) {
 		autoJoinId = m_autoJoinId;
 	}
@@ -1511,13 +1512,13 @@ void LoginHandler::updateAddressSessionCredentials(
 	// Update session id, reappend invite code if needed.
 	if(m_mode == Mode::Join) {
 		QString inviteCode;
-		Server::stripInviteCodeFromUrl(m_address, &inviteCode);
+		stripInviteCodeFromUrl(m_address, &inviteCode);
 		if(!inviteCode.isEmpty()) {
 			sessionId.append(QStringLiteral(":"));
 			sessionId.append(inviteCode);
 		}
 	}
-	Server::setSessionIdOnUrl(m_address, sessionId);
+	setSessionIdOnUrl(m_address, sessionId);
 	// Update join password.
 	QUrlQuery query(m_address);
 	QString key = QStringLiteral("p");

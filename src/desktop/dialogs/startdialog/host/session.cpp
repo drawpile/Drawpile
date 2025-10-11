@@ -6,6 +6,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/imageresourcetextbrowser.h"
 #include "libclient/net/server.h"
+#include "libshared/net/netutils.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDesktopServices>
@@ -269,7 +270,7 @@ void Session::host(
 			outAddress.clear();
 			outErrors.append(tr("Session: a server is required"));
 		} else {
-			outAddress = net::Server::addSchemeToUserSuppliedAddress(address);
+			outAddress = net::addSchemeToUserSuppliedAddress(address);
 		}
 		break;
 	}

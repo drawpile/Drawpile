@@ -3,7 +3,7 @@
 #include "desktop/main.h"
 #include "desktop/settings.h"
 #include "desktop/widgets/recentscroll.h"
-#include "libclient/net/server.h"
+#include "libshared/net/netutils.h"
 #include <QLabel>
 #include <QLineEdit>
 #include <QSignalBlocker>
@@ -170,9 +170,8 @@ QString Join::fixUpInviteOrWebAddress(const QString &address)
 QUrl Join::getUrl() const
 {
 	QString address = m_addressEdit->text().trimmed();
-	QUrl url = QUrl(
-		net::Server::addSchemeToUserSuppliedAddress(address),
-		QUrl::TolerantMode);
+	QUrl url =
+		QUrl(net::addSchemeToUserSuppliedAddress(address), QUrl::TolerantMode);
 	return url.isValid() || url.host().isEmpty() ? url : QUrl{};
 }
 

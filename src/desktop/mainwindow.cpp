@@ -87,6 +87,7 @@
 #include "libclient/utils/scopedoverridecursor.h"
 #include "libclient/utils/selectionalteration.h"
 #include "libclient/utils/shortcutdetector.h"
+#include "libshared/net/netutils.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/paths.h"
 #include "libshared/util/whatismyip.h"
@@ -3131,9 +3132,9 @@ void MainWindow::hostSession(const HostParams &params)
 	QUrl address;
 
 	if(useremote) {
-		address = net::Server::fixUpAddress(
+		address = net::fixUpAddress(
 			QUrl(
-				net::Server::addSchemeToUserSuppliedAddress(remoteAddress),
+				net::addSchemeToUserSuppliedAddress(remoteAddress),
 				QUrl::TolerantMode),
 			false);
 	} else {
@@ -3583,8 +3584,8 @@ void MainWindow::connectToSession(
 		return;
 	}
 
-	QUrl loginUrl = net::Server::fixUpAddress(url, true);
-	QString autoJoinId = net::Server::extractAutoJoinIdFromUrl(loginUrl);
+	QUrl loginUrl = net::fixUpAddress(url, true);
+	QString autoJoinId = net::extractAutoJoinIdFromUrl(loginUrl);
 	net::LoginHandler *login = new net::LoginHandler(
 		QSharedPointer<const net::LoginHostParams>(nullptr), autoJoinId,
 		loginUrl, 0, QStringList(), QJsonObject(), this);
