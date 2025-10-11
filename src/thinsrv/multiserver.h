@@ -9,9 +9,7 @@
 
 class QDir;
 class QTcpServer;
-#ifdef HAVE_WEBSOCKETS
 class QWebSocketServer;
-#endif
 
 namespace server {
 
@@ -92,9 +90,7 @@ public slots:
 
 private slots:
 	void newTcpClient();
-#ifdef HAVE_WEBSOCKETS
 	void newWebSocketClient();
-#endif
 	void printStatusUpdate();
 	void tryAutoStop();
 
@@ -183,9 +179,7 @@ private:
 
 	ServerConfig *m_config;
 	QTcpServer *m_tcpServer;
-#ifdef HAVE_WEBSOCKETS
 	QWebSocketServer *m_webSocketServer;
-#endif
 	SessionServer *m_sessions;
 	ExtBans *m_extBans;
 	State m_state;

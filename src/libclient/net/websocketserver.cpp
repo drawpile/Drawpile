@@ -10,13 +10,11 @@
 #endif
 
 namespace {
-#ifdef HAVE_WEBSOCKETS
-#	if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
 const auto WebSocketError = &QWebSocket::errorOccurred;
-#	else
+#else
 const auto WebSocketError =
 	QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error);
-#	endif
 #endif
 }
 

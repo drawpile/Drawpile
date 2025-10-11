@@ -21,10 +21,8 @@
 #include <QRegularExpression>
 #include <QTcpSocket>
 #include <QTimer>
-#ifdef HAVE_WEBSOCKETS
-#	include <QWebSocket>
-#	include <QWebSocketServer>
-#endif
+#include <QWebSocket>
+#include <QWebSocketServer>
 
 namespace server {
 
@@ -32,9 +30,7 @@ MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	: QObject(parent)
 	, m_config(config)
 	, m_tcpServer(nullptr)
-#ifdef HAVE_WEBSOCKETS
 	, m_webSocketServer(nullptr)
-#endif
 	, m_extBans(new ExtBans(config, this))
 	, m_state(STOPPED)
 	, m_autoStop(false)
@@ -127,7 +123,6 @@ bool MultiServer::createServer(bool enableWebSockets)
 		&MultiServer::newTcpClient);
 
 	if(enableWebSockets) {
-#ifdef HAVE_WEBSOCKETS
 		// TODO: Allow running a TLS-secured WebSocket server. Currently, this
 		// instead requires a reverse proxy server like nginx or something. The
 		// user almost certainly has one of those anyway though, so it's fine.
@@ -137,9 +132,6 @@ bool MultiServer::createServer(bool enableWebSockets)
 		connect(
 			m_webSocketServer, &QWebSocketServer::newConnection, this,
 			&MultiServer::newWebSocketClient);
-#else
-		qWarning("WebSocket server requested, but support not compiled in");
-#endif
 	}
 
 	return true;
@@ -149,10 +141,8 @@ bool MultiServer::abortStart()
 {
 	delete m_tcpServer;
 	m_tcpServer = nullptr;
-#ifdef HAVE_WEBSOCKETS
 	delete m_webSocketServer;
 	m_webSocketServer = nullptr;
-#endif
 	m_state = STOPPED;
 	return false;
 }
@@ -161,9 +151,7 @@ void MultiServer::updateInternalConfig()
 {
 	InternalConfig icfg = m_config->internalConfig();
 	icfg.realPort = m_port;
-#ifdef HAVE_WEBSOCKETS
 	icfg.webSocket = m_webSocketServer != nullptr;
-#endif
 	m_config->setInternalConfig(icfg);
 }
 
@@ -192,7 +180,6 @@ bool MultiServer::start(
 		return abortStart();
 	}
 
-#ifdef HAVE_WEBSOCKETS
 	if(m_webSocketServer &&
 	   !m_webSocketServer->listen(webSocketAddress, webSocketPort)) {
 		emit serverStartError(m_webSocketServer->errorString());
@@ -202,9 +189,6 @@ bool MultiServer::start(
 				.message(m_webSocketServer->errorString()));
 		return abortStart();
 	}
-#else
-	Q_UNUSED(webSocketAddress);
-#endif
 
 	m_port = m_tcpServer->serverPort();
 	updateInternalConfig();
@@ -217,7 +201,6 @@ bool MultiServer::start(
 							 "at address %2")
 						 .arg(tcpPort)
 						 .arg(tcpAddress.toString())));
-#ifdef HAVE_WEBSOCKETS
 	if(m_webSocketServer) {
 		m_sessions->config()->logger()->logMessage(
 			Log()
@@ -227,7 +210,6 @@ bool MultiServer::start(
 							 .arg(webSocketPort)
 							 .arg(webSocketAddress.toString())));
 	}
-#endif
 	return true;
 }
 
@@ -279,7 +261,6 @@ void MultiServer::newTcpClient()
 	newClient(new ThinServerClient(tcpSocket, m_sessions->config()->logger()));
 }
 
-#ifdef HAVE_WEBSOCKETS
 void MultiServer::newWebSocketClient()
 {
 	QWebSocket *webSocket = m_webSocketServer->nextPendingConnection();
@@ -307,7 +288,6 @@ void MultiServer::newWebSocketClient()
 	newClient(new ThinServerClient(
 		webSocket, ip, !origin.isEmpty(), m_sessions->config()->logger()));
 }
-#endif
 
 void MultiServer::newClient(ThinServerClient *client)
 {
@@ -352,11 +332,9 @@ void MultiServer::stop()
 
 		m_state = STOPPING;
 		m_tcpServer->close();
-#ifdef HAVE_WEBSOCKETS
 		if(m_webSocketServer) {
 			m_webSocketServer->close();
 		}
-#endif
 		m_port = 0;
 
 		m_sessions->stopAll();
@@ -367,10 +345,8 @@ void MultiServer::stop()
 			m_state = STOPPED;
 			delete m_tcpServer;
 			m_tcpServer = nullptr;
-#ifdef HAVE_WEBSOCKETS
 			delete m_webSocketServer;
 			m_webSocketServer = nullptr;
-#endif
 			m_sessions->config()->logger()->logMessage(
 				Log()
 					.about(Log::Level::Info, Log::Topic::Status)
@@ -512,16 +488,14 @@ JsonApiResult MultiServer::serverJsonApi(
 		config::RuleText,
 		config::MinimumProtocolVersion,
 		config::MandatoryLookup,
-#ifdef HAVE_WEBSOCKETS
 		config::AllowGuestWeb,
 		config::AllowGuestWebSession,
-#	ifdef HAVE_LIBSODIUM
+#ifdef HAVE_LIBSODIUM
 		config::ExtAuthWeb,
 		config::ExtAuthWebSession,
-#	endif
+#endif
 		config::PasswordDependentWebSession,
 		config::PreferWebSockets,
-#endif
 		config::SessionUserLimit,
 		config::EmptySessionLingerTime,
 		config::RequireMatchingHost,
@@ -564,7 +538,6 @@ JsonApiResult MultiServer::serverJsonApi(
 		result.remove(config::UseExtAuth.name);
 	}
 
-#ifdef HAVE_WEBSOCKETS
 	if(!icfg.webSocket) {
 		result.remove(config::AllowGuestWeb.name);
 		result.remove(config::ExtAuthWeb.name);
@@ -573,7 +546,6 @@ JsonApiResult MultiServer::serverJsonApi(
 		result.remove(config::PasswordDependentWebSession.name);
 		result.remove(config::PreferWebSockets.name);
 	}
-#endif
 
 	result.insert(QStringLiteral("_locked"), sectionLocked);
 	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(result)};

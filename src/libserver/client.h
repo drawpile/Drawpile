@@ -9,9 +9,7 @@
 
 class QHostAddress;
 class QTcpSocket;
-#ifdef HAVE_WEBSOCKETS
 class QWebSocket;
-#endif
 
 namespace net {
 class MessageQueue;
@@ -358,11 +356,9 @@ protected:
 	Client(
 		QTcpSocket *tcpSocket, ServerLog *logger, bool decodeOpaque,
 		QObject *parent);
-#ifdef HAVE_WEBSOCKETS
 	Client(
 		QWebSocket *webSocket, const QHostAddress &ip, bool isBrowser,
 		ServerLog *logger, bool decodeOpaque, QObject *parent);
-#endif
 	net::MessageQueue *messageQueue();
 
 private:

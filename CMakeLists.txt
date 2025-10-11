@@ -200,11 +200,7 @@ if(CLIENT OR SERVER)
 	# Everything needs these dependencies so just do it in one place
 	find_package(${QT_PACKAGE_NAME} QUIET COMPONENTS LinguistTools)
 	find_package(libsodium QUIET)
-	if(EMSCRIPTEN)
-		find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS WebSockets)
-	else()
-		find_package(${QT_PACKAGE_NAME} QUIET COMPONENTS WebSockets)
-	endif()
+	find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS WebSockets)
 
 	if(ANDROID AND QT_VERSION VERSION_LESS 6)
 		find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS AndroidExtras)
@@ -216,10 +212,6 @@ if(CLIENT OR SERVER)
 
 	if(HAVE_TCPSOCKETS)
 		add_compile_definitions(HAVE_TCPSOCKETS)
-	endif()
-
-	if(TARGET "${QT_PACKAGE_NAME}::WebSockets")
-		add_compile_definitions(HAVE_WEBSOCKETS)
 	endif()
 
 	# LinguistTools does not generate a target so its existence must be checked

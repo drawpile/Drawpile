@@ -95,16 +95,7 @@ void Join::addressChanged(const QString &address)
 void Join::resetAddressPlaceholderText()
 {
 	m_addressEdit->setPlaceholderText(
-#if defined(HAVE_TCPSOCKETS) && defined(HAVE_WEBSOCKETS)
-		QStringLiteral("drawpile://… or wss://…")
-#elif defined(HAVE_TCPSOCKETS)
-		QStringLiteral("drawpile://…")
-#elif defined(HAVE_WEBSOCKETS)
-		QStringLiteral("wss://…")
-#else
-		QStringLiteral("???://…")
-#endif
-	);
+		QStringLiteral("drawpile://… or wss://…"));
 }
 
 void Join::updateJoinButton()

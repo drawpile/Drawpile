@@ -1233,14 +1233,12 @@ void Session::sendUpdatedSessionProperties()
 		{QStringLiteral("allowIdleOverride"),
 		 m_config->getConfigBool(config::AllowIdleOverride)},
 	};
-#ifdef HAVE_WEBSOCKETS
 	if(m_config->internalConfig().webSocket) {
 		config[QStringLiteral("allowWeb")] =
 			m_history->hasFlag(SessionHistory::AllowWeb);
 		config[QStringLiteral("preferWebSockets")] =
 			m_config->getConfigBool(config::PreferWebSockets);
 	}
-#endif
 	if(supportsAutoReset()) {
 		config.insert(
 			QStringLiteral("resetThresholdMin"),
@@ -2158,12 +2156,9 @@ void Session::onAnnouncementError(
 
 void Session::onConfigValueChanged(const ConfigKey &key)
 {
-	if(key.index == config::IdleTimeLimit.index
-#ifdef HAVE_WEBSOCKETS
-	   || (m_config->internalConfig().webSocket &&
-		   key.index == config::PreferWebSockets.index)
-#endif
-	) {
+	if(key.index == config::IdleTimeLimit.index ||
+	   (m_config->internalConfig().webSocket &&
+		key.index == config::PreferWebSockets.index)) {
 		sendUpdatedSessionProperties();
 	} else if(key.index == config::ForceNsfm.index) {
 		if(forceEnableNsfm(m_history, m_config)) {
@@ -2354,7 +2349,6 @@ QJsonObject Session::getDescription(bool full, bool invite) const
 			m_history->hasFlag(SessionHistory::IdleOverride);
 	}
 
-#ifdef HAVE_WEBSOCKETS
 	if(m_config->internalConfig().webSocket) {
 		o[QStringLiteral("allowWeb")] =
 			invite || m_history->hasFlag(SessionHistory::AllowWeb);
@@ -2362,7 +2356,6 @@ QJsonObject Session::getDescription(bool full, bool invite) const
 			o.insert(QStringLiteral("preferWebSockets"), true);
 		}
 	}
-#endif
 
 	if(full) {
 		// Full descriptions includes detailed info for server admins.

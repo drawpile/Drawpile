@@ -34,11 +34,10 @@ QString addSchemeToUserSuppliedAddress(const QString &remoteAddress)
 
 QUrl fixUpAddress(const QUrl &originalUrl, bool join)
 {
-#ifdef HAVE_WEBSOCKETS
 	bool shouldTranslateToWebSocketUrl =
 		originalUrl.scheme().compare(
 			QStringLiteral("drawpile"), Qt::CaseInsensitive) == 0;
-#	ifdef HAVE_TCPSOCKETS
+#ifdef HAVE_TCPSOCKETS
 	// If TCP is an option only translate if requested via query parameter.
 	if(shouldTranslateToWebSocketUrl) {
 		QUrlQuery originalQuery(originalUrl);
@@ -47,7 +46,7 @@ QUrl fixUpAddress(const QUrl &originalUrl, bool join)
 			shouldTranslateToWebSocketUrl = false;
 		}
 	}
-#	endif
+#endif
 	if(shouldTranslateToWebSocketUrl) {
 		QUrl url = originalUrl;
 		url.setScheme(
@@ -76,22 +75,6 @@ QUrl fixUpAddress(const QUrl &originalUrl, bool join)
 			qUtf8Printable(url.toDisplayString()));
 		return url;
 	}
-#else
-	if(originalUrl.scheme().compare(
-		   QStringLiteral("ws"), Qt::CaseInsensitive) == 0 ||
-	   originalUrl.scheme().compare(
-		   QStringLiteral("wss"), Qt::CaseInsensitive) == 0) {
-		QUrl url = originalUrl;
-		url.setScheme(QStringLiteral("drawpile://"));
-		url.setPort(-1);
-		url.setPath(QString());
-		qInfo(
-			"Fixed up WebSocket URL '%s' to TCP URL '%s'",
-			qUtf8Printable(originalUrl.toDisplayString()),
-			qUtf8Printable(url.toDisplayString()));
-		return url;
-	}
-#endif
 
 	return originalUrl;
 }
