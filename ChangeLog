@@ -55,6 +55,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Start blank canvases with a single timeline track pre-created, similar to how it works with layers.
  * Feature: Allow joining sessions if there's only a minor protocol incompatibility. An outdated client like this won't handle any new features and therefore their canvas may desynchronize, so they can't reset or compress it.
  * Feature: Make compiling Drawpile with WebSocket support mandatory. This avoids accidentally ending up with an application that's unable to connect to certain servers.
+ * Fix: Properly disable join button when an empty address is entered.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

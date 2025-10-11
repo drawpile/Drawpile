@@ -161,9 +161,14 @@ QString Join::fixUpInviteOrWebAddress(const QString &address)
 QUrl Join::getUrl() const
 {
 	QString address = m_addressEdit->text().trimmed();
-	QUrl url =
-		QUrl(net::addSchemeToUserSuppliedAddress(address), QUrl::TolerantMode);
-	return url.isValid() || url.host().isEmpty() ? url : QUrl{};
+	if(!address.isEmpty()) {
+		QUrl url = QUrl(
+			net::addSchemeToUserSuppliedAddress(address), QUrl::TolerantMode);
+		if(url.isValid() && !url.host().isEmpty()) {
+			return url;
+		}
+	}
+	return QUrl();
 }
 
 }
