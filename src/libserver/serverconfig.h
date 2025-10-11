@@ -195,10 +195,8 @@ struct InternalConfig {
 	QUrl reportUrl;
 	// Key used to encrypt session ban exports
 	QByteArray cryptKey;
-#ifdef HAVE_WEBSOCKETS
 	// Are we listening for WebSocket connections?
 	bool webSocket = false;
-#endif
 
 	int getAnnouncePort() const
 	{

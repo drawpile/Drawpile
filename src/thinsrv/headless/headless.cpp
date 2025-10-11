@@ -49,11 +49,6 @@ void printVersion()
 #else
 	printf("Libsodium version: N/A (not compiled in)\n");
 #endif
-#ifdef HAVE_WEBSOCKETS
-	printf("QtWebSockets: yes\n");
-#else
-	printf("QtWebSockets: N/A (not compiled in)\n");
-#endif
 }
 
 #ifdef HAVE_LIBSODIUM
@@ -169,12 +164,7 @@ bool start()
 		QStringList() << "listen" << "l", "Listening address", "address");
 	parser.addOption(listenOption);
 
-#ifdef HAVE_WEBSOCKETS
 	QString websocketOptionSuffix;
-#else
-	QString websocketOptionSuffix = QStringLiteral(
-		" [QtWebSockets not compiled in, this option is unavailable]");
-#endif
 	// --websocket-port <port>
 	QCommandLineOption webSocketPortOption(
 		QStringList() << "websocket-port",
@@ -327,10 +317,6 @@ bool start()
 			   {QStringLiteral("Libsodium"),
 				{&extAuthOption, &cryptKeyOption, &generateCryptKeyOption}},
 #endif
-#ifndef HAVE_WEBSOCKETS
-			   {QStringLiteral("QtWebSockets"),
-				{&webSocketPortOption, &webSocketListenOption}},
-#endif
 		   })) {
 		return false;
 	}
@@ -451,7 +437,6 @@ bool start()
 		}
 	}
 
-#ifdef HAVE_WEBSOCKETS
 	int webSocketPort;
 	{
 		bool ok;
@@ -475,10 +460,6 @@ bool start()
 			}
 		}
 	}
-#else
-	const int webSocketPort = 0;
-	const QHostAddress webSocketAddress = QHostAddress::Any;
-#endif
 
 	{
 		QString sslCert = parser.value(sslCertOption);

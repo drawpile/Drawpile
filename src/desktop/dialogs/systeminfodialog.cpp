@@ -336,9 +336,6 @@ QString SystemInfoDialog::getCompileFeatures()
 #ifdef HAVE_TCPSOCKETS
 	features.append(QStringLiteral("HAVE_TCPSOCKETS"));
 #endif
-#ifdef HAVE_WEBSOCKETS
-	features.append(QStringLiteral("HAVE_WEBSOCKETS"));
-#endif
 #ifdef DP_HAVE_BUILTIN_SERVER
 	features.append(QStringLiteral("HAVE_BUILTIN_SERVER"));
 #endif

@@ -7,6 +7,7 @@
 #include "libshared/net/messagequeue.h"
 #include "libshared/net/servercmd.h"
 #include "libshared/net/tcpmessagequeue.h"
+#include "libshared/net/websocketmessagequeue.h"
 #include "libshared/util/qtcompat.h"
 #include <QPointer>
 #include <QRandomGenerator>
@@ -15,19 +16,14 @@
 #include <QTcpSocket>
 #include <QTimeZone>
 #include <QTimer>
-#ifdef HAVE_WEBSOCKETS
-#	include <QWebSocket>
-#	include "libshared/net/websocketmessagequeue.h"
-#endif
+#include <QWebSocket>
 
 namespace {
-#ifdef HAVE_WEBSOCKETS
-#	if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-#		define COMPAT_WEBSOCKET_ERROR_SIGNAL(CLS) &CLS::errorOccurred
-#	else
-#		define COMPAT_WEBSOCKET_ERROR_SIGNAL(CLS)                             \
-			QOverload<QAbstractSocket::SocketError>::of(&CLS::error)
-#	endif
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+#	define COMPAT_WEBSOCKET_ERROR_SIGNAL(CLS) &CLS::errorOccurred
+#else
+#	define COMPAT_WEBSOCKET_ERROR_SIGNAL(CLS)                                 \
+		QOverload<QAbstractSocket::SocketError>::of(&CLS::error)
 #endif
 }
 
@@ -96,7 +92,6 @@ private:
 	QTcpSocket *m_tcpSocket;
 };
 
-#ifdef HAVE_WEBSOCKETS
 class ClientWebSocket final : public ClientSocket {
 	COMPAT_DISABLE_COPY_MOVE(ClientWebSocket)
 public:
@@ -132,7 +127,6 @@ private:
 	QHostAddress m_ip;
 	bool m_browser;
 };
-#endif
 
 struct Client::Private {
 	QPointer<Session> session;
@@ -205,7 +199,6 @@ Client::Client(
 	connect(d->msgqueue, &net::MessageQueue::timedOut, this, &Client::timedOut);
 }
 
-#ifdef HAVE_WEBSOCKETS
 Client::Client(
 	QWebSocket *webSocket, const QHostAddress &ip, bool browser,
 	ServerLog *logger, bool decodeOpaque, QObject *parent)
@@ -225,7 +218,6 @@ Client::Client(
 	connect(
 		d->msgqueue, &net::MessageQueue::badData, this, &Client::gotBadData);
 }
-#endif
 
 Client::~Client()
 {

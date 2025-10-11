@@ -87,11 +87,7 @@ QJsonArray SessionServer::sessionDescriptions(bool includeUnlisted) const
 	}
 
 	const TemplateLoader *loader = templateLoader();
-#ifdef HAVE_WEBSOCKETS
 	bool supportsWebSockets = m_config->internalConfig().webSocket;
-#else
-	bool supportsWebSockets = false;
-#endif
 	if(loader) {
 		// Add session templates to list, if not shadowed by live sessions
 		QVector<QJsonObject> templates =
