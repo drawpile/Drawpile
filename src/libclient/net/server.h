@@ -70,12 +70,15 @@ public:
 	void login(LoginHandler *login, const QUrl &url);
 	void logout();
 
+	void abortTentative();
+
 	void replaceWithRedirect(LoginHandler *login, bool late);
 
 	/**
 	 * @brief Is the user in a session
 	 */
 	bool isLoggedIn() const { return m_loginstate == nullptr; }
+	LoginHandler *loginHandler() const { return m_loginstate; }
 
 	bool isBrowser() const;
 	void setBrowser(bool browser);

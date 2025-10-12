@@ -13,7 +13,7 @@
 #	include "libshared/util/androidutils.h"
 #endif
 
-Q_LOGGING_CATEGORY(lcDpClient, "net.drawpile.client", QtInfoMsg)
+Q_LOGGING_CATEGORY(lcDpClient, "net.drawpile.client", QtWarningMsg)
 
 namespace net {
 
@@ -22,11 +22,12 @@ Client::CommandHandler::~CommandHandler() {}
 Client::Client(CommandHandler *commandHandler, QObject *parent)
 	: QObject(parent)
 	, m_commandHandler(commandHandler)
-	, m_catchupTimer(new QTimer(this))
+	, m_connectStrategy(defaultConnectStrategy())
+	, m_timer(new QTimer(this))
 {
-	m_catchupTimer->setSingleShot(true);
-	m_catchupTimer->setTimerType(Qt::CoarseTimer);
-	connect(m_catchupTimer, &QTimer::timeout, this, &Client::nudgeCatchup);
+	m_timer->setSingleShot(true);
+	m_timer->setTimerType(Qt::CoarseTimer);
+	connect(m_timer, &QTimer::timeout, this, &Client::handleTimeout);
 }
 
 void Client::connectToServer(
@@ -38,23 +39,26 @@ void Client::connectToServer(
 	m_timeoutSecs = timeoutSecs;
 	m_proxyMode = proxyMode;
 	m_connectStrategy = connectStrategy;
-	connectToServerInternal(loginhandler, false, false);
+	m_tentativeConnection = false;
+	connectToServerInternal(loginhandler, false, false, true);
 }
 
 void Client::connectToServerInternal(
-	net::LoginHandler *loginhandler, bool redirect, bool transparent)
+	net::LoginHandler *loginhandler, bool redirect, bool transparent,
+	bool isFirstAttempt)
 {
 	QUrl originalUrl = loginhandler->url();
 	QUrl effectiveUrl = net::convertUrl(
 		originalUrl, loginhandler->mode() == LoginHandler::Mode::Join,
-		m_connectStrategy);
-	if(lcDpClient().isInfoEnabled()) {
-		qCInfo(lcDpClient) << "Connect to" << censorUrlForLogging(originalUrl)
-						   << "effective" << censorUrlForLogging(effectiveUrl)
-						   << "redirect" << redirect << "transparent"
-						   << transparent << "connected" << isConnected()
-						   << "strategy" << m_connectStrategy
-						   << connectStrategyToString(m_connectStrategy);
+		m_connectStrategy, isFirstAttempt, &m_tentativeConnection);
+	if(lcDpClient().isDebugEnabled()) {
+		qCDebug(lcDpClient)
+			<< "Connect to" << censorUrlForLogging(originalUrl) << "effective"
+			<< censorUrlForLogging(effectiveUrl) << "redirect" << redirect
+			<< "transparent" << transparent << "connected" << isConnected()
+			<< "strategy" << m_connectStrategy
+			<< connectStrategyToString(m_connectStrategy) << "tentative"
+			<< m_tentativeConnection;
 	}
 	Q_ASSERT(!isConnected());
 
@@ -89,10 +93,16 @@ void Client::connectToServerInternal(
 
 	m_connections.clear();
 	m_connections.append(connect(
+		loginhandler, &LoginHandler::handshakeStarted, this,
+		&Client::clearTentative));
+	m_connections.append(connect(
+		loginhandler, &LoginHandler::cancellationIssued, this,
+		&Client::clearTentative));
+	m_connections.append(connect(
 		m_server, &Server::initiatingConnection, this,
 		&Client::setConnectionUrl));
 	m_connections.append(connect(
-		m_server, &Server::loggingOut, this, &Client::serverDisconnecting));
+		m_server, &Server::loggingOut, this, &Client::handleServerLoggingOut));
 	m_connections.append(connect(
 		m_server, &Server::serverDisconnected, this,
 		&Client::handleDisconnect));
@@ -147,16 +157,33 @@ void Client::connectToServerInternal(
 		loginhandler, &LoginHandler::redirectRequested, this,
 		&Client::handleRedirect));
 
-	if(!redirect) {
-		emit serverConnected(originalUrl);
-	} else if(!transparent) {
-		emit serverRedirected(originalUrl);
+	if(isFirstAttempt) {
+		m_tentativeErrorMessage.clear();
+		if(!redirect) {
+			emit serverConnected(originalUrl);
+		} else if(!transparent) {
+			emit serverRedirected(originalUrl);
+		}
+	} else {
+		// We're retrying the connection after our attempted WebSocket
+		// connection didn't work out. This is transparent to the user.
+	}
+
+	if(m_tentativeConnection) {
+		m_timer->start(TENTATIVE_TIMER_MSEC);
 	}
 	m_server->login(loginhandler, effectiveUrl);
 
 	m_catchupTo = 0;
 	m_caughtUp = 0;
 	m_catchupProgress = 0;
+}
+
+void Client::handleServerLoggingOut()
+{
+	if(!m_tentativeConnection) {
+		emit serverDisconnecting();
+	}
 }
 
 void Client::disconnectFromServer()
@@ -167,6 +194,14 @@ void Client::disconnectFromServer()
 	} else {
 		qCDebug(lcDpClient, "Disconnect from server, but not connected");
 	}
+}
+
+void Client::clearTentative()
+{
+	qCDebug(lcDpClient, "Clear tentative %d", int(m_tentativeConnection));
+	m_timer->stop();
+	m_tentativeConnection = false;
+	m_tentativeErrorMessage.clear();
 }
 
 QUrl Client::sessionUrl(bool includeUser) const
@@ -211,31 +246,67 @@ void Client::handleDisconnect(
 	qCDebug(lcDpClient) << "Handle disconnect connected" << connected
 						<< "localDisconnect" << localDisconnect
 						<< "anyMessageReceived" << anyMessageReceived
-						<< "errorcode" << errorcode << "message" << message;
+						<< "errorcode" << errorcode << "message" << message
+						<< "tentative" << m_tentativeConnection;
 	if(connected) {
-		emit serverDisconnected(
-			message, errorcode, localDisconnect, anyMessageReceived);
-		m_compatibilityMode = false;
-		m_minorIncompatibility = false;
-		m_server->deleteLater();
-		m_server = nullptr;
-		m_userFlags = UserFlag::None;
-#ifdef Q_OS_ANDROID
-		delete m_wakeLock;
-		delete m_wifiLock;
-		m_wakeLock = nullptr;
-		m_wifiLock = nullptr;
-#	ifdef DRAWPILE_USE_CONNECT_SERVICE
-		if(m_connectServiceStarted) {
-			utils::stopConnectService();
+		if(m_tentativeConnection && !m_server->isLoggedIn()) {
+			handleTentativeDisconnect(message);
+		} else {
+			handleActualDisconnect(
+				message, errorcode, localDisconnect, anyMessageReceived);
 		}
-#	endif
-#endif
 	} else {
 		// WebSockets may report multiple disconnects, sometimes amending error
 		// information to them. So emit those too.
-		emit serverDisconnectedAgain(message, errorcode);
+		emit serverDisconnectedAgain(getFullErrorMessage(message), errorcode);
 	}
+}
+
+void Client::handleActualDisconnect(
+	const QString &message, const QString &errorcode, bool localDisconnect,
+	bool anyMessageReceived)
+{
+	emit serverDisconnected(
+		getFullErrorMessage(message), errorcode, localDisconnect,
+		anyMessageReceived);
+	m_compatibilityMode = false;
+	m_minorIncompatibility = false;
+	m_server->deleteLater();
+	m_server = nullptr;
+	m_userFlags = UserFlag::None;
+#ifdef Q_OS_ANDROID
+	delete m_wakeLock;
+	delete m_wifiLock;
+	m_wakeLock = nullptr;
+	m_wifiLock = nullptr;
+#	ifdef DRAWPILE_USE_CONNECT_SERVICE
+	if(m_connectServiceStarted) {
+		utils::stopConnectService();
+	}
+#	endif
+#endif
+}
+
+void Client::handleTentativeDisconnect(const QString &message)
+{
+	Q_ASSERT(isConnected());
+	Q_ASSERT(m_tentativeConnection);
+
+	for(const QMetaObject::Connection &connection : m_connections) {
+		disconnect(connection);
+	}
+	m_connections.clear();
+	m_tentativeConnection = false;
+	m_tentativeErrorMessage = message.isNull() ? QStringLiteral("") : message;
+
+	net::LoginHandler *oldLoginHandler = m_server->loginHandler();
+	net::LoginHandler *newLoginHandler =
+		oldLoginHandler->replaceTentative(this);
+
+	m_server->deleteLater();
+	m_server = nullptr;
+
+	connectToServerInternal(newLoginHandler, false, false, false);
 }
 
 void Client::handleRedirect(
@@ -263,24 +334,31 @@ void Client::handleRedirect(
 			&Server::deleteLater);
 		m_server->logout();
 		m_server = nullptr;
+		m_tentativeConnection = false;
 
 		connectToServerInternal(
 			loginhandler, true,
-			redirectData.value(QStringLiteral("transparent")).toBool());
+			redirectData.value(QStringLiteral("transparent")).toBool(), true);
 	}
 }
 
-void Client::nudgeCatchup()
+void Client::handleTimeout()
 {
-	if(m_catchupTo > 0) {
-		qWarning(
-			"Catchup stuck at %d%% with no message in %dms, nudging it",
-			m_catchupProgress, m_catchupTimer->interval());
-		if(++m_catchupProgress < 100) {
-			emit catchupProgress(m_catchupProgress);
-			m_catchupTimer->start(qMax(100, m_catchupTimer->interval() / 2));
-		} else {
-			finishCatchup("catchup stuck");
+	if(isConnected()) {
+		if(m_tentativeConnection) {
+			qCWarning(lcDpClient, "Aborting tentative connection");
+			m_server->abortTentative();
+		} else if(m_catchupTo > 0) {
+			qCWarning(
+				lcDpClient,
+				"Catchup stuck at %d%% with no message in %dms, nudging it",
+				m_catchupProgress, m_timer->interval());
+			if(++m_catchupProgress < 100) {
+				emit catchupProgress(m_catchupProgress);
+				m_timer->start(qMax(100, m_timer->interval() / 2));
+			} else {
+				finishCatchup("catchup stuck");
+			}
 		}
 	}
 }
@@ -387,7 +465,7 @@ void Client::setConnectionUrl(const QUrl &url)
 void Client::handleMessages(int count, net::Message *msgs)
 {
 	if(m_catchupTo > 0) {
-		m_catchupTimer->stop();
+		m_timer->stop();
 	}
 
 	int handled = 0;
@@ -431,14 +509,14 @@ void Client::handleMessages(int count, net::Message *msgs)
 			if(m_catchupKey == -1) {
 				finishCatchup("reached catchup count");
 			}
-			m_catchupTimer->start(CATCHUP_TIMER_MSEC);
+			m_timer->start(CATCHUP_TIMER_MSEC);
 		} else {
 			int progress = qBound(0, 100 * m_caughtUp / m_catchupTo, 99);
 			if(progress > m_catchupProgress) {
 				m_catchupProgress = progress;
 				emit catchupProgress(progress);
 			}
-			m_catchupTimer->start(CATCHUP_TIMER_MSEC);
+			m_timer->start(CATCHUP_TIMER_MSEC);
 		}
 	}
 }
@@ -852,7 +930,7 @@ void Client::finishCatchup(const char *reason, int handledMessageIndex)
 		"Caught up to %d/%d messages with key %d (%s)",
 		m_caughtUp + handledMessageIndex, m_catchupTo, m_catchupKey, reason);
 	m_catchupTo = 0;
-	m_catchupTimer->stop();
+	m_timer->stop();
 	m_server->setSmoothEnabled(true);
 	emit catchupProgress(100);
 }
@@ -878,6 +956,19 @@ void Client::requestUpdateAuthList(const QJsonArray &list)
 	QJsonArray args;
 	args.append(list);
 	sendMessage(net::ServerCommand::make(QStringLiteral("auth-list"), args));
+}
+
+QString Client::getFullErrorMessage(const QString &message) const
+{
+	if(m_tentativeErrorMessage.isNull()) {
+		return message;
+	} else {
+		//: This is a separator for connection errors, something like
+		//: "Connection refused (error 0) / Forbidden (error 403)". Those
+		//: messages may be in English or in your language, so use a separator
+		//: that works for both. If you're not sure, leave it the same.
+		return message + tr(" / ") + m_tentativeErrorMessage;
+	}
 }
 
 }

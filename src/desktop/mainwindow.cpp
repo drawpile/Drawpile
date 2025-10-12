@@ -3755,8 +3755,10 @@ void MainWindow::onServerDisconnectedAgain(
 	if(!message.isEmpty()) {
 		QString name = QStringLiteral("disconnectederrormessagebox");
 		QMessageBox *msgbox = findChild<QMessageBox *>(name);
-		if(msgbox && msgbox->informativeText().isEmpty()) {
-			msgbox->setInformativeText(message);
+		if(msgbox) {
+			if(msgbox->informativeText().length() < message.length()) {
+				msgbox->setInformativeText(message);
+			}
 		}
 	}
 }

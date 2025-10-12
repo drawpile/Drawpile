@@ -20,7 +20,10 @@ enum class ConnectStrategy {
 	ForceWebSocket,
 	// Connect via TCP, converting WebSocket addresses.
 	ForceTcp,
-	Last = ForceWebSocket,
+	// Try to connect via WebSocket if the URL isn't pointing at an IP address,
+	// localhost or contains an explicit port. Failing that, fall back to TCP.
+	Guess,
+	Last = Guess,
 };
 
 int defaultConnectStrategy();
@@ -35,7 +38,9 @@ QString addSchemeToUserSuppliedAddress(const QString &remoteAddress);
 
 QUrl convertToTcpUrl(const QUrl &originalUrl, bool join);
 QUrl convertToWebSocketUrl(const QUrl &originalUrl, bool join);
-QUrl convertUrl(const QUrl &originalUrl, bool join, int connectStrategy);
+QUrl convertUrl(
+	const QUrl &originalUrl, bool join, int connectStrategy,
+	bool isFirstAttempt, bool *outTentative);
 
 QString censorUrlForLogging(const QUrl &originalUrl);
 
@@ -54,6 +59,8 @@ void setSessionIdOnUrl(QUrl &url, QString &sessionId);
 bool looksLikeWebSocketUrl(const QUrl &url);
 
 bool looksLikeLocalhost(const QString &host);
+
+bool guessWebSocketSupport(const QUrl &url);
 
 }
 

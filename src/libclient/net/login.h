@@ -53,6 +53,8 @@ public:
 	~LoginHandler() override;
 #endif
 
+	LoginHandler *replaceTentative(QObject *parent);
+
 	void setReconnectState(canvas::ReconnectState *reconnectState)
 	{
 		m_reconnectState = reconnectState;
@@ -228,6 +230,9 @@ public slots:
 	void reportSession(const QString &id, const QString &reason);
 
 signals:
+	void handshakeStarted();
+	void cancellationIssued();
+
 	void ruleAcceptanceNeeded(const QString &ruleText);
 
 	void loginMethodChoiceNeeded(

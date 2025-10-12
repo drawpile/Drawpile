@@ -62,6 +62,15 @@ void Server::logout()
 		MessageQueue::GracefulDisconnect::Shutdown, QString());
 }
 
+void Server::abortTentative()
+{
+	if(m_loginstate) {
+		abortConnection();
+	} else {
+		qWarning("abortTentative: not in login state!");
+	}
+}
+
 void Server::replaceWithRedirect(LoginHandler *login, bool late)
 {
 	if(m_loginstate) {

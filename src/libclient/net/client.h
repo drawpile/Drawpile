@@ -315,9 +315,10 @@ private slots:
 		const QString &autoJoinId, const QUrl &url, quint64 redirectNonce,
 		const QStringList &redirectHistory, const QJsonObject &redirectData,
 		bool late);
-	void nudgeCatchup();
+	void handleTimeout();
 
 private:
+	static constexpr int TENTATIVE_TIMER_MSEC = 5000;
 	static constexpr int CATCHUP_TIMER_MSEC = 4000;
 
 	// Guess if we're connected to a thick server session. Checking for the
@@ -331,7 +332,18 @@ private:
 	}
 
 	void connectToServerInternal(
-		net::LoginHandler *loginhandler, bool redirect, bool transparent);
+		net::LoginHandler *loginhandler, bool redirect, bool transparent,
+		bool isFirstAttempt);
+
+	void handleServerLoggingOut();
+
+	void handleActualDisconnect(
+		const QString &message, const QString &errorcode, bool localDisconnect,
+		bool anyMessageReceived);
+
+	void handleTentativeDisconnect(const QString &message);
+
+	void clearTentative();
 
 	void sendRemoteMessages(int count, const net::Message *msgs);
 	QVector<net::Message>
@@ -345,6 +357,8 @@ private:
 	void handleData(const net::Message &msg);
 	void handleUserInfo(const net::Message &msg, DP_MsgData *md);
 	void finishCatchup(const char *reason, int handledMessageIndex = 0);
+
+	QString getFullErrorMessage(const QString &message) const;
 
 	CommandHandler *const m_commandHandler;
 	Server *m_server = nullptr;
@@ -376,10 +390,13 @@ private:
 	int m_caughtUp = 0;
 	int m_catchupProgress = 0;
 	int m_catchupKey = 0;
-	QTimer *m_catchupTimer;
+	QTimer *m_timer;
 
 	int m_smoothDrainRate = 0;
 	HistoryIndex m_historyIndex;
+
+	bool m_tentativeConnection = false;
+	QString m_tentativeErrorMessage;
 };
 
 }

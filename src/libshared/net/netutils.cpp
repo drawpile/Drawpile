@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libshared/net/netutils.h"
+#include <QHostAddress>
 #include <QRegularExpression>
 #include <QUrlQuery>
 
@@ -11,7 +12,7 @@ namespace net {
 
 int defaultConnectStrategy()
 {
-	return int(ConnectStrategy::Literal);
+	return int(ConnectStrategy::Guess);
 }
 
 int resolveConnectStrategy(int input, int preference)
@@ -20,13 +21,12 @@ int resolveConnectStrategy(int input, int preference)
 	case int(ConnectStrategy::Preference):
 		break;
 	case int(ConnectStrategy::Literal):
-		return int(ConnectStrategy::Literal);
 	case int(ConnectStrategy::ForceWebSocket):
-		return int(ConnectStrategy::ForceWebSocket);
+	case int(ConnectStrategy::Guess):
 #ifdef HAVE_TCPSOCKETS
 	case int(ConnectStrategy::ForceTcp):
-		return int(ConnectStrategy::ForceTcp);
 #endif
+		return input;
 	default:
 		qWarning("resolveConnectStrategy: unknown input %d", input);
 		break;
@@ -45,6 +45,8 @@ QString connectStrategyToString(int input)
 		return QStringLiteral("ws");
 	case int(ConnectStrategy::ForceTcp):
 		return QStringLiteral("tcp");
+	case int(ConnectStrategy::Guess):
+		return QStringLiteral("guess");
 	}
 	qWarning("connectStrategyToString: unknown input %d", int(input));
 	return QString();
@@ -61,6 +63,8 @@ int connectStrategyFromString(const QString &s)
 		return int(ConnectStrategy::ForceWebSocket);
 	} else if(QStringLiteral("tcp").compare(s, Qt::CaseInsensitive) == 0) {
 		return int(ConnectStrategy::ForceTcp);
+	} else if(QStringLiteral("guess").compare(s, Qt::CaseInsensitive) == 0) {
+		return int(ConnectStrategy::Guess);
 	} else {
 		qWarning(
 			"connectStrategyFromString: unknown input '%s'", qUtf8Printable(s));
@@ -226,24 +230,45 @@ static bool isTcpUrlWithWebSocketParameter(const QUrl &url)
 }
 }
 
-QUrl convertUrl(const QUrl &originalUrl, bool join, int connectStrategy)
+QUrl convertUrl(
+	const QUrl &originalUrl, bool join, int connectStrategy,
+	bool isFirstAttempt, bool *outTentative)
 {
+	QUrl url;
+	bool tentative = false;
+
 #ifdef HAVE_TCPSOCKETS
 	switch(connectStrategy) {
 	case int(ConnectStrategy::ForceWebSocket):
-		return convertToWebSocketUrl(originalUrl, join);
+		url = convertToWebSocketUrl(originalUrl, join);
+		break;
 	case int(ConnectStrategy::ForceTcp):
-		return convertToTcpUrl(originalUrl, join);
-	default:
+		url = convertToTcpUrl(originalUrl, join);
+		break;
+	case int(ConnectStrategy::Literal):
 		if(isTcpUrlWithWebSocketParameter(originalUrl)) {
-			return convertToWebSocketUrl(originalUrl, join);
+			url = convertToWebSocketUrl(originalUrl, join);
 		} else {
-			return originalUrl;
+			url = originalUrl;
 		}
+		break;
+	default:
+		if(isFirstAttempt && guessWebSocketSupport(originalUrl)) {
+			url = convertToWebSocketUrl(originalUrl, join);
+			tentative = true;
+		} else {
+			url = convertToTcpUrl(originalUrl, join);
+		}
+		break;
 	}
 #else
-	return convertToWebSocketUrl(originalUrl, join);
+	url = convertToWebSocketUrl(originalUrl, join);
 #endif
+
+	if(outTentative) {
+		*outTentative = tentative;
+	}
+	return url;
 }
 
 QString censorUrlForLogging(const QUrl &originalUrl)
@@ -412,6 +437,35 @@ bool looksLikeLocalhost(const QString &host)
 	return host.startsWith(QStringLiteral("localhost"), Qt::CaseInsensitive) ||
 		   host.startsWith(QStringLiteral("127.0.0.1")) ||
 		   host.startsWith(QStringLiteral("::1"));
+}
+
+bool guessWebSocketSupport(const QUrl &url)
+{
+	// Explicit WebSocket URL definitely supports WebSockets.
+	if(looksLikeWebSocketUrl(url)) {
+		return true;
+	}
+
+	// If this is a TCP URL with a ?w on it, we should also try it.
+	if(isTcpUrlWithWebSocketParameter(url)) {
+		return true;
+	}
+
+	// Localhost is a bad candidate for WebSockets.
+	QString host = url.host(QUrl::FullyDecoded);
+	if(looksLikeLocalhost(host)) {
+		return false;
+	}
+
+	// A raw IP address probably won't work either. Also yes, weird interface:
+	// setAddress returns whether parsing the the IP address succeeded.
+	if(QHostAddress().setAddress(host)) {
+		return false;
+	}
+
+	// Anything else should be a regular host, which should generally have
+	// WebSockets set up properly. Worth giving it a shot.
+	return true;
 }
 
 }

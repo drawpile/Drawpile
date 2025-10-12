@@ -81,6 +81,20 @@ LoginHandler::~LoginHandler()
 }
 #endif
 
+LoginHandler *LoginHandler::replaceTentative(QObject *parent)
+{
+	LoginHandler *newLoginHandler = new net::LoginHandler(
+		m_hostParams, m_autoJoinId, m_address, m_redirectNonce,
+		m_redirectHistory, m_redirectData, parent);
+	setState(ABORT_LOGIN);
+	if(m_server) {
+		m_server->replaceWithRedirect(newLoginHandler, false);
+	} else {
+		qCWarning(lcDpLogin, "replaceTentative: server is null!");
+	}
+	return newLoginHandler;
+}
+
 bool LoginHandler::receiveMessage(const ServerReply &msg)
 {
 	if(lcDpLogin().isDebugEnabled()) {
@@ -186,6 +200,8 @@ void LoginHandler::expectHello(const ServerReply &msg)
 		failLogin(tr("Server is for a different Drawpile version!"));
 		return;
 	}
+
+	emit handshakeStarted();
 
 	// Parse server capability flags
 	const QJsonArray flags = msg.reply["flags"].toArray();
@@ -1352,6 +1368,7 @@ void LoginHandler::continueTls()
 
 void LoginHandler::cancelLogin()
 {
+	emit cancellationIssued();
 	setState(ABORT_LOGIN);
 	m_server->loginFailure(tr("Cancelled"), "CANCELLED");
 }
