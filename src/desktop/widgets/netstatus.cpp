@@ -143,6 +143,14 @@ void NetStatus::setJoinPassword(const QString &joinPassword)
 	}
 }
 
+void NetStatus::setSocketType(const QString &socketType)
+{
+	if(socketType != m_socketType) {
+		m_socketType = socketType;
+		updateLabel();
+	}
+}
+
 /**
  * Set the label to display the address.
  * A context menu to copy the address to clipboard will be enabled.
@@ -256,6 +264,7 @@ void NetStatus::hostDisconnected()
 	m_address = QString();
 	m_isLocalHost = false;
 	m_haveRemoteAddress = false;
+	m_socketType.clear();
 	m_joinPassword = QString();
 	m_state = NotConnected;
 	updateLabel();
@@ -383,6 +392,22 @@ QString NetStatus::fullAddress() const
 	return addr;
 }
 
+QString NetStatus::displayAddress() const
+{
+	return appendSocketTypeTo(fullAddress());
+}
+
+QString NetStatus::appendSocketTypeTo(const QString &s) const
+{
+	if(m_socketType.isEmpty()) {
+		return s;
+	} else if(s.isEmpty()) {
+		return QStringLiteral("(%1)").arg(m_socketType);
+	} else {
+		return s + QStringLiteral(" (%1)").arg(m_socketType);
+	}
+}
+
 void NetStatus::showMessage(const QString &msg)
 {
 	m_popup->showMessage(
@@ -397,16 +422,26 @@ void NetStatus::updateLabel()
 		txt = tr("not connected");
 		break;
 	case Connecting:
-		if(m_hideServer)
-			txt = tr("Connecting...");
-		else
-			txt = tr("Connecting to %1...").arg(fullAddress());
+		if(m_hideServer) {
+			if(m_socketType.isEmpty()) {
+				txt = tr("Connecting...");
+			} else {
+				txt = appendSocketTypeTo(QString()) + QStringLiteral("…");
+			}
+		} else {
+			txt = QStringLiteral("%1…").arg(displayAddress());
+		}
 		break;
 	case LoggedIn:
-		if(m_hideServer)
-			txt = tr("Connected");
-		else
-			txt = tr("Host: %1").arg(fullAddress());
+		if(m_hideServer) {
+			if(m_socketType.isEmpty()) {
+				txt = tr("Connected");
+			} else {
+				txt = appendSocketTypeTo(QString());
+			}
+		} else {
+			txt = displayAddress();
+		}
 		break;
 	case Disconnecting:
 		txt = tr("Logging out...");

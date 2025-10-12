@@ -83,6 +83,9 @@ Document::Document(
 		m_client, &net::Client::serverRedirected, this,
 		&Document::serverRedirected);
 	connect(
+		m_client, &net::Client::serverSocketTypeChanged, this,
+		&Document::serverSocketTypeChanged);
+	connect(
 		m_client, &net::Client::serverLoggedIn, this, &Document::onServerLogin);
 	connect(
 		m_client, &net::Client::serverDisconnected, this,

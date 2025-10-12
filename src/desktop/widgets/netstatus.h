@@ -49,6 +49,7 @@ signals:
 public slots:
 	void setHaveJoinPassword(bool haveJoinPassword);
 	void setJoinPassword(const QString &joinPassword);
+	void setSocketType(const QString &socketType);
 	void connectingToHost(const QUrl &url);
 	void loggedIn(const QUrl &sessionUrl, const QString &joinPassword);
 	void hostDisconnecting();
@@ -89,6 +90,8 @@ private:
 	enum { NotConnected, Connecting, LoggedIn, Disconnecting } m_state;
 
 	QString fullAddress() const;
+	QString displayAddress() const;
+	QString appendSocketTypeTo(const QString &s) const;
 
 	QPointer<dialogs::NetStats> m_netstats;
 	QProgressBar *m_download;
@@ -97,6 +100,7 @@ private:
 	PopupMessage *m_popup;
 	QString m_address;
 	int m_port;
+	QString m_socketType;
 	QUrl m_sessionUrl;
 	QString m_joinPassword;
 	bool m_haveJoinPassword;

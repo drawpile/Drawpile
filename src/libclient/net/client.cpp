@@ -169,6 +169,8 @@ void Client::connectToServerInternal(
 		// connection didn't work out. This is transparent to the user.
 	}
 
+	emit serverSocketTypeChanged(m_server->socketType());
+
 	if(m_tentativeConnection) {
 		m_timer->start(TENTATIVE_TIMER_MSEC);
 	}

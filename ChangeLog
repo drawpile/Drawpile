@@ -58,6 +58,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Properly disable join button when an empty address is entered.
  * Feature: Allow explicitly picking between WebSockets and TCP sockets in the join, browser and host pages of the start dialog.
  * Feature: Prefer connecting via WebSockets, fall back to TCP if it fails or takes too long. Connections to localhost or IP addresses continue to use TCP by default. Thanks Bluestrings for suggesting.
+ * Feature: Show connection socket type in the net status field in the bottom-right corner.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

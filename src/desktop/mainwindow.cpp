@@ -501,6 +501,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	connect(m_doc, &Document::serverConnected, m_netstatus, &widgets::NetStatus::connectingToHost);
 	connect(m_doc, &Document::serverRedirected, m_netstatus, &widgets::NetStatus::connectingToHost);
+	connect(m_doc, &Document::serverSocketTypeChanged, m_netstatus, &widgets::NetStatus::setSocketType);
 	connect(m_doc->client(), &net::Client::serverDisconnecting, m_netstatus, &widgets::NetStatus::hostDisconnecting);
 	connect(m_doc, &Document::serverDisconnected, m_netstatus, &widgets::NetStatus::hostDisconnected);
 	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::joinPasswordChanged, m_netstatus, &widgets::NetStatus::setJoinPassword);

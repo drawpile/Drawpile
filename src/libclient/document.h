@@ -193,6 +193,7 @@ signals:
 	//! Connection opened, but not yet logged in
 	void serverConnected(const QUrl &url);
 	void serverRedirected(const QUrl &url);
+	void serverSocketTypeChanged(const QString &socketType);
 	void serverLoggedIn(bool join, const QString &joinPassword);
 	void serverDisconnected(
 		const QString &message, const QString &errorcode, bool localDisconnect,

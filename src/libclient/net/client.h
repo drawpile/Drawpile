@@ -275,6 +275,7 @@ signals:
 
 	void serverConnected(const QUrl &url);
 	void serverRedirected(const QUrl &url);
+	void serverSocketTypeChanged(const QString &socketType);
 	void serverLoggedIn(const LoggedInParams &params);
 	void serverDisconnecting();
 	void serverDisconnected(

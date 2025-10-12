@@ -131,6 +131,11 @@ public:
 	// Simulate network error by just closing the connection.
 	void artificialDisconnect() { abortConnection(); }
 
+	QString socketType() const
+	{
+		return isWebSocket() ? QStringLiteral("ws") : QStringLiteral("tcp");
+	}
+
 signals:
 	void initiatingConnection(const QUrl &url);
 
