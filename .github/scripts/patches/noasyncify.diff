@@ -560,3 +560,30 @@ instead of exec.
      actualMenu->d_func()->exec(initialPos, nullptr, positionFunction);
 
      if (!that)
+
+--- src/widgets/widgets/qmenu.cpp
++++ src/widgets/widgets/qmenu.cpp
+@@ -44,6 +44,10 @@
+ #include <qpa/qplatformtheme.h>
+ #include <private/qstyle_p.h>
+
++#ifdef Q_OS_WASM
++#   include <QtCore/private/qstdweb_p.h>
++#endif
++
+ QT_BEGIN_NAMESPACE
+
+ QMenu *QMenuPrivate::mouseDown = nullptr;
+@@ -2659,6 +2663,12 @@
+
+ QAction *QMenuPrivate::exec(const QPoint &p, QAction *action, PositionFunction positionFunction)
+ {
++#ifdef Q_OS_WASM
++    if (!qstdweb::canBlockCallingThread()) {
++        qWarning("QMenu::exec: asyncify not compiled in, bailing out");
++        return nullptr;
++    }
++#endif
+     Q_Q(QMenu);
+     q->ensurePolished();
+     q->createWinId();
