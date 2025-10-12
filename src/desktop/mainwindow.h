@@ -443,8 +443,10 @@ private:
 	void prepareDockTabUpdate();
 	void updateDockTabs();
 
+#ifndef __EMSCRIPTEN__
 	void saveAsType(int saveImageType);
 	void setPreferredSaveFormat(const QString &format);
+#endif
 
 	void setDonationLinkEnabled(bool enabled);
 	QString makeContributionInfoText();

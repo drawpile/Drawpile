@@ -581,7 +581,9 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	settings.bindLeftyMode(getAction("smallscreenleftymode"));
 	settings.bindDonationLinksEnabled(
 		this, &MainWindow::setDonationLinkEnabled);
+#ifndef __EMSCRIPTEN__
 	settings.bindPreferredSaveFormat(this, &MainWindow::setPreferredSaveFormat);
+#endif
 	settings.trySubmit();
 
 	m_updatingInterfaceMode = false;
@@ -2472,11 +2474,11 @@ void MainWindow::onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec)
 	if(m_exitAction == SAVING) {
 		close();
 	}
-#endif
 
 	if(m_reconnectAfterSave) {
 		reconnect();
 	}
+#endif
 }
 
 void MainWindow::onAnimationExported(
@@ -2536,6 +2538,9 @@ void MainWindow::offerDownload(
 						tr("Error performing download."), tr("File is empty."));
 				} else {
 					FileWrangler(this).saveFileContent(defaultName, bytes);
+					if(m_reconnectAfterSave) {
+						reconnect();
+					}
 				}
 			});
 		msgbox->show();
@@ -3359,7 +3364,11 @@ void MainWindow::reconnect()
 					m_reconnectAfterSave = true;
 					QTimer::singleShot(0, this, [this] {
 						if(!m_doc->isSaveInProgress()) {
+#ifdef __EMSCRIPTEN__
+							download();
+#else
 							save();
+#endif
 						}
 					});
 				} else if(button == box->button(QMessageBox::Discard)) {
@@ -7889,6 +7898,7 @@ void MainWindow::updateDockTabs()
 	}
 }
 
+#ifndef __EMSCRIPTEN__
 void MainWindow::saveAsType(int saveImageType)
 {
 	QString result = FileWrangler(this).saveImageAs(
@@ -7904,6 +7914,7 @@ void MainWindow::setPreferredSaveFormat(const QString &format)
 	getAction(QStringLiteral("savedocumentasdpcs"))->setVisible(!defaultIsDpcs);
 	getAction(QStringLiteral("savedocumentasora"))->setVisible(defaultIsDpcs);
 }
+#endif
 
 void MainWindow::setDonationLinkEnabled(bool enabled)
 {
