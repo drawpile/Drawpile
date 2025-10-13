@@ -898,7 +898,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Minor incompatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Незначна несумісність</translation>
     </message>
     <message>
         <location line="+121"/>
@@ -1595,7 +1595,7 @@ Select a regular layer instead.</source>
         <location line="+134"/>
         <source> / </source>
         <extracomment>This is a separator for connection errors, something like &quot;Connection refused (error 0) / Forbidden (error 403)&quot;. Those messages may be in English or in your language, so use a separator that works for both. If you&apos;re not sure, leave it the same.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> / </translation>
     </message>
     <message>
         <location line="-200"/>
@@ -2021,7 +2021,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (minor incompatibility)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.3 (незначна несумісність)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2200,7 +2200,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/freehand.cpp" line="+146"/>
         <source>Anti-overflow requires a fill source layer.</source>
-        <translation type="unfinished"></translation>
+        <translation>Для захисту від переповнення потрібен шар-джерело заливки.</translation>
     </message>
 </context>
 <context>
