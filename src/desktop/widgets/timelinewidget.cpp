@@ -1380,6 +1380,7 @@ void TimelineWidget::setKeyFrameEmpty()
 		return;
 	}
 	setKeyFrame(0);
+	emit blankLayerSelected();
 }
 
 void TimelineWidget::cutKeyFrame()
