@@ -892,7 +892,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+6"/>
         <source>Minor incompatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>多少の非互換性</translation>
     </message>
     <message>
         <location line="+121"/>
@@ -1589,7 +1589,7 @@ Select a regular layer instead.</source>
         <location line="+134"/>
         <source> / </source>
         <extracomment>This is a separator for connection errors, something like &quot;Connection refused (error 0) / Forbidden (error 403)&quot;. Those messages may be in English or in your language, so use a separator that works for both. If you&apos;re not sure, leave it the same.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> / </translation>
     </message>
     <message>
         <location line="-200"/>
@@ -2015,7 +2015,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.3 (minor incompatibility)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.3(多少の非互換性)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2060,7 +2060,7 @@ Select a regular layer instead.</source>
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation>未成年者には適していません (NSFM)</translation>
+        <translation>未成年者には適さない (NSFM)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2192,7 +2192,7 @@ Select a regular layer instead.</source>
     <message>
         <location filename="../tools/freehand.cpp" line="+146"/>
         <source>Anti-overflow requires a fill source layer.</source>
-        <translation type="unfinished"></translation>
+        <translation>はみ出し防止には塗りつぶし参照元レイヤーが必要です。</translation>
     </message>
 </context>
 <context>
