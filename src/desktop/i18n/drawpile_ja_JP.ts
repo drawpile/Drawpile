@@ -142,7 +142,7 @@
     <message>
         <location line="-66"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>アンチーオーバーフロー</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -162,22 +162,22 @@
     <message>
         <location line="+142"/>
         <source>Anti-Overflow:</source>
-        <translation type="unfinished"></translation>
+        <translation>はみ出し防止:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tolerance: </source>
-        <translation type="unfinished">許容範囲: </translation>
+        <translation>許容範囲: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Expand: </source>
-        <translation type="unfinished">拡大: </translation>
+        <translation>拡大: </translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Set fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>塗りつぶし参照元</translation>
     </message>
     <message>
         <location line="-249"/>
@@ -1074,7 +1074,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+21"/>
         <source>Block content (censor for you)</source>
-        <translation type="unfinished"></translation>
+        <translation>内容をブロック(センシティブ扱い)</translation>
     </message>
 </context>
 <context>
@@ -1293,12 +1293,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+4"/>
         <source>If you don&apos;t review your documents, all changes will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>ドキュメントを確認しない場合、すべての変更が失われます。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Review changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>変更を確認する…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1763,27 +1763,27 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+416"/>
         <source>Change Frame Range or FPS...</source>
-        <translation type="unfinished"></translation>
+        <translation>フレーム範囲またはFPSを変更...</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Increase Exposure on Current Track</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のトラックの露出を増やす</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Increase Exposure on All Visible Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>すべての表示中トラックで露出を増やす</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Decrease Exposure on Current Track</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のトラックの露出を下げる</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Decrease Exposure on All Visible Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>すべての表示中トラックで露出を減らす</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2080,12 +2080,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+6"/>
         <source>Outdated Version</source>
-        <translation type="unfinished"></translation>
+        <translation>旧バージョン</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This session was hosted with a newer version of Drawpile. You will not see an effect when people use newer features that your version doesn&apos;t have yet and you won&apos;t be able to compress or reset the canvas. Check &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; for updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>このセッションは新しいバージョンのDrawpileでホストされています。利用しているバージョンにない新機能を使用しても効果は表示されず、キャンバスの圧縮やリセットもできません。更新情報は&lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt;をご確認ください。</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -2155,18 +2155,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+2"/>
         <source>You have unsaved changes, do you want to save them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>保存されていない変更があります。再接続する前に保存しますか?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You have unsaved changes, do you want to save them before reconnecting or reconnect in a new window?</source>
-        <translation type="unfinished"></translation>
+        <translation>保存されていない変更があります。再接続する前に保存しますか、それとも新しいウィンドウで再接続しますか？</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>New Window</source>
         <extracomment>Button to reconnect in a new window instead of the current one. Is shown next to Save, Discard and Cancel buttons.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>新しいウィンドウで再接続</translation>
     </message>
     <message>
         <location line="+189"/>
@@ -2216,17 +2216,17 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+37"/>
         <source>Your canvas contains too much data, the server limit is %1 MB. Merge or delete some layers to simplify the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスのデータが多すぎます。サーバーの制限は %1 MB です。レイヤーを統合または削除してキャンバスを簡素化してください。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The canvas you tried to reset to contains too much data, the server limit is %1 MB.</source>
-        <translation type="unfinished"></translation>
+        <translation>リセットしようとしたキャンバスにはデータが多すぎます。サーバーの制限は %1 MB です。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset image too large</source>
-        <translation type="unfinished"></translation>
+        <translation>サイズが大きすぎる画像をリセットする</translation>
     </message>
     <message>
         <location line="+511"/>
@@ -2373,12 +2373,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Sa&amp;ve As DPCS…</source>
-        <translation type="unfinished"></translation>
+        <translation>DPCSとして保存(&amp;v)…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sa&amp;ve As ORA…</source>
-        <translation type="unfinished"></translation>
+        <translation>ORAとして保存(&amp;v)…</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -3035,7 +3035,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+293"/>
         <source>Start...</source>
-        <translation>スタート...</translation>
+        <translation>開始...</translation>
     </message>
     <message>
         <location line="+213"/>
@@ -3146,7 +3146,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Block layer (censor for you)</source>
-        <translation type="unfinished"></translation>
+        <translation>ブロックレイヤー(センシティブ扱い)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -3773,32 +3773,32 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+728"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>バグの報告や機能の提案については、[こちらをご覧ください]。</translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-65"/>
         <source>&amp;Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>開く(&amp;O)…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Start…</source>
-        <translation type="unfinished"></translation>
+        <translation>開始(&amp;S)…</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>&amp;Host…</source>
-        <translation type="unfinished"></translation>
+        <translation>ホスト(&amp;H)…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Join…</source>
-        <translation type="unfinished"></translation>
+        <translation>参加(&amp;J)…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>閲覧(&amp;B)…</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -5191,27 +5191,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/animationpropertiesdialog.cpp" line="+19"/>
         <source>Animation Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>アニメーションのプロパティ</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>FPS</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">フレームレート:</translation>
+        <translation>フレームレート:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>First frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>最初のフレーム:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Last frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>最後のフレーム:</translation>
     </message>
 </context>
 <context>
@@ -5597,12 +5597,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+19"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+22"/>
         <source>Pixel art input</source>
-        <translation type="unfinished"></translation>
+        <translation>ピクセルアート入力</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disables all smoothing and stabilization for instant pixel drawing.</source>
-        <translation type="unfinished"></translation>
+        <translation>すべてのスムージングと手ブレ補正を無効化し、瞬時のピクセル描画を有効にします。</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -5662,27 +5662,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-482"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>はみ出し防止</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Anti-overflow fill settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>はみ出し防止塗りつぶし設定。</translation>
     </message>
     <message>
         <location line="+397"/>
         <source>Enable anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>はみ出し防止の有効化</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Tolerance: </source>
-        <translation type="unfinished">許容範囲: </translation>
+        <translation>許容範囲: </translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Expand: </source>
-        <translation type="unfinished">拡大: </translation>
+        <translation>拡大: </translation>
     </message>
     <message>
         <location line="+51"/>
@@ -5846,12 +5846,12 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
         <location line="+8"/>
         <location filename="../toolwidgets/brushsettings.cpp" line="+9"/>
         <source>Pixel-perfect</source>
-        <translation type="unfinished"></translation>
+        <translation>ピクセルパーフェクト</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevents L-shaped curves, mostly useful for small pixel brushes.</source>
-        <translation type="unfinished"></translation>
+        <translation>L字カーブを防止します。主に小さなピクセルブラシで有用です。</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -5866,12 +5866,12 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+182"/>
         <source>The session you&apos;re in is hosted with an older version of Drawpile, anti-overflow is unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>現在参加しているセッションは古いバージョンの Drawpile でホストされているため、はみ出し防止機能は利用できません。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Anti-overflow makes brush strokes stay inside of lines automatically. Set your lines layer as the fill source and then draw on another layer.</source>
-        <translation type="unfinished"></translation>
+        <translation>はみ出し防止機能により、筆のストロークが自動的に線の内側に収まります。線のレイヤーを塗りつぶし参照元として設定し、別のレイヤーに描画してください。</translation>
     </message>
     <message>
         <location line="-683"/>
@@ -8066,12 +8066,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>This session was hosted with a newer version of Drawpile. You are not able to reset it.</source>
-        <translation type="unfinished"></translation>
+        <translation>このセッションは新しいバージョンの Drawpile でホストされています。リセットすることはできません。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished">セッションをリセットするには管理者である必要があります。</translation>
+        <translation>セッションをリセットするには管理者である必要があります。</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -8686,7 +8686,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog.cpp" line="+75"/>
         <source>Start</source>
-        <translation>スタート</translation>
+        <translation>開始</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -8826,7 +8826,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+40"/>
         <source>Show network preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>ネットワーク設定の表示</translation>
     </message>
     <message>
         <location line="+346"/>
@@ -8858,12 +8858,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Join via WebSocket</source>
-        <translation type="unfinished"></translation>
+        <translation>WebSocketで参加</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join via TCP</source>
-        <translation type="unfinished"></translation>
+        <translation>TCPで参加</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8873,12 +8873,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Host via WebSocket</source>
-        <translation type="unfinished"></translation>
+        <translation>WebSocketでホスト</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Host via TCP</source>
-        <translation type="unfinished"></translation>
+        <translation>TCPでホスト</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9135,12 +9135,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Write debugging log to file</source>
-        <translation type="unfinished">デバッグログをファイルに書き込む</translation>
+        <translation>デバッグログをファイルに書き込む</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished">ログの保存:</translation>
+        <translation>ログの保存:</translation>
     </message>
 </context>
 <context>
@@ -9276,12 +9276,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-54"/>
         <source>Show contribution, donation and feedback links</source>
-        <translation type="unfinished"></translation>
+        <translation>寄付・支援・フィードバックのリンクを表示</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Contributing:</source>
-        <translation type="unfinished"></translation>
+        <translation>貢献:</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -9609,22 +9609,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-89"/>
         <source>Display notification while connected to a session</source>
-        <translation type="unfinished"></translation>
+        <translation>セッション接続中に通知を表示する</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Network:</source>
-        <translation type="unfinished"></translation>
+        <translation>ネットワーク:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Notification</source>
-        <translation type="unfinished"></translation>
+        <translation>通知</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you want to grant Drawpile permission to show you a connection notification?</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpileに接続通知を表示する権限を与えますか?</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -10587,17 +10587,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Long-press to open context menus</source>
-        <translation type="unfinished"></translation>
+        <translation>長押しでコンテキストメニューを開く</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Quit when last window is closed</source>
-        <translation type="unfinished"></translation>
+        <translation>最後のウィンドウが閉じられた時に終了する</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>macOS:</source>
-        <translation type="unfinished"></translation>
+        <translation>macOS:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -11438,7 +11438,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation>未成年者には適していません(NSFM)</translation>
+        <translation>未成年者には適さない (NSFM)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -12480,12 +12480,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+98"/>
         <source>Play</source>
-        <translation type="unfinished">再生</translation>
+        <translation>再生</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>%1 FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 FPS</translation>
     </message>
 </context>
 <context>
@@ -12525,26 +12525,26 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/startdialog/host/session.cpp" line="-34"/>
         <source>[♥ Donate to Drawpile] to help keep the public server running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them your translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[♥ Drawpile への寄付]で公開サーバーの運営を支援してください。</translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
         <location filename="../mainwindow.cpp" line="+6175"/>
         <location filename="../widgets/macmenu.cpp" line="+20"/>
         <source>Donate</source>
-        <translation type="unfinished"></translation>
+        <translation>寄付</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../mainwindow.cpp" line="+3"/>
         <source>Open Drawpile&apos;s donate page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラウザで Drawpile の寄付ページを開く</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+800"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>[♥ Drawpile への寄付] 開発の継続とサーバーの維持にご協力ください。</translation>
     </message>
 </context>
 <context>
@@ -12763,7 +12763,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Click to disable pixel art input</source>
-        <translation type="unfinished"></translation>
+        <translation>クリックしてピクセルアート入力を無効にする</translation>
     </message>
     <message>
         <location line="+151"/>
@@ -13155,12 +13155,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Binary</source>
-        <translation type="unfinished"></translation>
+        <translation>バイナリ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smoothed interpolation while retaining hard edges</source>
-        <translation type="unfinished"></translation>
+        <translation>端を鋭く保ちながら滑らかに補間する</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13332,7 +13332,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>You need to set a layer as the fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーを塗りつぶし参照元に設定する必要があります</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13347,7 +13347,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Layer is censored and blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーはセンシティブかつ、ブロックされています</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13357,7 +13357,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Layer is blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーはブロックされています</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13377,7 +13377,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Choose a different layer to fill on</source>
-        <translation type="unfinished"></translation>
+        <translation>塗りつぶす別のレイヤーを選択してください</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13542,7 +13542,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+50"/>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>送る</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -13573,7 +13573,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source> (on an older version of Drawpile)</source>
         <extracomment>This is appended to the message &quot;%1 joined the session&quot; if the person joining is using a slightly incompatible version of Drawpile.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> (旧バージョンのDrawpile)</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -13584,7 +13584,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+56"/>
         <source>%1 rolls %2</source>
         <extracomment>This refers to a dice roll.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 が %2 を振ります</translation>
     </message>
     <message>
         <location line="+127"/>
@@ -14186,13 +14186,13 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>Outdated</source>
-        <translation type="unfinished"></translation>
+        <translation>旧式</translation>
     </message>
     <message>
         <location line="+10"/>
         <source> | </source>
         <extracomment>Separator for user state, shows up like &quot;Operator | Registered&quot;. Only change this if the vertical line is troublesome in your language, otherwise just leave it the same.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> | </translation>
     </message>
     <message>
         <location line="-19"/>
