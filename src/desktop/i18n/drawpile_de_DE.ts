@@ -88,7 +88,7 @@
     <message>
         <location line="+14"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-Übertritt</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -112,22 +112,22 @@
     <message>
         <location line="-36"/>
         <source>Anti-Overflow:</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-Übertritt:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tolerance: </source>
-        <translation type="unfinished">Toleranz: </translation>
+        <translation>Toleranz: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Expand: </source>
-        <translation type="unfinished">Erweitern: </translation>
+        <translation>Erweitern: </translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Set fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>Als Füllquelle setzen</translation>
     </message>
     <message>
         <location line="-531"/>
@@ -1069,7 +1069,7 @@ Teilreichweite: [%3, %4]</translation>
     <message>
         <location line="+21"/>
         <source>Block content (censor for you)</source>
-        <translation type="unfinished"></translation>
+        <translation>Inhalt blockieren (für Sie zensieren)</translation>
     </message>
     <message>
         <location line="-252"/>
@@ -1295,12 +1295,12 @@ Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdess
     <message>
         <location line="+4"/>
         <source>If you don&apos;t review your documents, all changes will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn Sie Ihre Dateien nicht prüfen, gehen Ihre Änderungen verloren.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Review changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen prüfen…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2416,12 +2416,12 @@ Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdess
     <message>
         <location line="+86"/>
         <source>Outdated Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Veraltete Version</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This session was hosted with a newer version of Drawpile. You will not see an effect when people use newer features that your version doesn&apos;t have yet and you won&apos;t be able to compress or reset the canvas. Check &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; for updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Sitzung wurde mit einer neueren Version von Drawpile gehostet. Sie werden keinen Effekt sehen, wenn Leute neuere Features verwenden, die in Ihrere Version noch nicht existieren. Sie können außerdem die Leinwand nicht komprimieren oder zurücksetzen. Prüfen Sie &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; auf Aktualisierungen.</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -2486,18 +2486,18 @@ Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdess
     <message>
         <location line="+2"/>
         <source>You have unsaved changes, do you want to save them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>Es gibt noch ungespeicherte Änderungen. Sollen diese vor dem Wiederverbinden gespeichert werden?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You have unsaved changes, do you want to save them before reconnecting or reconnect in a new window?</source>
-        <translation type="unfinished"></translation>
+        <translation>Es gibt noch ungespeicherte Änderungen. Sollen diese vor dem Wiederverbinden gespeichert werden oder möchten Sie in einem neuen Fenster wiederverbinden?</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>New Window</source>
         <extracomment>Button to reconnect in a new window instead of the current one. Is shown next to Save, Discard and Cancel buttons.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Neues Fenster</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -2552,17 +2552,17 @@ Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdess
     <message>
         <location line="+37"/>
         <source>Your canvas contains too much data, the server limit is %1 MB. Merge or delete some layers to simplify the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihre Leinwand enthält zu viele Daten, die serverseitige Begrenzung ist %1 MB. Führen Sie Ebenen zusammen oder löschen Sie diese um die Leinwand zu vereinfachen.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The canvas you tried to reset to contains too much data, the server limit is %1 MB.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Leinwand zu der Sie zurücksetzen wollten enthält zu viele Daten, die serverseitige Begrenzung ist %1 MB.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset image too large</source>
-        <translation type="unfinished"></translation>
+        <translation>Rücksetzbild zu groß</translation>
     </message>
     <message>
         <location line="+511"/>
@@ -2703,12 +2703,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+10"/>
         <source>Sa&amp;ve As DPCS…</source>
-        <translation type="unfinished"></translation>
+        <translation>Als DPCS spei&amp;chern…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sa&amp;ve As ORA…</source>
-        <translation type="unfinished"></translation>
+        <translation>Als ORA spei&amp;chern…</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -2958,7 +2958,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+4"/>
         <source>Block layer (censor for you)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene blockieren (für Sie zensieren)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -3612,27 +3612,27 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="-303"/>
         <source>Change Frame Range or FPS...</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilderbereich oder -rate (FPS) ändern…</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Increase Exposure on Current Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild auf aktueller Spur verlängern</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Increase Exposure on All Visible Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild auf allen sichtbaren Spuren verlängern</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Decrease Exposure on Current Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild auf aktueller Spur verkürzen</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Decrease Exposure on All Visible Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild auf allen sichtbaren Spuren verkürzen</translation>
     </message>
     <message>
         <location line="+262"/>
@@ -3781,27 +3781,27 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-65"/>
         <source>&amp;Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Öffnen…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Start…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Start…</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>&amp;Host…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Hosten…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Join…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Beitreten…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Durchsuchen…</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -5195,27 +5195,27 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../dialogs/animationpropertiesdialog.cpp" line="+19"/>
         <source>Animation Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Animationseigenschaften</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>FPS</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Bildwiederholrate:</translation>
+        <translation>Bildwiederholrate:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>First frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstes Bild:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Last frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>Letztes Bild:</translation>
     </message>
 </context>
 <context>
@@ -5653,27 +5653,27 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="-482"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-Übertritt</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Anti-overflow fill settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-Übertritt Fülleinstellungen.</translation>
     </message>
     <message>
         <location line="+397"/>
         <source>Enable anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-Übertritt aktivieren</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Tolerance: </source>
-        <translation type="unfinished">Toleranz: </translation>
+        <translation>Toleranz: </translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Expand: </source>
-        <translation type="unfinished">Erweitern: </translation>
+        <translation>Erweitern: </translation>
     </message>
     <message>
         <location line="+51"/>
@@ -5830,12 +5830,12 @@ Falls schnelle Striche Artefakte beim Schmieren verursachen, kann das Aktivieren
     <message>
         <location line="+182"/>
         <source>The session you&apos;re in is hosted with an older version of Drawpile, anti-overflow is unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die aktuelle Sitzung wurde mit einer älteren version von Drawpile gehostet, Anti-Übertritt ist nicht vefügbar.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Anti-overflow makes brush strokes stay inside of lines automatically. Set your lines layer as the fill source and then draw on another layer.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-Übertritt lässt Pinselstriche automatisch innerhalb von Linien bleiben. Setzen Sie Ihre Linienebene als die Füllquelle und malen Sie dann auf einer anderen Ebene.</translation>
     </message>
     <message>
         <location line="-683"/>
@@ -8074,12 +8074,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+29"/>
         <source>This session was hosted with a newer version of Drawpile. You are not able to reset it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Sitzung wurde mit einer neuren Version von Drawpile gehostet. Sie können sie nicht zurücksetzen.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished">Sie müssen Operator sein, um die Sitzung zurückzusetzen.</translation>
+        <translation>Sie müssen Operator sein, um die Sitzung zurückzusetzen.</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -8840,7 +8840,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+40"/>
         <source>Show network preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>Netzwerkeinstellungen anzeigen</translation>
     </message>
     <message>
         <location line="+346"/>
@@ -8873,12 +8873,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+5"/>
         <source>Join via WebSocket</source>
-        <translation type="unfinished"></translation>
+        <translation>Per WebSocket beitreten</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join via TCP</source>
-        <translation type="unfinished"></translation>
+        <translation>Per TCP beitreten</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8888,12 +8888,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+8"/>
         <source>Host via WebSocket</source>
-        <translation type="unfinished"></translation>
+        <translation>Per WebSocket hosten</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Host via TCP</source>
-        <translation type="unfinished"></translation>
+        <translation>Per TCP hosten</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9625,22 +9625,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="-89"/>
         <source>Display notification while connected to a session</source>
-        <translation type="unfinished"></translation>
+        <translation>Notifikation anzeigen wenn mit Sitzung verbunden</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Network:</source>
-        <translation type="unfinished"></translation>
+        <translation>Netzwerk:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Notification</source>
-        <translation type="unfinished"></translation>
+        <translation>Notifikation</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you want to grant Drawpile permission to show you a connection notification?</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchten Sie Drawpile die Erlaubnis geben, Ihnen eine Verbindungsnotifikation zu zeigen?</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -10607,17 +10607,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+5"/>
         <source>Long-press to open context menus</source>
-        <translation type="unfinished"></translation>
+        <translation>Lang drücken um Kontextemenüs zu öffnen</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Quit when last window is closed</source>
-        <translation type="unfinished"></translation>
+        <translation>Beenden wenn das letzte Fenster geschlossen wird</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>macOS:</source>
-        <translation type="unfinished"></translation>
+        <translation>macOS:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12506,12 +12506,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+98"/>
         <source>Play</source>
-        <translation type="unfinished">Abspielen</translation>
+        <translation>Abspielen</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>%1 FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 FPS</translation>
     </message>
 </context>
 <context>
@@ -13181,12 +13181,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+7"/>
         <source>Binary</source>
-        <translation type="unfinished"></translation>
+        <translation>Binär</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smoothed interpolation while retaining hard edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Weiche Interpolation die harte Kanten beibehält</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13358,7 +13358,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+4"/>
         <source>You need to set a layer as the fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie müssen eine Ebene als Füllquelle setzen</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13373,7 +13373,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Layer is censored and blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene ist zensiert und blockiert</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13383,7 +13383,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Layer is blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebene ist blockiert</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13403,7 +13403,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>Choose a different layer to fill on</source>
-        <translation type="unfinished"></translation>
+        <translation>Wählen Sie eine andere Ebene zum Füllen</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13568,7 +13568,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+50"/>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>Senden</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -13599,7 +13599,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+4"/>
         <source> (on an older version of Drawpile)</source>
         <extracomment>This is appended to the message &quot;%1 joined the session&quot; if the person joining is using a slightly incompatible version of Drawpile.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> (mit einer älteren Version von Drawpile)</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -13610,7 +13610,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+56"/>
         <source>%1 rolls %2</source>
         <extracomment>This refers to a dice roll.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 würfelt %2</translation>
     </message>
     <message>
         <location line="+127"/>
@@ -14212,13 +14212,13 @@ oder per Animation ▸ Neue Spur hinzufügen.</translation>
     <message>
         <location line="+4"/>
         <source>Outdated</source>
-        <translation type="unfinished"></translation>
+        <translation>Veraltet</translation>
     </message>
     <message>
         <location line="+10"/>
         <source> | </source>
         <extracomment>Separator for user state, shows up like &quot;Operator | Registered&quot;. Only change this if the vertical line is troublesome in your language, otherwise just leave it the same.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> | </translation>
     </message>
     <message>
         <location line="-19"/>
