@@ -93,7 +93,7 @@
     <message>
         <location line="+14"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Захист від переповнення</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -113,22 +113,22 @@
     <message>
         <location line="+47"/>
         <source>Anti-Overflow:</source>
-        <translation type="unfinished"></translation>
+        <translation>Захист від переповнення:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tolerance: </source>
-        <translation type="unfinished">Толерантність: </translation>
+        <translation>Толерантність: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Expand: </source>
-        <translation type="unfinished">Розгорнути: </translation>
+        <translation>Розгорнути: </translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Set fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити джерело заповнення</translation>
     </message>
     <message>
         <location line="-326"/>
@@ -1074,7 +1074,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+21"/>
         <source>Block content (censor for you)</source>
-        <translation type="unfinished"></translation>
+        <translation>Блокувати контент (цензурувати для вас)</translation>
     </message>
 </context>
 <context>
@@ -1295,12 +1295,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+4"/>
         <source>If you don&apos;t review your documents, all changes will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>Якщо ви не переглянете свої документи, всі зміни будуть втрачені.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Review changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Переглянути зміни…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1510,7 +1510,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+3"/>
         <source>&amp;Open...</source>
-        <translation>&amp;Відкрити…</translation>
+        <translation>&amp;Відкрити...</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1854,7 +1854,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+42"/>
         <source>Block layer (censor for you)</source>
-        <translation type="unfinished"></translation>
+        <translation>Блоковий шар (цензура для вас)</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2506,12 +2506,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+86"/>
         <source>Outdated Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Застаріла версія</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This session was hosted with a newer version of Drawpile. You will not see an effect when people use newer features that your version doesn&apos;t have yet and you won&apos;t be able to compress or reset the canvas. Check &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; for updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ця сесія була проведена за допомогою нової версії Drawpile. Ви не побачите ефекту, коли інші користувачі використовують нові функції, яких ще немає у вашій версії, і ви не зможете стиснути або скинути полотно. Перевірте &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; на наявність оновлень.</translation>
     </message>
     <message>
         <location line="+221"/>
@@ -2576,18 +2576,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+2"/>
         <source>You have unsaved changes, do you want to save them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>У вас є незбережені зміни. Зберегти їх перед повторним підключенням?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You have unsaved changes, do you want to save them before reconnecting or reconnect in a new window?</source>
-        <translation type="unfinished"></translation>
+        <translation>У вас є незбережені зміни. Зберегти їх перед повторним підключенням чи відкрити в новому вікні?</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>New Window</source>
         <extracomment>Button to reconnect in a new window instead of the current one. Is shown next to Save, Discard and Cancel buttons.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Нове вікно</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -2652,17 +2652,17 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+37"/>
         <source>Your canvas contains too much data, the server limit is %1 MB. Merge or delete some layers to simplify the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ваше полотно містить забагато даних, ліміт сервера становить %1 МБ. Об’єднайте або видаліть деякі шари, щоб спростити полотно.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The canvas you tried to reset to contains too much data, the server limit is %1 MB.</source>
-        <translation type="unfinished"></translation>
+        <translation>Полотно, на яке ви намагалися скинути налаштування, містить забагато даних, ліміт сервера становить %1 МБ.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset image too large</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути зображення занадто велике</translation>
     </message>
     <message>
         <location line="+511"/>
@@ -2819,12 +2819,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Sa&amp;ve As DPCS…</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти як DPCS…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sa&amp;ve As ORA…</source>
-        <translation type="unfinished"></translation>
+        <translation>Зберегти як ORA…</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -3691,27 +3691,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-426"/>
         <source>Change Frame Range or FPS...</source>
-        <translation type="unfinished"></translation>
+        <translation>Змінити діапазон кадрів або FPS...</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Increase Exposure on Current Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Збільшення експозиції на поточному треку</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Increase Exposure on All Visible Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Збільшити експозицію на всіх видимих доріжках</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Decrease Exposure on Current Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Зменшити експозицію на поточній доріжці</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Decrease Exposure on All Visible Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Зменшити експозицію на всіх видимих доріжках</translation>
     </message>
     <message>
         <location line="+389"/>
@@ -3780,27 +3780,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-65"/>
         <source>&amp;Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Відкрити…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Start…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Старт…</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>&amp;Host…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Хост…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Join…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Приєднатися…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Переглянути…</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -5195,27 +5195,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/animationpropertiesdialog.cpp" line="+19"/>
         <source>Animation Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Властивості анімації</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>FPS</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Частота кадрів:</translation>
+        <translation>Частота кадрів:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>First frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>Перший кадр:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Last frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>Останній кадр:</translation>
     </message>
 </context>
 <context>
@@ -5670,27 +5670,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-482"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Захист від переповнення</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Anti-overflow fill settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Налаштування заповнення проти переповнення.</translation>
     </message>
     <message>
         <location line="+397"/>
         <source>Enable anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути захист від переповнення</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Tolerance: </source>
-        <translation type="unfinished">Толерантність: </translation>
+        <translation>Толерантність: </translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Expand: </source>
-        <translation type="unfinished">Розгорнути: </translation>
+        <translation>Розгорнути: </translation>
     </message>
     <message>
         <location line="+51"/>
@@ -5874,12 +5874,12 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+182"/>
         <source>The session you&apos;re in is hosted with an older version of Drawpile, anti-overflow is unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сеанс, у якому ви перебуваєте, розміщено на старій версії Drawpile, захист від переповнення недоступний.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Anti-overflow makes brush strokes stay inside of lines automatically. Set your lines layer as the fill source and then draw on another layer.</source>
-        <translation type="unfinished"></translation>
+        <translation>Захист від переповнення автоматично змушує мазки пензля залишатися всередині ліній. Встановіть шар з лініями як джерело заливки, а потім малюйте на іншому шарі.</translation>
     </message>
     <message>
         <location line="-683"/>
@@ -8078,12 +8078,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>This session was hosted with a newer version of Drawpile. You are not able to reset it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Цей сеанс було проведено з використанням новішої версії Drawpile. Ви не можете її скинути.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished">Ви повинні бути оператором, щоб скинути сеанс.</translation>
+        <translation>Ви повинні бути оператором, щоб скинути сеанс.</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -8507,7 +8507,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Notifications</source>
-        <translation>Сповіщення</translation>
+        <translation>Сповіщеннях</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8850,7 +8850,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+40"/>
         <source>Show network preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати мережеві налаштування</translation>
     </message>
     <message>
         <location line="+346"/>
@@ -8884,12 +8884,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Join via WebSocket</source>
-        <translation type="unfinished"></translation>
+        <translation>Приєднатися через WebSocket</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join via TCP</source>
-        <translation type="unfinished"></translation>
+        <translation>Підключення через TCP</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8899,12 +8899,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Host via WebSocket</source>
-        <translation type="unfinished"></translation>
+        <translation>Розміщення через WebSocket</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Host via TCP</source>
-        <translation type="unfinished"></translation>
+        <translation>Хост через TCP</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9637,22 +9637,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-89"/>
         <source>Display notification while connected to a session</source>
-        <translation type="unfinished"></translation>
+        <translation>Відображати сповіщення під час підключення до сеансу</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Network:</source>
-        <translation type="unfinished"></translation>
+        <translation>Мережа:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Notification</source>
-        <translation type="unfinished"></translation>
+        <translation>Сповіщення</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you want to grant Drawpile permission to show you a connection notification?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ви хочете надати Drawpile дозвіл показувати вам сповіщення про підключення?</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -10623,17 +10623,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Long-press to open context menus</source>
-        <translation type="unfinished"></translation>
+        <translation>Довге натискання для відкриття контекстних меню</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Quit when last window is closed</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрити, коли закрито останнє вікно</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>macOS:</source>
-        <translation type="unfinished"></translation>
+        <translation>macOS:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12528,12 +12528,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+98"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Відтворити</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>%1 FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 FPS</translation>
     </message>
 </context>
 <context>
@@ -13203,12 +13203,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Binary</source>
-        <translation type="unfinished"></translation>
+        <translation>Бінарний</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smoothed interpolation while retaining hard edges</source>
-        <translation type="unfinished"></translation>
+        <translation>Згладжена інтерполяція зі збереженням чітких країв</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13380,7 +13380,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>You need to set a layer as the fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>Вам потрібно встановити шар як джерело заливки</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13395,7 +13395,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Layer is censored and blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Шар цензуровано та заблоковано</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13405,7 +13405,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Layer is blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Шар є заблоковані</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13425,7 +13425,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Choose a different layer to fill on</source>
-        <translation type="unfinished"></translation>
+        <translation>Виберіть інший шар для заповнення</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13590,7 +13590,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+50"/>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>Надіслати</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -13621,7 +13621,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source> (on an older version of Drawpile)</source>
         <extracomment>This is appended to the message &quot;%1 joined the session&quot; if the person joining is using a slightly incompatible version of Drawpile.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> (на старій версії Drawpile)</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -13632,7 +13632,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+56"/>
         <source>%1 rolls %2</source>
         <extracomment>This refers to a dice roll.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 рулони %2</translation>
     </message>
     <message>
         <location line="+127"/>
@@ -14234,13 +14234,13 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>Outdated</source>
-        <translation type="unfinished"></translation>
+        <translation>Застарілий</translation>
     </message>
     <message>
         <location line="+10"/>
         <source> | </source>
         <extracomment>Separator for user state, shows up like &quot;Operator | Registered&quot;. Only change this if the vertical line is troublesome in your language, otherwise just leave it the same.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> | </translation>
     </message>
     <message>
         <location line="-19"/>
