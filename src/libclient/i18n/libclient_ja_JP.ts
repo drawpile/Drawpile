@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1044"/>
+        <location filename="../document.cpp" line="+1129"/>
         <source>Unknown format.</source>
         <translation>不明な形式。</translation>
     </message>
@@ -617,7 +617,7 @@
         <translation>不明なエラー。</translation>
     </message>
     <message>
-        <location line="+689"/>
+        <location line="+719"/>
         <source>Error saving image</source>
         <translation>画像保存時のエラー</translation>
     </message>
@@ -819,12 +819,12 @@ Select a regular layer instead.</source>
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+522"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+527"/>
         <source>(untitled)</source>
         <translation>(無題)</translation>
     </message>
     <message>
-        <location line="-446"/>
+        <location line="-451"/>
         <source>%1d%2h%3m</source>
         <translation>%1日%2時間%3分</translation>
     </message>
@@ -865,12 +865,12 @@ Select a regular layer instead.</source>
         </translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+24"/>
         <source>Compatible</source>
         <translation>互換性あり</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Requires compatibility mode (%1)</source>
         <translation>互換モード (%1) が必要です</translation>
     </message>
@@ -885,12 +885,17 @@ Select a regular layer instead.</source>
         <translation>互換性がありません (%1)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-13"/>
         <source>unknown version</source>
         <translation>不明なバージョン</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+6"/>
+        <source>Minor incompatibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+121"/>
         <source>Compatibility</source>
         <translation>互換性</translation>
     </message>
@@ -1156,7 +1161,7 @@ Select a regular layer instead.</source>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1247"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1252"/>
         <source>Default</source>
         <translation>デフォルト</translation>
     </message>
@@ -1311,17 +1316,9 @@ Select a regular layer instead.</source>
     </message>
 </context>
 <context>
-    <name>canvas::PaintEngine</name>
-    <message>
-        <location filename="../canvas/paintengine.cpp" line="+208"/>
-        <source>Layer %1</source>
-        <translation>レイヤー %1</translation>
-    </message>
-</context>
-<context>
     <name>canvas::UserListModel</name>
     <message>
-        <location filename="../canvas/userlist.cpp" line="+64"/>
+        <location filename="../canvas/userlist.cpp" line="+66"/>
         <source>Moderator</source>
         <translation>モデレーター</translation>
     </message>
@@ -1366,7 +1363,7 @@ Select a regular layer instead.</source>
         <translation>状態</translation>
     </message>
     <message>
-        <location line="+182"/>
+        <location line="+190"/>
         <source>Server</source>
         <translation>サーバー</translation>
     </message>
@@ -1453,7 +1450,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+580"/>
+        <location filename="../net/client.cpp" line="+724"/>
         <source>%1 banned by %2.</source>
         <translation>%1 は %2 によりBANされた。</translation>
     </message>
@@ -1463,7 +1460,7 @@ Select a regular layer instead.</source>
         <translation>%1 は %2 からキックされた。</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+21"/>
         <source>%1 made operator by the server.</source>
         <translation>%1 はサーバーによって管理者になりました。</translation>
     </message>
@@ -1488,7 +1485,7 @@ Select a regular layer instead.</source>
         <translation>サーバーによって %1 の管理者ステータスが破棄されました。</translation>
     </message>
     <message>
-        <location line="-527"/>
+        <location line="-644"/>
         <source>You have been kicked.</source>
         <translation>あなたはキックされました。</translation>
     </message>
@@ -1528,7 +1525,7 @@ Select a regular layer instead.</source>
         <translation>切断されました: %1</translation>
     </message>
     <message>
-        <location line="+436"/>
+        <location line="+552"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>モデレーターのみが通常のBANをエクスポートできます。</translation>
@@ -1579,17 +1576,23 @@ Select a regular layer instead.</source>
         <translation>セッションのパスワードはサーバーの管理者によって削除されました。このサーバーは、公開セッションでWebブラウザを許可していないため切断されます。</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
         <translation>セッションのパスワードは %1 によって削除されました。このサーバーは、公開セッションでWebブラウザを許可していないため切断されます。</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+97"/>
         <source>%1 trusted via invite created by a server administrator.</source>
         <translation>%1 はサーバーの管理者によって作成された招待により信頼されています。</translation>
     </message>
     <message>
-        <location line="-62"/>
+        <location line="+134"/>
+        <source> / </source>
+        <extracomment>This is a separator for connection errors, something like &quot;Connection refused (error 0) / Forbidden (error 403)&quot;. Those messages may be in English or in your language, so use a separator that works for both. If you&apos;re not sure, leave it the same.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-200"/>
         <source>Operator status revoked from %1 by %2.</source>
         <translation>管理者ステータスが %2 によって %1 から取り消されました。</translation>
     </message>
@@ -1599,22 +1602,22 @@ Select a regular layer instead.</source>
         <translation>セッションのスペースが不足しています！描画を続行するには、管理者はリセットを行い、より小さいサイズに下げる必要があります。これは、[セッション] &gt; [リセット] から行うことができます。</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
         <translation>セッションのリセットがキャンセルされました！管理者はキャンバスのロックを解除しセッションを手動でリセットする必要があります。</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
         <translation>セッションのリセットに失敗しました！管理者はキャンバスのロックを解除しセッションを手動でリセットする必要があります。</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
         <translation>セッションリセットの準備をしています！しばらくお待ちください。セッションはすぐに再び利用可能になります…</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
         <translation>%1によるセッションのリセットを準備中です！ しばらくお待ち下さい、セッションはまもなく再び利用可能になります…</translation>
     </message>
@@ -1741,40 +1744,40 @@ Select a regular layer instead.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+111"/>
-        <location line="+663"/>
+        <location filename="../net/login.cpp" line="+126"/>
+        <location line="+706"/>
         <source>Invalid state</source>
         <translation>無効な状態です</translation>
     </message>
     <message>
-        <location line="-606"/>
+        <location line="-647"/>
         <location line="+8"/>
-        <location line="+145"/>
+        <location line="+149"/>
         <location line="+118"/>
         <location line="+33"/>
-        <location line="+338"/>
-        <location line="+192"/>
-        <location line="+80"/>
+        <location line="+375"/>
+        <location line="+194"/>
+        <location line="+83"/>
         <source>Incompatible server</source>
         <translation>互換性のないサーバー</translation>
     </message>
     <message>
-        <location line="-899"/>
+        <location line="-945"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>サーバーはあなたの Drawpile と異なるバージョンです！</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+52"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
         <translation>リダイレクトを受け入れないサーバーにリダイレクトされました：%1</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>このサーバーはセッションに参加するためのログイン方法が提供されていません！</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
         <translation>このサーバーではセッションをホストするためのログイン方法が提供されていません！</translation>
     </message>
@@ -1809,7 +1812,7 @@ Select a regular layer instead.</source>
         <translation>多すぎるリダイレクト</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+77"/>
         <source>This server does not allow guest logins</source>
         <translation>このサーバーはゲストログインを許可していません</translation>
     </message>
@@ -1819,13 +1822,13 @@ Select a regular layer instead.</source>
         <translation>&quot;%1&quot; としてログインするにはパスワードが必要です</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+76"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
         <translation>認証サーバーエラー: %1</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+25"/>
         <source>Group membership needed</source>
         <translation>グループメンバーシップが必要です</translation>
     </message>
@@ -1835,12 +1838,12 @@ Select a regular layer instead.</source>
         <translation>予期しない外部認証応答: %1</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+90"/>
         <source>Invalid ident intent response.</source>
         <translation>無効な識別子インテントの応答です。</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+26"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
         <translation>サーバーの構成ミス: 無効な外部認証 URL</translation>
     </message>
@@ -1855,17 +1858,17 @@ Select a regular layer instead.</source>
         <translation>サーバーは２つの異なるext-auth URLを報告</translation>
     </message>
     <message>
-        <location line="+125"/>
+        <location line="+127"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation>１つではなく複数のセッションが発生しました</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+64"/>
         <source>New version</source>
         <translation>新しいバージョン</translation>
     </message>
     <message>
-        <location line="-41"/>
+        <location line="-42"/>
         <source>Session not yet started!</source>
         <translation>セッションはまだ開始されていません！</translation>
     </message>
@@ -1880,7 +1883,7 @@ Select a regular layer instead.</source>
         <translation>別の Drawpile バージョン (%1) のセッションが進行中です！</translation>
     </message>
     <message>
-        <location line="+220"/>
+        <location line="+233"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation>TLS はこの種類のソケットではサポートされていません</translation>
@@ -1897,22 +1900,22 @@ Select a regular layer instead.</source>
         <translation>ホスト %1 の SSL 証明書が無効です</translation>
     </message>
     <message>
-        <location line="-949"/>
+        <location line="-1001"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation>固定された証明書を持つホストではセキュア モードが有効になっていません！</translation>
     </message>
     <message>
-        <location line="+641"/>
+        <location line="+679"/>
         <source>Unknown version %1</source>
         <translation>不明なバージョン %1</translation>
     </message>
     <message>
-        <location line="+290"/>
+        <location line="+304"/>
         <source>Pinned certificate has changed!</source>
         <translation>固定された証明書が変更されました！</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+65"/>
         <source>Cancelled</source>
         <translation>キャンセルしました</translation>
     </message>
@@ -1967,7 +1970,7 @@ Select a regular layer instead.</source>
         <translation>これは通常Drawpileのバージョンが古すぎることを意味します。アップデートが必要ですか？</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
         <translation>セッションが見つかりません。終了したか招待リンクが変更された可能性があります</translation>
     </message>
@@ -1982,12 +1985,12 @@ Select a regular layer instead.</source>
         <translation>無効なホスト名です。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
         <translation>ここでは公開セッションをホストすることは許可されていません、個人セッションのみが許可されています。 セッションタブで公開から個人に切り替えることができます。</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>Client failed to serialize command</source>
         <translation>クライアントがコマンドのシリアル化に失敗しました</translation>
     </message>
@@ -2000,7 +2003,7 @@ Select a regular layer instead.</source>
         <translation>(無題)</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+57"/>
         <source>%1 (incompatible)</source>
         <translation>%1 (互換性なし)</translation>
     </message>
@@ -2008,6 +2011,11 @@ Select a regular layer instead.</source>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
         <translation>Drawpile 2.2 (互換モード)</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Drawpile 2.3 (minor incompatibility)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2067,7 +2075,7 @@ Select a regular layer instead.</source>
         </translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+70"/>
         <source>Title</source>
         <translation>タイトル</translation>
     </message>
@@ -2132,7 +2140,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+273"/>
+        <location filename="../net/server.cpp" line="+151"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation>プロキシを使用する予定がない場合は、Drawpile の設定の 「ネットワーク」タブでネットワーク プロキシを無効にすることができます。</translation>
     </message>
@@ -2167,7 +2175,7 @@ Select a regular layer instead.</source>
         <translation>無効なデータを受信</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+61"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
         <translation>ソケットエラー %1: %2</translation>
@@ -2177,6 +2185,14 @@ Select a regular layer instead.</source>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
         <translation>%1 (エラー %2)</translation>
+    </message>
+</context>
+<context>
+    <name>tools::FreehandSettings</name>
+    <message>
+        <location filename="../tools/freehand.cpp" line="+146"/>
+        <source>Anti-overflow requires a fill source layer.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

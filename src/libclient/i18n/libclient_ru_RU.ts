@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1044"/>
+        <location filename="../document.cpp" line="+1129"/>
         <source>Unknown format.</source>
         <translation>Неизвестный формат.</translation>
     </message>
@@ -617,7 +617,7 @@
         <translation>Неизвестная ошибка.</translation>
     </message>
     <message>
-        <location line="+689"/>
+        <location line="+719"/>
         <source>Error saving image</source>
         <translation>Не удалось сохранить</translation>
     </message>
@@ -819,12 +819,12 @@ Select a regular layer instead.</source>
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+522"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+527"/>
         <source>(untitled)</source>
         <translation>(без названия)</translation>
     </message>
     <message>
-        <location line="-446"/>
+        <location line="-451"/>
         <source>%1d%2h%3m</source>
         <translation>%1д%2ч%3мин</translation>
     </message>
@@ -871,12 +871,12 @@ Select a regular layer instead.</source>
         </translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+24"/>
         <source>Compatible</source>
         <translation>Совместим</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Requires compatibility mode (%1)</source>
         <translation>Необходим режим совместимости (%1)</translation>
     </message>
@@ -891,12 +891,17 @@ Select a regular layer instead.</source>
         <translation>Несовместимое приложение (%1)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-13"/>
         <source>unknown version</source>
         <translation>Неизвестная версия</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+6"/>
+        <source>Minor incompatibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+121"/>
         <source>Compatibility</source>
         <translation>Совместимость</translation>
     </message>
@@ -1162,7 +1167,7 @@ Select a regular layer instead.</source>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1247"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1252"/>
         <source>Default</source>
         <translation>По умолчанию</translation>
     </message>
@@ -1317,17 +1322,9 @@ Select a regular layer instead.</source>
     </message>
 </context>
 <context>
-    <name>canvas::PaintEngine</name>
-    <message>
-        <location filename="../canvas/paintengine.cpp" line="+208"/>
-        <source>Layer %1</source>
-        <translation>Слой %1</translation>
-    </message>
-</context>
-<context>
     <name>canvas::UserListModel</name>
     <message>
-        <location filename="../canvas/userlist.cpp" line="+64"/>
+        <location filename="../canvas/userlist.cpp" line="+66"/>
         <source>Moderator</source>
         <translation>Модератор</translation>
     </message>
@@ -1372,7 +1369,7 @@ Select a regular layer instead.</source>
         <translation>Состояние</translation>
     </message>
     <message>
-        <location line="+182"/>
+        <location line="+190"/>
         <source>Server</source>
         <translation>Сервер</translation>
     </message>
@@ -1459,7 +1456,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+580"/>
+        <location filename="../net/client.cpp" line="+724"/>
         <source>%1 banned by %2.</source>
         <translation>%1 забанен пользователем %2.</translation>
     </message>
@@ -1469,7 +1466,7 @@ Select a regular layer instead.</source>
         <translation>%1 выгнан(а) пользователем %2.</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+21"/>
         <source>%1 made operator by the server.</source>
         <translation>%1 назначен оператором сервером.</translation>
     </message>
@@ -1494,7 +1491,7 @@ Select a regular layer instead.</source>
         <translation>Статус оператора изъят у пользователя %1 сервером.</translation>
     </message>
     <message>
-        <location line="-527"/>
+        <location line="-644"/>
         <source>You have been kicked.</source>
         <translation>Вы были выгнаны.</translation>
     </message>
@@ -1534,7 +1531,7 @@ Select a regular layer instead.</source>
         <translation>Отключен: %1</translation>
     </message>
     <message>
-        <location line="+436"/>
+        <location line="+552"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>Только модераторы могут экспортировать список забаненых пользователей.</translation>
@@ -1585,17 +1582,23 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+97"/>
         <source>%1 trusted via invite created by a server administrator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-62"/>
+        <location line="+134"/>
+        <source> / </source>
+        <extracomment>This is a separator for connection errors, something like &quot;Connection refused (error 0) / Forbidden (error 403)&quot;. Those messages may be in English or in your language, so use a separator that works for both. If you&apos;re not sure, leave it the same.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-200"/>
         <source>Operator status revoked from %1 by %2.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1605,22 +1608,22 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1747,40 +1750,40 @@ Select a regular layer instead.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+111"/>
-        <location line="+663"/>
+        <location filename="../net/login.cpp" line="+126"/>
+        <location line="+706"/>
         <source>Invalid state</source>
         <translation>Недопустимое состояние</translation>
     </message>
     <message>
-        <location line="-606"/>
+        <location line="-647"/>
         <location line="+8"/>
-        <location line="+145"/>
+        <location line="+149"/>
         <location line="+118"/>
         <location line="+33"/>
-        <location line="+338"/>
-        <location line="+192"/>
-        <location line="+80"/>
+        <location line="+375"/>
+        <location line="+194"/>
+        <location line="+83"/>
         <source>Incompatible server</source>
         <translation>Несовместимый сервер</translation>
     </message>
     <message>
-        <location line="-899"/>
+        <location line="-945"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Сервер для другой версии Drawpile!</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+52"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1815,7 +1818,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+77"/>
         <source>This server does not allow guest logins</source>
         <translation>На этом сервере не разрешён гостевой вход</translation>
     </message>
@@ -1825,18 +1828,18 @@ Select a regular layer instead.</source>
         <translation>Требуется пароль для входа под логином &quot;%1&quot;</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+76"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
         <translation>Ошибка сервера проверки подлинности: %1</translation>
     </message>
     <message>
-        <location line="+108"/>
+        <location line="+118"/>
         <source>Invalid ident intent response.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+26"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
         <translation>Неверная конфигурация сервера: неверный URL-адрес внешнего сервера проверки подлинности</translation>
     </message>
@@ -1851,17 +1854,17 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+125"/>
+        <location line="+127"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+64"/>
         <source>New version</source>
         <translation>Новая версия</translation>
     </message>
     <message>
-        <location line="+198"/>
+        <location line="+210"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation type="unfinished"></translation>
@@ -1872,12 +1875,12 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+145"/>
+        <location line="+146"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1887,7 +1890,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-453"/>
+        <location line="-468"/>
         <source>Session not yet started!</source>
         <translation>Сессия ещё не начата!</translation>
     </message>
@@ -1897,42 +1900,42 @@ Select a regular layer instead.</source>
         <translation>Заблокировано родительским контролем</translation>
     </message>
     <message>
-        <location line="+446"/>
+        <location line="+461"/>
         <source>Invalid host name.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>Client failed to serialize command</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-62"/>
+        <location line="-65"/>
         <source>Server is full!</source>
         <translation>Сервер полон!</translation>
     </message>
     <message>
-        <location line="-1031"/>
+        <location line="-1084"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+641"/>
+        <location line="+679"/>
         <source>Unknown version %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+290"/>
+        <location line="+304"/>
         <source>Pinned certificate has changed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+103"/>
         <source>Hosting not authorized</source>
         <translation>Хостинг не авторизован</translation>
     </message>
@@ -1947,13 +1950,13 @@ Select a regular layer instead.</source>
         <translation>Псевдоним сессии зарезервирован!</translation>
     </message>
     <message>
-        <location line="-109"/>
+        <location line="-110"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>Недействительный SSL сертификат для хоста %1</translation>
     </message>
     <message>
-        <location line="-629"/>
+        <location line="-653"/>
         <source>Group membership needed</source>
         <translation>Необходимо членство в группе</translation>
     </message>
@@ -1963,12 +1966,12 @@ Select a regular layer instead.</source>
         <translation>Неожиданный ответ внешнего сервера проверки подлинности: %1</translation>
     </message>
     <message>
-        <location line="+290"/>
+        <location line="+301"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+382"/>
+        <location line="+396"/>
         <source>Cancelled</source>
         <translation>Отменено</translation>
     </message>
@@ -2006,13 +2009,18 @@ Select a regular layer instead.</source>
         <translation>(без названия)</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+57"/>
         <source>%1 (incompatible)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Drawpile 2.3 (minor incompatibility)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2075,7 +2083,7 @@ Select a regular layer instead.</source>
         </translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+70"/>
         <source>Title</source>
         <translation>Название</translation>
     </message>
@@ -2140,7 +2148,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+273"/>
+        <location filename="../net/server.cpp" line="+151"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2175,7 +2183,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished">Получены неверные данные</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+61"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
         <translation type="unfinished"></translation>
@@ -2184,6 +2192,14 @@ Select a regular layer instead.</source>
         <location line="+4"/>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>tools::FreehandSettings</name>
+    <message>
+        <location filename="../tools/freehand.cpp" line="+146"/>
+        <source>Anti-overflow requires a fill source layer.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2237,7 +2253,7 @@ Select a regular layer instead.</source>
         <location filename="../utils/news.cpp" line="+282"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Проверка обновлений…</translation>
     </message>
     <message>
         <location line="-23"/>

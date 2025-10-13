@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1044"/>
+        <location filename="../document.cpp" line="+1129"/>
         <source>Unknown format.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -617,7 +617,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+689"/>
+        <location line="+719"/>
         <source>Error saving image</source>
         <translation type="unfinished"></translation>
     </message>
@@ -818,12 +818,12 @@ Select a regular layer instead.</source>
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+522"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+527"/>
         <source>(untitled)</source>
         <translation type="unfinished">(Bez názvu)</translation>
     </message>
     <message>
-        <location line="-446"/>
+        <location line="-451"/>
         <source>%1d%2h%3m</source>
         <translation type="unfinished"></translation>
     </message>
@@ -870,12 +870,12 @@ Select a regular layer instead.</source>
         </translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+24"/>
         <source>Compatible</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Requires compatibility mode (%1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -890,12 +890,17 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-13"/>
         <source>unknown version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+6"/>
+        <source>Minor incompatibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+121"/>
         <source>Compatibility</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1161,7 +1166,7 @@ Select a regular layer instead.</source>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1247"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1252"/>
         <source>Default</source>
         <translation type="unfinished">Výchozí</translation>
     </message>
@@ -1316,17 +1321,9 @@ Select a regular layer instead.</source>
     </message>
 </context>
 <context>
-    <name>canvas::PaintEngine</name>
-    <message>
-        <location filename="../canvas/paintengine.cpp" line="+208"/>
-        <source>Layer %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>canvas::UserListModel</name>
     <message>
-        <location filename="../canvas/userlist.cpp" line="+64"/>
+        <location filename="../canvas/userlist.cpp" line="+66"/>
         <source>Moderator</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1371,7 +1368,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+182"/>
+        <location line="+190"/>
         <source>Server</source>
         <translation type="unfinished">Server</translation>
     </message>
@@ -1458,7 +1455,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+580"/>
+        <location filename="../net/client.cpp" line="+724"/>
         <source>%1 banned by %2.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1468,7 +1465,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+21"/>
         <source>%1 made operator by the server.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1493,7 +1490,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-527"/>
+        <location line="-644"/>
         <source>You have been kicked.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1533,7 +1530,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+436"/>
+        <location line="+552"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation type="unfinished"></translation>
@@ -1584,17 +1581,23 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+97"/>
         <source>%1 trusted via invite created by a server administrator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-62"/>
+        <location line="+134"/>
+        <source> / </source>
+        <extracomment>This is a separator for connection errors, something like &quot;Connection refused (error 0) / Forbidden (error 403)&quot;. Those messages may be in English or in your language, so use a separator that works for both. If you&apos;re not sure, leave it the same.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-200"/>
         <source>Operator status revoked from %1 by %2.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1604,22 +1607,22 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1746,40 +1749,40 @@ Select a regular layer instead.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+111"/>
-        <location line="+663"/>
+        <location filename="../net/login.cpp" line="+126"/>
+        <location line="+706"/>
         <source>Invalid state</source>
         <translation type="unfinished">Neplatný stav</translation>
     </message>
     <message>
-        <location line="-606"/>
+        <location line="-647"/>
         <location line="+8"/>
-        <location line="+145"/>
+        <location line="+149"/>
         <location line="+118"/>
         <location line="+33"/>
-        <location line="+338"/>
-        <location line="+192"/>
-        <location line="+80"/>
+        <location line="+375"/>
+        <location line="+194"/>
+        <location line="+83"/>
         <source>Incompatible server</source>
         <translation type="unfinished">Neslučitelný server</translation>
     </message>
     <message>
-        <location line="-899"/>
+        <location line="-945"/>
         <source>Server is for a different Drawpile version!</source>
         <translation type="unfinished">Server je pro jinou verzi programu Drawpile!</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+52"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1814,7 +1817,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+77"/>
         <source>This server does not allow guest logins</source>
         <translation type="unfinished">Tento server nedovoluje přihlášení hostů</translation>
     </message>
@@ -1824,13 +1827,13 @@ Select a regular layer instead.</source>
         <translation type="unfinished">Pro přihlášení jako &quot;%1&quot; je potřeba heslo</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+76"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+25"/>
         <source>Group membership needed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1840,12 +1843,12 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+90"/>
         <source>Invalid ident intent response.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+26"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1860,17 +1863,17 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+125"/>
+        <location line="+127"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+64"/>
         <source>New version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-41"/>
+        <location line="-42"/>
         <source>Session not yet started!</source>
         <translation type="unfinished">Sezení ještě nespuštěno!</translation>
     </message>
@@ -1885,7 +1888,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+220"/>
+        <location line="+233"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation type="unfinished"></translation>
@@ -1902,22 +1905,22 @@ Select a regular layer instead.</source>
         <translation type="unfinished">Neplatné osvědčení SSL pro server %1</translation>
     </message>
     <message>
-        <location line="-949"/>
+        <location line="-1001"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+641"/>
+        <location line="+679"/>
         <source>Unknown version %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+290"/>
+        <location line="+304"/>
         <source>Pinned certificate has changed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+65"/>
         <source>Cancelled</source>
         <translation type="unfinished">Zřušeno</translation>
     </message>
@@ -1972,7 +1975,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1987,12 +1990,12 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>Client failed to serialize command</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2005,13 +2008,18 @@ Select a regular layer instead.</source>
         <translation type="unfinished">(Bez názvu)</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+57"/>
         <source>%1 (incompatible)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Drawpile 2.3 (minor incompatibility)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2074,7 +2082,7 @@ Select a regular layer instead.</source>
         </translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+70"/>
         <source>Title</source>
         <translation type="unfinished">Název</translation>
     </message>
@@ -2139,7 +2147,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+273"/>
+        <location filename="../net/server.cpp" line="+151"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2174,7 +2182,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished">Přijata neplatná data</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+61"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
         <translation type="unfinished"></translation>
@@ -2183,6 +2191,14 @@ Select a regular layer instead.</source>
         <location line="+4"/>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>tools::FreehandSettings</name>
+    <message>
+        <location filename="../tools/freehand.cpp" line="+146"/>
+        <source>Anti-overflow requires a fill source layer.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

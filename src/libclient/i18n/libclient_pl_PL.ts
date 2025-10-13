@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1044"/>
+        <location filename="../document.cpp" line="+1129"/>
         <source>Unknown format.</source>
         <translation>Nieznany format.</translation>
     </message>
@@ -617,7 +617,7 @@
         <translation>Nieznany błąd.</translation>
     </message>
     <message>
-        <location line="+689"/>
+        <location line="+719"/>
         <source>Error saving image</source>
         <translation>Błąd podczas zapisywania obrazu</translation>
     </message>
@@ -834,12 +834,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>%1 m</translation>
     </message>
     <message>
-        <location line="+437"/>
+        <location line="+442"/>
         <source>(untitled)</source>
         <translation>(bez tytułu)</translation>
     </message>
     <message numerus="yes">
-        <location line="-328"/>
+        <location line="-333"/>
         <source>%n users</source>
         <translation>
             <numerusform>%n użytkownik</numerusform>
@@ -871,12 +871,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         </translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+24"/>
         <source>Compatible</source>
         <translation>Kompatybilne</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Requires compatibility mode (%1)</source>
         <translation>Wymagany tryb zgodności (%1)</translation>
     </message>
@@ -891,12 +891,17 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Niekompatybilny Plik</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-13"/>
         <source>unknown version</source>
         <translation>Nieznana wersja</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+6"/>
+        <source>Minor incompatibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+121"/>
         <source>Compatibility</source>
         <translation>Kompatybilność</translation>
     </message>
@@ -1162,7 +1167,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1247"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1252"/>
         <source>Default</source>
         <translation>Domyślne</translation>
     </message>
@@ -1317,17 +1322,9 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
     </message>
 </context>
 <context>
-    <name>canvas::PaintEngine</name>
-    <message>
-        <location filename="../canvas/paintengine.cpp" line="+208"/>
-        <source>Layer %1</source>
-        <translation>Warstwa %1</translation>
-    </message>
-</context>
-<context>
     <name>canvas::UserListModel</name>
     <message>
-        <location filename="../canvas/userlist.cpp" line="+64"/>
+        <location filename="../canvas/userlist.cpp" line="+66"/>
         <source>Moderator</source>
         <translation>Moderator</translation>
     </message>
@@ -1372,7 +1369,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Status</translation>
     </message>
     <message>
-        <location line="+182"/>
+        <location line="+190"/>
         <source>Server</source>
         <translation>Serwer</translation>
     </message>
@@ -1459,7 +1456,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+580"/>
+        <location filename="../net/client.cpp" line="+724"/>
         <source>%1 banned by %2.</source>
         <translation>Użytkownik %1 zablokowany przez %2.</translation>
     </message>
@@ -1469,7 +1466,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>%1 wyrzucony przez %2.</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+21"/>
         <source>%1 made operator by the server.</source>
         <translation>%1 został utworzony przez serwer jako Admin.</translation>
     </message>
@@ -1494,7 +1491,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Status operatora %1 został cofnięty przez serwer.</translation>
     </message>
     <message>
-        <location line="-527"/>
+        <location line="-644"/>
         <source>You have been kicked.</source>
         <translation>Zostałeś wyrzucony z serwera.</translation>
     </message>
@@ -1534,7 +1531,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Rozłączono:%1</translation>
     </message>
     <message>
-        <location line="+436"/>
+        <location line="+552"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>Tylko moderatorzy mogą banować.</translation>
@@ -1585,17 +1582,23 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Hasło sesji usunięte przez administratora serwera. Ten serwer nie zezwala na przeglądarki internetowe w sesjach publicznych, zostaną one rozłączone.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
         <translation>Hasło sesji zostało usunięte przez %1. Ten serwer nie zezwala przeglądarkom internetowym na sesje publiczne. Będą one rozłączane.</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+97"/>
         <source>%1 trusted via invite created by a server administrator.</source>
         <translation>%1 zaufało zaproszeniu utworzonemu przez administratora serwera.</translation>
     </message>
     <message>
-        <location line="-62"/>
+        <location line="+134"/>
+        <source> / </source>
+        <extracomment>This is a separator for connection errors, something like &quot;Connection refused (error 0) / Forbidden (error 403)&quot;. Those messages may be in English or in your language, so use a separator that works for both. If you&apos;re not sure, leave it the same.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-200"/>
         <source>Operator status revoked from %1 by %2.</source>
         <translation>Status operatora został cofnięty dla %1 przez %2.</translation>
     </message>
@@ -1605,22 +1608,22 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Sesja nie ma już miejsca! Aby kontynuować rysowanie, operator musi ją zresetować, aby zmniejszyć jej rozmiar. Można to zrobić za pomocą opcji Sesja &gt; Resetuj.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
         <translation>Reset sesji anulowany! Operator musi odblokować płótno i ręcznie zresetować sesję.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
         <translation>Reset sesji nie powiódł się! Operator musi odblokować płótno i ręcznie zresetować sesję.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
         <translation>Przygotowywanie do resetu sesji! Proszę czekać, sesja powinna być wkrótce ponownie dostępna…</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
         <translation>Przygotowywanie do zresetowania sesji przez %1! Proszę czekać, sesja powinna być wkrótce ponownie dostępna…</translation>
     </message>
@@ -1747,40 +1750,40 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+111"/>
-        <location line="+663"/>
+        <location filename="../net/login.cpp" line="+126"/>
+        <location line="+706"/>
         <source>Invalid state</source>
         <translation>Niewłaściwy stan</translation>
     </message>
     <message>
-        <location line="-606"/>
+        <location line="-647"/>
         <location line="+8"/>
-        <location line="+145"/>
+        <location line="+149"/>
         <location line="+118"/>
         <location line="+33"/>
-        <location line="+338"/>
-        <location line="+192"/>
-        <location line="+80"/>
+        <location line="+375"/>
+        <location line="+194"/>
+        <location line="+83"/>
         <source>Incompatible server</source>
         <translation>Niezgodny serwer</translation>
     </message>
     <message>
-        <location line="-899"/>
+        <location line="-945"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Serwer jest przeznaczony dla innej wersji Drawpile!</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+52"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>Ten serwer nie umożliwia zalogowania się w celu dołączenia do sesji!</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
         <translation>Ten serwer nie umożliwia zalogowania się w celu hostowania sesji!</translation>
     </message>
@@ -1815,7 +1818,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+77"/>
         <source>This server does not allow guest logins</source>
         <translation>Ten serwer nie zezwala na logowanie gościnne</translation>
     </message>
@@ -1825,13 +1828,13 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Aby zalogować się jako &quot;%1&quot; wymagane jest hasło</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+76"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
         <translation>Błąd serwera uwierzytelniania: %1</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+25"/>
         <source>Group membership needed</source>
         <translation>Wymagane członkostwo w grupie</translation>
     </message>
@@ -1841,12 +1844,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Nieoczekiwana odpowiedź ext-auth: %1</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+90"/>
         <source>Invalid ident intent response.</source>
         <translation>Nieprawidłowa odpowiedź.</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+26"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
         <translation>Nieprawidłowa konfiguracja serwera: nieprawidłowy adres URL ext-auth</translation>
     </message>
@@ -1861,17 +1864,17 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Serwer zgłosił dwa różne adresy URL uwierzytelniania zewnętrznego</translation>
     </message>
     <message>
-        <location line="+125"/>
+        <location line="+127"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation>Wystąpiło kilka sesji, chociaż spodziewano się tylko jednej</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+64"/>
         <source>New version</source>
         <translation>Nowa wersja</translation>
     </message>
     <message>
-        <location line="-41"/>
+        <location line="-42"/>
         <source>Session not yet started!</source>
         <translation>Sesja jeszcze się nie zaczęła!</translation>
     </message>
@@ -1886,7 +1889,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Trwa sesja innej wersji Drawpile (%1)!</translation>
     </message>
     <message>
-        <location line="+220"/>
+        <location line="+233"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation>Protokół TLS nie jest obsługiwany przez ten typ gniazda</translation>
@@ -1903,22 +1906,22 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Nieprawidłowy certyfikat SSL dla hosta %1</translation>
     </message>
     <message>
-        <location line="-949"/>
+        <location line="-1001"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation>Tryb bezpieczny nie jest włączony na hoście z przypiętym certyfikatem!</translation>
     </message>
     <message>
-        <location line="+641"/>
+        <location line="+679"/>
         <source>Unknown version %1</source>
         <translation>Nieznana wersja %1</translation>
     </message>
     <message>
-        <location line="+290"/>
+        <location line="+304"/>
         <source>Pinned certificate has changed!</source>
         <translation>Przypięty certyfikat uległ zmianie!</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+65"/>
         <source>Cancelled</source>
         <translation>Anulowane</translation>
     </message>
@@ -1973,7 +1976,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Zwykle oznacza to, że Twoja wersja Drawpile jest za stara. Czy musisz dokonać aktualizacji?</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
         <translation>Sesja nie została znaleziona, mogła się zakończyć lub jej link zaproszeniowy uległ zmianie</translation>
     </message>
@@ -1988,12 +1991,12 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Niewłaściwa nazwa hosta</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
         <translation>Nie masz uprawnień do organizowania sesji publicznych, dozwolone są tylko sesje osobiste. Możesz przełączać się z sesji publicznej na osobistą w zakładce Sesja.</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>Client failed to serialize command</source>
         <translation>Klient nie mógł zserializować polecenia</translation>
     </message>
@@ -2006,13 +2009,18 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>(bez tytułu)</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+57"/>
         <source>%1 (incompatible)</source>
         <translation>%1 (niezgodne)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Drawpile 2.3 (minor incompatibility)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2075,7 +2083,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         </translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+70"/>
         <source>Title</source>
         <translation>Tytuł</translation>
     </message>
@@ -2140,7 +2148,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+273"/>
+        <location filename="../net/server.cpp" line="+151"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation>Jeśli nie zamierzasz korzystać z serwera proxy, możesz wyłączyć serwer proxy sieciowy w preferencjach Drawpile na karcie Sieć.</translation>
     </message>
@@ -2175,7 +2183,7 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <translation>Otrzymano nieprawidłowe dane</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+61"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
         <translation>Błąd gniazda %1: %2</translation>
@@ -2185,6 +2193,14 @@ Zamiast tego wybierz zwykłą warstwę.</translation>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
         <translation>Błąd %1$s: %2$s</translation>
+    </message>
+</context>
+<context>
+    <name>tools::FreehandSettings</name>
+    <message>
+        <location filename="../tools/freehand.cpp" line="+146"/>
+        <source>Anti-overflow requires a fill source layer.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

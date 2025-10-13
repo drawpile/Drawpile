@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1044"/>
+        <location filename="../document.cpp" line="+1129"/>
         <source>Unknown format.</source>
         <translation>امتداد مجهول.</translation>
     </message>
@@ -617,7 +617,7 @@
         <translation>حدث خطأ مجهول.</translation>
     </message>
     <message>
-        <location line="+689"/>
+        <location line="+719"/>
         <source>Error saving image</source>
         <translation>خطأ في حفظ الصورة</translation>
     </message>
@@ -834,12 +834,12 @@ Select a regular layer instead.</source>
         <translation>%1د</translation>
     </message>
     <message>
-        <location line="+437"/>
+        <location line="+442"/>
         <source>(untitled)</source>
         <translation>(بدون عنوان)</translation>
     </message>
     <message numerus="yes">
-        <location line="-328"/>
+        <location line="-333"/>
         <source>%n users</source>
         <translation>
             <numerusform>لا مستخدم</numerusform>
@@ -880,12 +880,12 @@ Select a regular layer instead.</source>
         </translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+24"/>
         <source>Compatible</source>
         <translation>متوافق</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Requires compatibility mode (%1)</source>
         <translation>يتطلب وضع التوافق (%1)</translation>
     </message>
@@ -900,12 +900,17 @@ Select a regular layer instead.</source>
         <translation>غير متوافق (%1)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-13"/>
         <source>unknown version</source>
         <translation>إصدار مجهول</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+6"/>
+        <source>Minor incompatibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+121"/>
         <source>Compatibility</source>
         <translation>التوافق</translation>
     </message>
@@ -1171,7 +1176,7 @@ Select a regular layer instead.</source>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1247"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1252"/>
         <source>Default</source>
         <translation>الافتراضي</translation>
     </message>
@@ -1326,17 +1331,9 @@ Select a regular layer instead.</source>
     </message>
 </context>
 <context>
-    <name>canvas::PaintEngine</name>
-    <message>
-        <location filename="../canvas/paintengine.cpp" line="+208"/>
-        <source>Layer %1</source>
-        <translation>الطبقة %1</translation>
-    </message>
-</context>
-<context>
     <name>canvas::UserListModel</name>
     <message>
-        <location filename="../canvas/userlist.cpp" line="+64"/>
+        <location filename="../canvas/userlist.cpp" line="+66"/>
         <source>Moderator</source>
         <translation>المشرف</translation>
     </message>
@@ -1381,7 +1378,7 @@ Select a regular layer instead.</source>
         <translation>الحالة</translation>
     </message>
     <message>
-        <location line="+182"/>
+        <location line="+190"/>
         <source>Server</source>
         <translation>الخادم</translation>
     </message>
@@ -1468,7 +1465,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+580"/>
+        <location filename="../net/client.cpp" line="+724"/>
         <source>%1 banned by %2.</source>
         <translation>تم حظر %1 بواسطة %2.</translation>
     </message>
@@ -1478,7 +1475,7 @@ Select a regular layer instead.</source>
         <translation>تم طرد %1 بواسطة %2.</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+21"/>
         <source>%1 made operator by the server.</source>
         <translation>أصبح %1 مشغلًا بواسطة الخادم.</translation>
     </message>
@@ -1503,7 +1500,7 @@ Select a regular layer instead.</source>
         <translation>تم إبطال حالة المشغل من %1 بواسطة الخادم.</translation>
     </message>
     <message>
-        <location line="-527"/>
+        <location line="-644"/>
         <source>You have been kicked.</source>
         <translation>لقد تم طردك.</translation>
     </message>
@@ -1543,7 +1540,7 @@ Select a regular layer instead.</source>
         <translation>انقطع الاتصال: %1</translation>
     </message>
     <message>
-        <location line="+436"/>
+        <location line="+552"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>فقط للمشرفين يمكنهم تصدير الحظر العادي.</translation>
@@ -1594,17 +1591,23 @@ Select a regular layer instead.</source>
         <translation>أُزيلت كلمة مرور الجَلسة بواسطة مسؤول الخادم. لا يسمح هذا الخادم بمتصفحات الويب في الجلسات العامة، وسيتم قطع اتصالها.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
         <translation>تمت إزالة كلمة مرور الجلسة بواسطة %1. لا يسمح هذا الخادم بمتصفحات الويب في الجلسات العامة، وسيتم قطع اتصالها.</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+97"/>
         <source>%1 trusted via invite created by a server administrator.</source>
         <translation>%1 موثوق به عبر دعوة أنشأها مسؤول الخادم.</translation>
     </message>
     <message>
-        <location line="-62"/>
+        <location line="+134"/>
+        <source> / </source>
+        <extracomment>This is a separator for connection errors, something like &quot;Connection refused (error 0) / Forbidden (error 403)&quot;. Those messages may be in English or in your language, so use a separator that works for both. If you&apos;re not sure, leave it the same.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-200"/>
         <source>Operator status revoked from %1 by %2.</source>
         <translation>تم إبطال دور المشغل %1 بواسطة %2.</translation>
     </message>
@@ -1614,22 +1617,22 @@ Select a regular layer instead.</source>
         <translation>نفدت مساحة الجَلسة! لمواصلة الرسم، يجب على المشغل إعادة ضبطها لتقليص حجمها إلى حجم أصغر. يمكن فعل ذلك عبر الجَلسة &gt; إعادة ضبط.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
         <translation>تم إلغاء إعادة ضبط الجَلسة! يجب على المشغل فتح قُفْل اللوحة وإعادة ضبط الجَلسة يدويًا.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
         <translation>فشلت إعادة ضبط الجَلسة! يجب على المشغل فتح قُفْل اللوحة وإعادة ضبط الجَلسة يدويًا.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
         <translation>يتم التحضير لإعادة ضبط الجَلسة! الرجاء الانتظار، من المفترض أن تكون الجَلسة متاحة مرة أخرى قريبًا…</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
         <translation>التحضير لإعادة ضبط الجَلسة بواسطة %1! برجاء الانتظار، من المفترض أن تكون الجَلسة متاحة مرة أخرى قريبًا…</translation>
     </message>
@@ -1756,40 +1759,40 @@ Select a regular layer instead.</source>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+111"/>
-        <location line="+663"/>
+        <location filename="../net/login.cpp" line="+126"/>
+        <location line="+706"/>
         <source>Invalid state</source>
         <translation>حالة غير صالحة</translation>
     </message>
     <message>
-        <location line="-606"/>
+        <location line="-647"/>
         <location line="+8"/>
-        <location line="+145"/>
+        <location line="+149"/>
         <location line="+118"/>
         <location line="+33"/>
-        <location line="+338"/>
-        <location line="+192"/>
-        <location line="+80"/>
+        <location line="+375"/>
+        <location line="+194"/>
+        <location line="+83"/>
         <source>Incompatible server</source>
         <translation>خادم غير متوافق</translation>
     </message>
     <message>
-        <location line="-899"/>
+        <location line="-945"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>هذا الخادم لنسخة مختلفة من Drawpile!</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+52"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>لا يوفر هذا الخادم طريقة لتسجيل الدخول للانضمام إلى جَلسة!</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
         <translation>لا يوفر هذا الخادم طريقة لتسجيل الدخول لاستضافة جَلسة!</translation>
     </message>
@@ -1824,7 +1827,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+77"/>
         <source>This server does not allow guest logins</source>
         <translation>هذا الخادم لا يسمح بتسجيل الدخول للضيوف</translation>
     </message>
@@ -1834,13 +1837,13 @@ Select a regular layer instead.</source>
         <translation>كلمة المرور مطلوبة لتسجيل الدخول كـ &quot;%1&quot;</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+76"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
         <translation>حدث خطأ في خادم المصادقة: %1</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+25"/>
         <source>Group membership needed</source>
         <translation>مطلوب عضوية للمجموعة</translation>
     </message>
@@ -1850,12 +1853,12 @@ Select a regular layer instead.</source>
         <translation>استجابة مصادقة خارجية غير متوقعة: %1</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+90"/>
         <source>Invalid ident intent response.</source>
         <translation type="unfinished">استجابة هدف التعريف غير صالحة.</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+26"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
         <translation>إعداد خاطئ للخادم: عنوان URL للمصادقة الخارجية غير صالح</translation>
     </message>
@@ -1870,17 +1873,17 @@ Select a regular layer instead.</source>
         <translation>أبلغ الخادم عن عنواني URL مختلفين لـ ext-auth</translation>
     </message>
     <message>
-        <location line="+125"/>
+        <location line="+127"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation type="unfinished">حصلت على جلسات متعددة عندما كان من المتوقع جَلسة واحدة فقط</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+64"/>
         <source>New version</source>
         <translation>إصدار جديد</translation>
     </message>
     <message>
-        <location line="-41"/>
+        <location line="-42"/>
         <source>Session not yet started!</source>
         <translation>الجَلسة لم تبدأ بعد!</translation>
     </message>
@@ -1895,7 +1898,7 @@ Select a regular layer instead.</source>
         <translation>جَلسة لإصدار Drawpile مختلف (%1) سارية حاليًا!</translation>
     </message>
     <message>
-        <location line="+220"/>
+        <location line="+233"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation>TLS غير مدعوم عبر هذا النوع من المقابس (socket)</translation>
@@ -1912,22 +1915,22 @@ Select a regular layer instead.</source>
         <translation>شهادة SSL غير صالحة للمضيف %1</translation>
     </message>
     <message>
-        <location line="-949"/>
+        <location line="-1001"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation>لم يتم تمكين الوضع الآمن على مضيف بشهادة مثبتة!</translation>
     </message>
     <message>
-        <location line="+641"/>
+        <location line="+679"/>
         <source>Unknown version %1</source>
         <translation>إصدار مجهول %1</translation>
     </message>
     <message>
-        <location line="+290"/>
+        <location line="+304"/>
         <source>Pinned certificate has changed!</source>
         <translation>لقد تغيرت الشهادة المثبتة!</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+65"/>
         <source>Cancelled</source>
         <translation>تم الإلغاء</translation>
     </message>
@@ -1982,7 +1985,7 @@ Select a regular layer instead.</source>
         <translation>هذا يعني عادةً أن إصدار Drawpile لديك قديم جدًا. هل تحتاج إلى تحديث؟</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
         <translation>لم يتم العثور على الجلسة، ربما تكون قد انتهت أو تم تغيير رابط الدعوة الخاص بها</translation>
     </message>
@@ -1997,12 +2000,12 @@ Select a regular layer instead.</source>
         <translation>اسم المضيف غير صالح.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
         <translation>لا يُسمح باستضافة جلسات عامة هنا، يُسمح فقط بالجلسات الشخصية. يمكنك التبديل من عامة إلى شخصية بواسطة تبويب &quot;الجلسة&quot;.</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>Client failed to serialize command</source>
         <translation>فشل العميل في إجراء تسلسل الأمر</translation>
     </message>
@@ -2015,13 +2018,18 @@ Select a regular layer instead.</source>
         <translation>(بدون عنوان)</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+57"/>
         <source>%1 (incompatible)</source>
         <translation>%1 (غير متوافق)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Drawpile 2.3 (minor incompatibility)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2087,7 +2095,7 @@ Select a regular layer instead.</source>
         </translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+70"/>
         <source>Title</source>
         <translation>العنوان</translation>
     </message>
@@ -2152,7 +2160,7 @@ Select a regular layer instead.</source>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+273"/>
+        <location filename="../net/server.cpp" line="+151"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation>إذا كنت لا تنوي استخدام وكيل ، فيمكنك تعطيل وكيل الشبكة في تفضيلات Drawpile ضمن علامة التبويب الشبكة.</translation>
     </message>
@@ -2187,7 +2195,7 @@ Select a regular layer instead.</source>
         <translation>تم استلام بيانات غير صالحة</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+61"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
         <translation>خطأ المقبس %1: %2</translation>
@@ -2197,6 +2205,14 @@ Select a regular layer instead.</source>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
         <translation>%1 (خطأ %2)</translation>
+    </message>
+</context>
+<context>
+    <name>tools::FreehandSettings</name>
+    <message>
+        <location filename="../tools/freehand.cpp" line="+146"/>
+        <source>Anti-overflow requires a fill source layer.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

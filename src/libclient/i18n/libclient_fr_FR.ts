@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1044"/>
+        <location filename="../document.cpp" line="+1129"/>
         <source>Unknown format.</source>
         <translation>Format inconnu.</translation>
     </message>
@@ -617,7 +617,7 @@
         <translation>Erreur inconnue.</translation>
     </message>
     <message>
-        <location line="+689"/>
+        <location line="+719"/>
         <source>Error saving image</source>
         <translation type="unfinished">Erreur de sauvegarde de l&apos;image</translation>
     </message>
@@ -819,12 +819,12 @@ Veuillez sélectionner un autre calque.</translation>
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+522"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+527"/>
         <source>(untitled)</source>
         <translation>(Sans titre)</translation>
     </message>
     <message>
-        <location line="-446"/>
+        <location line="-451"/>
         <source>%1d%2h%3m</source>
         <translation>%1j%2h%3min</translation>
     </message>
@@ -868,12 +868,12 @@ Veuillez sélectionner un autre calque.</translation>
         </translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+24"/>
         <source>Compatible</source>
         <translation>Compatible</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Requires compatibility mode (%1)</source>
         <translation>Requiert le mode de compatibilité (%1)</translation>
     </message>
@@ -888,12 +888,17 @@ Veuillez sélectionner un autre calque.</translation>
         <translation>Incompatible&#xa0;(%1)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-13"/>
         <source>unknown version</source>
         <translation>Version inconnue</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+6"/>
+        <source>Minor incompatibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+121"/>
         <source>Compatibility</source>
         <translation>Compatibilité</translation>
     </message>
@@ -1159,7 +1164,7 @@ Veuillez sélectionner un autre calque.</translation>
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+1247"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+1252"/>
         <source>Default</source>
         <translation type="unfinished">Défaut</translation>
     </message>
@@ -1314,17 +1319,9 @@ Veuillez sélectionner un autre calque.</translation>
     </message>
 </context>
 <context>
-    <name>canvas::PaintEngine</name>
-    <message>
-        <location filename="../canvas/paintengine.cpp" line="+208"/>
-        <source>Layer %1</source>
-        <translation>Calque %1</translation>
-    </message>
-</context>
-<context>
     <name>canvas::UserListModel</name>
     <message>
-        <location filename="../canvas/userlist.cpp" line="+64"/>
+        <location filename="../canvas/userlist.cpp" line="+66"/>
         <source>Moderator</source>
         <translation type="unfinished">Modérateur</translation>
     </message>
@@ -1369,7 +1366,7 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Statut</translation>
     </message>
     <message>
-        <location line="+182"/>
+        <location line="+190"/>
         <source>Server</source>
         <translation type="unfinished">Serveur</translation>
     </message>
@@ -1456,7 +1453,7 @@ Veuillez sélectionner un autre calque.</translation>
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+580"/>
+        <location filename="../net/client.cpp" line="+724"/>
         <source>%1 banned by %2.</source>
         <translation>%1 banni·e par %2.</translation>
     </message>
@@ -1466,7 +1463,7 @@ Veuillez sélectionner un autre calque.</translation>
         <translation>%2 a exclu·e %1.</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+21"/>
         <source>%1 made operator by the server.</source>
         <translation type="unfinished">%1 promu·e opérateur·ice par le serveur.</translation>
     </message>
@@ -1491,7 +1488,7 @@ Veuillez sélectionner un autre calque.</translation>
         <translation>Statut d&apos;opérateur·ice de %1 révoqué par le serveur.</translation>
     </message>
     <message>
-        <location line="-527"/>
+        <location line="-644"/>
         <source>You have been kicked.</source>
         <translation>Vous avez été exclu·e.</translation>
     </message>
@@ -1531,7 +1528,7 @@ Veuillez sélectionner un autre calque.</translation>
         <translation>Déconnecté·e&#xa0;: %1</translation>
     </message>
     <message>
-        <location line="+436"/>
+        <location line="+552"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation type="unfinished">Seul·e·s les modérateur·ice·s peuvent exporter les bannissements en clair.</translation>
@@ -1582,17 +1579,23 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Mot de passe de session retiré par un administrateur du serveur. Ce serveur n&apos;autorise pas les navigateurs web dans une session publique&#xa0;: ils seront déconnectés.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Session password removed by %1. This server doesn&apos;t allow web browsers in public sessions, they will be disconnected.</source>
         <translation type="unfinished">Mot de passe de session retiré par %1. Ce serveur n&apos;autorise pas les navigateurs web dans une session publique&#xa0;: ils seront déconnectés.</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+97"/>
         <source>%1 trusted via invite created by a server administrator.</source>
         <translation type="unfinished">%1 rendu·e fiable via invitation crée par un administrateur serveur.</translation>
     </message>
     <message>
-        <location line="-62"/>
+        <location line="+134"/>
+        <source> / </source>
+        <extracomment>This is a separator for connection errors, something like &quot;Connection refused (error 0) / Forbidden (error 403)&quot;. Those messages may be in English or in your language, so use a separator that works for both. If you&apos;re not sure, leave it the same.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-200"/>
         <source>Operator status revoked from %1 by %2.</source>
         <translation type="unfinished">Statut d&apos;opérateur·ice de %1 révoqué·e par %2.</translation>
     </message>
@@ -1602,22 +1605,22 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">La session n&apos;a plus d&apos;espace libre&#x202f;! Pour continuer de dessiner, un·e opérateur·ice doit le réinitialiser pour le ramener à une taille plus petite. Cela peut être réalisé via Session &gt; Réinitialiser.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
         <translation type="unfinished">Réinitialisation de la session annulée&#x202f;! Un·e opérateur·ice doit débloquer le canevas et réinitialiser la session manuellement.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
         <translation type="unfinished">Échec de la réinitialisation de la session&#x202f;! Un·e opérateur·ice doit débloquer le canevas et réinitialiser la session manuellement.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
         <translation type="unfinished">Réinitialisation en cours de préparation&#x202f;! Veuillez patienter pendant que la session soit de nouveau disponible…</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Preparing for session reset by %1! Please wait, the session should be available again shortly…</source>
         <translation>Réinitialisation par %1 en cours de préparation&#x202f;! Veuillez patienter pendant que la session soit de nouveau disponible…</translation>
     </message>
@@ -1744,40 +1747,40 @@ Veuillez sélectionner un autre calque.</translation>
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+111"/>
-        <location line="+663"/>
+        <location filename="../net/login.cpp" line="+126"/>
+        <location line="+706"/>
         <source>Invalid state</source>
         <translation type="unfinished">État non valide</translation>
     </message>
     <message>
-        <location line="-606"/>
+        <location line="-647"/>
         <location line="+8"/>
-        <location line="+145"/>
+        <location line="+149"/>
         <location line="+118"/>
         <location line="+33"/>
-        <location line="+338"/>
-        <location line="+192"/>
-        <location line="+80"/>
+        <location line="+375"/>
+        <location line="+194"/>
+        <location line="+83"/>
         <source>Incompatible server</source>
         <translation type="unfinished">Serveur non compatible</translation>
     </message>
     <message>
-        <location line="-899"/>
+        <location line="-945"/>
         <source>Server is for a different Drawpile version!</source>
         <translation type="unfinished">Ce serveur est pour une autre version de Drawpile !</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+52"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>Ce serveur ne dispose pas d&apos;un moyen de se connecter pour rejoindre une session&#x202f;!</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
         <translation>Ce serveur ne dispose pas d&apos;un moyen de se connecter pour héberger une session&#x202f;!</translation>
     </message>
@@ -1812,7 +1815,7 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+77"/>
         <source>This server does not allow guest logins</source>
         <translation type="unfinished">Ce serveur n&apos;autorise pas les connexions Invités</translation>
     </message>
@@ -1822,13 +1825,13 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Mot de passe nécessaire pour se connecter en tant que &quot;%1&quot;</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+76"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
         <translation type="unfinished">Erreur du serveur d&apos;authentification : %1</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+25"/>
         <source>Group membership needed</source>
         <translation type="unfinished">Vous devez faire partie d&apos;un groupe</translation>
     </message>
@@ -1838,12 +1841,12 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Réponse ext-auth inattendue : %1</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+90"/>
         <source>Invalid ident intent response.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+26"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
         <translation type="unfinished">Mauvaise configuration du serveur : URL ext-auth non valide</translation>
     </message>
@@ -1858,17 +1861,17 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Le serveur a reporté deux URL ext-auth différentes</translation>
     </message>
     <message>
-        <location line="+125"/>
+        <location line="+127"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation type="unfinished">Plusieurs sessions en cours alors qu&apos;une seule session est attendue</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+64"/>
         <source>New version</source>
         <translation type="unfinished">Nouvelle version</translation>
     </message>
     <message>
-        <location line="-41"/>
+        <location line="-42"/>
         <source>Session not yet started!</source>
         <translation type="unfinished">La session n&apos;a pas encore démarré !</translation>
     </message>
@@ -1883,7 +1886,7 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Session pour une version différente de Drawpile (%1) en cours&#x202f;!</translation>
     </message>
     <message>
-        <location line="+220"/>
+        <location line="+233"/>
         <location line="+8"/>
         <source>TLS is not supported via this kind of socket</source>
         <translation type="unfinished">TLS n&apos;est pas supporté via ce type de socket</translation>
@@ -1900,22 +1903,22 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Certificat SSL de l&apos;hôte %1 non valide</translation>
     </message>
     <message>
-        <location line="-949"/>
+        <location line="-1001"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation type="unfinished">Mode sécurisé non actif sur un hôte avec un certificat épinglé&#x202f;!</translation>
     </message>
     <message>
-        <location line="+641"/>
+        <location line="+679"/>
         <source>Unknown version %1</source>
         <translation>Version inconnue %1</translation>
     </message>
     <message>
-        <location line="+290"/>
+        <location line="+304"/>
         <source>Pinned certificate has changed!</source>
         <translation type="unfinished">Le certificat épinglé à changé&#x202f;!</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+65"/>
         <source>Cancelled</source>
         <translation type="unfinished">Annulé</translation>
     </message>
@@ -1970,7 +1973,7 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Cela veut probablement dire que votre version de Drawpile est trop ancienne. Voulez-vous la mettre à jour&#x202f;?</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
         <translation type="unfinished">Session introuvable, le lien a peut-être changé; ou la session a pris fin</translation>
     </message>
@@ -1985,12 +1988,12 @@ Veuillez sélectionner un autre calque.</translation>
         <translation>Nom d&apos;hôte invalide.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>You&apos;re not allowed to host public sessions here, only personal sessions are allowed. You can switch from public to personal in the Session tab.</source>
         <translation type="unfinished">Vous n&apos;êtes pas autorisé à héberger des sessions publiques ici, seules les sessions personnelles sont autorisées. Vous pouvez passer de public à personnel dans l&apos;onglet Sessions.</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>Client failed to serialize command</source>
         <translation type="unfinished">Échec du client à sérialiser la commande</translation>
     </message>
@@ -2003,13 +2006,18 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">(Sans titre)</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+57"/>
         <source>%1 (incompatible)</source>
         <translation type="unfinished">(incompatible) %1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (compatibility mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Drawpile 2.3 (minor incompatibility)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2071,7 +2079,7 @@ Veuillez sélectionner un autre calque.</translation>
         </translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+70"/>
         <source>Title</source>
         <translation type="unfinished">Titre</translation>
     </message>
@@ -2136,7 +2144,7 @@ Veuillez sélectionner un autre calque.</translation>
 <context>
     <name>net::Server</name>
     <message>
-        <location filename="../net/server.cpp" line="+273"/>
+        <location filename="../net/server.cpp" line="+151"/>
         <source>If you don&apos;t intend to use a proxy, you can disable the network proxy in Drawpile&apos;s preferences under the Network tab.</source>
         <translation type="unfinished">Si vous n&apos;avez pas l&apos;intention d&apos;utiliser un proxy, vous pouvez désactiver le proxy de réseau dans les préférences de Drawpile depuis l&apos;onglet Réseau.</translation>
     </message>
@@ -2171,7 +2179,7 @@ Veuillez sélectionner un autre calque.</translation>
         <translation type="unfinished">Données non valides reçues</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+61"/>
         <source>Socket error %1: %2</source>
         <extracomment>This is a network socket error message. %1 is an error code number, %2 is the English name for the error code.</extracomment>
         <translation type="unfinished">Erreur de socket %1&#xa0;: %2</translation>
@@ -2181,6 +2189,14 @@ Veuillez sélectionner un autre calque.</translation>
         <source>%1 (error %2)</source>
         <extracomment>This is a network socket error message. %1 is the error message, %2 is an error code number.</extracomment>
         <translation>%1 (erreur %2)</translation>
+    </message>
+</context>
+<context>
+    <name>tools::FreehandSettings</name>
+    <message>
+        <location filename="../tools/freehand.cpp" line="+146"/>
+        <source>Anti-overflow requires a fill source layer.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
