@@ -153,6 +153,14 @@ bool DrawpileApp::event(QEvent *e)
 		updateThemeIcons();
 		break;
 
+	case QEvent::StyleChange:
+		emit refreshApplicationStyleRequested();
+		break;
+
+	case QEvent::ApplicationFontChange:
+		emit refreshApplicationFontRequested();
+		break;
+
 #ifdef Q_OS_MACOS
 	case QEvent::ApplicationStateChange: {
 		QApplicationStateChangeEvent *ae =

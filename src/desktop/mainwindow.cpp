@@ -40,6 +40,8 @@
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
 #include "desktop/notifications.h"
+#include "desktop/scene/actionbaritem.h"
+#include "desktop/scene/hudhandler.h"
 #include "desktop/settings.h"
 #include "desktop/tabletinput.h"
 #include "desktop/toolwidgets/annotationsettings.h"
@@ -545,6 +547,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	updateTitle();
 	readSettings(restoreWindowPosition);
 	setupBrushShortcuts();
+	setupHud();
 
 	// Set status indicators
 	updateLockWidget();
@@ -575,6 +578,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		this, &MainWindow::updateTemporaryToolSwitch);
 	settings.bindTemporaryToolSwitchMs(
 		this, &MainWindow::updateTemporaryToolSwitch);
+	settings.bindActionBar(this, &MainWindow::setActionBarSetting);
+	settings.bindActionBarLocation(this, &MainWindow::setActionBarLocation);
 	settings.bindAutomaticAlphaPreserve(
 		getAction("layerautomaticalphapreserve"));
 	settings.bindLeftyMode(getAction("smallscreenleftymode"));
@@ -4171,7 +4176,39 @@ void MainWindow::updateSideTabDocks()
 	}
 }
 
-void MainWindow::handleHudAction(const HudAction &action)
+void MainWindow::handleHudAction(
+	const HudAction &action, const QPoint &globalPos)
+{
+	switch(action.type) {
+	case HudAction::Type::None:
+		return;
+	case HudAction::Type::ToggleBrush:
+	case HudAction::Type::ToggleTimeline:
+	case HudAction::Type::ToggleLayer:
+	case HudAction::Type::ToggleChat:
+		handleToggleAction(action);
+		return;
+	case HudAction::Type::TriggerAction:
+		if(action.action) {
+			QTimer::singleShot(0, action.action, &QAction::trigger);
+		} else {
+			qWarning("handleHudAction: triggered action is null!");
+		}
+		return;
+	case HudAction::Type::TriggerMenu:
+		if(action.menu) {
+			QTimer::singleShot(0, action.menu, [action, globalPos] {
+				action.menu->popup(globalPos);
+			});
+		} else {
+			qWarning("handleHudAction: triggered menu is null!");
+		}
+		return;
+	}
+	qWarning("Unknown hud action type %d", int(action.type));
+}
+
+void MainWindow::handleToggleAction(const HudAction &action)
 {
 	utils::ScopedUpdateDisabler disabler(this);
 	QScopedValueRollback<bool> rollback(m_updatingInterfaceMode, true);
@@ -4452,6 +4489,16 @@ void MainWindow::updateSelectTransformActions()
 	getAction("showselectionmask")->setEnabled(!selectionEditActive);
 	m_dockToolSettings->selectionSettings()->setActionEnabled(haveSelection);
 	m_dockToolSettings->gradientSettings()->setSelectionValid(haveSelection);
+
+	HudHandler::ActionBar actionBar = HudHandler::ActionBar::None;
+	if(m_actionBarEnabled) {
+		if(haveTransform) {
+			actionBar = HudHandler::ActionBar::Transform;
+		} else if(haveSelection) {
+			actionBar = HudHandler::ActionBar::Selection;
+		}
+	}
+	m_canvasView->hud()->setCurrentActionBar(actionBar);
 
 	if(!haveSelection || haveTransform) {
 		dialogs::SelectionAlterDialog *dlg =
@@ -5956,6 +6003,33 @@ void MainWindow::setupActions()
 			.statusTip(tr("Change the color tint of the selection mask"))
 			.icon("color-picker")
 			.noDefaultShortcut();
+	QAction *showactionbar =
+		makeAction("showactionbar", tr("Show Selection Action Bar"))
+			.noDefaultShortcut()
+			.checkable()
+			.checked();
+	QAction *actionbartopleft = makeAction("actionbartopleft", tr("Top-left"))
+									.noDefaultShortcut()
+									.checkable();
+	QAction *actionbartopcenter = makeAction("actionbartopcenter", tr("Top"))
+									  .noDefaultShortcut()
+									  .checkable();
+	QAction *actionbartopright =
+		makeAction("actionbartopright", tr("Top-right"))
+			.noDefaultShortcut()
+			.checkable();
+	QAction *actionbarbottomleft =
+		makeAction("actionbarbottomleft", tr("Bottom-left"))
+			.noDefaultShortcut()
+			.checkable();
+	QAction *actionbarbottomcenter =
+		makeAction("actionbarbottomcenter", tr("Bottom"))
+			.noDefaultShortcut()
+			.checkable();
+	QAction *actionbarbottomright =
+		makeAction("actionbarbottomright", tr("Bottom-right"))
+			.noDefaultShortcut()
+			.checkable();
 #ifdef SINGLE_MAIN_WINDOW
 	QAction *fittoscreen =
 		makeAction("fittoscreen", tr("&Fit to Screen")).noDefaultShortcut();
@@ -6004,7 +6078,7 @@ void MainWindow::setupActions()
 		if(m_smallScreenMode) {
 			HudAction action;
 			action.type = HudAction::Type::ToggleChat;
-			handleHudAction(action);
+			handleToggleAction(action);
 		} else {
 			if(show) {
 				QByteArray state = dpApp().settings().lastWindowViewState();
@@ -6039,11 +6113,25 @@ void MainWindow::setupActions()
 		showrulers, &QAction::toggled, m_canvasFrame,
 		&widgets::CanvasFrame::setShowRulers);
 	connect(
+		showactionbar, &QAction::triggered, this,
+		std::bind(&MainWindow::setActionBarEnabled, this, _1, true));
+	connect(
 		showselectionmask, &QAction::toggled, this,
 		&MainWindow::updateSelectionMaskVisibility);
 	connect(
 		setselectionmaskcolor, &QAction::triggered, this,
 		&MainWindow::showSelectionMaskColorPicker);
+
+	QActionGroup *actionBarLocations = new QActionGroup(this);
+	actionBarLocations->addAction(actionbartopleft);
+	actionBarLocations->addAction(actionbartopcenter);
+	actionBarLocations->addAction(actionbartopright);
+	actionBarLocations->addAction(actionbarbottomleft);
+	actionBarLocations->addAction(actionbarbottomcenter);
+	actionBarLocations->addAction(actionbarbottomright);
+	connect(
+		actionBarLocations, &QActionGroup::triggered, this,
+		&MainWindow::onActionBarLocationActionTriggered);
 
 	m_canvasView->connectActions(
 		{moveleft,		moveright,		moveup,			 movedown,
@@ -6168,6 +6256,13 @@ void MainWindow::setupActions()
 	viewmenu->addAction(showrulers);
 	viewmenu->addAction(showselectionmask);
 	viewmenu->addAction(setselectionmaskcolor);
+
+	viewmenu->addSeparator();
+	viewmenu->addAction(showactionbar);
+
+	m_actionBarLocationMenu =
+		viewmenu->addMenu(tr("Selection Action Bar Location"));
+	m_actionBarLocationMenu->addActions(actionBarLocations->actions());
 
 	viewmenu->addSeparator();
 #ifdef SINGLE_MAIN_WINDOW
@@ -7365,6 +7460,133 @@ void MainWindow::setupBrushShortcuts()
 	connect(
 		brushPresetModel, &brushes::BrushPresetModel::shortcutActionRemoved,
 		this, &MainWindow::removeBrushShortcut);
+}
+
+void MainWindow::setupHud()
+{
+	using drawingboard::ActionBarItem;
+	HudHandler *hud = m_canvasView->hud();
+	dpApp().settings().bindActionBarLocation(
+		hud, &HudHandler::setActionBarLocation);
+
+	QAction *locationMenuAction = new QAction(tr("Bar Location"), this);
+	locationMenuAction->setMenu(m_actionBarLocationMenu);
+
+	QAction *disableAction = new QAction(
+		QIcon::fromTheme(QStringLiteral("drawpile_close")),
+		tr("Disable This Bar"), this);
+	connect(
+		disableAction, &QAction::triggered, this,
+		&MainWindow::disableActionBar);
+
+	ActionBarItem *selectionActionBar = hud->selectionActionBar();
+	selectionActionBar->setButtons({
+		ActionBarItem::Button(getAction(QStringLiteral("selectnone"))),
+		ActionBarItem::Button(
+			//: Refers to inverting the selection.
+			getAction(QStringLiteral("selectinvert")), tr("Invert")),
+		ActionBarItem::Button(
+			//: Refers to expanding or shrinking the selection.
+			getAction(QStringLiteral("selectalter")), tr("Expand/Shrink")),
+		ActionBarItem::Button(getAction(QStringLiteral("starttransform"))),
+#ifdef __EMSCRIPTEN__
+		ActionBarItem::Button(
+			getAction(QStringLiteral("downloadselection")),
+			QIcon::fromTheme(QStringLiteral("document-export"))),
+#else
+		ActionBarItem::Button(
+			//: Refers to saving the selected area as an image.
+			getAction(QStringLiteral("saveselection")),
+			QIcon::fromTheme(QStringLiteral("document-export"))),
+#endif
+	});
+	selectionActionBar->setOverflowMenuActions({
+		getAction(QStringLiteral("selectall")),
+		getAction(QStringLiteral("selectlayerbounds")),
+		getAction(QStringLiteral("selectlayercontents")),
+		nullptr,
+		getAction(QStringLiteral("cleararea")),
+		getAction(QStringLiteral("fillfgarea")),
+		getAction(QStringLiteral("recolorarea")),
+		nullptr,
+		getAction(QStringLiteral("showselectionmask")),
+		getAction(QStringLiteral("editselection")),
+		getAction(QStringLiteral("maskselection")),
+		nullptr,
+		locationMenuAction,
+		disableAction,
+	});
+
+	ActionBarItem *transformActionBar = hud->transformActionBar();
+	transformActionBar->setButtons({
+		ActionBarItem::Button(
+			getAction("finishstroke"), tr("Apply"),
+			QIcon::fromTheme(QStringLiteral("checkbox"))),
+		ActionBarItem::Button(
+			//: Refers to mirroring a transform horizontally.
+			getAction(QStringLiteral("transformmirror")), tr("Mirror")),
+		ActionBarItem::Button(
+			//: Refers to mirroring a transform vertically (flip upside-down.)
+			getAction(QStringLiteral("transformflip")), tr("Flip")),
+		ActionBarItem::Button(
+			//: Refers to rotating a transform 90 degrees counter-clockwise.
+			getAction(QStringLiteral("transformrotateccw")), tr("Rotate -90°")),
+		ActionBarItem::Button(
+			//: Refers to rotating a transform 90 degrees clockwise.
+			getAction(QStringLiteral("transformrotatecw")), tr("Rotate +90°")),
+	});
+	transformActionBar->setOverflowMenuActions({
+		getAction(QStringLiteral("cancelaction")),
+		getAction(QStringLiteral("selectnone")),
+		nullptr,
+		getAction(QStringLiteral("transformshrinktoview")),
+		getAction(QStringLiteral("stamp")),
+		nullptr,
+		locationMenuAction,
+		disableAction,
+	});
+}
+
+void MainWindow::setActionBarSetting(int actionBar)
+{
+	// The setting is an integer for the sake of ease of later extension.
+	setActionBarEnabled(actionBar > 0, false);
+}
+
+void MainWindow::disableActionBar()
+{
+	setActionBarEnabled(false, true);
+	m_canvasView->showPopupNotice(
+		tr("Selection action bar disabled.\n"
+		   "You can re-enable it via the View menu."));
+}
+
+void MainWindow::setActionBarEnabled(bool enabled, bool updateSetting)
+{
+	if(m_actionBarEnabled != enabled) {
+		m_actionBarEnabled = enabled;
+		updateSelectTransformActions();
+		QAction *showactionbar = getAction(QStringLiteral("showactionbar"));
+		QSignalBlocker blocker(showactionbar);
+		showactionbar->setChecked(enabled);
+		if(updateSetting) {
+			dpApp().settings().setActionBar(enabled ? 1 : 0);
+		}
+	}
+}
+
+void MainWindow::setActionBarLocation(int location)
+{
+	QList<QAction *> actions = m_actionBarLocationMenu->actions();
+	actions[qBound(0, location, actions.size() - 1)]->setChecked(true);
+}
+
+void MainWindow::onActionBarLocationActionTriggered(QAction *action)
+{
+	int location = m_actionBarLocationMenu->actions().indexOf(action);
+	if(location != -1) {
+		dpApp().settings().setActionBarLocation(location);
+	}
 }
 
 void MainWindow::updateInterfaceModeActions()

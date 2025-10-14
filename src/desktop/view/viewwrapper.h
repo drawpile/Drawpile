@@ -18,6 +18,8 @@ public:
 
 	QAbstractScrollArea *viewWidget() const override;
 
+	HudHandler *hud() const override;
+
 	bool isTabletEnabled() const override;
 	bool isTouchScrollEnabled() const override;
 	bool isTouchDrawEnabled() const override;

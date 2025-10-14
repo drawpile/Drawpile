@@ -140,6 +140,15 @@ QPointF tabPosF(const QTabletEvent &event)
 #endif
 }
 
+QPoint tabGlobalPos(const QTabletEvent &event)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	return event.globalPosition().toPoint();
+#else
+	return event.globalPos();
+#endif
+}
+
 int pointerType(const QTabletEvent &event)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -189,6 +198,15 @@ QPointF touchPos(const TouchPoint &event)
 	return event.position();
 #else
 	return event.pos();
+#endif
+}
+
+QPoint touchGlobalPos(const TouchPoint &event)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	return event.globalPosition().toPoint();
+#else
+	return event.screenPos().toPoint();
 #endif
 }
 

@@ -2,6 +2,7 @@
 #include "desktop/scene/canvasview.h"
 #include "desktop/main.h"
 #include "desktop/scene/canvasscene.h"
+#include "desktop/scene/hudhandler.h"
 #include "desktop/settings.h"
 #include "desktop/tabletinput.h"
 #include "desktop/utils/qtguicompat.h"
@@ -451,6 +452,9 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 	connect(
 		m_notificationBar, &NotificationBar::heightChanged, m_scene->hud(),
 		&HudHandler::setTopOffset);
+	connect(
+		m_scene->hud(), &HudHandler::currentActionBarChanged, this,
+		&CanvasView::clearHudHover);
 
 	viewRectChanged();
 	updateLockNotice();
@@ -979,14 +983,21 @@ bool CanvasView::activatePendingHudAction()
 	if(m_hudActionToActivate.isValid()) {
 		HudAction action;
 		std::swap(action, m_hudActionToActivate);
-		m_hoveringOverHud = false;
-		m_scene->hud()->removeHover();
-		resetCursor();
-		emit hudActionActivated(action);
+		if(action.shouldRemoveHoverOnTrigger()) {
+			clearHudHover();
+		}
+		emit hudActionActivated(action, m_hudActionGlobalPos);
 		return true;
 	} else {
 		return false;
 	}
+}
+
+void CanvasView::clearHudHover()
+{
+	m_hoveringOverHud = false;
+	m_scene->hud()->removeHover();
+	resetCursor();
 }
 
 void CanvasView::viewRectChanged()
@@ -1024,11 +1035,8 @@ void CanvasView::leaveEvent(QEvent *event)
 	if(m_scene) {
 		m_scene->setCursorOnCanvas(false);
 	}
-	m_showoutline = false;
-	m_hoveringOverHud = false;
-	m_scene->hud()->removeHover();
 	updateOutline();
-	resetCursor();
+	clearHudHover();
 	m_tabletFilter.reset();
 }
 
@@ -1226,9 +1234,10 @@ void CanvasView::setEraserTipActive(bool eraserTipActive)
 }
 
 void CanvasView::penPressEvent(
-	QEvent *event, long long timeMsec, const QPointF &pos, qreal pressure,
-	qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button,
-	Qt::KeyboardModifiers modifiers, int deviceType, bool eraserOverride)
+	QEvent *event, long long timeMsec, const QPointF &pos,
+	const QPoint &globalPos, qreal pressure, qreal xtilt, qreal ytilt,
+	qreal rotation, Qt::MouseButton button, Qt::KeyboardModifiers modifiers,
+	int deviceType, bool eraserOverride)
 {
 #if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 	m_eraserTipActive = eraserOverride;
@@ -1248,6 +1257,10 @@ void CanvasView::penPressEvent(
 			event->accept();
 		}
 		m_hudActionToActivate = action;
+		m_hudActionGlobalPos = globalPos;
+		if(m_hudActionToActivate.type == HudAction::Type::TriggerMenu) {
+			activatePendingHudAction();
+		}
 		return;
 	}
 
@@ -1398,9 +1411,9 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	}
 
 	penPressEvent(
-		event, QDateTime::currentMSecsSinceEpoch(), mousePos, 1.0, 0.0, 0.0,
-		0.0, button, getMouseModifiers(event), int(tools::DeviceType::Mouse),
-		false);
+		event, QDateTime::currentMSecsSinceEpoch(), mousePos,
+		compat::globalPos(*event), 1.0, 0.0, 0.0, 0.0, button,
+		getMouseModifiers(event), int(tools::DeviceType::Mouse), false);
 }
 
 void CanvasView::penMoveEvent(
@@ -1601,11 +1614,12 @@ void CanvasView::penReleaseEvent(
 }
 
 void CanvasView::touchPressEvent(
-	QEvent *event, long long timeMsec, const QPointF &pos, qreal pressure)
+	QEvent *event, long long timeMsec, const QPointF &pos,
+	const QPoint &globalPos, qreal pressure)
 {
 	penPressEvent(
-		event, timeMsec, pos, pressure, 0.0, 0.0, 0.0, Qt::LeftButton,
-		Qt::NoModifier, int(tools::DeviceType::Touch), false);
+		event, timeMsec, pos, globalPos, pressure, 0.0, 0.0, 0.0,
+		Qt::LeftButton, Qt::NoModifier, int(tools::DeviceType::Touch), false);
 }
 
 void CanvasView::touchMoveEvent(
@@ -2093,6 +2107,12 @@ void CanvasView::touchEvent(QTouchEvent *event)
 					m_scene->hud()->checkHover(mapToScene(pos.toPoint()));
 				if(action.isValid()) {
 					m_hudActionToActivate = action;
+					m_hudActionGlobalPos =
+						compat::touchGlobalPos(points.constFirst());
+					if(m_hudActionToActivate.type ==
+					   HudAction::Type::TriggerMenu) {
+						activatePendingHudAction();
+					}
 				} else {
 					m_touch->handleTouchBegin(event);
 				}
@@ -2190,9 +2210,9 @@ bool CanvasView::viewportEvent(QEvent *event)
 
 		penPressEvent(
 			event, QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
-			tabev->pressure(), tabev->xTilt(), tabev->yTilt(),
-			qDegreesToRadians(tabev->rotation()), button, modifiers,
-			int(tools::DeviceType::Tablet), eraserOverride);
+			compat::tabGlobalPos(*tabev), tabev->pressure(), tabev->xTilt(),
+			tabev->yTilt(), qDegreesToRadians(tabev->rotation()), button,
+			modifiers, int(tools::DeviceType::Tablet), eraserOverride);
 	} else if(type == QEvent::TabletMove && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);

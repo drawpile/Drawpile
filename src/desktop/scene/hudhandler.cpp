@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/scene/hudhandler.h"
+#include "desktop/main.h"
+#include "desktop/scene/actionbaritem.h"
 #include "desktop/scene/catchupitem.h"
 #include "desktop/scene/noticeitem.h"
 #include "desktop/scene/toggleitem.h"
+#include <QAction>
 #include <QCoreApplication>
 #include <QIcon>
 
+using drawingboard::ActionBarItem;
 using drawingboard::BaseItem;
 using drawingboard::CatchupItem;
 using drawingboard::NoticeItem;
@@ -31,24 +35,115 @@ static void addOrEditToggleItem(
 HudHandler::HudHandler(HudScene *scene, QObject *parent)
 	: QObject(parent)
 	, m_scene(scene)
+	, m_actionBarLocation(int(ActionBarItem::Location::BottomCenter))
 {
 	Q_ASSERT(m_scene);
 	qRegisterMetaType<HudAction>();
+
+	DrawpileApp &app = dpApp();
+	const QStyle *style = dpApp().style();
+	QFont font = app.font();
+	QAction *overflowAction = new QAction(
+		QIcon::fromTheme(QStringLiteral("drawpile_ellipsis_vertical")),
+		tr("More…"), this);
+	m_selectionActionBar = new ActionBarItem(
+		QStringLiteral("- %1 -").arg(tr("Selection")), style, font,
+		overflowAction);
+	m_transformActionBar = new ActionBarItem(
+		QStringLiteral("- %1 -").arg(tr("Transform")), style, font,
+		overflowAction);
+	m_selectionActionBar->updateVisibility(false);
+	m_transformActionBar->updateVisibility(false);
+	m_scene->hudAddItem(m_selectionActionBar);
+	m_scene->hudAddItem(m_transformActionBar);
+	connect(
+		&app, &DrawpileApp::refreshApplicationStyleRequested, this,
+		&HudHandler::refreshApplicationStyle, Qt::QueuedConnection);
+	connect(
+		&app, &DrawpileApp::refreshApplicationFontRequested, this,
+		&HudHandler::refreshApplicationFont, Qt::QueuedConnection);
+}
+
+void HudHandler::setCurrentActionBar(ActionBar actionBar)
+{
+	if(actionBar != m_currentActionBar) {
+		switch(m_currentActionBar) {
+		case ActionBar::None:
+			break;
+		case ActionBar::Selection:
+			m_selectionActionBar->updateVisibility(false);
+			m_selectionActionBar->removeHover();
+			break;
+		case ActionBar::Transform:
+			m_transformActionBar->updateVisibility(false);
+			m_transformActionBar->removeHover();
+			break;
+		}
+
+		m_currentActionBar = actionBar;
+		switch(actionBar) {
+		case ActionBar::None:
+			break;
+		case ActionBar::Selection:
+			m_selectionActionBar->updateVisibility(true);
+			break;
+		case ActionBar::Transform:
+			m_transformActionBar->updateVisibility(true);
+			break;
+		}
+
+		updateItemsPositions();
+		emit currentActionBarChanged();
+	}
+}
+
+void HudHandler::setActionBarLocation(int location)
+{
+	switch(location) {
+	case int(ActionBarItem::Location::TopLeft):
+	case int(ActionBarItem::Location::TopCenter):
+	case int(ActionBarItem::Location::TopRight):
+	case int(ActionBarItem::Location::BottomLeft):
+	case int(ActionBarItem::Location::BottomCenter):
+	case int(ActionBarItem::Location::BottomRight):
+		if(location != m_actionBarLocation) {
+			m_actionBarLocation = location;
+			updateItemsPositions();
+		}
+		break;
+	default:
+		qWarning("setActionBarLocation: unknown location %d", location);
+		break;
+	}
 }
 
 HudAction HudHandler::checkHover(const QPointF &scenePos)
 {
 	HudAction action;
+
+	switch(m_currentActionBar) {
+	case ActionBar::None:
+		break;
+	case ActionBar::Selection:
+		m_selectionActionBar->checkHover(scenePos, action);
+		break;
+	case ActionBar::Transform:
+		m_transformActionBar->checkHover(scenePos, action);
+		break;
+	}
+
 	for(ToggleItem *ti : m_toggleItems) {
 		if(ti->checkHover(scenePos, action.wasHovering)) {
 			action.type = ti->hudActionType();
 		}
 	}
+
 	return action;
 }
 
 void HudHandler::removeHover()
 {
+	removeActionBarHover();
 	for(ToggleItem *ti : m_toggleItems) {
 		ti->removeHover();
 	}
@@ -116,11 +211,12 @@ bool HudHandler::hideLockNotice()
 void HudHandler::showPopupNotice(const QString &text)
 {
 	if(!text.isEmpty()) {
+		qreal persist = (qreal(text.count('\n')) + 1.0) * POPUP_PERSIST;
 		if(m_popupNotice) {
-			m_popupNotice->setPersist(POPUP_PERSIST);
+			m_popupNotice->setPersist(persist);
 			m_popupNotice->setText(text);
 		} else {
-			m_popupNotice = new NoticeItem(text, POPUP_PERSIST);
+			m_popupNotice = new NoticeItem(text, persist);
 			m_popupNotice->setAlignment(Qt::AlignCenter);
 			m_scene->hudAddItem(m_popupNotice);
 		}
@@ -283,52 +379,113 @@ void HudHandler::updateItemsPositions()
 	if(m_streamResetNotice) {
 		updateStreamResetNoticePosition();
 	}
+
+	switch(m_currentActionBar) {
+	case ActionBar::None:
+		break;
+	case ActionBar::Selection:
+		updateSelectionActionBarPosition();
+		break;
+	case ActionBar::Transform:
+		updateTransformActionBarPosition();
+		break;
+	}
+
 	updateToggleItemsPositions();
+}
+
+QPointF HudHandler::adjustAroundActionBar(const QPointF &pos, int location)
+{
+	if(location == m_actionBarLocation) {
+		switch(m_currentActionBar) {
+		case ActionBar::None:
+			break;
+		case ActionBar::Selection:
+			return adjustByActionBarHeight(
+				pos, location, m_selectionActionBar->boundingRect().height());
+		case ActionBar::Transform:
+			return adjustByActionBarHeight(
+				pos, location, m_transformActionBar->boundingRect().height());
+		}
+	}
+	return pos;
+}
+
+QPointF HudHandler::adjustByActionBarHeight(
+	const QPointF &pos, int location, qreal height)
+{
+	qreal y = pos.y();
+	if(ActionBarItem::isLocationAtTop(ActionBarItem::Location(location))) {
+		y += height;
+	} else {
+		y -= height;
+	}
+	return QPointF(pos.x(), y);
+}
+
+void HudHandler::removeActionBarHover()
+{
+	switch(m_currentActionBar) {
+	case ActionBar::None:
+		break;
+	case ActionBar::Selection:
+		m_selectionActionBar->removeHover();
+		break;
+	case ActionBar::Transform:
+		m_transformActionBar->removeHover();
+		break;
+	}
 }
 
 void HudHandler::updateTransformNoticePosition()
 {
+	QPointF pos = m_scene->hudSceneRect().topLeft() +
+				  QPointF(NOTICE_OFFSET, NOTICE_OFFSET + m_topOffset);
 	m_transformNotice->updatePosition(
-		m_scene->hudSceneRect().topLeft() +
-		QPointF(NOTICE_OFFSET, NOTICE_OFFSET + m_topOffset));
+		adjustAroundActionBar(pos, int(ActionBarItem::Location::TopLeft)));
 }
 
 void HudHandler::updateLockNoticePosition()
 {
+	QPointF pos = m_scene->hudSceneRect().topRight() +
+				  QPointF(
+					  -m_lockNotice->boundingRect().width() - NOTICE_OFFSET,
+					  NOTICE_OFFSET + m_topOffset);
 	m_lockNotice->updatePosition(
-		m_scene->hudSceneRect().topRight() +
-		QPointF(
-			-m_lockNotice->boundingRect().width() - NOTICE_OFFSET,
-			NOTICE_OFFSET + m_topOffset));
+		adjustAroundActionBar(pos, int(ActionBarItem::Location::TopRight)));
 }
 
 void HudHandler::updateToolNoticePosition()
 {
 	QRectF toolNoticeBounds = m_toolNotice->boundingRect();
-	m_toolNotice->updatePosition(
+	QPointF pos =
 		m_scene->hudSceneRect().bottomLeft() +
-		QPointF(NOTICE_OFFSET, -toolNoticeBounds.height() - NOTICE_OFFSET));
+		QPointF(NOTICE_OFFSET, -toolNoticeBounds.height() - NOTICE_OFFSET);
+	m_toolNotice->updatePosition(
+		adjustAroundActionBar(pos, int(ActionBarItem::Location::BottomLeft)));
 }
 
 void HudHandler::updatePopupNoticePosition()
 {
 	QRectF popupNoticeBounds = m_popupNotice->boundingRect();
 	QRectF sceneRect = m_scene->hudSceneRect();
+	QPointF pos = sceneRect.topLeft() +
+				  QPointF(
+					  (sceneRect.width() - popupNoticeBounds.width()) / 2.0,
+					  NOTICE_OFFSET);
 	m_popupNotice->updatePosition(
-		sceneRect.topLeft() +
-		QPointF(
-			(sceneRect.width() - popupNoticeBounds.width()) / 2.0,
-			NOTICE_OFFSET));
+		adjustAroundActionBar(pos, int(ActionBarItem::Location::TopCenter)));
 }
 
 void HudHandler::updateCatchupPosition()
 {
 	QRectF catchupBounds = m_catchup->boundingRect();
+	QPointF pos = m_scene->hudSceneRect().bottomRight() -
+				  QPointF(
+					  catchupBounds.width() + NOTICE_OFFSET,
+					  catchupBounds.height() + NOTICE_OFFSET);
 	m_catchup->updatePosition(
-		m_scene->hudSceneRect().bottomRight() -
-		QPointF(
-			catchupBounds.width() + NOTICE_OFFSET,
-			catchupBounds.height() + NOTICE_OFFSET));
+		adjustAroundActionBar(pos, int(ActionBarItem::Location::BottomRight)));
 }
 
 void HudHandler::updateStreamResetNoticePosition()
@@ -336,11 +493,27 @@ void HudHandler::updateStreamResetNoticePosition()
 	qreal catchupOffset =
 		m_catchup ? m_catchup->boundingRect().height() + NOTICE_OFFSET : 0.0;
 	QRectF streamResetNoticeBounds = m_streamResetNotice->boundingRect();
-	m_streamResetNotice->updatePosition(
+	QPointF pos =
 		m_scene->hudSceneRect().bottomRight() -
 		QPointF(
 			streamResetNoticeBounds.width() + NOTICE_OFFSET,
-			streamResetNoticeBounds.height() + NOTICE_OFFSET + catchupOffset));
+			streamResetNoticeBounds.height() + NOTICE_OFFSET + catchupOffset);
+	m_streamResetNotice->updatePosition(
+		adjustAroundActionBar(pos, int(ActionBarItem::Location::BottomRight)));
+}
+
+void HudHandler::updateSelectionActionBarPosition()
+{
+	m_selectionActionBar->updateLocation(
+		ActionBarItem::Location(m_actionBarLocation), m_scene->hudSceneRect(),
+		m_topOffset);
+}
+
+void HudHandler::updateTransformActionBarPosition()
+{
+	m_transformActionBar->updateLocation(
+		ActionBarItem::Location(m_actionBarLocation), m_scene->hudSceneRect(),
+		m_topOffset);
 }
 
 void HudHandler::updateToggleItemsPositions()
@@ -349,6 +522,20 @@ void HudHandler::updateToggleItemsPositions()
 	for(ToggleItem *ti : m_toggleItems) {
 		ti->updateSceneBounds(sceneRect);
 	}
+}
+
+void HudHandler::refreshApplicationStyle()
+{
+	const QStyle *style = dpApp().style();
+	m_selectionActionBar->setStyle(style);
+	m_transformActionBar->setStyle(style);
+}
+
+void HudHandler::refreshApplicationFont()
+{
+	QFont font = dpApp().font();
+	m_selectionActionBar->setFont(font);
+	m_transformActionBar->setFont(font);
 }
 
 QString HudHandler::getStreamResetProgressText(int percent)

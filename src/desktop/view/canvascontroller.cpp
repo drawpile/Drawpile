@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/view/canvascontroller.h"
 #include "desktop/main.h"
+#include "desktop/scene/hudhandler.h"
 #include "desktop/settings.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/touchhandler.h"
@@ -214,6 +215,9 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 	connect(
 		m_touch, &TouchHandler::touchColorPickFinished, this,
 		&CanvasController::hideSceneColorPick, Qt::DirectConnection);
+	connect(
+		m_scene->hud(), &HudHandler::currentActionBarChanged, this,
+		&CanvasController::clearHudHover);
 
 	resetCanvasTransform();
 }
@@ -567,10 +571,8 @@ void CanvasController::handleLeave()
 	m_showOutline = false;
 	m_scene->setCursorOnCanvas(false);
 	m_hudActionToActivate.clear();
-	m_hoveringOverHud = false;
-	m_scene->hud()->removeHover();
 	updateOutline();
-	resetCursor();
+	clearHudHover();
 	m_tabletFilter.reset();
 }
 
@@ -632,9 +634,9 @@ void CanvasController::handleMousePress(QMouseEvent *event)
 	   (button != Qt::LeftButton || m_tabletEventTimer.hasExpired())) {
 		event->accept();
 		penPressEvent(
-			QDateTime::currentMSecsSinceEpoch(), posf, 1.0, 0.0, 0.0, 0.0,
-			button, getMouseModifiers(event), int(tools::DeviceType::Mouse),
-			false);
+			QDateTime::currentMSecsSinceEpoch(), posf,
+			compat::globalPos(*event), 1.0, 0.0, 0.0, 0.0, button,
+			getMouseModifiers(event), int(tools::DeviceType::Mouse), false);
 	}
 }
 
@@ -744,8 +746,9 @@ void CanvasController::handleTabletPress(QTabletEvent *event)
 
 		penPressEvent(
 			QDateTime::currentMSecsSinceEpoch(), posf,
-			qBound(0.0, pressure, 1.0), xTilt, yTilt, rotation, button,
-			modifiers, int(tools::DeviceType::Tablet), eraserOverride);
+			compat::tabGlobalPos(*event), qBound(0.0, pressure, 1.0), xTilt,
+			yTilt, rotation, button, modifiers, int(tools::DeviceType::Tablet),
+			eraserOverride);
 	}
 }
 
@@ -782,10 +785,15 @@ void CanvasController::handleTouchBegin(QTouchEvent *event)
 		const QList<compat::TouchPoint> &points = compat::touchPoints(*event);
 		int pointsCount = points.size();
 		if(pointsCount > 0) {
+			const compat::TouchPoint &firstPoint = points.constFirst();
 			HudAction action = m_scene->hud()->checkHover(
-				compat::touchPos(points.first()).toPoint());
+				compat::touchPos(firstPoint).toPoint());
 			if(action.isValid()) {
 				m_hudActionToActivate = action;
+				m_hudActionGlobalPos = compat::touchGlobalPos(firstPoint);
+				if(m_hudActionToActivate.type == HudAction::Type::TriggerMenu) {
+					activatePendingHudAction();
+				}
 			} else {
 				m_touch->handleTouchBegin(event);
 			}
@@ -1511,9 +1519,10 @@ void CanvasController::penMoveEvent(
 }
 
 void CanvasController::penPressEvent(
-	long long timeMsec, const QPointF &posf, qreal pressure, qreal xtilt,
-	qreal ytilt, qreal rotation, Qt::MouseButton button,
-	Qt::KeyboardModifiers modifiers, int deviceType, bool eraserOverride)
+	long long timeMsec, const QPointF &posf, const QPoint &globalPos,
+	qreal pressure, qreal xtilt, qreal ytilt, qreal rotation,
+	Qt::MouseButton button, Qt::KeyboardModifiers modifiers, int deviceType,
+	bool eraserOverride)
 {
 #if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 	m_eraserTipActive = eraserOverride;
@@ -1532,6 +1541,10 @@ void CanvasController::penPressEvent(
 		}
 		if(m_hoveringOverHud) {
 			m_hudActionToActivate = action;
+			m_hudActionGlobalPos = globalPos;
+			if(m_hudActionToActivate.type == HudAction::Type::TriggerMenu) {
+				activatePendingHudAction();
+			}
 			return;
 		}
 
@@ -1784,12 +1797,13 @@ void CanvasController::penReleaseEvent(
 }
 
 void CanvasController::touchPressEvent(
-	QEvent *event, long long timeMsec, const QPointF &posf, qreal pressure)
+	QEvent *event, long long timeMsec, const QPointF &posf,
+	const QPoint &globalPos, qreal pressure)
 {
 	Q_UNUSED(event);
 	penPressEvent(
-		timeMsec, posf, pressure, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier,
-		int(tools::DeviceType::Touch), false);
+		timeMsec, posf, globalPos, pressure, 0.0, 0.0, 0.0, Qt::LeftButton,
+		Qt::NoModifier, int(tools::DeviceType::Touch), false);
 }
 
 void CanvasController::touchMoveEvent(
@@ -2477,14 +2491,21 @@ bool CanvasController::activatePendingHudAction()
 	if(m_hudActionToActivate.isValid()) {
 		HudAction action;
 		std::swap(action, m_hudActionToActivate);
-		m_hoveringOverHud = false;
-		m_scene->hud()->removeHover();
-		resetCursor();
-		emit hudActionActivated(action);
+		if(action.shouldRemoveHoverOnTrigger()) {
+			clearHudHover();
+		}
+		emit hudActionActivated(action, m_hudActionGlobalPos);
 		return true;
 	} else {
 		return false;
 	}
+}
+
+void CanvasController::clearHudHover()
+{
+	m_hoveringOverHud = false;
+	m_scene->hud()->removeHover();
+	resetCursor();
 }
 
 void CanvasController::emitTransformChanged()

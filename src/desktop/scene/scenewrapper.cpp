@@ -46,6 +46,11 @@ QAbstractScrollArea *SceneWrapper::viewWidget() const
 	return m_view;
 }
 
+HudHandler *SceneWrapper::hud() const
+{
+	return m_scene->hud();
+}
+
 bool SceneWrapper::isTabletEnabled() const
 {
 	return m_view->isTabletEnabled();

@@ -41,7 +41,8 @@ public:
 
 signals:
 	void touchPressed(
-		QEvent *event, long long timeMsec, const QPointF &posf, qreal pressure);
+		QEvent *event, long long timeMsec, const QPointF &posf,
+		const QPoint &globalPos, qreal pressure);
 	void touchMoved(long long timeMsec, const QPointF &posf, qreal pressure);
 	void touchReleased(long long timeMsec, const QPointF &posf);
 	void touchScrolledBy(qreal dx, qreal dy);
@@ -153,6 +154,7 @@ private:
 	TouchMode m_touchMode = TouchMode::Unknown;
 	QVector<TouchDrawPoint> m_touchDrawBuffer;
 	TouchState m_touchState;
+	QPoint m_touchGlobalPos;
 	qreal m_touchStartZoom = 0.0;
 	qreal m_touchStartRotate = 0.0;
 	QPointF m_gestureStartPos;

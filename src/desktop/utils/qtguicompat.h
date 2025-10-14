@@ -82,6 +82,7 @@ QPointF mousePosition(const QMouseEvent &event);
 QString styleName(const QStyle &style);
 
 QPointF tabPosF(const QTabletEvent &event);
+QPoint tabGlobalPos(const QTabletEvent &event);
 int pointerType(const QTabletEvent &event);
 bool isEraser(const QTabletEvent &event);
 
@@ -90,6 +91,7 @@ const QList<TouchPoint> &touchPoints(const QTouchEvent &event);
 int touchId(const TouchPoint &event);
 QPointF touchStartPos(const TouchPoint &event);
 QPointF touchPos(const TouchPoint &event);
+QPoint touchGlobalPos(const TouchPoint &event);
 
 QPoint dragMovePos(const QDragMoveEvent &event);
 QPoint dropPos(const QDropEvent &event);

@@ -101,6 +101,8 @@
 	 COLOR_SWATCH_NO_SLIDERS | COLOR_SWATCH_NO_SPINNER)
 
 SETTING(_brushCursorDummy         , _BrushCursorDummy         , "_brushcursordummy"                     , widgets::CanvasView::BrushCursor::Dot)
+SETTING(actionBar                 , ActionBar                 , "settings/actionbar"                    , 1)
+SETTING(actionBarLocation         , ActionBarLocation         , "settings/actionbarlocation"            , 3)
 SETTING_GETSET_V(
 	V1, alphaLockCursor           , AlphaLockCursor           , "settings/alphalockcursor"              , int(view::Cursor::SameAsBrush),
 	&viewCursor::get, &viewCursor::set)

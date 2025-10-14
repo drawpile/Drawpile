@@ -123,6 +123,8 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 	if(!isTouchPad && isTouchDrawEnabled() && m_touchState.isSingleTouch()) {
 		QPointF posf = m_touchState.currentCenter();
 		qreal pressure = touchPressure(event);
+		m_touchGlobalPos =
+			compat::touchGlobalPos(compat::touchPoints(*event).constFirst());
 		DP_EVENT_LOG(
 			"touch_draw_begin x=%f y=%f pressure=%f touching=%d type=%d "
 			"device=%s points=%s timestamp=%llu",
@@ -146,7 +148,8 @@ void TouchHandler::handleTouchBegin(QTouchEvent *event)
 			// can just start drawing without awaiting what happens next.
 			m_touchMode = TouchMode::Drawing;
 			emit touchPressed(
-				event, QDateTime::currentMSecsSinceEpoch(), posf, pressure);
+				event, QDateTime::currentMSecsSinceEpoch(), posf,
+				m_touchGlobalPos, pressure);
 		}
 	} else {
 		DP_EVENT_LOG(
@@ -219,7 +222,8 @@ void TouchHandler::handleTouchUpdate(
 				m_tapAndHoldTimer->stop();
 				m_touchMode = TouchMode::Drawing;
 				emit touchPressed(
-					event, QDateTime::currentMSecsSinceEpoch(), posf, pressure);
+					event, QDateTime::currentMSecsSinceEpoch(), posf,
+					m_touchGlobalPos, pressure);
 			}
 		} else {
 			// This still might be the beginning of a multitouch operation.
@@ -830,7 +834,9 @@ void TouchHandler::flushTouchDrawBuffer()
 	int bufferCount = m_touchDrawBuffer.size();
 	if(bufferCount != 0) {
 		const TouchDrawPoint &press = m_touchDrawBuffer.first();
-		emit touchPressed(nullptr, press.timeMsec, press.posf, press.pressure);
+		emit touchPressed(
+			nullptr, press.timeMsec, press.posf, m_touchGlobalPos,
+			press.pressure);
 		for(int i = 0; i < bufferCount; ++i) {
 			const TouchDrawPoint &move = m_touchDrawBuffer[i];
 			emit touchMoved(move.timeMsec, move.posf, move.pressure);

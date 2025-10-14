@@ -6,6 +6,7 @@
 #include <QString>
 
 class Document;
+class HudHandler;
 class MainWindow;
 class QAction;
 class QAbstractScrollArea;
@@ -80,6 +81,8 @@ public:
 	virtual ~CanvasWrapper();
 
 	virtual QAbstractScrollArea *viewWidget() const = 0;
+
+	virtual HudHandler *hud() const = 0;
 
 	virtual bool isTabletEnabled() const = 0;
 	virtual bool isTouchScrollEnabled() const = 0;

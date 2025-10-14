@@ -201,7 +201,8 @@ public slots:
 
 	void dropImage(const QImage &image);
 	void dropUrl(const QUrl &url);
-	void handleHudAction(const HudAction &action);
+	void handleHudAction(const HudAction &action, const QPoint &globalPos);
+	void handleToggleAction(const HudAction &action);
 	void handleTouchTapAction(int action);
 
 	void savePreResetImageAs();
@@ -416,6 +417,12 @@ private:
 	void resetDefaultToolbars();
 	void setupActions();
 	void setupBrushShortcuts();
+	void setupHud();
+	void setActionBarSetting(int actionBar);
+	void disableActionBar();
+	void setActionBarEnabled(bool enabled, bool updateSetting);
+	void setActionBarLocation(int location);
+	void onActionBarLocationActionTriggered(QAction *action);
 	void updateInterfaceModeActions();
 	void reenableUpdates();
 	void keepCanvasPosition(const std::function<void()> &block);
@@ -519,6 +526,7 @@ private:
 	QMenu *m_recentMenu;
 #endif
 	QAction *m_lastLayerViewMode;
+	QMenu *m_actionBarLocationMenu = nullptr;
 
 	QActionGroup
 		*m_currentdoctools; // general tools that require no special permissions
@@ -556,6 +564,7 @@ private:
 	bool m_resizeReactionPending = false;
 	bool m_lockWidgetUpdatePending = false;
 	bool m_reconnectAfterSave = false;
+	bool m_actionBarEnabled = true;
 
 	Document *m_doc;
 	MainActions *m_ma;

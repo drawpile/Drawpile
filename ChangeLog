@@ -60,6 +60,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Prefer connecting via WebSockets, fall back to TCP if it fails or takes too long. Connections to localhost or IP addresses continue to use TCP by default. Thanks Bluestrings for suggesting.
  * Feature: Show connection socket type in the net status field in the bottom-right corner.
  * Fix: Make deselect work on identity transforms. Previously it would cancel the transform, but not actually deselect.
+ * Feature: Selection and transform action bar. Shows up when a selection or transform is active to give quick access to common operations, such as deselecting or applying the transform. Thanks CosmosX007 and Geese for suggesting.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

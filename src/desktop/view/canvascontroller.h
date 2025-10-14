@@ -195,7 +195,7 @@ signals:
 	void coordinatesChanged(const QPointF &coordinates);
 	void quickAdjust(int type, qreal value, bool wheel);
 	void cursorChanged(const QCursor &cursor);
-	void hudActionActivated(const HudAction &action);
+	void hudActionActivated(const HudAction &action, const QPoint &globalPos);
 	void touchTapActionActivated(int action);
 	void saveInProgressChanged(bool saveInProgress);
 
@@ -231,16 +231,18 @@ private:
 		qreal ytilt, qreal rotation, Qt::KeyboardModifiers modifiers);
 
 	void penPressEvent(
-		long long timeMsec, const QPointF &posf, qreal pressure, qreal xtilt,
-		qreal ytilt, qreal rotation, Qt::MouseButton button,
-		Qt::KeyboardModifiers modifiers, int deviceType, bool eraserOverride);
+		long long timeMsec, const QPointF &posf, const QPoint &globalPos,
+		qreal pressure, qreal xtilt, qreal ytilt, qreal rotation,
+		Qt::MouseButton button, Qt::KeyboardModifiers modifiers, int deviceType,
+		bool eraserOverride);
 
 	void penReleaseEvent(
 		long long timeMsec, const QPointF &posf, Qt::MouseButton button,
 		Qt::KeyboardModifiers modifiers);
 
 	void touchPressEvent(
-		QEvent *event, long long timeMsec, const QPointF &posf, qreal pressure);
+		QEvent *event, long long timeMsec, const QPointF &posf,
+		const QPoint &globalPos, qreal pressure);
 	void
 	touchMoveEvent(long long timeMsec, const QPointF &posf, qreal pressure);
 	void touchReleaseEvent(long long timeMsec, const QPointF &posf);
@@ -319,6 +321,7 @@ private:
 	void rotateByDiscreteSteps(int steps);
 
 	bool activatePendingHudAction();
+	void clearHudHover();
 
 	void emitTransformChanged();
 	void emitViewRectChanged();
@@ -465,6 +468,7 @@ private:
 	bool m_showTransformNotices = false;
 	int m_toolState;
 	HudAction m_hudActionToActivate;
+	QPoint m_hudActionGlobalPos;
 	bool m_locked = false;
 	QString m_lockDescription;
 	bool m_saveInProgress = false;

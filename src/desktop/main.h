@@ -110,6 +110,8 @@ signals:
 	void focusCanvas();
 	void shortcutsChanged();
 	void tabletDriverChanged();
+	void refreshApplicationStyleRequested();
+	void refreshApplicationFontRequested();
 
 protected:
 	bool event(QEvent *e) override;

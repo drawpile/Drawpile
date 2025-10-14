@@ -250,6 +250,8 @@ target_sources(drawpile PRIVATE
 	icons/censored.svg
 	icons/drawpile.png
 	icons/drawpile.svg
+	scene/actionbaritem.cpp
+	scene/actionbaritem.h
 	scene/anchorlineitem.cpp
 	scene/anchorlineitem.h
 	scene/annotationitem.cpp

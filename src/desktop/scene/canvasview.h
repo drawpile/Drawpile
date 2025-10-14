@@ -168,7 +168,7 @@ signals:
 	void savePreResetStateRequested();
 	void savePreResetStateDismissed();
 
-	void hudActionActivated(const HudAction &action);
+	void hudActionActivated(const HudAction &action, const QPoint &globalPos);
 	void touchTapActionActivated(int action);
 
 public slots:
@@ -292,9 +292,10 @@ private:
 
 	// unified mouse/stylus event handlers
 	void penPressEvent(
-		QEvent *event, long long timeMsec, const QPointF &pos, qreal pressure,
-		qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button,
-		Qt::KeyboardModifiers modifiers, int deviceType, bool eraserOverride);
+		QEvent *event, long long timeMsec, const QPointF &pos,
+		const QPoint &globalPos, qreal pressure, qreal xtilt, qreal ytilt,
+		qreal rotation, Qt::MouseButton button, Qt::KeyboardModifiers modifiers,
+		int deviceType, bool eraserOverride);
 	void penMoveEvent(
 		long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation, Qt::MouseButtons buttons,
@@ -304,7 +305,8 @@ private:
 		Qt::KeyboardModifiers modifiers);
 
 	void touchPressEvent(
-		QEvent *event, long long timeMsec, const QPointF &pos, qreal pressure);
+		QEvent *event, long long timeMsec, const QPointF &pos,
+		const QPoint &globalPos, qreal pressure);
 	void touchMoveEvent(long long timeMsec, const QPointF &pos, qreal pressure);
 	void touchReleaseEvent(long long timeMsec, const QPointF &pos);
 	void touchZoomRotate(qreal zoom, qreal rotation);
@@ -366,6 +368,7 @@ private:
 	void rotateByDiscreteSteps(int steps);
 
 	bool activatePendingHudAction();
+	void clearHudHover();
 
 	void viewRectChanged();
 
@@ -500,6 +503,7 @@ private:
 	qreal m_brushOutlineWidth;
 	int m_brushBlendMode;
 	HudAction m_hudActionToActivate;
+	QPoint m_hudActionGlobalPos;
 
 	bool m_pickingColor = false;
 	bool m_scrollBarsAdjusting;
