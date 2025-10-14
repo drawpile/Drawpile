@@ -50,7 +50,7 @@ CanvasView::CanvasView(
 		&CanvasView::dismissNotificationBar);
 	connect(
 		m_notificationBar, &widgets::NotificationBar::heightChanged,
-		controller->scene(), &CanvasScene::setNotificationBarHeight);
+		controller->scene()->hud(), &HudHandler::setTopOffset);
 
 	desktop::settings::Settings &settings = dpApp().settings();
 	settings.bindCanvasScrollBars(this, &CanvasView::setEnableScrollBars);

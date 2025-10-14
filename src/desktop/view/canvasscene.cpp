@@ -4,15 +4,12 @@ extern "C" {
 }
 #include "desktop/scene/anchorlineitem.h"
 #include "desktop/scene/annotationitem.h"
-#include "desktop/scene/catchupitem.h"
 #include "desktop/scene/colorpickitem.h"
 #include "desktop/scene/lasertrailitem.h"
 #include "desktop/scene/maskpreviewitem.h"
-#include "desktop/scene/noticeitem.h"
 #include "desktop/scene/outlineitem.h"
 #include "desktop/scene/pathpreviewitem.h"
 #include "desktop/scene/selectionitem.h"
-#include "desktop/scene/toggleitem.h"
 #include "desktop/scene/transformitem.h"
 #include "desktop/scene/usermarkeritem.h"
 #include "desktop/utils/widgetutils.h"
@@ -36,6 +33,7 @@ namespace view {
 
 CanvasScene::CanvasScene(bool outline, QObject *parent)
 	: QGraphicsScene(parent)
+	, m_hud(new HudHandler(this, this))
 	, m_colorPickVisibility(ColorPickItem::defaultVisibility())
 {
 	m_canvasGroup = new QGraphicsItemGroup;
@@ -52,8 +50,8 @@ CanvasScene::CanvasScene(bool outline, QObject *parent)
 #endif
 
 	connect(
-		this, &CanvasScene::sceneRectChanged, this,
-		&CanvasScene::onSceneRectChanged, Qt::DirectConnection);
+		this, &CanvasScene::sceneRectChanged, m_hud,
+		&HudHandler::updateItemsPositions, Qt::DirectConnection);
 
 	QTimer *animationTimer = new QTimer(this);
 	animationTimer->setTimerType(Qt::CoarseTimer);
@@ -247,42 +245,6 @@ void CanvasScene::setShowLaserTrails(bool showLaserTrails)
 				}
 			}
 		}
-	}
-}
-
-void CanvasScene::setShowToggleItems(bool showToggleItems, bool leftyMode)
-{
-	bool haveToggleItems = !m_toggleItems.isEmpty();
-	if(showToggleItems) {
-		if(!haveToggleItems) {
-			m_toggleItems = {
-				new ToggleItem(
-					ToggleItem::Action::Left, Qt::AlignLeft, 1.0 / 3.0),
-				new ToggleItem(
-					ToggleItem::Action::Top, Qt::AlignLeft, 2.0 / 3.0),
-				new ToggleItem(
-					ToggleItem::Action::Right, Qt::AlignRight, 1.0 / 3.0),
-				new ToggleItem(
-					ToggleItem::Action::Bottom, Qt::AlignRight, 2.0 / 3.0),
-			};
-			for(ToggleItem *ti : m_toggleItems) {
-				addSceneItem(ti);
-			}
-			setTogglePositions();
-		}
-		QIcon brushIcon = QIcon::fromTheme("draw-brush");
-		QIcon keyFrameIcon = QIcon::fromTheme("keyframe");
-		QIcon layerIcon = QIcon::fromTheme("layer-visible-on");
-		QIcon chatIcon = QIcon::fromTheme("edit-comment");
-		m_toggleItems[0]->setIcon(leftyMode ? layerIcon : brushIcon);
-		m_toggleItems[1]->setIcon(leftyMode ? chatIcon : keyFrameIcon);
-		m_toggleItems[2]->setIcon(leftyMode ? brushIcon : layerIcon);
-		m_toggleItems[3]->setIcon(leftyMode ? keyFrameIcon : chatIcon);
-	} else if(!showToggleItems && haveToggleItems) {
-		for(ToggleItem *ti : m_toggleItems) {
-			removeItem(ti);
-		}
-		m_toggleItems.clear();
 	}
 }
 
@@ -497,166 +459,19 @@ void CanvasScene::setTransformToolState(int mode, int handle, bool dragging)
 	}
 }
 
-void CanvasScene::setNotificationBarHeight(int height)
+QRectF CanvasScene::hudSceneRect() const
 {
-	qreal topOffset = height;
-	if(m_topOffset != topOffset) {
-		m_topOffset = topOffset;
-		if(m_transformNotice) {
-			setTransformNoticePosition();
-		}
-		if(m_lockNotice) {
-			setLockNoticePosition();
-		}
-		if(m_toolNotice) {
-			setToolNoticePosition();
-		}
-		if(m_popupNotice) {
-			setPopupNoticePosition();
-		}
-	}
+	return sceneRect();
 }
 
-bool CanvasScene::showTransformNotice(const QString &text)
+void CanvasScene::hudAddItem(BaseItem *item)
 {
-	if(m_transformNotice) {
-		bool opacityChanged = m_transformNotice->setPersist(NOTICE_PERSIST);
-		if(!m_transformNotice->setText(text)) {
-			return opacityChanged;
-		}
-	} else {
-		m_transformNotice = new NoticeItem(text, NOTICE_PERSIST);
-		addSceneItem(m_transformNotice);
-	}
-	setTransformNoticePosition();
-	return true;
+	addSceneItem(item);
 }
 
-bool CanvasScene::showLockNotice(const QString &text)
+void CanvasScene::hudRemoveItem(BaseItem *item)
 {
-	if(m_lockNotice) {
-		if(!m_lockNotice->setText(text)) {
-			return false;
-		}
-	} else {
-		m_lockNotice = new NoticeItem(text);
-		addSceneItem(m_lockNotice);
-	}
-	setLockNoticePosition();
-	return true;
-}
-
-bool CanvasScene::hideLockNotice()
-{
-	if(m_lockNotice) {
-		delete m_lockNotice;
-		m_lockNotice = nullptr;
-		return true;
-	} else {
-		return false;
-	}
-}
-
-void CanvasScene::showPopupNotice(const QString &text)
-{
-	if(!text.isEmpty()) {
-		if(m_popupNotice) {
-			m_popupNotice->setPersist(POPUP_PERSIST);
-			m_popupNotice->setText(text);
-		} else {
-			m_popupNotice = new NoticeItem(text, POPUP_PERSIST);
-			m_popupNotice->setAlignment(Qt::AlignCenter);
-			addSceneItem(m_popupNotice);
-		}
-		setPopupNoticePosition();
-	}
-}
-
-void CanvasScene::setToolNotice(const QString &text)
-{
-	if(text.isEmpty()) {
-		if(m_toolNotice) {
-			delete m_toolNotice;
-			m_toolNotice = nullptr;
-		}
-	} else {
-		if(m_toolNotice) {
-			if(m_toolNotice->setText(text)) {
-				setToolNoticePosition();
-			}
-		} else {
-			m_toolNotice = new NoticeItem(text);
-			m_toolNotice->setZValue(BaseItem::Z_TOOL_NOTICE);
-			addSceneItem(m_toolNotice);
-			setToolNoticePosition();
-		}
-	}
-}
-
-bool CanvasScene::hasCatchup() const
-{
-	return m_catchup != nullptr;
-}
-
-void CanvasScene::setCatchupProgress(int percent)
-{
-	if(!m_catchup) {
-		m_catchup = new CatchupItem(tr("Restoring canvas…"));
-		addSceneItem(m_catchup);
-	}
-	m_catchup->setCatchupProgress(percent);
-	setCatchupPosition();
-}
-
-void CanvasScene::setStreamResetProgress(int percent)
-{
-	if(percent > 100) {
-		if(m_streamResetNotice) {
-			m_streamResetNotice->setText(getStreamResetProgressText(percent));
-			if(m_streamResetNotice->persist() < 0.0) {
-				m_streamResetNotice->setPersist(NOTICE_PERSIST);
-			}
-		}
-	} else {
-		if(m_streamResetNotice) {
-			m_streamResetNotice->setText(getStreamResetProgressText(percent));
-			m_streamResetNotice->setPersist(-1.0);
-		} else {
-			m_streamResetNotice =
-				new NoticeItem(getStreamResetProgressText(percent));
-			addSceneItem(m_streamResetNotice);
-		}
-		setStreamResetNoticePosition();
-	}
-}
-
-QString CanvasScene::getStreamResetProgressText(int percent)
-{
-	return percent < 0
-			   ? tr("Compressing canvas…")
-			   : tr("Uploading canvas %1%").arg(qBound(0, percent, 100));
-}
-
-int CanvasScene::checkHover(const QPointF &scenePos, bool *outWasHovering)
-{
-	ToggleItem::Action action = ToggleItem::Action::None;
-	bool wasHovering = false;
-	for(ToggleItem *ti : m_toggleItems) {
-		if(ti->checkHover(scenePos, wasHovering)) {
-			action = ti->action();
-		}
-	}
-	if(outWasHovering) {
-		*outWasHovering = wasHovering;
-	}
-	return int(action);
-}
-
-void CanvasScene::removeHover()
-{
-	for(ToggleItem *ti : m_toggleItems) {
-		ti->removeHover();
-	}
+	removeSceneItem(item);
 }
 
 void CanvasScene::addSceneItem(BaseItem *item)
@@ -665,27 +480,10 @@ void CanvasScene::addSceneItem(BaseItem *item)
 	addItem(item);
 }
 
-void CanvasScene::onSceneRectChanged()
+void CanvasScene::removeSceneItem(BaseItem *item)
 {
-	if(m_transformNotice) {
-		setTransformNoticePosition();
-	}
-	if(m_lockNotice) {
-		setLockNoticePosition();
-	}
-	if(m_toolNotice) {
-		setToolNoticePosition();
-	}
-	if(m_popupNotice) {
-		setPopupNoticePosition();
-	}
-	if(m_catchup) {
-		setCatchupPosition();
-	}
-	if(m_streamResetNotice) {
-		setStreamResetNoticePosition();
-	}
-	setTogglePositions();
+	removeItem(item);
+	item->setUpdateSceneOnRefresh(false);
 }
 
 void CanvasScene::onUserJoined(int id)
@@ -883,68 +681,6 @@ void CanvasScene::onPreviewAnnotation(int annotationId, const QRect &shape)
 	}
 }
 
-void CanvasScene::setTransformNoticePosition()
-{
-	m_transformNotice->updatePosition(
-		sceneRect().topLeft() +
-		QPointF(NOTICE_OFFSET, NOTICE_OFFSET + m_topOffset));
-}
-
-void CanvasScene::setLockNoticePosition()
-{
-	m_lockNotice->updatePosition(
-		sceneRect().topRight() +
-		QPointF(
-			-m_lockNotice->boundingRect().width() - NOTICE_OFFSET,
-			NOTICE_OFFSET + m_topOffset));
-}
-
-void CanvasScene::setToolNoticePosition()
-{
-	QRectF toolNoticeBounds = m_toolNotice->boundingRect();
-	m_toolNotice->updatePosition(
-		sceneRect().bottomLeft() +
-		QPointF(NOTICE_OFFSET, -toolNoticeBounds.height() - NOTICE_OFFSET));
-}
-
-void CanvasScene::setPopupNoticePosition()
-{
-	QRectF popupNoticeBounds = m_popupNotice->boundingRect();
-	QRectF sr = sceneRect();
-	m_popupNotice->updatePosition(
-		sr.topLeft() +
-		QPointF((sr.width() - popupNoticeBounds.width()) / 2.0, NOTICE_OFFSET));
-}
-
-void CanvasScene::setCatchupPosition()
-{
-	QRectF catchupBounds = m_catchup->boundingRect();
-	m_catchup->updatePosition(
-		sceneRect().bottomRight() -
-		QPointF(
-			catchupBounds.width() + NOTICE_OFFSET,
-			catchupBounds.height() + NOTICE_OFFSET));
-}
-
-void CanvasScene::setStreamResetNoticePosition()
-{
-	qreal catchupOffset =
-		m_catchup ? m_catchup->boundingRect().height() + NOTICE_OFFSET : 0.0;
-	QRectF streamResetNoticeBounds = m_streamResetNotice->boundingRect();
-	m_streamResetNotice->updatePosition(
-		sceneRect().bottomRight() -
-		QPointF(
-			streamResetNoticeBounds.width() + NOTICE_OFFSET,
-			streamResetNoticeBounds.height() + NOTICE_OFFSET + catchupOffset));
-}
-
-void CanvasScene::setTogglePositions()
-{
-	for(ToggleItem *ti : m_toggleItems) {
-		ti->updateSceneBounds(sceneRect());
-	}
-}
-
 void CanvasScene::advanceAnimations()
 {
 	qreal dt = qreal(m_animationElapsedTimer.elapsed()) / 1000.0;
@@ -969,25 +705,7 @@ void CanvasScene::advanceAnimations()
 		m_selection->animationStep(dt);
 	}
 
-	if(m_transformNotice && !m_transformNotice->animationStep(dt)) {
-		delete m_transformNotice;
-		m_transformNotice = nullptr;
-	}
-
-	if(m_popupNotice && !m_popupNotice->animationStep(dt)) {
-		delete m_popupNotice;
-		m_popupNotice = nullptr;
-	}
-
-	if(m_catchup && !m_catchup->animationStep(dt)) {
-		delete m_catchup;
-		m_catchup = nullptr;
-	}
-
-	if(m_streamResetNotice && !m_streamResetNotice->animationStep(dt)) {
-		delete m_streamResetNotice;
-		m_streamResetNotice = nullptr;
-	}
+	m_hud->advanceAnimations(dt);
 
 	m_animationElapsedTimer.restart();
 }

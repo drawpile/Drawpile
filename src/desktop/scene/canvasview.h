@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_SCENE_CANVASVIEW
 #define DESKTOP_SCENE_CANVASVIEW
+#include "desktop/scene/hudaction.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/tabletfilter.h"
 #include "desktop/view/lock.h"
@@ -167,7 +168,7 @@ signals:
 	void savePreResetStateRequested();
 	void savePreResetStateDismissed();
 
-	void toggleActionActivated(int action);
+	void hudActionActivated(const HudAction &action);
 	void touchTapActionActivated(int action);
 
 public slots:
@@ -364,7 +365,7 @@ private:
 	void setRotationSnap(qreal degrees);
 	void rotateByDiscreteSteps(int steps);
 
-	bool activatePendingToggleAction();
+	bool activatePendingHudAction();
 
 	void viewRectChanged();
 
@@ -498,7 +499,7 @@ private:
 	int m_alphaLockCursorStyle;
 	qreal m_brushOutlineWidth;
 	int m_brushBlendMode;
-	int m_hudActionToActivate;
+	HudAction m_hudActionToActivate;
 
 	bool m_pickingColor = false;
 	bool m_scrollBarsAdjusting;

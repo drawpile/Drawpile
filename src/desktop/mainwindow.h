@@ -5,6 +5,7 @@ extern "C" {
 #include <dpengine/load_enums.h>
 }
 #include "desktop/dialogs/flipbook.h"
+#include "desktop/scene/hudaction.h"
 #include "desktop/utils/hostparams.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/drawdance/canvasstate.h"
@@ -200,7 +201,7 @@ public slots:
 
 	void dropImage(const QImage &image);
 	void dropUrl(const QUrl &url);
-	void handleToggleAction(int action);
+	void handleHudAction(const HudAction &action);
 	void handleTouchTapAction(int action);
 
 	void savePreResetImageAs();

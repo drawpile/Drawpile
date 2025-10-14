@@ -40,7 +40,6 @@
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
 #include "desktop/notifications.h"
-#include "desktop/scene/toggleitem.h"
 #include "desktop/settings.h"
 #include "desktop/tabletinput.h"
 #include "desktop/toolwidgets/annotationsettings.h"
@@ -4162,7 +4161,6 @@ QAction *MainWindow::finishArrangingDocks()
 	}
 	return arrangeDocks;
 }
-// clang-format off
 
 void MainWindow::updateSideTabDocks()
 {
@@ -4173,10 +4171,9 @@ void MainWindow::updateSideTabDocks()
 	}
 }
 
-void MainWindow::handleToggleAction(int action)
+void MainWindow::handleHudAction(const HudAction &action)
 {
-	using Action = drawingboard::ToggleItem::Action;
-	utils::ScopedUpdateDisabler disabler{this};
+	utils::ScopedUpdateDisabler disabler(this);
 	QScopedValueRollback<bool> rollback(m_updatingInterfaceMode, true);
 	keepCanvasPosition([this, action] {
 		if(!m_dockToggles->isEnabled()) {
@@ -4185,28 +4182,27 @@ void MainWindow::handleToggleAction(int action)
 
 		m_viewStatusBar->hide();
 
-		int actionLeft = int(m_leftyMode ? Action::Right : Action::Left);
-		int actionRight = int(m_leftyMode ? Action::Left : Action::Right);
-		QPair<QWidget *, int> dockActions[] = {
-			{m_dockToolSettings, actionLeft},
-			{m_dockBrushPalette, actionLeft},
-			{m_dockTimeline, int(Action::Top)},
-			{m_dockOnionSkins, int(Action::Top)},
-			{m_dockNavigator, int(Action::None)},
-			{m_dockColorSpinner, actionRight},
-			{m_dockColorSliders, actionRight},
-			{m_dockColorPalette, actionRight},
-			{m_dockColorCircle, actionRight},
-			{m_dockReference, actionRight},
-			{m_dockLayers, actionRight},
-			{m_chatbox, int(Action::Bottom)},
+		QPair<QWidget *, HudAction::Type> dockActions[] = {
+			{m_dockToolSettings, HudAction::Type::ToggleBrush},
+			{m_dockBrushPalette, HudAction::Type::ToggleBrush},
+			{m_dockTimeline, HudAction::Type::ToggleTimeline},
+			{m_dockOnionSkins, HudAction::Type::ToggleTimeline},
+			{m_dockNavigator, HudAction::Type::None},
+			{m_dockColorSpinner, HudAction::Type::ToggleLayer},
+			{m_dockColorSliders, HudAction::Type::ToggleLayer},
+			{m_dockColorPalette, HudAction::Type::ToggleLayer},
+			{m_dockColorCircle, HudAction::Type::ToggleLayer},
+			{m_dockReference, HudAction::Type::ToggleLayer},
+			{m_dockLayers, HudAction::Type::ToggleLayer},
+			{m_chatbox, HudAction::Type::ToggleChat},
 		};
 		QVector<QWidget *> docksToShow;
 
-		for(const QPair<QWidget *, int> &p : dockActions) {
+		HudAction::Type type = action.type;
+		for(const QPair<QWidget *, HudAction::Type> &p : dockActions) {
 			QWidget *dock = p.first;
 			bool isActivated =
-				action != int(Action::None) && action == p.second;
+				type != HudAction::Type::None && type == p.second;
 			bool isVisible = dock->isVisible();
 			dock->hide();
 			bool visible = isActivated ? !isVisible : false;
@@ -4242,7 +4238,6 @@ void MainWindow::handleToggleAction(int action)
 	});
 }
 
-// clang-format on
 void MainWindow::handleTouchTapAction(int action)
 {
 	switch(action) {
@@ -6007,7 +6002,9 @@ void MainWindow::setupActions()
 
 	connect(toggleChat, &QAction::triggered, this, [this](bool show) {
 		if(m_smallScreenMode) {
-			handleToggleAction(int(drawingboard::ToggleItem::Action::Bottom));
+			HudAction action;
+			action.type = HudAction::Type::ToggleChat;
+			handleHudAction(action);
 		} else {
 			if(show) {
 				QByteArray state = dpApp().settings().lastWindowViewState();

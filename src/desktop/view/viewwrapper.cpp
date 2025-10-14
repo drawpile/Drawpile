@@ -5,6 +5,7 @@
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
 #include "desktop/mainwindow.h"
+#include "desktop/scene/hudhandler.h"
 #include "desktop/settings.h"
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/brushsettings.h"
@@ -142,19 +143,20 @@ void ViewWrapper::setPointerTracking(bool pointerTracking)
 
 void ViewWrapper::setShowToggleItems(bool showToggleItems, bool leftyMode)
 {
-	m_scene->setShowToggleItems(showToggleItems, leftyMode);
+	m_scene->hud()->setShowToggleItems(showToggleItems, leftyMode);
 }
 
 void ViewWrapper::setCatchupProgress(int percent, bool force)
 {
-	if(force || m_scene->hasCatchup()) {
-		m_scene->setCatchupProgress(percent);
+	HudHandler *hud = m_scene->hud();
+	if(force || hud->hasCatchup()) {
+		hud->setCatchupProgress(percent);
 	}
 }
 
 void ViewWrapper::setStreamResetProgress(int percent)
 {
-	m_scene->setStreamResetProgress(percent);
+	m_scene->hud()->setStreamResetProgress(percent);
 }
 
 void ViewWrapper::setSaveInProgress(bool saveInProgress)
@@ -185,7 +187,7 @@ void ViewWrapper::hideResetNotice()
 
 void ViewWrapper::showPopupNotice(const QString &message)
 {
-	m_scene->showPopupNotice(message);
+	m_scene->hud()->showPopupNotice(message);
 }
 
 void ViewWrapper::disposeScene()
@@ -328,8 +330,8 @@ void ViewWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::pathPreviewRequested, m_scene,
 		&CanvasScene::setPathPreview);
 	connect(
-		toolCtrl, &tools::ToolController::toolNoticeRequested, m_scene,
-		&CanvasScene::setToolNotice, Qt::QueuedConnection);
+		toolCtrl, &tools::ToolController::toolNoticeRequested, m_scene->hud(),
+		&HudHandler::setToolNotice, Qt::QueuedConnection);
 
 	connect(
 		m_scene, &CanvasScene::annotationDeleted, toolCtrl,
@@ -404,8 +406,8 @@ void ViewWrapper::connectMainWindow(MainWindow *mainWindow)
 		m_view, &CanvasView::imageDropped, mainWindow, &MainWindow::dropImage);
 	connect(m_view, &CanvasView::urlDropped, mainWindow, &MainWindow::dropUrl);
 	connect(
-		m_controller, &CanvasController::toggleActionActivated, mainWindow,
-		&MainWindow::handleToggleAction);
+		m_controller, &CanvasController::hudActionActivated, mainWindow,
+		&MainWindow::handleHudAction);
 	connect(
 		m_controller, &CanvasController::touchTapActionActivated, mainWindow,
 		&MainWindow::handleTouchTapAction);
@@ -463,7 +465,8 @@ void ViewWrapper::connectToolSettings(docks::ToolSettings *toolSettings)
 		m_controller, &CanvasController::quickAdjust, toolSettings,
 		&docks::ToolSettings::quickAdjust);
 
-	tools::AnnotationSettings *annotationSettings = toolSettings->annotationSettings();
+	tools::AnnotationSettings *annotationSettings =
+		toolSettings->annotationSettings();
 	annotationSettings->setCanvasView(this);
 	connect(
 		m_scene, &CanvasScene::annotationResized, annotationSettings,

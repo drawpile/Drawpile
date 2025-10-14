@@ -2,6 +2,7 @@
 #ifndef DESKTOP_SCENE_TOGGLEITEM_H
 #define DESKTOP_SCENE_TOGGLEITEM_H
 #include "desktop/scene/baseitem.h"
+#include "desktop/scene/hudaction.h"
 #include <QIcon>
 #include <QPainterPath>
 
@@ -10,21 +11,15 @@ namespace drawingboard {
 class ToggleItem final : public BaseItem {
 public:
 	enum { Type = ToggleType };
-	enum class Action {
-		None,
-		Left,
-		Top,
-		Right,
-		Bottom,
-	};
 
 	ToggleItem(
-		Action action, Qt::Alignment side, double fromTop,
+		HudAction::Type hudActionType, Qt::Alignment side, double fromTop,
 		QGraphicsItem *parent = nullptr);
 
 	int type() const override { return Type; }
 
-	Action action() const { return m_action; }
+	HudAction::Type hudActionType() const { return m_hudActionType; }
+	void setHudActionType(HudAction::Type hudActionType);
 
 	QRectF boundingRect() const override;
 
@@ -32,8 +27,6 @@ public:
 
 	bool checkHover(const QPointF &scenePos, bool &outWasHovering);
 	void removeHover();
-
-	void setIcon(const QIcon &icon);
 
 protected:
 	void paint(
@@ -50,7 +43,9 @@ private:
 	static QPainterPath getRightPath();
 	static QPainterPath makePath(bool right);
 
-	Action m_action;
+	static QIcon getIconForHudActionType(HudAction::Type hudActionType);
+
+	HudAction::Type m_hudActionType = HudAction::Type::None;
 	bool m_right;
 	double m_fromTop;
 	QIcon m_icon;

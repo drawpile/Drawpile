@@ -7,6 +7,7 @@
 #include "desktop/mainwindow.h"
 #include "desktop/scene/canvasscene.h"
 #include "desktop/scene/canvasview.h"
+#include "desktop/scene/hudhandler.h"
 #include "desktop/settings.h"
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/brushsettings.h"
@@ -150,21 +151,24 @@ void SceneWrapper::setPointerTracking(bool pointerTracking)
 void SceneWrapper::setShowToggleItems(bool showToggleItems, bool leftyMode)
 {
 	if(m_scene) {
-		m_scene->showToggleItems(showToggleItems, leftyMode);
+		m_scene->hud()->setShowToggleItems(showToggleItems, leftyMode);
 	}
 }
 
 void SceneWrapper::setCatchupProgress(int percent, bool force)
 {
-	if(m_scene && (force || m_scene->hasCatchup())) {
-		m_scene->setCatchupProgress(percent);
+	if(m_scene) {
+		HudHandler *hud = m_scene->hud();
+		if(force || hud->hasCatchup()) {
+			hud->setCatchupProgress(percent);
+		}
 	}
 }
 
 void SceneWrapper::setStreamResetProgress(int percent)
 {
 	if(m_scene) {
-		m_scene->setStreamResetProgress(percent);
+		m_scene->hud()->setStreamResetProgress(percent);
 	}
 }
 
@@ -192,7 +196,7 @@ void SceneWrapper::showResetNotice(bool saveInProgress)
 void SceneWrapper::showPopupNotice(const QString &message)
 {
 	if(m_scene) {
-		m_scene->showPopupNotice(message);
+		m_scene->hud()->showPopupNotice(message);
 	}
 }
 
@@ -338,8 +342,8 @@ void SceneWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::pathPreviewRequested, m_scene,
 		&CanvasScene::setPathPreview);
 	connect(
-		toolCtrl, &tools::ToolController::toolNoticeRequested, m_scene,
-		&CanvasScene::setToolNotice, Qt::QueuedConnection);
+		toolCtrl, &tools::ToolController::toolNoticeRequested, m_scene->hud(),
+		&HudHandler::setToolNotice, Qt::QueuedConnection);
 
 	connect(
 		m_scene, &drawingboard::CanvasScene::annotationDeleted, toolCtrl,
@@ -415,8 +419,8 @@ void SceneWrapper::connectMainWindow(MainWindow *mainWindow)
 		m_view, &CanvasView::imageDropped, mainWindow, &MainWindow::dropImage);
 	connect(m_view, &CanvasView::urlDropped, mainWindow, &MainWindow::dropUrl);
 	connect(
-		m_view, &CanvasView::toggleActionActivated, mainWindow,
-		&MainWindow::handleToggleAction);
+		m_view, &CanvasView::hudActionActivated, mainWindow,
+		&MainWindow::handleHudAction);
 	connect(
 		m_view, &CanvasView::touchTapActionActivated, mainWindow,
 		&MainWindow::handleTouchTapAction);

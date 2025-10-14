@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef CANVAS_SCENE_H
 #define CANVAS_SCENE_H
-#include "desktop/scene/toggleitem.h"
+#include "desktop/scene/hudhandler.h"
 #include "libclient/canvas/selectionmodel.h"
 #include <QColor>
 #include <QGraphicsScene>
@@ -20,11 +20,9 @@ namespace drawingboard {
 class AnchorLineItem;
 class AnnotationItem;
 class CanvasItem;
-class CatchupItem;
 class ColorPickItem;
 class LaserTrailItem;
 class MaskPreviewItem;
-class NoticeItem;
 class OutlineItem;
 class PathPreviewItem;
 class SelectionItem;
@@ -37,7 +35,7 @@ class CursorItem;
 /**
  * @brief The drawing board scene
  */
-class CanvasScene final : public QGraphicsScene {
+class CanvasScene final : public QGraphicsScene, public HudScene {
 	Q_OBJECT
 
 public:
@@ -62,23 +60,6 @@ public:
 
 	void setSceneBounds(const QRectF &sceneBounds);
 
-	// Move HUD notices down when a reconnect or reset notification is shown.
-	void setNotificationBarHeight(int height);
-
-	void showTransformNotice(const QString &text);
-
-	void showLockNotice(const QString &text);
-	void hideLockNotice();
-
-	void showPopupNotice(const QString &text);
-
-	void setToolNotice(const QString &text);
-
-	ToggleItem::Action
-	checkHover(const QPointF &scenePos, bool *outWasHovering = nullptr);
-
-	void removeHover();
-
 	//! Show/hide annotations
 	void showAnnotations(bool show);
 
@@ -95,8 +76,6 @@ public:
 
 	void setShowOwnUserMarker(bool showOwnUserMarker);
 	void setUserMarkerPersistence(int userMarkerPersistence);
-
-	bool hasCatchup() const { return m_catchup != nullptr; }
 
 	void setAnchorLine(const QVector<QPointF> &points, int activeIndex);
 	void setAnchorLineActiveIndex(int activeIndex);
@@ -121,6 +100,11 @@ public:
 	void setCursor(const QCursor &cursor);
 #endif
 
+	HudHandler *hud() { return m_hud; }
+	QRectF hudSceneRect() const override;
+	void hudAddItem(BaseItem *item) override;
+	void hudRemoveItem(BaseItem *item) override;
+
 public slots:
 	//! Show annotation borders
 	void showAnnotationBorders(bool show);
@@ -142,8 +126,6 @@ public slots:
 	//! Show/hide laser pointer trails
 	void showLaserTrails(bool show);
 
-	void showToggleItems(bool show, bool leftyMode);
-
 	//! Select the currently active/highlighted annotation
 	void setActiveAnnotation(int id);
 
@@ -154,10 +136,6 @@ public slots:
 	void hideCanvas();
 
 	void canvasViewportChanged(const QPolygonF &viewport);
-
-	void setCatchupProgress(int percent);
-
-	void setStreamResetProgress(int percent);
 
 signals:
 	void canvasResized(int xoffset, int yoffset, const QSize &oldSize);
@@ -182,16 +160,7 @@ private slots:
 	void onTransformChanged();
 
 private:
-	static constexpr qreal NOTICE_OFFSET = 16.0;
-	static constexpr qreal NOTICE_PERSIST = 1.0;
-	static constexpr qreal POPUP_PERSIST = 3.0;
-
-	void setTransformNoticePosition();
-	void setLockNoticePosition();
-	void setToolNoticePosition();
-	void setPopupNoticePosition();
-	void setCatchupPosition();
-	void setStreamResetNoticePosition();
+	HudHandler *const m_hud;
 
 	//! The actual canvas model
 	canvas::CanvasModel *m_model;
@@ -213,15 +182,6 @@ private:
 	PathPreviewItem *m_pathPreview;
 	SelectionItem *m_selection;
 	TransformItem *m_transform;
-
-	qreal m_topOffset = 0.0;
-	NoticeItem *m_transformNotice;
-	NoticeItem *m_lockNotice;
-	NoticeItem *m_toolNotice;
-	NoticeItem *m_popupNotice = nullptr;
-	CatchupItem *m_catchup;
-	NoticeItem *m_streamResetNotice;
-	QVector<ToggleItem *> m_toggleItems;
 
 	OutlineItem *m_outlineItem;
 	ColorPickItem *m_colorPick = nullptr;

@@ -267,6 +267,9 @@ target_sources(drawpile PRIVATE
 	scene/catchupitem.h
 	scene/colorpickitem.cpp
 	scene/colorpickitem.h
+	scene/hudaction.h
+	scene/hudhandler.cpp
+	scene/hudhandler.h
 	scene/lasertrailitem.cpp
 	scene/lasertrailitem.h
 	scene/maskpreviewitem.cpp

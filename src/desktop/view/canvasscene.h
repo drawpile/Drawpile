@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_VIEW_CANVASSCENE_H
 #define DESKTOP_VIEW_CANVASSCENE_H
+#include "desktop/scene/hudhandler.h"
 #include "libclient/canvas/selectionmodel.h"
 #include <QColor>
 #include <QElapsedTimer>
@@ -23,25 +24,22 @@ namespace drawingboard {
 class AnchorLineItem;
 class AnnotationItem;
 class BaseItem;
-class CatchupItem;
 class ColorPickItem;
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 class CursorItem;
 #endif
 class LaserTrailItem;
 class MaskPreviewItem;
-class NoticeItem;
 class OutlineItem;
 class PathPreviewItem;
 class SelectionItem;
-class ToggleItem;
 class TransformItem;
 class UserMarkerItem;
 }
 
 namespace view {
 
-class CanvasScene final : public QGraphicsScene {
+class CanvasScene final : public QGraphicsScene, public HudScene {
 	Q_OBJECT
 	using AnchorLineItem = drawingboard::AnchorLineItem;
 	using AnnotationItem = drawingboard::AnnotationItem;
@@ -78,7 +76,6 @@ public:
 	void setEvadeUserCursors(bool evadeUserCursors);
 	void setShowOwnUserMarker(bool showOwnUserMarker);
 	void setShowLaserTrails(bool showLaserTrails);
-	void setShowToggleItems(bool showToggleItems, bool leftyMode);
 	void setShowSelectionMask(bool showSelectionMask);
 	void setUserMarkerPersistence(int userMarkerPersistence);
 
@@ -113,35 +110,18 @@ public:
 
 	void setTransformToolState(int mode, int handle, bool dragging);
 
-	void setNotificationBarHeight(int height);
-
-	bool showTransformNotice(const QString &text);
-
-	bool showLockNotice(const QString &text);
-	bool hideLockNotice();
-
-	void showPopupNotice(const QString &text);
-
-	void setToolNotice(const QString &text);
-
-	bool hasCatchup() const;
-	void setCatchupProgress(int percent);
-	void setStreamResetProgress(int percent);
-	static QString getStreamResetProgressText(int percent);
-
-	int checkHover(const QPointF &scenePos, bool *outWasHovering = nullptr);
-	void removeHover();
+	HudHandler *hud() { return m_hud; }
+	QRectF hudSceneRect() const override;
+	void hudAddItem(BaseItem *item) override;
+	void hudRemoveItem(BaseItem *item) override;
 
 signals:
 	void annotationResized(int id);
 	void annotationDeleted(int id);
 
 private:
-	static constexpr qreal NOTICE_OFFSET = 16.0;
-	static constexpr qreal NOTICE_PERSIST = 1.0;
-	static constexpr qreal POPUP_PERSIST = 3.0;
-
 	void addSceneItem(BaseItem *item);
+	void removeSceneItem(BaseItem *item);
 
 	void onSceneRectChanged();
 
@@ -156,16 +136,9 @@ private:
 	void onAnnotationsChanged(const drawdance::AnnotationList &al);
 	void onPreviewAnnotation(int annotationId, const QRect &shape);
 
-	void setTransformNoticePosition();
-	void setLockNoticePosition();
-	void setToolNoticePosition();
-	void setPopupNoticePosition();
-	void setCatchupPosition();
-	void setStreamResetNoticePosition();
-	void setTogglePositions();
-
 	void advanceAnimations();
 
+	HudHandler *const m_hud;
 	canvas::CanvasModel *m_canvasModel = nullptr;
 
 	QGraphicsItemGroup *m_canvasGroup;
@@ -203,17 +176,6 @@ private:
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	CursorItem *m_cursorItem;
 #endif
-
-	qreal m_topOffset = 0.0;
-	NoticeItem *m_transformNotice = nullptr;
-	NoticeItem *m_lockNotice = nullptr;
-	NoticeItem *m_toolNotice = nullptr;
-	NoticeItem *m_popupNotice = nullptr;
-
-	CatchupItem *m_catchup = nullptr;
-	NoticeItem *m_streamResetNotice = nullptr;
-
-	QVector<ToggleItem *> m_toggleItems;
 
 	QElapsedTimer m_animationElapsedTimer;
 };

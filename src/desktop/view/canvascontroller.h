@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_VIEW_CANVASCONTROLLER_H
 #define DESKTOP_VIEW_CANVASCONTROLLER_H
+#include "desktop/scene/hudaction.h"
 #include "desktop/utils/tabletfilter.h"
 #include "desktop/view/lock.h"
 #include "libclient/canvas/canvasshortcuts.h"
@@ -194,7 +195,7 @@ signals:
 	void coordinatesChanged(const QPointF &coordinates);
 	void quickAdjust(int type, qreal value, bool wheel);
 	void cursorChanged(const QCursor &cursor);
-	void toggleActionActivated(int action);
+	void hudActionActivated(const HudAction &action);
 	void touchTapActionActivated(int action);
 	void saveInProgressChanged(bool saveInProgress);
 
@@ -317,7 +318,7 @@ private:
 	void setRotationSnap(qreal degrees);
 	void rotateByDiscreteSteps(int steps);
 
-	bool activatePendingToggleAction();
+	bool activatePendingHudAction();
 
 	void emitTransformChanged();
 	void emitViewRectChanged();
@@ -463,7 +464,7 @@ private:
 	bool m_blockNotices = false;
 	bool m_showTransformNotices = false;
 	int m_toolState;
-	int m_hudActionToActivate;
+	HudAction m_hudActionToActivate;
 	bool m_locked = false;
 	QString m_lockDescription;
 	bool m_saveInProgress = false;

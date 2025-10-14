@@ -2,7 +2,6 @@
 #include "desktop/scene/canvasview.h"
 #include "desktop/main.h"
 #include "desktop/scene/canvasscene.h"
-#include "desktop/scene/toggleitem.h"
 #include "desktop/settings.h"
 #include "desktop/tabletinput.h"
 #include "desktop/utils/qtguicompat.h"
@@ -185,7 +184,6 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_alphaLockCursorStyle(int(view::Cursor::SameAsBrush))
 	, m_brushOutlineWidth(1.0)
 	, m_brushBlendMode(DP_BLEND_MODE_NORMAL)
-	, m_hudActionToActivate(int(drawingboard::ToggleItem::Action::None))
 	, m_scrollBarsAdjusting{false}
 	, m_blockNotices{false}
 	, m_showTransformNotices(true)
@@ -451,8 +449,8 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 		this, &CanvasView::viewRectChange, scene,
 		&drawingboard::CanvasScene::canvasViewportChanged);
 	connect(
-		m_notificationBar, &NotificationBar::heightChanged, m_scene,
-		&drawingboard::CanvasScene::setNotificationBarHeight);
+		m_notificationBar, &NotificationBar::heightChanged, m_scene->hud(),
+		&HudHandler::setTopOffset);
 
 	viewRectChanged();
 	updateLockNotice();
@@ -976,15 +974,15 @@ void CanvasView::setOutlineOffset(const QPointF &outlineOffset)
 	}
 }
 
-bool CanvasView::activatePendingToggleAction()
+bool CanvasView::activatePendingHudAction()
 {
-	if(int action = m_hudActionToActivate;
-	   action != int(drawingboard::ToggleItem::Action::None)) {
-		m_hudActionToActivate = int(drawingboard::ToggleItem::Action::None);
+	if(m_hudActionToActivate.isValid()) {
+		HudAction action;
+		std::swap(action, m_hudActionToActivate);
 		m_hoveringOverHud = false;
-		m_scene->removeHover();
+		m_scene->hud()->removeHover();
 		resetCursor();
-		emit toggleActionActivated(action);
+		emit hudActionActivated(action);
 		return true;
 	} else {
 		return false;
@@ -1028,7 +1026,7 @@ void CanvasView::leaveEvent(QEvent *event)
 	}
 	m_showoutline = false;
 	m_hoveringOverHud = false;
-	m_scene->removeHover();
+	m_scene->hud()->removeHover();
 	updateOutline();
 	resetCursor();
 	m_tabletFilter.reset();
@@ -1236,23 +1234,20 @@ void CanvasView::penPressEvent(
 	m_eraserTipActive = eraserOverride;
 #endif
 
-	if(m_pendown != NOTDOWN ||
-	   m_hudActionToActivate != int(drawingboard::ToggleItem::Action::None)) {
+	if(m_pendown != NOTDOWN || m_hudActionToActivate.isValid()) {
 		return;
 	}
 
-	bool wasHovering;
-	drawingboard::ToggleItem::Action action =
-		m_scene->checkHover(mapToScene(pos.toPoint()), &wasHovering);
-	m_hoveringOverHud = action != drawingboard::ToggleItem::Action::None;
-	if(m_hoveringOverHud != wasHovering) {
+	HudAction action = m_scene->hud()->checkHover(mapToScene(pos.toPoint()));
+	m_hoveringOverHud = action.isValid();
+	if(m_hoveringOverHud != action.wasHovering) {
 		resetCursor();
 	}
 	if(m_hoveringOverHud) {
 		if(event) {
 			event->accept();
 		}
-		m_hudActionToActivate = int(action);
+		m_hudActionToActivate = action;
 		return;
 	}
 
@@ -1413,7 +1408,7 @@ void CanvasView::penMoveEvent(
 	qreal ytilt, qreal rotation, Qt::MouseButtons buttons,
 	Qt::KeyboardModifiers modifiers)
 {
-	if(m_hudActionToActivate != int(drawingboard::ToggleItem::Action::None)) {
+	if(m_hudActionToActivate.isValid()) {
 		return;
 	}
 
@@ -1444,12 +1439,10 @@ void CanvasView::penMoveEvent(
 					emit pointerMoved(point);
 				}
 
-				bool wasHovering;
-				m_hoveringOverHud =
-					m_scene->checkHover(
-						mapToScene(pos.toPoint()), &wasHovering) !=
-					drawingboard::ToggleItem::Action::None;
-				if(m_hoveringOverHud != wasHovering) {
+				HudAction action =
+					m_scene->hud()->checkHover(mapToScene(pos.toPoint()));
+				m_hoveringOverHud = action.isValid();
+				if(m_hoveringOverHud != action.wasHovering) {
 					resetCursor();
 				}
 			}
@@ -1495,7 +1488,7 @@ void CanvasView::penReleaseEvent(
 	long long timeMsec, const QPointF &pos, Qt::MouseButton button,
 	Qt::KeyboardModifiers modifiers)
 {
-	activatePendingToggleAction();
+	activatePendingHudAction();
 
 	canvas::Point point = mapToCanvas(timeMsec, pos, 0.0, 0.0, 0.0, 0.0);
 	m_prevpoint = point;
@@ -1544,8 +1537,8 @@ void CanvasView::penReleaseEvent(
 
 		m_pendown = NOTDOWN;
 
-		m_hoveringOverHud = m_scene->checkHover(mapToScene(pos.toPoint())) !=
-							drawingboard::ToggleItem::Action::None;
+		m_hoveringOverHud =
+			m_scene->hud()->checkHover(mapToScene(pos.toPoint())).isValid();
 		if(!m_hoveringOverHud) {
 			switch(mouseMatch.action()) {
 			case CanvasShortcuts::TOOL_ADJUST1:
@@ -2090,38 +2083,36 @@ void CanvasView::touchEvent(QTouchEvent *event)
 
 	switch(event->type()) {
 	case QEvent::TouchBegin: {
-		if(m_hudActionToActivate ==
-		   int(drawingboard::ToggleItem::Action::None)) {
+		if(!m_hudActionToActivate.isValid()) {
 			const QList<compat::TouchPoint> &points =
 				compat::touchPoints(*event);
 			int pointsCount = points.size();
 			if(pointsCount > 0) {
 				QPointF pos = compat::touchPos(points.first());
-				drawingboard::ToggleItem::Action action =
-					m_scene->checkHover(mapToScene(pos.toPoint()));
-				if(action == drawingboard::ToggleItem::Action::None) {
-					m_touch->handleTouchBegin(event);
+				HudAction action =
+					m_scene->hud()->checkHover(mapToScene(pos.toPoint()));
+				if(action.isValid()) {
+					m_hudActionToActivate = action;
 				} else {
-					m_hudActionToActivate = int(action);
+					m_touch->handleTouchBegin(event);
 				}
 			}
 		}
 		break;
 	}
 	case QEvent::TouchUpdate:
-		if(m_hudActionToActivate ==
-		   int(drawingboard::ToggleItem::Action::None)) {
+		if(!m_hudActionToActivate.isValid()) {
 			m_touch->handleTouchUpdate(
 				event, zoom(), rotation(), devicePixelRatioF());
 		}
 		break;
 	case QEvent::TouchEnd:
-		if(!activatePendingToggleAction()) {
+		if(!activatePendingHudAction()) {
 			m_touch->handleTouchEnd(event, false);
 		}
 		break;
 	case QEvent::TouchCancel:
-		if(!activatePendingToggleAction()) {
+		if(!activatePendingHudAction()) {
 			m_touch->handleTouchEnd(event, true);
 		}
 		break;
@@ -2764,7 +2755,7 @@ void CanvasView::showTouchTransformNotice()
 void CanvasView::showTransformNotice(const QString &text)
 {
 	if(m_scene && !m_blockNotices && m_showTransformNotices) {
-		m_scene->showTransformNotice(text);
+		m_scene->hud()->showTransformNotice(text);
 	}
 }
 
@@ -2784,9 +2775,10 @@ void CanvasView::updateLockNotice()
 		}
 
 		if(description.isEmpty()) {
-			m_scene->hideLockNotice();
+			m_scene->hud()->hideLockNotice();
 		} else {
-			m_scene->showLockNotice(description.join(QStringLiteral("\n")));
+			m_scene->hud()->showLockNotice(
+				description.join(QStringLiteral("\n")));
 		}
 	}
 }

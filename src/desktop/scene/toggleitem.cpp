@@ -7,14 +7,24 @@
 namespace drawingboard {
 
 ToggleItem::ToggleItem(
-	Action action, Qt::Alignment side, double fromTop, QGraphicsItem *parent)
-	: BaseItem{parent}
-	, m_action{action}
+	HudAction::Type hudActionType, Qt::Alignment side, double fromTop,
+	QGraphicsItem *parent)
+	: BaseItem(parent)
 	, m_right{side == Qt::AlignRight}
 	, m_fromTop{fromTop}
 {
+	setHudActionType(hudActionType);
 	setFlag(ItemIgnoresTransformations);
 	setZValue(Z_TOGGLE);
+}
+
+void ToggleItem::setHudActionType(HudAction::Type hudActionType)
+{
+	if(hudActionType != m_hudActionType) {
+		m_hudActionType = hudActionType;
+		m_icon = getIconForHudActionType(hudActionType);
+		refresh();
+	}
 }
 
 QRectF ToggleItem::boundingRect() const
@@ -50,14 +60,6 @@ void ToggleItem::removeHover()
 {
 	if(m_hover) {
 		m_hover = false;
-		refresh();
-	}
-}
-
-void ToggleItem::setIcon(const QIcon &icon)
-{
-	if(icon.cacheKey() != m_icon.cacheKey()) {
-		m_icon = icon;
 		refresh();
 	}
 }
@@ -121,6 +123,24 @@ QPainterPath ToggleItem::makePath(bool right)
 	t.addRoundedRect(0.0, 0.0, s, s, RADIUS, RADIUS);
 	t.addRect(right ? s / 2.0 : 0.0, 0.0, s / 2.0, s);
 	return t.simplified();
+}
+
+QIcon ToggleItem::getIconForHudActionType(HudAction::Type hudActionType)
+{
+	switch(hudActionType) {
+	case HudAction::Type::ToggleBrush:
+		return QIcon::fromTheme(QStringLiteral("draw-brush"));
+	case HudAction::Type::ToggleTimeline:
+		return QIcon::fromTheme(QStringLiteral("keyframe"));
+	case HudAction::Type::ToggleLayer:
+		return QIcon::fromTheme(QStringLiteral("layer-visible-on"));
+	case HudAction::Type::ToggleChat:
+		return QIcon::fromTheme(QStringLiteral("edit-comment"));
+	default:
+		qWarning(
+			"ToggleItem::setHudActionType: no icon for %d", int(hudActionType));
+		return QIcon();
+	}
 }
 
 }
