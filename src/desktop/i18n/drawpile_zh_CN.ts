@@ -88,7 +88,7 @@
     <message>
         <location line="+14"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>防溢出</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -112,22 +112,22 @@
     <message>
         <location line="-36"/>
         <source>Anti-Overflow:</source>
-        <translation type="unfinished"></translation>
+        <translation>防溢出:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Tolerance: </source>
-        <translation type="unfinished">容错率: </translation>
+        <translation>容错率: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Expand: </source>
-        <translation type="unfinished">扩展: </translation>
+        <translation>扩展: </translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Set fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>设置填充源</translation>
     </message>
     <message>
         <location line="-531"/>
@@ -1068,7 +1068,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+21"/>
         <source>Block content (censor for you)</source>
-        <translation type="unfinished"></translation>
+        <translation>屏蔽内容 (为你审查)</translation>
     </message>
     <message>
         <location line="-252"/>
@@ -1287,18 +1287,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="+180"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
-            <numerusform>您有 %n 个图像未保存更改, 您想在退出之前查看这些更改吗？</numerusform>
+            <numerusform>你有 %n 个图像存在未保存的更改, 你想在退出前检查这些更改吗？</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>If you don&apos;t review your documents, all changes will be lost.</source>
-        <translation type="unfinished"></translation>
+        <translation>如果你不检查你的文档, 所有更改都将丢失.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Review changes…</source>
-        <translation type="unfinished"></translation>
+        <translation>检查更改…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1679,12 +1679,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+6"/>
         <source>Outdated Version</source>
-        <translation type="unfinished"></translation>
+        <translation>过时版本</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This session was hosted with a newer version of Drawpile. You will not see an effect when people use newer features that your version doesn&apos;t have yet and you won&apos;t be able to compress or reset the canvas. Check &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; for updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>此房间是用一个较新版本的 Drawpile 开的. 当别人使用你当前版本尚未支持的新功能时, 你将无法看到效果且无法压缩或重置画布. 请访问 &lt;a href=&quot;%1&quot;&gt;drawpile.net&lt;/a&gt; 查看更新.</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -1729,18 +1729,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+2"/>
         <source>You have unsaved changes, do you want to save them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>你有未保存的更改, 你想在重新连接之前保存它们吗?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You have unsaved changes, do you want to save them before reconnecting or reconnect in a new window?</source>
-        <translation type="unfinished"></translation>
+        <translation>你有未保存的更改, 你想在重新连接之前保存它们还是在新窗口中重新连接?</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>New Window</source>
         <extracomment>Button to reconnect in a new window instead of the current one. Is shown next to Save, Discard and Cancel buttons.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>新窗口</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -1816,17 +1816,17 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+37"/>
         <source>Your canvas contains too much data, the server limit is %1 MB. Merge or delete some layers to simplify the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>你的画布包含数据过大, 服务器限制为 %1 MB. 请合并或者删除一些图层来简化画布.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The canvas you tried to reset to contains too much data, the server limit is %1 MB.</source>
-        <translation type="unfinished"></translation>
+        <translation>你尝试重置的画布包含数据过大, 服务器限制为 %1 MB.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Reset image too large</source>
-        <translation type="unfinished"></translation>
+        <translation>重置图像过大</translation>
     </message>
     <message>
         <location line="+511"/>
@@ -1913,12 +1913,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+10"/>
         <source>Sa&amp;ve As DPCS…</source>
-        <translation type="unfinished"></translation>
+        <translation>另存为DPCS(&amp;V)…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sa&amp;ve As ORA…</source>
-        <translation type="unfinished"></translation>
+        <translation>另存为ORA(&amp;V)…</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -2227,7 +2227,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+4"/>
         <source>Block layer (censor for you)</source>
-        <translation type="unfinished"></translation>
+        <translation>屏蔽图层 (为你审查)</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2297,27 +2297,27 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+174"/>
         <source>Change Frame Range or FPS...</source>
-        <translation type="unfinished"></translation>
+        <translation>更改帧范围或每秒帧数...</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Increase Exposure on Current Track</source>
-        <translation type="unfinished"></translation>
+        <translation>在当前轨道上增加曝光</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Increase Exposure on All Visible Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>在所有可见轨道上增加曝光</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Decrease Exposure on Current Track</source>
-        <translation type="unfinished"></translation>
+        <translation>在当前轨道上减少曝光</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Decrease Exposure on All Visible Tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>在所有可见轨道上减少曝光</translation>
     </message>
     <message>
         <location line="+1361"/>
@@ -3778,27 +3778,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-65"/>
         <source>&amp;Open…</source>
-        <translation type="unfinished"></translation>
+        <translation>打开(&amp;O)…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Start…</source>
-        <translation type="unfinished"></translation>
+        <translation>启动页面(&amp;S)…</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>&amp;Host…</source>
-        <translation type="unfinished"></translation>
+        <translation>创建(&amp;H)…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Join…</source>
-        <translation type="unfinished"></translation>
+        <translation>地址加入(&amp;J)…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Browse…</source>
-        <translation type="unfinished"></translation>
+        <translation>房间大厅(&amp;B)…</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -5191,27 +5191,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/animationpropertiesdialog.cpp" line="+19"/>
         <source>Animation Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>动画属性</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>每秒帧数</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Framerate:</source>
-        <translation type="unfinished">帧率:</translation>
+        <translation>帧率:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>First frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>首帧:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Last frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>末帧:</translation>
     </message>
 </context>
 <context>
@@ -5647,27 +5647,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-482"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>防溢出</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Anti-overflow fill settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>防溢出填充设置.</translation>
     </message>
     <message>
         <location line="+397"/>
         <source>Enable anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>启用防溢出</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Tolerance: </source>
-        <translation type="unfinished">容错率: </translation>
+        <translation>容错率: </translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Expand: </source>
-        <translation type="unfinished">扩展: </translation>
+        <translation>扩展: </translation>
     </message>
     <message>
         <location line="+51"/>
@@ -5824,12 +5824,12 @@ If fast strokes cause artifacts when smudging, enabling this can help.</source>
     <message>
         <location line="+182"/>
         <source>The session you&apos;re in is hosted with an older version of Drawpile, anti-overflow is unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation>此房间是用一个较旧版本的 Drawpile 开的, 防溢出功能无法使用.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Anti-overflow makes brush strokes stay inside of lines automatically. Set your lines layer as the fill source and then draw on another layer.</source>
-        <translation type="unfinished"></translation>
+        <translation>防溢出功能可自动使笔触保持在线条内部. 先设置你的线条图层为填充源, 然后在其他图层上绘制.</translation>
     </message>
     <message>
         <location line="-683"/>
@@ -8067,12 +8067,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>This session was hosted with a newer version of Drawpile. You are not able to reset it.</source>
-        <translation type="unfinished"></translation>
+        <translation>此房间是用一个较新版本的 Drawpile 开的. 你无法重置它.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You must be an operator to reset the session.</source>
-        <translation type="unfinished">你必须是房间管理员才能重置房间.</translation>
+        <translation>你必须是房间管理员才能重置房间.</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -8827,7 +8827,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+40"/>
         <source>Show network preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>显示网络首选项</translation>
     </message>
     <message>
         <location line="+346"/>
@@ -8859,12 +8859,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Join via WebSocket</source>
-        <translation type="unfinished"></translation>
+        <translation>通过 WebSocket 加入</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join via TCP</source>
-        <translation type="unfinished"></translation>
+        <translation>通过 TCP 加入</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -8874,12 +8874,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Host via WebSocket</source>
-        <translation type="unfinished"></translation>
+        <translation>通过 WebSocket 创建</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Host via TCP</source>
-        <translation type="unfinished"></translation>
+        <translation>通过 TCP 创建</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9610,22 +9610,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-89"/>
         <source>Display notification while connected to a session</source>
-        <translation type="unfinished"></translation>
+        <translation>在连接房间时显示通知</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Network:</source>
-        <translation type="unfinished"></translation>
+        <translation>网络:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Notification</source>
-        <translation type="unfinished"></translation>
+        <translation>通知</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do you want to grant Drawpile permission to show you a connection notification?</source>
-        <translation type="unfinished"></translation>
+        <translation>你是否想要 Drawpile 显示连接通知?</translation>
     </message>
     <message>
         <location line="+82"/>
@@ -10588,17 +10588,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Long-press to open context menus</source>
-        <translation type="unfinished"></translation>
+        <translation>长按来打开上下文菜单</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Quit when last window is closed</source>
-        <translation type="unfinished"></translation>
+        <translation>当最后一个窗口关闭时退出</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>macOS:</source>
-        <translation type="unfinished"></translation>
+        <translation>macOS:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -12481,12 +12481,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+98"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>%1 FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 每秒帧数</translation>
     </message>
 </context>
 <context>
@@ -13156,12 +13156,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Binary</source>
-        <translation type="unfinished"></translation>
+        <translation>二进制</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smoothed interpolation while retaining hard edges</source>
-        <translation type="unfinished"></translation>
+        <translation>平滑插值并保留硬边</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13333,7 +13333,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>You need to set a layer as the fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>你需要将一个图层设置为填充源</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13348,7 +13348,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Layer is censored and blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>图层已审查和屏蔽</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13358,7 +13358,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Layer is blocked</source>
-        <translation type="unfinished"></translation>
+        <translation>图层已屏蔽</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13378,7 +13378,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Choose a different layer to fill on</source>
-        <translation type="unfinished"></translation>
+        <translation>选择其他图层进行填充</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -13543,7 +13543,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+50"/>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>发送</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -13574,7 +13574,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source> (on an older version of Drawpile)</source>
         <extracomment>This is appended to the message &quot;%1 joined the session&quot; if the person joining is using a slightly incompatible version of Drawpile.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> (在旧版本上)</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -13585,7 +13585,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+56"/>
         <source>%1 rolls %2</source>
         <extracomment>This refers to a dice roll.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 掷出 %2</translation>
     </message>
     <message>
         <location line="+127"/>
@@ -14187,13 +14187,13 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>Outdated</source>
-        <translation type="unfinished"></translation>
+        <translation>过时的</translation>
     </message>
     <message>
         <location line="+10"/>
         <source> | </source>
         <extracomment>Separator for user state, shows up like &quot;Operator | Registered&quot;. Only change this if the vertical line is troublesome in your language, otherwise just leave it the same.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation> | </translation>
     </message>
     <message>
         <location line="-19"/>
