@@ -262,7 +262,8 @@ QVector<net::Message> TransformModel::applyFromCanvas(
 		m_blendMode != int(DP_BLEND_MODE_NORMAL) || m_opacity < 1.0;
 	int singleLayerSourceId = getSingleLayerMoveId(layerId);
 	if(!identity || adjustsImage ||
-	   (singleLayerSourceId > 0 && singleLayerSourceId != layerId)) {
+	   (singleLayerSourceId > 0 && singleLayerSourceId != layerId) ||
+	   m_deselectOnApply) {
 		int srcX = m_srcBounds.x();
 		int srcY = m_srcBounds.y();
 		int srcW = m_srcBounds.width();
