@@ -23,7 +23,7 @@ public:
 	ReconnectState(
 		const QJsonObject &sessionConfig, const HistoryIndex &hi,
 		const QVector<User> &users, const drawdance::AclState &aclState,
-		QObject *parent = nullptr);
+		int defaultLayerId, QObject *parent = nullptr);
 
 	~ReconnectState() override;
 
@@ -43,6 +43,8 @@ public:
 		m_chrs = chrs;
 	}
 
+	int defaultLayerId() const { return m_defaultLayerId; }
+
 	void clearDetach();
 
 private:
@@ -51,6 +53,7 @@ private:
 	QVector<User> m_users;
 	DP_AclState *m_aclState;
 	DP_CanvasHistoryReconnectState *m_chrs = nullptr;
+	int m_defaultLayerId = 0;
 };
 
 }

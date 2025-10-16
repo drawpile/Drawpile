@@ -151,7 +151,7 @@ ReconnectState *CanvasModel::makeReconnectState(
 {
 	ReconnectState *reconnectState = new ReconnectState(
 		sessionConfig, hi, m_userlist->users(), m_paintengine->aclState(),
-		parent);
+		m_layerlist->defaultLayer(), parent);
 
 	MakeReconnectStateParams *params = new MakeReconnectStateParams{
 		QPointer<CanvasModel>(this), QPointer<ReconnectState>(reconnectState)};
@@ -173,7 +173,7 @@ void CanvasModel::connectedToServer(
 
 	m_localUserId = myUserId;
 	m_compatibilityMode = compatibilityMode;
-	m_layerlist->setAutoselectAny(true);
+	m_layerlist->setAutoselectAny(!join || !reconnectState);
 
 	m_aclstate->setLocalUserId(myUserId);
 	m_selection->setLocalUserId(myUserId);
@@ -185,6 +185,7 @@ void CanvasModel::connectedToServer(
 			qDebug("Apply reconnect state");
 			m_userlist->setUsers(reconnectState->users());
 			m_paintengine->supplantAcl(reconnectState->aclState());
+			m_layerlist->setDefaultLayer(reconnectState->defaultLayerId());
 			net::Message msg = net::makeInternalReconnectStateApplyMessage(
 				0, reconnectState->historyState());
 			m_paintengine->receiveMessages(false, 1, &msg);
