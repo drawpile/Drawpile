@@ -407,6 +407,7 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	m_contextMenu->addAction(m_actions.layerClip);
 	m_contextMenu->addAction(m_actions.layerAutomaticAlphaPreserve);
 	m_contextMenu->addSeparator();
+	m_contextMenu->addMenu(m_actions.layerViewMenu);
 	m_contextMenu->addMenu(m_actions.layerLockMenu);
 	m_contextMenu->addAction(m_actions.layerCensor);
 	m_contextMenu->addAction(m_actions.layerCensorLocal);

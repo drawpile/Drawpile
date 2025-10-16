@@ -73,6 +73,7 @@ public:
 		QAction *layerClip = nullptr;
 		QAction *layerAutomaticAlphaPreserve = nullptr;
 		QMenu *layerColorMenu = nullptr;
+		QMenu *layerViewMenu = nullptr;
 		QMenu *layerLockMenu = nullptr;
 		QAction *layerAlphaLock = nullptr;
 		QAction *layerLockAll = nullptr;

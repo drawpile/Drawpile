@@ -6798,6 +6798,7 @@ void MainWindow::setupActions()
 		layerClip,
 		layerAutomaticAlphaPreserve,
 		layerColorMenu,
+		layerViewMenu,
 		layerLockMenu,
 		layerAlphaLock,
 		layerLockAll,
