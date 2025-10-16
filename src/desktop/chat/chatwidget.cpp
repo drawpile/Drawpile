@@ -4,6 +4,8 @@
 #include "desktop/main.h"
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/canvas/acl.h"
+#include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/drawdance/perf.h"
@@ -105,8 +107,7 @@ struct ChatWidget::Private {
 	QAction *muteAction = nullptr;
 
 	QList<int> announcedUsers;
-	canvas::UserListModel *userlist = nullptr;
-	canvas::LayerListModel *layerlist = nullptr;
+	canvas::CanvasModel *canvas = nullptr;
 	int currentLayer = 0;
 	QHash<int, Chat> chats;
 
@@ -155,6 +156,11 @@ struct ChatWidget::Private {
 	bool ensurePrivateChatExists(int userId, QObject *parent);
 
 	void updatePreserveModeUi();
+
+	bool amOperator() const
+	{
+		return canvas && canvas->aclState()->amOperator();
+	}
 };
 
 ChatWidget::ChatWidget(bool smallScreenMode, QWidget *parent)
@@ -374,14 +380,9 @@ void ChatWidget::focusInput()
 	d->myline->setFocus();
 }
 
-void ChatWidget::setUserList(canvas::UserListModel *userlist)
+void ChatWidget::setModel(canvas::CanvasModel *canvas)
 {
-	d->userlist = userlist;
-}
-
-void ChatWidget::setLayerList(canvas::LayerListModel *layerlist)
-{
-	d->layerlist = layerlist;
+	d->canvas = canvas;
 }
 
 QMenu *ChatWidget::externalMenu()
@@ -396,8 +397,8 @@ void ChatWidget::clear()
 	chat.lastAppendedId = 0;
 
 	// Re-add avatars
-	if(d->userlist) {
-		for(const auto &u : d->userlist->users()) {
+	if(d->canvas) {
+		for(const auto &u : d->canvas->userlist()->users()) {
 			chat.doc->addResource(
 				QTextDocument::ImageResource,
 				QUrl(QStringLiteral("avatar://%1").arg(u.id)), u.avatar);
@@ -415,8 +416,13 @@ bool ChatWidget::Private::ensurePrivateChatExists(int userId, QObject *parent)
 		qWarning("ChatWidget::openPrivateChat(%d): this is me...", userId);
 		return false;
 	}
+	if(!canvas) {
+		qWarning("ChatWidget::openPrivateChat(%d): no canvas", userId);
+		return false;
+	}
 
 	if(!chats.contains(userId)) {
+		canvas::UserListModel *userlist = canvas->userlist();
 		chats[userId] = Chat(parent);
 		const int newTab = tabs->addTab(userlist->getUsername(userId));
 		tabs->setTabData(newTab, userId);
@@ -455,14 +461,14 @@ static QString timestamp()
 
 QString ChatWidget::Private::usernamePlain(int userId)
 {
-	return userlist ? userlist->getUsername(userId)
-					: QStringLiteral("User #%1").arg(userId);
+	return canvas ? canvas->userlist()->getUsername(userId)
+				  : QStringLiteral("User #%1").arg(userId);
 }
 
 QString ChatWidget::Private::usernameSpan(int userId)
 {
 	const canvas::User user =
-		userlist ? userlist->getUserById(userId) : canvas::User();
+		canvas ? canvas->userlist()->getUserById(userId) : canvas::User();
 
 	QString userclass;
 	if(user.isMod) {
@@ -641,17 +647,19 @@ void Chat::appendNotification(const QString &message)
 void ChatWidget::userJoined(int id, const QString &name)
 {
 	Q_UNUSED(name);
+	canvas::UserListModel *userlist =
+		d->canvas ? d->canvas->userlist() : nullptr;
 
-	if(d->userlist) {
+	if(userlist) {
 		d->chats[0].doc->addResource(
 			QTextDocument::ImageResource,
 			QUrl(QStringLiteral("avatar://%1").arg(id)),
-			d->userlist->getUserById(id).avatar);
+			userlist->getUserById(id).avatar);
 		if(d->chats.contains(id)) {
 			d->chats[id].doc->addResource(
 				QTextDocument::ImageResource,
 				QUrl(QStringLiteral("avatar://%1").arg(id)),
-				d->userlist->getUserById(id).avatar);
+				userlist->getUserById(id).avatar);
 		}
 
 	} else {
@@ -666,13 +674,13 @@ void ChatWidget::userJoined(int id, const QString &name)
 	if(d->announcedUsers.contains(id))
 		return;
 
-	if(d->userlist && id == d->myId) {
-		setMentionUsername(d->userlist->getUsername(id));
+	if(userlist && id == d->myId) {
+		setMentionUsername(userlist->getUsername(id));
 	}
 
 	d->announcedUsers << id;
 	QString fmt = tr("%1 joined the session");
-	if(d->userlist && d->userlist->getUserById(id).isMinorIncompatibility) {
+	if(userlist && userlist->getUserById(id).isMinorIncompatibility) {
 		//: This is appended to the message "%1 joined the session" if the
 		//: person joining is using a slightly incompatible version of Drawpile.
 		fmt += tr(" (on an older version of Drawpile)");
@@ -738,7 +746,7 @@ void ChatWidget::receiveMessage(
 	Q_ASSERT(d->chats.contains(chatId));
 	Chat &chat = d->chats[chatId];
 
-	bool isOp = d->userlist && d->userlist->isOperator(sender);
+	bool isOp = d->amOperator();
 	bool isValidAlert = isOp && oflags & DP_MSG_CHAT_OFLAGS_ALERT;
 	bool isValidShout = isOp && oflags & DP_MSG_CHAT_OFLAGS_SHOUT;
 	QString usernameSpan = d->usernameSpan(sender);
@@ -877,7 +885,7 @@ void ChatWidget::sendMessage(QString chatMessage)
 			return;
 
 		} else if(cmd.startsWith('!') && d->currentChat == 0) {
-			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
+			if(!d->amOperator()) {
 				systemMessage(
 					tr("/!: only operators are allowed to send shouts."));
 				return;
@@ -893,7 +901,7 @@ void ChatWidget::sendMessage(QString chatMessage)
 			}
 
 		} else if(cmd == QStringLiteral("alert")) {
-			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
+			if(!d->amOperator()) {
 				systemMessage(
 					tr("/alert: only operators are allowed to send alerts."));
 				return;
@@ -915,7 +923,7 @@ void ChatWidget::sendMessage(QString chatMessage)
 			}
 
 		} else if(cmd == QStringLiteral("pin")) {
-			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
+			if(!d->amOperator()) {
 				systemMessage(tr("/pin: only operators are allowed to pin."));
 				return;
 			} else if(d->currentChat != 0) {
@@ -931,7 +939,7 @@ void ChatWidget::sendMessage(QString chatMessage)
 			}
 
 		} else if(cmd == QStringLiteral("unpin")) {
-			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
+			if(!d->amOperator()) {
 				systemMessage(
 					tr("/unpin: only operators are allowed to unpin."));
 				return;
@@ -957,10 +965,11 @@ void ChatWidget::sendMessage(QString chatMessage)
 			}
 
 		} else if(cmd == QStringLiteral("trust-all-users")) {
-			if(d->userlist && d->userlist->isOperator(d->myId)) {
+			if(d->amOperator()) {
 				if(params.isEmpty()) {
 					QVector<uint8_t> users;
-					for(const canvas::User &user : d->userlist->users()) {
+					for(const canvas::User &user :
+						d->canvas->userlist()->users()) {
 						bool needsTrust = user.isOnline &&
 										  (user.isTrusted || !user.isOperator);
 						if(needsTrust) {
@@ -979,7 +988,7 @@ void ChatWidget::sendMessage(QString chatMessage)
 			return;
 
 		} else if(cmd == QStringLiteral("untrust-all-users")) {
-			if(d->userlist && d->userlist->isOperator(d->myId)) {
+			if(d->amOperator()) {
 				emit message(net::makeTrustedUsersMessage(d->myId, {}));
 			} else {
 				systemMessage(QStringLiteral(
@@ -989,7 +998,7 @@ void ChatWidget::sendMessage(QString chatMessage)
 			return;
 
 		} else if(cmd == QStringLiteral("set-layer-acl-tiers")) {
-			if(d->userlist && d->userlist->isOperator(d->myId)) {
+			if(d->amOperator()) {
 				systemMessage(QStringLiteral("/set-layer-acl-tiers: %1")
 								  .arg(changeLayerAclTiers(params)));
 			} else {
@@ -1186,8 +1195,8 @@ QString ChatWidget::makeMentionPattern(const QString &trigger)
 
 QString ChatWidget::changeLayerAclTiers(const QString &params)
 {
-	if(!d->layerlist) {
-		return QStringLiteral("Layer list not set");
+	if(!d->canvas) {
+		return QStringLiteral("Model not set");
 	}
 
 	QStringList tierNames = {
@@ -1248,8 +1257,9 @@ QString ChatWidget::changeLayerAclTiers(const QString &params)
 
 	DP_AccessTier tier = tiers[tierIndex];
 	int changed = 0;
+	canvas::LayerListModel *layerlist = d->canvas->layerlist();
 	if(scope == ScopeAll) {
-		for(const canvas::LayerListItem &item : d->layerlist->layerItems()) {
+		for(const canvas::LayerListItem &item : layerlist->layerItems()) {
 			if(changeLayerAclTier(
 				   item.id, int(tier), raiseOnly, includeExclusive)) {
 				++changed;
@@ -1257,7 +1267,7 @@ QString ChatWidget::changeLayerAclTiers(const QString &params)
 		}
 	} else if(scope == ScopeCurrent && d->currentLayer != 0) {
 		changed += changeLayerAclTiersRecursive(
-			d->layerlist->layerIndex(d->currentLayer), int(tier), raiseOnly,
+			layerlist->layerIndex(d->currentLayer), int(tier), raiseOnly,
 			includeExclusive);
 	}
 
@@ -1278,11 +1288,11 @@ int ChatWidget::changeLayerAclTiersRecursive(
 			++changed;
 		}
 
-		int childCount = d->layerlist->rowCount(idx);
+		canvas::LayerListModel *layerlist = d->canvas->layerlist();
+		int childCount = layerlist->rowCount(idx);
 		for(int i = 0; i < childCount; ++i) {
 			changed += changeLayerAclTiersRecursive(
-				d->layerlist->index(i, 0, idx), tier, raiseOnly,
-				includeExclusive);
+				layerlist->index(i, 0, idx), tier, raiseOnly, includeExclusive);
 		}
 	}
 	return changed;
@@ -1291,7 +1301,8 @@ int ChatWidget::changeLayerAclTiersRecursive(
 bool ChatWidget::changeLayerAclTier(
 	int layerId, int tier, bool raiseOnly, bool includeExclusive)
 {
-	canvas::AclState::Layer layerAcl = d->layerlist->layerAcl(layerId);
+	canvas::AclState::Layer layerAcl =
+		d->canvas->layerlist()->layerAcl(layerId);
 	int layerTier = int(layerAcl.tier);
 	bool shouldChange = (raiseOnly ? layerTier > tier : layerTier != tier) &&
 						(includeExclusive || layerAcl.exclusive.isEmpty());

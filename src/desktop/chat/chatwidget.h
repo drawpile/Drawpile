@@ -7,8 +7,7 @@
 class QMenu;
 
 namespace canvas {
-class LayerListModel;
-class UserListModel;
+class CanvasModel;
 }
 
 namespace net {
@@ -31,8 +30,7 @@ public:
 	void focusInput();
 	void setAttached(bool isAttached);
 	void setSmallScreenMode(bool smallScreenMode);
-	void setUserList(canvas::UserListModel *userlist);
-	void setLayerList(canvas::LayerListModel *layerlist);
+	void setModel(canvas::CanvasModel *canvas);
 
 	QMenu *externalMenu();
 

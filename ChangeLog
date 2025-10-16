@@ -67,6 +67,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Allow detaching the chat but keeping it on top of the main window. Thanks Bluestrings for suggesting.
  * Fix: Properly autoselect default layer on join. Thanks Bluestrings for reporting.
  * Feature: Automatically switch to frame view mode when the animation timeline is sufficiently fiddled with.
+ * Fix: Make chat recognize user as operator even when they are for some rason not in the user list. Thanks Bluestrings for reporting.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

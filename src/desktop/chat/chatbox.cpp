@@ -159,8 +159,7 @@ void ChatBox::setSmallScreenMode(bool smallScreenMode)
 void ChatBox::onCanvasChanged(canvas::CanvasModel *canvas)
 {
 	m_userList->setModel(canvas->userlist()->onlineUsers());
-	m_chatWidget->setUserList(canvas->userlist());
-	m_chatWidget->setLayerList(canvas->layerlist());
+	m_chatWidget->setModel(canvas);
 
 	connect(
 		canvas, &canvas::CanvasModel::chatMessageReceived, m_chatWidget,
