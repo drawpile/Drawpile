@@ -40,11 +40,11 @@ public:
 	QAction *resetCanvasAction() { return m_resetCanvasAction; }
 	QAction *uncensorLayersAction() { return m_uncensorLayersAction; }
 
-	bool hasReason(Reason reason) const { return m_reasons.testFlag(reason); }
 	bool updateReasons(
-		QFlags<Reason> reasons, int viewMode, bool op, bool canUncensor);
+		QFlags<Reason> activeReasons, QFlags<Reason> allReasons, int viewMode,
+		bool op, bool canUncensor);
 
-	bool isLocked() const { return m_reasons; }
+	bool isLocked() const { return m_activeReasons; }
 	QString description() const;
 
 	void setShowVewModeNotices(bool showViewModeNotices);
@@ -58,13 +58,16 @@ private:
 	void buildDescriptions();
 	void buildActions();
 
+	bool hasAny(Reason reason) const { return m_allReasons.testFlag(reason); }
+
 	QAction *const m_exitLayerViewModeAction;
 	QAction *const m_exitGroupViewModeAction;
 	QAction *const m_exitFrameViewModeAction;
 	QAction *const m_unlockCanvasAction;
 	QAction *const m_resetCanvasAction;
 	QAction *const m_uncensorLayersAction;
-	QFlags<Reason> m_reasons;
+	QFlags<Reason> m_activeReasons;
+	QFlags<Reason> m_allReasons;
 	QStringList m_descriptions;
 	QVector<QAction *> m_actions;
 	int m_viewMode;

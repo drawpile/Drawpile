@@ -63,6 +63,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Selection and transform action bar. Shows up when a selection or transform is active to give quick access to common operations, such as deselecting or applying the transform. Thanks CosmosX007 and Geese for suggesting.
  * Feature: Add buttons to the lock notice to unlock the canvas, reset the session when it's out of space or uncensor layers. Thanks Phoneme for suggesting.
  * Feature: Indicate whether a non-normal view mode is active and give a way to get out of it in the lock notice. Can be disabled in the user interface preferences. Thanks Geese for suggesting.
+ * Feature: Show lock message even when it doesn't affect the current tool (without actually locking anything.)
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

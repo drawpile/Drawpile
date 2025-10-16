@@ -3845,19 +3845,43 @@ void MainWindow::triggerUpdateLockWidgetOnSelectionChange()
 	}
 }
 
+namespace {
+struct ReasonSetter {
+	using Reason = view::Lock::Reason;
+	QFlags<Reason> allReasons = Reason::None;
+	QFlags<Reason> activeReasons = Reason::None;
+
+	void setReason(Reason reason, bool active = true)
+	{
+		allReasons.setFlag(reason);
+		if(active) {
+			activeReasons.setFlag(reason);
+		}
+	}
+
+	void setReasons(QFlags<Reason> reasons, bool active = true)
+	{
+		allReasons |= reasons;
+		if(active) {
+			activeReasons |= reasons;
+		}
+	}
+};
+}
+
 void MainWindow::updateLockWidget()
 {
 	using Reason = view::Lock::Reason;
-	QFlags<Reason> reasons = Reason::None;
+	ReasonSetter reasons;
 	canvas::CanvasModel *canvas = m_doc->canvas();
 	canvas::AclState *aclState = canvas ? canvas->aclState() : nullptr;
 
 	if(m_doc->isSessionOutOfSpace()) {
-		reasons.setFlag(Reason::OutOfSpace);
+		reasons.setReason(Reason::OutOfSpace);
 	}
 
 	if(aclState && aclState->isResetLocked()) {
-		reasons.setFlag(Reason::Reset);
+		reasons.setReason(Reason::Reset);
 	}
 
 	bool sessionLocked = aclState && aclState->isSessionLocked();
@@ -3873,37 +3897,36 @@ void MainWindow::updateLockWidget()
 	}
 	m_wasSessionLocked = sessionLocked;
 
-	if(m_dockToolSettings->currentToolAffectsCanvas()) {
-		if(sessionLocked) {
-			reasons.setFlag(Reason::Canvas);
-			if(m_doc->isPreparingReset()) {
-				reasons.setFlag(Reason::Reset);
-			}
-		}
-		if(aclState && aclState->isLocked(aclState->localUserId())) {
-			reasons.setFlag(Reason::User);
+	bool affectsCanvas = m_dockToolSettings->currentToolAffectsCanvas();
+	if(sessionLocked) {
+		reasons.setReason(Reason::Canvas, affectsCanvas);
+		if(m_doc->isPreparingReset()) {
+			reasons.setReason(Reason::Reset, affectsCanvas);
 		}
 	}
 
-	if(m_dockToolSettings->currentToolAffectsLayer()) {
-		reasons |= m_dockLayers->currentLayerLock();
+	if(aclState && aclState->isLocked(aclState->localUserId())) {
+		reasons.setReason(Reason::User, affectsCanvas);
 	}
+
+	bool affectsLayer = m_dockToolSettings->currentToolAffectsLayer();
+	reasons.setReasons(m_dockLayers->currentLayerLock(), affectsLayer);
 
 	if(m_dockToolSettings->currentToolRequiresFillSource()) {
-		reasons |= m_dockLayers->currentFillSourceLock();
+		reasons.setReasons(m_dockLayers->currentFillSourceLock());
 	}
 
 	if(m_dockToolSettings->currentToolRequiresSelection() &&
 	   (!canvas || !canvas->selection()->isValid())) {
-		reasons.setFlag(Reason::NoSelection);
+		reasons.setReason(Reason::NoSelection);
 	}
 
 	if(m_dockToolSettings->isCurrentToolLocked()) {
-		reasons.setFlag(Reason::Tool);
+		reasons.setReason(Reason::Tool);
 	}
 
 	if(m_viewLock->updateReasons(
-		   reasons,
+		   reasons.activeReasons, reasons.allReasons,
 		   int(canvas ? canvas->paintEngine()->viewMode() : DP_VIEW_MODE_LAYER),
 		   aclState && aclState->amOperator(),
 		   !parentalcontrols::isLayerUncensoringBlocked())) {
