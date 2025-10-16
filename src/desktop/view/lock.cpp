@@ -12,13 +12,13 @@ namespace view {
 Lock::Lock(QObject *parent)
 	: QObject(parent)
 	, m_exitLayerViewModeAction(new QAction(
-		  QIcon::fromTheme(QStringLiteral("drawpile_close")),
+		  QIcon::fromTheme(QStringLiteral("layer-visible-off")),
 		  tr("Exit layer view"), this))
 	, m_exitGroupViewModeAction(new QAction(
-		  QIcon::fromTheme(QStringLiteral("drawpile_close")),
+		  QIcon::fromTheme(QStringLiteral("drawpile_folderhidden")),
 		  tr("Exit group view"), this))
 	, m_exitFrameViewModeAction(new QAction(
-		  QIcon::fromTheme(QStringLiteral("drawpile_close")),
+		  QIcon::fromTheme(QStringLiteral("keyframe-disable")),
 		  tr("Exit frame view"), this))
 	, m_unlockCanvasAction(new QAction(
 		  QIcon::fromTheme(QStringLiteral("object-unlocked")),
