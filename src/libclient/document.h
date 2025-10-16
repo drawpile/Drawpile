@@ -187,6 +187,7 @@ public:
 
 	bool checkPermission(int feature);
 
+	void setReconnectStatePreviousLayerId(int previousLayerId);
 	void clearReconnectState();
 
 signals:

@@ -1009,6 +1009,13 @@ bool Document::checkPermission(int feature)
 	return m_canvas && m_canvas->checkPermission(feature);
 }
 
+void Document::setReconnectStatePreviousLayerId(int previousLayerId)
+{
+	if(m_reconnectState) {
+		m_reconnectState->setPreviousLayerId(previousLayerId);
+	}
+}
+
 void Document::clearReconnectState()
 {
 	delete m_reconnectState;

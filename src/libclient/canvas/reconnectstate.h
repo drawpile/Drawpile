@@ -45,6 +45,13 @@ public:
 
 	int defaultLayerId() const { return m_defaultLayerId; }
 
+	int previousLayerId() const { return m_previousLayerId; }
+
+	void setPreviousLayerId(int previousLayerId)
+	{
+		m_previousLayerId = previousLayerId;
+	}
+
 	void clearDetach();
 
 private:
@@ -54,6 +61,7 @@ private:
 	DP_AclState *m_aclState;
 	DP_CanvasHistoryReconnectState *m_chrs = nullptr;
 	int m_defaultLayerId = 0;
+	int m_previousLayerId = 0;
 };
 
 }

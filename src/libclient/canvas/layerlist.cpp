@@ -587,8 +587,9 @@ static bool isNewLayerId(
 }
 
 static int getAutoselect(
-	uint8_t localUser, bool autoselectAny, int layerIdToSelect,
-	int defaultLayer, const QVector<LayerListItem> &oldItems,
+	uint8_t localUser, bool autoselectAny, bool forceSelect,
+	int layerIdToSelect, int defaultLayer,
+	const QVector<LayerListItem> &oldItems,
 	const QVector<LayerListItem> &newItems)
 {
 	if(autoselectAny) {
@@ -607,6 +608,14 @@ static int getAutoselect(
 			}
 		}
 	} else {
+		if(forceSelect) {
+			// This is a reconnect, look for what we had selected previously.
+			for(const LayerListItem &newItem : newItems) {
+				if(forceSelect && newItem.id == layerIdToSelect) {
+					return newItem.id;
+				}
+			}
+		}
 		// We already participated: we might have just created a new layer,
 		// try to select that one.
 		for(const LayerListItem &newItem : newItems) {
@@ -639,12 +648,13 @@ void LayerListModel::setLayers(
 
 	uint8_t localUser = m_aclstate ? m_aclstate->localUserId() : 0;
 	int autoselect = getAutoselect(
-		localUser, m_autoselectAny, m_layerIdToSelect, m_defaultLayer, m_items,
-		newItems);
+		localUser, m_autoselectAny, m_forceSelect, m_layerIdToSelect,
+		m_defaultLayer, m_items, newItems);
 
 	if(m_layerIdToSelect != 0) {
 		for(const LayerListItem &item : newItems) {
 			if(item.id == m_layerIdToSelect) {
+				m_forceSelect = false;
 				m_layerIdToSelect = 0;
 				break;
 			}

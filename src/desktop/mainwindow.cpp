@@ -3643,6 +3643,8 @@ void MainWindow::connectToSession(
 		&MainWindow::showCompatibilityModeWarning);
 	m_canvasView->connectLoginDialog(m_doc, dlg);
 
+	m_doc->setReconnectStatePreviousLayerId(m_dockLayers->currentId());
+
 	dlg->show();
 	m_doc->setRecordOnConnect(autoRecordFile);
 	const desktop::settings::Settings &settings = dpApp().settings();

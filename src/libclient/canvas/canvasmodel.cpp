@@ -173,7 +173,7 @@ void CanvasModel::connectedToServer(
 
 	m_localUserId = myUserId;
 	m_compatibilityMode = compatibilityMode;
-	m_layerlist->setAutoselectAny(!join || !reconnectState);
+	bool autoselectAny = true;
 
 	m_aclstate->setLocalUserId(myUserId);
 	m_selection->setLocalUserId(myUserId);
@@ -186,6 +186,11 @@ void CanvasModel::connectedToServer(
 			m_userlist->setUsers(reconnectState->users());
 			m_paintengine->supplantAcl(reconnectState->aclState());
 			m_layerlist->setDefaultLayer(reconnectState->defaultLayerId());
+			int previousLayerId = reconnectState->previousLayerId();
+			if(previousLayerId > 0) {
+				autoselectAny = false;
+				m_layerlist->setForceLayerIdToSelect(previousLayerId);
+			}
 			net::Message msg = net::makeInternalReconnectStateApplyMessage(
 				0, reconnectState->historyState());
 			m_paintengine->receiveMessages(false, 1, &msg);
@@ -194,6 +199,7 @@ void CanvasModel::connectedToServer(
 	}
 	delete reconnectState;
 
+	m_layerlist->setAutoselectAny(autoselectAny);
 	emit compatibilityModeChanged(m_compatibilityMode);
 }
 
