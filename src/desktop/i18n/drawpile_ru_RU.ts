@@ -93,7 +93,7 @@
     <message>
         <location line="+14"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Не выходить за границы</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -113,7 +113,7 @@
     <message>
         <location line="+47"/>
         <source>Anti-Overflow:</source>
-        <translation type="unfinished"></translation>
+        <translation>Не выходить за границы:</translation>
     </message>
     <message>
         <location line="+26"/>
