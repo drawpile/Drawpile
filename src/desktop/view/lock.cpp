@@ -84,19 +84,6 @@ void Lock::buildDescriptions()
 {
 	m_descriptions.clear();
 
-	if(m_showViewModeNotices) {
-		switch(m_viewMode) {
-		case int(DP_VIEW_MODE_LAYER):
-			m_descriptions.append(tr("View Mode: Layer"));
-			break;
-		case int(DP_VIEW_MODE_GROUP):
-			m_descriptions.append(tr("View Mode: Group"));
-			break;
-		default:
-			break;
-		}
-	}
-
 	if(hasAny(Reason::OutOfSpace)) {
 		if(m_op) {
 			m_descriptions.append(
@@ -160,24 +147,6 @@ void Lock::buildActions()
 {
 	m_actions.clear();
 
-	if(m_showViewModeNotices) {
-		switch(m_viewMode) {
-		case int(DP_VIEW_MODE_LAYER):
-			m_actions.append(m_exitLayerViewModeAction);
-			break;
-		case int(DP_VIEW_MODE_GROUP):
-			m_actions.append(m_exitGroupViewModeAction);
-			break;
-		case int(DP_VIEW_MODE_FRAME):
-			if(hasAny(Reason::LayerHiddenInFrame)) {
-				m_actions.append(m_exitFrameViewModeAction);
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
 	if(!hasAny(Reason::Reset)) {
 		if(hasAny(Reason::OutOfSpace)) {
 			if(m_op) {
@@ -201,6 +170,24 @@ void Lock::buildActions()
 
 	if(hasAny(Reason::LayerCensoredRemote) && m_canUncensor) {
 		m_actions.append(m_uncensorLayersAction);
+	}
+
+	if(m_showViewModeNotices) {
+		switch(m_viewMode) {
+		case int(DP_VIEW_MODE_LAYER):
+			m_actions.append(m_exitLayerViewModeAction);
+			break;
+		case int(DP_VIEW_MODE_GROUP):
+			m_actions.append(m_exitGroupViewModeAction);
+			break;
+		case int(DP_VIEW_MODE_FRAME):
+			if(hasAny(Reason::LayerHiddenInFrame)) {
+				m_actions.append(m_exitFrameViewModeAction);
+			}
+			break;
+		default:
+			break;
+		}
 	}
 }
 

@@ -2681,7 +2681,7 @@ void CanvasController::updateLockNotice()
 
 	QString description = descriptions.join('\n');
 	bool changed =
-		description.isEmpty()
+		description.isEmpty() && m_lockActions.isEmpty()
 			? m_scene->hud()->hideLockStatus()
 			: m_scene->hud()->showLockStatus(description, m_lockActions);
 

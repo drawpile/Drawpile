@@ -190,20 +190,26 @@ void StatusItem::paint(
 	painter->setPen(QPen(pal.text(), 1.0));
 	painter->setBrush(Qt::NoBrush);
 
+	bool haveText = !m_text.isEmpty();
 	int actionCount = qMin(m_actions.size(), m_actionsBounds.size());
 	for(int i = 0; i < actionCount; ++i) {
 		QRectF actionBounds = m_actionsBounds[i];
 		qreal y = actionBounds.top() + m_bounds.top();
-		painter->drawLine(m_bounds.left(), y, m_bounds.right(), y);
+		if(i != 0 || haveText) {
+			painter->drawLine(m_bounds.left(), y, m_bounds.right(), y);
+		}
+
 		if(m_actions[i]->menu()) {
 			qreal x = m_bounds.right() - MARGIN / 2.0 - overflowIconSize;
 			painter->drawLine(x, y, x, actionBounds.bottom() + m_bounds.top());
 		}
 	}
 
-	painter->drawText(
-		m_textBounds.translated(anchor).marginsRemoved(getTextMargins()),
-		m_text);
+	if(haveText) {
+		painter->drawText(
+			m_textBounds.translated(anchor).marginsRemoved(getTextMargins()),
+			m_text);
+	}
 
 	QMarginsF actionMargins = getActionMargins();
 	qreal iconSize = m_iconSize;
@@ -258,10 +264,14 @@ void StatusItem::updateBounds()
 	refreshGeometry();
 	QFontMetricsF fontMetrics(m_font);
 
-	m_textBounds =
-		fontMetrics.boundingRect(QRect(0, 0, 0xffff, 0xffff), 0, m_text)
-			.marginsAdded(getTextMargins());
-	m_textBounds.moveTo(0.0, 0.0);
+	if(m_text.isEmpty()) {
+		m_textBounds = QRectF(0.0, 0.0, 0.0, 0.0);
+	} else {
+		m_textBounds =
+			fontMetrics.boundingRect(QRect(0, 0, 0xffff, 0xffff), 0, m_text)
+				.marginsAdded(getTextMargins());
+		m_textBounds.moveTo(0.0, 0.0);
+	}
 	m_bounds = m_textBounds;
 
 	m_actionsBounds.clear();
