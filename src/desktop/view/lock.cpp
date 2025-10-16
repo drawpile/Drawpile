@@ -26,6 +26,18 @@ Lock::Lock(QObject *parent)
 	, m_resetCanvasAction(new QAction(
 		  QIcon::fromTheme(QStringLiteral("view-refresh")), tr("Reset canvas…"),
 		  this))
+	, m_selectAllAction(new QAction(
+		  QIcon::fromTheme(QStringLiteral("edit-select-all")), tr("Select all"),
+		  this))
+	, m_selectLayerBoundsAction(new QAction(
+		  QIcon::fromTheme(QStringLiteral("select-rectangular")),
+		  tr("Select layer bounds"), this))
+	, m_setFillSourceAction(new QAction(
+		  QIcon::fromTheme(QStringLiteral("tag")),
+		  tr("Set current layer as fill source"), this))
+	, m_clearFillSourceAction(new QAction(
+		  QIcon::fromTheme(QStringLiteral("tag-delete")),
+		  tr("Clear fill source"), this))
 	, m_uncensorLayersAction(new QAction(
 		  QIcon::fromTheme(QStringLiteral("view-visible")),
 		  tr("Show censored layers"), this))
@@ -107,6 +119,10 @@ void Lock::buildDescriptions()
 		m_descriptions.append(tr("User is locked"));
 	}
 
+	if(hasAny(Reason::NoSelection)) {
+		m_descriptions.append(tr("Tool requires a selection"));
+	}
+
 	if(hasAny(Reason::NoFillSource)) {
 		m_descriptions.append(tr("You need to set a layer as the fill source"));
 	}
@@ -138,10 +154,6 @@ void Lock::buildDescriptions()
 	if(hasAny(Reason::Tool)) {
 		m_descriptions.append(tr("Tool is locked"));
 	}
-
-	if(hasAny(Reason::NoSelection)) {
-		m_descriptions.append(tr("Tool requires a selection"));
-	}
 }
 
 void Lock::buildActions()
@@ -166,13 +178,24 @@ void Lock::buildActions()
 		}
 	}
 
-	if(hasAny(Reason::OutOfSpace)) {
-		if(m_op) {
-			m_actions.append(m_resetCanvasAction);
+	if(!hasAny(Reason::Reset)) {
+		if(hasAny(Reason::OutOfSpace)) {
+			if(m_op) {
+				m_actions.append(m_resetCanvasAction);
+			}
+		} else if(hasAny(Reason::Canvas)) {
+			if(m_op) {
+				m_actions.append(m_unlockCanvasAction);
+			}
+		} else if(hasAny(Reason::NoSelection) && !hasAny(Reason::User)) {
+			m_actions.append(m_selectAllAction);
+			m_actions.append(m_selectLayerBoundsAction);
 		}
-	} else if(hasAny(Reason::Canvas)) {
-		if(m_op) {
-			m_actions.append(m_unlockCanvasAction);
+
+		if(hasAny(Reason::NoFillSource) && !hasAny(Reason::NoLayer)) {
+			m_actions.append(m_setFillSourceAction);
+		} else if(hasAny(Reason::OverlappingFillSource)) {
+			m_actions.append(m_clearFillSourceAction);
 		}
 	}
 

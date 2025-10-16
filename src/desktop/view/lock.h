@@ -38,6 +38,10 @@ public:
 	QAction *exitFrameViewModeAction() { return m_exitFrameViewModeAction; }
 	QAction *unlockCanvasAction() { return m_unlockCanvasAction; }
 	QAction *resetCanvasAction() { return m_resetCanvasAction; }
+	QAction *selectAllAction() { return m_selectAllAction; }
+	QAction *selectLayerBoundsAction() { return m_selectLayerBoundsAction; }
+	QAction *setFillSourceAction() { return m_setFillSourceAction; }
+	QAction *clearFillSourceAction() { return m_clearFillSourceAction; }
 	QAction *uncensorLayersAction() { return m_uncensorLayersAction; }
 
 	bool updateReasons(
@@ -65,6 +69,10 @@ private:
 	QAction *const m_exitFrameViewModeAction;
 	QAction *const m_unlockCanvasAction;
 	QAction *const m_resetCanvasAction;
+	QAction *const m_selectAllAction;
+	QAction *const m_selectLayerBoundsAction;
+	QAction *const m_setFillSourceAction;
+	QAction *const m_clearFillSourceAction;
 	QAction *const m_uncensorLayersAction;
 	QFlags<Reason> m_activeReasons;
 	QFlags<Reason> m_allReasons;

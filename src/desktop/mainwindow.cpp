@@ -7473,6 +7473,18 @@ void MainWindow::setupActions()
 		m_viewLock->resetCanvasAction(), &QAction::triggered, resetsession,
 		&QAction::trigger);
 	connect(
+		m_viewLock->selectAllAction(), &QAction::triggered, selectall,
+		&QAction::trigger);
+	connect(
+		m_viewLock->selectLayerBoundsAction(), &QAction::triggered,
+		selectlayerbounds, &QAction::trigger);
+	connect(
+		m_viewLock->setFillSourceAction(), &QAction::triggered,
+		layerSetFillSource, &QAction::trigger);
+	connect(
+		m_viewLock->clearFillSourceAction(), &QAction::triggered,
+		layerClearFillSource, &QAction::trigger);
+	connect(
 		m_viewLock->uncensorLayersAction(), &QAction::triggered, this,
 		[layerUncensor] {
 			if(!layerUncensor->isChecked() &&
