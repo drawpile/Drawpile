@@ -50,6 +50,12 @@ HudHandler::HudHandler(HudScene *scene, QObject *parent)
 	m_lockStatus = new StatusItem(style, font);
 	m_lockStatus->updateVisibility(false);
 	m_scene->hudAddItem(m_lockStatus);
+	connect(
+		m_lockStatus->overflowMenu(), &QMenu::aboutToShow, this,
+		std::bind(&StatusItem::setMenuShown, m_lockStatus, true));
+	connect(
+		m_lockStatus->overflowMenu(), &QMenu::aboutToHide, this,
+		std::bind(&StatusItem::setMenuShown, m_lockStatus, false));
 
 	QAction *overflowAction = new QAction(
 		QIcon::fromTheme(QStringLiteral("drawpile_ellipsis_vertical")),
@@ -188,6 +194,8 @@ void HudHandler::activateHudAction(
 			m_selectionActionBar->setMenuShown(true);
 		} else if(action.menu == m_transformActionBar->overflowMenu()) {
 			m_transformActionBar->setMenuShown(true);
+		} else if(action.menu == m_lockStatus->overflowMenu()) {
+			m_lockStatus->setMenuShown(true);
 		}
 	}
 	emit hudActionActivated(action, globalPos);

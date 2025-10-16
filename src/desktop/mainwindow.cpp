@@ -590,6 +590,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 #endif
 	settings.bindShowViewModeNotices(
 		m_viewLock, &view::Lock::setShowVewModeNotices);
+	settings.bindShowViewModeNotices(getAction("layerviewnotices"));
 	settings.trySubmit();
 
 	m_updatingInterfaceMode = false;
@@ -6268,6 +6269,10 @@ void MainWindow::setupActions()
 			.statusTip(tr("Show only layers in the current frame"))
 			.shortcut("Shift+Home")
 			.checkable();
+	QAction *layerViewNotices =
+		makeAction("layerviewnotices", tr("On-canvas view mode notices"))
+			.noDefaultShortcut()
+			.checkable();
 	QAction *layerUncensor =
 		makeAction("layerviewuncensor", tr("Show Censored Layers"))
 			.noDefaultShortcut()
@@ -6286,6 +6291,8 @@ void MainWindow::setupActions()
 	layerViewMenu->addAction(m_layerViewCurrentLayer);
 	layerViewMenu->addAction(m_layerViewCurrentGroup);
 	layerViewMenu->addAction(m_layerViewCurrentFrame);
+	layerViewMenu->addSeparator();
+	layerViewMenu->addAction(layerViewNotices);
 	viewmenu->addAction(layerUncensor);
 
 	// clang-format off
@@ -7489,6 +7496,23 @@ void MainWindow::setupActions()
 	});
 
 	// Lock status actions
+	QMenu *layerViewNoticeMenu = new QMenu(this);
+	layerViewNoticeMenu->addAction(m_layerViewNormal);
+	layerViewNoticeMenu->addAction(m_layerViewCurrentLayer);
+	layerViewNoticeMenu->addAction(m_layerViewCurrentGroup);
+	layerViewNoticeMenu->addAction(m_layerViewCurrentFrame);
+	layerViewNoticeMenu->addSeparator();
+	QAction *disableViewModeNotices = layerViewNoticeMenu->addAction(
+		QIcon::fromTheme("drawpile_close"), tr("Disable view mode notices"));
+	connect(disableViewModeNotices, &QAction::triggered, this, [this] {
+		dpApp().settings().setShowViewModeNotices(false);
+		m_canvasView->showPopupNotice(
+			tr("Layer view mode notices disabled.\n"
+			   "You can re-enable them via the View menu or preferences."));
+	});
+	m_viewLock->exitLayerViewModeAction()->setMenu(layerViewNoticeMenu);
+	m_viewLock->exitGroupViewModeAction()->setMenu(layerViewNoticeMenu);
+	m_viewLock->exitFrameViewModeAction()->setMenu(layerViewNoticeMenu);
 	connect(
 		m_viewLock->exitLayerViewModeAction(), &QAction::triggered, this,
 		&MainWindow::setNormalLayerViewMode);
