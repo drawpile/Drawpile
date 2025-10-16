@@ -1678,6 +1678,17 @@ void Document::selectLayer(bool includeMask)
 
 		if(bounds.isEmpty()) {
 			selectNone(true);
+			QString message;
+			if(includeMask) {
+				//: A message shown when using "layer to selection", but there's
+				//: nothing on the layer to select.
+				message = tr("Layer to selection: current layer is empty.");
+			} else {
+				//: A message shown when using "select layer bounds", but
+				//: there's nothing on the layer to select.
+				message = tr("Select layer bounds: current layer is empty.");
+			}
+			emit m_toolctrl->showMessageRequested(message);
 		} else if(includeMask) {
 			QImage img(
 				bounds.width(), bounds.height(),
