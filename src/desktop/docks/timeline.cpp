@@ -42,6 +42,9 @@ Timeline::Timeline(QWidget *parent)
 	connect(
 		m_widget, &widgets::TimelineWidget::trackOnionSkinEnabled, this,
 		&Timeline::trackOnionSkinEnabled);
+	connect(
+		m_widget, &widgets::TimelineWidget::frameViewModeRequested, this,
+		&Timeline::frameViewModeRequested);
 
 	TitleWidget *titlebar = new TitleWidget(this);
 	setTitleBarWidget(titlebar);

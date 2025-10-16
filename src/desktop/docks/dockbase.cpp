@@ -55,6 +55,22 @@ void DockBase::makeTabCurrent(bool toggled)
 	}
 }
 
+bool DockBase::isActuallyVisible()
+{
+	if(isVisible()) {
+		if(isFloating()) {
+			return true;
+		} else {
+			int i;
+			QTabBar *tabBar = searchTab(i);
+			if(tabBar && tabBar->currentIndex() == i) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 QWidget *DockBase::actualTitleBarWidget() const
 {
 	return m_originalTitleBarWidget ? m_originalTitleBarWidget

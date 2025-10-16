@@ -16,6 +16,7 @@ extern "C" {
 #include "libclient/net/message.h"
 #include <QApplication>
 #include <QClipboard>
+#include <QDeadlineTimer>
 #include <QDrag>
 #include <QHash>
 #include <QIcon>
@@ -90,6 +91,7 @@ struct TimelineWidget::Private {
 	Qt::DropAction dropAction;
 	QPoint dragOrigin;
 	QPoint dragPos;
+	QDeadlineTimer frameViewRequestTimer;
 
 	int selectedLayerId = 0;
 	QHash<QPair<int, int>, int> layerIdByKeyFrame;
@@ -623,23 +625,44 @@ void TimelineWidget::setActions(const Actions &actions)
 		actions.trackBelow, &QAction::triggered, this,
 		&TimelineWidget::trackBelow);
 	connect(
+		actions.keyFrameCreateLayer, &QAction::triggered, this,
+		&TimelineWidget::startFrameViewRequestTimer);
+	connect(
 		actions.keyFrameCreateLayerNext, &QAction::triggered, this,
 		&TimelineWidget::nextFrame);
+	connect(
+		actions.keyFrameCreateLayerNext, &QAction::triggered, this,
+		&TimelineWidget::startFrameViewRequestTimer);
 	connect(
 		actions.keyFrameCreateLayerPrev, &QAction::triggered, this,
 		&TimelineWidget::prevFrame);
 	connect(
+		actions.keyFrameCreateLayerPrev, &QAction::triggered, this,
+		&TimelineWidget::startFrameViewRequestTimer);
+	connect(
 		actions.keyFrameCreateGroupNext, &QAction::triggered, this,
 		&TimelineWidget::nextFrame);
+	connect(
+		actions.keyFrameCreateGroupNext, &QAction::triggered, this,
+		&TimelineWidget::startFrameViewRequestTimer);
 	connect(
 		actions.keyFrameCreateGroupPrev, &QAction::triggered, this,
 		&TimelineWidget::prevFrame);
 	connect(
+		actions.keyFrameCreateGroupPrev, &QAction::triggered, this,
+		&TimelineWidget::startFrameViewRequestTimer);
+	connect(
 		actions.keyFrameDuplicateNext, &QAction::triggered, this,
 		&TimelineWidget::nextFrame);
 	connect(
+		actions.keyFrameDuplicateNext, &QAction::triggered, this,
+		&TimelineWidget::startFrameViewRequestTimer);
+	connect(
 		actions.keyFrameDuplicatePrev, &QAction::triggered, this,
 		&TimelineWidget::prevFrame);
+	connect(
+		actions.keyFrameDuplicatePrev, &QAction::triggered, this,
+		&TimelineWidget::startFrameViewRequestTimer);
 
 	updateActions();
 }
@@ -1927,6 +1950,11 @@ void TimelineWidget::updateTracks()
 	updateActions();
 	updateScrollbars();
 	update();
+
+	if(!d->frameViewRequestTimer.hasExpired()) {
+		d->frameViewRequestTimer.setRemainingTime(0, Qt::VeryCoarseTimer);
+		emit frameViewModeRequested();
+	}
 }
 
 void TimelineWidget::updateFrameCount()
@@ -1997,6 +2025,7 @@ void TimelineWidget::setCurrent(
 				} else {
 					emit layerSelected(layerIdToSelect);
 				}
+				emit frameViewModeRequested();
 			}
 		}
 		updateActions();
@@ -2006,6 +2035,9 @@ void TimelineWidget::setCurrent(
 
 void TimelineWidget::setKeyFrame(int layerId)
 {
+	if(layerId > 0) {
+		startFrameViewRequestTimer();
+	}
 	emitCommand([&](uint8_t contextId) {
 		return net::makeKeyFrameSetMessage(
 			contextId, d->currentTrackId, d->currentFrame, layerId, 0,
@@ -2300,6 +2332,13 @@ void TimelineWidget::updateScrollbars()
 	d->verticalScroll->setMaximum(qMax(
 		0, (d->rowHeight + hsh.height() + d->trackCount() * d->rowHeight) -
 			   height()));
+}
+
+void TimelineWidget::startFrameViewRequestTimer()
+{
+	if(d->editable) {
+		d->frameViewRequestTimer.setRemainingTime(10000, Qt::VeryCoarseTimer);
+	}
 }
 
 TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const

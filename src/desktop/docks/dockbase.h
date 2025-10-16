@@ -21,6 +21,7 @@ public:
 	void setShowIcons(bool showIcons);
 
 	void makeTabCurrent(bool toggled);
+	bool isActuallyVisible();
 
 	QWidget *actualTitleBarWidget() const;
 	void setArrangeMode(bool arrangeMode);

@@ -88,6 +88,7 @@ signals:
 	void blankLayerSelected();
 	void trackHidden(int trackId, bool hidden);
 	void trackOnionSkinEnabled(int trackId, bool onionSkin);
+	void frameViewModeRequested();
 
 protected:
 	bool event(QEvent *event) override;
@@ -164,6 +165,7 @@ private:
 		int trackId);
 	void updateActions();
 	void updateScrollbars();
+	void startFrameViewRequestTimer();
 
 	struct Target;
 	Target getMouseTarget(const QPoint &pos) const;

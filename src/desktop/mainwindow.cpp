@@ -796,6 +796,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(
 		m_dockTimeline, &docks::Timeline::trackOnionSkinEnabled, paintEngine,
 		&canvas::PaintEngine::setTrackOnionSkin);
+	connect(
+		m_dockTimeline, &docks::Timeline::frameViewModeRequested, this,
+		&MainWindow::autoSetFrameViewMode);
 
 	connect(
 		m_dockOnionSkins, &docks::OnionSkinsDock::onionSkinsChanged,
@@ -1184,9 +1187,19 @@ void MainWindow::setBrushSlotCount(int count)
 
 void MainWindow::setNormalLayerViewMode()
 {
-	QAction *layerviewnormal = getAction("layerviewnormal");
-	if(!layerviewnormal->isChecked()) {
-		layerviewnormal->trigger();
+	if(!m_layerViewNormal->isChecked()) {
+		m_layerViewNormal->trigger();
+	}
+}
+
+void MainWindow::autoSetFrameViewMode()
+{
+	if(!m_layerViewCurrentFrame->isChecked() &&
+	   m_dockTimeline->isActuallyVisible()) {
+		m_layerViewCurrentFrame->trigger();
+		m_canvasView->showPopupNotice(
+			tr("Switched to frame view mode.\n"
+			   "You can exit it via the View menu or the timeline."));
 	}
 }
 
@@ -1201,13 +1214,13 @@ void MainWindow::toggleLayerViewMode()
 	// single layer and normal mode by mashing the same shortcut. Otherwise
 	// pressing the shortcut again would have no useful effect anyway.
 	QAction *actions[] = {
-		getAction("layerviewcurrentlayer"),
-		getAction("layerviewcurrentgroup"),
-		getAction("layerviewcurrentframe"),
+		m_layerViewCurrentLayer,
+		m_layerViewCurrentGroup,
+		m_layerViewCurrentFrame,
 	};
 	for (QAction *action : actions) {
 		if (action->isChecked() && m_lastLayerViewMode == action) {
-			getAction("layerviewnormal")->setChecked(true);
+			m_layerViewNormal->setChecked(true);
 			break;
 		}
 	}
@@ -1223,14 +1236,14 @@ void MainWindow::updateLayerViewMode()
 
 	DP_ViewMode mode;
 	QAction *action;
-	if((action = getAction("layerviewcurrentlayer"))->isChecked()) {
+	if((action = m_layerViewCurrentLayer)->isChecked()) {
 		mode = DP_VIEW_MODE_LAYER;
-	} else if((action = getAction("layerviewcurrentgroup"))->isChecked()) {
+	} else if((action = m_layerViewCurrentGroup)->isChecked()) {
 		mode = DP_VIEW_MODE_GROUP;
-	} else if((action = getAction("layerviewcurrentframe"))->isChecked()) {
+	} else if((action = m_layerViewCurrentFrame)->isChecked()) {
 		mode = DP_VIEW_MODE_FRAME;
 	} else {
-		action = getAction("layerviewnormal");
+		action = m_layerViewNormal;
 		mode = DP_VIEW_MODE_NORMAL;
 	}
 	m_lastLayerViewMode = action;
@@ -6200,6 +6213,7 @@ void MainWindow::setupActions()
 
 	m_viewstatus->setActions(viewflip, viewmirror, rotateorig, {zoomorig, zoomfit, zoomfitwidth, zoomfitheight});
 
+	// clang-format on
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(layoutsAction);
 	m_desktopModeActions->addAction(layoutsAction);
@@ -6234,27 +6248,47 @@ void MainWindow::setupActions()
 
 	viewmenu->addSeparator();
 
-	QAction *layerViewNormal = makeAction("layerviewnormal", tr("Normal View")).statusTip(tr("Show all layers normally")).noDefaultShortcut().checkable().checked();
-	QAction *layerViewCurrentLayer = makeAction("layerviewcurrentlayer", tr("Layer View")).statusTip(tr("Show only the current layer")).shortcut("Home").checkable();
-	QAction *layerViewCurrentGroup = makeAction("layerviewcurrentgroup", tr("Group View")).statusTip(tr("Show only the current parent layer group")).shortcut("Ctrl+Home").checkable();
-	QAction *layerViewCurrentFrame = makeAction("layerviewcurrentframe", tr("Frame View")).statusTip(tr("Show only layers in the current frame")).shortcut("Shift+Home").checkable();
-	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).noDefaultShortcut().checkable();
-	m_lastLayerViewMode = layerViewNormal;
+	m_layerViewNormal = makeAction("layerviewnormal", tr("Normal View"))
+							.statusTip(tr("Show all layers normally"))
+							.noDefaultShortcut()
+							.checkable()
+							.checked();
+	m_layerViewCurrentLayer =
+		makeAction("layerviewcurrentlayer", tr("Layer View"))
+			.statusTip(tr("Show only the current layer"))
+			.shortcut("Home")
+			.checkable();
+	m_layerViewCurrentGroup =
+		makeAction("layerviewcurrentgroup", tr("Group View"))
+			.statusTip(tr("Show only the current parent layer group"))
+			.shortcut("Ctrl+Home")
+			.checkable();
+	m_layerViewCurrentFrame =
+		makeAction("layerviewcurrentframe", tr("Frame View"))
+			.statusTip(tr("Show only layers in the current frame"))
+			.shortcut("Shift+Home")
+			.checkable();
+	QAction *layerUncensor =
+		makeAction("layerviewuncensor", tr("Show Censored Layers"))
+			.noDefaultShortcut()
+			.checkable();
+	m_lastLayerViewMode = m_layerViewNormal;
 
 	QActionGroup *layerViewModeGroup = new QActionGroup(this);
 	layerViewModeGroup->setExclusive(true);
-	layerViewModeGroup->addAction(layerViewNormal);
-	layerViewModeGroup->addAction(layerViewCurrentLayer);
-	layerViewModeGroup->addAction(layerViewCurrentGroup);
-	layerViewModeGroup->addAction(layerViewCurrentFrame);
+	layerViewModeGroup->addAction(m_layerViewNormal);
+	layerViewModeGroup->addAction(m_layerViewCurrentLayer);
+	layerViewModeGroup->addAction(m_layerViewCurrentGroup);
+	layerViewModeGroup->addAction(m_layerViewCurrentFrame);
 
 	QMenu *layerViewMenu = viewmenu->addMenu(tr("Layer View Mode"));
-	layerViewMenu->addAction(layerViewNormal);
-	layerViewMenu->addAction(layerViewCurrentLayer);
-	layerViewMenu->addAction(layerViewCurrentGroup);
-	layerViewMenu->addAction(layerViewCurrentFrame);
+	layerViewMenu->addAction(m_layerViewNormal);
+	layerViewMenu->addAction(m_layerViewCurrentLayer);
+	layerViewMenu->addAction(m_layerViewCurrentGroup);
+	layerViewMenu->addAction(m_layerViewCurrentFrame);
 	viewmenu->addAction(layerUncensor);
 
+	// clang-format off
 	connect(layerViewModeGroup, &QActionGroup::triggered, this, &MainWindow::toggleLayerViewMode);
 	connect(layerUncensor, &QAction::toggled, this, &MainWindow::updateLayerViewMode);
 
@@ -6891,7 +6925,7 @@ void MainWindow::setupActions()
 			animationGroupMenu,
 			animationDuplicateMenu,
 		},
-		layerViewNormal, layerViewCurrentFrame, showFlipbook);
+		m_layerViewNormal, m_layerViewCurrentFrame, showFlipbook);
 	m_dockToolSettings->fillSettings()->setActions(layerAutomaticAlphaPreserve);
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);

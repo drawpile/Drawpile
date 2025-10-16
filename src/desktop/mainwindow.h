@@ -246,6 +246,7 @@ private slots:
 	void setBrushSlotCount(int count);
 
 	void setNormalLayerViewMode();
+	void autoSetFrameViewMode();
 	void toggleLayerViewMode();
 	void updateLayerViewMode();
 
@@ -527,6 +528,10 @@ private:
 	QMenu *m_recentMenu;
 #endif
 	QAction *m_lastLayerViewMode;
+	QAction *m_layerViewNormal;
+	QAction *m_layerViewCurrentLayer;
+	QAction *m_layerViewCurrentGroup;
+	QAction *m_layerViewCurrentFrame;
 	QMenu *m_actionBarLocationMenu = nullptr;
 
 	QActionGroup
