@@ -88,7 +88,7 @@
     <message>
         <location line="+14"/>
         <source>Anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-desbordamiento</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -108,7 +108,7 @@
     <message>
         <location line="+47"/>
         <source>Anti-Overflow:</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-Desbordamiento:</translation>
     </message>
     <message>
         <location line="+26"/>
