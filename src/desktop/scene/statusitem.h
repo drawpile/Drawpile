@@ -49,7 +49,7 @@ protected:
 
 private:
 	static constexpr qreal MARGIN = 16.0;
-	static constexpr qreal ICON_SPACE = 1.1;
+	static constexpr qreal ICON_SPACE = 1.2;
 
 	void copyActionsToOverflowMenu(QMenu *menu);
 
