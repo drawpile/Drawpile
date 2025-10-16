@@ -6,8 +6,8 @@
 
 namespace widgets {
 
-ChatWindow::ChatWindow(QWidget *content)
-	: QWidget()
+ChatWindow::ChatWindow(QWidget *content, QWidget *parent)
+	: QWidget(parent, Qt::Window)
 {
 	setWindowTitle(tr("Chat"));
 

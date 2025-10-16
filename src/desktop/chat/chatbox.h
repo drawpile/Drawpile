@@ -48,7 +48,7 @@ public slots:
 private slots:
 	void onCanvasChanged(canvas::CanvasModel *canvas);
 	void onServerLogin();
-	void detachFromParent();
+	void detachFromParent(bool onTop);
 	void reattachToParent();
 
 signals:

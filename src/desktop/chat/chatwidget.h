@@ -89,6 +89,7 @@ private slots:
 signals:
 	void message(const net::Message &msg);
 	void detachRequested();
+	void detachOnTopRequested();
 	void expandRequested();
 	void muteChanged(bool muted);
 

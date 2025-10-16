@@ -16,6 +16,7 @@
 #include <QResizeEvent>
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <functional>
 
 namespace widgets {
 
@@ -84,7 +85,10 @@ ChatBox::ChatBox(Document *doc, bool smallScreenMode, QWidget *parent)
 	connect(m_chatWidget, &ChatWidget::message, this, &ChatBox::message);
 	connect(
 		m_chatWidget, &ChatWidget::detachRequested, this,
-		&ChatBox::detachFromParent);
+		std::bind(&ChatBox::detachFromParent, this, false));
+	connect(
+		m_chatWidget, &ChatWidget::detachOnTopRequested, this,
+		std::bind(&ChatBox::detachFromParent, this, true));
 	connect(m_chatWidget, &ChatWidget::expandRequested, this, [this]() {
 		if(isCollapsed()) {
 			emit expandPlease();
@@ -192,20 +196,20 @@ void ChatBox::setCurrentLayer(int layerId)
 	m_chatWidget->setCurrentLayer(layerId);
 }
 
-void ChatBox::detachFromParent()
+void ChatBox::detachFromParent(bool onTop)
 {
-	if(!parent() || qobject_cast<ChatWindow *>(parent()))
+	QWidget *oldParent = parentWidget();
+	if(!oldParent || qobject_cast<ChatWindow *>(oldParent)) {
 		return;
+	}
 
 	m_state = State::Detached;
 
-	const auto siz = size();
-
-	QObject *oldParent = parent();
+	QSize siz = size();
 
 	m_chatWidget->setAttached(false);
 
-	auto *window = new ChatWindow(this);
+	ChatWindow *window = new ChatWindow(this, onTop ? oldParent : nullptr);
 	connect(window, &ChatWindow::closing, this, &ChatBox::reattachToParent);
 	connect(oldParent, &QObject::destroyed, window, &QObject::deleteLater);
 

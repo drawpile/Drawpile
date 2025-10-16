@@ -101,6 +101,7 @@ struct ChatWidget::Private {
 	QAction *compactAction = nullptr;
 	QAction *attachAction = nullptr;
 	QAction *detachAction = nullptr;
+	QAction *detachOnTopAction = nullptr;
 	QAction *muteAction = nullptr;
 
 	QList<int> announcedUsers;
@@ -257,6 +258,9 @@ ChatWidget::ChatWidget(bool smallScreenMode, QWidget *parent)
 			d->externalMenu->addAction(tr("Attach"), this, &ChatWidget::attach);
 		d->detachAction = d->externalMenu->addAction(
 			tr("Detach"), this, &ChatWidget::detachRequested);
+		d->detachOnTopAction = d->externalMenu->addAction(
+			tr("Detach and stay on top"), this,
+			&ChatWidget::detachOnTopRequested);
 	}
 
 	d->muteAction = d->externalMenu->addAction(
@@ -1077,9 +1081,9 @@ void ChatWidget::showChatContextMenu(const QPoint &pos)
 	QMenu *menu = d->view->createStandardContextMenu();
 	menu->addSeparator();
 
-	QAction *actions[] = {
-		d->clearAction, d->compactAction, d->attachAction, d->detachAction,
-		d->muteAction};
+	QAction *actions[] = {d->clearAction,		d->compactAction,
+						  d->attachAction,		d->detachAction,
+						  d->detachOnTopAction, d->muteAction};
 	for(QAction *action : actions) {
 		if(action && action->isVisible()) {
 			menu->addAction(action);
@@ -1095,6 +1099,7 @@ void ChatWidget::contextMenuAboutToShow()
 	if(ALLOW_DETACH) {
 		d->attachAction->setVisible(!d->smallScreenMode && !d->isAttached);
 		d->detachAction->setVisible(!d->smallScreenMode && d->isAttached);
+		d->detachOnTopAction->setVisible(!d->smallScreenMode && d->isAttached);
 	}
 }
 
