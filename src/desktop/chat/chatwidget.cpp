@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/chat/chatwidget.h"
 #include "desktop/chat/chatwidgetpinnedarea.h"
+#include "desktop/chat/chatwindow.h"
 #include "desktop/main.h"
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
@@ -1122,7 +1123,7 @@ void ChatWidget::setCompactMode(bool compact)
 void ChatWidget::attach()
 {
 	QWidget *win = parentWidget();
-	while(win->parent() != nullptr) {
+	while(win && !qobject_cast<ChatWindow *>(win)) {
 		win = win->parentWidget();
 	}
 	win->close();
