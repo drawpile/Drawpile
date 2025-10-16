@@ -717,6 +717,11 @@ void LayerList::selectLayer(int id)
 	selectLayerIndex(m_canvas->layerlist()->layerIndex(id), true);
 }
 
+void LayerList::autoSelectLayer(int id)
+{
+	selectLayerIndex(m_canvas->layerlist()->layerIndex(id), true);
+}
+
 void LayerList::clearLayerSelection()
 {
 	disableAutoselectAny();

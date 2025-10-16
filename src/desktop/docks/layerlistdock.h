@@ -102,6 +102,7 @@ public:
 	void updateLayerColorMenuIcon();
 
 	void selectLayer(int id);
+	void autoSelectLayer(int id);
 	void clearLayerSelection();
 	void selectAbove();
 	void selectBelow();

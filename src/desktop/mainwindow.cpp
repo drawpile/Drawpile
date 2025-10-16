@@ -720,7 +720,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(
 		canvas, &canvas::CanvasModel::layerAutoselectRequest, m_dockLayers,
-		&docks::LayerList::selectLayer);
+		&docks::LayerList::autoSelectLayer);
 	connect(
 		canvas, &canvas::CanvasModel::colorPicked, m_dockToolSettings,
 		&docks::ToolSettings::setForegroundColor);
