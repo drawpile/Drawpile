@@ -195,7 +195,6 @@ signals:
 	void coordinatesChanged(const QPointF &coordinates);
 	void quickAdjust(int type, qreal value, bool wheel);
 	void cursorChanged(const QCursor &cursor);
-	void hudActionActivated(const HudAction &action, const QPoint &globalPos);
 	void touchTapActionActivated(int action);
 	void saveInProgressChanged(bool saveInProgress);
 

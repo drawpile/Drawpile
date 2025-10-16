@@ -168,7 +168,6 @@ signals:
 	void savePreResetStateRequested();
 	void savePreResetStateDismissed();
 
-	void hudActionActivated(const HudAction &action, const QPoint &globalPos);
 	void touchTapActionActivated(int action);
 
 public slots:

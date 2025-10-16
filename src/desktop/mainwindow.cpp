@@ -7545,6 +7545,10 @@ void MainWindow::setupHud()
 		locationMenuAction,
 		disableAction,
 	});
+
+	connect(
+		hud, &HudHandler::hudActionActivated, this,
+		&MainWindow::handleHudAction);
 }
 
 void MainWindow::setActionBarSetting(int actionBar)

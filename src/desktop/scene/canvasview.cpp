@@ -986,7 +986,7 @@ bool CanvasView::activatePendingHudAction()
 		if(action.shouldRemoveHoverOnTrigger()) {
 			clearHudHover();
 		}
-		emit hudActionActivated(action, m_hudActionGlobalPos);
+		m_scene->hud()->activateHudAction(action, m_hudActionGlobalPos);
 		return true;
 	} else {
 		return false;

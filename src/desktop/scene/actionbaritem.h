@@ -2,14 +2,16 @@
 #ifndef DESKTOP_SCENE_ACTIONBARITEM_H
 #define DESKTOP_SCENE_ACTIONBARITEM_H
 #include "desktop/scene/baseitem.h"
-#include "desktop/scene/hudaction.h"
 #include <QFont>
 #include <QIcon>
+#include <QMenu>
+#include <QPointer>
 #include <QVector>
 
 class QAction;
 class QMenu;
 class QStyle;
+struct HudAction;
 
 namespace drawingboard {
 
@@ -41,9 +43,14 @@ public:
 		const QString &title, const QStyle *style, const QFont &font,
 		QAction *overflowAction, QGraphicsItem *parent = nullptr);
 
+	~ActionBarItem() override;
+
 	int type() const override { return Type; }
 
 	QRectF boundingRect() const override;
+
+	QMenu *overflowMenu() { return m_overflowMenu.data(); }
+	void setMenuShown(bool menuShown);
 
 	void setStyle(const QStyle *style);
 	void setFont(const QFont &font);
@@ -81,16 +88,16 @@ private:
 	static QPointF
 	getBoundsOffsetForLocation(Location location, const QRectF &bounds);
 
-	Hover m_hover = Hover::None;
 	Location m_location = Location::TopLeft;
 	int m_hoveredIndex = -1;
+	bool m_menuShown = false;
 	int m_buttonInnerSize;
 	int m_paddingSize;
 	int m_fontHeight;
 	QString m_title;
 	QFont m_font;
 	QAction *m_overflowAction;
-	QMenu *m_overflowMenu = nullptr;
+	QPointer<QMenu> m_overflowMenu;
 	QVector<Button> m_buttons;
 	QPointF m_anchor;
 	QRectF m_bounds;

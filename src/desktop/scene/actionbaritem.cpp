@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/scene/actionbaritem.h"
+#include "desktop/scene/hudaction.h"
 #include "desktop/utils/widgetutils.h"
 #include <QAction>
 #include <QApplication>
 #include <QFont>
-#include <QMenu>
 #include <QPainter>
 #include <QPalette>
 #include <QStyle>
@@ -42,6 +42,7 @@ ActionBarItem::ActionBarItem(
 	: BaseItem(parent)
 	, m_title(title)
 	, m_overflowAction(overflowAction)
+	, m_overflowMenu(new QMenu)
 {
 	setZValue(Z_ACTIONBAR);
 	setStyle(style);
@@ -50,9 +51,26 @@ ActionBarItem::ActionBarItem(
 	setOverflowMenuActions({});
 }
 
+ActionBarItem::~ActionBarItem()
+{
+	QMenu *overflowMenu = m_overflowMenu.data();
+	if(overflowMenu) {
+		m_overflowMenu.clear();
+		delete overflowMenu;
+	}
+}
+
 QRectF ActionBarItem::boundingRect() const
 {
 	return m_bounds;
+}
+
+void ActionBarItem::setMenuShown(bool menuShown)
+{
+	if(menuShown != m_menuShown) {
+		m_menuShown = menuShown;
+		refresh();
+	}
 }
 
 void ActionBarItem::setStyle(const QStyle *style)
@@ -82,11 +100,7 @@ void ActionBarItem::setButtons(const QVector<Button> &buttons)
 
 void ActionBarItem::setOverflowMenuActions(const QVector<QAction *> &actions)
 {
-	if(m_overflowMenu) {
-		m_overflowMenu->deleteLater();
-	}
-
-	m_overflowMenu = new QMenu;
+	m_overflowMenu->clear();
 	for(QAction *action : actions) {
 		if(action) {
 			m_overflowMenu->addAction(action);
@@ -108,12 +122,11 @@ void ActionBarItem::updateLocation(
 
 void ActionBarItem::checkHover(const QPointF &scenePos, HudAction &action)
 {
-	if(m_hover != Hover::None) {
+	if(m_hoveredIndex != -1) {
 		action.wasHovering = true;
 	}
 
 	QPointF pos = mapFromScene(scenePos);
-	Hover hover = Hover::None;
 	int hoveredIndex = -1;
 	if(m_bounds.contains(pos)) {
 		bool overButtons;
@@ -126,7 +139,6 @@ void ActionBarItem::checkHover(const QPointF &scenePos, HudAction &action)
 		}
 
 		if(overButtons) {
-			hover = Hover::Button;
 			int lastButtonIndex = m_buttons.size() - 1;
 			hoveredIndex = qBound(
 				0, int((pos.x() - m_bounds.x()) / buttonSize), lastButtonIndex);
@@ -140,8 +152,7 @@ void ActionBarItem::checkHover(const QPointF &scenePos, HudAction &action)
 		}
 	}
 
-	if(hover != m_hover || hoveredIndex != m_hoveredIndex) {
-		m_hover = hover;
+	if(hoveredIndex != m_hoveredIndex) {
 		m_hoveredIndex = hoveredIndex;
 		refresh();
 	}
@@ -149,8 +160,7 @@ void ActionBarItem::checkHover(const QPointF &scenePos, HudAction &action)
 
 void ActionBarItem::removeHover()
 {
-	if(m_hover != Hover::None) {
-		m_hover = Hover::None;
+	if(m_hoveredIndex != -1) {
 		m_hoveredIndex = -1;
 		refresh();
 	}
@@ -175,6 +185,7 @@ void ActionBarItem::paint(
 	qreal pad = qreal(m_paddingSize);
 	qreal buttonSize = getButtonSize();
 	bool top = isLocationAtTop(m_location);
+	int hoveredIndex = m_menuShown ? m_buttons.size() - 1 : m_hoveredIndex;
 
 	QRectF textRect(
 		m_bounds.left() + pad, m_bounds.top() + pad,
@@ -192,23 +203,23 @@ void ActionBarItem::paint(
 	painter->setRenderHint(QPainter::Antialiasing, false);
 	painter->setBrush(pal.window());
 	painter->setPen(Qt::NoPen);
-	if(m_hover == Hover::None) {
+	if(hoveredIndex == -1) {
 		painter->setOpacity(0.8);
 	}
 
-	if(m_hover == Hover::None && m_title.isEmpty()) {
+	if(hoveredIndex == -1 && m_title.isEmpty()) {
 		painter->drawRect(buttonsRect);
 	} else {
 		painter->drawRect(m_bounds);
 	}
 
 	QString text;
-	if(m_hover == Hover::Button) {
-		text = m_buttons[m_hoveredIndex].text;
+	if(hoveredIndex != -1) {
+		text = m_buttons[hoveredIndex].text;
 		painter->setBrush(pal.alternateBase());
 		painter->drawRect(QRectF(
-			m_bounds.x() + buttonSize * qreal(m_hoveredIndex),
-			buttonsRect.top(), buttonSize, buttonSize));
+			m_bounds.x() + buttonSize * qreal(hoveredIndex), buttonsRect.top(),
+			buttonSize, buttonSize));
 	} else {
 		text = m_title;
 	}
@@ -230,7 +241,7 @@ void ActionBarItem::paint(
 		QRectF iconRect(
 			m_bounds.x() + qreal(i) * buttonSize + pad, buttonsRect.top() + pad,
 			buttonInnerSize, buttonInnerSize);
-		painter->setOpacity(i == m_hoveredIndex ? 1.0 : 0.5);
+		painter->setOpacity(i == hoveredIndex ? 1.0 : 0.5);
 		m_buttons[i].icon.paint(painter, iconRect.toRect());
 	}
 

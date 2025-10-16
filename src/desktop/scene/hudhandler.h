@@ -55,6 +55,7 @@ public:
 
 	HudAction checkHover(const QPointF &scenePos);
 	void removeHover();
+	void activateHudAction(const HudAction &action, const QPoint &globalPos);
 
 	void setTopOffset(int topOffset);
 
@@ -73,6 +74,7 @@ public:
 
 signals:
 	void currentActionBarChanged();
+	void hudActionActivated(const HudAction &action, const QPoint &globalPos);
 
 private:
 	static constexpr qreal NOTICE_OFFSET = 16.0;

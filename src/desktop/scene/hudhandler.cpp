@@ -8,6 +8,7 @@
 #include <QAction>
 #include <QCoreApplication>
 #include <QIcon>
+#include <functional>
 
 using drawingboard::ActionBarItem;
 using drawingboard::BaseItem;
@@ -57,6 +58,18 @@ HudHandler::HudHandler(HudScene *scene, QObject *parent)
 	m_scene->hudAddItem(m_selectionActionBar);
 	m_scene->hudAddItem(m_transformActionBar);
 	connect(
+		m_selectionActionBar->overflowMenu(), &QMenu::aboutToShow, this,
+		std::bind(&ActionBarItem::setMenuShown, m_selectionActionBar, true));
+	connect(
+		m_transformActionBar->overflowMenu(), &QMenu::aboutToShow, this,
+		std::bind(&ActionBarItem::setMenuShown, m_transformActionBar, true));
+	connect(
+		m_selectionActionBar->overflowMenu(), &QMenu::aboutToHide, this,
+		std::bind(&ActionBarItem::setMenuShown, m_selectionActionBar, false));
+	connect(
+		m_transformActionBar->overflowMenu(), &QMenu::aboutToHide, this,
+		std::bind(&ActionBarItem::setMenuShown, m_transformActionBar, false));
+	connect(
 		&app, &DrawpileApp::refreshApplicationStyleRequested, this,
 		&HudHandler::refreshApplicationStyle, Qt::QueuedConnection);
 	connect(
@@ -72,10 +85,12 @@ void HudHandler::setCurrentActionBar(ActionBar actionBar)
 			break;
 		case ActionBar::Selection:
 			m_selectionActionBar->updateVisibility(false);
+			m_selectionActionBar->setMenuShown(false);
 			m_selectionActionBar->removeHover();
 			break;
 		case ActionBar::Transform:
 			m_transformActionBar->updateVisibility(false);
+			m_selectionActionBar->setMenuShown(false);
 			m_transformActionBar->removeHover();
 			break;
 		}
@@ -147,6 +162,21 @@ void HudHandler::removeHover()
 	for(ToggleItem *ti : m_toggleItems) {
 		ti->removeHover();
 	}
+}
+
+void HudHandler::activateHudAction(
+	const HudAction &action, const QPoint &globalPos)
+{
+	// Avoid the action bar flickering from having its hover removed and then
+	// right afterwards turning opaque again from the menu being shown.
+	if(action.type == HudAction::Type::TriggerMenu) {
+		if(action.menu == m_selectionActionBar->overflowMenu()) {
+			m_selectionActionBar->setMenuShown(true);
+		} else if(action.menu == m_transformActionBar->overflowMenu()) {
+			m_transformActionBar->setMenuShown(true);
+		}
+	}
+	emit hudActionActivated(action, globalPos);
 }
 
 void HudHandler::setTopOffset(int topOffset)
@@ -248,8 +278,9 @@ void HudHandler::setToolNotice(const QString &text)
 void HudHandler::setCatchupProgress(int percent)
 {
 	if(!m_catchup) {
-		m_catchup = new CatchupItem(QCoreApplication::translate(
-			"view::CanvasScene", "Restoring canvas…"));
+		m_catchup = new CatchupItem(
+			QCoreApplication::translate(
+				"view::CanvasScene", "Restoring canvas…"));
 		m_scene->hudAddItem(m_catchup);
 	}
 	m_catchup->setCatchupProgress(percent);
