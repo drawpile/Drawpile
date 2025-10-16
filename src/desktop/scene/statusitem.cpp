@@ -231,7 +231,7 @@ void StatusItem::paint(
 					QStringLiteral("drawpile_ellipsis_vertical"));
 			}
 			QRectF overflowIconRect = QRectF(
-				actionBounds.right() - overflowIconSize - MARGIN / 4.0,
+				m_bounds.right() - overflowIconSize - MARGIN / 4.0,
 				actionBounds.top() +
 					(actionBounds.height() - overflowIconSize) / 2.0,
 				overflowIconSize, overflowIconSize);
