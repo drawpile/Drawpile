@@ -70,7 +70,7 @@ void ToggleItem::paint(
 	painter->setRenderHint(QPainter::Antialiasing);
 	painter->setOpacity(m_hover ? 1.0 : 0.5);
 	painter->setPen(Qt::NoPen);
-	painter->setBrush(qApp->palette().window());
+	painter->setBrush(qApp->palette().base());
 	painter->drawPath(m_right ? getRightPath() : getLeftPath());
 	int padding = paddingSize();
 	int inner = innerSize();

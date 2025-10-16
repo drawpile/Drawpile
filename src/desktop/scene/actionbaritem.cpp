@@ -201,7 +201,7 @@ void ActionBarItem::paint(
 	}
 
 	painter->setRenderHint(QPainter::Antialiasing, false);
-	painter->setBrush(pal.window());
+	painter->setBrush(pal.base());
 	painter->setPen(Qt::NoPen);
 	if(hoveredIndex == -1) {
 		painter->setOpacity(0.8);
@@ -216,7 +216,8 @@ void ActionBarItem::paint(
 	QString text;
 	if(hoveredIndex != -1) {
 		text = m_buttons[hoveredIndex].text;
-		painter->setBrush(pal.alternateBase());
+		painter->setBrush(pal.highlight());
+		painter->setOpacity(1.0);
 		painter->drawRect(QRectF(
 			m_bounds.x() + buttonSize * qreal(hoveredIndex), buttonsRect.top(),
 			buttonSize, buttonSize));
@@ -225,13 +226,14 @@ void ActionBarItem::paint(
 	}
 
 	painter->setRenderHint(QPainter::Antialiasing, true);
-	painter->setPen(QPen(pal.windowText(), 1.0));
+	painter->setPen(QPen(pal.text(), 1.0));
 	painter->setBrush(Qt::NoBrush);
 
 	if(!text.isEmpty()) {
 		QTextOption textOption;
 		textOption.setAlignment(Qt::AlignCenter);
 		painter->setFont(m_font);
+		painter->setOpacity(1.0);
 		painter->drawText(textRect, text, textOption);
 	}
 
