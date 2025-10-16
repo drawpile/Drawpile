@@ -303,6 +303,7 @@ SETTING(shortcuts                 , Shortcuts                 , "settings/shortc
 SETTING(showInviteDialogOnHost    , ShowInviteDialogOnHost    , "invites/showdialogonhost"              , true)
 SETTING(showNsfmWarningOnJoin     , ShowNsfmWarningOnJoin     , "pc/shownsfmwarningonjoin"              , true)
 SETTING(showTransformNotices      , ShowTransformNotices      , "settings/showtransformnotices"         , true)
+SETTING(showViewModeNotices       , ShowViewModeNotices       , "settings/showviewmodenotices"          , true)
 SETTING(showTrayIcon              , ShowTrayIcon              , "ui/trayicon"                           , true)
 SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , 60)
 SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/tabletdriver"           , tabletinput::Mode::KisTabletWinink

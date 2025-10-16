@@ -152,6 +152,10 @@ void UserInterface::initMiscellaneous(
 	settings.bindShowTransformNotices(showTransformNotices);
 	form->addRow(tr("On-canvas notices:"), showTransformNotices);
 
+	QCheckBox *showViewModeNotices = new QCheckBox(tr("View mode notices"));
+	settings.bindShowViewModeNotices(showViewModeNotices);
+	form->addRow(nullptr, showViewModeNotices);
+
 	QCheckBox *scrollBars = new QCheckBox(tr("Show scroll bars on canvas"));
 	settings.bindCanvasScrollBars(scrollBars);
 	form->addRow(tr("Miscellaneous:"), scrollBars);

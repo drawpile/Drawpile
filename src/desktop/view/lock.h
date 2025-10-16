@@ -33,15 +33,21 @@ public:
 
 	explicit Lock(QObject *parent = nullptr);
 
+	QAction *exitLayerViewModeAction() { return m_exitLayerViewModeAction; }
+	QAction *exitGroupViewModeAction() { return m_exitGroupViewModeAction; }
+	QAction *exitFrameViewModeAction() { return m_exitFrameViewModeAction; }
 	QAction *unlockCanvasAction() { return m_unlockCanvasAction; }
 	QAction *resetCanvasAction() { return m_resetCanvasAction; }
 	QAction *uncensorLayersAction() { return m_uncensorLayersAction; }
 
 	bool hasReason(Reason reason) const { return m_reasons.testFlag(reason); }
-	bool updateReasons(QFlags<Reason> reasons, bool op, bool canUncensor);
+	bool updateReasons(
+		QFlags<Reason> reasons, int viewMode, bool op, bool canUncensor);
 
 	bool isLocked() const { return m_reasons; }
 	QString description() const;
+
+	void setShowVewModeNotices(bool showViewModeNotices);
 
 signals:
 	void lockStateChanged(
@@ -52,14 +58,19 @@ private:
 	void buildDescriptions();
 	void buildActions();
 
+	QAction *const m_exitLayerViewModeAction;
+	QAction *const m_exitGroupViewModeAction;
+	QAction *const m_exitFrameViewModeAction;
 	QAction *const m_unlockCanvasAction;
 	QAction *const m_resetCanvasAction;
 	QAction *const m_uncensorLayersAction;
 	QFlags<Reason> m_reasons;
 	QStringList m_descriptions;
 	QVector<QAction *> m_actions;
+	int m_viewMode;
 	bool m_op = false;
 	bool m_canUncensor = true;
+	bool m_showViewModeNotices = true;
 };
 
 }

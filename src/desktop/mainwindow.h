@@ -245,6 +245,7 @@ private slots:
 	void loadShortcuts(const QVariantMap &shortcuts);
 	void setBrushSlotCount(int count);
 
+	void setNormalLayerViewMode();
 	void toggleLayerViewMode();
 	void updateLayerViewMode();
 

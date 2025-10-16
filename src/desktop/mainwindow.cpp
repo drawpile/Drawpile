@@ -588,6 +588,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 #ifndef __EMSCRIPTEN__
 	settings.bindPreferredSaveFormat(this, &MainWindow::setPreferredSaveFormat);
 #endif
+	settings.bindShowViewModeNotices(
+		m_viewLock, &view::Lock::setShowVewModeNotices);
 	settings.trySubmit();
 
 	m_updatingInterfaceMode = false;
@@ -677,10 +679,7 @@ void MainWindow::autoJoin(
 
 void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 {
-	QAction *layerviewnormal = getAction("layerviewnormal");
-	if(!layerviewnormal->isChecked()) {
-		layerviewnormal->trigger();
-	}
+	setNormalLayerViewMode();
 
 	m_canvasView->setCanvas(canvas);
 	m_flipbookState = dialogs::Flipbook::State();
@@ -1182,6 +1181,15 @@ void MainWindow::setBrushSlotCount(int count)
 	CustomShortcutModel::changeDisabledActionNames(nameDisabledPairs);
 	emit dpApp().shortcutsChanged();
 }
+
+void MainWindow::setNormalLayerViewMode()
+{
+	QAction *layerviewnormal = getAction("layerviewnormal");
+	if(!layerviewnormal->isChecked()) {
+		layerviewnormal->trigger();
+	}
+}
+
 // clang-format off
 
 void MainWindow::toggleLayerViewMode()
@@ -3895,7 +3903,9 @@ void MainWindow::updateLockWidget()
 	}
 
 	if(m_viewLock->updateReasons(
-		   reasons, aclState && aclState->amOperator(),
+		   reasons,
+		   int(canvas ? canvas->paintEngine()->viewMode() : DP_VIEW_MODE_LAYER),
+		   aclState && aclState->amOperator(),
 		   !parentalcontrols::isLayerUncensoringBlocked())) {
 		QString toolTip;
 		QPixmap pixmap;
@@ -7420,6 +7430,15 @@ void MainWindow::setupActions()
 	});
 
 	// Lock status actions
+	connect(
+		m_viewLock->exitLayerViewModeAction(), &QAction::triggered, this,
+		&MainWindow::setNormalLayerViewMode);
+	connect(
+		m_viewLock->exitGroupViewModeAction(), &QAction::triggered, this,
+		&MainWindow::setNormalLayerViewMode);
+	connect(
+		m_viewLock->exitFrameViewModeAction(), &QAction::triggered, this,
+		&MainWindow::setNormalLayerViewMode);
 	connect(
 		m_viewLock->unlockCanvasAction(), &QAction::triggered, this,
 		[locksession] {

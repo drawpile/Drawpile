@@ -1,12 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+extern "C" {
+#include <dpengine/view_mode.h>
+}
 #include "desktop/view/lock.h"
 #include <QAction>
+#include <QCoreApplication>
 #include <QIcon>
 
 namespace view {
 
 Lock::Lock(QObject *parent)
 	: QObject(parent)
+	, m_exitLayerViewModeAction(new QAction(
+		  QIcon::fromTheme(QStringLiteral("drawpile_close")),
+		  tr("Exit layer view"), this))
+	, m_exitGroupViewModeAction(new QAction(
+		  QIcon::fromTheme(QStringLiteral("drawpile_close")),
+		  tr("Exit group view"), this))
+	, m_exitFrameViewModeAction(new QAction(
+		  QIcon::fromTheme(QStringLiteral("drawpile_close")),
+		  tr("Exit frame view"), this))
 	, m_unlockCanvasAction(new QAction(
 		  QIcon::fromTheme(QStringLiteral("object-unlocked")),
 		  tr("Unlock canvas"), this))
@@ -16,13 +29,17 @@ Lock::Lock(QObject *parent)
 	, m_uncensorLayersAction(new QAction(
 		  QIcon::fromTheme(QStringLiteral("view-visible")),
 		  tr("Show censored layers"), this))
+	, m_viewMode(int(DP_VIEW_MODE_NORMAL))
 {
 }
 
-bool Lock::updateReasons(QFlags<Reason> reasons, bool op, bool canUncensor)
+bool Lock::updateReasons(
+	QFlags<Reason> reasons, int viewMode, bool op, bool canUncensor)
 {
-	if(reasons != m_reasons || m_op != op || m_canUncensor != canUncensor) {
+	if(reasons != m_reasons || m_viewMode != viewMode || m_op != op ||
+	   m_canUncensor != canUncensor) {
 		m_reasons = reasons;
+		m_viewMode = viewMode;
 		m_op = op;
 		m_canUncensor = canUncensor;
 		buildDescriptions();
@@ -39,9 +56,32 @@ QString Lock::description() const
 	return m_descriptions.join('\n');
 }
 
+void Lock::setShowVewModeNotices(bool showViewModeNotices)
+{
+	if(showViewModeNotices != m_showViewModeNotices) {
+		m_showViewModeNotices = showViewModeNotices;
+		buildDescriptions();
+		buildActions();
+		emit lockStateChanged(m_reasons, m_descriptions, m_actions);
+	}
+}
+
 void Lock::buildDescriptions()
 {
 	m_descriptions.clear();
+
+	if(m_showViewModeNotices) {
+		switch(m_viewMode) {
+		case int(DP_VIEW_MODE_LAYER):
+			m_descriptions.append(tr("View Mode: Layer"));
+			break;
+		case int(DP_VIEW_MODE_GROUP):
+			m_descriptions.append(tr("View Mode: Group"));
+			break;
+		default:
+			break;
+		}
+	}
 
 	if(hasReason(Reason::OutOfSpace)) {
 		if(m_op) {
@@ -83,12 +123,14 @@ void Lock::buildDescriptions()
 		m_descriptions.append(tr("Layer is blocked"));
 	} else if(hasReason(Reason::LayerHidden)) {
 		m_descriptions.append(tr("Layer is hidden"));
-	} else if(hasReason(Reason::LayerHiddenInFrame)) {
-		m_descriptions.append(tr("Layer is not visible in this frame"));
 	} else if(hasReason(Reason::NoLayer)) {
 		m_descriptions.append(tr("No layer selected"));
 	} else if(hasReason(Reason::OverlappingFillSource)) {
 		m_descriptions.append(tr("Choose a different layer to fill on"));
+	}
+
+	if(hasReason(Reason::LayerHiddenInFrame)) {
+		m_descriptions.append(tr("Layer is not visible in this frame"));
 	}
 
 	if(hasReason(Reason::Tool)) {
@@ -103,6 +145,24 @@ void Lock::buildDescriptions()
 void Lock::buildActions()
 {
 	m_actions.clear();
+
+	if(m_showViewModeNotices) {
+		switch(m_viewMode) {
+		case int(DP_VIEW_MODE_LAYER):
+			m_actions.append(m_exitLayerViewModeAction);
+			break;
+		case int(DP_VIEW_MODE_GROUP):
+			m_actions.append(m_exitGroupViewModeAction);
+			break;
+		case int(DP_VIEW_MODE_FRAME):
+			if(hasReason(Reason::LayerHiddenInFrame)) {
+				m_actions.append(m_exitFrameViewModeAction);
+			}
+			break;
+		default:
+			break;
+		}
+	}
 
 	if(hasReason(Reason::OutOfSpace)) {
 		if(m_op) {
