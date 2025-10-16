@@ -286,6 +286,8 @@ target_sources(drawpile PRIVATE
 	scene/scenewrapper.h
 	scene/selectionitem.cpp
 	scene/selectionitem.h
+	scene/statusitem.cpp
+	scene/statusitem.h
 	scene/toggleitem.cpp
 	scene/toggleitem.h
 	scene/transformitem.cpp

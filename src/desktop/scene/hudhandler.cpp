@@ -4,6 +4,7 @@
 #include "desktop/scene/actionbaritem.h"
 #include "desktop/scene/catchupitem.h"
 #include "desktop/scene/noticeitem.h"
+#include "desktop/scene/statusitem.h"
 #include "desktop/scene/toggleitem.h"
 #include <QAction>
 #include <QCoreApplication>
@@ -14,6 +15,7 @@ using drawingboard::ActionBarItem;
 using drawingboard::BaseItem;
 using drawingboard::CatchupItem;
 using drawingboard::NoticeItem;
+using drawingboard::StatusItem;
 using drawingboard::ToggleItem;
 
 
@@ -44,6 +46,11 @@ HudHandler::HudHandler(HudScene *scene, QObject *parent)
 	DrawpileApp &app = dpApp();
 	const QStyle *style = dpApp().style();
 	QFont font = app.font();
+
+	m_lockStatus = new StatusItem(style, font);
+	m_lockStatus->updateVisibility(false);
+	m_scene->hudAddItem(m_lockStatus);
+
 	QAction *overflowAction = new QAction(
 		QIcon::fromTheme(QStringLiteral("drawpile_ellipsis_vertical")),
 		tr("More…"), this);
@@ -153,6 +160,10 @@ HudAction HudHandler::checkHover(const QPointF &scenePos)
 		}
 	}
 
+	if(m_lockStatus->isInternallyVisible()) {
+		m_lockStatus->checkHover(scenePos, action);
+	}
+
 	return action;
 }
 
@@ -161,6 +172,9 @@ void HudHandler::removeHover()
 	removeActionBarHover();
 	for(ToggleItem *ti : m_toggleItems) {
 		ti->removeHover();
+	}
+	if(m_lockStatus->isInternallyVisible()) {
+		m_lockStatus->removeHover();
 	}
 }
 
@@ -186,8 +200,8 @@ void HudHandler::setTopOffset(int topOffset)
 		if(m_transformNotice) {
 			updateTransformNoticePosition();
 		}
-		if(m_lockNotice) {
-			updateLockNoticePosition();
+		if(m_lockStatus->isInternallyVisible()) {
+			updateLockStatusPosition();
 		}
 		if(m_toolNotice) {
 			updateToolNoticePosition();
@@ -213,25 +227,23 @@ bool HudHandler::showTransformNotice(const QString &text)
 	return true;
 }
 
-bool HudHandler::showLockNotice(const QString &text)
+bool HudHandler::showLockStatus(
+	const QString &text, const QVector<QAction *> &actions)
 {
-	if(m_lockNotice) {
-		if(!m_lockNotice->setText(text)) {
-			return false;
-		}
-	} else {
-		m_lockNotice = new NoticeItem(text);
-		m_scene->hudAddItem(m_lockNotice);
+	bool changed = m_lockStatus->setStatus(text, actions);
+	if(!m_lockStatus->isInternallyVisible()) {
+		m_lockStatus->updateVisibility(true);
+		updateLockStatusPosition();
 	}
-	updateLockNoticePosition();
-	return true;
+	return changed;
 }
 
-bool HudHandler::hideLockNotice()
+bool HudHandler::hideLockStatus()
 {
-	if(m_lockNotice) {
-		delete m_lockNotice;
-		m_lockNotice = nullptr;
+	if(m_lockStatus->isInternallyVisible()) {
+		m_lockStatus->updateVisibility(false);
+		m_lockStatus->clearStatus();
+		m_lockStatus->removeHover();
 		return true;
 	} else {
 		return false;
@@ -395,8 +407,8 @@ void HudHandler::updateItemsPositions()
 	if(m_transformNotice) {
 		updateTransformNoticePosition();
 	}
-	if(m_lockNotice) {
-		updateLockNoticePosition();
+	if(m_lockStatus->isInternallyVisible()) {
+		updateLockStatusPosition();
 	}
 	if(m_toolNotice) {
 		updateToolNoticePosition();
@@ -476,13 +488,11 @@ void HudHandler::updateTransformNoticePosition()
 		adjustAroundActionBar(pos, int(ActionBarItem::Location::TopLeft)));
 }
 
-void HudHandler::updateLockNoticePosition()
+void HudHandler::updateLockStatusPosition()
 {
 	QPointF pos = m_scene->hudSceneRect().topRight() +
-				  QPointF(
-					  -m_lockNotice->boundingRect().width() - NOTICE_OFFSET,
-					  NOTICE_OFFSET + m_topOffset);
-	m_lockNotice->updatePosition(
+				  QPointF(-NOTICE_OFFSET, NOTICE_OFFSET + m_topOffset);
+	m_lockStatus->updatePosition(
 		adjustAroundActionBar(pos, int(ActionBarItem::Location::TopRight)));
 }
 
@@ -558,6 +568,7 @@ void HudHandler::updateToggleItemsPositions()
 void HudHandler::refreshApplicationStyle()
 {
 	const QStyle *style = dpApp().style();
+	m_lockStatus->setStyle(style);
 	m_selectionActionBar->setStyle(style);
 	m_transformActionBar->setStyle(style);
 }
@@ -565,6 +576,7 @@ void HudHandler::refreshApplicationStyle()
 void HudHandler::refreshApplicationFont()
 {
 	QFont font = dpApp().font();
+	m_lockStatus->setFont(font);
 	m_selectionActionBar->setFont(font);
 	m_transformActionBar->setFont(font);
 }

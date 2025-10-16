@@ -3894,10 +3894,19 @@ void MainWindow::updateLockWidget()
 		reasons.setFlag(Reason::Tool);
 	}
 
-	m_viewLock->setReasons(reasons);
-	m_lockstatus->setToolTip(m_viewLock->description());
-	m_lockstatus->setPixmap(
-		reasons ? QIcon::fromTheme("object-locked").pixmap(16, 16) : QPixmap());
+	if(m_viewLock->updateReasons(
+		   reasons, aclState && aclState->amOperator(),
+		   !parentalcontrols::isLayerUncensoringBlocked())) {
+		QString toolTip;
+		QPixmap pixmap;
+		if(m_viewLock->isLocked()) {
+			toolTip = m_viewLock->description();
+			pixmap = QIcon::fromTheme(QStringLiteral("object-locked"))
+						 .pixmap(16, 16);
+		}
+		m_lockstatus->setToolTip(toolTip);
+		m_lockstatus->setPixmap(pixmap);
+	}
 
 	m_lockWidgetUpdatePending = false;
 }
@@ -7409,6 +7418,26 @@ void MainWindow::setupActions()
 	connect(focusCanvas, &QAction::triggered, this, [this] {
 		m_canvasView->viewWidget()->setFocus();
 	});
+
+	// Lock status actions
+	connect(
+		m_viewLock->unlockCanvasAction(), &QAction::triggered, this,
+		[locksession] {
+			if(locksession->isChecked()) {
+				locksession->trigger();
+			}
+		});
+	connect(
+		m_viewLock->resetCanvasAction(), &QAction::triggered, resetsession,
+		&QAction::trigger);
+	connect(
+		m_viewLock->uncensorLayersAction(), &QAction::triggered, this,
+		[layerUncensor] {
+			if(!layerUncensor->isChecked() &&
+			   !parentalcontrols::isLayerUncensoringBlocked()) {
+				layerUncensor->trigger();
+			}
+		});
 
 	const QList<QAction *> globalDockActions = {
 		sideTabDocks, hideDocks, arrangeDocks, nullptr, layoutsAction};

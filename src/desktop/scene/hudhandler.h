@@ -12,6 +12,7 @@ class ActionBarItem;
 class BaseItem;
 class CatchupItem;
 class NoticeItem;
+class StatusItem;
 class ToggleItem;
 }
 
@@ -60,8 +61,8 @@ public:
 	void setTopOffset(int topOffset);
 
 	bool showTransformNotice(const QString &text);
-	bool showLockNotice(const QString &text);
-	bool hideLockNotice();
+	bool showLockStatus(const QString &text, const QVector<QAction *> &actions);
+	bool hideLockStatus();
 	void showPopupNotice(const QString &text);
 	void setToolNotice(const QString &text);
 	void setCatchupProgress(int percent);
@@ -89,7 +90,7 @@ private:
 	void removeActionBarHover();
 
 	void updateTransformNoticePosition();
-	void updateLockNoticePosition();
+	void updateLockStatusPosition();
 	void updateToolNoticePosition();
 	void updatePopupNoticePosition();
 	void updateCatchupPosition();
@@ -108,7 +109,7 @@ private:
 	ActionBar m_currentActionBar = ActionBar::None;
 	int m_actionBarLocation;
 	drawingboard::NoticeItem *m_transformNotice = nullptr;
-	drawingboard::NoticeItem *m_lockNotice = nullptr;
+	drawingboard::StatusItem *m_lockStatus = nullptr;
 	drawingboard::NoticeItem *m_toolNotice = nullptr;
 	drawingboard::NoticeItem *m_popupNotice = nullptr;
 	drawingboard::CatchupItem *m_catchup = nullptr;

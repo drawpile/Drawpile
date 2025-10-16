@@ -13,6 +13,7 @@
 #include <QGraphicsView>
 #include <functional>
 
+class QAction;
 class QGestureEvent;
 class QTouchEvent;
 class TouchHandler;
@@ -206,8 +207,9 @@ public slots:
 	bool showSceneColorPick(int source, const QPointF &posfr);
 	void hideSceneColorPick();
 
-	void setLockReasons(QFlags<view::Lock::Reason> reasons);
-	void setLockDescription(const QString &lockDescription);
+	void setLockState(
+		QFlags<view::Lock::Reason> reasons, const QStringList &descriptions,
+		const QVector<QAction *> &actions);
 	void setToolState(int toolState);
 	void setSaveInProgress(bool saveInProgress);
 
@@ -484,7 +486,8 @@ private:
 	bool m_useGestureEvents = false;
 	bool m_enableTablet;
 	bool m_locked;
-	QString m_lockDescription;
+	QStringList m_lockDescriptions;
+	QVector<QAction *> m_lockActions;
 	int m_toolState;
 	bool m_saveInProgress;
 	bool m_pointertracking;

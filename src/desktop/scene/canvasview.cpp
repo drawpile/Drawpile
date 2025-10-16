@@ -764,16 +764,21 @@ void CanvasView::setViewMirror(bool mirror)
 	}
 }
 
-void CanvasView::setLockReasons(QFlags<view::Lock::Reason> reasons)
+void CanvasView::setLockState(
+	QFlags<view::Lock::Reason> reasons, const QStringList &descriptions,
+	const QVector<QAction *> &actions)
 {
-	m_locked = reasons;
-	resetCursor();
-}
+	bool locked = reasons;
+	if(locked != m_locked) {
+		m_locked = locked;
+	}
 
-void CanvasView::setLockDescription(const QString &lockDescription)
-{
-	m_lockDescription = lockDescription;
-	updateLockNotice();
+	if(m_lockDescriptions != descriptions || m_lockActions != actions) {
+		m_lockDescriptions = descriptions;
+		m_lockActions = actions;
+		updateLockNotice();
+		clearHudHover();
+	}
 }
 
 void CanvasView::setToolState(int toolState)
@@ -2782,23 +2787,20 @@ void CanvasView::showTransformNotice(const QString &text)
 void CanvasView::updateLockNotice()
 {
 	if(m_scene) {
-		QStringList description;
+		QStringList descriptions = m_lockDescriptions;
 		if(m_saveInProgress) {
 #ifdef __EMSCRIPTEN__
-			description.append(tr("Downloading…"));
+			descriptions.prepend(tr("Downloading…"));
 #else
-			description.append(tr("Saving…"));
+			descriptions.prepend(tr("Saving…"));
 #endif
 		}
-		if(!m_lockDescription.isEmpty()) {
-			description.append(m_lockDescription);
-		}
 
+		QString description = descriptions.join('\n');
 		if(description.isEmpty()) {
-			m_scene->hud()->hideLockNotice();
+			m_scene->hud()->hideLockStatus();
 		} else {
-			m_scene->hud()->showLockNotice(
-				description.join(QStringLiteral("\n")));
+			m_scene->hud()->showLockStatus(description, m_lockActions);
 		}
 	}
 }

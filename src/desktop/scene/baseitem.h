@@ -32,16 +32,20 @@ public:
 		ColorPickType = QGraphicsItem::UserType + 23,
 		AnchorLineItemType = QGraphicsItem::UserType + 24,
 		ActionBarType = QGraphicsItem::UserType + 25,
+		StatusType = QGraphicsItem::UserType + 26,
 	};
 
 	static constexpr qreal Z_USER_MARKER = 999.0;
 	static constexpr qreal Z_NOTICE = 9999.0;
 	static constexpr qreal Z_CATCHUP = Z_NOTICE;
+	static constexpr qreal Z_STATUS = Z_NOTICE;
 	static constexpr qreal Z_TOOL_NOTICE = Z_NOTICE + 1.0;
 	static constexpr qreal Z_TOGGLE = 99999.0;
 	static constexpr qreal Z_ACTIONBAR = Z_TOGGLE - 1.0;
 	static constexpr qreal Z_COLORPICK = 999998.0;
 	static constexpr qreal Z_CURSOR = 999999.0;
+
+	bool isInternallyVisible() const { return m_internallyVisible; }
 
 	void setUpdateSceneOnRefresh(bool updateSceneOnRefresh);
 

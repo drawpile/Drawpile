@@ -398,10 +398,7 @@ void SceneWrapper::connectDocument(Document *doc)
 void SceneWrapper::connectLock(view::Lock *lock)
 {
 	connect(
-		lock, &view::Lock::reasonsChanged, m_view, &CanvasView::setLockReasons);
-	connect(
-		lock, &view::Lock::descriptionChanged, m_view,
-		&CanvasView::setLockDescription);
+		lock, &view::Lock::lockStateChanged, m_view, &CanvasView::setLockState);
 }
 
 void SceneWrapper::connectLoginDialog(Document *doc, dialogs::LoginDialog *dlg)

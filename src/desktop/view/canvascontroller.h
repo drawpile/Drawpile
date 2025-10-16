@@ -22,6 +22,7 @@
 #include <QVector>
 #include <functional>
 
+class QAction;
 class QGestureEvent;
 class QKeyEvent;
 class QMouseEvent;
@@ -157,8 +158,9 @@ public:
 	QPointF outlinePos() const;
 	bool isSquareOutline() const { return m_squareOutline; }
 
-	void setLockReasons(QFlags<view::Lock::Reason> reasons);
-	void setLockDescription(const QString &lockDescription);
+	void setLockState(
+		QFlags<view::Lock::Reason> reasons, const QStringList &descriptions,
+		const QVector<QAction *> &actions);
 	void setToolState(int toolState);
 	void setSaveInProgress(bool saveInProgress);
 
@@ -469,7 +471,8 @@ private:
 	HudAction m_hudActionToActivate;
 	QPoint m_hudActionGlobalPos;
 	bool m_locked = false;
-	QString m_lockDescription;
+	QStringList m_lockDescriptions;
+	QVector<QAction *> m_lockActions;
 	bool m_saveInProgress = false;
 
 	bool m_hoveringOverHud = false;

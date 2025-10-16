@@ -386,11 +386,8 @@ void ViewWrapper::connectDocument(Document *doc)
 void ViewWrapper::connectLock(view::Lock *lock)
 {
 	connect(
-		lock, &view::Lock::reasonsChanged, m_controller,
-		&CanvasController::setLockReasons);
-	connect(
-		lock, &view::Lock::descriptionChanged, m_controller,
-		&CanvasController::setLockDescription);
+		lock, &view::Lock::lockStateChanged, m_controller,
+		&CanvasController::setLockState);
 }
 
 void ViewWrapper::connectLoginDialog(Document *doc, dialogs::LoginDialog *dlg)

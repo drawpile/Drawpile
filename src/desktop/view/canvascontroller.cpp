@@ -1290,13 +1290,21 @@ void CanvasController::updatePixelGridScale()
 	}
 }
 
-void CanvasController::setLockReasons(QFlags<view::Lock::Reason> reasons)
+void CanvasController::setLockState(
+	QFlags<view::Lock::Reason> reasons, const QStringList &descriptions,
+	const QVector<QAction *> &actions)
 {
 	bool locked = reasons;
 	if(locked != m_locked) {
-		m_locked = reasons;
+		m_locked = locked;
+	}
+
+	if(m_lockDescriptions != descriptions || m_lockActions != actions) {
+		m_lockDescriptions = descriptions;
+		m_lockActions = actions;
+		updateLockNotice();
 		updateOutline();
-		resetCursor();
+		clearHudHover();
 	}
 }
 
@@ -1307,12 +1315,6 @@ void CanvasController::setToolState(int toolState)
 		updateOutline();
 		resetCursor();
 	}
-}
-
-void CanvasController::setLockDescription(const QString &lockDescription)
-{
-	m_lockDescription = lockDescription;
-	updateLockNotice();
 }
 
 void CanvasController::setSaveInProgress(bool saveInProgress)
@@ -2665,26 +2667,23 @@ void CanvasController::showTransformNotice(const QString &text)
 
 void CanvasController::updateLockNotice()
 {
-	QStringList descriptions;
+	QStringList descriptions = m_lockDescriptions;
 
 	if(m_saveInProgress) {
 #ifdef __EMSCRIPTEN__
-		descriptions.append(
+		descriptions.prepend(
 			QCoreApplication::translate("widgets::CanvasView", "Downloading…"));
 #else
-		descriptions.append(
+		descriptions.prepend(
 			QCoreApplication::translate("widgets::CanvasView", "Saving…"));
 #endif
 	}
 
-	if(!m_lockDescription.isEmpty()) {
-		descriptions.append(m_lockDescription);
-	}
-
 	QString description = descriptions.join('\n');
-	bool changed = description.isEmpty()
-					   ? m_scene->hud()->hideLockNotice()
-					   : m_scene->hud()->showLockNotice(description);
+	bool changed =
+		description.isEmpty()
+			? m_scene->hud()->hideLockStatus()
+			: m_scene->hud()->showLockStatus(description, m_lockActions);
 
 	if(changed) {
 		emit lockNoticeChanged();

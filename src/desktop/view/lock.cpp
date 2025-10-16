@@ -1,81 +1,122 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/view/lock.h"
+#include <QAction>
+#include <QIcon>
 
 namespace view {
 
 Lock::Lock(QObject *parent)
 	: QObject(parent)
+	, m_unlockCanvasAction(new QAction(
+		  QIcon::fromTheme(QStringLiteral("object-unlocked")),
+		  tr("Unlock canvas"), this))
+	, m_resetCanvasAction(new QAction(
+		  QIcon::fromTheme(QStringLiteral("view-refresh")), tr("Reset canvas…"),
+		  this))
+	, m_uncensorLayersAction(new QAction(
+		  QIcon::fromTheme(QStringLiteral("view-visible")),
+		  tr("Show censored layers"), this))
 {
 }
 
-void Lock::setReasons(QFlags<Reason> reasons)
+bool Lock::updateReasons(QFlags<Reason> reasons, bool op, bool canUncensor)
 {
-	if(reasons != m_reasons) {
+	if(reasons != m_reasons || m_op != op || m_canUncensor != canUncensor) {
 		m_reasons = reasons;
-		emit reasonsChanged(reasons);
-		QString description = buildDescription();
-		if(description != m_description) {
-			m_description = description;
-			emit descriptionChanged(m_description);
-		}
+		m_op = op;
+		m_canUncensor = canUncensor;
+		buildDescriptions();
+		buildActions();
+		emit lockStateChanged(m_reasons, m_descriptions, m_actions);
+		return true;
+	} else {
+		return false;
 	}
 }
 
-QString Lock::buildDescription() const
+QString Lock::description() const
 {
-	QStringList lines;
+	return m_descriptions.join('\n');
+}
+
+void Lock::buildDescriptions()
+{
+	m_descriptions.clear();
 
 	if(hasReason(Reason::OutOfSpace)) {
-		lines.append(tr("Out of space, use Session > Reset to fix this"));
+		if(m_op) {
+			m_descriptions.append(
+				tr("Out of space, you must reset the canvas"));
+		} else {
+			m_descriptions.append(
+				tr("Out of space, operator must reset the canvas"));
+		}
 	}
 
 	if(hasReason(Reason::Reset)) {
-		lines.append(tr("Reset in progress"));
+		m_descriptions.append(tr("Reset in progress"));
 	}
 
 	if(hasReason(Reason::Canvas)) {
-		lines.append(tr("Canvas is locked"));
+		m_descriptions.append(tr("Canvas is locked"));
 	}
 
 	if(hasReason(Reason::User)) {
-		lines.append(tr("User is locked"));
+		m_descriptions.append(tr("User is locked"));
 	}
 
 	if(hasReason(Reason::NoFillSource)) {
-		lines.append(tr("You need to set a layer as the fill source"));
+		m_descriptions.append(tr("You need to set a layer as the fill source"));
 	}
 
 	if(hasReason(Reason::LayerGroup)) {
-		lines.append(tr("Layer is a group"));
+		m_descriptions.append(tr("Layer is a group"));
 	} else if(hasReason(Reason::LayerLocked)) {
-		lines.append(tr("Layer is locked"));
+		m_descriptions.append(tr("Layer is locked"));
 	} else if(hasReason(Reason::LayerCensoredRemote)) {
 		if(hasReason(Reason::LayerCensoredLocal)) {
-			lines.append(tr("Layer is censored and blocked"));
+			m_descriptions.append(tr("Layer is censored and blocked"));
 		} else {
-			lines.append(tr("Layer is censored"));
+			m_descriptions.append(tr("Layer is censored"));
 		}
 	} else if(hasReason(Reason::LayerCensoredLocal)) {
-		lines.append(tr("Layer is blocked"));
+		m_descriptions.append(tr("Layer is blocked"));
 	} else if(hasReason(Reason::LayerHidden)) {
-		lines.append(tr("Layer is hidden"));
+		m_descriptions.append(tr("Layer is hidden"));
 	} else if(hasReason(Reason::LayerHiddenInFrame)) {
-		lines.append(tr("Layer is not visible in this frame"));
+		m_descriptions.append(tr("Layer is not visible in this frame"));
 	} else if(hasReason(Reason::NoLayer)) {
-		lines.append(tr("No layer selected"));
+		m_descriptions.append(tr("No layer selected"));
 	} else if(hasReason(Reason::OverlappingFillSource)) {
-		lines.append(tr("Choose a different layer to fill on"));
+		m_descriptions.append(tr("Choose a different layer to fill on"));
 	}
 
 	if(hasReason(Reason::Tool)) {
-		lines.append(tr("Tool is locked"));
+		m_descriptions.append(tr("Tool is locked"));
 	}
 
 	if(hasReason(Reason::NoSelection)) {
-		lines.append(tr("Tool requires a selection"));
+		m_descriptions.append(tr("Tool requires a selection"));
+	}
+}
+
+void Lock::buildActions()
+{
+	m_actions.clear();
+
+	if(hasReason(Reason::OutOfSpace)) {
+		if(m_op) {
+			m_actions.append(m_resetCanvasAction);
+		}
+	} else if(hasReason(Reason::Canvas)) {
+		if(m_op) {
+			m_actions.append(m_unlockCanvasAction);
+		}
 	}
 
-	return lines.join(QStringLiteral("\n"));
+	if(hasReason(Reason::LayerCensoredRemote) && m_canUncensor) {
+		m_actions.append(m_uncensorLayersAction);
+	}
 }
 
 }

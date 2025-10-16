@@ -2,6 +2,9 @@
 #ifndef DESKTOP_VIEW_LOCK_H
 #define DESKTOP_VIEW_LOCK_H
 #include <QObject>
+#include <QVector>
+
+class QAction;
 
 namespace view {
 
@@ -30,19 +33,33 @@ public:
 
 	explicit Lock(QObject *parent = nullptr);
 
+	QAction *unlockCanvasAction() { return m_unlockCanvasAction; }
+	QAction *resetCanvasAction() { return m_resetCanvasAction; }
+	QAction *uncensorLayersAction() { return m_uncensorLayersAction; }
+
 	bool hasReason(Reason reason) const { return m_reasons.testFlag(reason); }
-	void setReasons(QFlags<Reason> reasons);
-	const QString description() const { return m_description; }
+	bool updateReasons(QFlags<Reason> reasons, bool op, bool canUncensor);
+
+	bool isLocked() const { return m_reasons; }
+	QString description() const;
 
 signals:
-	void reasonsChanged(QFlags<Reason> reasons);
-	void descriptionChanged(const QString &description);
+	void lockStateChanged(
+		QFlags<Reason> reasons, const QStringList &descriptions,
+		const QVector<QAction *> &actions);
 
 private:
-	QString buildDescription() const;
+	void buildDescriptions();
+	void buildActions();
 
+	QAction *const m_unlockCanvasAction;
+	QAction *const m_resetCanvasAction;
+	QAction *const m_uncensorLayersAction;
 	QFlags<Reason> m_reasons;
-	QString m_description;
+	QStringList m_descriptions;
+	QVector<QAction *> m_actions;
+	bool m_op = false;
+	bool m_canUncensor = true;
 };
 
 }
