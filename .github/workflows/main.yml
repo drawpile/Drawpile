@@ -493,7 +493,7 @@ jobs:
 
       - name: Install pkg-config for building and linking to ffmpeg in Windows
         run: |
-          choco install pkgconfiglite
+          choco install --allow-empty-checksums pkgconfiglite
         if: runner.os == 'Windows'
 
       - name: Add msbuild to PATH
