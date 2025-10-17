@@ -3,9 +3,9 @@
 #include "brush.h"
 #include "brush_engine.h"
 #include "canvas_state.h"
-#include "event_log.h"
 #include "layer_content.h"
 #include <dpcommon/common.h>
+#include <dpcommon/event_log.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
 #include <dpmsg/message.h>

@@ -2923,7 +2923,7 @@ void MainWindow::toggleProfile()
 void MainWindow::toggleTabletEventLog()
 {
 #ifdef __EMSCRIPTEN__
-	QString path = QStringLiteral("/eventlog.dplog2");
+	QString path = QStringLiteral("/eventlog.dplog");
 #endif
 	if(drawdance::EventLog::isOpen()) {
 		if(drawdance::EventLog::close()) {
@@ -2931,7 +2931,7 @@ void MainWindow::toggleTabletEventLog()
 			QFile f(path);
 			if(f.open(QIODevice::ReadOnly)) {
 				FileWrangler(this).saveFileContent(
-					QStringLiteral("eventlog%1.dplog2")
+					QStringLiteral("eventlog%1.dplog")
 						.arg(QDateTime::currentSecsSinceEpoch()),
 					f.readAll());
 			} else {

@@ -16,7 +16,6 @@ dp_target_sources(dpengine
     dpengine/document_metadata.c
     dpengine/draw_context.c
     dpengine/dump_reader.c
-    dpengine/event_log.c
     dpengine/flood_fill.c
     dpengine/image.c
     dpengine/image_transform.c
@@ -62,7 +61,6 @@ dp_target_sources(dpengine
     dpengine/document_metadata.h
     dpengine/draw_context.h
     dpengine/dump_reader.h
-    dpengine/event_log.h
     dpengine/flood_fill.h
     dpengine/image.h
     dpengine/image_transform.h

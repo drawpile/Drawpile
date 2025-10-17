@@ -10,8 +10,8 @@ namespace drawdance {
 
 bool EventLog::open(const QString &path)
 {
-	QByteArray pathBytes = path.toUtf8();
-	return DP_event_log_open(pathBytes.constData());
+	DP_Output *output = DP_gzip_output_new_from_path(path.toUtf8().constData());
+	return output ? DP_event_log_open(output) : false;
 }
 
 bool EventLog::close()

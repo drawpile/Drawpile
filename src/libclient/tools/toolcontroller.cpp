@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
-#include <dpengine/event_log.h>
+#include <dpcommon/event_log.h>
 #include <dpmsg/ids.h>
 }
 #include "libclient/canvas/blendmodes.h"

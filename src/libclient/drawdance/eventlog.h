@@ -4,7 +4,7 @@
 #define DRAWDANCE_EVENTLOG_H
 
 extern "C" {
-#include <dpengine/event_log.h>
+#include <dpcommon/event_log.h>
 }
 
 class QString;

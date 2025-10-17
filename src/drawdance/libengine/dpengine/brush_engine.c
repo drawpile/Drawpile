@@ -3,7 +3,6 @@
 #include "brush.h"
 #include "canvas_state.h"
 #include "compress.h"
-#include "event_log.h"
 #include "flood_fill.h"
 #include "layer_content.h"
 #include "layer_routes.h"
@@ -14,6 +13,7 @@
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/event_log.h>
 #include <dpcommon/geom.h>
 #include <dpcommon/perf.h>
 #include <dpcommon/queue.h>

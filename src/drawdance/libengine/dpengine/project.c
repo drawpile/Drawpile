@@ -690,7 +690,13 @@ static DP_ProjectOpenResult project_open(const char *path, unsigned int flags,
 
     bool empty;
     if (truncate) {
-        DP_sql_clear(db);
+        // This is how you clear out the database according to the sqlite
+        // manual. Lack of error checking is intentional, we'll notice later.
+        sqlite3_table_column_metadata(db, NULL, "dummy_table", "dummy_column",
+                                      NULL, NULL, NULL, NULL, NULL);
+        sqlite3_db_config(db, SQLITE_DBCONFIG_RESET_DATABASE, 1, 0);
+        sqlite3_exec(db, "vacuum", NULL, NULL, NULL);
+        sqlite3_db_config(db, SQLITE_DBCONFIG_RESET_DATABASE, 0, 0);
         empty = true;
     }
     else if (!is_empty_db(db, &empty, &sql_result)) {

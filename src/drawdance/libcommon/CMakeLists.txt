@@ -16,6 +16,7 @@ dp_target_sources(dpcommon
     dpcommon/cpu.c
     dpcommon/curve.c
     dpcommon/endianness.c
+    dpcommon/event_log.c
     dpcommon/file.c
     dpcommon/input.c
     dpcommon/memory_pool.c
@@ -34,6 +35,7 @@ dp_target_sources(dpcommon
     dpcommon/cpu.h
     dpcommon/curve.h
     dpcommon/endianness.h
+    dpcommon/event_log.h
     dpcommon/file.h
     dpcommon/geom.h
     dpcommon/input.h
