@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
-#include <dpcommon/event_log.h>
 #include <dpcommon/threading.h>
 #include <dpengine/layer_content.h>
 #include <dpengine/layer_group.h>
@@ -29,14 +28,12 @@ DP_LayerContent *AntiOverflowSource::get(ToolController &owner)
 {
 	canvas::CanvasModel *canvas = owner.model();
 	if(!canvas) {
-		DP_EVENT_LOG("Anti-overflow no canvas");
 		clear();
 		return nullptr;
 	}
 
 	canvas::LayerListModel *layerlist = canvas->layerlist();
 	int fillSourceLayerId = layerlist->fillSourceLayerId();
-	DP_EVENT_LOG("Anti-overflow fillSourceLayerId %d", fillSourceLayerId);
 	if(fillSourceLayerId <= 0) {
 		clear();
 		return nullptr;
@@ -47,15 +44,12 @@ DP_LayerContent *AntiOverflowSource::get(ToolController &owner)
 			fillSourceLayerId, true);
 	if(drawdance::LayerContent *layerContent =
 		   std::get_if<drawdance::LayerContent>(&lsr.data)) {
-		DP_EVENT_LOG("Anti-overflow source layer content");
 		return setLayerContentSource(layerContent->get());
 	} else if(
 		drawdance::LayerGroup *layerGroup =
 			std::get_if<drawdance::LayerGroup>(&lsr.data)) {
-		DP_EVENT_LOG("Anti-overflow source layer group");
 		return setLayerGroupSource(layerGroup->get(), lsr.props.get());
 	} else {
-		DP_EVENT_LOG("Anti-overflow source not found");
 		qWarning("Anti-overflow source %d not found", fillSourceLayerId);
 		clear();
 		return nullptr;
@@ -64,7 +58,6 @@ DP_LayerContent *AntiOverflowSource::get(ToolController &owner)
 
 void AntiOverflowSource::clear()
 {
-	DP_EVENT_LOG("Anti-overflow clear");
 	DP_layer_group_decref_nullable(m_sourceLg);
 	DP_layer_content_decref_nullable(m_sourceLc);
 	m_sourceLg = nullptr;
@@ -128,13 +121,11 @@ Freehand::~Freehand()
 
 void Freehand::begin(const BeginParams &params)
 {
-	DP_EVENT_LOG("Freehand begin drawing=%d", int(m_drawing));
 	beginStroke(params, this);
 }
 
 void Freehand::beginStroke(const BeginParams &params, SnapToPixelToggle *target)
 {
-	DP_EVENT_LOG("Freehand beginStroke drawing=%d", int(m_drawing));
 	Q_ASSERT(!m_drawing);
 	if(params.right) {
 		return;
@@ -187,7 +178,6 @@ void Freehand::beginStroke(const BeginParams &params, SnapToPixelToggle *target)
 
 void Freehand::motion(const MotionParams &params)
 {
-	DP_EVENT_LOG("Freehand motion drawing=%d", int(m_drawing));
 	if(m_drawing) {
 		strokeTo(params.point);
 	}
@@ -195,7 +185,6 @@ void Freehand::motion(const MotionParams &params)
 
 void Freehand::strokeTo(const canvas::Point &point)
 {
-	DP_EVENT_LOG("Freehand strokeTo drawing=%d", int(m_drawing));
 	Q_ASSERT(m_drawing);
 	drawdance::CanvasState canvasState =
 		m_owner.model()->paintEngine()->sampleCanvasState();
@@ -215,7 +204,6 @@ void Freehand::strokeTo(const canvas::Point &point)
 
 void Freehand::end(const EndParams &)
 {
-	DP_EVENT_LOG("Freehand end drawing=%d", int(m_drawing));
 	if(m_drawing) {
 		m_drawing = false;
 		drawdance::CanvasState canvasState =
@@ -236,7 +224,6 @@ void Freehand::end(const EndParams &)
 
 bool Freehand::undoRedo(bool redo)
 {
-	DP_EVENT_LOG("Freehand %s", redo ? "redo" : "undo");
 	cancelStroke();
 	m_strokeWorker.pushMessageNoinc(DP_msg_undo_new(localUserId(), 0, redo));
 	return true;
@@ -259,25 +246,20 @@ void Freehand::setSelectionMaskingEnabled(bool selectionMaskingEnabled)
 
 void Freehand::finish()
 {
-	DP_EVENT_LOG("Freehand finish cancelling=%d", int(m_cancelling));
 	m_cancelling = true;
 	cancelStroke();
 	DP_SEMAPHORE_MUST_POST(m_sem);
 	m_strokeWorker.finishThread();
-	DP_EVENT_LOG("Freehand finish wait");
 	DP_SEMAPHORE_MUST_WAIT(m_sem);
-	DP_EVENT_LOG("Freehand finished cancelling=%d", int(m_cancelling));
 	m_cancelling = false;
 }
 
 void Freehand::dispose()
 {
-	DP_EVENT_LOG("Freehand dispose cancelling=%d", int(m_cancelling));
 	m_cancelling = true;
 	cancelStroke();
 	DP_SEMAPHORE_MUST_POST(m_sem);
 	m_strokeWorker.finishThread();
-	DP_EVENT_LOG("Freehand disposed cancelling=%d", int(m_cancelling));
 }
 
 void Freehand::setSnapToPixel(bool snapToPixel)
@@ -287,20 +269,15 @@ void Freehand::setSnapToPixel(bool snapToPixel)
 
 void Freehand::cancelStroke()
 {
-	DP_EVENT_LOG("Freehand cancel stroke");
 	m_strokeWorker.cancelStroke(QDateTime::currentMSecsSinceEpoch(), true);
 }
 
 void Freehand::pushMessage(DP_Message *msg)
 {
-	DP_EVENT_LOG(
-		"Freehand push %s",
-		DP_message_type_enum_name_unprefixed(DP_message_type(msg)));
 	DP_MUTEX_MUST_LOCK(m_mutex);
 	bool needsSignal = m_messages.isEmpty();
 	m_messages.append(net::Message::noinc(msg));
 	DP_MUTEX_MUST_UNLOCK(m_mutex);
-	DP_EVENT_LOG("Freehand pushed needsSignal=%d", int(needsSignal));
 	if(needsSignal) {
 		emit m_owner.freehandMessagesAvailable();
 	}
@@ -308,7 +285,6 @@ void Freehand::pushMessage(DP_Message *msg)
 
 void Freehand::flushMessages()
 {
-	DP_EVENT_LOG("Freehand flush");
 	DP_MUTEX_MUST_LOCK(m_mutex);
 	int count = m_messages.size();
 	if(count != 0) {
@@ -340,20 +316,17 @@ void Freehand::flushMessages()
 		m_messages.clear();
 	}
 	DP_MUTEX_MUST_UNLOCK(m_mutex);
-	DP_EVENT_LOG("Freehand flushed");
 }
 
 void Freehand::pollControl(bool enable)
 {
 	if(isOnMainThread()) {
-		DP_EVENT_LOG("Freehand poll control main %d", int(enable));
 		if(enable) {
 			m_pollTimer.start();
 		} else {
 			m_pollTimer.stop();
 		}
 	} else {
-		DP_EVENT_LOG("Freehand poll control invoke %d", int(enable));
 		QMetaObject::invokeMethod(
 			&m_pollTimer, enable ? "start" : "stop",
 			m_cancelling ? Qt::QueuedConnection : Qt::BlockingQueuedConnection);
@@ -371,25 +344,20 @@ void Freehand::poll()
 DP_CanvasState *Freehand::sync()
 {
 	if(isOnMainThread()) {
-		DP_EVENT_LOG("Freehand sync on main thread");
 		qWarning("Freehand::sync called on main thread");
 		return nullptr;
 	} else if(m_cancelling) {
-		DP_EVENT_LOG("Freehand sync cancelling");
 		return nullptr;
 	} else {
-		DP_EVENT_LOG("Freehand sync wait");
 		pushMessage(DP_msg_internal_paint_sync_new(
 			0, &Freehand::syncUnlockCallback, this));
 		DP_SEMAPHORE_MUST_WAIT(m_sem);
-		DP_EVENT_LOG("Freehand sync done");
 		return m_owner.model()->paintEngine()->sampleCanvasState().take();
 	}
 }
 
 void Freehand::syncUnlock()
 {
-	DP_EVENT_LOG("Freehand sync unlock");
 	DP_SEMAPHORE_MUST_POST(m_sem);
 }
 
@@ -417,25 +385,21 @@ FreehandEraser::FreehandEraser(ToolController &owner, Freehand *freehand)
 
 void FreehandEraser::begin(const BeginParams &params)
 {
-	DP_EVENT_LOG("FreehandEraser begin");
 	m_freehand->beginStroke(params, this);
 }
 
 void FreehandEraser::motion(const MotionParams &params)
 {
-	DP_EVENT_LOG("FreehandEraser motion");
 	m_freehand->motion(params);
 }
 
 void FreehandEraser::end(const EndParams &params)
 {
-	DP_EVENT_LOG("FreehandEraser end");
 	m_freehand->end(params);
 }
 
 bool FreehandEraser::undoRedo(bool redo)
 {
-	DP_EVENT_LOG("FreehandEraser %s", redo ? "redo" : "undo");
 	return m_freehand->undoRedo(redo);
 }
 
@@ -446,7 +410,6 @@ void FreehandEraser::offsetActiveTool(int x, int y)
 
 void FreehandEraser::finish()
 {
-	DP_EVENT_LOG("FreehandEraser finish");
 	m_freehand->finish();
 }
 

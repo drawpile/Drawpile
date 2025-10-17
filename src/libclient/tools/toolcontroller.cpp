@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
-#include <dpcommon/event_log.h>
 #include <dpmsg/ids.h>
 }
 #include "libclient/canvas/blendmodes.h"
@@ -135,17 +134,13 @@ TransformTool *ToolController::transformTool()
 
 void ToolController::finishActiveTool()
 {
-	DP_EVENT_LOG("Tool controller finish active tool");
 	endDrawing(false, false);
 	m_activeTool->finish();
 }
 
 void ToolController::setActiveTool(Tool::Type tool)
 {
-	Tool::Type prevTool = activeTool();
-	if(prevTool != tool) {
-		DP_EVENT_LOG(
-			"Tool controller set active tool %d->%d", int(prevTool), int(tool));
+	if(activeTool() != tool) {
 		finishActiveTool();
 		m_activeTool = getTool(tool);
 		emit toolCapabilitiesChanged(activeToolCapabilities());
@@ -519,7 +514,6 @@ void ToolController::startDrawing(
 	int deviceType, bool eraserOverride)
 {
 	Q_ASSERT(m_activeTool);
-	DP_EVENT_LOG("Tool controller start drawing %d", int(m_drawing));
 	if(m_model) {
 		m_drawing = true;
 		m_applyGlobalSmoothing =
@@ -549,7 +543,6 @@ void ToolController::continueDrawing(
 	const QPointF &viewPos)
 {
 	Q_ASSERT(m_activeTool);
-	DP_EVENT_LOG("Tool controller continue drawing %d", int(m_drawing));
 	if(m_model && m_drawing) {
 		m_activeTool->motion(
 			Tool::MotionParams{
@@ -573,15 +566,15 @@ void ToolController::hoverDrawing(
 {
 	Q_ASSERT(m_activeTool);
 	if(m_model) {
-		m_activeTool->hover(Tool::HoverParams{
-			point, angle, zoom, mirror, flip, constrain, center});
+		m_activeTool->hover(
+			Tool::HoverParams{
+				point, angle, zoom, mirror, flip, constrain, center});
 	}
 }
 
 void ToolController::endDrawing(bool constrain, bool center)
 {
 	Q_ASSERT(m_activeTool);
-	DP_EVENT_LOG("Tool controller end drawing %d", int(m_drawing));
 	if(m_model) {
 		if(m_drawing) {
 			m_drawing = false;
@@ -594,7 +587,6 @@ void ToolController::endDrawing(bool constrain, bool center)
 void ToolController::undoRedo(bool redo)
 {
 	if(!m_model || !m_activeTool || !m_activeTool->undoRedo(redo)) {
-		DP_EVENT_LOG("Tool controller send %s", redo ? "redo" : "undo");
 		m_client->sendMessage(net::makeUndoMessage(m_client->myId(), 0, redo));
 	}
 }
@@ -603,7 +595,6 @@ bool ToolController::undoMultipartDrawing()
 {
 	Q_ASSERT(!m_model || m_activeTool);
 	if(m_model && m_activeTool->isMultipart()) {
-		DP_EVENT_LOG("Tool controller undo multipart");
 		m_activeTool->undoMultipart();
 		return true;
 	} else {
@@ -615,7 +606,6 @@ bool ToolController::redoMultipartDrawing()
 {
 	Q_ASSERT(!m_model || m_activeTool);
 	if(m_model && m_activeTool->isMultipart()) {
-		DP_EVENT_LOG("Tool controller redo multipart");
 		m_activeTool->redoMultipart();
 		return true;
 	} else {
@@ -639,7 +629,6 @@ void ToolController::finishMultipartDrawing()
 		return;
 	}
 
-	DP_EVENT_LOG("Tool controller finish multipart");
 	m_activeTool->finishMultipart();
 }
 
@@ -653,7 +642,6 @@ void ToolController::cancelMultipartDrawing()
 	}
 
 	if(!m_cancelDeselects || m_activeTool->isMultipart()) {
-		DP_EVENT_LOG("Tool controller cancel multipart");
 		m_activeTool->cancelMultipart();
 		emit actionCancelled();
 	} else if(m_cancelDeselects) {
@@ -664,7 +652,6 @@ void ToolController::cancelMultipartDrawing()
 void ToolController::offsetActiveTool(int xOffset, int yOffset)
 {
 	Q_ASSERT(m_activeTool);
-	DP_EVENT_LOG("Tool controller offset %d %d", xOffset, yOffset);
 	m_activeTool->offsetActiveTool(xOffset, yOffset);
 }
 
@@ -704,7 +691,6 @@ void ToolController::setStrokeEngineParams(
 
 void ToolController::executeAsync(Task *task)
 {
-	DP_EVENT_LOG("Tool controller execute async %p", static_cast<void *>(task));
 	task->setParent(this);
 	if(m_taskCount++ == 0) {
 		emit toolStateChanged(int(ToolState::Busy));
@@ -720,7 +706,6 @@ void ToolController::executeAsync(Task *task)
 
 void ToolController::notifyAsyncExecutionFinished(Task *task)
 {
-	DP_EVENT_LOG("Tool controller finish async %p", static_cast<void *>(task));
 	task->finished();
 	task->deleteLater();
 }

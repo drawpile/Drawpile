@@ -5,10 +5,8 @@
 #include "canvas_state.h"
 #include "layer_content.h"
 #include <dpcommon/common.h>
-#include <dpcommon/event_log.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
-#include <dpmsg/message.h>
 
 struct DP_StrokeWorker {
     DP_Semaphore *sem;
@@ -103,28 +101,23 @@ static bool shift_job(DP_Mutex *queue_mutex, DP_Queue *queue,
 
 static void run_stroke_worker_thread(void *data)
 {
-    DP_EVENT_LOG("Stroke worker thread started");
     DP_StrokeWorker *sw = data;
     DP_Semaphore *sem = sw->sem;
     DP_Mutex *mutex = sw->mutex;
     DP_Queue *queue = &sw->queue;
     bool stroking = false;
     while (true) {
-        DP_EVENT_LOG("Stroke worker waiting stroking=%d", (int)stroking);
         DP_SEMAPHORE_MUST_WAIT(sem);
         DP_StrokeWorkerJob job;
         if (shift_job(mutex, queue, &job)) {
             switch (job.type) {
             case DP_STROKE_WORKER_JOB_NONE: // Job got cancelled.
-                DP_EVENT_LOG("Stroke worker none");
                 continue;
             case DP_STROKE_WORKER_JOB_SIZE_LIMIT_SET:
-                DP_EVENT_LOG("Stroke worker size limit set");
                 DP_brush_engine_size_limit_set(sw->be, job.size_limit);
                 continue;
             case DP_STROKE_WORKER_JOB_CLASSIC_BRUSH_SET:
                 DP_ASSERT(!stroking);
-                DP_EVENT_LOG("Stroke worker classic brush set");
                 DP_brush_engine_classic_brush_set(
                     sw->be, &job.classic->brush, &job.classic->besp,
                     job.classic->have_color_override
@@ -136,7 +129,6 @@ static void run_stroke_worker_thread(void *data)
                 continue;
             case DP_STROKE_WORKER_JOB_MYPAINT_BRUSH_SET:
                 DP_ASSERT(!stroking);
-                DP_EVENT_LOG("Stroke worker mypaint brush set");
                 DP_brush_engine_mypaint_brush_set(
                     sw->be, &job.mypaint->brush, &job.mypaint->settings,
                     &job.mypaint->besp,
@@ -148,17 +140,12 @@ static void run_stroke_worker_thread(void *data)
                 DP_free(job.mypaint);
                 continue;
             case DP_STROKE_WORKER_JOB_DABS_FLUSH:
-                DP_EVENT_LOG("Stroke worker dabs flush");
                 DP_brush_engine_dabs_flush(sw->be);
                 continue;
             case DP_STROKE_WORKER_JOB_MESSAGE_PUSH:
-                DP_EVENT_LOG("Stroke worker message push %s",
-                             DP_message_type_enum_name_unprefixed(
-                                 DP_message_type(job.msg)));
                 DP_brush_engine_message_push_noinc(sw->be, job.msg);
                 continue;
             case DP_STROKE_WORKER_JOB_STROKE_BEGIN:
-                DP_EVENT_LOG("Stroke worker stroke begin");
                 stroking = true;
                 DP_brush_engine_stroke_begin(
                     sw->be, NULL, job.stroke_begin.context_id,
@@ -168,26 +155,21 @@ static void run_stroke_worker_thread(void *data)
                     job.stroke_begin.angle);
                 continue;
             case DP_STROKE_WORKER_JOB_STROKE_TO:
-                DP_EVENT_LOG("Stroke worker stroke to");
                 DP_brush_engine_stroke_to(sw->be, job.stroke_to.bp, NULL);
                 continue;
             case DP_STROKE_WORKER_JOB_POLL:
-                DP_EVENT_LOG("Stroke worker poll");
                 DP_brush_engine_poll(sw->be, job.poll.time_msec, NULL);
                 continue;
             case DP_STROKE_WORKER_JOB_STROKE_END:
-                DP_EVENT_LOG("Stroke worker stroke end");
                 stroking = false;
                 DP_brush_engine_stroke_end(sw->be, job.stroke_end.time_msec,
                                            NULL, job.stroke_end.push_pen_up);
                 continue;
             case DP_STROKE_WORKER_JOB_OFFSET_ADD:
-                DP_EVENT_LOG("Stroke worker offset add");
                 DP_brush_engine_offset_add(sw->be, job.offset_add.x,
                                            job.offset_add.y);
                 continue;
             case DP_STROKE_WORKER_JOB_CANCEL:
-                DP_EVENT_LOG("Stroke worker cancel");
                 if (stroking) {
                     stroking = false;
                     DP_brush_engine_stroke_end(sw->be, job.cancel.time_msec,
@@ -198,7 +180,6 @@ static void run_stroke_worker_thread(void *data)
             DP_UNREACHABLE();
         }
         else {
-            DP_EVENT_LOG("Stroke worker thread ended");
             break;
         }
     }
@@ -215,7 +196,6 @@ static void push_job(DP_StrokeWorker *sw, DP_StrokeWorkerJob job)
     *(DP_StrokeWorkerJob *)DP_queue_push(&sw->queue, sizeof(job)) = job;
     DP_MUTEX_MUST_UNLOCK(mutex);
     DP_SEMAPHORE_MUST_POST(sw->sem);
-    DP_EVENT_LOG("Stroke worker pushed");
 }
 
 
@@ -231,7 +211,6 @@ void DP_stroke_worker_free(DP_StrokeWorker *sw)
 {
     if (sw) {
         if (sw->thread) {
-            DP_EVENT_LOG("Stroke worker free wait");
             DP_SEMAPHORE_MUST_POST(sw->sem);
             DP_thread_free_join(sw->thread);
             DP_mutex_free(sw->mutex);
@@ -240,7 +219,6 @@ void DP_stroke_worker_free(DP_StrokeWorker *sw)
         DP_queue_dispose(&sw->queue);
         DP_brush_engine_free(sw->be);
         DP_free(sw);
-        DP_EVENT_LOG("Stroke worker freed");
     }
 }
 
@@ -256,7 +234,7 @@ bool DP_stroke_worker_thread_start(DP_StrokeWorker *sw)
     if (!sw->thread) {
         DP_ASSERT(!sw->sem);
         DP_ASSERT(!sw->mutex);
-        DP_EVENT_LOG("Stroke worker start thread");
+        DP_debug("Start stroke worker thread");
 
         sw->sem = DP_semaphore_new(0);
         if (!sw->sem) {
@@ -288,7 +266,7 @@ bool DP_stroke_worker_thread_finish(DP_StrokeWorker *sw)
     if (sw->thread) {
         DP_ASSERT(sw->sem);
         DP_ASSERT(sw->mutex);
-        DP_EVENT_LOG("Stroke worker finish wait");
+        DP_debug("Finish stroke worker thread");
 
         DP_SEMAPHORE_MUST_POST(sw->sem);
         DP_thread_free_join(sw->thread);
@@ -300,11 +278,9 @@ bool DP_stroke_worker_thread_finish(DP_StrokeWorker *sw)
         DP_semaphore_free(sw->sem);
         sw->sem = NULL;
 
-        DP_EVENT_LOG("Stroke worker finished");
         return true;
     }
     else {
-        DP_EVENT_LOG("Stroke worker nothing to finish");
         return false;
     }
 }
@@ -312,7 +288,6 @@ bool DP_stroke_worker_thread_finish(DP_StrokeWorker *sw)
 void DP_stroke_worker_size_limit_set(DP_StrokeWorker *sw, int size_limit)
 {
     DP_ASSERT(sw);
-    DP_EVENT_LOG("Stroke worker size limit set thread=%d", sw->thread ? 1 : 0);
     if (sw->thread) {
         push_job(sw, (DP_StrokeWorkerJob){DP_STROKE_WORKER_JOB_SIZE_LIMIT_SET,
                                           {.size_limit = size_limit}});
@@ -325,8 +300,6 @@ void DP_stroke_worker_size_limit_set(DP_StrokeWorker *sw, int size_limit)
 static void start_or_stop_thread(DP_StrokeWorker *sw, bool sync_samples,
                                  DP_LayerContent *flood_lc_or_null)
 {
-    DP_EVENT_LOG("Stroke worker startstop sync=%d flood=%p", (int)sync_samples,
-                 (void *)flood_lc_or_null);
     if (sync_samples || flood_lc_or_null) {
         if (!sw->thread) {
             bool started = DP_stroke_worker_thread_start(sw);
@@ -351,8 +324,6 @@ void DP_stroke_worker_classic_brush_set(DP_StrokeWorker *sw,
     DP_ASSERT(besp);
 
     start_or_stop_thread(sw, besp->sync_samples, besp->flood_lc);
-    DP_EVENT_LOG("Stroke worker classic brush set thread=%d",
-                 sw->thread ? 1 : 0);
 
     if (sw->thread) {
         DP_StrokeWorkerJobClassic *classic = DP_malloc(sizeof(*classic));
@@ -387,8 +358,6 @@ void DP_stroke_worker_mypaint_brush_set(DP_StrokeWorker *sw,
     DP_ASSERT(besp);
 
     start_or_stop_thread(sw, besp->sync_samples, besp->flood_lc);
-    DP_EVENT_LOG("Stroke worker mypaint brush set thread=%d",
-                 sw->thread ? 1 : 0);
 
     if (sw->thread) {
         DP_StrokeWorkerJobMyPaint *mypaint = DP_malloc(sizeof(*mypaint));
@@ -414,7 +383,6 @@ void DP_stroke_worker_mypaint_brush_set(DP_StrokeWorker *sw,
 void DP_stroke_worker_dabs_flush(DP_StrokeWorker *sw)
 {
     DP_ASSERT(sw);
-    DP_EVENT_LOG("Stroke worker dabs flush thread=%d", sw->thread ? 1 : 0);
     if (sw->thread) {
         push_job(sw,
                  (DP_StrokeWorkerJob){DP_STROKE_WORKER_JOB_DABS_FLUSH, {0}});
@@ -428,7 +396,6 @@ void DP_stroke_worker_message_push_noinc(DP_StrokeWorker *sw, DP_Message *msg)
 {
     DP_ASSERT(sw);
     DP_ASSERT(msg);
-    DP_EVENT_LOG("Stroke worker message push thread=%d", sw->thread ? 1 : 0);
     if (sw->thread) {
         push_job(sw, (DP_StrokeWorkerJob){DP_STROKE_WORKER_JOB_MESSAGE_PUSH,
                                           .msg = msg});
@@ -446,7 +413,6 @@ void DP_stroke_worker_stroke_begin(DP_StrokeWorker *sw,
                                    float zoom, float angle)
 {
     DP_ASSERT(sw);
-    DP_EVENT_LOG("Stroke worker stroke begin thread=%d", sw->thread ? 1 : 0);
     if (sw->thread) {
         push_job(sw, (DP_StrokeWorkerJob){
                          DP_STROKE_WORKER_JOB_STROKE_BEGIN,
@@ -466,7 +432,6 @@ void DP_stroke_worker_stroke_to(DP_StrokeWorker *sw, const DP_BrushPoint *bp,
 {
     DP_ASSERT(sw);
     DP_ASSERT(bp);
-    DP_EVENT_LOG("Stroke worker stroke to thread=%d", sw->thread ? 1 : 0);
     if (sw->thread) {
         push_job(sw, (DP_StrokeWorkerJob){DP_STROKE_WORKER_JOB_STROKE_TO,
                                           {.stroke_to = {*bp}}});
@@ -480,7 +445,6 @@ void DP_stroke_worker_poll(DP_StrokeWorker *sw, long long time_msec,
                            DP_CanvasState *cs_or_null)
 {
     DP_ASSERT(sw);
-    DP_EVENT_LOG("Stroke worker poll thread=%d", sw->thread ? 1 : 0);
     if (sw->thread) {
         push_job(sw, (DP_StrokeWorkerJob){DP_STROKE_WORKER_JOB_POLL,
                                           {.poll = {time_msec}}});
@@ -494,7 +458,6 @@ void DP_stroke_worker_stroke_end(DP_StrokeWorker *sw, long long time_msec,
                                  DP_CanvasState *cs_or_null, bool push_pen_up)
 {
     DP_ASSERT(sw);
-    DP_EVENT_LOG("Stroke worker stroke end thread=%d", sw->thread ? 1 : 0);
     if (sw->thread) {
         push_job(
             sw, (DP_StrokeWorkerJob){DP_STROKE_WORKER_JOB_STROKE_END,
@@ -527,7 +490,6 @@ void DP_stroke_worker_stroke_cancel(DP_StrokeWorker *sw, long long time_msec,
                                     bool push_pen_up)
 {
     DP_ASSERT(sw);
-    DP_EVENT_LOG("Stroke worker stroke cancel thread=%d", sw->thread ? 1 : 0);
     if (sw->thread) {
         DP_ASSERT(sw->sem);
         DP_ASSERT(sw->mutex);
@@ -539,14 +501,12 @@ void DP_stroke_worker_stroke_cancel(DP_StrokeWorker *sw, long long time_msec,
             DP_STROKE_WORKER_JOB_CANCEL, {.cancel = {time_msec, push_pen_up}}};
         DP_MUTEX_MUST_UNLOCK(mutex);
         DP_SEMAPHORE_MUST_POST(sw->sem);
-        DP_EVENT_LOG("Stroke worker stroke cancel issued");
     }
 }
 
 void DP_stroke_worker_offset_add(DP_StrokeWorker *sw, float x, float y)
 {
     DP_ASSERT(sw);
-    DP_EVENT_LOG("Stroke worker offset add thread=%d", sw->thread ? 1 : 0);
     if (sw->thread) {
         push_job(sw, (DP_StrokeWorkerJob){DP_STROKE_WORKER_JOB_OFFSET_ADD,
                                           {.offset_add = {x, y}}});
