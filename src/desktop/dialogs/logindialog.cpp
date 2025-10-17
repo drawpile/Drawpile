@@ -201,7 +201,10 @@ struct LoginDialog::Private {
 	bool haveRecentAccounts() const
 	{
 #ifdef __EMSCRIPTEN__
-		return false;
+		// Browser auth does not save to the local accounts, so always ask.
+		if(hasDrawpileExtAuth) {
+			return false;
+		}
 #else
 		return !accounts->isEmpty();
 #endif
@@ -537,8 +540,15 @@ LoginDialog::Private::setupAuthPage(bool usernameEnabled, bool passwordVisible)
 	ui->passwordIcon->setVisible(passwordVisible);
 	ui->badPasswordLabel->setVisible(false);
 	ui->rememberPassword->setChecked(false);
-	ui->rememberPassword->setEnabled(AccountListModel::canSavePasswords(
-		dpApp().settings().insecurePasswordStorage()));
+	bool canSavePasswords = AccountListModel::canSavePasswords(
+		dpApp().settings().insecurePasswordStorage());
+#ifdef __EMSCRIPTEN__
+	// See LoginDialog::Private::haveRecentAccounts.
+	if(hasDrawpileExtAuth) {
+		canSavePasswords = false;
+	}
+#endif
+	ui->rememberPassword->setEnabled(canSavePasswords);
 	ui->rememberPassword->setVisible(passwordVisible);
 	if(passwordVisible &&
 	   (!usernameEnabled || !ui->username->text().isEmpty())) {
