@@ -64,7 +64,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Add buttons to the lock notice to unlock the canvas, reset the session when it's out of space or uncensor layers. Thanks Phoneme for suggesting.
  * Feature: Indicate whether a non-normal view mode is active and give a way to get out of it in the lock notice. Can be disabled in the user interface preferences. Thanks Geese for suggesting.
  * Feature: Show lock message even when it doesn't affect the current tool (without actually locking anything.)
- * Feature: Allow detaching the chat but keeping it on top of the main window. Thanks Bluestrings for suggesting.
+ * Feature: Allow detaching the chat but keeping it on top of the main window or all other windows. Thanks Bluestrings and Blozzom for suggesting.
  * Fix: Properly autoselect default layer on join. Thanks Bluestrings for reporting.
  * Feature: Automatically switch to frame view mode when the animation timeline is sufficiently fiddled with.
  * Fix: Make chat recognize user as operator even when they are for some rason not in the user list. Thanks Bluestrings for reporting.

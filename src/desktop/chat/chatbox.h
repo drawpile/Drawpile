@@ -48,7 +48,7 @@ public slots:
 private slots:
 	void onCanvasChanged(canvas::CanvasModel *canvas);
 	void onServerLogin();
-	void detachFromParent(bool onTop);
+	void detachFromParent(int mode);
 	void reattachToParent();
 
 signals:
@@ -75,6 +75,10 @@ protected:
 	void resizeEvent(QResizeEvent *event) override;
 
 private:
+	static constexpr int DETACH_REGULAR = 0;
+	static constexpr int DETACH_ON_TOP = 1;
+	static constexpr int DETACH_ALWAYS_ON_TOP = 2;
+
 	enum class State { Expanded, Collapsed, Detached };
 
 	ChatWidget *m_chatWidget;

@@ -84,11 +84,14 @@ ChatBox::ChatBox(Document *doc, bool smallScreenMode, QWidget *parent)
 
 	connect(m_chatWidget, &ChatWidget::message, this, &ChatBox::message);
 	connect(
-		m_chatWidget, &ChatWidget::detachRequested, this,
-		std::bind(&ChatBox::detachFromParent, this, false));
+		m_chatWidget, &ChatWidget::detachRegularRequested, this,
+		std::bind(&ChatBox::detachFromParent, this, DETACH_REGULAR));
 	connect(
 		m_chatWidget, &ChatWidget::detachOnTopRequested, this,
-		std::bind(&ChatBox::detachFromParent, this, true));
+		std::bind(&ChatBox::detachFromParent, this, DETACH_ON_TOP));
+	connect(
+		m_chatWidget, &ChatWidget::detachAlwaysOnTopRequested, this,
+		std::bind(&ChatBox::detachFromParent, this, DETACH_ALWAYS_ON_TOP));
 	connect(m_chatWidget, &ChatWidget::expandRequested, this, [this]() {
 		if(isCollapsed()) {
 			emit expandPlease();
@@ -195,7 +198,7 @@ void ChatBox::setCurrentLayer(int layerId)
 	m_chatWidget->setCurrentLayer(layerId);
 }
 
-void ChatBox::detachFromParent(bool onTop)
+void ChatBox::detachFromParent(int mode)
 {
 	QWidget *oldParent = parentWidget();
 	if(!oldParent || qobject_cast<ChatWindow *>(oldParent)) {
@@ -208,7 +211,13 @@ void ChatBox::detachFromParent(bool onTop)
 
 	m_chatWidget->setAttached(false);
 
-	ChatWindow *window = new ChatWindow(this, onTop ? oldParent : nullptr);
+	Qt::WindowFlags windowFlags = Qt::Window;
+	if(mode == DETACH_ALWAYS_ON_TOP) {
+		windowFlags.setFlag(Qt::WindowStaysOnTopHint);
+	}
+
+	QWidget *windowParent = mode == DETACH_ON_TOP ? oldParent : nullptr;
+	ChatWindow *window = new ChatWindow(this, windowFlags, windowParent);
 	connect(window, &ChatWindow::closing, this, &ChatBox::reattachToParent);
 	connect(oldParent, &QObject::destroyed, window, &QObject::deleteLater);
 

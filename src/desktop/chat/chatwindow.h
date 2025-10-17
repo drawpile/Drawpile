@@ -11,7 +11,8 @@ class ChatWindow final : public QWidget
 {
 	Q_OBJECT
 public:
-	explicit ChatWindow(QWidget *content, QWidget *parent = nullptr);
+	explicit ChatWindow(
+		QWidget *content, Qt::WindowFlags windowFlags, QWidget *parent);
 
 signals:
 	void closing();
