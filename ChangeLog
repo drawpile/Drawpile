@@ -70,6 +70,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Make chat recognize user as operator even when they are for some rason not in the user list. Thanks Bluestrings for reporting.
  * Fix: Properly restore chat size when reattaching.
  * Fix: Properly save accounts on the web when asked when the server doesn't support browser authentication. Thanks Bluestrings and Evil Sonic for reporting.
+ * Fix: Don't hang when quickly switching tools while strokes with smudge sync are in progress. Thanks D'mitri for reporting and helping find this.
 
 2025-08-14 Version 2.3.0-beta.3
  * Fix: Allow putting labels on a blank brush thumbnail. Thanks hipofiz for reporting.

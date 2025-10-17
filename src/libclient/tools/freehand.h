@@ -72,6 +72,9 @@ private:
 	void syncUnlock();
 	static void syncUnlockCallback(void *user);
 
+	void executePendingSyncMessages();
+	static bool isPaintSyncInternalMessage(const net::Message &msg);
+
 	static bool isOnMainThread();
 
 	QTimer m_pollTimer;

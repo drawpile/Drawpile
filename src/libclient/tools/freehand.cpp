@@ -250,6 +250,9 @@ void Freehand::finish()
 	cancelStroke();
 	DP_SEMAPHORE_MUST_POST(m_sem);
 	m_strokeWorker.finishThread();
+	// There may be messages not yet emitted that would POST to m_sem. Those
+	// need to be executed early, otherwise the following WAIT may hang.
+	executePendingSyncMessages();
 	DP_SEMAPHORE_MUST_WAIT(m_sem);
 	m_cancelling = false;
 }
@@ -365,6 +368,31 @@ void Freehand::syncUnlockCallback(void *user)
 {
 	Freehand *freehand = static_cast<Freehand *>(user);
 	freehand->syncUnlock();
+}
+
+void Freehand::executePendingSyncMessages()
+{
+	DP_MUTEX_MUST_LOCK(m_mutex);
+	int i = 0;
+	int count = m_messages.size();
+	QVector<QThread *> threads;
+	while(i < count) {
+		if(isPaintSyncInternalMessage(m_messages[i])) {
+			m_messages.removeAt(i);
+			DP_SEMAPHORE_MUST_POST(m_sem);
+			--count;
+		} else {
+			++i;
+		}
+	}
+	DP_MUTEX_MUST_UNLOCK(m_mutex);
+}
+
+bool Freehand::isPaintSyncInternalMessage(const net::Message &msg)
+{
+	return msg.type() == DP_MSG_INTERNAL &&
+		   DP_msg_internal_type(msg.toInternal()) ==
+			   DP_MSG_INTERNAL_TYPE_PAINT_SYNC;
 }
 
 bool Freehand::isOnMainThread()

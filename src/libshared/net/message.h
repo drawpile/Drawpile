@@ -11,6 +11,7 @@ class QByteArray;
 class QJsonDocument;
 class QString;
 struct DP_Message;
+struct DP_MsgInternal;
 
 namespace net {
 
@@ -81,6 +82,7 @@ public:
 	DP_MsgDrawDabsPixel *toDrawDabsPixel() const;
 	DP_MsgFeatureAccessLevels *toFeatureAccessLevels() const;
 	DP_MsgFillRect *toFillRect() const;
+	DP_MsgInternal *toInternal() const;
 	DP_MsgLayerAttributes *toLayerAttributes() const;
 	DP_MsgLayerTreeCreate *toLayerTreeCreate() const;
 	DP_MsgPrivateChat *toPrivateChat() const;

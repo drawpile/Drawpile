@@ -272,6 +272,12 @@ DP_MsgFillRect *Message::toFillRect() const
 	return static_cast<DP_MsgFillRect *>(DP_message_internal(m_data));
 }
 
+DP_MsgInternal *Message::toInternal() const
+{
+	Q_ASSERT(type() == DP_MSG_INTERNAL);
+	return static_cast<DP_MsgInternal *>(DP_message_internal(m_data));
+}
+
 DP_MsgLayerAttributes *Message::toLayerAttributes() const
 {
 	Q_ASSERT(type() == DP_MSG_LAYER_ATTRIBUTES);
