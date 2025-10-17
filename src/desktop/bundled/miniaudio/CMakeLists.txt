@@ -15,6 +15,6 @@ target_compile_definitions(miniaudio PUBLIC
 # Some platforms need extra flags.
 if(APPLE)
     target_link_options(miniaudio PUBLIC -lpthread -lm)
-elseif(UNIX AND NOT ANDROID AND NOT EMSCRIPTEN)
+elseif(UNIX AND NOT ANDROID AND NOT HAIKU AND NOT EMSCRIPTEN)
     target_link_libraries(miniaudio PUBLIC -latomic -ldl -lpthread -lm)
 endif()

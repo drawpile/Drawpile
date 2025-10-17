@@ -1124,7 +1124,7 @@ DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc,
 #    define PREFERRED_PATH_SEPARATOR "\\"
 #    define POSSIBLE_PATH_SEPARATORS "\\/"
 #elif defined(__EMSCRIPTEN__) || defined(__APPLE__) || defined(__linux__) \
-    || defined(__Haiku__)
+    || defined(__HAIKU__)
 #    define PREFERRED_PATH_SEPARATOR "/"
 #    define POSSIBLE_PATH_SEPARATORS "/"
 #else
