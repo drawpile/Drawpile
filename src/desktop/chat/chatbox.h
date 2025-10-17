@@ -40,6 +40,8 @@ public:
 		return m_state == State::Collapsed || !isVisible();
 	}
 
+	bool isDetached() const { return m_state == State::Detached; }
+
 	void receiveSystemMessage(const QString &message, int type = 0);
 
 public slots:

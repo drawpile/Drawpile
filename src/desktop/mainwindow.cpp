@@ -230,6 +230,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	QWidget *centralwidget = new QWidget;
 	QVBoxLayout *mainwinlayout = new QVBoxLayout(centralwidget);
 	mainwinlayout->setContentsMargins(0, 0, 0 ,0);
+	// clang-format on
 	mainwinlayout->setSpacing(0);
 	setCentralWidget(centralwidget);
 
@@ -285,6 +286,13 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	connect(m_chatbox, &widgets::ChatBox::reattachNowPlease, this, [this]() {
 		m_splitter->addWidget(m_chatbox);
+		QByteArray state = dpApp().settings().lastWindowViewState();
+		bool haveSplitterState =
+			!state.isEmpty() && m_splitter->restoreState(state);
+		if(!haveSplitterState || m_chatbox->isCollapsed()) {
+			int h = height();
+			m_splitter->setSizes({h * 2 / 3, h / 3});
+		}
 	});
 
 	// Nice initial division between canvas and chat
@@ -303,6 +311,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_sessionSettings = new dialogs::SessionSettingsDialog(m_doc, this);
 	m_serverLogDialog = new dialogs::ServerLogDialog(this);
 	m_serverLogDialog->setModel(m_doc->serverLog());
+	// clang-format off
 
 	// Document <-> Main window connections
 	connect(m_doc, &Document::canvasChanged, this, &MainWindow::onCanvasChanged);
@@ -1573,7 +1582,8 @@ void MainWindow::saveSplitterState()
 		return;
 	}
 	m_saveSplitterDebounce.stop();
-	if(!m_smallScreenMode && !m_chatbox->isCollapsed()) {
+	if(!m_smallScreenMode && !m_chatbox->isCollapsed() &&
+	   !m_chatbox->isDetached()) {
 		dpApp().settings().setLastWindowViewState(m_splitter->saveState());
 	}
 }
