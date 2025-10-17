@@ -13608,7 +13608,7 @@ Los valores superiores a 0,5 pueden pasar desapercibidos.</translation>
         <location line="+56"/>
         <source>%1 rolls %2</source>
         <extracomment>This refers to a dice roll.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 tirar dado de %2</translation>
     </message>
     <message>
         <location line="+127"/>
