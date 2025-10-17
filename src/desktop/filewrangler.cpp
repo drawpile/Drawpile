@@ -368,7 +368,7 @@ QString FileWrangler::getSavePerformanceProfilePath() const
 QString FileWrangler::getSaveTabletEventLogPath() const
 {
 	return showSaveFileDialog(
-		tr("Tablet Event Log"), LastPath::TABLET_EVENT_LOG, ".dplog",
+		tr("Tablet Event Log"), LastPath::TABLET_EVENT_LOG, ".dplog2",
 		utils::FileFormatOption::SaveEventLog);
 }
 

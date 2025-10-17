@@ -45,6 +45,17 @@ int DP_sql_init(void)
     }
 }
 
+void DP_sql_clear(sqlite3 *db)
+{
+    // This is how you clear out the database according to the sqlite manual.
+    // Lack of error checking is intentional, we just clobber everything anyway.
+    sqlite3_table_column_metadata(db, NULL, "dummy_table", "dummy_column", NULL,
+                                  NULL, NULL, NULL, NULL);
+    sqlite3_db_config(db, SQLITE_DBCONFIG_RESET_DATABASE, 1, 0);
+    sqlite3_exec(db, "vacuum", NULL, NULL, NULL);
+    sqlite3_db_config(db, SQLITE_DBCONFIG_RESET_DATABASE, 0, 0);
+}
+
 
 struct DP_SqlRecover {
     sqlite3 *db;

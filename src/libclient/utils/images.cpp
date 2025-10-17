@@ -112,7 +112,7 @@ QStringList fileFormatFilterList(FileFormatOptions formats)
 
 	if(formats.testFlag(FileFormatOption::EventLog)) {
 		if(formats.testFlag(FileFormatOption::Save)) {
-			filter << QGuiApplication::tr("Tablet Event Log (%1)").arg("*.dplog");
+			filter << QGuiApplication::tr("Tablet Event Log (%1)").arg("*.dplog2");
 		} else {
 			// Can't read event logs.
 		}

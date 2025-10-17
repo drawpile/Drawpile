@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
-#include <dpcommon/event_log.h>
 #include <dpcommon/threading.h>
+#include <dpengine/event_log.h>
 #include <dpengine/layer_content.h>
 #include <dpengine/layer_group.h>
 #include <dpmsg/msg_internal.h>

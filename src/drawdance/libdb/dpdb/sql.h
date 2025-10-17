@@ -9,6 +9,8 @@
 
 int DP_sql_init(void);
 
+void DP_sql_clear(sqlite3 *db);
+
 
 typedef struct DP_SqlRecover DP_SqlRecover;
 
