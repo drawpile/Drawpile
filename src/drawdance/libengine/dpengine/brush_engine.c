@@ -402,7 +402,9 @@ static DP_LayerContent *update_sample_layer_content(DP_BrushEngine *be)
 {
     if (be->stroke.sync_samples) {
         DP_ASSERT(be->sync); // Checked when setting sync_samples.
+        DP_EVENT_LOG("update_sample_layer_content sync");
         DP_CanvasState *cs = be->sync(be->user);
+        DP_EVENT_LOG("update_sample_layer_content synced");
         if (cs) {
             if (cs == be->cs) {
                 DP_canvas_state_decref(cs);
@@ -2861,7 +2863,9 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be,
     // canvas states when it's running with a worker thread.
     DP_CanvasState *sync_cs;
     if (!cs_or_null && be->stroke.sync_samples) {
+        DP_EVENT_LOG("stroke_begin sync");
         sync_cs = be->sync(be->user);
+        DP_EVENT_LOG("stroke_begin synced");
         cs_or_null = sync_cs;
     }
     else {
