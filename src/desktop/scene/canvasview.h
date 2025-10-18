@@ -505,6 +505,7 @@ private:
 	qreal m_brushOutlineWidth;
 	int m_brushBlendMode;
 	HudAction m_hudActionToActivate;
+	int m_hudActionDeviceType = 0;
 	QPoint m_hudActionGlobalPos;
 
 	bool m_pickingColor = false;

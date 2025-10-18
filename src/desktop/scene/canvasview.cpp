@@ -1263,7 +1263,19 @@ void CanvasView::penPressEvent(
 		}
 		m_hudActionToActivate = action;
 		m_hudActionGlobalPos = globalPos;
-		if(m_hudActionToActivate.type == HudAction::Type::TriggerMenu) {
+		m_hudActionDeviceType = deviceType;
+		// Some users operate context menus by pressing down, moving the
+		// cursor over the intended action and then releasing. With touch,
+		// you don't want this to happen, since it just ends up accidentally
+		// activating whatever was under the finger. On Windows, we will get
+		// a garbage mouse press right after the tablet press, so we open
+		// the menu in mousePressEvent, otherwise it will instantly close.
+		if(m_hudActionToActivate.type == HudAction::Type::TriggerMenu &&
+		   deviceType != int(tools::DeviceType::Touch)
+#ifdef Q_OS_WINDOWS
+		   && deviceType != int(tools::DeviceType::Tablet)
+#endif
+		) {
 			activatePendingHudAction();
 		}
 		return;
@@ -1409,16 +1421,24 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	updateCursorPos(mousePos);
 
 	Qt::MouseButton button = event->button();
-	if((m_enableTablet && isSynthetic(event)) || isSyntheticTouch(event) ||
-	   touching ||
-	   (button == Qt::LeftButton && !m_tabletEventTimer.hasExpired())) {
-		return;
+	if((!m_enableTablet || !isSynthetic(event)) && !isSyntheticTouch(event) &&
+	   !touching &&
+	   (button != Qt::LeftButton || m_tabletEventTimer.hasExpired())) {
+		penPressEvent(
+			event, QDateTime::currentMSecsSinceEpoch(), mousePos,
+			compat::globalPos(*event), 1.0, 0.0, 0.0, 0.0, button,
+			getMouseModifiers(event), int(tools::DeviceType::Mouse), false);
 	}
 
-	penPressEvent(
-		event, QDateTime::currentMSecsSinceEpoch(), mousePos,
-		compat::globalPos(*event), 1.0, 0.0, 0.0, 0.0, button,
-		getMouseModifiers(event), int(tools::DeviceType::Mouse), false);
+#ifdef Q_OS_WINDOWS
+	// On Windows, we get a garbage mouse press after every tablet input, so
+	// this is the point where we open the menu.
+	if(m_hudActionToActivate.isValid() &&
+	   m_hudActionToActivate.type == HudAction::Type::TriggerMenu &&
+	   m_hudActionDeviceType == int(tools::DeviceType::Tablet)) {
+		activatePendingHudAction();
+	}
+#endif
 }
 
 void CanvasView::penMoveEvent(
@@ -2114,10 +2134,7 @@ void CanvasView::touchEvent(QTouchEvent *event)
 					m_hudActionToActivate = action;
 					m_hudActionGlobalPos =
 						compat::touchGlobalPos(points.constFirst());
-					if(m_hudActionToActivate.type ==
-					   HudAction::Type::TriggerMenu) {
-						activatePendingHudAction();
-					}
+					m_hudActionDeviceType = int(tools::DeviceType::Touch);
 				} else {
 					m_touch->handleTouchBegin(event);
 				}

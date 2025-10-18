@@ -629,8 +629,8 @@ void CanvasController::handleMousePress(QMouseEvent *event)
 		int(m_penState), int(touching), qulonglong(event->timestamp()));
 
 	Qt::MouseButton button = event->button();
-	if(((!m_tabletEnabled || !isSynthetic(event))) &&
-	   !isSyntheticTouch(event) && !touching &&
+	if((!m_tabletEnabled || !isSynthetic(event)) && !isSyntheticTouch(event) &&
+	   !touching &&
 	   (button != Qt::LeftButton || m_tabletEventTimer.hasExpired())) {
 		event->accept();
 		penPressEvent(
@@ -638,6 +638,16 @@ void CanvasController::handleMousePress(QMouseEvent *event)
 			compat::globalPos(*event), 1.0, 0.0, 0.0, 0.0, button,
 			getMouseModifiers(event), int(tools::DeviceType::Mouse), false);
 	}
+
+#ifdef Q_OS_WINDOWS
+	// On Windows, we get a garbage mouse press after every tablet input, so
+	// this is the point where we open the menu.
+	if(m_hudActionToActivate.isValid() &&
+	   m_hudActionToActivate.type == HudAction::Type::TriggerMenu &&
+	   m_hudActionDeviceType == int(tools::DeviceType::Tablet)) {
+		activatePendingHudAction();
+	}
+#endif
 }
 
 void CanvasController::handleMouseRelease(QMouseEvent *event)
@@ -791,9 +801,7 @@ void CanvasController::handleTouchBegin(QTouchEvent *event)
 			if(action.isValid()) {
 				m_hudActionToActivate = action;
 				m_hudActionGlobalPos = compat::touchGlobalPos(firstPoint);
-				if(m_hudActionToActivate.type == HudAction::Type::TriggerMenu) {
-					activatePendingHudAction();
-				}
+				m_hudActionDeviceType = int(tools::DeviceType::Touch);
 			} else {
 				m_touch->handleTouchBegin(event);
 			}
@@ -1544,7 +1552,19 @@ void CanvasController::penPressEvent(
 		if(m_hoveringOverHud) {
 			m_hudActionToActivate = action;
 			m_hudActionGlobalPos = globalPos;
-			if(m_hudActionToActivate.type == HudAction::Type::TriggerMenu) {
+			m_hudActionDeviceType = deviceType;
+			// Some users operate context menus by pressing down, moving the
+			// cursor over the intended action and then releasing. With touch,
+			// you don't want this to happen, since it just ends up accidentally
+			// activating whatever was under the finger. On Windows, we will get
+			// a garbage mouse press right after the tablet press, so we open
+			// the menu in handleMousePress, otherwise it will instantly close.
+			if(m_hudActionToActivate.type == HudAction::Type::TriggerMenu &&
+			   deviceType != int(tools::DeviceType::Touch)
+#ifdef Q_OS_WINDOWS
+			   && deviceType != int(tools::DeviceType::Tablet)
+#endif
+			) {
 				activatePendingHudAction();
 			}
 			return;

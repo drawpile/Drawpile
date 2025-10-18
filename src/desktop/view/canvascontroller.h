@@ -469,6 +469,7 @@ private:
 	bool m_showTransformNotices = false;
 	int m_toolState;
 	HudAction m_hudActionToActivate;
+	int m_hudActionDeviceType = 0;
 	QPoint m_hudActionGlobalPos;
 	bool m_locked = false;
 	QStringList m_lockDescriptions;
