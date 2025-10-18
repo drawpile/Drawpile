@@ -561,8 +561,8 @@ instead of exec.
 
      if (!that)
 
---- src/widgets/widgets/qmenu.cpp
-+++ src/widgets/widgets/qmenu.cpp
+--- a/src/widgets/widgets/qmenu.cpp
++++ b/src/widgets/widgets/qmenu.cpp
 @@ -44,6 +44,10 @@
  #include <qpa/qplatformtheme.h>
  #include <private/qstyle_p.h>
