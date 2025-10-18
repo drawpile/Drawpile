@@ -792,8 +792,6 @@ elseif(APPLE)
 	target_sources(drawpile PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.icns")
 	set_property(TARGET drawpile APPEND PROPERTY RESOURCE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.icns")
 elseif(ANDROID)
-	cmake_minimum_required(VERSION 3.26) # for copy_directory_if_different
-
 	set_target_properties(drawpile PROPERTIES
 		# Qt5 requires the output name to match the project name; Qt6 does not
 		# but might as well be consistent
@@ -835,6 +833,10 @@ elseif(ANDROID)
 	get_shared_libs(android_extra_libs drawpile)
 
 	if(QT_VERSION VERSION_GREATER_EQUAL 6)
+		# CMake before 3.26 doesn't have copy_directory_if_different. If this
+		# is required for a Qt6 build, try using the workaround for Qt5 below.
+		cmake_minimum_required(VERSION 3.26)
+
 		# TODO: The Java code references the "qt5" package, which probably
 		# changed in Qt6. So we probably have to split the Java code into a Qt5
 		# and a Qt6 directory or something.
@@ -872,14 +874,38 @@ elseif(ANDROID)
 			VERBATIM
 		)
 	else()
-		add_custom_target(drawpile_copy_android_java_sources ALL
-			COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
-				"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/android"
-				"${CMAKE_BINARY_DIR}/android-build/src/net/drawpile/android"
-			COMMAND_EXPAND_LISTS
-			COMMENT "Copying Java sources"
-			VERBATIM
-		)
+		# CMake before 3.26 doesn't have copy_directory_if_different.
+		# Work around it by deleting and copying the directory instead.
+		if(CMAKE_VERSION VERSION_LESS "3.26.0")
+			add_custom_target(drawpile_remove_previous_android_java_sources ALL
+				COMMAND ${CMAKE_COMMAND} -E rm -rf --
+					"${CMAKE_BINARY_DIR}/android-build/src/net/drawpile/android"
+				COMMAND_EXPAND_LISTS
+				COMMENT "Removing previous Java sources"
+				VERBATIM
+			)
+			add_custom_target(drawpile_copy_android_java_sources ALL
+				COMMAND ${CMAKE_COMMAND} -E copy_directory
+					"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/android"
+					"${CMAKE_BINARY_DIR}/android-build/src/net/drawpile/android"
+				COMMAND_EXPAND_LISTS
+				COMMENT "Copying Java sources"
+				VERBATIM
+			)
+			add_dependencies(
+				drawpile_copy_android_java_sources
+				drawpile_remove_previous_android_java_sources
+			)
+		else()
+			add_custom_target(drawpile_copy_android_java_sources ALL
+				COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+					"${CMAKE_CURRENT_SOURCE_DIR}/android/src/net/drawpile/android"
+					"${CMAKE_BINARY_DIR}/android-build/src/net/drawpile/android"
+				COMMAND_EXPAND_LISTS
+				COMMENT "Copying Java sources"
+				VERBATIM
+			)
+		endif()
 		add_dependencies(apk drawpile_copy_android_java_sources)
 
 		add_custom_target(drawpile_copy_android_resources_wrapper ALL
