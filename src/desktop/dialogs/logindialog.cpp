@@ -205,9 +205,8 @@ struct LoginDialog::Private {
 		if(hasDrawpileExtAuth) {
 			return false;
 		}
-#else
-		return !accounts->isEmpty();
 #endif
+		return !accounts->isEmpty();
 	}
 
 	QString
