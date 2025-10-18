@@ -267,9 +267,9 @@ void StatusItem::updateBounds()
 	if(m_text.isEmpty()) {
 		m_textBounds = QRectF(0.0, 0.0, 0.0, 0.0);
 	} else {
-		m_textBounds =
+		m_textBounds = addTextSlop(
 			fontMetrics.boundingRect(QRect(0, 0, 0xffff, 0xffff), 0, m_text)
-				.marginsAdded(getTextMargins());
+				.marginsAdded(getTextMargins()));
 		m_textBounds.moveTo(0.0, 0.0);
 	}
 	m_bounds = m_textBounds;
@@ -282,8 +282,8 @@ void StatusItem::updateBounds()
 	for(int i = 0, count = m_actions.count(); i < count; ++i) {
 		QAction *action = m_actions[i];
 
-		QRectF actionBounds = fontMetrics.boundingRect(
-			QRect(0, 0, 0xffff, 0xffff), 0, action->text());
+		QRectF actionBounds = addTextSlop(fontMetrics.boundingRect(
+			QRect(0, 0, 0xffff, 0xffff), 0, action->text()));
 		actionBounds.setRight(actionBounds.right() + iconSize * ICON_SPACE);
 		if(action->menu()) {
 			actionBounds.setRight(
@@ -316,6 +316,15 @@ QMarginsF StatusItem::getTextMargins() const
 QMarginsF StatusItem::getActionMargins() const
 {
 	return QMarginsF(MARGIN * 0.75, MARGIN / 2.0, MARGIN, MARGIN / 2.0);
+}
+
+QRectF StatusItem::addTextSlop(QRectF bounds)
+{
+	// Text can get cut off without this, probably due to float errors.
+	if(!bounds.isEmpty()) {
+		bounds.setRight(bounds.right() + 1.0);
+	}
+	return bounds;
 }
 
 }

@@ -58,6 +58,8 @@ private:
 	QMarginsF getTextMargins() const;
 	QMarginsF getActionMargins() const;
 
+	static QRectF addTextSlop(const QRectF bounds);
+
 	QFont m_font;
 	QIcon m_overflowIcon;
 	int m_iconSize;
