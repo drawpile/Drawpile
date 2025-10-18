@@ -262,6 +262,8 @@ QUrl convertUrl(
 		break;
 	}
 #else
+	Q_UNUSED(connectStrategy);
+	Q_UNUSED(isFirstAttempt);
 	url = convertToWebSocketUrl(originalUrl, join);
 #endif
 
