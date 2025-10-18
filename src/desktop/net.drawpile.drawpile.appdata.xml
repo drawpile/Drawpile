@@ -104,6 +104,53 @@
           <li>Fix: Don't hang when quickly switching tools while strokes with smudge sync are in progress. Thanks D'mitri for reporting and helping find this.</li>
         </ul>
       </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-x86_64.msi</location>
+          <checksum type="sha256">d0428daae5715dae3019448774c95c9be0af5776173b74a7b2976e5834df8c57</checksum>
+          <size type="download">23810048</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-x86.msi</location>
+          <checksum type="sha256">57282b1ab068bb1d3c9cff73ce4e4f6e2dcf944730301fd247de00d5b385432f</checksum>
+          <size type="download">20537344</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-arm64.msi</location>
+          <checksum type="sha256">fcc672dfc2abc3b797145eb3f27213ce116e0382bbc266a2923dcab385cf87a9</checksum>
+          <size type="download">21680128</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-x86_64.dmg</location>
+          <checksum type="sha256">755121d2f9c09ea077be4918fc11b90acae9c21034a35d50f6ca2f818ff56a1b</checksum>
+          <size type="download">33622167</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-arm64.dmg</location>
+          <checksum type="sha256">de4806ed1b5b404a6645d60378e86e18d6a10166c890a6ef89a94521a9ac8111</checksum>
+          <size type="download">30657446</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-x86_64.AppImage</location>
+          <checksum type="sha256">595f0d1208a3ee42e8aceccee401bbbb5f02ad9c292f4c6b8851a21b4398f148</checksum>
+          <size type="download">55116992</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-30-35-arm64-v8a.apk</location>
+          <checksum type="sha256">ccebb16162dea1ded4e1a90c827d787d5e7f57427721cf905c3da80e1bd6f140</checksum>
+          <size type="download">23394591</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.3.0-beta.4/Drawpile-2.3.0-beta.4-23-23-armeabi-v7a.apk</location>
+          <checksum type="sha256">37592023b56a3bb7e552f6514b62a3352e82a16e7bdf841237ce888268c488f0</checksum>
+          <size type="download">20097529</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.3.0-beta.4.tar.gz</location>
+          <checksum type="sha256">159deeff39bcae669efdb810128ba27e53267cd00999328141e78b5741f93d92</checksum>
+          <size type="download">10770131</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.3.0-beta.3" type="development" date="2025-08-14">
       <url>https://drawpile.net/news/release-2.3.0-beta.3/</url>
