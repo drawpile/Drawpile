@@ -1,0 +1,1 @@
+Fast reconnects that don't require waiting through catchup, anti-overflow fills, selection action bar, more stable connetions by default, animation improvements, bugfixes and more. See the website for a full changelog and an illustrated guide to all the changes in 2.3.
