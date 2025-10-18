@@ -6076,27 +6076,29 @@ void MainWindow::setupActions()
 			.noDefaultShortcut()
 			.checkable()
 			.checked();
-	QAction *actionbartopleft = makeAction("actionbartopleft", tr("Top-left"))
-									.noDefaultShortcut()
-									.checkable();
-	QAction *actionbartopcenter = makeAction("actionbartopcenter", tr("Top"))
-									  .noDefaultShortcut()
-									  .checkable();
+	QAction *actionbartopleft =
+		makeAction("actionbartopleft", tr("Top-left"))
+			.noDefaultShortcutWithTitle(tr("Selection action bar top-left"))
+			.checkable();
+	QAction *actionbartopcenter =
+		makeAction("actionbartopcenter", tr("Top"))
+			.noDefaultShortcutWithTitle(tr("Selection action bar top"))
+			.checkable();
 	QAction *actionbartopright =
 		makeAction("actionbartopright", tr("Top-right"))
-			.noDefaultShortcut()
+			.noDefaultShortcutWithTitle(tr("Selection action bar top-right"))
 			.checkable();
 	QAction *actionbarbottomleft =
 		makeAction("actionbarbottomleft", tr("Bottom-left"))
-			.noDefaultShortcut()
+			.noDefaultShortcutWithTitle(tr("Selection action bar bottom-left"))
 			.checkable();
 	QAction *actionbarbottomcenter =
 		makeAction("actionbarbottomcenter", tr("Bottom"))
-			.noDefaultShortcut()
+			.noDefaultShortcutWithTitle(tr("Selection action bar bottom"))
 			.checkable();
 	QAction *actionbarbottomright =
 		makeAction("actionbarbottomright", tr("Bottom-right"))
-			.noDefaultShortcut()
+			.noDefaultShortcutWithTitle(tr("Selection action bar bottom-right"))
 			.checkable();
 #ifdef SINGLE_MAIN_WINDOW
 	QAction *fittoscreen =
@@ -6583,13 +6585,14 @@ void MainWindow::setupActions()
 		makeAction("transformmirror", tr("&Mirror Transform"))
 			.icon("drawpile_mirror")
 			.statusTip(tr("Mirror the transformed image horizontally"))
-			.noDefaultShortcut(
+			.noDefaultShortcutWithSearchText(
 				tr("mirror/flip transformed image horizontally"));
 	QAction *transformflip =
 		makeAction("transformflip", tr("&Flip Transform"))
 			.icon("drawpile_flip")
 			.statusTip(tr("Flip the transformed image upside-down"))
-			.noDefaultShortcut(tr("mirror/flip transformed image vertically"));
+			.noDefaultShortcutWithSearchText(
+				tr("mirror/flip transformed image vertically"));
 	QAction *transformrotatecw =
 		makeAction("transformrotatecw", tr("&Rotate Transform Clockwise"))
 			.icon("drawpile_rotate_right")

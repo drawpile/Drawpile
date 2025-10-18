@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_UTILS_ACTIONBUILDER_H
 #define DESKTOP_UTILS_ACTIONBUILDER_H
+#include "desktop/utils/widgetutils.h"
 #include "libclient/utils/customshortcutmodel.h"
 #include <QAction>
 #include <QIcon>
@@ -41,11 +42,29 @@ public:
 		return *this;
 	}
 
-	ActionBuilder &noDefaultShortcut(const QString &searchText = QString())
+	ActionBuilder &noDefaultShortcut()
+	{
+		return noDefaultShortcutWithTitleAndSearchText(QString(), QString());
+	}
+
+	ActionBuilder &noDefaultShortcutWithTitle(const QString &title)
+	{
+		return noDefaultShortcutWithTitleAndSearchText(title, QString());
+	}
+
+	ActionBuilder &noDefaultShortcutWithSearchText(const QString &searchText)
+	{
+		return noDefaultShortcutWithTitleAndSearchText(QString(), searchText);
+	}
+
+	ActionBuilder &noDefaultShortcutWithTitleAndSearchText(
+		const QString &title, const QString &searchText)
 	{
 		Q_ASSERT(!m_action->objectName().isEmpty());
 		CustomShortcutModel::registerCustomizableAction(
-			m_action->objectName(), m_action->text().remove('&'),
+			m_action->objectName(),
+			title.isEmpty() ? utils::scrubAccelerators(m_action->text())
+							: title,
 			m_action->icon(), QKeySequence(), QKeySequence(), searchText);
 		return *this;
 	}
@@ -59,17 +78,37 @@ public:
 		const QKeySequence &shortcut,
 		const QKeySequence &alternateShortcut = QKeySequence())
 	{
-		return shortcutWithSearchText(QString(), shortcut, alternateShortcut);
+		return shortcutWithTitleAndSearchText(
+			QString(), QString(), shortcut, alternateShortcut);
+	}
+
+	ActionBuilder &shortcutWithTitle(
+		const QString &title, const QKeySequence &shortcut,
+		const QKeySequence &alternateShortcut = QKeySequence())
+	{
+		return shortcutWithTitleAndSearchText(
+			title, QString(), shortcut, alternateShortcut);
 	}
 
 	ActionBuilder &shortcutWithSearchText(
 		const QString &searchText, const QKeySequence &shortcut,
 		const QKeySequence &alternateShortcut = QKeySequence())
 	{
+		return shortcutWithTitleAndSearchText(
+			QString(), searchText, shortcut, alternateShortcut);
+	}
+
+	ActionBuilder &shortcutWithTitleAndSearchText(
+		const QString &title, const QString &searchText,
+		const QKeySequence &shortcut,
+		const QKeySequence &alternateShortcut = QKeySequence())
+	{
 		Q_ASSERT(!m_action->objectName().isEmpty());
 		m_action->setShortcut(shortcut);
 		CustomShortcutModel::registerCustomizableAction(
-			m_action->objectName(), m_action->text().remove('&'),
+			m_action->objectName(),
+			title.isEmpty() ? utils::scrubAccelerators(m_action->text())
+							: title,
 			m_action->icon(), shortcut, alternateShortcut, searchText);
 		return *this;
 	}
