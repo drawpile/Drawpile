@@ -40,6 +40,7 @@ public:
 	QAction *resetCanvasAction() { return m_resetCanvasAction; }
 	QAction *selectAllAction() { return m_selectAllAction; }
 	QAction *selectLayerBoundsAction() { return m_selectLayerBoundsAction; }
+	QAction *disableAntiOverflowAction() { return m_disableAntiOverflowAction; }
 	QAction *setFillSourceAction() { return m_setFillSourceAction; }
 	QAction *clearFillSourceAction() { return m_clearFillSourceAction; }
 	QAction *uncensorLayersAction() { return m_uncensorLayersAction; }
@@ -71,6 +72,7 @@ private:
 	QAction *const m_resetCanvasAction;
 	QAction *const m_selectAllAction;
 	QAction *const m_selectLayerBoundsAction;
+	QAction *const m_disableAntiOverflowAction;
 	QAction *const m_setFillSourceAction;
 	QAction *const m_clearFillSourceAction;
 	QAction *const m_uncensorLayersAction;

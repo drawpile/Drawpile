@@ -7552,6 +7552,10 @@ void MainWindow::setupActions()
 		m_viewLock->selectLayerBoundsAction(), &QAction::triggered,
 		selectlayerbounds, &QAction::trigger);
 	connect(
+		m_viewLock->disableAntiOverflowAction(), &QAction::triggered,
+		m_dockToolSettings->brushSettings(),
+		&tools::BrushSettings::disableAntiOverflow);
+	connect(
 		m_viewLock->setFillSourceAction(), &QAction::triggered,
 		layerSetFillSource, &QAction::trigger);
 	connect(

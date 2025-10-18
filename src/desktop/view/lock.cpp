@@ -32,6 +32,9 @@ Lock::Lock(QObject *parent)
 	, m_selectLayerBoundsAction(new QAction(
 		  QIcon::fromTheme(QStringLiteral("select-rectangular")),
 		  tr("Select layer bounds"), this))
+	, m_disableAntiOverflowAction(new QAction(
+		  QIcon::fromTheme(QStringLiteral("drawpile_antioverflow")),
+		  tr("Disable anti-overflow"), this))
 	, m_setFillSourceAction(new QAction(
 		  QIcon::fromTheme(QStringLiteral("tag")),
 		  tr("Set current layer as fill source"), this))
@@ -162,8 +165,10 @@ void Lock::buildActions()
 		}
 
 		if(hasAny(Reason::NoFillSource) && !hasAny(Reason::NoLayer)) {
+			m_actions.append(m_disableAntiOverflowAction);
 			m_actions.append(m_setFillSourceAction);
 		} else if(hasAny(Reason::OverlappingFillSource)) {
+			m_actions.append(m_disableAntiOverflowAction);
 			m_actions.append(m_clearFillSourceAction);
 		}
 	}

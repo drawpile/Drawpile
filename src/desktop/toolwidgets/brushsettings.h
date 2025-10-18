@@ -107,6 +107,7 @@ public:
 	void toggleAlphaPreserve() override;
 	void toggleBlendMode(int blendMode) override;
 	void setEraserMode(bool erase);
+	void disableAntiOverflow();
 	void resetPreset();
 	void resetPresetsInAllSlots();
 

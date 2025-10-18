@@ -1133,6 +1133,13 @@ void BrushSettings::setEraserMode(bool erase)
 	updateUi();
 }
 
+void BrushSettings::disableAntiOverflow()
+{
+	if(d->ui.antiOverflow->isChecked()) {
+		d->ui.antiOverflow->click();
+	}
+}
+
 void BrushSettings::selectEraserSlot(bool eraser)
 {
 	if(eraser) {
