@@ -2575,7 +2575,7 @@ void MainWindow::offerDownload(
 				} else {
 					FileWrangler(this).saveFileContent(defaultName, bytes);
 					if(m_reconnectAfterSave) {
-						reconnect();
+						reconnectWith(true);
 					}
 				}
 			});
@@ -3367,20 +3367,56 @@ void MainWindow::join()
 
 void MainWindow::reconnect()
 {
+	reconnectWith(false);
+}
+
+void MainWindow::reconnectWith(bool downloaded)
+{
 	m_reconnectAfterSave = false;
-	if(getReplacementCriteria().testFlag(ReplacementCriterion::Dirty)) {
-		QWidget *parent = getStartDialogOrThis();
-		QMessageBox *box = utils::makeMessage(
-			parent, tr("Reconnect"),
+
+#ifdef __EMSCRIPTEN__
+	bool needsConfirmation = true;
+#else
+	Q_UNUSED(downloaded);
+	bool needsConfirmation =
+		getReplacementCriteria().testFlag(ReplacementCriterion::Dirty);
+#endif
+
+	if(needsConfirmation) {
+		QString message;
 #ifdef SINGLE_MAIN_WINDOW
+#	ifdef __EMSCRIPTEN__
+		if(downloaded) {
+			message = tr("Did the download complete successfully?");
+		} else {
+			message =
+				tr("You have unsaved changes, do you want to download them "
+				   "before reconnecting?");
+		}
+#	else
+		message =
 			tr("You have unsaved changes, do you want to save them before "
 			   "reconnecting?"),
+#	endif
 #else
+		message =
 			tr("You have unsaved changes, do you want to save them before "
-			   "reconnecting or reconnect in a new window?"),
+			   "reconnecting or reconnect in a new window?");
 #endif
-			QString(), QMessageBox::Question,
+
+		QWidget *parent = getStartDialogOrThis();
+		QMessageBox *box = utils::makeMessage(
+			parent, tr("Reconnect"), message, QString(), QMessageBox::Question,
 			QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+#ifdef __EMSCRIPTEN__
+		if(downloaded) {
+			box->button(QMessageBox::Save)->setText(tr("No, try again"));
+			box->button(QMessageBox::Discard)->setText(tr("Yes, reconnect"));
+		} else {
+			box->button(QMessageBox::Save)->setText(tr("Download"));
+		}
+#endif
 
 #ifndef SINGLE_MAIN_WINDOW
 		QPushButton *newWindowButton =

@@ -180,6 +180,7 @@ public slots:
 	void invite();
 	void join();
 	void reconnect();
+	void reconnectWith(bool downloaded);
 	void browse();
 	void leave();
 #ifndef __EMSCRIPTEN__
