@@ -3953,7 +3953,8 @@ void MainWindow::updateLockWidget()
 
 	if(m_viewLock->updateReasons(
 		   reasons.activeReasons, reasons.allReasons,
-		   int(canvas ? canvas->paintEngine()->viewMode() : DP_VIEW_MODE_LAYER),
+		   int(canvas ? canvas->paintEngine()->viewMode()
+					  : DP_VIEW_MODE_NORMAL),
 		   aclState && aclState->amOperator(),
 		   !parentalcontrols::isLayerUncensoringBlocked())) {
 		QString toolTip;
