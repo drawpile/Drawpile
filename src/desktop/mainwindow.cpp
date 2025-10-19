@@ -3396,7 +3396,7 @@ void MainWindow::reconnectWith(bool downloaded)
 #	else
 		message =
 			tr("You have unsaved changes, do you want to save them before "
-			   "reconnecting?"),
+			   "reconnecting?");
 #	endif
 #else
 		message =
