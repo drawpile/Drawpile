@@ -827,7 +827,7 @@ import { UAParser } from "ua-parser-js";
     const betaOption = tag(
       "option",
       { value: "beta" },
-      "Drawpile 2.3.0-beta.3"
+      "Drawpile 2.3.0-beta.4"
     );
 
     if (params.has("v1")) {
