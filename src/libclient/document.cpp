@@ -1111,7 +1111,8 @@ void Document::saveCanvasState(
 
 	CanvasSaverRunnable *saver = new CanvasSaverRunnable(
 		canvasState, type, path, m_canvas ? m_canvas->paintEngine() : nullptr);
-	if(isCurrentState && (!exported || type == DP_SAVE_IMAGE_ORA)) {
+	if(isCurrentState && (!exported || type == DP_SAVE_IMAGE_ORA ||
+						  type == DP_SAVE_IMAGE_PROJECT_CANVAS)) {
 		unmarkDirty();
 	}
 	connect(
