@@ -4584,6 +4584,11 @@ void MainWindow::updateSelectTransformActions()
 		->setEnabled(haveSelection && !compatibilityMode);
 	getAction("darknesstoalphaarea")
 		->setEnabled(haveSelection && !compatibilityMode);
+	QAction *selectcrop = getAction("selectcrop");
+	selectcrop->setEnabled(haveSelection || haveTransform);
+	selectcrop->setText(
+		haveTransform ? tr("Cr&op canvas to transform…")
+					  : tr("Cr&op canvas to selection…"));
 	getAction("starttransform")->setEnabled(haveSelection);
 	getAction("starttransformmask")->setEnabled(haveSelection);
 	getAction("transformmirror")->setEnabled(haveTransform);
@@ -6606,6 +6611,10 @@ void MainWindow::setupActions()
 	QAction *darknesstoalphaarea =
 		makeAction("darknesstoalphaarea", tr("Selection Darkness to Alpha"))
 			.noDefaultShortcut();
+	QAction *selectcrop =
+		makeAction("selectcrop", tr("Cr&op canvas to selection/transform…"))
+			.icon(QStringLiteral("drawpile_crop"))
+			.noDefaultShortcut();
 	QAction *starttransform =
 		makeAction("starttransform", tr("&Transform"))
 			.shortcut("T")
@@ -6672,6 +6681,8 @@ void MainWindow::setupActions()
 	m_putimagetools->addAction(darknesstoalphaarea);
 	m_putimagetools->addAction(stamp);
 
+	m_resizetools->addAction(selectcrop);
+
 	connect(selectall, &QAction::triggered, m_doc, &Document::selectAll);
 	connect(
 		selectnone, &QAction::triggered, m_doc,
@@ -6686,6 +6697,7 @@ void MainWindow::setupActions()
 	connect(
 		selectalter, &QAction::triggered, this,
 		&MainWindow::showAlterSelectionDialog);
+	connect(selectcrop, &QAction::triggered, resize, &QAction::trigger);
 	connect(
 		fillfgarea, &QAction::triggered, this,
 		std::bind(
@@ -6745,6 +6757,7 @@ void MainWindow::setupActions()
 	selectMenu->addAction(colorerasearea);
 	selectMenu->addAction(lightnesstoalphaarea);
 	selectMenu->addAction(darknesstoalphaarea);
+	selectMenu->addAction(selectcrop);
 	selectMenu->addSeparator();
 	selectMenu->addAction(starttransform);
 	selectMenu->addAction(starttransformmask);
@@ -7706,6 +7719,7 @@ void MainWindow::setupHud()
 		getAction(QStringLiteral("cleararea")),
 		getAction(QStringLiteral("fillfgarea")),
 		getAction(QStringLiteral("recolorarea")),
+		getAction(QStringLiteral("selectcrop")),
 		nullptr,
 		getAction(QStringLiteral("showselectionmask")),
 		getAction(QStringLiteral("editselection")),
