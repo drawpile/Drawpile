@@ -3,6 +3,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Properly remove the "unsaved changes" marker when saving to DPCS.
  * Feature: Add crop to selection action in the selection menu. Not any different to the resize canvas action, but there for discoverability.
  * Feature: Allow using stabilizer and smoothing with lasso select tool.
+ * Fix: Don't remember interpolation mode on transform tool, since it's too easy to mess up art from having a stale mode set.
 
 2025-10-18 Version 2.3.0-beta.4
  * Fix: Unpremultiply alpha values when exporting to animated WEBP so that partially transparent pixels come out looking correct.

@@ -30,8 +30,6 @@ namespace tools {
 namespace props {
 static const ToolProperties::Value<bool> accuratepreview{
 	QStringLiteral("accuratepreview"), true};
-static const ToolProperties::RangedValue<int> interpolation{
-	QStringLiteral("interpolation"), 1, 0, 2};
 }
 
 TransformSettings::TransformSettings(ToolController *ctrl, QObject *parent)
@@ -77,7 +75,6 @@ ToolProperties TransformSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
 	cfg.setValue(props::accuratepreview, m_previewGroup->checkedId() != 0);
-	cfg.setValue(props::interpolation, m_interpolationGroup->checkedId());
 	return cfg;
 }
 
@@ -87,12 +84,6 @@ void TransformSettings::restoreToolSettings(const ToolProperties &cfg)
 		m_previewGroup->button(cfg.value(props::accuratepreview) ? 1 : 0);
 	if(previewButton) {
 		previewButton->setChecked(true);
-	}
-
-	QAbstractButton *interpolationButton =
-		m_interpolationGroup->button(cfg.value(props::interpolation));
-	if(interpolationButton) {
-		interpolationButton->setChecked(true);
 	}
 }
 
