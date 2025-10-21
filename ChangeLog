@@ -2,6 +2,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Don't show "exit layer view" notice when there's no canvas.
  * Fix: Properly remove the "unsaved changes" marker when saving to DPCS.
  * Feature: Add crop to selection action in the selection menu. Not any different to the resize canvas action, but there for discoverability.
+ * Feature: Allow using stabilizer and smoothing with lasso select tool.
 
 2025-10-18 Version 2.3.0-beta.4
  * Fix: Unpremultiply alpha values when exporting to animated WEBP so that partially transparent pixels come out looking correct.

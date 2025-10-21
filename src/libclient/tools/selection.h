@@ -99,6 +99,9 @@ class PolygonSelection final : public SelectionTool {
 public:
 	PolygonSelection(ToolController &owner);
 
+	void setStabilizationParams(
+		int stabilizationMode, int stabilizerSampleCount, int smoothing);
+
 protected:
 	virtual const QCursor &getCursor(int effectiveOp) const override;
 	void beginSelection(const canvas::Point &point) override;
@@ -108,6 +111,9 @@ protected:
 	net::MessageList endSelection(uint8_t contextId) override;
 
 private:
+	int getEffectiveStabilizerSampleCount() const;
+	int getEffectiveSmoothing() const;
+
 	void addPoint(const QPointF &point);
 	void pollControl(bool enable);
 	void poll();
@@ -118,6 +124,9 @@ private:
 	long long m_lastTimeMsec = 0LL;
 	QPolygon m_polygon;
 	QPolygonF m_polygonF;
+	int m_stabilizationMode = 0;
+	int m_stabilizerSampleCount = 0;
+	int m_smoothing = 0;
 };
 
 }

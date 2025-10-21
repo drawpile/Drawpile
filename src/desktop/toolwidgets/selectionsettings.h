@@ -5,6 +5,7 @@
 
 class KisSliderSpinBox;
 class QAction;
+class QActionGroup;
 class QButtonGroup;
 class QCheckBox;
 class QComboBox;
@@ -68,9 +69,19 @@ private:
 
 	void setDragState(bool dragging, int tolerance);
 
+	void updateStabilizationMode(QAction *action);
+	int getCurrentStabilizationMode() const;
+
 	QWidget *m_headerWidget = nullptr;
 	QButtonGroup *m_headerGroup = nullptr;
 	QWidget *m_selectionContainer = nullptr;
+	QWidget *m_stabilizationContainer = nullptr;
+	KisSliderSpinBox *m_stabilizerSpinner = nullptr;
+	KisSliderSpinBox *m_smoothingSpinner = nullptr;
+	widgets::GroupedToolButton *m_stabilizerButton = nullptr;
+	QActionGroup *m_stabilizationModeGroup = nullptr;
+	QAction *m_stabilizerAction = nullptr;
+	QAction *m_smoothingAction = nullptr;
 	QCheckBox *m_antiAliasCheckBox = nullptr;
 	QCheckBox *m_dragModeCheckBox = nullptr;
 	QWidget *m_magicWandContainer = nullptr;

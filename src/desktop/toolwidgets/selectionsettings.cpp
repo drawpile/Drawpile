@@ -4,8 +4,10 @@
 #include "desktop/widgets/expandshrinkspinner.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "libclient/brushes/brush.h"
 #include "libclient/tools/toolcontroller.h"
 #include <QAction>
+#include <QActionGroup>
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
@@ -13,11 +15,13 @@
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMenu>
 #include <QPair>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QWidget>
 #include <libclient/tools/magicwand.h>
+#include <libclient/tools/selection.h>
 
 namespace tools {
 
@@ -34,7 +38,12 @@ static const ToolProperties::RangedValue<int> expand{
 	source{QStringLiteral("source"), 2, 0, 2},
 	area{QStringLiteral("area"), 0, 0, 1},
 	kernel{QStringLiteral("kernel"), 0, 0, 1},
-	dragMode{QStringLiteral("dragmode"), 1, 0, 1};
+	dragMode{QStringLiteral("dragmode"), 1, 0, 1},
+	stabilizer{QStringLiteral("stabilizer"), 0, 0, 1000},
+	smoothing{QStringLiteral("smoothing"), 0, 0, 20},
+	stabilizationMode{
+		QStringLiteral("stabilizationMode"), 0, 0,
+		int(brushes::LastStabilizationMode)};
 static const ToolProperties::RangedValue<double> tolerance{
 	QStringLiteral("tolerance"), 0.0, 0.0, 1.0};
 }
@@ -49,6 +58,7 @@ void SelectionSettings::setActiveTool(tools::Tool::Type tool)
 	m_isMagicWand = tool == Tool::MAGICWAND;
 	// Hide first, then show. Otherwise the UI temporarily gets larger and
 	// expands the surrounding dock unnecessarily.
+	m_stabilizationContainer->setVisible(tool == Tool::POLYGONSELECTION);
 	if(m_isMagicWand) {
 		m_selectionContainer->hide();
 		m_magicWandContainer->show();
@@ -78,6 +88,9 @@ ToolProperties SelectionSettings::saveToolSettings()
 	cfg.setValue(props::gap, m_closeGapsSlider->value());
 	cfg.setValue(props::source, m_sourceGroup->checkedId());
 	cfg.setValue(props::area, m_areaGroup->checkedId());
+	cfg.setValue(props::stabilizer, m_stabilizerSpinner->value());
+	cfg.setValue(props::smoothing, m_smoothingSpinner->value());
+	cfg.setValue(props::stabilizationMode, getCurrentStabilizationMode());
 	return cfg;
 }
 
@@ -98,6 +111,17 @@ void SelectionSettings::restoreToolSettings(const ToolProperties &cfg)
 	m_closeGapsSlider->setValue(cfg.value(props::gap));
 	checkGroupButton(m_sourceGroup, cfg.value(props::source));
 	checkGroupButton(m_areaGroup, cfg.value(props::area));
+	m_stabilizerSpinner->setValue(cfg.value(props::stabilizer));
+	m_smoothingSpinner->setValue(cfg.value(props::smoothing));
+	if(cfg.value(props::stabilizationMode) == int(brushes::Smoothing)) {
+		m_smoothingAction->setChecked(true);
+		m_stabilizerSpinner->hide();
+		m_smoothingSpinner->show();
+	} else {
+		m_stabilizerAction->setChecked(true);
+		m_smoothingSpinner->hide();
+		m_stabilizerSpinner->show();
+	}
 }
 
 void SelectionSettings::stepAdjust1(bool increase)
@@ -168,9 +192,19 @@ void SelectionSettings::pushSettings()
 	m_closeGapsSlider->setEnabled(continuous);
 	ToolController *ctrl = controller();
 	ctrl->setSelectionParams(selectionParams);
-	if(ctrl->activeTool() == Tool::MAGICWAND) {
+	switch(ctrl->activeTool()) {
+	case Tool::POLYGONSELECTION:
+		static_cast<PolygonSelection *>(ctrl->getTool(Tool::POLYGONSELECTION))
+			->setStabilizationParams(
+				getCurrentStabilizationMode(), m_stabilizerSpinner->value(),
+				m_smoothingSpinner->value());
+		break;
+	case Tool::MAGICWAND:
 		static_cast<MagicWandTool *>(ctrl->getTool(Tool::MAGICWAND))
 			->updateParameters();
+		break;
+	default:
+		break;
 	}
 }
 
@@ -239,6 +273,80 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	selectionLayout->setContentsMargins(0, 0, 0, 0);
 	selectionLayout->setSpacing(3);
 	layout->addWidget(m_selectionContainer);
+
+	m_stabilizationContainer = new QWidget;
+	QHBoxLayout *stabilizerLayout = new QHBoxLayout(m_stabilizationContainer);
+	stabilizerLayout->setContentsMargins(0, 0, 0, 0);
+	selectionLayout->addWidget(m_stabilizationContainer);
+
+	m_stabilizerSpinner = new KisSliderSpinBox;
+	m_stabilizerSpinner->setRange(0, 1000);
+	m_stabilizerSpinner->setExponentRatio(3.0);
+	m_stabilizerSpinner->setBlockUpdateSignalOnDrag(true);
+	m_stabilizerSpinner->setPrefix(
+		QCoreApplication::translate("BrushDock", "Stabilizer: ", nullptr));
+	m_stabilizerSpinner->setSizePolicy(
+		QSizePolicy::Expanding, QSizePolicy::Preferred);
+	stabilizerLayout->addWidget(m_stabilizerSpinner);
+	connect(
+		m_stabilizerSpinner,
+		QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
+		&SelectionSettings::pushSettings);
+
+	m_smoothingSpinner = new KisSliderSpinBox;
+	m_smoothingSpinner->setRange(0, 20);
+	m_smoothingSpinner->setBlockUpdateSignalOnDrag(true);
+	m_smoothingSpinner->setPrefix(
+		QCoreApplication::translate("BrushDock", "Smoothing: ", nullptr));
+	m_smoothingSpinner->setSizePolicy(
+		QSizePolicy::Expanding, QSizePolicy::Preferred);
+	m_smoothingSpinner->hide();
+	stabilizerLayout->addWidget(m_smoothingSpinner);
+	connect(
+		m_smoothingSpinner, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		this, &SelectionSettings::pushSettings);
+
+	m_stabilizerButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
+	m_stabilizerButton->setIcon(QIcon::fromTheme("application-menu"));
+	m_stabilizerButton->setPopupMode(QToolButton::InstantPopup);
+	m_stabilizerButton->setStatusTip(
+		QCoreApplication::translate(
+			"tools::LassoFillSettings", "Stabilization mode"));
+	m_stabilizerButton->setToolTip(m_stabilizerButton->statusTip());
+	stabilizerLayout->addWidget(m_stabilizerButton);
+
+	QMenu *stabilizerMenu = new QMenu(m_stabilizerButton);
+	m_stabilizerButton->setMenu(stabilizerMenu);
+
+	m_stabilizationModeGroup = new QActionGroup(stabilizerMenu);
+	m_stabilizerAction = stabilizerMenu->addAction(
+		QCoreApplication::translate(
+			"tools::BrushSettings", "Time-Based Stabilizer", nullptr));
+	m_smoothingAction = stabilizerMenu->addAction(
+		QCoreApplication::translate(
+			"tools::BrushSettings", "Average Smoothing", nullptr));
+	m_stabilizerAction->setStatusTip(
+		QCoreApplication::translate(
+			"tools::BrushSettings",
+			"Slows down the stroke and stabilizes it over time. Can produce "
+			"very "
+			"smooth results, but may feel sluggish.",
+			nullptr));
+	m_smoothingAction->setStatusTip(
+		QCoreApplication::translate(
+			"tools::BrushSettings",
+			"Simply averages inputs to get a smoother result. Faster than the "
+			"time-based stabilizer, but not as smooth.",
+			nullptr));
+	m_stabilizerAction->setCheckable(true);
+	m_smoothingAction->setCheckable(true);
+	m_stabilizationModeGroup->addAction(m_stabilizerAction);
+	m_stabilizationModeGroup->addAction(m_smoothingAction);
+	m_stabilizerAction->setChecked(true);
+	connect(
+		m_stabilizationModeGroup, &QActionGroup::triggered, this,
+		&SelectionSettings::updateStabilizationMode);
 
 	m_antiAliasCheckBox = new QCheckBox(tr("Anti-aliasing"));
 	m_antiAliasCheckBox->setStatusTip(tr("Smoothe out selection edges"));
@@ -491,6 +599,27 @@ void SelectionSettings::setDragState(bool dragging, int tolerance)
 	} else if(m_toleranceBeforeDrag >= 0) {
 		m_toleranceSlider->setValue(m_toleranceBeforeDrag);
 		m_toleranceBeforeDrag = -1;
+	}
+}
+
+void SelectionSettings::updateStabilizationMode(QAction *action)
+{
+	if(action == m_smoothingAction) {
+		m_stabilizerSpinner->hide();
+		m_smoothingSpinner->show();
+	} else {
+		m_smoothingSpinner->hide();
+		m_stabilizerSpinner->show();
+	}
+	pushSettings();
+}
+
+int SelectionSettings::getCurrentStabilizationMode() const
+{
+	if(m_smoothingAction->isChecked()) {
+		return int(brushes::Smoothing);
+	} else {
+		return int(brushes::Stabilizer);
 	}
 }
 

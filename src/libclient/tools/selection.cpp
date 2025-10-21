@@ -392,6 +392,14 @@ PolygonSelection::PolygonSelection(ToolController &owner)
 	});
 }
 
+void PolygonSelection::setStabilizationParams(
+	int stabilizationMode, int stabilizerSampleCount, int smoothing)
+{
+	m_stabilizationMode = stabilizationMode;
+	m_stabilizerSampleCount = stabilizerSampleCount;
+	m_smoothing = smoothing;
+}
+
 const QCursor &PolygonSelection::getCursor(int effectiveOp) const
 {
 	switch(effectiveOp) {
@@ -411,7 +419,9 @@ void PolygonSelection::beginSelection(const canvas::Point &point)
 	m_polygon.clear();
 	m_polygonF.clear();
 	m_lastTimeMsec = point.timeMsec();
-	m_owner.setStrokeEngineParams(m_strokeEngine);
+	m_owner.setStrokeEngineParams(
+		m_strokeEngine, getEffectiveStabilizerSampleCount(),
+		getEffectiveSmoothing());
 	m_strokeEngine.beginStroke();
 	m_strokeEngine.strokeTo(point, drawdance::CanvasState::null());
 }
@@ -486,6 +496,18 @@ net::MessageList PolygonSelection::endSelection(uint8_t contextId)
 			area.x(), area.y(), area.width(), area.height(), mask);
 		return msgs;
 	}
+}
+
+int PolygonSelection::getEffectiveStabilizerSampleCount() const
+{
+	return m_stabilizationMode == int(brushes::Stabilizer)
+			   ? m_stabilizerSampleCount
+			   : 0;
+}
+
+int PolygonSelection::getEffectiveSmoothing() const
+{
+	return m_stabilizationMode == int(brushes::Smoothing) ? m_smoothing : 0;
 }
 
 void PolygonSelection::addPoint(const QPointF &point)
