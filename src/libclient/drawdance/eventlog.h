@@ -7,6 +7,7 @@ extern "C" {
 #include <dpcommon/event_log.h>
 }
 
+class QObject;
 class QString;
 
 namespace drawdance {
@@ -16,6 +17,8 @@ public:
 	static bool open(const QString &path);
 	static bool close();
 	static bool isOpen();
+
+	static const char *objectClassName(QObject *object);
 
 private:
 	static EventLog instance;

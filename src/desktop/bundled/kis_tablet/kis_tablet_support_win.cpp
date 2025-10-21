@@ -31,6 +31,7 @@
 // #include "kis_tablet_support.h"
 
 #include "desktop/bundled/kis_tablet/debug.h"
+#include "libclient/drawdance/eventlog.h"
 
 #include <QApplication>
 #include <QGuiApplication>
@@ -195,8 +196,10 @@ static void handleTabletEvent(QWidget *windowWidget, const QPointF &local, const
     if (type == QEvent::TabletPress) {
         targetWindow = windowWidget;
         dbgInput << "Locking target window" << targetWindow;
+        DP_EVENT_LOG("Wintab locking target window %s", drawdance::EventLog::objectClassName(targetWindow));
     } else if ((type == QEvent::TabletRelease || buttons == Qt::NoButton) && (targetWindow != 0)) {
         dbgInput << "Releasing target window" << targetWindow;
+        DP_EVENT_LOG("Wintab releasing target window %s", drawdance::EventLog::objectClassName(targetWindow));
         targetWindow = 0;
     }
     if (!windowWidget) // Should never happen
@@ -219,9 +222,15 @@ static void handleTabletEvent(QWidget *windowWidget, const QPointF &local, const
         finalDestination = windowWidget->childAt(localPos);
     }
 
+    DP_EVENT_LOG(
+        "Wintab targetWindow %s qt_tablet_target %s finalDestination %s",
+        drawdance::EventLog::objectClassName(targetWindow),
+        drawdance::EventLog::objectClassName(qt_tablet_target),
+        drawdance::EventLog::objectClassName(finalDestination));
 
     if ((type == QEvent::TabletRelease || buttons == Qt::NoButton) && (qt_tablet_target != 0)) {
         dbgInput << "releasing tablet target" << qt_tablet_target;
+        DP_EVENT_LOG("Wintab releasing target");
         qt_tablet_target = 0;
     }
 
@@ -232,13 +241,18 @@ static void handleTabletEvent(QWidget *windowWidget, const QPointF &local, const
         QTabletEvent ev = compat::makeTabletEvent(type, mapped, global, device, pointerType, pressure, xTilt, yTilt,
                         tangentialPressure, rotation, z, modifiers, uniqueId, button, buttons);
         ev.setTimestamp(time);
+        DP_EVENT_LOG(
+            "Wintap remap to global (%f, %f) local (%f, %f)", mapped.x(),
+            mapped.y(), compat::tabPosF(ev).x(), compat::tabPosF(ev).y());
         QGuiApplication::sendEvent(finalDestination, &ev);
 
 
         if (ev.isAccepted()) {
+            DP_EVENT_LOG("Wintab accepted");
             // dbgTablet << "Tablet event" << type << "accepted" << "by target widget" << finalDestination;
         }
         else {
+            DP_EVENT_LOG("Wintab not accepted");
             // Turn off eventEater send a synthetic mouse event.
             // dbgTablet << "Tablet event" << type << "rejected; sending mouse event to" << finalDestination;
             qt_tablet_target = 0;
@@ -784,6 +798,10 @@ bool KisWindowsTabletSupport::translateTabletPacketEvent()
             if (!w) continue;
             w = w->window();
         }
+        DP_EVENT_LOG(
+            "Wintab targetWindow %s w %s",
+            drawdance::EventLog::objectClassName(targetWindow),
+            drawdance::EventLog::objectClassName(w));
 
         // Get Mouse Position and compare to tablet info
         const QPoint mouseLocation = QCursor::pos();
@@ -839,6 +857,11 @@ bool KisWindowsTabletSupport::translateTabletPacketEvent()
                 << currentPointerType << "P:" << pressureNew << "tilt:" << tiltX << ','
                 << tiltY << "tanP:" << tangentialPressure << "rotation:" << rotation;
         }
+
+        DP_EVENT_LOG(
+            "Wintab packet #%d/%d global (%f, %f) z %d (%ld, %ld)", i + 1,
+            packetCount, globalPosF.x(), globalPosF.y(), z, long(packet.pkX),
+            long(packet.pkY));
 
         // Reusable helper function. Better than compiler macros!
         auto sendTabletEvent = [&](QEvent::Type t){

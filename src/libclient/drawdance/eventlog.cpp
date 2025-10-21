@@ -4,6 +4,8 @@ extern "C" {
 #include <dpcommon/output.h>
 }
 #include "libclient/drawdance/eventlog.h"
+#include <QMetaObject>
+#include <QObject>
 #include <QString>
 
 namespace drawdance {
@@ -22,6 +24,20 @@ bool EventLog::close()
 bool EventLog::isOpen()
 {
 	return DP_event_log_is_open();
+}
+
+const char *EventLog::objectClassName(QObject *object)
+{
+	if(object) {
+		const QMetaObject *metaObject = object->metaObject();
+		if(metaObject) {
+			const char *className = metaObject->className();
+			if(className) {
+				return className;
+			}
+		}
+	}
+	return "NULL";
 }
 
 EventLog EventLog::instance{};
