@@ -2221,7 +2221,8 @@ float BrushSettings::myPaintRadiusToPixelSize(float myPaintRadius)
 
 float BrushSettings::pixelSizeToMyPaintRadius(float pixelSize)
 {
-	return std::log(pixelSize / 2.0f);
+	float result = std::log(pixelSize / 2.0f);
+	return std::isfinite(result) ? result : 0.0f;
 }
 
 double BrushSettings::radiusLogarithmicToPixelSize(int radiusLogarithmic)
