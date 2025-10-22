@@ -2463,7 +2463,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Configure drawing toolbar…</source>
-        <translation>描画ツールバーを設定します…</translation>
+        <translation>描画ツールバーを設定…</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2588,7 +2588,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>Set Selection Mask &amp;Color…</source>
-        <translation>選択マスクと色を設定します…</translation>
+        <translation>選択マスクと色を設定…</translation>
     </message>
     <message>
         <location line="+1"/>
