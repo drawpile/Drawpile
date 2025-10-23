@@ -322,6 +322,7 @@ SETTING(toolToggle                , ToolToggle                , "settings/toolto
 SETTING(toolset                   , Toolset                   , "tools/toolset"                         , (QMap<QString, QVariantHash>()))
 SETTING(touchDrawPressure         , TouchDrawPressure         , "settings/input/touchdrawpressure"      , false)
 SETTING(updateCheckEnabled        , UpdateCheckEnabled        , "settings/updatecheck"                  , UPDATE_CHECK_DEFAULT)
+SETTING(useMipmaps                , UseMipmaps                , "settings/usemipmaps"                   , false)
 SETTING(userMarkerPersistence     , UserMarkerPersistence     , "settings/usermarkerpersistence"        , 1000)
 SETTING(videoExportCustomFfmpeg   , VideoExportCustomFfmpeg   , "videoexport/customffmpeg"              , QString())
 SETTING(videoExportFfmpegPath     , VideoExportFfmpegPath     , "videoexport/ffmpegpath"                , QString("ffmpeg"))

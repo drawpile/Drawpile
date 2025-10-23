@@ -254,6 +254,8 @@ public:
 	virtual void
 	eachDirtyTileReset(const QRect &tileArea, const OnTileFn &fn) = 0;
 
+	void markAllTilesDirty() { m_dirtyTiles.fill(true); }
+
 protected:
 	int tileIndex(int tileX, int tileY) const
 	{
@@ -606,6 +608,11 @@ void TileCache::eachDirtyTileReset(const QRect &tileArea, const OnTileFn &fn)
 bool TileCache::paintDirtyNavigatorTilesReset(bool all, QPixmap &cache)
 {
 	return d->paintDirtyNavigatorTilesReset(all, cache);
+}
+
+void TileCache::markAllTilesDirty()
+{
+	d->markAllTilesDirty();
 }
 
 TileCache::BaseImpl *TileCache::instantiateImpl(int canvasImplementation)

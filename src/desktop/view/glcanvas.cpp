@@ -689,15 +689,23 @@ void main()
 	void
 	drawCanvasShader(QOpenGLFunctions *f, const QRect &rect, GLint &inOutFilter)
 	{
-		GLint min_filter =
-			textureFilterLinear ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST;
-		GLint max_filter = textureFilterLinear ? GL_LINEAR : GL_NEAREST;
-		if(inOutFilter != max_filter) {
-			inOutFilter = max_filter;
-			f->glTexParameteri(
-				GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
-			f->glTexParameteri(
-				GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, max_filter);
+		GLint minFilter, maxFilter;
+		if(textureFilterLinear) {
+			if(usingMipmaps) {
+				minFilter = GL_LINEAR_MIPMAP_LINEAR;
+			} else {
+				minFilter = GL_LINEAR;
+			}
+			maxFilter = GL_LINEAR;
+		} else {
+			minFilter = GL_NEAREST;
+			maxFilter = GL_NEAREST;
+		}
+
+		if(inOutFilter != maxFilter) {
+			inOutFilter = maxFilter;
+			f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+			f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxFilter);
 		}
 		f->glUniform4f(
 			canvasShader.rectLocation, rect.x(), rect.y(), rect.width(),
@@ -729,7 +737,9 @@ void main()
 						pixelRect.y() - rect.y(), pixelRect.width(),
 						pixelRect.height(), GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 				});
-			f->glGenerateMipmap(GL_TEXTURE_2D);
+			if(usingMipmaps) {
+				f->glGenerateMipmap(GL_TEXTURE_2D);
+			}
 			drawCanvasShader(f, rect, inOutFilter);
 		}
 	}
@@ -805,6 +815,19 @@ void main()
 		}
 	}
 
+	void clearTextures(QOpenGLFunctions *f, canvas::TileCache &tileCache)
+	{
+		totalTextureSize = QSize();
+		GLsizei count = canvasTextures.size();
+		if(count != 0) {
+			f->glDeleteTextures(count, canvasTextures.constData());
+			canvasTextures.clear();
+			canvasRects.clear();
+			canvasFilters.clear();
+		}
+		tileCache.markAllTilesDirty();
+	}
+
 	void renderCanvasDirtyTextures(
 		QOpenGLFunctions *f, QOpenGLExtraFunctions *e,
 		canvas::TileCache &tileCache)
@@ -813,6 +836,17 @@ void main()
 		qCDebug(lcDpGlCanvas, "renderCanvasDirtyTexture");
 		setUpCanvasShader(f, e);
 		updateCanvasTextureFilter(f);
+
+		bool mipmaps = textureFilterLinear && shouldUseMipmaps;
+		if(mipmaps != usingMipmaps) {
+			qCDebug(
+				lcDpGlCanvas, mipmaps ? "Enable mipmaps" : "Disable mipmaps");
+			usingMipmaps = mipmaps;
+			// Can't really get rid of mipmaps separately, just just destroy and
+			// recreate the textures. This only happens if the user changes the
+			// setting, so it's not performance-relevant.
+			clearTextures(f, tileCache);
+		}
 
 		QSize size = tileCache.size();
 		bool textureSizeChanged = totalTextureSize != size;
@@ -953,6 +987,8 @@ void main()
 	QVector<GLint> canvasFilters;
 	QSize totalTextureSize;
 	bool textureFilterLinear = false;
+	bool usingMipmaps = false;
+	bool shouldUseMipmaps = false;
 	GLfloat translationX;
 	GLfloat translationY;
 	GLfloat transform[9];
@@ -969,6 +1005,7 @@ GlCanvas::GlCanvas(CanvasController *controller, QWidget *parent)
 	desktop::settings::Settings &settings = dpApp().settings();
 	settings.bindCheckerColor1(this, &GlCanvas::setCheckerColor1);
 	settings.bindCheckerColor2(this, &GlCanvas::setCheckerColor2);
+	settings.bindUseMipmaps(this, &GlCanvas::setShouldUseMipmaps);
 
 	connect(
 		controller, &CanvasController::clearColorChanged, this,
@@ -1256,6 +1293,15 @@ void GlCanvas::setCheckerColor2(const QColor &color)
 	d->dirty.checker = true;
 	d->checkerColor2 = color;
 	update();
+}
+
+void GlCanvas::setShouldUseMipmaps(bool useMipmaps)
+{
+	if(useMipmaps != d->shouldUseMipmaps) {
+		d->shouldUseMipmaps = useMipmaps;
+		d->dirty.texture = true;
+		update();
+	}
 }
 
 void GlCanvas::onControllerRenderSmoothChanged()

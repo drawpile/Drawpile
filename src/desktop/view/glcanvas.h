@@ -34,6 +34,7 @@ protected:
 private:
 	void setCheckerColor1(const QColor &checkerColor1);
 	void setCheckerColor2(const QColor &checkerColor2);
+	void setShouldUseMipmaps(bool useMipmaps);
 	void onControllerRenderSmoothChanged();
 	void onControllerCanvasSizeChanged();
 	void onControllerTransformChanged();

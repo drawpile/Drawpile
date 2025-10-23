@@ -118,6 +118,7 @@ public:
 	bool needsDirtyCheck() const;
 	void eachDirtyTileReset(const QRect &tileArea, const OnTileFn &fn);
 	bool paintDirtyNavigatorTilesReset(bool all, QPixmap &cache);
+	void markAllTilesDirty();
 
 private:
 	class BaseImpl;
