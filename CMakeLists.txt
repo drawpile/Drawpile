@@ -135,10 +135,24 @@ if(QT_VERSION)
 else()
     find_package(QT ${DP_MIN_QT_VERSION} NAMES Qt6 Qt5 REQUIRED)
 endif()
-message(STATUS "Using Qt version ${QT_VERSION_MAJOR}")
+message(STATUS "Using Qt version ${QT_VERSION}")
 set(QT_PACKAGE_NAME Qt${QT_VERSION_MAJOR})
 # Qt5AndroidSupport.cmake clobbers this variable, so make a copy
 set(DP_QT_DIR ${QT_DIR})
+
+if(QT_VERSION VERSION_LESS "6.10.0")
+	function(dp_qt_private_headers target module)
+		set(var_name "Qt${QT_VERSION_MAJOR}${module}_PRIVATE_INCLUDE_DIRS")
+		target_include_directories("${target}" SYSTEM PRIVATE "${${var_name}}")
+	endfunction()
+else()
+	function(dp_qt_private_headers target module)
+		set(package_name "Qt${QT_VERSION_MAJOR}${module}Private")
+		find_package("${package_name}" REQUIRED NO_MODULE)
+		set(library_name "Qt${QT_VERSION_MAJOR}::${module}Private")
+		target_link_libraries("${target}" PRIVATE "${library_name}")
+	endfunction()
+endif()
 
 # There is an inherent conflict where the docs say `CMAKE_OSX_DEPLOYMENT_TARGET`
 # needs to be set before calling `enable_language` or `project`, but it is
