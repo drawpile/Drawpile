@@ -109,9 +109,9 @@ void General::initPerformance(
 	//: One of the canvas renderer options. "Qt" is a software framework.
 	QString graphicsViewName = tr("Qt Graphics View");
 	//: One of the canvas renderer options. Hardware meaning it uses the GPU.
-	QString openGlName = tr("Hardware (experimental)");
+	QString openGlName = tr("Hardware");
 	//: One of the canvas renderer options. Software meaning it uses the CPU.
-	QString softwareName = tr("Software (experimental)");
+	QString softwareName = tr("Software");
 	QPair<QString, int> implementations[] = {
 		//: One of the canvas renderer options.
 		{tr("Default"), int(CanvasImplementation::Default)},

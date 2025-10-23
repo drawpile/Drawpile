@@ -9189,15 +9189,15 @@ Les valeurs supérieures à 0,5 peuvent ne pas être visibles.</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Hardware (experimental)</source>
+        <source>Hardware</source>
         <extracomment>One of the canvas renderer options. Hardware meaning it uses the GPU.</extracomment>
-        <translation>Matériel (expérimental)</translation>
+        <translation>Matériel</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Software (experimental)</source>
+        <source>Software</source>
         <extracomment>One of the canvas renderer options. Software meaning it uses the CPU.</extracomment>
-        <translation>Logiciel (expérimental)</translation>
+        <translation>Logiciel</translation>
     </message>
     <message>
         <location line="+3"/>

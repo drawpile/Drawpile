@@ -9181,15 +9181,15 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+2"/>
-        <source>Hardware (experimental)</source>
+        <source>Hardware</source>
         <extracomment>One of the canvas renderer options. Hardware meaning it uses the GPU.</extracomment>
-        <translation>硬件 (实验性)</translation>
+        <translation>硬件</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Software (experimental)</source>
+        <source>Software</source>
         <extracomment>One of the canvas renderer options. Software meaning it uses the CPU.</extracomment>
-        <translation>软件 (实验性)</translation>
+        <translation>软件</translation>
     </message>
     <message>
         <location line="+3"/>
