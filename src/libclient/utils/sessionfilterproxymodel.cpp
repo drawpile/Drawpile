@@ -2,6 +2,7 @@
 #include "libclient/utils/sessionfilterproxymodel.h"
 #include "libclient/net/loginsessions.h"
 #include "libclient/net/sessionlistingmodel.h"
+#include "libshared/util/qtcompat.h"
 
 SessionFilterProxyModel::SessionFilterProxyModel(QObject *parent)
 	: QSortFilterProxyModel(parent)
@@ -11,47 +12,55 @@ SessionFilterProxyModel::SessionFilterProxyModel(QObject *parent)
 void SessionFilterProxyModel::refreshDuplicates()
 {
 	if(!m_showDuplicates) {
-		invalidateFilter();
+		// Before Qt 6.10, this used to just be a call to invalidateFilter(),
+		// now it looks kind of weird. Hope this doesn't break.
+		COMPAT_SORT_FILTER_PROXY_MODEL_BEGIN_FILTER_CHANGE();
+		COMPAT_SORT_FILTER_PROXY_MODEL_END_FILTER_CHANGE();
 	}
 }
 
 void SessionFilterProxyModel::setShowPassworded(bool show)
 {
 	if(m_showPassworded != show) {
+		COMPAT_SORT_FILTER_PROXY_MODEL_BEGIN_FILTER_CHANGE();
 		m_showPassworded = show;
-		invalidateFilter();
+		COMPAT_SORT_FILTER_PROXY_MODEL_END_FILTER_CHANGE();
 	}
 }
 
 void SessionFilterProxyModel::setShowNsfm(bool show)
 {
 	if(m_showNsfm != show) {
+		COMPAT_SORT_FILTER_PROXY_MODEL_BEGIN_FILTER_CHANGE();
 		m_showNsfm = show;
-		invalidateFilter();
+		COMPAT_SORT_FILTER_PROXY_MODEL_END_FILTER_CHANGE();
 	}
 }
 
 void SessionFilterProxyModel::setShowClosed(bool show)
 {
 	if(m_showClosed != show) {
+		COMPAT_SORT_FILTER_PROXY_MODEL_BEGIN_FILTER_CHANGE();
 		m_showClosed = show;
-		invalidateFilter();
+		COMPAT_SORT_FILTER_PROXY_MODEL_END_FILTER_CHANGE();
 	}
 }
 
 void SessionFilterProxyModel::setShowInactive(bool show)
 {
 	if(m_showInactive != show) {
+		COMPAT_SORT_FILTER_PROXY_MODEL_BEGIN_FILTER_CHANGE();
 		m_showInactive = show;
-		invalidateFilter();
+		COMPAT_SORT_FILTER_PROXY_MODEL_END_FILTER_CHANGE();
 	}
 }
 
 void SessionFilterProxyModel::setShowDuplicates(bool show)
 {
 	if(m_showDuplicates != show) {
+		COMPAT_SORT_FILTER_PROXY_MODEL_BEGIN_FILTER_CHANGE();
 		m_showDuplicates = show;
-		invalidateFilter();
+		COMPAT_SORT_FILTER_PROXY_MODEL_END_FILTER_CHANGE();
 	}
 }
 

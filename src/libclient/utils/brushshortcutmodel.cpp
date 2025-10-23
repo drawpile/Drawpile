@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/utils/brushshortcutmodel.h"
+#include "libshared/util/qtcompat.h"
 #include <QIcon>
 #include <functional>
 
@@ -239,17 +240,21 @@ BrushShortcutFilterProxyModel::BrushShortcutFilterProxyModel(
 void BrushShortcutFilterProxyModel::setCurrentTagRow(int tagRow)
 {
 	if(tagRow != m_tagRow) {
+		COMPAT_SORT_FILTER_PROXY_MODEL_BEGIN_FILTER_CHANGE();
 		m_tagRow = tagRow;
-		invalidateFilter();
+		COMPAT_SORT_FILTER_PROXY_MODEL_END_FILTER_CHANGE();
 	}
 }
 
 void BrushShortcutFilterProxyModel::setSearchAllTags(bool searchAllTags)
 {
 	if(searchAllTags != m_searchAllTags) {
+		if(m_haveSearch) {
+			COMPAT_SORT_FILTER_PROXY_MODEL_BEGIN_FILTER_CHANGE();
+		}
 		m_searchAllTags = searchAllTags;
 		if(m_haveSearch) {
-			invalidateFilter();
+			COMPAT_SORT_FILTER_PROXY_MODEL_END_FILTER_CHANGE();
 		}
 	}
 }

@@ -25,6 +25,26 @@
 #	define COMPAT_DISABLE_COPY_MOVE(Class) Q_DISABLE_COPY_MOVE(Class)
 #endif
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+#	define COMPAT_SORT_FILTER_PROXY_MODEL_BEGIN_FILTER_CHANGE()               \
+		do {                                                                   \
+			beginFilterChange();                                               \
+		} while(0)
+#	define COMPAT_SORT_FILTER_PROXY_MODEL_END_FILTER_CHANGE()                 \
+		do {                                                                   \
+			endFilterChange();                                                 \
+		} while(0)
+#else
+#	define COMPAT_SORT_FILTER_PROXY_MODEL_BEGIN_FILTER_CHANGE()               \
+		do {                                                                   \
+			/* nothing */                                                      \
+		} while(0)
+#	define COMPAT_SORT_FILTER_PROXY_MODEL_END_FILTER_CHANGE()                 \
+		do {                                                                   \
+			invalidateFilter();                                                \
+		} while(0)
+#endif
+
 namespace compat {
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
