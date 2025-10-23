@@ -559,29 +559,6 @@ void main()
 		return texture;
 	}
 
-	void refreshTextureFilter(QOpenGLFunctions *f)
-	{
-		if(dirty.textureFilter) {
-			dirty.textureFilter = false;
-			bool linear = controller->shouldRenderSmooth();
-			if(linear && !textureFilterLinear) {
-				qCDebug(lcDpGlCanvas, "Set texture filter to linear");
-				textureFilterLinear = true;
-				f->glTexParameteri(
-					GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				f->glTexParameteri(
-					GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			} else if(!linear && textureFilterLinear) {
-				qCDebug(lcDpGlCanvas, "Set texture filter to nearest");
-				textureFilterLinear = false;
-				f->glTexParameteri(
-					GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				f->glTexParameteri(
-					GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			}
-		}
-	}
-
 	static void
 	setCheckerColor(QByteArray &pixels, int x, int y, const QColor &color)
 	{
