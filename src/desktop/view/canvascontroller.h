@@ -59,6 +59,7 @@ public:
 	const QTransform &transform() const { return m_transform; }
 	const QTransform &invertedTransform() const { return m_invertedTransform; }
 
+	bool isRenderSmoothSettingSet() const { return m_renderSmooth; }
 	bool shouldRenderSmooth() const;
 	bool isTabletEnabled() const { return m_tabletEnabled; }
 	bool isTouchDrawEnabled() const;

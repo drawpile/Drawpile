@@ -837,7 +837,8 @@ void main()
 		setUpCanvasShader(f, e);
 		updateCanvasTextureFilter(f);
 
-		bool mipmaps = textureFilterLinear && shouldUseMipmaps;
+		bool mipmaps =
+			controller->isRenderSmoothSettingSet() && shouldUseMipmaps;
 		if(mipmaps != usingMipmaps) {
 			qCDebug(
 				lcDpGlCanvas, mipmaps ? "Enable mipmaps" : "Disable mipmaps");
