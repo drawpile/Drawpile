@@ -161,6 +161,10 @@ void General::initPerformance(
 		new QCheckBox(tr("Improve zoom quality (hardware renderer only)"));
 	settings.bindUseMipmaps(useMipmaps);
 	form->addRow(nullptr, useMipmaps);
+	settings.bindRenderSmooth(useMipmaps, [useMipmaps](bool smooth) {
+		useMipmaps->setEnabled(smooth);
+		useMipmaps->setVisible(smooth);
+	});
 
 	form->addRow(
 		nullptr,
