@@ -42,8 +42,9 @@ QNetworkAccessManager *getInstance()
 		// Don't fiddle with statics during global destruction.
 		nam->connect(
 			QCoreApplication::instance(), &QCoreApplication::aboutToQuit, nam,
-			[conn] {
+			[nam, conn] {
 				QObject::disconnect(conn);
+				nam->deleteLater();
 			});
 		MANAGERS.perThreadManagers[t] = nam;
 	}
