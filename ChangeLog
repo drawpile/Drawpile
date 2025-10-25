@@ -5,6 +5,7 @@ Unreleased Version 2.3.0-pre
  * Feature: Allow using stabilizer and smoothing with lasso select tool.
  * Fix: Don't remember interpolation mode on transform tool, since it's too easy to mess up art from having a stale mode set.
  * Fix: Make mipmap usage in hardware renderer configurable, since it causes performance issues with some graphics cards or drivers. Defaults to off. Thanks Bluestrings and Sinamer for reporting.
+ * Fix: Make setting the hue slider to 359 in HSL space not turn out gray. Thanks BornIncompetence for reporting.
 
 2025-10-18 Version 2.3.0-beta.4
  * Fix: Unpremultiply alpha values when exporting to animated WEBP so that partially transparent pixels come out looking correct.
