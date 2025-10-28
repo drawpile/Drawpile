@@ -12,6 +12,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMouseEvent>
+#include <QScopedValueRollback>
 #include <QStyleHints>
 #include <QTimer>
 #ifdef Q_OS_ANDROID
@@ -35,29 +36,38 @@ LongPressEventFilter::LongPressEventFilter(QObject *parent)
 
 bool LongPressEventFilter::eventFilter(QObject *watched, QEvent *event)
 {
-	switch(event->type()) {
-	case QEvent::MouseButtonPress:
-	case QEvent::MouseButtonDblClick:
-		handleMousePress(
-			qobject_cast<QWidget *>(watched),
-			static_cast<QMouseEvent *>(event));
-		break;
-	case QEvent::MouseMove:
-		handleMouseMove(static_cast<QMouseEvent *>(event));
-		break;
-	case QEvent::MouseButtonRelease:
-		cancel();
-		break;
-	default:
-		break;
+	if(!m_handlingEvent) {
+		QScopedValueRollback rollback(m_handlingEvent, true);
+		switch(event->type()) {
+		case QEvent::MouseButtonPress:
+			if(handleMousePress(
+				   qobject_cast<QWidget *>(watched),
+				   static_cast<QMouseEvent *>(event))) {
+				event->setAccepted(true);
+				return true;
+			}
+			break;
+		case QEvent::MouseMove:
+			if(handleMouseMove(static_cast<QMouseEvent *>(event))) {
+				return true;
+			}
+			break;
+		case QEvent::MouseButtonDblClick:
+		case QEvent::MouseButtonRelease:
+			flush();
+			break;
+		default:
+			break;
+		}
 	}
 	return QObject::eventFilter(watched, event);
 }
 
-void LongPressEventFilter::handleMousePress(
+bool LongPressEventFilter::handleMousePress(
 	QWidget *target, const QMouseEvent *me)
 {
-	if(isContextMenuTarget(target)) {
+	if(me->buttons() == Qt::LeftButton && me->modifiers() == Qt::NoModifier &&
+	   isContextMenuTarget(target)) {
 		const QStyleHints *sh = qApp->styleHints();
 		long long distance = qMax(MINIMUM_DISTANCE, sh->startDragDistance());
 		m_distanceSquared = distance * distance;
@@ -70,15 +80,34 @@ void LongPressEventFilter::handleMousePress(
 		int longPressInterval = sh->mousePressAndHoldInterval();
 #endif
 		m_timer->start(qMax(MINIMUM_DELAY, longPressInterval));
+		return true;
 	} else {
 		cancel();
+		return false;
 	}
 }
 
-void LongPressEventFilter::handleMouseMove(const QMouseEvent *me)
+bool LongPressEventFilter::handleMouseMove(const QMouseEvent *me)
 {
-	if(m_timer->isActive() && !isWithinDistance(compat::globalPos(*me))) {
-		cancel();
+	if(m_timer->isActive()) {
+		if(isWithinDistance(compat::globalPos(*me))) {
+			return true;
+		} else {
+			flush();
+		}
+	}
+	return false;
+}
+
+void LongPressEventFilter::flush()
+{
+	QWidget *target = m_target.data();
+	cancel();
+	if(target && target->isVisible()) {
+		QMouseEvent event(
+			QEvent::MouseButtonPress, m_pressLocalPos, m_pressGlobalPos,
+			Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+		qApp->sendEvent(target, &event);
 	}
 }
 
@@ -98,7 +127,25 @@ bool LongPressEventFilter::isWithinDistance(const QPoint &globalPos) const
 void LongPressEventFilter::triggerLongPress()
 {
 	QWidget *target = m_target.data();
-	if(isContextMenuTarget(target)) {
+	cancel();
+	if(!m_handlingEvent && isContextMenuTarget(target)) {
+		QScopedValueRollback rollback(m_handlingEvent, true);
+		// First we synchronously send a right click press and release so that
+		// the target widget can update its state correctly. Afterwards we post
+		// the context menu event to it so that'll open. As far as I can tell,
+		// that's what Qt does when you right-click on a widget as well.
+		{
+			QMouseEvent pressEvent(
+				QEvent::MouseButtonPress, m_pressLocalPos, m_pressGlobalPos,
+				Qt::RightButton, Qt::RightButton, Qt::NoModifier);
+			qApp->sendEvent(target, &pressEvent);
+		}
+		{
+			QMouseEvent releaseEvent(
+				QEvent::MouseButtonRelease, m_pressLocalPos, m_pressGlobalPos,
+				Qt::RightButton, Qt::NoButton, Qt::NoModifier);
+			qApp->sendEvent(target, &releaseEvent);
+		}
 		qApp->postEvent(
 			target,
 			new QContextMenuEvent(
