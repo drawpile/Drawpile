@@ -219,7 +219,6 @@ Qt::ItemFlags LayerListModel::flags(const QModelIndex &index) const
 	if(index.isValid()) {
 		const LayerListItem &item = m_items[index.internalId()];
 		flags.setFlag(Qt::ItemIsSelectable);
-		flags.setFlag(Qt::ItemIsEditable);
 		flags.setFlag(Qt::ItemIsDragEnabled, isLayerMovable(item.id));
 		flags.setFlag(Qt::ItemIsDropEnabled, item.group);
 	} else {

@@ -7,6 +7,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Make mipmap usage in hardware renderer configurable, since it causes performance issues with some graphics cards or drivers. Defaults to off. Thanks Bluestrings and Sinamer for reporting.
  * Fix: Make setting the hue slider to 359 in HSL space not turn out gray. Thanks BornIncompetence for reporting.
  * Fix: Make sliders not show a text selection cursor on Android when they're not in edit mode.
+ * Fix: Make layer list items not show a text selection cursor on Android.
 
 2025-10-18 Version 2.3.0-beta.4
  * Fix: Unpremultiply alpha values when exporting to animated WEBP so that partially transparent pixels come out looking correct.
