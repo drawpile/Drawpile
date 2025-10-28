@@ -10,7 +10,7 @@ This patch adds a filter hook kinetic scrolling based on the starting position.
 +++ b/src/widgets/util/qflickgesture.cpp
 @@ -531,8 +531,18 @@
      bool scrollerWasScrolling = (scroller->state() == QScroller::Scrolling);
-
+ 
      if (inputType) {
 -        if (QWidget *w = qobject_cast<QWidget *>(d->receiver))
 +        if (QWidget *w = qobject_cast<QWidget *>(d->receiver)) {
@@ -19,7 +19,7 @@ This patch adds a filter hook kinetic scrolling based on the starting position.
 +				QVariant filterVariant = w->property("drawpile_scroller_filter");
 +                if (filterVariant.isValid()) {
 +                    DrawpileQScrollerFilter *filter = filterVariant.value<DrawpileQScrollerFilter *>();
-+                    if (filter && filter->filterScroll(w, point)) {
++                    if (filter && filter->shouldFilterScroll(w, point)) {
 +                        return Ignore;
 +                    }
 +                }
@@ -28,34 +28,52 @@ This patch adds a filter hook kinetic scrolling based on the starting position.
  #if QT_CONFIG(graphicsview)
          else if (QGraphicsObject *go = qobject_cast<QGraphicsObject *>(d->receiver))
              point = go->mapFromScene(point);
-
---- a/src/widgets/util/qscroller.cpp
-+++ b/src/widgets/util/qscroller.cpp
-@@ -32,6 +32,8 @@
-
- QT_BEGIN_NAMESPACE
-
-+DrawpileQScrollerFilter::DrawpileQScrollerFilter(QObject *parent) : QObject(parent) {}
-+
- Q_LOGGING_CATEGORY(lcScroller, "qt.widgets.scroller")
-
- bool qt_sendSpontaneousEvent(QObject *receiver, QEvent *event);
-
 --- a/src/widgets/util/qscroller.h
 +++ b/src/widgets/util/qscroller.h
-@@ -13,6 +13,15 @@
-
+@@ -13,6 +13,28 @@
+ 
  QT_BEGIN_NAMESPACE
-
+ 
 +#define DRAWPILE_QSCROLLER_PATCH
++#define DRAWPILE_QSCROLLER_VERSION 2
 +
 +class Q_WIDGETS_EXPORT DrawpileQScrollerFilter : public QObject {
 +    Q_OBJECT
 +public:
 +    explicit DrawpileQScrollerFilter(QObject *parent);
++
++    bool shouldFilterScroll(QWidget *w, const QPointF &point);
++
++    bool wasScrollFiltered() const
++    {
++        return m_wasScrollFiltered;
++    }
++
++protected:
 +    virtual bool filterScroll(QWidget *w, const QPointF &point) = 0;
++
++private:
++    bool m_wasScrollFiltered = false;
 +};
 +
-
+ 
  class QWidget;
  class QScrollerPrivate;
+--- a/src/widgets/util/qscroller.cpp
++++ b/src/widgets/util/qscroller.cpp
+@@ -32,6 +32,15 @@
+ 
+ QT_BEGIN_NAMESPACE
+ 
++DrawpileQScrollerFilter::DrawpileQScrollerFilter(QObject *parent) : QObject(parent) {}
++
++bool DrawpileQScrollerFilter::shouldFilterScroll(QWidget *w, const QPointF &point)
++{
++    bool filtered = filterScroll(w, point);
++    m_wasScrollFiltered = filtered;
++    return filtered;
++}
++
+ Q_LOGGING_CATEGORY(lcScroller, "qt.widgets.scroller")
+ 
+ bool qt_sendSpontaneousEvent(QObject *receiver, QEvent *event);

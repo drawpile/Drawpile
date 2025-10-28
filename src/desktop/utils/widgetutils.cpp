@@ -29,9 +29,13 @@
 #include <QScreen>
 #include <QScrollBar>
 #include <QStyle>
+#include <QStyleHints>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QWidget>
+#ifdef Q_OS_ANDROID
+#	include <libshared/util/androidutils.h>
+#endif
 
 namespace utils {
 
@@ -455,6 +459,19 @@ QScrollerProperties KineticScroller::getScrollerPropertiesForSensitivity(
 	float mm = 0.001f;
 	float resistance = 1.0f - (kineticScrollSensitivity / 100.0f);
 	float mousePressEventDelay = 1.0f - 0.75f * resistance;
+	// If the mouse press event delay is too large, it also ends up delaying
+	// long-presses. Cap the value there for consistency.
+#ifdef Q_OS_ANDROID
+	int maxDelayMs = utils::androidLongPressTimeout();
+#else
+	// This doesn't handle the case where the interval changes in the style
+	// hints while the application is running, but that's too rare to bother.
+	int maxDelayMs = qApp->styleHints()->mousePressAndHoldInterval();
+#endif
+	float maxDelay = float(maxDelayMs) / 1000.0f;
+	if(mousePressEventDelay > maxDelay) {
+		mousePressEventDelay = maxDelay;
+	}
 	float resistanceCoefficient = 10.0f;
 	float dragVelocitySmoothFactor = 1.0f;
 	float minimumVelocity = 0.0f;

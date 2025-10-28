@@ -31,6 +31,9 @@ private:
 
 	void triggerLongPress();
 
+	void setKineticScrollGesture(int kineticScrollGesture);
+	int getKineticScrollDelay(QWidget *target) const;
+
 	static bool isContextMenuTarget(QWidget *target);
 	static bool isLongPressableWidget(QWidget *target);
 
@@ -39,6 +42,7 @@ private:
 	QPoint m_pressLocalPos;
 	QPoint m_pressGlobalPos;
 	QPointer<QWidget> m_target;
+	int m_kineticScrollGesture;
 #ifdef Q_OS_ANDROID
 	int m_longPressTimeout;
 #endif

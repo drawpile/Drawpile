@@ -27,6 +27,7 @@
 #include <QMetaEnum>
 #include <QRegularExpression>
 #include <QScreen>
+#include <QScroller>
 #include <QStyle>
 #include <QStyleFactory>
 #include <QSurfaceFormat>
@@ -55,6 +56,13 @@
 #ifdef HAVE_RUN_IN_NEW_PROCESS
 #	include <QProcess>
 #endif
+
+// Make sure that we're building against the proper patch set.
+#if defined(DRAWPILE_QSCROLLER_PATCH) &&                                       \
+	(!defined(DRAWPILE_QSCROLLER_VERSION) || DRAWPILE_QSCROLLER_VERSION != 2)
+#	error "DRAWPILE_QSCROLLER_VERSION != 2, do you need to recompile Qt?"
+#endif
+
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)

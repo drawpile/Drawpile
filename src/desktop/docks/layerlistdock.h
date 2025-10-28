@@ -288,6 +288,7 @@ class LayerListScrollFilter : public DrawpileQScrollerFilter {
 public:
 	explicit LayerListScrollFilter(LayerList *parent);
 
+protected:
 	bool filterScroll(QWidget *w, const QPointF &point) override;
 };
 #endif
