@@ -17,6 +17,7 @@
 #include <QStyleOptionSpinBox>
 #include <QPainter>
 #include <QEvent>
+#include <QInputMethodQueryEvent>
 #include <QApplication>
 #include <QMouseEvent>
 #include <QTimer>
@@ -618,6 +619,20 @@ public:
         return true;
     }
 
+    bool blockInputMethodQuery(QInputMethodQueryEvent *e)
+    {
+        // On Android, pressing on a text input shows text selection handles,
+        // see QAndroidInputContext::updateSelectionHandles. We don't want that
+        // if a slider is not in edit mode, so we respond with "not enabled".
+        if (e->queries().testFlag(Qt::ImEnabled) && !isEditModeActive()) {
+            e->setValue(Qt::ImEnabled, false);
+            e->accept();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Generic "style aware" helper function to draw a rect
     void paintSliderRect(QPainter &painter, const QRectF &rect, const QBrush &brush)
     {
@@ -921,6 +936,7 @@ public:
                 // events so that we get the key presses we're interested in.
                 case QEvent::ShortcutOverride : return qShortcutOverrideEvent(static_cast<QKeyEvent*>(e));
                 case QEvent::ContextMenu : return qContextMenuEvent(static_cast<QContextMenuEvent*>(e));
+                case QEvent::InputMethodQuery: return blockInputMethodQuery(static_cast<QInputMethodQueryEvent *>(e));
                 default: break;
             }
         } else if (o == m_lineEdit) {
@@ -938,6 +954,7 @@ public:
                 case QEvent::MouseButtonRelease: return widgetRangeToggletMouseReleaseEvent(static_cast<QMouseEvent*>(e));
                 case QEvent::Enter: return widgetRangeToggleEnterEvent(e);
                 case QEvent::Leave: return widgetRangeToggleLeaveEvent(e);
+                case QEvent::InputMethodQuery: return blockInputMethodQuery(static_cast<QInputMethodQueryEvent *>(e));
                 default: break;
             }
         }
