@@ -60,7 +60,7 @@ void LongPressEventFilter::handleMousePress(
 	if(isContextMenuTarget(target)) {
 		const QStyleHints *sh = qApp->styleHints();
 		long long distance = qMax(MINIMUM_DISTANCE, sh->startDragDistance());
-		m_distanceSquared = distance * 2LL;
+		m_distanceSquared = distance * distance;
 		m_pressLocalPos = compat::mousePos(*me);
 		m_pressGlobalPos = compat::globalPos(*me);
 		m_target = target;
