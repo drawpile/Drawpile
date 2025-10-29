@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/main.h"
 #include "desktop/settings.h"
+#include "desktop/utils/widgetutils.h"
 #include <QtColorWidgets/ColorDialog>
 #include <QtColorWidgets/ColorPreview>
+#include <QtColorWidgets/ColorWheel>
 
 namespace dialogs {
 
@@ -12,6 +14,15 @@ void applyColorDialogSettings(color_widgets::ColorDialog *dlg)
 	settings.bindColorWheelShape(dlg, &color_widgets::ColorDialog::setWheelShape);
 	settings.bindColorWheelAngle(dlg, &color_widgets::ColorDialog::setWheelRotating);
 	settings.bindColorWheelMirror(dlg, &color_widgets::ColorDialog::setWheelMirrored);
+
+	color_widgets::ColorWheel *wheel =
+		dlg->findChild<color_widgets::ColorWheel *>(
+			QStringLiteral("wheel"), Qt::FindDirectChildrenOnly);
+	if(wheel) {
+		utils::setWidgetLongPressEnabled(wheel, false);
+	} else {
+		qWarning("Wheel not found in color dialog, long presses not disabled");
+	}
 }
 
 void setColorDialogResetColor(color_widgets::ColorDialog *dlg, const QColor &color)

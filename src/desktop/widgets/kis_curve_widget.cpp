@@ -22,6 +22,7 @@
 #include <QtMath>
 
 #include "desktop/widgets/kis_curve_widget.h"
+#include "desktop/utils/widgetutils.h"
 
 static constexpr int MOUSE_AWAY_THRES = 15;
 static constexpr double POINT_AREA = 1E-4;
@@ -55,6 +56,8 @@ KisCurveWidget::KisCurveWidget(QWidget *parent, Qt::WindowFlags f)
 	setMinimumSize(50, 50);
 
 	d->setCurveModified();
+
+	utils::setWidgetLongPressEnabled(this, false);
 
 	setFocusPolicy(Qt::StrongFocus);
 }

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/widgets/artisticcolorwheel.h"
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/utils/widgetutils.h"
 #include <QImage>
 #include <QLineF>
 #include <QMouseEvent>
@@ -15,6 +16,7 @@ namespace widgets {
 ArtisticColorWheel::ArtisticColorWheel(QWidget *parent)
 	: QWidget(parent)
 {
+	utils::setWidgetLongPressEnabled(this, false);
 }
 
 void ArtisticColorWheel::setHueLimit(bool hueLimit)
