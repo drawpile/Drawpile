@@ -24,6 +24,9 @@ public:
 	void createButtons(QDialogButtonBox *buttons);
 	void showButtons();
 
+	static void addTouchPressureSettingTo(
+		desktop::settings::Settings &settings, QFormLayout *form);
+
 signals:
 	void touchTesterRequested();
 

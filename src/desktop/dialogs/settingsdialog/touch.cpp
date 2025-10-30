@@ -4,6 +4,7 @@
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include <QButtonGroup>
+#include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QFormLayout>
@@ -49,6 +50,19 @@ void Touch::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 	initTapAndHoldActions(settings, utils::addFormSection(layout));
 }
 
+void Touch::addTouchPressureSettingTo(
+	desktop::settings::Settings &settings, QFormLayout *form)
+{
+	QCheckBox *touchDrawPressure =
+		new QCheckBox(tr("Enable pressure for touch drawing"));
+	settings.bindTouchDrawPressure(touchDrawPressure);
+	form->addRow(nullptr, touchDrawPressure);
+	form->addRow(
+		nullptr, utils::formNote(
+					 tr("Required for certain screen tablets, probably doesn't "
+						"work for finger drawing!")));
+}
+
 void Touch::initMode(desktop::settings::Settings &settings, QFormLayout *form)
 {
 	QButtonGroup *touchMode = utils::addRadioGroup(
@@ -58,6 +72,7 @@ void Touch::initMode(desktop::settings::Settings &settings, QFormLayout *form)
 			{tr("Gestures"), true},
 		});
 	settings.bindTouchGestures(touchMode);
+	addTouchPressureSettingTo(settings, form);
 }
 
 void Touch::initTapActions(

@@ -15,6 +15,9 @@
 #include <QSlider>
 #include <QVBoxLayout>
 #include <QWidget>
+#ifdef Q_OS_ANDROID
+#	include "desktop/dialogs/settingsdialog/touch.h"
+#endif
 
 namespace dialogs {
 namespace settingsdialog {
@@ -125,6 +128,10 @@ void Tablet::initTablet(
 	auto *pressure = new QCheckBox(tr("Enable pressure sensitivity"));
 	settings.bindTabletEvents(pressure);
 	form->addRow(tr("Pen pressure:"), pressure);
+
+#ifdef Q_OS_ANDROID
+	Touch::addTouchPressureSettingTo(settings, form);
+#endif
 
 	auto *smoothing = new KisSliderSpinBox;
 	smoothing->setMaximum(libclient::settings::maxSmoothing);
