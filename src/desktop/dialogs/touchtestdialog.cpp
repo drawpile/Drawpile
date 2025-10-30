@@ -18,6 +18,11 @@
 #include <QScreen>
 #include <QTouchEvent>
 #include <QVBoxLayout>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#	include <QInputDevice>
+#else
+#	include <QTouchDevice>
+#endif
 
 namespace dialogs {
 
@@ -69,7 +74,7 @@ bool TouchTestView::viewportEvent(QEvent *event)
 	case QEvent::TouchUpdate:
 	case QEvent::TouchEnd:
 	case QEvent::TouchCancel:
-		debugLogEvent(event, QString());
+		debugLogTouchEvent(static_cast<QTouchEvent *>(event));
 		event->accept();
 		return true;
 	case QEvent::Gesture:
@@ -79,6 +84,35 @@ bool TouchTestView::viewportEvent(QEvent *event)
 	default:
 		return QGraphicsView::viewportEvent(event);
 	}
+}
+
+void TouchTestView::debugLogTouchEvent(QTouchEvent *event)
+{
+	QString deviceInfo;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	const QInputDevice *inputDevice = event->device();
+	if(inputDevice) {
+		deviceInfo =
+			QStringLiteral("Device '%1' capabilities=%2 type=%3")
+				.arg(
+					inputDevice->name(),
+					QString::number(int(inputDevice->capabilities()), 16),
+					QString::number(int(inputDevice->type())));
+	}
+#else
+	const QTouchDevice *touchDevice = event->device();
+	if(touchDevice) {
+		deviceInfo =
+			QStringLiteral(
+				"Device '%1' capabilities=%2 type=%3 maxTouchPoints=%4")
+				.arg(
+					touchDevice->name(),
+					QString::number(int(touchDevice->capabilities()), 16),
+					QString::number(int(touchDevice->type())),
+					QString::number(touchDevice->maximumTouchPoints()));
+	}
+#endif
+	debugLogEvent(event, deviceInfo);
 }
 
 void TouchTestView::debugLogGestureEvent(QGestureEvent *event)

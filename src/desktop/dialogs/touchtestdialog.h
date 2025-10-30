@@ -5,6 +5,7 @@
 #include <QGraphicsView>
 
 class QGestureEvent;
+class QTouchEvent;
 
 namespace dialogs {
 
@@ -33,6 +34,7 @@ private:
 	bool m_gestureEventsEnabled = false;
 	QGraphicsScene *m_scene;
 
+	void debugLogTouchEvent(QTouchEvent *event);
 	void debugLogGestureEvent(QGestureEvent *event);
 	void debugLogEvent(QEvent *event, const QString extraInfo);
 };
