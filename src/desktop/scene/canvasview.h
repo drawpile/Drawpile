@@ -379,6 +379,8 @@ private:
 	void showTransformNotice(const QString &text);
 	void updateLockNotice();
 
+	void handleDragDrop(QDropEvent *event, bool drop);
+
 	Qt::KeyboardModifiers getKeyboardModifiers(const QKeyEvent *keyev) const;
 	Qt::KeyboardModifiers getMouseModifiers(const QMouseEvent *mouseev) const;
 	Qt::KeyboardModifiers getTabletModifiers(const QTabletEvent *tabev) const;

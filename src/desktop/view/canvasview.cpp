@@ -7,6 +7,7 @@
 #include "desktop/view/canvasscene.h"
 #include "desktop/view/glcanvas.h"
 #include "desktop/widgets/notifbar.h"
+#include "libclient/canvas/layerlist.h"
 #include "libclient/drawdance/eventlog.h"
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
@@ -322,9 +323,13 @@ void CanvasView::handleDragDrop(QDropEvent *event, bool drop)
 {
 	const QMimeData *mimeData = event->mimeData();
 	if(mimeData->hasImage()) {
-		event->acceptProposedAction();
-		if(drop) {
-			emit imageDropped(qvariant_cast<QImage>(mimeData->imageData()));
+		// Don't accept layer drops from the same canvas, that just leads to
+		// accidental dragging of layers duplicating their contents.
+		if(!qobject_cast<const canvas::LayerMimeData *>(mimeData)) {
+			event->acceptProposedAction();
+			if(drop) {
+				emit imageDropped(qvariant_cast<QImage>(mimeData->imageData()));
+			}
 		}
 	} else if(mimeData->hasUrls() && !mimeData->urls().isEmpty()) {
 		event->acceptProposedAction();

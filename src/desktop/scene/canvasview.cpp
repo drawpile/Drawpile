@@ -11,6 +11,7 @@
 #include "desktop/widgets/notifbar.h"
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/layerlist.h"
 #include "libclient/drawdance/eventlog.h"
 #include "libclient/tools/enums.h"
 #include "libclient/utils/cursors.h"
@@ -2693,44 +2694,44 @@ bool CanvasView::isRotationInverted() const
 	return m_mirror ^ m_flip;
 }
 
-/**
- * @brief accept image drops
- * @param event event info
- *
- * @todo Check file extensions
- */
 void CanvasView::dragEnterEvent(QDragEnterEvent *event)
 {
-	if(event->mimeData()->hasUrls() || event->mimeData()->hasImage() ||
-	   event->mimeData()->hasColor())
-		event->acceptProposedAction();
+	handleDragDrop(event, false);
 }
 
 void CanvasView::dragMoveEvent(QDragMoveEvent *event)
 {
-	if(event->mimeData()->hasUrls() || event->mimeData()->hasImage())
-		event->acceptProposedAction();
+	handleDragDrop(event, false);
 }
 
-/**
- * @brief handle image drops
- * @param event event info
- */
 void CanvasView::dropEvent(QDropEvent *event)
+{
+	handleDragDrop(event, true);
+}
+
+void CanvasView::handleDragDrop(QDropEvent *event, bool drop)
 {
 	const QMimeData *mimeData = event->mimeData();
 	if(mimeData->hasImage()) {
-		emit imageDropped(
-			qvariant_cast<QImage>(event->mimeData()->imageData()));
-	} else if(mimeData->hasUrls()) {
-		emit urlDropped(event->mimeData()->urls().first());
+		// Don't accept layer drops from the same canvas, that just leads to
+		// accidental dragging of layers duplicating their contents.
+		if(!qobject_cast<const canvas::LayerMimeData *>(mimeData)) {
+			event->acceptProposedAction();
+			if(drop) {
+				emit imageDropped(qvariant_cast<QImage>(mimeData->imageData()));
+			}
+		}
+	} else if(mimeData->hasUrls() && !mimeData->urls().isEmpty()) {
+		event->acceptProposedAction();
+		if(drop) {
+			emit urlDropped(mimeData->urls().first());
+		}
 	} else if(mimeData->hasColor()) {
-		emit colorDropped(event->mimeData()->colorData().value<QColor>());
-	} else {
-		// unsupported data
-		return;
+		event->acceptProposedAction();
+		if(drop) {
+			emit colorDropped(event->mimeData()->colorData().value<QColor>());
+		}
 	}
-	event->acceptProposedAction();
 }
 
 void CanvasView::showEvent(QShowEvent *event)

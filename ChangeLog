@@ -12,6 +12,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Improve long-press handling for context menus to act more like a real right-click would.
  * Fix: Don't delay long-presses by left-click or touch kinetic scrolling.
  * Feature: Add touch draw pressure settings, because apparently some screen tablets on Android use touch inputs instead of stylus ones. Thanks SurgeonTaco for suggesting.
+ * Fix: Make dragging a layer onto its own canvas not paste its contents. Dragging layers between different windows is still possible. Thanks Blozzom and Pepper for reporting.
 
 2025-10-18 Version 2.3.0-beta.4
  * Fix: Unpremultiply alpha values when exporting to animated WEBP so that partially transparent pixels come out looking correct.
