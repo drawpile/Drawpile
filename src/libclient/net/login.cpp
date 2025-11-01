@@ -933,7 +933,15 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 		// Single session mode: automatically join the (only) session
 		int sessionCount = sessions->rowCount();
 		if(sessionCount > 1) {
-			failLogin(tr("Got multiple sessions when only one was expected"));
+			qCWarning(
+				lcDpLogin,
+				"Got %d sessions when only one was expected (%s %s '%s')",
+				sessionCount,
+				m_multisession ? "multi-session" : "single-session",
+				m_supportsLookup ? "lookup" : "no lookup",
+				qUtf8Printable(m_autoJoinId));
+			m_multisession = true;
+			m_autoJoinId.clear();
 		} else {
 			LoginSession session = sessions->getFirstSession();
 			if(checkSession(session, true)) {
