@@ -243,11 +243,19 @@ bool DP_protocol_version_is_compatible(DP_ProtocolVersion *protover)
 
 bool DP_protocol_version_is_opaque_compatible(DP_ProtocolVersion *protover)
 {
-    return protover
-        && DP_str_equal(protover->ns, DP_PROTOCOL_COMPAT_VERSION_NAMESPACE)
-        && protover->server == DP_PROTOCOL_COMPAT_VERSION_SERVER
-        && protover->major == DP_PROTOCOL_COMPAT_VERSION_MAJOR
-        && protover->minor == DP_PROTOCOL_COMPAT_VERSION_MINOR;
+    if (protover
+        && DP_str_equal(protover->ns, DP_PROTOCOL_COMPAT_VERSION_NAMESPACE)) {
+        switch (protover->server) {
+        case DP_PROTOCOL_VERSION_SERVER:
+#if DP_PROTOCOL_VERSION_SERVER != DP_PROTOCOL_COMPAT_VERSION_SERVER
+        case DP_PROTOCOL_COMPAT_VERSION_SERVER:
+#endif
+            return true;
+        default:
+            break;
+        }
+    }
+    return false;
 }
 
 static bool is_at_least_4_24_0(const DP_ProtocolVersion *protover)
