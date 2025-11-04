@@ -155,17 +155,8 @@ LayerList::LayerList(QWidget *parent)
 	auto *titlebar = new TitleWidget(this);
 	setTitleBarWidget(titlebar);
 
-	m_lockButton =
-		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
-	m_lockButton->setIcon(QIcon::fromTheme("object-locked"));
-	m_lockButton->setToolTip(tr("Locks and permissions"));
-	m_lockButton->setStatusTip(m_lockButton->toolTip());
-	m_lockButton->setCheckable(true);
-	m_lockButton->setPopupMode(QToolButton::InstantPopup);
-	titlebar->addCustomWidget(m_lockButton);
-
 	m_clipButton =
-		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
 	m_clipButton->setIcon(QIcon::fromTheme("drawpile_selection_intersect"));
 	m_clipButton->setToolTip(tr("Clip to layer below"));
 	m_clipButton->setStatusTip(m_clipButton->toolTip());
@@ -176,7 +167,7 @@ LayerList::LayerList(QWidget *parent)
 	titlebar->addCustomWidget(m_clipButton);
 
 	m_alphaPreserveButton =
-		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
 	QIcon alphaOffOnIcon;
 	alphaOffOnIcon.addFile(
 		QStringLiteral("theme:drawpile_alpha_on.svg"), QSize(), QIcon::Normal,
@@ -192,6 +183,22 @@ LayerList::LayerList(QWidget *parent)
 		m_alphaPreserveButton, &widgets::GroupedToolButton::clicked, this,
 		&LayerList::alphaPreserveChanged);
 	titlebar->addCustomWidget(m_alphaPreserveButton);
+
+	m_alphaLockButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	QIcon alphaLockedUnlockedIcon;
+	alphaLockedUnlockedIcon.addFile(
+		QStringLiteral("theme:drawpile_alpha_unlocked.svg"), QSize(),
+		QIcon::Normal, QIcon::Off);
+	alphaLockedUnlockedIcon.addFile(
+		QStringLiteral("theme:drawpile_alpha_locked.svg"), QSize(),
+		QIcon::Normal, QIcon::On);
+	alphaLockedUnlockedIcon.addFile(
+		QStringLiteral("theme:drawpile_alpha_disabled.svg"), QSize(),
+		QIcon::Disabled);
+	m_alphaLockButton->setIcon(alphaLockedUnlockedIcon);
+	m_alphaLockButton->setCheckable(true);
+	titlebar->addCustomWidget(m_alphaLockButton);
 
 	titlebar->addSpace(4);
 	m_blendModeCombo = new QComboBox;
@@ -210,8 +217,16 @@ LayerList::LayerList(QWidget *parent)
 	root->setLayout(rootLayout);
 	setWidget(root);
 
+	m_lockButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
+	m_lockButton->setIcon(QIcon::fromTheme("object-locked"));
+	m_lockButton->setToolTip(tr("Locks and permissions"));
+	m_lockButton->setStatusTip(m_lockButton->toolTip());
+	m_lockButton->setCheckable(true);
+	m_lockButton->setPopupMode(QToolButton::InstantPopup);
+
 	m_sketchButton =
-		new widgets::GroupedToolButton(widgets::GroupedToolButton::NotGrouped);
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
 	m_sketchButton->setIcon(QIcon::fromTheme("draw-freehand"));
 	m_sketchButton->setToolTip(tr("Toggle sketch mode (only visible to you)"));
 	m_sketchButton->setStatusTip(m_sketchButton->toolTip());
@@ -219,6 +234,16 @@ LayerList::LayerList(QWidget *parent)
 	connect(
 		m_sketchButton, &widgets::GroupedToolButton::clicked, this,
 		&LayerList::toggleLayerSketch);
+
+	m_sketchTintButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	m_sketchTintButton->setToolTip(tr("Change sketch tint"));
+	m_sketchTintButton->setStatusTip(m_sketchButton->toolTip());
+	m_sketchTintButton->setEnabled(false);
+	m_sketchTintButton->setVisible(false);
+	connect(
+		m_sketchTintButton, &widgets::GroupedToolButton::clicked, this,
+		&LayerList::showSketchTintColorPicker);
 
 	m_opacitySlider = new KisSliderSpinBox{this};
 	m_opacitySlider->setRange(0, 100);
@@ -231,19 +256,10 @@ LayerList::LayerList(QWidget *parent)
 		m_opacitySlider, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
 		this, &LayerList::opacityChanged);
 
-	m_sketchTintButton =
-		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
-	m_sketchTintButton->setToolTip(tr("Change sketch tint"));
-	m_sketchTintButton->setStatusTip(m_sketchButton->toolTip());
-	m_sketchTintButton->setEnabled(false);
-	m_sketchTintButton->setVisible(false);
-	connect(
-		m_sketchTintButton, &widgets::GroupedToolButton::clicked, this,
-		&LayerList::showSketchTintColorPicker);
-
 	QHBoxLayout *opacitySliderLayout = new QHBoxLayout;
 	opacitySliderLayout->setContentsMargins(
 		titlebar->layout()->contentsMargins());
+	opacitySliderLayout->addWidget(m_lockButton);
 	opacitySliderLayout->addWidget(m_sketchButton);
 	opacitySliderLayout->addWidget(m_sketchTintButton);
 	opacitySliderLayout->addWidget(m_opacitySlider);
@@ -419,6 +435,9 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	m_aclmenu = new LayerAclMenu(m_actions, this);
 	m_lockButton->setMenu(m_aclmenu);
 
+	m_alphaLockButton->setToolTip(m_actions.layerAlphaLock->text());
+	m_alphaLockButton->setStatusTip(m_actions.layerAlphaLock->statusTip());
+
 	// Action functionality
 	connect(
 		m_contextMenu, &QMenu::aboutToShow, this,
@@ -497,7 +516,7 @@ void LayerList::setLayerEditActions(const Actions &actions)
 		actions.layerColorMenu, &QMenu::triggered, this,
 		&LayerList::setLayerColor);
 	connect(
-		m_aclmenu, &LayerAclMenu::layerAlphaLockChange, this,
+		actions.layerAlphaLock, &QAction::triggered, this,
 		&LayerList::changeLayersAlphaLock);
 	connect(
 		m_aclmenu, &LayerAclMenu::layerContentLockChange, this,
@@ -523,6 +542,9 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	connect(
 		m_aclmenu, &LayerAclMenu::layerCensoredLocalChange, this,
 		&LayerList::changeLayersCensorLocal);
+	connect(
+		m_alphaLockButton, &widgets::GroupedToolButton::clicked,
+		actions.layerAlphaLock, &QAction::trigger);
 
 	updateActionLabels();
 	updateLockedControls();
@@ -560,8 +582,9 @@ void LayerList::updateActionLabels()
 		alphaLockEnabled = false;
 	}
 
-	if(m_aclmenu) {
-		m_aclmenu->setAlphaLockEnabled(alphaLockEnabled);
+	m_alphaLockButton->setEnabled(alphaLockEnabled);
+	if(m_actions.layerAlphaLock) {
+		m_actions.layerAlphaLock->setEnabled(alphaLockEnabled);
 	}
 
 	if(group) {
@@ -2147,6 +2170,7 @@ void LayerList::updateUiFromCurrent()
 	m_currentId = layer.id;
 
 	QScopedValueRollback<bool> rollback(m_noupdate, true);
+	m_alphaLockButton->setChecked(!layer.group && layer.alphaLock);
 	m_clipButton->setChecked(layer.clip);
 	bool alphaPreserve =
 		!layer.clip &&
@@ -2155,8 +2179,8 @@ void LayerList::updateUiFromCurrent()
 	m_sketchMode = layer.sketchOpacity > 0.0f;
 	m_sketchButton->setChecked(m_sketchMode);
 	m_sketchButton->setGroupPosition(
-		m_sketchMode ? widgets::GroupedToolButton::GroupLeft
-					 : widgets::GroupedToolButton::NotGrouped);
+		m_sketchMode ? widgets::GroupedToolButton::GroupCenter
+					 : widgets::GroupedToolButton::GroupRight);
 	m_sketchTintButton->setEnabled(m_sketchMode);
 	m_sketchTintButton->setVisible(m_sketchMode);
 	if(m_sketchMode) {
@@ -2167,7 +2191,6 @@ void LayerList::updateUiFromCurrent()
 	if(m_aclmenu) {
 		m_aclmenu->setCensored(layer.actuallyCensoredRemote());
 		m_aclmenu->setCensoredLocal(layer.censoredLocal);
-		m_aclmenu->setAlphaLock(layer.alphaLock);
 	}
 
 	bool compatibilityMode = m_canvas && m_canvas->isCompatibilityMode();
@@ -2192,6 +2215,7 @@ void LayerList::updateUiFromCurrent()
 		} else {
 			m_actions.layerAlphaBlend->setChecked(true);
 		}
+		m_actions.layerAlphaLock->setChecked(!layer.group && layer.alphaLock);
 	}
 
 	layerLockStatusChanged(layer.id);

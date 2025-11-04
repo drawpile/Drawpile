@@ -271,6 +271,7 @@ private:
 	QColor m_updateSketchTint;
 
 	widgets::GroupedToolButton *m_lockButton;
+	widgets::GroupedToolButton *m_alphaLockButton;
 	widgets::GroupedToolButton *m_clipButton;
 	widgets::GroupedToolButton *m_alphaPreserveButton;
 	QComboBox *m_blendModeCombo;

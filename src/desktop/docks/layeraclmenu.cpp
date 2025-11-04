@@ -12,11 +12,7 @@ LayerAclMenu::LayerAclMenu(const LayerList::Actions &actions, QWidget *parent)
 	: QMenu(parent)
 	, m_userlist(nullptr)
 {
-	m_alphaLock = actions.layerAlphaLock;
-	addAction(m_alphaLock);
-	connect(
-		m_alphaLock, &QAction::triggered, this,
-		&LayerAclMenu::layerAlphaLockChange);
+	addAction(actions.layerAlphaLock);
 
 	m_censored = actions.layerCensor;
 	addAction(m_censored);
@@ -147,16 +143,6 @@ void LayerAclMenu::setCensored(bool censor)
 void LayerAclMenu::setCensoredLocal(bool censor)
 {
 	m_censoredLocal->setChecked(censor);
-}
-
-void LayerAclMenu::setAlphaLock(bool alphaLock)
-{
-	m_alphaLock->setChecked(alphaLock);
-}
-
-void LayerAclMenu::setAlphaLockEnabled(bool alphaLockEnabled)
-{
-	m_alphaLock->setEnabled(alphaLockEnabled);
 }
 
 void LayerAclMenu::setCanEdit(bool canEdit, bool compatibilityMode)

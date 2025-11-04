@@ -23,12 +23,9 @@ public:
 		const QVector<uint8_t> exclusive);
 	void setCensored(bool censor);
 	void setCensoredLocal(bool censor);
-	void setAlphaLock(bool alphaLock);
-	void setAlphaLockEnabled(bool alphaLockEnabled);
 	void setCanEdit(bool canEdit, bool compatibilityMode);
 
 signals:
-	void layerAlphaLockChange(bool alphaLock);
 	void layerContentLockChange(bool contentLock);
 	void layerPropsLockChange(bool propsLock);
 	void layerMoveLockChange(bool moveLock);
@@ -46,7 +43,6 @@ private:
 
 	QAbstractItemModel *m_userlist;
 	QVector<uint8_t> m_exclusive;
-	QAction *m_alphaLock;
 	QAction *m_censored;
 	QAction *m_censoredLocal;
 	QAction *m_lockAll;
