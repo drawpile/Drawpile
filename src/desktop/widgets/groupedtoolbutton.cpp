@@ -175,8 +175,10 @@ GroupedToolButton::GroupedToolButton(GroupPosition position, QWidget *parent)
 void GroupedToolButton::setGroupPosition(
 	GroupedToolButton::GroupPosition groupPosition)
 {
-	m_groupPosition = groupPosition;
-	update();
+	if(groupPosition != m_groupPosition) {
+		m_groupPosition = groupPosition;
+		update();
+	}
 }
 
 void GroupedToolButton::setColorSwatch(const QColor &colorSwatch)
