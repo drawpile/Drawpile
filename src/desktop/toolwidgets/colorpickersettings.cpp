@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/toolwidgets/colorpickersettings.h"
-#include "desktop/dialogs/colordialog.h"
+#include "desktop/main.h"
+#include "desktop/settings.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
@@ -109,6 +110,11 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	m_layerpick = new QCheckBox(tr("Pick from current layer only"), widget);
 	layout->addWidget(m_layerpick);
 
+	m_previewBox = new QCheckBox(
+		QCoreApplication::translate(
+			"dialogs::settingsdialog::Tools", "Show sampling ring"));
+	layout->addWidget(m_previewBox);
+
 	m_palettewidget = new widgets::PaletteWidget;
 	m_palettewidget->setColumns(9);
 	layout->addWidget(m_palettewidget, 1);
@@ -127,6 +133,9 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	connect(
 		m_layerpick, &QCheckBox::toggled, this,
 		&ColorPickerSettings::pushSettings);
+	connect(
+		m_previewBox, &QCheckBox::clicked, this,
+		&ColorPickerSettings::onPreviewBoxClicked);
 #ifndef SINGLE_MAIN_WINDOW
 	connect(
 		m_headerWidget, &colorpickersettings::HeaderWidget::pickingChanged,
@@ -135,6 +144,9 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 		m_pickButton, &QAbstractButton::clicked, this,
 		&ColorPickerSettings::pickFromScreen);
 #endif
+
+	dpApp().settings().bindSamplingRingVisibility(
+		this, &ColorPickerSettings::setSamplingRingVisibility);
 
 	return widget;
 }
@@ -219,6 +231,19 @@ void ColorPickerSettings::addColor(const QColor &color)
 void ColorPickerSettings::pickFromScreen()
 {
 	m_headerWidget->pickFromScreen();
+}
+
+void ColorPickerSettings::onPreviewBoxClicked(bool checked)
+{
+	dpApp().settings().setSamplingRingVisibility(
+		checked ? int(desktop::settings::SamplingRingVisibility::Always)
+				: int(desktop::settings::SamplingRingVisibility::TouchOnly));
+}
+
+void ColorPickerSettings::setSamplingRingVisibility(int visibility)
+{
+	m_previewBox->setChecked(
+		visibility == int(desktop::settings::SamplingRingVisibility::Always));
 }
 
 }

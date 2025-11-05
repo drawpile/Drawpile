@@ -80,10 +80,14 @@ private slots:
 	void pickFromScreen();
 
 private:
+	void onPreviewBoxClicked(bool checked);
+	void setSamplingRingVisibility(int visibility);
+
 	colorpickersettings::HeaderWidget *m_headerWidget = nullptr;
 	widgets::GroupedToolButton *m_pickButton = nullptr;
 	widgets::PaletteWidget *m_palettewidget;
 	QCheckBox *m_layerpick;
+	QCheckBox *m_previewBox;
 	KisSliderSpinBox *m_size;
 	qreal m_quickAdjust1 = 0.0;
 	bool m_pickingFromScreen = false;

@@ -16,6 +16,7 @@ Unreleased Version 2.3.0-pre
  * Server Fix: Don't claim that dprec templates are incompatible when they're not.
  * Fix: Make the "alpha lock layer for you" a buttton in the layer dock, rather than having it in the lock menu. Otherwise the inherit alpha button is too confusing to people not used to that feature existing. Thanks Phoneme for reporting.
  * Feature: Add extra thickness to the color sampling ring in the area where the colors meet to give better visibility of the comparison. Thanks tiar for suggesting.
+ * Feature: Allow toggling color sampling ring in the color picker tool settings.
 
 2025-10-18 Version 2.3.0-beta.4
  * Fix: Unpremultiply alpha values when exporting to animated WEBP so that partially transparent pixels come out looking correct.
