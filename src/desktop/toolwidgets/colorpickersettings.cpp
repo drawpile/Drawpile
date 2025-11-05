@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/toolwidgets/colorpickersettings.h"
 #include "desktop/main.h"
 #include "desktop/settings.h"
@@ -10,6 +9,7 @@
 #include "libclient/tools/colorpicker.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
+#include "libshared/util/qtcompat.h"
 #include <QBoxLayout>
 #include <QCheckBox>
 #include <QIcon>
@@ -128,10 +128,10 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	connect(
 		m_size, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	connect(
-		m_size, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		m_size, QOverload<int>::of(&KisSliderSpinBox::valueChanged), this,
 		&ColorPickerSettings::pushSettings);
 	connect(
-		m_layerpick, &QCheckBox::toggled, this,
+		m_layerpick, &QCheckBox::clicked, this,
 		&ColorPickerSettings::pushSettings);
 	connect(
 		m_previewBox, &QCheckBox::clicked, this,
@@ -215,7 +215,7 @@ void ColorPickerSettings::addColor(const QColor &color)
 	palette.insertColor(0, color);
 	m_palettewidget->setNextColor(color);
 
-	int i = 1;
+	compat::sizetype i = 1;
 	while(i < palette.count()) {
 		if(palette.colorAt(i) == color) {
 			palette.eraseColor(i);
@@ -224,8 +224,10 @@ void ColorPickerSettings::addColor(const QColor &color)
 		}
 	}
 
-	if(palette.count() > 80)
-		palette.eraseColor(palette.count() - 1);
+	compat::sizetype count = palette.count();
+	for(i = 80; i < count; ++i) {
+		palette.eraseColor(count - 1);
+	}
 }
 
 void ColorPickerSettings::pickFromScreen()

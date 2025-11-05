@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef TOOLSETTINGS_COLORPICKER_H
-#define TOOLSETTINGS_COLORPICKER_H
-
+#ifndef DESKTOP_TOOLWIDGETS_COLORPICKER_H
+#define DESKTOP_TOOLWIDGETS_COLORPICKER_H
 #include "desktop/toolwidgets/toolsettings.h"
 #include <QWidget>
 
@@ -38,9 +36,6 @@ private:
 
 }
 
-/**
- * @brief Color picker history
- */
 class ColorPickerSettings final : public ToolSettings {
 	Q_OBJECT
 public:
