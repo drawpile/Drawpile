@@ -426,6 +426,14 @@ int CanvasModel::amendSnapshotMetadata(
 	return prepended;
 }
 
+void CanvasModel::finishColorPick()
+{
+	if(m_lastPickedColor.isValid()) {
+		emit colorPickFinished(m_lastPickedColor);
+		m_lastPickedColor = QColor();
+	}
+}
+
 void CanvasModel::pickLayer(int x, int y)
 {
 	int layerId = m_paintengine->pickLayer(x, y);
@@ -439,6 +447,7 @@ QColor CanvasModel::pickColor(int x, int y, int layer, int diameter)
 	QColor color = m_paintengine->sampleColor(x, y, layer, diameter);
 	if(color.alpha() > 0) {
 		color.setAlpha(255);
+		m_lastPickedColor = color;
 		emit colorPicked(color);
 	}
 	return color;

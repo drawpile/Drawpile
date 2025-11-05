@@ -204,8 +204,9 @@ public slots:
 	void setViewFlip(bool flip);
 	void setViewMirror(bool mirror);
 
-	bool showSceneColorPick(int source, const QPointF &posfr);
+	void showSceneColorPick(int source, const QPointF &posfr);
 	void hideSceneColorPick();
+	void finishColorPick();
 
 	void setLockState(
 		QFlags<view::Lock::Reason> reasons, const QStringList &descriptions,

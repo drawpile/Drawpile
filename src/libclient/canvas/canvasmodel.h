@@ -159,6 +159,8 @@ public:
 
 	bool checkPermission(int feature);
 
+	void finishColorPick();
+
 public slots:
 	void pickLayer(int x, int y);
 	QColor pickColor(int x, int y, int layer, int diameter = 0);
@@ -178,6 +180,7 @@ signals:
 	void pinnedMessageChanged(QString message);
 
 	void colorPicked(const QColor &color);
+	void colorPickFinished(const QColor &color);
 	void canvasInspected(int lastEditedBy);
 
 	void chatMessageReceived(
@@ -225,6 +228,7 @@ private:
 
 	PaintEngine *m_paintengine;
 	int m_transformInterpolation = 0;
+	QColor m_lastPickedColor;
 
 	QString m_title;
 	QString m_pinnedMessage;

@@ -292,7 +292,7 @@ CanvasView::CanvasView(QWidget *parent)
 		&CanvasView::touchColorPick, Qt::DirectConnection);
 	connect(
 		m_touch, &TouchHandler::touchColorPickFinished, this,
-		&CanvasView::hideSceneColorPick, Qt::DirectConnection);
+		&CanvasView::finishColorPick, Qt::DirectConnection);
 }
 
 
@@ -1570,8 +1570,7 @@ void CanvasView::penReleaseEvent(
 		}
 
 		if(m_pickingColor) {
-			hideSceneColorPick();
-			m_pickingColor = false;
+			finishColorPick();
 		}
 
 		m_pendown = NOTDOWN;
@@ -2540,14 +2539,23 @@ void CanvasView::moveDrag(const QPoint &point)
 	m_dragLastPoint = point;
 }
 
-bool CanvasView::showSceneColorPick(int source, const QPointF &posf)
+void CanvasView::showSceneColorPick(int source, const QPointF &posf)
 {
-	return m_scene->showColorPick(source, mapToScene(posf.toPoint()));
+	m_scene->showColorPick(source, mapToScene(posf.toPoint()));
 }
 
 void CanvasView::hideSceneColorPick()
 {
 	m_scene->hideColorPick();
+}
+
+void CanvasView::finishColorPick()
+{
+	canvas::CanvasModel *canvas = m_scene->model();
+	if(canvas) {
+		canvas->finishColorPick();
+	}
+	hideSceneColorPick();
 	m_pickingColor = false;
 }
 
@@ -2555,7 +2563,8 @@ void CanvasView::pickColor(
 	int source, const QPointF &point, const QPointF &posf)
 {
 	m_scene->model()->pickColor(point.x(), point.y(), 0, 0);
-	m_pickingColor = showSceneColorPick(source, posf);
+	showSceneColorPick(source, posf);
+	m_pickingColor = true;
 }
 
 void CanvasView::touchColorPick(const QPointF &posf)

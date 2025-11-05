@@ -33,6 +33,10 @@ void ColorPicker::motion(const MotionParams &params)
 
 void ColorPicker::end(const EndParams &)
 {
+	canvas::CanvasModel *canvas = m_owner.model();
+	if(canvas) {
+		canvas->finishColorPick();
+	}
 	m_picking = false;
 	m_owner.hideColorPickRequested();
 }

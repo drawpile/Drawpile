@@ -735,7 +735,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		canvas, &canvas::CanvasModel::colorPicked, m_dockToolSettings,
 		&docks::ToolSettings::setForegroundColor);
 	connect(
-		canvas, &canvas::CanvasModel::colorPicked,
+		canvas, &canvas::CanvasModel::colorPickFinished,
 		m_dockToolSettings->colorPickerSettings(),
 		&tools::ColorPickerSettings::addColor);
 	connect(

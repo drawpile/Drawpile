@@ -214,7 +214,7 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 		&CanvasController::touchColorPick, Qt::DirectConnection);
 	connect(
 		m_touch, &TouchHandler::touchColorPickFinished, this,
-		&CanvasController::hideSceneColorPick, Qt::DirectConnection);
+		&CanvasController::finishColorPick, Qt::DirectConnection);
 	connect(
 		m_scene->hud(), &HudHandler::currentActionBarChanged, this,
 		&CanvasController::clearHudHover);
@@ -891,6 +891,7 @@ void CanvasController::handleWheel(QWheelEvent *event)
 		if(toolAllowsColorPick() && m_canvasModel) {
 			QPointF p = mapPointToCanvasF(posf);
 			m_canvasModel->pickColor(p.x(), p.y(), 0, 0);
+			m_canvasModel->finishColorPick();
 		}
 		break;
 	case CanvasShortcuts::LAYER_PICK: {
@@ -1749,7 +1750,7 @@ void CanvasController::penReleaseEvent(
 		}
 
 		if(m_pickingColor) {
-			hideSceneColorPick();
+			finishColorPick();
 		}
 
 		m_penState = PenState::Up;
@@ -2006,7 +2007,8 @@ void CanvasController::pickColor(
 	int source, const QPointF &point, const QPointF &posf)
 {
 	m_canvasModel->pickColor(point.x(), point.y(), 0, 0);
-	m_pickingColor = m_scene->showColorPick(source, posf);
+	m_scene->showColorPick(source, posf);
+	m_pickingColor = true;
 }
 
 void CanvasController::touchColorPick(const QPointF &posf)
@@ -2015,8 +2017,11 @@ void CanvasController::touchColorPick(const QPointF &posf)
 		int(tools::ColorPickSource::Touch), mapPointToCanvasF(posf), posf);
 }
 
-void CanvasController::hideSceneColorPick()
+void CanvasController::finishColorPick()
 {
+	if(m_canvasModel) {
+		m_canvasModel->finishColorPick();
+	}
 	m_scene->hideColorPick();
 	m_pickingColor = false;
 }

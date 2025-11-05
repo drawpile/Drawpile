@@ -373,7 +373,7 @@ void CanvasScene::setComparisonColor(const QColor &comparisonColor)
 	}
 }
 
-bool CanvasScene::showColorPick(int source, const QPointF &pos)
+void CanvasScene::showColorPick(int source, const QPointF &pos)
 {
 	if(ColorPickItem::shouldShow(source, m_colorPickVisibility)) {
 		if(!m_colorPick) {
@@ -382,9 +382,6 @@ bool CanvasScene::showColorPick(int source, const QPointF &pos)
 			addSceneItem(m_colorPick);
 		}
 		m_colorPick->updatePosition(pos);
-		return true;
-	} else {
-		return m_colorPick;
 	}
 }
 

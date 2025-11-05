@@ -255,7 +255,7 @@ private:
 	void dragAdjust(int type, int delta, qreal acceleration);
 	void pickColor(int source, const QPointF &point, const QPointF &posf);
 	void touchColorPick(const QPointF &posf);
-	void hideSceneColorPick();
+	void finishColorPick();
 
 	void resetCursor();
 	void updateOutlinePos(QPointF point);

@@ -89,7 +89,7 @@ public:
 	void setOutlineVisibleInMode(bool visibleInMode);
 	void setForegroundColor(const QColor &foregroundColor);
 	void setComparisonColor(const QColor &comparisonColor);
-	bool showColorPick(int source, const QPointF &pos);
+	void showColorPick(int source, const QPointF &pos);
 	void hideColorPick();
 	void setColorPickVisibility(int colorPickVisibility);
 	bool isCursorOnCanvas() const { return m_cursorOnCanvas; }
