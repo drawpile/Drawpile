@@ -82,38 +82,82 @@ void ColorPickItem::paint(
 		baseColor.setAlpha(128);
 		qreal penWidth = 2.0 * dpr;
 		QPen pen = QPen(baseColor, penWidth);
-		cachePainter.setPen(pen);
 
 		QRectF cacheRect = m_cache.rect();
+		const QPainterPath &path = getPath(penWidth, cacheRect);
+
+		if(m_color == m_comparisonColor) {
+			cachePainter.setPen(pen);
+			cachePainter.setBrush(m_color);
+			cachePainter.drawPath(path);
+		} else {
+			cachePainter.setPen(Qt::NoPen);
+
+			cachePainter.setBrush(m_color);
+			cachePainter.drawPath(path);
+			cachePainter.setClipRect(QRectF(
+				0, 0, cacheRect.width(), cacheRect.height() / 2.0 + 1.0));
+			cachePainter.drawPath(path);
+
+			cachePainter.setBrush(m_comparisonColor);
+			cachePainter.setClipRect(QRectF(
+				0, cacheRect.height() / 2.0, cacheRect.width(),
+				cacheRect.height() / 2.0));
+			cachePainter.drawPath(path);
+
+			cachePainter.setPen(pen);
+			cachePainter.setBrush(Qt::NoBrush);
+			cachePainter.setClipRect(QRectF(), Qt::NoClip);
+			cachePainter.drawPath(path);
+		}
+	}
+	painter->drawPixmap(rect, m_cache);
+}
+
+const QPainterPath &
+ColorPickItem::getPath(qreal penWidth, const QRectF &cacheRect)
+{
+	bool needsNewPath = m_path.isEmpty() || penWidth != m_pathPenWidth ||
+						cacheRect != m_pathCacheRect;
+	if(needsNewPath) {
+		m_pathPenWidth = penWidth;
+		m_pathCacheRect = cacheRect;
+		m_path.clear();
+
 		QRectF outerRect = cacheRect.marginsRemoved(
 			QMarginsF(penWidth, penWidth, penWidth, penWidth));
-		cachePainter.setBrush(m_color);
-		cachePainter.setClipRect(
-			QRectF(0, 0, cacheRect.width(), cacheRect.height() / 2.0));
-		cachePainter.drawEllipse(outerRect);
-
-		cachePainter.setBrush(m_comparisonColor);
-		cachePainter.setClipRect(QRectF(
-			0, cacheRect.height() / 2.0, cacheRect.width(),
-			cacheRect.height() / 2.0));
-		cachePainter.drawEllipse(outerRect);
-		cachePainter.setClipRect(QRectF(), Qt::NoClip);
 
 		qreal innerX = cacheRect.width() / 8.0;
 		qreal innerY = cacheRect.height() / 8.0;
 		QRectF innerRect =
 			cacheRect.marginsRemoved(QMarginsF(innerX, innerY, innerX, innerY));
 
-		cachePainter.setPen(Qt::NoPen);
-		cachePainter.setCompositionMode(QPainter::CompositionMode_Clear);
-		cachePainter.drawEllipse(innerRect);
+		QPointF center = cacheRect.center();
+		qreal focusLeft = outerRect.left();
+		qreal focusRight = outerRect.right();
+		qreal focusWidth = innerX * 1.75;
+		qreal focusOffsetY = innerY * 1.5;
+		qreal focusTop = center.y() - focusOffsetY;
+		qreal focusBottom = center.y() + focusOffsetY;
+		QRectF leftFocusRect(
+			QPointF(focusLeft, focusTop),
+			QPointF(focusLeft + focusWidth, focusBottom));
+		QRectF rightFocusRect(
+			QPointF(focusRight - focusWidth, focusTop),
+			QPointF(focusRight, focusBottom));
 
-		cachePainter.setBrush(Qt::transparent);
-		cachePainter.setPen(pen);
-		cachePainter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-		cachePainter.drawEllipse(innerRect);
+		QPainterPath focusPath;
+		focusPath.addEllipse(leftFocusRect);
+		focusPath.addEllipse(rightFocusRect);
+
+		QPainterPath innerPath;
+		innerPath.addEllipse(innerRect);
+
+		QPainterPath path;
+		path.addEllipse(outerRect);
+		m_path = path.subtracted(innerPath.subtracted(focusPath)).simplified();
 	}
-	painter->drawPixmap(rect, m_cache);
+	return m_path;
 }
 
 QColor ColorPickItem::sanitizeColor(const QColor &color)

@@ -4,6 +4,7 @@
 #include "desktop/scene/baseitem.h"
 #include <QColor>
 #include <QPixmap>
+#include <QPainterPath>
 
 namespace drawingboard {
 
@@ -34,6 +35,8 @@ protected:
 private:
 	static constexpr int SIZE = 200;
 
+	const QPainterPath &getPath(qreal penWidth, const QRectF &cacheRect);
+
 	static QColor sanitizeColor(const QColor &color);
 
 	static QRect bounds()
@@ -45,6 +48,9 @@ private:
 	QColor m_color;
 	QColor m_comparisonColor;
 	QPixmap m_cache;
+	QRectF m_pathCacheRect;
+	qreal m_pathPenWidth = 0.0;
+	QPainterPath m_path;
 };
 
 }
