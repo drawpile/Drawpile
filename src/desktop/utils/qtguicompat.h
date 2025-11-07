@@ -63,6 +63,7 @@ QString fontFamily(const QTextCharFormat &format);
 void setFontFamily(QTextCharFormat &format, const QString &family);
 
 QScreen *widgetScreen(const QWidget &widget);
+QScreen *widgetOrPrimaryScreen(const QWidget &widget);
 
 QPointF wheelPosition(const QWheelEvent &event);
 

@@ -39,6 +39,21 @@ QScreen *widgetScreen(const QWidget &widget)
 #endif
 }
 
+QScreen *widgetOrPrimaryScreen(const QWidget &widget)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+	QScreen *screen = widget.screen();
+	if(screen) {
+		return screen;
+	} else {
+		return qApp->primaryScreen();
+	}
+#else
+	Q_UNUSED(widget);
+	return qApp->primaryScreen();
+#endif
+}
+
 QPointF wheelPosition(const QWheelEvent &event)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)

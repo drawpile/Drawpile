@@ -8040,7 +8040,7 @@ bool MainWindow::isInitialSmallScreenMode()
 	} else {
 		s = settings.lastWindowSize();
 	}
-	return isSmallScreenModeSize(s);
+	return utils::isSmallScreenModeSize(s);
 }
 
 void MainWindow::setLeftyMode(bool leftyMode)
@@ -8088,14 +8088,8 @@ bool MainWindow::shouldUseSmallScreenMode(
 	case int(desktop::settings::InterfaceMode::SmallScreen):
 		return true;
 	default:
-		return isSmallScreenModeSize(size());
+		return utils::isSmallScreenModeSize(size());
 	}
-}
-
-bool MainWindow::isSmallScreenModeSize(const QSize &s)
-{
-	return s.isEmpty() || s.width() < DESKTOP_MODE_MIN_WIDTH ||
-		   s.height() < DESKTOP_MODE_MIN_HEIGHT;
 }
 
 void MainWindow::switchInterfaceMode(bool smallScreenMode)

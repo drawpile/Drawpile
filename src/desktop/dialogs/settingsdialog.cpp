@@ -38,13 +38,12 @@ SettingsDialog::SettingsDialog(
 	makeModal(this, utils::Modality::Application);
 
 #if defined(Q_OS_ANDROID)
-	Q_UNUSED(smallScreenMode);
-	bool vertical = false;
-	bool menuFirst = false;
-#else
+	if(utils::isWidgetOnSmallScreen(parent)) {
+		smallScreenMode = true;
+	}
+#endif
 	bool vertical = !smallScreenMode;
 	bool menuFirst = !smallScreenMode;
-#endif
 
 	QWidget *menu = new QWidget;
 	menu->setSizePolicy(

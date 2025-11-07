@@ -658,29 +658,30 @@ void showWindow(QWidget *widget, bool maximized, bool isMainWindow)
 	Q_UNUSED(isMainWindow);
 #endif
 
-	// On Android, we rarely want small windows unless it's like a simple
-	// message box or something. Anything more complex is probably better off
-	// being a full-screen window, which is also more akin to how Android's
-	// native UI works. This wrapper takes care of that very common switch.
 #ifdef Q_OS_ANDROID
-	Q_UNUSED(maximized);
 #	ifdef DRAWPILE_KRITA_PATCHED_QT
-	// When using the Krita patched version of Qt, there's a frame around our
-	// window and showMaximized doesn't handle it properly. Too much effort to
-	// figure out how to patch that up correctly, so we'll just maximize
-	// manually. The padding is always 25 at the top and 3 everywhere else.
+	// On Krita's patched Qt, we have a window border on Android. That's kind of
+	// hacked in though, so it doesn't handle maximizing very well, we have to
+	// do it manually by removing the margins.
 	QScreen *screen = compat::widgetScreen(*widget);
 	if(screen) {
 		QRect r = screen->availableGeometry();
-		widget->setGeometry(r.marginsAdded(QMargins(3, 25, 0, -25)));
+		if(maximized || isSmallScreenModeSize(r.size())) {
+			widget->setGeometry(r.marginsRemoved(QMargins(3, 25, 3, 3)));
+		}
 		widget->show();
 	} else {
 		widget->showMaximized();
 	}
 #	else
+	// On an unpatched Qt, there's no way to move or resize windows, so always
+	// just maximize them.
+	Q_UNUSED(maximized);
 	widget->showMaximized();
 #	endif
 #else
+	// On other platforms than Android, we don't need to do any stunts with our
+	// windows, just maximize them as requested.
 	if(maximized) {
 		widget->showMaximized();
 	} else {
@@ -699,6 +700,29 @@ void maximizeExistingWindow(QWidget *widget)
 	widget->hide();
 #endif
 	widget->showMaximized();
+}
+
+bool isWidgetOnSmallScreen(const QWidget *widget)
+{
+	if(widget) {
+		QScreen *screen = compat::widgetOrPrimaryScreen(*widget);
+		if(screen) {
+			return isSmallScreenModeSize(screen->availableSize());
+		}
+	}
+#ifdef Q_OS_ANDROID
+	return true;
+#else
+	return false;
+#endif
+}
+
+bool isSmallScreenModeSize(const QSize &s)
+{
+	static constexpr int DESKTOP_MODE_MIN_WIDTH = 1200;
+	static constexpr int DESKTOP_MODE_MIN_HEIGHT = 700;
+	return s.isEmpty() || s.width() < DESKTOP_MODE_MIN_WIDTH ||
+		   s.height() < DESKTOP_MODE_MIN_HEIGHT;
 }
 
 void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize)

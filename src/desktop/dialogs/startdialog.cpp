@@ -76,12 +76,12 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 	utils::makeModal(this);
 
 #if defined(Q_OS_ANDROID)
-	bool vertical = false;
-	bool menuFirst = false;
-#else
+	if(utils::isWidgetOnSmallScreen(parent)) {
+		smallScreenMode = true;
+	}
+#endif
 	bool vertical = !smallScreenMode;
 	bool menuFirst = !smallScreenMode;
-#endif
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	layout->setContentsMargins(0, 0, 0, 0);

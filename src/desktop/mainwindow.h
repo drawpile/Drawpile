@@ -325,8 +325,6 @@ protected:
 	bool event(QEvent *event) override;
 
 private:
-	static constexpr int DESKTOP_MODE_MIN_WIDTH = 1200;
-	static constexpr int DESKTOP_MODE_MIN_HEIGHT = 700;
 	enum class ReplacementCriterion {
 		Dirty = (1 << 0),
 		Connected = (1 << 1),
@@ -438,7 +436,6 @@ private:
 	void setLeftyMode(bool leftyMode);
 	void updateInterfaceMode();
 	bool shouldUseSmallScreenMode(const desktop::settings::Settings &settings);
-	static bool isSmallScreenModeSize(const QSize &s);
 	void switchInterfaceMode(bool smallScreenMode);
 	void updateSmallScreenToolBarVisibility();
 	bool shouldShowDialogMaximized() const;

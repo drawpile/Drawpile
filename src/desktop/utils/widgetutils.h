@@ -169,6 +169,10 @@ void showWindow(
 
 void maximizeExistingWindow(QWidget *widget);
 
+bool isWidgetOnSmallScreen(const QWidget *widget);
+
+bool isSmallScreenModeSize(const QSize &s);
+
 void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize);
 
 void setWidgetLongPressEnabled(QWidget *widget, bool enabled);
