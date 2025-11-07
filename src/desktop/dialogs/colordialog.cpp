@@ -2,11 +2,39 @@
 #include "desktop/main.h"
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include <QCoreApplication>
+#include <QDialogButtonBox>
+#include <QPushButton>
 #include <QtColorWidgets/ColorDialog>
 #include <QtColorWidgets/ColorPreview>
 #include <QtColorWidgets/ColorWheel>
+#include <functional>
 
 namespace dialogs {
+
+#ifdef Q_OS_LINUX
+void showColorPickUnsupportedMessage(QWidget *parent)
+{
+	utils::showWarning(
+		parent,
+		QCoreApplication::translate(
+			"tools::ColorPickerSettings", "Screen Color Picking Unsupported"),
+		//: Wayland and Xorg are the names so-called display servers on
+		//: Linux. You don't need to worry about what that is, just don't
+		//: change the names.
+		QCoreApplication::translate(
+			"tools::ColorPickerSettings",
+			"Picking colors from the screen is not supported under Wayland."),
+		//: Wayland and Xorg are the names so-called display servers on
+		//: Linux. You don't need to worry about what that is, just don't
+		//: change the names. Note that "Linux user account" is an account
+		//: on the computer, NOT a Drawpile account.
+		QCoreApplication::translate(
+			"tools::ColorPickerSettings",
+			"You may be able to switch to Xorg instead when logging into your "
+			"Linux user account."));
+}
+#endif
 
 void applyColorDialogSettings(color_widgets::ColorDialog *dlg)
 {
@@ -22,6 +50,52 @@ void applyColorDialogSettings(color_widgets::ColorDialog *dlg)
 		utils::setWidgetLongPressEnabled(wheel, false);
 	} else {
 		qWarning("Wheel not found in color dialog, long presses not disabled");
+	}
+
+#if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
+	bool shouldRemovePickButton = true;
+#elif defined(Q_OS_LINUX)
+	bool shouldRemovePickButton =
+		QGuiApplication::platformName() == QStringLiteral("wayland");
+#else
+	bool shouldRemovePickButton = false;
+#endif
+	if(shouldRemovePickButton) {
+		QDialogButtonBox *buttonBox = dlg->findChild<QDialogButtonBox *>(
+			QStringLiteral("buttonBox"), Qt::FindDirectChildrenOnly);
+		if(buttonBox) {
+#ifdef Q_OS_LINUX
+			bool havePickButton = false;
+			QString pickText;
+			QIcon pickIcon;
+#endif
+			for(QAbstractButton *button : buttonBox->buttons()) {
+				if(buttonBox->buttonRole(button) ==
+				   QDialogButtonBox::ActionRole) {
+#ifdef Q_OS_LINUX
+					havePickButton = true;
+					pickText = button->text();
+					pickIcon = button->icon();
+#endif
+					buttonBox->removeButton(button);
+					button->deleteLater();
+				}
+			}
+#ifdef Q_OS_LINUX
+			if(havePickButton) {
+				QPushButton *pickButton = buttonBox->addButton(
+					pickText, QDialogButtonBox::DestructiveRole);
+				pickButton->setIcon(pickIcon);
+				QObject::connect(
+					pickButton, &QPushButton::clicked, dlg,
+					std::bind(&showColorPickUnsupportedMessage, dlg));
+			}
+#endif
+		} else {
+			qWarning(
+				"Button box not found in color dialog, not removing pick "
+				"button");
+		}
 	}
 }
 

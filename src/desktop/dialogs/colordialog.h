@@ -7,6 +7,10 @@
 
 namespace dialogs {
 
+#ifdef Q_OS_LINUX
+void showColorPickUnsupportedMessage(QWidget *parent);
+#endif
+
 // Applies the user's color wheel settings to the given color dialog.
 void applyColorDialogSettings(color_widgets::ColorDialog *dlg);
 

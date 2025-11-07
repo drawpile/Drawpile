@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/colorpickersettings.h"
+#include "desktop/dialogs/colordialog.h"
 #include "desktop/main.h"
 #include "desktop/settings.h"
 #include "desktop/utils/qtguicompat.h"
@@ -37,6 +38,13 @@ HeaderWidget::HeaderWidget(QWidget *parent)
 
 void HeaderWidget::pickFromScreen()
 {
+#ifdef Q_OS_LINUX
+	if(QGuiApplication::platformName() == QStringLiteral("wayland")) {
+		dialogs::showColorPickUnsupportedMessage(this);
+		stopPickingFromScreen();
+		return;
+	}
+#endif
 	if(!m_picking) {
 		setFocusPolicy(Qt::StrongFocus);
 		setFocus();
