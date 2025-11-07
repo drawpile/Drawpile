@@ -412,8 +412,9 @@ QString FileWrangler::getSaveImageSeriesPath() const
 void FileWrangler::downloadImage(Document *doc) const
 {
 	withFileTypeDialog(
-		doc->downloadName(),
-		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages), doc,
+		getDownloadNameOrUntitled(doc),
+		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages),
+		preferredSaveExtension(), doc,
 		[doc](const QString &name, const QString &type) {
 			doc->setDownloadName(name);
 			QString selectedExt =
@@ -430,8 +431,9 @@ bool FileWrangler::downloadPreResetImage(
 	Document *doc, const drawdance::CanvasState &canvasState) const
 {
 	withFileTypeDialog(
-		doc->downloadName(),
-		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages), doc,
+		getDownloadNameOrUntitled(doc),
+		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages),
+		preferredSaveExtension(), doc,
 		[doc, canvasState](const QString &name, const QString &type) {
 			doc->setDownloadName(name);
 			QString selectedExt =
@@ -449,11 +451,12 @@ bool FileWrangler::downloadPreResetImage(
 void FileWrangler::downloadSelection(Document *doc)
 {
 	withFileTypeDialog(
-		doc->downloadName(),
+		getDownloadNameOrUntitled(doc),
 		utils::fileFormatFilterList(
 			utils::FileFormatOption::SaveImages |
 			utils::FileFormatOption::QtImagesOnly),
-		doc, [doc](const QString &name, const QString &type) {
+		preferredExportExtension(), doc,
+		[doc](const QString &name, const QString &type) {
 			doc->setDownloadName(name);
 			QString selectedExt =
 				guessExtension(type, preferredExportExtension());
@@ -1107,7 +1110,7 @@ QString FileWrangler::showSaveFileDialogFilters(
 	// after the fact.
 	dialogs::FileTypeDialog nameAndTypeDialog{
 		lastPath.has_value() ? lastPath.value() : getLastPath(type), filters,
-		parentWidget()};
+		selectedFilter ? *selectedFilter : QString(), parentWidget()};
 	if(nameAndTypeDialog.exec() != QDialog::Accepted) {
 		return QString{};
 	}
@@ -1242,12 +1245,28 @@ QString FileWrangler::getEffectiveFilter(const QStringList &filters)
 }
 
 #ifdef __EMSCRIPTEN__
+QString FileWrangler::getDownloadNameOrUntitled(Document *doc)
+{
+	QString name = doc->downloadName();
+	if(name.isEmpty()) {
+		return tr("Untitled");
+	} else {
+		return name;
+	}
+}
+
 void FileWrangler::withFileTypeDialog(
-	const QString &name, const QStringList &formats, QObject *context,
+	const QString &name, const QStringList &formats, const QString &extension,
+	QObject *context,
 	const std::function<void(const QString &, const QString &)> fn) const
 {
-	dialogs::FileTypeDialog *nameAndTypeDialog =
-		new dialogs::FileTypeDialog(name, formats, parentWidget());
+	QString selectedFormat;
+	if(!extension.isEmpty()) {
+		updateSelectedFilter(selectedFormat, formats, extension);
+	}
+
+	dialogs::FileTypeDialog *nameAndTypeDialog = new dialogs::FileTypeDialog(
+		name, formats, selectedFormat, parentWidget());
 	nameAndTypeDialog->setAttribute(Qt::WA_DeleteOnClose);
 	connect(
 		nameAndTypeDialog, &dialogs::FileTypeDialog::accepted, context,

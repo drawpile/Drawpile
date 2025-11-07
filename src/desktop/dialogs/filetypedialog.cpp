@@ -1,17 +1,32 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/filetypedialog.h"
 #include <QPushButton>
+#include <QRegularExpression>
 
 namespace dialogs {
 
 FileTypeDialog::FileTypeDialog(
-	const QString &name, const QStringList &formats, QWidget *parent)
+	QString name, const QStringList &formats, const QString &selectedFormat,
+	QWidget *parent)
 	: QDialog{parent}
 {
 	m_ui.setupUi(this);
+	name.replace(
+		QRegularExpression(QStringLiteral("\\.[^/\\.\\\\]*\\z")), QString());
 	m_ui.nameEdit->setText(name);
 	m_ui.typeList->addItems(formats);
-	m_ui.typeList->setCurrentRow(0);
+
+	int preferredRow = 0;
+	if(!selectedFormat.isEmpty()) {
+		for(int i = 0, count = formats.size(); i < count; ++i) {
+			if(selectedFormat == formats[i]) {
+				preferredRow = i;
+				break;
+			}
+		}
+	}
+	m_ui.typeList->setCurrentRow(preferredRow);
+
 	connect(
 		m_ui.nameEdit, &QLineEdit::textChanged, this,
 		&FileTypeDialog::updateUi);

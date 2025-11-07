@@ -22,6 +22,7 @@ Unreleased Version 2.3.0-pre
  * Fix: On Android devices with a screen large enough to show a full desktop UI, dialogs no longer get full-screened by default. The start and settings dialogs also no longer use their vertical design meant for tiny screens. Thanks tiar for reporting.
  * Fix: Replace some symbols in messages that don't show up properly on Android with equivalent ones that do.
  * Fix: Default MyPaint brushes to use synchronized smudging, since many of them only work properly with it turned on.
+ * Fix: Select proper file type and remove the extension on the name input field when saving on Android and the browser.
 
 2025-10-18 Version 2.3.0-beta.4
  * Fix: Unpremultiply alpha values when exporting to animated WEBP so that partially transparent pixels come out looking correct.

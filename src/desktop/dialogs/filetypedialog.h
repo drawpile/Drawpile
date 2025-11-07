@@ -10,7 +10,7 @@ class FileTypeDialog final : public QDialog {
 	Q_OBJECT
 public:
 	explicit FileTypeDialog(
-		const QString &name, const QStringList &formats,
+		QString name, const QStringList &formats, const QString &selectedFormat,
 		QWidget *parent = nullptr);
 
 	QString name() const;

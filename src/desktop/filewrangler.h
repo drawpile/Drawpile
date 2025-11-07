@@ -218,8 +218,11 @@ private:
 	static QString getEffectiveFilter(const QStringList &filters);
 
 #ifdef __EMSCRIPTEN__
+	static QString getDownloadNameOrUntitled(Document *doc);
+
 	void withFileTypeDialog(
-		const QString &name, const QStringList &formats, QObject *context,
+		const QString &name, const QStringList &formats,
+		const QString &extension, QObject *context,
 		const std::function<void(const QString &, const QString &)> fn) const;
 #endif
 
