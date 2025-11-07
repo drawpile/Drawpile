@@ -938,7 +938,7 @@ MyPaintBrush MyPaintBrush::fromJson(const QJsonObject &json)
 		o["stabilizationmode"].toInt() == Smoothing ? Smoothing : Stabilizer;
 	b.m_stabilizerSampleCount = stabilizerSampleCount;
 	b.m_smoothing = o["smoothing"].toInt();
-	b.m_syncSamples = o.value(QStringLiteral("syncsamples")).toBool();
+	b.m_syncSamples = o.value(QStringLiteral("syncsamples")).toBool(true);
 	b.m_confidential = o.value(QStringLiteral("confidential")).toBool();
 
 	return b;
