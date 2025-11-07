@@ -132,6 +132,8 @@ public:
 
 	bool skipCatchup() const { return m_skipCatchup; }
 
+	static bool isDrawpileExtAuth(const QUrl &extAuthUrl);
+
 public slots:
 	void acceptRules();
 
@@ -181,6 +183,7 @@ public slots:
 
 #ifdef __EMSCRIPTEN__
 	void requestBrowserAuth();
+	void requestBrowserAuthWithUsername(const QString &username);
 	void cancelBrowserAuth();
 	void selectBrowserAuthUsername(const QString &username);
 	void browserAuthIdentified(const QString &token);
@@ -410,6 +413,8 @@ private:
 	void handleRedirect(const QJsonObject &reply, bool late);
 	void presentRules();
 	void chooseLoginMethod();
+	bool shouldLogInFromUrl(
+		LoginMethod intendedMethod, bool &outDrawpileExtAuth) const;
 	void requestLoginMethodChoice();
 	void prepareToSendIdentity();
 	void sendIdentity();

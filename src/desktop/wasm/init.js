@@ -288,8 +288,13 @@ import { UAParser } from "ua-parser-js";
       }
     });
 
-    window.drawpileShowLoginModal = function () {
+    window.drawpileShowLoginModal = function (data = null, len = 0) {
       if (!document.querySelector("#login-modal")) {
+        let iframeSrc = "https://drawpile.net/auth/";
+        if (data && len !== 0) {
+          iframeSrc += `?name=${encodeURIComponent(UTF8ToString(data, len))}`;
+        }
+
         const modal = tag("div", { id: "login-modal", className: "modal" }, [
           tag("div", { className: "modal-container" }, [
             tag("div", { className: "modal-body" }, [
@@ -307,7 +312,7 @@ import { UAParser } from "ua-parser-js";
               ]),
               tag("iframe", {
                 title: "drawpile.net login",
-                src: "https://drawpile.net/auth/",
+                src: iframeSrc,
               }),
             ]),
           ]),

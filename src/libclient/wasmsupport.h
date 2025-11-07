@@ -19,7 +19,7 @@ QString getHostaddressParam();
 QString getHostpassParam();
 QString getUsernameParam();
 QString getUserpassParam();
-void showLoginModal(net::LoginHandler *loginHandler);
+void showLoginModal(net::LoginHandler *loginHandler, const QString &username);
 void cancelLoginModal(net::LoginHandler *loginHandler);
 void authenticate(net::LoginHandler *loginHandler, const QByteArray &payload);
 void intuitFailedConnectionReason(QString &description, const QUrl &url);

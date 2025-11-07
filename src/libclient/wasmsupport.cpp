@@ -118,12 +118,18 @@ QString getUserpassParam()
 	return convertAndFreeWasmString(value).trimmed();
 }
 
-void showLoginModal(net::LoginHandler *loginHandler)
+void showLoginModal(net::LoginHandler *loginHandler, const QString &username)
 {
 	cancelLoginModal(currentLoginHandler);
 	currentLoginHandler = loginHandler;
 	if(loginHandler) {
-		EM_ASM(window.drawpileShowLoginModal(););
+		if(username.isEmpty()) {
+			EM_ASM(window.drawpileShowLoginModal(););
+		} else {
+			QByteArray usernameBytes = username.toUtf8();
+			EM_ASM(window.drawpileShowLoginModal($0, $1);
+				   , usernameBytes.constData(), int(usernameBytes.size()));
+		}
 	}
 }
 

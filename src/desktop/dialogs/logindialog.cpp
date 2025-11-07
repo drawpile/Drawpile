@@ -903,9 +903,8 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 	d->ui->methodGuestButton->setEnabled(guest);
 	d->ui->methodGuestButton->setVisible(guest);
 
-	d->hasDrawpileExtAuth = extAuth && extAuthUrl.host().compare(
-										   QStringLiteral("drawpile.net"),
-										   Qt::CaseInsensitive) == 0;
+	d->hasDrawpileExtAuth =
+		extAuth && net::LoginHandler::isDrawpileExtAuth(extAuthUrl);
 	d->ui->methodExtAuthButton->setIcon(
 		d->hasDrawpileExtAuth ? QIcon(":/icons/drawpile.png") : QIcon());
 

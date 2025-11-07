@@ -173,6 +173,12 @@ bool LoginHandler::supportsPersistence() const
 		   m_userFlags.contains(QStringLiteral("PERSIST"));
 }
 
+bool LoginHandler::isDrawpileExtAuth(const QUrl &extAuthUrl)
+{
+	return extAuthUrl.host().compare(
+			   QStringLiteral("drawpile.net"), Qt::CaseInsensitive) == 0;
+}
+
 void LoginHandler::setState(State state)
 {
 	qCDebug(lcDpLogin, "Set state to %d", int(state));
@@ -528,18 +534,49 @@ void LoginHandler::chooseLoginMethod()
 	} else {
 		LoginMethod intendedMethod = parseLoginMethod(
 			QUrlQuery(m_address).queryItemValue(QStringLiteral("loginmethod")));
-		m_loginFromUrl = intendedMethod != LoginMethod::Unknown &&
-						 m_loginMethods.contains(intendedMethod) &&
-						 !m_address.userName().isEmpty() &&
-						 (intendedMethod == LoginMethod::Guest ||
-						  !m_address.password().isEmpty());
+
+		bool drawpileExtAuth = false;
+		m_loginFromUrl = shouldLogInFromUrl(intendedMethod, drawpileExtAuth);
+
 		if(m_loginFromUrl) {
+#ifdef __EMSCRIPTEN__
+			if(drawpileExtAuth) {
+				updateAddressLoginMethod(LoginMethod::Unknown);
+				requestBrowserAuthWithUsername(m_address.userName());
+				return;
+			}
+#endif
 			selectIdentity(
 				m_address.userName(), m_address.password(), intendedMethod);
 		} else {
 			requestLoginMethodChoice();
 		}
 	}
+}
+
+bool LoginHandler::shouldLogInFromUrl(
+	LoginMethod intendedMethod, bool &outDrawpileExtAuth) const
+{
+	bool couldLogInFromUrl = intendedMethod != LoginMethod::Unknown &&
+							 m_loginMethods.contains(intendedMethod) &&
+							 !m_address.userName().isEmpty();
+	bool ok;
+	if(couldLogInFromUrl) {
+#ifdef __EMSCRIPTEN__
+		if(intendedMethod == LoginMethod::ExtAuth &&
+		   isDrawpileExtAuth(m_loginExtAuthUrl)) {
+			outDrawpileExtAuth = true;
+			return true;
+		}
+#endif
+		ok = intendedMethod == LoginMethod::Guest ||
+			 !m_address.password().isEmpty();
+	} else {
+		ok = false;
+	}
+
+	outDrawpileExtAuth = false;
+	return ok;
 }
 
 void LoginHandler::requestLoginMethodChoice()
@@ -681,9 +718,14 @@ void LoginHandler::requestExtAuth(
 #ifdef __EMSCRIPTEN__
 void LoginHandler::requestBrowserAuth()
 {
+	requestBrowserAuthWithUsername(QString());
+}
+
+void LoginHandler::requestBrowserAuthWithUsername(const QString &username)
+{
 	if(!inBrowserAuth()) {
 		m_inBrowserAuth = true;
-		browser::showLoginModal(this);
+		browser::showLoginModal(this, username);
 	}
 }
 
@@ -692,7 +734,11 @@ void LoginHandler::cancelBrowserAuth()
 	if(inBrowserAuth()) {
 		browser::cancelLoginModal(this);
 		m_inBrowserAuth = false;
-		emit browserAuthCancelled();
+		if(m_loginFromUrl) {
+			requestLoginMethodChoice();
+		} else {
+			emit browserAuthCancelled();
+		}
 	}
 }
 
