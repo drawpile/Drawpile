@@ -1,0 +1,15 @@
+Description: newer gcc versions spew an ODR violation here. This is a fix
+backported from Qt 6.7.3 onwards.
+
+--- a/src/corelib/global/qcomparehelpers.h
++++ b/src/corelib/global/qcomparehelpers.h
+@@ -351,7 +351,7 @@
+ 
+ #if QFLOAT16_IS_NATIVE
+ template <>
+-constexpr bool IsFloatType_v<QtPrivate::NativeFloat16Type> = true;
++inline constexpr bool IsFloatType_v<QtPrivate::NativeFloat16Type> = true;
+ #endif
+ 
+ } // namespace QtPrivate
+

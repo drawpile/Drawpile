@@ -429,6 +429,7 @@ else()
 					patches/browser_keyboard_input.diff
 					patches/browser_file_accept.diff
 					patches/kineticscrollfilter-qt6.diff
+					patches/isfloattypeodr.diff
 				6.8.3
 					patches/qtbug-113394.diff
 					patches/cancel_touch_on_pen.diff
