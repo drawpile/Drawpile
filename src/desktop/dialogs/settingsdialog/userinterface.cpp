@@ -240,10 +240,10 @@ void UserInterface::initRequiringRestart(
 	fontSize->setRange(6, 16);
 	fontSize->setPrefix(tr("Font size: "));
 	fontSize->setSuffix(tr("pt"));
+	form->addRow(nullptr, fontSize);
 	settings.bindFontSize(fontSize);
 	settings.bindOverrideFontSize(fontSize, &QWidget::setEnabled);
 	settings.bindOverrideFontSize(fontSize, &QWidget::setVisible);
-	form->addRow(nullptr, fontSize);
 	disableKineticScrollingOnWidget(fontSize);
 
 	QButtonGroup *vsyncButtons = utils::addRadioGroup(
