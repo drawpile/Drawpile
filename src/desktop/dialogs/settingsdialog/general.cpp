@@ -193,10 +193,13 @@ void General::initSnapshots(
 	snapshotIntervalLayout->setControlTypes(QSizePolicy::CheckBox);
 	form->addRow(nullptr, snapshotIntervalLayout);
 
-	form->addRow(
-		nullptr,
-		utils::formNote(
-			tr("Snapshots can be restored from the Session ▸ Reset… menu.")));
+	QString snapshotNote =
+		tr("Snapshots can be restored from the Session ▸ Reset… menu.");
+#ifdef Q_OS_ANDROID
+	// The Android font can't deal with this character.
+	snapshotNote.replace(QStringLiteral("▸"), QStringLiteral(">"));
+#endif
+	form->addRow(nullptr, utils::formNote(snapshotNote));
 }
 
 void General::initTheme(

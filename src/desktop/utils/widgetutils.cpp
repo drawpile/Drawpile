@@ -1227,8 +1227,7 @@ QString toHtmlWithLink(
 	QString html = text;
 #ifdef Q_OS_ANDROID
 	// Hearts don't work on Android.
-	static const QRegularExpression heartRegex(
-			QStringLiteral("♥\\s+"));
+	static const QRegularExpression heartRegex(QStringLiteral("♥\\s+"));
 	html.replace(heartRegex, QString());
 #endif
 	html = html.toHtmlEscaped();

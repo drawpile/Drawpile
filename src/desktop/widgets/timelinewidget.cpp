@@ -1051,12 +1051,17 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 		painter.setClipRect(QRect(), Qt::NoClip);
 		painter.setPen(textColor);
 		painter.setBrush(Qt::NoBrush);
-		painter.drawText(
-			bodyRect,
+		QString noTracksText =
 			tr("There's no tracks yet.\n"
 			   "Add one using the ＋ button above\n"
-			   "or via Animation ▸ New Track."),
-			Qt::AlignHCenter | Qt::AlignVCenter);
+			   "or via Animation ▸ New Track.");
+#ifdef Q_OS_ANDROID
+		// The Android font can't deal with these characters.
+		noTracksText.replace(QStringLiteral("＋"), QStringLiteral("+"));
+		noTracksText.replace(QStringLiteral("▸"), QStringLiteral(">"));
+#endif
+		painter.drawText(
+			bodyRect, noTracksText, Qt::AlignHCenter | Qt::AlignVCenter);
 	}
 }
 

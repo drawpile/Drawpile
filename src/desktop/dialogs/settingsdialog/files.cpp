@@ -44,10 +44,13 @@ void Files::initAutosave(
 	snapshotCountLayout->setControlTypes(QSizePolicy::CheckBox);
 	form->addRow(tr("Autosave:"), snapshotCountLayout);
 
-	form->addRow(
-		nullptr, utils::formNote(
-					 tr("Autosave can be enabled for the current file under "
-						"File ▸ Autosave.")));
+	QString autosaveNote = tr(
+		"Autosave can be enabled for the current file under File ▸ Autosave.");
+#ifdef Q_OS_ANDROID
+	// The Android font can't deal with this character.
+	autosaveNote.replace(QStringLiteral("▸"), QStringLiteral(">"));
+#endif
+	form->addRow(nullptr, utils::formNote(autosaveNote));
 }
 
 void Files::initDialogs(
