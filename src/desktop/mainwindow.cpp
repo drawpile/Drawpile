@@ -961,9 +961,11 @@ void MainWindow::questionWindowReplacement(
 
 void MainWindow::prepareWindowReplacement()
 {
+#ifndef __EMSCRIPTEN__
 	if(windowState().testFlag(Qt::WindowFullScreen)) {
 		toggleFullscreen();
 	}
+#endif
 	saveWindowState();
 	saveSplitterState();
 	dpApp().settings().trySubmit();
