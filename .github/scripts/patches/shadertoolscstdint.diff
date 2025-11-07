@@ -1,0 +1,12 @@
+Description: Newer GCC requires this include in qtshadertools.
+
+--- a/src/3rdparty/glslang/SPIRV/SpvBuilder.h
++++ b/src/3rdparty/glslang/SPIRV/SpvBuilder.h
+@@ -61,6 +61,7 @@
+ #include <set>
+ #include <sstream>
+ #include <stack>
++#include <cstdint>
+ #include <unordered_map>
+ #include <map>
+ 

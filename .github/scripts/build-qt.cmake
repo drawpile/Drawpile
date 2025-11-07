@@ -508,6 +508,9 @@ else()
 				SHA384=cb2d4f4fe3e5aa556d6923cdb1408444114730ef9cb52f10796bd363ad9f4da38b3676633f1fe06678d10eee695cf97f
 			ALL_PLATFORMS
 				${MODULE_GENERATOR}
+			PATCHES
+				6.7.2
+					patches/shadertoolscstdint.diff
 		)
 	endif()
 
