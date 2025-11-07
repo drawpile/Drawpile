@@ -99,7 +99,7 @@ private:
 	QPoint m_dragstart;
 	long long m_dragTime;
 	QRubberBand *m_outline;
-	QColor m_nextColor;
+	QColor m_nextColor = Qt::black;
 };
 
 }

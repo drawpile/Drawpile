@@ -23,6 +23,7 @@ Unreleased Version 2.3.0-pre
  * Fix: Replace some symbols in messages that don't show up properly on Android with equivalent ones that do.
  * Fix: Default MyPaint brushes to use synchronized smudging, since many of them only work properly with it turned on.
  * Fix: Select proper file type and remove the extension on the name input field when saving on Android and the browser.
+ * Fix: Make color picker color dialog use the current foreground color when manually adding a color. Thanks Phoneme for reporting.
 
 2025-10-18 Version 2.3.0-beta.4
  * Fix: Unpremultiply alpha values when exporting to animated WEBP so that partially transparent pixels come out looking correct.

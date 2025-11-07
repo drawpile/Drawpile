@@ -230,6 +230,11 @@ void ColorPickerSettings::addColor(const QColor &color)
 	}
 }
 
+void ColorPickerSettings::setCurrentColor(const QColor &color)
+{
+	m_palettewidget->setNextColor(color);
+}
+
 void ColorPickerSettings::pickFromScreen()
 {
 	m_headerWidget->pickFromScreen();

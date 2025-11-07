@@ -59,6 +59,7 @@ public:
 	QWidget *getHeaderWidget() override { return m_headerWidget; }
 
 public slots:
+	void setCurrentColor(const QColor &color);
 	void addColor(const QColor &color);
 	void pushSettings() override;
 	void selectColor(const QColor &color);
