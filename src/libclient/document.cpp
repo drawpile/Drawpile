@@ -1009,10 +1009,12 @@ bool Document::checkPermission(int feature)
 	return m_canvas && m_canvas->checkPermission(feature);
 }
 
-void Document::setReconnectStatePreviousLayerId(int previousLayerId)
+void Document::setReconnectStatePrevious(int layerId, int trackId, int frameIndex)
 {
 	if(m_reconnectState) {
-		m_reconnectState->setPreviousLayerId(previousLayerId);
+		m_reconnectState->setPreviousLayerId(layerId);
+		m_reconnectState->setPreviousTrackId(trackId);
+		m_reconnectState->setPreviousFrameIndex(frameIndex);
 	}
 }
 

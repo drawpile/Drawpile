@@ -1,12 +1,12 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DPENGINE_LOCAL_STATE_H
 #define DPENGINE_LOCAL_STATE_H
-
 #include "view_mode.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
+typedef struct DP_LocalStateAction DP_LocalStateAction;
 typedef struct DP_Message DP_Message;
 typedef struct DP_MsgLocalChange DP_MsgLocalChange;
 typedef struct DP_Tile DP_Tile;
@@ -32,12 +32,19 @@ typedef struct DP_LocalTrackState {
 typedef void (*DP_LocalStateViewInvalidatedFn)(void *user, bool check_all,
                                                int layer_id);
 typedef bool (*DP_LocalStateAcceptResetMessageFn)(void *user, DP_Message *msg);
+typedef void (*DP_LocalStateActionSaveFn)(void *user,
+                                          const DP_LocalStateAction *action);
 
 DP_LocalState *
 DP_local_state_new(DP_CanvasState *cs_or_null,
                    DP_LocalStateViewInvalidatedFn view_invalidated, void *user);
 
 void DP_local_state_free(DP_LocalState *ls);
+
+// Calls the given function with actions to restore the local state, then calls
+// it with a null action last.
+void DP_local_state_save(DP_LocalState *ls, bool reveal_censored,
+                         DP_LocalStateActionSaveFn save_fn, void *user);
 
 const DP_LocalLayerState *DP_local_state_layer_states(DP_LocalState *ls,
                                                       int *out_count);

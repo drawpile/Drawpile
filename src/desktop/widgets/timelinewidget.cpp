@@ -494,6 +494,12 @@ void TimelineWidget::setCanvas(canvas::CanvasModel *canvas)
 		canvas->timeline(), &canvas::TimelineModel::tracksChanged, this,
 		&TimelineWidget::updateTracks);
 	connect(
+		canvas->timeline(), &canvas::TimelineModel::restoreSelectedTrackId,
+		this, &TimelineWidget::setCurrentTrack);
+	connect(
+		canvas->timeline(), &canvas::TimelineModel::restoreSelectedFrameIndex,
+		this, &TimelineWidget::setCurrentFrame);
+	connect(
 		canvas->metadata(), &canvas::DocumentMetadata::frameCountChanged, this,
 		&TimelineWidget::updateFrameCount);
 	connect(

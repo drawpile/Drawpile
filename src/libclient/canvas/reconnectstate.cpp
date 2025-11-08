@@ -30,6 +30,7 @@ ReconnectState::~ReconnectState()
 void ReconnectState::clearDetach()
 {
 	m_historyIndex.clear();
+	m_localStateActions.clear();
 	m_users.clear();
 	m_aclState = nullptr;
 	m_chrs = nullptr;

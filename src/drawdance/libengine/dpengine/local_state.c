@@ -4,6 +4,7 @@
 #include "draw_context.h"
 #include "layer_props.h"
 #include "layer_props_list.h"
+#include "local_state_action.h"
 #include "pixels.h"
 #include "tile.h"
 #include "timeline.h"
@@ -109,6 +110,95 @@ void DP_local_state_free(DP_LocalState *ls)
         DP_vector_dispose(&ls->layer_states);
         DP_free(ls);
     }
+}
+
+
+static void call_save_fn(DP_LocalStateActionSaveFn save_fn, void *user,
+                         DP_LocalStateAction lsa)
+{
+    save_fn(user, &lsa);
+}
+
+void DP_local_state_save(DP_LocalState *ls, bool reveal_censored,
+                         DP_LocalStateActionSaveFn save_fn, void *user)
+{
+    DP_ASSERT(ls);
+    DP_ASSERT(save_fn);
+
+    DP_Pixel15 pixel;
+    if (ls->background_tile
+        && DP_tile_same_pixel(ls->background_tile, &pixel)) {
+        DP_UPixel8 upixel8 = DP_upixel15_to_8(DP_pixel15_unpremultiply(pixel));
+        call_save_fn(
+            save_fn, user,
+            (DP_LocalStateAction){DP_LOCAL_STATE_ACTION_BACKGROUND_COLOR,
+                                  {.color = upixel8.color}});
+    }
+
+    call_save_fn(
+        save_fn, user,
+        (DP_LocalStateAction){DP_LOCAL_STATE_ACTION_VIEW_MODE,
+                              {.view = {(int)ls->view_mode, reveal_censored}}});
+
+    call_save_fn(save_fn, user,
+                 (DP_LocalStateAction){DP_LOCAL_STATE_ACTION_ACTIVE,
+                                       {.active = {ls->active_layer_id,
+                                                   ls->active_frame_index}}});
+
+    for (size_t i = 0, count = ls->layer_states.used; i < count; ++i) {
+        const DP_LocalLayerState *lls =
+            &DP_VECTOR_AT_TYPE(&ls->layer_states, DP_LocalLayerState, i);
+        int layer_id = lls->layer_id;
+
+        if (lls->hidden) {
+            call_save_fn(save_fn, user,
+                         (DP_LocalStateAction){DP_LOCAL_STATE_ACTION_LAYER_HIDE,
+                                               {.id = layer_id}});
+        }
+
+        if (lls->alpha_lock) {
+            call_save_fn(save_fn, user,
+                         (DP_LocalStateAction){
+                             DP_LOCAL_STATE_ACTION_LAYER_ENABLE_ALPHA_LOCK,
+                             {.id = layer_id}});
+        }
+
+        if (lls->censored) {
+            call_save_fn(
+                save_fn, user,
+                (DP_LocalStateAction){DP_LOCAL_STATE_ACTION_LAYER_CENSOR,
+                                      {.id = layer_id}});
+        }
+
+        if (lls->sketch_opacity != 0) {
+            call_save_fn(
+                save_fn, user,
+                (DP_LocalStateAction){DP_LOCAL_STATE_ACTION_LAYER_ENABLE_SKETCH,
+                                      {.sketch = {layer_id, lls->sketch_opacity,
+                                                  lls->sketch_tint}}});
+        }
+    }
+
+    for (size_t i = 0, count = ls->track_states.used; i < count; ++i) {
+        const DP_LocalTrackState *lts =
+            &DP_VECTOR_AT_TYPE(&ls->track_states, DP_LocalTrackState, i);
+        int track_id = lts->track_id;
+
+        if (lts->hidden) {
+            call_save_fn(save_fn, user,
+                         (DP_LocalStateAction){DP_LOCAL_STATE_ACTION_TRACK_HIDE,
+                                               {.id = track_id}});
+        }
+
+        if (lts->onion_skin) {
+            call_save_fn(save_fn, user,
+                         (DP_LocalStateAction){
+                             DP_LOCAL_STATE_ACTION_TRACK_ENABLE_ONION_SKIN,
+                             {.id = track_id}});
+        }
+    }
+
+    save_fn(user, NULL);
 }
 
 

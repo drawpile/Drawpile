@@ -101,6 +101,14 @@ Message makeInternalCleanupMessage(uint8_t contextId)
 	return Message::noinc(DP_msg_internal_cleanup_new(contextId));
 }
 
+Message makeInternalLocalStateSaveMessage(
+	uint8_t contextId, void (*callback)(void *, const DP_LocalStateAction *),
+	void *user)
+{
+	return Message::noinc(
+		DP_msg_internal_local_state_save_new(contextId, callback, user));
+}
+
 Message makeInternalPaintSyncMessage(
 	uint8_t contextId, void (*callback)(void *), void *user)
 {

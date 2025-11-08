@@ -105,6 +105,16 @@ void TimelineModel::setTimeline(const drawdance::Timeline &tl)
 		}
 	}
 	emit tracksChanged();
+
+	if(m_selectedTrackIdToRestore > 0) {
+		emit restoreSelectedTrackId(m_selectedTrackIdToRestore);
+		m_selectedTrackIdToRestore = 0;
+	}
+
+	if(m_selectedFrameIndexToRestore >= 0) {
+		emit restoreSelectedFrameIndex(m_selectedFrameIndexToRestore);
+		m_selectedFrameIndexToRestore = -1;
+	}
 }
 
 int TimelineModel::searchAvailableTrackId(

@@ -26,6 +26,12 @@ struct CanvasModel::MakeReconnectStateParams {
 	QPointer<ReconnectState> reconnectState;
 };
 
+struct CanvasModel::SaveLocalStateParams {
+	QPointer<CanvasModel> canvas;
+	QPointer<ReconnectState> reconnectState;
+	QVector<DP_LocalStateAction> actions;
+};
+
 CanvasModel::CanvasModel(
 	libclient::settings::Settings &settings, uint8_t localUserId,
 	int canvasImplementation, int fps, int snapshotMaxCount,
@@ -33,6 +39,7 @@ CanvasModel::CanvasModel(
 	: QObject(parent)
 {
 	qRegisterMetaType<CanvasModelSetReconnectStateHistoryParams>();
+	qRegisterMetaType<CanvasModelSetLocalStateActionsParams>();
 
 	m_paintengine = new PaintEngine(
 		canvasImplementation, settings.checkerColor1(),
@@ -153,11 +160,20 @@ ReconnectState *CanvasModel::makeReconnectState(
 		sessionConfig, hi, m_userlist->users(), m_paintengine->aclState(),
 		m_layerlist->defaultLayer(), parent);
 
-	MakeReconnectStateParams *params = new MakeReconnectStateParams{
-		QPointer<CanvasModel>(this), QPointer<ReconnectState>(reconnectState)};
-	net::Message msg = net::makeInternalReconnectStateMakeMessage(
-		0, &CanvasModel::reconnectStateMakeCallback, params);
-	m_paintengine->receiveMessages(false, 1, &msg);
+	net::Message msgs[] = {
+		net::makeInternalReconnectStateMakeMessage(
+			0, &CanvasModel::reconnectStateMakeCallback,
+			new MakeReconnectStateParams{
+				QPointer<CanvasModel>(this),
+				QPointer<ReconnectState>(reconnectState)}),
+		net::makeInternalLocalStateSaveMessage(
+			0, &CanvasModel::saveLocalStateCallback,
+			new SaveLocalStateParams{
+				QPointer<CanvasModel>(this),
+				QPointer<ReconnectState>(reconnectState),
+				QVector<DP_LocalStateAction>()}),
+	};
+	m_paintengine->receiveMessages(false, DP_ARRAY_LENGTH(msgs), msgs);
 
 	return reconnectState;
 }
@@ -183,17 +199,27 @@ void CanvasModel::connectedToServer(
 		m_paintengine->resetAcl(m_localUserId);
 		if(reconnectState) {
 			qDebug("Apply reconnect state");
+
 			m_userlist->setUsers(reconnectState->users());
 			m_paintengine->supplantAcl(reconnectState->aclState());
 			m_layerlist->setDefaultLayer(reconnectState->defaultLayerId());
+			m_timeline->setSelectedTrackIdToRestore(
+				reconnectState->previousTrackId());
+			m_timeline->setSelectedFrameIndexToRestore(
+				reconnectState->previousFrameIndex());
+
 			int previousLayerId = reconnectState->previousLayerId();
 			if(previousLayerId > 0) {
 				autoselectAny = false;
 				m_layerlist->setForceLayerIdToSelect(previousLayerId);
 			}
+
 			net::Message msg = net::makeInternalReconnectStateApplyMessage(
 				0, reconnectState->historyState());
 			m_paintengine->receiveMessages(false, 1, &msg);
+
+			applyLocalStateActions(reconnectState->localStateActions());
+
 			reconnectState->clearDetach();
 		}
 	}
@@ -375,6 +401,16 @@ void CanvasModel::setReconnectStateHistory(
 		DP_canvas_history_reconnect_state_free(params.chrs);
 	} else {
 		params.reconnectState->setHistoryState(params.chrs);
+	}
+}
+
+void CanvasModel::setLocalStateActions(
+	const CanvasModelSetLocalStateActionsParams &params)
+{
+	if(params.reconnectState.isNull()) {
+		qWarning("setLocalStateActions: target is null");
+	} else {
+		params.reconnectState->setLocalStateActions(params.actions);
 	}
 }
 
@@ -589,6 +625,52 @@ void CanvasModel::updatePaintEngineTransform()
 	m_paintengine->setTransformActive(m_transform->isActive());
 }
 
+void CanvasModel::applyLocalStateActions(
+	const QVector<DP_LocalStateAction> &localStateActions)
+{
+	for(const DP_LocalStateAction &lsa : localStateActions) {
+		applyLocalStateAction(lsa);
+	}
+}
+
+void CanvasModel::applyLocalStateAction(const DP_LocalStateAction &lsa)
+{
+	switch(lsa.type) {
+	case DP_LOCAL_STATE_ACTION_BACKGROUND_COLOR:
+		m_paintengine->setLocalBackgroundColor(
+			QColor::fromRgba(lsa.data.color));
+		return;
+	case DP_LOCAL_STATE_ACTION_VIEW_MODE:
+		emit restoreLocalStateViewMode(
+			lsa.data.view.mode, lsa.data.view.reveal_censored);
+		return;
+	case DP_LOCAL_STATE_ACTION_ACTIVE:
+		m_paintengine->setViewLayer(lsa.data.active.layer_id);
+		m_paintengine->setViewFrame(lsa.data.active.frame_index);
+		return;
+	case DP_LOCAL_STATE_ACTION_LAYER_HIDE:
+		m_paintengine->setLayerVisibility(lsa.data.id, true);
+		return;
+	case DP_LOCAL_STATE_ACTION_LAYER_ENABLE_ALPHA_LOCK:
+		m_paintengine->setLayerAlphaLock(lsa.data.id, true);
+		return;
+	case DP_LOCAL_STATE_ACTION_LAYER_CENSOR:
+		m_paintengine->setLayerCensoredLocal(lsa.data.id, true);
+		return;
+	case DP_LOCAL_STATE_ACTION_LAYER_ENABLE_SKETCH:
+		m_paintengine->setLayerSketch(
+			lsa.data.sketch.id, lsa.data.sketch.opacity, lsa.data.sketch.tint);
+		return;
+	case DP_LOCAL_STATE_ACTION_TRACK_HIDE:
+		m_paintengine->setTrackVisibility(lsa.data.id, true);
+		return;
+	case DP_LOCAL_STATE_ACTION_TRACK_ENABLE_ONION_SKIN:
+		m_paintengine->setTrackOnionSkin(lsa.data.id, true);
+		return;
+	}
+	qWarning("Unhandled local state action %d", int(lsa.type));
+}
+
 void CanvasModel::reconnectStateMakeCallback(
 	void *user, DP_CanvasHistoryReconnectState *chrs)
 {
@@ -606,6 +688,27 @@ void CanvasModel::reconnectStateMakeCallback(
 			Q_ARG(CanvasModelSetReconnectStateHistoryParams, invokeParams));
 	}
 	delete params;
+}
+
+void CanvasModel::saveLocalStateCallback(
+	void *user, const DP_LocalStateAction *lsa)
+{
+	SaveLocalStateParams *params = static_cast<SaveLocalStateParams *>(user);
+	if(lsa) {
+		params->actions.append(*lsa);
+	} else {
+		if(params->canvas.isNull() || params->reconnectState.isNull()) {
+			qWarning("saveLocalStateCallback: target is null");
+		} else if(!params->actions.isEmpty()) {
+			CanvasModelSetLocalStateActionsParams invokeParams = {
+				params->reconnectState, std::move(params->actions)};
+			QMetaObject::invokeMethod(
+				params->canvas.data(), "setLocalStateActions",
+				Qt::QueuedConnection,
+				Q_ARG(CanvasModelSetLocalStateActionsParams, invokeParams));
+		}
+		delete params;
+	}
 }
 
 }

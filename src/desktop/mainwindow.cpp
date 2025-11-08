@@ -821,6 +821,10 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		paintEngine, &canvas::PaintEngine::setOnionSkins);
 	m_dockOnionSkins->triggerUpdate();
 
+	connect(
+		canvas, &canvas::CanvasModel::restoreLocalStateViewMode, this,
+		&MainWindow::restoreViewMode);
+
 	m_dockToolSettings->inspectorSettings()->setUserList(canvas->userlist());
 
 	// Make sure the UI matches the default feature access level
@@ -1221,7 +1225,6 @@ void MainWindow::autoSetFrameViewMode()
 	}
 }
 
-// clang-format off
 
 void MainWindow::toggleLayerViewMode()
 {
@@ -1236,8 +1239,8 @@ void MainWindow::toggleLayerViewMode()
 		m_layerViewCurrentGroup,
 		m_layerViewCurrentFrame,
 	};
-	for (QAction *action : actions) {
-		if (action->isChecked() && m_lastLayerViewMode == action) {
+	for(QAction *action : actions) {
+		if(action->isChecked() && m_lastLayerViewMode == action) {
 			m_layerViewNormal->setChecked(true);
 			break;
 		}
@@ -1247,28 +1250,53 @@ void MainWindow::toggleLayerViewMode()
 
 void MainWindow::updateLayerViewMode()
 {
-	if(!m_doc->canvas())
-		return;
+	if(m_doc->canvas()) {
+		bool censor = !getAction("layerviewuncensor")->isChecked();
 
-	const bool censor = !getAction("layerviewuncensor")->isChecked();
+		DP_ViewMode mode;
+		QAction *action;
+		if((action = m_layerViewCurrentLayer)->isChecked()) {
+			mode = DP_VIEW_MODE_LAYER;
+		} else if((action = m_layerViewCurrentGroup)->isChecked()) {
+			mode = DP_VIEW_MODE_GROUP;
+		} else if((action = m_layerViewCurrentFrame)->isChecked()) {
+			mode = DP_VIEW_MODE_FRAME;
+		} else {
+			action = m_layerViewNormal;
+			mode = DP_VIEW_MODE_NORMAL;
+		}
+		m_lastLayerViewMode = action;
 
-	DP_ViewMode mode;
-	QAction *action;
-	if((action = m_layerViewCurrentLayer)->isChecked()) {
-		mode = DP_VIEW_MODE_LAYER;
-	} else if((action = m_layerViewCurrentGroup)->isChecked()) {
-		mode = DP_VIEW_MODE_GROUP;
-	} else if((action = m_layerViewCurrentFrame)->isChecked()) {
-		mode = DP_VIEW_MODE_FRAME;
-	} else {
-		action = m_layerViewNormal;
-		mode = DP_VIEW_MODE_NORMAL;
+		m_doc->canvas()->paintEngine()->setViewMode(mode, censor);
+		triggerUpdateLockWidget();
 	}
-	m_lastLayerViewMode = action;
-
-	m_doc->canvas()->paintEngine()->setViewMode(mode, censor);
-	triggerUpdateLockWidget();
 }
+
+void MainWindow::restoreViewMode(int viewMode, bool revealCensored)
+{
+	if(m_doc->canvas()) {
+		getAction("layerviewuncensor")->setChecked(revealCensored);
+		switch(viewMode) {
+		case int(DP_VIEW_MODE_NORMAL):
+			m_layerViewNormal->setChecked(true);
+			break;
+		case int(DP_VIEW_MODE_LAYER):
+			m_layerViewCurrentLayer->setChecked(true);
+			break;
+		case int(DP_VIEW_MODE_GROUP):
+			m_layerViewCurrentGroup->setChecked(true);
+			break;
+		case int(DP_VIEW_MODE_FRAME):
+			m_layerViewCurrentFrame->setChecked(true);
+			break;
+		default:
+			qWarning("Can't restore unknown view mode %d", viewMode);
+			break;
+		}
+		updateLayerViewMode();
+	}
+}
+// clang-format off
 
 /**
  * Read and apply mainwindow related settings.
@@ -3711,7 +3739,9 @@ void MainWindow::connectToSession(
 		&MainWindow::showCompatibilityModeWarning);
 	m_canvasView->connectLoginDialog(m_doc, dlg);
 
-	m_doc->setReconnectStatePreviousLayerId(m_dockLayers->currentId());
+	m_doc->setReconnectStatePrevious(
+		m_dockLayers->currentId(), m_dockTimeline->currentTrackId(),
+		m_dockTimeline->currentFrame());
 
 	dlg->show();
 	m_doc->setRecordOnConnect(autoRecordFile);

@@ -90,6 +90,12 @@ typedef struct DP_MsgInternalReconnectStateApply {
     DP_CanvasHistoryReconnectState *chrs;
 } DP_MsgInternalReconnectStateApply;
 
+typedef struct DP_MsgInternalLocalStateSave {
+    DP_MsgInternal parent;
+    DP_LocalStateSaveCallback callback;
+    void *user;
+} DP_MsgInternalLocalStateSave;
+
 static size_t payload_length(DP_UNUSED DP_Message *msg)
 {
     DP_warn("DP_MsgInternal: payload_length called on internal message");
@@ -303,6 +309,19 @@ DP_msg_internal_reconnect_state_apply_new(unsigned int context_id,
     return msg;
 }
 
+DP_Message *DP_msg_internal_local_state_save_new(
+    unsigned int context_id, DP_LocalStateSaveCallback callback, void *user)
+{
+    DP_ASSERT(callback);
+    DP_Message *msg =
+        msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_LOCAL_STATE_SAVE,
+                         sizeof(DP_MsgInternalLocalStateSave));
+    DP_MsgInternalLocalStateSave *milss = DP_message_internal(msg);
+    milss->callback = callback;
+    milss->user = user;
+    return msg;
+}
+
 
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg)
 {
@@ -410,4 +429,19 @@ DP_msg_internal_reconnect_state_apply_get(DP_MsgInternal *mi)
     DP_MsgInternalReconnectStateApply *mirsa =
         (DP_MsgInternalReconnectStateApply *)mi;
     return mirsa->chrs;
+}
+
+
+DP_LocalStateSaveCallback
+DP_msg_internal_local_state_save_callback(DP_MsgInternal *mi)
+{
+    DP_MsgInternalLocalStateSave *milss = (DP_MsgInternalLocalStateSave *)mi;
+    return milss->callback;
+}
+
+void *DP_msg_internal_local_state_save_user(DP_MsgInternal *mi)
+{
+
+    DP_MsgInternalLocalStateSave *milss = (DP_MsgInternalLocalStateSave *)mi;
+    return milss->user;
 }

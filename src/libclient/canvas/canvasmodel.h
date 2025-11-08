@@ -10,6 +10,7 @@
 #include <QPointer>
 
 class QJsonObject;
+struct DP_LocalStateAction;
 struct DP_Player;
 
 namespace drawdance {
@@ -29,8 +30,13 @@ struct CanvasModelSetReconnectStateHistoryParams {
 	QPointer<canvas::ReconnectState> reconnectState;
 	DP_CanvasHistoryReconnectState *chrs;
 };
-
 Q_DECLARE_METATYPE(CanvasModelSetReconnectStateHistoryParams)
+
+struct CanvasModelSetLocalStateActionsParams {
+	QPointer<canvas::ReconnectState> reconnectState;
+	QVector<DP_LocalStateAction> actions;
+};
+Q_DECLARE_METATYPE(CanvasModelSetLocalStateActionsParams)
 
 namespace canvas {
 
@@ -198,14 +204,20 @@ signals:
 
 	void permissionDenied(int feature);
 
+	void restoreLocalStateViewMode(int viewMode, bool revealCensored);
+
 private slots:
 	void onLaserTrail(int userId, int persistence, uint32_t color);
 
 	void setReconnectStateHistory(
 		const CanvasModelSetReconnectStateHistoryParams &params);
 
+	void
+	setLocalStateActions(const CanvasModelSetLocalStateActionsParams &params);
+
 private:
 	struct MakeReconnectStateParams;
+	struct SaveLocalStateParams;
 
 	void handleMetaMessages(int count, const net::Message *msgs);
 	void handleJoin(const net::Message &msg);
@@ -215,8 +227,16 @@ private:
 
 	void updatePaintEngineTransform();
 
+	void applyLocalStateActions(
+		const QVector<DP_LocalStateAction> &localStateActions);
+
+	void applyLocalStateAction(const DP_LocalStateAction &lsa);
+
 	static void reconnectStateMakeCallback(
 		void *user, DP_CanvasHistoryReconnectState *chrs);
+
+	static void
+	saveLocalStateCallback(void *user, const DP_LocalStateAction *lsa);
 
 	AclState *m_aclstate;
 	UserListModel *m_userlist;

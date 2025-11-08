@@ -62,11 +62,23 @@ public:
 	int getAvailableTrackId() const;
 	QString getAvailableTrackName(QString basename) const;
 
+	void setSelectedTrackIdToRestore(int trackId)
+	{
+		m_selectedTrackIdToRestore = trackId;
+	}
+
+	void setSelectedFrameIndexToRestore(int frameIndex)
+	{
+		m_selectedFrameIndexToRestore = frameIndex;
+	}
+
 public slots:
 	void setTimeline(const drawdance::Timeline &tl);
 
 signals:
 	void tracksChanged();
+	void restoreSelectedTrackId(int trackId);
+	void restoreSelectedFrameIndex(int frameIndex);
 
 private:
 	static int
@@ -80,6 +92,8 @@ private:
 	QVector<TimelineTrack> m_tracks;
 	AclState *m_aclState;
 	int m_lastFrameIndex = -1;
+	int m_selectedTrackIdToRestore = 0;
+	int m_selectedFrameIndexToRestore = -1;
 };
 
 }

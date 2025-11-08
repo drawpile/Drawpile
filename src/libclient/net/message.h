@@ -14,6 +14,7 @@ class QImage;
 class QJsonDocument;
 class QString;
 struct DP_CanvasHistoryReconnectState;
+struct DP_LocalStateAction;
 struct DP_OnionSkins;
 
 namespace net {
@@ -53,6 +54,10 @@ Message makeFillRectMessage(
 Message makeInternalCatchupMessage(uint8_t contextId, int progress);
 
 Message makeInternalCleanupMessage(uint8_t contextId);
+
+Message makeInternalLocalStateSaveMessage(
+	uint8_t contextId, void (*callback)(void *, const DP_LocalStateAction *),
+	void *user);
 
 Message makeInternalPaintSyncMessage(
 	uint8_t contextId, void (*callback)(void *), void *user);

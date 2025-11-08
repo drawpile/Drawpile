@@ -250,6 +250,7 @@ private slots:
 	void autoSetFrameViewMode();
 	void toggleLayerViewMode();
 	void updateLayerViewMode();
+	void restoreViewMode(int viewMode, bool revealCensored);
 
 	void copyText();
 	void paste();

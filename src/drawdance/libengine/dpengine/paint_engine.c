@@ -382,6 +382,11 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
         DP_canvas_history_reconnect_state_free(chrs);
         break;
     }
+    case DP_MSG_INTERNAL_TYPE_LOCAL_STATE_SAVE:
+        DP_local_state_save(pe->local_state, pe->local_view.reveal_censored,
+                            DP_msg_internal_local_state_save_callback(mi),
+                            DP_msg_internal_local_state_save_user(mi));
+        break;
     default:
         DP_warn("Unhandled internal message type %d", (int)type);
         break;
@@ -853,6 +858,10 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
                 case DP_MSG_INTERNAL_TYPE_RECONNECT_STATE_APPLY:
                     DP_canvas_history_reconnect_state_free(
                         DP_msg_internal_reconnect_state_apply_get(mi));
+                    break;
+                case DP_MSG_INTERNAL_TYPE_LOCAL_STATE_SAVE:
+                    DP_msg_internal_local_state_save_callback(mi)(
+                        DP_msg_internal_local_state_save_user(mi), NULL);
                     break;
                 default:
                     break;

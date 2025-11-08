@@ -73,6 +73,7 @@ dp_target_sources(dpengine
     dpengine/layer_routes.h
     dpengine/load_enums.h
     dpengine/local_state.h
+    dpengine/local_state_action.h
     dpengine/ops.h
     dpengine/paint.h
     dpengine/paint_engine.h
