@@ -547,7 +547,10 @@ static int push_blocking(DP_Renderer *renderer, DP_RendererBlocking *blocking)
 
         renderer->xtiles = DP_tile_count_round(width);
     }
-    memset(renderer->tile.map, TILE_QUEUED_NONE, required_capacity);
+
+    if (required_capacity != 0) {
+        memset(renderer->tile.map, TILE_QUEUED_NONE, required_capacity);
+    }
 
     return pushed;
 }
