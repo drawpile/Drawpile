@@ -411,7 +411,10 @@ StartDialog::StartDialog(bool smallScreenMode, QWidget *parent)
 
 	const desktop::settings::Settings &settings = dpApp().settings();
 	QSize lastSize = settings.lastStartDialogSize();
-	resize(lastSize.isValid() ? lastSize : QSize{820, 450});
+	resize(
+		lastSize.isValid() && utils::sizeFitsOnScreen(this, lastSize)
+			? lastSize
+			: QSize(820, 450));
 
 	connect(
 		m_stack, &QStackedWidget::currentChanged, this,

@@ -765,6 +765,26 @@ bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry)
 	return false;
 }
 
+bool sizeFitsOnScreen(QWidget *widget, const QSize &size)
+{
+	if(widget) {
+		QScreen *screen = compat::widgetOrPrimaryScreen(*widget);
+		if(screen) {
+			QSize availableSize = screen->availableSize();
+			int availableWidth = availableSize.width();
+			int availableHeight = availableSize.height();
+#if defined(Q_OS_ANDROID) && defined(DRAWPILE_KRITA_PATCHED_QT)
+			// Krita's Qt has borders around windows.
+			availableWidth -= 6;
+			availableHeight -= 28;
+#endif
+			return size.width() <= availableWidth &&
+				   size.height() <= availableHeight;
+		}
+	}
+	return false;
+}
+
 QRect moveRectToFit(const QRect &subjectRect, const QRect &boundingRect)
 {
 	QRect rect = subjectRect;

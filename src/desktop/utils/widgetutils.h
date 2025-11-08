@@ -179,6 +179,7 @@ void setWidgetLongPressEnabled(QWidget *widget, bool enabled);
 
 bool moveIfOnScreen(QWidget *widget, const QPoint &pos);
 bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry);
+bool sizeFitsOnScreen(QWidget *widget, const QSize &size);
 
 QRect moveRectToFit(const QRect &subjectRect, const QRect &boundingRect);
 QRectF moveRectToFitF(const QRectF &subjectRect, const QRectF &boundingRect);
