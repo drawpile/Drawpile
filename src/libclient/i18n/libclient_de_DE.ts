@@ -620,13 +620,13 @@
         <location line="+544"/>
         <source>Layer to selection: current layer is empty.</source>
         <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ebene zu Selektion: aktuelle Ebene ist leer.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds: current layer is empty.</source>
         <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ebenengrenze auswählen: aktuelle Ebene ist leer.</translation>
     </message>
     <message>
         <location line="+182"/>
@@ -2203,7 +2203,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <message>
         <location filename="../tools/freehand.cpp" line="+146"/>
         <source>Anti-overflow requires a fill source layer.</source>
-        <translation>Anti-Übertritt erfordert eine Ebene als Füllquelle</translation>
+        <translation>Anti-Übertritt erfordert eine Ebene als Füllquelle.</translation>
     </message>
 </context>
 <context>

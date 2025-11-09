@@ -833,17 +833,17 @@
     <message>
         <location filename="../scene/hudhandler.cpp" line="+62"/>
         <source>More…</source>
-        <translation type="unfinished">Mehr…</translation>
+        <translation>Mehr…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektion</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Transform</source>
-        <translation type="unfinished">Transformation</translation>
+        <translation>Transformation</translation>
     </message>
 </context>
 <context>
@@ -2513,17 +2513,18 @@ Um diesen zusätzlichen Schritt in Zukunft zu vermeiden, verwenden Sie stattdess
         <location line="-2211"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zur Animationsansicht gewechselt.
+Sie können sie über das Ansichtsmenü oder den Zeitstrahl verlassen.</translation>
     </message>
     <message>
         <location line="+2203"/>
         <source>Did the download complete successfully?</source>
-        <translation type="unfinished"></translation>
+        <translation>War der Download erfolgreich?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You have unsaved changes, do you want to download them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>Es gibt noch ungespeicherte Änderungen. Möchten Sie diese vor dem Wiederverbinden herunterladen?</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2533,17 +2534,17 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+11"/>
         <source>No, try again</source>
-        <translation type="unfinished"></translation>
+        <translation>Nein, nochmal versuchen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Ja, wiederverbinden</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Download</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -2619,12 +2620,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+444"/>
         <source>Cr&amp;op canvas to transform…</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand auf Transformation zus&amp;chneiden…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cr&amp;op canvas to selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand auf Selektion zus&amp;chneiden…</translation>
     </message>
     <message>
         <location line="+109"/>
@@ -2940,67 +2941,67 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+4"/>
         <source>Show Selection Action Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionsaktionsleiste anzeigen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Oben links</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionsaktionsleiste oben links</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished">Oben</translation>
+        <translation>Oben</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionsaktionsleiste oben</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Oben rechts</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionsaktionsleiste oben rechts</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Unten links</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionsaktionsleiste unten links</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom</source>
-        <translation type="unfinished">Unten</translation>
+        <translation>Unten</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionsaktionsleiste unten</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Unten rechts</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionsaktionsleiste unten rechts</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -3020,7 +3021,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+9"/>
         <source>On-canvas view mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwandmeldungen für Ansichtsmodi</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3065,7 +3066,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+29"/>
         <source>Selection Action Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionsaktionsleistenposition</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -3176,7 +3177,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+3"/>
         <source>Cr&amp;op canvas to selection/transform…</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand auf Selektion/Transformation zus&amp;chneiden…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -3743,70 +3744,72 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+14"/>
         <source>Disable view mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>Meldungen für Ansichtsmodi deaktivieren</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer view mode notices disabled.
 You can re-enable them via the View menu or preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>Meldungen für Ebenenansichtsmodi deaktiviert.
+Sie können diese über das Ansichtsmenü oder die Einstellungen reaktivieren.</translation>
     </message>
     <message>
         <location line="+110"/>
         <source>Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Leistenposition</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disable This Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Leiste deaktivieren</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Invert</source>
         <extracomment>Refers to inverting the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Invertieren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand/Shrink</source>
         <extracomment>Refers to expanding or shrinking the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Vergrößern/schrumpfen</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Apply</source>
-        <translation type="unfinished">Anwenden</translation>
+        <translation>Anwenden</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Mirror</source>
         <extracomment>Refers to mirroring a transform horizontally.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Horizontal spiegeln</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip</source>
         <extracomment>Refers to mirroring a transform vertically (flip upside-down.)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Vertikal spiegeln</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate -90°</source>
         <extracomment>Refers to rotating a transform 90 degrees counter-clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>-90° rotieren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate +90°</source>
         <extracomment>Refers to rotating a transform 90 degrees clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>+90° rotieren</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Selection action bar disabled.
 You can re-enable it via the View menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionsaktionsleiste deaktiviert.
+Sie können diese über das Ansichtsmenü reaktivieren.</translation>
     </message>
     <message>
         <location line="+604"/>
@@ -9320,7 +9323,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+15"/>
         <source>Improve zoom quality (hardware renderer only)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom-Qualität verbessern (nur Hardware-Renderer)</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -10414,12 +10417,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+30"/>
         <source>Enable pressure for touch drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Touch-Druckempfindlichkeit aktivieren</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Required for certain screen tablets, probably doesn&apos;t work for finger drawing!</source>
-        <translation type="unfinished"></translation>
+        <translation>Wird für einige Bildschirm-Tablets benötigt, funktioniert wahrscheinlich nicht für das Malen mit dem Finger!</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10687,7 +10690,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>View mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>Meldungen für Ansichtsmodi</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12955,19 +12958,19 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/colordialog.cpp" line="+20"/>
         <source>Screen Color Picking Unsupported</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbaufnahme vom Bildschirm nicht unterstützt</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Picking colors from the screen is not supported under Wayland.</source>
         <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Die Farbaufnahme vom Bildschirm wird unter Wayland nicht unterstützt.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You may be able to switch to Xorg instead when logging into your Linux user account.</source>
         <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names. Note that &quot;Linux user account&quot; is an account on the computer, NOT a Drawpile account.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sie können eventuell auf dem Linux-Loginbildschirm zu Xorg wechseln.</translation>
     </message>
 </context>
 <context>
@@ -13522,67 +13525,67 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="-119"/>
         <source>Exit layer view</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebenenansicht verlassen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exit group view</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppenansicht verlassen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exit frame view</source>
-        <translation type="unfinished"></translation>
+        <translation>Animationsansicht verlassen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unlock canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand entsperren</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Reset canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand zurücksetzen…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles auswählen</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebenengrenze auswählen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Disable anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Anti-Übertritt deaktivieren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set current layer as fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelĺe Ebene als Füllquelle setzen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clear fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>Füllquelle entfernen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show censored layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Zensierte Ebenen anzeigen</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Out of space, you must reset the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Platz, Sie müssen die Leinwand zurücksetzen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Out of space, operator must reset the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Platz, ein Operator muss die Leinwand zurücksetzen</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -13758,19 +13761,19 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+41"/>
         <source>As regular window</source>
         <extracomment>A chat detach option, &quot;detach &gt; as regular window&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Als normales Fenster</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>On top of Drawpile</source>
         <extracomment>A chat detach option, &quot;detach &gt; on top of Drawpile&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Über dem Drawpile-Fenster</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>On top of everything</source>
         <extracomment>A chat detach option, &quot;detach &gt; on top of everything&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Über allen Fenstern</translation>
     </message>
     <message>
         <location line="+5"/>
