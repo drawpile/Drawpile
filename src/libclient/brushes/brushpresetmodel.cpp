@@ -30,18 +30,6 @@ static constexpr int ALL_ID = -1;
 static constexpr int UNTAGGED_ID = -2;
 
 namespace {
-typedef QVector<QPair<QString, QStringList>> OldMetadata;
-
-struct OldBrushPreset {
-	ClassicBrush brush;
-	QString filename;
-};
-
-struct OldPresetFolder {
-	QString title;
-	QVector<OldBrushPreset> presets;
-};
-
 struct CachedTag {
 	int id;
 	QString name;
@@ -1054,7 +1042,6 @@ BrushPresetTagModel::BrushPresetTagModel(QObject *parent)
 	, d(new Private)
 {
 	d->setPresetModel(new BrushPresetModel(this));
-	maybeConvertOldPresets();
 	d->initShortcuts();
 	connect(
 		this, &QAbstractItemModel::modelAboutToBeReset, d->presetModel(),
@@ -1230,132 +1217,6 @@ bool BrushPresetTagModel::isTagRowInBounds(int row) const
 	} else {
 		int i = row - TAG_OFFSET;
 		return i >= 0 && i < d->tagCacheSize();
-	}
-}
-
-void BrushPresetTagModel::maybeConvertOldPresets()
-{
-	if(!d->readStateBool("classic_presets_loaded", false) &&
-	   d->createOrUpdateState("classic_presets_loaded", true)) {
-		convertOldPresets();
-	}
-}
-
-static OldMetadata loadOldMetadata(QFile &metadataFile)
-{
-	QTextStream in(&metadataFile);
-	OldMetadata metadata;
-	QString line;
-
-	// The first folder is always the "Default" folder
-	metadata << QPair<QString, QStringList>{
-		BrushPresetModel::tr("Default"), QStringList()};
-
-	while(!(line = in.readLine()).isNull()) {
-		// # is reserved for comments for now, but might be used for extra
-		// metadata fields later
-		if(line.isEmpty() || line.at(0) == '#')
-			continue;
-
-		// Lines starting with \ start new folders. Nested folders are not
-		// supported currently.
-		if(line.at(0) == '\\') {
-			metadata << QPair<QString, QStringList>{line.mid(1), QStringList()};
-			continue;
-		}
-
-		metadata.last().second << line;
-	}
-
-	return metadata;
-}
-
-void BrushPresetTagModel::convertOldPresets()
-{
-	QString brushDir = utils::paths::writablePath("brushes/");
-
-	QMap<QString, OldBrushPreset> brushes;
-
-	QDirIterator entries{
-		brushDir, QStringList() << "*.dpbrush", QDir::Files | QDir::Readable,
-		QDirIterator::Subdirectories};
-
-	while(entries.hasNext()) {
-		QFile f{entries.next()};
-		QString filename = entries.filePath().mid(brushDir.length());
-
-		if(!f.open(QFile::ReadOnly)) {
-			qWarning() << "Couldn't open" << filename
-					   << "due to:" << f.errorString();
-			continue;
-		}
-
-		QJsonParseError err;
-		QJsonDocument doc = QJsonDocument::fromJson(f.readAll(), &err);
-		if(doc.isNull()) {
-			qWarning() << "Couldn't parse" << filename
-					   << "due to:" << err.errorString();
-			continue;
-		}
-
-		brushes[filename] = OldBrushPreset{
-			ClassicBrush::fromJson(doc.object()),
-			filename,
-		};
-	}
-
-	// Load metadata file (if present)
-	OldMetadata metadata;
-
-	QFile metadataFile{brushDir + "index.txt"};
-	if(metadataFile.open(QFile::ReadOnly)) {
-		metadata = loadOldMetadata(metadataFile);
-	}
-
-	// Apply ordering
-	QVector<OldPresetFolder> folders;
-
-	for(const QPair<QString, QStringList> &metaFolder : metadata) {
-		folders << OldPresetFolder{metaFolder.first, QVector<OldBrushPreset>()};
-		OldPresetFolder &folder = folders.last();
-
-		for(const QString &filename : metaFolder.second) {
-			const OldBrushPreset b = brushes.take(filename);
-			if(!b.filename.isEmpty()) {
-				folder.presets << b;
-			}
-		}
-	}
-
-	// Add any remaining unsorted presets to a default folder
-	if(folders.isEmpty()) {
-		folders.push_front(
-			OldPresetFolder{tr("Default"), QVector<OldBrushPreset>()});
-	}
-
-	OldPresetFolder &defaultFolder = folders.first();
-
-	QMapIterator<QString, OldBrushPreset> i{brushes};
-	while(i.hasNext()) {
-		defaultFolder.presets << i.next().value();
-	}
-
-	if(folders.size() > 1 || !folders.first().presets.isEmpty()) {
-		ActiveBrush brush(ActiveBrush::CLASSIC);
-		int brushCount = 0;
-
-		for(const OldPresetFolder &folder : folders) {
-			int tagId = newTag(folder.title);
-			for(const OldBrushPreset &preset : folder.presets) {
-				++brushCount;
-				QString name = tr("Classic Brush %1").arg(brushCount);
-				QString description =
-					tr("Converted from %1.").arg(preset.filename);
-				brush.setClassic(preset.brush);
-				std::optional<Preset> opt = d->presetModel()->newPreset(
-					name, description, brush.presetThumbnail(), brush, tagId);
-			}
-		}
 	}
 }
 

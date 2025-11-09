@@ -813,17 +813,6 @@ static StartupOptions initApp(DrawpileApp &app)
 		"count");
 	parser.addOption(buffer);
 
-#ifdef Q_OS_WIN
-	// --copy-legacy-settings
-	QCommandLineOption copyLegacySettings(
-		"copy-legacy-settings",
-		"Copy settings from Drawpile 2.1 to the new ini format. Use 'true' to "
-		"copy the settings, 'false' to not copy them and 'if-empty' to only "
-		"copy if the new settings are empty (this is the default.)",
-		"mode", "if-empty");
-	parser.addOption(copyLegacySettings);
-#endif
-
 	QCommandLineOption join(
 		QStringLiteral("join"),
 		QStringLiteral(
@@ -904,12 +893,7 @@ static StartupOptions initApp(DrawpileApp &app)
 
 	parser.process(app);
 	app.setNewProcessArgs(
-		parser,
-		{&dataDir, &portableDataDir, &opengl, &buffer, &renderer,
-#ifdef Q_OS_WIN
-		 &copyLegacySettings
-#endif
-		},
+		parser, {&dataDir, &portableDataDir, &opengl, &buffer, &renderer},
 		{&noNativeDialogs});
 
 	// Override data directories
@@ -922,21 +906,6 @@ static StartupOptions initApp(DrawpileApp &app)
 			utils::paths::writablePath(
 				QStandardPaths::AppConfigLocation, "drawpile.ini"));
 	}
-#ifdef Q_OS_WIN
-	else {
-		const auto mode = parser.value(copyLegacySettings);
-		if(mode.compare("true", Qt::CaseInsensitive) == 0) {
-			app.settings().migrateFromNativeFormat(true);
-		} else if(mode.compare("if-empty", Qt::CaseInsensitive) == 0) {
-			app.settings().migrateFromNativeFormat(false);
-		} else if(mode.compare("false", Qt::CaseInsensitive) != 0) {
-			qCritical(
-				"Unknown --copy-legacy-settings value '%s'",
-				qUtf8Printable(mode));
-			std::exit(EXIT_FAILURE);
-		}
-	}
-#endif
 
 	app.initState();
 	desktop::settings::Settings &settings = app.settings();

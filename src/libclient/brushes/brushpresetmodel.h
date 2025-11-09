@@ -167,9 +167,6 @@ private:
 	static bool isBuiltInTag(int row);
 	bool isTagRowInBounds(int row) const;
 
-	void maybeConvertOldPresets();
-	void convertOldPresets();
-
 	static QVector<ImportBrushGroup> readOrderConf(
 		BrushImportResult &result, const QString &file,
 		const drawdance::ZipReader &zr);

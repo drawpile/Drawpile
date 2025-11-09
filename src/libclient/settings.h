@@ -111,10 +111,6 @@ public:
 
 	QSettings *scalingSettings();
 
-#ifdef Q_OS_WIN
-	void migrateFromNativeFormat(bool force);
-#endif
-
 #	define DP_SETTINGS_HEADER
 #	include "libclient/settings_table.h"
 #	undef DP_SETTINGS_HEADER

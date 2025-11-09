@@ -199,21 +199,6 @@ QSettings *Settings::scalingSettings()
 	return m_scalingSettings;
 }
 
-#ifdef Q_OS_WIN
-void Settings::migrateFromNativeFormat(bool force)
-{
-	QMutexLocker locker{&m_mutex};
-	if (m_settings.allKeys().isEmpty() || force) {
-		m_settings.clear();
-		QSettings oldSettings;
-		oldSettings.setFallbacksEnabled(false);
-		for(const QString &key : oldSettings.allKeys()) {
-			m_settings.setValue(key, oldSettings.value(key));
-		}
-	}
-}
-#endif
-
 void Settings::revert()
 {
 	QMutexLocker locker{&m_mutex};
