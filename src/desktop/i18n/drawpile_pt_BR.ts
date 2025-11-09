@@ -148,7 +148,7 @@
         <location filename="../toolwidgets/fillsettings.cpp" line="+136"/>
         <location filename="../toolwidgets/gradientsettings.cpp" line="+401"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
-        <location filename="../toolwidgets/transformsettings.cpp" line="+345"/>
+        <location filename="../toolwidgets/transformsettings.cpp" line="+336"/>
         <source>Preserve alpha</source>
         <translation>Preservar alfa</translation>
     </message>
@@ -184,12 +184,14 @@
     <message>
         <location line="-42"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-71"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+287"/>
         <source>Stabilizer: </source>
         <translation>Estabilização: </translation>
     </message>
     <message>
         <location line="+13"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+12"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Smoothing: </source>
         <translation>Suavização: </translation>
     </message>
@@ -420,12 +422,12 @@
     </message>
     <message>
         <location line="+142"/>
-        <location line="+302"/>
+        <location line="+305"/>
         <source>Save Image</source>
         <translation>Salvar Imagem</translation>
     </message>
     <message>
-        <location line="-302"/>
+        <location line="-305"/>
         <source>Export Image</source>
         <translation>Exportar Imagem</translation>
     </message>
@@ -465,12 +467,12 @@
         <translation>Registro de Eventos da Mesa Digitalizadora</translation>
     </message>
     <message>
-        <location line="+146"/>
+        <location line="+149"/>
         <source>Log File</source>
         <translation>Arquivo do Log</translation>
     </message>
     <message>
-        <location line="-174"/>
+        <location line="-177"/>
         <location line="+36"/>
         <source>Export MP4 Video</source>
         <translation>Exportar Vídeo MP4</translation>
@@ -537,12 +539,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+399"/>
+        <location line="+402"/>
         <source>Session Settings (%1)</source>
         <translation>Configurações da Sessão (%1)</translation>
     </message>
     <message>
-        <location line="-398"/>
+        <location line="-401"/>
         <source>Session Bans (%1)</source>
         <translation>Banimentos da Sessão (%1)</translation>
     </message>
@@ -597,7 +599,7 @@
         <translation>Salvar Série de Imagens</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+80"/>
         <source>Export Brushes</source>
         <translation>Exportar Pincéis</translation>
     </message>
@@ -640,11 +642,12 @@
     <message>
         <location line="+168"/>
         <location line="+5"/>
+        <location line="+491"/>
         <source>Untitled</source>
         <translation>Sem Título</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="-392"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
         <translation>SemTitulo%1</translation>
@@ -654,7 +657,7 @@
     <name>FillSettings</name>
     <message>
         <location filename="../ui/fillsettings.ui" line="+351"/>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="+318"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+126"/>
         <source>Feather: </source>
         <translation>Desfocar Borda: </translation>
     </message>
@@ -827,6 +830,24 @@
     </message>
 </context>
 <context>
+    <name>HudHandler</name>
+    <message>
+        <location filename="../scene/hudhandler.cpp" line="+62"/>
+        <source>More…</source>
+        <translation type="unfinished">Mais…</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Transform</source>
+        <translation type="unfinished">Transformar</translation>
+    </message>
+</context>
+<context>
     <name>InspectorSettings</name>
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
@@ -910,7 +931,7 @@
 <context>
     <name>KisCurveWidget</name>
     <message>
-        <location filename="../widgets/kis_curve_widget.cpp" line="+46"/>
+        <location filename="../widgets/kis_curve_widget.cpp" line="+47"/>
         <source>Remove point</source>
         <translation>Remover ponto</translation>
     </message>
@@ -923,7 +944,7 @@
 <context>
     <name>KisSliderSpinBoxPrivate</name>
     <message>
-        <location filename="../widgets/kis_slider_spin_box_p.h" line="+381"/>
+        <location filename="../widgets/kis_slider_spin_box_p.h" line="+382"/>
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
@@ -1110,7 +1131,7 @@ Subintervalo: [%3,%4]</translation>
 <context>
     <name>LinkCheck</name>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1363"/>
+        <location filename="../utils/widgetutils.cpp" line="+1423"/>
         <source>Open Link</source>
         <translation>Abrir link</translation>
     </message>
@@ -1310,13 +1331,13 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+998"/>
-        <location line="+2405"/>
+        <location filename="../mainwindow.cpp" line="+1026"/>
+        <location line="+2485"/>
         <source>Untitled</source>
         <translation>Sem Título</translation>
     </message>
     <message>
-        <location line="-1597"/>
+        <location line="-1633"/>
         <location line="+29"/>
         <source>Exit Drawpile</source>
         <translation>Sair do Drawpile</translation>
@@ -1444,7 +1465,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Hospedar sessão</translation>
     </message>
     <message>
-        <location line="+231"/>
+        <location line="+267"/>
         <source>Really leave the session?</source>
         <translation>Deseja realmente sair da sessão?</translation>
     </message>
@@ -1464,7 +1485,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Ainda existem dados não enviados, espere o envio terminar!</translation>
     </message>
     <message>
-        <location line="+302"/>
+        <location line="+306"/>
         <source>Would you like to join the session instead?</source>
         <translation>Você não quer entrar nessa sessão ao invés disso?</translation>
     </message>
@@ -1474,7 +1495,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Entrar em uma sessão</translation>
     </message>
     <message>
-        <location line="+842"/>
+        <location line="+920"/>
         <source>The image could not be loaded</source>
         <translation>Não foi possível carregar a imagem</translation>
     </message>
@@ -1501,7 +1522,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+5"/>
-        <location filename="../utils/widgetutils.cpp" line="-342"/>
+        <location filename="../utils/widgetutils.cpp" line="-341"/>
         <source>Close</source>
         <translation>Fechar</translation>
     </message>
@@ -1521,13 +1542,13 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Salvar automaticamente</translation>
     </message>
     <message>
-        <location line="-2516"/>
-        <location line="+2543"/>
+        <location line="-2634"/>
+        <location line="+2661"/>
         <source>Record...</source>
         <translation>Gravar...</translation>
     </message>
     <message>
-        <location line="-4462"/>
+        <location line="-4626"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
         <translation>desconectar você da sessão</translation>
@@ -1587,18 +1608,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Não, cancelar</translation>
     </message>
     <message>
-        <location line="+124"/>
-        <location line="+4258"/>
+        <location line="+126"/>
+        <location line="+4420"/>
         <source>Export Again</source>
         <translation>Exportar Novamente</translation>
     </message>
     <message>
-        <location line="-4254"/>
+        <location line="-4416"/>
         <source>Export Again to %1</source>
         <translation>Exportar Novamente para %1</translation>
     </message>
     <message>
-        <location line="+922"/>
+        <location line="+966"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
         <translation>Você não tem permissão para cortar, colar, preencher ou deletar.</translation>
@@ -1649,7 +1670,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Você está abrindo um arquivo recente e fechando esta janela.</translation>
     </message>
     <message>
-        <location line="-1274"/>
+        <location line="-1320"/>
         <source>Open</source>
         <translation>Abrir</translation>
     </message>
@@ -1659,7 +1680,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Você está abrindo um novo arquivo e fechando esta janela.</translation>
     </message>
     <message>
-        <location line="+1752"/>
+        <location line="+1798"/>
         <source>Outdated Version</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1674,22 +1695,22 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Você já está conectado a uma sessão! Desconecte-se antes de hospedar uma nova.</translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+245"/>
         <source>Reconnect</source>
         <translation>Reconectar</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-11"/>
         <source>You have unsaved changes, do you want to save them before reconnecting?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
         <source>You have unsaved changes, do you want to save them before reconnecting or reconnect in a new window?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+22"/>
         <source>New Window</source>
         <extracomment>Button to reconnect in a new window instead of the current one. Is shown next to Save, Discard and Cancel buttons.</extracomment>
         <translation type="unfinished"></translation>
@@ -1711,12 +1732,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3254"/>
+        <location line="+3425"/>
         <source>Terminate</source>
         <translation>Terminar</translation>
     </message>
     <message>
-        <location line="-3239"/>
+        <location line="-3410"/>
         <source>Join Session</source>
         <translation>Entrar na Sessão</translation>
     </message>
@@ -1726,7 +1747,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Você está se conectando em uma nova sessão e fechando essa janela.</translation>
     </message>
     <message>
-        <location line="+363"/>
+        <location line="+402"/>
         <source>Session blocked by parental controls</source>
         <translation>Sessão bloqueada por controle parental</translation>
     </message>
@@ -1746,7 +1767,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+511"/>
+        <location line="+554"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
         <translation>A imagem não pode ser carregada: %1.</translation>
@@ -1935,17 +1956,17 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>espelhar/inverter tela de pintura verticalmente</translation>
     </message>
     <message>
-        <location line="+172"/>
+        <location line="+227"/>
         <source>Group View</source>
         <translation>Visão de Grupo</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Show only the current parent layer group</source>
         <translation>Mostrar somente o grupo de camadas-pai atual</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+48"/>
         <source>Stay Time</source>
         <translation>Tempo de permanência</translation>
     </message>
@@ -1980,7 +2001,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Para sempre</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+29"/>
+        <source>Selection Action Bar Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+46"/>
         <source>Clear Fill Source</source>
         <translation>Limpar Origem do Preenchimento</translation>
     </message>
@@ -2080,7 +2106,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Seleção de Apagar Cor</translation>
     </message>
     <message>
-        <location line="-586"/>
+        <location line="-665"/>
         <location filename="../widgets/macmenu.cpp" line="-4"/>
         <source>&amp;Edit</source>
         <translation>&amp;Editar</translation>
@@ -2111,37 +2137,37 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+223"/>
+        <location line="+269"/>
         <source>Normal View</source>
         <translation>Visão Normal</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Show all layers normally</source>
         <translation>Mostra todas as camadas normalmente</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+5"/>
         <source>Layer View</source>
         <translation>Visão de Camada</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Show only the current layer</source>
         <translation>Mostra só a camada atual</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+9"/>
         <source>Frame View</source>
         <translation>Visão de Quadro</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Show only layers in the current frame</source>
         <translation>Mostra somente camadas no quadro de animação atual</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+109"/>
         <source>New Layer Group</source>
         <translation>Novo Grupo de Camadas</translation>
     </message>
@@ -2151,7 +2177,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Definir como Origem do Preenchimento</translation>
     </message>
     <message>
-        <location line="+330"/>
+        <location line="+339"/>
         <source>Flipbook</source>
         <translation>Rolar Animação</translation>
     </message>
@@ -2161,7 +2187,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Mostrar janela de previsão da animação</translation>
     </message>
     <message>
-        <location line="-651"/>
+        <location line="-739"/>
         <source>Zoom &amp;In</source>
         <translation>D&amp;iminuir zoom</translation>
     </message>
@@ -2171,7 +2197,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Aumentar z&amp;oom</translation>
     </message>
     <message>
-        <location line="+456"/>
+        <location line="+535"/>
         <source>&amp;Invert Selection</source>
         <translation>&amp;Inverter Seleção</translation>
     </message>
@@ -2203,6 +2229,11 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+3"/>
+        <source>Cr&amp;op canvas to selection/transform…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>&amp;Transform</source>
         <translation>&amp;Transformar</translation>
     </message>
@@ -2247,7 +2278,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Inverte a imagem transformada de cabeça para baixo</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>mirror/flip transformed image vertically</source>
         <translation>espelhar/inverter imagem transformada verticalmente</translation>
     </message>
@@ -2287,12 +2318,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Manter pinceladas dentro da máscara de seleção</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+82"/>
         <source>Selectio&amp;n</source>
         <translation>&amp;Seleção</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+43"/>
         <source>Change Frame Range or FPS...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2307,7 +2338,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Frame Anterior</translation>
     </message>
     <message>
-        <location line="+222"/>
+        <location line="+223"/>
         <source>Moderation</source>
         <translation>Moderação</translation>
     </message>
@@ -2452,12 +2483,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Cancelar ação</translation>
     </message>
     <message>
-        <location line="-4853"/>
+        <location line="-5060"/>
         <source>Image saving failed</source>
         <translation>Falha ao salvar a imagem</translation>
     </message>
     <message>
-        <location line="-780"/>
+        <location line="-1306"/>
+        <source>Switched to frame view mode.
+You can exit it via the View menu or the timeline.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+526"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation>O pincel solicitado não pode ser usado por outros.</translation>
     </message>
@@ -2552,12 +2589,37 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Não é possível hospedar neste computador</translation>
     </message>
     <message>
-        <location line="+216"/>
+        <location line="+165"/>
+        <source>Did the download complete successfully?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>You have unsaved changes, do you want to download them before reconnecting?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>No, try again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Yes, reconnect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+60"/>
         <source>Really leave and terminate the session?</source>
         <translation>Deseja mesmo sair e terminar a sessão?</translation>
     </message>
     <message>
-        <location line="+291"/>
+        <location line="+295"/>
         <source>Disconnected</source>
         <translation>Desconectado</translation>
     </message>
@@ -2587,7 +2649,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Desconectado: %1</translation>
     </message>
     <message>
-        <location line="+218"/>
+        <location line="+253"/>
         <source>Undo Limit... (%1)</source>
         <translation>Limite de Desfazer... (%1)</translation>
     </message>
@@ -2602,7 +2664,17 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>Erro</translation>
     </message>
     <message>
-        <location line="+827"/>
+        <location line="+486"/>
+        <source>Cr&amp;op canvas to transform…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cr&amp;op canvas to selection…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+383"/>
         <source>User #%1</source>
         <translation>Usuário Nº%1</translation>
     </message>
@@ -2618,23 +2690,23 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1997"/>
+        <location line="+2086"/>
         <source>Tablet Event Log...</source>
         <translation>Registro de Eventos da Mesa Digitalizadora...</translation>
     </message>
     <message>
-        <location line="-1993"/>
+        <location line="-2082"/>
         <source>Stop Profile</source>
         <translation>Parar Perfil</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1994"/>
+        <location line="+2083"/>
         <source>Profile...</source>
         <translation>Perfil...</translation>
     </message>
     <message>
-        <location line="-1983"/>
+        <location line="-2072"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Definir Latência Artificial (atualmente %1 ms)</translation>
     </message>
@@ -2660,12 +2732,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1941"/>
+        <location line="+2030"/>
         <source>Record Debug Dumps</source>
         <translation>Gravar Registro de Depuração</translation>
     </message>
     <message>
-        <location line="-1940"/>
+        <location line="-2029"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2913,23 +2985,93 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Mudar a cor do contorno da máscara de seleção</translation>
     </message>
     <message>
+        <location line="+4"/>
+        <source>Show Selection Action Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+5"/>
+        <source>Top-left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selection action bar top-left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Top</source>
+        <translation type="unfinished">Em cima</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selection action bar top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Top-right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selection action bar top-right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Bottom-left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selection action bar bottom-left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Bottom</source>
+        <translation type="unfinished">Embaixo</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selection action bar bottom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Bottom-right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selection action bar bottom-right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>&amp;Fit to Screen</source>
         <translation>&amp;Ajustar à Tela</translation>
     </message>
     <message>
-        <location line="+156"/>
+        <location line="+180"/>
+        <source>On-canvas view mode notices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>Layer View Mode</source>
         <translation>Modo de Visualização da Camada</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+14"/>
         <source>User Pointers</source>
         <translation>Apontadores dos usuários</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+584"/>
-        <location filename="../mainwindow.cpp" line="+70"/>
+        <location filename="../docks/layerlistdock.cpp" line="+608"/>
+        <location filename="../mainwindow.cpp" line="+77"/>
         <source>Merge Layer</source>
         <translation>Juntar Camadas</translation>
     </message>
@@ -2949,7 +3091,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Ca&amp;mada</translation>
     </message>
     <message>
-        <location line="+313"/>
+        <location line="+322"/>
         <source>Create Group on Current Key Frame</source>
         <translation>Criar Grupo no Quadro-chave Atual</translation>
     </message>
@@ -2984,7 +3126,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Duplicar Quadro-chave</translation>
     </message>
     <message>
-        <location line="+109"/>
+        <location line="+110"/>
         <source>Share your canvas with others</source>
         <translation>Compartilhar sua Tela de Pintura com os outros</translation>
     </message>
@@ -3059,22 +3201,22 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Focar na tela de pintura</translation>
     </message>
     <message>
-        <location line="-1372"/>
+        <location line="-1461"/>
         <source>Show &amp;Annotations</source>
         <translation>Mostrar &amp;Anotações</translation>
     </message>
     <message>
-        <location line="-5176"/>
+        <location line="-5347"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 entrou!</translation>
     </message>
     <message>
-        <location line="+1939"/>
+        <location line="+1992"/>
         <source>Saving animation...</source>
         <translation>Salvando animação...</translation>
     </message>
     <message>
-        <location line="+3211"/>
+        <location line="+3329"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>Girar tela de pintura no sentido horário</translation>
     </message>
@@ -3094,12 +3236,12 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Mostrar &amp;grade de pixels</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+57"/>
         <source>&amp;Full Screen</source>
         <translation>&amp;Tela cheia</translation>
     </message>
     <message>
-        <location line="+97"/>
+        <location line="+114"/>
         <source>&amp;View</source>
         <translation>&amp;Ver</translation>
     </message>
@@ -3114,7 +3256,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Rotação</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+135"/>
         <source>New Layer</source>
         <translation>Nova camada</translation>
     </message>
@@ -3143,12 +3285,12 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Ativar Modo E&amp;sboço da Camada</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-104"/>
+        <location filename="../mainwindow.cpp" line="-116"/>
         <source>Show Censored Layers</source>
         <translation>Mostrar camadas censuradas</translation>
     </message>
     <message>
-        <location line="-4618"/>
+        <location line="-4804"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;O atalho &apos;%1&apos; já está sendo usado em várias ocasiões:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -3163,7 +3305,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Corrigir</translation>
     </message>
     <message>
-        <location line="+738"/>
+        <location line="+739"/>
         <source>Opening file…</source>
         <translation>Abrindo arquivo…</translation>
     </message>
@@ -3173,12 +3315,12 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Entrou na sessão!</translation>
     </message>
     <message>
-        <location line="+959"/>
+        <location line="+995"/>
         <source>Reason:</source>
         <translation>Motivo:</translation>
     </message>
     <message>
-        <location line="+330"/>
+        <location line="+358"/>
         <source>Canvas locked</source>
         <translation>Tela de pintura bloqueada</translation>
     </message>
@@ -3188,7 +3330,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Tela de pintura desbloqueada</translation>
     </message>
     <message>
-        <location line="+507"/>
+        <location line="+546"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation>À mão livre (modo apagar, clique para reiniciar)</translation>
     </message>
@@ -3208,7 +3350,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>À mão livre (canal alfa bloqueado)</translation>
     </message>
     <message>
-        <location line="+838"/>
+        <location line="+853"/>
         <source>Toggle Dock %1</source>
         <translation>Ligar Painel de %1</translation>
     </message>
@@ -3264,12 +3406,12 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
-        <location filename="../mainwindow.cpp" line="+389"/>
+        <location filename="../mainwindow.cpp" line="+468"/>
         <source>Layer Properties…</source>
         <translation>Propriedades da Camada…</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+339"/>
+        <location filename="../mainwindow.cpp" line="+348"/>
         <source>Set Key Frame to Current Layer</source>
         <translation>Definir Key Frame para Camada Atual</translation>
     </message>
@@ -3404,7 +3546,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Criar Camadas no Quadro-Chave</translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+120"/>
         <source>&amp;Host...</source>
         <translation>&amp;Hospedar...</translation>
     </message>
@@ -3766,13 +3908,81 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>&amp;Ajuda</translation>
     </message>
     <message>
-        <location line="+728"/>
+        <location line="+105"/>
+        <source>Disable view mode notices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Layer view mode notices disabled.
+You can re-enable them via the View menu or preferences.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+110"/>
+        <source>Bar Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Disable This Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Invert</source>
+        <extracomment>Refers to inverting the selection.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Expand/Shrink</source>
+        <extracomment>Refers to expanding or shrinking the selection.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Apply</source>
+        <translation type="unfinished">Aplicar</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Mirror</source>
+        <extracomment>Refers to mirroring a transform horizontally.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Flip</source>
+        <extracomment>Refers to mirroring a transform vertically (flip upside-down.)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Rotate -90°</source>
+        <extracomment>Refers to rotating a transform 90 degrees counter-clockwise.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Rotate +90°</source>
+        <extracomment>Refers to rotating a transform 90 degrees clockwise.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Selection action bar disabled.
+You can re-enable it via the View menu.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+604"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
         <translation>Para relatar um bug ou sugerir um recurso, [dê uma olhada aqui].</translation>
     </message>
     <message>
-        <location line="-2249"/>
+        <location line="-2526"/>
         <source>Delete</source>
         <translation>Apagar</translation>
     </message>
@@ -3816,7 +4026,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
 <context>
     <name>MarkerColors</name>
     <message>
-        <location line="+248"/>
+        <location line="+247"/>
         <source>None</source>
         <translation>Nenhum</translation>
     </message>
@@ -4080,7 +4290,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../filewrangler.cpp" line="-685"/>
+        <location filename="../filewrangler.cpp" line="-688"/>
         <source>All files (*)</source>
         <translation>Todos os arquivos (*)</translation>
     </message>
@@ -7727,7 +7937,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Ignorar Grupo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+521"/>
+        <location filename="../mainwindow.cpp" line="+600"/>
         <source>Blend alpha</source>
         <translation>Misturar Alfa</translation>
     </message>
@@ -7843,7 +8053,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Denunciar...</translation>
     </message>
     <message>
-        <location line="+181"/>
+        <location line="+183"/>
         <source>Accept</source>
         <translation>Aceitar</translation>
     </message>
@@ -7896,7 +8106,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+146"/>
         <source>You can&apos;t join this session because:</source>
         <translation>Você não pode entrar nessa sessão porque:</translation>
     </message>
@@ -7922,12 +8132,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     </message>
     <message>
         <location line="+52"/>
-        <location line="+160"/>
+        <location line="+159"/>
         <source>Enter the name you want to use.</source>
         <translation>Digite o nome que quer usar.</translation>
     </message>
     <message>
-        <location line="-99"/>
+        <location line="-98"/>
         <source>Server Rules for %1</source>
         <translation>Regras do Servidor %1</translation>
     </message>
@@ -7937,7 +8147,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Fazer login com a conta %1</translation>
     </message>
     <message>
-        <location line="+72"/>
+        <location line="+71"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
         <translation>Digite o nome que você deseja usar. Veja %1 para mais informações sobre esse servidor.</translation>
     </message>
@@ -8459,7 +8669,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Preferências</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+50"/>
         <source>General</source>
         <translation>Geral</translation>
     </message>
@@ -8568,130 +8778,9 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Definir cor…</translation>
     </message>
     <message>
-        <location line="+42"/>
-        <source>Custom</source>
-        <translation>Personalizado</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Hue</source>
-        <translation>Matiz</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Saturation</source>
-        <translation>Saturação</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Chroma</source>
-        <translation>Croma</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Value</source>
-        <translation>Valor</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Lightness</source>
-        <translation>Luminosidade</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Luminance</source>
-        <translation>Luminância</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Shades</source>
-        <translation>Sombras</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Move Up</source>
-        <translation>Mover para cima</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Move Down</source>
-        <translation>Mover para baixo</translation>
-    </message>
-    <message>
-        <location line="+122"/>
-        <location line="+4"/>
-        <source>Range: </source>
-        <translation>Intervalo: </translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <location line="+12"/>
-        <source>Saturation range: </source>
-        <translation>Intervalo de Saturação: </translation>
-    </message>
-    <message>
-        <location line="-12"/>
-        <location line="+12"/>
-        <source>Chroma range: </source>
-        <translation>Intervalo de croma: </translation>
-    </message>
-    <message>
-        <location line="-8"/>
-        <location line="+12"/>
-        <source>Value range: </source>
-        <translation>Intervalo de valor: </translation>
-    </message>
-    <message>
-        <location line="-12"/>
-        <location line="+12"/>
-        <source>Lightness range: </source>
-        <translation>Intervalo de Luminosidade: </translation>
-    </message>
-    <message>
-        <location line="-11"/>
-        <location line="+12"/>
-        <source>Luminance range: </source>
-        <translation>Intervalo de Luminância: </translation>
-    </message>
-    <message>
-        <location line="-8"/>
+        <location line="+218"/>
         <source>Hue range: </source>
         <translation>Intervalo de matiz: </translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Hue offset: </source>
-        <translation>Deslocamento de matiz: </translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Saturation offset: </source>
-        <translation>Deslocamento de Saturação: </translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Chroma offset: </source>
-        <translation>Deslocamento de Croma: </translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Value offset: </source>
-        <translation>Deslocamneto de valor: </translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Lightness offset: </source>
-        <translation>Deslocamento de Luminosidade: </translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Luminance offset: </source>
-        <translation>Deslocamento de Luminância: </translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>%</source>
-        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -8842,7 +8931,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+346"/>
+        <location line="+349"/>
         <source>Checking…</source>
         <translation>Verificando…</translation>
     </message>
@@ -8939,7 +9028,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::TouchTestDialog</name>
     <message>
-        <location filename="../dialogs/touchtestdialog.cpp" line="+214"/>
+        <location filename="../dialogs/touchtestdialog.cpp" line="+248"/>
         <source>Enable touch</source>
         <translation>Ativar toque</translation>
     </message>
@@ -8962,7 +9051,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::TouchTestView</name>
     <message>
-        <location line="-236"/>
+        <location line="-265"/>
         <source>Touch here.</source>
         <translation>Toque aqui.</translation>
     </message>
@@ -9079,12 +9168,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Salvar automaticamente:</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+2"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
         <translation>O salvamento automático pode ser ativado para este arquivo em Arquivo ▸ Salvar automaticamente.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+13"/>
         <source>Use system file picker dialogs</source>
         <translation>Usar interfaces de arquivo do sistema</translation>
     </message>
@@ -9161,13 +9250,13 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <name>dialogs::settingsdialog::General</name>
     <message>
         <location filename="../dialogs/settingsdialog/general.cpp" line="+52"/>
-        <location line="+145"/>
+        <location line="+157"/>
         <location line="+15"/>
         <source>System</source>
         <translation>Sistema</translation>
     </message>
     <message>
-        <location line="-149"/>
+        <location line="-161"/>
         <source>Language:</source>
         <translation>Idioma (Language):</translation>
     </message>
@@ -9228,7 +9317,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Renderizador atual: %1. Mudanças só terão efeito após reiniciar o Drawpile.</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+15"/>
+        <source>Improve zoom quality (hardware renderer only)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
         <source>Keep %1 canvas snapshots</source>
         <translation>Manter %1 backup da tela de pintura</translation>
     </message>
@@ -9243,7 +9337,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Fazer um backup a cada %1 segundo(s)</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+39"/>
         <source>Blue Apatite</source>
         <translation>Azul-Apatita</translation>
     </message>
@@ -9283,7 +9377,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>%1 níveis do histórico offline de desfazer por padrão</translation>
     </message>
     <message>
-        <location line="-90"/>
+        <location line="-102"/>
         <source>Interpolate when view is zoomed or rotated</source>
         <translation>Interpolar quando a visualização é ampliada ou girada</translation>
     </message>
@@ -9303,17 +9397,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Prevenir tremulação em certos níveis de zoom e rotação</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+15"/>
         <source>Enabling these options may impact performance on some systems.</source>
         <translation>Ativar essas opções pode afetar a performance em alguns sistemas.</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+26"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
         <translation>Backups da tela de pintura podem ser restaurados do menu Sessão ▸ Reiniciar.</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+23"/>
         <source>Style:</source>
         <translation>Estilo:</translation>
     </message>
@@ -10006,7 +10100,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::settingsdialog::Tablet</name>
     <message>
-        <location filename="../dialogs/settingsdialog/tablet.cpp" line="+31"/>
+        <location filename="../dialogs/settingsdialog/tablet.cpp" line="+34"/>
         <source>Tablet Tester</source>
         <translation>Testador de Tablet</translation>
     </message>
@@ -10043,7 +10137,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     </message>
     <message>
         <location line="+21"/>
-        <location filename="../mainwindow.cpp" line="-610"/>
+        <location filename="../mainwindow.cpp" line="-689"/>
         <source>Windows Ink</source>
         <translation>Windows Ink</translation>
     </message>
@@ -10099,7 +10193,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Pressão da caneta:</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+8"/>
         <source>Global smoothing: </source>
         <translation>Suavização global: </translation>
     </message>
@@ -10235,6 +10329,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     </message>
     <message>
         <location line="+14"/>
+        <location filename="../toolwidgets/colorpickersettings.cpp" line="+122"/>
         <source>Show sampling ring</source>
         <translation>Mostrar anel de amostragem</translation>
     </message>
@@ -10311,12 +10406,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::settingsdialog::Touch</name>
     <message>
-        <location filename="../dialogs/settingsdialog/touch.cpp" line="+26"/>
+        <location filename="../dialogs/settingsdialog/touch.cpp" line="+27"/>
         <source>Touch Tester</source>
         <translation>Teste de Toque</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+30"/>
+        <source>Enable pressure for touch drawing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Required for certain screen tablets, probably doesn&apos;t work for finger drawing!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Touch mode:</source>
         <translation>Modo de toque:</translation>
     </message>
@@ -10331,7 +10436,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Gestos</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+16"/>
         <location line="+41"/>
         <location line="+20"/>
         <location line="+13"/>
@@ -10468,7 +10573,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::settingsdialog::UserInterface</name>
     <message>
-        <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+231"/>
+        <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+235"/>
         <source>Override system font size</source>
         <translation>Substituir tamanho de fonte do sistema</translation>
     </message>
@@ -10483,7 +10588,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>pt</translation>
     </message>
     <message>
-        <location line="-195"/>
+        <location line="-199"/>
         <source>Interface mode:</source>
         <translation>Modo da Interface:</translation>
     </message>
@@ -10499,12 +10604,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     </message>
     <message>
         <location line="+14"/>
-        <location line="+188"/>
+        <location line="+192"/>
         <source>Disabled</source>
         <translation>Desativado</translation>
     </message>
     <message>
-        <location line="-187"/>
+        <location line="-191"/>
         <source>On left-click drag</source>
         <translation>Ao arrastar com o botão esquerdo</translation>
     </message>
@@ -10544,12 +10649,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Cor de fundo atrás da tela de pintura</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+92"/>
         <source>Override system scale factor</source>
         <translation>Substituir fator de escala do sistema</translation>
     </message>
     <message>
-        <location line="-146"/>
+        <location line="-150"/>
         <source>Small screen</source>
         <translation>Tela pequena</translation>
     </message>
@@ -10580,6 +10685,11 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     </message>
     <message>
         <location line="+2"/>
+        <source>View mode notices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Show scroll bars on canvas</source>
         <translation>Mostrar barra de rolagem na tela de pintura</translation>
     </message>
@@ -12160,7 +12270,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>docks::DockBase</name>
     <message>
-        <location filename="../docks/dockbase.cpp" line="+73"/>
+        <location filename="../docks/dockbase.cpp" line="+89"/>
         <source>Drag here to arrange</source>
         <translation>Arraste aqui para organizar</translation>
     </message>
@@ -12173,7 +12283,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>docks::LayerAclMenu</name>
     <message>
-        <location filename="../docks/layeraclmenu.cpp" line="+33"/>
+        <location filename="../docks/layeraclmenu.cpp" line="+29"/>
         <source>Locks:</source>
         <translation>Travas:</translation>
     </message>
@@ -12211,17 +12321,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="-439"/>
+        <location filename="../docks/layerlistdock.cpp" line="-463"/>
         <source>Layers</source>
         <translation>Camadas</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+75"/>
         <source>Locks and permissions</source>
         <translation>Travas e Permissões</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-62"/>
         <source>Clip to layer below</source>
         <translation>Montar com camada abaixo</translation>
     </message>
@@ -12231,28 +12341,28 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Obter Alfa</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+52"/>
         <source>Toggle sketch mode (only visible to you)</source>
         <translation>Ativar modo de esboço (somente para você)</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <location line="+1946"/>
+        <location line="+19"/>
+        <location line="+1950"/>
         <source>Opacity: </source>
         <translation>Opacidade: </translation>
     </message>
     <message>
-        <location line="-1945"/>
+        <location line="-1949"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-11"/>
         <source>Change sketch tint</source>
         <translation>Mudar tinta do esboço</translation>
     </message>
     <message>
-        <location line="+331"/>
+        <location line="+351"/>
         <source>Duplicate Layer Group</source>
         <translation>Duplicar Grupo de Camadas</translation>
     </message>
@@ -12302,7 +12412,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Desmarcar Camada</translation>
     </message>
     <message>
-        <location line="+1067"/>
+        <location line="+1072"/>
         <source>Layer Limit Reached</source>
         <translation>O Número de Camadas é o Limite</translation>
     </message>
@@ -12334,8 +12444,8 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Esboçar: </translation>
     </message>
     <message>
-        <location line="+266"/>
-        <location filename="../mainwindow.cpp" line="-4715"/>
+        <location line="+267"/>
+        <location filename="../mainwindow.cpp" line="-4877"/>
         <source>Layer</source>
         <translation>Camada</translation>
     </message>
@@ -12345,7 +12455,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Grupo</translation>
     </message>
     <message>
-        <location line="-932"/>
+        <location line="-933"/>
         <source>Delete Layer?</source>
         <translation>Apagar Camada?</translation>
     </message>
@@ -12503,7 +12613,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Linha do Tempo</translation>
     </message>
     <message>
-        <location line="+98"/>
+        <location line="+101"/>
         <source>Play</source>
         <translation type="unfinished">Reproduzir</translation>
     </message>
@@ -12554,7 +12664,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+6175"/>
+        <location filename="../mainwindow.cpp" line="+6426"/>
         <location filename="../widgets/macmenu.cpp" line="+20"/>
         <source>Donate</source>
         <translation>Doar</translation>
@@ -12566,18 +12676,10 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Abrir a página de doações do Drawpile no seu navegador</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+800"/>
+        <location filename="../mainwindow.cpp" line="+988"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation>[♥ Doe para o Drawpile] para ajudar a manter o desenvolvimento e os servidores funcionando.</translation>
-    </message>
-</context>
-<context>
-    <name>drawingboard::CanvasScene</name>
-    <message>
-        <location filename="../scene/canvasscene.cpp" line="+334"/>
-        <source>Restoring canvas…</source>
-        <translation>Restaurando a tela de pintura…</translation>
     </message>
 </context>
 <context>
@@ -12744,24 +12846,28 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+123"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+42"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="-224"/>
         <source>Time-Based Stabilizer</source>
         <translation>Estabilizador à Base de Tempo</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+2"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+3"/>
         <source>Average Smoothing</source>
         <translation>Suavização Média</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+2"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+3"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
         <translation>Desacelera a linha e estabiliza-a com o tempo. Produz resultados muito suaves, mas pode parecer que o pincel é muito lento.</translation>
     </message>
     <message>
         <location line="+4"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+5"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+7"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
         <translation>Simplesmente calcula a média das entradas para um resultado mais suave. É mais rápido, mas não tão suave quanto o estabilizador baseado no tempo.</translation>
     </message>
@@ -12807,7 +12913,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>/%1 px</translation>
     </message>
     <message>
-        <location line="+647"/>
+        <location line="+654"/>
         <source>Smudging: </source>
         <translation>Mistura de cores: </translation>
     </message>
@@ -12823,7 +12929,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>/%1</translation>
     </message>
     <message>
-        <location line="-1487"/>
+        <location line="-1494"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
         <translation>Você não tem permissão para usar os pincéis MyPaint.</translation>
     </message>
@@ -12831,7 +12937,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>tools::ColorPickerSettings</name>
     <message>
-        <location filename="../toolwidgets/colorpickersettings.cpp" line="+90"/>
+        <location filename="../toolwidgets/colorpickersettings.cpp" line="-23"/>
         <source>Pick from screen</source>
         <translation>Pegar da tela</translation>
     </message>
@@ -12844,6 +12950,23 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+11"/>
         <source>Pick from current layer only</source>
         <translation>Pegar cores somente da camada atual</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/colordialog.cpp" line="+20"/>
+        <source>Screen Color Picking Unsupported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Picking colors from the screen is not supported under Wayland.</source>
+        <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>You may be able to switch to Xorg instead when logging into your Linux user account.</source>
+        <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names. Note that &quot;Linux user account&quot; is an account on the computer, NOT a Drawpile account.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13043,6 +13166,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <name>tools::LassoFillSettings</name>
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-16"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="-23"/>
         <source>Stabilization mode</source>
         <translation>Modo de estabilização</translation>
     </message>
@@ -13085,7 +13209,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>tools::SelectionSettings</name>
     <message>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="-250"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="-90"/>
         <source>Replace selection</source>
         <translation>Substituir seleção</translation>
     </message>
@@ -13105,7 +13229,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Remover da seleção</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+98"/>
         <source>Anti-aliasing</source>
         <translation>Anti-serrilhamento</translation>
     </message>
@@ -13309,17 +13433,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../view/canvasscene.cpp" line="+604"/>
+        <location filename="../scene/hudhandler.cpp" line="+235"/>
         <source>Restoring canvas…</source>
         <translation>Restaurando a tela de pintura…</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+293"/>
         <source>Compressing canvas…</source>
         <translation>Compactando tela de pintura…</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Uploading canvas %1%</source>
         <translation>Enviando tela de pintura %1%</translation>
     </message>
@@ -13327,7 +13451,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>view::CanvasView</name>
     <message>
-        <location filename="../view/canvasview.cpp" line="+128"/>
+        <location filename="../view/canvasview.cpp" line="+129"/>
         <source>Save As…</source>
         <translation>Salvar Como…</translation>
     </message>
@@ -13335,12 +13459,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>view::Lock</name>
     <message>
-        <location filename="../view/lock.cpp" line="+29"/>
-        <source>Out of space, use Session &gt; Reset to fix this</source>
-        <translation>Sem espaço em disco, vá em Sessão &gt; Reiniciar para consertar isso</translation>
-    </message>
-    <message>
-        <location line="+4"/>
+        <location filename="../view/lock.cpp" line="+101"/>
         <source>Reset in progress</source>
         <translation>Reinício em andamento</translation>
     </message>
@@ -13355,7 +13474,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>O usuário está bloqueado</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+8"/>
         <source>You need to set a layer as the fill source</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13390,27 +13509,92 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>A camada está escondida</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+8"/>
         <source>Layer is not visible in this frame</source>
         <translation>A Camada está invisível nesse quadro</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-6"/>
         <source>No layer selected</source>
         <translation>Nenhuma camada selecionada</translation>
     </message>
     <message>
+        <location line="-119"/>
+        <source>Exit layer view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Exit group view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Exit frame view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Unlock canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+2"/>
-        <source>Choose a different layer to fill on</source>
+        <source>Reset canvas…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Select all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
+        <source>Select layer bounds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Disable anti-overflow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Set current layer as fill source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Clear fill source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Show censored layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+47"/>
+        <source>Out of space, you must reset the canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Out of space, operator must reset the canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Choose a different layer to fill on</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Tool is locked</source>
         <translation>A Ferramenta está bloqueada</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="-32"/>
         <source>Tool requires a selection</source>
         <translation>A ferramenta requer uma seleção</translation>
     </message>
@@ -13486,8 +13670,8 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Salvar Como…</translation>
     </message>
     <message>
-        <location line="+377"/>
-        <location filename="../view/canvascontroller.cpp" line="+473"/>
+        <location line="+380"/>
+        <location filename="../view/canvascontroller.cpp" line="+475"/>
         <source>Vertical flip: ON</source>
         <translation>Espelhamento vertical: LIGADO</translation>
     </message>
@@ -13510,8 +13694,8 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Espelhamento horizontal: DESLIGADO</translation>
     </message>
     <message>
-        <location line="+1981"/>
-        <location filename="../view/canvascontroller.cpp" line="+2122"/>
+        <location line="+2021"/>
+        <location filename="../view/canvascontroller.cpp" line="+2162"/>
         <source>Zoom: %1%</source>
         <translation>Zoom: %1%</translation>
     </message>
@@ -13537,7 +13721,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>widgets::ChatBox</name>
     <message>
-        <location filename="../chat/chatbox.cpp" line="+45"/>
+        <location filename="../chat/chatbox.cpp" line="+46"/>
         <source>Invite</source>
         <translation>Convidar</translation>
     </message>
@@ -13560,7 +13744,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../chat/chatwidget.cpp" line="+172"/>
+        <location filename="../chat/chatwidget.cpp" line="+182"/>
         <source>Public</source>
         <translation>Público</translation>
     </message>
@@ -13571,6 +13755,24 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     </message>
     <message>
         <location line="+41"/>
+        <source>As regular window</source>
+        <extracomment>A chat detach option, &quot;detach &gt; as regular window&quot;.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>On top of Drawpile</source>
+        <extracomment>A chat detach option, &quot;detach &gt; on top of Drawpile&quot;.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>On top of everything</source>
+        <extracomment>A chat detach option, &quot;detach &gt; on top of everything&quot;.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Mute notifications</source>
         <translation>Silenciar notificações</translation>
     </message>
@@ -13590,7 +13792,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Chat...</translation>
     </message>
     <message>
-        <location line="+357"/>
+        <location line="+359"/>
         <source>%1 joined the session</source>
         <translation>%1 entrou na sessão</translation>
     </message>
@@ -13672,7 +13874,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>/roll: descrição de rolagem de dado inválida.</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>Available client commands:
 /help - show this message
 /clear - clear chat window
@@ -13699,7 +13901,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Comando desconhecido: %1</translation>
     </message>
     <message>
-        <location line="-783"/>
+        <location line="-797"/>
         <source>Clear</source>
         <translation>Limpar</translation>
     </message>
@@ -13709,12 +13911,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Modo Compacto</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Detach</source>
         <translation>Desanexar</translation>
     </message>
     <message>
-        <location line="-2"/>
+        <location line="-1"/>
         <source>Attach</source>
         <translation>Anexar</translation>
     </message>
@@ -13722,7 +13924,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>widgets::ChatWindow</name>
     <message>
-        <location filename="../chat/chatwindow.cpp" line="+12"/>
+        <location filename="../chat/chatwindow.cpp" line="+13"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
@@ -14046,7 +14248,7 @@ Hexadecimal: %4</translation>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+716"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+745"/>
         <source>Blank key frame (duplicate)</source>
         <translation>Key Frame Vazio (duplicado)</translation>
     </message>
@@ -14096,7 +14298,7 @@ Hexadecimal: %4</translation>
         <translation>Ativar casca de cebola</translation>
     </message>
     <message>
-        <location line="+289"/>
+        <location line="+288"/>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
@@ -14105,8 +14307,8 @@ Adicione uma usando o botão ＋ acima
 ou em Animação ▸ Nova Trilha.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-6976"/>
-        <location filename="../widgets/timelinewidget.cpp" line="+564"/>
+        <location filename="../mainwindow.cpp" line="-7415"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+571"/>
         <source>Track</source>
         <translation>Trilha</translation>
     </message>
@@ -14121,7 +14323,7 @@ ou em Animação ▸ Nova Trilha.</translation>
         <translation>Nome da Trilha</translation>
     </message>
     <message>
-        <location line="+536"/>
+        <location line="+545"/>
         <source>Set Key Frame to %1</source>
         <translation>Definir Key Frame para %1</translation>
     </message>

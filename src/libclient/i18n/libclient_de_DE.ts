@@ -17,7 +17,7 @@
 <context>
     <name>BrowserStartPage</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="+259"/>
+        <location filename="../wasmsupport.cpp" line="+265"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
         <translation>Speicherallokation fehlgeschlagen. Das kann in einigen Browsern bei einem Neuladen der Seite passieren. Schließen Sie diese Seite und Ihren Browser vollständig, dann versuchen Sie es erneut.</translation>
     </message>
@@ -240,7 +240,7 @@
 <context>
     <name>BrushShortcutModel</name>
     <message>
-        <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
+        <location filename="../utils/brushshortcutmodel.cpp" line="+66"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>Konflikt</translation>
@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1129"/>
+        <location filename="../document.cpp" line="+1139"/>
         <source>Unknown format.</source>
         <translation>Unbekanntes Format.</translation>
     </message>
@@ -617,7 +617,19 @@
         <translation>Unbekannter Fehler.</translation>
     </message>
     <message>
-        <location line="+719"/>
+        <location line="+544"/>
+        <source>Layer to selection: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Select layer bounds: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+182"/>
         <source>Error saving image</source>
         <translation>Fehler beim Speichern des Bildes</translation>
     </message>
@@ -1748,34 +1760,34 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
     <name>net::LoginHandler</name>
     <message>
         <location filename="../net/login.cpp" line="+126"/>
-        <location line="+706"/>
+        <location line="+752"/>
         <source>Invalid state</source>
         <translation>Ungültiger Zustand</translation>
     </message>
     <message>
-        <location line="-647"/>
+        <location line="-687"/>
         <location line="+8"/>
         <location line="+149"/>
         <location line="+118"/>
         <location line="+33"/>
-        <location line="+375"/>
-        <location line="+194"/>
+        <location line="+415"/>
+        <location line="+202"/>
         <location line="+83"/>
         <source>Incompatible server</source>
         <translation>Inkompatibler Server</translation>
     </message>
     <message>
-        <location line="-945"/>
+        <location line="-993"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Server unterstützt eine andere Drawpile Version!</translation>
     </message>
     <message>
-        <location line="+1206"/>
+        <location line="+1254"/>
         <source>Username already taken!</source>
         <translation>Benutzername bereits vergeben!</translation>
     </message>
     <message>
-        <location line="-843"/>
+        <location line="-860"/>
         <source>This server does not allow guest logins</source>
         <translation>Dieser Server erlaubt keine Gastzugänge</translation>
     </message>
@@ -1791,7 +1803,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Fehler von Authentifizierungsserver: %1</translation>
     </message>
     <message>
-        <location line="+144"/>
+        <location line="+153"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
         <translation>Serverkonfiguration fehlerhaft: ungültige URL für externe Authentifizierung</translation>
     </message>
@@ -1801,7 +1813,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>URL-Schema für externe Authentifizierung nicht unterstützt</translation>
     </message>
     <message>
-        <location line="+200"/>
+        <location line="+208"/>
         <source>New version</source>
         <translation>Neue Version</translation>
     </message>
@@ -1877,7 +1889,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Abgebrochen</translation>
     </message>
     <message>
-        <location line="-1121"/>
+        <location line="-1169"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
         <translation>Wurde zu einem Server weitergeleitet, der keine Weiterleitungen akzeptiert: %1</translation>
     </message>
@@ -1927,7 +1939,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Zu viele Weiterleitungen</translation>
     </message>
     <message>
-        <location line="+187"/>
+        <location line="+218"/>
         <source>Group membership needed</source>
         <translation>Gruppenzugehörigkeit benötigt</translation>
     </message>
@@ -1937,7 +1949,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Unerwartete Antwort von externer Authentifizierung: %1</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+99"/>
         <source>Invalid ident intent response.</source>
         <translation>Ungültige Antwort für die Identifikationsabsicht.</translation>
     </message>
@@ -1947,12 +1959,7 @@ Wählen Sie stattdessen eine normale Ebene.</translation>
         <translation>Der Server vermeldet zwei verschiedene Ext-Auth-URLs</translation>
     </message>
     <message>
-        <location line="+127"/>
-        <source>Got multiple sessions when only one was expected</source>
-        <translation>Mehrere Sitzungen erhalten, aber nur eine war erwartet</translation>
-    </message>
-    <message>
-        <location line="+41"/>
+        <location line="+176"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation>Laufende Sitzung für eine andere Drawpile-Version (%1)!</translation>
     </message>

@@ -17,7 +17,7 @@
 <context>
     <name>BrowserStartPage</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="+259"/>
+        <location filename="../wasmsupport.cpp" line="+265"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
         <translation>Allocazione di memoria non riuscita. Questo può accadere in alcuni browser se si aggiorna la pagina. Chiudere completamente questa pagina e il browser, quindi riprovare.</translation>
     </message>
@@ -240,7 +240,7 @@
 <context>
     <name>BrushShortcutModel</name>
     <message>
-        <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
+        <location filename="../utils/brushshortcutmodel.cpp" line="+66"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>Conflitto</translation>
@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1129"/>
+        <location filename="../document.cpp" line="+1139"/>
         <source>Unknown format.</source>
         <translation>Formato sconosciuto.</translation>
     </message>
@@ -617,7 +617,19 @@
         <translation>Errore sconosciuto.</translation>
     </message>
     <message>
-        <location line="+719"/>
+        <location line="+544"/>
+        <source>Layer to selection: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Select layer bounds: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+182"/>
         <source>Error saving image</source>
         <translation>Errore durante il salvataggio dell&apos;immagine</translation>
     </message>
@@ -1748,24 +1760,24 @@ Seleziona invece un livello normale.</translation>
     <name>net::LoginHandler</name>
     <message>
         <location filename="../net/login.cpp" line="+126"/>
-        <location line="+706"/>
+        <location line="+752"/>
         <source>Invalid state</source>
         <translation>Stato non valido</translation>
     </message>
     <message>
-        <location line="-647"/>
+        <location line="-687"/>
         <location line="+8"/>
         <location line="+149"/>
         <location line="+118"/>
         <location line="+33"/>
-        <location line="+375"/>
-        <location line="+194"/>
+        <location line="+415"/>
+        <location line="+202"/>
         <location line="+83"/>
         <source>Incompatible server</source>
         <translation>Server incompatibile</translation>
     </message>
     <message>
-        <location line="-945"/>
+        <location line="-993"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Il server è per una diversa versione di Drawpile!</translation>
     </message>
@@ -1815,7 +1827,7 @@ Seleziona invece un livello normale.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+108"/>
         <source>This server does not allow guest logins</source>
         <translation>Questo server non consente accessi guest</translation>
     </message>
@@ -1841,7 +1853,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Risposta ext-auth imprevista: %1</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+99"/>
         <source>Invalid ident intent response.</source>
         <translation>Risposta intenzionale non valida.</translation>
     </message>
@@ -1861,12 +1873,7 @@ Seleziona invece un livello normale.</translation>
         <translation>Il Server ha segnalato due diversi URL ext-auth</translation>
     </message>
     <message>
-        <location line="+127"/>
-        <source>Got multiple sessions when only one was expected</source>
-        <translation>Ho più sessioni quando solo una era prevista</translation>
-    </message>
-    <message>
-        <location line="+64"/>
+        <location line="+199"/>
         <source>New version</source>
         <translation>Nuova versione</translation>
     </message>
@@ -1903,12 +1910,12 @@ Seleziona invece un livello normale.</translation>
         <translation>Certificato SSL non valido per l&apos;host %1</translation>
     </message>
     <message>
-        <location line="-1001"/>
+        <location line="-1049"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation>Modalità sicura non abilitata su un host con certificato bloccato!</translation>
     </message>
     <message>
-        <location line="+679"/>
+        <location line="+727"/>
         <source>Unknown version %1</source>
         <translation>Versione sconosciuta %1</translation>
     </message>

@@ -17,7 +17,7 @@
 <context>
     <name>BrowserStartPage</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="+259"/>
+        <location filename="../wasmsupport.cpp" line="+265"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
         <translation type="unfinished">Bellek tahsisi başarısız oldu. Bu, bazı tarayıcılarda yenilemeniz durumunda gerçekleşebilir. Bu sayfayı ve tarayıcınızı tamamen kapatın, ardından tekrar deneyin.</translation>
     </message>
@@ -240,7 +240,7 @@
 <context>
     <name>BrushShortcutModel</name>
     <message>
-        <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
+        <location filename="../utils/brushshortcutmodel.cpp" line="+66"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation type="unfinished">Çakışma</translation>
@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1129"/>
+        <location filename="../document.cpp" line="+1139"/>
         <source>Unknown format.</source>
         <translation>Bilinmeyen format.</translation>
     </message>
@@ -617,7 +617,19 @@
         <translation>Bilinmeyen hata.</translation>
     </message>
     <message>
-        <location line="+719"/>
+        <location line="+544"/>
+        <source>Layer to selection: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Select layer bounds: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+182"/>
         <source>Error saving image</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1744,24 +1756,24 @@ Select a regular layer instead.</source>
     <name>net::LoginHandler</name>
     <message>
         <location filename="../net/login.cpp" line="+126"/>
-        <location line="+706"/>
+        <location line="+752"/>
         <source>Invalid state</source>
         <translation>Geçersiz durum</translation>
     </message>
     <message>
-        <location line="-647"/>
+        <location line="-687"/>
         <location line="+8"/>
         <location line="+149"/>
         <location line="+118"/>
         <location line="+33"/>
-        <location line="+375"/>
-        <location line="+194"/>
+        <location line="+415"/>
+        <location line="+202"/>
         <location line="+83"/>
         <source>Incompatible server</source>
         <translation>Uyumsuz sunucu</translation>
     </message>
     <message>
-        <location line="-945"/>
+        <location line="-993"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Bu sunucu başka bir Drawpile versiyonu için!</translation>
     </message>
@@ -1811,7 +1823,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+108"/>
         <source>This server does not allow guest logins</source>
         <translation>Bu sunucu konuk olarak giriş yapanları kabul etmiyor</translation>
     </message>
@@ -1837,7 +1849,7 @@ Select a regular layer instead.</source>
         <translation>Beklenmeyen dış-yetkilendirme cevabı: %1</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+99"/>
         <source>Invalid ident intent response.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1857,12 +1869,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+127"/>
-        <source>Got multiple sessions when only one was expected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+64"/>
+        <location line="+199"/>
         <source>New version</source>
         <translation>Yeni versiyon</translation>
     </message>
@@ -1899,12 +1906,12 @@ Select a regular layer instead.</source>
         <translation>Host için geçersiz SSL sertifikası %1</translation>
     </message>
     <message>
-        <location line="-1001"/>
+        <location line="-1049"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+679"/>
+        <location line="+727"/>
         <source>Unknown version %1</source>
         <translation type="unfinished"></translation>
     </message>

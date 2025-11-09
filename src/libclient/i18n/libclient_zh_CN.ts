@@ -17,7 +17,7 @@
 <context>
     <name>BrowserStartPage</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="+259"/>
+        <location filename="../wasmsupport.cpp" line="+265"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
         <translation>内存分配失败. 某些浏览器在刷新时会出现这种情况. 请完全关闭此页面和浏览器, 然后再试一次.</translation>
     </message>
@@ -240,7 +240,7 @@
 <context>
     <name>BrushShortcutModel</name>
     <message>
-        <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
+        <location filename="../utils/brushshortcutmodel.cpp" line="+66"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>冲突</translation>
@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1129"/>
+        <location filename="../document.cpp" line="+1139"/>
         <source>Unknown format.</source>
         <translation>未知格式.</translation>
     </message>
@@ -617,7 +617,19 @@
         <translation>未知错误.</translation>
     </message>
     <message>
-        <location line="+719"/>
+        <location line="+544"/>
+        <source>Layer to selection: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Select layer bounds: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+182"/>
         <source>Error saving image</source>
         <translation>保存图片时出现错误</translation>
     </message>
@@ -1745,34 +1757,34 @@ Select a regular layer instead.</source>
     <name>net::LoginHandler</name>
     <message>
         <location filename="../net/login.cpp" line="+126"/>
-        <location line="+706"/>
+        <location line="+752"/>
         <source>Invalid state</source>
         <translation>无效状态</translation>
     </message>
     <message>
-        <location line="-647"/>
+        <location line="-687"/>
         <location line="+8"/>
         <location line="+149"/>
         <location line="+118"/>
         <location line="+33"/>
-        <location line="+375"/>
-        <location line="+194"/>
+        <location line="+415"/>
+        <location line="+202"/>
         <location line="+83"/>
         <source>Incompatible server</source>
         <translation>服务器不兼容</translation>
     </message>
     <message>
-        <location line="-945"/>
+        <location line="-993"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>服务器不支持当前的Drawpile版本！</translation>
     </message>
     <message>
-        <location line="+1206"/>
+        <location line="+1254"/>
         <source>Username already taken!</source>
         <translation>用户名已被使用!</translation>
     </message>
     <message>
-        <location line="-843"/>
+        <location line="-860"/>
         <source>This server does not allow guest logins</source>
         <translation>此服务器不支持非注册用户登录</translation>
     </message>
@@ -1788,7 +1800,7 @@ Select a regular layer instead.</source>
         <translation>认证服务器错误: %1</translation>
     </message>
     <message>
-        <location line="+144"/>
+        <location line="+153"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
         <translation>服务器配置错误：ext-auth URL无效</translation>
     </message>
@@ -1798,7 +1810,7 @@ Select a regular layer instead.</source>
         <translation>不支持ext-auth的URL方案</translation>
     </message>
     <message>
-        <location line="+200"/>
+        <location line="+208"/>
         <source>New version</source>
         <translation>新版本</translation>
     </message>
@@ -1874,7 +1886,7 @@ Select a regular layer instead.</source>
         <translation>已取消</translation>
     </message>
     <message>
-        <location line="-1121"/>
+        <location line="-1169"/>
         <source>Got redirected to a server that doesn&apos;t accept redirects: %1</source>
         <translation>已重新定向到一个不接受重新定向的服务器: %1</translation>
     </message>
@@ -1924,7 +1936,7 @@ Select a regular layer instead.</source>
         <translation>太多重新定向</translation>
     </message>
     <message>
-        <location line="+187"/>
+        <location line="+218"/>
         <source>Group membership needed</source>
         <translation>需要群组成员资格</translation>
     </message>
@@ -1934,7 +1946,7 @@ Select a regular layer instead.</source>
         <translation>意外的ext-auth响应: %1</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+99"/>
         <source>Invalid ident intent response.</source>
         <translation>无效标识意图响应.</translation>
     </message>
@@ -1944,12 +1956,7 @@ Select a regular layer instead.</source>
         <translation>服务器报告了两个不同的外部认证 URLs</translation>
     </message>
     <message>
-        <location line="+127"/>
-        <source>Got multiple sessions when only one was expected</source>
-        <translation>在预期只有一个房间的情况下出现了多个房间</translation>
-    </message>
-    <message>
-        <location line="+41"/>
+        <location line="+176"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation>不同Drawpile版本（%1）的房间正在进行中!</translation>
     </message>

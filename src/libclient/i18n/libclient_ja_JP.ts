@@ -17,7 +17,7 @@
 <context>
     <name>BrowserStartPage</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="+259"/>
+        <location filename="../wasmsupport.cpp" line="+265"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
         <translation>メモリの割り当てに失敗しました。ブラウザによっては、更新時にこのような現象が発生することがあります。このページとブラウザを完全に閉じてから、もう一度お試しください。</translation>
     </message>
@@ -240,7 +240,7 @@
 <context>
     <name>BrushShortcutModel</name>
     <message>
-        <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
+        <location filename="../utils/brushshortcutmodel.cpp" line="+66"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>競合</translation>
@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1129"/>
+        <location filename="../document.cpp" line="+1139"/>
         <source>Unknown format.</source>
         <translation>不明な形式。</translation>
     </message>
@@ -617,7 +617,19 @@
         <translation>不明なエラー。</translation>
     </message>
     <message>
-        <location line="+719"/>
+        <location line="+544"/>
+        <source>Layer to selection: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Select layer bounds: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+182"/>
         <source>Error saving image</source>
         <translation>画像保存時のエラー</translation>
     </message>
@@ -1745,24 +1757,24 @@ Select a regular layer instead.</source>
     <name>net::LoginHandler</name>
     <message>
         <location filename="../net/login.cpp" line="+126"/>
-        <location line="+706"/>
+        <location line="+752"/>
         <source>Invalid state</source>
         <translation>無効な状態です</translation>
     </message>
     <message>
-        <location line="-647"/>
+        <location line="-687"/>
         <location line="+8"/>
         <location line="+149"/>
         <location line="+118"/>
         <location line="+33"/>
-        <location line="+375"/>
-        <location line="+194"/>
+        <location line="+415"/>
+        <location line="+202"/>
         <location line="+83"/>
         <source>Incompatible server</source>
         <translation>互換性のないサーバー</translation>
     </message>
     <message>
-        <location line="-945"/>
+        <location line="-993"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>サーバーはあなたの Drawpile と異なるバージョンです！</translation>
     </message>
@@ -1812,7 +1824,7 @@ Select a regular layer instead.</source>
         <translation>多すぎるリダイレクト</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+108"/>
         <source>This server does not allow guest logins</source>
         <translation>このサーバーはゲストログインを許可していません</translation>
     </message>
@@ -1838,7 +1850,7 @@ Select a regular layer instead.</source>
         <translation>予期しない外部認証応答: %1</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+99"/>
         <source>Invalid ident intent response.</source>
         <translation>無効な識別子インテントの応答です。</translation>
     </message>
@@ -1858,12 +1870,7 @@ Select a regular layer instead.</source>
         <translation>サーバーは２つの異なるext-auth URLを報告</translation>
     </message>
     <message>
-        <location line="+127"/>
-        <source>Got multiple sessions when only one was expected</source>
-        <translation>１つではなく複数のセッションが発生しました</translation>
-    </message>
-    <message>
-        <location line="+64"/>
+        <location line="+199"/>
         <source>New version</source>
         <translation>新しいバージョン</translation>
     </message>
@@ -1900,12 +1907,12 @@ Select a regular layer instead.</source>
         <translation>ホスト %1 の SSL 証明書が無効です</translation>
     </message>
     <message>
-        <location line="-1001"/>
+        <location line="-1049"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation>固定された証明書を持つホストではセキュア モードが有効になっていません！</translation>
     </message>
     <message>
-        <location line="+679"/>
+        <location line="+727"/>
         <source>Unknown version %1</source>
         <translation>不明なバージョン %1</translation>
     </message>

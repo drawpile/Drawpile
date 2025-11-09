@@ -17,7 +17,7 @@
 <context>
     <name>BrowserStartPage</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="+259"/>
+        <location filename="../wasmsupport.cpp" line="+265"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
         <translation type="unfinished">Не удалось распределить память. Это может произойти в некоторых браузерах при обновлении. Закройте эту страницу и браузер полностью, а затем повторите попытку.</translation>
     </message>
@@ -240,7 +240,7 @@
 <context>
     <name>BrushShortcutModel</name>
     <message>
-        <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
+        <location filename="../utils/brushshortcutmodel.cpp" line="+66"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>Конфликт</translation>
@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1129"/>
+        <location filename="../document.cpp" line="+1139"/>
         <source>Unknown format.</source>
         <translation>Неизвестный формат.</translation>
     </message>
@@ -617,7 +617,19 @@
         <translation>Неизвестная ошибка.</translation>
     </message>
     <message>
-        <location line="+719"/>
+        <location line="+544"/>
+        <source>Layer to selection: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Select layer bounds: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+182"/>
         <source>Error saving image</source>
         <translation>Не удалось сохранить</translation>
     </message>
@@ -1751,24 +1763,24 @@ Select a regular layer instead.</source>
     <name>net::LoginHandler</name>
     <message>
         <location filename="../net/login.cpp" line="+126"/>
-        <location line="+706"/>
+        <location line="+752"/>
         <source>Invalid state</source>
         <translation>Недопустимое состояние</translation>
     </message>
     <message>
-        <location line="-647"/>
+        <location line="-687"/>
         <location line="+8"/>
         <location line="+149"/>
         <location line="+118"/>
         <location line="+33"/>
-        <location line="+375"/>
-        <location line="+194"/>
+        <location line="+415"/>
+        <location line="+202"/>
         <location line="+83"/>
         <source>Incompatible server</source>
         <translation>Несовместимый сервер</translation>
     </message>
     <message>
-        <location line="-945"/>
+        <location line="-993"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Сервер для другой версии Drawpile!</translation>
     </message>
@@ -1818,7 +1830,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+108"/>
         <source>This server does not allow guest logins</source>
         <translation>На этом сервере не разрешён гостевой вход</translation>
     </message>
@@ -1834,7 +1846,7 @@ Select a regular layer instead.</source>
         <translation>Ошибка сервера проверки подлинности: %1</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+127"/>
         <source>Invalid ident intent response.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1854,12 +1866,7 @@ Select a regular layer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+127"/>
-        <source>Got multiple sessions when only one was expected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+64"/>
+        <location line="+199"/>
         <source>New version</source>
         <translation>Новая версия</translation>
     </message>
@@ -1920,12 +1927,12 @@ Select a regular layer instead.</source>
         <translation>Сервер полон!</translation>
     </message>
     <message>
-        <location line="-1084"/>
+        <location line="-1132"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+679"/>
+        <location line="+727"/>
         <source>Unknown version %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1956,7 +1963,7 @@ Select a regular layer instead.</source>
         <translation>Недействительный SSL сертификат для хоста %1</translation>
     </message>
     <message>
-        <location line="-653"/>
+        <location line="-670"/>
         <source>Group membership needed</source>
         <translation>Необходимо членство в группе</translation>
     </message>
@@ -1966,7 +1973,7 @@ Select a regular layer instead.</source>
         <translation>Неожиданный ответ внешнего сервера проверки подлинности: %1</translation>
     </message>
     <message>
-        <location line="+301"/>
+        <location line="+318"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation type="unfinished"></translation>
     </message>

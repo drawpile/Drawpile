@@ -17,7 +17,7 @@
 <context>
     <name>BrowserStartPage</name>
     <message>
-        <location filename="../wasmsupport.cpp" line="+259"/>
+        <location filename="../wasmsupport.cpp" line="+265"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
         <translation>A alocação de memória falhou. Isso pode acontecer em alguns navegadores se você reiniciar. Feche esta página e seu navegador inteiro, e tente novamente.</translation>
     </message>
@@ -240,7 +240,7 @@
 <context>
     <name>BrushShortcutModel</name>
     <message>
-        <location filename="../utils/brushshortcutmodel.cpp" line="+65"/>
+        <location filename="../utils/brushshortcutmodel.cpp" line="+66"/>
         <source>Conflict</source>
         <extracomment>Tooltip for a keyboard shortcut conflict.</extracomment>
         <translation>Conflito</translation>
@@ -592,7 +592,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+1129"/>
+        <location filename="../document.cpp" line="+1139"/>
         <source>Unknown format.</source>
         <translation>Formato desconhecido.</translation>
     </message>
@@ -617,7 +617,19 @@
         <translation>Erro desconhecido.</translation>
     </message>
     <message>
-        <location line="+719"/>
+        <location line="+544"/>
+        <source>Layer to selection: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Select layer bounds: current layer is empty.</source>
+        <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+182"/>
         <source>Error saving image</source>
         <translation>Erro ao salvar a imagem</translation>
     </message>
@@ -1748,24 +1760,24 @@ Selecione uma camada normal em vez disso.</translation>
     <name>net::LoginHandler</name>
     <message>
         <location filename="../net/login.cpp" line="+126"/>
-        <location line="+706"/>
+        <location line="+752"/>
         <source>Invalid state</source>
         <translation>Estado inválido</translation>
     </message>
     <message>
-        <location line="-647"/>
+        <location line="-687"/>
         <location line="+8"/>
         <location line="+149"/>
         <location line="+118"/>
         <location line="+33"/>
-        <location line="+375"/>
-        <location line="+194"/>
+        <location line="+415"/>
+        <location line="+202"/>
         <location line="+83"/>
         <source>Incompatible server</source>
         <translation>Servidor incompatível</translation>
     </message>
     <message>
-        <location line="-945"/>
+        <location line="-993"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Este servidor é para uma versão diferente de Drawpile!</translation>
     </message>
@@ -1815,7 +1827,7 @@ Selecione uma camada normal em vez disso.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+108"/>
         <source>This server does not allow guest logins</source>
         <translation>Esse servidor não aceita logins de visitantes</translation>
     </message>
@@ -1841,7 +1853,7 @@ Selecione uma camada normal em vez disso.</translation>
         <translation>Resposta do servidor ext-auth não esperada: %1</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+99"/>
         <source>Invalid ident intent response.</source>
         <translation>Identação de resposta de identificação inválida.</translation>
     </message>
@@ -1861,12 +1873,7 @@ Selecione uma camada normal em vez disso.</translation>
         <translation>O servidor retornou duas URLs diferentes para autenticação externa</translation>
     </message>
     <message>
-        <location line="+127"/>
-        <source>Got multiple sessions when only one was expected</source>
-        <translation>Várias sessões foram obtidas quando uma só era esperada</translation>
-    </message>
-    <message>
-        <location line="+64"/>
+        <location line="+199"/>
         <source>New version</source>
         <translation>Versão nova</translation>
     </message>
@@ -1903,12 +1910,12 @@ Selecione uma camada normal em vez disso.</translation>
         <translation>Certificado SSL para o hospedeiro %1 inválido</translation>
     </message>
     <message>
-        <location line="-1001"/>
+        <location line="-1049"/>
         <source>Secure mode not enabled on a host with pinned certificate!</source>
         <translation>O modo seguro não está ativado em um hospedeiro com certificado fixado!</translation>
     </message>
     <message>
-        <location line="+679"/>
+        <location line="+727"/>
         <source>Unknown version %1</source>
         <translation>Versão desconhecida %1</translation>
     </message>

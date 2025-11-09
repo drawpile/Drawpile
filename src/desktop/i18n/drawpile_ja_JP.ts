@@ -122,7 +122,7 @@
         <location filename="../toolwidgets/fillsettings.cpp" line="+136"/>
         <location filename="../toolwidgets/gradientsettings.cpp" line="+401"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+84"/>
-        <location filename="../toolwidgets/transformsettings.cpp" line="+345"/>
+        <location filename="../toolwidgets/transformsettings.cpp" line="+336"/>
         <source>Preserve alpha</source>
         <translation>アルファ値保持</translation>
     </message>
@@ -182,12 +182,14 @@
     <message>
         <location line="-249"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-71"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+287"/>
         <source>Stabilizer: </source>
         <translation>手ブレ補正: </translation>
     </message>
     <message>
         <location line="+13"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+12"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+13"/>
         <source>Smoothing: </source>
         <translation>スムージング: </translation>
     </message>
@@ -418,12 +420,12 @@
     </message>
     <message>
         <location line="+142"/>
-        <location line="+302"/>
+        <location line="+305"/>
         <source>Save Image</source>
         <translation>画像を保存</translation>
     </message>
     <message>
-        <location line="-302"/>
+        <location line="-305"/>
         <source>Export Image</source>
         <translation>画像のエクスポート</translation>
     </message>
@@ -463,12 +465,12 @@
         <translation>タブレットイベントのログ</translation>
     </message>
     <message>
-        <location line="+146"/>
+        <location line="+149"/>
         <source>Log File</source>
         <translation>ログファイル</translation>
     </message>
     <message>
-        <location line="-174"/>
+        <location line="-177"/>
         <location line="+36"/>
         <source>Export MP4 Video</source>
         <translation>MP4動画形式へエクスポート</translation>
@@ -535,12 +537,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+399"/>
+        <location line="+402"/>
         <source>Session Settings (%1)</source>
         <translation>セッションの設定 (%1)</translation>
     </message>
     <message>
-        <location line="-398"/>
+        <location line="-401"/>
         <source>Session Bans (%1)</source>
         <translation>セッションのBAN (%1)</translation>
     </message>
@@ -595,7 +597,7 @@
         <translation>連続画像の保存</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+80"/>
         <source>Export Brushes</source>
         <translation>ブラシのエクスポート</translation>
     </message>
@@ -638,11 +640,12 @@
     <message>
         <location line="+168"/>
         <location line="+5"/>
+        <location line="+491"/>
         <source>Untitled</source>
         <translation>無題</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="-392"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
         <translation>無題%1</translation>
@@ -652,7 +655,7 @@
     <name>FillSettings</name>
     <message>
         <location filename="../ui/fillsettings.ui" line="+351"/>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="+318"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+126"/>
         <source>Feather: </source>
         <translation>ぼかし: </translation>
     </message>
@@ -825,6 +828,24 @@
     </message>
 </context>
 <context>
+    <name>HudHandler</name>
+    <message>
+        <location filename="../scene/hudhandler.cpp" line="+62"/>
+        <source>More…</source>
+        <translation type="unfinished">続き…</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Transform</source>
+        <translation type="unfinished">変形</translation>
+    </message>
+</context>
+<context>
     <name>InspectorSettings</name>
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
@@ -908,7 +929,7 @@
 <context>
     <name>KisCurveWidget</name>
     <message>
-        <location filename="../widgets/kis_curve_widget.cpp" line="+46"/>
+        <location filename="../widgets/kis_curve_widget.cpp" line="+47"/>
         <source>Remove point</source>
         <translation>ポイントを削除</translation>
     </message>
@@ -921,7 +942,7 @@
 <context>
     <name>KisSliderSpinBoxPrivate</name>
     <message>
-        <location filename="../widgets/kis_slider_spin_box_p.h" line="+381"/>
+        <location filename="../widgets/kis_slider_spin_box_p.h" line="+382"/>
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
@@ -1108,7 +1129,7 @@ Subrange: [%3, %4]</source>
 <context>
     <name>LinkCheck</name>
     <message>
-        <location filename="../utils/widgetutils.cpp" line="+1363"/>
+        <location filename="../utils/widgetutils.cpp" line="+1423"/>
         <source>Open Link</source>
         <translation>リンクを開く</translation>
     </message>
@@ -1309,13 +1330,13 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+998"/>
-        <location line="+2405"/>
+        <location filename="../mainwindow.cpp" line="+1026"/>
+        <location line="+2485"/>
         <source>Untitled</source>
         <translation>無題</translation>
     </message>
     <message>
-        <location line="-1726"/>
+        <location line="-1762"/>
         <source>The requested brush does not allow others to use it.</source>
         <translation>要求されたブラシは、他の人がそれを使用することを許可しません。</translation>
     </message>
@@ -1438,7 +1459,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>無効なアドレスです</translation>
     </message>
     <message>
-        <location line="+248"/>
+        <location line="+284"/>
         <source>Really leave the session?</source>
         <translation>本当にセッションを退出しますか？</translation>
     </message>
@@ -1463,7 +1484,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>理由:</translation>
     </message>
     <message>
-        <location line="+194"/>
+        <location line="+198"/>
         <source>Would you like to join the session instead?</source>
         <translation>代わりにこのセッションに参加しますか？</translation>
     </message>
@@ -1473,7 +1494,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>参加</translation>
     </message>
     <message>
-        <location line="+134"/>
+        <location line="+158"/>
         <source>Canvas locked</source>
         <translation>キャンバスのロック</translation>
     </message>
@@ -1483,7 +1504,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>キャンバスのロック解除</translation>
     </message>
     <message>
-        <location line="+507"/>
+        <location line="+546"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation>フリーハンド(消去モード,クリックでリセット)</translation>
     </message>
@@ -1503,7 +1524,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>フリーハンドブラシツール(透明度保護モード)</translation>
     </message>
     <message>
-        <location line="+192"/>
+        <location line="+207"/>
         <source>The image could not be loaded</source>
         <translation>画像を読み込みできませんでした</translation>
     </message>
@@ -1554,13 +1575,13 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>自動保存</translation>
     </message>
     <message>
-        <location line="-2516"/>
-        <location line="+2543"/>
+        <location line="-2634"/>
+        <location line="+2661"/>
         <source>Record...</source>
         <translation>記録...</translation>
     </message>
     <message>
-        <location line="-2908"/>
+        <location line="-3026"/>
         <source>Saving...</source>
         <translation>保存中...</translation>
     </message>
@@ -1580,18 +1601,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>再生</translation>
     </message>
     <message>
-        <location line="+735"/>
+        <location line="+771"/>
         <source>Terminate session</source>
         <translation>セッションを終了</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+3254"/>
+        <location line="+3425"/>
         <source>Terminate</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location line="-1434"/>
+        <location line="-1523"/>
         <location line="+6"/>
         <location filename="../widgets/macmenu.cpp" line="+14"/>
         <location line="+2"/>
@@ -1640,7 +1661,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>貼り付け(&amp;P)</translation>
     </message>
     <message>
-        <location line="+562"/>
+        <location line="+634"/>
         <source>Stay Time</source>
         <translation>滞在時間</translation>
     </message>
@@ -1675,7 +1696,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>無期限</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+29"/>
+        <source>Selection Action Bar Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+46"/>
         <source>Clear Fill Source</source>
         <translation>塗りつぶし参照元をクリア</translation>
     </message>
@@ -1715,7 +1741,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>選択範囲を色消しゴムで消去</translation>
     </message>
     <message>
-        <location line="-586"/>
+        <location line="-665"/>
         <location filename="../widgets/macmenu.cpp" line="+28"/>
         <source>&amp;Edit</source>
         <translation>編集(&amp;E)</translation>
@@ -1741,12 +1767,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>チャット</translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+395"/>
         <source>New Layer Group</source>
         <translation>新しいレイヤーグループ</translation>
     </message>
     <message>
-        <location line="+346"/>
+        <location line="+355"/>
         <source>Flipbook</source>
         <translation>フリップブック</translation>
     </message>
@@ -1756,12 +1782,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>アニメーションのプレビューウィンドウを表示</translation>
     </message>
     <message>
-        <location line="-414"/>
+        <location line="-430"/>
         <source>User Pointers</source>
         <translation>ユーザーポインター</translation>
     </message>
     <message>
-        <location line="+416"/>
+        <location line="+432"/>
         <source>Change Frame Range or FPS...</source>
         <translation>フレーム範囲またはFPSを変更...</translation>
     </message>
@@ -1796,7 +1822,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>前のフレーム</translation>
     </message>
     <message>
-        <location line="+182"/>
+        <location line="+183"/>
         <source>Report...</source>
         <translation>報告...</translation>
     </message>
@@ -1901,17 +1927,17 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>アクションをキャンセル</translation>
     </message>
     <message>
-        <location line="-1367"/>
+        <location line="-1456"/>
         <source>Show User &amp;Pointers</source>
         <translation>ユーザーポインターを表示(&amp;P)</translation>
     </message>
     <message>
-        <location line="-5177"/>
+        <location line="-5348"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 が入室しました！</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+120"/>
         <source>disconnect you from the session</source>
         <extracomment>This is an effect of what will happen when closing the window. It will potentially be put into a list with other effects.</extracomment>
         <translation>セッションからあなたは切断されます</translation>
@@ -1971,18 +1997,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>いいえ、キャンセルします</translation>
     </message>
     <message>
-        <location line="+124"/>
-        <location line="+4258"/>
+        <location line="+126"/>
+        <location line="+4420"/>
         <source>Export Again</source>
         <translation>再エクスポート</translation>
     </message>
     <message>
-        <location line="-4254"/>
+        <location line="-4416"/>
         <source>Export Again to %1</source>
         <translation>%1 に再エクスポート</translation>
     </message>
     <message>
-        <location line="+440"/>
+        <location line="+483"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;ショートカット &apos;%1&apos; は以下で複数設定されています:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -1997,7 +2023,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>修正する</translation>
     </message>
     <message>
-        <location line="+474"/>
+        <location line="+475"/>
         <source>You don&apos;t have permission to cut, paste, fill or delete.</source>
         <extracomment>&quot;Delete&quot; refers to Edit &gt; Delete, which erases the contents of a selection and the default shortcut is the delete key.</extracomment>
         <translation>切り取り、貼り付け、塗りつぶし、削除を行う権限がありません。</translation>
@@ -2048,7 +2074,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>このウィンドウを閉じ、最近使ったファイルを開きます。</translation>
     </message>
     <message>
-        <location line="-1274"/>
+        <location line="-1320"/>
         <source>Open</source>
         <translation>開く</translation>
     </message>
@@ -2058,7 +2084,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>このウィンドウを閉じ、新しいファイルを開きます。</translation>
     </message>
     <message>
-        <location line="+1592"/>
+        <location line="+1638"/>
         <source>Image saving failed</source>
         <translation>画像の保存に失敗</translation>
     </message>
@@ -2148,22 +2174,53 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>すでにセッションに参加しています。ホストになるには一度切断してください。</translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+245"/>
         <source>Reconnect</source>
         <translation>再接続</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-11"/>
         <source>You have unsaved changes, do you want to save them before reconnecting?</source>
         <translation>保存されていない変更があります。再接続する前に保存しますか?</translation>
     </message>
     <message>
+        <location line="-2211"/>
+        <source>Switched to frame view mode.
+You can exit it via the View menu or the timeline.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2203"/>
+        <source>Did the download complete successfully?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+3"/>
+        <source>You have unsaved changes, do you want to download them before reconnecting?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>You have unsaved changes, do you want to save them before reconnecting or reconnect in a new window?</source>
         <translation>保存されていない変更があります。再接続する前に保存しますか、それとも新しいウィンドウで再接続しますか？</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+11"/>
+        <source>No, try again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Yes, reconnect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>New Window</source>
         <extracomment>Button to reconnect in a new window instead of the current one. Is shown next to Save, Discard and Cancel buttons.</extracomment>
         <translation>新しいウィンドウで再接続</translation>
@@ -2179,7 +2236,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>このウィンドウを閉じ、新しいセッションに接続します。</translation>
     </message>
     <message>
-        <location line="+153"/>
+        <location line="+157"/>
         <source>Disconnected</source>
         <translation>切断しました</translation>
     </message>
@@ -2199,7 +2256,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>サーバーへの接続を確立できませんでした。</translation>
     </message>
     <message>
-        <location line="+260"/>
+        <location line="+295"/>
         <source>Undo Limit... (%1)</source>
         <translation>取り消し制限回数... (%1)</translation>
     </message>
@@ -2229,7 +2286,17 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <translation>サイズが大きすぎる画像をリセットする</translation>
     </message>
     <message>
-        <location line="+511"/>
+        <location line="+444"/>
+        <source>Cr&amp;op canvas to transform…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cr&amp;op canvas to selection…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+109"/>
         <source>The image could not be loaded: %1.</source>
         <extracomment>%1 is an error message.</extracomment>
         <translation>%1 により画像の読み込みに失敗しました。</translation>
@@ -2251,23 +2318,23 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+1"/>
-        <location line="+1997"/>
+        <location line="+2086"/>
         <source>Tablet Event Log...</source>
         <translation>タブレットイベントのログ...</translation>
     </message>
     <message>
-        <location line="-1993"/>
+        <location line="-2082"/>
         <source>Stop Profile</source>
         <translation>プロファイルの停止</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+1994"/>
+        <location line="+2083"/>
         <source>Profile...</source>
         <translation>プロファイル...</translation>
     </message>
     <message>
-        <location line="-1983"/>
+        <location line="-2072"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>強制遅延を設定... (現在 %1 ミリ秒)</translation>
     </message>
@@ -2293,12 +2360,12 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     </message>
     <message>
         <location line="+16"/>
-        <location line="+1941"/>
+        <location line="+2030"/>
         <source>Record Debug Dumps</source>
         <translation>デバッグダンプの記録</translation>
     </message>
     <message>
-        <location line="-1940"/>
+        <location line="-2029"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2596,12 +2663,77 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>選択マスクの色合いを変更します</translation>
     </message>
     <message>
+        <location line="+4"/>
+        <source>Show Selection Action Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+5"/>
+        <source>Top-left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selection action bar top-left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Top</source>
+        <translation type="unfinished">上</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selection action bar top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Top-right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selection action bar top-right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Bottom-left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selection action bar bottom-left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Bottom</source>
+        <translation type="unfinished">下</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selection action bar bottom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Bottom-right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selection action bar bottom-right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>&amp;Fit to Screen</source>
         <translation>画面に合わせる(&amp;F)</translation>
     </message>
     <message>
-        <location line="+108"/>
+        <location line="+125"/>
         <source>&amp;View</source>
         <translation>表示(&amp;V)</translation>
     </message>
@@ -2616,23 +2748,28 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>回転</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+21"/>
         <source>Group View</source>
         <translation>グループビュー</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Show only the current parent layer group</source>
         <translation>現在の親レイヤーグループのみを表示</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+9"/>
+        <source>On-canvas view mode notices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>Layer View Mode</source>
         <translation>レイヤー表示モード</translation>
     </message>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+584"/>
-        <location filename="../mainwindow.cpp" line="+81"/>
+        <location filename="../docks/layerlistdock.cpp" line="+608"/>
+        <location filename="../mainwindow.cpp" line="+91"/>
         <source>Merge Layer</source>
         <translation>下のレイヤーと結合</translation>
     </message>
@@ -2652,7 +2789,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>レイヤー(&amp;L)</translation>
     </message>
     <message>
-        <location line="+256"/>
+        <location line="+265"/>
         <source>Set Key Frame to Current Layer</source>
         <translation>現在のレイヤーにキーフレームを設定</translation>
     </message>
@@ -2677,7 +2814,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>キーフレームにレイヤーを作成</translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+120"/>
         <source>&amp;Host...</source>
         <translation>ホスト(&amp;H)...</translation>
     </message>
@@ -2794,7 +2931,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>キャンバスの中心</translation>
     </message>
     <message>
-        <location line="-4519"/>
+        <location line="-4726"/>
         <source>Stop Recording</source>
         <translation>セッションの記録を停止</translation>
     </message>
@@ -2804,13 +2941,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>セッションをホスト</translation>
     </message>
     <message>
-        <location line="+1854"/>
+        <location line="+1972"/>
         <source>A collaborative drawing program.</source>
         <translation>共同作業可能なドローイングアプリケーションです。</translation>
     </message>
     <message>
         <location line="+253"/>
-        <location filename="../utils/widgetutils.cpp" line="-342"/>
+        <location filename="../utils/widgetutils.cpp" line="-341"/>
         <source>Close</source>
         <translation>閉じる</translation>
     </message>
@@ -2864,12 +3001,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>設定(&amp;n)</translation>
     </message>
     <message>
-        <location line="+729"/>
+        <location line="+808"/>
         <source>Select &amp;All</source>
         <translation>すべて選択(&amp;A)</translation>
     </message>
     <message>
-        <location line="-506"/>
+        <location line="-585"/>
         <source>Edit Tools</source>
         <translation>編集ツール</translation>
     </message>
@@ -2889,12 +3026,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>注釈を表示(&amp;A)</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+64"/>
         <source>&amp;Full Screen</source>
         <translation>全画面(&amp;F)</translation>
     </message>
     <message>
-        <location line="+873"/>
+        <location line="+933"/>
         <source>Pick colors from the image</source>
         <translation>画像から色を抽出</translation>
     </message>
@@ -2909,7 +3046,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>直線(&amp;L)</translation>
     </message>
     <message>
-        <location line="-3384"/>
+        <location line="-3555"/>
         <source>Become Operator</source>
         <translation>管理者になる</translation>
     </message>
@@ -2919,12 +3056,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>管理者パスワードを入力</translation>
     </message>
     <message>
-        <location line="+449"/>
+        <location line="+488"/>
         <source>Session blocked by parental controls</source>
         <translation>ペアレンタルコントロールによりブロック済のセッション</translation>
     </message>
     <message>
-        <location line="+1352"/>
+        <location line="+1395"/>
         <source>Hide Docks</source>
         <translation>ドックを隠す</translation>
     </message>
@@ -2959,7 +3096,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>アバターを表示</translation>
     </message>
     <message>
-        <location line="+254"/>
+        <location line="+333"/>
         <source>New Layer</source>
         <translation>新しいレイヤー</translation>
     </message>
@@ -2988,12 +3125,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>レイヤーのスケッチモードを切り替え(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-104"/>
+        <location filename="../mainwindow.cpp" line="-116"/>
         <source>Show Censored Layers</source>
         <translation>センシティブレイヤーの表示</translation>
     </message>
     <message>
-        <location line="-3872"/>
+        <location line="-4057"/>
         <source>Opening file…</source>
         <translation>ファイルを開く…</translation>
     </message>
@@ -3008,12 +3145,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>このコンピューターでホストすることはできません</translation>
     </message>
     <message>
-        <location line="+216"/>
+        <location line="+252"/>
         <source>Really leave and terminate the session?</source>
         <translation>本当に退出してセッションを終了しますか？</translation>
     </message>
     <message>
-        <location line="+337"/>
+        <location line="+341"/>
         <source>You&apos;ve been disconnected from the session.</source>
         <translation>セッションから切断されました。</translation>
     </message>
@@ -3023,7 +3160,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>切断済み: %1</translation>
     </message>
     <message>
-        <location line="+1308"/>
+        <location line="+1386"/>
         <source>Primary screen:</source>
         <translation>メイン画面:</translation>
     </message>
@@ -3083,38 +3220,38 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>キャンバスを下へ移動</translation>
     </message>
     <message>
-        <location line="+218"/>
+        <location line="+264"/>
         <source>Normal View</source>
         <translation>すべて表示</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Show all layers normally</source>
         <translation>すべてのレイヤーを通常表示</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+5"/>
         <source>Layer View</source>
         <translation>現在のレイヤーのみ表示</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Show only the current layer</source>
         <translation>現在のレイヤーのみ表示</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+9"/>
         <source>Frame View</source>
         <translation>フレームのみ表示</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Show only layers in the current frame</source>
         <translation>現在のフレーム内のレイヤーのみを表示</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="-10"/>
-        <location filename="../mainwindow.cpp" line="+102"/>
+        <location filename="../mainwindow.cpp" line="+121"/>
         <source>Layer Properties…</source>
         <translation>レイヤーのプロパティ…</translation>
     </message>
@@ -3211,6 +3348,11 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+3"/>
+        <source>Cr&amp;op canvas to selection/transform…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>&amp;Transform</source>
         <translation>変形(&amp;T)</translation>
     </message>
@@ -3255,7 +3397,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>変形された画像を上下反転します</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>mirror/flip transformed image vertically</source>
         <translation>変形された画像を垂直にミラー/反転する</translation>
     </message>
@@ -3295,12 +3437,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>選択マスク内にブラシストロークを保持</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+82"/>
         <source>Selectio&amp;n</source>
         <translation>選択(&amp;n)</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+47"/>
         <source>Set Blank Key Frame</source>
         <translation>空白のキーフレームを設定</translation>
     </message>
@@ -3425,7 +3567,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>キーフレームを複製</translation>
     </message>
     <message>
-        <location line="+109"/>
+        <location line="+110"/>
         <source>Share your canvas with others</source>
         <translation>キャンバスを他の人と共有する</translation>
     </message>
@@ -3770,7 +3912,75 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>ヘルプ(&amp;H)</translation>
     </message>
     <message>
-        <location line="+728"/>
+        <location line="+105"/>
+        <source>Disable view mode notices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Layer view mode notices disabled.
+You can re-enable them via the View menu or preferences.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+110"/>
+        <source>Bar Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Disable This Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Invert</source>
+        <extracomment>Refers to inverting the selection.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Expand/Shrink</source>
+        <extracomment>Refers to expanding or shrinking the selection.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Apply</source>
+        <translation type="unfinished">適用</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Mirror</source>
+        <extracomment>Refers to mirroring a transform horizontally.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Flip</source>
+        <extracomment>Refers to mirroring a transform vertically (flip upside-down.)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Rotate -90°</source>
+        <extracomment>Refers to rotating a transform 90 degrees counter-clockwise.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Rotate +90°</source>
+        <extracomment>Refers to rotating a transform 90 degrees clockwise.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Selection action bar disabled.
+You can re-enable it via the View menu.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+604"/>
         <source>To report a bug or suggest a feature, [take a look here].</source>
         <extracomment>The [] will be turned into a clickable link to Drawpile&apos;s help page! Keep them in your translation.</extracomment>
         <translation>バグの報告や機能の提案については、[こちらをご覧ください]。</translation>
@@ -3815,7 +4025,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>MarkerColors</name>
     <message>
-        <location line="+248"/>
+        <location line="+247"/>
         <source>None</source>
         <translation>なし</translation>
     </message>
@@ -4079,7 +4289,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../filewrangler.cpp" line="-685"/>
+        <location filename="../filewrangler.cpp" line="-688"/>
         <source>All files (*)</source>
         <translation>すべてのファイル (*)</translation>
     </message>
@@ -7720,7 +7930,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>貫通</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-1728"/>
+        <location filename="../mainwindow.cpp" line="-1926"/>
         <source>Blend alpha</source>
         <translation>アルファブレンド</translation>
     </message>
@@ -7836,7 +8046,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>報告...</translation>
     </message>
     <message>
-        <location line="+181"/>
+        <location line="+183"/>
         <source>Accept</source>
         <translation>承認</translation>
     </message>
@@ -7889,7 +8099,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>(%1からリダイレクト)</translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+146"/>
         <source>You can&apos;t join this session because:</source>
         <translation>セッションに参加できない理由:</translation>
     </message>
@@ -7915,12 +8125,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+52"/>
-        <location line="+160"/>
+        <location line="+159"/>
         <source>Enter the name you want to use.</source>
         <translation>使用したい名前を入力してください。</translation>
     </message>
     <message>
-        <location line="-99"/>
+        <location line="-98"/>
         <source>Server Rules for %1</source>
         <translation>%1 のサーバールール</translation>
     </message>
@@ -7930,7 +8140,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%1 のアカウントでログイン</translation>
     </message>
     <message>
-        <location line="+72"/>
+        <location line="+71"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
         <translation>使用したい名前を入力します。このサーバーの詳細については %1 を参照してください。</translation>
     </message>
@@ -8446,7 +8656,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>設定</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+50"/>
         <source>General</source>
         <translation>一般</translation>
     </message>
@@ -8555,130 +8765,9 @@ Values above 0.5 may not be noticeable.</source>
         <translation>色の設定…</translation>
     </message>
     <message>
-        <location line="+42"/>
-        <source>Custom</source>
-        <translation>カスタム</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Hue</source>
-        <translation>色相</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Saturation</source>
-        <translation>彩度(Saturation)</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Chroma</source>
-        <translation>彩度(Chroma)</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Value</source>
-        <translation>明るさ</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Lightness</source>
-        <translation>明度</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Luminance</source>
-        <translation>輝度</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Shades</source>
-        <translation>陰影</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Move Up</source>
-        <translation>上へ移動</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Move Down</source>
-        <translation>下へ移動</translation>
-    </message>
-    <message>
-        <location line="+122"/>
-        <location line="+4"/>
-        <source>Range: </source>
-        <translation>範囲: </translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <location line="+12"/>
-        <source>Saturation range: </source>
-        <translation>彩度(Saturation)の範囲: </translation>
-    </message>
-    <message>
-        <location line="-12"/>
-        <location line="+12"/>
-        <source>Chroma range: </source>
-        <translation>彩度(Chroma)の範囲: </translation>
-    </message>
-    <message>
-        <location line="-8"/>
-        <location line="+12"/>
-        <source>Value range: </source>
-        <translation>明るさの範囲: </translation>
-    </message>
-    <message>
-        <location line="-12"/>
-        <location line="+12"/>
-        <source>Lightness range: </source>
-        <translation>明度の範囲: </translation>
-    </message>
-    <message>
-        <location line="-11"/>
-        <location line="+12"/>
-        <source>Luminance range: </source>
-        <translation>輝度の範囲: </translation>
-    </message>
-    <message>
-        <location line="-8"/>
+        <location line="+218"/>
         <source>Hue range: </source>
         <translation>色相の範囲: </translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Hue offset: </source>
-        <translation>色相のオフセット: </translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Saturation offset: </source>
-        <translation>彩度(Saturation)のオフセット: </translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Chroma offset: </source>
-        <translation>彩度(Chroma)のオフセット: </translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Value offset: </source>
-        <translation>明るさのオフセット: </translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Lightness offset: </source>
-        <translation>明度のオフセット: </translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Luminance offset: </source>
-        <translation>輝度のオフセット: </translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>%</source>
-        <translation>%</translation>
     </message>
 </context>
 <context>
@@ -8829,7 +8918,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>ネットワーク設定の表示</translation>
     </message>
     <message>
-        <location line="+346"/>
+        <location line="+349"/>
         <source>Checking…</source>
         <translation>確認中…</translation>
     </message>
@@ -8925,7 +9014,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TouchTestDialog</name>
     <message>
-        <location filename="../dialogs/touchtestdialog.cpp" line="+214"/>
+        <location filename="../dialogs/touchtestdialog.cpp" line="+248"/>
         <source>Enable touch</source>
         <translation>タッチ有効</translation>
     </message>
@@ -8948,7 +9037,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TouchTestView</name>
     <message>
-        <location line="-236"/>
+        <location line="-265"/>
         <source>Touch here.</source>
         <translation>ここにタッチ。</translation>
     </message>
@@ -9065,12 +9154,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>自動保存:</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+2"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
         <translation>[ファイル] ▸ [自動保存] で現在のファイルの自動保存を有効にできます。</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+13"/>
         <source>Use system file picker dialogs</source>
         <translation>システムのファイル選択ダイアログを使用</translation>
     </message>
@@ -9147,13 +9236,13 @@ Values above 0.5 may not be noticeable.</source>
     <name>dialogs::settingsdialog::General</name>
     <message>
         <location filename="../dialogs/settingsdialog/general.cpp" line="+52"/>
-        <location line="+145"/>
+        <location line="+157"/>
         <location line="+15"/>
         <source>System</source>
         <translation>システム</translation>
     </message>
     <message>
-        <location line="-149"/>
+        <location line="-161"/>
         <source>Language:</source>
         <translation>言語:</translation>
     </message>
@@ -9214,7 +9303,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>現在のレンダラー: %1。変更は Drawpile を再起動した後に適用されます。</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+15"/>
+        <source>Improve zoom quality (hardware renderer only)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
         <source>Keep %1 canvas snapshots</source>
         <translation>%1 個のキャンバス のスナップショットを保持</translation>
     </message>
@@ -9229,7 +9323,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%1 秒ごとに 1 つのスナップショットを作成します</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+39"/>
         <source>Blue Apatite</source>
         <translation>ブルーアパタイト</translation>
     </message>
@@ -9269,7 +9363,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>オフライン時のアンドゥ回数のデフォルト %1</translation>
     </message>
     <message>
-        <location line="-90"/>
+        <location line="-102"/>
         <source>Interpolate when view is zoomed or rotated</source>
         <translation>ビューのズームまたは回転時の補間</translation>
     </message>
@@ -9289,17 +9383,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>一定のズーム、回転レベルでのジッターを防止</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+15"/>
         <source>Enabling these options may impact performance on some systems.</source>
         <translation>これらのオプションを有効にすると、一部のシステムのパフォーマンスに影響を与える可能性があります。</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+26"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
         <translation>スナップショットは [セッション] ▸ [リセット… ] メニューから復元できます。</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+23"/>
         <source>Style:</source>
         <translation>スタイル:</translation>
     </message>
@@ -9988,7 +10082,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Tablet</name>
     <message>
-        <location filename="../dialogs/settingsdialog/tablet.cpp" line="+31"/>
+        <location filename="../dialogs/settingsdialog/tablet.cpp" line="+34"/>
         <source>Tablet Tester</source>
         <translation>タブレットテスター</translation>
     </message>
@@ -10025,7 +10119,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+21"/>
-        <location filename="../mainwindow.cpp" line="-610"/>
+        <location filename="../mainwindow.cpp" line="-689"/>
         <source>Windows Ink</source>
         <translation>Windows Ink</translation>
     </message>
@@ -10081,7 +10175,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>ペンの筆圧:</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+8"/>
         <source>Global smoothing: </source>
         <translation>グローバルスムージング: </translation>
     </message>
@@ -10217,6 +10311,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+14"/>
+        <location filename="../toolwidgets/colorpickersettings.cpp" line="+122"/>
         <source>Show sampling ring</source>
         <translation>サンプリングリングを表示</translation>
     </message>
@@ -10292,12 +10387,22 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Touch</name>
     <message>
-        <location filename="../dialogs/settingsdialog/touch.cpp" line="+26"/>
+        <location filename="../dialogs/settingsdialog/touch.cpp" line="+27"/>
         <source>Touch Tester</source>
         <translation>タッチテスター</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+30"/>
+        <source>Enable pressure for touch drawing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Required for certain screen tablets, probably doesn&apos;t work for finger drawing!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Touch mode:</source>
         <translation>タッチモード:</translation>
     </message>
@@ -10312,7 +10417,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>ジェスチャー</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+16"/>
         <location line="+41"/>
         <location line="+20"/>
         <location line="+13"/>
@@ -10449,7 +10554,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::UserInterface</name>
     <message>
-        <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+231"/>
+        <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+235"/>
         <source>Override system font size</source>
         <translation>システムフォントサイズを上書き</translation>
     </message>
@@ -10464,7 +10569,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>pt</translation>
     </message>
     <message>
-        <location line="-195"/>
+        <location line="-199"/>
         <source>Interface mode:</source>
         <translation>インターフェースモード:</translation>
     </message>
@@ -10480,12 +10585,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+14"/>
-        <location line="+188"/>
+        <location line="+192"/>
         <source>Disabled</source>
         <translation>無効</translation>
     </message>
     <message>
-        <location line="-187"/>
+        <location line="-191"/>
         <source>On left-click drag</source>
         <translation>左クリックでドラッグ</translation>
     </message>
@@ -10525,12 +10630,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>キャンバスの裏の背景色</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+92"/>
         <source>Override system scale factor</source>
         <translation>システムの拡大率を上書きする</translation>
     </message>
     <message>
-        <location line="-146"/>
+        <location line="-150"/>
         <source>Small screen</source>
         <translation>小さい画面</translation>
     </message>
@@ -10561,6 +10666,11 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+2"/>
+        <source>View mode notices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Show scroll bars on canvas</source>
         <translation>キャンバス上にスクロールバーを表示</translation>
     </message>
@@ -12137,7 +12247,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::DockBase</name>
     <message>
-        <location filename="../docks/dockbase.cpp" line="+73"/>
+        <location filename="../docks/dockbase.cpp" line="+89"/>
         <source>Drag here to arrange</source>
         <translation>ドラッグして配置</translation>
     </message>
@@ -12150,7 +12260,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerAclMenu</name>
     <message>
-        <location filename="../docks/layeraclmenu.cpp" line="+33"/>
+        <location filename="../docks/layeraclmenu.cpp" line="+29"/>
         <source>Locks:</source>
         <translation>ロック:</translation>
     </message>
@@ -12188,17 +12298,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="-439"/>
+        <location filename="../docks/layerlistdock.cpp" line="-463"/>
         <source>Layers</source>
         <translation>レイヤー</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+75"/>
         <source>Locks and permissions</source>
         <translation>ロックと権限</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-62"/>
         <source>Clip to layer below</source>
         <translation>下のレイヤーにクリップ</translation>
     </message>
@@ -12208,28 +12318,28 @@ Values above 0.5 may not be noticeable.</source>
         <translation>アルファ値の継承</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+52"/>
         <source>Toggle sketch mode (only visible to you)</source>
         <translation>スケッチモード切替(あなたにだけ見えます)</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <location line="+1946"/>
+        <location line="+19"/>
+        <location line="+1950"/>
         <source>Opacity: </source>
         <translation>不透明度: </translation>
     </message>
     <message>
-        <location line="-1945"/>
+        <location line="-1949"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-11"/>
         <source>Change sketch tint</source>
         <translation>スケッチの色合いを変更</translation>
     </message>
     <message>
-        <location line="+331"/>
+        <location line="+351"/>
         <source>Duplicate Layer Group</source>
         <translation>レイヤーグループの複製</translation>
     </message>
@@ -12279,7 +12389,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>レイヤーのチェックを外す</translation>
     </message>
     <message>
-        <location line="+1067"/>
+        <location line="+1072"/>
         <source>Layer Limit Reached</source>
         <translation>レイヤー数制限に到達</translation>
     </message>
@@ -12309,8 +12419,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation>スケッチ: </translation>
     </message>
     <message>
-        <location line="+266"/>
-        <location filename="../mainwindow.cpp" line="-4715"/>
+        <location line="+267"/>
+        <location filename="../mainwindow.cpp" line="-4877"/>
         <source>Layer</source>
         <translation>レイヤー</translation>
     </message>
@@ -12320,7 +12430,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>グループ</translation>
     </message>
     <message>
-        <location line="-932"/>
+        <location line="-933"/>
         <source>Delete Layer?</source>
         <translation>レイヤーを削除しますか?</translation>
     </message>
@@ -12478,7 +12588,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>タイムライン</translation>
     </message>
     <message>
-        <location line="+98"/>
+        <location line="+101"/>
         <source>Play</source>
         <translation>再生</translation>
     </message>
@@ -12529,7 +12639,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="-19"/>
-        <location filename="../mainwindow.cpp" line="+6175"/>
+        <location filename="../mainwindow.cpp" line="+6426"/>
         <location filename="../widgets/macmenu.cpp" line="+20"/>
         <source>Donate</source>
         <translation>寄付</translation>
@@ -12541,18 +12651,10 @@ Values above 0.5 may not be noticeable.</source>
         <translation>ブラウザで Drawpile の寄付ページを開く</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+800"/>
+        <location filename="../mainwindow.cpp" line="+988"/>
         <source>[♥ Donate to Drawpile] to help keep development going and the servers running.</source>
         <extracomment>The [] will be turned into a clickable link! Keep them in translation. You can copy the heart ♥ into your text if it doesn&apos;t look weird for your language.</extracomment>
         <translation>[♥ Drawpile への寄付] 開発の継続とサーバーの維持にご協力ください。</translation>
-    </message>
-</context>
-<context>
-    <name>drawingboard::CanvasScene</name>
-    <message>
-        <location filename="../scene/canvasscene.cpp" line="+334"/>
-        <source>Restoring canvas…</source>
-        <translation>キャンバスを復元中…</translation>
     </message>
 </context>
 <context>
@@ -12719,24 +12821,28 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+123"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+42"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="-224"/>
         <source>Time-Based Stabilizer</source>
         <translation>時間基準の手ブレ補正</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+2"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+3"/>
         <source>Average Smoothing</source>
         <translation>平均的スムージング</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+2"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+3"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
         <translation>ストロークを遅くし、時間の経過とともに補正させます。 非常にスムーズな結果が得られますが、動作が遅く感じる場合があります。</translation>
     </message>
     <message>
         <location line="+4"/>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="+5"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="+7"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
         <translation>入力を平均化するだけで、より滑らかな結果が得られます。「 時間基準の手ブレ補正」よりも高速ですが、それほどスムーズではありません。</translation>
     </message>
@@ -12782,7 +12888,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>/%1px</translation>
     </message>
     <message>
-        <location line="+647"/>
+        <location line="+654"/>
         <source>Smudging: </source>
         <translation>混色: </translation>
     </message>
@@ -12798,7 +12904,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>/%1</translation>
     </message>
     <message>
-        <location line="-1487"/>
+        <location line="-1494"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
         <translation>MyPaint ブラシを使用する権限がありません。</translation>
     </message>
@@ -12806,7 +12912,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::ColorPickerSettings</name>
     <message>
-        <location filename="../toolwidgets/colorpickersettings.cpp" line="+90"/>
+        <location filename="../toolwidgets/colorpickersettings.cpp" line="-23"/>
         <source>Pick from screen</source>
         <translation>画面から抽出</translation>
     </message>
@@ -12819,6 +12925,23 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+11"/>
         <source>Pick from current layer only</source>
         <translation>現在のレイヤーから抽出</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/colordialog.cpp" line="+20"/>
+        <source>Screen Color Picking Unsupported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Picking colors from the screen is not supported under Wayland.</source>
+        <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>You may be able to switch to Xorg instead when logging into your Linux user account.</source>
+        <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names. Note that &quot;Linux user account&quot; is an account on the computer, NOT a Drawpile account.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13018,6 +13141,7 @@ Values above 0.5 may not be noticeable.</source>
     <name>tools::LassoFillSettings</name>
     <message>
         <location filename="../toolwidgets/lassofillsettings.cpp" line="-16"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="-23"/>
         <source>Stabilization mode</source>
         <translation>手ブレ補正モード</translation>
     </message>
@@ -13060,7 +13184,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::SelectionSettings</name>
     <message>
-        <location filename="../toolwidgets/selectionsettings.cpp" line="-250"/>
+        <location filename="../toolwidgets/selectionsettings.cpp" line="-90"/>
         <source>Replace selection</source>
         <translation>選択範囲の置き換え</translation>
     </message>
@@ -13080,7 +13204,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>選択範囲から取り除く</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+98"/>
         <source>Anti-aliasing</source>
         <translation>アンチエイリアス</translation>
     </message>
@@ -13284,17 +13408,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::CanvasScene</name>
     <message>
-        <location filename="../view/canvasscene.cpp" line="+604"/>
+        <location filename="../scene/hudhandler.cpp" line="+235"/>
         <source>Restoring canvas…</source>
         <translation>キャンバスを復元中…</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+293"/>
         <source>Compressing canvas…</source>
         <translation>キャンバスを圧縮しています…</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Uploading canvas %1%</source>
         <translation>キャンバス %1% をアップロード中</translation>
     </message>
@@ -13302,7 +13426,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::CanvasView</name>
     <message>
-        <location filename="../view/canvasview.cpp" line="+128"/>
+        <location filename="../view/canvasview.cpp" line="+129"/>
         <source>Save As…</source>
         <translation>名前を付けて保存…</translation>
     </message>
@@ -13310,12 +13434,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>view::Lock</name>
     <message>
-        <location filename="../view/lock.cpp" line="+29"/>
-        <source>Out of space, use Session &gt; Reset to fix this</source>
-        <translation>スペースが不足しているため、[セッション] &gt; [リセット] を使用してこれを修正してください</translation>
-    </message>
-    <message>
-        <location line="+4"/>
+        <location filename="../view/lock.cpp" line="+101"/>
         <source>Reset in progress</source>
         <translation>リセット進行中</translation>
     </message>
@@ -13330,7 +13449,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>ユーザーがロックされています</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+8"/>
         <source>You need to set a layer as the fill source</source>
         <translation>レイヤーを塗りつぶし参照元に設定する必要があります</translation>
     </message>
@@ -13365,27 +13484,92 @@ Values above 0.5 may not be noticeable.</source>
         <translation>レイヤーは非表示です</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+8"/>
         <source>Layer is not visible in this frame</source>
         <translation>このフレームではレイヤーは表示されません</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-6"/>
         <source>No layer selected</source>
         <translation>レイヤーが未選択</translation>
     </message>
     <message>
+        <location line="-119"/>
+        <source>Exit layer view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Exit group view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Exit frame view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Unlock canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+2"/>
+        <source>Reset canvas…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Select all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Select layer bounds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Disable anti-overflow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Set current layer as fill source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Clear fill source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Show censored layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+47"/>
+        <source>Out of space, you must reset the canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Out of space, operator must reset the canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+41"/>
         <source>Choose a different layer to fill on</source>
         <translation>塗りつぶす別のレイヤーを選択してください</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+8"/>
         <source>Tool is locked</source>
         <translation>ツールはロックされています</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="-32"/>
         <source>Tool requires a selection</source>
         <translation>このツールには選択範囲が必要です</translation>
     </message>
@@ -13461,8 +13645,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation>名前を付けて保存…</translation>
     </message>
     <message>
-        <location line="+377"/>
-        <location filename="../view/canvascontroller.cpp" line="+473"/>
+        <location line="+380"/>
+        <location filename="../view/canvascontroller.cpp" line="+475"/>
         <source>Vertical flip: ON</source>
         <translation>上下反転：オン</translation>
     </message>
@@ -13485,8 +13669,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation>左右反転：OFF</translation>
     </message>
     <message>
-        <location line="+1981"/>
-        <location filename="../view/canvascontroller.cpp" line="+2122"/>
+        <location line="+2021"/>
+        <location filename="../view/canvascontroller.cpp" line="+2162"/>
         <source>Zoom: %1%</source>
         <translation>拡大率: %1%</translation>
     </message>
@@ -13512,7 +13696,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::ChatBox</name>
     <message>
-        <location filename="../chat/chatbox.cpp" line="+45"/>
+        <location filename="../chat/chatbox.cpp" line="+46"/>
         <source>Invite</source>
         <translation>招待</translation>
     </message>
@@ -13535,7 +13719,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../chat/chatwidget.cpp" line="+172"/>
+        <location filename="../chat/chatwidget.cpp" line="+182"/>
         <source>Public</source>
         <translation>公開</translation>
     </message>
@@ -13546,6 +13730,24 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+41"/>
+        <source>As regular window</source>
+        <extracomment>A chat detach option, &quot;detach &gt; as regular window&quot;.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>On top of Drawpile</source>
+        <extracomment>A chat detach option, &quot;detach &gt; on top of Drawpile&quot;.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>On top of everything</source>
+        <extracomment>A chat detach option, &quot;detach &gt; on top of everything&quot;.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Mute notifications</source>
         <translation>通知のミュート</translation>
     </message>
@@ -13565,7 +13767,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>チャット...</translation>
     </message>
     <message>
-        <location line="+357"/>
+        <location line="+359"/>
         <source>%1 joined the session</source>
         <translation>%1 が参加しました</translation>
     </message>
@@ -13647,7 +13849,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>/roll: 無効なダイスロールの説明。</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>Available client commands:
 /help - show this message
 /clear - clear chat window
@@ -13674,7 +13876,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>不明なコマンド: %1</translation>
     </message>
     <message>
-        <location line="-783"/>
+        <location line="-797"/>
         <source>Clear</source>
         <translation>クリア</translation>
     </message>
@@ -13684,12 +13886,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>コンパクトモード</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Detach</source>
         <translation>取り外し</translation>
     </message>
     <message>
-        <location line="-2"/>
+        <location line="-1"/>
         <source>Attach</source>
         <translation>取り付け</translation>
     </message>
@@ -13697,7 +13899,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::ChatWindow</name>
     <message>
-        <location filename="../chat/chatwindow.cpp" line="+12"/>
+        <location filename="../chat/chatwindow.cpp" line="+13"/>
         <source>Chat</source>
         <translation>チャット</translation>
     </message>
@@ -14021,7 +14223,7 @@ Hex: %4</source>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+716"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+745"/>
         <source>Blank key frame (duplicate)</source>
         <translation>空のキーフレーム(複製)</translation>
     </message>
@@ -14071,7 +14273,7 @@ Hex: %4</source>
         <translation>オニオンスキン切替</translation>
     </message>
     <message>
-        <location line="+289"/>
+        <location line="+288"/>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
@@ -14080,8 +14282,8 @@ or via Animation ▸ New Track.</source>
 追加します。</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-6976"/>
-        <location filename="../widgets/timelinewidget.cpp" line="+564"/>
+        <location filename="../mainwindow.cpp" line="-7415"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+571"/>
         <source>Track</source>
         <translation>トラック</translation>
     </message>
@@ -14096,7 +14298,7 @@ or via Animation ▸ New Track.</source>
         <translation>トラック名</translation>
     </message>
     <message>
-        <location line="+536"/>
+        <location line="+545"/>
         <source>Set Key Frame to %1</source>
         <translation>キーフレームを %1 にセット</translation>
     </message>
