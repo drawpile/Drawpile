@@ -832,17 +832,17 @@
     <message>
         <location filename="../scene/hudhandler.cpp" line="+62"/>
         <source>More…</source>
-        <translation type="unfinished">更多…</translation>
+        <translation>更多…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>选区</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Transform</source>
-        <translation type="unfinished">变换</translation>
+        <translation>变换</translation>
     </message>
 </context>
 <context>
@@ -1756,17 +1756,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="-2211"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
-        <translation type="unfinished"></translation>
+        <translation>已切换到帧视图模式.
+你可以通过视图菜单或者时间轴来退出该模式.</translation>
     </message>
     <message>
         <location line="+2203"/>
         <source>Did the download complete successfully?</source>
-        <translation type="unfinished"></translation>
+        <translation>下载是否成功完成?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You have unsaved changes, do you want to download them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>你有未保存的更改, 你想在重新连接之前下载它们吗?</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1776,17 +1777,17 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+11"/>
         <source>No, try again</source>
-        <translation type="unfinished"></translation>
+        <translation>不, 再试一次</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>是的, 重新连接</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>下载</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1883,12 +1884,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+444"/>
         <source>Cr&amp;op canvas to transform…</source>
-        <translation type="unfinished"></translation>
+        <translation>裁剪画布至变换范围(&amp;O)…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cr&amp;op canvas to selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>裁剪画布至选区范围(&amp;O)…</translation>
     </message>
     <message>
         <location line="+109"/>
@@ -2214,67 +2215,67 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+4"/>
         <source>Show Selection Action Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>显示选区操作工具栏</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>左上</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>选区操作工具栏置于左上方</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished">靠上</translation>
+        <translation>中上</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top</source>
-        <translation type="unfinished"></translation>
+        <translation>选区操作工具栏置于中上方</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>右上</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>选区操作工具栏置于右上方</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>左下</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>选区操作工具栏置于左下方</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom</source>
-        <translation type="unfinished">靠下</translation>
+        <translation>中下</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>选区操作工具栏置于中下方</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>右下</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>选区操作工具栏置于右下方</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2294,7 +2295,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+9"/>
         <source>On-canvas view mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>视图模式提示</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -2334,7 +2335,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+29"/>
         <source>Selection Action Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>选区操作工具栏位置</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -2434,7 +2435,7 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+9"/>
         <source>Cr&amp;op canvas to selection/transform…</source>
-        <translation type="unfinished"></translation>
+        <translation>裁剪画布至选区/变换范围(&amp;O)…</translation>
     </message>
     <message>
         <location line="+174"/>
@@ -2464,70 +2465,72 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+739"/>
         <source>Disable view mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>禁用视图模式提示</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer view mode notices disabled.
 You can re-enable them via the View menu or preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>图层视图模式提示已禁用.
+你可以通过视图菜单或者首选项来重新启用它.</translation>
     </message>
     <message>
         <location line="+110"/>
         <source>Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>工具栏位置</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disable This Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>禁用此工具栏</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Invert</source>
         <extracomment>Refers to inverting the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>反选</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand/Shrink</source>
         <extracomment>Refers to expanding or shrinking the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>扩展/缩小</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Apply</source>
-        <translation type="unfinished">应用</translation>
+        <translation>应用</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Mirror</source>
         <extracomment>Refers to mirroring a transform horizontally.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>水平翻转</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip</source>
         <extracomment>Refers to mirroring a transform vertically (flip upside-down.)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>垂直翻转</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate -90°</source>
         <extracomment>Refers to rotating a transform 90 degrees counter-clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>逆时针旋转 90°</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate +90°</source>
         <extracomment>Refers to rotating a transform 90 degrees clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>顺时针旋转 90°</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Selection action bar disabled.
 You can re-enable it via the View menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>选区操作工具栏已禁用.
+你可以通过视图菜单来重新启用它.</translation>
     </message>
     <message>
         <location line="+604"/>
@@ -9306,7 +9309,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Improve zoom quality (hardware renderer only)</source>
-        <translation type="unfinished"></translation>
+        <translation>提升缩放质量 (仅限硬件渲染)</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -10395,12 +10398,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+30"/>
         <source>Enable pressure for touch drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>为触控绘制启用笔压</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Required for certain screen tablets, probably doesn&apos;t work for finger drawing!</source>
-        <translation type="unfinished"></translation>
+        <translation>某些平板需要此功能, 但可能不适用于手指绘制!</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10668,7 +10671,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>View mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>视图模式提示</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12930,19 +12933,19 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/colordialog.cpp" line="+20"/>
         <source>Screen Color Picking Unsupported</source>
-        <translation type="unfinished"></translation>
+        <translation>屏幕拾色功能不支持</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Picking colors from the screen is not supported under Wayland.</source>
         <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>在 Wayland 环境下不支持从屏幕中拾色.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You may be able to switch to Xorg instead when logging into your Linux user account.</source>
         <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names. Note that &quot;Linux user account&quot; is an account on the computer, NOT a Drawpile account.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>你可以在登录 Linux 用户账号时尝试切换到 Xorg 上.</translation>
     </message>
 </context>
 <context>
@@ -13497,67 +13500,67 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-119"/>
         <source>Exit layer view</source>
-        <translation type="unfinished"></translation>
+        <translation>退出图层视图</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exit group view</source>
-        <translation type="unfinished"></translation>
+        <translation>退出组视图</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exit frame view</source>
-        <translation type="unfinished"></translation>
+        <translation>退出帧视图</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unlock canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>取消锁定画布</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Reset canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>重置画布…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>全选</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>选择像素区域</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Disable anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>禁用防溢出</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set current layer as fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>设置当前图层为填充源</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clear fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>清除填充源</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show censored layers</source>
-        <translation type="unfinished"></translation>
+        <translation>显示审查图层</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Out of space, you must reset the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>空间不足, 你必须重置画布</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Out of space, operator must reset the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>空间不足, 房间管理员必须重置画布</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -13733,19 +13736,19 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+41"/>
         <source>As regular window</source>
         <extracomment>A chat detach option, &quot;detach &gt; as regular window&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>作为常规窗口</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>On top of Drawpile</source>
         <extracomment>A chat detach option, &quot;detach &gt; on top of Drawpile&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>置于 Drawpile 上方</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>On top of everything</source>
         <extracomment>A chat detach option, &quot;detach &gt; on top of everything&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>置于所有窗口上方</translation>
     </message>
     <message>
         <location line="+5"/>
