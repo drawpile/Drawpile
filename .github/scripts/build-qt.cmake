@@ -362,6 +362,7 @@ if(KRITA_QT)
 				qtbase:patches/android35-qt5-krita.diff
 				qtbase:patches/android_krita_exit.diff
 				qtbase:patches/qtglobal_patched_define.diff
+				qtbase:patches/androidinputfocus-qt5.diff
 	)
 else()
 	set(TEMPLATE_URL "https://download.qt.io/archive/qt/@version_major@/@version@/submodules/@name@-everywhere-${URL_LICENSE}src-@version@.tar.xz")
@@ -411,6 +412,7 @@ else()
 					patches/android_no_build_id.diff
 					patches/kineticscrollfilter-qt5.diff
 					patches/android35-qt5.diff
+					patches/androidinputfocus-qt5.diff
 				6.7.2
 					patches/qtbug-113394.diff
 					patches/cancel_touch_on_pen.diff
@@ -430,6 +432,7 @@ else()
 					patches/browser_file_accept.diff
 					patches/kineticscrollfilter-qt6.diff
 					patches/isfloattypeodr.diff
+					# TODO androidinputfocus-qt6.diff
 				6.8.3
 					patches/qtbug-113394.diff
 					patches/cancel_touch_on_pen.diff
@@ -447,6 +450,7 @@ else()
 					patches/android_no_build_id.diff
 					patches/kineticscrollfilter-qt6.diff
 					patches/nonativemessagebox.diff
+					# TODO androidinputfocus-qt6.diff
 		)
 	endif()
 

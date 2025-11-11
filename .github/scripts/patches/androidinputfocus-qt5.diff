@@ -1,0 +1,40 @@
+Description: Move focus to the root layout when the soft keyboard is hidden so
+that Android doesn't forwarding the key presses to the hidden soft keyboard.
+With some keyboards, this is benign, but others like GBoard will happily just
+eat the key presses and not do anything with them, breaking most keyboard
+shortcuts.
+
+Fixes https://github.com/drawpile/Drawpile/issues/1495 and
+https://bugs.kde.org/show_bug.cgi?id=431681 in Krita.
+
+--- a/src/android/jar/src/org/qtproject/qt5/android/QtActivityDelegate.java
++++ b/src/android/jar/src/org/qtproject/qt5/android/QtActivityDelegate.java
+@@ -430,6 +430,8 @@
+                                     }
+                                 break;
+                             case InputMethodManager.RESULT_HIDDEN:
++                                m_layout.requestFocus();
++                                //FALLTHROUGH
+                             case InputMethodManager.RESULT_UNCHANGED_HIDDEN:
+                                 setKeyboardVisibility(false, System.nanoTime());
+                                 break;
+@@ -457,6 +459,8 @@
+                         setKeyboardVisibility(true, System.nanoTime());
+                         break;
+                     case InputMethodManager.RESULT_HIDDEN:
++                        m_layout.requestFocus();
++                        //FALLTHROUGH
+                     case InputMethodManager.RESULT_UNCHANGED_HIDDEN:
+                         setKeyboardVisibility(false, System.nanoTime());
+                         break;
+--- a/src/android/jar/src/org/qtproject/qt5/android/QtLayout.java
++++ b/src/android/jar/src/org/qtproject/qt5/android/QtLayout.java
+@@ -64,6 +64,8 @@
+         m_startApplicationRunnable = startRunnable;
+         initializeGestureDetector(context);
+         inputEventDispatcher = QtNative.getInputEventDispatcher();
++        setFocusable(true);
++        setFocusableInTouchMode(true);
+     }
+ 
+     public QtLayout(Context context, AttributeSet attrs)
