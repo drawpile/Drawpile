@@ -620,13 +620,13 @@
         <location line="+544"/>
         <source>Layer to selection: current layer is empty.</source>
         <extracomment>A message shown when using &quot;layer to selection&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Шар для вибору: поточний шар порожній.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds: current layer is empty.</source>
         <extracomment>A message shown when using &quot;select layer bounds&quot;, but there&apos;s nothing on the layer to select.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вибрати межі шару: поточний шар порожній.</translation>
     </message>
     <message>
         <location line="+182"/>
