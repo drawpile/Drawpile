@@ -832,17 +832,17 @@
     <message>
         <location filename="../scene/hudhandler.cpp" line="+62"/>
         <source>More…</source>
-        <translation type="unfinished">Більше…</translation>
+        <translation>Більше…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибіром</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Transform</source>
-        <translation type="unfinished">Трансформувати</translation>
+        <translation>Трансформувати</translation>
     </message>
 </context>
 <context>
@@ -1870,7 +1870,7 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
     <message>
         <location line="+29"/>
         <source>Selection Action Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Розташування панелі дій вибору</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -2608,17 +2608,18 @@ To avoid this extra step in the future, use the Browse page or a direct link to 
         <location line="-2211"/>
         <source>Switched to frame view mode.
 You can exit it via the View menu or the timeline.</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключено в режим перегляду кадрів.
+Ви можете вийти з нього через меню «Вигляд» або часову шкалу.</translation>
     </message>
     <message>
         <location line="+2203"/>
         <source>Did the download complete successfully?</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження успішно завершилося?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You have unsaved changes, do you want to download them before reconnecting?</source>
-        <translation type="unfinished"></translation>
+        <translation>У вас є незбережені зміни. Бажаєте завантажити їх перед повторним підключенням?</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2628,17 +2629,17 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+11"/>
         <source>No, try again</source>
-        <translation type="unfinished"></translation>
+        <translation>Ні, спробуйте ще раз</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Yes, reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Так, перепідключитися</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантажити</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -2724,12 +2725,12 @@ You can exit it via the View menu or the timeline.</source>
     <message>
         <location line="+444"/>
         <source>Cr&amp;op canvas to transform…</source>
-        <translation type="unfinished"></translation>
+        <translation>Обрізати полотно для перетворення…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cr&amp;op canvas to selection…</source>
-        <translation type="unfinished"></translation>
+        <translation>Обрізати полотно до виділення…</translation>
     </message>
     <message>
         <location line="+109"/>
@@ -3056,72 +3057,72 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Show Selection Action Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати панель дій вибору</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Зверху ліворуч</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель дій вибору угорі ліворуч</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top</source>
-        <translation type="unfinished"></translation>
+        <translation>Верх</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top</source>
-        <translation type="unfinished"></translation>
+        <translation>Верхня панель дій вибору</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Угорі праворуч</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar top-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель дій вибору угорі праворуч</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Внизу ліворуч</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-left</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель дій вибору внизу ліворуч</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom</source>
-        <translation type="unfinished">Вкінець</translation>
+        <translation>Вкінець</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom</source>
-        <translation type="unfinished"></translation>
+        <translation>Вкінця панель дій вибору</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Внизу праворуч</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selection action bar bottom-right</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель дій вибору внизу праворуч</translation>
     </message>
     <message>
         <location line="+184"/>
         <source>On-canvas view mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>Примітки щодо режиму перегляду на полотні</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3244,7 +3245,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Cr&amp;op canvas to selection/transform…</source>
-        <translation type="unfinished"></translation>
+        <translation>Обрізати полотно для вибору/трансформації…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -3822,70 +3823,72 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+38"/>
         <source>Disable view mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимкнути сповіщення в режимі перегляду</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer view mode notices disabled.
 You can re-enable them via the View menu or preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сповіщення режиму перегляду шарів вимкнено.
+Ви можете знову ввімкнути їх через меню «Вигляд» або налаштування.</translation>
     </message>
     <message>
         <location line="+110"/>
         <source>Bar Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Розташування бару</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disable This Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимкнути цю панель</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Invert</source>
         <extracomment>Refers to inverting the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Інвертувати</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Expand/Shrink</source>
         <extracomment>Refers to expanding or shrinking the selection.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Розгорнути/Згорнути</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Apply</source>
-        <translation type="unfinished">Застосувати</translation>
+        <translation>Застосувати</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Mirror</source>
         <extracomment>Refers to mirroring a transform horizontally.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Дзеркало</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flip</source>
         <extracomment>Refers to mirroring a transform vertically (flip upside-down.)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Заповніть</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate -90°</source>
         <extracomment>Refers to rotating a transform 90 degrees counter-clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Поворот на -90°</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Rotate +90°</source>
         <extracomment>Refers to rotating a transform 90 degrees clockwise.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Повернути на +90°</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Selection action bar disabled.
 You can re-enable it via the View menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Панель дій вибору вимкнено.
+Ви можете знову ввімкнути її через меню «Вигляд».</translation>
     </message>
     <message>
         <location line="+604"/>
@@ -9331,7 +9334,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Improve zoom quality (hardware renderer only)</source>
-        <translation type="unfinished"></translation>
+        <translation>Покращення якості масштабування (лише для апаратного рендерера)</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -10430,12 +10433,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+30"/>
         <source>Enable pressure for touch drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Увімкнути малювання сенсорним керуванням</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Required for certain screen tablets, probably doesn&apos;t work for finger drawing!</source>
-        <translation type="unfinished"></translation>
+        <translation>Потрібно для деяких планшетів з екраном, ймовірно, не працює для малювання пальцями!</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -10703,7 +10706,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>View mode notices</source>
-        <translation type="unfinished"></translation>
+        <translation>Сповіщення режиму перегляду</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -12977,19 +12980,19 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/colordialog.cpp" line="+20"/>
         <source>Screen Color Picking Unsupported</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибір кольору екрана не підтримується</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Picking colors from the screen is not supported under Wayland.</source>
         <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Вибір кольорів з екрана не підтримується у Wayland.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You may be able to switch to Xorg instead when logging into your Linux user account.</source>
         <extracomment>Wayland and Xorg are the names so-called display servers on Linux. You don&apos;t need to worry about what that is, just don&apos;t change the names. Note that &quot;Linux user account&quot; is an account on the computer, NOT a Drawpile account.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Можливо, ви зможете переключитися на Xorg під час входу до свого облікового запису користувача Linux.</translation>
     </message>
 </context>
 <context>
@@ -13544,67 +13547,67 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-119"/>
         <source>Exit layer view</source>
-        <translation type="unfinished"></translation>
+        <translation>Вийти з режиму перегляду шарів</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exit group view</source>
-        <translation type="unfinished"></translation>
+        <translation>Вийти з режиму групового перегляду</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exit frame view</source>
-        <translation type="unfinished"></translation>
+        <translation>Вихід з режиму перегляду кадру</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unlock canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Розблокувати полотно</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Reset canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Скинути полотно…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Select all</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибрати все</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Select layer bounds</source>
-        <translation type="unfinished"></translation>
+        <translation>Вибрати межі шару</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Disable anti-overflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Вимкнути захист від переповнення</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set current layer as fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановити поточний шар як джерело заливки</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clear fill source</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистити Джерело Заповнення</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show censored layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Показати Цензуровані Шари</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Out of space, you must reset the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вистачає місця, потрібно скинути налаштування полотна</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Out of space, operator must reset the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вистачає місця, оператор повинен скинути налаштування полотна</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -13780,19 +13783,19 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+41"/>
         <source>As regular window</source>
         <extracomment>A chat detach option, &quot;detach &gt; as regular window&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Як звичайне вікно</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>On top of Drawpile</source>
         <extracomment>A chat detach option, &quot;detach &gt; on top of Drawpile&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>На вершині Drawpile</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>On top of everything</source>
         <extracomment>A chat detach option, &quot;detach &gt; on top of everything&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>На додачу до всього</translation>
     </message>
     <message>
         <location line="+5"/>
