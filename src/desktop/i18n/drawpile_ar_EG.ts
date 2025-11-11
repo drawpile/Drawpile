@@ -119,7 +119,7 @@
     <message>
         <location line="+47"/>
         <source>Anti-Overflow:</source>
-        <translation type="unfinished"></translation>
+        <translation>‌‏‎‏</translation>
     </message>
     <message>
         <location line="+26"/>
