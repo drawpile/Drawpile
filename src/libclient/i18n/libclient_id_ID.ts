@@ -19,37 +19,37 @@
     <message>
         <location filename="../wasmsupport.cpp" line="+265"/>
         <source>Memory allocation failed. This can happen in some browsers if you refresh. Close this page and your browser entirely, then try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alokasi memori gagal. Ini bisa terjadi pada beberapa browser jika anda me-refresh. tutup halaman ini dan browser anda sepenuhnya, lalu coba lagi.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Memory allocated is not a SharedArrayBuffer, even though your browser supports it. You may need to change a setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Memori ter-alokasi bukan sebuah &apos;SharedArrayBuffer&apos;, meskipun browser anda mendukung. Anda mungkin perlu mengubah pengaturan.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Drawpile logo</source>
-        <translation type="unfinished"></translation>
+        <translation>Logo Drawpile</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>drawpile.net login</source>
-        <translation type="unfinished"></translation>
+        <translation>Masuk drawpile.net</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Loading application</source>
-        <translation type="unfinished"></translation>
+        <translation>Memuat aplikasi</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Memulai…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Starting, this should only take a moment…</source>
-        <translation type="unfinished"></translation>
+        <translation>Memulai, tunggu sebentar…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -59,47 +59,47 @@
     <message>
         <location line="+1"/>
         <source>Loading, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>Memuat, tunggu sebentar…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Preparing</source>
-        <translation type="unfinished"></translation>
+        <translation>Menyiapkan</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Initializing, this may take a while…</source>
-        <translation type="unfinished"></translation>
+        <translation>Menginisialisasi, tunggu sebentar…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to start Drawpile: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Gagal memulai Drawpile: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Setting up…</source>
-        <translation type="unfinished"></translation>
+        <translation>Mengatur…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fatal error:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kesalahan fatal:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>This is usually because your browser is outdated or you are viewing the page through some kind of embedded browser, like a chat application&apos;s, and need to open it properly. For more information, check out &lt;a href=&quot;#&quot;&gt;this help page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ini biasa terjadi karena browser anda lawas atau anda membuka halaman ini lewat semacam browser tertanam, seperti yang ada di aplikasi chat, dan perlu di-buka dengan benar. Informasi lebih lanjut, lihat &lt;a href=&quot;#&quot;&gt;halaman bantuan ini&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Link sesi tidak benar.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>However you got here was not via a valid link to a Drawpile session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bagaimana-pun cara anda sampai ke sini bukanlah melalui link sesi Drawpile yang benar.</translation>
     </message>
     <message>
         <location line="+3"/>
