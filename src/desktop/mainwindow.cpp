@@ -4404,6 +4404,8 @@ void MainWindow::handleToggleAction(const HudAction &action)
 			int h = height();
 			int top = h / 2;
 			m_splitter->setSizes({top, h - top});
+		} else {
+			m_canvasView->viewWidget()->setFocus();
 		}
 
 		// It's ridiculous how hard resizeDocks() resists resizing the docks to
@@ -6246,6 +6248,7 @@ void MainWindow::setupActions()
 			} else {
 				saveSplitterState();
 				m_splitter->setSizes({1, 0});
+				m_canvasView->viewWidget()->setFocus();
 			}
 		}
 	});
