@@ -20,11 +20,28 @@ public class MainActivity extends QtActivity {
 
     public static final String CONNECTION_NOTIFICATION_CHANNEL_ID = "net.drawpile.connection";
     public static NotificationChannel connectionNotificationChannel = null;
+    private static boolean started = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.QT_ANDROID_DEFAULT_THEME = "DefaultTheme";
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // This is called multiple times in the application's lifecycle, but we
+        // only want to full-screen it once at the beginning. Doing it here
+        // avoids some flickering with the main window that happens otherwise.
+        if (!started) {
+            started = true;
+            try {
+                setFullScreen(true);
+            } catch (Exception | UnsatisfiedLinkError e) {
+                Log.e(TAG, "Failed to enter fullscreen", e);
+            }
+        }
     }
 
     public boolean createConnectionNotificationChannel() {
