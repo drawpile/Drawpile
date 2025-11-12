@@ -6,7 +6,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+52"/>
         <source>Add New</source>
-        <translation type="unfinished"></translation>
+        <translation>Magdagdag ng bago</translation>
     </message>
     <message>
         <location line="+51"/>
