@@ -21,6 +21,8 @@
  */
 #include "canvas_history.h"
 #include "canvas_state.h"
+#include "project.h"
+#include "project_worker.h"
 #include "recorder.h"
 #include "snapshots.h"
 #include <dpcommon/atomic.h>
@@ -1819,6 +1821,47 @@ DP_Recorder *DP_canvas_history_recorder_new(
         DP_recorder_free_join(params.r, NULL);
         return NULL;
     }
+}
+
+
+struct DP_CanvasHistoryProjectRecordingParams {
+    DP_ProjectWorker *pw;
+    unsigned int file_id;
+    unsigned int local_user_id;
+};
+
+static bool accept_project_recording_state(void *user, DP_CanvasState *cs)
+{
+    struct DP_CanvasHistoryProjectRecordingParams *params = user;
+    DP_project_worker_snapshot_make_inc(params->pw, params->file_id, cs,
+                                        DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT
+                                            | DP_PROJECT_SNAPSHOT_FLAG_INITIAL);
+    return true;
+}
+
+static bool accept_project_recording_message(void *user, DP_Message *msg)
+{
+    struct DP_CanvasHistoryProjectRecordingParams *params = user;
+    unsigned int flags = DP_message_context_id(msg) == params->local_user_id
+                           ? DP_PROJECT_MESSAGE_FLAG_OWN
+                           : 0u;
+    DP_project_worker_message_record_noinc(params->pw, params->file_id, msg,
+                                           flags);
+    return true;
+}
+
+void DP_canvas_history_project_recording_start(DP_CanvasHistory *ch,
+                                               DP_ProjectWorker *pw,
+                                               unsigned int file_id,
+                                               unsigned int local_user_id)
+{
+    DP_ASSERT(ch);
+    DP_ASSERT(pw);
+    struct DP_CanvasHistoryProjectRecordingParams params = {pw, file_id,
+                                                            local_user_id};
+    DP_canvas_history_reset_image_new(ch, accept_project_recording_state,
+                                      accept_project_recording_message,
+                                      &params);
 }
 
 

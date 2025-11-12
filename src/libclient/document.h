@@ -76,10 +76,11 @@ public:
 
 	bool loadBlank(
 		const QSize &size, const QColor &background,
-		const QString &initialLayerName, const QString &initialTrackName);
+		const QString &initialLayerName, const QString &initialTrackName,
+		bool autoRecord);
 	void loadState(
 		const drawdance::CanvasState &canvasState, const QString &path,
-		DP_SaveImageType type, bool dirty);
+		DP_SaveImageType type, bool dirty, bool autoRecord);
 	DP_LoadResult loadRecording(
 		const QString &path, bool debugDump, bool *outIsTemplate = nullptr);
 
@@ -92,10 +93,6 @@ public:
 	void exportTemplate(const QString &path);
 	bool saveSelection(const QString &path);
 	bool isSaveInProgress() const { return m_saveInProgress; }
-
-	void setAutosave(bool autosave);
-	bool isAutosave() const { return m_autosave; }
-	bool canAutosave() const { return m_canAutosave; }
 
 #ifdef __EMSCRIPTEN__
 	void downloadCanvas(
@@ -174,6 +171,11 @@ public:
 		m_recordOnConnect = filename;
 	}
 
+	void setProjectRecordOnConnect(bool projectRecordOnConnect)
+	{
+		m_projectRecordOnConnect = projectRecordOnConnect;
+	}
+
 	void connectToServer(
 		int timeoutSecs, int proxyMode, int connectStrategy,
 		net::LoginHandler *loginhandler, bool builtin);
@@ -206,8 +208,6 @@ signals:
 
 	void canvasChanged(canvas::CanvasModel *canvas);
 	void dirtyCanvas(bool isDirty);
-	void autosaveChanged(bool autosave);
-	void canAutosaveChanged(bool canAutosave);
 	void currentPathChanged(const QString &path);
 	void exportPathChanged(const QString &path);
 	void recorderStateChanged(bool recording);
@@ -331,7 +331,6 @@ private slots:
 	void markDirty();
 	void unmarkDirty();
 
-	void autosaveNow();
 	void onCanvasSaved(const QString &errorMessage, qint64 elapsedMsec);
 
 private:
@@ -370,8 +369,6 @@ private:
 	void selectLayer(bool includeMask);
 	void selectAllOp(int op);
 	void selectOp(int op, const QRect &bounds, const QImage &mask = QImage());
-
-	void autosave();
 
 	bool shouldRespondToAutoReset() const;
 	void generateJustInTimeSnapshot();
@@ -425,13 +422,11 @@ private:
 	QString m_originalRecordingFilename;
 	QString m_recordOnConnect;
 	QString m_autoResetCorrelator;
+	bool m_projectRecordOnConnect = false;
 
-	bool m_autosave = false;
-	bool m_canAutosave = false;
 	bool m_saveInProgress = false;
 	bool m_wantCanvasHistoryDump = false;
 	bool m_generatingThumbnail = false;
-	QTimer *m_autosaveTimer;
 
 	QJsonObject m_cumulativeConfig;
 	bool m_sessionPersistent = false;

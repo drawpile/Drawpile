@@ -71,16 +71,29 @@ void MemoryConfig::setAnimationExportFormat(int value)
 	}
 }
 
-int MemoryConfig::getAutoSaveIntervalMinutes() const
+bool MemoryConfig::getAutoRecordHost() const
 {
-	return m_autoSaveIntervalMinutes;
+	return m_autoRecordHost;
 }
 
-void MemoryConfig::setAutoSaveIntervalMinutes(int value)
+void MemoryConfig::setAutoRecordHost(bool value)
 {
-	if(value != m_autoSaveIntervalMinutes) {
-		m_autoSaveIntervalMinutes = value;
-		Q_EMIT changeAutoSaveIntervalMinutes(m_autoSaveIntervalMinutes);
+	if(value != m_autoRecordHost) {
+		m_autoRecordHost = value;
+		Q_EMIT changeAutoRecordHost(m_autoRecordHost);
+	}
+}
+
+bool MemoryConfig::getAutoRecordJoin() const
+{
+	return m_autoRecordJoin;
+}
+
+void MemoryConfig::setAutoRecordJoin(bool value)
+{
+	if(value != m_autoRecordJoin) {
+		m_autoRecordJoin = value;
+		Q_EMIT changeAutoRecordJoin(m_autoRecordJoin);
 	}
 }
 

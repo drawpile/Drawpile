@@ -16,6 +16,8 @@ typedef struct DP_Output DP_Output;
 #define DP_PROJECT_CANVAS_APPLICATION_ID 520585025
 #define DP_PROJECT_CANVAS_USER_VERSION   1
 
+#define DP_PROJECT_THUMBNAIL_SIZE 256
+
 #define DP_PROJECT_ERROR_IN(VALUE, CATEGORY) \
     (VALUE <= CATEGORY##_UNKNOWN && VALUE > CATEGORY##_UNKNOWN - 100)
 
@@ -95,6 +97,31 @@ typedef struct DP_Output DP_Output;
 #define DP_PROJECT_CANVAS_LOAD_ERROR_UNKNOWN (-1200)
 #define DP_PROJECT_CANVAS_LOAD_ERROR_READ    (-1201)
 
+#define DP_PROJECT_RECOVERY_INFO_ERROR_UNKNOWN   (-1300)
+#define DP_PROJECT_RECOVERY_INFO_ERROR_MISUSE    (-1301)
+#define DP_PROJECT_RECOVERY_INFO_ERROR_LOCKED    (-1302)
+#define DP_PROJECT_RECOVERY_INFO_ERROR_OPEN      (-1303)
+#define DP_PROJECT_RECOVERY_INFO_ERROR_CORRUPTED (-1304)
+#define DP_PROJECT_RECOVERY_INFO_ERROR_VERIFY    (-1305)
+#define DP_PROJECT_RECOVERY_INFO_ERROR_PREPARE   (-1306)
+#define DP_PROJECT_RECOVERY_INFO_ERROR_READ      (-1307)
+#define DP_PROJECT_RECOVERY_INFO_ERROR_EMPTY     (-1308)
+
+#define DP_PROJECT_SAVE_ERROR_UNKNOWN         (-1400)
+#define DP_PROJECT_SAVE_ERROR_MISUSE          (-1401)
+#define DP_PROJECT_SAVE_ERROR_NO_SESSION      (-1402)
+#define DP_PROJECT_SAVE_ERROR_OPEN            (-1403)
+#define DP_PROJECT_SAVE_ERROR_READ_ONLY       (-1404)
+#define DP_PROJECT_SAVE_ERROR_SETUP           (-1405)
+#define DP_PROJECT_SAVE_ERROR_READ_EMPTY      (-1406)
+#define DP_PROJECT_SAVE_ERROR_HEADER_WRITE    (-1407)
+#define DP_PROJECT_SAVE_ERROR_HEADER_READ     (-1408)
+#define DP_PROJECT_SAVE_ERROR_HEADER_MISMATCH (-1409)
+#define DP_PROJECT_SAVE_ERROR_MIGRATION       (-1410)
+#define DP_PROJECT_SAVE_ERROR_PREPARE         (-1411)
+#define DP_PROJECT_SAVE_ERROR_LOCKED          (-1412)
+#define DP_PROJECT_SAVE_ERROR_QUERY           (-1413)
+
 #define DP_PROJECT_OPEN_EXISTING  (1u << 0u)
 #define DP_PROJECT_OPEN_TRUNCATE  (1u << 1u)
 #define DP_PROJECT_OPEN_READ_ONLY (1u << 2u)
@@ -110,9 +137,12 @@ typedef struct DP_Output DP_Output;
 
 #define DP_PROJECT_MESSAGE_FLAG_OWN (1u << 0u)
 
+#define DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET (-1)
+
 #define DP_PROJECT_SNAPSHOT_FLAG_COMPLETE   (1u << 0u)
 #define DP_PROJECT_SNAPSHOT_FLAG_PERSISTENT (1u << 1u)
 #define DP_PROJECT_SNAPSHOT_FLAG_CANVAS     (1u << 2u)
+#define DP_PROJECT_SNAPSHOT_FLAG_INITIAL    (1u << 3u)
 
 
 typedef struct DP_Project DP_Project;
@@ -143,6 +173,13 @@ typedef enum DP_ProjectVerifyStatus {
     DP_PROJECT_VERIFY_ERROR,
 } DP_ProjectVerifyStatus;
 
+typedef struct DP_ProjectRecoveryInfo {
+    int error;
+    int source_type;
+    char *source_param;
+    long long own_work_minutes;
+} DP_ProjectRecoveryInfo;
+
 
 // Check whether the given buffer looks like the header of project file. The
 // buffer needs to be at least 72 bytes long, anything less will return
@@ -161,6 +198,13 @@ bool DP_project_close(DP_Project *prj);
 DP_ProjectVerifyStatus DP_project_verify(DP_Project *prj, unsigned int flags);
 
 
+int DP_project_recovery_state(const char *path);
+
+DP_ProjectRecoveryInfo DP_project_recovery_info(const char *path);
+
+void DP_project_recovery_info_dispose(DP_ProjectRecoveryInfo *pri);
+
+
 long long DP_project_session_id(DP_Project *prj);
 
 // Opens a new session. Returns 0 on success and a negative
@@ -175,11 +219,16 @@ int DP_project_session_open(DP_Project *prj, int source_type,
 // DP_PROJECT_SESSION_CLOSE_NOT_OPEN if there's not session to close.
 int DP_project_session_close(DP_Project *prj, unsigned int flags_to_set);
 
-
 // Records a message to the current session. Returns 0 on success and a negative
 // DP_PROJECT_MESSAGE_RECORD_ERROR_* value on failure. A session must be open.
 int DP_project_message_record(DP_Project *prj, DP_Message *msg,
                               unsigned int flags);
+
+// Like DP_project_message_record, but for internal messages like resets.
+int DP_project_message_internal_record(DP_Project *prj, int type,
+                                       unsigned int context_id,
+                                       const void *body_or_null, size_t size,
+                                       unsigned int flags);
 
 
 // Opens a snapshot to record messages to. Returns a positive snapshot id on
@@ -199,9 +248,8 @@ int DP_project_snapshot_finish(DP_Project *prj, long long snapshot_id);
 int DP_project_snapshot_discard(DP_Project *prj, long long snapshot_id);
 
 // Discards all snapshots and messages associated with them except the one with
-// the given id and any snapshots that have the PERSISTENT flag set. At the time
-// of writing, we never set this flag, but it's there for forward-compatibility.
-// Returns the number of snapshots discarded on success and a negative
+// the given id and any snapshots that have the PERSISTENT flag set. Returns the
+// number of snapshots discarded on success and a negative
 // DP_PROJECT_SNAPSHOT_DISCARD_ALL_EXCEPT_ERROR value on failure.
 int DP_project_snapshot_discard_all_except(DP_Project *prj,
                                            long long snapshot_id);

@@ -147,3 +147,9 @@ bool DP_image_write_webp(DP_Image *img, DP_Output *output)
                                DP_image_height(img), DP_image_pixels(img),
                                100.0f, true);
 }
+
+bool DP_image_write_project_thumbnail(DP_UNUSED void *unused_user,
+                                      DP_Image *img, DP_Output *output)
+{
+    return DP_image_write_jpeg_quality(img, output, 80);
+}

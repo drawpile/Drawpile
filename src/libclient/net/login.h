@@ -126,6 +126,8 @@ public:
 	 */
 	const QStringList &sessionFlags() const { return m_sessionFlags; }
 
+	const QString &sessionTitle() const { return m_sessionTitle; }
+
 	const QString &joinPassword() const { return m_joinPassword; }
 
 	const QPixmap &usedAvatar() const { return m_usedAvatar; }
@@ -484,6 +486,7 @@ private:
 	LoginSessionModel *m_sessions = nullptr;
 
 	QString m_selectedId;
+	QString m_sessionTitle;
 	QStringList m_sessionFlags;
 
 	QFileInfo m_certFile;

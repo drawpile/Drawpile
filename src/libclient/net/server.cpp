@@ -322,6 +322,7 @@ void Server::loginSuccess()
 		m_loginstate->minorIncompatibility(),
 		m_loginstate->userId(),
 		m_loginstate->url(),
+		m_loginstate->sessionTitle(),
 		m_loginstate->joinPassword(),
 		m_loginstate->authId(),
 		m_loginstate->userFlags(),

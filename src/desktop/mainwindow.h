@@ -141,6 +141,7 @@ signals:
 	void resizeReactionRequested();
 	void lockWidgetUpdateRequested();
 	void selectionMaskVisibilityChanged(bool visible);
+	void initialCatchupFinished();
 
 public slots:
 	// Triggerable actions
@@ -392,6 +393,11 @@ private:
 	void showLoadResultMessage(DP_LoadResult result);
 	void showResetImageTooLargeErrorMessage(int maxSize, bool autoReset);
 	void handleAmbiguousShortcut(QShortcutEvent *shortcutEvent);
+
+	void toggleProjectRecording(bool enabled);
+	void onProjectRecordingStarted();
+	void onProjectRecordingStopped(bool notify);
+	void showProjectRecordingError(const QString &message);
 
 	void showSelectionMaskColorPicker();
 

@@ -1,10 +1,22 @@
 settings:
   # libclient
 
-  - id: autoSaveIntervalMinutes
-    type: 'int'
-    default: '5'
-    qsettings: 'settings/autosaveminutes'
+  - id: autoRecordHost
+    type: 'bool'
+    default:
+      - value: 'false'
+        condition: 'defined(__EMSCRIPTEN__)'
+      - value: 'true'
+    qsettings: 'settings/autorecord/host'
+    legacy_package: 'libclient'
+
+  - id: autoRecordJoin
+    type: 'bool'
+    default:
+      - value: 'false'
+        condition: 'defined(__EMSCRIPTEN__)'
+      - value: 'true'
+    qsettings: 'settings/autorecord/join'
     legacy_package: 'libclient'
 
   - id: cancelDeselects

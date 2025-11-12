@@ -11,6 +11,7 @@ extern "C" {
 
 class QColor;
 struct DP_PaintEngine;
+struct DP_ProjectWorker;
 
 namespace drawdance {
 
@@ -108,6 +109,11 @@ public:
 	bool stopRecorder();
 	bool recorderIsRecording() const;
 
+	void startProjectRecording(DP_ProjectWorker *pw, unsigned int fileId);
+	bool stopProjectRecording();
+	bool isProjectRecording() const;
+
+	bool hasPlayback() const;
 	DP_PlayerResult stepPlayback(long long steps, net::MessageList &outMsgs);
 	DP_PlayerResult skipPlaybackBy(
 		long long steps, bool bySnapshots, net::MessageList &outMsgs);

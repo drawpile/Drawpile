@@ -348,80 +348,106 @@ static void set_db_configs(sqlite3 *db)
     TRY_SET_DB_CONFIG(db, ENABLE_TRIGGER, 0);
     TRY_SET_DB_CONFIG(db, ENABLE_LOAD_EXTENSION, 0);
     TRY_SET_DB_CONFIG(db, TRUSTED_SCHEMA, 0);
-    TRY_SET_DB_CONFIG(db, ENABLE_ATTACH_CREATE, 0);
+    TRY_SET_DB_CONFIG(db, ENABLE_ATTACH_CREATE, 1);
 }
 
-static bool is_empty_db(sqlite3 *db, bool *out_empty, int *out_result)
-{
-    int value;
-    if (exec_int_stmt(db, "select 1 from sqlite_master limit 1", 0, &value,
-                      out_result)) {
-        *out_empty = value == 0;
-        return true;
-    }
-    else {
-        return false;
-    }
-}
+#define PRAGMA_SETUP(DB, PREFIX, OUT_OK, OUT_SQL_RESULT)                       \
+    do {                                                                       \
+        OUT_OK =                                                               \
+            exec_write_stmt(DB, "pragma " PREFIX "locking_mode = exclusive",   \
+                            "setting exclusive locking mode", &OUT_SQL_RESULT) \
+            && exec_write_stmt(DB, "pragma " PREFIX "journal_mode = memory",   \
+                               "setting journal mode to memory",               \
+                               &OUT_SQL_RESULT)                                \
+            && exec_write_stmt(DB, "pragma " PREFIX "synchronous = off",       \
+                               "setting synchronous off", &OUT_SQL_RESULT)     \
+            && exec_text_stmt(DB, "pragma " PREFIX "locking_mode", NULL,       \
+                              check_pragma_result,                             \
+                              (char *[]){"exclusive", "locking_mode"},         \
+                              &OUT_SQL_RESULT);                                \
+    } while (0)
 
-static bool init_header(sqlite3 *db, bool snapshot_only, int *out_result)
-{
-    const char *application_id_sql;
-    const char *user_version_sql;
-    if (snapshot_only) {
-        application_id_sql = "pragma application_id = " DP_PROJECT_XSTR(
-            DP_PROJECT_CANVAS_APPLICATION_ID);
-        user_version_sql = "pragma user_version = " DP_PROJECT_XSTR(
-            DP_PROJECT_CANVAS_USER_VERSION);
-    }
-    else {
-        application_id_sql = "pragma application_id = " DP_PROJECT_XSTR(
-            DP_PROJECT_APPLICATION_ID);
-        user_version_sql =
-            "pragma user_version = " DP_PROJECT_XSTR(DP_PROJECT_USER_VERSION);
-    }
+#define PRAGMA_READY(DB, PREFIX, OUT_OK, OUT_SQL_RESULT)                     \
+    do {                                                                     \
+        OUT_OK =                                                             \
+            exec_write_stmt(DB, "pragma " PREFIX "journal_mode = off",       \
+                            "setting journal mode to off", &OUT_SQL_RESULT); \
+    } while (0)
 
-    bool ok = exec_write_stmt(db, application_id_sql, "setting application_id",
-                              out_result)
-           && exec_write_stmt(db, user_version_sql, "setting user_version",
-                              out_result);
-    return ok;
-}
+#define IS_EMPTY_DB(DB, PREFIX, OUT_OK, OUT_EMPTY, OUT_SQL_RESULT)             \
+    do {                                                                       \
+        int _value;                                                            \
+        if (exec_int_stmt(db, "select 1 from " PREFIX "sqlite_master limit 1", \
+                          0, &_value, &OUT_SQL_RESULT)) {                      \
+            OUT_EMPTY = (_value == 0);                                         \
+            OUT_OK = true;                                                     \
+        }                                                                      \
+        else {                                                                 \
+            OUT_OK = false;                                                    \
+        }                                                                      \
+    } while (0)
 
-static int check_header(sqlite3 *db, bool snapshot_only, int *out_result)
-{
-    int application_id, user_version;
-    bool exec_ok = exec_int_stmt(db, "pragma application_id", -1,
-                                 &application_id, out_result)
-                && exec_int_stmt(db, "pragma user_version", -1, &user_version,
-                                 out_result);
-    if (!exec_ok) {
-        return DP_PROJECT_OPEN_ERROR_HEADER_READ;
-    }
+#define INIT_HEADER(DB, PREFIX, SNAPSHOT_ONLY, OUT_OK, OUT_SQL_RESULT)      \
+    do {                                                                    \
+        const char *_application_id_sql;                                    \
+        const char *_user_version_sql;                                      \
+        if (SNAPSHOT_ONLY) {                                                \
+            _application_id_sql =                                           \
+                "pragma " PREFIX "application_id = " DP_PROJECT_XSTR(       \
+                    DP_PROJECT_CANVAS_APPLICATION_ID);                      \
+            _user_version_sql = "pragma user_version = " DP_PROJECT_XSTR(   \
+                DP_PROJECT_CANVAS_USER_VERSION);                            \
+        }                                                                   \
+        else {                                                              \
+            _application_id_sql =                                           \
+                "pragma " PREFIX "application_id = " DP_PROJECT_XSTR(       \
+                    DP_PROJECT_APPLICATION_ID);                             \
+            _user_version_sql = "pragma user_version = " DP_PROJECT_XSTR(   \
+                DP_PROJECT_USER_VERSION);                                   \
+        }                                                                   \
+        OUT_OK = exec_write_stmt(DB, _application_id_sql,                   \
+                                 "setting application_id", &OUT_SQL_RESULT) \
+              && exec_write_stmt(DB, _user_version_sql,                     \
+                                 "setting user_version", &OUT_SQL_RESULT);  \
+    } while (0)
 
-    int expected_application_id;
-    int expected_user_version;
-    if (snapshot_only) {
-        expected_application_id = DP_PROJECT_CANVAS_APPLICATION_ID;
-        expected_user_version = DP_PROJECT_CANVAS_USER_VERSION;
-    }
-    else {
-        expected_application_id = DP_PROJECT_APPLICATION_ID;
-        expected_user_version = DP_PROJECT_USER_VERSION;
-    }
-
-    if (application_id != expected_application_id) {
-        DP_error_set("File has incorrect application id %d", application_id);
-        return DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH;
-    }
-    else if (user_version != expected_user_version) {
-        DP_error_set("File has unknown user version %d", user_version);
-        return DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH;
-    }
-    else {
-        return 0;
-    }
-}
+#define CHECK_HEADER(DB, PREFIX, SNAPSHOT_ONLY, OUT_RESULT, OUT_SQL_RESULT)    \
+    do {                                                                       \
+        int _application_id, _user_version;                                    \
+        bool _exec_ok = exec_int_stmt(DB, "pragma " PREFIX "application_id",   \
+                                      -1, &_application_id, &OUT_SQL_RESULT)   \
+                     && exec_int_stmt(DB, "pragma " PREFIX "user_version", -1, \
+                                      &_user_version, &OUT_SQL_RESULT);        \
+        if (_exec_ok) {                                                        \
+            int _expected_application_id;                                      \
+            int _expected_user_version;                                        \
+            if (SNAPSHOT_ONLY) {                                               \
+                _expected_application_id = DP_PROJECT_CANVAS_APPLICATION_ID;   \
+                _expected_user_version = DP_PROJECT_CANVAS_USER_VERSION;       \
+            }                                                                  \
+            else {                                                             \
+                _expected_application_id = DP_PROJECT_APPLICATION_ID;          \
+                _expected_user_version = DP_PROJECT_USER_VERSION;              \
+            }                                                                  \
+                                                                               \
+            if (_application_id != _expected_application_id) {                 \
+                DP_error_set("File has incorrect application id %d",           \
+                             _application_id);                                 \
+                OUT_RESULT = DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH;            \
+            }                                                                  \
+            else if (_user_version != _expected_user_version) {                \
+                DP_error_set("File has unknown user version %d",               \
+                             _user_version);                                   \
+                OUT_RESULT = DP_PROJECT_OPEN_ERROR_HEADER_MISMATCH;            \
+            }                                                                  \
+            else {                                                             \
+                OUT_RESULT = 0;                                                \
+            }                                                                  \
+        }                                                                      \
+        else {                                                                 \
+            OUT_RESULT = DP_PROJECT_OPEN_ERROR_HEADER_READ;                    \
+        }                                                                      \
+    } while (0)
 
 static void try_rollback(sqlite3 *db)
 {
@@ -436,180 +462,194 @@ static void try_rollback(sqlite3 *db)
     }
 }
 
-static bool apply_migrations(sqlite3 *db, int *out_result)
-{
-    if (!exec_write_stmt(db,
-                         "create table if not exists migrations (\n"
-                         "    migration_id integer primary key not null)\n"
-                         "strict",
-                         "creating migrations table", out_result)) {
-        return false;
-    }
+#define APPLY_MIGRATIONS(DB, PREFIX, OUT_OK, OUT_SQL_RESULT)                   \
+    do {                                                                       \
+        if (!exec_write_stmt(                                                  \
+                DB,                                                            \
+                "create table if not exists " PREFIX "migrations (\n"          \
+                "    migration_id integer primary key not null)\n"             \
+                "strict",                                                      \
+                "creating migrations table", &OUT_SQL_RESULT)) {               \
+            OUT_OK = false;                                                    \
+            break;                                                             \
+        }                                                                      \
+                                                                               \
+        sqlite3_stmt *_insert_migration_stmt = prepare(                        \
+            DB,                                                                \
+            "insert or ignore into " PREFIX "migrations (migration_id)\n"      \
+            "values (?)",                                                      \
+            0, &OUT_SQL_RESULT);                                               \
+        if (!_insert_migration_stmt) {                                         \
+            OUT_OK = false;                                                    \
+            break;                                                             \
+        }                                                                      \
+                                                                               \
+        const char *_migrations[] = {                                          \
+            /* Migration 1: initial setup. */                                  \
+            "create table " PREFIX "sessions (\n"                              \
+            "    session_id integer primary key not null,\n"                   \
+            "    source_type integer not null,\n"                              \
+            "    source_param text not null,\n"                                \
+            "    protocol text not null,\n"                                    \
+            "    flags integer not null\n,"                                    \
+            "    opened_at real not null,\n"                                   \
+            "    closed_at real,\n"                                            \
+            "    thumbnail blob)\n"                                            \
+            "strict;\n"                                                        \
+            "create table " PREFIX "messages (\n"                              \
+            "    session_id integer not null,\n"                               \
+            "    sequence_id integer not null,\n"                              \
+            "    recorded_at real not null,\n"                                 \
+            "    flags integer not null,\n"                                    \
+            "    type integer not null,\n"                                     \
+            "    context_id integer not null,\n"                               \
+            "    body blob,\n"                                                 \
+            "    primary key (session_id, sequence_id))\n"                     \
+            "strict, without rowid;\n"                                         \
+            "create table " PREFIX "snapshots (\n"                             \
+            "    snapshot_id integer primary key not null,\n"                  \
+            "    session_id integer not null,\n"                               \
+            "    flags integer not null,\n"                                    \
+            "    taken_at real not null,\n"                                    \
+            "    thumbnail blob)\n"                                            \
+            "strict;\n"                                                        \
+            "create table " PREFIX "snapshot_metadata (\n"                     \
+            "    snapshot_id integer not null,\n"                              \
+            "    metadata_id integer not null,\n"                              \
+            "    value any,\n"                                                 \
+            "    primary key (snapshot_id, metadata_id))\n"                    \
+            "strict;\n"                                                        \
+            "create table " PREFIX "snapshot_layers (\n"                       \
+            "    snapshot_id integer not null,\n"                              \
+            "    layer_index integer not null,\n"                              \
+            "    parent_index integer not null,\n"                             \
+            "    layer_id integer not null,\n"                                 \
+            "    title text not null,\n"                                       \
+            "    blend_mode integer not null,\n"                               \
+            "    opacity integer not null,\n"                                  \
+            "    sketch_opacity integer not null,\n"                           \
+            "    sketch_tint integer not null,\n"                              \
+            "    flags integer not null,\n"                                    \
+            "    fill integer not null,\n"                                     \
+            "    primary key (snapshot_id, layer_index))\n"                    \
+            "strict, without rowid;\n"                                         \
+            "create table " PREFIX "snapshot_tiles (\n"                        \
+            "    snapshot_id integer not null,\n"                              \
+            "    layer_index integer not null,\n"                              \
+            "    tile_index integer not null,\n"                               \
+            "    context_id integer not null,\n"                               \
+            "    repeat integer not null,\n"                                   \
+            "    pixels blob not null,\n"                                      \
+            "    primary key (snapshot_id, layer_index, tile_index))\n"        \
+            "strict;\n"                                                        \
+            "create table " PREFIX "snapshot_annotations (\n"                  \
+            "    snapshot_id integer not null,\n"                              \
+            "    annotation_index integer not null,\n"                         \
+            "    annotation_id integer not null,\n"                            \
+            "    content text not null,\n"                                     \
+            "    x integer not null,\n"                                        \
+            "    y integer not null,\n"                                        \
+            "    width integer not null,\n"                                    \
+            "    height integer not null,\n"                                   \
+            "    background_color integer not null,\n"                         \
+            "    valign integer not null,\n"                                   \
+            "    flags integer not null,\n"                                    \
+            "    primary key (snapshot_id, annotation_index))\n"               \
+            "strict;\n"                                                        \
+            "create table " PREFIX "snapshot_tracks (\n"                       \
+            "    snapshot_id integer not null,\n"                              \
+            "    track_index integer not null,\n"                              \
+            "    track_id integer not null,\n"                                 \
+            "    title text not null,\n"                                       \
+            "    flags integer not null,\n"                                    \
+            "    primary key (snapshot_id, track_index))\n"                    \
+            "strict, without rowid;\n"                                         \
+            "create table " PREFIX "snapshot_key_frames (\n"                   \
+            "    snapshot_id integer not null,\n"                              \
+            "    track_index integer not null,\n"                              \
+            "    frame_index integer not null,\n"                              \
+            "    title text not null,\n"                                       \
+            "    layer_id integer not null,\n"                                 \
+            "    primary key (snapshot_id, track_index, frame_index))\n"       \
+            "strict, without rowid;\n"                                         \
+            "create table " PREFIX "snapshot_key_frame_layers (\n"             \
+            "    snapshot_id integer not null,\n"                              \
+            "    track_index integer not null,\n"                              \
+            "    frame_index integer not null,\n"                              \
+            "    layer_id integer not null,\n"                                 \
+            "    flags integer not null,\n"                                    \
+            "    primary key (snapshot_id, track_index, frame_index, "         \
+            "layer_id))\n"                                                     \
+            "strict, without rowid;\n",                                        \
+        };                                                                     \
+                                                                               \
+        OUT_OK = true;                                                         \
+        for (int i = 0; i < (int)DP_ARRAY_LENGTH(_migrations); ++i) {          \
+            int _bind_result =                                                 \
+                sqlite3_bind_int(_insert_migration_stmt, 1, i + 1);            \
+            if (!is_ok(_bind_result)) {                                        \
+                DP_error_set("Error %d binding migration insertion: %s",       \
+                             _bind_result, db_error(DB));                      \
+                OUT_SQL_RESULT = _bind_result;                                 \
+                OUT_OK = false;                                                \
+                break;                                                         \
+            }                                                                  \
+                                                                               \
+            int _step_result = sqlite3_step(_insert_migration_stmt);           \
+            if (_step_result != SQLITE_DONE) {                                 \
+                DP_error_set("Error %d inserting migration: %s", _step_result, \
+                             db_error(DB));                                    \
+                OUT_SQL_RESULT = _step_result;                                 \
+                OUT_OK = false;                                                \
+                break;                                                         \
+            }                                                                  \
+                                                                               \
+            int _changes = sqlite3_changes(DB);                                \
+            int _reset_result = sqlite3_reset(_insert_migration_stmt);         \
+            if (!is_ok(_reset_result)) {                                       \
+                DP_error_set("Error %d resetting migration insertion: %s",     \
+                             _reset_result, db_error(DB));                     \
+                OUT_SQL_RESULT = _reset_result;                                \
+                OUT_OK = false;                                                \
+                break;                                                         \
+            }                                                                  \
+                                                                               \
+            if (_changes > 0) {                                                \
+                const char *sql = _migrations[i];                              \
+                DP_debug("Executing migration %d", i + 1);                     \
+                if (!exec_write_stmt(DB, sql, "executing migration",           \
+                                     &OUT_SQL_RESULT)) {                       \
+                    OUT_OK = false;                                            \
+                    break;                                                     \
+                }                                                              \
+            }                                                                  \
+        }                                                                      \
+                                                                               \
+        sqlite3_finalize(_insert_migration_stmt);                              \
+    } while (0)
 
-    sqlite3_stmt *insert_migration_stmt = prepare(
-        db, "insert or ignore into migrations (migration_id) values (?)", 0,
-        out_result);
-    if (!insert_migration_stmt) {
-        return false;
-    }
-
-    const char *migrations[] = {
-        // Migration 1: initial setup.
-        "create table sessions (\n"
-        "    session_id integer primary key not null,\n"
-        "    source_type integer not null,\n"
-        "    source_param text not null,\n"
-        "    protocol text not null,\n"
-        "    flags integer not null\n,"
-        "    opened_at real not null,\n"
-        "    closed_at real,\n"
-        "    thumbnail blob)\n"
-        "strict;\n"
-        "create table messages (\n"
-        "    session_id integer not null,\n"
-        "    sequence_id integer not null,\n"
-        "    recorded_at real not null,\n"
-        "    flags integer not null,\n"
-        "    type integer not null,\n"
-        "    context_id integer not null,\n"
-        "    body blob,\n"
-        "    primary key (session_id, sequence_id))\n"
-        "strict, without rowid;\n"
-        "create table snapshots (\n"
-        "    snapshot_id integer primary key not null,\n"
-        "    session_id integer not null,\n"
-        "    flags integer not null,\n"
-        "    taken_at real not null,\n"
-        "    thumbnail blob)\n"
-        "strict;\n"
-        "create table snapshot_metadata (\n"
-        "    snapshot_id integer not null,\n"
-        "    metadata_id integer not null,\n"
-        "    value any,\n"
-        "    primary key (snapshot_id, metadata_id))\n"
-        "strict;\n"
-        "create table snapshot_layers (\n"
-        "    snapshot_id integer not null,\n"
-        "    layer_index integer not null,\n"
-        "    parent_index integer not null,\n"
-        "    layer_id integer not null,\n"
-        "    title text not null,\n"
-        "    blend_mode integer not null,\n"
-        "    opacity integer not null,\n"
-        "    sketch_opacity integer not null,\n"
-        "    sketch_tint integer not null,\n"
-        "    flags integer not null,\n"
-        "    fill integer not null,\n"
-        "    primary key (snapshot_id, layer_index))\n"
-        "strict, without rowid;\n"
-        "create table snapshot_tiles (\n"
-        "    snapshot_id integer not null,\n"
-        "    layer_index integer not null,\n"
-        "    tile_index integer not null,\n"
-        "    context_id integer not null,\n"
-        "    repeat integer not null,\n"
-        "    pixels blob not null,\n"
-        "    primary key (snapshot_id, layer_index, tile_index))\n"
-        "strict;\n"
-        "create table snapshot_annotations (\n"
-        "    snapshot_id integer not null,\n"
-        "    annotation_index integer not null,\n"
-        "    annotation_id integer not null,\n"
-        "    content text not null,\n"
-        "    x integer not null,\n"
-        "    y integer not null,\n"
-        "    width integer not null,\n"
-        "    height integer not null,\n"
-        "    background_color integer not null,\n"
-        "    valign integer not null,\n"
-        "    flags integer not null,\n"
-        "    primary key (snapshot_id, annotation_index))\n"
-        "strict;\n"
-        "create table snapshot_tracks (\n"
-        "    snapshot_id integer not null,\n"
-        "    track_index integer not null,\n"
-        "    track_id integer not null,\n"
-        "    title text not null,\n"
-        "    flags integer not null,\n"
-        "    primary key (snapshot_id, track_index))\n"
-        "strict, without rowid;\n"
-        "create table snapshot_key_frames (\n"
-        "    snapshot_id integer not null,\n"
-        "    track_index integer not null,\n"
-        "    frame_index integer not null,\n"
-        "    title text not null,\n"
-        "    layer_id integer not null,\n"
-        "    primary key (snapshot_id, track_index, frame_index))\n"
-        "strict, without rowid;\n"
-        "create table snapshot_key_frame_layers (\n"
-        "    snapshot_id integer not null,\n"
-        "    track_index integer not null,\n"
-        "    frame_index integer not null,\n"
-        "    layer_id integer not null,\n"
-        "    flags integer not null,\n"
-        "    primary key (snapshot_id, track_index, frame_index, layer_id))\n"
-        "strict, without rowid;\n",
-    };
-
-    bool result = true;
-    for (int i = 0; i < (int)DP_ARRAY_LENGTH(migrations); ++i) {
-        int bind_result = sqlite3_bind_int(insert_migration_stmt, 1, i + 1);
-        if (!is_ok(bind_result)) {
-            assign_result(bind_result, out_result);
-            DP_error_set("Error %d binding migration insertion: %s",
-                         bind_result, db_error(db));
-            result = false;
-            break;
-        }
-
-        int step_result = sqlite3_step(insert_migration_stmt);
-        if (step_result != SQLITE_DONE) {
-            assign_result(step_result, out_result);
-            DP_error_set("Error %d inserting migration: %s", bind_result,
-                         db_error(db));
-            result = false;
-            break;
-        }
-
-        int changes = sqlite3_changes(db);
-        int reset_result = sqlite3_reset(insert_migration_stmt);
-        if (!is_ok(reset_result)) {
-            assign_result(reset_result, out_result);
-            DP_error_set("Error %d resetting migration insertion: %s",
-                         bind_result, db_error(db));
-            result = false;
-            break;
-        }
-
-        if (changes > 0) {
-            const char *sql = migrations[i];
-            DP_debug("Executing migration %d", i + 1);
-            if (!exec_write_stmt(db, sql, "executing migration", out_result)) {
-                result = false;
-                break;
-            }
-        }
-    }
-
-    sqlite3_finalize(insert_migration_stmt);
-    return result;
-}
-
-static bool apply_migrations_in_tx(sqlite3 *db, int *out_result)
-{
-    if (exec_write_stmt(db, "begin exclusive", "opening migration transaction",
-                        out_result)) {
-        if (apply_migrations(db, out_result)
-            && exec_write_stmt(db, "commit", "committing migration transaction",
-                               out_result)) {
-            return true;
-        }
-        else {
-            try_rollback(db);
-        }
-    }
-    return false;
-}
+#define APPLY_MIGRATIONS_IN_TX(DB, PREFIX, OUT_OK, OUT_SQL_RESULT)     \
+    do {                                                               \
+        if (exec_write_stmt(DB, "begin exclusive",                     \
+                            "opening migration transaction",           \
+                            &OUT_SQL_RESULT)) {                        \
+            bool _apply_ok;                                            \
+            APPLY_MIGRATIONS(DB, PREFIX, _apply_ok, OUT_SQL_RESULT);   \
+            if (_apply_ok                                              \
+                && exec_write_stmt(DB, "commit",                       \
+                                   "committing migration transaction", \
+                                   &OUT_SQL_RESULT)) {                 \
+                OUT_OK = true;                                         \
+            }                                                          \
+            else {                                                     \
+                try_rollback(DB);                                      \
+                OUT_OK = false;                                        \
+            }                                                          \
+        }                                                              \
+        else {                                                         \
+            OUT_OK = false;                                            \
+        }                                                              \
+    } while (0)
 
 static const char *pps_sql(DP_ProjectPersistentStatement pps)
 {
@@ -669,17 +709,9 @@ static DP_ProjectOpenResult project_open(const char *path, unsigned int flags,
             return make_open_error(DP_PROJECT_OPEN_ERROR_READ_ONLY, SQLITE_OK);
         }
 
-        bool setup_ok =
-            exec_write_stmt(db, "pragma locking_mode = exclusive",
-                            "setting exclusive locking mode", &sql_result)
-            && exec_write_stmt(db, "pragma journal_mode = memory",
-                               "setting journal mode to memory", &sql_result)
-            && exec_write_stmt(db, "pragma synchronous = off",
-                               "setting synchronous off", &sql_result)
-            && exec_text_stmt(
-                db, "pragma locking_mode", NULL, check_pragma_result,
-                (char *[]){"exclusive", "locking_mode"}, &sql_result);
-        if (!setup_ok) {
+        bool ok;
+        PRAGMA_SETUP(db, "", ok, sql_result);
+        if (!ok) {
             try_close_db(db);
             return make_open_error(sql_result == SQLITE_BUSY
                                        ? DP_PROJECT_OPEN_ERROR_LOCKED
@@ -699,45 +731,63 @@ static DP_ProjectOpenResult project_open(const char *path, unsigned int flags,
         sqlite3_db_config(db, SQLITE_DBCONFIG_RESET_DATABASE, 0, 0);
         empty = true;
     }
-    else if (!is_empty_db(db, &empty, &sql_result)) {
-        try_close_db(db);
-        return make_open_error(read_only && sql_result == SQLITE_BUSY
-                                   ? DP_PROJECT_OPEN_ERROR_LOCKED
-                                   : DP_PROJECT_OPEN_ERROR_READ_EMPTY,
-                               sql_result);
-    }
-    else if (empty && read_only) {
-        DP_error_set("Read-only database is empty");
-        try_close_db(db);
-        return make_open_error(DP_PROJECT_OPEN_ERROR_READ_EMPTY, sql_result);
+    else {
+        bool ok;
+        IS_EMPTY_DB(db, "", ok, empty, sql_result);
+        if (!ok) {
+            try_close_db(db);
+            return make_open_error(read_only && sql_result == SQLITE_BUSY
+                                       ? DP_PROJECT_OPEN_ERROR_LOCKED
+                                       : DP_PROJECT_OPEN_ERROR_READ_EMPTY,
+                                   sql_result);
+        }
+
+        if (empty && read_only) {
+            DP_error_set("Read-only database is empty");
+            try_close_db(db);
+            return make_open_error(DP_PROJECT_OPEN_ERROR_READ_EMPTY,
+                                   sql_result);
+        }
     }
 
-    if (empty && !init_header(db, snapshot_only, &sql_result)) {
-        try_close_db(db);
-        return make_open_error(DP_PROJECT_OPEN_ERROR_HEADER_WRITE, sql_result);
+    if (empty) {
+        bool ok;
+        INIT_HEADER(db, "", snapshot_only, ok, sql_result);
+        if (!ok) {
+            try_close_db(db);
+            return make_open_error(DP_PROJECT_OPEN_ERROR_HEADER_WRITE,
+                                   sql_result);
+        }
     }
 
-    int header_error = check_header(db, snapshot_only, &sql_result);
-    if (header_error != 0) {
+    int header_result;
+    CHECK_HEADER(db, "", snapshot_only, header_result, sql_result);
+    if (header_result != 0) {
         try_close_db(db);
-        return make_open_error(header_error, sql_result);
-    }
-
-    if (!read_only && !apply_migrations_in_tx(db, &sql_result)) {
-        try_close_db(db);
-        return make_open_error(DP_PROJECT_OPEN_ERROR_MIGRATION, sql_result);
+        return make_open_error(header_result, sql_result);
     }
 
     if (!read_only) {
-        if (!exec_write_stmt(db, "pragma journal_mode = off",
-                             "setting journal mode to off", &sql_result)) {
+        bool ok;
+        APPLY_MIGRATIONS_IN_TX(db, "", ok, sql_result);
+        if (!ok) {
+            try_close_db(db);
+            return make_open_error(DP_PROJECT_OPEN_ERROR_MIGRATION, sql_result);
+        }
+    }
+
+    if (!read_only) {
+        bool ok;
+        PRAGMA_READY(db, "", ok, sql_result);
+        if (!ok) {
             try_close_db(db);
             return make_open_error(DP_PROJECT_OPEN_ERROR_SETUP, sql_result);
         }
     }
 
     sqlite3_stmt *stmts[DP_PROJECT_STATEMENT_COUNT];
-    if (!snapshot_only) {
+    bool have_project_stmts = !snapshot_only && !read_only;
+    if (have_project_stmts) {
         for (int i = 0; i < DP_PROJECT_STATEMENT_COUNT; ++i) {
             sqlite3_stmt *stmt =
                 prepare(db, pps_sql((DP_ProjectPersistentStatement)i),
@@ -766,13 +816,13 @@ static DP_ProjectOpenResult project_open(const char *path, unsigned int flags,
     for (int i = 0; i < DP_PROJECT_SNAPSHOT_STATEMENT_COUNT; ++i) {
         prj->snapshot.stmts[i] = NULL;
     }
-    if (snapshot_only) {
+    if (have_project_stmts) {
+        memcpy(prj->stmts, stmts, sizeof(stmts));
+    }
+    else {
         for (int i = 0; i < DP_PROJECT_STATEMENT_COUNT; ++i) {
             prj->stmts[i] = NULL;
         }
-    }
-    else {
-        memcpy(prj->stmts, stmts, sizeof(stmts));
     }
     return (DP_ProjectOpenResult){prj, 0, SQLITE_OK};
 }
@@ -887,6 +937,19 @@ static sqlite3_stmt *ps_prepare_persistent(DP_Project *prj, const char *sql)
     return prepare(prj->db, sql, SQLITE_PREPARE_PERSISTENT, NULL);
 }
 
+static bool ps_bind_null(DP_Project *prj, sqlite3_stmt *stmt, int param)
+{
+    int bind_result = sqlite3_bind_null(stmt, param);
+    if (is_ok(bind_result)) {
+        return true;
+    }
+    else {
+        DP_error_set("Error %d binding null parameter %d to %s: %s",
+                     bind_result, param, sqlite3_sql(stmt), prj_db_error(prj));
+        return false;
+    }
+}
+
 static bool ps_bind_int(DP_Project *prj, sqlite3_stmt *stmt, int param,
                         int value)
 {
@@ -927,6 +990,17 @@ static bool ps_bind_blob(DP_Project *prj, sqlite3_stmt *stmt, int param,
         DP_error_set("Error %d binding blob parameter %d to %s: %s",
                      bind_result, param, sqlite3_sql(stmt), prj_db_error(prj));
         return false;
+    }
+}
+
+static bool ps_bind_blob_or_null(DP_Project *prj, sqlite3_stmt *stmt, int param,
+                                 const void *value, size_t length)
+{
+    if (value && length > 0) {
+        return ps_bind_blob(prj, stmt, param, value, length);
+    }
+    else {
+        return ps_bind_null(prj, stmt, param);
     }
 }
 
@@ -1030,6 +1104,311 @@ static void ps_clear_bindings(DP_Project *prj, sqlite3_stmt *stmt)
 }
 
 
+static DP_ProjectRecoveryInfo project_recovery_info_error(int error)
+{
+    return (DP_ProjectRecoveryInfo){error, 0, NULL, 0LL};
+}
+
+static long long project_recovery_own_work_minutes(DP_Project *prj,
+                                                   long long session_id)
+{
+    static_assert(DP_PROJECT_MESSAGE_FLAG_OWN == 1u,
+                  "Message own flag value matches query");
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select count(*) from (\n"
+             "    select distinct cast((recorded_at / 60.0) as int) as m\n"
+             "    from messages where session_id = ? and flags & 1)");
+    if (!stmt) {
+        DP_warn("Error preparing project work time query: %s", DP_error());
+        return -1LL;
+    }
+
+    long long own_work_minutes = -1;
+    if (ps_bind_int64(prj, stmt, 1, session_id)) {
+        bool error;
+        if (ps_exec_step(prj, stmt, &error)) {
+            own_work_minutes = sqlite3_column_int64(stmt, 0);
+        }
+        else if (error) {
+            DP_warn("Error executing work time query: %s", DP_error());
+        }
+        else {
+            DP_warn("Work time query resulted in no rows");
+        }
+    }
+    else {
+        DP_warn("Error in project work time query: %s", DP_error());
+    }
+
+    sqlite3_finalize(stmt);
+    return own_work_minutes;
+}
+
+DP_ProjectRecoveryInfo DP_project_recovery_info(const char *path)
+{
+    if (!path) {
+        DP_error_set("Path is null");
+        return project_recovery_info_error(
+            DP_PROJECT_RECOVERY_INFO_ERROR_MISUSE);
+    }
+
+    DP_ProjectOpenResult open_result =
+        project_open(path, DP_PROJECT_OPEN_READ_ONLY, false);
+    switch (open_result.error) {
+    case 0:
+        break;
+    case DP_PROJECT_OPEN_ERROR_LOCKED:
+        return project_recovery_info_error(
+            DP_PROJECT_RECOVERY_INFO_ERROR_LOCKED);
+    default:
+        return project_recovery_info_error(DP_PROJECT_RECOVERY_INFO_ERROR_OPEN);
+    }
+
+    DP_Project *prj = open_result.project;
+    DP_ProjectVerifyStatus verify_status =
+        DP_project_verify(prj, DP_PROJECT_VERIFY_FULL);
+    switch (verify_status) {
+    case DP_PROJECT_VERIFY_OK:
+        break;
+    case DP_PROJECT_VERIFY_CORRUPTED:
+        project_close(prj, true);
+        return project_recovery_info_error(
+            DP_PROJECT_RECOVERY_INFO_ERROR_CORRUPTED);
+    case DP_PROJECT_VERIFY_ERROR:
+        project_close(prj, true);
+        return project_recovery_info_error(
+            DP_PROJECT_RECOVERY_INFO_ERROR_VERIFY);
+    }
+
+    static_assert(DP_PROJECT_SNAPSHOT_FLAG_COMPLETE == 1u,
+                  "Snapshot complete flag value matches query");
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select i.session_id, i.source_type, i.source_param\n"
+             "from snapshots h\n"
+             "join sessions i on h.session_id = i.session_id\n"
+             "where h.flags & 1\n"
+             "order by h.snapshot_id desc\n"
+             "limit 1");
+    if (!stmt) {
+        project_close(prj, true);
+        return project_recovery_info_error(
+            DP_PROJECT_RECOVERY_INFO_ERROR_PREPARE);
+    }
+
+    bool read_error = false;
+    DP_ProjectRecoveryInfo pri;
+    if (ps_exec_step(prj, stmt, &read_error)) {
+        long long session_id = sqlite3_column_int64(stmt, 0);
+        int source_type = sqlite3_column_int(stmt, 1);
+
+        char *source_param = NULL;
+        if (sqlite3_column_type(stmt, 2) != SQLITE_NULL) {
+            const unsigned char *source_param_text =
+                sqlite3_column_text(stmt, 2);
+            if (source_param_text) {
+                int source_param_bytes = sqlite3_column_bytes(stmt, 2);
+                if (source_param_bytes > 0) {
+                    source_param = DP_memdup(source_param_text,
+                                             DP_int_to_size(source_param_bytes)
+                                                 + (size_t)1);
+                }
+            }
+        }
+
+        long long own_work_minutes =
+            project_recovery_own_work_minutes(prj, session_id);
+
+        pri = (DP_ProjectRecoveryInfo){
+            0,
+            source_type,
+            source_param,
+            own_work_minutes,
+        };
+    }
+    else if (read_error) {
+        pri = project_recovery_info_error(DP_PROJECT_RECOVERY_INFO_ERROR_READ);
+    }
+    else {
+        pri = project_recovery_info_error(DP_PROJECT_RECOVERY_INFO_ERROR_EMPTY);
+    }
+
+    sqlite3_finalize(stmt);
+    project_close(prj, true);
+    return pri;
+}
+
+void DP_project_recovery_info_dispose(DP_ProjectRecoveryInfo *pri)
+{
+    if (pri) {
+        DP_free(pri->source_param);
+        *pri =
+            project_recovery_info_error(DP_PROJECT_RECOVERY_INFO_ERROR_UNKNOWN);
+    }
+}
+
+
+static void project_save_try_detach(DP_Project *prj)
+{
+    sqlite3 *db = prj->db;
+    char *errmsg;
+    int exec_result = sqlite3_exec(db, "detach sav", NULL, NULL, &errmsg);
+    if (!is_ok(exec_result)) {
+        DP_warn("Error %d detaching save database: %s", exec_result,
+                fallback_db_error(db, errmsg));
+    }
+}
+
+static int project_save_attach(DP_Project *prj, const char *path)
+{
+    sqlite3_stmt *attach_stmt = ps_prepare_ephemeral(prj, "attach ? as sav");
+    if (!attach_stmt) {
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    if (!ps_bind_text(prj, attach_stmt, 1, path)) {
+        sqlite3_finalize(attach_stmt);
+        return DP_PROJECT_SAVE_ERROR_PREPARE;
+    }
+
+    int step_result = sqlite3_step(attach_stmt);
+    sqlite3_finalize(attach_stmt);
+    if (!is_ok(step_result)) {
+        return DP_PROJECT_SAVE_ERROR_OPEN;
+    }
+
+    return 0;
+}
+
+static long long project_save_append_session_id(DP_Project *prj)
+{
+    sqlite3_stmt *stmt = ps_prepare_ephemeral(
+        prj, "select ss.session_id sid, ms.session_id mid\n"
+             "from sav.sessions ss\n"
+             "left join main.sessions ms\n"
+             "    on ms.session_id = ?\n"
+             "    and ss.source_param = ms.source_param\n"
+             "order by ss.session_id desc\n"
+             "limit 1");
+    if (!stmt || !ps_bind_int64(prj, stmt, 1, prj->session_id)) {
+        return -1LL;
+    }
+
+    bool error;
+    long long session_id;
+    if (ps_exec_step(prj, stmt, &error)) {
+        long long save_session_id = sqlite3_column_int64(stmt, 0);
+        long long main_session_id = sqlite3_column_int64(stmt, 1);
+        if (save_session_id > 0LL && main_session_id > 0LL) {
+            session_id = save_session_id;
+        }
+        else {
+            session_id = 0LL;
+        }
+    }
+    else if (error) {
+        session_id = -1LL;
+    }
+    else {
+        session_id = 0LL;
+    }
+
+    sqlite3_finalize(stmt);
+    return session_id;
+}
+
+static int project_save_to_attached(DP_Project *prj, unsigned int flags)
+{
+    sqlite3 *db = prj->db;
+    if (sqlite3_db_readonly(prj->db, "sav")) {
+        DP_error_set("Database is read-only");
+        return DP_PROJECT_SAVE_ERROR_READ_ONLY;
+    }
+
+    bool ok;
+    int sql_result;
+    PRAGMA_SETUP(db, "sav.", ok, sql_result);
+    if (!ok) {
+        if (sql_result == SQLITE_BUSY) {
+            return DP_PROJECT_SAVE_ERROR_LOCKED;
+        }
+        else {
+            return DP_PROJECT_SAVE_ERROR_SETUP;
+        }
+    }
+
+    bool empty;
+    IS_EMPTY_DB(db, "sav.", ok, empty, sql_result);
+    if (!ok) {
+        return DP_PROJECT_SAVE_ERROR_READ_EMPTY;
+    }
+
+    if (empty) {
+        INIT_HEADER(db, "sav.", false, ok, sql_result);
+        if (!ok) {
+            return DP_PROJECT_SAVE_ERROR_HEADER_WRITE;
+        }
+    }
+
+    int header_result;
+    CHECK_HEADER(db, "sav.", false, header_result, sql_result);
+    if (header_result != 0) {
+        return DP_PROJECT_SAVE_ERROR_HEADER_MISMATCH;
+    }
+
+    APPLY_MIGRATIONS_IN_TX(db, "sav.", ok, sql_result);
+    if (!ok) {
+        return DP_PROJECT_SAVE_ERROR_MIGRATION;
+    }
+
+    PRAGMA_READY(db, "sav.", ok, sql_result);
+    if (!ok) {
+        return DP_PROJECT_SAVE_ERROR_SETUP;
+    }
+
+    long long append_session_id = project_save_append_session_id(prj);
+    if (append_session_id < 0LL) {
+        return DP_PROJECT_SAVE_ERROR_QUERY;
+    }
+    else if (append_session_id == 0LL) {
+        // TODO
+        return DP_PROJECT_SAVE_ERROR_UNKNOWN;
+    }
+    else {
+        // TODO
+        return DP_PROJECT_SAVE_ERROR_UNKNOWN;
+    }
+
+    return 0;
+}
+
+int DP_project_save(DP_Project *prj, const char *path, unsigned int flags)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_SAVE_ERROR_MISUSE;
+    }
+
+    if (!path) {
+        DP_error_set("No path given");
+        return DP_PROJECT_SAVE_ERROR_MISUSE;
+    }
+
+    if (prj->session_id == 0LL) {
+        DP_error_set("No open session");
+        return DP_PROJECT_SAVE_ERROR_NO_SESSION;
+    }
+
+    int attach_result = project_save_attach(prj, path);
+    if (attach_result != 0) {
+        return attach_result;
+    }
+
+    int save_result = project_save_to_attached(prj, flags);
+    project_save_try_detach(prj);
+    return save_result;
+}
+
+
 long long DP_project_session_id(DP_Project *prj)
 {
     DP_ASSERT(prj);
@@ -1092,6 +1471,7 @@ int DP_project_session_close(DP_Project *prj, unsigned int flags_to_set)
 
     long long session_id = prj->session_id;
     if (session_id == 0LL) {
+        DP_error_set("No open session");
         return DP_PROJECT_SESSION_CLOSE_NOT_OPEN;
     }
 
@@ -1120,11 +1500,33 @@ int DP_project_session_close(DP_Project *prj, unsigned int flags_to_set)
 }
 
 
-unsigned char *get_serialize_buffer(void *user, DP_UNUSED size_t length)
+static unsigned char *get_serialize_buffer(void *user, DP_UNUSED size_t length)
 {
     DP_ASSERT(length <= DP_MESSAGE_MAX_PAYLOAD_LENGTH);
     DP_Project *prj = user;
     return prj->serialize_buffer;
+}
+
+static bool record_message(DP_Project *prj, long long session_id,
+                           unsigned int flags, int type,
+                           unsigned int context_id, const void *body_or_null,
+                           size_t length)
+{
+    sqlite3_stmt *stmt = prj->stmts[DP_PROJECT_STATEMENT_MESSAGE_RECORD];
+    bool write_ok = ps_bind_int64(prj, stmt, 1, session_id)
+                 && ps_bind_int64(prj, stmt, 2, ++prj->sequence_id)
+                 && ps_bind_int64(prj, stmt, 3, DP_uint_to_llong(flags))
+                 && ps_bind_int(prj, stmt, 4, type)
+                 && ps_bind_int64(prj, stmt, 5, context_id)
+                 && ps_bind_blob_or_null(prj, stmt, 6, body_or_null, length)
+                 && ps_exec_write(prj, stmt, NULL);
+    ps_clear_bindings(prj, stmt);
+    if (write_ok) {
+        return 0;
+    }
+    else {
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_WRITE;
+    }
 }
 
 int DP_project_message_record(DP_Project *prj, DP_Message *msg,
@@ -1146,25 +1548,39 @@ int DP_project_message_record(DP_Project *prj, DP_Message *msg,
         return DP_PROJECT_MESSAGE_RECORD_ERROR_NO_SESSION;
     }
 
-    size_t length = DP_message_serialize_body(msg, get_serialize_buffer, prj);
-    if (length == 0) {
+    ssize_t length = DP_message_serialize_body(msg, get_serialize_buffer, prj);
+    if (length < 0) {
         return DP_PROJECT_MESSAGE_RECORD_ERROR_SERIALIZE;
     }
 
-    sqlite3_stmt *stmt = prj->stmts[DP_PROJECT_STATEMENT_MESSAGE_RECORD];
-    bool write_ok = ps_bind_int64(prj, stmt, 1, session_id)
-                 && ps_bind_int64(prj, stmt, 2, ++prj->sequence_id)
-                 && ps_bind_int64(prj, stmt, 3, DP_uint_to_llong(flags))
-                 && ps_bind_int(prj, stmt, 4, (int)DP_message_type(msg))
-                 && ps_bind_int64(prj, stmt, 5, DP_message_context_id(msg))
-                 && ps_bind_blob(prj, stmt, 6, prj->serialize_buffer, length)
-                 && ps_exec_write(prj, stmt, NULL);
-    ps_clear_bindings(prj, stmt);
-    if (!write_ok) {
-        return DP_PROJECT_MESSAGE_RECORD_ERROR_WRITE;
+    return record_message(prj, session_id, flags, (int)DP_message_type(msg),
+                          DP_message_context_id(msg), prj->serialize_buffer,
+                          (size_t)length);
+}
+
+int DP_project_message_internal_record(DP_Project *prj, int type,
+                                       unsigned int context_id,
+                                       const void *body_or_null, size_t size,
+                                       unsigned int flags)
+{
+    if (!prj) {
+        DP_error_set("No project given");
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_MISUSE;
     }
 
-    return 0;
+    if (type >= 0) {
+        DP_error_set("Invalid internal message type %d", type);
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_MISUSE;
+    }
+
+    long long session_id = prj->session_id;
+    if (session_id == 0LL) {
+        DP_error_set("No open session");
+        return DP_PROJECT_MESSAGE_RECORD_ERROR_NO_SESSION;
+    }
+
+    return record_message(prj, session_id, flags, type, context_id,
+                          body_or_null, size);
 }
 
 
@@ -1784,8 +2200,8 @@ snapshot_canvas(DP_Project *prj, long long snapshot_id, DP_CanvasState *cs,
                                     true,
                                     false,
                                     DP_RESET_IMAGE_COMPRESSION_ZSTD8LE,
-                                    256,
-                                    256,
+                                    DP_PROJECT_THUMBNAIL_SIZE,
+                                    DP_PROJECT_THUMBNAIL_SIZE,
                                     {thumb_write_fn, thumb_write_user}};
     DP_reset_image_build_with(cs, &options, snapshot_handle_entry_callback,
                               prj);

@@ -57,6 +57,12 @@ bool looksLikeCanvasReplacingSuffix(const QString &suffix);
 
 bool slurp(const QString &path, QByteArray &outBytes, QString &outError);
 
+// Gives a reasonable format for a project file, either in MiB or GiB (presented
+// without the overly correct i), avoiding smaller units because at best it's
+// useless to know just how tiny a tiny file is. Worse, users may not know the
+// more unusual smaller units or misread them, thinking that they're huge.
+QString formatFileSize(qint64 sizeInBytes);
+
 }
 }
 

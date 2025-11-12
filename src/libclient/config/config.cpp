@@ -41,9 +41,22 @@ int Config::defaultAnimationExportFormat()
 	return -1;
 }
 
-int Config::defaultAutoSaveIntervalMinutes()
+bool Config::defaultAutoRecordHost()
 {
-	return 5;
+#if defined(__EMSCRIPTEN__)
+	return false;
+#else
+	return true;
+#endif
+}
+
+bool Config::defaultAutoRecordJoin()
+{
+#if defined(__EMSCRIPTEN__)
+	return false;
+#else
+	return true;
+#endif
 }
 
 int Config::defaultAutomaticAlphaPreserve()

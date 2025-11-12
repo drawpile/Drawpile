@@ -22,6 +22,10 @@ class CanvasState;
 class SelectionSet;
 }
 
+namespace project {
+class ProjectHandler;
+}
+
 // Qt5 is very picky about types passed to QMetaType::invokeMethod, namespaces
 // confuse it and fail to invoke at runtime. So keep this at top-level.
 struct CanvasModelSetReconnectStateHistoryParams {
@@ -133,6 +137,23 @@ public:
 	//! Is recording in progress?
 	bool isRecording() const;
 
+	bool startProjectRecording(int sourceType, bool requestThumbnail = true);
+	bool cancelProjectRecording();
+	bool discardProjectRecording();
+	bool discardProjectRecordingReinit();
+
+	bool isProjectRecording() const;
+
+	bool isRetainProjectRecordings() const { return m_retainProjectRecordings; }
+	void setRetainProjectRecordings(bool retainProjectRecordings);
+
+	void unblockProjectRecordingErrors();
+
+	void requestProjectRecordingThumbnail();
+
+	void addProjectRecordingMetadataSource(
+		int sourceType, const QString &sourceParam);
+
 	//! Size of the canvas
 	QSize size() const;
 
@@ -203,6 +224,11 @@ signals:
 
 	void restoreLocalStateViewMode(int viewMode, bool revealCensored);
 
+	void projectRecordingStarted();
+	void projectRecordingStopped(bool notify);
+	void projectRecordingErrorOccurred(const QString &message);
+	void retainProjectRecordingsChanged(bool retainProjectRecordings);
+
 private slots:
 	void onLaserTrail(int userId, int persistence, uint32_t color);
 
@@ -224,6 +250,9 @@ private:
 
 	void updatePaintEngineTransform();
 
+	bool stopProjectRecording(bool remove, bool notify);
+	void handleProjectRecordingError(const QString &message);
+
 	void applyLocalStateActions(
 		const QVector<DP_LocalStateAction> &localStateActions);
 
@@ -244,6 +273,7 @@ private:
 	TransformModel *m_transform;
 
 	PaintEngine *m_paintengine;
+	project::ProjectHandler *m_projectHandler = nullptr;
 	int m_transformInterpolation = 0;
 	QColor m_lastPickedColor;
 
@@ -253,6 +283,7 @@ private:
 	uint8_t m_localUserId = 1;
 	bool m_dirty = false;
 	bool m_compatibilityMode = false;
+	bool m_retainProjectRecordings = false;
 };
 
 }

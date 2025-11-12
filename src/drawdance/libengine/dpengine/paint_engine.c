@@ -36,6 +36,8 @@
 #include "paint.h"
 #include "player.h"
 #include "preview.h"
+#include "project.h"
+#include "project_worker.h"
 #include "recorder.h"
 #include "renderer.h"
 #include "tile.h"
@@ -151,6 +153,8 @@ struct DP_PaintEngine {
         int state_change;
         DP_RecorderGetTimeMsFn get_time_ms_fn;
         void *get_time_ms_user;
+        DP_ProjectWorker *pw;
+        unsigned int file_id;
     } record;
     DP_PaintEnginePlayback playback;
     struct {
@@ -386,6 +390,21 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
         DP_local_state_save(pe->local_state, pe->local_view.reveal_censored,
                             DP_msg_internal_local_state_save_callback(mi),
                             DP_msg_internal_local_state_save_user(mi));
+        break;
+    case DP_MSG_INTERNAL_TYPE_PROJECT_THUMBAIL_REQUEST:
+        if (pe->record.pw) {
+            DP_MUTEX_MUST_LOCK(pe->queue_mutex);
+            DP_ProjectWorker *pw = pe->record.pw;
+            // Might have stopped recording in the interim, so check again.
+            if (pw) {
+                DP_CanvasState *cs = DP_canvas_history_get(pe->ch);
+                if (cs) {
+                    DP_project_worker_thumbnail_make_noinc(
+                        pw, pe->record.file_id, cs);
+                }
+            }
+            DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
+        }
         break;
     default:
         DP_warn("Unhandled internal message type %d", (int)type);
@@ -805,6 +824,8 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->record.state_change = RECORDER_STOPPED;
     pe->record.get_time_ms_fn = get_time_ms_fn;
     pe->record.get_time_ms_user = get_time_ms_user;
+    pe->record.pw = NULL;
+    pe->record.file_id = 0u;
     pe->playback.player = player_or_null;
     pe->playback.msecs = 0;
     pe->playback.next_has_time = true;
@@ -1178,6 +1199,51 @@ bool DP_paint_engine_recorder_is_recording(DP_PaintEngine *pe)
 }
 
 
+void DP_paint_engine_project_recording_start(DP_PaintEngine *pe,
+                                             DP_ProjectWorker *pw,
+                                             unsigned int file_id)
+{
+    DP_ASSERT(pe);
+    DP_ASSERT(pw);
+
+    // Get a clean start, see the explanation in start_recording.
+    DP_MUTEX_MUST_LOCK(pe->queue_mutex);
+    DP_message_queue_push_noinc(&pe->remote_queue,
+                                DP_msg_internal_recorder_start_new(0));
+    DP_SEMAPHORE_MUST_POST(pe->queue_sem);
+    DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
+    // Wait for the paint engine to post to this semaphore.
+    DP_SEMAPHORE_MUST_WAIT(pe->record.start_sem);
+    DP_ASSERT(pe->remote_queue.used == 0);
+
+    DP_canvas_history_project_recording_start(
+        pe->ch, pw, file_id, DP_acl_state_local_user_id(pe->acls));
+    pe->record.pw = pw;
+    pe->record.file_id = file_id;
+}
+
+bool DP_paint_engine_project_recording_stop(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    if (pe->record.pw) {
+        DP_MUTEX_MUST_LOCK(pe->queue_mutex);
+        pe->record.pw = NULL;
+        pe->record.file_id = 0u;
+        DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+bool DP_paint_engine_is_project_recording(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    return pe->record.pw != NULL;
+}
+
+
 DP_PaintEnginePlayback *DP_paint_engine_playback(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);
@@ -1252,6 +1318,31 @@ static void record_message(DP_PaintEngine *pe, DP_Message *msg,
     }
 }
 
+static void project_record_message(DP_PaintEngine *pe, DP_Message *msg,
+                                   DP_MessageType type)
+{
+    DP_ProjectWorker *pw = pe->record.pw;
+    if (pw) {
+        if (type == DP_MSG_INTERNAL) {
+            DP_MsgInternal *mi = DP_message_internal(msg);
+            if (DP_msg_internal_type(mi) == DP_MSG_INTERNAL_TYPE_RESET) {
+                DP_project_worker_message_internal_record(
+                    pw, pe->record.file_id,
+                    DP_PROJECT_MESSAGE_INTERNAL_TYPE_RESET, 0u, NULL, 0, 0u);
+            }
+        }
+        else if (!DP_message_type_control(type)
+                 && !DP_msg_local_match_is_local_match(msg)) {
+            unsigned int local_user_id = DP_acl_state_local_user_id(pe->acls);
+            unsigned int flags = DP_message_context_id(msg) == local_user_id
+                                   ? DP_PROJECT_MESSAGE_FLAG_OWN
+                                   : 0u;
+            DP_project_worker_message_record_inc(pw, pe->record.file_id, msg,
+                                                 flags);
+        }
+    }
+}
+
 static void handle_laser_trail(DP_PaintEngine *pe, DP_Message *msg)
 {
     DP_MsgLaserTrail *mlt = DP_message_internal(msg);
@@ -1295,6 +1386,7 @@ static int should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
         }
     }
     else {
+        project_record_message(pe, msg, type);
         DP_local_state_handle(pe->local_state, pe->main_dc, msg, false);
         if (is_pushable_remote(type, msg) || type == DP_MSG_UNDO_DEPTH
             || type == DP_MSG_SOFT_RESET) {

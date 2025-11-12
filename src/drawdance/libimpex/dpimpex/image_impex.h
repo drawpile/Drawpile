@@ -29,5 +29,8 @@ bool DP_image_write_webp_lossy(DP_Image *img, DP_Output *output,
                                int quality) DP_MUST_CHECK;
 bool DP_image_write_webp(DP_Image *img, DP_Output *output) DP_MUST_CHECK;
 
+bool DP_image_write_project_thumbnail(void *unused_user, DP_Image *img,
+                                      DP_Output *output) DP_MUST_CHECK;
+
 
 #endif

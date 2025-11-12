@@ -345,8 +345,8 @@ size_t DP_message_serialize_compat(DP_Message *msg, bool write_body_length,
 }
 #endif
 
-size_t DP_message_serialize_body(DP_Message *msg,
-                                 DP_GetMessageBufferFn get_buffer, void *user)
+ssize_t DP_message_serialize_body(DP_Message *msg,
+                                  DP_GetMessageBufferFn get_buffer, void *user)
 {
     DP_ASSERT(msg);
     DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
@@ -355,17 +355,21 @@ size_t DP_message_serialize_body(DP_Message *msg,
     size_t length = msg->methods->payload_length(msg);
     if (length > DP_MESSAGE_MAX_PAYLOAD_LENGTH) {
         DP_error_set("Message body length out of bounds: %zu", length);
+        return -1;
+    }
+
+    if (length == 0) {
         return 0;
     }
 
     unsigned char *buffer = get_buffer(user, length);
     if (!buffer) {
-        return 0;
+        return -1;
     }
 
     size_t written = msg->methods->serialize_payload(msg, buffer);
     DP_ASSERT(written == length);
-    return written;
+    return (ssize_t)written;
 }
 
 bool DP_message_write_text(DP_Message *msg, DP_TextWriter *writer)

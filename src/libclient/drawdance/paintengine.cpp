@@ -266,6 +266,27 @@ bool PaintEngine::recorderIsRecording() const
 	return DP_paint_engine_recorder_is_recording(m_data);
 }
 
+void PaintEngine::startProjectRecording(
+	DP_ProjectWorker *pw, unsigned int fileId)
+{
+	DP_paint_engine_project_recording_start(m_data, pw, fileId);
+}
+
+bool PaintEngine::stopProjectRecording()
+{
+	return DP_paint_engine_project_recording_stop(m_data);
+}
+
+bool PaintEngine::isProjectRecording() const
+{
+	return DP_paint_engine_is_project_recording(m_data);
+}
+
+bool PaintEngine::hasPlayback() const
+{
+	return DP_paint_engine_playback(m_data)->player != nullptr;
+}
+
 DP_PlayerResult
 PaintEngine::stepPlayback(long long steps, net::MessageList &outMsgs)
 {

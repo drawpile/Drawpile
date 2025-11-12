@@ -204,6 +204,8 @@ target_sources(drawpile PRIVATE
 	dialogs/startdialog/links.h
 	dialogs/startdialog/page.cpp
 	dialogs/startdialog/page.h
+	dialogs/startdialog/recover.cpp
+	dialogs/startdialog/recover.h
 	dialogs/startdialog/welcome.cpp
 	dialogs/startdialog/welcome.h
 	dialogs/systeminfodialog.cpp

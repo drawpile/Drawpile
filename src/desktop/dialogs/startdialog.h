@@ -39,6 +39,7 @@ public:
 #ifndef __EMSCRIPTEN__
 		Recent,
 #endif
+		Recover,
 		Open,
 		Layouts,
 		Preferences,

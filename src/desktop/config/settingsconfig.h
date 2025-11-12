@@ -34,8 +34,11 @@ public:
 	int getAnimationExportFormat() const override;
 	void setAnimationExportFormat(int value) override;
 
-	int getAutoSaveIntervalMinutes() const override;
-	void setAutoSaveIntervalMinutes(int value) override;
+	bool getAutoRecordHost() const override;
+	void setAutoRecordHost(bool value) override;
+
+	bool getAutoRecordJoin() const override;
+	void setAutoRecordJoin(bool value) override;
 
 	int getAutomaticAlphaPreserve() const override;
 	void setAutomaticAlphaPreserve(int value) override;

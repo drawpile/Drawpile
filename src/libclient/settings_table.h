@@ -6,9 +6,11 @@ SETTING(
 	_parentalControlsLevelDummy, _ParentalControlsLevelDummy,
 	"_parentalcontrolsleveldummy", parentalcontrols::Level::Unrestricted)
 SETTING(
-	autoSaveIntervalMinutes, AutoSaveIntervalMinutes,
-	"settings/autosaveminutes",
-	config::Config::defaultAutoSaveIntervalMinutes())
+	autoRecordHost, AutoRecordHost, "settings/autorecord/host",
+	config::Config::defaultAutoRecordHost())
+SETTING(
+	autoRecordJoin, AutoRecordJoin, "settings/autorecord/join",
+	config::Config::defaultAutoRecordJoin())
 SETTING(
 	cancelDeselects, CancelDeselects, "settings/canceldeselects",
 	config::Config::defaultCancelDeselects())
